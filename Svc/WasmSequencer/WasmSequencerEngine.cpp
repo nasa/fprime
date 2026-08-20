@@ -6,9 +6,12 @@
 
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/LinearBufferTemplate.hpp"
+#include "Fw/Types/Serializable.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
+#include "config/FwAssertArgTypeAliasAc.h"
 #include "spacewasm.h"
 
 namespace Svc {
@@ -423,66 +426,59 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dispatchPending
             this->interpreter_sendSignal_hostResume();
             break;
         }
-        case WasmSequencer_HostFunction::SYNC_PORT: {
-            const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.u.syncPort.index);
+        case WasmSequencer_HostFunction::SERIAL_OUT: {
+            const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.u.serialOut.index);
 
             // Copy the payload out of guest memory into our own buffer
             auto status =
-                spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.u.syncPort.ptr,
-                                   this->m_serialPortBuffer.getBuffAddr(), this->m_pendingHostFunction.u.syncPort.len);
+                spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.u.serialOut.ptr,
+                                   this->m_serialPortBuffer.getBuffAddr(), this->m_pendingHostFunction.u.serialOut.len);
             if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::SYNC_PORT,
+                this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::SERIAL_OUT,
                                                                 static_cast<WasmSequencer_Status::T>(status));
                 this->interpreter_sendSignal_hostResponseFailure();
                 break;
             }
 
-            auto serStatus = this->m_serialPortBuffer.setBuffLen(this->m_pendingHostFunction.u.syncPort.len);
+            auto serStatus = this->m_serialPortBuffer.setBuffLen(this->m_pendingHostFunction.u.serialOut.len);
             FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
 
-            // Invoke the serial output port. The reply port MUST NOT be connected for the
-            // synchronous variant, so we resume the interpreter immediately without waiting.
+            // Invoke the serial output port.
             serStatus = this->serialOut_out(portNum, this->m_serialPortBuffer);
             if (serStatus != Fw::FW_SERIALIZE_OK) {
-                this->log_WARNING_HI_SerialPortSendFailed(Svc::WasmSequencer_HostFunction::SYNC_PORT,
+                this->log_WARNING_HI_SerialPortSendFailed(Svc::WasmSequencer_HostFunction::SERIAL_OUT,
                                                           static_cast<I32>(serStatus));
                 this->interpreter_sendSignal_hostResponseFailure();
                 break;
             }
 
+            // Send worked, wake up the interpreter
             this->interpreter_sendSignal_hostResume();
             break;
         }
-        case WasmSequencer_HostFunction::ASYNC_PORT: {
-            const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.u.asyncPort.index);
+        case WasmSequencer_HostFunction::SERIAL_RECV: {
+            const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.u.serialRecv.index);
+            FW_ASSERT(portNum < NUM_SERIALIN_INPUT_PORTS, portNum);
+            auto& queue = this->m_serialInQueue[portNum];
 
-            // Copy the payload out of guest memory into our own buffer
-            auto status =
-                spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.u.asyncPort.ptr,
-                                   this->m_serialPortBuffer.getBuffAddr(), this->m_pendingHostFunction.u.asyncPort.len);
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::ASYNC_PORT,
-                                                                static_cast<WasmSequencer_Status::T>(status));
-                this->interpreter_sendSignal_hostResponseFailure();
-                break;
-            }
-
-            auto serStatus = this->m_serialPortBuffer.setBuffLen(this->m_pendingHostFunction.u.asyncPort.len);
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
-            // Start the statement-timeout clock: we are about to block in
-            // AWAITING_RESPONSE until the reply comes back on serialReply[portNum].
-            this->m_statementStart = this->getTime();
-            this->m_hasStatementStart = true;
-
-            // Invoke the serial output port and block the interpreter until the reply
-            // comes back on serialReply[portNum] (handled by serialReply_handler).
-            serStatus = this->serialOut_out(portNum, this->m_serialPortBuffer);
-            if (serStatus != Fw::FW_SERIALIZE_OK) {
-                this->log_WARNING_HI_SerialPortSendFailed(Svc::WasmSequencer_HostFunction::ASYNC_PORT,
-                                                          static_cast<I32>(serStatus));
-                this->interpreter_sendSignal_hostResponseFailure();
-                break;
+            // Check if there is an available message on the queue
+            if (queue.get_allocated_size() > 0) {
+                // There is data available signal to the state machine to pull this data and wake up without blocking
+                this->interpreter_sendSignal_serialInMessage(portNum);
+            } else {
+                // Check if we should block or not
+                switch (this->m_pendingHostFunction.u.serialRecv.blockingType) {
+                    case Os::QueueBlockingType::BLOCKING:
+                        // Do not immediately resume the interpreter, this will let the state machine asynchronously
+                        // wait for a signal that we got a message (or timeout)
+                        break;
+                    case Os::QueueBlockingType::NONBLOCKING:
+                        // We are non-blocking and the queue is empty, report this back to the interpreter and wake back
+                        // up
+                        constexpr I32 FPRIME_SERIAL_RECV_QUEUE_STATUS_EMPTY = 1;
+                        this->interpreter_sendSignal_hostResumeI32(FPRIME_SERIAL_RECV_QUEUE_STATUS_EMPTY);
+                        break;
+                }
             }
 
             break;
@@ -609,6 +605,95 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkTimeout(
     }
 }
 
+void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dequeueSerialAndResume(
+    SmId smId,
+    Svc_WasmSequencer_EngineStateMachine::Signal signal,
+    const FwIndexType& value) {
+    const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.u.serialRecv.index);
+    FW_ASSERT(portNum < NUM_SERIALIN_INPUT_PORTS, portNum);
+    auto& queue = this->m_serialInQueue[portNum];
+
+    // Message is available, pull out the size
+    U32 msgSize;
+    auto status = queue.peek(msgSize);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+    U32 offset = sizeof(U32);
+    const U32 dataSize = sizeof(U32) + msgSize;
+
+    // Write the message size in little endian to the guest memory
+    Fw::LinearBufferTemplate<sizeof(U32)> msgSizeSer;
+    status = msgSizeSer.serializeFrom(msgSize, Fw::Endianness::LITTLE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+    auto sw_status =
+        spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.u.serialRecv.actualSizePtr,
+                            msgSizeSer.getBuffAddr(), sizeof(U32));
+
+    if (sw_status != SPACEWASM_OK) {
+        this->log_WARNING_HI_HostFunctionInvalidPointer(
+            Svc::WasmSequencer_HostFunction::SERIAL_RECV,
+            Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
+        this->interpreter_sendSignal_hostResponseFailure();
+        return;
+    }
+
+    // Pull the message off the queue, we may need to do it in multiple chunks
+    constexpr U32 CHUNK_SIZE = 32;
+    Fw::LinearBufferTemplate<CHUNK_SIZE> scratch;
+
+    // Pull all the full chunks off the queue
+    for (; (offset + CHUNK_SIZE) < dataSize; offset += CHUNK_SIZE) {
+        scratch.resetSer();
+        status = queue.peek(scratch, CHUNK_SIZE, offset);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+        // Copy the data into the guest memory
+        sw_status = spacewasm_mem_write(this->m_pendingHostFunction.caller,
+                                        this->m_pendingHostFunction.u.serialRecv.dataPtr + offset,
+                                        scratch.getBuffAddr(), scratch.getSize());
+
+        if (sw_status != SPACEWASM_OK) {
+            this->log_WARNING_HI_HostFunctionInvalidPointer(
+                Svc::WasmSequencer_HostFunction::SERIAL_RECV,
+                Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
+            this->interpreter_sendSignal_hostResponseFailure();
+            return;
+        }
+    }
+
+    // Pull out the final partial chunk
+    if (offset < dataSize) {
+        FW_ASSERT((dataSize - offset) < CHUNK_SIZE, static_cast<FwAssertArgType>(dataSize),
+                  static_cast<FwAssertArgType>(offset), CHUNK_SIZE);
+
+        scratch.resetSer();
+        status = queue.peek(scratch, dataSize - offset, offset);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+        // Copy the data into the guest memory
+        sw_status = spacewasm_mem_write(this->m_pendingHostFunction.caller,
+                                        this->m_pendingHostFunction.u.serialRecv.dataPtr + offset,
+                                        scratch.getBuffAddr(), scratch.getSize());
+
+        if (sw_status != SPACEWASM_OK) {
+            this->log_WARNING_HI_HostFunctionInvalidPointer(
+                Svc::WasmSequencer_HostFunction::SERIAL_RECV,
+                Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
+            this->interpreter_sendSignal_hostResponseFailure();
+            return;
+        }
+    }
+
+    // Dequeue the message now that we fully copied it into guest memory
+    status = queue.rotate(dataSize);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+
+    // Yay, we successfully dequeued a message from the queue, wake up the interpreter to tell it about our success
+    constexpr I32 FPRIME_SERIAL_RECV_QUEUE_STATUS_OK = 0;
+    this->interpreter_sendSignal_hostResumeI32(FPRIME_SERIAL_RECV_QUEUE_STATUS_OK);
+}
+
 // ----------------------------------------------------------------------
 // Implementations for internal state machine guards
 // ----------------------------------------------------------------------
@@ -630,6 +715,14 @@ bool WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_guard_pendingHostFunct
     Svc_WasmSequencer_EngineStateMachine::Signal signal) const {
     return this->m_pendingHostFunction.kind == WasmSequencer_HostFunction::ASLEEP ||
            this->m_pendingHostFunction.kind == WasmSequencer_HostFunction::RSLEEP;
+}
+
+bool WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_guard_blockingSerialIn(
+    SmId smId,
+    Svc_WasmSequencer_EngineStateMachine::Signal signal,
+    const FwIndexType& value) const {
+    return (this->m_pendingHostFunction.kind == Svc::WasmSequencer_HostFunction::SERIAL_RECV &&
+            this->m_pendingHostFunction.u.serialRecv.index == static_cast<U32>(value));
 }
 
 }  // namespace Svc

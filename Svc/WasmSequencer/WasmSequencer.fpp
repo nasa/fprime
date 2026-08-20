@@ -31,15 +31,14 @@ module Svc {
     async input port writeTelemetry: Svc.Sched drop
 
     @ Port for sending a serial port invocation
-    @ The Wasm modules can call sync/async variants of this.
-    @ If sync variant is called -> serialReply[portNum] MUST NOT be connected.
-    @ If async variant is called -> serialReply[portNum] MUST be connected.
-    output port serialOut: [Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
+    @ This is invoked by calling serial_out inside the wasm module
+    @ If the port is not connected, the sequence will error out
+    output port serialOut: [Wasm.SerialPortOutIndex.MAX_SERIAL_PORTS] serial
 
-    @ Reply port for [serialOut]. This reply is subject to timeout if configured.
-    @ Sequences that send async serial messages will block until this reply is received
-    @ on the corresponding port number
-    async input port serialReply: [Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
+    @ Port for receiving serial messages from other components.
+    @ When the serial in queue is configured as unified, all port indexes will share the same queue
+    @ When the serial in queue is configured as split, each port index will have it's own queue
+    async input port serialIn: [Wasm.SerialPortInIndex.MAX_SERIAL_PORTS] serial
 
     @ port for requests to run sequences
     # same priority as RUN cmd
@@ -54,8 +53,6 @@ module Svc {
 
     @ called when a sequence finishes running, either successfully or not
     output port seqDoneOut: Fw.CmdResponse
-
-    match serialOut with serialReply
 
     ###############################################################################
     # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

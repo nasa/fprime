@@ -15,6 +15,7 @@
 #include "Fw/Types/StringTemplate.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
+#include "Os/Models/QueueBlockingTypeEnumAc.hpp"
 #include "Svc/Seq/SeqArgsSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
@@ -23,6 +24,7 @@
 #include "Svc/WasmSequencer/WasmSequencer_StatusEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
+#include "Utils/Types/CircularBuffer.hpp"
 #include "config/FppConstantsAc.hpp"
 #include "config/FwChanIdTypeAliasAc.h"
 #include "config/FwPrmIdTypeAliasAc.h"
@@ -98,14 +100,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     // Handler implementations for serial input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for serialReply
+    //! Handler implementation for serialIn
     //!
-    //! Reply port for [serialOut]. This reply is subject to timeout if configured.
-    //! Sequences that send async serial messages will block until this reply is received
-    //! on the corresponding port number
-    void serialReply_handler(FwIndexType portNum,          //!< The port number
-                             Fw::LinearBufferBase& buffer  //!< The serialization buffer
-                             ) override;
+    //! Port for receiving serial messages from other components.
+    //! When the serial in queue is configured as unified, all port indexes will share the same queue
+    //! When the serial in queue is configured as split, each port index will have it's own queue
+    void serialIn_handler(FwIndexType portNum,          //!< The port number
+                          Fw::LinearBufferBase& buffer  //!< The serialization buffer
+                          ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -434,6 +436,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Implementation for action runEngine of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Send a signal to the engine state machine to begin running
+    //! The engine will asynchronously reply with the `engineFinished` signal
     void Svc_WasmSequencer_ControllerStateMachine_action_runEngine(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
@@ -624,6 +627,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
         ) override;
 
+    //! Implementation for action dequeueSerialAndResume of state machine Svc_WasmSequencer_EngineStateMachine
+    //!
+    //! Dequeue a serial message into the host guest memory and resume the interpreter
+    void Svc_WasmSequencer_EngineStateMachine_action_dequeueSerialAndResume(
+        SmId smId,                                            //!< The state machine id
+        Svc_WasmSequencer_EngineStateMachine::Signal signal,  //!< The signal
+        const FwIndexType& value                              //!< The value
+        ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
@@ -686,6 +698,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     bool Svc_WasmSequencer_EngineStateMachine_guard_pendingHostFunctionIsSleep(
         SmId smId,                                           //!< The state machine id
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+    ) const override;
+
+    //! Implementation for guard blockingSerialIn of state machine Svc_WasmSequencer_EngineStateMachine
+    //!
+    //! Check if we are currently blocking on a serial_recv() for a given serial port index
+    bool Svc_WasmSequencer_EngineStateMachine_guard_blockingSerialIn(
+        SmId smId,                                            //!< The state machine id
+        Svc_WasmSequencer_EngineStateMachine::Signal signal,  //!< The signal
+        const FwIndexType& value                              //!< The value
     ) const override;
 
   private:
@@ -847,6 +868,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Buffer to hold the serial output port invocation invoked by the guest
     Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m_serialPortBuffer;
 
+    //! Serial in buffer data
+    U8 m_serialInQueueData[NUM_SERIALIN_INPUT_PORTS][Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_SIZE];
+
+    //! Queues (or queue) that handle inputs on the serial input port
+    Types::CircularBuffer m_serialInQueue[NUM_SERIALIN_INPUT_PORTS];
+
     //! A host function call the guest requested that is pending dispatch by the
     //! engine state machine (see dispatchPendingHostFunction). `kind` selects
     //! which arm of the `u` union carries the call's arguments.
@@ -908,21 +935,21 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                 U32 len;
             } time;
 
-            // SYNC_PORT: serial output port index plus payload in guest memory
+            // SERIAL_OUT: serial output port index plus payload in guest memory
             struct {
                 U32 index;
                 U32 ptr;
                 U32 len;
-            } syncPort;
+            } serialOut;
 
-            // ASYNC_PORT: like SYNC_PORT plus where to write the reply
+            // SERIAL_RECV: Read a message from the serialIn port queue given a port index
             struct {
                 U32 index;
-                U32 ptr;
-                U32 len;
-                U32 returnPtr;
-                U32 returnLen;
-            } asyncPort;
+                U32 dataPtr;
+                U32 dataSize;
+                U32 actualSizePtr;
+                Os::QueueBlockingType::T blockingType;
+            } serialRecv;
 
             Args() : command{0, 0} {}
         } u;
@@ -1011,20 +1038,21 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                            size_t n_params,
                                            struct spacewasm_value_t* out_result);
 
-    spacewasm_hostcall_result_t wasmSerialSync(struct spacewasm_caller_t* caller,
+    spacewasm_hostcall_result_t wasmSerialOut(struct spacewasm_caller_t* caller,
+                                              const struct spacewasm_value_t* params,
+                                              size_t n_params,
+                                              struct spacewasm_value_t* out_result);
+
+    spacewasm_hostcall_result_t wasmSerialRecv(struct spacewasm_caller_t* caller,
                                                const struct spacewasm_value_t* params,
                                                size_t n_params,
                                                struct spacewasm_value_t* out_result);
 
-    spacewasm_hostcall_result_t wasmSerialAsync(struct spacewasm_caller_t* caller,
-                                                const struct spacewasm_value_t* params,
-                                                size_t n_params,
-                                                struct spacewasm_value_t* out_result);
-
     //! Validate a guest serial-port request (shared by the sync and async variants).
     //! Emits the appropriate warning event and returns false when the port index is
     //! out of range/unconnected or the payload length exceeds the configured maximum.
-    bool validateSerialPortRequest(WasmSequencer_HostFunction::T kind, I32 index, U32 len);
+    bool validateSerialPortOutput(WasmSequencer_HostFunction::T kind, I32 index, U32 len);
+    bool validateSerialPortRecv(WasmSequencer_HostFunction::T kind, I32 index, U32 len);
 
     // A global static lock. This is needed to allow the global allocator in spacewasm
     // to not require to pass context to fine grained context to allocations.

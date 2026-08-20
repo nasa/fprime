@@ -9,8 +9,8 @@ enum HostFunction: U8 {
   ASLEEP
   ARGS
   TIME
-  SYNC_PORT
-  ASYNC_PORT
+  SERIAL_OUT
+  SERIAL_RECV
 }
 
 @ Corresponds to spacewasm_status_t

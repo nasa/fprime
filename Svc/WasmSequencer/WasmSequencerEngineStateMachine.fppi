@@ -165,6 +165,16 @@ state machine EngineStateMachine {
   @ A host function timed-out
   signal hostResponseTimeout
 
+  @ Signal to announce we got a message to a serial queue on a specific port index
+  @ These signals may come asynchronously and not wake up anything until the sequence reads from the queue
+  signal serialInMessage: FwIndexType
+
+  @ Check if we are currently blocking on a serial_recv() for a given serial port index
+  guard blockingSerialIn: FwIndexType
+
+  @ Dequeue a serial message into the host guest memory and resume the interpreter
+  action dequeueSerialAndResume: FwIndexType
+
   #######################
   # Interpreter signals #
   #######################
@@ -240,6 +250,10 @@ state machine EngineStateMachine {
       state SLEEPING {
         on checkTimers do { checkSleepTimers }
       }
+
+      on serialInMessage if blockingSerialIn do {
+        dequeueSerialAndResume
+      } enter PAUSE_CHECK
 
       on hostResume do { resume } enter PAUSE_CHECK
       on hostResumeI32 do { resumeI32 } enter PAUSE_CHECK

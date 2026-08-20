@@ -8,6 +8,7 @@
 
 #include "Fw/Cmd/CmdResponseEnumAc.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/LinearBufferTemplate.hpp"
 #include "Fw/Types/Serializable.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/Mutex.hpp"
@@ -20,6 +21,9 @@
 #include "Svc/WasmSequencer/WasmSequencer_SignalSourceEnumAc.hpp"
 #include "Svc/WasmSequencer/fprime_spacewasm/include/fprime_spacewasm.h"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
+#include "config/FwAssertArgTypeAliasAc.h"
+#include "config/SerialPortInIndexEnumAc.hpp"
+#include "config/WasmSequencerConfig.hpp"
 
 namespace Svc {
 
@@ -63,6 +67,10 @@ WasmSequencer ::WasmSequencer(const char* const compName)
     getGlobalAllocatorLock()->unlock();
 
     FW_ASSERT(status == SPACEWASM_OK, status);
+
+    for (FwIndexType i = 0; i < Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS; i++) {
+        this->m_serialInQueue[i].setup(this->m_serialInQueueData[i], Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_SIZE);
+    }
 }
 
 WasmSequencer ::~WasmSequencer() {
@@ -171,35 +179,62 @@ void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
 // Handler implementations for serial input ports
 // ----------------------------------------------------------------------
 
-void WasmSequencer ::serialReply_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
-    if (this->interpreter_getState() != WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING ||
-        this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::ASYNC_PORT ||
-        static_cast<U32>(portNum) != this->m_pendingHostFunction.u.asyncPort.index) {
-        this->interpreter_sendSignal_hostResponseUnexpected(WasmSequencer_HostFunction::ASYNC_PORT);
-        return;
+void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
+    FW_ASSERT(portNum <= Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS, portNum,
+              Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS);
+    auto& queue = this->m_serialInQueue[portNum];
+
+    // Make sure the queue is large enough to handle this message.
+    // This doesn't check the free space in the queue, just the queue is sized
+    // accordinly to handle messages of this size.
+    FW_ASSERT(sizeof(U32) + buffer.getSize() <= queue.get_capacity(), portNum,
+              static_cast<FwAssertArgType>(sizeof(U32) + buffer.getSize()),
+              static_cast<FwAssertArgType>(queue.get_capacity()));
+
+    // Check if we _can_ push the data to the queue
+    if ((buffer.getSize() + sizeof(U32)) > queue.get_free_size()) {
+        // The queue is full and cannot push this data
+        switch (Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_FULL_BEHAVIOR) {
+            case WasmSequencerConfig::SerialInQueueFullBehavior::DROP_OLDEST:
+                // Drop messages until this message can fit
+                while ((buffer.getSize() + sizeof(U32)) > queue.get_free_size()) {
+                    U32 nextMsgSize;
+                    auto status = queue.peek(nextMsgSize);
+                    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, portNum, status);
+
+                    status = queue.rotate(sizeof(U32) + nextMsgSize);
+
+                    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, portNum, status);
+                }
+
+                // Now it fits, fall through to push the data to the queue
+                break;
+            case WasmSequencerConfig::SerialInQueueFullBehavior::DROP_NEWEST:
+                // Drop this message
+                return;
+
+            case WasmSequencerConfig::SerialInQueueFullBehavior::ASSERT:
+                FW_ASSERT(false, portNum, static_cast<FwAssertArgType>(buffer.getSize()) + 4,
+                          static_cast<FwAssertArgType>(queue.get_free_size()),
+                          static_cast<FwAssertArgType>(queue.get_capacity()));
+                break;
+        }
     }
 
-    // The guest cannot receive more than it allocated for the return buffer
-    if (buffer.getSize() > this->m_pendingHostFunction.u.asyncPort.returnLen) {
-        this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::ASYNC_PORT,
-                                            this->m_pendingHostFunction.u.asyncPort.returnLen,
-                                            static_cast<U32>(buffer.getSize()));
-        this->interpreter_sendSignal_hostResponseFailure();
-        return;
-    }
+    // The message should be able to be put into the queue
+    // Enqueue it
+    Fw::LinearBufferTemplate<sizeof(U32)> sizeSer;
+    auto status = sizeSer.serializeFrom(static_cast<U32>(buffer.getSize()));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // Write the reply payload back into guest memory
-    const auto status =
-        spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.u.asyncPort.returnPtr,
-                            buffer.getBuffAddr(), buffer.getSize());
-    if (status != SPACEWASM_OK) {
-        this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::ASYNC_PORT,
-                                                        static_cast<WasmSequencer_Status::T>(status));
-        this->interpreter_sendSignal_hostResponseFailure();
-        return;
-    }
+    status = queue.serialize(sizeSer, sizeof(U32));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    this->interpreter_sendSignal_hostResumeI32(static_cast<I32>(buffer.getSize()));
+    status = queue.serialize(buffer, buffer.getSize());
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+    // Wake up any blocking recv calls
+    this->interpreter_sendSignal_serialInMessage(portNum);
 }
 
 // ----------------------------------------------------------------------

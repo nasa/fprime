@@ -106,7 +106,7 @@ enum FprimeCmdResponse {
 WASM_IMPORT(WASM_MODULE_NAME, "cmd")
 extern FprimeCmdResponse fprime_wasm_command(U32 buf_ptr, U32 buf_size);
 
-enum FprimeEventSeverity {
+enum FprimeEventSeverity : I32 {
     FPRIME_EVENT_FATAL = 1,        //!< A fatal non-recoverable event
     FPRIME_EVENT_WARNING_HI = 2,   //!< A serious but recoverable event
     FPRIME_EVENT_WARNING_LO = 3,   //!< A less serious but recoverable event
@@ -137,27 +137,38 @@ WASM_IMPORT(WASM_MODULE_NAME, "asleep")
 extern void fprime_wasm_asleep(U64 us);
 
 /// @brief Invoke a serial port
+/// If the port is not connected, the module will panic/trap
 ///
-/// The corresponding serialReply port on [index] MUST NOT be connected
-/// @param index Port index to emit on the serial async output/serial async reply
+/// @param index Port index to emit on the serialOut on
 /// @param data_ptr Pointer to the data to send on the output port
 /// @param data_size Length of the data to send on the output port
-WASM_IMPORT(WASM_MODULE_NAME, "serial_sync")
-extern void fprime_wasm_serial_sync(I32 index, U32 data_ptr, U32 data_size);
+WASM_IMPORT(WASM_MODULE_NAME, "serial_send")
+extern void fprime_wasm_serial_out(I32 index, U32 data_ptr, U32 data_size);
 
-/// @brief Invoke a serial port and await a reply on the reply port
+enum FprimeBlockingType {
+    FPRIME_BLOCK_BLOCKING = 0,     //!< Block the wasm execution until a message is received (subject to timeouts)
+    FPRIME_BLOCK_NONBLOCKING = 1,  //!< If there are no messages in the queue, return immediately
+};
+
+enum FprimeQueueStatus {
+    FPRIME_QUEUE_OK = 0,     //!< Message was received and copied into the destination memory
+    FPRIME_QUEUE_EMPTY = 1,  //!< Empty queue with a NONBLOCKING request
+};
+
+/// @brief Receive a message from a serial input queue
 ///
-/// This host function will block the Wasm interpreter until a reply is received
-/// on the [index] port (or timeout)
-/// The corresponding serialReply port MUST be connected
-/// @param index Port index to emit on the serial async output/serial async reply
-/// @param data_ptr Pointer to the data to send on the output port
-/// @param data_size Length of the data to send on the output port
-/// @param return_ptr Pointer to the return value
-/// @param return_size Maximum length allowed to be copied into [return_ptr]
-/// @returns The number of bytes written to [return_ptr]
-WASM_IMPORT(WASM_MODULE_NAME, "serial_async")
-extern U32 fprime_wasm_serial_async(I32 index, U32 data_ptr, U32 data_size, U32 return_ptr, U32 return_size);
+/// @param index Port number/queue index to receive message from
+/// @param data_ptr Pointer to the destination to write serial messages into
+/// @param data_size Size of the data_ptr memory. If a message is larger than this size, trap the wasm module
+/// @param actual_size_ptr (U32*). On message receive, number of bytes received will be written here (little endian)
+/// @param block_type Whether or not to block for a message when the queue on this index is empty
+/// @returns Status on whether or not we received a message (blocking will always return OK)
+WASM_IMPORT(WASM_MODULE_NAME, "serial_recv")
+extern FprimeQueueStatus fprime_wasm_serial_receive(I32 index,
+                                                    U32 data_ptr,
+                                                    U32 data_size,
+                                                    U32 actual_size_ptr,
+                                                    FprimeBlockingType block_type);
 
 #ifdef __cplusplus
 }  // extern "C"

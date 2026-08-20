@@ -118,6 +118,10 @@ event HostFunctionInvalidPointer(host_function: HostFunction, code: Status) \
   severity warning high \
   format "Failed to read guest pointer in host function {}: {}"
 
+event InvalidBlockingTypeValue(invalidValue: I32) \
+  severity warning high \
+  format "Invalid blocking type value passed to serial_recv: {}"
+
 @ A guest serial port host function requested a port index outside the configured range
 event HostFunctionInvalidPort(
   host_function: HostFunction

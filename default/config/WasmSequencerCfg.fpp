@@ -5,25 +5,37 @@ module Svc {
         @ the rules of Os::File::open. trailing slash optional
         dictionary constant DEFAULT_SEQ_BASE_DIR = ""
 
-        # NOTE! This symbol conflicts with Fpy.SerialPortIndex, override that configuration for now
-        # @ Serial port indices for WasmSequencer serialOut/serialReply port array.
-        # @ Synchronous serial ports should not connect serialReply
-        # @ Asynchronous serial ports should connect serialReply at the same index as the dispatch
-        # @ MAX_SERIAL_PORTS must be defined with this exact name for Fpy compiler bounds checking.
-        # dictionary enum SerialPortIndex: U8 {
-        #     @ Example serial port 0 - rename to application-specific name (e.g., TIME_SYNC_PORT)
-        #     EXAMPLE_PORT_0 = 0
-        #     @ Example serial port 1 - rename to application-specific name (e.g., SENSOR_DATA_PORT)
-        #     EXAMPLE_PORT_1 = 1
-        #     @ Example serial port 2 - rename to application-specific name
-        #     EXAMPLE_PORT_2 = 2
-        #     @ Example serial port 3 - rename to application-specific name
-        #     EXAMPLE_PORT_3 = 3
-        #     @ Example serial port 4 - rename to application-specific name
-        #     EXAMPLE_PORT_4 = 4
+        
+        dictionary enum SerialPortOutIndex: U8 {
+            @ Example serial port 0 - rename to application-specific name (e.g., TIME_SYNC_PORT)
+            EXAMPLE_PORT_0 = 0
+            @ Example serial port 1 - rename to application-specific name (e.g., SENSOR_DATA_PORT)
+            EXAMPLE_PORT_1 = 1
+            @ Example serial port 2 - rename to application-specific name
+            EXAMPLE_PORT_2 = 2
+            @ Example serial port 3 - rename to application-specific name
+            EXAMPLE_PORT_3 = 3
+            @ Example serial port 4 - rename to application-specific name
+            EXAMPLE_PORT_4 = 4
 
-        #     @ REQUIRED: Maximum number of serial ports. This sentinel value MUST be named
-        #     MAX_SERIAL_PORTS = 5
-        # }
+            @ REQUIRED: Maximum number of serial ports. This sentinel value MUST be named
+            MAX_SERIAL_PORTS = 5
+        }
+
+        dictionary enum SerialPortInIndex: U8 {
+            @ Example serial port 0 - rename to application-specific name (e.g., TIME_SYNC_PORT)
+            EXAMPLE_PORT_0 = 0
+            @ Example serial port 1 - rename to application-specific name (e.g., SENSOR_DATA_PORT)
+            EXAMPLE_PORT_1 = 1
+            @ Example serial port 2 - rename to application-specific name
+            EXAMPLE_PORT_2 = 2
+            @ Example serial port 3 - rename to application-specific name
+            EXAMPLE_PORT_3 = 3
+            @ Example serial port 4 - rename to application-specific name
+            EXAMPLE_PORT_4 = 4
+
+            @ REQUIRED: Maximum number of serial ports. This sentinel value MUST be named
+            MAX_SERIAL_PORTS = 5
+        }
     }
 }

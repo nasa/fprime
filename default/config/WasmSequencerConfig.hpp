@@ -14,6 +14,7 @@
 #define WASMSEQUENCERCONFIG_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include "config/FwSizeTypeAliasAc.h"
 
 namespace Svc {
 namespace WasmSequencerConfig {
@@ -57,6 +58,18 @@ constexpr U32 MAX_SERIAL_PORT_SIZE = 256;
 
 /// Buffer size to allocate for streaming a Wasm module from the filesystem to the decoder/validator
 constexpr FwSizeType LOAD_READ_CHUNK_SIZE = 512;
+
+enum class SerialInQueueFullBehavior {
+    DROP_OLDEST,  //!< Oldest message will be de-queued and dropped to make space for the new message. Keep dropping
+                  //!< messages until enough space is made
+    DROP_NEWEST,  //!< Drop the latest message if it cannot fit in the remaining queue space
+    ASSERT,       //!< Trigger an assertion if the queue fills and cannot process another message
+};
+
+constexpr SerialInQueueFullBehavior SERIAL_IN_QUEUE_FULL_BEHAVIOR = SerialInQueueFullBehavior::DROP_OLDEST;
+
+/// Size of each serialIn port in bytes
+constexpr FwSizeType SERIAL_IN_QUEUE_SIZE = 32;
 
 }  // namespace WasmSequencerConfig
 }  // namespace Svc
