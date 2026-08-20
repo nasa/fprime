@@ -7,7 +7,14 @@ module FileHandling {
         queue size FileHandlingConfig.QueueSizes.fileUplink \
         stack size FileHandlingConfig.StackSizes.fileUplink \
         priority FileHandlingConfig.Priorities.fileUplink \
-        cpu FileHandlingConfig.CpuAffinities.fileUplink
+        cpu FileHandlingConfig.CpuAffinities.fileUplink \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        // Confine ground-uplinked file writes to the sandbox directory (see
+        // FileHandlingConfig::FileSystem). "." = deployment working-directory subtree.
+        FileHandling::fileUplink.configure(".");
+        """
+    }
 
     instance fileDownlink: Svc.FileDownlink base id FileHandlingConfig.BASE_ID + 0x01000 \
         queue size FileHandlingConfig.QueueSizes.fileDownlink \
@@ -21,6 +28,9 @@ module FileHandling {
             FileHandlingConfig::DownlinkConfig::cycleTime,
             FileHandlingConfig::DownlinkConfig::fileQueueDepth
         );
+        // Confine ground-commanded file reads (SendFile / SendPartial) to the sandbox
+        // directory (see FileHandlingConfig::FileSystem).
+        FileHandling::fileDownlink.configure(".");
         """
     }
 
@@ -36,6 +46,13 @@ module FileHandling {
         priority FileHandlingConfig.Priorities.prmDb \
         cpu FileHandlingConfig.CpuAffinities.prmDb \
     {
+        phase Fpp.ToCpp.Phases.configComponents """
+        // Confine ground-commanded PRM_LOAD_FILE reads to the sandbox directory (see
+        // FileHandlingConfig::FileSystem). Runs before readParameters; only PRM_LOAD_FILE
+        // (DB_STAGING) is sandboxed, so the boot-time readParamFile() of the configured
+        // store file is unaffected.
+        FileHandling::prmDb.configureLoadSandbox(".");
+        """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandling::prmDb.readParamFile();
         """
