@@ -32,6 +32,8 @@ The Version component tracks and reports version information for the framework, 
 
 The Assert Fatal Adapter intercepts framework-level assertions (FW_ASSERT calls) and converts them into FATAL events within the event system. This bridges the C++ assertion mechanism with the F Prime event architecture, ensuring that assertion failures are captured, logged, and handled through the standard fatal event path.
 
+Assertions are intended to enforce internal invariants and signal unrecoverable conditions, not to replace recoverable error handling. When assertions are compiled out, the condition is not checked at runtime. Components are also not designed to continue safely after a failed assertion if a platform assertion handler returns. Code paths reachable through runtime or external input should validate and handle expected failures explicitly rather than relying on `FW_ASSERT`.
+
 ### Fatal Event Handling
 
 The Fatal Handler component receives fatal event announcements and performs the platform-specific response to unrecoverable errors. The default implementation may log a message and halt. Deployments typically override this with project-specific behavior such as:
