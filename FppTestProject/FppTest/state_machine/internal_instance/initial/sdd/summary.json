@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-08-20T01:46:36Z",
+  "ref": "v4.3.0",
+  "commit": "7d8f579f159d2f7c2d4984d92828575e37f87fa6",
+  "tier": "bronze",
+  "has_sdd": false,
+  "doxygen": [
+    {
+      "name": "FppTest::SmInstanceInitial::BasicTester",
+      "url": "https://fprime.jpl.nasa.gov/v4.3.0/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_initial_1_1_basic_tester.html"
+    },
+    {
+      "name": "FppTest::SmInstanceInitial::ChoiceTester",
+      "url": "https://fprime.jpl.nasa.gov/v4.3.0/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_initial_1_1_choice_tester.html"
+    },
+    {
+      "name": "FppTest::SmInstanceInitial::NestedTester",
+      "url": "https://fprime.jpl.nasa.gov/v4.3.0/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_initial_1_1_nested_tester.html"
+    }
+  ]
+}

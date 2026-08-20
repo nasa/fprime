@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-08-20T01:46:36Z",
+  "ref": "v4.3.0",
+  "commit": "7d8f579f159d2f7c2d4984d92828575e37f87fa6",
+  "tier": "bronze",
+  "has_sdd": true,
+  "sections": 9,
+  "filled_sections": 1,
+  "prose_words": 43,
+  "placeholder_hits": 1,
+  "table_kinds": [],
+  "declared_kinds": [
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.3.0/TestDeploymentsProject/Ref/BlockDriver/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Ref::BlockDriver",
+      "url": "https://fprime.jpl.nasa.gov/v4.3.0/docs/reference/api/cpp/html/class_ref_1_1_block_driver.html"
+    }
+  ]
+}

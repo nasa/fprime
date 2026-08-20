@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-08-20T01:46:36Z",
+  "ref": "v4.3.0",
+  "commit": "7d8f579f159d2f7c2d4984d92828575e37f87fa6",
+  "tier": "bronze",
+  "has_sdd": true,
+  "sections": 8,
+  "filled_sections": 4,
+  "prose_words": 414,
+  "placeholder_hits": 0,
+  "table_kinds": [],
+  "declared_kinds": [
+    "events",
+    "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.3.0/Svc/FrameAccumulator/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::FrameAccumulator",
+      "url": "https://fprime.jpl.nasa.gov/v4.3.0/docs/reference/api/cpp/html/class_svc_1_1_frame_accumulator.html"
+    }
+  ]
+}

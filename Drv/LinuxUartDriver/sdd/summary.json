@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-08-20T01:46:36Z",
+  "ref": "v4.3.0",
+  "commit": "7d8f579f159d2f7c2d4984d92828575e37f87fa6",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 15,
+  "filled_sections": 9,
+  "prose_words": 497,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "parameters"
+  ],
+  "declared_kinds": [
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.3.0/Drv/LinuxUartDriver/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Drv::LinuxUartDriver",
+      "url": "https://fprime.jpl.nasa.gov/v4.3.0/docs/reference/api/cpp/html/class_drv_1_1_linux_uart_driver.html"
+    }
+  ]
+}

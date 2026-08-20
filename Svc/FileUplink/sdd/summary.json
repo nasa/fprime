@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-08-20T01:46:36Z",
+  "ref": "v4.3.0",
+  "commit": "7d8f579f159d2f7c2d4984d92828575e37f87fa6",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 17,
+  "filled_sections": 8,
+  "prose_words": 682,
+  "placeholder_hits": 0,
+  "table_kinds": [],
+  "declared_kinds": [
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.3.0/Svc/FileUplink/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::FileUplink",
+      "url": "https://fprime.jpl.nasa.gov/v4.3.0/docs/reference/api/cpp/html/class_svc_1_1_file_uplink.html"
+    }
+  ]
+}

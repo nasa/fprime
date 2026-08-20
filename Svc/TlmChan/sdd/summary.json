@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-08-20T01:46:36Z",
+  "ref": "v4.3.0",
+  "commit": "7d8f579f159d2f7c2d4984d92828575e37f87fa6",
+  "tier": "platinum",
+  "has_sdd": true,
+  "sections": 20,
+  "filled_sections": 7,
+  "prose_words": 747,
+  "placeholder_hits": 1,
+  "table_kinds": [
+    "events",
+    "ports"
+  ],
+  "declared_kinds": [
+    "events",
+    "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.3.0/Svc/TlmChan/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::TlmChan",
+      "url": "https://fprime.jpl.nasa.gov/v4.3.0/docs/reference/api/cpp/html/class_svc_1_1_tlm_chan.html"
+    }
+  ]
+}
