@@ -8,6 +8,7 @@
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/LinearBufferTemplate.hpp"
 #include "Fw/Types/Serializable.hpp"
+#include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
@@ -468,13 +469,13 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dispatchPending
             } else {
                 // Check if we should block or not
                 switch (this->m_pendingHostFunction.u.serialRecv.blockingType) {
-                    case Os::QueueBlockingType::BLOCKING:
+                    case Svc::BlockState::BLOCK:
                         // Do not immediately resume the interpreter, this will let the state machine asynchronously
                         // wait for a signal that we got a message (or timeout).
                         this->m_statementStart = this->getTime();
                         this->m_hasStatementStart = true;
                         break;
-                    case Os::QueueBlockingType::NONBLOCKING:
+                    case Svc::BlockState::NO_BLOCK:
                         // We are non-blocking and the queue is empty, report this back to the interpreter and wake back
                         // up
                         constexpr I32 FPRIME_SERIAL_RECV_QUEUE_STATUS_EMPTY = 1;

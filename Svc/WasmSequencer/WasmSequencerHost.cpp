@@ -7,7 +7,7 @@
 #include <limits>
 
 #include "Fw/Types/Assert.hpp"
-#include "Os/Models/QueueBlockingTypeEnumAc.hpp"
+#include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
@@ -437,9 +437,8 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialRecv(spacewasm_caller_t* ca
         return SPACEWASM_TRAP;
     }
 
-    if (block_type < 0 ||
-        block_type > static_cast<I32>(std::numeric_limits<Os::QueueBlockingType::SerialType>::max()) ||
-        !Os::QueueBlockingType::isValid(static_cast<Os::QueueBlockingType::SerialType>(block_type))) {
+    if (block_type < 0 || block_type > static_cast<I32>(std::numeric_limits<Svc::BlockState::SerialType>::max()) ||
+        !Svc::BlockState::isValid(static_cast<Svc::BlockState::SerialType>(block_type))) {
         this->log_WARNING_HI_InvalidBlockingTypeValue(block_type);
         return SPACEWASM_TRAP;
     }
@@ -450,7 +449,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialRecv(spacewasm_caller_t* ca
     this->m_pendingHostFunction.u.serialRecv.dataPtr = data_ptr;
     this->m_pendingHostFunction.u.serialRecv.dataSize = data_len;
     this->m_pendingHostFunction.u.serialRecv.actualSizePtr = actual_size_ptr;
-    this->m_pendingHostFunction.u.serialRecv.blockingType = static_cast<Os::QueueBlockingType::T>(block_type);
+    this->m_pendingHostFunction.u.serialRecv.blockingType = static_cast<Svc::BlockState::T>(block_type);
 
     // Always pause the interpreter to allow the state machine to process this request
     return SPACEWASM_PAUSE;

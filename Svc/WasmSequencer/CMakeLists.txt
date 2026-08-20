@@ -89,7 +89,6 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerHelpers.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerHost.cpp"
     DEPENDS
-        Os_Models # Os::QueueBlockingType
         Utils_Types # Types::CircularBuffer
 )
 

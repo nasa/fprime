@@ -15,7 +15,6 @@
 #include "Fw/Types/StringTemplate.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
-#include "Os/Models/QueueBlockingTypeEnumAc.hpp"
 #include "Svc/Seq/SeqArgsSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
@@ -948,7 +947,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                 U32 dataPtr;
                 U32 dataSize;
                 U32 actualSizePtr;
-                Os::QueueBlockingType::T blockingType;
+                Svc::BlockState::T blockingType;
             } serialRecv;
 
             Args() : command{0, 0} {}
