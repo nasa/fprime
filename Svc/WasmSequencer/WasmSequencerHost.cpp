@@ -437,7 +437,9 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialRecv(spacewasm_caller_t* ca
         return SPACEWASM_TRAP;
     }
 
-    if (!Os::QueueBlockingType::isValid(static_cast<Os::QueueBlockingType::SerialType>(block_type))) {
+    if (block_type < 0 ||
+        block_type > static_cast<I32>(std::numeric_limits<Os::QueueBlockingType::SerialType>::max()) ||
+        !Os::QueueBlockingType::isValid(static_cast<Os::QueueBlockingType::SerialType>(block_type))) {
         this->log_WARNING_HI_InvalidBlockingTypeValue(block_type);
         return SPACEWASM_TRAP;
     }

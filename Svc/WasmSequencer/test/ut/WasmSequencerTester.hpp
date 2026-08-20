@@ -81,6 +81,22 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! telemetry channel into the tester history so ASSERT_TLM_* can read them.
     void flushTelemetry();
 
+    //! Enqueue a raw serial message on serialIn[portNum] and dispatch it into the
+    //! component's inbound queue. When called while the engine is not awaiting a serial
+    //! message (e.g. IDLE), the resulting serialInMessage signal is a harmless no-op and
+    //! the message simply waits in the queue for a later serial_recv to consume.
+    void enqueueSerialIn(FwIndexType portNum, const U8* bytes, FwSizeType size);
+
+    //! Reset serialOut[portNum] to an unconnected state (connectPorts() connects all ports
+    //! via UT_AUTO_HELPERS; the framework has no disconnect, so reconstruct the port in
+    //! place). Used to exercise the host's "port not connected" error path.
+    void disconnectSerialOut(FwIndexType portNum);
+
+    //! Re-point serialOut[portNum] at the given input port (e.g. a FailingSerialInputPort),
+    //! so serialOut_out returns that port's invokeSerial status. Used to exercise the
+    //! "serial port send failed" error path.
+    void connectSerialOutTo(FwIndexType portNum, Fw::InputPortBase& port);
+
     // ----------------------------------------------------------------------
     // Dispatch / state helpers
     // ----------------------------------------------------------------------
@@ -125,6 +141,9 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
 
     U32 getPageUsedMask() const { return this->component.m_page_used_mask; }
     FwSizeType getGuestOffset() const { return this->component.m_guest_offset; }
+    //! Access the inbound serial queue for a given port index (white-box). Friendship is not
+    //! inherited by the generated TEST_F subclass, so expose it through the tester.
+    Types::CircularBuffer& serialInQueue(FwIndexType portNum) { return this->component.m_serialInQueue[portNum]; }
     WasmSequencer_HostFunction getPendingHostFunctionKind() const { return this->component.m_pendingHostFunction.kind; }
     //! Forward to the component's private static mapping helpers (friendship
     //! does not extend to the generated TEST_F subclass, so expose them here).

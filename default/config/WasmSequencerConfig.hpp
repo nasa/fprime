@@ -69,7 +69,7 @@ enum class SerialInQueueFullBehavior {
 constexpr SerialInQueueFullBehavior SERIAL_IN_QUEUE_FULL_BEHAVIOR = SerialInQueueFullBehavior::DROP_OLDEST;
 
 /// Size of each serialIn port in bytes
-constexpr FwSizeType SERIAL_IN_QUEUE_SIZE = 32;
+constexpr FwSizeType SERIAL_IN_QUEUE_SIZE = 256;
 
 }  // namespace WasmSequencerConfig
 }  // namespace Svc

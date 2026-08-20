@@ -6,6 +6,9 @@
 
 #include "WasmSequencerTester.hpp"
 
+#include <new>
+
+#include "Fw/Port/OutputSerializePort.hpp"
 #include "Os/FileSystem.hpp"
 
 // Directory holding the committed golden WebAssembly modules. Injected by the
@@ -78,6 +81,26 @@ void WasmSequencerTester ::flushTelemetry() {
     this->clearTlm();
     this->invoke_to_writeTelemetry(0, 0);
     this->dispatchAll();
+}
+
+void WasmSequencerTester ::enqueueSerialIn(FwIndexType portNum, const U8* bytes, FwSizeType size) {
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> msg(bytes, size);
+    this->invoke_to_serialIn(portNum, msg);
+    this->dispatchAll();
+}
+
+void WasmSequencerTester ::disconnectSerialOut(FwIndexType portNum) {
+    // The framework offers no port disconnect and registerSerialPort() rejects nullptr, so
+    // reconstruct the OutputSerializePort in place -- a fresh one has m_connObj == nullptr, so
+    // isConnected() is false. Placement-new port reset is an established F´ UT idiom.
+    Fw::OutputSerializePort& port = this->component.m_serialOut_OutputPort[portNum];
+    port.~OutputSerializePort();
+    new (&port) Fw::OutputSerializePort();
+    port.init();
+}
+
+void WasmSequencerTester ::connectSerialOutTo(FwIndexType portNum, Fw::InputPortBase& port) {
+    this->component.set_serialOut_OutputPort(portNum, &port);
 }
 
 Svc::SeqArgs WasmSequencerTester ::makeSeqArgs(const U8* bytes, FwSizeType size) {

@@ -251,9 +251,7 @@ state machine EngineStateMachine {
         on checkTimers do { checkSleepTimers }
       }
 
-      on serialInMessage if blockingSerialIn do {
-        dequeueSerialAndResume
-      } enter PAUSE_CHECK
+      on serialInMessage if blockingSerialIn do { dequeueSerialAndResume }
 
       on hostResume do { resume } enter PAUSE_CHECK
       on hostResumeI32 do { resumeI32 } enter PAUSE_CHECK

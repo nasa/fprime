@@ -7,6 +7,7 @@
 #include "WasmSequencerGTestBase.hpp"
 #include "WasmSequencerTester.hpp"
 
+#include "Fw/Port/InputPortBase.hpp"
 #include "WasmSequencer_ControllerStateMachine_StateEnumAc.hpp"
 #include "config/FwPacketDescriptorTypeAliasAc.h"
 
@@ -14,6 +15,16 @@ namespace Svc {
 
 using ControllerState = WasmSequencerTester::ControllerState;
 using EngineState = WasmSequencerTester::EngineState;
+
+//! A serial input port stub whose invokeSerial always reports a serialization failure.
+//! Connected to a serialOut[] index to drive the component's "serial port send failed"
+//! error path (serialOut_out returning non-OK), which the normal tester InputSerializePort
+//! -- always returning FW_SERIALIZE_OK -- cannot exercise.
+class FailingSerialInputPort final : public Fw::InputPortBase {
+  public:
+    FailingSerialInputPort() : Fw::InputPortBase() { this->init(); }
+    Fw::SerializeStatus invokeSerial(Fw::LinearBufferBase&) override { return Fw::FW_SERIALIZE_NO_ROOM_LEFT; }
+};
 
 // Convenience: the two block modes.
 static const Svc::BlockState BLOCK(Svc::BlockState::BLOCK);
@@ -2001,16 +2012,18 @@ TEST_F(WasmSequencerTester, StatementTimeoutDisabledByDefault) {
     this->removeFile("cmd.wasm");
 }
 
-TEST_F(WasmSequencerTester, StatementTimeoutFailsAwaitingSerialReply) {
-    // The timeout applies equally to a blocking async serial port awaiting a reply.
+TEST_F(WasmSequencerTester, StatementTimeoutFailsBlockingSerialRecv) {
+    // The statement timeout applies equally to a blocking serial_recv parked waiting for a
+    // message that never arrives: dispatchPendingHostFunction arms the statement clock in the
+    // BLOCKING/empty-queue branch, so checkTimeout eventually fails the sequence.
     this->paramSet_STATEMENT_TIMEOUT_SECS(2.0f, Fw::ParamValid::VALID);
     this->component.loadParameters();  // refresh the component's cached parameter value
     this->setTestTime(Fw::Time(0, 0));
 
-    const Fw::String file = this->copyAsset("serial_async.wasm");
+    const Fw::String file = this->copyAsset("serial_recv.wasm");
     this->sendCmd_RUN(0, 402, file, BLOCK, {});
     this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
-    ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::ASYNC_PORT);
+    ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::SERIAL_RECV);
 
     this->setTestTime(Fw::Time(30, 0));
     this->invoke_to_checkTimers(0, 0);
@@ -2019,7 +2032,7 @@ TEST_F(WasmSequencerTester, StatementTimeoutFailsAwaitingSerialReply) {
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 402, Fw::CmdResponse::EXECUTION_ERROR);
-    this->removeFile("serial_async.wasm");
+    this->removeFile("serial_recv.wasm");
 }
 
 // ----------------------------------------------------------------------
@@ -2311,15 +2324,15 @@ TEST_F(WasmSequencerTester, ContinueWhileSpinningIsOk) {
 }
 
 // ----------------------------------------------------------------------
-// Host functions: SYNC_PORT (byte-fidelity of guest bytes -> serialOut buffer)
+// Host functions: SERIAL_OUT (fire-and-forget: guest bytes -> serialOut buffer)
 // ----------------------------------------------------------------------
 
-TEST_F(WasmSequencerTester, SerialSyncByteFidelityAndResume) {
-    const Fw::String file = this->copyAsset("serial_sync.wasm");
+TEST_F(WasmSequencerTester, SerialOutByteFidelityAndResume) {
+    const Fw::String file = this->copyAsset("serial_out.wasm");
 
-    // The guest calls serial_sync on port index 1 with an 8-byte pattern. The host copies
-    // the payload out, emits it on serialOut[1], and resumes immediately (no reply awaited),
-    // so the sequence runs straight to completion.
+    // The guest calls serial_send on port index 1 with an 8-byte pattern. The host copies
+    // the payload out, emits it on serialOut[1], and resumes immediately (fire-and-forget,
+    // no reply awaited), so the sequence runs straight to completion.
     this->sendCmd_RUN(0, 200, file, BLOCK, {});
     this->dispatchUntilControllerState(ControllerState::READY);
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -2333,211 +2346,380 @@ TEST_F(WasmSequencerTester, SerialSyncByteFidelityAndResume) {
     for (FwSizeType i = 0; i < sizeof expectedPattern; i++) {
         ASSERT_EQ(this->lastSerialOutData[i], expectedPattern[i]) << "payload byte " << i;
     }
-    this->removeFile("serial_sync.wasm");
+    this->removeFile("serial_out.wasm");
 }
 
-TEST_F(WasmSequencerTester, SerialSyncInvalidPortTraps) {
-    // serial_sync with an out-of-range port index is rejected in the host function with a
+TEST_F(WasmSequencerTester, SerialOutInvalidPortTraps) {
+    // serial_send with an out-of-range port index is rejected in the host function with a
     // trap before any port invocation.
-    const Fw::String file = this->copyAsset("serial_sync_badport.wasm");
+    const Fw::String file = this->copyAsset("serial_out_badport.wasm");
     this->sendCmd_RUN(0, 201, file, BLOCK, {});
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_HostFunctionInvalidPort_SIZE(1);
-    ASSERT_EVENTS_HostFunctionInvalidPort(0, WasmSequencer_HostFunction::SYNC_PORT, 5, 5);
+    ASSERT_EVENTS_HostFunctionInvalidPort(0, WasmSequencer_HostFunction::SERIAL_OUT, 5, 5);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
-    this->removeFile("serial_sync_badport.wasm");
+    this->removeFile("serial_out_badport.wasm");
 }
 
-TEST_F(WasmSequencerTester, SerialSyncPayloadTooLargeTraps) {
-    // serial_sync with a payload larger than MAX_SERIAL_PORT_SIZE is rejected in the host
+TEST_F(WasmSequencerTester, SerialOutPayloadTooLargeTraps) {
+    // serial_send with a payload larger than MAX_SERIAL_PORT_SIZE is rejected in the host
     // function with a trap (BufferTooLarge) before any port invocation.
-    const Fw::String file = this->copyAsset("serial_sync_toobig.wasm");
+    const Fw::String file = this->copyAsset("serial_out_toobig.wasm");
     this->sendCmd_RUN(0, 202, file, BLOCK, {});
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_BufferTooLarge_SIZE(1);
-    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::SYNC_PORT, 300,
+    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::SERIAL_OUT, 300,
                                  Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
-    this->removeFile("serial_sync_toobig.wasm");
+    this->removeFile("serial_out_toobig.wasm");
 }
 
-TEST_F(WasmSequencerTester, SerialSyncBadPointerFails) {
-    // serial_sync with an out-of-bounds data pointer: spacewasm_mem_read fails ->
-    // HostFunctionInvalidPointer(SYNC_PORT) -> stmtFailure -> IDLE. The port is
+TEST_F(WasmSequencerTester, SerialOutBadPointerFails) {
+    // serial_send with an out-of-bounds data pointer: spacewasm_mem_read fails ->
+    // HostFunctionInvalidPointer(SERIAL_OUT) -> stmtFailure -> IDLE. The port is
     // never invoked.
-    const Fw::String file = this->copyAsset("serial_sync_badptr.wasm");
+    const Fw::String file = this->copyAsset("serial_out_badptr.wasm");
     this->sendCmd_RUN(0, 206, file, BLOCK, {});
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
-    ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::SYNC_PORT,
+    ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::SERIAL_OUT,
                                              WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
-    this->removeFile("serial_sync_badptr.wasm");
+    this->removeFile("serial_out_badptr.wasm");
 }
 
-// ----------------------------------------------------------------------
-// Host functions: ASYNC_PORT (emit on serialOut, block for serialReply)
-// ----------------------------------------------------------------------
+TEST_F(WasmSequencerTester, SerialOutDisconnectedPortTraps) {
+    // serial_send to an in-range but DISCONNECTED port is rejected in the host function with a
+    // trap (HostFunctionInvalidPort) before any invocation. The guest targets port index 3,
+    // which we leave unconnected.
+    this->disconnectSerialOut(3);
 
-TEST_F(WasmSequencerTester, SerialAsyncEmitsAndBlocksForReply) {
-    const Fw::String file = this->copyAsset("serial_async.wasm");
-
-    // The guest calls serial_async on port index 2. The host emits the payload on
-    // serialOut[2] and parks in AWAITING_RESPONSE until a reply arrives on serialReply[2].
-    this->sendCmd_RUN(0, 203, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
-    ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::ASYNC_PORT);
-
-    // The request payload round-tripped verbatim on the requested port.
-    ASSERT_EQ(this->serialOutCount, static_cast<U32>(1));
-    ASSERT_EQ(this->lastSerialOutPort, static_cast<FwIndexType>(2));
-    const U8 expectedRequest[4] = {0x11, 0x22, 0x33, 0x44};
-    ASSERT_EQ(this->lastSerialOutSize, static_cast<FwSizeType>(sizeof expectedRequest));
-    for (FwSizeType i = 0; i < sizeof expectedRequest; i++) {
-        ASSERT_EQ(this->lastSerialOutData[i], expectedRequest[i]) << "request byte " << i;
-    }
-
-    // Deliver a 4-byte reply on serialReply[2]. The guest asserts (via unreachable) that
-    // these exact bytes land in its return buffer, so a clean finish proves the round trip.
-    const U8 replyBytes[4] = {0x11, 0x22, 0x33, 0x44};
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> reply(replyBytes, sizeof replyBytes);
-    this->invoke_to_serialReply(2, reply);
-    this->dispatchUntilControllerState(ControllerState::READY);
-
-    ASSERT_EQ(this->controllerState(), ControllerState::READY);
-    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
-    this->removeFile("serial_async.wasm");
-}
-
-TEST_F(WasmSequencerTester, SerialAsyncReplyTooLargeFails) {
-    // A reply larger than the guest's return buffer (return_size == 4) cannot be delivered:
-    // serialReply_handler fails the statement (BufferTooSmall) and the sequence fails.
-    const Fw::String file = this->copyAsset("serial_async.wasm");
-    this->sendCmd_RUN(0, 204, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
-
-    const U8 replyBytes[8] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88};
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> reply(replyBytes, sizeof replyBytes);
-    this->invoke_to_serialReply(2, reply);
-    this->dispatchUntilControllerState(ControllerState::IDLE);
-
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_BufferTooSmall_SIZE(1);
-    // The guest's return buffer is 4 bytes but the reply is 8 bytes.
-    ASSERT_EVENTS_BufferTooSmall(0, WasmSequencer_HostFunction::ASYNC_PORT, 4, 8);
-    ASSERT_EVENTS_SequenceFailed_SIZE(1);
-    this->removeFile("serial_async.wasm");
-}
-
-TEST_F(WasmSequencerTester, SerialAsyncBadReturnPointerFails) {
-    // serial_async emits the request fine, but the guest's return pointer is out of bounds.
-    // When the reply arrives, serialReply_handler's spacewasm_mem_write fails ->
-    // HostFunctionInvalidPointer(ASYNC_PORT) -> stmtFailure -> IDLE.
-    const Fw::String file = this->copyAsset("serial_async_badret.wasm");
-    this->sendCmd_RUN(0, 209, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
-    ASSERT_EQ(this->serialOutCount, static_cast<U32>(1));
-
-    const U8 replyBytes[4] = {0x55, 0x66, 0x77, 0x88};
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> reply(replyBytes, sizeof replyBytes);
-    this->invoke_to_serialReply(2, reply);
-    this->dispatchUntilControllerState(ControllerState::IDLE);
-
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
-    ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::ASYNC_PORT,
-                                             WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
-    ASSERT_EVENTS_SequenceFailed_SIZE(1);
-    this->removeFile("serial_async_badret.wasm");
-}
-
-TEST_F(WasmSequencerTester, SerialReplyWhileNotAwaitingIsUnexpected) {
-    // A serialReply that arrives while the sequencer is not awaiting a response (here from
-    // IDLE) is unexpected: serialReply_handler raises stmtUnexpected. It must not
-    // crash and must stay in IDLE.
-    const U8 replyBytes[4] = {0x11, 0x22, 0x33, 0x44};
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> reply(replyBytes, sizeof replyBytes);
-    this->invoke_to_serialReply(2, reply);
-    this->dispatchAll();
-
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-}
-
-TEST_F(WasmSequencerTester, SerialReplyOnWrongPortIsUnexpected) {
-    // A reply on a port that does not match the pending async invocation is unexpected and
-    // fails the sequence (stmtUnexpected).
-    const Fw::String file = this->copyAsset("serial_async.wasm");
-    this->sendCmd_RUN(0, 205, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
-
-    const U8 replyBytes[4] = {0x11, 0x22, 0x33, 0x44};
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> reply(replyBytes, sizeof replyBytes);
-    // Pending invocation is on port 2; reply on port 0.
-    this->invoke_to_serialReply(0, reply);
-    this->dispatchUntilControllerState(ControllerState::IDLE);
-
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_SequenceFailed_SIZE(1);
-    this->removeFile("serial_async.wasm");
-}
-
-TEST_F(WasmSequencerTester, SerialAsyncInvalidPortTraps) {
-    // serial_async with an out-of-range port index is rejected in the host function with a
-    // trap before any port invocation.
-    const Fw::String file = this->copyAsset("serial_async_badport.wasm");
-    this->sendCmd_RUN(0, 206, file, BLOCK, {});
+    const Fw::String file = this->copyAsset("serial_out_port3.wasm");
+    this->sendCmd_RUN(0, 210, file, BLOCK, {});
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_HostFunctionInvalidPort_SIZE(1);
-    ASSERT_EVENTS_HostFunctionInvalidPort(0, WasmSequencer_HostFunction::ASYNC_PORT, 5, 5);
+    ASSERT_EVENTS_HostFunctionInvalidPort(0, WasmSequencer_HostFunction::SERIAL_OUT, 3, 5);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
-    this->removeFile("serial_async_badport.wasm");
+    this->removeFile("serial_out_port3.wasm");
 }
 
-TEST_F(WasmSequencerTester, SerialAsyncPayloadTooLargeTraps) {
-    // serial_async with a payload larger than MAX_SERIAL_PORT_SIZE is rejected in the host
-    // function with a trap (BufferTooLarge) before any port invocation.
-    const Fw::String file = this->copyAsset("serial_async_toobig.wasm");
-    this->sendCmd_RUN(0, 208, file, BLOCK, {});
+TEST_F(WasmSequencerTester, SerialOutSendFailureFailsSequence) {
+    // If the connected serial output port reports a serialization failure, the host emits
+    // SerialPortSendFailed and fails the sequence. The normal tester InputSerializePort always
+    // returns OK, so we re-point serialOut[3] at a stub that returns FW_SERIALIZE_NO_ROOM_LEFT.
+    FailingSerialInputPort failingPort;
+    this->connectSerialOutTo(3, failingPort);
+
+    const Fw::String file = this->copyAsset("serial_out_port3.wasm");
+    this->sendCmd_RUN(0, 211, file, BLOCK, {});
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_BufferTooLarge_SIZE(1);
-    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::ASYNC_PORT, 300,
-                                 Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE);
+    ASSERT_EVENTS_SerialPortSendFailed_SIZE(1);
+    ASSERT_EVENTS_SerialPortSendFailed(0, WasmSequencer_HostFunction::SERIAL_OUT,
+                                       static_cast<I32>(Fw::FW_SERIALIZE_NO_ROOM_LEFT));
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
-    ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
-    this->removeFile("serial_async_toobig.wasm");
+    this->removeFile("serial_out_port3.wasm");
 }
 
-TEST_F(WasmSequencerTester, SerialAsyncBadPointerFails) {
-    // serial_async with an out-of-bounds data pointer: spacewasm_mem_read fails ->
-    // HostFunctionInvalidPointer(ASYNC_PORT) -> stmtFailure -> IDLE, without
-    // emitting on serialOut or awaiting a reply.
-    const Fw::String file = this->copyAsset("serial_async_badptr.wasm");
-    this->sendCmd_RUN(0, 207, file, BLOCK, {});
+// ----------------------------------------------------------------------
+// Host functions: SERIAL_RECV (read from the inbound serialIn queue)
+// ----------------------------------------------------------------------
+
+TEST_F(WasmSequencerTester, SerialRecvBlockingDeliversMessageAtDataPtr) {
+    // Pre-load a 4-byte message on serialIn[2], then RUN a guest that blocking-receives it.
+    // The guest asserts (via unreachable) that the payload lands exactly at data_ptr (not
+    // data_ptr+4), that actual_size_ptr holds 4, and that the bytes just before/after are
+    // untouched -- a clean SequenceSucceeded proves the round trip with correct offsets.
+    const U8 msg[4] = {0xAA, 0xBB, 0xCC, 0xDD};
+    this->enqueueSerialIn(2, msg, sizeof msg);
+
+    const Fw::String file = this->copyAsset("serial_recv.wasm");
+    this->sendCmd_RUN(0, 300, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    this->removeFile("serial_recv.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvBlocksThenWakesOnMessage) {
+    // With an empty queue, a blocking serial_recv parks in AWAITING_RESPONSE.WAITING. When a
+    // message subsequently arrives on serialIn[2], the serialInMessage signal wakes the
+    // engine, the payload is dequeued into guest memory, and the sequence completes.
+    const Fw::String file = this->copyAsset("serial_recv.wasm");
+    this->sendCmd_RUN(0, 301, file, BLOCK, {});
+    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::SERIAL_RECV);
+
+    // Deliver the message the guest is waiting for.
+    const U8 msg[4] = {0xAA, 0xBB, 0xCC, 0xDD};
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> in(msg, sizeof msg);
+    this->invoke_to_serialIn(2, in);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    this->removeFile("serial_recv.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvMultiChunkMessage) {
+    // A 40-byte message exercises the chunked copy path in dequeueSerialAndResume (one full
+    // 32-byte chunk + an 8-byte partial). The guest validates the ramp payload landed at
+    // data_ptr with the correct length, proving the multi-chunk copy is byte-accurate.
+    U8 msg[40];
+    for (FwSizeType i = 0; i < sizeof msg; i++) {
+        msg[i] = static_cast<U8>(i + 1);
+    }
+    this->enqueueSerialIn(2, msg, sizeof msg);
+
+    const Fw::String file = this->copyAsset("serial_recv_big.wasm");
+    this->sendCmd_RUN(0, 302, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    this->removeFile("serial_recv_big.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvExactChunkMultipleMessage) {
+    // A message whose payload is exactly CHUNK_SIZE (32 bytes) is the boundary case for the
+    // chunked copy loop: the full-chunk loop must consume all 32 bytes, leaving zero for the
+    // partial-chunk branch. A clean finish proves the loop bound handles the exact multiple.
+    U8 msg[32];
+    for (FwSizeType i = 0; i < sizeof msg; i++) {
+        msg[i] = static_cast<U8>(i + 1);
+    }
+    this->enqueueSerialIn(2, msg, sizeof msg);
+
+    const Fw::String file = this->copyAsset("serial_recv_chunk32.wasm");
+    this->sendCmd_RUN(0, 303, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    this->removeFile("serial_recv_chunk32.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvNonBlockingEmptyReturnsEmptyStatus) {
+    // A NONBLOCKING serial_recv on an empty queue does not park: the host resumes the guest
+    // immediately with status 1 (EMPTY) and writes nothing into the data buffer. The guest
+    // asserts both, so a clean finish proves the empty-nonblocking fast path.
+    const Fw::String file = this->copyAsset("serial_recv_nonblock_empty.wasm");
+    this->sendCmd_RUN(0, 304, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    this->removeFile("serial_recv_nonblock_empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvInvalidPortTraps) {
+    // serial_recv with an out-of-range port index is rejected in the host function with a
+    // trap before parking to wait.
+    const Fw::String file = this->copyAsset("serial_recv_badport.wasm");
+    this->sendCmd_RUN(0, 305, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidPort_SIZE(1);
+    // Requested index 5 is out of range; numPorts == NUM_SERIALIN_INPUT_PORTS == 5.
+    ASSERT_EVENTS_HostFunctionInvalidPort(0, WasmSequencer_HostFunction::SERIAL_RECV, 5, 5);
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    this->removeFile("serial_recv_badport.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvInvalidBlockingTypeTraps) {
+    // serial_recv with an out-of-range block_type (256) must trap. 256's low byte is 0, so a
+    // truncated-U8 validation would wrongly accept it as BLOCKING; the host must validate the
+    // full-width value and emit InvalidBlockingTypeValue instead.
+    const Fw::String file = this->copyAsset("serial_recv_badblock.wasm");
+    this->sendCmd_RUN(0, 306, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_InvalidBlockingTypeValue_SIZE(1);
+    ASSERT_EVENTS_InvalidBlockingTypeValue(0, 256);
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    this->removeFile("serial_recv_badblock.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvMessageLargerThanGuestBufferFails) {
+    // The guest declares an 8-byte buffer (data_size = 4 in the module) but the injected
+    // message is 8 bytes -- larger than the guest buffer. The host must fail the statement
+    // (BufferTooSmall) rather than overflow guest memory, and leave the message on the queue.
+    const U8 msg[8] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88};
+    this->enqueueSerialIn(2, msg, sizeof msg);
+
+    const Fw::String file = this->copyAsset("serial_recv_toobig.wasm");
+    this->sendCmd_RUN(0, 307, file, BLOCK, {});
+    // The sequence starts and ends in IDLE (it fails on recv), so dispatchUntilControllerState
+    // would be a no-op; drain the queue explicitly instead.
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_BufferTooSmall_SIZE(1);
+    // Guest buffer capacity (4) is smaller than the queued message (8).
+    ASSERT_EVENTS_BufferTooSmall(0, WasmSequencer_HostFunction::SERIAL_RECV, 4, 8);
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    this->removeFile("serial_recv_toobig.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvBadPointerFails) {
+    // A blocking serial_recv with an out-of-bounds actual_size_ptr: when the host dequeues a
+    // delivered message, the first spacewasm_mem_write (of the size to actual_size_ptr) fails
+    // -> HostFunctionInvalidPointer(SERIAL_RECV, ERR_MEM_OUT_OF_BOUNDS) -> stmtFailure -> IDLE.
+    // This also proves the failure event reports the real spacewasm status, not a stale OK.
+    const U8 msg[4] = {0x11, 0x22, 0x33, 0x44};
+    this->enqueueSerialIn(2, msg, sizeof msg);
+
+    const Fw::String file = this->copyAsset("serial_recv_badptr.wasm");
+    this->sendCmd_RUN(0, 308, file, BLOCK, {});
+    // The sequence starts and ends in IDLE (it fails on recv), so dispatchUntilControllerState
+    // would be a no-op; drain the queue explicitly instead.
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
-    ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::ASYNC_PORT,
+    ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::SERIAL_RECV,
                                              WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
-    ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
-    this->removeFile("serial_async_badptr.wasm");
+    this->removeFile("serial_recv_badptr.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvBadDataPointerPartialChunkFails) {
+    // actual_size_ptr is valid, so the size write succeeds, but data_ptr is out of bounds.
+    // With a small (4-byte) message the payload copy runs through the final partial-chunk
+    // branch, whose spacewasm_mem_write fails -> HostFunctionInvalidPointer(SERIAL_RECV) ->
+    // stmtFailure -> IDLE. Covers the partial-chunk write-failure path (distinct from the
+    // actual_size_ptr write failure above).
+    const U8 msg[4] = {0x11, 0x22, 0x33, 0x44};
+    this->enqueueSerialIn(2, msg, sizeof msg);
+
+    const Fw::String file = this->copyAsset("serial_recv_baddata.wasm");
+    this->sendCmd_RUN(0, 309, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::SERIAL_RECV,
+                                             WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    this->removeFile("serial_recv_baddata.wasm");
+}
+
+TEST_F(WasmSequencerTester, SerialRecvBadDataPointerFullChunkFails) {
+    // Same as above but with a 40-byte message so the copy takes the multi-chunk path: the
+    // FIRST full 32-byte chunk write to the OOB data_ptr fails, covering the full-chunk
+    // write-failure branch (distinct from the final partial-chunk branch).
+    U8 msg[40];
+    for (FwSizeType i = 0; i < sizeof msg; i++) {
+        msg[i] = static_cast<U8>(i + 1);
+    }
+    this->enqueueSerialIn(2, msg, sizeof msg);
+
+    const Fw::String file = this->copyAsset("serial_recv_baddata_big.wasm");
+    this->sendCmd_RUN(0, 310, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::SERIAL_RECV,
+                                             WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    this->removeFile("serial_recv_baddata_big.wasm");
+}
+
+// ----------------------------------------------------------------------
+// serialIn inbound queue: enqueue framing and queue-full behavior (white-box)
+// ----------------------------------------------------------------------
+
+TEST_F(WasmSequencerTester, SerialInEnqueueFramesRawSizePrefixedMessages) {
+    // serialIn_handler must enqueue each message as a raw [U32 size][payload] frame using the
+    // raw CircularBuffer::serialize overload (no length token). Enqueue two messages and
+    // verify the queue holds exactly (4 + size) bytes per frame and the raw big-endian size
+    // prefix of the first frame reads back correctly -- catching a wrong serialize overload.
+    const U8 msgA[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
+    const U8 msgB[3] = {0xAA, 0xBB, 0xCC};
+
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> a(msgA, sizeof msgA);
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> b(msgB, sizeof msgB);
+    this->invoke_to_serialIn(0, a);
+    this->invoke_to_serialIn(0, b);
+    this->dispatchAll();
+
+    Types::CircularBuffer& queue = this->serialInQueue(0);
+    const FwSizeType expected = (sizeof(U32) + sizeof msgA) + (sizeof(U32) + sizeof msgB);
+    ASSERT_EQ(queue.get_allocated_size(), expected);
+
+    // The first frame's size prefix (big-endian U32, matching peek(U32)) reads back as msgA's
+    // length, and the first payload byte follows immediately after the 4-byte prefix.
+    U32 firstSize = 0;
+    ASSERT_EQ(queue.peek(firstSize), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(firstSize, static_cast<U32>(sizeof msgA));
+    U8 firstPayloadByte = 0;
+    ASSERT_EQ(queue.peek(firstPayloadByte, sizeof(U32)), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(firstPayloadByte, msgA[0]);
+}
+
+TEST_F(WasmSequencerTester, SerialInQueueFullDropsOldest) {
+    // The default queue-full behavior is DROP_OLDEST. Fill the queue near capacity, then push
+    // a message that does not fit; the handler drops whole frames from the front until the new
+    // message fits. Verify the newest message survives and the total never exceeds capacity.
+    ASSERT_EQ(Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_FULL_BEHAVIOR,
+              Svc::WasmSequencerConfig::SerialInQueueFullBehavior::DROP_OLDEST);
+
+    Types::CircularBuffer& queue = this->serialInQueue(0);
+    const FwSizeType capacity = queue.get_capacity();
+
+    // Each frame is (4 + payload) bytes. Use ~1/3-capacity payloads so three frames nearly
+    // fill the queue and a fourth forces at least one drop.
+    const FwSizeType payload = (capacity / 3) - sizeof(U32);
+    U8 buf[Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE];
+
+    for (U32 n = 0; n < 3; n++) {
+        for (FwSizeType i = 0; i < payload; i++) {
+            buf[i] = static_cast<U8>(n);  // frame n filled with byte value n
+        }
+        Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m(buf, payload);
+        this->invoke_to_serialIn(0, m);
+        this->dispatchAll();
+    }
+    const FwSizeType beforeFree = queue.get_free_size();
+
+    // Push a fourth frame (byte value 3) that cannot fit alongside all three -> DROP_OLDEST.
+    for (FwSizeType i = 0; i < payload; i++) {
+        buf[i] = static_cast<U8>(3);
+    }
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m(buf, payload);
+    this->invoke_to_serialIn(0, m);
+    this->dispatchAll();
+
+    // The frame did not fit before the drop, but the queue still holds it now and stays within
+    // capacity -- the oldest frame(s) were dropped to make room.
+    ASSERT_LT(beforeFree, sizeof(U32) + payload);
+    ASSERT_LE(queue.get_allocated_size(), capacity);
+
+    // The oldest surviving frame is no longer frame 0: its size prefix is intact and its first
+    // payload byte identifies which frame now sits at the front (frame 1 or later, never 0).
+    U32 frontSize = 0;
+    ASSERT_EQ(queue.peek(frontSize), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(frontSize, static_cast<U32>(payload));
+    U8 frontByte = 0;
+    ASSERT_EQ(queue.peek(frontByte, sizeof(U32)), Fw::FW_SERIALIZE_OK);
+    ASSERT_GT(frontByte, static_cast<U8>(0)) << "oldest frame (byte 0) should have been dropped";
 }
 
 // ----------------------------------------------------------------------

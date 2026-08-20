@@ -180,7 +180,7 @@ void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
 // ----------------------------------------------------------------------
 
 void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
-    FW_ASSERT(portNum <= Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS, portNum,
+    FW_ASSERT(portNum < Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS, portNum,
               Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS);
     auto& queue = this->m_serialInQueue[portNum];
 
@@ -221,16 +221,16 @@ void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase&
         }
     }
 
-    // The message should be able to be put into the queue
-    // Enqueue it
+    // The message should be able to be put into the queue.
+    // Enqueue it as a raw [U32 size][payload] frame. We use the raw (const U8*, size)
     Fw::LinearBufferTemplate<sizeof(U32)> sizeSer;
     auto status = sizeSer.serializeFrom(static_cast<U32>(buffer.getSize()));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    status = queue.serialize(sizeSer, sizeof(U32));
+    status = queue.serialize(sizeSer.getBuffAddr(), sizeof(U32));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    status = queue.serialize(buffer, buffer.getSize());
+    status = queue.serialize(buffer.getBuffAddr(), buffer.getSize());
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Wake up any blocking recv calls

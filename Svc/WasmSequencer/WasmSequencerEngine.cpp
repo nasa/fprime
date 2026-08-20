@@ -470,7 +470,9 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dispatchPending
                 switch (this->m_pendingHostFunction.u.serialRecv.blockingType) {
                     case Os::QueueBlockingType::BLOCKING:
                         // Do not immediately resume the interpreter, this will let the state machine asynchronously
-                        // wait for a signal that we got a message (or timeout)
+                        // wait for a signal that we got a message (or timeout).
+                        this->m_statementStart = this->getTime();
+                        this->m_hasStatementStart = true;
                         break;
                     case Os::QueueBlockingType::NONBLOCKING:
                         // We are non-blocking and the queue is empty, report this back to the interpreter and wake back
@@ -558,8 +560,8 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkSleepTimer
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkTimeout(
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal) {
-    // Only blocking async host functions that await an external reply are subject
-    // to the statement timeout (COMMAND -> cmdResponseIn, ASYNC_PORT -> serialReply).
+    // Only blocking host functions that await an external event are subject to the
+    // statement timeout (COMMAND -> cmdResponseIn, blocking SERIAL_RECV -> serialIn).
     // Sleeps have their own wake timer (checkShouldWake) and are not "statements".
     if (!this->m_hasStatementStart) {
         return;
@@ -618,7 +620,15 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dequeueSerialAn
     auto status = queue.peek(msgSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U32 offset = sizeof(U32);
+    if (msgSize > this->m_pendingHostFunction.u.serialRecv.dataSize) {
+        this->log_WARNING_HI_BufferTooSmall(Svc::WasmSequencer_HostFunction::SERIAL_RECV,
+                                            this->m_pendingHostFunction.u.serialRecv.dataSize, msgSize);
+        this->interpreter_sendSignal_hostResponseFailure();
+        return;
+    }
+
+    // The queue holds [U32 size][payload]; skip the size prefix when copying the payload.
+    const U32 queuePayloadStart = sizeof(U32);
     const U32 dataSize = sizeof(U32) + msgSize;
 
     // Write the message size in little endian to the guest memory
@@ -633,53 +643,53 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dequeueSerialAn
     if (sw_status != SPACEWASM_OK) {
         this->log_WARNING_HI_HostFunctionInvalidPointer(
             Svc::WasmSequencer_HostFunction::SERIAL_RECV,
-            Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
+            Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(sw_status)));
         this->interpreter_sendSignal_hostResponseFailure();
         return;
     }
 
     // Pull the message off the queue, we may need to do it in multiple chunks
     constexpr U32 CHUNK_SIZE = 32;
-    Fw::LinearBufferTemplate<CHUNK_SIZE> scratch;
+    U8 scratch[CHUNK_SIZE];
 
     // Pull all the full chunks off the queue
-    for (; (offset + CHUNK_SIZE) < dataSize; offset += CHUNK_SIZE) {
-        scratch.resetSer();
-        status = queue.peek(scratch, CHUNK_SIZE, offset);
+    U32 queueOffset = queuePayloadStart;
+    for (; (queueOffset + CHUNK_SIZE) <= dataSize; queueOffset += CHUNK_SIZE) {
+        status = queue.peek(scratch, CHUNK_SIZE, queueOffset);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
         // Copy the data into the guest memory
-        sw_status = spacewasm_mem_write(this->m_pendingHostFunction.caller,
-                                        this->m_pendingHostFunction.u.serialRecv.dataPtr + offset,
-                                        scratch.getBuffAddr(), scratch.getSize());
+        sw_status = spacewasm_mem_write(
+            this->m_pendingHostFunction.caller,
+            this->m_pendingHostFunction.u.serialRecv.dataPtr + (queueOffset - queuePayloadStart), scratch, CHUNK_SIZE);
 
         if (sw_status != SPACEWASM_OK) {
             this->log_WARNING_HI_HostFunctionInvalidPointer(
                 Svc::WasmSequencer_HostFunction::SERIAL_RECV,
-                Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
+                Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(sw_status)));
             this->interpreter_sendSignal_hostResponseFailure();
             return;
         }
     }
 
     // Pull out the final partial chunk
-    if (offset < dataSize) {
-        FW_ASSERT((dataSize - offset) < CHUNK_SIZE, static_cast<FwAssertArgType>(dataSize),
-                  static_cast<FwAssertArgType>(offset), CHUNK_SIZE);
+    if (queueOffset < dataSize) {
+        const U32 remaining = dataSize - queueOffset;
+        FW_ASSERT(remaining < CHUNK_SIZE, static_cast<FwAssertArgType>(dataSize),
+                  static_cast<FwAssertArgType>(queueOffset), CHUNK_SIZE);
 
-        scratch.resetSer();
-        status = queue.peek(scratch, dataSize - offset, offset);
+        status = queue.peek(scratch, remaining, queueOffset);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
         // Copy the data into the guest memory
-        sw_status = spacewasm_mem_write(this->m_pendingHostFunction.caller,
-                                        this->m_pendingHostFunction.u.serialRecv.dataPtr + offset,
-                                        scratch.getBuffAddr(), scratch.getSize());
+        sw_status = spacewasm_mem_write(
+            this->m_pendingHostFunction.caller,
+            this->m_pendingHostFunction.u.serialRecv.dataPtr + (queueOffset - queuePayloadStart), scratch, remaining);
 
         if (sw_status != SPACEWASM_OK) {
             this->log_WARNING_HI_HostFunctionInvalidPointer(
                 Svc::WasmSequencer_HostFunction::SERIAL_RECV,
-                Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
+                Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(sw_status)));
             this->interpreter_sendSignal_hostResponseFailure();
             return;
         }
