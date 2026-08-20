@@ -6,6 +6,26 @@ unless there is a software or processor error. Assert.hpp defines macros
 to declare an assertion in C++ code. CAssert.hpp defines macros to
 declare an assertion in C code.
 
+## Assertion Usage Guidance
+
+Assertions are intended to enforce internal invariants and signal
+unrecoverable software conditions. They should not be used as the only
+validation or error-handling mechanism for conditions that can occur during
+normal operation, including conditions influenced by runtime or external
+input. Such conditions should be checked explicitly and handled through the
+appropriate error path.
+
+Assertion behavior is configurable. With `FW_ASSERT_LEVEL` set to
+`FW_NO_ASSERT`, a failed assertion does not report an error or terminate the
+program. In C++, `FW_ASSERT` still evaluates its condition and discards the
+result; the C `FW_CASSERT*` macros are compiled away. Code correctness must
+therefore not depend on assertion failure behavior being enabled.
+
+F Prime components are not engineered to continue safely after a failed
+assertion. A custom assertion hook may technically return from an assertion,
+but code following the failed assertion must not assume that component state
+remains valid.
+
 The definition for the framework assert is found in Fw/Types/Assert.hpp.
 The user calls the `FW_ASSERT(cond, arg1, ...)` macro with up to six arguments. The
 arguments can consist of any basic types shown below.
