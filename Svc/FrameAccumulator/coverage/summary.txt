@@ -1,0 +1,16 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../..
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+Svc/FrameAccumulator/FrameAccumulator.cpp
+                                              89      89   100%
+Svc/FrameAccumulator/FrameDetector.hpp         1       1   100%
+Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.cpp
+                                              46      44    95%   30,78
+Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.cpp
+                                              55      49    89%   37,45,68,91,98,128
+------------------------------------------------------------------------------
+TOTAL                                        191     183    95%
+------------------------------------------------------------------------------

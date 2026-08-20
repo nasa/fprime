@@ -1,0 +1,46 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../../..
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+Svc/Ccsds/CfdpManager/CfdpManager.cpp        352     343    97%   31,117-119,219-221,234-235
+Svc/Ccsds/CfdpManager/CfdpManager.hpp         99      99   100%
+Svc/Ccsds/CfdpManager/Channel.cpp            419     313    74%   254,313-314,317,326,343,381,411-412,476-477,484,486-487,490,493-496,509,511-512,525,527-529,532-534,545,547-549,551-553,555-557,559-561,563-564,569-570,577-579,583-592,595-597,673-676,678,700,704-706,718,760-762,773,775-776,780,784-786,788-790,792,794-795,797,808-809,811,813-814,816-817,820,828,861-862,901,907-911
+Svc/Ccsds/CfdpManager/Channel.hpp             23      20    87%   524-526
+Svc/Ccsds/CfdpManager/Chunk.cpp              141     115    81%   91,98,122-125,127,131-134,136,167,188-189,292-296,303,305,307-309,313
+Svc/Ccsds/CfdpManager/Chunk.hpp                6       5    83%   65
+Svc/Ccsds/CfdpManager/Clist.cpp               95      94    98%   204
+Svc/Ccsds/CfdpManager/Clist.hpp                5       5   100%
+Svc/Ccsds/CfdpManager/Engine.cpp             543     511    94%   145-147,154-156,160,162,232,436-437,453-454,469-470,472,498-500,502-503,505-506,510,552,592,642,1045,1059-1060,1146,1167
+Svc/Ccsds/CfdpManager/Timer.cpp               19      19   100%
+Svc/Ccsds/CfdpManager/Transaction.hpp          5       4    80%   232
+Svc/Ccsds/CfdpManager/TransactionRx.cpp      543     482    88%   108,211,259,262-263,282,285-286,310-312,314,332,334-336,338,340,375,401,435,497,499,578,580,679,681-682,705-707,711-712,715,762,774,776-777,859-860,872-876,882,884,916-917,994,1008,1020,1038,1040-1041,1072,1074,1119-1122
+Svc/Ccsds/CfdpManager/TransactionTx.cpp      356     325    91%   76,79-80,167,177,216-218,224-226,251,289,359,368,377,429,432-433,458-460,462-463,467,476,493-496,715
+Svc/Ccsds/CfdpManager/Types/AckPdu.cpp        72      63    87%   56,63,66,89,96,109,122,137,153
+Svc/Ccsds/CfdpManager/Types/AckPdu.hpp        10      10   100%
+Svc/Ccsds/CfdpManager/Types/EofPdu.cpp        71      59    83%   56,68,71,94,101,109,115,121,127,143,151,163
+Svc/Ccsds/CfdpManager/Types/EofPdu.hpp         8       7    87%   81
+Svc/Ccsds/CfdpManager/Types/FileDataPdu.cpp
+                                              85      74    87%   36,50,75,103,109-110,117,124,148,166,186
+Svc/Ccsds/CfdpManager/Types/FileDataPdu.hpp
+                                               5       5   100%
+Svc/Ccsds/CfdpManager/Types/FinPdu.cpp        67      58    86%   59,66,69,92,99,114,120,135,154
+Svc/Ccsds/CfdpManager/Types/FinPdu.hpp        11      10    90%   84
+Svc/Ccsds/CfdpManager/Types/MetadataPdu.cpp
+                                             114      93    81%   69,74,81,84,107,114,128,134,141,148,155,162,177,187,194,199,204,212,222,227,232
+Svc/Ccsds/CfdpManager/Types/MetadataPdu.hpp
+                                              12      12   100%
+Svc/Ccsds/CfdpManager/Types/NakPdu.cpp        85      73    85%   76,102,109,115,121,129,135,150,156,168,176,182
+Svc/Ccsds/CfdpManager/Types/NakPdu.hpp         6       6   100%
+Svc/Ccsds/CfdpManager/Types/PduBase.hpp        3       3   100%
+Svc/Ccsds/CfdpManager/Types/PduHeader.cpp
+                                             151     140    92%   57,119,125,141,147,152,157,170,183,190,215
+Svc/Ccsds/CfdpManager/Types/PduHeader.hpp
+                                               9       9   100%
+Svc/Ccsds/CfdpManager/Types/Tlv.cpp          120     108    90%   88,95,104,112,127,135,154,171,226,245-246,249
+Svc/Ccsds/CfdpManager/Types/Types.hpp          1       1   100%
+Svc/Ccsds/CfdpManager/Utils.cpp               50      46    92%   105-106,109-110
+------------------------------------------------------------------------------
+TOTAL                                       3486    3112    89%
+------------------------------------------------------------------------------
