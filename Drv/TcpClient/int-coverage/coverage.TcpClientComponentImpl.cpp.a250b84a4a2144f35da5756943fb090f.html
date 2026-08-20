@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-19 22:23:21</td>
+      <td>2026-08-20 22:26:59</td>
     </tr>
   </table>
 </div>
@@ -73,11 +73,11 @@
     <tr><td><a href="#l24">Drv::TcpClientComponentImpl::TcpClientComponentImpl(char const*) (line 24)</a></td><td>called 1 time</td><td>62.0%</td></tr>
     <tr><td><a href="#l26">Drv::TcpClientComponentImpl::configure(char const*, unsigned short, unsigned int, unsigned int, unsigned long) (line 26)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l63">Drv::TcpClientComponentImpl::connected() (line 63)</a></td><td>called 1 time</td><td>100.0%</td></tr>
-    <tr><td><a href="#l45">Drv::TcpClientComponentImpl::getBuffer() (line 45)</a></td><td>called 613 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l41">Drv::TcpClientComponentImpl::getSocketHandler() (line 41)</a></td><td>called 854 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l90">Drv::TcpClientComponentImpl::recvReturnIn_handler(short, Fw::Buffer&amp;) (line 90)</a></td><td>called 613 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l49">Drv::TcpClientComponentImpl::sendBuffer(Fw::Buffer, Drv::SocketIpStatus) (line 49)</a></td><td>called 613 times</td><td>75.0%</td></tr>
-    <tr><td><a href="#l73">Drv::TcpClientComponentImpl::send_handler(short, Fw::Buffer&amp;) (line 73)</a></td><td>called 235 times</td><td>67.0%</td></tr>
+    <tr><td><a href="#l45">Drv::TcpClientComponentImpl::getBuffer() (line 45)</a></td><td>called 616 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l41">Drv::TcpClientComponentImpl::getSocketHandler() (line 41)</a></td><td>called 844 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l90">Drv::TcpClientComponentImpl::recvReturnIn_handler(short, Fw::Buffer&amp;) (line 90)</a></td><td>called 616 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l49">Drv::TcpClientComponentImpl::sendBuffer(Fw::Buffer, Drv::SocketIpStatus) (line 49)</a></td><td>called 616 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l73">Drv::TcpClientComponentImpl::send_handler(short, Fw::Buffer&amp;) (line 73)</a></td><td>called 222 times</td><td>67.0%</td></tr>
     <tr><td><a href="#l35">Drv::TcpClientComponentImpl::~TcpClientComponentImpl() (line 35)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -383,14 +383,14 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">854</td>
+      <td class="linecount coveredLine">844</td>
       <td class="src coveredLine"><span class="n">IpSocket</span><span class="o">&amp;</span><span class="w"> </span><span class="n">TcpClientComponentImpl</span><span class="o">::</span><span class="n">getSocketHandler</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l42" href="#l42">42</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">854</td>
+      <td class="linecount coveredLine">844</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_socket</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -411,14 +411,14 @@
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="w"> </span><span class="n">TcpClientComponentImpl</span><span class="o">::</span><span class="n">getBuffer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">allocate_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">m_allocation_size</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -439,7 +439,7 @@
       <td class="lineno"><a id="l49" href="#l49">49</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">TcpClientComponentImpl</span><span class="o">::</span><span class="n">sendBuffer</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">SocketIpStatus</span><span class="w"> </span><span class="n">status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -453,7 +453,7 @@
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">((</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SOCK_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getData</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -462,11 +462,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 613 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 616 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Drv</span><span class="o">::</span><span class="n">ByteStreamStatus</span><span class="w"> </span><span class="n">recvStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteStreamStatus</span><span class="o">::</span><span class="n">OTHER_ERROR</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -475,12 +475,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 612 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 615 times.</div>
             <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SOCK_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -489,11 +489,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 612 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 615 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">612</td>
+      <td class="linecount coveredLine">615</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">recvStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteStreamStatus</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -550,18 +550,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 613 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 616 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">recv_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">recvStatus</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -652,21 +652,21 @@
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">222</td>
       <td class="src coveredLine"><span class="n">Drv</span><span class="o">::</span><span class="n">ByteStreamStatus</span><span class="w"> </span><span class="n">TcpClientComponentImpl</span><span class="o">::</span><span class="n">send_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">222</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Drv</span><span class="o">::</span><span class="n">SocketIpStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">send</span><span class="p">(</span><span class="n">fwBuffer</span><span class="p">.</span><span class="n">getData</span><span class="p">(),</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">222</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Drv</span><span class="o">::</span><span class="n">ByteStreamStatus</span><span class="w"> </span><span class="n">returnStatus</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -676,12 +676,12 @@
           <summary class="linebranchSummary">1/3</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 235 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 222 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">235</td>
+      <td class="linecount partialCoveredLine">222</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -709,7 +709,7 @@
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">222</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">SOCK_SUCCESS</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -718,18 +718,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 235 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 222 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">222</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">returnStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteStreamStatus</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">222</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -764,7 +764,7 @@
       <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">222</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">returnStatus</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -785,21 +785,21 @@
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">TcpClientComponentImpl</span><span class="o">::</span><span class="n">recvReturnIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">deallocate_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">613</td>
+      <td class="linecount coveredLine">616</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
