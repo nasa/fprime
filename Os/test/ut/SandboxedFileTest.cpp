@@ -23,7 +23,7 @@ class SandboxedFileTest : public ::testing::Test {
 
 TEST_F(SandboxedFileTest, ConfigureValid) {
     Os::SandboxedFile file;
-    ASSERT_TRUE(file.isConfigured());  // default is "/"
+    ASSERT_FALSE(file.isConfigured());  // fail-closed: unconfigured by default
     file.configure("/tmp/sandbox_test/");
     ASSERT_TRUE(file.isConfigured());
     ASSERT_STREQ("/tmp/sandbox_test/", file.getSandboxDirectory());
@@ -54,13 +54,31 @@ TEST_F(SandboxedFileTest, TraversalAttackRejected) {
     ASSERT_FALSE(file.isOpen());
 }
 
-TEST_F(SandboxedFileTest, DefaultConfigAllowsAnyAbsolutePath) {
+// GHSA-g8xv-rf85-4pjp regression: an unconfigured sandbox must deny every open
+// (fail-closed). Previously it defaulted to "/", permitting arbitrary absolute paths.
+TEST_F(SandboxedFileTest, DefaultConfigDeniesAbsolutePath) {
     Os::SandboxedFile file;
-    // Default sandbox is "/" — any absolute path is allowed
     auto status = file.open("/tmp/sandbox_test/test_file.bin", Os::File::OPEN_CREATE);
-    ASSERT_EQ(Os::File::OP_OK, status);
-    ASSERT_TRUE(file.isOpen());
-    file.close();
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+// GHSA-g8xv-rf85-4pjp regression: unconfigured sandbox also denies relative paths.
+TEST_F(SandboxedFileTest, DefaultConfigDeniesRelativePath) {
+    Os::SandboxedFile file;
+    auto status = file.open("test_file.bin", Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+// GHSA-g8xv-rf85-4pjp regression: an absolute traversal target outside the configured
+// sandbox (e.g. the classic ../../etc/passwd read) is rejected.
+TEST_F(SandboxedFileTest, ConfiguredSandboxRejectsAbsoluteEscape) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+    auto status = file.open("/etc/passwd", Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
 }
 
 TEST_F(SandboxedFileTest, WriteAndRead) {
@@ -91,7 +109,7 @@ TEST_F(SandboxedFileTest, WriteAndRead) {
 
 TEST_F(SandboxedFileTest, GetSandboxDirectoryDefault) {
     Os::SandboxedFile file;
-    ASSERT_STREQ("/", file.getSandboxDirectory());
+    ASSERT_STREQ("", file.getSandboxDirectory());  // fail-closed: no directory until configure()
 }
 
 TEST_F(SandboxedFileTest, OpenEmptyPathRejected) {

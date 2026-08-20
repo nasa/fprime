@@ -34,19 +34,25 @@ The **FileHandling subtopology** packages the core file-transfer services common
 * **Rate Groups**: Connect scheduler outputs to the **Run** (scheduling) ports of `fileDownlink`.
 * **Communication/Framing Stack**: Wire file-packet ports between FileHandling and your COM/framing subtopology (e.g., `ComCcsds`, `ComFprime`, `FramingFprime`, `FramingCcsds`) to complete uplink/downlink paths.
 
-> [!WARNING]
-> **This subtopology is not configured to be secure by default.** For backwards compatibility, it
-> intentionally does **not** configure the file-access sandboxes of its components, leaving them
-> fail-open: `fileUplink` may write, `fileDownlink` may read, and `prmDb` (`PRM_LOAD_FILE`) may
-> load from **any absolute path accessible to the process** via ground command. Security-conscious
-> deployments **must** call the following from topology setup code:
+> [!IMPORTANT]
+> **This subtopology is secure by default.** In its `configComponents` phase it confines all
+> ground-commanded file access to a sandbox base directory of `"."` (the deployment
+> working-directory subtree), calling:
 >
-> * `FileHandling::fileUplink.configure(<directory>)` — restrict uplinked file writes.
-> * `FileHandling::fileDownlink.configure(<directory>)` — restrict downlink reads (note: the
->   `configure(cooldown, cycleTime, fileQueueDepth)` overload called by this subtopology does
->   **not** set a sandbox).
-> * `FileHandling::prmDb.configureLoadSandbox(<directory>)` — restrict `PRM_LOAD_FILE` reads
->   (note: `prmDb.configure(<file name>)` sets the store-file name and is **not** a load sandbox).
+> * `FileHandling::fileUplink.configure(".")` — restrict uplinked file writes.
+> * `FileHandling::fileDownlink.configure(".")` — restrict downlink reads (this is the
+>   `configure(directory)` overload, in addition to the
+>   `configure(cooldown, cycleTime, fileQueueDepth)` overload).
+> * `FileHandling::prmDb.configureLoadSandbox(".")` — restrict `PRM_LOAD_FILE` reads (distinct
+>   from `prmDb.configure(<file name>)`, which sets the store-file name and is **not** a load
+>   sandbox).
+>
+> Paths that resolve outside the sandbox — `../` traversal sequences and absolute paths — are
+> rejected before any file is opened. The underlying `Os::SandboxedFile` is **fail-closed**: if a
+> component were left unconfigured it would deny all access rather than permit it. To change the
+> allowed directory, edit the string literals in this subtopology's `configComponents` phases
+> (see `FileHandlingConfig::FileSystem` in `FileHandlingConfig.fpp`). A deployment that genuinely
+> requires unrestricted access must opt in explicitly by setting the sandbox to `"/"`.
 
 ### 2.4 Limitations
 
