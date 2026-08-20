@@ -90,9 +90,10 @@ class DpWriter final : public DpWriterComponentBase {
     );
 
     //! Send the DpWritten notification
-    void sendNotification(const Fw::DpContainer& container,    //!< The container
-                          const Fw::FileNameString& fileName,  //!< The file name
-                          FwSizeType packetSize                //!< The packet size
+    void sendNotification(FwIndexType portNum,                   //!< The routing port number
+                          const Fw::DpContainer& container,       //!< The container
+                          const Fw::FileNameString& fileName,     //!< The file name
+                          FwSizeType packetSize                   //!< The packet size
     );
 
   private:
