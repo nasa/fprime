@@ -64,7 +64,7 @@ Choose the operating system you are using to install F Prime:
     >[!TIP]
     > On newer macOS systems you may need to clear the quarantine flag on the download.
 
-   **Example Commands:** Assuming download of `LLVM-22.1.8-macOS-ARM64.tar.xz`
+    **Example Commands:** Assuming download of `LLVM-22.1.8-macOS-ARM64.tar.xz`
     ```bash
     xattr -d com.apple.quarantine LLVM-22.1.8-macOS-ARM64.tar.xz
     tar -xf LLVM-22.1.8-macOS-ARM64.tar.xz
@@ -88,7 +88,7 @@ Choose the operating system you are using to install F Prime:
     may be downloaded and extracted anywhere; point your PATH and LLVM_TOOLS_PATH to the extracted
     folder.
 
-   **Example Commands:** Assuming download of LLVM-22.1.8-Linux-X64.tar.xz
+    **Example Commands:** Assuming download of LLVM-22.1.8-Linux-X64.tar.xz
     ```bash
     tar -xf LLVM-22.1.8-Linux-X64.tar.xz
     export PATH="`pwd`/LLVM-22.1.8-Linux-X64/bin:${PATH}"
