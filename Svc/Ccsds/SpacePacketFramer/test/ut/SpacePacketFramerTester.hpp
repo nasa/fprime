@@ -47,6 +47,7 @@ class SpacePacketFramerTester final : public SpacePacketFramerGTestBase {
     void testDataReturnPassthrough();
     void testNominalFraming();
     void testOversizedAllocatorBufferIsTrimmed();
+    void testEmptyDataDropped();
 
   private:
     // ----------------------------------------------------------------------

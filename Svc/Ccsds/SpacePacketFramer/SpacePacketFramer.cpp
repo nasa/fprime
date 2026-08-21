@@ -25,14 +25,21 @@ SpacePacketFramer ::~SpacePacketFramer() {}
 // ----------------------------------------------------------------------
 
 void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    // CCSDS Space Packet requires at least 1 data octet (the Packet Data Length
+    // field encodes "number of octets minus 1", so size 0 cannot be represented).
+    // Guard at runtime so the subtraction at packetDataLength never underflows,
+    // even in FW_NO_ASSERT builds.
+    if (data.getSize() == 0) {
+        this->log_WARNING_HI_EmptyDataReceived();
+        this->dataReturnOut_out(0, data, context);
+        return;
+    }
+
     SpacePacketHeader header;
     Fw::SerializeStatus status;
     FwSizeType frameSize = SpacePacketHeader::SERIALIZED_SIZE + data.getSize();
     FW_ASSERT(data.getSize() <= std::numeric_limits<Fw::Buffer::SizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE,
               static_cast<FwAssertArgType>(data.getSize()));
-    FW_ASSERT(
-        data.getSize() > 0,
-        static_cast<FwAssertArgType>(data.getSize()));  // Protocol specifies at least 1 byte of data for a valid packet
 
     // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, static_cast<Fw::Buffer::SizeType>(frameSize));

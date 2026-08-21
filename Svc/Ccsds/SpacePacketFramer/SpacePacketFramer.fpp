@@ -20,6 +20,12 @@ module Ccsds {
             format "Failed to allocate a packet buffer: packet dropped" \
             throttle 5
 
+        @ Received a zero-size data buffer; CCSDS Space Packet requires at least 1 data octet
+        event EmptyDataReceived \
+            severity warning high \
+            format "Received empty data buffer: packet dropped (CCSDS requires >= 1 data octet)" \
+            throttle 5
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

@@ -144,6 +144,23 @@ void SpacePacketFramerTester ::testOversizedAllocatorBufferIsTrimmed() {
     ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
 }
 
+void SpacePacketFramerTester::testEmptyDataDropped() {
+    Fw::Buffer emptyData(nullptr, 0);
+    ComCfg::FrameContext context;
+    context.set_apid(static_cast<ComCfg::Apid::T>(0x01));
+
+    this->invoke_to_dataIn(0, emptyData, context);
+
+    // No packet should be emitted
+    ASSERT_from_dataOut_SIZE(0);
+    // The original buffer must still be returned to the caller
+    ASSERT_from_dataReturnOut_SIZE(1);
+    // The EmptyDataReceived warning must fire
+    ASSERT_EVENTS_EmptyDataReceived_SIZE(1);
+    // No allocation should have occurred
+    ASSERT_from_bufferAllocate_SIZE(0);
+}
+
 // ----------------------------------------------------------------------
 // Output port handler overrides
 // ----------------------------------------------------------------------

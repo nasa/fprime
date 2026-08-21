@@ -27,6 +27,11 @@ TEST(SpacePacketFramer, OversizedAllocatorBufferIsTrimmed) {
     tester.testOversizedAllocatorBufferIsTrimmed();
 }
 
+TEST(SpacePacketFramer, EmptyDataDropped) {
+    Svc::Ccsds::SpacePacketFramerTester tester;
+    tester.testEmptyDataDropped();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
