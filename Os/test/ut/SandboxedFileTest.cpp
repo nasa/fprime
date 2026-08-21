@@ -23,7 +23,7 @@ class SandboxedFileTest : public ::testing::Test {
 
 TEST_F(SandboxedFileTest, ConfigureValid) {
     Os::SandboxedFile file;
-    ASSERT_TRUE(file.isConfigured());  // default is "/"
+    ASSERT_FALSE(file.isConfigured());  // deny-by-default (v5.0.0)
     file.configure("/tmp/sandbox_test/");
     ASSERT_TRUE(file.isConfigured());
     ASSERT_STREQ("/tmp/sandbox_test/", file.getSandboxDirectory());
@@ -54,13 +54,12 @@ TEST_F(SandboxedFileTest, TraversalAttackRejected) {
     ASSERT_FALSE(file.isOpen());
 }
 
-TEST_F(SandboxedFileTest, DefaultConfigAllowsAnyAbsolutePath) {
+TEST_F(SandboxedFileTest, UnconfiguredRejectsOpen) {
     Os::SandboxedFile file;
-    // Default sandbox is "/" — any absolute path is allowed
+    // Deny-by-default: open() fails until configure() is called (v5.0.0, #5657)
     auto status = file.open("/tmp/sandbox_test/test_file.bin", Os::File::OPEN_CREATE);
-    ASSERT_EQ(Os::File::OP_OK, status);
-    ASSERT_TRUE(file.isOpen());
-    file.close();
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
 }
 
 TEST_F(SandboxedFileTest, WriteAndRead) {

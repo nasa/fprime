@@ -43,9 +43,10 @@ class SandboxedFile {
     SandboxedFile(const SandboxedFile&) = delete;             //!< Non-copyable (owns file handle)
     SandboxedFile& operator=(const SandboxedFile&) = delete;  //!< Non-copy-assignable
 
-    //! \brief Construct a SandboxedFile with default sandbox of `/`
+    //! \brief Construct an unconfigured SandboxedFile (deny-by-default)
     //!
-    //! The default allows any absolute path. Call `configure()` to restrict.
+    //! `open()` returns `OUTSIDE_SANDBOX` until `configure()` is called.
+    //! This is a breaking change from v4.x which defaulted to `/` (permit-all).
     //!
     SandboxedFile();
 
