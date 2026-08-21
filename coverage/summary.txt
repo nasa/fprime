@@ -133,7 +133,7 @@ googletest/googletest/include/gtest/gtest-param-test.h
 googletest/googletest/include/gtest/gtest-printers.h
                                               84      24    28%   133-142,145,148-149,152-153,155-156,182-184,189,191,213,216-217,332-333,341-342,358-359,412,414,450,454-455,458-460,501-506,554-556,593,606,623-625,627-629,631,639-641
 googletest/googletest/include/gtest/gtest.h
-                                              43      22    51%   244,252,257-258,339,1338,1343,1362,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
+                                              43      23    53%   244,252,257-258,339,1338,1343,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
 googletest/googletest/include/gtest/internal/gtest-death-test-internal.h
                                                4       2    50%   95-96
 googletest/googletest/include/gtest/internal/gtest-internal.h
@@ -152,7 +152,7 @@ Os/Cpu.cpp                                    23      20    87%   35-37
 Os/Cpu.hpp                                     2       2   100%
 Os/Delegate.hpp                               12      12   100%
 Os/DelegateRawTime.cpp                        66      63    95%   90,102-103
-Os/Directory.cpp                              92      76    82%   26-28,86,90,103,109,118,122,133,135,141,147,150-152
+Os/Directory.cpp                              92      77    83%   26-28,86,90,103,109,118,122,135,141,147,150-152
 Os/Directory.hpp                               2       2   100%
 Os/File.cpp                                  211     182    86%   59-60,88-90,115,137,169-173,175-176,290-291,293-294,299-301,312-314,318-319,337-339
 Os/File.hpp                                    1       1   100%
@@ -165,11 +165,11 @@ Os/Generic/DefaultPriorityMemQueue.cpp         3       0     0%   16-18
 Os/Generic/DefaultPriorityQueue.cpp            3       3   100%
 Os/Generic/LocklessPriorityQueue.cpp         200     188    94%   128,130-131,147-149,151-154,364-365
 Os/Generic/LocklessPriorityQueue.hpp           1       1   100%
-Os/Generic/PriorityMemQueue.cpp              352     318    90%   79-80,110-111,123-124,190-192,196-197,213,219-220,223-224,228-230,232,235-236,238,246,424,434-435,460,485,531-532,601,766-767
+Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,123-124,190-192,196-197,213,219-220,223-224,228-230,232,235-236,238,246,424,434-435,460,485,531-532,601,767
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 164     137    83%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,258-259
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,248-249,253,311,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     155    91%   21-26,28,194,248-249,253,318,343,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -427,5 +427,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp               145     127    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      23694   19735    83%
+TOTAL                                      23694   19737    83%
 ------------------------------------------------------------------------------
