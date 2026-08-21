@@ -19,7 +19,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Os/Generic/PriorityMemQueue.hpp
                                                7       0     0%   63,65-66,68,98,100-101
 /home/runner/work/fprime/fprime/Os/Generic/PriorityQueue.cpp
-                                             161     129    80%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,204,252,254-256,258-259
+                                             161     128    79%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,199,204,252,254-256,258-259
 /home/runner/work/fprime/fprime/Os/Generic/PriorityQueue.hpp
                                                1       1   100%
 /home/runner/work/fprime/fprime/Os/Generic/Types/AtomicQueue.cpp
@@ -29,5 +29,5 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Os/Generic/Types/MaxHeap.cpp
                                              107     100    93%   68,95-96,117,244-245,248
 ------------------------------------------------------------------------------
-TOTAL                                       1006     233    23%
+TOTAL                                       1006     232    23%
 ------------------------------------------------------------------------------
