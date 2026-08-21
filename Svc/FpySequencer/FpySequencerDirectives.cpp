@@ -415,7 +415,7 @@ Signal FpySequencer::pushTlmValAndTime_directiveHandler(const FpySequencer_PushT
     FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
 
     // check that our stack won't overflow if we put both val and time on it
-    if (Fpy::MAX_STACK_SIZE - tlmValue.getSize() - timeEsb.getSize() < this->m_runtime.stack.size) {
+    if (tlmValue.getSize() + timeEsb.getSize() > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
