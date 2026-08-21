@@ -735,6 +735,8 @@ class FpySequencer : public FpySequencerComponentBase {
         bool reachedEndOfFile = false;
         // true if we were able to deserialize the next statement successfully
         bool nextStatementReadSuccess = false;
+        // cached statement index to avoid repeated WARNING events on every tick (#5661)
+        U32 cachedStmtIndex = 0xFFFFFFFF;
         // the opcode of the next statement to dispatch.
         U8 nextStatementOpcode = 0;
         // if the next statement is a cmd directive, the opcode of that cmd
