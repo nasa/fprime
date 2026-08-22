@@ -1,4 +1,5 @@
 module Svc {
+
   @| ----------------------------------------------------------------------
   @| A generic hub component
   @| ----------------------------------------------------------------------
@@ -40,6 +41,7 @@ module Svc {
   @| its interface, and so can support any transport mechanism.
   @| ----------------------------------------------------------------------
   passive component GenericHub {
+
     # ----------------------------------------------------------------------
     # Ports for sending data from FSW to the hub
     # ----------------------------------------------------------------------
@@ -206,5 +208,7 @@ module Svc {
 
     @ remote command response
     sync input port cmdRespIn: [CmdDispatcherSequencePorts] Fw.CmdResponse
+
   }
+
 }

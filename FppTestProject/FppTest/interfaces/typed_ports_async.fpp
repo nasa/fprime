@@ -13,5 +13,6 @@ module FppTest {
     async input port structArgsAsync: [3] StructArgs priority 5 drop
 
     async input port enumArgsHook: [3] EnumArgs hook
+
   }
 }

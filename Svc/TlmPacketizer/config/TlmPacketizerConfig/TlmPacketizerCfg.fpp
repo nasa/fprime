@@ -7,10 +7,10 @@ module Svc {
   @ Each section creates output indices for each telemetry group
   enum TelemetrySection {
     # REALTIME is a project-selected name. Default configuration uses REALTIME as this is a common section
-    REALTIME @< OPTIONAL: realtime telemetry downlink through communication stack
+    REALTIME  @< OPTIONAL: realtime telemetry downlink through communication stack
     # RECORDED is a project-selected name. Default configuration uses RECORDED as this is a common section
-    RECORDED     @< OPTIONAL: recorded telemetry stored on disk for later retrieval
-    NUM_SECTIONS @< REQUIRED: Counter, leave as last element.
+    RECORDED      @< OPTIONAL: recorded telemetry stored on disk for later retrieval
+    NUM_SECTIONS  @< REQUIRED: Counter, leave as last element.
   }
 
   @ Greatest packet group

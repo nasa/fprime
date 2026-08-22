@@ -1,6 +1,8 @@
 module Svc {
+
   @ A component for writing data products to disk
   active component DpWriter {
+
     # ----------------------------------------------------------------------
     # Scheduling ports
     # ----------------------------------------------------------------------
@@ -68,8 +70,8 @@ module Svc {
 
     @ Received buffer is too small to hold a data product packet
     event BufferTooSmallForPacket(
-      bufferSize: FwSizeType @< The incoming buffer size
-      minSize: U32           @< The minimum required size
+      bufferSize: FwSizeType  @< The incoming buffer size
+      minSize: U32            @< The minimum required size
     ) \
       severity warning high \
       format "Received buffer has size {}; minimum required size is {}" \
@@ -77,9 +79,9 @@ module Svc {
 
     @ The received buffer has an invalid header hash
     event InvalidHeaderHash(
-      bufferSize: FwSizeType @< The incoming buffer size
-      storedHash: U32        @< The stored hash value
-      computedHash: U32      @< The computed hash value
+      bufferSize: FwSizeType  @< The incoming buffer size
+      storedHash: U32         @< The stored hash value
+      computedHash: U32       @< The computed hash value
     ) \
       severity warning high \
       format "Received a buffer of size {} with an invalid header hash (stored {x}, computed {x})" \
@@ -87,8 +89,8 @@ module Svc {
 
     @ Error occurred when deserializing the packet header
     event InvalidHeader(
-      bufferSize: FwSizeType @< The incoming buffer size
-      errorCode: U32         @< The error code
+      bufferSize: FwSizeType  @< The incoming buffer size
+      errorCode: U32          @< The error code
     ) \
       severity warning high \
       format "Received buffer of size {}; deserialization of packet header failed with error code {}" \
@@ -96,8 +98,8 @@ module Svc {
 
     @ Received buffer is too small to hold the data specified in the header
     event BufferTooSmallForData(
-      bufferSize: FwSizeType @< The incoming buffer size
-      minSize: U32           @< The minimum required size
+      bufferSize: FwSizeType  @< The incoming buffer size
+      minSize: U32            @< The minimum required size
     ) \
       severity warning high \
       format "Received buffer has size {}; minimum required size is {}" \
@@ -105,7 +107,7 @@ module Svc {
 
     @ An error occurred when formatting a file name
     event FileNameFormatError(
-      status: Fw.StringFormatStatus @< The status returned from the format operation
+      status: Fw.StringFormatStatus  @< The status returned from the format operation
     ) \
       severity warning high \
       format "Error {} formatting DP file name" \
@@ -113,8 +115,8 @@ module Svc {
 
     @ An error occurred when opening a file
     event FileOpenError(
-      status: U32                          @< The status code returned from the open operation
-      file: string size FileNameStringSize @< The file
+      status: U32                           @< The status code returned from the open operation
+      file: string size FileNameStringSize  @< The file
     ) \
       severity warning high \
       format "Error {} opening file {}" \
@@ -122,10 +124,10 @@ module Svc {
 
     @ An error occurred when writing to a file
     event FileWriteError(
-      status: U32                          @< The status code returned from the write operation
-      bytesWritten: U32                    @< The number of bytes successfully written
-      bytesToWrite: U32                    @< The number of bytes attempted
-      file: string size FileNameStringSize @< The file
+      status: U32                           @< The status code returned from the write operation
+      bytesWritten: U32                     @< The number of bytes successfully written
+      bytesToWrite: U32                     @< The number of bytes attempted
+      file: string size FileNameStringSize  @< The file
     ) \
       severity warning high \
       format "Error {} while writing {} of {} bytes to {}" \
@@ -133,8 +135,8 @@ module Svc {
 
     @ File written
     event FileWritten(
-      bytes: U32                           @< The number of bytes written
-      file: string size FileNameStringSize @< The file name
+      bytes: U32                            @< The number of bytes written
+      file: string size FileNameStringSize  @< The file name
     ) \
       severity activity low \
       format "Wrote {} bytes to file {}"
@@ -157,5 +159,7 @@ module Svc {
 
     @ The number of errors
     telemetry NumErrors: U32 update on change
+
   }
+
 }

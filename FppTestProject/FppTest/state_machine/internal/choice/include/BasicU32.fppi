@@ -1,5 +1,6 @@
 @ A basic state machine with a U32 choice
 state machine BasicU32 {
+
   @ Action a
   action a: U32
 
@@ -17,8 +18,10 @@ state machine BasicU32 {
 
   @ State S1
   state S1 {
+
     @ State transition
     on s enter C
+
   }
 
   @ Choice C
@@ -31,4 +34,5 @@ state machine BasicU32 {
 
   @ State S3
   state S3
+
 }

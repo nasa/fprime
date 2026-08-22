@@ -1,6 +1,8 @@
 module Drv {
+
   @ The ready and receive interfaces for a byte stream driver client
   interface PassiveByteStreamDriverClientReadyRecv {
+
     # ----------------------------------------------------------------------
     # Ready interface
     # ----------------------------------------------------------------------
@@ -18,5 +20,7 @@ module Drv {
     @ Port for returning ownership of buffers received on fromDriver
     @ Sample connection: byteStreamDriverClient.byteStreamReturn -> byteStreamDriver.recvReturnIn
     output port fromByteStreamDriverReturn: Fw.BufferSend
+
   }
+
 }

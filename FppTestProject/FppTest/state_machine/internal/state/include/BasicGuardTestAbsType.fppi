@@ -1,5 +1,6 @@
 @ A basic state machine with a TestAbsType guard
 state machine BasicGuardTestAbsType {
+
   @ Action a
   action a: SmHarness.TestAbsType
 
@@ -13,10 +14,13 @@ state machine BasicGuardTestAbsType {
 
   @ State S
   state S {
+
     @ State transition
     on s if g do { a } enter T
+
   }
 
   @ State T
   state T
+
 }

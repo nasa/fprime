@@ -1,9 +1,11 @@
 module FppTest {
+
   state machine DeviceSm
   state machine HackSm
 
   @ A component for testing data product code gen
   active component SmTest {
+
     # ----------------------------------------------------------------------
     # Types
     # ----------------------------------------------------------------------
@@ -20,5 +22,7 @@ module FppTest {
     state machine instance device3: HackSm priority 3 drop
     state machine instance device4: HackSm priority 4 hook
     state machine instance device5: HackSm
+
   }
+
 }

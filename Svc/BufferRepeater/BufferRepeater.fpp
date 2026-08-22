@@ -1,4 +1,5 @@
 module Svc {
+
   @ A component for repeating Fw.BufferSend calls to multiple consumers
   passive component BufferRepeater {
     @ Port to duplicate across the repeater
@@ -24,8 +25,8 @@ module Svc {
 
     @ Soft failure in allocation
     event AllocationSoftFailure(
-      $port: I32        @< The port index that needed an allocation
-      $size: FwSizeType @< The requested allocation size
+      $port: I32         @< The port index that needed an allocation
+      $size: FwSizeType  @< The requested allocation size
     ) \
       severity warning high \
       id 0 \
@@ -33,8 +34,8 @@ module Svc {
 
     @ Hard failure in allocation
     event AllocationHardFailure(
-      $port: I32        @< The port index that needed an allocation
-      $size: FwSizeType @< The requested allocation size
+      $port: I32         @< The port index that needed an allocation
+      $size: FwSizeType  @< The requested allocation size
     ) \
       severity fatal \
       id 1 \

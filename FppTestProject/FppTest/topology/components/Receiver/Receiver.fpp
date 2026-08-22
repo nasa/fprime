@@ -1,5 +1,7 @@
 module FppTest {
+
   active component Receiver {
+
     import TypedPortsSyncInputs
     import TypedPortsGuardedInputs
     import TypedPortsAsync
@@ -8,5 +10,7 @@ module FppTest {
 
     sync input port serialIn: [TestDeploymentPort.N] serial
     output port serialReplyOut: [SenderId.N] Reply
+
   }
+
 }

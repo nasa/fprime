@@ -1,4 +1,5 @@
 module FppTest {
+
   topology Async {
     import Receiver
 
@@ -85,4 +86,5 @@ module FppTest {
       sender2Async.structArgsOut[2]    -> receiver2.serialIn[TestDeploymentPort.STRUCT_ARGS_ASYNC]
     }
   }
+
 }

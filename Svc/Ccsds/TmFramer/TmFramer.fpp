@@ -2,6 +2,7 @@ module Svc {
   module Ccsds {
     @ Deframer for the TM Space Data Link Protocol (CCSDS Standard)
     passive component TmFramer {
+
       import Framer
 
       ###############################################################################
@@ -24,6 +25,7 @@ module Svc {
 
       @Port to set the value of a parameter
       param set port prmSetOut
+
     }
   }
 }

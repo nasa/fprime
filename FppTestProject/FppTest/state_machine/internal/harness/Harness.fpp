@@ -1,5 +1,7 @@
 module FppTest {
+
   module SmHarness {
+
     type TestAbsType
 
     enum TestEnum {
@@ -13,5 +15,7 @@ module FppTest {
     struct TestStruct {
       x: U32
     }
+
   }
+
 }

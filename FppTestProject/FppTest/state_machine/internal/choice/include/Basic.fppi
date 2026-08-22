@@ -1,5 +1,6 @@
 @ A basic state machine with a choice
 state machine Basic {
+
   @ Action a
   action a
 
@@ -17,8 +18,10 @@ state machine Basic {
 
   @ State S1
   state S1 {
+
     @ State transition
     on s enter C
+
   }
 
   @ Choice C
@@ -31,4 +34,5 @@ state machine Basic {
 
   @ State S3
   state S3
+
 }

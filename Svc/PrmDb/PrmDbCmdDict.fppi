@@ -1,4 +1,4 @@
-enum Merge: U8 {
+enum Merge : U8 {
   MERGE
   RESET
 }
@@ -7,8 +7,8 @@ async command PRM_SAVE_FILE opcode 0x00
 
 @ Loads a file from storage into the staging database. The file could have selective IDs and not the whole set.
 async command PRM_LOAD_FILE(
-  fileName: string size FileNameStringSize @< The name of the on-board file to set parameters from
-  merge: Merge                             @< Whether to merge or fully reset the parameter database from the file contents
+  fileName: string size FileNameStringSize  @< The name of the on-board file to set parameters from
+  merge: Merge                              @< Whether to merge or fully reset the parameter database from the file contents
 ) \
   opcode 0x01
 

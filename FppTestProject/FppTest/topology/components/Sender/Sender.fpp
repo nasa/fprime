@@ -1,5 +1,7 @@
 module FppTest {
+
   queued component Sender {
+
     import TypedPortsOutputs
 
     internal port done
@@ -7,5 +9,7 @@ module FppTest {
     sync input port serialReplyIn: Reply
 
     output port serialOut: [TestDeploymentPort.N] serial
+
   }
+
 }

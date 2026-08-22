@@ -1,18 +1,20 @@
 module Svc {
+
   @ A component for running command sequences
   active component CmdSequencer {
+
     # ----------------------------------------------------------------------
     # Types
     # ----------------------------------------------------------------------
 
     @ The sequencer mode
-    enum SeqMode: U8 {
+    enum SeqMode : U8 {
       STEP = 0
       AUTO = 1
     }
 
     @ The stage of the file read operation
-    enum FileReadStage: U8 {
+    enum FileReadStage : U8 {
       READ_HEADER
       READ_HEADER_SIZE
       DESER_SIZE
@@ -100,5 +102,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     include "Events.fppi"
+
   }
+
 }

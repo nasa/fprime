@@ -1,5 +1,7 @@
 module FppTest {
+
   module Enum {
+
     @ An enum with specified default values
     enum Default {
       A
@@ -8,5 +10,7 @@ module FppTest {
       D
       E
     } default C
+
   }
+
 }

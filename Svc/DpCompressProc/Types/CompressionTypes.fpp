@@ -1,5 +1,6 @@
 module Svc {
-  enum CompressionAlgorithm: U8 {
+
+  enum CompressionAlgorithm : U8 {
     UNCOMPRESSED = 0
     ZLIB_DEFLATE = 1
   }

@@ -1,6 +1,7 @@
 module Fw {
   @ Defines ports for asynchronous data product operations (request/recv/send)
   interface DataProductAsync {
+
     @ Data product request port: requests allocation of a data product container
     product request port productRequestOut
 
@@ -9,5 +10,6 @@ module Fw {
 
     @ Data product send port: sends the filled data product container
     product send port productSendOut
+
   }
 }

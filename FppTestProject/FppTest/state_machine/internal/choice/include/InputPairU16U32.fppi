@@ -1,5 +1,6 @@
 @ A state machine with two inputs to a choice
 state machine InputPairU16U32 {
+
   @ Action a
   action a: U32
 
@@ -17,11 +18,13 @@ state machine InputPairU16U32 {
 
   @ State S1
   state S1 {
+
     @ State transition on s1
     on s1 enter C
 
     @ State transition on s2
     on s2 enter C
+
   }
 
   @ Choice C
@@ -34,4 +37,5 @@ state machine InputPairU16U32 {
 
   @ State S3
   state S3
+
 }

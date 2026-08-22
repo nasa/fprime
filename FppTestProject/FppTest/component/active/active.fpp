@@ -1,5 +1,6 @@
 @ An active component
 active component ActiveTest {
+
   include "../include/internal_ports.fppi"
   import FppTest.SerialPorts
   import FppTest.SerialPortsAsync
@@ -17,4 +18,5 @@ active component ActiveTest {
   include "../include/external_params.fppi"
   include "../include/params.fppi"
   include "../include/telemetry.fppi"
+
 }

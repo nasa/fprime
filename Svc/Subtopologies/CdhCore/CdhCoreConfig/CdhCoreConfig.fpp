@@ -20,5 +20,12 @@ module CdhCoreConfig {
     constant $health = 24
     constant events  = 23
     constant tlmSend = 22
+
+  }
+
+  module CpuAffinities {
+    constant cmdDisp = Os.TASK_DEFAULT
+    constant events  = Os.TASK_DEFAULT
+    constant tlmSend = Os.TASK_DEFAULT
   }
 }

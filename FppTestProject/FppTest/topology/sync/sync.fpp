@@ -1,4 +1,5 @@
 module FppTest {
+
   topology Sync {
     import Receiver
 
@@ -133,4 +134,5 @@ module FppTest {
       sender2Sync.structArgsOut[2]    -> receiver2.serialIn[TestDeploymentPort.STRUCT_ARGS_SYNC]
     }
   }
+
 }

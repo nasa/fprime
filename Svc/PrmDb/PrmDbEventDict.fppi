@@ -1,4 +1,4 @@
-enum PrmLoadAction: U8 {
+enum PrmLoadAction : U8 {
   SET_PARAMETER
   SAVE_FILE_COMMAND
   LOAD_FILE_COMMAND
@@ -7,7 +7,7 @@ enum PrmLoadAction: U8 {
 
 @ Parameter ID not found in database.
 event PrmIdNotFound(
-  Id: FwPrmIdType @< The parameter ID
+  Id: FwPrmIdType  @< The parameter ID
 ) \
   severity warning low \
   id 0 \
@@ -16,7 +16,7 @@ event PrmIdNotFound(
 
 @ Parameter ID updated in database
 event PrmIdUpdated(
-  Id: FwPrmIdType @< The parameter ID
+  Id: FwPrmIdType  @< The parameter ID
 ) \
   severity activity high \
   id 1 \
@@ -24,7 +24,7 @@ event PrmIdUpdated(
 
 @ Parameter database is full
 event PrmDbFull(
-  Id: FwPrmIdType @< The parameter ID
+  Id: FwPrmIdType  @< The parameter ID
 ) \
   severity warning high \
   id 2 \
@@ -32,7 +32,7 @@ event PrmDbFull(
 
 @ Parameter ID added to database
 event PrmIdAdded(
-  Id: FwPrmIdType @< The parameter ID
+  Id: FwPrmIdType  @< The parameter ID
 ) \
   severity activity high \
   id 3 \
@@ -40,9 +40,9 @@ event PrmIdAdded(
 
 @ Failed to write parameter file
 event PrmFileWriteError(
-  stage: PrmWriteError @< The write stage
-  $record: I32         @< The record that had the failure
-  error: I32           @< The error code
+  stage: PrmWriteError  @< The write stage
+  $record: I32          @< The record that had the failure
+  error: I32            @< The error code
 ) \
   severity warning high \
   id 4 \
@@ -50,7 +50,7 @@ event PrmFileWriteError(
 
 @ Save of parameter file completed
 event PrmFileSaveComplete(
-  records: U32 @< The number of records saved
+  records: U32  @< The number of records saved
 ) \
   severity activity high \
   id 5 \
@@ -58,9 +58,9 @@ event PrmFileSaveComplete(
 
 @ Failed to read parameter file
 event PrmFileReadError(
-  stage: PrmReadError @< The read stage
-  $record: I32        @< The record that had the failure
-  error: I32          @< The error code
+  stage: PrmReadError  @< The read stage
+  $record: I32         @< The record that had the failure
+  error: I32           @< The error code
 ) \
   severity warning high \
   id 6 \
@@ -68,10 +68,10 @@ event PrmFileReadError(
 
 @ Load of parameter file completed
 event PrmFileLoadComplete(
-  databaseString: string @< The database string
-  recordsTotal: U32      @< The number of records total
-  recordsAdded: U32      @< The number of new records added
-  recordsUpdated: U32    @< The number of records updated
+  databaseString: string  @< The database string
+  recordsTotal: U32       @< The number of records total
+  recordsAdded: U32       @< The number of new records added
+  recordsUpdated: U32     @< The number of records updated
 ) \
   severity activity high \
   id 7 \
@@ -85,8 +85,8 @@ event PrmDbCommitComplete() \
 
 @ All parameters Copied from one DB to another
 event PrmDbCopyAllComplete(
-  databaseStringSrc: string  @< The src database string
-  databaseStringDest: string @< The dest database string
+  databaseStringSrc: string   @< The src database string
+  databaseStringDest: string  @< The dest database string
 ) \
   severity activity high \
   id 9 \
@@ -100,8 +100,8 @@ event PrmDbFileLoadFailed() \
 
 @ Invalid Action during parameter file load
 event PrmDbFileLoadInvalidAction(
-  currentState: PrmDbFileLoadState @< The current state
-  attemptedAction: PrmLoadAction   @< The invalid action attempted
+  currentState: PrmDbFileLoadState  @< The current state
+  attemptedAction: PrmLoadAction    @< The invalid action attempted
 ) \
   severity warning low \
   id 11 \
@@ -109,8 +109,8 @@ event PrmDbFileLoadInvalidAction(
 
 @ parameter file failed CRC
 event PrmFileBadCrc(
-  readCrc: U32 @< The read CRC
-  compCrc: U32 @< The computed CRC
+  readCrc: U32  @< The read CRC
+  compCrc: U32  @< The computed CRC
 ) \
   severity warning high \
   id 12 \

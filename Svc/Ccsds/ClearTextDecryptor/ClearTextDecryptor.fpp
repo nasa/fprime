@@ -4,7 +4,9 @@ module Svc {
     @ no decryption, passing buffers and contexts through unmodified. It is intended
     @ only for clear-mode operation and testing.
     passive component ClearTextDecryptor {
+
       import Svc.Ccsds.CcsdsSdlsDecrypt
+
     }
   }
 }

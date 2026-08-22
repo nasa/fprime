@@ -1,5 +1,7 @@
 module FppTest {
+
   module Array {
+
     array FormatBool = [3] bool format "a {} b"
 
     array FormatU8 = [3] U8 format "a {} b"
@@ -27,5 +29,7 @@ module FppTest {
     array FormatString = [3] string format "% {}"
 
     array FormatChar = [3] U8 format "a {c} b"
+
   }
+
 }

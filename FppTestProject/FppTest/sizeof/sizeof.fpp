@@ -28,7 +28,7 @@ constant SizeofArray = sizeof(TestArray1)
 array TestArray2 = [2] TestArray1
 constant SizeofArray2 = sizeof(TestArray2)
 
-enum TestEnum1: U16 {
+enum TestEnum1 : U16 {
   X
   Y
   Z

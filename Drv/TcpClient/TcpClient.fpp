@@ -1,5 +1,6 @@
 module Drv {
   passive component TcpClient {
+
     import ByteStreamDriver
 
     @ Allocation for received data
@@ -7,5 +8,6 @@ module Drv {
 
     @ Deallocation of allocated buffers
     output port deallocate: Fw.BufferSend
+
   }
 }

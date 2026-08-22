@@ -1,13 +1,14 @@
 module Svc {
   @ Dispatches command sequences to available command sequencers
   active component FpySequencer {
-    enum GoalState: U8 {
+
+    enum GoalState : U8 {
       RUNNING
       VALID
       IDLE
     }
 
-    enum FileReadStage: U8 {
+    enum FileReadStage : U8 {
       HEADER
       BODY
       FOOTER
@@ -96,5 +97,6 @@ module Svc {
     param get port prmGet
 
     param set port prmSet
+
   }
 }

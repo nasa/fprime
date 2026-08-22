@@ -1,6 +1,7 @@
 module Svc {
   @ Routes packets deframed by the Deframer to the rest of the system
   passive component FprimeRouter {
+
     # ----------------------------------------------------------------------
     # Router interface
     # ----------------------------------------------------------------------
@@ -13,14 +14,14 @@ module Svc {
 
     @ An error occurred while serializing a com buffer
     event SerializationError(
-      status: U32 @< The status of the operation
+      status: U32  @< The status of the operation
     ) \
       severity warning high \
       format "Serializing com buffer failed with status {}"
 
     @ An error occurred while deserializing a packet
     event DeserializationError(
-      status: U32 @< The status of the operation
+      status: U32  @< The status of the operation
     ) \
       severity warning high \
       format "Deserializing packet type failed with status {}"
@@ -57,5 +58,6 @@ module Svc {
 
     @ Port for sending events to downlink
     event port logOut
+
   }
 }

@@ -1,4 +1,5 @@
 module FppTest {
+
   port Data(data: U32)
 
   enum SenderId {
@@ -21,7 +22,7 @@ module FppTest {
 
   @ Identifies the port handlers in the receiver to validate the proper
   @ port handler dispatch and connection in the topology code-generation
-  enum TestDeploymentPort: U8 {
+  enum TestDeploymentPort : U8 {
     INVALID
     ARRAY_ARGS_ASYNC
     ARRAY_ARGS_GUARDED
@@ -60,4 +61,5 @@ module FppTest {
     SERIAL
     N
   }
+
 }

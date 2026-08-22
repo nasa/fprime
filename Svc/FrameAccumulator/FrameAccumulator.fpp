@@ -1,6 +1,7 @@
 module Svc {
   @ Accumulates data into frames
   passive component FrameAccumulator {
+
     # ----------------------------------------------------------------------
     # FrameAccumulator interface
     # ----------------------------------------------------------------------
@@ -36,5 +37,6 @@ module Svc {
 
     @ Ports for logging events
     import Fw.Event
+
   }
 }

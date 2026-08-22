@@ -1,5 +1,6 @@
 module Svc {
   module FprimeProtocol {
+
     type TokenType = U32
 
     @ Describes the frame header format for the F Prime communications protocol
@@ -12,5 +13,6 @@ module Svc {
     struct FrameTrailer {
       crcField: U32
     }
+
   }
 }

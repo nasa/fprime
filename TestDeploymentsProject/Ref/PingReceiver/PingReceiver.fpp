@@ -43,8 +43,7 @@ module Ref {
     # ----------------------------------------------------------------------
 
     @ Command to disable ping response
-    async command PR_StopPings \
-      opcode 0
+    async command PR_StopPings opcode 0
 
     # ----------------------------------------------------------------------
     # Events
@@ -58,8 +57,8 @@ module Ref {
 
     @ Got ping
     event PR_PingReceived(
-                           code: U32 @< Ping code
-                         ) \
+      code: U32  @< Ping code
+    ) \
       severity diagnostic \
       id 1 \
       format "PingReceiver pinged with code {}"

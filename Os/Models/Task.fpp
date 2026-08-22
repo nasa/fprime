@@ -4,20 +4,24 @@
 # ======================================================================
 
 module Os {
+  @ Sentinel for default task parameters: casts to Os::Task::TASK_DEFAULT
+  @ CPU affinities must be a valid core index (< CPU_SETSIZE) or TASK_DEFAULT; others assert at startup
+  constant TASK_DEFAULT = -1
+
   @ FPP shadow-enum representing Os::Task::Status
-  enum TaskStatus: U8 {
-    OP_OK            @< message sent/received okay
-    INVALID_HANDLE   @< Task handle invalid
-    INVALID_PARAMS   @< started task with invalid parameters
-    INVALID_PRIORITY @< started task with invalid priority
-    INVALID_STACK    @< started with invalid stack size
-    UNKNOWN_ERROR    @< unexpected error return value
-    INVALID_AFFINITY @< unable to set the task affinity
-    DELAY_ERROR      @< error trying to delay the task
-    JOIN_ERROR       @< error trying to join the task
-    ERROR_RESOURCES  @< unable to allocate more tasks
-    ERROR_PERMISSION @< permissions error setting-up tasks
-    NOT_SUPPORTED    @< Task feature is not supported
-    INVALID_STATE    @< Task is in an invalid state for the operation
+  enum TaskStatus : U8 {
+    OP_OK             @< message sent/received okay
+    INVALID_HANDLE    @< Task handle invalid
+    INVALID_PARAMS    @< started task with invalid parameters
+    INVALID_PRIORITY  @< started task with invalid priority
+    INVALID_STACK     @< started with invalid stack size
+    UNKNOWN_ERROR     @< unexpected error return value
+    INVALID_AFFINITY  @< unable to set the task affinity
+    DELAY_ERROR       @< error trying to delay the task
+    JOIN_ERROR        @< error trying to join the task
+    ERROR_RESOURCES   @< unable to allocate more tasks
+    ERROR_PERMISSION  @< permissions error setting-up tasks
+    NOT_SUPPORTED     @< Task feature is not supported
+    INVALID_STATE     @< Task is in an invalid state for the operation
   }
 }

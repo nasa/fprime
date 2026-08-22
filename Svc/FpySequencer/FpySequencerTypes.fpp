@@ -10,7 +10,7 @@ module Svc {
     @ signed version of StackSizeType, used for relative offsets that can be negative
     type SignedStackSizeType = I32
 
-    enum DirectiveId: U8 {
+    enum DirectiveId : U8 {
       INVALID      = 0
       WAIT_REL     = 1
       WAIT_ABS     = 2
@@ -118,7 +118,7 @@ module Svc {
       FABS   = 81
     }
 
-    enum DirectiveErrorCode: U8 {
+    enum DirectiveErrorCode : U8 {
       NO_ERROR                   = 0
       STMT_OUT_OF_BOUNDS         = 1
       TLM_GET_NOT_CONNECTED      = 2

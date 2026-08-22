@@ -1,4 +1,5 @@
 module Svc {
+
   @ A time component using OSAL RawTime abstractions
   passive component OsTime {
     import Time
@@ -27,10 +28,11 @@ module Svc {
 
     @ An error occurred while attempting to set the current time
     event SetCurrentTimeError(
-      status: U32 @< The error status
+      status: U32  @< The error status
     ) \
       severity warning high \
       id 0x00 \
       format "Could not set current time due to RawTime error status {}"
+
   }
 }

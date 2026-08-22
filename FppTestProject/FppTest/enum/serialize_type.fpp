@@ -1,7 +1,9 @@
 module FppTest {
+
   module Enum {
+
     @ An enum with a specified serialize type
-    enum SerializeTypeU8: U8 {
+    enum SerializeTypeU8 : U8 {
       A
       B
       C
@@ -9,12 +11,14 @@ module FppTest {
       E
     }
 
-    enum SerializeTypeU64: U64 {
+    enum SerializeTypeU64 : U64 {
       A
       B
       C
       D
       E
     }
+
   }
+
 }

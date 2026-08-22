@@ -8,6 +8,7 @@ module Svc {
     @ 4. Allocate a frame buffer and prepend the security association index (16 bits) to the encrypted data
     @ 5. Pass the SDLS frame to the next component in the pipeline
     passive component CcsdsSdlsFramer {
+
       @ Security association index used when the incoming frame context does not specify one
       param SA_INDEX: U16 default 0
 
@@ -53,6 +54,7 @@ module Svc {
 
       @ Port to set the value of a parameter
       param set port prmSetOut
+
     }
   }
 }

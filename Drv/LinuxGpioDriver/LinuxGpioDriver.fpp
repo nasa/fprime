@@ -1,4 +1,5 @@
 module Drv {
+
   passive component LinuxGpioDriver {
     import Gpio
 
@@ -48,5 +49,7 @@ module Drv {
     event InterruptTimeError(status: Os.RawTimeStatus) \
       severity warning high \
       format "Failed to read interrupt timestamp: {}"
+
   }
+
 }

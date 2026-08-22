@@ -2,6 +2,7 @@ module Svc {
   module Ccsds {
     @ Deframer for the CCSDS Space Packet protocol
     passive component SpacePacketDeframer {
+
       import Deframer
 
       @ Port to validate a received sequence count for a given APID
@@ -40,6 +41,8 @@ module Svc {
 
       @ Port to set the value of a parameter
       param set port prmSetOut
+
     }
+
   } # end Ccsds
 } # end Svc

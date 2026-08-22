@@ -1,6 +1,7 @@
 module Svc {
   @ Data Product Compressor using ZLib DEFLATE
   passive component DpZLibCompressor {
+
     sync input port compressChunk: CompressChunk
 
     output port bufferCompressionGet: Fw.BufferGet
@@ -99,5 +100,6 @@ module Svc {
 
     @Port to set the value of a parameter
     param set port prmSetOut
+
   }
 }

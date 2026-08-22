@@ -1,5 +1,6 @@
 @ A hierarchical state machine with behavioral polymorphism
 state machine Polymorphism {
+
   @ Signal for polymorphic transition
   signal poly
 
@@ -11,6 +12,7 @@ state machine Polymorphism {
 
   @ State S1
   state S1 {
+
     @ Initial transition
     initial enter S2
 
@@ -19,15 +21,20 @@ state machine Polymorphism {
 
     @ State S2
     state S2 {
+
       on S2_to_S3 enter S3
+
     }
 
     @ State S3
     state S3 {
+
       @ Polymorphic state transition
       @ This transition overrides the transition in S1
       on poly enter S5
+
     }
+
   }
 
   @ State S4
@@ -35,4 +42,5 @@ state machine Polymorphism {
 
   @ State S5
   state S5
+
 }

@@ -1,6 +1,8 @@
 module Svc {
+
   @ A component for turning FW_ASSERTs into FATALs
   passive component AssertFatalAdapter {
+
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
@@ -19,5 +21,7 @@ module Svc {
 
     @ Port for getting the time
     time get port Time
+
   }
+
 }

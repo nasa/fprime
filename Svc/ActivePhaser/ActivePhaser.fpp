@@ -1,6 +1,7 @@
 module Svc {
   @ A rate group active component that schedules output port calls at pre-defined start times
   active component ActivePhaser {
+
     # ----------------------------------------------------------------------
     # General Ports
     # ----------------------------------------------------------------------
@@ -24,10 +25,10 @@ module Svc {
 
     @ Warning event that rate group has had a missed deadline
     event MissedDeadline(
-      p: FwIndexType @< Port that is delayed
-      start: U32     @< Start of execution window
-      length: U32    @< Length of the execution window
-      ticks: U32     @< Time in ticks the deadline was late
+      p: FwIndexType  @< Port that is delayed
+      start: U32      @< Start of execution window
+      length: U32     @< Length of the execution window
+      ticks: U32      @< Time in ticks the deadline was late
     ) \
       severity warning high \
       id 0 \
@@ -49,5 +50,6 @@ module Svc {
 
     @ Port for sending telemetry channels to downlink
     telemetry port tlmOut
+
   }
 }

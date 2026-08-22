@@ -1,4 +1,5 @@
 module FppTest {
+
   @ A struct with a fixed-size member array
   struct FixedSizeData {
     a: U32
@@ -14,6 +15,7 @@ module FppTest {
   port GetParameter() -> U32
 
   active component Comp {
+
     import SpecialPorts
 
     @ Signal from the framework to synchronize with the testing context
@@ -49,5 +51,7 @@ module FppTest {
     product record F32ArrayRecord: F32 array id 0x01
 
     product container Product
+
   }
+
 }

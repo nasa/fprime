@@ -1,10 +1,11 @@
 module Drv {
+
   @ Status returned by the send call
-  enum ByteStreamStatus: U8 {
-    OP_OK        @< Operation worked as expected
-    SEND_RETRY   @< Data send should be retried
-    RECV_NO_DATA @< Receive worked, but there was no data
-    OTHER_ERROR  @< Error occurred, retrying may succeed
+  enum ByteStreamStatus : U8 {
+    OP_OK         @< Operation worked as expected
+    SEND_RETRY    @< Data send should be retried
+    RECV_NO_DATA  @< Receive worked, but there was no data
+    OTHER_ERROR   @< Error occurred, retrying may succeed
   }
 
   @ Port to exchange buffer and status with the ByteStreamDriver model
@@ -14,9 +15,10 @@ module Drv {
 
   @ Synchronous only - Send data out through the byte stream
   port ByteStreamSend(
-    ref sendBuffer: Fw.Buffer @< Data to send
+    ref sendBuffer: Fw.Buffer  @< Data to send
   ) -> ByteStreamStatus
 
   @ Signal indicating the driver is ready to send and received data
   port ByteStreamReady()
+
 }

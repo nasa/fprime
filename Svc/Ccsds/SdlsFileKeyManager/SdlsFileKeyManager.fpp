@@ -6,6 +6,7 @@ module Svc {
     @ caller-provided key buffer, and returns SUCCESS. Any file error (open, read, or
     @ short read) returns KEY_ERROR. A key request before configuration asserts.
     passive component SdlsFileKeyManager {
+
       @ Event raised when the key file cannot be read
       event KeyReadFailed(
         status: I32
@@ -30,6 +31,7 @@ module Svc {
 
       @ Port for requesting the current time
       time get port timeCaller
+
     }
   }
 }

@@ -1,27 +1,29 @@
 module Svc {
+
   @ Tracks versions for project, framework and user defined versions etc
-  enum VersionEnabled: U8 {
-    DISABLED = 0 @< verbosity disabled
-    ENABLED  = 1 @< verbosity enabled
+  enum VersionEnabled : U8 {
+    DISABLED = 0  @< verbosity disabled
+    ENABLED  = 1  @< verbosity enabled
   }
 
   @ An enumeration for Version Type
-  enum VersionType: U8 {
-    PROJECT   = 0 @< project version
-    FRAMEWORK = 1 @< framework version
-    LIBRARY   = 2 @< library version
-    CUSTOM    = 3 @< custom version
-    ALL       = 4 @< all above versions
+  enum VersionType : U8 {
+    PROJECT   = 0  @< project version
+    FRAMEWORK = 1  @< framework version
+    LIBRARY   = 2  @< library version
+    CUSTOM    = 3  @< custom version
+    ALL       = 4  @< all above versions
   }
 
   @Data Structure for custom version Tlm
   struct CustomVersionDb {
-    version_enum: VersionCfg.VersionEnum @<enumeration/name of the custom version
-    version_value: string size 80        @< string containing custom version
-    version_status: Svc.VersionStatus    @< status of the custom version
+    version_enum: VersionCfg.VersionEnum  @<enumeration/name of the custom version
+    version_value: string size 80         @< string containing custom version
+    version_status: Svc.VersionStatus     @< status of the custom version
   }
 
   passive component Version {
+
     ##############################################################################
     #### Customizing version component ####
     ##############################################################################
@@ -34,19 +36,19 @@ module Svc {
 
     @ A command to enable or disable Event verbosity and Telemetry
     guarded command ENABLE(
-      enable: VersionEnabled @< whether or not Version telemetry is enabled
+      enable: VersionEnabled  @< whether or not Version telemetry is enabled
     ) \
       opcode 0
 
     @ Report version as Event
     guarded command VERSION(
-      version_type: VersionType @<which version type Event is requested
+      version_type: VersionType  @<which version type Event is requested
     ) \
       opcode 1
 
     @ Version of the git repository.
     event FrameworkVersion(
-      version: string size 40 @< version string
+      version: string size 40  @< version string
     ) \
       severity activity low \
       id 0 \
@@ -54,7 +56,7 @@ module Svc {
 
     @ Version of the git repository.
     event ProjectVersion(
-      version: string size 40 @< version string
+      version: string size 40  @< version string
     ) \
       severity activity low \
       id 1 \
@@ -62,7 +64,7 @@ module Svc {
 
     @ Version of the git repository.
     event LibraryVersions(
-      version: string size 40 @< version string
+      version: string size 40  @< version string
     ) \
       severity activity low \
       id 2 \
@@ -70,8 +72,8 @@ module Svc {
 
     @ Version of the git repository.
     event CustomVersions(
-      version_enum: VersionCfg.VersionEnum @< The enum to access
-      version_value: string size 40        @< version
+      version_enum: VersionCfg.VersionEnum  @< The enum to access
+      version_value: string size 40         @< version
     ) \
       severity activity low \
       id 3 \

@@ -1,5 +1,6 @@
 module Svc {
   module Ccsds {
+
     @ Port for requesting a sequence count for a given APID
     port ApidSequenceCount(apid: ComCfg.Apid, sequenceCount: U16) -> U16
 
@@ -24,5 +25,6 @@ module Svc {
 
     @ Port for requesting an SDLS key: the provided buffer is filled with the key
     port SdlsKey(ref key: SdlsKeyBuffer) -> SdlsStatus
+
   }
 }

@@ -1,4 +1,5 @@
 module ComCcsdsSdls {
+
   # ----------------------------------------------------------------------
   # SDLS decryption instances
   # ----------------------------------------------------------------------
@@ -299,5 +300,7 @@ module ComCcsdsSdls {
 
     @ Input port triggering commsBufferManager telemetry output
     port bufferManagerSchedIn = ComCcsds.commsBufferManager.schedIn
+
   } # end Subtopology
+
 } # end ComCcsdsSdls

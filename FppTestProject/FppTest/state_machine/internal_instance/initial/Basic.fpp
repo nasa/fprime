@@ -1,6 +1,9 @@
 module FppTest {
+
   module SmInstanceInitial {
+
     queued component Basic {
+
       sync input port schedIn: Svc.Sched
 
       include "../../internal/initial/include/Basic.fppi"
@@ -12,6 +15,9 @@ module FppTest {
       state machine instance smInitialBasic1: SmInitial.Basic
 
       state machine instance smInitialBasic2: SmInitial.Basic
+
     }
+
   }
+
 }

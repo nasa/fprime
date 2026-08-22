@@ -1,5 +1,6 @@
 module Svc {
   module Ccsds {
+
     @ Interface for components supplying SDLS keys: fills a caller-provided key
     @ buffer and returns the operation status
     interface SdlsKeyInterface {
@@ -13,5 +14,6 @@ module Svc {
       @ Port for requesting a key: the provided buffer is filled with the key
       output port keyGet: Svc.Ccsds.SdlsKey
     }
+
   }
 }

@@ -1,5 +1,6 @@
 @ A hierarchical state machine with an internal transition
 state machine Internal {
+
   @ Action a
   action a
 
@@ -14,13 +15,16 @@ state machine Internal {
 
   @ State S1
   state S1 {
+
     @ Initial transition
     initial enter S2
 
     @ State S2
     state S2 {
+
       @ Transition from S2 to S3
       on S2_to_S3 enter S3
+
     }
 
     @ State S3
@@ -28,5 +32,7 @@ state machine Internal {
 
     @ Internal transition
     on S1_internal do { a }
+
   }
+
 }

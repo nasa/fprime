@@ -1,5 +1,7 @@
 module FppTest {
+
   module Enum {
+
     @ An enum with many intervals of values
     enum Interval {
       A = 0
@@ -10,5 +12,7 @@ module FppTest {
       F = 100
       G = 101
     }
+
   }
+
 }

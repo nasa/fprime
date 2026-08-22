@@ -1,6 +1,8 @@
 module Svc {
+
   @ A rate group active component with input and output scheduler ports
   active component ActiveRateGroup {
+
     # ----------------------------------------------------------------------
     # General Ports
     # ----------------------------------------------------------------------
@@ -26,7 +28,7 @@ module Svc {
 
     @ Warning event that rate group has had a cycle slip
     event RateGroupCycleSlip(
-      cycle: U32 @< The cycle where the cycle occurred
+      cycle: U32  @< The cycle where the cycle occurred
     ) \
       severity warning high \
       id 1 \
@@ -34,7 +36,7 @@ module Svc {
 
     @ Warning event that reading the cycle end time failed
     event RateGroupTimeGetError(
-      status: Os.RawTimeStatus @< The status returned by the time read
+      status: Os.RawTimeStatus  @< The status returned by the time read
     ) \
       severity warning high \
       id 2 \
@@ -66,5 +68,7 @@ module Svc {
 
     @ A port for emitting telemetry
     telemetry port Tlm
+
   }
+
 }

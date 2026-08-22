@@ -8,6 +8,7 @@ module Svc {
     @ 4. Checking the status of the decryption and raise an event if it fails
     @ 5. Passing the decrypted frame to the next component in the pipeline
     passive component CcsdsSdlsDeframer {
+
       @ Event raised when the frame is not long enough for the security association index of 16bits
       event InsufficientLength() \
         severity warning high \
@@ -39,6 +40,7 @@ module Svc {
 
       @ Port for requesting the current time
       time get port timeCaller
+
     }
   }
 }

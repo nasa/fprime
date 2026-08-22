@@ -1,10 +1,11 @@
 module ComFprime {
-  enum Ports_ComPacketQueue: U8 {
+
+  enum Ports_ComPacketQueue : U8 {
     EVENTS
     TELEMETRY
   }
 
-  enum Ports_ComBufferQueue: U8 {
+  enum Ports_ComBufferQueue : U8 {
     FILE
   }
 
@@ -14,7 +15,8 @@ module ComFprime {
   instance comQueue: Svc.ComQueue base id ComFprimeConfig.BASE_ID + 0x00000 \
     queue size ComFprimeConfig.QueueSizes.comQueue \
     stack size ComFprimeConfig.StackSizes.comQueue \
-    priority ComFprimeConfig.Priorities.comQueue {
+    priority ComFprimeConfig.Priorities.comQueue \
+    cpu ComFprimeConfig.CpuAffinities.comQueue {
       phase Fpp.ToCpp.Phases.configComponents """
         using namespace ComFprime;
         Svc::ComQueue::QueueConfigurationTable configurationTable;
@@ -207,5 +209,7 @@ module ComFprime {
     # Scheduling
     @ Input port for scheduling ComQueue telemetry output
     port comQueueRun = comQueue.run
+
   } # end Subtopology
+
 } # end ComFprime

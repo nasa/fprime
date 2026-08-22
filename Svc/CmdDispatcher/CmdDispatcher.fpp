@@ -1,6 +1,8 @@
 module Svc {
+
   @ A component for dispatching commands
   active component CommandDispatcher {
+
     # ----------------------------------------------------------------------
     # General ports
     # ----------------------------------------------------------------------
@@ -71,15 +73,15 @@ module Svc {
 
     @ No-op string command
     async command CMD_NO_OP_STRING(
-      arg1: string size 40 @< The String command argument
+      arg1: string size 40  @< The String command argument
     ) \
       opcode 1
 
     @ No-op command
     async command CMD_TEST_CMD_1(
-      arg1: I32 @< The I32 command argument
-      arg2: F32 @< The F32 command argument
-      arg3: U8  @< The U8 command argument
+      arg1: I32  @< The I32 command argument
+      arg2: F32  @< The F32 command argument
+      arg3: U8   @< The U8 command argument
     ) \
       opcode 2
 
@@ -91,9 +93,9 @@ module Svc {
     # ----------------------------------------------------------------------
 
     event OpCodeRegistered(
-      Opcode: FwOpcodeType @< The opcode to register
-      $port: I32           @< The registration port
-      slot: I32            @< The dispatch slot it was placed in
+      Opcode: FwOpcodeType  @< The opcode to register
+      $port: I32            @< The registration port
+      slot: I32             @< The dispatch slot it was placed in
     ) \
       severity diagnostic \
       id 0 \
@@ -101,8 +103,8 @@ module Svc {
 
     @ Op code dispatched event
     event OpCodeDispatched(
-      Opcode: FwOpcodeType @< The opcode dispatched
-      $port: I32           @< The port dispatched to
+      Opcode: FwOpcodeType  @< The opcode dispatched
+      $port: I32            @< The port dispatched to
     ) \
       severity command \
       id 1 \
@@ -110,7 +112,7 @@ module Svc {
 
     @ Op code completed event
     event OpCodeCompleted(
-      Opcode: FwOpcodeType @< The I32 command argument
+      Opcode: FwOpcodeType  @< The I32 command argument
     ) \
       severity command \
       id 2 \
@@ -118,8 +120,8 @@ module Svc {
 
     @ Op code completed with error event
     event OpCodeError(
-      Opcode: FwOpcodeType  @< The opcode with the error
-      error: Fw.CmdResponse @< The error value
+      Opcode: FwOpcodeType   @< The opcode with the error
+      error: Fw.CmdResponse  @< The error value
     ) \
       severity command \
       id 3 \
@@ -127,7 +129,7 @@ module Svc {
 
     @ Received a malformed command packet
     event MalformedCommand(
-      Status: Fw.DeserialStatus @< The deserialization error
+      Status: Fw.DeserialStatus  @< The deserialization error
     ) \
       severity warning high \
       id 4 \
@@ -135,7 +137,7 @@ module Svc {
 
     @ Received an invalid opcode
     event InvalidCommand(
-      Opcode: FwOpcodeType @< Invalid opcode
+      Opcode: FwOpcodeType  @< Invalid opcode
     ) \
       severity warning high \
       id 5 \
@@ -143,7 +145,7 @@ module Svc {
 
     @ Exceeded the number of commands that can be simultaneously executed
     event TooManyCommands(
-      Opcode: FwOpcodeType @< The opcode that overflowed the list
+      Opcode: FwOpcodeType  @< The opcode that overflowed the list
     ) \
       severity warning high \
       id 6 \
@@ -157,7 +159,7 @@ module Svc {
 
     @ The command dispatcher has successfully received a NO-OP command from GUI with a string
     event NoOpStringReceived(
-      message: string size 40 @< The NO-OP string that is generated
+      message: string size 40  @< The NO-OP string that is generated
     ) \
       severity activity high \
       id 8 \
@@ -165,9 +167,9 @@ module Svc {
 
     @ This log event message returns the TEST_CMD_1 arguments.
     event TestCmd1Args(
-      arg1: I32 @< Arg1
-      arg2: F32 @< Arg2
-      arg3: U8  @< Arg3
+      arg1: I32  @< Arg1
+      arg2: F32  @< Arg2
+      arg3: U8   @< Arg3
     ) \
       severity activity high \
       id 9 \
@@ -175,8 +177,8 @@ module Svc {
 
     @ Op code reregistered event
     event OpCodeReregistered(
-      Opcode: FwOpcodeType @< The opcode reregistered
-      $port: I32           @< The reregistration port
+      Opcode: FwOpcodeType  @< The opcode reregistered
+      $port: I32            @< The reregistration port
     ) \
       severity diagnostic \
       id 10 \
@@ -184,8 +186,8 @@ module Svc {
 
     @ This log event reports the Command Sequence Buffer port queue has overflowed.
     event CommandDroppedQueueOverflow(
-      OpCode: FwOpcodeType @< The command opcode dropped
-      Context: U32         @< The call order
+      OpCode: FwOpcodeType  @< The command opcode dropped
+      Context: U32          @< The call order
     ) \
       severity warning high \
       id 11 \
@@ -205,4 +207,5 @@ module Svc {
     @ Number of commands drooped due to buffer overflow
     telemetry CommandsDropped: U32 id 2 update on change
   }
+
 }

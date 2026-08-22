@@ -1,7 +1,9 @@
 module Svc {
+
   @ A component for deframing input received from the ground
   @ via a FrameAccumulator
   passive component FprimeDeframer {
+
     # ----------------------------------------------------------------------
     # Deframer interface
     # ----------------------------------------------------------------------
@@ -45,4 +47,5 @@ module Svc {
     @ Port for sending events to downlink
     event port logOut
   }
+
 }

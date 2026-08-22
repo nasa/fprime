@@ -1,9 +1,10 @@
 module Fw {
+
   # ----------------------------------------------------------------------
   # Types
   # ----------------------------------------------------------------------
 
-  enum DpState: U8 {
+  enum DpState : U8 {
     @ The untransmitted state
     UNTRANSMITTED
     @ The partially transmitted state
@@ -61,4 +62,5 @@ module Fw {
     @ The buffer
     buffer: Fw.Buffer
   )
+
 }

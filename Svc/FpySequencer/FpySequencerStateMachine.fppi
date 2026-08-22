@@ -126,6 +126,7 @@ state machine SequencerStateMachine {
   }
 
   state VALIDATING {
+
     # do it this way so we are only running validate while we
     # are in the VALIDATING state
     entry do { report_seqStarted, signalEntered }
@@ -159,6 +160,7 @@ state machine SequencerStateMachine {
 
   @ sequencer has validated the sequence and is waiting for a command to run it
   state AWAITING_CMD_RUN_VALIDATED {
+
     # we can only get to this state if we explicitly ran the VALIDATE cmd
     # that means now's the time to return a response, as VALIDATE always waits
     # until completion to return response

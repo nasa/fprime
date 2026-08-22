@@ -35,6 +35,7 @@ module FppTest {
     sync input port arrayStringAliasReturnSync: [3] ArrayStringAliasReturn
 
     sync input port structReturnSync: [3] StructReturn
+
   }
 
   interface TypedPortsGuardedInputs {
@@ -73,6 +74,7 @@ module FppTest {
     guarded input port arrayStringAliasReturnGuarded: [3] ArrayStringAliasReturn
 
     guarded input port structReturnGuarded: [3] StructReturn
+
   }
 
   interface TypedPortsOutputs {
@@ -111,6 +113,7 @@ module FppTest {
     output port arrayStringAliasReturnOut: [3] ArrayStringAliasReturn
 
     output port structReturnOut: [3] StructReturn
+
   }
 
   interface TypedPortsHelpers {
@@ -125,5 +128,6 @@ module FppTest {
     @ Output port that causes from_to_prmSetIn = prmSetIn to be generated
     @ in the test harness. This lets the test harness emulate a PrmDb component.
     output port prmSetIn: Fw.PrmSet
+
   }
 }

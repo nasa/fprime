@@ -1,4 +1,5 @@
 module DataProducts {
+
   # ----------------------------------------------------------------------
   # Active Components
   # ----------------------------------------------------------------------
@@ -6,7 +7,8 @@ module DataProducts {
   instance dpCat: Svc.DpCatalog base id DataProductsConfig.BASE_ID + 0x00000 \
     queue size DataProductsConfig.QueueSizes.dpCat \
     stack size DataProductsConfig.StackSizes.dpCat \
-    priority DataProductsConfig.Priorities.dpCat {
+    priority DataProductsConfig.Priorities.dpCat \
+    cpu DataProductsConfig.CpuAffinities.dpCat {
       phase Fpp.ToCpp.Phases.configComponents """
             Fw::FileNameString dpDir(DataProductsConfig::Paths::dpDir);
             Fw::FileNameString dpState(DataProductsConfig::Paths::dpState);
@@ -19,12 +21,14 @@ module DataProducts {
   instance dpMgr: Svc.DpManager base id DataProductsConfig.BASE_ID + 0x01000 \
     queue size DataProductsConfig.QueueSizes.dpMgr \
     stack size DataProductsConfig.StackSizes.dpMgr \
-    priority DataProductsConfig.Priorities.dpMgr
+    priority DataProductsConfig.Priorities.dpMgr \
+    cpu DataProductsConfig.CpuAffinities.dpMgr
 
   instance dpWriter: Svc.DpWriter base id DataProductsConfig.BASE_ID + 0x02000 \
     queue size DataProductsConfig.QueueSizes.dpWriter \
     stack size DataProductsConfig.StackSizes.dpWriter \
-    priority DataProductsConfig.Priorities.dpWriter {
+    priority DataProductsConfig.Priorities.dpWriter \
+    cpu DataProductsConfig.CpuAffinities.dpWriter {
       phase Fpp.ToCpp.Phases.configComponents """
             DataProducts::dpWriter.configure(dpDir);
         """
@@ -33,7 +37,8 @@ module DataProducts {
   instance dpBufferAccumulator: Svc.BufferAccumulator base id DataProductsConfig.BASE_ID + 0x04000 \
     queue size DataProductsConfig.QueueSizes.dpBufferAccumulator \
     stack size DataProductsConfig.StackSizes.dpBufferAccumulator \
-    priority DataProductsConfig.Priorities.dpBufferAccumulator {
+    priority DataProductsConfig.Priorities.dpBufferAccumulator \
+    cpu DataProductsConfig.CpuAffinities.dpBufferAccumulator {
       phase Fpp.ToCpp.Phases.configComponents """
             DataProducts::dpBufferAccumulator.allocateQueue(
                 DataProductsConfig::BufferAccumulator::allocatorId,
@@ -125,5 +130,6 @@ module DataProducts {
 
     @ Input port for scheduling dpMgr telemetry output
     port dpMgrSchedIn = dpMgr.schedIn
+
   } # end topology
 } # end DataProducts Subtopology

@@ -1,27 +1,29 @@
 module Svc {
+
   @ A component for logging events
   active component EventManager {
+
     # ----------------------------------------------------------------------
     # Types
     # ----------------------------------------------------------------------
 
     @ Severity level for event filtering
     @ Similar to Fw::LogSeverity, but no FATAL event
-    enum FilterSeverity: U8 {
-      WARNING_HI  = 0 @< Filter WARNING_HI events
-      WARNING_LO  = 1 @< Filter WARNING_LO events
-      COMMAND     = 2 @< Filter COMMAND events
-      ACTIVITY_HI = 3 @< Filter ACTIVITY_HI events
-      ACTIVITY_LO = 4 @< Filter ACTIVITY_LO events
-      DIAGNOSTIC  = 5 @< Filter DIAGNOSTIC events
+    enum FilterSeverity : U8 {
+      WARNING_HI  = 0  @< Filter WARNING_HI events
+      WARNING_LO  = 1  @< Filter WARNING_LO events
+      COMMAND     = 2  @< Filter COMMAND events
+      ACTIVITY_HI = 3  @< Filter ACTIVITY_HI events
+      ACTIVITY_LO = 4  @< Filter ACTIVITY_LO events
+      DIAGNOSTIC  = 5  @< Filter DIAGNOSTIC events
     }
 
     # TODO: Consider replacing this enum with Fw::Enabled
     # However, the sense of 0 and 1 are reversed
     @ Enabled and disabled state
-    enum Enabled: U8 {
-      ENABLED  = 0 @< Enabled state
-      DISABLED = 1 @< Disabled state
+    enum Enabled : U8 {
+      ENABLED  = 0  @< Enabled state
+      DISABLED = 1  @< Disabled state
     }
 
     # ----------------------------------------------------------------------
@@ -30,10 +32,10 @@ module Svc {
 
     @ Internal interface to send log messages to component thread
     internal port loqQueue(
-      $id: FwEventIdType        @< Log ID
-      timeTag: Fw.Time          @< Time Tag
-      $severity: Fw.LogSeverity @< The severity argument
-      args: Fw.LogBuffer        @< Buffer containing serialized log entry
+      $id: FwEventIdType         @< Log ID
+      timeTag: Fw.Time           @< Time Tag
+      $severity: Fw.LogSeverity  @< The severity argument
+      args: Fw.LogBuffer         @< Buffer containing serialized log entry
     ) \
       drop
 
@@ -90,15 +92,15 @@ module Svc {
 
     @ Set filter for reporting events. Events are not stored in component.
     sync command SET_EVENT_FILTER(
-      filterLevel: FilterSeverity @< Filter level
-      filterEnabled: Enabled      @< Filter state
+      filterLevel: FilterSeverity  @< Filter level
+      filterEnabled: Enabled       @< Filter state
     ) \
       opcode 0
 
     @ Filter a particular ID
     async command SET_ID_FILTER(
       ID: FwEventIdType
-      idFilterEnabled: Enabled @< ID filter state
+      idFilterEnabled: Enabled  @< ID filter state
     ) \
       opcode 2
 
@@ -118,7 +120,7 @@ module Svc {
 
     @ Dump severity filter state
     event SEVERITY_FILTER_STATE(
-      $severity: FilterSeverity @< The severity level
+      $severity: FilterSeverity  @< The severity level
       enabled: bool
     ) \
       severity activity low \
@@ -127,7 +129,7 @@ module Svc {
 
     @ Indicate ID is filtered
     event ID_FILTER_ENABLED(
-      ID: FwEventIdType @< The ID filtered
+      ID: FwEventIdType  @< The ID filtered
     ) \
       severity activity high \
       id 1 \
@@ -135,7 +137,7 @@ module Svc {
 
     @ Attempted to add ID to full ID filter ID
     event ID_FILTER_LIST_FULL(
-      ID: FwEventIdType @< The ID filtered
+      ID: FwEventIdType  @< The ID filtered
     ) \
       severity warning low \
       id 2 \
@@ -143,7 +145,7 @@ module Svc {
 
     @ Removed an ID from the filter
     event ID_FILTER_REMOVED(
-      ID: FwEventIdType @< The ID removed
+      ID: FwEventIdType  @< The ID removed
     ) \
       severity activity high \
       id 3 \
@@ -151,10 +153,12 @@ module Svc {
 
     @ ID not in filter
     event ID_FILTER_NOT_FOUND(
-      ID: FwEventIdType @< The ID removed
+      ID: FwEventIdType  @< The ID removed
     ) \
       severity warning low \
       id 4 \
       format "ID filter ID {} not found."
+
   }
+
 }

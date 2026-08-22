@@ -7,6 +7,7 @@ module Svc {
     @ - Space Packet Protocol (SPP) extraction per CCSDS 133.0-B-2
     @ - Encapsulation Packet Protocol (EPP) extraction per CCSDS 133.1-B-3
     passive component AosDeframer {
+
       constant NumVcs = 1
 
       import Deframer
@@ -40,6 +41,7 @@ module Svc {
 
       @Port to set the value of a parameter
       param set port prmSetOut
+
     }
   }
 }

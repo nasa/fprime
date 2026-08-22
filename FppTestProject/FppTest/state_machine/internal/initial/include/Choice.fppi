@@ -1,5 +1,6 @@
 @ A state machine with an initial choice
 state machine Choice {
+
   @ Action a
   action a
 
@@ -22,4 +23,5 @@ state machine Choice {
   state T {
     entry do { a, a }
   }
+
 }

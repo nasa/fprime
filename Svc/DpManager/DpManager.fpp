@@ -1,6 +1,8 @@
 module Svc {
+
   @ A component for managing data products
   active component DpManager {
+
     # ----------------------------------------------------------------------
     # Scheduling ports
     # ----------------------------------------------------------------------
@@ -72,7 +74,7 @@ module Svc {
 
     @ Buffer allocation failed
     event BufferAllocationFailed(
-      $id: FwDpIdType @< The container ID
+      $id: FwDpIdType  @< The container ID
     ) \
       severity warning high \
       format "Buffer allocation failed for container id {}" \
@@ -93,5 +95,7 @@ module Svc {
 
     @ Number of bytes handled
     telemetry NumBytes: U64 update on change
+
   }
+
 }

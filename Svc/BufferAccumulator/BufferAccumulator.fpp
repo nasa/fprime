@@ -1,5 +1,7 @@
 module Svc {
+
   active component BufferAccumulator {
+
     include "Commands.fppi"
 
     include "Events.fppi"
@@ -44,5 +46,7 @@ module Svc {
 
     @ A port for emitting telemetry
     telemetry port tlmOut
+
   }
+
 }

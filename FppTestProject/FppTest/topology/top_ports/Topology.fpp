@@ -1,4 +1,5 @@
 module FppTest {
+
   instance sender1Top: Sender base id 0x2010 queue size 1
   instance sender2Top: Sender base id 0x2020 queue size 1
 
@@ -77,4 +78,5 @@ module FppTest {
       SenderTop.serialOut2[TestDeploymentPort.SERIAL] -> ReceiverTop.serialIn2[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
     }
   }
+
 }

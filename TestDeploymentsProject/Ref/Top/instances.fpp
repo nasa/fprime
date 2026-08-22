@@ -3,7 +3,7 @@ module Ref {
   # ----------------------------------------------------------------------
   # Base ID Convention
   # ----------------------------------------------------------------------
-  # 
+  #
   # All Base IDs follow the 8-digit hex format: 0xDSSCCxxx
   #
   # Where:
@@ -70,20 +70,15 @@ module Ref {
   instance sendBuffComp: Ref.SendBuff base id 0x10010000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG1: Ref.SignalGen base id 0x10011000 \
-    queue size Default.QUEUE_SIZE
+  instance SG1: Ref.SignalGen base id 0x10011000 queue size Default.QUEUE_SIZE
 
-  instance SG2: Ref.SignalGen base id 0x10012000 \
-    queue size Default.QUEUE_SIZE
+  instance SG2: Ref.SignalGen base id 0x10012000 queue size Default.QUEUE_SIZE
 
-  instance SG3: Ref.SignalGen base id 0x10013000 \
-    queue size Default.QUEUE_SIZE
+  instance SG3: Ref.SignalGen base id 0x10013000 queue size Default.QUEUE_SIZE
 
-  instance SG4: Ref.SignalGen base id 0x10014000 \
-    queue size Default.QUEUE_SIZE
+  instance SG4: Ref.SignalGen base id 0x10014000 queue size Default.QUEUE_SIZE
 
-  instance SG5: Ref.SignalGen base id 0x10015000 \
-    queue size Default.QUEUE_SIZE
+  instance SG5: Ref.SignalGen base id 0x10015000 queue size Default.QUEUE_SIZE
 
   # ----------------------------------------------------------------------
   # Passive component instances

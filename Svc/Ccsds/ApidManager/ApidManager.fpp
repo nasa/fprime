@@ -2,6 +2,7 @@ module Svc {
   module Ccsds {
     @ Maps output of ComQueue to CCSDS APIDs
     passive component ApidManager {
+
       @ Port to validate a given sequence count for a given APID
       guarded input port validateApidSeqCountIn: Ccsds.ApidSequenceCount
 

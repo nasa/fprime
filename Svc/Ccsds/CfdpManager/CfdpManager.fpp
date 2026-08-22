@@ -1,8 +1,10 @@
 module Svc {
   module Ccsds {
     module Cfdp {
+
       @ F' implementation of the CFDP file transfer protocol
       active component CfdpManager {
+
         ##############################################################################
         # Includes
         ##############################################################################
@@ -73,6 +75,7 @@ module Svc {
 
         @Port to set the value of a parameter
         param set port prmSetOut
+
       }
     } # end Cfdp
   } # end Ccsds

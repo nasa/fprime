@@ -5,6 +5,7 @@ module Svc {
     @ index using a compile-time SA-to-port map (SdlsCfg.SaMap). Separate instances
     @ may serve the uplink (decryption) and downlink (encryption) paths.
     passive component SdlsSaRouter {
+
       # ----------------------------------------------------------------------
       # Upstream side: raw ports mirroring the CcsdsSdlsEncrypt/CcsdsSdlsDecrypt
       # interfaces, which share the same port types. Inlined (rather than

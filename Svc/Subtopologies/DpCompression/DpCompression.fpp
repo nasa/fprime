@@ -1,4 +1,5 @@
 module DpCompression {
+
   # ----------------------------------------------------------------------
   # Passive Components
   # ----------------------------------------------------------------------
@@ -30,6 +31,7 @@ module DpCompression {
   }
 
   topology Subtopology {
+
     #Passive Components
     instance dpCompressProc
     instance dpZLibCompressor
@@ -52,5 +54,6 @@ module DpCompression {
 
     @ Input port for scheduling dpZLibCompressorBufferManager telemetry output
     port dpZLibBufferManagerSchedIn = dpZLibCompressorBufferManager.schedIn
+
   } # end topology
 } # end DpCompression Subtopology

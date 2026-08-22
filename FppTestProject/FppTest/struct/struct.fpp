@@ -1,5 +1,7 @@
 module FppTest {
+
   module Struct {
+
     enum StructEnum {
       A
       B
@@ -57,5 +59,7 @@ module FppTest {
       initial enter S
       type SMPrimitive = Primitive
     }
+
   }
+
 }

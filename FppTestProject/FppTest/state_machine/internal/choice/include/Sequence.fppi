@@ -1,5 +1,6 @@
 @ A basic state machine with a choice sequence
 state machine Sequence {
+
   @ Action a
   action a
 
@@ -20,8 +21,10 @@ state machine Sequence {
 
   @ State S1
   state S1 {
+
     @ State transition
     on s enter C1
+
   }
 
   @ Choice C1
@@ -42,4 +45,5 @@ state machine Sequence {
 
   @ State S4
   state S4
+
 }

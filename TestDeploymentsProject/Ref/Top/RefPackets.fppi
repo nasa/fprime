@@ -1,9 +1,9 @@
 telemetry packets RefPackets {
-
   packet CDH id 1 group 1 {
     CdhCore.cmdDisp.CommandsDispatched
 
     FileHandling.fileUplink.FilesReceived
+    FileHandling.fileUplink.FilesReceivedFailed
     FileHandling.fileUplink.PacketsReceived
     FileHandling.fileDownlink.FilesSent
     FileHandling.fileDownlink.PacketsSent
@@ -278,13 +278,12 @@ telemetry packets RefPackets {
 
   # Uncomment to enable DpCompression subtopology
   #packet DpCompression id 38 group 3 {
-    #DpCompression.dpZLibCompressorBufferManager.TotalBuffs
-    #DpCompression.dpZLibCompressorBufferManager.CurrBuffs
-    #DpCompression.dpZLibCompressorBufferManager.HiBuffs
-    #DpCompression.dpZLibCompressorBufferManager.NoBuffs
-    #DpCompression.dpZLibCompressorBufferManager.EmptyBuffs
+  #DpCompression.dpZLibCompressorBufferManager.TotalBuffs
+  #DpCompression.dpZLibCompressorBufferManager.CurrBuffs
+  #DpCompression.dpZLibCompressorBufferManager.HiBuffs
+  #DpCompression.dpZLibCompressorBufferManager.NoBuffs
+  #DpCompression.dpZLibCompressorBufferManager.EmptyBuffs
   #}
-
 } omit {
   CdhCore.cmdDisp.CommandErrors
   cmdSeq.CS_CurrentSequence

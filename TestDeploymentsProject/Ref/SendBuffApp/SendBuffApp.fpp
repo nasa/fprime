@@ -59,30 +59,28 @@ module Ref {
     # ----------------------------------------------------------------------
 
     @ Command to start sending packets
-    async command SB_START_PKTS \
-      opcode 0
+    async command SB_START_PKTS opcode 0
 
     @ Send a bad packet
-    async command SB_INJECT_PKT_ERROR \
-      opcode 1
+    async command SB_INJECT_PKT_ERROR opcode 1
 
     @ Generate a FATAL EVR
     async command SB_GEN_FATAL(
-                                arg1: U32 @< First FATAL Argument
-                                arg2: U32 @< Second FATAL Argument
-                                arg3: U32 @< Third FATAL Argument
-                              ) \
+      arg1: U32  @< First FATAL Argument
+      arg2: U32  @< Second FATAL Argument
+      arg3: U32  @< Third FATAL Argument
+    ) \
       opcode 2
 
     @ Generate an ASSERT
     async command SB_GEN_ASSERT(
-                                 arg1: U32 @< First ASSERT Argument
-                                 arg2: U32 @< Second ASSERT Argument
-                                 arg3: U32 @< Third ASSERT Argument
-                                 arg4: U32 @< Fourth ASSERT Argument
-                                 arg5: U32 @< Fifth ASSERT Argument
-                                 arg6: U32 @< Sixth ASSERT Argument
-                               ) \
+      arg1: U32  @< First ASSERT Argument
+      arg2: U32  @< Second ASSERT Argument
+      arg3: U32  @< Third ASSERT Argument
+      arg4: U32  @< Fourth ASSERT Argument
+      arg5: U32  @< Fifth ASSERT Argument
+      arg6: U32  @< Sixth ASSERT Argument
+    ) \
       opcode 3
 
     # ----------------------------------------------------------------------
@@ -91,34 +89,34 @@ module Ref {
 
     @ First packet send
     event FirstPacketSent(
-                           $id: U32 @< The ID argument
-                         ) \
+      $id: U32  @< The ID argument
+    ) \
       severity activity high \
       id 0 \
       format "First packet ID {} received"
 
     @ Packet checksum error
     event PacketErrorInserted(
-                               $id: U32 @< The ID argument
-                             ) \
+      $id: U32  @< The ID argument
+    ) \
       severity warning high \
       id 1 \
       format "Inserted error in packet ID {}"
 
     @ Report parameter update
     event BuffSendParameterUpdated(
-                                    $id: U32 @< The ID argument
-                                  ) \
+      $id: U32  @< The ID argument
+    ) \
       severity activity low \
       id 2 \
       format "BuffSend Parameter {} was updated"
 
     @ A test FATAL
     event SendBuffFatal(
-                         arg1: U32 @< First FATAL argument
-                         arg2: U32 @< Second FATAL argument
-                         arg3: U32 @< Second FATAL argument
-                       ) \
+      arg1: U32  @< First FATAL argument
+      arg2: U32  @< Second FATAL argument
+      arg3: U32  @< Second FATAL argument
+    ) \
       severity fatal \
       id 3 \
       format "Test Fatal: {} {} {}"
@@ -128,14 +126,10 @@ module Ref {
     # ----------------------------------------------------------------------
 
     @ A test parameter
-    param parameter3: U8 default 12 id 0 \
-      set opcode 10 \
-      save opcode 11
+    param parameter3: U8 default 12 id 0 set opcode 10 save opcode 11
 
     @ A test parameter
-    param parameter4: F32 default 13.14 id 1 \
-      set opcode 12 \
-      save opcode 13
+    param parameter4: F32 default 13.14 id 1 set opcode 12 save opcode 13
 
     # ----------------------------------------------------------------------
     # Telemetry

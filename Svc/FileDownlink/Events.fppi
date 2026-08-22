@@ -1,6 +1,6 @@
 @ An error occurred opening a file
 event FileOpenError(
-  fileName: string size 100 @< The name of the file
+  fileName: string size 100  @< The name of the file
 ) \
   severity warning high \
   id 0x00 \
@@ -8,8 +8,8 @@ event FileOpenError(
 
 @ An error occurred reading a file
 event FileReadError(
-  fileName: string size 100 @< The name of the file
-  status: I32               @< The file status of read
+  fileName: string size 100  @< The name of the file
+  status: I32                @< The file status of read
 ) \
   severity warning high \
   id 0x01 \
@@ -17,8 +17,8 @@ event FileReadError(
 
 @ The File Downlink component successfully sent a file
 event FileSent(
-  sourceFileName: string size 100 @< The source file name
-  destFileName: string size 100   @< The destination file name
+  sourceFileName: string size 100  @< The source file name
+  destFileName: string size 100    @< The destination file name
 ) \
   severity activity high \
   id 0x02 \
@@ -26,31 +26,31 @@ event FileSent(
 
 @ The File Downlink component canceled downlink of a file
 event DownlinkCanceled(
-  sourceFileName: string size 100 @< The source file name
-  destFileName: string size 100   @< The destination file name
+  sourceFileName: string size 100  @< The source file name
+  destFileName: string size 100    @< The destination file name
 ) \
   severity activity high \
   id 0x03 \
   format "Canceled downlink of file {} to file {}"
 
-@ The File Downlink component has detected a timeout. Downlink has been canceled.
+@ A partial downlink request exceeded the source file size; length was clamped
 event DownlinkPartialWarning(
-  startOffset: U32                @< Starting file offset in bytes
-  length: U32                     @< Number of bytes to downlink
-  filesize: U32                   @< Size of source file
-  sourceFileName: string size 100 @< The source filename
-  destFileName: string size 100   @< The destination file name
+  startOffset: U32                 @< Starting file offset in bytes
+  length: U32                      @< Number of bytes to downlink
+  filesize: U32                    @< Size of source file
+  sourceFileName: string size 100  @< The source filename
+  destFileName: string size 100    @< The destination file name
 ) \
   severity warning low \
   id 0x05 \
   format "Offset {} plus length {} is greater than source size {} for partial downlink of file {} to file {}. "
 
-@ The File Downlink component has detected a timeout. Downlink has been canceled.
+@ A partial downlink request started beyond the source file size and failed
 event DownlinkPartialFail(
-  sourceFileName: string size 100 @< The source filename
-  destFileName: string size 100   @< The destination file name
-  startOffset: U32                @< Starting file offset in bytes
-  filesize: U32                   @< Size of source file
+  sourceFileName: string size 100  @< The source filename
+  destFileName: string size 100    @< The destination file name
+  startOffset: U32                 @< Starting file offset in bytes
+  filesize: U32                    @< Size of source file
 ) \
   severity warning high \
   id 0x06 \
@@ -58,8 +58,8 @@ event DownlinkPartialFail(
 
 @ The File Downlink component generated an error when trying to send a data packet.
 event SendDataFail(
-  sourceFileName: string size 100 @< The source filename
-  byteOffset: U32                 @< Byte offset
+  sourceFileName: string size 100  @< The source filename
+  byteOffset: U32                  @< Byte offset
 ) \
   severity warning high \
   id 0x07 \
@@ -67,9 +67,9 @@ event SendDataFail(
 
 @ The File Downlink component started a file download.
 event SendStarted(
-  fileSize: U32                   @< The source file size
-  sourceFileName: string size 100 @< The source filename
-  destFileName: string size 100   @< The destination filename
+  fileSize: U32                    @< The source file size
+  sourceFileName: string size 100  @< The source filename
+  destFileName: string size 100    @< The destination filename
 ) \
   severity activity high \
   id 0x08 \
@@ -77,7 +77,7 @@ event SendStarted(
 
 @ The File Downlink component stopped due to a zero-size file
 event DownlinkZeroSizeFile(
-  sourceFileName: string size 100 @< The source file name
+  sourceFileName: string size 100  @< The source file name
 ) \
   severity warning high \
   id 0x09 \
@@ -97,7 +97,7 @@ event FilenameDestinationOverflow() \
 
 @ Source file path is outside the configured read sandbox
 event SourceOutOfSandbox(
-  fileName: string size 100 @< The rejected source file path
+  fileName: string size 100  @< The rejected source file path
 ) \
   severity warning high \
   id 0x12 \

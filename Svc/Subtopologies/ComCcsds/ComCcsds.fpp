@@ -1,11 +1,12 @@
 module ComCcsds {
+
   # ComPacket Queue enum for queue types
-  enum Ports_ComPacketQueue: U8 {
+  enum Ports_ComPacketQueue : U8 {
     EVENTS
     TELEMETRY
   }
 
-  enum Ports_ComBufferQueue: U8 {
+  enum Ports_ComBufferQueue : U8 {
     FILE
   }
 
@@ -15,7 +16,8 @@ module ComCcsds {
   instance comQueue: Svc.ComQueue base id ComCcsdsConfig.BASE_ID + 0x00000 \
     queue size ComCcsdsConfig.QueueSizes.comQueue \
     stack size ComCcsdsConfig.StackSizes.comQueue \
-    priority ComCcsdsConfig.Priorities.comQueue {
+    priority ComCcsdsConfig.Priorities.comQueue \
+    cpu ComCcsdsConfig.CpuAffinities.comQueue {
       phase Fpp.ToCpp.Phases.configComponents """
         using namespace ComCcsds;
         Svc::ComQueue::QueueConfigurationTable configurationTable;
@@ -95,7 +97,8 @@ module ComCcsds {
   instance aggregator: Svc.ComAggregator base id ComCcsdsConfig.BASE_ID + 0x06000 \
     queue size ComCcsdsConfig.QueueSizes.aggregator \
     stack size ComCcsdsConfig.StackSizes.aggregator \
-    priority ComCcsdsConfig.Priorities.aggregator
+    priority ComCcsdsConfig.Priorities.aggregator \
+    cpu ComCcsdsConfig.CpuAffinities.aggregator
 
   # NOTE: name 'framer' is used for the framer that connects to the Com Adapter Interface for better subtopology interoperability
   instance framer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x07000
@@ -261,6 +264,7 @@ module ComCcsds {
 
     @ Input port triggering commsBufferManager telemetry output
     port bufferManagerSchedIn = commsBufferManager.schedIn
+
   } # end SpacePacket
 
   # This subtopology boxes the CCSDS TM/TC transfer frame layer: the TM framer (downlink),
@@ -475,5 +479,7 @@ module ComCcsds {
 
     @ Input port triggering commsBufferManager telemetry output
     port bufferManagerSchedIn = commsBufferManager.schedIn
+
   } # end Subtopology
+
 } # end ComCcsds

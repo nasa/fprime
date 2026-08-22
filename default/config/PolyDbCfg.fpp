@@ -3,10 +3,12 @@
 # ======================================================================
 
 module Svc {
+
   module PolyDbCfg {
+
     @ Define a set of PolyDb entries on a project-specific
     @ basis.
-    enum PolyDbEntry: U32 {
+    enum PolyDbEntry : U32 {
       @ Entry 0
       POLYDB_ENTRY_00
       @ Entry 1
@@ -26,5 +28,7 @@ module Svc {
       @ Entry 9
       POLYDB_ENTRY_09
     }
+
   }
+
 }

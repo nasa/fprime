@@ -1,5 +1,6 @@
 @ A basic state machine with an internal transition
 state machine BasicInternal {
+
   @ Action a
   action a
 
@@ -11,10 +12,13 @@ state machine BasicInternal {
 
   @ State S
   state S {
+
     @ Enter S
     entry do { a }
 
     @ Internal transition
     on s do { a }
+
   }
+
 }

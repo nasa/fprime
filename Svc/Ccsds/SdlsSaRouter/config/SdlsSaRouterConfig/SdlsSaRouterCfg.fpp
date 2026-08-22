@@ -4,6 +4,7 @@
 # ======================================================================
 
 module SdlsCfg {
+
   @ Number of downstream crypto component ports on the SdlsSaRouter
   constant SaRouterPortCount = 2
 
@@ -14,7 +15,7 @@ module SdlsCfg {
   constant SaRouterMaxOutstandingBuffers = 4
 
   @ Enumeration of the downstream crypto component ports on the SdlsSaRouter
-  enum SaRouterPorts: FwIndexType {
+  enum SaRouterPorts : FwIndexType {
     PLAINTEXT   = 0
     UNCONNECTED = 1
   }
@@ -29,4 +30,5 @@ module SdlsCfg {
     { securityAssociationIndex = 0, portIndex = SaRouterPorts.PLAINTEXT }
     { securityAssociationIndex = 1, portIndex = SaRouterPorts.UNCONNECTED }
   ]
+
 }

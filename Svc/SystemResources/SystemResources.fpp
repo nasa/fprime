@@ -1,10 +1,12 @@
 module Svc {
-  enum SystemResourceEnabled: U8 {
+
+  enum SystemResourceEnabled : U8 {
     DISABLED = 0
     ENABLED  = 1
   }
 
   passive component SystemResources {
+
     @ Run port
     guarded input port run: [1] Svc.Sched
 
@@ -35,7 +37,7 @@ module Svc {
 
     @ A command to enable or disable system resource telemetry
     guarded command ENABLE(
-      enable: SystemResourceEnabled @< whether or not system resource telemetry is enabled
+      enable: SystemResourceEnabled  @< whether or not system resource telemetry is enabled
     ) \
       opcode 0
 
@@ -101,5 +103,7 @@ module Svc {
 
     @ System's CPU Percentage
     telemetry CPU_15: F32 id 20 format "{.2f} percent"
+
   }
+
 }

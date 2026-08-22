@@ -1,4 +1,5 @@
 module Os {
+
   @ File open mode permission bits
   @ Constant values are derived from standard
   @ Unix values, but should not be assumed

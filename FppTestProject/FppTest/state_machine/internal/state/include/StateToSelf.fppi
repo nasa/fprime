@@ -1,6 +1,7 @@
 @ A state machine for testing state-to-self transitions
 @ with hierarchy
 state machine StateToSelf {
+
   @ Exit S1
   action exitS1
 
@@ -33,6 +34,7 @@ state machine StateToSelf {
 
   @ State S1
   state S1 {
+
     @ Initial transition
     initial enter S2
 
@@ -44,6 +46,7 @@ state machine StateToSelf {
 
     @ State S2
     state S2 {
+
       @ Enter S2
       entry do { enterS2 }
 
@@ -52,18 +55,23 @@ state machine StateToSelf {
 
       @ State transition to S3
       on S2_to_S3 enter S3
+
     }
 
     @ State S3
     state S3 {
+
       @ Enter S3
       entry do { enterS3 }
 
       @ Exit S3
       exit do { exitS3 }
+
     }
 
     @ State transition to S1
     on S1_to_S1 do { a } enter S1
+
   }
+
 }

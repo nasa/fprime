@@ -1,9 +1,10 @@
 module Svc {
   @ Component to dispatch uplinked files to various services
   active component FileDispatcher {
+
     # @ disable dispatch of a file type
     async command ENABLE_DISPATCH(
-      file_type: Svc.FileDispatcherCfg.FileDispatchPort @< the file type dispatch to enable/disable
+      file_type: Svc.FileDispatcherCfg.FileDispatchPort  @< the file type dispatch to enable/disable
       enable: Fw.Enabled
     ) \
       opcode 0
@@ -27,6 +28,15 @@ module Svc {
     ) \
       severity activity high \
       format "File {} dispatched to {}"
+
+    # @ File matched a dispatch entry whose output port is not connected
+    event FileDispatchPortNotConnected(
+      file_name: string size FileNameStringSize
+      file_type: Svc.FileDispatcherCfg.FileDispatchPort
+    ) \
+      severity warning low \
+      format "File {} matched {} but the dispatch port is not connected" \
+      throttle 5
 
     ###############################################################################
     # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
@@ -68,5 +78,6 @@ module Svc {
 
     @ Ping out
     output port pingOut: Svc.Ping
+
   }
 }

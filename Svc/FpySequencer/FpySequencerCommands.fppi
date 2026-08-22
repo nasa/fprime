@@ -1,17 +1,17 @@
 @ Loads, validates and runs a sequence
 # prio: lower than sm sig and CANCEL
 async command RUN(
-  fileName: string size FileNameStringSize @< The name of the sequence file
-  $block: Svc.BlockState                   @< Return command status when complete or not
+  fileName: string size FileNameStringSize  @< The name of the sequence file
+  $block: Svc.BlockState                    @< Return command status when complete or not
 ) \
   opcode 0 \
   priority 7 \
   assert
 
 async command RUN_ARGS(
-  fileName: string size FileNameStringSize @< The name of the sequence file
-  $block: Svc.BlockState                   @< Return command status when complete or not
-  buffer: Svc.SeqArgs                      @< Arguments to pass to the sequencer
+  fileName: string size FileNameStringSize  @< The name of the sequence file
+  $block: Svc.BlockState                    @< Return command status when complete or not
+  buffer: Svc.SeqArgs                       @< Arguments to pass to the sequencer
 ) \
   opcode 1 \
   priority 7 \
@@ -20,7 +20,7 @@ async command RUN_ARGS(
 @ Loads and validates a sequence
 # prio: lower than sm sig and CANCEL
 async command VALIDATE(
-  fileName: string size FileNameStringSize @< The name of the sequence file
+  fileName: string size FileNameStringSize  @< The name of the sequence file
 ) \
   opcode 2 \
   priority 7 \
@@ -29,8 +29,8 @@ async command VALIDATE(
 @ Loads and validates a sequence with arguments
 # prio: lower than sm sig and CANCEL
 async command VALIDATE_ARGS(
-  fileName: string size FileNameStringSize @< The name of the sequence file
-  buffer: Svc.SeqArgs                      @< Arguments to pass to the sequencer
+  fileName: string size FileNameStringSize  @< The name of the sequence file
+  buffer: Svc.SeqArgs                       @< Arguments to pass to the sequencer
 ) \
   opcode 3 \
   priority 7 \
@@ -39,7 +39,7 @@ async command VALIDATE_ARGS(
 @ Must be called after VALIDATE. Runs the sequence that was validated.
 # prio: lower than sm sig and CANCEL
 async command RUN_VALIDATED(
-  $block: Svc.BlockState @< Return command status when complete or not
+  $block: Svc.BlockState  @< Return command status when complete or not
 ) \
   opcode 4 \
   priority 7 \
@@ -55,8 +55,8 @@ async command CANCEL() opcode 5 priority 8 assert
 @ dispatching the specified directive. This command is valid in all states. Breakpoint
 @ settings are cleared after a sequence ends execution.
 async command SET_BREAKPOINT(
-  stmtIdx: U32    @< The directive index to pause execution before.
-  breakOnce: bool @< Whether or not to break only once at this breakpoint
+  stmtIdx: U32     @< The directive index to pause execution before.
+  breakOnce: bool  @< Whether or not to break only once at this breakpoint
 ) \
   opcode 6 \
   priority 7 \
@@ -81,7 +81,7 @@ async command STEP() opcode 10 priority 7 assert
 
 @ Writes the contents of the stack to a file. This command is only valid in the RUNNING.PAUSED state.
 async command DUMP_STACK_TO_FILE(
-  fileName: string size FileNameStringSize @< The name of the output file
+  fileName: string size FileNameStringSize  @< The name of the output file
 ) \
   opcode 11 \
   priority 7 \

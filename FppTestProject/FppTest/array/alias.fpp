@@ -1,5 +1,7 @@
 module FppTest {
+
   module Array {
+
     type EA = E
 
     array ArrayOfAlias = [3] EA default [E.A, E.B, E.C]
@@ -11,5 +13,7 @@ module FppTest {
     array AliasStringZero = [3] AStringZero
 
     type AliasOfArray = ArrayOfAlias
+
   }
+
 }

@@ -2,6 +2,7 @@ module Svc {
   module Ccsds {
     @ Deframer for the TC Space Data Link Protocol (CCSDS Standard)
     passive component TcDeframer {
+
       import Deframer
 
       @ Port to notify of a deframing error
@@ -52,6 +53,7 @@ module Svc {
 
       @Port to set the value of a parameter
       param set port prmSetOut
+
     }
   }
 }

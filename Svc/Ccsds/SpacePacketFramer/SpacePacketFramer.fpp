@@ -2,6 +2,7 @@ module Svc {
   module Ccsds {
     @ Deframer for the CCSDS Space Packet protocol
     passive component SpacePacketFramer {
+
       import Framer
 
       @ Port to allocate a buffer for a space packet
@@ -12,6 +13,12 @@ module Svc {
 
       @ Port to retrieve the current sequence count for a given APID
       output port getApidSeqCount: Ccsds.ApidSequenceCount
+
+      @ No buffer was available to hold the packet, which was dropped
+      event NoBufferAvailable \
+        severity warning high \
+        format "Failed to allocate a packet buffer: packet dropped" \
+        throttle 5
 
       ###############################################################################
       # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
@@ -33,6 +40,8 @@ module Svc {
 
       @ Port to set the value of a parameter
       param set port prmSetOut
+
     }
+
   } # end Ccsds
 } # end Svc

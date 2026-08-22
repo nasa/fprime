@@ -56,7 +56,6 @@ module Ref {
     @ Data product container
     product container DataContainer id 0 default priority 10
 
-
     # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------

@@ -1,10 +1,11 @@
 module Svc {
+
   # This structure will use to store the state
   # in the component and to generate a catalog
   # data product
 
   @ Header validation error
-  enum DpHdrField: U8 {
+  enum DpHdrField : U8 {
     DESCRIPTOR
     ID
     PRIORITY
@@ -24,6 +25,7 @@ module Svc {
 
   @ A component for managing downlink of data products
   active component DpCatalog {
+
     # Component specific ports
 
     @ Ping input port
@@ -75,8 +77,8 @@ module Svc {
 
     @ Start transmitting catalog
     async command START_XMIT_CATALOG(
-      wait: Fw.Wait      @< have START_XMIT command complete wait for catalog to complete transmitting
-      remainActive: bool @< should the catalog resume transmission when Dps are added at runtime
+      wait: Fw.Wait       @< have START_XMIT command complete wait for catalog to complete transmitting
+      remainActive: bool  @< should the catalog resume transmission when Dps are added at runtime
     ) \
       opcode 1
 
@@ -92,8 +94,8 @@ module Svc {
 
     @ Error opening directory
     event DirectoryOpenError(
-      loc: string size FileNameStringSize @< The directory
-      stat: I32                           @< status
+      loc: string size FileNameStringSize  @< The directory
+      stat: I32                            @< status
     ) \
       severity warning high \
       id 0 \
@@ -101,7 +103,7 @@ module Svc {
 
     @ Processing directory
     event ProcessingDirectory(
-      directory: string size FileNameStringSize @< The directory
+      directory: string size FileNameStringSize  @< The directory
     ) \
       severity activity low \
       id 1 \
@@ -109,7 +111,7 @@ module Svc {
 
     @ Processing directory
     event ProcessingFile(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
     ) \
       severity activity low \
       id 2 \
@@ -117,10 +119,10 @@ module Svc {
 
     @ Directory Processing complete
     event ProcessingDirectoryComplete(
-      loc: string size FileNameStringSize @< The directory
-      total: U32                          @< total data products
-      pending: U32                        @< pending data products
-      pending_bytes: U64                  @< pending data product volume
+      loc: string size FileNameStringSize  @< The directory
+      total: U32                           @< total data products
+      pending: U32                         @< pending data products
+      pending_bytes: U64                   @< pending data product volume
     ) \
       severity activity high \
       id 3 \
@@ -134,7 +136,7 @@ module Svc {
 
     @ Error opening directory
     event DirectoryNotManaged(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
     ) \
       severity warning high \
       id 5 \
@@ -148,7 +150,7 @@ module Svc {
 
     @ Catalog transmission stopped
     event CatalogXmitStopped(
-      bytes: U64 @< data transmitted
+      bytes: U64  @< data transmitted
     ) \
       severity activity high \
       id 11 \
@@ -156,7 +158,7 @@ module Svc {
 
     @ Catalog transmission completed
     event CatalogXmitCompleted(
-      bytes: U64 @< data transmitted
+      bytes: U64  @< data transmitted
     ) \
       severity activity high \
       id 12 \
@@ -164,9 +166,9 @@ module Svc {
 
     @ Sending product
     event SendingProduct(
-      file: string size FileNameStringSize @< The file
-      bytes: U32                           @< file size
-      prio: U32                            @< DP priority
+      file: string size FileNameStringSize  @< The file
+      bytes: U32                            @< file size
+      prio: U32                             @< DP priority
     ) \
       severity activity low \
       id 13 \
@@ -174,9 +176,9 @@ module Svc {
 
     @ Product send complete
     event ProductComplete(
-      file: string size FileNameStringSize @< The file
-      pending: U32                         @< pending data products
-      pending_bytes: U64                   @< pending data product volume
+      file: string size FileNameStringSize  @< The file
+      pending: U32                          @< pending data products
+      pending_bytes: U64                    @< pending data product volume
     ) \
       severity activity low \
       id 14 \
@@ -198,7 +200,7 @@ module Svc {
 
     @ Catalog is full
     event CatalogFull(
-      dir: string size FileNameStringSize @< last directory read
+      dir: string size FileNameStringSize  @< last directory read
     ) \
       severity warning high \
       id 22 \
@@ -207,8 +209,8 @@ module Svc {
 
     @ Error opening file
     event FileOpenError(
-      loc: string size FileNameStringSize @< The directory
-      stat: I32                           @< status
+      loc: string size FileNameStringSize  @< The directory
+      stat: I32                            @< status
     ) \
       severity warning high \
       id 23 \
@@ -217,8 +219,8 @@ module Svc {
 
     @ Error opening file
     event FileReadError(
-      file: string size FileNameStringSize @< The file
-      stat: I32                            @< status
+      file: string size FileNameStringSize  @< The file
+      stat: I32                             @< status
     ) \
       severity warning high \
       id 24 \
@@ -227,10 +229,10 @@ module Svc {
 
     @ Error reading header data from DP file
     event FileHdrError(
-      file: string size FileNameStringSize @< The file
-      field: DpHdrField                    @< incorrect value
-      exp: U32                             @< expected value
-      act: U32                             @< expected value
+      file: string size FileNameStringSize  @< The file
+      field: DpHdrField                     @< incorrect value
+      exp: U32                              @< expected value
+      act: U32                              @< expected value
     ) \
       severity warning high \
       id 25 \
@@ -239,7 +241,7 @@ module Svc {
 
     @ Error deserializing header data
     event FileHdrDesError(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
       stat: I32
     ) \
       severity warning high \
@@ -249,7 +251,7 @@ module Svc {
 
     @ Error inserting entry into list
     event DpInsertError(
-      dp: DpRecord @< The DP
+      dp: DpRecord  @< The DP
     ) \
       severity warning high \
       id 27 \
@@ -258,7 +260,7 @@ module Svc {
 
     @ Error inserting entry into list
     event DpDuplicate(
-      dp: DpRecord @< The DP
+      dp: DpRecord  @< The DP
     ) \
       severity diagnostic \
       id 28 \
@@ -267,7 +269,7 @@ module Svc {
 
     @ Error inserting entry into list
     event DpCatalogFull(
-      dp: DpRecord @< The DP
+      dp: DpRecord  @< The DP
     ) \
       severity warning high \
       id 29 \
@@ -283,7 +285,7 @@ module Svc {
 
     @ Error getting file size
     event FileSizeError(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
       stat: I32
     ) \
       severity warning high \
@@ -299,7 +301,7 @@ module Svc {
       format "DpCatalog transmit not active"
 
     event StateFileOpenError(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
       stat: I32
     ) \
       severity warning high \
@@ -307,7 +309,7 @@ module Svc {
       format "Error opening state file {}, stat: {}"
 
     event StateFileReadError(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
       stat: I32
       offset: I32
     ) \
@@ -316,7 +318,7 @@ module Svc {
       format "Error reading state file {}, stat {}, offset: {}"
 
     event StateFileTruncated(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
       offset: I32
       $size: I32
     ) \
@@ -330,7 +332,7 @@ module Svc {
       format "No specified state file"
 
     event StateFileWriteError(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
       stat: I32
     ) \
       severity warning high \
@@ -338,14 +340,14 @@ module Svc {
       format "Error writing state file {}, stat {}"
 
     event NoStateFile(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
     ) \
       severity warning low \
       id 40 \
       format "State file {} doesn't exist"
 
     event DpFileXmitError(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
       stat: Svc.SendFileStatus
     ) \
       severity warning high \
@@ -354,7 +356,7 @@ module Svc {
       throttle 10
 
     event DpFileSendError(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
       stat: Svc.SendFileStatus
     ) \
       severity warning high \
@@ -364,14 +366,14 @@ module Svc {
 
     @ File added
     event DpFileAdded(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
     ) \
       severity activity high \
       id 43 \
       format "DP file {} added at runtime"
 
     event NotLoaded(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
     ) \
       severity activity high \
       id 44 \
@@ -379,7 +381,7 @@ module Svc {
 
     @ Skipped a transmitted file
     event DpFileSkipped(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
     ) \
       severity activity high \
       id 45 \
@@ -392,8 +394,8 @@ module Svc {
 
     @ DP file name does not match the file's header metadata
     event InvalidFileName(
-      file: string size FileNameStringSize     @< The invalid file
-      expected: string size FileNameStringSize @< The expected canonical file
+      file: string size FileNameStringSize      @< The invalid file
+      expected: string size FileNameStringSize  @< The expected canonical file
     ) \
       severity warning high \
       id 47 \
@@ -402,7 +404,7 @@ module Svc {
 
     @ The file contained malformed or invalid data during deserialization
     event FileCorruptedDataError(
-      file: string size FileNameStringSize @< The file
+      file: string size FileNameStringSize  @< The file
       stat: I32
     ) \
       severity warning high \
@@ -411,8 +413,8 @@ module Svc {
 
     @ Error formatting a DP file name
     event FileNameFormatError(
-      file: string size FileNameStringSize @< The file whose name failed to format
-      status: Fw.StringFormatStatus        @< The status returned from the format operation
+      file: string size FileNameStringSize  @< The file whose name failed to format
+      status: Fw.StringFormatStatus         @< The status returned from the format operation
     ) \
       severity warning high \
       id 49 \
@@ -428,5 +430,7 @@ module Svc {
 
     @ Number of data products sent
     telemetry DpsSent: U32 id 1
+
   }
+
 }

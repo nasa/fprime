@@ -1,5 +1,6 @@
 @ A state machine for testing state-to-child transitions
 state machine StateToChild {
+
   @ Exit S2
   action exitS2
 
@@ -26,11 +27,13 @@ state machine StateToChild {
 
   @ State S1
   state S1 {
+
     @ Initial transition
     initial enter S2
 
     @ State S2
     state S2 {
+
       @ Enter S2
       entry do { enterS2 }
 
@@ -39,18 +42,23 @@ state machine StateToChild {
 
       @ State transition to S3
       on S2_to_S3 enter S3
+
     }
 
     @ State S3
     state S3 {
+
       @ Enter S3
       entry do { enterS3 }
 
       @ Exit S3
       exit do { exitS3 }
+
     }
 
     @ State transition to S2
     on S1_to_S2 do { a } enter S2
+
   }
+
 }

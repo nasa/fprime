@@ -1,5 +1,6 @@
 module Svc {
   module Ccsds {
+
     @ Interface for components performing CCSDS SDLS (Space Data Link Security) decryption:
     @ receives a security association index and iv/data buffer with frame context.
     @ Decrypted data (possibly newly allocated) is sent out decryptOut alongside the
@@ -34,5 +35,6 @@ module Svc {
       @ Port for receiving back the iv/data buffer sent on decryptOut for deallocation
       sync input port bufferReturnIn: Svc.ComDataWithContext
     }
+
   }
 }

@@ -4,7 +4,7 @@ async command BL_OpenFile(file: string size 40) opcode 0x00
 @ Close the currently open log file, if any
 async command BL_CloseFile opcode 0x01
 
-enum LogState: U8 {
+enum LogState : U8 {
   LOGGING_ON  = 0
   LOGGING_OFF = 1
 }

@@ -5,12 +5,14 @@ module CdhCore {
   instance cmdDisp: Svc.CommandDispatcher base id CdhCoreConfig.BASE_ID + 0x00000 \
     queue size CdhCoreConfig.QueueSizes.cmdDisp \
     stack size CdhCoreConfig.StackSizes.cmdDisp \
-    priority CdhCoreConfig.Priorities.cmdDisp
+    priority CdhCoreConfig.Priorities.cmdDisp \
+    cpu CdhCoreConfig.CpuAffinities.cmdDisp
 
   instance events: Svc.EventManager base id CdhCoreConfig.BASE_ID + 0x001000 \
     queue size CdhCoreConfig.QueueSizes.events \
     stack size CdhCoreConfig.StackSizes.events \
-    priority CdhCoreConfig.Priorities.events
+    priority CdhCoreConfig.Priorities.events \
+    cpu CdhCoreConfig.CpuAffinities.events
 
   # ----------------------------------------------------------------------
   # Queued Components
@@ -96,5 +98,6 @@ module CdhCore {
 
     @ Input port for scheduling the EventManager (dropped event telemetry)
     port eventsRun = events.run
+
   } # end topology
 } # end CdhCore Subtopology

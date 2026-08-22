@@ -1,6 +1,8 @@
 module Svc {
+
   @ A rate group passive component with input and output scheduler ports
   passive component PassiveRateGroup {
+
     @ The rate group cycle input
     sync input port CycleIn: Cycle
 
@@ -19,11 +21,28 @@ module Svc {
     array CycleTime = [PassiveRateGroupOutputPorts] U32 default 0
     telemetry PortCycleTime: CycleTime
 
+    @ High water marks for port cycle times
+    telemetry PortCycleTimeHWM: CycleTime update on change
+
+    @ Clear max cycle time and port cycle time high water marks (cycle count is not cleared)
+    sync command CLEAR_STATISTICS
+
     # Standard ports
     @ A port for getting the time
     time get port Time
 
     @ A port for emitting telemetry
     telemetry port Tlm
+
+    @ Port for receiving commands
+    command recv port CmdDisp
+
+    @ Port for sending command responses
+    command resp port CmdStatus
+
+    @ Port for sending command registration requests
+    command reg port CmdReg
+
   }
+
 }

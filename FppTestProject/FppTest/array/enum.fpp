@@ -1,5 +1,7 @@
 module FppTest {
+
   module Array {
+
     enum E {
       A
       B
@@ -7,5 +9,7 @@ module FppTest {
     }
 
     array Enum = [3] E default [E.A, E.B, E.C]
+
   }
+
 }

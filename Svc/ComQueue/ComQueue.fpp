@@ -1,6 +1,6 @@
 module Svc {
   @ An enumeration of queue data types
-  enum QueueType: U8 {
+  enum QueueType : U8 {
     COM_QUEUE
     BUFFER_QUEUE
   }
@@ -13,6 +13,7 @@ module Svc {
 
   @ Component used to queue buffer types
   active component ComQueue {
+
     # ----------------------------------------------------------------------
     # General ports
     # ----------------------------------------------------------------------
