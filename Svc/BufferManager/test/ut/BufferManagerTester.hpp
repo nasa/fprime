@@ -48,6 +48,9 @@ class BufferManagerTester : public BufferManagerGTestBase {
     //! Multiple buffer sizes
     void multBuffSize();
 
+    //! Requested buffer size is preserved when allocating from a larger bin
+    void bufferSizeTrimmed();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods

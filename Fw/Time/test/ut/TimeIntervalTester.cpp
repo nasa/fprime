@@ -23,8 +23,8 @@ void TimeIntervalTester::test_TimeIntervalInstantiateTest() {
     std::cout << time << std::endl;
 
     Fw::TimeInterval time2(time);
-    ASSERT_EQ(time.getSeconds(), 1);
-    ASSERT_EQ(time.getUSeconds(), 2);
+    ASSERT_EQ(time2.getSeconds(), 1);
+    ASSERT_EQ(time2.getUSeconds(), 2);
     std::cout << time2 << std::endl;
 
     Fw::TimeInterval time3(Fw::Time(10, 20), Fw::Time(20, 40));

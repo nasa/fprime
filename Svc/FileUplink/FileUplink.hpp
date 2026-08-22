@@ -192,6 +192,7 @@ class FileUplink final : public FileUplinkComponentBase {
     //! Configure the allowed uplink directory
     //!
     //! Restricts all file writes to the given directory.
+    //! Fail-open: until called, the sandbox defaults to `/` (any writable path is allowed).
     //! Must be called before any files are received.
     //! The directory must be an absolute path ending with `/`.
     //!
@@ -271,7 +272,7 @@ class FileUplink final : public FileUplinkComponentBase {
     //! The total number of files rejected for a bad checksum
     FilesReceivedFailed m_filesReceivedFailed;
 
-    //! The total number of cancel packets
+    //! The total number of packets received
     PacketsReceived m_packetsReceived;
 
     //! The total number of warnings

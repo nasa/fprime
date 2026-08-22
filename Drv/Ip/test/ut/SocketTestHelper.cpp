@@ -21,7 +21,7 @@ void force_recv_timeout(int fd, Drv::IpSocket& socket) {
     // Set timeout socket option
     struct timeval timeout;
     timeout.tv_sec = 0;
-    timeout.tv_usec = 50;  // 50ms max before test failure
+    timeout.tv_usec = 50;  // 50us timeout to force a quick receive timeout
     setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char*>(&timeout), sizeof(timeout));
 }
 

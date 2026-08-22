@@ -37,6 +37,7 @@ module ComCfg {
         FW_PACKET_PACKETIZED_TLM = 0x0004  @< Packetized telemetry packet type
         FW_PACKET_DP             = 0x0005  @< Data Product packet type
         FW_PACKET_IDLE           = 0x0006  @< F Prime idle
+        FW_PACKET_PARAM          = 0x0007  @< Parameter value type - outgoing
         FW_PACKET_HAND           = 0x00FE  @< F Prime handshake
         FW_PACKET_UNKNOWN        = 0x00FF  @< F Prime unknown packet
         SPP_IDLE_PACKET          = 0x07FF  @< Per Space Packet Standard, all 1s (11bits) is reserved for Idle Packets

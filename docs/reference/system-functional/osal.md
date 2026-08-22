@@ -45,6 +45,7 @@ The console service provides a mechanism for writing messages to the system cons
 In addition to the platform-specific core services, the OSAL provides generic services that are implemented independently of the underlying OS:
 
 - **Priority Queue** — A heap-based priority queue implementation used by the framework for priority-aware message dispatch.
+- **Lockless Priority Queue** — An opt-in, lockless, ISR-safe priority queue with at-initialization memory allocation, for targets that send or receive messages from interrupt context.
 
 ### Implementation Architecture
 

@@ -10,6 +10,7 @@
 
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Prm/ParamValid.hpp>
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
 #include <TlmPacketizerConfig/FppConstantsAc.hpp>
 #include <cstring>
@@ -585,7 +586,7 @@ Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id,
                                                     const FwPrmIdType local_id,
                                                     const Fw::ParamValid prmStat,
                                                     Fw::SerialBufferBase& buff) {
-    if ((prmStat == Fw::ParamValid::VALID) || (prmStat == Fw::ParamValid::DEFAULT)) {
+    if (FW_PARAM_OK(prmStat)) {
         switch (local_id) {
             case PARAMID_SECTION_ENABLED:
                 return buff.deserializeTo(this->m_sectionEnabled);

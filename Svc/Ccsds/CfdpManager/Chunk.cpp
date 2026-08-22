@@ -61,6 +61,14 @@ void CfdpChunkList::reset() {
 }
 
 void CfdpChunkList::add(FileSize offset, FileSize size) {
+    // A zero-length chunk covers no bytes and is not a received interval. It also violates the
+    // non-empty invariant assumed downstream by combineNext() (chunk_end > offset), so ignore it
+    // rather than asserting. This value can be derived from incoming protocol data (a FileData PDU
+    // whose payload length equals the encoded offset length), so it must not be treated as a bug.
+    if (size == 0) {
+        return;
+    }
+
     const Chunk chunk = {offset, size};
     const ChunkIdx i = findInsertPosition(&chunk);
 

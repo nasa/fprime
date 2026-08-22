@@ -3,8 +3,6 @@
 Test the command dispatcher with basic integration tests.
 """
 
-import time
-
 
 def test_send_systemResources_command(fprime_test_api):
     """Test that commands may be sent
@@ -126,7 +124,6 @@ def test_send_systemResources_command(fprime_test_api):
     print("PERCENT: ", CPU_percent1)
 
     fprime_test_api.clear_histories()  # will clear all history (can read telemetry channel again with latest value.  otherwise still have old value)
-    time.sleep(5)
 
     # Expect number still changing after clear_history
     fprime_test_api.await_telemetry(
@@ -139,12 +136,10 @@ def test_send_systemResources_command(fprime_test_api):
         ["DISABLED"],
     )
 
-    time.sleep(3)
     # Expect number no change (stale or stop) after Disable
     fprime_test_api.await_telemetry(
         fprime_test_api.get_mnemonic("Svc.SystemResources") + "." + "CPU", start="NOW"
     )
-    time.sleep(5)
 
     fprime_test_api.await_telemetry(
         fprime_test_api.get_mnemonic("Svc.SystemResources") + "." + "CPU", start="NOW"

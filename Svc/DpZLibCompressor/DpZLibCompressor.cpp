@@ -8,6 +8,8 @@
 
 #include <cstring>
 
+#include <Fw/Prm/ParamValid.hpp>
+
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -48,7 +50,7 @@ Svc::CompressionAlgorithm DpZLibCompressor ::compressChunk_handler(FwIndexType p
 
     Fw::ParamValid param_valid;
     const FwSizeType zlib_alloc_size = paramGet_ZLibBufferSize(param_valid);
-    FW_ASSERT(param_valid == Fw::ParamValid::DEFAULT || param_valid == Fw::ParamValid::VALID, param_valid);
+    FW_ASSERT(FW_PARAM_OK(param_valid), param_valid);
 
     ctx.zlib_alloc_buffer = bufferZLibGet_out(0, zlib_alloc_size);
     if (ctx.zlib_alloc_buffer.getSize() == 0) {
@@ -87,7 +89,7 @@ Svc::CompressionAlgorithm DpZLibCompressor ::compressChunk_handler(FwIndexType p
 CompressionAlgorithm DpZLibCompressor::zlibCompressionHelper(ZLibCtx& ctx, const Fw::Buffer& in_buffer) {
     Fw::ParamValid param_valid;
     const I8 compression_level = paramGet_CompressionLevel(param_valid);
-    FW_ASSERT(param_valid == Fw::ParamValid::DEFAULT || param_valid == Fw::ParamValid::VALID, param_valid);
+    FW_ASSERT(FW_PARAM_OK(param_valid), param_valid);
 
     int zlib_ok = 0;
     zlib_ok = deflateInit(&ctx.zlib_stream, compression_level);

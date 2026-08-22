@@ -35,6 +35,15 @@ The **FileHandlingCfdp subtopology** packages CFDP-based file-transfer services 
 * **Communication/Framing Stack**: Wire CFDP PDU ports between FileHandlingCfdp and your COM/framing subtopology (e.g., `ComCcsds`, `FprimeRouter`) to complete uplink/downlink paths for CFDP PDUs.
 * **Buffer Management**: Connect buffer allocation/deallocation ports to downstream buffer managers (typically part of your COM subtopology).
 
+> [!WARNING]
+> **This subtopology is not configured to be secure by default.** For backwards compatibility, it
+> intentionally does **not** configure a load sandbox for `prmDb`: `PRM_LOAD_FILE` may load from
+> **any absolute path accessible to the process** via ground command. Security-conscious
+> deployments **must** call `FileHandlingCfdp::prmDb.configureLoadSandbox(<directory>)` from
+> topology setup code (note: `prmDb.configure(<file name>)` sets the store-file name and is
+> **not** a load sandbox). Additionally, CFDP file transfers via `cfdpManager` are not sandboxed:
+> ground-commanded transactions may read or write any path accessible to the process.
+
 ### 2.4 Differences from FileHandling Subtopology
 
 The **FileHandlingCfdp** subtopology replaces the traditional `FileUplink` and `FileDownlink` components with the CFDP-based `CfdpManager` component:

@@ -531,7 +531,7 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(vo
 }
 
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(F32& val, Endianness mode) {
-    // deserialize as 64-bit int to handle endianness
+    // deserialize as 32-bit int to handle endianness
     U32 tempVal = 0;
     SerializeStatus stat = this->deserializeTo(tempVal, mode);
     if (stat != FW_SERIALIZE_OK) {
@@ -653,11 +653,11 @@ void LinearBufferBase::resetDeser() {
 
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeSkip(FwSizeType numBytesToSkip) {
     Fw::SerializeStatus status = FW_SERIALIZE_OK;
-    // compute new deser loc
+    // compute new ser loc
     const FwSizeType newSerLoc = this->m_serLoc + numBytesToSkip;
     // check for room
     if (newSerLoc <= this->m_capacity) {
-        // update deser loc
+        // update ser loc
         this->m_serLoc = static_cast<Serializable::SizeType>(newSerLoc);
     } else {
         status = FW_SERIALIZE_NO_ROOM_LEFT;

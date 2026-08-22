@@ -164,7 +164,7 @@ class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
 
     Drv::UdpSocket m_socket;  //!< Socket implementation
 
-    FwSizeType m_allocation_size;  //!< Member variable to store the buffer size
+    FwSizeType m_allocation_size = 0;  //!< Member variable to store the buffer size
 };
 
 }  // end namespace Drv
