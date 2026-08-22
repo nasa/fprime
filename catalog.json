@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "7d8f579f159d2f7c2d4984d92828575e37f87fa6",
-  "generated_at": "2026-08-22T21:17:58Z",
+  "generated_at": "2026-08-22T22:11:44Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -23,14 +23,14 @@
     "tier": "silver"
   },
   "overall_int": {
-    "line_pct": 29.45,
-    "line_covered": 8700,
+    "line_pct": 29.46,
+    "line_covered": 8703,
     "line_total": 29538,
     "function_pct": 38.43,
     "function_covered": 1527,
     "function_total": 3973,
-    "branch_pct": 18.67,
-    "branch_covered": 2843,
+    "branch_pct": 18.66,
+    "branch_covered": 2841,
     "branch_total": 15224,
     "report": "int-coverage/coverage-all.html",
     "tier": "bronze"
@@ -4800,14 +4800,14 @@
         "tier": "bronze"
       },
       "int": {
-        "line_pct": 35.62,
-        "line_covered": 1198,
+        "line_pct": 35.71,
+        "line_covered": 1201,
         "line_total": 3363,
         "function_pct": 40.69,
         "function_covered": 236,
         "function_total": 580,
-        "branch_pct": 25.67,
-        "branch_covered": 371,
+        "branch_pct": 25.54,
+        "branch_covered": 369,
         "branch_total": 1445,
         "report": "Os/int-coverage/index.html",
         "tier": "bronze"
@@ -4964,8 +4964,8 @@
         "function_pct": 27.17,
         "function_covered": 25,
         "function_total": 92,
-        "branch_pct": 15.27,
-        "branch_covered": 73,
+        "branch_pct": 15.06,
+        "branch_covered": 72,
         "branch_total": 478,
         "report": "Os/Generic/int-coverage/index.html",
         "tier": "bronze"
@@ -5055,8 +5055,8 @@
         "function_pct": 44.44,
         "function_covered": 12,
         "function_total": 27,
-        "branch_pct": 20.43,
-        "branch_covered": 19,
+        "branch_pct": 19.35,
+        "branch_covered": 18,
         "branch_total": 93,
         "report": "Os/Generic/Types/int-coverage/index.html",
         "tier": "bronze"
@@ -5207,14 +5207,14 @@
         "tier": "bronze"
       },
       "int": {
-        "line_pct": 44.61,
-        "line_covered": 335,
+        "line_pct": 45.01,
+        "line_covered": 338,
         "line_total": 751,
         "function_pct": 61.05,
         "function_covered": 58,
         "function_total": 95,
-        "branch_pct": 28.79,
-        "branch_covered": 93,
+        "branch_pct": 29.1,
+        "branch_covered": 94,
         "branch_total": 323,
         "report": "Os/Posix/int-coverage/index.html",
         "tier": "bronze"

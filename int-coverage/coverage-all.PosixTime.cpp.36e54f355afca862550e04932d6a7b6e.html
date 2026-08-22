@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-21 22:10:08</td>
+      <td>2026-08-22 22:09:38</td>
     </tr>
   </table>
 </div>
@@ -72,7 +72,7 @@
     </tr>
     <tr><td><a href="#l14">Svc::PosixTime::PosixTime(char const*) (line 14)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l18">Svc::PosixTime::setTimeContext(unsigned char) (line 18)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l22">Svc::PosixTime::timeGetPort_handler(short, Fw::Time&amp;) (line 22)</a></td><td>called 3840 times</td><td>64.0%</td></tr>
+    <tr><td><a href="#l22">Svc::PosixTime::timeGetPort_handler(short, Fw::Time&amp;) (line 22)</a></td><td>called 3892 times</td><td>64.0%</td></tr>
     <tr><td><a href="#l16">Svc::PosixTime::~PosixTime() (line 16)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -238,7 +238,7 @@
       <td class="lineno"><a id="l22" href="#l22">22</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3840</td>
+      <td class="linecount coveredLine">3892</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">PosixTime</span><span class="o">::</span><span class="n">timeGetPort_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="cm">/*!&lt; The port number*/</span></td>
     </tr>
     <tr class="source-line">
@@ -259,7 +259,7 @@
       <td class="lineno"><a id="l25" href="#l25">25</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3840</td>
+      <td class="linecount coveredLine">3892</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">timespec</span><span class="w"> </span><span class="n">stime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span></td>
     </tr>
     <tr class="source-line">
@@ -269,11 +269,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 3841 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 3894 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3840</td>
+      <td class="linecount partialCoveredLine">3892</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">clock_gettime</span><span class="p">(</span><span class="n">CLOCK_REALTIME</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stime</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -310,11 +310,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 3825 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 3888 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">3826</td>
+      <td class="linecount coveredLine">3887</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">time</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">TimeBase</span><span class="o">::</span><span class="n">TB_WORKSTATION_TIME</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_timeContext</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">stime</span><span class="p">.</span><span class="n">tv_sec</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -323,18 +323,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 3826 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 3887 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">3841</td>
+      <td class="linecount coveredLine">3894</td>
       <td class="src coveredLine"><span class="w">             </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">stime</span><span class="p">.</span><span class="n">tv_nsec</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3824</td>
+      <td class="linecount coveredLine">3888</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
