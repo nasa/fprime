@@ -23,6 +23,6 @@ telemetry CommandsFailed: U64 update on change
 telemetry LastTrapReason: TrapReason update on change
 
 @ Currently running sequence name.
-@ When executing sequence with `RUN` or `LOAD` the name will be the filename
-@ without `.wasm`. When using `LOAD_NAME`, the name is provided by the user
+@ When a module is loaded under an empty name (`RUN`, or `LOAD` with no name) the
+@ name is the filename without `.wasm`; otherwise it is the module name provided to `LOAD`
 telemetry SeqName: string size FileNameStringSize update on change

@@ -312,39 +312,44 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_RequestContext& value) {
-    // Reached on any engine-completion failure, whether the engine was running a
-    // start function (LOAD/RUN) or a main function (RUN). Reason about the cause
-    // so the right counter is bumped.
-    switch (this->m_exit.reason) {
-        case WasmSequencer_ExitReason::CANCEL:
-            this->m_tlm.sequencesCancelled++;
-            this->log_ACTIVITY_HI_SequenceCancelled(value.get_moduleIdx());
-            break;
-        default:
-            this->m_tlm.sequencesFailed++;
-            this->log_WARNING_HI_SequenceStartFailed(value.get_moduleIdx(), this->m_exit.reason, this->m_exit.code,
-                                                     this->m_exit.lastTrapReason, this->m_exit.lastHostFunction);
-            break;
-    }
+    // A failure while running a module's start function (LOAD-with-start, or the
+    // start phase of a RUN-with-start).
+    this->reportSequenceFailure(value.get_moduleIdx(), WasmSequencer_SequencePhase::START);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleFailed(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_RequestContext& value) {
-    // Reached on any engine-completion failure, whether the engine was running a
-    // start function (LOAD/RUN) or a main function (RUN). Reason about the cause
-    // so the right counter is bumped.
+    // A failure while running a module's main function.
+    this->reportSequenceFailure(value.get_moduleIdx(), WasmSequencer_SequencePhase::MAIN);
+}
+
+void WasmSequencer ::reportSequenceFailure(WasmSequencer_ModuleIdx moduleIdx, WasmSequencer_SequencePhase phase) {
     switch (this->m_exit.reason) {
         case WasmSequencer_ExitReason::CANCEL:
             this->m_tlm.sequencesCancelled++;
-            this->log_ACTIVITY_HI_SequenceCancelled(value.get_moduleIdx());
-            break;
+            this->log_ACTIVITY_HI_SequenceCancelled(moduleIdx, phase);
+            return;
+        case WasmSequencer_ExitReason::HOST_PANIC:
+            this->m_tlm.sequencesFailed++;
+            this->log_WARNING_HI_SequencePanic(moduleIdx, phase, this->m_exit.code);
+            return;
+        case WasmSequencer_ExitReason::INTERPRETER_TRAP:
+            this->m_tlm.sequencesFailed++;
+            this->log_WARNING_HI_SequenceTrapped(moduleIdx, phase, this->m_exit.lastTrapReason);
+            return;
+        case WasmSequencer_ExitReason::INTERPRETER_FINISHED:
+        case WasmSequencer_ExitReason::HOST_EXIT:
+            // Only reached on the failure path: a non-zero main return value or a
+            // non-zero fprime.exit code.
+            this->m_tlm.sequencesFailed++;
+            this->log_WARNING_HI_SequenceExited(moduleIdx, phase, this->m_exit.code);
+            return;
         default:
             this->m_tlm.sequencesFailed++;
-            this->log_WARNING_HI_SequenceFailed(value.get_moduleIdx(), this->m_exit.reason, this->m_exit.code,
-                                                this->m_exit.lastTrapReason, this->m_exit.lastHostFunction);
-            break;
+            this->log_WARNING_HI_SequenceHostFailure(moduleIdx, phase, this->m_exit.reason, this->m_exit.lastHostFunction);
+            return;
     }
 }
 
@@ -390,14 +395,12 @@ bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_invokeSuccee
 bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_interpreterSucceeded(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal) const {
-    // The engine sets m_exit.reason before signalling engineFinished. A run
-    // succeeds when the interpreter finished normally, or when the guest called
-    // fprime.exit(0) (a clean, explicit termination). Every other exit reason
-    // (trap, non-zero exit, panic, timeout, host failure, unexpected reply,
-    // cancel) is a failure.
+    // The engine sets m_exit.reason and m_exit.code before signalling
+    // engineFinished. A run succeeds only when it finished with a zero code:
+    // main returned 0 (a void return reports code 0) or the guest called
+    // fprime.exit(0)
     switch (this->m_exit.reason) {
         case WasmSequencer_ExitReason::INTERPRETER_FINISHED:
-            return true;
         case WasmSequencer_ExitReason::HOST_EXIT:
             return this->m_exit.code == 0;
         default:

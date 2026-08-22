@@ -30,7 +30,6 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     static const FwOpcodeType OPCODE_RUN = WasmSequencer::OPCODE_RUN;
     static const FwOpcodeType OPCODE_WAIT = WasmSequencer::OPCODE_WAIT;
     static const FwOpcodeType OPCODE_LOAD = WasmSequencer::OPCODE_LOAD;
-    static const FwOpcodeType OPCODE_LOAD_NAME = WasmSequencer::OPCODE_LOAD_NAME;
     static const FwOpcodeType OPCODE_INVOKE = WasmSequencer::OPCODE_INVOKE;
     static const FwOpcodeType OPCODE_CONTINUE = WasmSequencer::OPCODE_CONTINUE;
     static const FwOpcodeType OPCODE_CANCEL = WasmSequencer::OPCODE_CANCEL;
@@ -134,6 +133,22 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! current sequence index without a command actually being dispatched, to
     //! exercise the "unexpected response" failure paths.
     U32 currentCmdUid() const { return this->component.makeCmdUid(); }
+
+    // ----------------------------------------------------------------------
+    // Event-assertion helpers
+    // ----------------------------------------------------------------------
+
+    //! Assert the total count of sequence-completion FAILURE events across the
+    //! four distinct failure events (SequenceExited / SequencePanic /
+    //! SequenceTrapped / SequenceHostFailure). Used where a test only cares that
+    //! a failure occurred, independent of which branch reported it.
+    void assertSequenceFailureCount(U32 expected) const {
+        const U32 actual = static_cast<U32>(this->eventHistory_SequenceExited->size()) +
+                           static_cast<U32>(this->eventHistory_SequencePanic->size()) +
+                           static_cast<U32>(this->eventHistory_SequenceTrapped->size()) +
+                           static_cast<U32>(this->eventHistory_SequenceHostFailure->size());
+        ASSERT_EQ(expected, actual);
+    }
 
     // ----------------------------------------------------------------------
     // White-box accessors into the component under test

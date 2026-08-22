@@ -214,10 +214,10 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dispatchPending
                 // reject late/stale responses in cmdResponseIn_handler.
                 this->m_tlm.commandsDispatched++;
 
-                // Start the statement-timeout clock: we are about to block in
+                // Start the host-function timeout clock: we are about to block in
                 // AWAITING_RESPONSE until the command response comes back in.
-                this->m_statementStart = this->getTime();
-                this->m_hasStatementStart = true;
+                this->m_hostFunctionStart = this->getTime();
+                this->m_hasHostFunctionStart = true;
 
                 this->cmdOut_out(0, cmd, this->makeCmdUid());
             }
@@ -472,8 +472,8 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dispatchPending
                     case Svc::BlockState::BLOCK:
                         // Do not immediately resume the interpreter, this will let the state machine asynchronously
                         // wait for a signal that we got a message (or timeout).
-                        this->m_statementStart = this->getTime();
-                        this->m_hasStatementStart = true;
+                        this->m_hostFunctionStart = this->getTime();
+                        this->m_hasHostFunctionStart = true;
                         break;
                     case Svc::BlockState::NO_BLOCK:
                         // We are non-blocking and the queue is empty, report this back to the interpreter and wake back
@@ -495,7 +495,7 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_clearPendingHos
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::NONE;
     this->m_pendingHostFunction.caller = nullptr;
     this->m_hasPendingTimer = false;
-    this->m_hasStatementStart = false;
+    this->m_hasHostFunctionStart = false;
 }
 
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setContext(
@@ -562,14 +562,14 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkTimeout(
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal) {
     // Only blocking host functions that await an external event are subject to the
-    // statement timeout (COMMAND -> cmdResponseIn, blocking SERIAL_RECV -> serialIn).
-    // Sleeps have their own wake timer (checkShouldWake) and are not "statements".
-    if (!this->m_hasStatementStart) {
+    // host-function timeout (COMMAND -> cmdResponseIn, blocking SERIAL_RECV -> serialIn).
+    // Sleeps have their own wake timer (checkSleepTimers), separate from this timeout.
+    if (!this->m_hasHostFunctionStart) {
         return;
     }
 
     Fw::ParamValid prmValid;
-    const F32 timeoutSecs = this->paramGet_STATEMENT_TIMEOUT_SECS(prmValid);
+    const F32 timeoutSecs = this->paramGet_HOST_FUNCTION_TIMEOUT_SECS(prmValid);
 
     // A non-positive or out-of-range timeout disables the check entirely.
     if (timeoutSecs <= 0.0f || timeoutSecs > static_cast<F32>(std::numeric_limits<U32>::max())) {
@@ -588,7 +588,7 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkTimeout(
         useconds %= 1000000u;
     }
 
-    Fw::Time deadline = this->m_statementStart;
+    Fw::Time deadline = this->m_hostFunctionStart;
     deadline.add(seconds, useconds);
 
     const Fw::Time now = this->getTime();
@@ -602,7 +602,7 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkTimeout(
             this->interpreter_sendSignal_hostResponseTimeout();
             break;
         case Fw::TimeComparison::INCOMPARABLE:
-            // Time base / context changed since the statement started.
+            // Time base / context changed since the host function started.
             this->interpreter_sendSignal_hostResponseTimeIncomparable();
             break;
     }

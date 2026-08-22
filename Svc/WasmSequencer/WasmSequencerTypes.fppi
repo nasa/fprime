@@ -13,6 +13,12 @@ enum HostFunction: U8 {
   SERIAL_RECV
 }
 
+@ Which phase of a module's execution a sequence-completion event refers to
+enum SequencePhase: U8 {
+  START @< The module's optional start function
+  MAIN  @< The module's main entrypoint
+}
+
 @ Corresponds to spacewasm_status_t
 enum Status: I32 {
   OK                                      = 0

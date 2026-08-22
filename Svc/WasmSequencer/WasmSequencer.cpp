@@ -56,8 +56,8 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_hasExectingContext(false),
       m_pendingTimer(),
       m_hasPendingTimer(false),
-      m_statementStart(),
-      m_hasStatementStart(false),
+      m_hostFunctionStart(),
+      m_hasHostFunctionStart(false),
       m_invokeStatus(SPACEWASM_OK),
       m_pendingPause(false),
       m_loadFile(nullptr),
@@ -88,7 +88,7 @@ WasmSequencer ::~WasmSequencer() {
 // ----------------------------------------------------------------------
 
 void WasmSequencer ::checkTimers_handler(FwIndexType portNum, U32 context) {
-    // Drive the sleep-wake / statement-timeout checks in the state machine.
+    // Drive the sleep-wake / host-function-timeout checks in the state machine.
     this->interpreter_sendSignal_checkTimers();
 }
 
@@ -271,15 +271,10 @@ void WasmSequencer ::WAIT_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     }
 }
 
-void WasmSequencer ::LOAD_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& fileName) {
-    // LOAD uses an empty module name (single unnamed module).
-    this->LOAD_NAME_cmdHandler(opCode, cmdSeq, fileName, Fw::CmdStringArg(""));
-}
-
-void WasmSequencer ::LOAD_NAME_cmdHandler(FwOpcodeType opCode,
-                                          U32 cmdSeq,
-                                          const Fw::CmdStringArg& fileName,
-                                          const Fw::CmdStringArg& name) {
+void WasmSequencer ::LOAD_cmdHandler(FwOpcodeType opCode,
+                                     U32 cmdSeq,
+                                     const Fw::CmdStringArg& fileName,
+                                     const Fw::CmdStringArg& name) {
     this->controller_sendSignal_load(Svc::WasmSequencer_LoadRequest(
         fileName, name, Svc::SeqArgs(),
         Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_LOAD, opCode, cmdSeq,

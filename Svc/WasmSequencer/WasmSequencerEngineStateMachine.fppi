@@ -62,7 +62,7 @@ state machine EngineStateMachine {
   # Guards      #
   ###############
 
-  @ return true if execution should pause before spinning the next statement
+  @ return true if execution should pause before spinning the interpreter again
   guard pendingPause
 
   @ a host function is waiting to be processed
@@ -156,9 +156,9 @@ state machine EngineStateMachine {
   @ A periodic check on any host function to guard against timeouts
   action checkTimeout
 
-  @ called when a paused host statement (F´ command) unsuccessfully executed. only raised in RUNNING.AWAITING_RESPONSE
+  @ called when a paused host function (F´ command) unsuccessfully executed. only raised in RUNNING.AWAITING_RESPONSE
   signal hostResponseFailure
-  @ called when an unexpected or incorrect statement response comes in. only raised in the RUNNING state
+  @ called when an unexpected or incorrect host-function response comes in. only raised in the RUNNING state
   signal hostResponseUnexpected: HostFunction
   @ Fw::Times are not comparable during a sleep
   signal hostResponseTimeIncomparable
@@ -203,7 +203,7 @@ state machine EngineStateMachine {
 
     initial enter PAUSE_CHECK
 
-    @ check whether to pause execution before spinning the next statement
+    @ check whether to pause execution before spinning the interpreter again
     choice PAUSE_CHECK {
       if pendingPause enter PAUSED else enter SPINNING
     }
@@ -275,7 +275,7 @@ state machine EngineStateMachine {
       }
     }
 
-    @ fail the sequence if we got an unexpected statement response while running it.
+    @ fail the sequence if we got an unexpected host-function response while running it.
     @ the definition of unexpected is complicated, see WasmSequencer::cmdResponseIn_handler.
     @ in general, it is "unexpected" if there isn't a nominal way of producing this response.
     @ sometimes, we can produce responses in strange situations nominally by cancelling and

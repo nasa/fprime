@@ -59,7 +59,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Handler implementation for checkTimers
     //!
-    //! Port to periodically drive sleep-wake and statement-timeout checks
+    //! Port to periodically drive sleep-wake and host-function-timeout checks
     void checkTimers_handler(FwIndexType portNum,  //!< The port number
                              U32 context           //!< The call order
                              ) override;
@@ -116,8 +116,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Handler implementation for command RUN
     //!
     //! Run a Wasm module main function on it's own in the interpreter
-    //! This command is short-hand for:
-    //! 1. LOAD_NAME [fileName] ""
+    //! This command first resets the store (discarding any modules previously
+    //! staged with LOAD), then is short-hand for:
+    //! 1. LOAD [fileName] ""
     //! 2. INVOKE "" "main"
     //! 3. CONTINUE
     //!
@@ -134,23 +135,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Handler implementation for command LOAD
     //!
-    //! Loads and validates a WebAssembly module into the store.
-    //! This command loads the module with a empty name meaning only a single module may be loaded.
-    //! To allow multiple modules, use the `LOAD_NAME` command instead.
-    void LOAD_cmdHandler(FwOpcodeType opCode,              //!< The opcode
-                         U32 cmdSeq,                       //!< The command sequence number
-                         const Fw::CmdStringArg& fileName  //!< The name of the sequence file
-                         ) override;
-
-    //! Handler implementation for command LOAD_NAME
-    //!
-    //! Load and validate a WebAssembly module into the store. This module is given a name so that
-    //! it's exports can be referenced by other modules.
-    void LOAD_NAME_cmdHandler(
+    //! Loads and validates a WebAssembly module into the store under the given name.
+    //! Naming the module lets its exports be referenced by other modules and lets
+    //! INVOKE, GLOBAL_GET and GLOBAL_SET address it. Use an empty name for a single,
+    //! standalone module.
+    void LOAD_cmdHandler(
         FwOpcodeType opCode,               //!< The opcode
         U32 cmdSeq,                        //!< The command sequence number
         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-        const Fw::CmdStringArg& name  //!< WebAssembly module name, must not conflict with previously loaded modules
+        const Fw::CmdStringArg& name       //!< WebAssembly module name (empty for a single unnamed module)
         ) override;
 
     //! Handler implementation for command INVOKE
@@ -677,7 +670,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Implementation for guard pendingPause of state machine Svc_WasmSequencer_EngineStateMachine
     //!
-    //! return true if execution should pause before spinning the next statement
+    //! return true if execution should pause before spinning the interpreter again
     bool Svc_WasmSequencer_EngineStateMachine_guard_pendingPause(
         SmId smId,                                           //!< The state machine id
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
@@ -742,9 +735,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Map a spacewasm_trap_t onto the TrapReason event enum.
     static Svc::WasmSequencer_TrapReason::T mapTrapReason(spacewasm_trap_t trap);
 
-    //! Record the SeqName telemetry for a load. Uses moduleName when non-empty
-    //! (LOAD_NAME); otherwise derives it from the file's basename with any ".wasm"
-    //! suffix stripped (RUN / LOAD).
+    //! Record the SeqName telemetry for a load. Uses moduleName when non-empty;
+    //! otherwise derives it from the file's basename with any ".wasm" suffix
+    //! stripped (an empty-name RUN / LOAD).
     void setSequenceName(const Fw::StringBase& filePath, const Fw::StringBase& moduleName);
 
     //! Static pool backing the process-wide spacewasm global page allocator.
@@ -796,9 +789,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Wall-clock time at which the current blocking async host function
     //! (COMMAND / ASYNC_PORT) began awaiting its reply. Used to enforce
-    //! STATEMENT_TIMEOUT_SECS. Only meaningful while awaiting one of those.
-    Fw::Time m_statementStart;
-    bool m_hasStatementStart;
+    //! HOST_FUNCTION_TIMEOUT_SECS. Only meaningful while awaiting one of those.
+    Fw::Time m_hostFunctionStart;
+    bool m_hasHostFunctionStart;
 
     //! Flag indicating a function invocation failed
     spacewasm_status_t m_invokeStatus;
@@ -845,8 +838,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! detect a response for a different instance of the same opcode.
     U32 makeCmdUid() const;
 
-    //! Why the last sequence ended. Set as the program runs and reported
-    //! together in SequenceFailed (see the controller reportModuleFailed action).
+    //! Why the last sequence ended. Set as the program runs and classified into
+    //! the appropriate completion event (see reportSequenceFailure in the controller).
     struct ExitStatus {
         //! Reason the current program exited.
         //! By default this is INTERPRETER but can be overriden from host functions
@@ -958,6 +951,13 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Helper function for checking the signature of a modules main function
     spacewasm_status_t validateModuleMain(WasmSequencer_ModuleIdx moduleIdx) const;
+
+    //! Report an engine-completion failure as the appropriate distinct event
+    //! (SequenceExited / SequencePanic / SequenceTrapped / SequenceHostFailure,
+    //! or SequenceCancelled) and bump the matching telemetry counter. `phase`
+    //! records whether the failure occurred running the module's start function
+    //! or its main entrypoint.
+    void reportSequenceFailure(WasmSequencer_ModuleIdx moduleIdx, WasmSequencer_SequencePhase phase);
 
     //! Check if there are any pending flags before trying to fill the pending state
     Fw::Success checkPendingFlags();

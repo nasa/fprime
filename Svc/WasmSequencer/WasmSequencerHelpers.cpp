@@ -287,7 +287,7 @@ Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t 
 }
 
 void WasmSequencer ::setSequenceName(const Fw::StringBase& filePath, const Fw::StringBase& moduleName) {
-    // LOAD_NAME supplies an explicit module name; use it verbatim.
+    // A non-empty module name was supplied to LOAD; use it verbatim.
     if (moduleName.length() > 0) {
         this->m_tlm.sequenceName = moduleName;
         return;

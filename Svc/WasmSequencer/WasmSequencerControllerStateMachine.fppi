@@ -31,7 +31,7 @@ struct RequestContext {
   moduleIdx: ModuleIdx  @< Module index to invoke start/main function, filled in for LOAD/RUN
 }
 
-@ diagram-layout engine=elk direction=TB cycleBreaking=MODEL_ORDER considerModelOrder=NODES_AND_EDGES nodePlacement=BRANDES_KOEPF nodeSpacing=60 rankSpacing=60
+@ diagram-layout engine=elk direction=LR cycleBreaking=MODEL_ORDER considerModelOrder=NODES_AND_EDGES nodePlacement=BRANDES_KOEPF nodeSpacing=60 rankSpacing=60
 state machine ControllerStateMachine {
   initial enter IDLE
 
@@ -299,7 +299,7 @@ state machine ControllerStateMachine {
       if interpreterSucceeded do {
         invokeMain
       } enter MAIN_INVOKE_CHECK else do {
-        reportModuleFailed
+        reportModuleStartFailed
         # The RUN has not been answered yet (respond_noblock_OK is only reached
         # after the start completes and main is invoked), so respond regardless
         # of block.

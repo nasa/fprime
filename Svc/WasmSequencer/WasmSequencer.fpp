@@ -24,7 +24,7 @@ module Svc {
     @ Port for getting parameter values (backs the guest `prm` host function)
     output port getParam: Fw.PrmGet
 
-    @ Port to periodically drive sleep-wake and statement-timeout checks
+    @ Port to periodically drive sleep-wake and host-function-timeout checks
     async input port checkTimers: Svc.Sched assert
 
     @ Port to periodically write telemetry channels (optional)

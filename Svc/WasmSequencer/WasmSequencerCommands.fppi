@@ -1,6 +1,7 @@
 @ Run a Wasm module main function on it's own in the interpreter
-@ This command is short-hand for:
-@ 1. LOAD_NAME [fileName] ""
+@ This command first resets the store (discarding any modules previously staged
+@ with LOAD), then is short-hand for:
+@ 1. LOAD [fileName] ""
 @ 2. INVOKE "" "main"
 @ 3. CONTINUE
 @
@@ -16,21 +17,15 @@ async command RUN(
 ) \
   opcode 0
 
-@ Loads and validates a WebAssembly module into the store.
-@ This command loads the module with a empty name meaning only a single module may be loaded.
-@ To allow multiple modules, use the `LOAD_NAME` command instead.
+@ Loads and validates a WebAssembly module into the store under the given name.
+@ Naming the module lets its exports be referenced by other modules and lets
+@ INVOKE, GLOBAL_GET and GLOBAL_SET address it. Use an empty name for a single,
+@ standalone module. The name must not conflict with a previously loaded module.
 async command LOAD(
   fileName: string size FileNameStringSize @< The name of the sequence file
+  name: string size 16                     @< WebAssembly module name (empty for a single unnamed module)
 ) \
   opcode 1
-
-@ Load and validate a WebAssembly module into the store. This module is given a name so that
-@ it's exports can be referenced by other modules.
-async command LOAD_NAME(
-  fileName: string size FileNameStringSize @< The name of the sequence file
-  name: string size 16                     @< WebAssembly module name, must not conflict with previously loaded modules
-) \
-  opcode 2
 
 @ Invoke a main function from a loaded module
 async command INVOKE(
@@ -38,16 +33,16 @@ async command INVOKE(
   $block: Svc.BlockState  @< Block until sequence has finished running
   seqArgs: Svc.SeqArgs    @< Arguments to invalid sequence entrypoint with
 ) \
-  opcode 3
+  opcode 2
 
 @ Wait for the interpreter to finish and return it's result as a CmdResponse
-async command WAIT opcode 4
+async command WAIT opcode 3
 
 @ Cancels a running or validated sequence. After running CANCEL, the sequencer should return to IDLE
 @ This completely clears the store.
 @ Cancelling during LOADING will trigger a fail response in the reader and
 @ return to IDLE mode.
-sync command CANCEL opcode 5
+sync command CANCEL opcode 4
 
 # TODO(tumbar) Add a reset and make CANCEL not clear the store
 
@@ -56,10 +51,10 @@ sync command CANCEL opcode 5
 @ up again.
 @
 @ This command completes immediately
-async command PAUSE opcode 6
+async command PAUSE opcode 5
 
 @ Resume the sequence from a paused state
-async command CONTINUE opcode 7
+async command CONTINUE opcode 6
 
 @ Set a global variable to a given i32 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of i32 type
@@ -68,7 +63,7 @@ async command GLOBAL_SET_I32(
   name: string size 16       @< Name of the global
   value: I32                 @< Value to set global to
 ) \
-  opcode 8
+  opcode 7
 
 @ Set a global variable to a given i64 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of i64 type
@@ -77,7 +72,7 @@ async command GLOBAL_SET_I64(
   name: string size 16       @< Name of the global
   value: I64                 @< Value to set global to
 ) \
-  opcode 9
+  opcode 8
 
 @ Set a global variable to a given f32 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of f32 type
@@ -86,7 +81,7 @@ async command GLOBAL_SET_F32(
   name: string size 16       @< Name of the global
   value: F32                 @< Value to set global to
 ) \
-  opcode 10
+  opcode 9
 
 @ Set a global variable to a given f64 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of f64 type
@@ -95,7 +90,7 @@ async command GLOBAL_SET_F64(
   name: string size 16       @< Name of the global
   value: F64                 @< Value to set global to
 ) \
-  opcode 11
+  opcode 10
 
 @ Get the current value of a global variable and emit an event
 @ Command fails if the module is not found, global is not exported, mutable, or of f64 type
@@ -103,4 +98,4 @@ async command GLOBAL_GET(
   moduleName: string size 16 @< Name of the module to set global for
   name: string size 16       @< Name of the global
 ) \
-  opcode 12
+  opcode 11

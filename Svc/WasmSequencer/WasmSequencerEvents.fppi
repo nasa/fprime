@@ -155,9 +155,9 @@ event SequenceSucceeded(index: ModuleIdx) \
   format "Sequence at index {} finished successfully"
 
 @ The sequence was cancelled
-event SequenceCancelled(index: ModuleIdx) \
+event SequenceCancelled(index: ModuleIdx, $phase: SequencePhase) \
   severity activity high \
-  format "Sequence at index {} was cancelled"
+  format "Sequence at index {} was cancelled during {}"
 
 enum ExitReason: U8 {
   UNKNOWN              @< We did not explicitely set the exit reason, bug?
@@ -169,32 +169,30 @@ enum ExitReason: U8 {
   HOST_FAILURE         @< An async host function replied with an error
   UNEXPECTED_REPLY     @< We got an unexpected async reply which caused us to abort
   CANCEL               @< A cancel signal was sent and we exited the interpreter
-  TIMER_INCOMPARABLE   @< A sleep/statement timer became incomparable (time base changed) and could not be evaluated
+  TIMER_INCOMPARABLE   @< A sleep or host-function timer became incomparable (time base changed) and could not be evaluated
 }
 
-#TODO(tumbar) Move non-zero exit to another event
-
-@ The sequence failed to execute
-event SequenceFailed(
-  index: ModuleIdx
-  exitReason: ExitReason
-  exitCode: I32
-  trapReason: TrapReason
-  hostFunction: HostFunction
-) \
+@ The sequence finished with a non-zero code: the guest returned a non-zero
+@ value from main, or called fprime.exit with a non-zero code
+event SequenceExited(index: ModuleIdx, $phase: SequencePhase, code: I32) \
   severity warning high \
-  format "Sequence at index {} failed with reason={} code={} trap={} hostFn={}"
+  format "Sequence at index {} exited during {} with non-zero code {}"
 
-@ The sequence failed to execute start function
-event SequenceStartFailed(
-  index: ModuleIdx
-  exitReason: ExitReason
-  exitCode: I32
-  trapReason: TrapReason
-  hostFunction: HostFunction
-) \
+@ The guest called fprime.panic
+event SequencePanic(index: ModuleIdx, $phase: SequencePhase, code: I32) \
   severity warning high \
-  format "Sequence at index {} failed start with reason={} code={} trap={} hostFn={}"
+  format "Sequence at index {} panicked during {} with code {}"
+
+@ The interpreter aborted the sequence with a byte-code trap
+event SequenceTrapped(index: ModuleIdx, $phase: SequencePhase, reason: TrapReason) \
+  severity warning high \
+  format "Sequence at index {} trapped during {}: {}"
+
+@ A host function the sequence was awaiting failed: an error reply, a reply
+@ timeout, an unexpected reply, or an incomparable timer
+event SequenceHostFailure(index: ModuleIdx, $phase: SequencePhase, reason: ExitReason, hostFunction: HostFunction) \
+  severity warning high \
+  format "Sequence at index {} failed during {} awaiting host function {} (reason {})"
 
 @ Execution was paused at a breakpoint
 event SequencePaused() severity activity high format "Sequence execution paused"
@@ -203,16 +201,6 @@ event SequencePaused() severity activity high format "Sequence execution paused"
 event SequenceNotRunning() \
   severity warning low \
   format "Sequence cannot continue when interpreter is not running"
-
-@ The guest program called fprime.exit with a non-zero code
-event SequenceExited(code: I32) \
-  severity warning high \
-  format "Sequence exited with code {}"
-
-@ The guest program called fprime.panic, or the interpreter itself panicked
-event SequencePanic(code: I32) \
-  severity warning high \
-  format "Wasm program panicked: code {}"
 
 @ The guest requested a sleep whose duration (in microseconds) does not fit the
 @ host timer representation (its whole-seconds part overflows U32)

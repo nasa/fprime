@@ -2,7 +2,7 @@
 @ on a host function/command. if <= 0 or greater than U32 max, never time out.
 @ accuracy of this timeout is determined by the rate group driving this
 @ component. it will be rounded up
-param STATEMENT_TIMEOUT_SECS: F32 default 0
+param HOST_FUNCTION_TIMEOUT_SECS: F32 default 0
 
 @ Number of Wasm instructions to execute per interpreter cycle.
 @ Larger numbers will effect the responsiveness of the interpreter to
