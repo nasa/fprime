@@ -692,11 +692,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     U8* globalAlloc(U32 size, U32 align);
     void globalDealloc(const U8* ptr);
 
-    /// C-callback trampolines for the spacewasm global-allocator registry. Static
-    /// so they can be used as plain function pointers (no lambdas, per CPP-7);
-    /// each forwards to the owning instance carried in `userdata`.
-    static U8* globalAllocThunk(void* userdata, size_t size, size_t align);
-    static void globalDeallocThunk(void* userdata, U8* ptr, size_t size, size_t align);
+    /// C-callback trampolines for the spacewasm global-allocator registry
+    static U8* globalAllocCallback(void* userdata, size_t size, size_t align);
+    static void globalDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align);
 
     /// The Wasm guest allocator callbacks
     U8* guestAlloc(U32 size, U32 align);

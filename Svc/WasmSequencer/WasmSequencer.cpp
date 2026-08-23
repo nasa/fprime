@@ -27,14 +27,14 @@
 
 namespace Svc {
 
-U8* WasmSequencer ::globalAllocThunk(void* userdata, size_t size, size_t align) {
+U8* WasmSequencer ::globalAllocCallback(void* userdata, size_t size, size_t align) {
     if (userdata == nullptr) {
         return nullptr;
     }
     return static_cast<WasmSequencer*>(userdata)->globalAlloc(static_cast<U32>(size), static_cast<U32>(align));
 }
 
-void WasmSequencer ::globalDeallocThunk(void* userdata, U8* ptr, size_t size, size_t align) {
+void WasmSequencer ::globalDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align) {
     (void)size;
     (void)align;
     if (userdata != nullptr) {
@@ -61,7 +61,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_loadFile(nullptr),
       m_sequencesStarted(0) {
     getGlobalAllocatorLock()->lock();
-    const auto status = spacewasm_fprime_register_global_allocator(&globalAllocThunk, &globalDeallocThunk, this);
+    const auto status = spacewasm_fprime_register_global_allocator(&globalAllocCallback, &globalDeallocCallback, this);
     getGlobalAllocatorLock()->unlock();
 
     FW_ASSERT(status == SPACEWASM_OK, status);
