@@ -12,7 +12,6 @@
 #include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/LinearBufferTemplate.hpp"
 #include "Fw/Types/StringBase.hpp"
-#include "Fw/Types/StringTemplate.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/Seq/SeqArgsSerializableAc.hpp"
@@ -23,7 +22,6 @@
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "Utils/Types/CircularBuffer.hpp"
-#include "config/FppConstantsAc.hpp"
 #include "config/FwChanIdTypeAliasAc.h"
 #include "config/FwPrmIdTypeAliasAc.h"
 #include "config/FwSizeTypeAliasAc.h"
@@ -101,8 +99,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Handler implementation for serialIn
     //!
     //! Port for receiving serial messages from other components.
-    //! When the serial in queue is configured as unified, all port indexes will share the same queue
-    //! When the serial in queue is configured as split, each port index will have it's own queue
+    //! All port indices will be placed into their own internal binary queue to be
+    //! handled by the serial_recv host function.
     void serialIn_handler(FwIndexType portNum,          //!< The port number
                           Fw::LinearBufferBase& buffer  //!< The serialization buffer
                           ) override;
@@ -806,7 +804,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         U64 commandsFailed{0};
 
         //! Currently running sequence name
-        Fw::StringTemplate<FileNameStringSize> sequenceName{""};
+        Fw::FileNameString sequenceName{""};
     };
 
     Telemetry m_tlm;

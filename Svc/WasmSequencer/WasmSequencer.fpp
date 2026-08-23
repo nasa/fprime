@@ -36,9 +36,9 @@ module Svc {
     output port serialOut: [Wasm.SerialPortOutIndex.MAX_SERIAL_PORTS] serial
 
     @ Port for receiving serial messages from other components.
-    @ When the serial in queue is configured as unified, all port indexes will share the same queue
-    @ When the serial in queue is configured as split, each port index will have it's own queue
-    async input port serialIn: [Wasm.SerialPortInIndex.MAX_SERIAL_PORTS] serial
+    @ All port indices will be placed into their own internal binary queue to be
+    @ handled by the serial_recv host function.
+    async input port serialIn: [Wasm.SerialPortInIndex.MAX_SERIAL_PORTS] serial assert
 
     @ port for requests to run sequences
     async input port seqRunIn: Svc.CmdSeqIn assert
