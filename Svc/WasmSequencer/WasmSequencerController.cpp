@@ -304,43 +304,48 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     const Svc::WasmSequencer_RequestContext& value) {
     // A failure while running a module's start function (LOAD-with-start, or the
     // start phase of a RUN-with-start).
-    this->reportSequenceFailure(value.get_moduleIdx(), WasmSequencer_SequencePhase::START);
+    this->reportSequenceRuntimeFailure(value.get_moduleIdx(), WasmSequencer_SequencePhase::START);
 }
 
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleFailed(
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleMainFailed(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_RequestContext& value) {
     // A failure while running a module's main function.
-    this->reportSequenceFailure(value.get_moduleIdx(), WasmSequencer_SequencePhase::MAIN);
+    this->reportSequenceRuntimeFailure(value.get_moduleIdx(), WasmSequencer_SequencePhase::MAIN);
 }
 
-void WasmSequencer ::reportSequenceFailure(WasmSequencer_ModuleIdx moduleIdx, WasmSequencer_SequencePhase phase) {
+void WasmSequencer ::reportSequenceRuntimeFailure(WasmSequencer_ModuleIdx moduleIdx,
+                                                  WasmSequencer_SequencePhase phase) {
     switch (this->m_exit.reason) {
         case WasmSequencer_ExitReason::CANCEL:
             this->m_tlm.sequencesCancelled++;
             this->log_ACTIVITY_HI_SequenceCancelled(moduleIdx, phase);
-            return;
+            break;
         case WasmSequencer_ExitReason::HOST_PANIC:
             this->m_tlm.sequencesFailed++;
             this->log_WARNING_HI_SequencePanic(moduleIdx, phase, this->m_exit.code);
-            return;
+            break;
         case WasmSequencer_ExitReason::INTERPRETER_TRAP:
             this->m_tlm.sequencesFailed++;
             this->log_WARNING_HI_SequenceTrapped(moduleIdx, phase, this->m_exit.lastTrapReason);
-            return;
+            break;
         case WasmSequencer_ExitReason::INTERPRETER_FINISHED:
         case WasmSequencer_ExitReason::HOST_EXIT:
             // Only reached on the failure path: a non-zero main return value or a
             // non-zero fprime.exit code.
             this->m_tlm.sequencesFailed++;
             this->log_WARNING_HI_SequenceExited(moduleIdx, phase, this->m_exit.code);
-            return;
-        default:
+            break;
+        case WasmSequencer_ExitReason::UNKNOWN:
+        case WasmSequencer_ExitReason::REPLY_TIMEOUT:
+        case WasmSequencer_ExitReason::HOST_FAILURE:
+        case WasmSequencer_ExitReason::UNEXPECTED_REPLY:
+        case WasmSequencer_ExitReason::TIMER_INCOMPARABLE:
             this->m_tlm.sequencesFailed++;
             this->log_WARNING_HI_SequenceHostFailure(moduleIdx, phase, this->m_exit.reason,
                                                      this->m_exit.lastHostFunction);
-            return;
+            break;
     }
 }
 

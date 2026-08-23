@@ -137,7 +137,7 @@ state machine ControllerStateMachine {
   action reportModuleStartFailed: RequestContext
 
   @ Emit an event noting a module failed during execution. Increment telemetry counters.
-  action reportModuleFailed: RequestContext
+  action reportModuleMainFailed: RequestContext
 
   ###############
   # Engine      #
@@ -318,7 +318,7 @@ state machine ControllerStateMachine {
         reportModuleSucceeded
         respond_block_OK
       } enter READY else do {
-        reportModuleFailed
+        reportModuleMainFailed
         respond_block_ERROR
       } enter IDLE
     }

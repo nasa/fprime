@@ -399,7 +399,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Implementation for action reportModuleFailed of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Emit an event noting a module failed during execution. Increment telemetry counters.
-    void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleFailed(
+    void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleMainFailed(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
         const Svc::WasmSequencer_RequestContext& value            //!< The value
@@ -942,7 +942,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! or SequenceCancelled) and bump the matching telemetry counter. `phase`
     //! records whether the failure occurred running the module's start function
     //! or its main entrypoint.
-    void reportSequenceFailure(WasmSequencer_ModuleIdx moduleIdx, WasmSequencer_SequencePhase phase);
+    void reportSequenceRuntimeFailure(WasmSequencer_ModuleIdx moduleIdx, WasmSequencer_SequencePhase phase);
 
     //! Check if there are any pending flags before trying to fill the pending state
     Fw::Success checkPendingFlags();
