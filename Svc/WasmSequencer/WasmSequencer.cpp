@@ -112,7 +112,7 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 
     // From here on the response claims to be from the current sequence, so any
     // inconsistency is a genuine error that should fail the sequence.
-    if (this->interpreter_getState() != WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING ||
+    if (this->interpreter_getState() != WasmSequencer_InterpreterStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING ||
         this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::COMMAND) {
         this->interpreter_sendSignal_hostResponseUnexpected(WasmSequencer_HostFunction::COMMAND);
         return;
@@ -140,7 +140,7 @@ void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
     auto now = this->getTime();
 
     this->tlmWrite_ControllerState(this->controller_getState(), now);
-    this->tlmWrite_EngineState(this->interpreter_getState(), now);
+    this->tlmWrite_InterpreterState(this->interpreter_getState(), now);
     this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded, now);
     this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed, now);
     this->tlmWrite_SequencesCancelled(this->m_tlm.sequencesCancelled, now);
@@ -298,18 +298,18 @@ void WasmSequencer ::PAUSE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
 void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     switch (this->interpreter_getState()) {
-        case WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_SLEEPING:
-        case WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING:
-        case WasmSequencer_EngineStateMachine_State::RUNNING_SPINNING:
+        case WasmSequencer_InterpreterStateMachine_State::RUNNING_AWAITING_RESPONSE_SLEEPING:
+        case WasmSequencer_InterpreterStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING:
+        case WasmSequencer_InterpreterStateMachine_State::RUNNING_SPINNING:
             // Already running
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             break;
-        case WasmSequencer_EngineStateMachine_State::RUNNING_PAUSED:
+        case WasmSequencer_InterpreterStateMachine_State::RUNNING_PAUSED:
             this->interpreter_sendSignal_cmd_CONTINUE();
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             break;
         default:
-        case WasmSequencer_EngineStateMachine_State::IDLE:
+        case WasmSequencer_InterpreterStateMachine_State::IDLE:
             this->log_WARNING_LO_SequenceNotRunning();
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             break;

@@ -40,7 +40,7 @@ and specification of the Wasm standard.
 
 ## Design
 
-The design of this component is tightly coupled with the [spacewasm](https://github.com/nasa/spacewasm) WebAssembly engine, which performs module loading, validation, and instruction execution. `Svc::WasmSequencer` is an **active** component (it owns a thread; the queue depth is set per instance in the topology) built around two FPP state machines: a **controller** that manages the module lifecycle (load, validate, initialize, run) and an **engine** that executes Wasm instructions and services the host functions a running sequence calls.
+The design of this component is tightly coupled with the [spacewasm](https://github.com/nasa/spacewasm) WebAssembly engine, which performs module loading, validation, and instruction execution. `Svc::WasmSequencer` is an **active** component (it owns a thread; the queue depth is set per instance in the topology) built around two FPP state machines: a **controller** that manages the module lifecycle (load, validate, initialize, run) and an **interpreter** that executes Wasm instructions and services the host functions a running sequence calls.
 
 ### WebAssembly Engine
 
@@ -84,19 +84,19 @@ A loaded module's exported, mutable globals can additionally be read and written
 
 ### State Machines
 
-The component is driven by two state machines whose (flattened) leaf states are reported on telemetry. The transition detail is in the diagrams below; the FPP sources are `WasmSequencerControllerStateMachine.fppi` and `WasmSequencerEngineStateMachine.fppi`.
+The component is driven by two state machines whose (flattened) leaf states are reported on telemetry. The transition detail is in the diagrams below; the FPP sources are `WasmSequencerControllerStateMachine.fppi` and `WasmSequencerInterpreterStateMachine.fppi`.
 
 #### Controller
 
 ![Controller State Machine Diagram](ControllerStateMachine.svg)
 
-The controller owns the module lifecycle. From `IDLE` (no store) a `LOAD` reads and validates a module into the store and settles in `READY`; a `RUN` does the same and then chains into running the module's optional `start` function and its `main` entry point. Because a failed load invalidates the store, the controller returns to `IDLE` — whose entry rebuilds a fresh store — on any load failure, and resets the store before every `RUN`. Execution is handed to the engine, which reports back when it finishes; the controller then classifies the outcome (a success only if the run finished with a zero return/exit code) and answers the caller — a `BLOCK` caller (and any pending `WAIT`) on completion, a `NO_BLOCK` caller as soon as the sequence starts. Requests that arrive while the controller is busy are rejected with `BUSY`. Cancelling a running sequence is realized through the engine: `CANCEL` signals the engine, which unwinds and reports back so the controller can count the sequence as cancelled.
+The controller owns the module lifecycle. From `IDLE` (no store) a `LOAD` reads and validates a module into the store and settles in `READY`; a `RUN` does the same and then chains into running the module's optional `start` function and its `main` entry point. Because a failed load invalidates the store, the controller returns to `IDLE` — whose entry rebuilds a fresh store — on any load failure, and resets the store before every `RUN`. Execution is handed to the interpreter, which reports back when it finishes; the controller then classifies the outcome (a success only if the run finished with a zero return/exit code) and answers the caller — a `BLOCK` caller (and any pending `WAIT`) on completion, a `NO_BLOCK` caller as soon as the sequence starts. Requests that arrive while the controller is busy are rejected with `BUSY`. Cancelling a running sequence is realized through the interpreter: `CANCEL` signals the interpreter, which unwinds and reports back so the controller can count the sequence as cancelled.
 
-#### Engine
+#### Interpreter
 
-![Engine State Machine Diagram](EngineStateMachine.svg)
+![Interpreter State Machine Diagram](InterpreterStateMachine.svg)
 
-The engine executes the loaded program in fuel-bounded slices and services the host functions it calls. Each slice runs the interpreter until it finishes, traps, exhausts its fuel (loop and spin again — the point at which a pending `PAUSE` or `CANCEL` takes effect), or a guest host call pauses it. Most host functions (reading time, telemetry, parameters or arguments, emitting an event, sending serial output) complete immediately and resume the guest. Two are asynchronous: a dispatched command (`cmd`) awaits its response on `cmdResponseIn`, and a blocking `serial_recv` awaits an inbound message on `serialIn` — both bounded by the `HOST_FUNCTION_TIMEOUT_SECS` parameter and checked on the `checkTimers` tick. Sleeps (`rsleep`/`asleep`) are not bounded by that parameter; they wait on their own guest-requested wake timer, also checked each `checkTimers` tick. When the program ends the engine records why — a normal finish (with its return code), a guest `exit`/`panic` (with its code), or a byte-code trap (with its reason) — and reports it to the controller, which emits the matching completion event.
+The interpreter executes the loaded program in fuel-bounded slices and services the host functions it calls. Each slice runs the interpreter until it finishes, traps, exhausts its fuel (loop and spin again — the point at which a pending `PAUSE` or `CANCEL` takes effect), or a guest host call pauses it. Most host functions (reading time, telemetry, parameters or arguments, emitting an event, sending serial output) complete immediately and resume the guest. Two are asynchronous: a dispatched command (`cmd`) awaits its response on `cmdResponseIn`, and a blocking `serial_recv` awaits an inbound message on `serialIn` — both bounded by the `HOST_FUNCTION_TIMEOUT_SECS` parameter and checked on the `checkTimers` tick. Sleeps (`rsleep`/`asleep`) are not bounded by that parameter; they wait on their own guest-requested wake timer, also checked each `checkTimers` tick. When the program ends the interpreter records why — a normal finish (with its return code), a guest `exit`/`panic` (with its code), or a byte-code trap (with its reason) — and reports it to the controller, which emits the matching completion event.
 
 ### Allocator Lock
 
@@ -164,7 +164,7 @@ Guest arguments are validated on every call; invalid input (bad pointers, oversi
 
 ## Telemetry and Events
 
-The full set of telemetry channels and events, with their arguments, is defined in the FPP model and enumerated in the generated dictionary. In summary, the component reports the controller and engine state-machine states, cumulative counters (sequences succeeded / failed / cancelled, commands dispatched / failed), the most recent trap reason, and the running sequence name (WASM-SEQ-020, WASM-SEQ-021). Its events cover module-load and file errors, the sequence lifecycle and its per-branch completion outcomes (exited / panicked / trapped / host-failure / cancelled, each tagged with the `START` or `MAIN` phase), guest-argument-validation failures, and the guest-emitted log events produced by the `event` host function.
+The full set of telemetry channels and events, with their arguments, is defined in the FPP model and enumerated in the generated dictionary. In summary, the component reports the controller and interpreter state-machine states, cumulative counters (sequences succeeded / failed / cancelled, commands dispatched / failed), the most recent trap reason, and the running sequence name (WASM-SEQ-020, WASM-SEQ-021). Its events cover module-load and file errors, the sequence lifecycle and its per-branch completion outcomes (exited / panicked / trapped / host-failure / cancelled, each tagged with the `START` or `MAIN` phase), guest-argument-validation failures, and the guest-emitted log events produced by the `event` host function.
 
 ## Configuration
 

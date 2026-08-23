@@ -21,15 +21,15 @@ namespace Svc {
 // Implementations for internal state machine actions
 // ----------------------------------------------------------------------
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_signalEntered(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_signalEntered(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->interpreter_sendSignal_entered();
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_spin(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_spin(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     FW_ASSERT(this->m_wasm);
 
     Fw::ParamValid prmValid;
@@ -75,9 +75,9 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_spin(
     }
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_reset(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_reset(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     FW_ASSERT(this->m_wasm);
     auto status = spacewasm_reset(this->m_wasm);
     FW_ASSERT(status == SPACEWASM_OK);
@@ -86,100 +86,100 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_reset(
     // bytecode trap) in the next run reports NONE rather than a stale value.
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_clearExitStatus(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_clearExitStatus(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_exit.reason = WasmSequencer_ExitReason::UNKNOWN;
     this->m_exit.lastHostFunction = WasmSequencer_HostFunction::NONE;
     this->m_exit.code = 0;
     this->m_exit.lastTrapReason = WasmSequencer_TrapReason::NONE;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitReason_INTERPRETER_FINISHED(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_INTERPRETER_FINISHED(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_exit.reason = WasmSequencer_ExitReason::INTERPRETER_FINISHED;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitReason_INTERPRETER_TRAP(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_INTERPRETER_TRAP(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     if (this->m_exit.reason == WasmSequencer_ExitReason::UNKNOWN) {
         this->m_exit.reason = WasmSequencer_ExitReason::INTERPRETER_TRAP;
     }
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitReason_REPLY_TIMEOUT(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_REPLY_TIMEOUT(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_exit.reason = WasmSequencer_ExitReason::REPLY_TIMEOUT;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitReason_HOST_FAILURE(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_HOST_FAILURE(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_exit.reason = WasmSequencer_ExitReason::HOST_FAILURE;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitReason_UNEXPECTED_REPLY(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_UNEXPECTED_REPLY(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_exit.reason = WasmSequencer_ExitReason::UNEXPECTED_REPLY;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitReason_TIMER_INCOMPARABLE(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_TIMER_INCOMPARABLE(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_exit.reason = WasmSequencer_ExitReason::TIMER_INCOMPARABLE;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitReason_CANCEL(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_CANCEL(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_exit.reason = WasmSequencer_ExitReason::CANCEL;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitCode(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setExitCode(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal,
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal,
     I32 value) {
     this->m_exit.code = value;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setTrapReason(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setTrapReason(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal,
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal,
     const Svc::WasmSequencer_TrapReason& value) {
     this->m_exit.lastTrapReason = value;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setLastHostFunction(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setLastHostFunction(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_exit.lastHostFunction = this->m_pendingHostFunction.kind;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_finish(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_finish(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->controller_sendSignal_engineFinished(this->m_executingContext);
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_reportPaused(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_reportPaused(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->log_ACTIVITY_HI_SequencePaused();
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_clearPause(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_clearPause(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_pendingPause = false;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dispatchPendingHostFunction(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_dispatchPendingHostFunction(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     switch (this->m_pendingHostFunction.kind) {
         case WasmSequencer_HostFunction::NONE:
             // Invalid host function
@@ -489,41 +489,41 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dispatchPending
     }
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_clearPendingHostFunction(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_clearPendingHostFunction(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::NONE;
     this->m_pendingHostFunction.caller = nullptr;
     this->m_hasPendingTimer = false;
     this->m_hasHostFunctionStart = false;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setContext(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setContext(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal,
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal,
     const Svc::WasmSequencer_RequestContext& value) {
     FW_ASSERT(!this->m_hasExecutingContext);
     this->m_hasExecutingContext = true;
     this->m_executingContext = value;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_clearContext(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_clearContext(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     this->m_hasExecutingContext = false;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_resume(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_resume(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     FW_ASSERT(this->m_wasm != nullptr);
     auto status = spacewasm_resume(this->m_wasm);
     FW_ASSERT(status == SPACEWASM_OK, status);
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_resumeI32(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_resumeI32(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal,
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal,
     I32 value) {
     FW_ASSERT(this->m_wasm != nullptr);
     spacewasm_value_t return_val;
@@ -534,9 +534,9 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_resumeI32(
     FW_ASSERT(status == SPACEWASM_OK, status);
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkSleepTimers(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_checkSleepTimers(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     // Check if we have overrun the timer
     FW_ASSERT(this->m_hasPendingTimer);
 
@@ -558,9 +558,9 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkSleepTimer
     }
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkTimeout(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_checkTimeout(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
     // Only blocking host functions that await an external event are subject to the
     // host-function timeout (COMMAND -> cmdResponseIn, blocking SERIAL_RECV -> serialIn).
     // Sleeps have their own wake timer (checkSleepTimers), separate from this timeout.
@@ -608,9 +608,9 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_checkTimeout(
     }
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dequeueSerialAndResume(
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_dequeueSerialAndResume(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal,
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal,
     const FwIndexType& value) {
     const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.u.serialRecv.index);
     FW_ASSERT(portNum < NUM_SERIALIN_INPUT_PORTS, portNum);
@@ -709,28 +709,28 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dequeueSerialAn
 // Implementations for internal state machine guards
 // ----------------------------------------------------------------------
 
-bool WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_guard_pendingPause(
+bool WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_guard_pendingPause(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) const {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) const {
     return this->m_pendingPause;
 }
 
-bool WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_guard_pendingHostFunction(
+bool WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_guard_pendingHostFunction(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) const {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) const {
     return this->m_pendingHostFunction.isPending();
 }
 
-bool WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_guard_pendingHostFunctionIsSleep(
+bool WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_guard_pendingHostFunctionIsSleep(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) const {
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal) const {
     return this->m_pendingHostFunction.kind == WasmSequencer_HostFunction::ASLEEP ||
            this->m_pendingHostFunction.kind == WasmSequencer_HostFunction::RSLEEP;
 }
 
-bool WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_guard_blockingSerialIn(
+bool WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_guard_blockingSerialIn(
     SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal,
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal,
     const FwIndexType& value) const {
     return (this->m_pendingHostFunction.kind == Svc::WasmSequencer_HostFunction::SERIAL_RECV &&
             this->m_pendingHostFunction.u.serialRecv.index == static_cast<U32>(value));

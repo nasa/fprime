@@ -41,11 +41,11 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
 
     //! Convenience aliases for the two cooperating state-machine enums. The
     //! component is driven by a `controller` machine (load / validate /
-    //! lifecycle) and an `interpreter` engine machine (instruction execution).
+    //! lifecycle) and an `interpreter` machine (instruction execution).
     //! Tests assert against whichever machine actually models the state under
     //! test rather than a synthesized single state.
     using ControllerState = Svc::WasmSequencer_ControllerStateMachine_State;
-    using EngineState = Svc::WasmSequencer_EngineStateMachine_State;
+    using InterpreterState = Svc::WasmSequencer_InterpreterStateMachine_State;
 
   public:
     // ----------------------------------------------------------------------
@@ -113,15 +113,15 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! bound/empty queue is hit). Asserts the state was reached.
     void dispatchUntilControllerState(ControllerState state, U32 bound = 1000);
 
-    //! Pump the queue until the interpreter engine machine reaches `state` (or
+    //! Pump the queue until the interpreter machine reaches `state` (or
     //! the bound/empty queue is hit). Asserts the state was reached.
-    void dispatchUntilEngineState(EngineState state, U32 bound = 1000);
+    void dispatchUntilInterpreterState(InterpreterState state, U32 bound = 1000);
 
     //! Current controller (load / validate / lifecycle) machine state.
     ControllerState controllerState();
 
-    //! Current interpreter engine (instruction execution) machine state.
-    EngineState engineState();
+    //! Current interpreter (instruction execution) machine state.
+    InterpreterState interpreterState();
 
     //! Context (cmdUid) attached to the most recent cmdOut dispatch. Tests echo
     //! this back as the cmdSeq argument of cmdResponseIn so the component accepts

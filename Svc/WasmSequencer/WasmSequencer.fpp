@@ -4,13 +4,13 @@ module Svc {
     include "WasmSequencerTypes.fppi"
     include "WasmSequencerCommands.fppi"
     include "WasmSequencerControllerStateMachine.fppi"
-    include "WasmSequencerEngineStateMachine.fppi"
+    include "WasmSequencerInterpreterStateMachine.fppi"
     include "WasmSequencerParams.fppi"
     include "WasmSequencerEvents.fppi"
     include "WasmSequencerTelemetry.fppi"
 
     state machine instance controller: ControllerStateMachine assert
-    state machine instance interpreter: EngineStateMachine assert
+    state machine instance interpreter: InterpreterStateMachine assert
 
     @ Port for dispatching commands
     output port cmdOut: Fw.Com

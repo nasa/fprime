@@ -2,7 +2,7 @@
 telemetry ControllerState: ControllerStateMachine.State update on change
 
 @ Current executing state of the WebAssembly interpreter engine
-telemetry EngineState: EngineStateMachine.State update on change
+telemetry InterpreterState: InterpreterStateMachine.State update on change
 
 @ Sequences successfully completed
 telemetry SequencesSucceeded: U64 update on change

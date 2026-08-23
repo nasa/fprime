@@ -421,196 +421,196 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
-    //! Implementation for action signalEntered of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action signalEntered of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! generic signal raised
-    void Svc_WasmSequencer_EngineStateMachine_action_signalEntered(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_signalEntered(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action spin of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action spin of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! spins the interpreter loop, executing up to a bounded number of instructions
-    void Svc_WasmSequencer_EngineStateMachine_action_spin(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_spin(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action reset of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action reset of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! resets the engine's state (clears operand stack, pc, fp, sp)
-    void Svc_WasmSequencer_EngineStateMachine_action_reset(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_reset(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action clearExitStatus of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_clearExitStatus(
+    //! Implementation for action clearExitStatus of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_clearExitStatus(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
     //! Implementation for action setExitReason_INTERPRETER_FINISHED of state machine
-    //! Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setExitReason_INTERPRETER_FINISHED(
+    //! Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_INTERPRETER_FINISHED(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setExitReason_INTERPRETER_TRAP of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setExitReason_INTERPRETER_TRAP(
+    //! Implementation for action setExitReason_INTERPRETER_TRAP of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_INTERPRETER_TRAP(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setExitReason_REPLY_TIMEOUT of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setExitReason_REPLY_TIMEOUT(
+    //! Implementation for action setExitReason_REPLY_TIMEOUT of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_REPLY_TIMEOUT(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setExitReason_HOST_FAILURE of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setExitReason_HOST_FAILURE(
+    //! Implementation for action setExitReason_HOST_FAILURE of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_HOST_FAILURE(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setExitReason_TIMER_INCOMPARABLE of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setExitReason_TIMER_INCOMPARABLE(
+    //! Implementation for action setExitReason_TIMER_INCOMPARABLE of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_TIMER_INCOMPARABLE(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setExitReason_UNEXPECTED_REPLY of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setExitReason_UNEXPECTED_REPLY(
+    //! Implementation for action setExitReason_UNEXPECTED_REPLY of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_UNEXPECTED_REPLY(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setExitReason_CANCEL of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setExitReason_CANCEL(
+    //! Implementation for action setExitReason_CANCEL of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setExitReason_CANCEL(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setExitCode of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setExitCode(
+    //! Implementation for action setExitCode of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setExitCode(
         SmId smId,                                            //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal,  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal,  //!< The signal
         I32 value                                             //!< The value
         ) override;
 
-    //! Implementation for action setTrapReason of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setTrapReason(
+    //! Implementation for action setTrapReason of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setTrapReason(
         SmId smId,                                            //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal,  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal,  //!< The signal
         const Svc::WasmSequencer_TrapReason& value            //!< The value
         ) override;
 
-    //! Implementation for action setLastHostFunction of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setLastHostFunction(
+    //! Implementation for action setLastHostFunction of state machine Svc_WasmSequencer_InterpreterStateMachine
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setLastHostFunction(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action finish of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action finish of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! Send a signal back to the controller state machine that we have finished executing
     //! The response codes are stored in m_exitReason, m_exitCode, m_tlmLastTrapReason
-    void Svc_WasmSequencer_EngineStateMachine_action_finish(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_finish(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action reportPaused of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action reportPaused of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! reports that execution was paused at a breakpoint
-    void Svc_WasmSequencer_EngineStateMachine_action_reportPaused(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_reportPaused(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action clearPause of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action clearPause of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! sets the pause flag to false
-    void Svc_WasmSequencer_EngineStateMachine_action_clearPause(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_clearPause(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action dispatchPendingHostFunction of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action dispatchPendingHostFunction of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! dispatch a host function port call
-    void Svc_WasmSequencer_EngineStateMachine_action_dispatchPendingHostFunction(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_dispatchPendingHostFunction(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action clearPendingHostFunction of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action clearPendingHostFunction of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! clears the pending host function port call
-    void Svc_WasmSequencer_EngineStateMachine_action_clearPendingHostFunction(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_clearPendingHostFunction(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setContext of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action setContext of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! Set the current executing context
-    void Svc_WasmSequencer_EngineStateMachine_action_setContext(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_setContext(
         SmId smId,                                            //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal,  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal,  //!< The signal
         const Svc::WasmSequencer_RequestContext& value        //!< The value
         ) override;
 
-    //! Implementation for action clearContext of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action clearContext of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! Clear the current executing context
-    void Svc_WasmSequencer_EngineStateMachine_action_clearContext(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_clearContext(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action resume of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action resume of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! spacewasm_engine_resume
-    void Svc_WasmSequencer_EngineStateMachine_action_resume(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_resume(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action resumeI32 of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action resumeI32 of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! spacewasm_engine_resume_some(I32(value))
-    void Svc_WasmSequencer_EngineStateMachine_action_resumeI32(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_resumeI32(
         SmId smId,                                            //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal,  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal,  //!< The signal
         I32 value                                             //!< The value
         ) override;
 
-    //! Implementation for action checkSleepTimers of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action checkSleepTimers of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! A periodic check on the pending timer to see if we can wake up
-    void Svc_WasmSequencer_EngineStateMachine_action_checkSleepTimers(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_checkSleepTimers(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action checkTimeout of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action checkTimeout of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! A periodic check on any host function to guard against timeouts
-    void Svc_WasmSequencer_EngineStateMachine_action_checkTimeout(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_checkTimeout(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action dequeueSerialAndResume of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for action dequeueSerialAndResume of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! Dequeue a serial message into the host guest memory and resume the interpreter
-    void Svc_WasmSequencer_EngineStateMachine_action_dequeueSerialAndResume(
+    void Svc_WasmSequencer_InterpreterStateMachine_action_dequeueSerialAndResume(
         SmId smId,                                            //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal,  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal,  //!< The signal
         const FwIndexType& value                              //!< The value
         ) override;
 
@@ -654,36 +654,36 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard pendingPause of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for guard pendingPause of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! return true if execution should pause before spinning the interpreter again
-    bool Svc_WasmSequencer_EngineStateMachine_guard_pendingPause(
+    bool Svc_WasmSequencer_InterpreterStateMachine_guard_pendingPause(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard pendingHostFunction of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for guard pendingHostFunction of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! a host function is waiting to be processed
-    bool Svc_WasmSequencer_EngineStateMachine_guard_pendingHostFunction(
+    bool Svc_WasmSequencer_InterpreterStateMachine_guard_pendingHostFunction(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard pendingHostFunctionIsSleep of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for guard pendingHostFunctionIsSleep of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! the pending host function is a sleep (therefore we need to check the sleep timers)
-    bool Svc_WasmSequencer_EngineStateMachine_guard_pendingHostFunctionIsSleep(
+    bool Svc_WasmSequencer_InterpreterStateMachine_guard_pendingHostFunctionIsSleep(
         SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard blockingSerialIn of state machine Svc_WasmSequencer_EngineStateMachine
+    //! Implementation for guard blockingSerialIn of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! Check if we are currently blocking on a serial_recv() for a given serial port index
-    bool Svc_WasmSequencer_EngineStateMachine_guard_blockingSerialIn(
+    bool Svc_WasmSequencer_InterpreterStateMachine_guard_blockingSerialIn(
         SmId smId,                                            //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal,  //!< The signal
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal,  //!< The signal
         const FwIndexType& value                              //!< The value
     ) const override;
 

@@ -89,7 +89,7 @@ register_fprime_library(
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerController.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerEngine.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerInterpreter.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerHelpers.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerHost.cpp"
     DEPENDS

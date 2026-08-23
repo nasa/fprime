@@ -14,7 +14,7 @@
 namespace Svc {
 
 using ControllerState = WasmSequencerTester::ControllerState;
-using EngineState = WasmSequencerTester::EngineState;
+using InterpreterState = WasmSequencerTester::InterpreterState;
 
 //! A serial input port stub whose invokeSerial always reports a serialization failure.
 //! Connected to a serialOut[] index to drive the component's "serial port send failed"
@@ -1136,7 +1136,7 @@ TEST_F(WasmSequencerTester, TelemetryInitialDefaults) {
     this->clearHistory();
     this->flushTelemetry();
     ASSERT_TLM_ControllerState_SIZE(0);
-    ASSERT_TLM_EngineState_SIZE(0);
+    ASSERT_TLM_InterpreterState_SIZE(0);
     ASSERT_TLM_SequencesSucceeded_SIZE(0);
     ASSERT_TLM_CommandsDispatched_SIZE(0);
     ASSERT_TLM_LastTrapReason_SIZE(0);
@@ -1228,7 +1228,7 @@ TEST_F(WasmSequencerTester, TelemetryCancelledCount) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 306, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
     this->sendCmd_CANCEL(0, 307);
     this->dispatchUntilControllerState(ControllerState::IDLE);
 
@@ -1245,7 +1245,7 @@ TEST_F(WasmSequencerTester, TelemetryCommandsDispatchedAndFailed) {
     // CommandsFailed while CommandsDispatched counts the dispatch.
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 308, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::EXECUTION_ERROR);
     this->dispatchUntilControllerState(ControllerState::READY);
@@ -1263,7 +1263,7 @@ TEST_F(WasmSequencerTester, TelemetryCommandOkDoesNotCountFailed) {
     // An OK command response dispatches but does not increment CommandsFailed.
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 309, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
     this->dispatchUntilControllerState(ControllerState::READY);
@@ -1285,8 +1285,8 @@ TEST_F(WasmSequencerTester, CommandByteFidelityAndResume) {
     // RUN pauses when the guest calls cmd, dispatches the command out cmdOut,
     // and parks in AWAITING_RESPONSE until we feed a cmdResponseIn.
     this->sendCmd_RUN(0, 90, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::COMMAND);
 
     // The ComBuffer is a packet descriptor (FW_PACKET_COMMAND) followed by the
@@ -1459,16 +1459,16 @@ TEST_F(WasmSequencerTester, RelativeSleepWakes) {
     // Start at t=0. rsleep asks for a 1s relative timer.
     this->setTestTime(Fw::Time(0, 0));
     this->sendCmd_RUN(0, 100, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_SLEEPING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
 
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_SLEEPING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
     ASSERT_TRUE(this->hasPendingTimer());
 
     // A checkTimers tick before the deadline does not wake it.
     this->setTestTime(Fw::Time(0, 500000));
     this->invoke_to_checkTimers(0, 0);
     this->dispatchAll();
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_SLEEPING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
 
     // Past the deadline, the timer fires and the interpreter resumes/finishes.
     this->setTestTime(Fw::Time(2, 0));
@@ -1485,7 +1485,7 @@ TEST_F(WasmSequencerTester, AbsoluteSleepWakes) {
 
     this->setTestTime(Fw::Time(0, 0));
     this->sendCmd_RUN(0, 101, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_SLEEPING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
     ASSERT_TRUE(this->hasPendingTimer());
 
     // asleep target is 10s from epoch.
@@ -1503,7 +1503,7 @@ TEST_F(WasmSequencerTester, SleepTimeBaseMismatchFails) {
     // Set the timer using a specific time base.
     this->setTestTime(Fw::Time(TimeBase::TB_WORKSTATION_TIME, 0, 0, 0));
     this->sendCmd_RUN(0, 102, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_SLEEPING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
     ASSERT_TRUE(this->hasPendingTimer());
 
     // Change the time base: comparison becomes INCOMPARABLE -> timeOpFailed.
@@ -1547,12 +1547,12 @@ TEST_F(WasmSequencerTester, PauseThenContinueCompletes) {
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 110, file, NO_BLOCK, {});
     // Advance into the running loop.
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // Request a pause; the machine pauses before the next spin.
     this->sendCmd_PAUSE(0, 111);
-    this->dispatchUntilEngineState(EngineState::RUNNING_PAUSED);
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_PAUSED);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_PAUSED);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_PAUSED);
     ASSERT_EVENTS_SequencePaused_SIZE(1);
 
     // Continue: it resumes spinning and eventually finishes.
@@ -1569,7 +1569,7 @@ TEST_F(WasmSequencerTester, CancelWhileSpinning) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 120, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // CANCEL is synchronous (responds OK immediately) and returns to IDLE.
     this->sendCmd_CANCEL(0, 121);
@@ -1586,10 +1586,10 @@ TEST_F(WasmSequencerTester, CancelWhilePaused) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 122, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_PAUSE(0, 123);
-    this->dispatchUntilEngineState(EngineState::RUNNING_PAUSED);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_PAUSED);
 
     this->sendCmd_CANCEL(0, 124);
     this->dispatchUntilControllerState(ControllerState::IDLE);
@@ -1602,7 +1602,7 @@ TEST_F(WasmSequencerTester, CancelWhilePaused) {
 TEST_F(WasmSequencerTester, CancelWhileAwaitingResponse) {
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 125, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // CANCEL from AWAITING_RESPONSE clears the pending host function and returns
     // to IDLE.
@@ -1650,10 +1650,10 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhilePausedFails) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 133, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_PAUSE(0, 134);
-    this->dispatchUntilEngineState(EngineState::RUNNING_PAUSED);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_PAUSED);
 
     // Tag the response with the current sequence's cmdUid so it isn't dismissed as
     // a late reply from an old sequence; it is unexpected here and fails.
@@ -1718,7 +1718,7 @@ TEST_F(WasmSequencerTester, SeqDoneEmittedWithErrorOnRunCancel) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 202, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     ASSERT_EQ(this->seqStartOutCount, 1u);
     ASSERT_EQ(this->seqDoneOutCount, 0u);
@@ -1805,7 +1805,7 @@ TEST_F(WasmSequencerTester, SeqRunInWhileRunningRejected) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 207, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     const U32 startsBefore = this->seqStartOutCount;
 
@@ -1831,7 +1831,7 @@ TEST_F(WasmSequencerTester, SeqCancelInCancelsRunningSequence) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->invoke_to_seqCancelIn(0);
     this->dispatchUntilControllerState(ControllerState::IDLE);
@@ -1852,11 +1852,11 @@ TEST_F(WasmSequencerTester, PauseAtHostFunctionThenContinueResumes) {
     // RUNNING_PAUSED with the host function still pending, rather than dispatching it.
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 135, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_PAUSE(0, 136);
-    this->dispatchUntilEngineState(EngineState::RUNNING_PAUSED);
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_PAUSED);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_PAUSED);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_PAUSED);
     ASSERT_EVENTS_SequencePaused_SIZE(1);
     // The command has not been dispatched: the pause pre-empted the host-function
     // dispatch, and the pending host function is retained across the pause.
@@ -1866,8 +1866,8 @@ TEST_F(WasmSequencerTester, PauseAtHostFunctionThenContinueResumes) {
     // CONTINUE resumes into the pending host function (PAUSED_RESUME host-function
     // branch): the command is dispatched and the machine awaits its response.
     this->sendCmd_CONTINUE(0, 137);
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_from_cmdOut_SIZE(1);
 
     // Feed the response so the sequence finishes cleanly.
@@ -1885,13 +1885,13 @@ TEST_F(WasmSequencerTester, CheckTimersWhileAwaitingWithoutTimer) {
     // (guard_pendingTimer false -> checkTimeout only) and stays awaiting.
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 138, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_FALSE(this->hasPendingTimer());
 
     this->invoke_to_checkTimers(0, 0);
     this->dispatchAll();
     // No timer to wake it: it remains awaiting the command response.
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Response still resumes it to completion.
     this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
@@ -1914,13 +1914,13 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsAwaitingCommand) {
 
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 400, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // A tick before the deadline keeps it awaiting.
     this->setTestTime(Fw::Time(3, 0));
     this->invoke_to_checkTimers(0, 0);
     this->dispatchAll();
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // A tick past the deadline times the host function out.
     this->setTestTime(Fw::Time(10, 0));
@@ -1946,7 +1946,7 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutTimeIncomparableFails) {
 
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 401, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Change the time base: comparison against the host-function-start deadline becomes
     // INCOMPARABLE.
@@ -1968,13 +1968,13 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutDisabledByDefault) {
 
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 401, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Advance well past any plausible timeout and tick: still awaiting.
     this->setTestTime(Fw::Time(100000, 0));
     this->invoke_to_checkTimers(0, 0);
     this->dispatchAll();
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // The response still resumes it cleanly.
     this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
@@ -1994,7 +1994,7 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsBlockingSerialRecv) {
 
     const Fw::String file = this->copyAsset("serial_recv.wasm");
     this->sendCmd_RUN(0, 402, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::SERIAL_RECV);
 
     this->setTestTime(Fw::Time(30, 0));
@@ -2017,7 +2017,7 @@ TEST_F(WasmSequencerTester, LateCmdResponseFromOldSequenceIgnored) {
     // sequence currently awaiting its own response.
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 410, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Craft a cmdUid from an older sequence index (current - 1).
     const U32 currentUid = this->currentCmdUid();
@@ -2028,7 +2028,7 @@ TEST_F(WasmSequencerTester, LateCmdResponseFromOldSequenceIgnored) {
     this->dispatchAll();
 
     // Still awaiting; the stale reply was ignored with a warning.
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_EVENTS_CmdResponseFromOldSequence_SIZE(1);
     // The event must carry the perturbed opcode/response and the old-vs-current
     // sequence indices, not just fire.
@@ -2048,7 +2048,7 @@ TEST_F(WasmSequencerTester, WrongCmdResponseIndexFails) {
     // low-half index) is an integrity error and fails the sequence.
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 411, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Keep the current sequence index, but perturb the command index.
     const U32 currentUid = this->currentCmdUid();
@@ -2077,7 +2077,7 @@ TEST_F(WasmSequencerTester, RunWhileRunningRejected) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 150, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // RUN is only valid from IDLE/READY; from RUNNING it is rejected as BUSY
     // (ControllerBusy for the COMMAND_RUN signal) without disturbing the running
@@ -2101,7 +2101,7 @@ TEST_F(WasmSequencerTester, LoadWhileRunningRejected) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 152, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // LOAD is only valid from IDLE/READY; from RUNNING it is rejected as BUSY
     // (ControllerBusy for the COMMAND_LOAD signal). The original NO_BLOCK RUN
@@ -2125,7 +2125,7 @@ TEST_F(WasmSequencerTester, WaitWhileRunningQueuesUntilFinish) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 160, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // WAIT while running enqueues on the finish queue (default branch of
     // WAIT_cmdHandler) and only responds once the loop completes.
@@ -2146,7 +2146,7 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileSpinningFails) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 170, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // A cmdResponseIn while spinning (not awaiting a host command) is "unexpected"
     // and fails the running sequence (stmtUnexpected -> report_seqFailed). Tag it
@@ -2167,7 +2167,7 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileAwaitingSleepFails) {
     const Fw::String file = this->copyAsset("rsleep.wasm");
     this->setTestTime(Fw::Time(0, 0));
     this->sendCmd_RUN(0, 172, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_SLEEPING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
     ASSERT_TRUE(this->hasPendingTimer());
 
     // Tag with the current sequence's cmdUid so it reaches the "unexpected" path
@@ -2205,17 +2205,17 @@ TEST_F(WasmSequencerTester, PauseWhileAwaitingResponseIsPending) {
     // command response arrives, the pending pause takes effect at PAUSE_CHECK.
     const Fw::String file = this->copyAsset("cmd.wasm");
     this->sendCmd_RUN(0, 175, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     this->sendCmd_PAUSE(0, 176);
     this->dispatchAll();
     // Still awaiting the response; the pause is only pending.
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Feeding the response now resolves the pending pause -> RUNNING_PAUSED.
     this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
-    this->dispatchUntilEngineState(EngineState::RUNNING_PAUSED);
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_PAUSED);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_PAUSED);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_PAUSED);
     ASSERT_EVENTS_SequencePaused_SIZE(1);
 
     // Continue to completion.
@@ -2233,15 +2233,15 @@ TEST_F(WasmSequencerTester, PauseWhilePausedIsIdempotent) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 178, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_PAUSE(0, 179);
-    this->dispatchUntilEngineState(EngineState::RUNNING_PAUSED);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_PAUSED);
 
     this->sendCmd_PAUSE(0, 180);
     this->dispatchAll();
     // The duplicate PAUSE is a self-transition: still paused, no extra broken event.
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_PAUSED);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_PAUSED);
     ASSERT_EVENTS_SequencePaused_SIZE(1);
 
     // CANCEL cleanly tears down the paused sequence.
@@ -2260,7 +2260,7 @@ TEST_F(WasmSequencerTester, WaitFinishQueueOverflow) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 180, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // Queue nine WAITs up front (test queue depth is 20) so they are all handled
     // while the loop is still spinning: eight enqueue, the ninth overflows.
@@ -2285,7 +2285,7 @@ TEST_F(WasmSequencerTester, ContinueWhileSpinningIsOk) {
 
     const Fw::String file = this->copyAsset("loop.wasm");
     this->sendCmd_RUN(0, 140, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_CONTINUE(0, 141);
     this->dispatchUntilControllerState(ControllerState::READY);
@@ -2433,7 +2433,7 @@ TEST_F(WasmSequencerTester, SerialRecvBlocksThenWakesOnMessage) {
     // engine, the payload is dequeued into guest memory, and the sequence completes.
     const Fw::String file = this->copyAsset("serial_recv.wasm");
     this->sendCmd_RUN(0, 301, file, BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_AWAITING_RESPONSE_WAITING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::SERIAL_RECV);
 
     // Deliver the message the guest is waiting for.
@@ -2755,7 +2755,7 @@ TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
 
     // 5. RUN loop NO_BLOCK, then CANCEL mid-spin -> cancelled, back to IDLE.
     this->sendCmd_RUN(0, 5, loop, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
     this->sendCmd_CANCEL(0, 6);
     this->dispatchUntilControllerState(ControllerState::IDLE);
     cancelled++;
@@ -3279,12 +3279,12 @@ TEST_F(WasmSequencerTester, GlobalGetSetWhileSequencePaused) {
 
     const Fw::String file = this->copyAsset("global_loop.wasm");
     this->sendCmd_RUN(0, 123, file, NO_BLOCK, {});
-    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // Pause so the engine parks quiescently (no self-posted spin messages),
     // making the global command the only work dispatchAll() advances.
     this->sendCmd_PAUSE(0, 124);
-    this->dispatchUntilEngineState(EngineState::RUNNING_PAUSED);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_PAUSED);
     ASSERT_EQ(this->controllerState(), ControllerState::RUNNING_MAIN);
 
     // GET reads the live global (its declared init 42) without disturbing the run.
@@ -3296,7 +3296,7 @@ TEST_F(WasmSequencerTester, GlobalGetSetWhileSequencePaused) {
     ASSERT_EVENTS_GlobalValueI32(0, "", "g_i32", 42);
     ASSERT_CMD_RESPONSE(2, OPCODE_GLOBAL_GET, 125, Fw::CmdResponse::OK);
     // Still paused mid-sequence: the global command did not advance or end the run.
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_PAUSED);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_PAUSED);
     ASSERT_EQ(this->controllerState(), ControllerState::RUNNING_MAIN);
 
     // SET is likewise accepted mid-run and mutates the live store.
@@ -3304,7 +3304,7 @@ TEST_F(WasmSequencerTester, GlobalGetSetWhileSequencePaused) {
     this->dispatchAll();
     ASSERT_CMD_RESPONSE(3, OPCODE_GLOBAL_SET_I32, 126, Fw::CmdResponse::OK);
     ASSERT_EVENTS_GlobalSetFailed_SIZE(0);
-    ASSERT_EQ(this->engineState(), EngineState::RUNNING_PAUSED);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_PAUSED);
 
     this->sendCmd_GLOBAL_GET(0, 127, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
     this->dispatchAll();

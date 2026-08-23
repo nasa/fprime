@@ -149,23 +149,23 @@ void WasmSequencerTester ::dispatchUntilControllerState(ControllerState state, U
     ASSERT_EQ(this->controllerState(), state) << "controller did not reach expected state within bound";
 }
 
-void WasmSequencerTester ::dispatchUntilEngineState(EngineState state, U32 bound) {
+void WasmSequencerTester ::dispatchUntilInterpreterState(InterpreterState state, U32 bound) {
     U32 iters = 0;
-    while (this->engineState() != state && iters < bound) {
+    while (this->interpreterState() != state && iters < bound) {
         if (this->messagesAvailable() == 0) {
             break;
         }
         this->component.doDispatch();
         iters++;
     }
-    ASSERT_EQ(this->engineState(), state) << "engine did not reach expected state within bound";
+    ASSERT_EQ(this->interpreterState(), state) << "interpreter did not reach expected state within bound";
 }
 
 WasmSequencerTester::ControllerState WasmSequencerTester ::controllerState() {
     return this->component.controller_getState();
 }
 
-WasmSequencerTester::EngineState WasmSequencerTester ::engineState() {
+WasmSequencerTester::InterpreterState WasmSequencerTester ::interpreterState() {
     return this->component.interpreter_getState();
 }
 
