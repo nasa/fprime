@@ -393,7 +393,7 @@ void WasmSequencer ::GLOBAL_GET_cmdHandler(FwOpcodeType opCode,
                                            const Fw::CmdStringArg& moduleName,
                                            const Fw::CmdStringArg& name) {
     spacewasm_value_t g_value;
-    auto status = this->getGlobal(moduleName, name, &g_value);
+    auto status = this->getGlobal(moduleName, name, g_value);
     if (status == SPACEWASM_OK) {
         switch (g_value.tag) {
             case SPACEWASM_I32:

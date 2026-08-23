@@ -966,7 +966,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Get the value of a global variable given its module name and global name
     spacewasm_status_t getGlobal(const Fw::StringBase& moduleName,
                                  const Fw::StringBase& name,
-                                 spacewasm_value_t* value);
+                                 spacewasm_value_t& value);
 
     //! Set up the fprime host interface
     void hostFprimeV1(spacewasm_host_t*);

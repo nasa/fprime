@@ -232,7 +232,7 @@ spacewasm_status_t WasmSequencer ::setGlobal(const Fw::StringBase& moduleName,
 
 spacewasm_status_t WasmSequencer ::getGlobal(const Fw::StringBase& moduleName,
                                              const Fw::StringBase& name,
-                                             spacewasm_value_t* value) {
+                                             spacewasm_value_t& value) {
     U32 moduleIdx = 0;
     spacewasm_status_t status = spacewasm_find_module(this->m_wasm, moduleName.toChar(), &moduleIdx);
     if (status != SPACEWASM_OK) {
@@ -245,7 +245,7 @@ spacewasm_status_t WasmSequencer ::getGlobal(const Fw::StringBase& moduleName,
         return status;
     }
 
-    return spacewasm_get_global(this->m_wasm, moduleIdx, globalIdx, value);
+    return spacewasm_get_global(this->m_wasm, moduleIdx, globalIdx, &value);
 }
 
 Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t trap) {
