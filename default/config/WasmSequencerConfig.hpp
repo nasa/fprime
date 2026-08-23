@@ -15,19 +15,16 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include "config/FwSizeTypeAliasAc.h"
+#include "config/WasmSequencerSpacewasmConfig.h"
 
 namespace Svc {
 namespace WasmSequencerConfig {
+constexpr FwSizeType SPACEWASM_PAGE_SIZE = WASM_SEQ_SPACEWASM_PAGE_SIZE;
+constexpr FwSizeType SPACEWASM_MAX_PAGES = WASM_SEQ_SPACEWASM_MAX_PAGES;
 
-/// Backing for the process-wide spacewasm global page allocator. These two
-/// constants MUST match the values baked into the `spacewasm_c_api` crate's
-/// `config.rs` (`GLOBAL_ALLOCATOR_PAGE_SIZE` / `GLOBAL_ALLOCATOR_MAX_PAGES`).
-/// The crate requests fixed-size pages of exactly SPACEWASM_PAGE_SIZE and never
-/// holds more than SPACEWASM_MAX_PAGES at once; the component serves them from a
-/// static pool. This memory is used only for the Wasm store and bytecode, NOT
-/// for guest linear-memory pages (see GUEST_MEMORY_SIZE).
-constexpr FwSizeType SPACEWASM_PAGE_SIZE = 8192;
-constexpr FwSizeType SPACEWASM_MAX_PAGES = 4;
+/// Maximum number of WasmSequencer instances that may register a global
+/// allocator slot process-wide
+constexpr FwSizeType MAX_SEQUENCERS = WASM_SEQ_MAX_SEQUENCERS;
 
 /// Total static pool backing the interpreter heap: 4 * 8192 = 32 KiB.
 constexpr FwSizeType DYNAMIC_MEMORY_SIZE = SPACEWASM_PAGE_SIZE * SPACEWASM_MAX_PAGES;

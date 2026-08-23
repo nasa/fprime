@@ -12,62 +12,57 @@ event ControllerBusy(
   format "Controller cannot process signal {} in state {}"
 
 @ Failed to find a loaded module with the requested name
-event ModuleNotFound(module_name: string size 16) \
+event ModuleNotFound(module_name: string size Wasm.MODULE_NAME_STRING_SIZE) \
   severity warning low \
   format "Module with name {} is not loaded into the store"
 
 event GlobalSetFailed(
-  module_name: string size 16
-  globalName: string size 16
+  module_name: string size Wasm.MODULE_NAME_STRING_SIZE
+  globalName: string size Wasm.GLOBAL_NAME_STRING_SIZE
   reason: Status
 ) \
   severity warning low \
   format "Failed to set global value for module {} global name {}: {}"
 
 event GlobalGetFailed(
-  module_name: string size 16
-  globalName: string size 16
+  module_name: string size Wasm.MODULE_NAME_STRING_SIZE
+  globalName: string size Wasm.GLOBAL_NAME_STRING_SIZE
   reason: Status
 ) \
   severity warning low \
   format "Failed to get global value for module {} global name {}: {}"
 
 event GlobalValueI32(
-  module_name: string size 16
-  globalName: string size 16
+  module_name: string size Wasm.MODULE_NAME_STRING_SIZE
+  globalName: string size Wasm.GLOBAL_NAME_STRING_SIZE
   value: I32
 ) \
   severity activity low \
   format "Global value module={} name={} value={}"
 
 event GlobalValueI64(
-  module_name: string size 16
-  globalName: string size 16
+  module_name: string size Wasm.MODULE_NAME_STRING_SIZE
+  globalName: string size Wasm.GLOBAL_NAME_STRING_SIZE
   value: I64
 ) \
   severity activity low \
   format "Global value module={} name={} value={}"
 
 event GlobalValueF32(
-  module_name: string size 16
-  globalName: string size 16
+  module_name: string size Wasm.MODULE_NAME_STRING_SIZE
+  globalName: string size Wasm.GLOBAL_NAME_STRING_SIZE
   value: F32
 ) \
   severity activity low \
   format "Global value module={} name={} value={}"
 
 event GlobalValueF64(
-  module_name: string size 16
-  globalName: string size 16
+  module_name: string size Wasm.MODULE_NAME_STRING_SIZE
+  globalName: string size Wasm.GLOBAL_NAME_STRING_SIZE
   value: F64
 ) \
   severity activity low \
   format "Global value module={} name={} value={}"
-
-@ A cancel was requested on the seqCancelIn port from a state where it is not valid
-event InvalidSeqCancelCall($state: ControllerStateMachine.State) \
-  severity warning high \
-  format "Cannot cancel sequence from a port in state {}"
 
 @ Failed to open the requested Wasm module file
 event FileOpenError(fileName: string size FileNameStringSize, status: I32) \
@@ -140,7 +135,7 @@ event SerialPortSendFailed(host_function: HostFunction, status: I32) \
 @ The guest requested an event at a severity that is not permitted for guest
 @ programs (an out-of-range id, or FATAL/COMMAND which are reserved for the
 @ host). The guest message is preserved and reported here at WARNING_HI.
-event HostFunctionInvalidSeverity(raw: I32, msg: string size 128) \
+event HostFunctionInvalidSeverity(raw: I32, msg: string size Wasm.GUEST_EVENT_MESSAGE_SIZE) \
   severity warning high \
   format "Guest event at invalid/forbidden severity '{}': {}"
 
@@ -245,16 +240,16 @@ event InvalidModuleEntrypoint(moduleIdx: ModuleIdx, status: Status) \
 # ----------------------------------------------------------------------
 
 @ A WARNING_HI event emitted by the guest program
-event LogWarningHi(msg: string size 128) severity warning high format "{}"
+event LogWarningHi(msg: string size Wasm.GUEST_EVENT_MESSAGE_SIZE) severity warning high format "{}"
 
 @ A WARNING_LO event emitted by the guest program
-event LogWarningLo(msg: string size 128) severity warning low format "{}"
+event LogWarningLo(msg: string size Wasm.GUEST_EVENT_MESSAGE_SIZE) severity warning low format "{}"
 
 @ An ACTIVITY_HI event emitted by the guest program
-event LogActivityHi(msg: string size 128) severity activity high format "{}"
+event LogActivityHi(msg: string size Wasm.GUEST_EVENT_MESSAGE_SIZE) severity activity high format "{}"
 
 @ An ACTIVITY_LO event emitted by the guest program
-event LogActivityLo(msg: string size 128) severity activity low format "{}"
+event LogActivityLo(msg: string size Wasm.GUEST_EVENT_MESSAGE_SIZE) severity activity low format "{}"
 
 @ A DIAGNOSTIC event emitted by the guest program
-event LogDiagnostic(msg: string size 128) severity diagnostic format "{}"
+event LogDiagnostic(msg: string size Wasm.GUEST_EVENT_MESSAGE_SIZE) severity diagnostic format "{}"

@@ -10,7 +10,7 @@ param HOST_FUNCTION_TIMEOUT_SECS: F32 default 0
 @
 @ Larger numbers make the interpreter faster because the engine doesn't
 @ need to feed itself through a queue to fuel more cycles.
-param INSTRUCTION_FUEL: FwSizeType default 1000
+param INSTRUCTION_FUEL: FwSizeType default Wasm.DEFAULT_INSTRUCTION_FUEL
 
 @ the base directory relative to which sequence file paths are resolved.
 @ a '/' separator is always inserted between this base dir and the input

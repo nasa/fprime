@@ -5,7 +5,22 @@ module Svc {
         @ the rules of Os::File::open. trailing slash optional
         dictionary constant DEFAULT_SEQ_BASE_DIR = ""
 
-        
+        @ Buffer size (bytes) for a WebAssembly module name (LOAD/INVOKE and the
+        @ commands/events that reference a loaded module by name)
+        dictionary constant MODULE_NAME_STRING_SIZE = 16
+
+        @ Buffer size (bytes) for a WebAssembly global export name
+        @ (GLOBAL_SET_*/GLOBAL_GET and their events)
+        dictionary constant GLOBAL_NAME_STRING_SIZE = 16
+
+        @ Maximum length (bytes) of a guest-emitted event message
+        @ (fprime.event host function)
+        dictionary constant GUEST_EVENT_MESSAGE_SIZE = 128
+
+        @ Default value of the INSTRUCTION_FUEL parameter: number of Wasm
+        @ instructions to execute per interpreter cycle
+        dictionary constant DEFAULT_INSTRUCTION_FUEL = 1000
+
         dictionary enum SerialPortOutIndex: U8 {
             @ Example serial port 0 - rename to application-specific name (e.g., TIME_SYNC_PORT)
             EXAMPLE_PORT_0 = 0

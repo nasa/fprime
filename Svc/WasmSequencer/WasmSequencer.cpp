@@ -27,8 +27,6 @@
 
 namespace Svc {
 
-// Trampolines for the spacewasm global-allocator registry. Static member functions
-// (not lambdas, per CPP-7) that forward to the owning instance carried in `userdata`.
 U8* WasmSequencer ::globalAllocThunk(void* userdata, size_t size, size_t align) {
     if (userdata == nullptr) {
         return nullptr;
@@ -163,14 +161,6 @@ void WasmSequencer ::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase&
 }
 
 void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
-    // Port-driven CANCEL. The only state a sequence cannot be cancelled from is
-    // IDLE (nothing is running). Mirrors the CANCEL command otherwise, but has no
-    // command response to send.
-    if (this->controller_getState() == WasmSequencer_ControllerStateMachine_State::IDLE) {
-        this->log_WARNING_HI_InvalidSeqCancelCall(this->controller_getState());
-        return;
-    }
-
     this->controller_sendSignal_cancel();
     this->interpreter_sendSignal_cmd_CANCEL();
 }

@@ -256,6 +256,8 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     const Svc::WasmSequencer_RequestContext& value) {
     // A module that cannot be run (no valid main) counts as a failed sequence.
     this->m_tlm.sequencesFailed++;
+
+    // Get the failure status of why the main module is invalid
     auto problemStatus = this->validateModuleMain(value.get_moduleIdx());
     this->log_WARNING_HI_InvalidModuleEntrypoint(value.get_moduleIdx(), WasmSequencer_Status(problemStatus));
 }

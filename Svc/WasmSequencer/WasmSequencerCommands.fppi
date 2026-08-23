@@ -23,13 +23,13 @@ async command RUN(
 @ standalone module. The name must not conflict with a previously loaded module.
 async command LOAD(
   fileName: string size FileNameStringSize @< The name of the sequence file
-  name: string size 16                     @< WebAssembly module name (empty for a single unnamed module)
+  name: string size Wasm.MODULE_NAME_STRING_SIZE @< WebAssembly module name (empty for a single unnamed module)
 ) \
   opcode 1
 
 @ Invoke a main function from a loaded module
 async command INVOKE(
-  $module: string size 16 @< Name of the module to invoke a function from
+  $module: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to invoke a function from
   $block: Svc.BlockState  @< Block until sequence has finished running
   seqArgs: Svc.SeqArgs    @< Arguments to invalid sequence entrypoint with
 ) \
@@ -40,8 +40,6 @@ async command WAIT opcode 3
 
 @ Cancels a running or validated sequence. After running CANCEL, the sequencer should return to IDLE
 @ This completely clears the store.
-@ Cancelling during LOADING will trigger a fail response in the reader and
-@ return to IDLE mode.
 sync command CANCEL opcode 4
 
 # TODO(tumbar) Add a reset and make CANCEL not clear the store
@@ -59,8 +57,8 @@ async command CONTINUE opcode 6
 @ Set a global variable to a given i32 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of i32 type
 async command GLOBAL_SET_I32(
-  moduleName: string size 16 @< Name of the module to set global for
-  name: string size 16       @< Name of the global
+  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
+  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
   value: I32                 @< Value to set global to
 ) \
   opcode 7
@@ -68,8 +66,8 @@ async command GLOBAL_SET_I32(
 @ Set a global variable to a given i64 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of i64 type
 async command GLOBAL_SET_I64(
-  moduleName: string size 16 @< Name of the module to set global for
-  name: string size 16       @< Name of the global
+  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
+  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
   value: I64                 @< Value to set global to
 ) \
   opcode 8
@@ -77,8 +75,8 @@ async command GLOBAL_SET_I64(
 @ Set a global variable to a given f32 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of f32 type
 async command GLOBAL_SET_F32(
-  moduleName: string size 16 @< Name of the module to set global for
-  name: string size 16       @< Name of the global
+  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
+  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
   value: F32                 @< Value to set global to
 ) \
   opcode 9
@@ -86,8 +84,8 @@ async command GLOBAL_SET_F32(
 @ Set a global variable to a given f64 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of f64 type
 async command GLOBAL_SET_F64(
-  moduleName: string size 16 @< Name of the module to set global for
-  name: string size 16       @< Name of the global
+  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
+  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
   value: F64                 @< Value to set global to
 ) \
   opcode 10
@@ -95,7 +93,7 @@ async command GLOBAL_SET_F64(
 @ Get the current value of a global variable and emit an event
 @ Command fails if the module is not found, global is not exported, mutable, or of f64 type
 async command GLOBAL_GET(
-  moduleName: string size 16 @< Name of the module to set global for
-  name: string size 16       @< Name of the global
+  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
+  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
 ) \
   opcode 11

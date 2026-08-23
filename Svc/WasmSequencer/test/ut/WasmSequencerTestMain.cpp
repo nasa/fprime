@@ -1844,20 +1844,6 @@ TEST_F(WasmSequencerTester, SeqCancelInCancelsRunningSequence) {
     this->removeFile("loop.wasm");
 }
 
-TEST_F(WasmSequencerTester, SeqCancelInFromIdleRejected) {
-    // Cancelling from IDLE (nothing running) is rejected with InvalidSeqCancelCall
-    // and leaves the component in IDLE.
-    this->invoke_to_seqCancelIn(0);
-    this->dispatchAll();
-
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_InvalidSeqCancelCall_SIZE(1);
-    ASSERT_EVENTS_InvalidSeqCancelCall(0, ControllerState::IDLE);
-    ASSERT_EVENTS_SequenceCancelled_SIZE(0);
-    ASSERT_EQ(this->seqDoneOutCount, 0u);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-}
-
 TEST_F(WasmSequencerTester, PauseAtHostFunctionThenContinueResumes) {
     // cmd.wasm reaches the cmd host function on its very first spin. dispatchUntilState
     // stops at RUNNING_SPINNING with the entry `entered` signal still queued (before that

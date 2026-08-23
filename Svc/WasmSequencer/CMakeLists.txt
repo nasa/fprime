@@ -10,16 +10,6 @@
 #
 ####
 
-# Module names are derived from the path from the nearest project/library/framework
-# root when not specifically overridden by the developer, i.e. the module defined by
-# `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
-
-####
-# fprime_spacewasm: thin Rust static library re-exporting the published
-# `spacewasm_c_api` crate (the C ABI over the `spacewasm` WebAssembly
-# interpreter). Built by cargo and consumed by the C++ component below as an
-# IMPORTED static library. The C API surface is the vendored `spacewasm.h`.
-####
 set(FPRIME_SPACEWASM_DIR  "${CMAKE_CURRENT_LIST_DIR}/fprime_spacewasm")
 set(FPRIME_SPACEWASM_TDIR "${CMAKE_CURRENT_BINARY_DIR}/fprime_spacewasm_target")
 
@@ -48,24 +38,38 @@ else()
     set(FPRIME_SPACEWASM_PROFILE_FLAG "--release")
 endif()
 
-# With an explicit --target and --target-dir, cargo writes the archive to a
-# fixed, documented path: <target-dir>/<triple>/<profile>/lib<crate>.a. Point
-# the linker straight at it -- no JSON parsing or copy step needed.
 set(FPRIME_SPACEWASM_LIB
     "${FPRIME_SPACEWASM_TDIR}/${RUST_TARGET_TRIPLE}/${FPRIME_SPACEWASM_PROFILE}/libfprime_spacewasm.a")
+
+get_property(_fp_cfg_dests GLOBAL PROPERTY FPRIME_CONFIG_DESTINATIONS)
+set(WASM_SEQ_CONFIG_DIR "")
+foreach(_dest IN LISTS _fp_cfg_dests)
+    get_filename_component(_name "${_dest}" NAME)
+    if(_name STREQUAL "WasmSequencerSpacewasmConfig.h")
+        get_filename_component(WASM_SEQ_CONFIG_DIR "${_dest}" DIRECTORY)
+        break()
+    endif()
+endforeach()
+if(NOT WASM_SEQ_CONFIG_DIR)
+    status(FATAL_ERROR "Could not find WasmSequencerSpacewasmConfig.h config directory")
+endif()
+set(WASM_SEQ_CONFIG_HEADER "${WASM_SEQ_CONFIG_DIR}/WasmSequencerSpacewasmConfig.h")
 
 if (CARGO)
     # Optimization/codegen flags live in the crate's [profile.release]
     # (opt-level, lto, codegen-units, panic=abort); --release selects it.
     add_custom_command(
         OUTPUT  "${FPRIME_SPACEWASM_LIB}"
-        COMMAND "${CARGO}" build --locked ${FPRIME_SPACEWASM_PROFILE_FLAG}
+        COMMAND "${CMAKE_COMMAND}" -E env "WASM_SEQ_CONFIG_DIR=${WASM_SEQ_CONFIG_DIR}"
+                "${CARGO}" build --locked ${FPRIME_SPACEWASM_PROFILE_FLAG}
                 --manifest-path "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
                 --target        "${RUST_TARGET_TRIPLE}"
                 --target-dir    "${FPRIME_SPACEWASM_TDIR}"
         DEPENDS "${FPRIME_SPACEWASM_DIR}/src/lib.rs"
+                "${FPRIME_SPACEWASM_DIR}/build.rs"
                 "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
                 "${FPRIME_SPACEWASM_DIR}/Cargo.lock"
+                "${WASM_SEQ_CONFIG_HEADER}"
         COMMENT "Building fprime_spacewasm Rust static library"
         VERBATIM
     )

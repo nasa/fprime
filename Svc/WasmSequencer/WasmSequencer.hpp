@@ -116,8 +116,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Handler implementation for command RUN
     //!
     //! Run a Wasm module main function on it's own in the interpreter
-    //! This command first resets the store (discarding any modules previously
-    //! staged with LOAD), then is short-hand for:
+    //! This command first resets the store (discarding any modules previously staged
+    //! with LOAD), then is short-hand for:
     //! 1. LOAD [fileName] ""
     //! 2. INVOKE "" "main"
     //! 3. CONTINUE
@@ -138,13 +138,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Loads and validates a WebAssembly module into the store under the given name.
     //! Naming the module lets its exports be referenced by other modules and lets
     //! INVOKE, GLOBAL_GET and GLOBAL_SET address it. Use an empty name for a single,
-    //! standalone module.
-    void LOAD_cmdHandler(
-        FwOpcodeType opCode,               //!< The opcode
-        U32 cmdSeq,                        //!< The command sequence number
-        const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-        const Fw::CmdStringArg& name       //!< WebAssembly module name (empty for a single unnamed module)
-        ) override;
+    //! standalone module. The name must not conflict with a previously loaded module.
+    void LOAD_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                         U32 cmdSeq,                        //!< The command sequence number
+                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+                         const Fw::CmdStringArg& name  //!< WebAssembly module name (empty for a single unnamed module)
+                         ) override;
 
     //! Handler implementation for command INVOKE
     //!
@@ -167,8 +166,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //!
     //! Cancels a running or validated sequence. After running CANCEL, the sequencer should return to IDLE
     //! This completely clears the store.
-    //! Cancelling during LOADING will trigger a fail response in the reader and
-    //! return to IDLE mode.
     void CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                            U32 cmdSeq            //!< The command sequence number
                            ) override;
@@ -826,7 +823,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     Telemetry m_tlm;
 
-    //! Monotonic counter of sequences started (bumped whenever the interpreter
+    //! Sequences started counter (bumped whenever the interpreter
     //! begins spinning a freshly-invoked program). The low 16 bits form the
     //! high half of the command context (cmdUid) so we can detect a command
     //! response that arrives late, after its originating sequence has ended.

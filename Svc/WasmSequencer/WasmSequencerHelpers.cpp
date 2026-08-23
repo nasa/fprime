@@ -9,7 +9,7 @@
 #include "Os/Console.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "config/FwSizeTypeAliasAc.h"
-#include "default/config/WasmSequencerConfig.hpp"
+#include "config/WasmSequencerConfig.hpp"
 #include "spacewasm.h"
 
 namespace Svc {
