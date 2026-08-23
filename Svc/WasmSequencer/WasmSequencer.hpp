@@ -891,10 +891,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                 U32 msgLen;
             } event;
 
-            // RSLEEP / ASLEEP: absolute/relative sleep duration
+            // RSLEEP: relative sleep duration
             struct {
                 U64 us;
-            } sleep;
+            } rsleep;
+
+            // ASLEEP: absolute sleep time
+            struct {
+                U64 us;
+            } asleep;
 
             // ARGS: where to write the stored sequence arguments
             struct {

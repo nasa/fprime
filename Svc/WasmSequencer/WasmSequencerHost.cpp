@@ -342,7 +342,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmRsleep(spacewasm_caller_t* caller
 
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::RSLEEP;
     this->m_pendingHostFunction.caller = caller;
-    this->m_pendingHostFunction.u.sleep.us = us;
+    this->m_pendingHostFunction.u.rsleep.us = us;
 
     return SPACEWASM_PAUSE;
 }
@@ -367,7 +367,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmAsleep(spacewasm_caller_t* caller
 
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::ASLEEP;
     this->m_pendingHostFunction.caller = caller;
-    this->m_pendingHostFunction.u.sleep.us = us;
+    this->m_pendingHostFunction.u.asleep.us = us;
 
     return SPACEWASM_PAUSE;
 }

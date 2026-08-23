@@ -354,8 +354,8 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_dispatchPe
             break;
         }
         case WasmSequencer_HostFunction::RSLEEP: {
-            U32 seconds = static_cast<U32>(this->m_pendingHostFunction.u.sleep.us / 1000000);
-            U32 useconds = static_cast<U32>(this->m_pendingHostFunction.u.sleep.us % 1000000);
+            U32 seconds = static_cast<U32>(this->m_pendingHostFunction.u.rsleep.us / 1000000);
+            U32 useconds = static_cast<U32>(this->m_pendingHostFunction.u.rsleep.us % 1000000);
 
             // Relative sleep from now
             Fw::Time timer = this->getTime();
@@ -366,8 +366,8 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_dispatchPe
             break;
         }
         case WasmSequencer_HostFunction::ASLEEP: {
-            U32 seconds = static_cast<U32>(this->m_pendingHostFunction.u.sleep.us / 1000000);
-            U32 useconds = static_cast<U32>(this->m_pendingHostFunction.u.sleep.us % 1000000);
+            U32 seconds = static_cast<U32>(this->m_pendingHostFunction.u.asleep.us / 1000000);
+            U32 useconds = static_cast<U32>(this->m_pendingHostFunction.u.asleep.us % 1000000);
 
             // Absolute is relative to epoch, we still need to get the time for base/context
             Fw::Time timer = this->getTime();
