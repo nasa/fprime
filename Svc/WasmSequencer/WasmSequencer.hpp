@@ -766,7 +766,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     };
 
     //! WAIT commands waiting for sequence completion
-    Fw::FifoQueue<WaitingCmd, 8> m_waiting;
+    Fw::FifoQueue<WaitingCmd, WasmSequencerConfig::MAX_CONCURRENT_WAIT_COMMANDS> m_waiting;
 
     //! Status stored by the `load` action indicated failure reason
     WasmSequencer_Status m_loadFailureStatus = WasmSequencer_Status::OK;

@@ -68,6 +68,9 @@ constexpr SerialInQueueFullBehavior SERIAL_IN_QUEUE_FULL_BEHAVIOR = SerialInQueu
 /// Size of each serialIn port in bytes
 constexpr FwSizeType SERIAL_IN_QUEUE_SIZE = 256;
 
+/// Maximum number of concurrent `WAIT` commands each WasmSequencer can service
+constexpr FwSizeType MAX_CONCURRENT_WAIT_COMMANDS = 8;
+
 }  // namespace WasmSequencerConfig
 }  // namespace Svc
 
