@@ -537,6 +537,23 @@ class FpySequencer : public FpySequencerComponentBase {
                           U32 context           //!< The call order
                           ) override;
 
+    // ----------------------------------------------------------------------
+    // Pre-message hook overrides for typed async input ports
+    // ----------------------------------------------------------------------
+
+    void checkOverflow();
+    //! Pre-message hook for async input port checkTimers
+    void checkTimers_preMsgHook(FwIndexType portNum, U32 context) override;
+
+    //! Pre-message hook for async input port cmdResponseIn
+    void cmdResponseIn_preMsgHook(FwIndexType portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse& response) override;
+
+    //! Pre-message hook for async input port seqRunIn
+    void seqRunIn_preMsgHook(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) override;
+
+    // ! Pre-message hook for async input port tlmWrite
+    void tlmWrite_preMsgHook(FwIndexType portNum, U32 context) override;
+
     //! Internal interface handler for directive_waitAbs
     void directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) override;
 
@@ -831,18 +848,8 @@ class FpySequencer : public FpySequencerComponentBase {
     // dispatches a command, returns whether successful or not
     Fw::Success sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize);
 
-    // HandlerBase wrappers for queue capacity monitoring
-    void FpySequencer::checkTimers_handlerBase(FwIndexType portNum, U32 context);
-    
-    void cmdResponseIn_handlerBase(FwIndexType portNum,
-                                   FwOpcodeType opCode,
-                                   U32 cmdSeq,
-                                   const Fw::CmdResponse& response);
-    void pingIn_handlerBase(FwIndexType portNum, U32 key);
-    void seqRunIn_handlerBase(FwIndexType portNum,
-                              const Fw::StringBase& filename,
-                              const Svc::SeqArgs& args);
-    void tlmWrite_handlerBase(FwIndexType portNum, U32 context);
+    // sm_dispatch wrapper for queue capacity monitoring
+    void smDispatch(Fw::SerialBufferBase &buffer);
 
     // returns the index of the current statement
     U32 currentStatementIdx();
