@@ -99,9 +99,6 @@ state machine ControllerStateMachine {
   @ Signal emited inside the laod action when module load fails
   signal loadFailed: RequestContext
 
-  @ Emit an event to denote failed module load
-  action reportModuleLoadFailed
-
   ###############
   # Start       #
   ###############
@@ -210,7 +207,7 @@ state machine ControllerStateMachine {
 
   state LOADING_TO_READY {
     on loadSucceeded enter START_CHECK
-    on loadFailed do { reportModuleLoadFailed, respond_ERROR } enter IDLE
+    on loadFailed do { respond_ERROR } enter IDLE
 
     on run do { respondLoad_BUSY }
     on load do { respondLoad_BUSY }
@@ -251,7 +248,7 @@ state machine ControllerStateMachine {
 
   state LOADING_TO_RUN {
     on loadSucceeded enter MAIN_CHECK_PENDING_START_AND_MAIN
-    on loadFailed do { reportModuleLoadFailed, respond_ERROR } enter IDLE
+    on loadFailed do { respond_ERROR } enter IDLE
 
     on run do { respondLoad_BUSY }
     on load do { respondLoad_BUSY }

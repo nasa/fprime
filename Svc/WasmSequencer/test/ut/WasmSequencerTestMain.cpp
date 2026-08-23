@@ -180,7 +180,7 @@ TEST_F(WasmSequencerTester, LoadFileNotFound) {
     // file name here since the numeric status is platform-dependent.
     ASSERT_EVENTS_FileOpenError_SIZE(1);
     ASSERT_STREQ(this->eventHistory_FileOpenError->at(0).fileName.toChar(), "does_not_exist.wasm");
-    ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
+    ASSERT_EVENTS_ModuleLoadFailed_SIZE(0);
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 12, Fw::CmdResponse::EXECUTION_ERROR);
 }
 

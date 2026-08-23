@@ -56,6 +56,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_ERR
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_RequestContext& value) {
+    this->m_tlm.sequencesFailed++;
     this->respondToRequest(value, Fw::CmdResponse::EXECUTION_ERROR);
 
     // Respond to all wait requests
@@ -146,7 +147,6 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     const Os::File::Status openStatus = file.open(filePath.toChar(), Os::File::OPEN_READ);
     if (openStatus != Os::File::Status::OP_OK) {
         this->log_WARNING_HI_FileOpenError(filePath, openStatus);
-        this->m_loadFailureStatus = WasmSequencer_Status::ERR_READER_ERROR;
         this->controller_sendSignal_loadFailed(value.get_context());
         return;
     }
@@ -208,18 +208,9 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     if (status == SPACEWASM_OK) {
         this->controller_sendSignal_loadSucceeded(next);
     } else {
-        this->m_loadFailureStatus = WasmSequencer_Status(status);
+        this->log_WARNING_HI_ModuleLoadFailed(WasmSequencer_Status(status));
         this->controller_sendSignal_loadFailed(value.get_context());
     }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleLoadFailed(
-    SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    // A failed load counts as a failed sequence: the RUN/LOAD attempt did not
-    // reach a runnable module.
-    this->m_tlm.sequencesFailed++;
-    this->log_WARNING_HI_ModuleLoadFailed(this->m_loadFailureStatus);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_invokeStart(
@@ -254,9 +245,6 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_RequestContext& value) {
-    // A module that cannot be run (no valid main) counts as a failed sequence.
-    this->m_tlm.sequencesFailed++;
-
     // Get the failure status of why the main module is invalid
     auto problemStatus = this->validateModuleMain(value.get_moduleIdx());
     this->log_WARNING_HI_InvalidModuleEntrypoint(value.get_moduleIdx(), WasmSequencer_Status(problemStatus));
@@ -350,7 +338,8 @@ void WasmSequencer ::reportSequenceFailure(WasmSequencer_ModuleIdx moduleIdx, Wa
             return;
         default:
             this->m_tlm.sequencesFailed++;
-            this->log_WARNING_HI_SequenceHostFailure(moduleIdx, phase, this->m_exit.reason, this->m_exit.lastHostFunction);
+            this->log_WARNING_HI_SequenceHostFailure(moduleIdx, phase, this->m_exit.reason,
+                                                     this->m_exit.lastHostFunction);
             return;
     }
 }

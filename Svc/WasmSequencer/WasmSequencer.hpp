@@ -20,7 +20,6 @@
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ModuleIdxAliasAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_RequestContextSerializableAc.hpp"
-#include "Svc/WasmSequencer/WasmSequencer_StatusEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "Utils/Types/CircularBuffer.hpp"
@@ -322,14 +321,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
         const Svc::WasmSequencer_LoadRequest& value               //!< The value
-        ) override;
-
-    //! Implementation for action reportModuleLoadFailed of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! Emit an event to denote failed module load
-    void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleLoadFailed(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
         ) override;
 
     //! Implementation for action invokeStart of state machine Svc_WasmSequencer_ControllerStateMachine
@@ -767,9 +758,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! WAIT commands waiting for sequence completion
     Fw::FifoQueue<WaitingCmd, WasmSequencerConfig::MAX_CONCURRENT_WAIT_COMMANDS> m_waiting;
-
-    //! Status stored by the `load` action indicated failure reason
-    WasmSequencer_Status m_loadFailureStatus = WasmSequencer_Status::OK;
 
     //! Currently stored sequence arguments
     Svc::SeqArgs m_args;
