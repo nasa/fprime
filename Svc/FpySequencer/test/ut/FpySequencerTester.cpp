@@ -796,6 +796,10 @@ Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr
     return &(this->cmp.m_sequenceBuffer);
 }
 
+Os::Queue* FpySequencerTester::tester_get_m_componentQueue_ptr() {
+    return &(this->cmp.m_queue);
+}
+
 Svc::FpySequencer::BreakpointInfo* FpySequencerTester::tester_get_m_breakpoint_ptr() {
     return &(this->cmp.m_breakpoint);
 }
