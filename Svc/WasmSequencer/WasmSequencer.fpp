@@ -41,11 +41,9 @@ module Svc {
     async input port serialIn: [Wasm.SerialPortInIndex.MAX_SERIAL_PORTS] serial
 
     @ port for requests to run sequences
-    # same priority as RUN cmd
     async input port seqRunIn: Svc.CmdSeqIn assert
 
     @ port for requesting to cancel the currently running sequence
-    # same priority as CANCEL cmd
     async input port seqCancelIn: Svc.CmdSeqCancel assert
 
     @ called when a sequence begins running
