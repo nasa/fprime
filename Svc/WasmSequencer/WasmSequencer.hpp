@@ -766,7 +766,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     Fw::FileNameString m_lastLoadFileName;
 
     WasmSequencer_RequestContext m_executingContext;
-    bool m_hasExectingContext;
+    bool m_hasExecutingContext;
 
     //! Pending timer from sleep host function
     Fw::Time m_pendingTimer;

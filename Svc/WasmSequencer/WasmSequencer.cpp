@@ -51,7 +51,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_page_used_mask(0),
       m_guest_offset(0),
       m_wasm(nullptr),
-      m_hasExectingContext(false),
+      m_hasExecutingContext(false),
       m_pendingTimer(),
       m_hasPendingTimer(false),
       m_hostFunctionStart(),

@@ -502,15 +502,15 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setContext(
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal,
     const Svc::WasmSequencer_RequestContext& value) {
-    FW_ASSERT(!this->m_hasExectingContext);
-    this->m_hasExectingContext = true;
+    FW_ASSERT(!this->m_hasExecutingContext);
+    this->m_hasExecutingContext = true;
     this->m_executingContext = value;
 }
 
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_clearContext(
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal) {
-    this->m_hasExectingContext = false;
+    this->m_hasExecutingContext = false;
 }
 
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_resume(
