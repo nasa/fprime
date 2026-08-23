@@ -1956,7 +1956,9 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutTimeIncomparableFails) {
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     this->assertSequenceFailureCount(1);
-    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN, WasmSequencer_ExitReason::TIMER_INCOMPARABLE, WasmSequencer_HostFunction::COMMAND);
+    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
+                                      WasmSequencer_ExitReason::TIMER_INCOMPARABLE,
+                                      WasmSequencer_HostFunction::COMMAND);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 401, Fw::CmdResponse::EXECUTION_ERROR);
     this->removeFile("cmd.wasm");
 }

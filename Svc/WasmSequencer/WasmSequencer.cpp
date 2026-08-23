@@ -112,7 +112,8 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 
     // From here on the response claims to be from the current sequence, so any
     // inconsistency is a genuine error that should fail the sequence.
-    if (this->interpreter_getState() != WasmSequencer_InterpreterStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING ||
+    if (this->interpreter_getState() !=
+            WasmSequencer_InterpreterStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING ||
         this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::COMMAND) {
         this->interpreter_sendSignal_hostResponseUnexpected(WasmSequencer_HostFunction::COMMAND);
         return;
