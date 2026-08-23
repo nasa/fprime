@@ -273,7 +273,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Implementation for action respondInvoke_BUSY of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
-    //! Responds to request with EXECUTION_ERROR
+    //! Responds to request with BUSY
     //! Emit an event to say why we are rejecting this request in the current state
     void Svc_WasmSequencer_ControllerStateMachine_action_respondInvoke_BUSY(
         SmId smId,                                                //!< The state machine id
@@ -281,9 +281,19 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         const Svc::WasmSequencer_InvokeRequest& value             //!< The value
         ) override;
 
-    //! Implementation for action respondLoad_BUSY of state machine Svc_WasmSequencer_ControllerStateMachine
+    //! Implementation for action respondInvoke_ERROR of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Responds to request with EXECUTION_ERROR
+    //! Emit an event to say why we are rejecting this request in the current state
+    void Svc_WasmSequencer_ControllerStateMachine_action_respondInvoke_ERROR(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_InvokeRequest& value             //!< The value
+        ) override;
+
+    //! Implementation for action respondLoad_BUSY of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Responds to request with BUSY
     //! Emit an event to say why we are rejecting this request in the current state
     void Svc_WasmSequencer_ControllerStateMachine_action_respondLoad_BUSY(
         SmId smId,                                                //!< The state machine id
@@ -394,7 +404,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
-    //! Implementation for action reportModuleFailed of state machine Svc_WasmSequencer_ControllerStateMachine
+    //! Implementation for action reportModuleMainFailed of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Emit an event noting a module failed during execution. Increment telemetry counters.
     void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleMainFailed(

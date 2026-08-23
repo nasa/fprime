@@ -71,6 +71,14 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respondInvo
     this->respondToRequest(value.get_context(), Fw::CmdResponse::BUSY);
 }
 
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respondInvoke_ERROR(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_InvokeRequest& value) {
+    this->log_WARNING_LO_ControllerCannotInvoke();
+    this->respondToRequest(value.get_context(), Fw::CmdResponse::EXECUTION_ERROR);
+}
+
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respondLoad_BUSY(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,

@@ -69,11 +69,15 @@ state machine ControllerStateMachine {
   @ Responds to request with EXECUTION_ERROR
   action respond_ERROR: RequestContext
 
-  @ Responds to request with EXECUTION_ERROR
+  @ Responds to request with BUSY
   @ Emit an event to say why we are rejecting this request in the current state
   action respondInvoke_BUSY: InvokeRequest
 
   @ Responds to request with EXECUTION_ERROR
+  @ Emit an event to say why we are rejecting this request in the current state
+  action respondInvoke_ERROR: InvokeRequest
+
+  @ Responds to request with BUSY
   @ Emit an event to say why we are rejecting this request in the current state
   action respondLoad_BUSY: LoadRequest
 
@@ -164,7 +168,7 @@ state machine ControllerStateMachine {
     on cancel enter IDLE
     on run do { load } enter LOADING_TO_RUN
     on load do { load } enter LOADING_TO_READY
-    on invoke do { respondInvoke_BUSY }
+    on invoke do { respondInvoke_ERROR }
   }
 
   @ Interpreter has modules loaded into the store and is ready to execute

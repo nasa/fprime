@@ -580,10 +580,8 @@ TEST_F(WasmSequencerTester, InvokeFromIdleInvalid) {
     this->sendCmd_INVOKE(0, 34, Fw::CmdStringArg(""), NO_BLOCK, {});
     this->dispatchAll();
 
-    ASSERT_EVENTS_ControllerBusy_SIZE(1);
-    ASSERT_EVENTS_ControllerBusy(0, WasmSequencer_SignalSource::COMMAND_INVOKE,
-                                 WasmSequencer_ControllerStateMachine_State::IDLE);
-    ASSERT_CMD_RESPONSE(0, OPCODE_INVOKE, 34, Fw::CmdResponse::BUSY);
+    ASSERT_EVENTS_ControllerCannotInvoke_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_INVOKE, 34, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
@@ -2118,6 +2116,33 @@ TEST_F(WasmSequencerTester, LoadWhileRunningRejected) {
                                  WasmSequencer_ControllerStateMachine_State::RUNNING_MAIN);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 152, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(1, OPCODE_LOAD, 153, Fw::CmdResponse::BUSY);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("loop.wasm");
+}
+
+TEST_F(WasmSequencerTester, InvokeWhileRunningRejected) {
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+
+    const Fw::String file = this->copyAsset("loop.wasm");
+    this->sendCmd_RUN(0, 154, file, NO_BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
+
+    // INVOKE is only valid from READY; from a running sequence it is rejected as
+    // BUSY (respondInvoke_BUSY -> ControllerBusy for the COMMAND_INVOKE signal in
+    // the RUNNING_MAIN state) without disturbing the running loop. This is the
+    // distinct busy-state path, versus respondInvoke_ERROR which handles an INVOKE
+    // from IDLE (see InvokeFromIdleInvalid). The original NO_BLOCK RUN already
+    // responded OK at load (index 0); the rejected INVOKE lands as a BUSY (index 1).
+    // The loop still finishes.
+    this->sendCmd_INVOKE(0, 155, Fw::CmdStringArg(""), NO_BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_ControllerBusy_SIZE(1);
+    ASSERT_EVENTS_ControllerBusy(0, WasmSequencer_SignalSource::COMMAND_INVOKE,
+                                 WasmSequencer_ControllerStateMachine_State::RUNNING_MAIN);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 154, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_INVOKE, 155, Fw::CmdResponse::BUSY);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }

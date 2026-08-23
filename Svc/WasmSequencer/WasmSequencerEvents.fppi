@@ -4,6 +4,11 @@ event StoreAllocationSucceeded(moduleCount: U16) \
   format "Successfully allocated store with {} modules"
 
 @ A command was issued in a state where it is not valid
+event ControllerCannotInvoke \
+  severity warning low \
+  format "Cannot invoke a module when no module is loaded"
+
+@ A command was issued in a state where it is not valid
 event ControllerBusy(
   signalSource: SignalSource
   $state: ControllerStateMachine.State
