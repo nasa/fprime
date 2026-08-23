@@ -54,9 +54,9 @@ def build_invalid():
     # decode error.
     truncated = os.path.join(HERE, "truncated.wasm")
     with open(truncated, "wb") as f:
-        f.write(b"\x00asm")          # magic
+        f.write(b"\x00asm")  # magic
         f.write(b"\x01\x00\x00\x00")  # version 1
-        f.write(b"\x01\x07\x01")      # start of a type section, declared len 7, then EOF
+        f.write(b"\x01\x07\x01")  # start of a type section, declared len 7, then EOF
     print(f"  (hand-crafted) -> truncated.wasm ({os.path.getsize(truncated)} bytes)")
 
 
