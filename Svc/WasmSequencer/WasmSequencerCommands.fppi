@@ -7,33 +7,33 @@
 @
 @ If $block == Svc.BlockState.BLOCK this command will wait for completion.
 async command RUN(
-  fileName: string size FileNameStringSize @< The name of the sequence file
-  @ Block until sequence has finished running
-  @ Binary arguments to pass to the sequence
-  $block: Svc.BlockState
-  @ Optional arguments to execute the sequence with
-  @ Depending on the sequence being loaded these arguments may differ
-  seqArgs: Svc.SeqArgs
+    fileName: string size FileNameStringSize  @< The name of the sequence file
+    @ Block until sequence has finished running
+    @ Binary arguments to pass to the sequence
+    $block: Svc.BlockState
+    @ Optional arguments to execute the sequence with
+    @ Depending on the sequence being loaded these arguments may differ
+    seqArgs: string size SequenceArgumentsMaxSize
 ) \
-  opcode 0
+    opcode 0
 
 @ Loads and validates a WebAssembly module into the store under the given name.
 @ Naming the module lets its exports be referenced by other modules and lets
 @ INVOKE, GLOBAL_GET and GLOBAL_SET address it. Use an empty name for a single,
 @ standalone module. The name must not conflict with a previously loaded module.
 async command LOAD(
-  fileName: string size FileNameStringSize @< The name of the sequence file
-  name: string size Wasm.MODULE_NAME_STRING_SIZE @< WebAssembly module name (empty for a single unnamed module)
+    fileName: string size FileNameStringSize        @< The name of the sequence file
+    name: string size Wasm.MODULE_NAME_STRING_SIZE  @< WebAssembly module name (empty for a single unnamed module)
 ) \
-  opcode 1
+    opcode 1
 
 @ Invoke a main function from a loaded module
 async command INVOKE(
-  $module: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to invoke a function from
-  $block: Svc.BlockState  @< Block until sequence has finished running
-  seqArgs: Svc.SeqArgs    @< Arguments to invalid sequence entrypoint with
+    $module: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to invoke a function from
+    $block: Svc.BlockState                             @< Block until sequence has finished running
+    seqArgs: Svc.SeqArgs                               @< Arguments to invalid sequence entrypoint with
 ) \
-  opcode 2
+    opcode 2
 
 @ Wait for the interpreter to finish and return it's result as a CmdResponse
 async command WAIT opcode 3
@@ -57,43 +57,43 @@ async command CONTINUE opcode 6
 @ Set a global variable to a given i32 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of i32 type
 async command GLOBAL_SET_I32(
-  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
-  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
-  value: I32                 @< Value to set global to
+    moduleName: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to set global for
+    name: string size Wasm.GLOBAL_NAME_STRING_SIZE        @< Name of the global
+    value: I32                                            @< Value to set global to
 ) \
-  opcode 7
+    opcode 7
 
 @ Set a global variable to a given i64 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of i64 type
 async command GLOBAL_SET_I64(
-  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
-  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
-  value: I64                 @< Value to set global to
+    moduleName: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to set global for
+    name: string size Wasm.GLOBAL_NAME_STRING_SIZE        @< Name of the global
+    value: I64                                            @< Value to set global to
 ) \
-  opcode 8
+    opcode 8
 
 @ Set a global variable to a given f32 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of f32 type
 async command GLOBAL_SET_F32(
-  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
-  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
-  value: F32                 @< Value to set global to
+    moduleName: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to set global for
+    name: string size Wasm.GLOBAL_NAME_STRING_SIZE        @< Name of the global
+    value: F32                                            @< Value to set global to
 ) \
-  opcode 9
+    opcode 9
 
 @ Set a global variable to a given f64 value.
 @ Command fails if the module is not found, global is not exported, mutable, or of f64 type
 async command GLOBAL_SET_F64(
-  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
-  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
-  value: F64                 @< Value to set global to
+    moduleName: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to set global for
+    name: string size Wasm.GLOBAL_NAME_STRING_SIZE        @< Name of the global
+    value: F64                                            @< Value to set global to
 ) \
-  opcode 10
+    opcode 10
 
 @ Get the current value of a global variable and emit an event
 @ Command fails if the module is not found, global is not exported, mutable, or of f64 type
 async command GLOBAL_GET(
-  moduleName: string size Wasm.MODULE_NAME_STRING_SIZE @< Name of the module to set global for
-  name: string size Wasm.GLOBAL_NAME_STRING_SIZE @< Name of the global
+    moduleName: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to set global for
+    name: string size Wasm.GLOBAL_NAME_STRING_SIZE        @< Name of the global
 ) \
-  opcode 11
+    opcode 11
