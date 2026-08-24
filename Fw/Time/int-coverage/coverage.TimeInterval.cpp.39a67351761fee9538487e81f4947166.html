@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-23 22:10:21</td>
+      <td>2026-08-24 22:11:46</td>
     </tr>
   </table>
 </div>
@@ -78,8 +78,8 @@
     <tr><td><a href="#l56">Fw::TimeInterval::asTimeIntervalValue() const (line 56)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l78">Fw::TimeInterval::compare(Fw::TimeInterval const&amp;, Fw::TimeInterval const&amp;) (line 78)</a></td><td>called 107 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l65">Fw::TimeInterval::deserializeFrom(Fw::SerialBufferBase&amp;, Fw::Endianness) (line 65)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l70">Fw::TimeInterval::getSeconds() const (line 70)</a></td><td>called 5574 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l74">Fw::TimeInterval::getUSeconds() const (line 74)</a></td><td>called 5574 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l70">Fw::TimeInterval::getSeconds() const (line 70)</a></td><td>called 5532 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l74">Fw::TimeInterval::getUSeconds() const (line 74)</a></td><td>called 5531 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l34">Fw::TimeInterval::operator!=(Fw::TimeInterval const&amp;) const (line 34)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l42">Fw::TimeInterval::operator&lt;(Fw::TimeInterval const&amp;) const (line 42)</a></td><td>called 107 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l51">Fw::TimeInterval::operator&lt;=(Fw::TimeInterval const&amp;) const (line 51)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -88,7 +88,7 @@
     <tr><td><a href="#l38">Fw::TimeInterval::operator&gt;(Fw::TimeInterval const&amp;) const (line 38)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l46">Fw::TimeInterval::operator&gt;=(Fw::TimeInterval const&amp;) const (line 46)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l60">Fw::TimeInterval::serializeTo(Fw::SerialBufferBase&amp;, Fw::Endianness) const (line 60)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l17">Fw::TimeInterval::set(unsigned int, unsigned int) (line 17)</a></td><td>called 429 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l17">Fw::TimeInterval::set(unsigned int, unsigned int) (line 17)</a></td><td>called 425 times</td><td>75.0%</td></tr>
     <tr><td><a href="#l109">Fw::TimeInterval::sub(Fw::TimeInterval const&amp;, Fw::TimeInterval const&amp;) (line 109)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
 </details>
@@ -231,7 +231,7 @@
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">429</td>
+      <td class="linecount coveredLine">425</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">TimeInterval</span><span class="o">::</span><span class="n">set</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">seconds</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">useconds</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -245,21 +245,21 @@
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">429</td>
+      <td class="linecount coveredLine">425</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">useconds</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1000000</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">useconds</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">429</td>
+      <td class="linecount coveredLine">425</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_val</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span><span class="w"> </span><span class="n">useconds</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">429</td>
+      <td class="linecount coveredLine">425</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -602,14 +602,14 @@
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5574</td>
+      <td class="linecount coveredLine">5532</td>
       <td class="src coveredLine"><span class="n">U32</span><span class="w"> </span><span class="n">TimeInterval</span><span class="o">::</span><span class="n">getSeconds</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5574</td>
+      <td class="linecount coveredLine">5532</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_val</span><span class="p">.</span><span class="n">get_seconds</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -630,14 +630,14 @@
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5574</td>
+      <td class="linecount coveredLine">5531</td>
       <td class="src coveredLine"><span class="n">U32</span><span class="w"> </span><span class="n">TimeInterval</span><span class="o">::</span><span class="n">getUSeconds</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5574</td>
+      <td class="linecount coveredLine">5531</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_val</span><span class="p">.</span><span class="n">get_useconds</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
