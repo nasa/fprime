@@ -8,7 +8,17 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/ConstStringBase.hpp>
 #include <Os/Os.hpp>
+#include <Utils/Hash/Hash.hpp>
 #include "config/OsDelegateFile.hpp"
+
+// Forward declaration for UTs
+namespace Os {
+namespace Test {
+namespace FileTest {
+struct Tester;
+}
+}  // namespace Test
+}  // namespace Os
 
 namespace Os {
 
@@ -18,6 +28,8 @@ struct FileHandle {};
 
 // This class encapsulates a very simple file interface that has the most often-used features
 class FileInterface {
+    friend struct Os::Test::FileTest::Tester;
+
   public:
     enum Mode {
         OPEN_NO_MODE,     //!< File mode not yet selected
@@ -64,7 +76,28 @@ class FileInterface {
         MAX_WAIT_TYPE
     };
 
+    //! \brief default constructor
+    //!
+    FileInterface() = default;
+
+    //! \brief default virtual destructor
+    //!
     virtual ~FileInterface() = default;
+
+    //! \brief copy constructor that copies the mode/CRC state tracked by this base class
+    FileInterface(const FileInterface& other);
+
+    //! \brief assignment operator that copies the mode/CRC state tracked by this base class
+    FileInterface& operator=(const FileInterface& other);
+
+    //! \brief determine if the file is open
+    //! \return true if file is open, false otherwise
+    //!
+    bool isOpen() const;
+
+    // ------------------------------------
+    // Functions supplying default values
+    // ------------------------------------
 
     //! \brief open file with supplied path and mode
     //!
@@ -84,17 +117,85 @@ class FileInterface {
     //!
     virtual Status open(const char* path, Mode mode, OverwriteType overwrite) = 0;
 
-    //! \brief open file with supplied path and mode, defaulting to NO_OVERWRITE
+    //! \brief open file with supplied path and mode
     //!
-    //! Convenience overload equivalent to `open(path, mode, OverwriteType::NO_OVERWRITE)`. Implemented in terms of
-    //! the virtual 3-argument `open` above, so it is automatically available on every concrete Os::File backend
-    //! without requiring changes to that backend.
+    //! Open the file passed in with the given mode. Opening files with `OPEN_CREATE` mode will not clobber existing
+    //! files. Use other `open` method to set overwrite flag and clobber existing files. The status of the open
+    //! request is returned from the function call. Delegates to the chosen implementation's `open` function.
+    //!
+    //! It is invalid to send `nullptr` as the path.
+    //! It is invalid to supply `mode` as a non-enumerated value.
     //!
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
     //! \return: status of the open
     //!
-    Status open(const char* path, Mode mode) { return this->open(path, mode, OverwriteType::NO_OVERWRITE); }
+    Status open(const char* path, Mode mode);
+
+    //! \brief open file with supplied path, bounded length, and mode
+    //!
+    //! Open the file passed in with the given mode. The path length is bounded by `length`.
+    //! Opening files with `OPEN_CREATE` mode will not clobber existing files. Use the overload
+    //! accepting `OverwriteType` to set overwrite flag and clobber existing files.
+    //!
+    //! It is invalid to send `nullptr` as the path.
+    //! It is invalid to supply `mode` as a non-enumerated value.
+    //! It is invalid for the path to not be null-terminated within `length` characters.
+    //!
+    //! \param path: c-string of path to open
+    //! \param length: bound on the path buffer size
+    //! \param mode: file operation mode
+    //! \return: status of the open
+    //!
+    Status open(const char* path, FwSizeType length, Mode mode);
+
+    //! \brief open file with supplied path, bounded length, mode, and overwrite type
+    //!
+    //! Open the file passed in with the given mode. The path length is bounded by `length`.
+    //! If overwrite is set to OVERWRITE, then opening files in OPEN_CREATE mode will clobber
+    //! existing files. Set overwrite to NO_OVERWRITE to preserve existing files. This is the
+    //! core open implementation to which all other open overloads delegate.
+    //!
+    //! It is invalid to send `nullptr` as the path.
+    //! It is invalid to supply `mode` as a non-enumerated value.
+    //! It is invalid to supply `overwrite` as a non-enumerated value.
+    //! It is invalid for the path to not be null-terminated within `length` characters.
+    //!
+    //! \param path: c-string of path to open
+    //! \param length: bound on the path buffer size
+    //! \param mode: file operation mode
+    //! \param overwrite: overwrite existing file on create
+    //! \return: status of the open
+    //!
+    Status open(const char* path, FwSizeType length, Mode mode, OverwriteType overwrite);
+
+    //! \brief open file with supplied string path and mode
+    //!
+    //! Open the file passed in with the given mode. Opening files with `OPEN_CREATE` mode will not clobber existing
+    //! files. Use the overload accepting `OverwriteType` to set overwrite flag and clobber existing files.
+    //!
+    //! It is invalid to supply `mode` as a non-enumerated value.
+    //!
+    //! \param path: ConstStringBase reference of path to open
+    //! \param mode: file operation mode
+    //! \return: status of the open
+    //!
+    Status open(const Fw::ConstStringBase& path, Mode mode);
+
+    //! \brief open file with supplied string path, mode, and overwrite type
+    //!
+    //! Open the file passed in with the given mode. If overwrite is set to OVERWRITE, then opening files in
+    //! OPEN_CREATE mode will clobber existing files. Set overwrite to NO_OVERWRITE to preserve existing files.
+    //!
+    //! It is invalid to supply `mode` as a non-enumerated value.
+    //! It is invalid to supply `overwrite` as a non-enumerated value.
+    //!
+    //! \param path: ConstStringBase reference of path to open
+    //! \param mode: file operation mode
+    //! \param overwrite: overwrite existing file on create
+    //! \return: status of the open
+    //!
+    Status open(const Fw::ConstStringBase& path, Mode mode, OverwriteType overwrite);
 
     //! \brief close the file, if not opened then do nothing
     //!
@@ -144,6 +245,19 @@ class FileInterface {
     //!
     virtual Status seek(FwSignedSizeType offset, SeekType seekType) = 0;
 
+    //! \brief seek the file pointer to the given offset absolutely with the full range
+    //!
+    //! Seek the file pointer to the given `offset` absolutely from the beginning of the file. This function is
+    //! equivalent to calling `seek` with `ABSOLUTE` as the `seekType` with the exception that it can handle the
+    //! full range of `FwSizeType` values as returned by `size` and `position` calls.
+    //!
+    //! Internally, it will perform multiple seeks to reach the desired offset while never exceeding the signed
+    //! limit of the basic `seek` function.
+    //!
+    //! \param offset_unsigned: offset to absolutely seek to
+    //! \return OP_OK on success otherwise error status
+    Status seek_absolute(FwSizeType offset_unsigned);
+
     //! \brief flush file contents to storage
     //!
     //! Flushes the file contents to storage (i.e. out of the OS cache to disk). Does nothing in implementations
@@ -175,6 +289,42 @@ class FileInterface {
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!
+    //! Read data from this file up to the `size` and store it in `buffer`.  This version will
+    //! will block until the requested size has been read successfully read or the end of the file has been
+    //! reached.
+    //!
+    //! `size` will be updated to the count of bytes actually read. Status will reflect the success/failure of
+    //! the read operation.
+    //!
+    //! It is invalid to pass `nullptr` to this function call.
+    //! It is invalid to pass a negative `size`.
+    //!
+    //! \param buffer: memory location to store data read from file
+    //! \param size: size of data to read
+    //! \return OP_OK on success otherwise error status
+    //!
+    Status read(U8* buffer, FwSizeType& size);
+
+    //! \brief read a line from the file using `\n` as the delimiter
+    //!
+    //! Reads a single line from the file including the terminating '\n'. This will return an error if no line is
+    //! found within the specified buffer size. In the case of EOF, the line is read without the terminating '\n'.
+    //!
+    //! In the case of an error, this function will seek to the original location in the file. Otherwise, the
+    //! pointer will point to the first character after the `\n` or EOF in the case of no `\n`.
+    //!
+    //! It is invalid to send a null buffer.
+    //! It is invalid to send a size less than 0.
+    //! It is an error if the file is not opened for reading.
+    //!
+    //! \param buffer: memory location to store data read from file
+    //! \param size: maximum size of buffer to store the new line
+    //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
+    //! \return OP_OK on success otherwise error status
+    Status readline(U8* buffer, FwSizeType& size, WaitType wait);
+
+    //! \brief read data from this file into supplied buffer bounded by size
+    //!
     //! Write data to this file up to the `size` from the `buffer`.  When `wait` is set to `WAIT`, this
     //! will block until the requested size has been written successfully to disk. When `wait` is set to
     //! `NO_WAIT` it will return once the data is sent to the OS.
@@ -193,6 +343,23 @@ class FileInterface {
     //!
     virtual Status write(const U8* buffer, FwSizeType& size, WaitType wait) = 0;
 
+    //! \brief write data to this file from the supplied buffer bounded by size
+    //!
+    //! Write data from `buffer` up to the `size` and store it in this file. This call
+    //! will block until the requested size has been written. Otherwise, this call will write without blocking.
+    //!
+    //! `size` will be updated to the count of bytes actually written. Status will reflect the success/failure of
+    //! the write operation.
+    //!
+    //! It is invalid to pass `nullptr` to this function call.
+    //! It is invalid to pass a negative `size`.
+    //!
+    //! \param buffer: memory location of data to write to file
+    //! \param size: size of data to write
+    //! \return OP_OK on success otherwise error status
+    //!
+    Status write(const U8* buffer, FwSizeType& size);
+
     //! \brief returns the raw file handle
     //!
     //! Gets the raw file handle from the implementation. Note: users must include the implementation specific
@@ -201,6 +368,63 @@ class FileInterface {
     //! \return raw file handle
     //!
     virtual FileHandle* getHandle() = 0;
+
+    //! \brief calculate the CRC32 of the entire file
+    //!
+    //! Calculates the CRC32 of the file's contents. The `crc` parameter will be updated to contain the CRC or 0 on
+    //! failure. Status will represent failure conditions. This call will be decomposed into calculations on
+    //! sections of the file `FW_FILE_CHUNK_SIZE` bytes long.
+    //!
+    //! This function requires that the file already be opened for "READ" mode.
+    //!
+    //! On error crc will be set to 0.
+    //!
+    //! \note: the file pointer will be positioned at the end of the file after this call.
+    //!
+    //! This function is equivalent to the following pseudo-code:
+    //!
+    //! ```
+    //! U32 crc;
+    //! do {
+    //!     size = FW_FILE_CHUNK_SIZE;
+    //!     m_file.incrementalCrc(size);
+    //! while (size == FW_FILE_CHUNK_SIZE);
+    //! m_file.finalize(crc);
+    //! ```
+    //! \param crc: U32 bit value to fill with CRC
+    //! \return OP_OK on success otherwise error status
+    //!
+    Status calculateCrc(U32& crc);
+
+    //! \brief calculate the CRC32 of the next section of data
+    //!
+    //! Starting at the current file pointer, this will add `size` bytes of data to the currently calculated CRC.
+    //! Call `finalizeCrc` to retrieve the CRC or `calculateCrc` to perform a CRC on the entire file. This call will
+    //! not block waiting for data on the underlying read, nor will it reset the file position pointer. On error,
+    //! the current CRC results should be discarded by reopening the file or calling `finalizeCrc` and
+    //! discarding its result. `size` will be updated with the `size` actually read and used in the CRC calculation.
+    //!
+    //! This function requires that the file already be opened for "READ" mode.
+    //!
+    //! It is illegal for size to be less than or equal to 0 or greater than FW_FILE_CHUNK_SIZE.
+    //!
+    //! \param size: size of data to read for CRC
+    //! \return: status of the CRC calculation
+    //!
+    Status incrementalCrc(FwSizeType& size);
+
+    //! \brief finalize and retrieve the CRC value
+    //!
+    //! Finalizes the CRC computation and returns the CRC value. The `crc` value will be modified to contain the
+    //! crc or 0 on error. Note: this will reset any active CRC calculation and effectively re-initializes any
+    //! `incrementalCrc` calculation.
+    //!
+    //! On error crc will be set to 0.
+    //!
+    //! \param crc: value to fill
+    //! \return status of the CRC calculation
+    //!
+    Status finalizeCrc(U32& crc);
 
     //! \brief provide a pointer to a file delegate object
     //!
@@ -226,7 +450,33 @@ class FileInterface {
     //!
     static FileInterface* getDelegate(FileHandleStorage& aligned_placement_new_memory,
                                       const FileInterface* to_copy = nullptr);
+
+  protected:
+    //! \brief get the currently tracked open mode
+    //!
+    //! Provided for subclasses (e.g. link-time delegates) that need to replicate the mode-based guards this base
+    //! class already applies in its own convenience methods.
+    //!
+    //! \return the mode most recently passed to a successful `open` call, or `OPEN_NO_MODE` if not open
+    //!
+    Mode getMode() const;
+
+    //! \brief set the tracked open mode
+    //!
+    //! Provided for subclasses (e.g. link-time delegates) whose `close` override must reset the mode tracked by
+    //! this base class back to `OPEN_NO_MODE`.
+    //!
+    //! \param mode: new mode to track
+    //!
+    void setMode(Mode mode);
+
+  private:
+    static const U32 INITIAL_CRC = 0xFFFFFFFF;  //!< Initial value for CRC calculation
+
+    Mode m_mode = Mode::OPEN_NO_MODE;  //!< Stores mode for error checking
+
+    Utils::Hash m_hash;  //!< Hash object for incremental CRC calculation
+    U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];
 };
 }  // namespace Os
-
 #endif  // OS_FILEINTERFACE_HPP_

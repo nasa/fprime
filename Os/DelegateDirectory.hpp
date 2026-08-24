@@ -46,10 +46,6 @@ class DelegateDirectory final : public DirectoryInterface {
     //! \return status of the operation
     Status open(const char* path, OpenMode mode) override;
 
-    //! \brief Check if Directory is open or not
-    //! \return true if Directory is open, false otherwise
-    bool isOpen();
-
     //! \brief Rewind directory stream
     //!
     //! Each read operation moves the seek position forward. This function resets the seek position to the beginning.
@@ -72,53 +68,6 @@ class DelegateDirectory final : public DirectoryInterface {
 
     //! \brief Close directory
     void close() override;
-
-    // ------------------------------------------------------------
-    // Common functions built on top of OS-specific functions
-    // ------------------------------------------------------------
-
-    //! \brief Get next filename from directory stream and write it to a Fw::StringBase object
-    //!
-    //! \param filename: Fw::StringBase (or derived) object to store filename in
-    //! \return status of the operation
-    Status read(Fw::StringBase& filename) override;
-
-    //! \brief Read the contents of the directory and store filenames in the supplied array.
-    //!
-    //! Reads at most filenameArray.getSize() filenames.
-    //! The function first rewinds the directory stream to ensure reading starts from the beginning.
-    //! After reading, it rewinds the directory stream again, resetting seek position to beginning.
-    //!
-    //! \param filenameArray: array to store filenames
-    //! \param filenameCount: number of filenames written to filenameArray (output)
-    //! \return status of the operation
-    Status readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount) override;
-
-    //! \brief Read the contents of the directory and store filenames in filenameArray of size arraySize.
-    //!
-    //! The function first rewinds the directory stream to ensure reading starts from the beginning.
-    //! After reading, it rewinds the directory stream again, resetting seek position to beginning.
-    //!
-    //! \param filenameArray: array to store filenames
-    //! \param arraySize: size of filenameArray
-    //! \param filenameCount: number of filenames written to filenameArray (output)
-    //! \return status of the operation
-    DEPRECATED(Status readDirectory(Fw::String filenameArray[], const FwSizeType arraySize, FwSizeType& filenameCount),
-               "Use readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount) instead");
-
-    //! \brief Get the number of files in the directory.
-    //!
-    //! Counts the number of files in the directory by reading each file entry and writing the count to fileCount.
-    //!
-    //! The function first rewinds the directory stream to ensure counting starts from the beginning.
-    //! After counting, it rewinds the directory stream again, resetting seek position to beginning.
-    //!
-    //! \param fileCount Reference to a variable where the file count will be stored.
-    //! \return Status indicating the result of the operation.
-    Status getFileCount(FwSizeType& fileCount) override;
-
-  private:
-    bool m_is_open;  //!< Flag indicating if the directory has been open
 
   private:
     // This section is used to store the implementation-defined Directory handle. To Os::Directory and fprime, this type

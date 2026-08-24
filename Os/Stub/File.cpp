@@ -58,11 +58,6 @@ FileHandle* StubFile::getHandle() {
     return &this->m_handle;
 }
 
-StubFile::Status StubFile::calculateCrc(U32& crc) {
-    crc = 0;
-    return Status::NOT_SUPPORTED;
-}
-
 }  // namespace File
 }  // namespace Stub
 }  // namespace Os

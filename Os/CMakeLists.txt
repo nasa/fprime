@@ -165,9 +165,11 @@ register_fprime_module(
     REQUIRES_IMPLEMENTATIONS
       "Os_File"
     SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/FileInterface.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/DelegateFile.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/DelegateFileSystem.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/FileSystemInterface.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DirectoryInterface.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/DelegateDirectory.cpp"
     HEADERS
       "${CMAKE_CURRENT_LIST_DIR}/File.hpp"

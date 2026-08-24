@@ -52,6 +52,10 @@ class DirectoryInterface {
     //! \brief assignment operator is forbidden
     DirectoryInterface& operator=(const DirectoryInterface& other) = delete;
 
+    //! \brief Check if Directory is open or not
+    //! \return true if Directory is open, false otherwise
+    bool isOpen() const;
+
     //! \brief return the underlying Directory handle (implementation specific)
     //! \return internal Directory handle representation
     virtual DirectoryHandle* getHandle() = 0;
@@ -62,6 +66,8 @@ class DirectoryInterface {
     // -----------------------------------------------------------------
     // Directory operations to be implemented by an OSAL implementation
     // -----------------------------------------------------------------
+    // These functions are to be overridden in each OS implementation
+    // See an example in in Os/Posix/Directory.hpp
 
     //! \brief Open or create a directory
     //!
@@ -102,14 +108,14 @@ class DirectoryInterface {
     virtual void close() = 0;
 
     // ------------------------------------------------------------------
-    // Common virtual functions built on top of OS-specific functions
+    // Common functions built on top of OS-specific functions
     // ------------------------------------------------------------------
 
     //! \brief Get next filename from directory stream and write it to a Fw::StringBase object
     //!
     //! \param filename: Fw::StringBase (or derived) object to store filename in
     //! \return status of the operation
-    virtual Status read(Fw::StringBase& filename);
+    Status read(Fw::StringBase& filename);
 
     //! \brief Read the contents of the directory and store filenames in the supplied array.
     //!
@@ -120,7 +126,19 @@ class DirectoryInterface {
     //! \param filenameArray: array to store filenames
     //! \param filenameCount: number of filenames written to filenameArray (output)
     //! \return status of the operation
-    virtual Status readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount);
+    Status readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount);
+
+    //! \brief Read the contents of the directory and store filenames in filenameArray of size arraySize.
+    //!
+    //! The function first rewinds the directory stream to ensure reading starts from the beginning.
+    //! After reading, it rewinds the directory stream again, resetting seek position to beginning.
+    //!
+    //! \param filenameArray: array to store filenames
+    //! \param arraySize: size of filenameArray
+    //! \param filenameCount: number of filenames written to filenameArray (output)
+    //! \return status of the operation
+    DEPRECATED(Status readDirectory(Fw::String filenameArray[], const FwSizeType arraySize, FwSizeType& filenameCount),
+               "Use readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount) instead");
 
     //! \brief Get the number of files in the directory.
     //!
@@ -131,7 +149,20 @@ class DirectoryInterface {
     //!
     //! \param fileCount Reference to a variable where the file count will be stored.
     //! \return Status indicating the result of the operation.
-    virtual Status getFileCount(FwSizeType& fileCount);
+    Status getFileCount(FwSizeType& fileCount);
+
+  protected:
+    //! \brief set whether the directory is currently tracked as open
+    //!
+    //! Provided for subclasses (e.g. link-time delegates) whose `open`/`close` overrides must update the open
+    //! state tracked by this base class.
+    //!
+    //! \param is_open: new open state to track
+    //!
+    void setOpen(bool is_open);
+
+  private:
+    bool m_is_open = false;  //!< Flag indicating if the directory has been open
 };
 }  // namespace Os
 

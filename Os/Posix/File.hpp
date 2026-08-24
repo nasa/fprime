@@ -66,6 +66,13 @@ class PosixFile : public FileInterface {
     //!
     Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
 
+    // Bring the base class's open(const char*, Mode) convenience overload, and the read/write overloads
+    // without a WaitType parameter, back into scope; they would otherwise be hidden by the
+    // open/read/write overrides declared here and below.
+    using FileInterface::open;
+    using FileInterface::read;
+    using FileInterface::write;
+
     //! \brief close the file, if not opened then do nothing
     //!
     //! Closes the file, if open. Otherwise this function does nothing. Delegates to the chosen implementation's
