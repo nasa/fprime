@@ -551,9 +551,6 @@ class FpySequencer : public FpySequencerComponentBase {
                                   U32 cmdSeq,
                                   const Fw::CmdResponse& response) override;
 
-    //! Pre-message hook for async input port seqRunIn
-    void seqRunIn_preMsgHook(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) override;
-
     // ! Pre-message hook for async input port tlmWrite
     void tlmWrite_preMsgHook(FwIndexType portNum, U32 context) override;
 

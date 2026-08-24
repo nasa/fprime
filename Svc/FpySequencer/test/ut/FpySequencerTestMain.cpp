@@ -5613,29 +5613,6 @@ TEST_F(FpySequencerTester, QueueOverflow_CmdResponseIn) {
     }
 }
 
-TEST_F(FpySequencerTester, QueueOverflow_SeqRunIn) {
-    // Busy sequence
-    allocMem();
-    add_NO_OP();
-    add_GOTO(0);
-    writeAndRun();
-
-    Os::Queue* qptr = this->tester_get_m_componentQueue_ptr();
-    FwSizeType depth = qptr->getDepth();
-
-    for (FwSizeType i = 0; i < depth - Fpy::LOAD_MARGIN; i++) {
-        invoke_to_tlmWrite(0, 0);
-    }
-
-    // Attempt to overload the queue
-    Svc::SeqArgs emptyArgs;
-    for (FwSizeType i = 0; i < Fpy::LOAD_MARGIN; i++) {
-        invoke_to_seqRunIn(0, Fw::String("test.bin"), emptyArgs);
-        for (U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++) {
-            this->dispatchOne(this->cmp);
-        }
-    }
-}
 
 TEST_F(FpySequencerTester, QueueOverflow_longBusySequence) {
     // Busy sequence
