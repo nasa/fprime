@@ -72,6 +72,24 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! Remove a file previously written into the working directory.
     void removeFile(const char* name);
 
+    //! RAII helper: stages a golden module into the working directory on
+    //! construction (copyAsset) and removes it on scope exit (removeFile).
+    class StagedAsset {
+      public:
+        StagedAsset(WasmSequencerTester& tester, const char* name);
+        ~StagedAsset();
+        StagedAsset(const StagedAsset&) = delete;
+        StagedAsset& operator=(const StagedAsset&) = delete;
+
+        //! The basename to pass as the RUN/LOAD file argument.
+        const Fw::String& file() const { return this->m_file; }
+
+      private:
+        WasmSequencerTester& m_tester;
+        const char* m_name;
+        Fw::String m_file;
+    };
+
     //! Build a Svc::SeqArgs holding the given raw bytes (size + buffer), for driving
     //! the `args` host function round trip through RUN/INVOKE.
     static Svc::SeqArgs makeSeqArgs(const U8* bytes, FwSizeType size);
@@ -154,8 +172,9 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     // White-box accessors into the component under test
     // ----------------------------------------------------------------------
 
-    U32 getPageUsedMask() const { return this->component.m_page_used_mask; }
-    FwSizeType getGuestOffset() const { return this->component.m_guest_offset; }
+    //! Whether page `i` of the global page pool is currently handed out (white-box).
+    bool isPageUsed(FwSizeType i) const { return this->component.m_page_used[i]; }
+    FwSizeType getGuestOffset() const { return this->component.m_guest_pool_offset; }
     //! Access the inbound serial queue for a given port index (white-box). Friendship is not
     //! inherited by the generated TEST_F subclass, so expose it through the tester.
     Types::CircularBuffer& serialInQueue(FwIndexType portNum) { return this->component.m_serialInQueue[portNum]; }
@@ -249,6 +268,15 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! The component under test
     WasmSequencer component;
 };
+
+// Defined out of line so the enclosing tester is a complete type when the
+// constructor calls its (protected) copyAsset/removeFile helpers.
+inline WasmSequencerTester::StagedAsset::StagedAsset(WasmSequencerTester& tester, const char* name)
+    : m_tester(tester), m_name(name), m_file(tester.copyAsset(name)) {}
+
+inline WasmSequencerTester::StagedAsset::~StagedAsset() {
+    this->m_tester.removeFile(this->m_name);
+}
 
 }  // namespace Svc
 

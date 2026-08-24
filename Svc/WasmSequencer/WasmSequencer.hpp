@@ -761,45 +761,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! and returns false; the caller is responsible for failing the load.
     bool resolveSequencePath(const Fw::StringBase& fileName, Fw::String& filePath);
 
-    // ----------------------------------------------------------------------
-    // Per-host-function dispatch helpers
-    //
-    // Each implements one arm of
-    // Svc_WasmSequencer_InterpreterStateMachine_action_dispatchPendingHostFunction:
-    // it reads its arguments from m_pendingHostFunction and signals the
-    // interpreter state machine with the result.
-    // ----------------------------------------------------------------------
-
-    //! COMMAND: forward an encoded command from guest memory to the command dispatcher.
-    void dispatchCommand();
-
-    //! TELEMETRY: read a telemetry channel and write its value + time into guest memory.
-    void dispatchTelemetry();
-
-    //! PARAMETER: read a parameter and write it into guest memory.
-    void dispatchParameter();
-
-    //! EVENT: emit a guest-requested event at the guest-requested severity.
-    void dispatchEvent();
-
-    //! RSLEEP: arm a relative sleep timer.
-    void dispatchRelativeSleep();
-
-    //! ASLEEP: arm an absolute sleep timer.
-    void dispatchAbsoluteSleep();
-
-    //! ARGS: write the stored sequence arguments into guest memory.
-    void dispatchArgs();
-
-    //! TIME: write the current time into guest memory.
-    void dispatchTime();
-
-    //! SERIAL_OUT: copy a payload out of guest memory and invoke the serial output port.
-    void dispatchSerialOut();
-
-    //! SERIAL_RECV: check the serial input queue and either resume or block awaiting a message.
-    void dispatchSerialRecv();
-
     //! Read `len` bytes of guest linear memory at `addr` into `dst` (via
     //! spacewasm_mem_read on the pending host function's caller).
     Fw::Success readGuestOrFail(WasmSequencer_HostFunction::T kind, U32 addr, U8* dst, FwSizeType len);
@@ -808,18 +769,18 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! spacewasm_mem_write). Same failure contract as readGuestOrFail.
     Fw::Success writeGuestOrFail(WasmSequencer_HostFunction::T kind, U32 addr, const U8* src, FwSizeType len);
 
-    //! Static pool backing the process-wide spacewasm global page allocator.
+    //! Fixed-size pool backing the process-wide spacewasm global page allocator.
     alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE]{};
 
-    //! Which pages of `m_memory_pool` are currently handed out (bit i == page i).
-    U32 m_page_used_mask;
+    //! Whether each page of `m_memory_pool` is currently handed out; entry i tracks page i.
+    bool m_page_used[Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES]{};
 
-    //! Static pool backing the per-load guest linear-memory allocator; a simple
+    //! Fixed-size pool backing the per-load guest linear-memory allocator; a simple
     //! bump allocator (guest modules are compiled with memory.grow disabled).
     alignas(16) U8 m_guest_pool[Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE]{};
 
     //! Current bump offset into `m_guest_pool`.
-    FwSizeType m_guest_offset;
+    FwSizeType m_guest_pool_offset;
 
     //! Buffer handed to the streaming loader, filled from `m_loadFile`.
     U8 m_readBuf[Svc::WasmSequencerConfig::LOAD_READ_CHUNK_SIZE]{};
@@ -1116,6 +1077,36 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                                const struct spacewasm_value_t* params,
                                                size_t n_params,
                                                struct spacewasm_value_t* out_result);
+
+    //! COMMAND: forward an encoded command from guest memory to the command dispatcher.
+    void dispatchCommand();
+
+    //! TELEMETRY: read a telemetry channel and write its value + time into guest memory.
+    void dispatchTelemetry();
+
+    //! PARAMETER: read a parameter and write it into guest memory.
+    void dispatchParameter();
+
+    //! EVENT: emit a guest-requested event at the guest-requested severity.
+    void dispatchEvent();
+
+    //! RSLEEP: arm a relative sleep timer.
+    void dispatchRelativeSleep();
+
+    //! ASLEEP: arm an absolute sleep timer.
+    void dispatchAbsoluteSleep();
+
+    //! ARGS: write the stored sequence arguments into guest memory.
+    void dispatchArgs();
+
+    //! TIME: write the current time into guest memory.
+    void dispatchTime();
+
+    //! SERIAL_OUT: copy a payload out of guest memory and invoke the serial output port.
+    void dispatchSerialOut();
+
+    //! SERIAL_RECV: check the serial input queue and either resume or block awaiting a message.
+    void dispatchSerialRecv();
 
     //! Validate a guest serial-port request (shared by the sync and async variants).
     //! Emits the appropriate warning event and returns false when the port index is

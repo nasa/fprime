@@ -48,8 +48,7 @@ void WasmSequencer ::globalDeallocCallback(void* userdata, U8* ptr, size_t size,
 
 WasmSequencer ::WasmSequencer(const char* const compName)
     : WasmSequencerComponentBase(compName),
-      m_page_used_mask(0),
-      m_guest_offset(0),
+      m_guest_pool_offset(0),
       m_wasm(nullptr),
       m_hasExecutingContext(false),
       m_pendingTimer(),
@@ -175,25 +174,37 @@ void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase&
               Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS);
     auto& queue = this->m_serialInQueue[portNum];
 
-    // Make sure the queue is large enough to handle this message.
-    // This doesn't check the free space in the queue, just the queue is sized
-    // accordinly to handle messages of this size.
-    FW_ASSERT(sizeof(U32) + buffer.getSize() <= queue.get_capacity(), portNum,
-              static_cast<FwAssertArgType>(sizeof(U32) + buffer.getSize()),
-              static_cast<FwAssertArgType>(queue.get_capacity()));
+    // Each message is framed on the queue as [U32 length][payload]
+    const FwSizeType headerSize = sizeof(U32);
+    const FwSizeType payloadSize = buffer.getSize();
+    const FwSizeType capacity = queue.get_capacity();
+
+    // Make sure the queue is sized to hold this framed message at all. This does
+    // not check free space, only that the queue's capacity is large enough.
+    FW_ASSERT(capacity >= headerSize, portNum, static_cast<FwAssertArgType>(capacity));
+    FW_ASSERT(payloadSize <= capacity - headerSize, portNum, static_cast<FwAssertArgType>(payloadSize),
+              static_cast<FwAssertArgType>(capacity));
+
+    // Total framed size; <= capacity by the assertions above, so it cannot overflow.
+    const FwSizeType frameSize = headerSize + payloadSize;
 
     // Check if we _can_ push the data to the queue
-    if ((buffer.getSize() + sizeof(U32)) > queue.get_free_size()) {
+    if (frameSize > queue.get_free_size()) {
         // The queue is full and cannot push this data
         switch (Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_FULL_BEHAVIOR) {
             case WasmSequencerConfig::SerialInQueueFullBehavior::DROP_OLDEST:
                 // Drop messages until this message can fit
-                while ((buffer.getSize() + sizeof(U32)) > queue.get_free_size()) {
+                while (frameSize > queue.get_free_size()) {
                     U32 nextMsgSize;
                     auto status = queue.peek(nextMsgSize);
                     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, portNum, status);
 
-                    status = queue.rotate(sizeof(U32) + nextMsgSize);
+                    const FwSizeType allocated = queue.get_allocated_size();
+                    FW_ASSERT(allocated >= headerSize, portNum, static_cast<FwAssertArgType>(allocated));
+                    FW_ASSERT(static_cast<FwSizeType>(nextMsgSize) <= allocated - headerSize, portNum,
+                              static_cast<FwAssertArgType>(nextMsgSize), static_cast<FwAssertArgType>(allocated));
+
+                    status = queue.rotate(headerSize + nextMsgSize);
 
                     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, portNum, status);
                 }
@@ -205,9 +216,8 @@ void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase&
                 return;
 
             case WasmSequencerConfig::SerialInQueueFullBehavior::ASSERT:
-                FW_ASSERT(false, portNum, static_cast<FwAssertArgType>(buffer.getSize()) + 4,
-                          static_cast<FwAssertArgType>(queue.get_free_size()),
-                          static_cast<FwAssertArgType>(queue.get_capacity()));
+                FW_ASSERT(false, portNum, static_cast<FwAssertArgType>(frameSize),
+                          static_cast<FwAssertArgType>(queue.get_free_size()), static_cast<FwAssertArgType>(capacity));
                 break;
         }
     }
@@ -215,13 +225,13 @@ void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase&
     // The message should be able to be put into the queue.
     // Enqueue it as a raw [U32 size][payload] frame. We use the raw (const U8*, size)
     Fw::LinearBufferTemplate<sizeof(U32)> sizeSer;
-    auto status = sizeSer.serializeFrom(static_cast<U32>(buffer.getSize()));
+    auto status = sizeSer.serializeFrom(static_cast<U32>(payloadSize));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    status = queue.serialize(sizeSer.getBuffAddr(), sizeof(U32));
+    status = queue.serialize(sizeSer.getBuffAddr(), headerSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    status = queue.serialize(buffer.getBuffAddr(), buffer.getSize());
+    status = queue.serialize(buffer.getBuffAddr(), payloadSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Wake up any blocking recv calls

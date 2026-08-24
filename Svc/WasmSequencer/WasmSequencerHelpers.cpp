@@ -23,12 +23,9 @@ U8* WasmSequencer ::globalAlloc(const U32 size, const U32 align) {
     FW_ASSERT(size == Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE, static_cast<FwAssertArgType>(size));
     FW_ASSERT(align <= 16, static_cast<FwAssertArgType>(align));
 
-    static_assert(Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES <= 32,
-                  "m_page_used_mask (U32) supports at most 32 pages");
     for (U32 page = 0; page < Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES; page++) {
-        const U32 bit = static_cast<U32>(1) << page;
-        if ((this->m_page_used_mask & bit) == 0) {
-            this->m_page_used_mask |= bit;
+        if (!this->m_page_used[page]) {
+            this->m_page_used[page] = true;
             return &this->m_memory_pool[page * Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE];
         }
     }
@@ -44,9 +41,8 @@ void WasmSequencer ::globalDealloc(const U8* ptr) {
     FW_ASSERT((offset % Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE) == 0, static_cast<FwAssertArgType>(offset));
     const U32 page = static_cast<U32>(offset / Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE);
     FW_ASSERT(page < Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES, static_cast<FwAssertArgType>(page));
-    const U32 bit = static_cast<U32>(1) << page;
-    FW_ASSERT((this->m_page_used_mask & bit) != 0);
-    this->m_page_used_mask &= ~bit;
+    FW_ASSERT(this->m_page_used[page], static_cast<FwAssertArgType>(page));
+    this->m_page_used[page] = false;
 }
 
 U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
@@ -56,11 +52,11 @@ U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
 
     // Round the current offset up to the requested alignment.
     const FwSizeType a = (align < 1) ? 1 : static_cast<FwSizeType>(align);
-    FwSizeType start = (this->m_guest_offset + a - 1) & ~(a - 1);
+    FwSizeType start = (this->m_guest_pool_offset + a - 1) & ~(a - 1);
     if (start + size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
         return nullptr;
     }
-    this->m_guest_offset = start + size;
+    this->m_guest_pool_offset = start + size;
     return &this->m_guest_pool[start];
 }
 
@@ -164,7 +160,7 @@ void WasmSequencer ::destroyStore() {
 
     // Reset the guest linear-memory bump allocator; all guest allocations were
     // owned by the store that just went away.
-    this->m_guest_offset = 0;
+    this->m_guest_pool_offset = 0;
 
     // Clear any pending state.
     this->m_invokeStatus = SPACEWASM_OK;
