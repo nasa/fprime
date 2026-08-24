@@ -546,7 +546,10 @@ class FpySequencer : public FpySequencerComponentBase {
     void checkTimers_preMsgHook(FwIndexType portNum, U32 context) override;
 
     //! Pre-message hook for async input port cmdResponseIn
-    void cmdResponseIn_preMsgHook(FwIndexType portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse& response) override;
+    void cmdResponseIn_preMsgHook(FwIndexType portNum,
+                                  FwOpcodeType opCode,
+                                  U32 cmdSeq,
+                                  const Fw::CmdResponse& response) override;
 
     //! Pre-message hook for async input port seqRunIn
     void seqRunIn_preMsgHook(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) override;
@@ -849,7 +852,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Fw::Success sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize);
 
     // sm_dispatch wrapper for queue capacity monitoring
-    void smDispatch(Fw::SerialBufferBase &buffer);
+    void smDispatch(Fw::SerialBufferBase& buffer);
 
     // returns the index of the current statement
     U32 currentStatementIdx();

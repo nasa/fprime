@@ -7,7 +7,6 @@
 #include <Svc/FpySequencer/FpySequencer.hpp>
 #include <new>
 
-
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -436,7 +435,7 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
 // Pre-message hook overrides for typed async input ports
 // ----------------------------------------------------------------------
 
-void FpySequencer::checkOverflow(){
+void FpySequencer::checkOverflow() {
     if (this->m_queue.getMessagesAvailable() > this->m_queue.getDepth() - Fpy::LOAD_MARGIN) {
         this->sequencer_sendSignal_cmd_CANCEL();
     }
@@ -446,19 +445,15 @@ void FpySequencer::checkTimers_preMsgHook(FwIndexType portNum, U32 context) {
     checkOverflow();
 }
 
-void FpySequencer::cmdResponseIn_preMsgHook(FwIndexType portNum, FwOpcodeType opCode, U32 cmdSeq,
+void FpySequencer::cmdResponseIn_preMsgHook(FwIndexType portNum,
+                                            FwOpcodeType opCode,
+                                            U32 cmdSeq,
                                             const Fw::CmdResponse& response) {
-    checkOverflow();
-}
-
-void FpySequencer::seqRunIn_preMsgHook(FwIndexType portNum, const Fw::StringBase& filename,
-                                      const Svc::SeqArgs& args) {
     checkOverflow();
 }
 
 void FpySequencer::tlmWrite_preMsgHook(FwIndexType portNum, U32 context) {
     checkOverflow();
-    
 }
 
 void FpySequencer::updateDebugTelemetryStruct() {

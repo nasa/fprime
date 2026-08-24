@@ -5556,8 +5556,7 @@ TEST_F(FpySequencerTester, popSerializable_differentPorts) {
     ASSERT_EQ(m_serialOutHistory[0].portNum, 4);
 }
 
-TEST_F(FpySequencerTester, QueueOverflow_TlmWrite){
-
+TEST_F(FpySequencerTester, QueueOverflow_TlmWrite) {
     // Busy sequence
     allocMem();
     add_NO_OP();
@@ -5568,19 +5567,15 @@ TEST_F(FpySequencerTester, QueueOverflow_TlmWrite){
     FwSizeType depth = qptr->getDepth();
 
     // Attempt to overload the queue
-    for(FwSizeType i = 0; i < depth+1; i++){
-        invoke_to_tlmWrite(0,0);
-        for(U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++){
+    for (FwSizeType i = 0; i < depth + 1; i++) {
+        invoke_to_tlmWrite(0, 0);
+        for (U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++) {
             this->dispatchOne(this->cmp);
-
         }
-        
     }
-
 }
 
-TEST_F(FpySequencerTester, QueueOverflow_CheckTimers){
-
+TEST_F(FpySequencerTester, QueueOverflow_CheckTimers) {
     // Busy sequence
     allocMem();
     add_NO_OP();
@@ -5591,76 +5586,65 @@ TEST_F(FpySequencerTester, QueueOverflow_CheckTimers){
     FwSizeType depth = qptr->getDepth();
 
     // Attempt to overload the queue
-    for(FwSizeType i = 0; i < depth+1; i++){
-        invoke_to_checkTimers(0,0);
-        for(U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++){
+    for (FwSizeType i = 0; i < depth + 1; i++) {
+        invoke_to_checkTimers(0, 0);
+        for (U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++) {
             this->dispatchOne(this->cmp);
-
         }
-        
     }
-
 }
 
-TEST_F(FpySequencerTester, QueueOverflow_CmdResponseIn){
-
+TEST_F(FpySequencerTester, QueueOverflow_CmdResponseIn) {
     // Busy sequence
     allocMem();
     add_NO_OP();
     add_GOTO(0);
     writeAndRun();
-
 
     Os::Queue* qptr = this->tester_get_m_componentQueue_ptr();
     FwSizeType depth = qptr->getDepth();
 
     // for(FwSizeType i = 0; i < depth-Fpy::LOAD_MARGIN; i++){
-    //     invoke_to_tlmWrite(0,0);        
+    //     invoke_to_tlmWrite(0,0);
     // }
 
     // Attempt to overload the queue
-    for(FwSizeType i = 0; i < depth+1; i++){
+    for (FwSizeType i = 0; i < depth + 1; i++) {
         invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
-        for(U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++){
+        for (U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++) {
             this->dispatchOne(this->cmp);
         }
-        
     }
-
 }
 
-TEST_F(FpySequencerTester, QueueOverflow_SeqRunIn){
-
+TEST_F(FpySequencerTester, QueueOverflow_SeqRunIn) {
     // Busy sequence
     allocMem();
     add_NO_OP();
     add_GOTO(0);
     writeAndRun();
 
-
     Os::Queue* qptr = this->tester_get_m_componentQueue_ptr();
     FwSizeType depth = qptr->getDepth();
 
-    for(FwSizeType i = 0; i < depth-Fpy::LOAD_MARGIN; i++){
-        invoke_to_tlmWrite(0,0);        
+    for (FwSizeType i = 0; i < depth - Fpy::LOAD_MARGIN; i++) {
+        invoke_to_tlmWrite(0, 0);
     }
 
     // Attempt to overload the queue
     Svc::SeqArgs emptyArgs;
-    for(FwSizeType i = 0; i < Fpy::LOAD_MARGIN; i++){
+    for (FwSizeType i = 0; i < Fpy::LOAD_MARGIN; i++) {
         invoke_to_seqRunIn(0, Fw::String("test.bin"), emptyArgs);
-        for(U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++){
+        for (U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++) {
             this->dispatchOne(this->cmp);
         }
     }
-
 }
 
-TEST_F(FpySequencerTester, QueueOverflow_longBusySequence){
-
+TEST_F(FpySequencerTester, QueueOverflow_longBusySequence) {
     // Busy sequence
     allocMem();
-    for(U8 i = 0; i < 50; i ++){
+    for (U8 i = 0; i < 50; i++) {
         add_NO_OP();
     }
     add_GOTO(0);
@@ -5670,43 +5654,35 @@ TEST_F(FpySequencerTester, QueueOverflow_longBusySequence){
     FwSizeType depth = qptr->getDepth();
 
     // Attempt to overload the queue
-    for(FwSizeType i = 0; i < depth+20; i++){
-        invoke_to_tlmWrite(0,0);
-        for(U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++){
+    for (FwSizeType i = 0; i < depth + 20; i++) {
+        invoke_to_tlmWrite(0, 0);
+        for (U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++) {
             this->dispatchOne(this->cmp);
-
         }
-        
     }
-
 }
 
-TEST_F(FpySequencerTester, QueueOverflow_CmdRun){
-
+TEST_F(FpySequencerTester, QueueOverflow_CmdRun) {
     // Busy sequence
     allocMem();
     add_NO_OP();
     add_GOTO(0);
     writeAndRun();
 
-
     Os::Queue* qptr = this->tester_get_m_componentQueue_ptr();
     FwSizeType depth = qptr->getDepth();
 
-    for(FwSizeType i = 0; i < depth-Fpy::LOAD_MARGIN; i++){
-        invoke_to_tlmWrite(0,0);        
+    for (FwSizeType i = 0; i < depth - Fpy::LOAD_MARGIN; i++) {
+        invoke_to_tlmWrite(0, 0);
     }
 
     // Attempt to overload the queue
-    for(FwSizeType i = 0; i < Fpy::LOAD_MARGIN; i++){
+    for (FwSizeType i = 0; i < Fpy::LOAD_MARGIN; i++) {
         sendCmd_RUN(0, 0, Fw::String("test.bin"), BlockState::BLOCK);
-        for(U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++){
+        for (U8 j = 0; j < (qptr->getMessagesAvailable() < 4 ? qptr->getMessagesAvailable() : 4); j++) {
             this->dispatchOne(this->cmp);
         }
-        
     }
-
 }
-
 
 }  // namespace Svc
