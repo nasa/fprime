@@ -95,6 +95,64 @@ TEST_F(WasmSequencerTester, LoadAgainstMissingBaseDirFailsToOpen) {
     this->removeFile("empty.wasm");
 }
 
+TEST_F(WasmSequencerTester, LoadRejectsPathTraversalOutsideBaseDir) {
+    // With SEQ_BASE_DIR configured it is a containment boundary: a ground-supplied
+    // file name containing a ".." component could escape the base dir. The load is
+    // rejected up front with SequenceFilePathNotContained (no open is attempted)
+    // instead of resolving a path outside the configured base directory.
+    this->paramSet_SEQ_BASE_DIR(Fw::ParamString("seqs"), Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    this->sendCmd_LOAD(0, 20, Fw::CmdStringArg("../../etc/evil.wasm"), Fw::CmdStringArg(""));
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_SequenceFilePathNotContained_SIZE(1);
+    ASSERT_STREQ(this->eventHistory_SequenceFilePathNotContained->at(0).baseDir.toChar(), "seqs");
+    ASSERT_STREQ(this->eventHistory_SequenceFilePathNotContained->at(0).fileName.toChar(), "../../etc/evil.wasm");
+    // Rejected before any open is attempted.
+    ASSERT_EVENTS_FileOpenError_SIZE(0);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 20, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+TEST_F(WasmSequencerTester, SeqRunPathTooLongEmitsEvent) {
+    // Joining SEQ_BASE_DIR with a long file name overflows the internal file-path
+    // buffer (Fw::String, 256 bytes). Command string args are too short to reach
+    // that, so the RUN arrives over seqRunIn, which carries a longer file name. The
+    // overflow is reported via SequenceFilePathTooLong and the load is failed back to
+    // IDLE without attempting to open the (truncated) path.
+    char baseChars[36];
+    for (FwSizeType i = 0; i < 35; i++) {
+        baseChars[i] = 'b';
+    }
+    baseChars[35] = '\0';
+    this->paramSet_SEQ_BASE_DIR(Fw::ParamString(baseChars), Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    char nameChars[231];
+    for (FwSizeType i = 0; i < 230; i++) {
+        nameChars[i] = 'a';
+    }
+    nameChars[230] = '\0';
+    const Fw::String longName(nameChars);
+
+    this->invoke_to_seqRunIn(0, longName, Svc::SeqArgs());
+    this->dispatchAll();
+
+    ASSERT_EVENTS_SequenceFilePathTooLong_SIZE(1);
+    ASSERT_STREQ(this->eventHistory_SequenceFilePathTooLong->at(0).baseDir.toChar(), baseChars);
+    // The event carries (a prefix of) the requested file name -- the event's string
+    // arg may be shorter than the full requested name, so check it is a non-empty run
+    // of the requested characters rather than pinning the exact truncation boundary.
+    const Fw::StringBase& evtName = this->eventHistory_SequenceFilePathTooLong->at(0).fileName;
+    ASSERT_GT(evtName.length(), static_cast<FwSizeType>(0));
+    for (FwSizeType i = 0; i < evtName.length(); i++) {
+        ASSERT_EQ(evtName.toChar()[i], 'a');
+    }
+    // The interpreter never starts; the controller settles back in IDLE.
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+}
+
 TEST_F(WasmSequencerTester, LoadNamedModuleReady) {
     const Fw::String file = this->copyAsset("empty.wasm");
 

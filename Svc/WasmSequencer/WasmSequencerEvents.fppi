@@ -83,6 +83,16 @@ event SequenceFilePathTooLong(
     severity warning high \
     format "Sequence file path too long: base dir {} + file {}"
 
+@ A ground-supplied sequence file name contained a ".." path-traversal component
+@ while SEQ_BASE_DIR was configured, so it could escape the base directory. The
+@ load is rejected rather than opening a path outside the configured base dir.
+event SequenceFilePathNotContained(
+    baseDir: string size FileNameStringSize
+    fileName: string size FileNameStringSize
+) \
+    severity warning high \
+    format "Sequence file {} is not contained within base dir {} (path traversal rejected)"
+
 @ A module failed to decode/validate while loading
 event ModuleLoadFailed(status: Status) \
     severity warning high \

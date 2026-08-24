@@ -709,12 +709,20 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     static U8* globalAllocCallback(void* userdata, size_t size, size_t align);
     static void globalDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align);
 
-    /// The Wasm guest allocator callbacks
+    /// The Wasm guest allocator callbacks for this component
     U8* guestAlloc(U32 size, U32 align);
     void guestDealloc(const U8* ptr, U32 size);
 
+    // Guest allocator callbacks passed to C API
+    static U8* guestAllocCallback(void* userdata, size_t size, size_t align);
+    static U8* guestReallocCallback(void* userdata, U8* ptr, size_t old_size, size_t new_size, size_t align);
+    static void guestDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align);
+
     //! Fill `m_readBuf` with the next chunk of the module file being loaded.
     spacewasm_read_result_t readModuleChunk(const U8** outBuf, size_t* outLen);
+
+    //! C-callback trampoline for the streaming module reader
+    static spacewasm_read_result_t readModuleChunkCallback(void* userdata, const U8** outBuf, size_t* outLen);
 
     //! Create a fresh interpreter store with the given module capacity,
     //! destroying any existing store first.
@@ -736,6 +744,22 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! otherwise derives it from the file's basename with any ".wasm" suffix
     //! stripped (an empty-name RUN / LOAD).
     void setSequenceName(const Fw::StringBase& filePath, const Fw::StringBase& moduleName);
+
+    //! Return a pointer to the basename of `path` (the segment after the last '/')
+    //! and write its length to `outLen`. `len` is the length of `path`. Pure string
+    //! manipulation, no filesystem access.
+    static const char* pathBaseName(const char* path, FwSizeType len, FwSizeType& outLen);
+
+    //! True if `path` contains a ".." path-traversal component (a segment, delimited
+    //! by '/', that is exactly ".."). Used to keep a ground-supplied sequence file
+    //! name from escaping the configured SEQ_BASE_DIR.
+    static bool pathHasParentTraversal(const Fw::StringBase& path);
+
+    //! Resolve a sequence `fileName` against the SEQ_BASE_DIR parameter, writing the
+    //! result to `filePath`. On failure (a ".." component that would escape the base
+    //! dir, or a joined path that overflows the buffer) it logs the specific event
+    //! and returns false; the caller is responsible for failing the load.
+    bool resolveSequencePath(const Fw::StringBase& fileName, Fw::String& filePath);
 
     // ----------------------------------------------------------------------
     // Per-host-function dispatch helpers
@@ -775,6 +799,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! SERIAL_RECV: check the serial input queue and either resume or block awaiting a message.
     void dispatchSerialRecv();
+
+    //! Read `len` bytes of guest linear memory at `addr` into `dst` (via
+    //! spacewasm_mem_read on the pending host function's caller).
+    Fw::Success readGuestOrFail(WasmSequencer_HostFunction::T kind, U32 addr, U8* dst, FwSizeType len);
+
+    //! Write `len` bytes from `src` into guest linear memory at `addr` (via
+    //! spacewasm_mem_write). Same failure contract as readGuestOrFail.
+    Fw::Success writeGuestOrFail(WasmSequencer_HostFunction::T kind, U32 addr, const U8* src, FwSizeType len);
 
     //! Static pool backing the process-wide spacewasm global page allocator.
     alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE]{};

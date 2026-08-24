@@ -71,6 +71,29 @@ void WasmSequencer ::guestDealloc(const U8* ptr, const U32 size) {
     (void)size;
 }
 
+U8* WasmSequencer ::guestAllocCallback(void* userdata, size_t size, size_t align) {
+    FW_ASSERT(userdata != nullptr);
+    return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<U32>(size), static_cast<U32>(align));
+}
+
+U8* WasmSequencer ::guestReallocCallback(void* userdata, U8* ptr, size_t old_size, size_t new_size, size_t align) {
+    (void)userdata;
+    (void)ptr;
+    (void)old_size;
+    (void)new_size;
+    (void)align;
+
+    // memory.grow is disabled for guest modules, so a reallocation should never be
+    // requested. Returning nullptr bubbles up as a reallocation failure if it is.
+    return nullptr;
+}
+
+void WasmSequencer ::guestDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align) {
+    FW_ASSERT(userdata != nullptr);
+    (void)align;
+    static_cast<WasmSequencer*>(userdata)->guestDealloc(ptr, static_cast<U32>(size));
+}
+
 spacewasm_read_result_t WasmSequencer ::readModuleChunk(const U8** outBuf, std::size_t* outLen) {
     FW_ASSERT(this->m_loadFile != nullptr);
 
@@ -94,6 +117,11 @@ spacewasm_read_result_t WasmSequencer ::readModuleChunk(const U8** outBuf, std::
     }
 
     return readStatus;
+}
+
+spacewasm_read_result_t WasmSequencer ::readModuleChunkCallback(void* userdata, const U8** outBuf, size_t* outLen) {
+    FW_ASSERT(userdata != nullptr);
+    return static_cast<WasmSequencer*>(userdata)->readModuleChunk(outBuf, outLen);
 }
 
 void WasmSequencer ::createStore() {
@@ -298,37 +326,63 @@ void WasmSequencer ::setSequenceName(const Fw::StringBase& filePath, const Fw::S
     const FwSizeType len = static_cast<FwSizeType>(filePath.length());
 
     // Find the start of the basename (character after the last '/').
+    FwSizeType nameLen = 0;
+    const char* const base = WasmSequencer::pathBaseName(path, len, nameLen);
+
+    // Drop a trailing ".wasm" if present.
+    static const char suffix[] = ".wasm";
+    const FwSizeType suffixLen = static_cast<FwSizeType>(sizeof(suffix) - 1);
+    if (nameLen >= suffixLen) {
+        bool match = true;
+        for (FwSizeType i = 0; i < suffixLen; i++) {
+            if (base[nameLen - suffixLen + i] != suffix[i]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            nameLen -= suffixLen;
+        }
+    }
+
+    char name[FileNameStringSize];
+    FwSizeType n = 0;
+    for (FwSizeType i = 0; i < nameLen && n < static_cast<FwSizeType>(sizeof(name) - 1); i++) {
+        name[n++] = base[i];
+    }
+    name[n] = '\0';
+    this->m_tlm.sequenceName = name;
+}
+
+const char* WasmSequencer ::pathBaseName(const char* path, FwSizeType len, FwSizeType& outLen) {
+    FW_ASSERT(path != nullptr);
+    // Basename starts just after the last '/', or at the start if there is none.
     FwSizeType start = 0;
     for (FwSizeType i = 0; i < len; i++) {
         if (path[i] == '/') {
             start = i + 1;
         }
     }
+    outLen = len - start;
+    return path + start;
+}
 
-    // Drop a trailing ".wasm" if present.
-    FwSizeType end = len;
-    static const char suffix[] = ".wasm";
-    const FwSizeType suffixLen = static_cast<FwSizeType>(sizeof(suffix) - 1);
-    if ((end - start) >= suffixLen) {
-        bool match = true;
-        for (FwSizeType i = 0; i < suffixLen; i++) {
-            if (path[end - suffixLen + i] != suffix[i]) {
-                match = false;
-                break;
+bool WasmSequencer ::pathHasParentTraversal(const Fw::StringBase& path) {
+    const char* const s = path.toChar();
+    const FwSizeType len = static_cast<FwSizeType>(path.length());
+
+    // Walk the '/'-delimited segments; reject if any segment is exactly "..".
+    FwSizeType segStart = 0;
+    for (FwSizeType i = 0; i <= len; i++) {
+        if (i == len || s[i] == '/') {
+            const FwSizeType segLen = i - segStart;
+            if (segLen == 2 && s[segStart] == '.' && s[segStart + 1] == '.') {
+                return true;
             }
-        }
-        if (match) {
-            end -= suffixLen;
+            segStart = i + 1;
         }
     }
-
-    char name[FileNameStringSize];
-    FwSizeType n = 0;
-    for (FwSizeType i = start; i < end && n < static_cast<FwSizeType>(sizeof(name) - 1); i++) {
-        name[n++] = path[i];
-    }
-    name[n] = '\0';
-    this->m_tlm.sequenceName = name;
+    return false;
 }
 
 //! Panic hook the spacewasm interpreter calls on a fatal internal error.

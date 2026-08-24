@@ -19,56 +19,76 @@
 
 namespace Svc {
 
-void WasmSequencer ::hostFprimeV1(spacewasm_host_t* host) {
-#define HOST_FN(member_fn)                                                                                         \
-    [](struct spacewasm_caller_t* caller, void* userdata, const struct spacewasm_value_t* params, size_t n_params, \
-       struct spacewasm_value_t* out_result) {                                                                     \
-        FW_ASSERT(userdata != nullptr);                                                                            \
-        return static_cast<WasmSequencer*>(userdata)->member_fn(caller, params, n_params, out_result);             \
-    }
+//! Member-function signature of a spacewasm host-function handler.
+using HostFn = spacewasm_hostcall_result_t (WasmSequencer::*)(struct spacewasm_caller_t*,
+                                                              const struct spacewasm_value_t*,
+                                                              size_t,
+                                                              struct spacewasm_value_t*);
 
+//! Named trampoline adapting spacewasm's C host-function ABI to a member handler.
+template <HostFn Handler>
+static spacewasm_hostcall_result_t hostFunctionTrampoline(struct spacewasm_caller_t* caller,
+                                                          void* userdata,
+                                                          const struct spacewasm_value_t* params,
+                                                          size_t n_params,
+                                                          struct spacewasm_value_t* out_result) {
+    FW_ASSERT(userdata != nullptr);
+    return (static_cast<WasmSequencer*>(userdata)->*Handler)(caller, params, n_params, out_result);
+}
+
+void WasmSequencer ::hostFprimeV1(spacewasm_host_t* host) {
     spacewasm_status_t status;
     U32 module_idx;
     status = spacewasm_add_host_module(host, "fprime_v1", 12, 0, &module_idx);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "exit", "i", "", HOST_FN(wasmExit), this);
+    status = spacewasm_add_host_function(host, module_idx, "exit", "i", "",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmExit>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "panic", "i", "", HOST_FN(wasmPanic), this);
+    status = spacewasm_add_host_function(host, module_idx, "panic", "i", "",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmPanic>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "args", "ii", "i", HOST_FN(wasmArgs), this);
+    status = spacewasm_add_host_function(host, module_idx, "args", "ii", "i",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmArgs>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "time", "ii", "", HOST_FN(wasmTime), this);
+    status = spacewasm_add_host_function(host, module_idx, "time", "ii", "",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmTime>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "tlm", "Iiiii", "i", HOST_FN(wasmReadTelemetry), this);
+    status = spacewasm_add_host_function(host, module_idx, "tlm", "Iiiii", "i",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmReadTelemetry>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "prm", "Iii", "i", HOST_FN(wasmReadParameter), this);
+    status = spacewasm_add_host_function(host, module_idx, "prm", "Iii", "i",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmReadParameter>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "cmd", "ii", "i", HOST_FN(wasmCommand), this);
+    status = spacewasm_add_host_function(host, module_idx, "cmd", "ii", "i",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmCommand>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "event", "iii", "", HOST_FN(wasmEvent), this);
+    status = spacewasm_add_host_function(host, module_idx, "event", "iii", "",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmEvent>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "rsleep", "I", "", HOST_FN(wasmRsleep), this);
+    status = spacewasm_add_host_function(host, module_idx, "rsleep", "I", "",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmRsleep>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "asleep", "I", "", HOST_FN(wasmAsleep), this);
+    status = spacewasm_add_host_function(host, module_idx, "asleep", "I", "",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmAsleep>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "serial_send", "iii", "", HOST_FN(wasmSerialOut), this);
+    status = spacewasm_add_host_function(host, module_idx, "serial_send", "iii", "",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmSerialOut>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "serial_recv", "iiiii", "i", HOST_FN(wasmSerialRecv), this);
+    status = spacewasm_add_host_function(host, module_idx, "serial_recv", "iiiii", "i",
+                                         &hostFunctionTrampoline<&WasmSequencer::wasmSerialRecv>, this);
     FW_ASSERT(status == SPACEWASM_OK, status);
-
-#undef HOST_FN
 }
 
 spacewasm_hostcall_result_t WasmSequencer::wasmExit(spacewasm_caller_t* caller,

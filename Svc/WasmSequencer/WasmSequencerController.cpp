@@ -121,6 +121,38 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_blo
     this->reportSeqDone(value, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
+bool WasmSequencer ::resolveSequencePath(const Fw::StringBase& fileName, Fw::String& filePath) {
+    // Resolve the requested path against the SEQ_BASE_DIR parameter. An empty
+    // base dir (the default) means paths are used verbatim; otherwise a single
+    // '/' is inserted between the base dir and the requested path, matching the
+    // parameter's documented contract.
+    Fw::ParamValid baseDirValid;
+    const Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(baseDirValid);
+
+    if (baseDir.length() == 0) {
+        filePath = fileName;
+        return true;
+    }
+
+    // With a base dir configured, SEQ_BASE_DIR acts as a containment boundary.
+    // A ground-supplied file name containing a ".." component could escape it
+    // (e.g. "../../etc/passwd"), so reject such names rather than opening a path
+    // outside the configured base directory.
+    if (WasmSequencer::pathHasParentTraversal(fileName)) {
+        this->log_WARNING_HI_SequenceFilePathNotContained(baseDir, fileName);
+        return false;
+    }
+
+    const Fw::FormatStatus fmtStatus = filePath.format("%s/%s", baseDir.toChar(), fileName.toChar());
+    if (fmtStatus != Fw::FormatStatus::SUCCESS) {
+        FW_ASSERT(fmtStatus == Fw::FormatStatus::OVERFLOWED, static_cast<FwAssertArgType>(fmtStatus));
+        this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, fileName);
+        return false;
+    }
+
+    return true;
+}
+
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
@@ -129,23 +161,11 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
 
     this->m_args = value.get_args();
 
-    // Resolve the requested path against the SEQ_BASE_DIR parameter. An empty
-    // base dir (the default) means paths are used verbatim; otherwise a single
-    // '/' is inserted between the base dir and the requested path, matching the
-    // parameter's documented contract.
-    Fw::ParamValid baseDirValid;
-    const Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(baseDirValid);
+    // Resolve the sequence file path against SEQ_BASE_DIR
     Fw::String filePath;
-    if (baseDir.length() == 0) {
-        filePath = value.get_fileName();
-    } else {
-        // The result is truncated to filePath's capacity on overflow; a
-        // truncated path will then fail to open and report FileOpenError.
-        const Fw::FormatStatus fmtStatus = filePath.format("%s/%s", baseDir.toChar(), value.get_fileName().toChar());
-        if (fmtStatus != Fw::FormatStatus::SUCCESS) {
-            FW_ASSERT(fmtStatus == Fw::FormatStatus::OVERFLOWED, static_cast<FwAssertArgType>(fmtStatus));
-            this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, value.get_fileName());
-        }
+    if (!this->resolveSequencePath(value.get_fileName(), filePath)) {
+        this->controller_sendSignal_loadFailed(value.get_context());
+        return;
     }
 
     // Record the sequence name for telemetry (module name, or filename stem).
@@ -168,42 +188,15 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
 
     // A per-load guest linear-memory allocator. Backed by m_guest_pool; released
     // immediately after load (the module retains its own reference).
-    spacewasm_allocator_t* alloc = spacewasm_allocator_new(
-        /* alloc */
-        [](void* userdata, const size_t size, const size_t align) -> U8* {
-            FW_ASSERT(userdata != nullptr);
-            return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<U32>(size), static_cast<U32>(align));
-        },
-        /* realloc */
-        [](void* userdata, uint8_t* ptr, size_t old_size, size_t new_size, size_t align) -> U8* {
-            (void)userdata;
-            (void)ptr;
-            (void)old_size;
-            (void)new_size;
-            (void)align;
-
-            // We turn off memory.grow so this should never be called!
-            // This nullptr will bubble as a reallocation failure
-            return nullptr;
-        },
-        /* dealloc */
-        [](void* userdata, U8* ptr, size_t size, size_t align) {
-            FW_ASSERT(userdata != nullptr);
-            (void)align;
-            static_cast<WasmSequencer*>(userdata)->guestDealloc(ptr, static_cast<U32>(size));
-        },
-        /* userdata */ this);
+    spacewasm_allocator_t* alloc =
+        spacewasm_allocator_new(&WasmSequencer::guestAllocCallback, &WasmSequencer::guestReallocCallback,
+                                &WasmSequencer::guestDeallocCallback, /* userdata */ this);
 
     U32 moduleIndex;
     Svc::WasmSequencer_RequestContext next = value.get_context();
 
-    auto status = spacewasm_load_module(
-        this->m_wasm, value.get_moduleName().toChar(),
-        [](void* userdata, const U8** outBuf, std::size_t* outLen) -> spacewasm_read_result_t {
-            FW_ASSERT(userdata != nullptr);
-            return static_cast<WasmSequencer*>(userdata)->readModuleChunk(outBuf, outLen);
-        },
-        this, alloc, &moduleIndex);
+    auto status = spacewasm_load_module(this->m_wasm, value.get_moduleName().toChar(),
+                                        &WasmSequencer::readModuleChunkCallback, this, alloc, &moduleIndex);
 
     spacewasm_allocator_destroy(alloc);
     next.set_moduleIdx(static_cast<WasmSequencer_ModuleIdx>(moduleIndex));

@@ -6,8 +6,6 @@
 
 #include "WasmSequencerTester.hpp"
 
-#include <new>
-
 #include "Fw/Port/OutputSerializePort.hpp"
 #include "Os/FileSystem.hpp"
 
