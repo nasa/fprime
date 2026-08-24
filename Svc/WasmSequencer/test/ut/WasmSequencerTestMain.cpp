@@ -1040,6 +1040,36 @@ TEST_F(WasmSequencerTester, ArgsBadPointerFails) {
     this->removeFile("args_badptr.wasm");
 }
 
+TEST_F(WasmSequencerTester, ArgsMixedStructRoundTrip) {
+    // Fill the argument buffer to its maximum (SequenceArgumentsMaxSize) with a mixed,
+    // packed little-endian struct and validate every field round-trips. This exercises
+    // the host->guest arg copy at the full buffer size across differently-sized fields:
+    //   U32 0x11223344, U16 0x5566, U8 0x77, U8 0x88, U32 0x99AABBCC  (12 bytes total).
+    // args_mixed.wasm reads it back, checks the returned count is 12, verifies each field
+    // at its offset, and confirms the byte just past the payload was not written.
+    const U8 argBytes[] = {
+        0x44, 0x33, 0x22, 0x11,  // U32 a = 0x11223344 (LE)
+        0x66, 0x55,              // U16 b = 0x5566 (LE)
+        0x77,                    // U8  c
+        0x88,                    // U8  d
+        0xCC, 0xBB, 0xAA, 0x99,  // U32 e = 0x99AABBCC (LE)
+    };
+    static_assert(sizeof argBytes == SequenceArgumentsMaxSize,
+                  "ArgsMixedStructRoundTrip is meant to fill the argument buffer exactly; "
+                  "update the payload if SequenceArgumentsMaxSize changes");
+    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
+
+    const Fw::String file = this->copyAsset("args_mixed.wasm");
+    this->sendCmd_RUN(0, 205, file, BLOCK, args);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    this->assertSequenceFailureCount(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("args_mixed.wasm");
+}
+
 // ----------------------------------------------------------------------
 // Time host function (fprime.time)
 // ----------------------------------------------------------------------

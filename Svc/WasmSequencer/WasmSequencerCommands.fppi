@@ -13,7 +13,7 @@ async command RUN(
     $block: Svc.BlockState
     @ Optional arguments to execute the sequence with
     @ Depending on the sequence being loaded these arguments may differ
-    seqArgs: string size SequenceArgumentsMaxSize
+    seqArgs: Svc.SeqArgs
 ) \
     opcode 0
 
