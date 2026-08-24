@@ -737,6 +737,45 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! stripped (an empty-name RUN / LOAD).
     void setSequenceName(const Fw::StringBase& filePath, const Fw::StringBase& moduleName);
 
+    // ----------------------------------------------------------------------
+    // Per-host-function dispatch helpers
+    //
+    // Each implements one arm of
+    // Svc_WasmSequencer_InterpreterStateMachine_action_dispatchPendingHostFunction:
+    // it reads its arguments from m_pendingHostFunction and signals the
+    // interpreter state machine with the result.
+    // ----------------------------------------------------------------------
+
+    //! COMMAND: forward an encoded command from guest memory to the command dispatcher.
+    void dispatchCommand();
+
+    //! TELEMETRY: read a telemetry channel and write its value + time into guest memory.
+    void dispatchTelemetry();
+
+    //! PARAMETER: read a parameter and write it into guest memory.
+    void dispatchParameter();
+
+    //! EVENT: emit a guest-requested event at the guest-requested severity.
+    void dispatchEvent();
+
+    //! RSLEEP: arm a relative sleep timer.
+    void dispatchRelativeSleep();
+
+    //! ASLEEP: arm an absolute sleep timer.
+    void dispatchAbsoluteSleep();
+
+    //! ARGS: write the stored sequence arguments into guest memory.
+    void dispatchArgs();
+
+    //! TIME: write the current time into guest memory.
+    void dispatchTime();
+
+    //! SERIAL_OUT: copy a payload out of guest memory and invoke the serial output port.
+    void dispatchSerialOut();
+
+    //! SERIAL_RECV: check the serial input queue and either resume or block awaiting a message.
+    void dispatchSerialRecv();
+
     //! Static pool backing the process-wide spacewasm global page allocator.
     alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE]{};
 
