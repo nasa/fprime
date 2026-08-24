@@ -27,10 +27,16 @@ The **CdhCore subtopology** provides a reusable bundle of the core flight-softwa
 | `events`       | `EventManager`       | Active  | Aggregates and distributes events; `FatalAnnounce` is wired to `fatalHandler`.         | event connections      |
 | `$health`      | `Health`             | Queued  | Performs health pings; configured with ping table.                                     | health connections     |
 | `version`      | `Version`            | Passive | Provides version reporting; configured for startup reporting.                          |                        |
-| `textLogger`   | `PassiveTextLogger`  | Passive | Text event logging sink.                                                               | text event connections |
+| `textLogger`   | `PassiveTextLogger`  | Passive | Text event logging sink. Present only when `FPRIME_ENABLE_TEXT_LOGGERS` is on.                                                               | text event connections |
 | `fatalAdapter` | `AssertFatalAdapter` | Passive | Adapts framework `FW_ASSERT`s into `FATAL`s behavior.                                  |                        |
 | `tlmSend`      | *(configurable)*     | —       | Telemetry send instance provided via configuration.                                    | telemetry connections  |
 | `fatalHandler` | *(configurable)*     | —       | Fatal handler instance provided via configuration.                                     |                        |
+
+When the build option `FPRIME_ENABLE_TEXT_LOGGERS` is off, the build selects
+`CdhCoreNoTextLogger.fpp`, a variant of the subtopology without the
+`textLogger` instance. Deployments must omit their
+`text event connections instance CdhCore.textLogger` specifier in that
+configuration (see `TestDeploymentsProject/Ref/Top/topology-no-text-logger.fpp`).
 
 ### 2.2 Configuration Hooks inside the Subtopology
 
