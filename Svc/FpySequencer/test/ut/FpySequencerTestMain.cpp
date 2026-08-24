@@ -5604,10 +5604,6 @@ TEST_F(FpySequencerTester, QueueOverflow_CmdResponseIn) {
     Os::Queue* qptr = this->tester_get_m_componentQueue_ptr();
     FwSizeType depth = qptr->getDepth();
 
-    // for(FwSizeType i = 0; i < depth-Fpy::LOAD_MARGIN; i++){
-    //     invoke_to_tlmWrite(0,0);
-    // }
-
     // Attempt to overload the queue
     for (FwSizeType i = 0; i < depth + 1; i++) {
         invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);

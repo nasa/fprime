@@ -851,9 +851,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // dispatches a command, returns whether successful or not
     Fw::Success sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize);
 
-    // sm_dispatch wrapper for queue capacity monitoring
-    void smDispatch(Fw::SerialBufferBase& buffer);
-
     // returns the index of the current statement
     U32 currentStatementIdx();
 
