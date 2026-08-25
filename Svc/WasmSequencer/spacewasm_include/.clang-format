@@ -1,0 +1,4 @@
+# spacewasm.h is vendored verbatim from the published spacewasm_c_api crate
+# (cbindgen-generated).
+DisableFormat: true
+SortIncludes: Never
