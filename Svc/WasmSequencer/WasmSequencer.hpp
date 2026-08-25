@@ -170,7 +170,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Handler implementation for command PAUSE
     //!
     //! Pauses the execution of the sequencer, just before it is about to start spinning.
-    //! This simply pends a pause flag that will be take before the sequence engine starts
+    //! This simply pends a pause flag that will be taken before the sequence engine starts
     //! up again.
     //!
     //! This command completes immediately
@@ -251,6 +251,31 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
         const Svc::WasmSequencer_InvokeRequest& value             //!< The value
+        ) override;
+
+    //! Implementation for action setCancelRequested of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Latch a cancel that arrives while a sequence is loading/resolving
+    void Svc_WasmSequencer_ControllerStateMachine_action_setCancelRequested(
+        SmId smId,                                               //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action clearCancelRequested of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Acknowledge/clear any pending cancel
+    void Svc_WasmSequencer_ControllerStateMachine_action_clearCancelRequested(
+        SmId smId,                                               //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action cancelPendingRequest of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Abort a load/invoke that was cancelled before the engine ran
+    void Svc_WasmSequencer_ControllerStateMachine_action_cancelPendingRequest(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
     //! Implementation for action respond_noblock_OK of state machine Svc_WasmSequencer_ControllerStateMachine
@@ -632,6 +657,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
 
+    //! Implementation for guard cancelRequested of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! True if a cancel was latched since the controller last came to rest.
+    bool Svc_WasmSequencer_ControllerStateMachine_guard_cancelRequested(
+        SmId smId,                                               //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+    ) const override;
+
     //! Implementation for guard moduleHasStart of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! return true if this module has a start function
@@ -824,6 +857,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Flag indicating interpreter is waiting to be paused
     bool m_pendingPause;
+
+    //! Latches a CANCEL that arrives while a sequence is loading/resolving
+    bool m_cancelRequested;
 
     //! Currently loading file handle
     Os::File* m_loadFile;

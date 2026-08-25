@@ -63,6 +63,18 @@ state machine ControllerStateMachine {
     @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes
     signal cancel
 
+    @ Latch a cancel that arrives while a sequence is loading/resolving
+    action setCancelRequested
+
+    @ Acknowledge/clear any pending cancel
+    action clearCancelRequested
+
+    @ True if a cancel was latched since the controller last came to rest.
+    guard cancelRequested
+
+    @ Abort a load/invoke that was cancelled before the engine ran
+    action cancelPendingRequest: RequestContext
+
     @ Responds to $block == NO_BLOCK requests with OK
     action respond_noblock_OK: RequestContext
 
@@ -163,7 +175,7 @@ state machine ControllerStateMachine {
 
     @ Interpreter does not have any modules loaded or a store initialized
     state IDLE {
-        entry do { resetStore }
+        entry do { resetStore, clearCancelRequested }
 
         on cancel enter IDLE
         on run do { load } enter LOADING_TO_RUN
@@ -173,6 +185,8 @@ state machine ControllerStateMachine {
 
     @ Interpreter has modules loaded into the store and is ready to execute
     state READY {
+        entry do { clearCancelRequested }
+
         on cancel enter IDLE
         on run do { resetStore, load } enter LOADING_TO_RUN
         on load do { load } enter LOADING_TO_READY
@@ -181,11 +195,17 @@ state machine ControllerStateMachine {
     }
 
     state INVOKING {
-        on invoked enter MAIN_CHECK
+        on invoked enter INVOKE_CANCEL_CHECK
         on invokeFailed do { respond_ERROR } enter READY
+        on cancel do { setCancelRequested }
         on run do { respondLoad_BUSY }
         on load do { respondLoad_BUSY }
         on invoke do { respondInvoke_BUSY }
+    }
+
+    @ Honor a cancel latched while resolving the invoke, before running main
+    choice INVOKE_CANCEL_CHECK {
+        if cancelRequested do { cancelPendingRequest } enter IDLE else enter MAIN_CHECK
     }
 
     @ Make sure the module we want to run has a main function
@@ -210,12 +230,18 @@ state machine ControllerStateMachine {
     }
 
     state LOADING_TO_READY {
-        on loadSucceeded enter START_CHECK
+        on loadSucceeded enter LOAD_READY_CANCEL_CHECK
         on loadFailed do { respond_ERROR } enter IDLE
+        on cancel do { setCancelRequested }
 
         on run do { respondLoad_BUSY }
         on load do { respondLoad_BUSY }
         on invoke do { respondInvoke_BUSY }
+    }
+
+    @ Honor a cancel latched while loading, before running the start function
+    choice LOAD_READY_CANCEL_CHECK {
+        if cancelRequested do { cancelPendingRequest } enter IDLE else enter START_CHECK
     }
 
     choice START_CHECK {
@@ -251,12 +277,18 @@ state machine ControllerStateMachine {
     }
 
     state LOADING_TO_RUN {
-        on loadSucceeded enter MAIN_CHECK_PENDING_START_AND_MAIN
+        on loadSucceeded enter LOAD_RUN_CANCEL_CHECK
         on loadFailed do { respond_ERROR } enter IDLE
+        on cancel do { setCancelRequested }
 
         on run do { respondLoad_BUSY }
         on load do { respondLoad_BUSY }
         on invoke do { respondInvoke_BUSY }
+    }
+
+    @ Honor a cancel latched while loading, before starting/running the module
+    choice LOAD_RUN_CANCEL_CHECK {
+        if cancelRequested do { cancelPendingRequest } enter IDLE else enter MAIN_CHECK_PENDING_START_AND_MAIN
     }
 
     @ Make sure the module we want to run has a main function
@@ -292,20 +324,25 @@ state machine ControllerStateMachine {
     @ Engine is running a module's start function before running the main function
     state RUNNING_START_PENDING_MAIN {
         on engineFinished enter INTERPRETER_STATUS
+        on cancel do { setCancelRequested }
 
         @ Once the start function finishes successfully we still owe the caller a
         @ main invocation (this is the RUN-with-start path). Chain into invokeMain
-        @ rather than settling in READY.
+        @ rather than settling in READY -- unless a cancel was latched in the brief
+        @ interpreter-idle gap between the start finishing and main being invoked.
         choice INTERPRETER_STATUS {
-            if interpreterSucceeded do {
-                invokeMain
-            } enter MAIN_INVOKE_CHECK else do {
+            if interpreterSucceeded enter START_MAIN_CANCEL_CHECK else do {
                 reportModuleStartFailed
                 # The RUN has not been answered yet (respond_noblock_OK is only reached
                 # after the start completes and main is invoked), so respond regardless
                 # of block.
                 respond_ERROR
             } enter IDLE
+        }
+
+        @ Honor a cancel latched during the start->main gap, before invoking main
+        choice START_MAIN_CANCEL_CHECK {
+            if cancelRequested do { cancelPendingRequest } enter IDLE else do { invokeMain } enter MAIN_INVOKE_CHECK
         }
 
         on run do { respondLoad_BUSY }

@@ -1739,6 +1739,226 @@ TEST_F(WasmSequencerTester, CancelFromIdleStaysIdle) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
+// ----------------------------------------------------------------------
+// CANCEL during the load/start window (before the engine runs)
+//
+// A CANCEL that lands while the controller is still loading/resolving (engine
+// not yet RUNNING) used to be dropped by both state machines while the operator
+// still received OK, and the sequence ran anyway. The deferred-cancel latch now
+// records such a cancel and honors it at the next decision point: the sequence
+// does not run, the pending request is answered EXECUTION_ERROR, and CANCEL's OK
+// becomes truthful. Ordering note: enqueuing the request and CANCEL back-to-back
+// makes the FIFO record the cancel before the queued loadSucceeded/invoked, so
+// the divert fires deterministically.
+// ----------------------------------------------------------------------
+
+TEST_F(WasmSequencerTester, RunCancelledDuringLoadDiverts) {
+    StagedAsset file_asset(*this, "empty.wasm");
+    const Fw::String& file = file_asset.file();
+
+    // RUN is async (a queued command); CANCEL is sync (its handler runs immediately).
+    // Dispatch the RUN command first so the `run` signal is queued and the controller
+    // begins loading; the CANCEL then latches while the controller is LOADING_TO_RUN,
+    // ahead of the queued loadSucceeded, so the post-load cancel-check diverts.
+    this->sendCmd_RUN(0, 140, file, BLOCK, {});
+    this->dispatchOne();
+    this->sendCmd_CANCEL(0, 141);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    // CANCEL replies OK immediately; the RUN is answered EXECUTION_ERROR at the divert.
+    ASSERT_CMD_RESPONSE(0, OPCODE_CANCEL, 141, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_RUN, 140, Fw::CmdResponse::EXECUTION_ERROR);
+    // The sequence never began executing.
+    ASSERT_EVENTS_SequenceStarting_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(0));
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(0));
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, LoadCancelledDuringLoadDiverts) {
+    StagedAsset file_asset(*this, "empty.wasm");
+    const Fw::String& file = file_asset.file();
+
+    this->sendCmd_LOAD(0, 142, file, Fw::CmdStringArg(""));
+    this->dispatchOne();  // dispatch async LOAD so the load signal is queued before sync CANCEL
+    this->sendCmd_CANCEL(0, 143);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_CMD_RESPONSE(0, OPCODE_CANCEL, 143, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_LOAD, 142, Fw::CmdResponse::EXECUTION_ERROR);
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(0));
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, InvokeCancelledDuringInvokingDiverts) {
+    StagedAsset file_asset(*this, "empty.wasm");
+    const Fw::String& file = file_asset.file();
+
+    // Load a module so INVOKE has something to resolve, landing in READY.
+    this->sendCmd_LOAD(0, 144, file, Fw::CmdStringArg(""));
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    // INVOKE then CANCEL back-to-back: the cancel is latched in INVOKING and honored
+    // at the post-resolve cancel-check, before main runs.
+    this->sendCmd_INVOKE(0, 145, Fw::CmdStringArg(""), BLOCK, {});
+    this->dispatchOne();  // dispatch async INVOKE so the invoke signal is queued before sync CANCEL
+    this->sendCmd_CANCEL(0, 146);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 144, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_CANCEL, 146, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(2, OPCODE_INVOKE, 145, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SequenceStarting_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, RunWithStartCancelledInStartMainGapDiverts) {
+    // start.wasm has both a start function and a main. A CANCEL latched after the
+    // start finishes but before main is invoked (the interpreter-idle start->main gap)
+    // must prevent main from running. Regression guard for the RUNNING_START_PENDING_MAIN
+    // cancel-check.
+    StagedAsset file_asset(*this, "start.wasm");
+    const Fw::String& file = file_asset.file();
+
+    this->sendCmd_RUN(0, 147, file, BLOCK, {});
+    // Controller waits in RUNNING_START_PENDING_MAIN; drive the interpreter to spin the
+    // start (entry `entered` still queued), then run that spin so the (empty) start
+    // finishes -- interpreterFinished is now queued and the interpreter is about to
+    // return to IDLE. A cancel injected here is dropped by the idle interpreter, so the
+    // RUNNING_START_PENDING_MAIN latch + START_MAIN_CANCEL_CHECK is the only thing that
+    // can keep main from running.
+    this->dispatchUntilControllerState(ControllerState::RUNNING_START_PENDING_MAIN);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
+    this->dispatchOne();  // run the start spin -> interpreterFinished queued
+
+    this->sendCmd_CANCEL(0, 148);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_CMD_RESPONSE(0, OPCODE_CANCEL, 148, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_RUN, 147, Fw::CmdResponse::EXECUTION_ERROR);
+    // main never started or completed.
+    ASSERT_EVENTS_SequenceStarting_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(0));
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, CancelAfterEngineRunningCountsOnce) {
+    // A CANCEL after the engine is already RUNNING is handled by the interpreter path
+    // (not the load-window latch); it must still count exactly once.
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+
+    StagedAsset file_asset(*this, "loop.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 149, file, NO_BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
+
+    this->sendCmd_CANCEL(0, 150);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_SequenceCancelled_SIZE(1);
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, CancelLatchDoesNotLeak) {
+    // After a divert, the cancel latch is cleared by the next attempt: a subsequent
+    // RUN of a good module runs to success rather than being spuriously diverted.
+    StagedAsset file_asset(*this, "empty.wasm");
+    const Fw::String& file = file_asset.file();
+
+    // First: divert a RUN during load.
+    this->sendCmd_RUN(0, 151, file, BLOCK, {});
+    this->dispatchOne();  // dispatch async RUN before the sync CANCEL so the cancel latches while loading
+    this->sendCmd_CANCEL(0, 152);
+    this->dispatchAll();
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_CMD_RESPONSE(0, OPCODE_CANCEL, 152, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_RUN, 151, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Second: a fresh RUN with no cancel must run to completion.
+    this->sendCmd_RUN(0, 153, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_CMD_RESPONSE(2, OPCODE_RUN, 153, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));  // only the first attempt
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(1));  // the second attempt
+}
+
+TEST_F(WasmSequencerTester, SeqCancelInDuringLoadDiverts) {
+    // The seqCancelIn port latches a cancel during load like the CANCEL command. A
+    // port-sourced RUN cancelled before it runs emits no cmdResponse and neither
+    // seqStartOut nor seqDoneOut (the pair stays balanced, as on the load-failure path).
+    StagedAsset file_asset(*this, "empty.wasm");
+    const Fw::String& file = file_asset.file();
+
+    this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
+    this->invoke_to_seqCancelIn(0);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_SequenceStarting_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
+    ASSERT_EQ(this->seqStartOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 0u);
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
+}
+
+TEST_F(WasmSequencerTester, CancelDuringFailedInvokeDoesNotLeakToNextInvoke) {
+    // A cancel latched during an invoke that then FAILS to resolve returns the
+    // controller to READY (not IDLE), bypassing the cancel-check. Entering READY must
+    // acknowledge/clear the latch, so a subsequent uncancelled INVOKE runs normally
+    // instead of being spuriously diverted. Guards against narrowing the clear to
+    // IDLE-only (which would leak the latch across the invokeFailed -> READY edge).
+    StagedAsset file_asset(*this, "empty.wasm");
+    const Fw::String& file = file_asset.file();
+
+    this->sendCmd_LOAD(0, 154, file, Fw::CmdStringArg(""));
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    // INVOKE an unknown module (async) then CANCEL (sync) latched during INVOKING; the
+    // invoke fails to resolve -> READY, so only READY's entry clears the latch.
+    this->sendCmd_INVOKE(0, 155, Fw::CmdStringArg("nope"), BLOCK, {});
+    this->dispatchOne();
+    this->sendCmd_CANCEL(0, 156);
+    this->dispatchAll();
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_ModuleNotFound_SIZE(1);
+
+    // A fresh, uncancelled INVOKE of the loaded module must run to success (not diverted).
+    this->sendCmd_INVOKE(0, 157, Fw::CmdStringArg(""), BLOCK, {});
+    this->dispatchAll();
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+
+    this->flushTelemetry();
+    // The failed invoke counts as failed; the second invoke succeeds; nothing was
+    // actually cancelled (the latched cancel was acknowledged at READY, not consumed).
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
 TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhilePausedFails) {
     // A cmdResponseIn while RUNNING_PAUSED (not awaiting a host command) is unexpected
     // and fails the sequence (stmtUnexpected from RUNNING_PAUSED -> IDLE).

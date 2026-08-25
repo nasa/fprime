@@ -57,6 +57,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_hasHostFunctionStart(false),
       m_invokeStatus(SPACEWASM_OK),
       m_pendingPause(false),
+      m_cancelRequested(false),
       m_loadFile(nullptr),
       m_sequencesStarted(0) {
     getGlobalAllocatorLock()->lock();

@@ -63,6 +63,27 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_ERR
     this->respondToWaiting(Fw::CmdResponse::EXECUTION_ERROR);
 }
 
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_setCancelRequested(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
+    this->m_cancelRequested = true;
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_clearCancelRequested(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
+    this->m_cancelRequested = false;
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_cancelPendingRequest(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
+    this->m_tlm.sequencesCancelled++;
+    this->respondToRequest(value, Fw::CmdResponse::EXECUTION_ERROR);
+    this->respondToWaiting(Fw::CmdResponse::EXECUTION_ERROR);
+}
+
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respondInvoke_BUSY(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
@@ -400,6 +421,12 @@ bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_interpreterS
         default:
             return false;
     }
+}
+
+bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_cancelRequested(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal) const {
+    return this->m_cancelRequested;
 }
 
 }  // namespace Svc
