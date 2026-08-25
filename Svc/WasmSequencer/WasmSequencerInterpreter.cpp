@@ -640,7 +640,7 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_dequeueSer
 
     // The queue holds [U32 size][payload]; skip the size prefix when copying the payload.
     const U32 queuePayloadStart = sizeof(U32);
-    const U32 dataSize = sizeof(U32) + msgSize;
+    const U32 dataSize = static_cast<U32>(sizeof(U32)) + msgSize;
 
     // Write the message size in little endian to the guest memory
     Fw::LinearBufferTemplate<sizeof(U32)> msgSizeSer;
