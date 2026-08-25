@@ -127,9 +127,15 @@ TEST(TestNominal, sectionConfigParameterTest) {
 }
 
 TEST(TestNominal, PerPacketOverrideTest) {
-    TEST_CASE(100.1.13, "Per-packet configIn override disables a single packet/section");
+    TEST_CASE(100.1.13, "Per-packet ENABLE_PACKET override disables a single packet/section");
     Svc::TlmPacketizerTester tester;
     tester.perPacketOverrideTest();
+}
+
+TEST(TestNominal, PerPacketCommandsTest) {
+    TEST_CASE(100.1.15, "Per-packet commands update overrides + mirror out configOut");
+    Svc::TlmPacketizerTester tester;
+    tester.perPacketCommandsTest();
 }
 
 TEST(TestNominal, GetPacketConfigTest) {

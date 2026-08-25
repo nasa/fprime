@@ -1984,6 +1984,14 @@ void TlmPacketizerTester ::from_pingOut_handler(const FwIndexType portNum, U32 k
     this->pushFromPortEntry_pingOut(key);
 }
 
+void TlmPacketizerTester ::from_configOut_handler(FwIndexType portNum,
+                                                  FwSizeType count,
+                                                  const Svc::PacketConfigBatch& batch) {
+    this->m_configOutInvokes++;
+    this->m_lastConfigCount = count;
+    this->m_lastConfigBatch = batch;
+}
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
@@ -1992,21 +2000,10 @@ void TlmPacketizerTester ::perPacketOverrideTest() {
     this->stockConfiguration();  // all sections/groups enabled
     this->component.setPacketList(packetList, ignore, 2);
 
-    // Override: disable packet 1 (id = 4) in PRIMARY only. Its SECONDARY copy and packet 2
-    // remain group-enabled, so exactly one (packet, section) send should drop out.
-    Svc::PacketConfig cfg;
-    cfg.set_enabled(Fw::Enabled::DISABLED);
-    cfg.set_forceEnabled(Fw::Enabled::DISABLED);
-    cfg.set_rateLogic(Svc::RateLogic::ON_CHANGE_MIN);
-    cfg.set_min(0);
-    cfg.set_max(0);
-    Svc::PacketConfigEntry entry;
-    entry.set_packetId(4);
-    entry.set_section(Svc::TelemetrySection::PRIMARY);
-    entry.set_config(cfg);
-    Svc::PacketConfigBatch batch;
-    batch[0] = entry;
-    this->invoke_to_configIn(0, 1, batch);
+    // Override: disable packet 1 (id = 4) in PRIMARY only via the per-packet command. Its
+    // SECONDARY copy and packet 2 remain group-enabled, so exactly one (packet, section) send
+    // should drop out.
+    this->sendCmd_ENABLE_PACKET(0, 0, 4, Svc::TelemetrySection::PRIMARY, Fw::Enabled::DISABLED);
     this->component.doDispatch();
 
     // Populate both packets with data (same channels as sendPacketsTest)
@@ -2037,6 +2034,78 @@ void TlmPacketizerTester ::perPacketOverrideTest() {
 
     // Baseline (all enabled) is 2 packets x NUM_SECTIONS; the override removes exactly one.
     ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS - 1);
+}
+
+void TlmPacketizerTester ::perPacketCommandsTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList, ignore, 2);
+
+    // ENABLE_PACKET on known id 4 / PRIMARY -> OK, exactly one mirror carrying the override
+    // seeded from the behavior-preserving default with only `enabled` changed.
+    this->clearHistory();
+    this->m_configOutInvokes = 0;
+    this->sendCmd_ENABLE_PACKET(0, 10, 4, Svc::TelemetrySection::PRIMARY, Fw::Enabled::DISABLED);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_ENABLE_PACKET, 10, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->m_configOutInvokes, 1u);
+    ASSERT_EQ(static_cast<U32>(this->m_lastConfigCount), 1u);
+    {
+        const Svc::PacketConfigEntry& e = this->m_lastConfigBatch[0];
+        ASSERT_EQ(e.get_packetId(), 4u);
+        ASSERT_EQ(e.get_section(), Svc::TelemetrySection::PRIMARY);
+        const Svc::PacketConfig c = e.get_config();
+        ASSERT_EQ(c.get_enabled(), Fw::Enabled::DISABLED);            // set by the command
+        ASSERT_EQ(c.get_forceEnabled(), Fw::Enabled::DISABLED);       // seeded default
+        ASSERT_EQ(c.get_rateLogic(), Svc::RateLogic::ON_CHANGE_MIN);  // seeded default
+    }
+
+    // FORCE_PACKET on the same id/section merges into the existing override.
+    this->clearHistory();
+    this->m_configOutInvokes = 0;
+    this->sendCmd_FORCE_PACKET(0, 11, 4, Svc::TelemetrySection::PRIMARY, Fw::Enabled::ENABLED);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_FORCE_PACKET, 11, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->m_configOutInvokes, 1u);
+    {
+        const Svc::PacketConfig c = this->m_lastConfigBatch[0].get_config();
+        ASSERT_EQ(c.get_enabled(), Fw::Enabled::DISABLED);      // preserved from ENABLE_PACKET
+        ASSERT_EQ(c.get_forceEnabled(), Fw::Enabled::ENABLED);  // set by FORCE_PACKET
+    }
+
+    // CONFIGURE_PACKET_RATES sets the rate fields on the same override.
+    this->clearHistory();
+    this->m_configOutInvokes = 0;
+    this->sendCmd_CONFIGURE_PACKET_RATES(0, 12, 4, Svc::TelemetrySection::PRIMARY,
+                                         Svc::RateLogic::EVERY_MAX, 5, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CONFIGURE_PACKET_RATES, 12, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->m_configOutInvokes, 1u);
+    {
+        const Svc::PacketConfig c = this->m_lastConfigBatch[0].get_config();
+        ASSERT_EQ(c.get_rateLogic(), Svc::RateLogic::EVERY_MAX);
+        ASSERT_EQ(c.get_min(), 5u);
+        ASSERT_EQ(c.get_max(), 10u);
+    }
+
+    // Unknown packet id -> VALIDATION_ERROR + UnknownPacketId warning, and no mirror.
+    this->clearHistory();
+    this->m_configOutInvokes = 0;
+    this->sendCmd_ENABLE_PACKET(0, 13, 9999, Svc::TelemetrySection::PRIMARY, Fw::Enabled::ENABLED);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_ENABLE_PACKET, 13, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_UnknownPacketId_SIZE(1);
+    ASSERT_EVENTS_UnknownPacketId(0, 9999);
+    ASSERT_EQ(this->m_configOutInvokes, 0u);
+
+    // Out-of-range section -> VALIDATION_ERROR, and no mirror.
+    this->clearHistory();
+    this->m_configOutInvokes = 0;
+    this->sendCmd_FORCE_PACKET(0, 14, 4, Svc::TelemetrySection(Svc::TelemetrySection::NUM_SECTIONS),
+                               Fw::Enabled::ENABLED);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_FORCE_PACKET, 14, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EQ(this->m_configOutInvokes, 0u);
 }
 
 void TlmPacketizerTester ::getPacketConfigTest() {
@@ -2114,8 +2183,8 @@ void TlmPacketizerTester ::connectPorts() {
 
     this->connect_to_configureSectionGroupRate(0, this->component.get_configureSectionGroupRate_InputPort(0));
 
-    // configIn (per-packet configuration push)
-    this->connect_to_configIn(0, this->component.get_configIn_InputPort(0));
+    // configOut (per-packet override mirror to the passive TlmPacketConfig)
+    this->component.set_configOut_OutputPort(0, this->get_from_configOut(0));
 }
 
 void TlmPacketizerTester::textLogIn(const FwEventIdType id,          //!< The event ID

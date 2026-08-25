@@ -113,9 +113,13 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Non-empty packet with a nullptr channel list is still rejected by the configuration assert
     void nullChannelListTest(void);
     
-    //! Per-packet override test: a configIn override disables one packet/section while
-    //! the group-enabled remainder still sends (Phase 2 per-packet control)
+    //! Per-packet override test: an ENABLE_PACKET override disables one packet/section while
+    //! the group-enabled remainder still sends (per-packet control)
     void perPacketOverrideTest(void);
+
+    //! Per-packet command test: ENABLE_PACKET / FORCE_PACKET / CONFIGURE_PACKET_RATES update
+    //! the override table + mirror one entry out configOut; bad args/id -> VALIDATION_ERROR
+    void perPacketCommandsTest(void);
 
     //! GET_PACKET_CONFIG test: effective config reported for a known id; unknown id warns
     void getPacketConfigTest(void);
@@ -141,6 +145,12 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
                               U32 key                    /*!< Value to return to pinger*/
                               ) override;
+
+    //! Handler for from_configOut: captures the per-packet override mirror sent to TlmPacketConfig
+    void from_configOut_handler(FwIndexType portNum,                //!< The port number
+                                FwSizeType count,                   //!< Number of valid entries
+                                const Svc::PacketConfigBatch& batch  //!< The mirrored overrides
+                                ) override;
 
     virtual void textLogIn(const FwEventIdType id,         /*!< The event ID*/
                            const Fw::Time& timeTag,        /*!< The time*/
@@ -180,6 +190,11 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
 
     // bool m_primaryTestLock{true};  //! Lock limited to entries from port 0 PktSend
     FwSizeType m_portOutInvokes[Svc::TELEMETRY_SEND_PORTS]{};
+
+    //! configOut mirror capture (per-packet override sent to the passive TlmPacketConfig)
+    U32 m_configOutInvokes{0};              //!< Number of configOut invocations
+    FwSizeType m_lastConfigCount{0};        //!< Count arg of the most recent configOut invocation
+    Svc::PacketConfigBatch m_lastConfigBatch{};  //!< Batch of the most recent configOut invocation
 };
 
 }  // end namespace Svc
