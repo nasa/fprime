@@ -319,11 +319,12 @@ void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
             this->interpreter_sendSignal_cmd_CONTINUE();
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             break;
-        default:
         case WasmSequencer_InterpreterStateMachine_State::IDLE:
             this->log_WARNING_LO_SequenceNotRunning();
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             break;
+        default:
+            FW_ASSERT(false, this->interpreter_getState());
     }
 }
 
