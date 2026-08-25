@@ -2417,8 +2417,7 @@ TEST_F(WasmSequencerTester, SequenceIndexIncrementsAcrossRuns) {
     // by exactly one for two back-to-back single-window runs.
     ASSERT_NE(firstSeqIdx, secondSeqIdx) << "sequence index did not advance across runs";
     ASSERT_EQ(static_cast<U16>(firstSeqIdx + 1), secondSeqIdx)
-        << "expected the sequence index to advance by one (first=" << firstSeqIdx
-        << " second=" << secondSeqIdx << ")";
+        << "expected the sequence index to advance by one (first=" << firstSeqIdx << " second=" << secondSeqIdx << ")";
 
     // Complete the second run so the component ends cleanly.
     this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
@@ -2462,8 +2461,7 @@ TEST_F(WasmSequencerTester, LateCmdResponseFromPreviousRunIgnored) {
 
     ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_EVENTS_CmdResponseFromOldSequence_SIZE(1);
-    ASSERT_EVENTS_CmdResponseFromOldSequence(0, 0, Fw::CmdResponse::OK,
-                                             static_cast<U16>((firstRunUid >> 16) & 0xFFFF),
+    ASSERT_EVENTS_CmdResponseFromOldSequence(0, 0, Fw::CmdResponse::OK, static_cast<U16>((firstRunUid >> 16) & 0xFFFF),
                                              static_cast<U16>((secondRunUid >> 16) & 0xFFFF));
 
     // The second run's own response still completes it normally.
