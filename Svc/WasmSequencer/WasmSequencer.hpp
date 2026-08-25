@@ -922,10 +922,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Buffer to hold the serial output port invocation invoked by the guest
     Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m_serialOutBuffer;
 
-    //! Serial in buffer data
+    //! Backing storage for m_serialInQueue: one contiguous byte buffer per serial-in
+    //! port, handed to the matching CircularBuffer via setup() in the constructor.
     U8 m_serialInQueueData[NUM_SERIALIN_INPUT_PORTS][Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_SIZE];
 
-    //! Queues (or queue) that handle inputs on the serial input port
+    //! Queues (or queue) that handle inputs on the serial input port. Each is backed by
+    //! the corresponding row of m_serialInQueueData (see the setup() loop in the ctor).
     Types::CircularBuffer m_serialInQueue[NUM_SERIALIN_INPUT_PORTS];
 
     //! A host function call the guest requested that is pending dispatch by the

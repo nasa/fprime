@@ -194,7 +194,7 @@ void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase&
         // The queue is full and cannot push this data
         switch (Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_FULL_BEHAVIOR) {
             case WasmSequencerConfig::SerialInQueueFullBehavior::DROP_OLDEST:
-                // Drop messages until this message can fit
+                // Drop oldest messages until this one fits.
                 while (frameSize > queue.get_free_size()) {
                     U32 nextMsgSize;
                     auto status = queue.peek(nextMsgSize);
