@@ -55,20 +55,91 @@ The layers are wired together exclusively through their **topology ports** (e.g.
 > **A. "With ComStub" (`Subtopology`):** includes `Svc::ComStub` and exposes **ByteStream** ports to your driver.
 > **B. "With External ComInterface" (`FramingSubtopology`):** you **provide** an `Svc.ComInterface` implementation in the deployment.
 
-### 2.2 Uplink Data Flow (with SDLS)
+### 2.2 Data Flow
 
-```
-[ ComCcsds.TmTcFraming ]      [    SdlsDecryption    ]      [ ComCcsds.SpacePacketFraming ]
-frameAccumulator -> tcDeframer -> sdlsDeframer -> spacePacketDeframer -> fprimeRouter
-                                       |  ^
-                            decryptOut v  | decryptIn (decrypted data)
-                            decryptionSaRouter
-                                       |  ^
-                          saDataOut[0] v  | saDataIn[0]
-                                    decryptor
+For reference, the **standard CCSDS flow** (as provided by `ComCcsds` alone) wires the
+packet layer directly to the transfer frame layer:
+
+```mermaid
+flowchart LR
+    subgraph SPF["ComCcsds.SpacePacketFraming (packet layer)"]
+        comQueue["comQueue"]
+        spacePacketFramer["spacePacketFramer"]
+        aggregator["aggregator"]
+        spacePacketDeframer["spacePacketDeframer"]
+        fprimeRouter["fprimeRouter"]
+    end
+
+    subgraph TMTC["ComCcsds.TmTcFraming (transfer frame layer)"]
+        framer["framer (TM)"]
+        frameAccumulator["frameAccumulator"]
+        tcDeframer["tcDeframer"]
+    end
+
+    com["ComInterface"]
+
+    %% Downlink
+    comQueue --> spacePacketFramer --> aggregator -->|Space Packets| framer -->|TM Transfer Frame| com
+
+    %% Uplink
+    com -->|raw bytes| frameAccumulator -->|TC Transfer Frame| tcDeframer -->|Space Packet| spacePacketDeframer --> fprimeRouter
 ```
 
-The downlink path inserts the mirrored `SdlsEncryption` layer (`sdlsFramer` → `encryptionSaRouter` → `encryptor`) between `SpacePacketFraming.dataOut` and `TmTcFraming.dataIn`.
+The **updated CCSDS flow with SDLS** inserts the `SdlsDecryption` layer between the
+transfer frame layer and the packet layer on the uplink path, and the mirrored
+`SdlsEncryption` layer between the packet layer and the transfer frame layer on the
+downlink path:
+
+```mermaid
+flowchart LR
+    subgraph SPF["ComCcsds.SpacePacketFraming (packet layer)"]
+        comQueue["comQueue"]
+        spacePacketFramer["spacePacketFramer"]
+        aggregator["aggregator"]
+        spacePacketDeframer["spacePacketDeframer"]
+        fprimeRouter["fprimeRouter"]
+    end
+
+    subgraph ENC["SdlsEncryption (this module)"]
+        sdlsFramer["sdlsFramer<br>Svc.Ccsds.CcsdsSdlsFramer"]
+        encryptionSaRouter["encryptionSaRouter<br>Svc.Ccsds.SdlsSaRouter"]
+        encryptor["encryptor*<br>Svc.Ccsds.ClearTextEncryptor"]
+    end
+
+    subgraph DEC["SdlsDecryption (this module)"]
+        sdlsDeframer["sdlsDeframer<br>Svc.Ccsds.CcsdsSdlsDeframer"]
+        decryptionSaRouter["decryptionSaRouter<br>Svc.Ccsds.SdlsSaRouter"]
+        decryptor["decryptor*<br>Svc.Ccsds.ClearTextDecryptor"]
+    end
+
+    subgraph TMTC["ComCcsds.TmTcFraming (transfer frame layer)"]
+        framer["framer (TM)"]
+        frameAccumulator["frameAccumulator"]
+        tcDeframer["tcDeframer"]
+    end
+
+    com["ComInterface"]
+
+    %% Downlink (with SDLS encryption)
+    comQueue --> spacePacketFramer --> aggregator -->|Space Packets| sdlsFramer
+    sdlsFramer -->|encryptOut| encryptionSaRouter
+    encryptionSaRouter -->|"saDataOut[SA]"| encryptor
+    encryptor -->|"saDataIn[SA]"| encryptionSaRouter
+    encryptionSaRouter -->|encryptIn| sdlsFramer
+    sdlsFramer -->|SDLS frame| framer
+    framer -->|TM Transfer Frame| com
+
+    %% Uplink (with SDLS decryption)
+    com -->|raw bytes| frameAccumulator -->|TC Transfer Frame| tcDeframer -->|SDLS frame| sdlsDeframer
+    sdlsDeframer -->|decryptOut| decryptionSaRouter
+    decryptionSaRouter -->|"saDataOut[SA]"| decryptor
+    decryptor -->|"saDataIn[SA]"| decryptionSaRouter
+    decryptionSaRouter -->|decryptIn| sdlsDeframer
+    sdlsDeframer -->|decrypted Space Packet| spacePacketDeframer --> fprimeRouter
+```
+
+\* The `encryptor`/`decryptor` instances default to the ClearText implementations (NO
+security) and are configurable — see 2.3.
 
 The `sdlsDeframer` extracts the leading 16-bit SA index, records it in the frame context, and sends the remaining iv/data to the `decryptionSaRouter`, which maps the SA to the decryptor on the mapped port. Decrypted data flows back through the router and deframer to the `spacePacketDeframer`. Buffer ownership returns flow the reverse paths (`dataReturnIn` → `decryptReturnOut` → decryptor; decryptor `bufferReturnOut` → router `bufferReturnOut` → deframer `dataReturnOut`).
 
