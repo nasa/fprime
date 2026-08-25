@@ -12,6 +12,13 @@ This document assumes a general familiarity with the capabilities and design of 
 for more information, please see [WebAssembly Docs](https://webassembly.org/) for in-depth documentation
 and specification of the Wasm standard.
 
+## Build Dependencies
+
+The [spacewasm](https://github.com/nasa/spacewasm) engine is written in Rust and compiled into a static
+library at build time, so building this component requires a [Rust toolchain](https://www.rust-lang.org/tools/install)
+(`cargo` and `rustc`) on the `PATH`. This is the framework's only Rust dependency, so it is treated as
+optional: `cmake/required.cmake` detects `cargo`, and `Svc/CMakeLists.txt` skips `Svc::WasmSequencer`.
+
 ## Requirements
 
 | Name         | Description                                                                                                                                                                         | Rationale                                                                                                                                                                                                                                                                       | Validation |

@@ -3145,7 +3145,6 @@ TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
     ASSERT_CMD_RESPONSE(5, OPCODE_CANCEL, 6, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(6, OPCODE_RUN, 7, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(7, OPCODE_RUN, 8, Fw::CmdResponse::EXECUTION_ERROR);
-
 }
 
 // ----------------------------------------------------------------------

@@ -12,6 +12,6 @@ spacewasm_status_t spacewasm_fprime_deregister_global_allocator(void* userdata);
 
 spacewasm_status_t spacewasm_fprime_acquire_global_allocator(void* userdata);
 spacewasm_status_t spacewasm_fprime_release_global_allocator(void* userdata);
-};
+}
 
 #endif
