@@ -147,6 +147,13 @@ event SerialPortSendFailed(host_function: HostFunction, status: I32) \
     severity warning high \
     format "Host function {} failed to send on serial port: serialize status {}"
 
+@ An inbound serial frame was larger than the receiving queue could ever hold and was
+@ dropped. serialIn is fed by external hardware/ground data, so an oversized frame is
+@ rejected here rather than asserting on flight software.
+event SerialInFrameTooLarge(portIndex: U32, $size: U32, maxSize: U32) \
+    severity warning high \
+    format "Serial input port {} dropped oversized frame of {} bytes (queue max {})"
+
 @ The guest requested an event at a severity that is not permitted for guest
 @ programs (an out-of-range id, or FATAL/COMMAND which are reserved for the
 @ host). The guest message is preserved and reported here at WARNING_HI.

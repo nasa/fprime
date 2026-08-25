@@ -2386,6 +2386,93 @@ TEST_F(WasmSequencerTester, WrongCmdResponseIndexFails) {
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 411, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
+TEST_F(WasmSequencerTester, SequenceIndexIncrementsAcrossRuns) {
+    // Regression for the cmdUid sequence-index counter (m_sequencesStarted): each
+    // freshly-invoked program must stamp a DISTINCT sequence index into the high half
+    // of the cmdUid it attaches to dispatched commands. If the counter never advanced
+    // (the original defect) both runs would stamp sequence index 0 and the
+    // cross-sequence late-reply detection below would be silently dead. Unlike
+    // LateCmdResponseFromOldSequenceIgnored (which synthesizes a stale uid within one
+    // run), this drives two real runs so it fails if the counter is stuck.
+    StagedAsset file_asset(*this, "cmd.wasm");
+    const Fw::String& file = file_asset.file();
+
+    // First run: park awaiting its command response and capture the dispatched cmdUid.
+    this->sendCmd_RUN(0, 420, file, BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
+    const U32 firstUid = this->lastCmdContext();
+    const U16 firstSeqIdx = static_cast<U16>((firstUid >> 16) & 0xFFFF);
+
+    // Tear the first run down without ever giving it its response.
+    this->sendCmd_CANCEL(0, 421);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    // Second run: park again and capture its cmdUid.
+    this->sendCmd_RUN(0, 422, file, BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
+    const U32 secondUid = this->lastCmdContext();
+    const U16 secondSeqIdx = static_cast<U16>((secondUid >> 16) & 0xFFFF);
+
+    // The sequence index advanced between runs (would both be 0 with the counter bug),
+    // by exactly one for two back-to-back single-window runs.
+    ASSERT_NE(firstSeqIdx, secondSeqIdx) << "sequence index did not advance across runs";
+    ASSERT_EQ(static_cast<U16>(firstSeqIdx + 1), secondSeqIdx)
+        << "expected the sequence index to advance by one (first=" << firstSeqIdx
+        << " second=" << secondSeqIdx << ")";
+
+    // Complete the second run so the component ends cleanly.
+    this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
+    this->dispatchUntilControllerState(ControllerState::READY);
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+}
+
+TEST_F(WasmSequencerTester, LateCmdResponseFromPreviousRunIgnored) {
+    // End-to-end companion to LateCmdResponseFromOldSequenceIgnored. Rather than
+    // synthesizing a stale cmdUid, this runs two real sequences and delivers the
+    // ACTUAL cmdUid dispatched by the first (cancelled) run to the live second run.
+    // This only classifies as an old-sequence reply because m_sequencesStarted
+    // advanced between the runs; with the counter stuck the two runs would share a
+    // sequence index and the old reply's low-half command index would instead be
+    // treated as a wrong-instance integrity error that FAILS the live sequence.
+    StagedAsset file_asset(*this, "cmd.wasm");
+    const Fw::String& file = file_asset.file();
+
+    // First run parks awaiting its command response; capture its real cmdUid, then
+    // cancel it before it is ever answered.
+    this->sendCmd_RUN(0, 423, file, BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
+    const U32 firstRunUid = this->lastCmdContext();
+
+    this->sendCmd_CANCEL(0, 424);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+    ASSERT_EVENTS_SequenceCancelled_SIZE(1);
+
+    // Second run parks awaiting its own (distinct) command response.
+    this->sendCmd_RUN(0, 425, file, BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
+    const U32 secondRunUid = this->lastCmdContext();
+    ASSERT_NE(firstRunUid, secondRunUid);
+
+    // Deliver the FIRST run's now-stale response to the live second run. It is
+    // recognized as coming from an old sequence: reported, ignored, and the live
+    // sequence keeps awaiting its own response (it must NOT be failed).
+    this->invoke_to_cmdResponseIn(0, 0, firstRunUid, Fw::CmdResponse::OK);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
+    ASSERT_EVENTS_CmdResponseFromOldSequence_SIZE(1);
+    ASSERT_EVENTS_CmdResponseFromOldSequence(0, 0, Fw::CmdResponse::OK,
+                                             static_cast<U16>((firstRunUid >> 16) & 0xFFFF),
+                                             static_cast<U16>((secondRunUid >> 16) & 0xFFFF));
+
+    // The second run's own response still completes it normally.
+    this->invoke_to_cmdResponseIn(0, 0, secondRunUid, Fw::CmdResponse::OK);
+    this->dispatchUntilControllerState(ControllerState::READY);
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+}
+
 // ----------------------------------------------------------------------
 // Commands rejected / queued while a sequence is running
 // ----------------------------------------------------------------------
@@ -3037,6 +3124,64 @@ TEST_F(WasmSequencerTester, SerialInQueueFullDropsOldest) {
     U8 frontByte = 0;
     ASSERT_EQ(queue.peek(frontByte, sizeof(U32)), Fw::FW_SERIALIZE_OK);
     ASSERT_GT(frontByte, static_cast<U8>(0)) << "oldest frame (byte 0) should have been dropped";
+}
+
+TEST_F(WasmSequencerTester, SerialInOversizedFrameDroppedNotAsserted) {
+    // serialIn is fed by external hardware/ground data, so a frame larger than the
+    // queue could EVER hold (payload > capacity minus the 4-byte length header) must be
+    // dropped with a warning rather than asserting and crashing flight software.
+    Types::CircularBuffer& queue = this->serialInQueue(0);
+    const FwSizeType capacity = queue.get_capacity();
+    const FwSizeType headerSize = sizeof(U32);
+    const FwSizeType maxPayload = capacity - headerSize;
+
+    // One byte too large to ever fit, so this is a reject (not a DROP_OLDEST eviction).
+    const FwSizeType oversized = maxPayload + 1;
+    ASSERT_LE(oversized, static_cast<FwSizeType>(Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE));
+    U8 payload[Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE];
+    for (FwSizeType i = 0; i < oversized; i++) {
+        payload[i] = static_cast<U8>(i);
+    }
+
+    this->enqueueSerialIn(0, payload, oversized);
+
+    // Nothing was enqueued and the component did not assert; the oversized frame was
+    // reported and dropped.
+    ASSERT_EQ(queue.get_allocated_size(), static_cast<FwSizeType>(0));
+    ASSERT_EVENTS_SerialInFrameTooLarge_SIZE(1);
+    ASSERT_EVENTS_SerialInFrameTooLarge(0, 0, static_cast<U32>(oversized), static_cast<U32>(maxPayload));
+
+    // The queue is still usable: a normally-sized frame enqueues afterward and no
+    // further drop is reported.
+    const U8 ok[4] = {0x01, 0x02, 0x03, 0x04};
+    this->enqueueSerialIn(0, ok, sizeof ok);
+    ASSERT_EQ(queue.get_allocated_size(), static_cast<FwSizeType>(sizeof(U32) + sizeof ok));
+    ASSERT_EVENTS_SerialInFrameTooLarge_SIZE(1);
+}
+
+TEST_F(WasmSequencerTester, SerialInMaxSizeFrameEnqueued) {
+    // The exact-fit boundary: a payload of (capacity - header) is the largest frame
+    // that fits and MUST be enqueued, not dropped. Guards the '>' drop guard against
+    // regressing to '>=' (which would reject the maximum legal frame).
+    Types::CircularBuffer& queue = this->serialInQueue(0);
+    const FwSizeType capacity = queue.get_capacity();
+    const FwSizeType headerSize = sizeof(U32);
+    const FwSizeType maxPayload = capacity - headerSize;
+
+    U8 payload[Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE];
+    for (FwSizeType i = 0; i < maxPayload; i++) {
+        payload[i] = static_cast<U8>(i);
+    }
+
+    this->enqueueSerialIn(0, payload, maxPayload);
+
+    // Enqueued as a single [U32 size][payload] frame that fills the queue exactly, with
+    // no oversized-frame warning.
+    ASSERT_EVENTS_SerialInFrameTooLarge_SIZE(0);
+    ASSERT_EQ(queue.get_allocated_size(), capacity);
+    U32 framedSize = 0;
+    ASSERT_EQ(queue.peek(framedSize), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(framedSize, static_cast<U32>(maxPayload));
 }
 
 // ----------------------------------------------------------------------

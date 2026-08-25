@@ -183,8 +183,11 @@ void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase&
     // Make sure the queue is sized to hold this framed message at all. This does
     // not check free space, only that the queue's capacity is large enough.
     FW_ASSERT(capacity >= headerSize, portNum, static_cast<FwAssertArgType>(capacity));
-    FW_ASSERT(payloadSize <= capacity - headerSize, portNum, static_cast<FwAssertArgType>(payloadSize),
-              static_cast<FwAssertArgType>(capacity));
+    if (payloadSize > capacity - headerSize) {
+        this->log_WARNING_HI_SerialInFrameTooLarge(static_cast<U32>(portNum), static_cast<U32>(payloadSize),
+                                                   static_cast<U32>(capacity - headerSize));
+        return;
+    }
 
     // Total framed size; <= capacity by the assertions above, so it cannot overflow.
     const FwSizeType frameSize = headerSize + payloadSize;

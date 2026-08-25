@@ -83,8 +83,9 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_reset(
     auto status = spacewasm_reset(this->m_wasm);
     FW_ASSERT(status == SPACEWASM_OK);
 
-    // Clear the failed-host-function record so a non-host failure (e.g. a
-    // bytecode trap) in the next run reports NONE rather than a stale value.
+    // This only resets the spacewasm engine's execution state (operand stack, pc,
+    // fp, sp). The exit-status record (reason / last host function / trap reason) is
+    // cleared separately by clearExitStatus.
 }
 
 void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_clearExitStatus(
@@ -515,6 +516,12 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setContext
     FW_ASSERT(!this->m_hasExecutingContext);
     this->m_hasExecutingContext = true;
     this->m_executingContext = value;
+
+    // A fresh execution window is starting. Bump the sequence counter so any command
+    // dispatched from this program carries a distinct cmdUid (see makeCmdUid), letting
+    // cmdResponseIn_handler recognize a response that arrives late, after its
+    // originating sequence has ended.
+    this->m_sequencesStarted++;
 }
 
 void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_clearContext(
