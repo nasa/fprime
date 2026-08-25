@@ -450,16 +450,16 @@ void WasmSequencer ::dispatchSerialOut() {
 
     // Copy the payload out of guest memory into our own buffer
     if (this->readGuestOrFail(Svc::WasmSequencer_HostFunction::SERIAL_OUT, this->m_pendingHostFunction.u.serialOut.ptr,
-                              this->m_serialPortBuffer.getBuffAddr(),
+                              this->m_serialOutBuffer.getBuffAddr(),
                               this->m_pendingHostFunction.u.serialOut.len) != Fw::Success::SUCCESS) {
         return;
     }
 
-    auto serStatus = this->m_serialPortBuffer.setBuffLen(this->m_pendingHostFunction.u.serialOut.len);
+    auto serStatus = this->m_serialOutBuffer.setBuffLen(this->m_pendingHostFunction.u.serialOut.len);
     FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
 
     // Invoke the serial output port.
-    serStatus = this->serialOut_out(portNum, this->m_serialPortBuffer);
+    serStatus = this->serialOut_out(portNum, this->m_serialOutBuffer);
     if (serStatus != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_SerialPortSendFailed(Svc::WasmSequencer_HostFunction::SERIAL_OUT,
                                                   static_cast<I32>(serStatus));

@@ -60,11 +60,11 @@ TEST_F(WasmSequencerTester, LoadEmptyModuleReady) {
 }
 
 TEST_F(WasmSequencerTester, LoadResolvesAgainstSeqBaseDir) {
-    // With SEQ_BASE_DIR set, the requested (bare) file name is resolved relative
-    // to the base dir with a single '/' separator. copyAsset stages the module in
-    // the CWD, so a base dir of "." resolves "empty.wasm" -> "./empty.wasm", which
+    // With SEQ_BASE_DIR set, the base dir is prepended verbatim to the requested
+    // (bare) file name (no separator inserted). copyAsset stages the module in the
+    // CWD, so a base dir of "./" resolves "empty.wasm" -> "./empty.wasm", which
     // opens successfully.
-    this->paramSet_SEQ_BASE_DIR(Fw::ParamString("."), Fw::ParamValid::VALID);
+    this->paramSet_SEQ_BASE_DIR(Fw::ParamString("./"), Fw::ParamValid::VALID);
     this->component.loadParameters();
 
     StagedAsset file_asset(*this, "empty.wasm");
@@ -80,7 +80,7 @@ TEST_F(WasmSequencerTester, LoadResolvesAgainstSeqBaseDir) {
 TEST_F(WasmSequencerTester, LoadAgainstMissingBaseDirFailsToOpen) {
     // A non-empty base dir that does not contain the file resolves to a path that
     // cannot be opened; the load fails with FileOpenError and returns to IDLE.
-    this->paramSet_SEQ_BASE_DIR(Fw::ParamString("no_such_dir"), Fw::ParamValid::VALID);
+    this->paramSet_SEQ_BASE_DIR(Fw::ParamString("no_such_dir/"), Fw::ParamValid::VALID);
     this->component.loadParameters();
 
     StagedAsset file_asset(*this, "empty.wasm");

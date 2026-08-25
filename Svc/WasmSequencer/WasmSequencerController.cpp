@@ -122,10 +122,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_blo
 }
 
 bool WasmSequencer ::resolveSequencePath(const Fw::StringBase& fileName, Fw::String& filePath) {
-    // Resolve the requested path against the SEQ_BASE_DIR parameter. An empty
-    // base dir (the default) means paths are used verbatim; otherwise a single
-    // '/' is inserted between the base dir and the requested path, matching the
-    // parameter's documented contract.
+    // Resolve the requested path against the SEQ_BASE_DIR parameter
     Fw::ParamValid baseDirValid;
     const Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(baseDirValid);
 
@@ -143,7 +140,7 @@ bool WasmSequencer ::resolveSequencePath(const Fw::StringBase& fileName, Fw::Str
         return false;
     }
 
-    const Fw::FormatStatus fmtStatus = filePath.format("%s/%s", baseDir.toChar(), fileName.toChar());
+    const Fw::FormatStatus fmtStatus = filePath.format("%s%s", baseDir.toChar(), fileName.toChar());
     if (fmtStatus != Fw::FormatStatus::SUCCESS) {
         FW_ASSERT(fmtStatus == Fw::FormatStatus::OVERFLOWED, static_cast<FwAssertArgType>(fmtStatus));
         this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, fileName);

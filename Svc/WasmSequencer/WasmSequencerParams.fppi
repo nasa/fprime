@@ -12,9 +12,9 @@ param HOST_FUNCTION_TIMEOUT_SECS: F32 default 0
 @ need to feed itself through a queue to fuel more cycles.
 param INSTRUCTION_FUEL: FwSizeType default Wasm.DEFAULT_INSTRUCTION_FUEL
 
-@ the base directory relative to which sequence file paths are resolved.
-@ a '/' separator is always inserted between this base dir and the input
-@ sequence file path before resolution occurs following the rules of
-@ Os::File::open.
+@ A literal prefix prepended to every requested sequence file path before
+@ resolution following the rules of Os::File::open. When non-empty it
+@ also acts as a containment boundary: a requested name with a ".." component is
+@ rejected rather than being allowed to escape the prefix.
 param SEQ_BASE_DIR: string size FileNameStringSize \
     default Wasm.DEFAULT_SEQ_BASE_DIR

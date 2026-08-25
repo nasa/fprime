@@ -884,7 +884,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     ExitStatus m_exit;
 
     //! Buffer to hold the serial output port invocation invoked by the guest
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m_serialPortBuffer;
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m_serialOutBuffer;
 
     //! Serial in buffer data
     U8 m_serialInQueueData[NUM_SERIALIN_INPUT_PORTS][Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_SIZE];
@@ -990,9 +990,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! or its main entrypoint.
     void reportSequenceRuntimeFailure(WasmSequencer_ModuleIdx moduleIdx, WasmSequencer_SequencePhase phase);
 
-    //! Check if there are any pending flags before trying to fill the pending state
-    Fw::Success checkPendingFlags();
-
     //! Respond to a request with certain reply
     void respondToRequest(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response);
 
@@ -1002,8 +999,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Report that a RUN finished on seqDoneOut (if connected) with the given
     //! response. Only emits for RUN-sourced requests, matching the RUN-gated
     //! seqStartOut in reportModuleStarted, so the seqStart/seqDone pair stays
-    //! balanced. A no-op for INVOKE/LOAD, so it is safe to call from every
-    //! terminal responder.
+    //! balanced. A no-op for INVOKE/LOAD, so both controller completion actions
+    //! (respond_block_OK and respond_block_ERROR, which send the final command
+    //! response) can call it unconditionally.
     void reportSeqDone(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response);
 
     //! Set a global to a value given the name of the module, global export name and value

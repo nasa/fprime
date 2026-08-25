@@ -1,8 +1,7 @@
 module Svc {
     module Wasm {
-        @ the default value of the SEQ_BASE_DIR parameter. suffixed to
-        @ the input sequence file path before resolution occurs following
-        @ the rules of Os::File::open. trailing slash optional
+        @ the default value of the SEQ_BASE_DIR parameter: a literal prefix
+        @ prepended to each requested sequence file path
         dictionary constant DEFAULT_SEQ_BASE_DIR = ""
 
         @ Buffer size (bytes) for a WebAssembly module name (LOAD/INVOKE and the
