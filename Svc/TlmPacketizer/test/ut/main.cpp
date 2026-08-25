@@ -138,6 +138,12 @@ TEST(TestNominal, PerPacketCommandsTest) {
     tester.perPacketCommandsTest();
 }
 
+TEST(TestNominal, ConfigInReloadTest) {
+    TEST_CASE(100.1.16, "configIn reload applies overrides to the volatile table without echo");
+    Svc::TlmPacketizerTester tester;
+    tester.configInReloadTest();
+}
+
 TEST(TestNominal, GetPacketConfigTest) {
     TEST_CASE(100.1.14, "GET_PACKET_CONFIG reports effective config; unknown id warns");
     Svc::TlmPacketizerTester tester;

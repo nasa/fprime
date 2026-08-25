@@ -35,7 +35,7 @@ module Svc {
     @ A fixed-capacity batch of per-packet config entries. Only the first `count` are valid.
     array PacketConfigBatch = [TLM_PACKET_CONFIG_BATCH_MAX] PacketConfigEntry
 
-    @ Port pushing a batch of per-packet configuration from the config owner (TlmPacketConfig)
+    @ Port pushing a batch of per-packet configuration from the config persistent-memory owner
     @ to the packetizer (TlmPacketizer). Batching bounds the number of async messages required
     @ to synchronize many packets (e.g. the full push at boot).
     port TlmPacketConfigUpdate(

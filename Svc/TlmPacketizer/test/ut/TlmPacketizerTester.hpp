@@ -121,6 +121,10 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! the override table + mirror one entry out configOut; bad args/id -> VALIDATION_ERROR
     void perPacketCommandsTest(void);
 
+    //! configIn reload test: a batch pushed over configIn is applied to the volatile table
+    //! (unknown ids warned + skipped) and is not echoed back out configOut
+    void configInReloadTest(void);
+
     //! GET_PACKET_CONFIG test: effective config reported for a known id; unknown id warns
     void getPacketConfigTest(void);
 
@@ -146,7 +150,7 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
                               U32 key                    /*!< Value to return to pinger*/
                               ) override;
 
-    //! Handler for from_configOut: captures the per-packet override mirror sent to TlmPacketConfig
+    //! Handler for from_configOut: captures the per-packet override mirror sent to external component
     void from_configOut_handler(FwIndexType portNum,                //!< The port number
                                 FwSizeType count,                   //!< Number of valid entries
                                 const Svc::PacketConfigBatch& batch  //!< The mirrored overrides
@@ -191,7 +195,7 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     // bool m_primaryTestLock{true};  //! Lock limited to entries from port 0 PktSend
     FwSizeType m_portOutInvokes[Svc::TELEMETRY_SEND_PORTS]{};
 
-    //! configOut mirror capture (per-packet override sent to the passive TlmPacketConfig)
+    //! configOut mirror capture (per-packet override sent to an external component)
     U32 m_configOutInvokes{0};              //!< Number of configOut invocations
     FwSizeType m_lastConfigCount{0};        //!< Count arg of the most recent configOut invocation
     Svc::PacketConfigBatch m_lastConfigBatch{};  //!< Batch of the most recent configOut invocation

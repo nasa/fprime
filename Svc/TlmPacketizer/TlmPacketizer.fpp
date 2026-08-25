@@ -39,10 +39,14 @@ module Svc {
     @ Input configuration port
     async input port configureSectionGroupRate: ConfigureGroupRate
 
-    @ Per-packet configuration mirror to TlmPacketConfig (the passive persistence proxy).
+    @ Per-packet configuration mirror to persistent storage managed by an external component
     @ Each entry carries the full override for the addressed packet/section and is pushed
     @ whenever an ENABLE_PACKET / FORCE_PACKET / CONFIGURE_PACKET_RATES command changes it.
     output port configOut: TlmPacketConfigUpdate
+
+    @ Per-packet configuration reload from the persistence storage component
+    @ That storage component pushes it's config into this port when commanded to do so (usually at boot-up)
+    async input port configIn: TlmPacketConfigUpdate
 
     @ Telemetry input port
     sync input port TlmRecv: Fw.Tlm

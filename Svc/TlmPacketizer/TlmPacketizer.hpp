@@ -93,6 +93,12 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
                         U32 key                    /*!< Value to return to pinger*/
                         ) override;
 
+    //! Handler for input port configIn: reload path. Applies a batch of persisted overrides
+    void configIn_handler(FwIndexType portNum,                //!< The port number
+                          FwSizeType count,                   //!< Number of valid entries in batch
+                          const Svc::PacketConfigBatch& batch  //!< Overrides to apply
+                          ) override;
+
     //! Handler for input port TlmGet
     Fw::TlmValid TlmGet_handler(FwIndexType portNum,  //!< The port number
                                 FwChanIdType id,      //!< Telemetry Channel ID

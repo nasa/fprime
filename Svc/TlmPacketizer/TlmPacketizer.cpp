@@ -675,9 +675,9 @@ bool TlmPacketizer::findPacketIndexById(U32 packetId, FwChanIdType& pkt) const {
 }
 
 Svc::PacketConfig TlmPacketizer::defaultPacketConfig() {
-    // Behavior-preserving default (matches the pre-reversal TlmPacketConfig default): enabled,
-    // not forced, output-on-change, no thresholds. Seeds a slot on its first override so a
-    // single-field command does not depend on the packet's group-derived policy.
+    // seeds the default the first time the packet is overridden, assuming these parameters
+    // were not configured ahead of this packet being enabled: enabled, not forced,
+    // output-on-change, no thresholds.
     Svc::PacketConfig cfg;
     cfg.set_enabled(Fw::Enabled(Fw::Enabled::ENABLED));
     cfg.set_forceEnabled(Fw::Enabled(Fw::Enabled::DISABLED));
@@ -706,8 +706,29 @@ bool TlmPacketizer::resolveAndSeedOverride(const Svc::TelemetrySection& section,
     return true;
 }
 
+void TlmPacketizer ::configIn_handler(FwIndexType portNum, FwSizeType count, const Svc::PacketConfigBatch& batch) {
+    // load overrides from an external component's persistant storage of the overrides (intended to be used after a reboot)
+    const FwSizeType cap = static_cast<FwSizeType>(Svc::PacketConfigBatch::SIZE);
+    const FwSizeType n = (count < cap) ? count : cap;
+    for (FwSizeType i = 0; i < n; i++) {
+        const Svc::PacketConfigEntry& entry = batch[i];
+        const Svc::TelemetrySection section = entry.get_section();
+        if (not(section.isValid() and section >= 0 and section < TelemetrySection::NUM_SECTIONS)) {
+            continue;
+        }
+        FwChanIdType pkt = 0;
+        if (not this->findPacketIndexById(entry.get_packetId(), pkt)) {
+            this->log_WARNING_LO_UnknownPacketId(entry.get_packetId());
+            continue;
+        }
+        const FwSizeType s = static_cast<FwSizeType>(section.e);
+        this->m_packetOverride[s][pkt] = entry.get_config();
+        this->m_packetOverridden[s][pkt] = true;
+    }
+}
+
 void TlmPacketizer::mirrorOverride(const Svc::TelemetrySection& section, FwChanIdType pkt, U32 packetId) {
-    // Passive TlmPacketConfig mirrors this state for persistence; skip if not wired.
+    // persistent storage component should mirror this state; skip if not wired
     if (not this->isConnected_configOut_OutputPort(0)) {
         return;
     }
