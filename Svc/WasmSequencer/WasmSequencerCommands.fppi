@@ -42,8 +42,6 @@ async command WAIT opcode 3
 @ This completely clears the store.
 sync command CANCEL opcode 4
 
-# TODO(tumbar) Add a reset and make CANCEL not clear the store
-
 @ Pauses the execution of the sequencer, just before it is about to start spinning.
 @ This simply pends a pause flag that will be taken before the sequence engine starts
 @ up again.
