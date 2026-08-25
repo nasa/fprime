@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-24 22:11:19</td>
+      <td>2026-08-25 22:12:36</td>
     </tr>
   </table>
 </div>
@@ -72,11 +72,11 @@
     </tr>
     <tr><td><a href="#l10">Os::Cpu::Cpu() (line 10)</a></td><td>called 1 time</td><td>80.0%</td></tr>
     <tr><td><a href="#l25">Os::Cpu::_getCount(unsigned long&amp;) (line 25)</a></td><td>called 1 time</td><td>80.0%</td></tr>
-    <tr><td><a href="#l30">Os::Cpu::_getTicks(Os::Generic::UsedTotal&amp;, unsigned long) (line 30)</a></td><td>called 940 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l30">Os::Cpu::_getTicks(Os::Generic::UsedTotal&amp;, unsigned long) (line 30)</a></td><td>called 936 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l40">Os::Cpu::getCount(unsigned long&amp;) (line 40)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l35">Os::Cpu::getHandle() (line 35)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l20">Os::Cpu::getSingleton() (line 20)</a></td><td>called 942 times</td><td>82.0%</td></tr>
-    <tr><td><a href="#l44">Os::Cpu::getTicks(Os::Generic::UsedTotal&amp;, unsigned long) (line 44)</a></td><td>called 940 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l20">Os::Cpu::getSingleton() (line 20)</a></td><td>called 938 times</td><td>82.0%</td></tr>
+    <tr><td><a href="#l44">Os::Cpu::getTicks(Os::Generic::UsedTotal&amp;, unsigned long) (line 44)</a></td><td>called 936 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l16">Os::Cpu::init() (line 16)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l12">Os::Cpu::~Cpu() (line 12)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
@@ -235,7 +235,7 @@
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">942</td>
+      <td class="linecount coveredLine">938</td>
       <td class="src coveredLine"><span class="n">Cpu</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Cpu</span><span class="o">::</span><span class="n">getSingleton</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -245,7 +245,7 @@
           <summary class="linebranchSummary">4/7</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 941 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 937 times.</div>
             <div class="takenBranch">&check; Branch 3 taken 1 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
@@ -254,14 +254,14 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">942</td>
+      <td class="linecount partialCoveredLine">938</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">Cpu</span><span class="w"> </span><span class="n">_singleton</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l22" href="#l22">22</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">942</td>
+      <td class="linecount coveredLine">938</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_singleton</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -317,21 +317,21 @@
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">940</td>
+      <td class="linecount coveredLine">936</td>
       <td class="src coveredLine"><span class="n">Cpu</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">Cpu</span><span class="o">::</span><span class="n">_getTicks</span><span class="p">(</span><span class="n">Ticks</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ticks</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">cpu_index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">940</td>
+      <td class="linecount coveredLine">936</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">CpuInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">940</td>
+      <td class="linecount coveredLine">936</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">_getTicks</span><span class="p">(</span><span class="n">ticks</span><span class="p">,</span><span class="w"> </span><span class="n">cpu_index</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -415,14 +415,14 @@
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">940</td>
+      <td class="linecount coveredLine">936</td>
       <td class="src coveredLine"><span class="n">Cpu</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">Cpu</span><span class="o">::</span><span class="n">getTicks</span><span class="p">(</span><span class="n">Ticks</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ticks</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">cpu_index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">940</td>
+      <td class="linecount coveredLine">936</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Cpu</span><span class="o">::</span><span class="n">getSingleton</span><span class="p">().</span><span class="n">_getTicks</span><span class="p">(</span><span class="n">ticks</span><span class="p">,</span><span class="w"> </span><span class="n">cpu_index</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

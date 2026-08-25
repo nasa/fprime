@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "7d8f579f159d2f7c2d4984d92828575e37f87fa6",
-  "generated_at": "2026-08-25T21:23:37Z",
+  "generated_at": "2026-08-25T22:14:41Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -23,14 +23,14 @@
     "tier": "silver"
   },
   "overall_int": {
-    "line_pct": 29.47,
-    "line_covered": 8704,
+    "line_pct": 29.46,
+    "line_covered": 8703,
     "line_total": 29538,
     "function_pct": 38.43,
     "function_covered": 1527,
     "function_total": 3973,
-    "branch_pct": 18.71,
-    "branch_covered": 2848,
+    "branch_pct": 18.68,
+    "branch_covered": 2844,
     "branch_total": 15224,
     "report": "int-coverage/coverage-all.html",
     "tier": "bronze"
@@ -3324,8 +3324,8 @@
         "function_pct": 78.12,
         "function_covered": 25,
         "function_total": 32,
-        "branch_pct": 60.98,
-        "branch_covered": 25,
+        "branch_pct": 63.41,
+        "branch_covered": 26,
         "branch_total": 41,
         "report": "Fw/Comp/int-coverage/index.html",
         "tier": "bronze"
@@ -4642,14 +4642,14 @@
         "tier": "bronze"
       },
       "int": {
-        "line_pct": 33.96,
-        "line_covered": 503,
+        "line_pct": 33.9,
+        "line_covered": 502,
         "line_total": 1481,
         "function_pct": 32.87,
         "function_covered": 95,
         "function_total": 289,
-        "branch_pct": 28.04,
-        "branch_covered": 127,
+        "branch_pct": 27.81,
+        "branch_covered": 126,
         "branch_total": 453,
         "report": "Fw/Types/int-coverage/index.html",
         "tier": "bronze"
@@ -4806,8 +4806,8 @@
         "function_pct": 40.69,
         "function_covered": 236,
         "function_total": 580,
-        "branch_pct": 25.74,
-        "branch_covered": 372,
+        "branch_pct": 25.67,
+        "branch_covered": 371,
         "branch_total": 1445,
         "report": "Os/int-coverage/index.html",
         "tier": "bronze"
@@ -9643,8 +9643,8 @@
         "function_pct": 100.0,
         "function_covered": 7,
         "function_total": 7,
-        "branch_pct": 60.71,
-        "branch_covered": 34,
+        "branch_pct": 55.36,
+        "branch_covered": 31,
         "branch_total": 56,
         "report": "Svc/FprimeRouter/int-coverage/index.html",
         "tier": "bronze"
