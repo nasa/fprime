@@ -6,6 +6,8 @@
 - [F Prime DpManager SDD](https://github.com/nasa/fprime/blob/devel/Svc/DpManager/docs/sdd.md)
 - [F Prime DpWriter SDD](https://github.com/nasa/fprime/blob/devel/Svc/DpWriter/docs/sdd.md)
 - [F Prime DpCatalog SDD](https://github.com/nasa/fprime/blob/devel/Svc/DpCatalog/docs/sdd.md)
+- [F Prime DpCompressProc SDD](https://github.com/nasa/fprime/blob/devel/Svc/DpCompressProc/docs/sdd.md)
+- [F Prime DpZLibCompressor SDD](https://github.com/nasa/fprime/blob/devel/Svc/DpZLibCompressor/docs/sdd.md)
 - [Fw::Dp SDD](https://github.com/nasa/fprime/blob/devel/Fw/Dp/docs/sdd.md)
 - [FPP User Guide — Data Products](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Components_Data-Products)
 

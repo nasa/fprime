@@ -17,8 +17,10 @@
 name: "Coverage Update"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
     tags:     [ 'v*' ]
   workflow_dispatch:
 
@@ -32,11 +34,12 @@ concurrency:
 jobs:
   coverage-update:
     name: "Coverage [push]"
-    # Serialize with every other baseline-branch publisher (e.g. the CodeQL
-    # findings publisher) so concurrent writers to coverage/<ref> can't race.
+    # One publish per publisher and ref; a newer run supersedes (cancels) an
+    # older one.  Cross-publisher races on coverage/<ref> are handled by the
+    # fetch-and-retry push loop in the shared publish helper.
     concurrency:
-      group: baseline-publish-${{ github.ref }}
-      cancel-in-progress: false
+      group: publish-coverage-${{ github.ref }}
+      cancel-in-progress: true
     # ubuntu-24.04 ships gcov-13, which is required: gcov-11 (Ubuntu
     # 22.04 default) has counter-overflow bugs and pathological slowness
     # on heavily-templated test code that can turn a 30 s coverage run
@@ -49,6 +52,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - name: "Setup F' Tools"
         uses: nasa/fprime-actions/setup@devel

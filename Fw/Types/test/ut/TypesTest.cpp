@@ -31,16 +31,7 @@
 
 class SerializeTestBuffer : public Fw::LinearBufferBase {
   public:
-    FwSizeType getCapacity() const {  // !< returns capacity, not current size, of buffer
-        return sizeof(m_testBuff);
-    }
-
-    U8* getBuffAddr() {  // !< gets buffer address for data filling
-        return m_testBuff;
-    }
-    const U8* getBuffAddr() const {  // !< gets buffer address for data reading
-        return m_testBuff;
-    }
+    SerializeTestBuffer() : Fw::LinearBufferBase(m_testBuff, sizeof(m_testBuff)) {}
 
   private:
     U8 m_testBuff[255];
@@ -639,7 +630,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     stat2 = buff.deserializeSize(size2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
-    ASSERT_EQ(u64t1, u64t2);
+    ASSERT_EQ(size1, size2);
     Fw::LinearBufferBaseTester::verifyDeserLocEq(buff, sizeof(FwSizeStoreType));
 
 #if DEBUG_VERBOSE
@@ -657,7 +648,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     stat2 = buff.deserializeSize(size2, Fw::Endianness::LITTLE);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
-    ASSERT_EQ(u64t1, u64t2);
+    ASSERT_EQ(size1, size2);
     Fw::LinearBufferBaseTester::verifyDeserLocEq(buff, sizeof(FwSizeStoreType));
 
 #if DEBUG_VERBOSE

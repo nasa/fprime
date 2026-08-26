@@ -64,7 +64,7 @@ Drv::I2cStatus LinuxI2cDriver ::write_handler(const FwIndexType portNum, U32 add
     FW_ASSERT_NO_OVERFLOW(serBuffer.getSize(), size_t);
     // write data
     ssize_t status_write = write(this->m_fd, serBuffer.getData(), static_cast<size_t>(serBuffer.getSize()));
-    if (status_write == -1) {
+    if ((status_write == -1) || (static_cast<FwSizeType>(status_write) != serBuffer.getSize())) {
         return I2cStatus::I2C_WRITE_ERR;
     }
     return I2cStatus::I2C_OK;
@@ -86,7 +86,7 @@ Drv::I2cStatus LinuxI2cDriver ::read_handler(const FwIndexType portNum, U32 addr
     // read data
     FW_ASSERT_NO_OVERFLOW(serBuffer.getSize(), size_t);
     ssize_t status_read = read(this->m_fd, serBuffer.getData(), static_cast<size_t>(serBuffer.getSize()));
-    if (status_read == -1) {
+    if ((status_read == -1) || (static_cast<FwSizeType>(status_read) != serBuffer.getSize())) {
         return I2cStatus::I2C_READ_ERR;
     }
     return I2cStatus::I2C_OK;

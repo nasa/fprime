@@ -23,3 +23,7 @@ Aggregates buffers in the downlink chain. This is for use with systems that have
 ![Component Block Diagram](./img/diagram.svg)
 
 `Svc.ComAggregator` implements `Svc.Framer`.  Additionally, it has a `Svc.Sched` timeout port enabling timeout to be driven via a rate group.
+
+### Threading Model
+
+`Svc.ComAggregator` is an active component whose input ports are all `sync`: port handlers run on the caller's thread and do no work beyond sending a signal to the `AggregationMachine` state machine instance. State machine signals are internally enqueued on the component's message queue, so all state machine actions and guards execute serially on the component's own thread. This keeps callers non-blocking while ensuring the aggregation state (frame buffer, held buffer, last context) is only touched from one thread. The only state shared across threads is the buffer ownership flag, which is an atomic exchanged in `dataReturnIn_handler` (caller thread) and `doSend` (component thread).

@@ -1130,6 +1130,40 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
     EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 0);
 }
 
+void PrmDbTester::runPrmFileLoadSandboxViolation() {
+    Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
+
+    // Restrict commanded loads to /prm
+    this->m_impl.configureLoadSandbox("/prm");
+
+    // 1. A path escaping the sandbox must be rejected before any file I/O
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_LOAD_FILE(0, 10, Fw::String("/prm/../etc/passwd"), PrmDb_Merge::RESET);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 10, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::OUTSIDE_SANDBOX);
+    ASSERT_EVENTS_PrmDbFileLoadFailed_SIZE(1);
+
+    // 2. A path inside the sandbox passes containment and reaches file I/O
+    this->clearEvents();
+    this->clearHistory();
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::DOESNT_EXIST);
+    this->sendCmd_PRM_LOAD_FILE(0, 11, Fw::String("/prm/good.prm"), PrmDb_Merge::RESET);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::DOESNT_EXIST);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+}
+
 void PrmDbTester::runPrmFileLoadIllegal() {
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
     Fw::ParamBuffer pBuff;

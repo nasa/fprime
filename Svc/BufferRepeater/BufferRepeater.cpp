@@ -74,6 +74,9 @@ void BufferRepeater ::portIn_handler(FwIndexType portNum, /*!< The port number*/
                 (void)::memcpy(new_allocation.getData(), buffer.getData(), static_cast<size_t>(buffer.getSize()));
                 new_allocation.setSize(buffer.getSize());
                 this->portOut_out(i, new_allocation);
+            } else if (new_allocation.getData() != nullptr) {
+                // Return an undersized but valid allocation rather than leaking it
+                this->deallocate_out(0, new_allocation);
             }
         }
     }

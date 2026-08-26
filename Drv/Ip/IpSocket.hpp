@@ -115,7 +115,8 @@ class IpSocket {
      * fails to send all the data. Retries are globally configured in the `IpCfg.hpp` header. Should the
      * socket be unavailable, SOCK_DISCONNECTED is returned and the socket should be reopened using the `open` call.
      * This can happen even when the socket has already been opened should a transmission error/closure be detected.
-     * Unless an error is received, all data will have been transmitted.
+     * Unless an error is received, all data will have been transmitted. A zero-size send is a no-op returning
+     * SOCK_SUCCESS.
      *
      * Note: delegates to `sendProtocol` to send the data
      *
@@ -146,7 +147,7 @@ class IpSocket {
     /**
      * \brief closes the socket
      *
-     * Closes the socket opened by the open call. In this case of the TcpServer, this does NOT close server's listening
+     * Closes the socket opened by the open call. In the case of the TcpServer, this does NOT close server's listening
      * port but will close the active client connection.
      *
      * \param socketDescriptor: socket descriptor to close
@@ -156,7 +157,7 @@ class IpSocket {
     /**
      * \brief shutdown the socket
      *
-     * Shuts down the socket opened by the open call. In this case of the TcpServer, this does shut down server's
+     * Shuts down the socket opened by the open call. In the case of the TcpServer, this does not shut down server's
      * listening port, but rather shuts down the active client.
      *
      * A shut down begins the termination of communication. The underlying socket will coordinate a clean shutdown, and

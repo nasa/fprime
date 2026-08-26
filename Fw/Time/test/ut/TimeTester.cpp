@@ -193,10 +193,10 @@ void TimeTester::test_CopyTest() {
     // set method
     Fw::Time time4;
     time4.set(time1.getTimeBase(), time1.getContext(), time1.getSeconds(), time1.getUSeconds());
-    ASSERT_EQ(time1.getSeconds(), time3.getSeconds());
-    ASSERT_EQ(time1.getUSeconds(), time3.getUSeconds());
-    ASSERT_EQ(time1.getTimeBase(), time3.getTimeBase());
-    ASSERT_EQ(time1.getContext(), time3.getContext());
+    ASSERT_EQ(time1.getSeconds(), time4.getSeconds());
+    ASSERT_EQ(time1.getUSeconds(), time4.getUSeconds());
+    ASSERT_EQ(time1.getTimeBase(), time4.getTimeBase());
+    ASSERT_EQ(time1.getContext(), time4.getContext());
 }
 
 void TimeTester::test_ZeroTimeEquality() {

@@ -57,6 +57,7 @@ Directory::Status Directory::read(char* fileNameBuffer, FwSizeType bufSize) {
         return Status::NOT_OPENED;
     }
     FW_ASSERT(fileNameBuffer != nullptr);
+    FW_ASSERT(bufSize > 0);
     Status status = this->m_delegate.read(fileNameBuffer, bufSize);
     fileNameBuffer[bufSize - 1] = '\0';  // Guarantee null-termination
     return status;

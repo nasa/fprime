@@ -54,6 +54,7 @@ class FileUplink final : public FileUplinkComponentBase {
         Os::File::Status open(const Fw::FilePacket::StartPacket& startPacket);
 
         //! Write bytes into the OS file and update the checksum
+        //! \return OP_OK on success, NO_SPACE on a short write, or the OS status on failure
         Os::File::Status write(const U8* const data, const U32 byteOffset, const U32 length);
 
         //! Get the checksum
@@ -78,6 +79,29 @@ class FileUplink final : public FileUplinkComponentBase {
       private:
         //! The total number of files received
         U32 m_received_files_counter;
+
+        //! The enclosing FileUplink object
+        FileUplink* const m_fileUplink;
+    };
+
+    //! Object to record files rejected for a bad checksum
+    class FilesReceivedFailed {
+        friend class FileUplinkTester;
+
+      public:
+        //! Construct a FilesReceivedFailed object
+        FilesReceivedFailed(FileUplink* const fileUplink) : m_failed_files_counter(0), m_fileUplink(fileUplink) {}
+
+      public:
+        //! Record a file rejected for a bad checksum
+        void fileReceivedFailed() {
+            ++this->m_failed_files_counter;
+            this->m_fileUplink->tlmWrite_FilesReceivedFailed(m_failed_files_counter);
+        }
+
+      private:
+        //! The total number of files rejected for a bad checksum
+        U32 m_failed_files_counter;
 
         //! The enclosing FileUplink object
         FileUplink* const m_fileUplink;
@@ -168,6 +192,7 @@ class FileUplink final : public FileUplinkComponentBase {
     //! Configure the allowed uplink directory
     //!
     //! Restricts all file writes to the given directory.
+    //! Fail-open: until called, the sandbox defaults to `/` (any writable path is allowed).
     //! Must be called before any files are received.
     //! The directory must be an absolute path ending with `/`.
     //!
@@ -215,8 +240,8 @@ class FileUplink final : public FileUplinkComponentBase {
     //! Check if a received packet is a duplicate
     bool checkDuplicatedPacket(const U32 sequenceIndex);
 
-    //! Compare checksums
-    void compareChecksums(const Fw::FilePacket::EndPacket& endPacket);
+    //! Compare checksums; returns true if the computed checksum matches the value in the END packet
+    bool compareChecksums(const Fw::FilePacket::EndPacket& endPacket);
 
     //! Go to START mode
     void goToStartMode();
@@ -244,7 +269,10 @@ class FileUplink final : public FileUplinkComponentBase {
     //! The total number of files received
     FilesReceived m_filesReceived;
 
-    //! The total number of cancel packets
+    //! The total number of files rejected for a bad checksum
+    FilesReceivedFailed m_filesReceivedFailed;
+
+    //! The total number of packets received
     PacketsReceived m_packetsReceived;
 
     //! The total number of warnings

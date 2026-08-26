@@ -1,282 +1,274 @@
 @ An error occurred while attempting to create a directory
 event DirectoryCreateError(
-  dirName: string size FileNameStringSize  @< The name of the directory
-  status: U32                              @< The error status
-) \
+                            dirName: string size FileNameStringSize @< The name of the directory
+                            status: U32 @< The error status
+                          ) \
   severity warning high \
   id 0x00 \
   format "Could not create directory {}, returned status {}"
 
 @ An error occurred while attempting to remove a directory
 event DirectoryRemoveError(
-  dirName: string size FileNameStringSize  @< The name of the directory
-  status: U32                              @< The error status
-) \
+                            dirName: string size FileNameStringSize @< The name of the directory
+                            status: U32 @< The error status
+                          ) \
   severity warning high \
   id 0x01 \
   format "Could not remove directory {}, returned status {}"
 
 @ An error occurred while attempting to move a file
 event FileMoveError(
-  sourceFileName: string size FileNameStringSize  @< The name of the source file
-  destFileName: string size FileNameStringSize    @< The name of the destination file
-  status: U32                                     @< The error status
-) \
+                     sourceFileName: string size FileNameStringSize @< The name of the source file
+                     destFileName: string size FileNameStringSize @< The name of the destination file
+                     status: U32 @< The error status
+                   ) \
   severity warning high \
   id 0x02 \
   format "Could not move file {} to file {}, returned status {}"
 
 @ An error occurred while attempting to remove a file
 event FileRemoveError(
-  fileName: string size FileNameStringSize  @< The name of the file
-  status: U32                               @< The error status
-) \
+                       fileName: string size FileNameStringSize @< The name of the file
+                       status: U32 @< The error status
+                     ) \
   severity warning high \
   id 0x03 \
   format "Could not remove file {}, returned status {}"
 
 @ The File System component returned status non-zero when trying to append 2 files together
 event AppendFileFailed(
-  source: string size FileNameStringSize  @< The name of the file being read from
-  target: string size FileNameStringSize  @< The name of the file to append to
-  status: U32                             @< The error status
-) \
+                        source: string size FileNameStringSize @< The name of the file being read from
+                        target: string size FileNameStringSize @< The name of the file to append to
+                        status: U32 @< The error status
+                      ) \
   severity warning high \
   id 0x05 \
   format "Appending {} onto {} failed with status {}"
 
 @ The File System component appended 2 files without error
 event AppendFileSucceeded(
-  source: string size FileNameStringSize  @< The name of the file being read from
-  target: string size FileNameStringSize  @< The name of the file to append to
-) \
+                           source: string size FileNameStringSize @< The name of the file being read from
+                           target: string size FileNameStringSize @< The name of the file to append to
+                         ) \
   severity activity high \
   id 0x06 \
   format "Appended {} to the end of {}"
 
 @ The File System component created a new directory without error
 event CreateDirectorySucceeded(
-  dirName: string size FileNameStringSize  @< The name of the directory
-) \
+                                dirName: string size FileNameStringSize @< The name of the directory
+                              ) \
   severity activity high \
   id 0x08 \
   format "Created directory {} successfully"
 
 @ The File System component deleted and existing directory without error
 event RemoveDirectorySucceeded(
-  dirName: string size FileNameStringSize  @< The name of the directory
-) \
+                                dirName: string size FileNameStringSize @< The name of the directory
+                              ) \
   severity activity high \
   id 0x09 \
   format "Removed directory {} successfully"
 
 @ The File System component moved a file to a new location without error
 event MoveFileSucceeded(
-  sourceFileName: string size FileNameStringSize  @< The name of the source file
-  destFileName: string size FileNameStringSize    @< The name of the destination file
-) \
+                         sourceFileName: string size FileNameStringSize @< The name of the source file
+                         destFileName: string size FileNameStringSize @< The name of the destination file
+                       ) \
   severity activity high \
   id 0x0A \
   format "Moved file {} to file {} successfully"
 
 @ The File System component deleted an existing file without error
 event RemoveFileSucceeded(
-  fileName: string size FileNameStringSize  @< The name of the file
-) \
+                           fileName: string size FileNameStringSize @< The name of the file
+                         ) \
   severity activity high \
   id 0x0B \
   format "Removed file {} successfully"
 
 @ The File System component appended 2 files without error
 event AppendFileStarted(
-  source: string size FileNameStringSize  @< The name of the file being read from
-  target: string size FileNameStringSize  @< The name of the file to append to
-) \
+                         source: string size FileNameStringSize @< The name of the file being read from
+                         target: string size FileNameStringSize @< The name of the file to append to
+                       ) \
   severity activity high \
   id 0x0C \
   format "Appending file {} to the end of {}..."
 
 @ The File System component began creating a new directory
 event CreateDirectoryStarted(
-  dirName: string size FileNameStringSize  @< The name of the directory
-) \
+                              dirName: string size FileNameStringSize @< The name of the directory
+                            ) \
   severity activity high \
   id 0x0E \
   format "Creating directory {}..."
 
 @ The File System component began deleting a directory
 event RemoveDirectoryStarted(
-  dirName: string size FileNameStringSize  @< The name of the directory
-) \
+                              dirName: string size FileNameStringSize @< The name of the directory
+                            ) \
   severity activity high \
   id 0x0F \
   format "Removing directory {}..."
 
 @ The File System component began moving a file to a new location
 event MoveFileStarted(
-  sourceFileName: string size FileNameStringSize  @< The name of the source file
-  destFileName: string size FileNameStringSize    @< The name of the destination file
-) \
+                       sourceFileName: string size FileNameStringSize @< The name of the source file
+                       destFileName: string size FileNameStringSize @< The name of the destination file
+                     ) \
   severity activity high \
   id 0x10 \
   format "Moving file {} to file {}..."
 
 @ The File System component began deleting an existing file
 event RemoveFileStarted(
-  fileName: string size FileNameStringSize  @< The name of the file
-) \
+                         fileName: string size FileNameStringSize @< The name of the file
+                       ) \
   severity activity high \
   id 0x11 \
   format "Removing file {}..."
 
 @ File size response
 event FileSizeSucceeded(
-  fileName: string size FileNameStringSize  @< The name of the file
-  $size: FwSizeType                         @< The size of the file in bytes
-) \
+                         fileName: string size FileNameStringSize @< The name of the file
+                         $size: FwSizeType @< The size of the file in bytes
+                       ) \
   severity activity high \
   id 0x12 \
   format "The size of file {} is {} B"
 
 @ Failed to get file size
 event FileSizeError(
-  fileName: string size FileNameStringSize  @< The name of the file
-  status: U32                               @< The error status
-) \
+                      fileName: string size FileNameStringSize @< The name of the file
+                      status: U32 @< The error status
+                    ) \
   severity warning high \
   id 0x13 \
   format "Failed to get the size of file {}, returned status {}"
 
 @ Checking file size
 event FileSizeStarted(
-  fileName: string size FileNameStringSize  @< The name of the file
-) \
+                       fileName: string size FileNameStringSize @< The name of the file
+                     ) \
   severity activity high \
   id 0x14 \
   format "Checking size of file {}..."
 
 @ Starting directory listing
 event ListDirectoryStarted(
-  dirName: string size FileNameStringSize  @< The name of the directory
-) \
+                            dirName: string size FileNameStringSize @< The name of the directory
+                          ) \
   severity activity high \
   id 0x15 \
   format "Listing contents of directory {}..."
 
-@ Directory listing completed successfully
+@ Directory listing completed successfully  
 event ListDirectorySucceeded(
-  dirName: string size FileNameStringSize  @< The name of the directory
-  fileCount: U32                           @< The number of files found
-) \
+                              dirName: string size FileNameStringSize @< The name of the directory
+                              fileCount: U32 @< The number of files found
+                            ) \
   severity activity high \
   id 0x16 \
   format "Directory {} contains {} files"
 
 @ Failed to list directory
 event ListDirectoryError(
-  dirName: string size FileNameStringSize  @< The name of the directory
-  status: U32                              @< The error status
-) \
+                          dirName: string size FileNameStringSize @< The name of the directory
+                          status: U32 @< The error status
+                        ) \
   severity warning high \
   id 0x17 \
   format "Failed to list directory {}, returned status {}"
 
 @ Directory listing file entry
 event DirectoryListing(
-  dirName: string size FileNameStringSize   @< The name of the directory
-  fileName: string size FileNameStringSize  @< The name of the file
-  fileSize: FwSizeType                      @< The size of the file in bytes
-) \
+                        dirName: string size FileNameStringSize @< The name of the directory
+                        fileName: string size FileNameStringSize @< The name of the file
+                        fileSize: FwSizeType @< The size of the file in bytes
+                      ) \
   severity activity high \
   id 0x18 \
   format "Directory {}: {} ({} bytes)"
 
 @ Directory listing subdirectory entry
 event DirectoryListingSubdir(
-  dirName: string size FileNameStringSize     @< The name of the directory
-  subdirName: string size FileNameStringSize  @< The name of the subdirectory
-) \
+                        dirName: string size FileNameStringSize @< The name of the directory
+                        subdirName: string size FileNameStringSize @< The name of the subdirectory
+                      ) \
   severity activity high \
   id 0x19 \
   format "Directory {}: {}"
 
 @ CRC started
-event CalculateCrcStarted(
-  fileName: string size FileNameStringSize  @< The name of the file being read from
-) \
+event CalculateCrcStarted(fileName: string size FileNameStringSize @< The name of the file being read from
+                    ) \
   severity activity high \
   id 0x1a \
   format "Started CRC calculation for file {}"
 
 @  CRC failed
-event CalculateCrcFailed(
-  fileName: string size FileNameStringSize  @< The name of the file being read from
-  status: U32                               @< The error status
-) \
+event CalculateCrcFailed(fileName: string size FileNameStringSize @< The name of the file being read from
+                    status: U32 @< The error status
+                    ) \
   severity warning high \
   id 0x1b \
   format "Failed CRC calculation for file {}, returned status {}"
 
 @ Error formatting a file path
 event FileNameFormatError(
-  fileName: string size FileNameStringSize  @< The file whose full path failed to format
-  status: Fw.StringFormatStatus             @< The status returned from the format operation
-) \
+                          fileName: string size FileNameStringSize @< The file whose full path failed to format
+                          status: Fw.StringFormatStatus @< The status returned from the format operation
+                        ) \
   severity warning high \
   id 0x1d \
   format "Failed to format full path for file {} with status {}"
 
 @ CRC succeeded
-event CalculateCrcSucceeded(
-  fileName: string size FileNameStringSize  @< The name of the file being read from
-  crc: U32                                  @< The computed CRC value
-) \
+event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name of the file being read from
+                       crc: U32 @< The computed CRC value
+                      ) \
   severity activity high \
   id 0x1c \
   format "{} has CRC value 0x{x}"
 @ File data product generation started
-event GenerateDpStarted(
-  fileName: string size FileNameStringSize  @< The file being packaged
-  bytesToWrite: U64                         @< The number of file bytes that will be written
-) \
+event GenerateDpStarted(fileName: string size FileNameStringSize @< The file being packaged
+                        bytesToWrite: U64 @< The number of file bytes that will be written
+                       ) \
   severity activity high \
   id 0x1e \
   format "Started data product generation for file {} ({} bytes)"
 
 @ File data product generation completed
-event GenerateDpComplete(
-  fileName: string size FileNameStringSize  @< The file that was packaged
-  chunks: U32                               @< The number of chunks emitted
-) \
+event GenerateDpComplete(fileName: string size FileNameStringSize @< The file that was packaged
+                         chunks: U32 @< The number of chunks emitted
+                        ) \
   severity activity high \
   id 0x1f \
   format "Completed data product generation for file {} in {} chunks"
 
 @ File data product generation failed
-event GenerateDpFailed(
-  fileName: string size FileNameStringSize  @< The file being packaged
-  stage: Svc.FileManager.GenerateDpStage    @< Where the failure occurred
-  status: U32                               @< The error status
-) \
+event GenerateDpFailed(fileName: string size FileNameStringSize @< The file being packaged
+                       stage: Svc.FileManager.GenerateDpStage @< Where the failure occurred
+                       status: U32 @< The error status
+                      ) \
   severity warning high \
   id 0x20 \
   format "Data product generation failed for file {} at stage {}, status {}"
 
 @ Data product container allocation failed
-event GenerateDpBufferFailed(
-  fileName: string size FileNameStringSize  @< The file being packaged
-) \
+event GenerateDpBufferFailed(fileName: string size FileNameStringSize @< The file being packaged
+                            ) \
   severity warning high \
   id 0x21 \
   format "Failed to allocate data product buffer for file {}"
 
 @ Invalid offset range requested for data product generation
-event GenerateDpInvalidRange(
-  fileName: string size FileNameStringSize  @< The file being packaged
-  beginOffset: U64                          @< The requested begin offset
-  endOffset: U64                            @< The requested end offset
-  fileSize: U64                             @< The size of the file
-) \
+event GenerateDpInvalidRange(fileName: string size FileNameStringSize @< The file being packaged
+                             beginOffset: U64 @< The requested begin offset
+                             endOffset: U64 @< The requested end offset
+                             fileSize: U64 @< The size of the file
+                            ) \
   severity warning high \
   id 0x22 \
   format "Invalid offset range requested for file {}: [{}, {}) with file size {}"

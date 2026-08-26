@@ -22,7 +22,7 @@ opening a new one, while still counting the finding in your own
 hidden metadata.
 
 The C/C++ design rules this agent enforces live in
-`_shared/skills/fprime-cpp-design.skill.md`. That skill is the
+`.github/skills/fprime-cpp-design/SKILL.md`. That skill is the
 single source of truth for the rule set (CPP-1 through CPP-34) and
 the finding-class vocabulary; this agent file specifies how the
 multi-agent flow applies it on a PR.
@@ -33,8 +33,8 @@ multi-agent flow applies it on a PR.
 
 You flag findings on touched C/C++ source where the offending
 construct violates one of the rules CPP-1 through CPP-34 in
-`_shared/skills/fprime-cpp-design.skill.md`. The "introduced by this
-PR" test (`_shared/skills/pr-diff-scoping.skill.md`) applies; pre-
+`.github/skills/fprime-cpp-design/SKILL.md`. The "introduced by this
+PR" test (`.github/skills/pr-diff-scoping/SKILL.md`) applies; pre-
 existing rule violations become `**future work**`.
 
 The touched-file set you analyze is, at minimum:
@@ -58,7 +58,7 @@ sources.
 ## Finding classes
 
 Use the finding-class names defined in
-`_shared/skills/fprime-cpp-design.skill.md` §2 verbatim. Quick
+`.github/skills/fprime-cpp-design/SKILL.md` §2 verbatim. Quick
 reference (the skill is authoritative):
 
 - `cpp-dynamic-memory-post-init` (CPP-1)
@@ -165,10 +165,10 @@ For each touched file in the PR diff, scan in this order:
    what depends on it.
 
 For each finding, classify the offending behavior as introduced or
-preexisting per `_shared/skills/pr-diff-scoping.skill.md`, pick the
+preexisting per `.github/skills/pr-diff-scoping/SKILL.md`, pick the
 triage tag per the per-cluster hints in
-`_shared/skills/fprime-cpp-design.skill.md` §3 plus
-`_shared/skills/triage-classifier.skill.md`, then format the comment
+`.github/skills/fprime-cpp-design/SKILL.md` §3 plus
+`.github/skills/triage-classifier/SKILL.md`, then format the comment
 per the review contract §9.
 
 ---
@@ -200,7 +200,7 @@ per the review contract §9.
   flags only the codified rules (e.g., CPP-30 magic numbers,
   CPP-33 inlined utilities, CPP-26 style guide).
 
-The nine reviewer agents are designed to partition the review
+The ten reviewer agents are designed to partition the review
 surface. Overlap with the security agent on CPP-4 is intentional
 and documented above; otherwise the agents do not double-flag.
 
@@ -228,14 +228,14 @@ Treat a finding as low-confidence when ANY of these hold:
 
 Low confidence does not downgrade the tag (review contract §4).
 Append a maintainer ping per
-`_shared/skills/maintainer-lookup.skill.md`.
+`.github/skills/maintainer-lookup/SKILL.md`.
 
 ---
 
 ## Triage rules of thumb
 
 The per-cluster severity hints in
-`_shared/skills/fprime-cpp-design.skill.md` §3 are the primary
+`.github/skills/fprime-cpp-design/SKILL.md` §3 are the primary
 guide. Summarized here for fast reference:
 
 - **Memory & lifetime (CPP-1, 2, 17, 19, 20)**: default `**must
@@ -301,7 +301,7 @@ CI-safety agents).
 
 The agent's inline comment body cites the CPP-N rule number in the
 prose so a reader can jump to
-`_shared/skills/fprime-cpp-design.skill.md` for context:
+`.github/skills/fprime-cpp-design/SKILL.md` for context:
 
 ```
 [C++ Design] **must fix** CPP-1 (no dynamic memory after init): `new` / `delete` in steady-state handler.

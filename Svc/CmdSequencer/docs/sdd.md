@@ -51,7 +51,7 @@ seqDone|Fw::CmdResponse|output|outputs status of sequence run; meant to be used 
 ##### 3.2.2.1 CS_Validate
 The `CS_Validate` command will validate that the format and checksum of a sequence file are correct without executing any commands in the file. This allows operators to validate a file prior to executing it.
 ##### 3.2.2.2 CS_Run
-The `CS_Run` command will execute a sequence. If a prior sequence is still running, it will be canceled. If a command returns a failed status, the sequence will be aborted.
+The `CS_Run` command will execute a sequence. If a prior sequence is still running, the command is rejected with an execution error; the running sequence must complete or be canceled first. If a command returns a failed status, the sequence will be aborted.
 ##### 3.2.2.3 CS_Cancel
 The `CS_Cancel` command will cancel an existing sequence. If there is no sequence currently executing, the command will emit a warning event but not fail.
 ##### 3.2.2.4 CS_Manual
@@ -78,7 +78,10 @@ The `cmdResponseIn` port is called when a command in a sequence is completed. If
 
 This port takes a single argument `filename` of type `Fw::String`. In
 general, sending `filename` on this port has the same  effect as issuing
-a `CS_Run` command with `filename` as the file name argument.
+a `CS_Run` command with `filename` as the file name argument. If the
+sequencer is in manual stepping mode (see `CS_Manual`), the request is
+rejected: the `CS_InvalidMode` event is emitted and `EXECUTION_ERROR` is
+returned on the `seqDone` port.
 
 If `filename` is empty, then `CmdSequencer` runs the sequence stored in the
 sequence buffer, without loading a sequence first. In order for this to work:

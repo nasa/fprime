@@ -61,6 +61,7 @@ Generic services are implemented in the `Os::Generic` namespace and are not tied
 | Service | Purpose |
 |---|---|
 | **PriorityQueue** | Heap-based priority queue implementation |
+| **LocklessPriorityQueue** | Lockless ISR-safe priority queue implementation |
 | **FilePathUtils** | Textual path resolution (collapsing `.`/`..`/`//`) and directory-containment checking. No filesystem access; suitable for embedded targets. |
 | **SandboxedFile** | Composition wrapper around `Os::File` that validates all paths on `open()` against a configured allowed directory, preventing path-traversal attacks. |
 
@@ -110,7 +111,83 @@ classDiagram
 
 ```
 
-### 5.2 API usage
+### 5.2 Selection Mechanisms: Link-Time vs Compile-Time
+
+The OSAL supports two mechanisms for selecting which platform-specific implementation to use:
+
+#### 5.2.1 Link-Time Selection (Default)
+
+Most OSAL services use **link-time selection** with runtime virtual dispatch:
+
+1. The wrapper class (e.g., `Os::File`) contains a reference to an interface delegate
+2. At construction, the wrapper calls `Interface::getDelegate()` to construct the implementation via placement-new
+3. CMake selects which `Default*.cpp` file to link based on platform configuration
+4. All method calls dispatch through the virtual function table at runtime
+
+**Advantages:**
+- Runtime flexibility to swap implementations
+- Clean interface/implementation separation
+- Well-suited where call overhead is negligible
+
+**Disadvantages:**
+- Virtual dispatch overhead
+- Compiler cannot inline methods across the virtual boundary
+
+#### 5.2.2 Compile-Time Selection (Performance Optimization)
+
+For performance-critical services, the OSAL supports **compile-time selection** that eliminates virtual dispatch:
+
+1. A configuration header (e.g., `default/config/OsDelegateRawTime.hpp`) defines a type alias
+2. The wrapper type (e.g., `Os::RawTime`) directly aliases the concrete implementation
+3. All calls are direct function calls that the compiler can inline
+4. With LTO enabled, the entire call chain can be optimized away for simple operations
+
+**Advantages:**
+- Zero virtual dispatch overhead
+- Enables aggressive inlining and LTO optimizations
+- Can reduce simple operations (like time reads) from dozens of cycles to single-digit instructions
+
+**Disadvantages:**
+- No runtime flexibility — implementation selected at compile time
+- Different builds using different overrides have incompatible ABIs
+- More complex build configuration
+
+**Currently Supported Services:**
+- **RawTime**
+
+The configuration header mechanism allows projects to opt into compile-time selection while maintaining link-time selection as the default for backward compatibility.
+
+**Example: RawTime Configuration Header**
+
+F´ provides a default `default/config/OsDelegateRawTime.hpp` that enables link-time selection:
+
+```c++
+namespace Os {
+    class DelegateRawTime;
+    using RawTime = DelegateRawTime;  // Wrapper with virtual dispatch
+}
+#define OS_RAW_TIME_HEADER <Os/DelegateRawTime.hpp>
+```
+
+Projects can override this header to enable compile-time selection:
+
+```c++
+namespace MyPlatform {
+    class MyRawTime;  // Concrete implementation
+}
+namespace Os {
+    using RawTime = MyPlatform::MyRawTime;  // Direct alias, no wrapper
+}
+#define OS_RAW_TIME_HEADER "MyPlatform/Os/RawTime.hpp"
+```
+
+> [!IMPORTANT]
+> When using compile-time selection:
+> - All object files in the build directory must use the same configuration (same ABI)
+> - The concrete implementation MUST inherit from the corresponding interface class
+> - The configuration header MUST NOT include Os OSAL headers (to avoid circular dependencies)
+
+### 5.3 API usage
 
 Application code interacts exclusively with the wrapper classes (e.g., `Os::File`) and never directly with the interfaces or implementations.  The wrapper forwards calls to the delegate interface, which is implemented by the platform-specific implementation class.
 
@@ -126,14 +203,14 @@ The full API for each service is documented in the header files in the [`Os/` mo
 > [!NOTE]
 > `Os::Task` exposes both usage patterns. `Os::Task::delay()` is a static method that blocks the current task for a specified duration, while `Os::Task` instances represent individual tasks that can be started and stopped.
 
-### 5.3 Initialization
+### 5.4 Initialization
 
 `Os::init()` is called once at system startup.  It initializes the singleton instances used by
 services that have global state (Console, FileSystem, Cpu, Memory, Task).
 
 While calling `Os::init()` is not strictly required, it does provide a deterministic place to initialize all singletons.  When not called, singletons are initialized at the time of their first use.
 
-### 5.4 Error Handling
+### 5.5 Error Handling
 
 All operations return a typed `Status` enumeration specific to each service.  Platform
 backends translate native error codes (e.g., `errno`) into these status values so that callers

@@ -14,13 +14,10 @@
 #include "Fw/Types/String.hpp"
 #include "Os/Generic/PriorityMemQueue.hpp"
 
-// Test helper to access private members
+// Test helper wrapping the public PriorityMemQueue::resetConfig() API
 class PriorityMemQueueTestHelper {
   public:
-    static void resetConfig() {
-        // Use the public resetConfig() API
-        Os::Generic::PriorityMemQueue::resetConfig();
-    }
+    static void resetConfig() { Os::Generic::PriorityMemQueue::resetConfig(); }
 };
 
 // Test fixture

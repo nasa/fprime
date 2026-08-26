@@ -80,8 +80,9 @@ void PriorityMemQueueHandle::init() {
         this->m_notEmptySem = nullptr;
     }
 
-    // Initialize atomic variables
-    this->m_priorityMask.store(1U << Os::Generic::Queue::DEFAULT_PRIORITY, std::memory_order_relaxed);
+    // Initialize atomic variables: no priority is enabled until its queue is created.
+    // A stale bit for an unconfigured priority would assert in the receive scan.
+    this->m_priorityMask.store(0, std::memory_order_relaxed);
 }
 
 bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator, FwEnumStoreType allocatorId) {
@@ -497,7 +498,12 @@ QueueInterface::Status PriorityMemQueue::createDefaultQueue(FwSizeType depth,
                                                             Fw::MemAllocator& allocator,
                                                             FwEnumStoreType allocatorId) {
     // Create and initialize the default priority queue
-    return this->createPriorityQueue(Os::Generic::Queue::DEFAULT_PRIORITY, messageSize, depth, allocator, allocatorId);
+    QueueInterface::Status status =
+        this->createPriorityQueue(Os::Generic::Queue::DEFAULT_PRIORITY, messageSize, depth, allocator, allocatorId);
+    if (status == Os::QueueInterface::Status::OP_OK) {
+        this->setPriorityEnabled(Os::Generic::Queue::DEFAULT_PRIORITY, true);
+    }
+    return status;
 }
 
 // Helper method to create a single priority queue using AtomicQueue
@@ -556,7 +562,7 @@ void PriorityMemQueue::teardownInternal() {
     }
 
     // Reset handle state
-    this->m_handle.m_priorityMask.store(1U << Os::Generic::Queue::DEFAULT_PRIORITY, std::memory_order_relaxed);
+    this->m_handle.m_priorityMask.store(0, std::memory_order_relaxed);
 
     // Deallocate arrays using stored allocator ID
     Fw::MemAllocator& allocator = this->getAllocator();
@@ -711,6 +717,9 @@ QueueInterface::Status PriorityMemQueue::receive(U8* destination,
     //
     // MEMORY ORDERING: acquire on priority mask ensures visibility of queue state.
 
+    // Tracks whether this receive has already consumed a semaphore credit via a blocking wait
+    bool consumedCredit = false;
+
     // Bounded loop with compile-time limit
     for (U32 reps = 0; reps < LOOP_GUARD_LIMIT; ++reps) {
         U32 enabledPriorities = this->m_handle.m_priorityMask.load(std::memory_order_acquire);
@@ -731,6 +740,11 @@ QueueInterface::Status PriorityMemQueue::receive(U8* destination,
             }
             const bool dequeued = aq->dequeue(destination, capacity, actualSize);
             if (dequeued) {
+                // Balance the sender's post: consume one credit unless a blocking wait already did.
+                // A failed tryWait is harmless: the credit was consumed by another receiver
+                if (!consumedCredit) {
+                    (void)this->m_handle.m_notEmptySem->tryWait();
+                }
                 priority = testPriority;
                 return QueueInterface::Status::OP_OK;
             }
@@ -742,6 +756,7 @@ QueueInterface::Status PriorityMemQueue::receive(U8* destination,
             Os::CountingSemaphoreInterface::Status semStatus = this->m_handle.m_notEmptySem->wait();
             FW_ASSERT(semStatus == Os::CountingSemaphoreInterface::Status::OP_OK,
                       static_cast<FwAssertArgType>(semStatus));
+            consumedCredit = true;
         } else {
             return QueueInterface::Status::EMPTY;
         }

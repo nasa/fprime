@@ -12,11 +12,12 @@ It allocates a set of fixed-sized buffers as specified by the user. The overall 
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
 FPRIME-BM-001 | `BufferManager` shall allow the specification of multiple bins of buffers based on the size of the buffer|Allows for some optimization of memory usage if buffers of varying sizes are needed|Test|
-FPRIME-BM-002 | `BufferManager` shall allocate the first buffer larger than the requested size from the set of unallocated buffers, starting with the smallest set of buffers.|If a buffer from a smaller pool is not available, allow using larger buffers to avoid starving the user| Test|
+FPRIME-BM-002 | `BufferManager` shall allocate the first buffer with capacity at least the requested size from the set of unallocated buffers, starting with the smallest set of buffers.|If a buffer from a smaller pool is not available, allow using larger buffers to avoid starving the user| Test|
 FPRIME-BM-003 | `BufferManager` shall return an empty buffer (size = 0) if no buffers are available|Allow the user to decide how to react to no memory|Test|
 FPRIME-BM-004 | `BufferManager` shall accept empty returned buffers without an assert|Just send a warning to cover the case where an empty buffer is returned by a component|Test
 FPRIME-BM-005 | `BufferManager` shall use a provided Fw::MemAllocator instance to request overall buffer memory|Let the user decide where the memory comes from|Test
 FPRIME-BM-006 | `BufferManager` shall allow buffers to be returned in any order|Do not restrict the lifetime or usage of buffers|Test
+FPRIME-BM-007 | `BufferManager` shall return a buffer whose size is set exactly to the requested size|Allow callers to use the requested size without checking the underlying allocation size|Test|
 
 ## 3 Design
 
@@ -51,7 +52,7 @@ Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
 `bufferSendIn` | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | guarded input | Receives buffers for deallocation
 `bufferGetCallee` | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.md) | guarded input (callee) | Receives requests for allocated buffers and returns the buffers
-`schedIn` | [`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | sync input (callee) | writes telemetry values (optional, if the user doesn't need BufferManager telemetry)
+`schedIn` | [`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | guarded input (callee) | writes telemetry values (optional, if the user doesn't need BufferManager telemetry)
 
 ### 3.4 Constants
 
@@ -76,8 +77,9 @@ When `BufferManager` receives a request for a buffer of size *s* on
 
 1. Search for an unallocated buffer that is big enough to hold the requested buffer size.
 2. Mark the buffer as allocated.
-3. Return the `Fw::Buffer` instance to the user.
-4. If a free buffer cannot be found, return an empty buffer to the user.
+3. Set the returned buffer's size to the requested size. The underlying allocation may be larger.
+4. Return the `Fw::Buffer` instance to the user.
+5. If a free buffer cannot be found, return an empty buffer to the user.
 
 #### 3.6.2 bufferSendIn
 

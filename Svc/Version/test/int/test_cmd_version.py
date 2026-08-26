@@ -74,20 +74,9 @@ def test_send_version_command(fprime_test_api):
             evr_ver_list = str(evr_ver).split()
             evr_ver_value = evr_ver_list[3]
 
-            if evr_ver_value == report_ver_value:
-                print(
-                    "COMPARE EVR vs. TELEMETRY channel and version cmd_option PASS ",
-                    evr_ver_value,
-                    report_ver_value,
-                    value,
-                )
-            else:
-                print(
-                    "COMPARE EVR vs. TELEMETRY channel and version cmd_option FAIL ",
-                    evr_ver_value,
-                    report_ver_value,
-                    value,
-                )
+            assert (
+                evr_ver_value == report_ver_value
+            ), f"EVR version {report_ver_value} != telemetry version {evr_ver_value} for {value}"
 
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Version") + "." + "ENABLE",

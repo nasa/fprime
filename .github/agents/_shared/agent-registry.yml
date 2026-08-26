@@ -22,6 +22,20 @@ agents:
       sequence, then the aggregator. Owns kickoff prompts (with the
       orchestrator->agent thanks convention) and error handling.
 
+  - name: F Prime Full-Codebase Review Orchestrator
+    short_name: full-codebase-review
+    role: batch-orchestrator
+    path: .github/agents/full-codebase-review.agent.md
+    invocable_by_humans: true
+    notes: >
+      Single human entry point for the batch (full-codebase) review.
+      Partitions the repository into review units per
+      `_shared/skills/repo-partitioning.skill.md`, drives every
+      `role: reviewer` entry over every unit under the batch
+      contract (`_shared/review-contract-batch.md`), and maintains
+      the resumable ledger and diffable finding artifacts in a
+      results repository. Not part of the PR review flow.
+
   - name: F Prime Security Vulnerability Reviewer
     short_name: security-review
     review_label: Security
@@ -57,7 +71,7 @@ agents:
     invocable_by_humans: true
     scope_summary: >
       C/C++ design-rule conformance (CPP-1 through CPP-34 in
-      `_shared/skills/fprime-cpp-design.skill.md`): no dynamic memory
+      `.github/skills/fprime-cpp-design/SKILL.md`): no dynamic memory
       post-init, Fw::Buffer ownership, FW_ASSERT scope, C++14
       language subset, F Prime type idioms (Fw::String,
       Fw/DataStructures, FPP modeled types on ground-facing
@@ -86,12 +100,13 @@ agents:
     path: .github/agents/design-review.agent.md
     invocable_by_humans: true
     scope_summary: >
-      Eight design categories — design-vs-intent mismatch,
+      Nine design categories — design-vs-intent mismatch,
       code-vs-design mismatch, F Prime pattern violations, scope
       creep / under-scoped, FPP-vs-C++ divergence, undocumented
       behavioral regression, resource margin erosion, fault-handling
-      gap — plus the special `design-needs-human-adjudication`
-      finding class that always pings code owners. References the
+      gap, missed reuse of an existing facility — plus the special
+      `design-needs-human-adjudication` finding class that always
+      pings code owners. References the
       JPL Design Principles skill for margin and fault-protection
       rules. Does not contribute to CI safety.
 
@@ -149,6 +164,32 @@ agents:
       what it is evidently intended to do, for every reachable
       input" — defensive defect-finding, not exploitability analysis
       (that is security-review's scope). Does not contribute to CI
+      safety.
+
+  - name: F Prime Operational Consequences Reviewer
+    short_name: operational-consequences-review
+    review_label: Operational
+    role: reviewer
+    path: .github/agents/operational-consequences-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Operational consequences of documented behavior on a flight
+      system, reviewed from the operator's seat rather than the
+      author's. Five passes — interface-contract tracing (framework
+      call-site assumptions and parameters silently ignored by
+      concrete interface implementations), failure-path blast radius
+      (heuristic / spurious statuses meeting assert-on-overflow or
+      drop-on-full callers), timing and resource budgets (quantified
+      polling wakeup rates, livelock / starvation / priority
+      inversion under strict-priority schedulers, preemption-window
+      visibility), configuration-space extremes (minimum type
+      widths, depth=1, degenerate values, with quantified degraded
+      guarantees), and documentation-versus-reality audits of
+      quantified claims — plus `ops-other` for any other confirmed
+      operational hazard. Findings are ranked by mission impact and
+      quantified; documentation plus configuration guidance is an
+      acceptable remedy. Assumes local correctness
+      (correctness-review's scope). Does not contribute to CI
       safety.
 
   - name: F Prime Maintainability & Readability Reviewer

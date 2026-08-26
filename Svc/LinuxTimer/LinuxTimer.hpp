@@ -47,6 +47,8 @@ class LinuxTimer final : public LinuxTimerComponentBase {
     volatile bool m_quit;  //!< flag to quit
 
     Os::RawTime m_rawTime;  //!< timestamp to pass to CycleOut port calls
+
+    bool m_rawTimeErrorLogged = false;  //!< latch so a persistent raw time failure is logged once
 };
 
 }  // end namespace Svc

@@ -9,6 +9,7 @@
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 
 #include <Os/File.hpp>
+#include <Os/SandboxedFile.hpp>
 #include <Utils/Hash/Hash.hpp>
 
 #include <cstdio>
@@ -23,11 +24,7 @@ namespace Svc {
 namespace {
 class WorkingBuffer : public Fw::LinearBufferBase {
   public:
-    FwSizeType getCapacity() const { return sizeof(m_buff); }
-
-    U8* getBuffAddr() { return m_buff; }
-
-    const U8* getBuffAddr() const { return m_buff; }
+    WorkingBuffer() : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {}
 
   private:
     // Set to max of parameter buffer + id
@@ -52,6 +49,11 @@ PrmDbImpl::~PrmDbImpl() {}
 void PrmDbImpl::configure(const char* file) {
     FW_ASSERT(file != nullptr);
     this->m_fileName = file;
+}
+
+void PrmDbImpl::configureLoadSandbox(const char* directory) {
+    FW_ASSERT(directory != nullptr);
+    this->m_sandboxDir = directory;
 }
 
 void PrmDbImpl::readParamFile() {
@@ -389,10 +391,22 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     FW_ASSERT(dbType == PrmDbType::DB_ACTIVE or dbType == PrmDbType::DB_STAGING);
     FW_ASSERT(fileName.length() > 0);
 
-    Fw::String dbString = getDbString(dbType);
-
-    // load file. FIXME: Put more robust file checking, such as a CRC.
+    // Commanded loads (staging) may carry a ground-supplied path; restrict them
+    // to the configured sandbox directory to prevent path traversal
+    if ((dbType == PrmDbType::DB_STAGING) && (this->m_sandboxDir.length() > 0)) {
+        Os::SandboxedFile paramFile;
+        paramFile.configure(this->m_sandboxDir.toChar());
+        return this->readParamFileWork(paramFile, fileName, dbType);
+    }
     Os::File paramFile;
+    return this->readParamFileWork(paramFile, fileName, dbType);
+}
+
+template <typename FileType>
+PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileWork(FileType& paramFile,
+                                                      const Fw::StringBase& fileName,
+                                                      PrmDbType dbType) {
+    Fw::String dbString = getDbString(dbType);
 
     Os::File::Status stat = paramFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
@@ -449,6 +463,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     U32 recordNumTotal = 0;
     U32 recordNumAdded = 0;
     U32 recordNumUpdated = 0;
+    U32 recordNumDropped = 0;
 
     for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
         U8 delimiter;
@@ -457,8 +472,9 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
         // read delimiter
         Os::File::Status fStat = paramFile.read(&delimiter, readSize, Os::File::WaitType::WAIT);
 
-        // check for end of file (read size 0)
-        if (0 == readSize) {
+        // check for end of file (successful read of size 0); a failed read can
+        // also yield size 0 and must not be mistaken for a clean EOF
+        if ((Os::File::OP_OK == fStat) && (0 == readSize)) {
             break;
         }
 
@@ -506,7 +522,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
         // sanity check value. It can't be larger than the maximum parameter buffer size + id
         // or smaller than the record id
-        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32)) or (recordSize < sizeof(U32))) {
+        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwPrmIdType)) or (recordSize < sizeof(FwPrmIdType))) {
             this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_VALUE, static_cast<I32>(recordNumTotal),
                                                   static_cast<I32>(recordSize));
             return PrmLoadStatus::ERROR;
@@ -565,8 +581,14 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
         if (updateStatus == NO_SLOTS) {
             this->log_WARNING_HI_PrmDbFull(parameterId);
+            recordNumDropped++;
         }
         recordNumTotal++;
+    }
+
+    // Dropped records mean the database does not reflect the file: report an error
+    if (recordNumDropped > 0) {
+        return PrmLoadStatus::ERROR;
     }
 
     this->log_ACTIVITY_HI_PrmFileLoadComplete(dbString, recordNumTotal, recordNumAdded, recordNumUpdated);

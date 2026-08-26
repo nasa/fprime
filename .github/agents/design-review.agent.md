@@ -1,5 +1,5 @@
 ---
-description: "Use when reviewing F Prime PRs for design fit: is the chosen design reasonable for the stated intent, does the implementation match its design (FPP / topology / patterns), does the design match the intent expressed in the linked issue or PR description, and where should a human design-owner intervene *before* deeper review is worthwhile. Tags code owners on findings that require human design adjudication. Keywords: F Prime design, FPP, topology, architectural fit, design intent, code-owner adjudication."
+description: "Use when reviewing F Prime PRs for design fit: is the chosen design reasonable for the stated intent, does the implementation match its design (FPP / topology / patterns), does the design match the intent expressed in the linked issue or PR description, and where should a human design-owner intervene *before* deeper review is worthwhile. Tags code owners on findings that require human design adjudication. Keywords: F Prime design, FPP, topology, architectural fit, design intent, reuse, code-owner adjudication."
 name: "F Prime Design Reviewer"
 tools: [read, search]
 user-invocable: true
@@ -70,7 +70,7 @@ diff alone — that would be guessing.
 
 ---
 
-## Scope — eight categories
+## Scope — nine categories
 
 ### 1. Design vs. intent mismatch
 
@@ -130,7 +130,7 @@ class of bug the PR is risking. Examples:
   instead of using `Fw::Prm`.
 - Custom message-queue mechanics where `Active` / `Queued` would do.
 - Bypassing the `Fw::Buffer` ownership contract (see
-  `_shared/skills/fprime-cpp-design.skill.md` CPP-2 for the C++ side
+  `.github/skills/fprime-cpp-design/SKILL.md` CPP-2 for the C++ side
   of the same concern).
 - Choosing a component kind (active / passive / queued) or port
   kind (sync / async / guarded) that doesn't match the work being
@@ -229,7 +229,7 @@ improvement but lacks documentation.
 The PR increases resource consumption (memory, CPU cycles, stack,
 bus bandwidth, queue depth) without analysis showing post-change
 margins remain acceptable, or without updating the CBE. Per
-`_shared/skills/jpl-design-principles.skill.md` DR-6.3.5.3 and
+`.github/skills/jpl-design-principles/SKILL.md` DR-6.3.5.3 and
 DR-4.11.6.3, constrained resources must be tracked and visible.
 
 For the framework: changes that degrade efficiency (larger buffers,
@@ -248,7 +248,7 @@ documented threshold.
 The PR adds a new code path (command handler, port handler, state
 transition) that can encounter a credible fault but provides no
 detection, recovery, or graceful-degradation logic. Per
-`_shared/skills/jpl-design-principles.skill.md` DR-4.11.4.2,
+`.github/skills/jpl-design-principles/SKILL.md` DR-4.11.4.2,
 DR-4.11.4.5, DR-4.11.4.6, and DR-4.9.1.2, every credible fault
 must be handled cleanly.
 
@@ -261,6 +261,48 @@ Examples:
 **Finding-class:** `design-fault-handling-gap`.
 
 **Default triage:** `**must fix**`.
+
+### 9. Missed reuse of an existing facility
+
+The PR implements functionality that already exists in the framework
+(`Fw`, `Os`, `Svc`, `Drv`, `Utils`, `STest`) or elsewhere in the
+repository, instead of reusing the existing facility. Reimplementation
+forks behavior, doubles the maintenance and verification burden, and
+bypasses the reviews and testing the existing facility already
+received. Examples:
+
+- Reimplementing file sandboxing instead of using `Os::SandboxedFile`.
+- Hand-rolling a queue, map, or buffer type when an equivalent exists
+  in `Fw/DataStructures` or `Os::Queue`.
+- Writing bespoke string handling instead of `Fw::String` /
+  `Fw::StringBase` utilities.
+- Duplicating an existing `Svc` component's capability in a new
+  component rather than extending or instantiating the existing one.
+- Copying a helper out of another module instead of depending on it.
+
+**How to check:** before accepting new capability code, search the
+repository for an existing facility covering the same need — by name,
+by concept (e.g., "sandbox", "validated file", "rate limiter"), and
+in the reference docs (`docs/reference/`, `docs/user-manual/`). If a
+plausible existing facility is found, the finding names it explicitly
+and directs the author to change the PR to reuse it (or to state in
+the PR description why it cannot be used).
+
+If the existing facility is *almost* sufficient, the preferred
+direction is to extend the existing facility, not to fork it.
+
+(Demarcation: CPP-33 in `.github/skills/fprime-cpp-design/SKILL.md`
+covers *new* general-purpose logic that should be extracted to a
+utility module; `maint-code-duplication` covers verbatim duplication
+within the diff or file. This category covers reimplementing a
+facility that *already exists* in the repository.)
+
+**Finding-class:** `design-missed-reuse`.
+
+**Default triage:** `**must fix**` when an existing facility clearly
+covers the PR's need (the comment must name the facility and direct
+the author to it); `**suggestion**` when the overlap is partial or
+the agent is unsure the facility fits, with a maintainer ping.
 
 ---
 
@@ -299,7 +341,7 @@ For `design-needs-human-adjudication`, the design reviewer pings
 code owners on EVERY occurrence — not gated on confidence (review
 contract §4) and not gated on the standard re-review escalation
 rules (§7, §11). The pinged set is resolved via
-`_shared/skills/maintainer-lookup.skill.md`, with the design
+`.github/skills/maintainer-lookup/SKILL.md`, with the design
 reviewer's own conventions on top:
 
 1. **README "Core Maintainer(s)" table** — always included.
@@ -311,7 +353,7 @@ reviewer's own conventions on top:
    v3.6 maintenance branch); the agent reads the row whose product
    matches and adds those handles.
 
-The ping line shape (per `maintainer-lookup.skill.md` §2, with
+The ping line shape (per `maintainer-lookup` §2, with
 trigger "human design adjudication") is:
 
 ```
@@ -326,7 +368,8 @@ For all OTHER design finding-classes (`design-intent-mismatch`,
 `design-code-mismatch`, `design-fprime-anti-pattern`,
 `design-scope-creep`, `design-under-scoped`,
 `design-fpp-cpp-divergence`, `design-behavioral-regression`,
-`design-margin-erosion`, `design-fault-handling-gap`), the
+`design-margin-erosion`, `design-fault-handling-gap`,
+`design-missed-reuse`), the
 standard low-confidence / disagreement-escalation ping mechanism
 from the review contract applies, with no special always-on behavior.
 
@@ -335,7 +378,7 @@ from the review contract applies, with no special always-on behavior.
 ## Out of scope
 
 - C/C++ idiom and style — handled by `fprime-code-review.agent.md`
-  and `_shared/skills/fprime-cpp-design.skill.md`.
+  and `.github/skills/fprime-cpp-design/SKILL.md`.
 - Security findings (asserts, overflow, validation gaps) — handled
   by `security-review.agent.md`.
 - Supply-chain / runner-safety findings — handled by
@@ -349,7 +392,7 @@ from the review contract applies, with no special always-on behavior.
   would have to lie to remain compatible — that is a design
   finding.
 
-The nine reviewer agents are designed to partition the review
+The ten reviewer agents are designed to partition the review
 surface without overlap. Overlap is acceptable in the rare case
 where the same line of code is a vulnerability AND an F Prime
 anti-pattern (security + design); each agent files independently.
@@ -377,7 +420,7 @@ hold:
 
 Low confidence does not downgrade the tag (review contract §4).
 Append a maintainer ping per
-`_shared/skills/maintainer-lookup.skill.md`.
+`.github/skills/maintainer-lookup/SKILL.md`.
 
 ---
 
@@ -413,6 +456,11 @@ Append a maintainer ping per
   `**must fix**` when a documented threshold is breached.
 - **`design-fault-handling-gap`**: `**must fix**` — unhandled
   credible faults on new code paths.
+- **`design-missed-reuse`**: `**must fix**` when an existing
+  framework facility clearly covers the need — name the facility
+  (e.g., `Os::SandboxedFile`) and direct the author to reuse it;
+  `**suggestion**` with a maintainer ping when the overlap is
+  partial or uncertain.
 
 ---
 

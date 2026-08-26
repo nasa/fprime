@@ -132,6 +132,12 @@ CfdpManager accepts destination file paths as specified in incoming CFDP Metadat
 
 For mission deployments, ensure radio links employ hardware encryption or cryptographic authentication, ground systems implement proper authentication and authorization controls, and operational procedures include verification of file paths before commanding transfers.
 
+#### Input Robustness
+
+Because CfdpManager processes PDUs received from an external link, it must remain available even when the received bytes are malformed, degenerate, or hostile. The receive path treats structural properties of an incoming PDU as untrusted input and rejects or safely ignores them rather than relying on an `FW_ASSERT`, which would raise a FATAL and remove the deployment from service. Assertions in the CFDP code are reserved for internal invariants that cannot be influenced by received data.
+
+A specific case handled here is a syntactically valid FileData PDU that declares a file offset but carries zero file-data octets (its PDU payload length equals the encoded offset length). Such an empty segment conveys no data: the receive handler treats it as a successful no-op — no file write and no gap-tracking update — so it can never produce a zero-length interval in the chunk tracker. This closes the denial-of-service reported in [GHSA-mh5x-2m6h-8267](https://github.com/nasa/fprime/security/advisories/GHSA-mh5x-2m6h-8267), where a single zero-length Class 2 FileData PDU could reach a gap-tracking assertion and terminate the process. Note that this is an availability hardening measure; it does not by itself remove the need for the authenticated lower layers described above.
+
 ### Main Class Hierarchy
 
 CfdpManager ([CfdpManager.hpp](../CfdpManager.hpp))
@@ -212,6 +218,23 @@ The transmission throttling mechanism works in conjunction with buffer allocatio
 #### Receive Throttling
 
 Unlike transmit operations that are driven by the periodic `run1Hz` scheduler port, receive operations in CfdpManager are driven by the `dataIn` async input port. Incoming CFDP PDUs arrive via this port and are processed immediately by the component's thread when the port handler is invoked, without per-cycle limits. Receive throttling was implemented in NASA's CF (CFDP) application because CF processes received PDUs during scheduled execution cycles. In contrast, CfdpManager processes incoming PDUs asynchronously as they arrive, so there is no architectural reason to throttle incoming PDUs.
+
+### Directory Playback and Polling
+
+CfdpManager supports two related mechanisms for transferring the contents of a directory:
+
+- **Directory playback** (`PlaybackDirectory` command): a one-shot operation that sends every file currently in the source directory as individual CFDP transactions and completes when the directory has been fully processed.
+- **Directory polling** (`PollDirectory` command): a recurring operation that re-checks the source directory on a fixed interval and automatically sends any new files found. Each channel supports up to `MaxPollingDirPerChan` independent polling slots, identified by a poll index. The file is deleted from the directory after a successful transfer.
+
+**Poll cycle behavior:**
+
+Each polling slot owns an interval timer that is evaluated once per `run1Hz` cycle:
+
+1. A poll slot is armed by the `PollDirectory` command with a non-zero interval (in seconds). A zero interval is rejected at command validation with an `InvalidPollInterval` event.
+2. The interval timer only counts down while the slot's playback is **not** busy. While a directory playback triggered by a previous poll is still in progress (transactions pending or active), the timer is held so polls do not stack up.
+3. When the timer expires, the slot initiates a playback of the source directory and re-arms the timer for the next interval. Re-arming happens regardless of whether the playback started successfully — `playbackDirInitiate` emits its own event on failure, and re-arming ensures the poll retries on the next interval rather than stalling.
+
+Polling continues until stopped with the `StopPollDirectory` command. Stopping is only honored for a slot that is currently enabled; stopping an inactive slot produces a `PollDirNotActive` event.
 
 ## Sequence Diagrams
 
@@ -457,11 +480,12 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | UnsupportedSendFileArguments | warning low | Invalid send file port request with offset and length |
 | InvalidChannel | warning low | Invalid channel ID, maximum channel ID is specified |
 | PlaybackInitiated | activity low | Successfully initiated directory playback for source directory |
-| PollDirInitiated | activity low | Successfully initiated directory poll for source directory |
+| PollDirInitiated | activity low | Successfully initiated directory poll for source directory (identified by channel poll index) |
 | PollDirStopped | activity low | Successfully stopped directory poll for channel and poll index |
 | PollDirBusy | warning low | Cannot start directory poll - channel poll already in use |
 | PollDirNotActive | warning low | Cannot stop directory poll - channel poll is not active |
 | InvalidChannelPoll | warning low | Invalid poll ID, maximum poll ID is specified |
+| InvalidPollInterval | warning low | Invalid poll interval requested (must be non-zero) |
 | SetFlowState | activity low | Set channel to specified flow state |
 | ResetCounters | activity high | Reset telemetry counters for channel (0xFF indicates all channels) |
 
@@ -564,7 +588,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 |---|---|
 | SendFile | Initiates a CFDP file transaction to send a file to a remote entity. Specifies channel, destination entity ID, CFDP class (1 or 2), file retention policy, priority, source filename, and destination filename. |
 | PlaybackDirectory | Starts a directory playback operation to send all files from a source directory to a destination directory on a remote entity. Files are sent sequentially as individual CFDP transactions. Completes when all files in the directory have been processed. |
-| PollDirectory | Establishes a recurring directory poll that periodically checks a source directory for new files and automatically sends them to a destination directory on a remote entity. Poll interval is configurable in seconds. |
+| PollDirectory | Establishes a recurring directory poll that periodically checks a source directory for new files and automatically sends them to a destination directory on a remote entity. Poll interval is configurable in seconds and must be non-zero (a zero interval is rejected with a `VALIDATION_ERROR` response and an `InvalidPollInterval` event). |
 | StopPollDirectory | Stops an active directory poll operation identified by channel ID and poll ID. |
 | SetChannelFlow | Sets the flow control state for a specific CFDP channel. Can freeze (pause) or resume PDU transmission on the channel. |
 | SuspendResumeTransaction | Suspend or resume a transaction. When suspended, the transaction remains in memory but stops making progress (no PDUs sent or processed, no timers tick). Useful during critical spacecraft operations. Takes an action parameter (SUSPEND or RESUME). Transactions are identified by channel ID, transaction sequence number, and entity ID. |
@@ -677,4 +701,4 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 | CFDP-010 | `CfdpManager` shall support configurable file archiving to move completed files instead of deletion | Preserves files for audit trails and operational analysis while managing storage | Unit Test |
 | CFDP-011 | `CfdpManager` shall support both command-initiated and port-initiated file transfers | Allows both ground operators and onboard components to initiate file transfers | Unit Test, System Test |
 | CFDP-012 | `CfdpManager` shall support flow control to freeze and resume channel operations | Provides mechanism to temporarily halt file transfers during critical spacecraft operations | Unit Test |
-
+| CFDP-013 | `CfdpManager` shall process malformed or degenerate received PDUs, including zero-length FileData segments, without raising a FATAL assertion | Preserves deployment availability against untrusted link input and prevents a single crafted PDU from terminating the process ([GHSA-mh5x-2m6h-8267](https://github.com/nasa/fprime/security/advisories/GHSA-mh5x-2m6h-8267)) | Unit Test |

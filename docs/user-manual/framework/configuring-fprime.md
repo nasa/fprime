@@ -24,11 +24,11 @@ This guide includes:
 
 ## How To Configure F´
 
-All configurable files (top-level and component-specific) for F´ are available in the top-level
-`config` directory. By default, all deployments use the F´ provided default configuration options.
+All configurable files (top-level and component-specific) for F´ are available in the
+`default/config` directory. By default, all deployments use the F´ provided default configuration options.
 
-Projects can also take ownership of the `config` directory to provide their own HPP/FPP configuration to
-override the framework defaults. To do so, copy the `config` directory into your project and use the
+Projects can also take ownership of the configuration to provide their own HPP/FPP configuration to
+override the framework defaults. To do so, copy the `default/config` directory into your project and use the
 [`register_fprime_config()`](../../reference/api/cmake/API.md) CMake API to let the build system know 
 to use your configuration overrides. This is demonstrated in various F´ reference projects, such as the 
 [FprimeZephyrReference](https://github.com/fprime-community/fprime-zephyr-reference/tree/devel/FprimeZephyrReference).
@@ -372,6 +372,10 @@ Some components allow users to turn on and off features. If a component does not
 for the user to set.
 
 Users are encouraged to look through the header for the component of interest as they should be self-descriptive.
+
+`CommandDispatcherImplCfg.hpp` provides `Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents`. When this setting is
+`false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum
+`FwOpcodeType` value before downlink.
 
 ## Conclusion
 

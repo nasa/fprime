@@ -27,8 +27,8 @@ void FileDispatcher ::configure(const FileDispatcherTable& table) {
     // validate table
     FW_ASSERT(table.numEntries <= Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE);
     for (FwSizeType entry = 0; entry < table.numEntries; entry++) {
-        FW_ASSERT(table.entries[entry].port.isValid(),
-                  table.entries[entry].port.e);  // valid output port
+        FW_ASSERT(table.entries[entry].port.e < Svc::FileDispatcherCfg::FileDispatchPort::MAX_FILE_DISPATCH_PORTS,
+                  table.entries[entry].port.e);  // valid, non-sentinel output port
         FW_ASSERT(table.entries[entry].fileExt.length() > 0,
                   static_cast<FwAssertArgType>(table.entries[entry].fileExt.length()));  // non-zero length
         // Copy over table entry
@@ -63,9 +63,13 @@ void FileDispatcher ::fileAnnounceRecv_handler(FwIndexType portNum, Fw::StringBa
             (file_name.length() - this->m_dispatchTable.entries[i].fileExt.length() ==
              static_cast<FwSizeType>(loc))  // match at end of string
         ) {
-            // dispatch on this port
-            this->fileDispatch_out(this->m_dispatchTable.entries[i].port.e, file_name);
-            this->log_ACTIVITY_HI_FileDispatched(file_name, this->m_dispatchTable.entries[i].port);
+            // dispatch on this port, if connected
+            if (this->isConnected_fileDispatch_OutputPort(this->m_dispatchTable.entries[i].port.e)) {
+                this->fileDispatch_out(this->m_dispatchTable.entries[i].port.e, file_name);
+                this->log_ACTIVITY_HI_FileDispatched(file_name, this->m_dispatchTable.entries[i].port);
+            } else {
+                this->log_WARNING_LO_FileDispatchPortNotConnected(file_name, this->m_dispatchTable.entries[i].port);
+            }
         }
     }
 }

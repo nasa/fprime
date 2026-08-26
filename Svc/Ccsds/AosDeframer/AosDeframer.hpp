@@ -161,7 +161,7 @@ class AosDeframer : public AosDeframerComponentBase {
         struct SpanningPacketState {
             static constexpr FwSizeType HEADER_BUF_SIZE =
                 8;  //!< Max header bytes needed to determine size (8 bytes is largest EPP Header)
-            U8 headerBuf[HEADER_BUF_SIZE];  //!< Header bytes accumulated before allocation
+            U8 headerBuf[HEADER_BUF_SIZE] = {};  //!< Header bytes accumulated before allocation
 
             Fw::Buffer buffer;  //!< Dynamically-allocated packet buffer
 

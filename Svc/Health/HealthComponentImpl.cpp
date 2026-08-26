@@ -205,7 +205,7 @@ void HealthImpl::HLTH_CHNG_PING_cmdHandler(const FwOpcodeType opCode,
 FwIndexType HealthImpl::findEntry(const Fw::CmdStringArg& entry) {
     static_assert(std::numeric_limits<FwIndexType>::is_signed, "FwIndexType must be signed to return -1 for error");
     // walk through entries
-    for (FwIndexType tableEntry = 0; tableEntry < NUM_PINGSEND_OUTPUT_PORTS; tableEntry++) {
+    for (FwIndexType tableEntry = 0; tableEntry < this->m_numPingEntries; tableEntry++) {
         if (entry == this->m_pingTrackerEntries[tableEntry].entry.entryName) {
             return static_cast<FwIndexType>(tableEntry);
         }

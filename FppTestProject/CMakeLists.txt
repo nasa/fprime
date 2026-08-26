@@ -17,22 +17,7 @@ endif ()
 
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 
-add_compile_options(
-    -Wall
-    -Wconversion
-    -Wdouble-promotion
-    -Werror
-    -Wextra
-    $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
-    -Wshadow
-    -pedantic
-)
-
-# Required by F Prime
-add_compile_options(
-    -Wno-unused-parameter
-    -Wno-vla
-)
+fprime_add_validation_flags()
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 
 # Required by Google Test typed tests
