@@ -38,8 +38,7 @@ module Svc {
         @ Port for receiving serial messages from other components.
         @ All port indices will be placed into their own internal binary queue to be
         @ handled by the serial_recv host function.
-        async input port serialIn: [Wasm.SerialPortInIndex.MAX_SERIAL_PORTS] serial \
-            assert
+        guarded input port serialIn: [Wasm.SerialPortInIndex.MAX_SERIAL_PORTS] serial
 
         @ port for requests to run sequences
         async input port seqRunIn: Svc.CmdSeqIn assert
