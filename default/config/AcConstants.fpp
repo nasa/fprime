@@ -62,11 +62,6 @@ constant FwAssertTextSize = 256
 @ arguments in log message
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
-@ The size in bytes of a loaded-module name passed through Svc::SeqLoadIn.
-@ Keep in sync with the sequencer's module-name buffer (WasmSequencer's
-@ Wasm.MODULE_NAME_STRING_SIZE) so names are not truncated in transit.
-constant SequenceModuleNameSize = 16
-
 @ The maximum size in bytes of the argument blob carried in a Svc::SeqArgs buffer
 @ (CmdSeqIn / RUN / INVOKE).
 @ Deliberately kept small (rather than derived from FW_CMD_ARG_BUFFER_MAX_SIZE) to

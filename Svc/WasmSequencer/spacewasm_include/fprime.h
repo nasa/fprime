@@ -73,13 +73,26 @@ enum FprimeTlmValid {
 WASM_IMPORT(WASM_MODULE_NAME, "tlm")
 extern FprimeTlmValid fprime_wasm_read_telemetry(I64 id, U32 time_ptr, U32 time_size, U32 value_ptr, U32 value_size);
 
+/// Parameter validity, mirroring Fw::ParamValid. Unlike telemetry (FprimeTlmValid, a
+/// two-state VALID/INVALID enum), a parameter read distinguishes four states, so it uses
+/// its own encoding. Note FPRIME_PARAM_VALID is 1, not 0.
+enum FprimeParamValid {
+    FPRIME_PARAM_UNINIT = 0,   //!< Parameter storage has not been initialized
+    FPRIME_PARAM_VALID = 1,    //!< Parameter has a valid value from the parameter database
+    FPRIME_PARAM_INVALID = 2,  //!< Parameter value is invalid (e.g. not found)
+    FPRIME_PARAM_DEFAULT = 3,  //!< Parameter is serving its compiled-in default value
+};
+
 /// @brief Read a parameter value and write it to the specified memory addresses
 ///
 /// @param id Parameter ID to read
 /// @param value_ptr Guest memory address to parameters's value
 /// @param value_size Size allocated for value_ptr
+/// @returns Parameter validity (FprimeParamValid); value bytes are written when the
+///          parameter is present. This differs from the telemetry validity enum:
+///          FPRIME_PARAM_VALID is 1, not 0.
 WASM_IMPORT(WASM_MODULE_NAME, "prm")
-extern FprimeTlmValid fprime_wasm_read_parameter(I64 id, U32 value_ptr, U32 value_size);
+extern FprimeParamValid fprime_wasm_read_parameter(I64 id, U32 value_ptr, U32 value_size);
 
 enum FprimeCmdResponse {
     /// Command successfully executed

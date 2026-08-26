@@ -50,6 +50,11 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_nob
         // Respond to this request!
         this->respondToRequest(value, Fw::CmdResponse::OK);
     }
+
+    // Clear any pending waits that locked during load
+    if (value.get_source() == Svc::WasmSequencer_SignalSource::COMMAND_LOAD) {
+        this->respondToWaiting(Fw::CmdResponse::OK);
+    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_ERROR(

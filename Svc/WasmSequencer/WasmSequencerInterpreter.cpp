@@ -386,12 +386,19 @@ void WasmSequencer ::dispatchEvent() {
 }
 
 void WasmSequencer ::dispatchRelativeSleep() {
-    U32 seconds = static_cast<U32>(this->m_pendingHostFunction.u.rsleep.us / 1000000);
-    U32 useconds = static_cast<U32>(this->m_pendingHostFunction.u.rsleep.us % 1000000);
+    const U32 seconds = static_cast<U32>(this->m_pendingHostFunction.u.rsleep.us / 1000000);
+    const U32 useconds = static_cast<U32>(this->m_pendingHostFunction.u.rsleep.us % 1000000);
 
-    // Relative sleep from now
-    Fw::Time timer = this->getTime();
-    timer.add(seconds, useconds);
+    const Fw::Time now = this->getTime();
+    const U64 deadlineSeconds = static_cast<U64>(now.getSeconds()) + seconds +
+                                (static_cast<U64>(now.getUSeconds()) + useconds) / 1000000u;
+
+    Fw::Time timer = now;
+    if (deadlineSeconds > static_cast<U64>(std::numeric_limits<U32>::max())) {
+        timer.set(std::numeric_limits<U32>::max(), 999999u);
+    } else {
+        timer.add(seconds, useconds);
+    }
 
     this->m_pendingTimer = timer;
     this->m_hasPendingTimer = true;
@@ -410,6 +417,15 @@ void WasmSequencer ::dispatchAbsoluteSleep() {
 }
 
 void WasmSequencer ::dispatchArgs() {
+    const FwSizeType argCapacity = static_cast<FwSizeType>(sizeof(this->m_args.get_buffer()));
+    if (this->m_args.get_size() > argCapacity) {
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::ARGS,
+                                            static_cast<U32>(this->m_args.get_size()),
+                                            static_cast<U32>(argCapacity));
+        this->interpreter_sendSignal_hostResponseFailure();
+        return;
+    }
+
     if (this->m_args.get_size() > this->m_pendingHostFunction.u.args.len) {
         // Too many param bytes and we are going to leak data into the guest memory
         this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::ARGS, this->m_pendingHostFunction.u.args.len,

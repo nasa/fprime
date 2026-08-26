@@ -1144,12 +1144,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! SERIAL_RECV: check the serial input queue and either resume or block awaiting a message.
     void dispatchSerialRecv();
 
-    //! Validate a guest serial-port request (shared by the sync and async variants).
-    //! Emits the appropriate warning event and returns false when the port index is
-    //! out of range/unconnected or the payload length exceeds the configured maximum.
-    bool validateSerialPortOutput(WasmSequencer_HostFunction::T kind, I32 index, U32 len);
-    bool validateSerialPortRecv(WasmSequencer_HostFunction::T kind, I32 index, U32 len);
-
     // A global static lock. This is needed to allow the global allocator in spacewasm
     // to not require to pass context to fine grained context to allocations.
     // Read more about this in the SDD.

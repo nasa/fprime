@@ -61,9 +61,9 @@ The engine, [spacewasm](https://github.com/nasa/spacewasm), implements the offic
 
 Rather than JIT-compiling to native code, spacewasm is an _interpreter_ — more precisely an _IR interpreter_: during load it translates Wasm byte-code into a resolved intermediate representation that it then decodes and executes in a loop. This is slower than a production JIT but gives the determinism and safety guarantees flight software needs. This document does not cover the engine's internals; see the [spacewasm repository](https://github.com/nasa/spacewasm). A few of its design choices drive this component:
 
-- **Fuel.** The interpreter loop runs at most a bounded number of IR instructions per call and then yields, so a long-running or malicious guest cannot starve the component thread and pause/cancel stay responsive. The bound is the `INSTRUCTION_FUEL` parameter.
+- **Fuel.** The interpreter loop runs at most a bounded number of IR instructions per call and then yields, so a long-running or malicious guest cannot starve the component thread and pause/cancel stay responsive. The bound is the `INSTRUCTION_FUEL` parameter. This bounds per-cycle work, not total CPU; see [Scheduling and CPU Budget](#scheduling-and-cpu-budget).
 - **Dynamic memory.** spacewasm allocates its module data structures and compiled byte-code from a "global allocator" the embedder provides. This component backs it with a fixed static pool (`SPACEWASM_PAGE_SIZE` × `SPACEWASM_MAX_PAGES`), keeping peak memory deterministic and free of heap fragmentation. Guest linear memory is served from a separate per-load pool (`GUEST_MEMORY_SIZE`).
-- **Panics.** spacewasm is written in Rust and compiled with `panic = "abort"`. A panic is routed through a `spacewasm_panic` callback that logs the location to `Os::Console` and then `FW_ASSERT(false)` — terminal for the FSW, and distinct from a guest-level `panic()` (which fails only the sequence). spacewasm is [fuzzed](https://github.com/nasa/spacewasm/tree/main/fuzz/fuzz_targets) to keep this path from firing on arbitrary input.
+- **Panics.** spacewasm is written in Rust and compiled with `panic = "abort"`. A panic is routed through a `spacewasm_panic` callback that logs the location to `Os::Console` and then `FW_ASSERT(false)` — terminal for the FSW, and distinct from a guest-level `panic()` (which fails only the sequence). This path is reserved for a engine invariant violation: untrusted or malformed module bytes are contractually handled by graceful `SPACEWASM_ERR_*` load-failure codes (surfaced as load-failure events), not panics. To keep the panic path from firing on arbitrary input, the upstream engine is [fuzzed](https://github.com/nasa/spacewasm/tree/main/fuzz/fuzz_targets); its pinned release exercises the decode / validate / compile entry points that run against a ground-uplinked module. The assurance is therefore only as strong as the pinned release's upstream fuzzing.
 
 **Specification divergences.** spacewasm diverges from the spec in a few documented ways for determinism:
 
@@ -108,6 +108,18 @@ The interpreter executes the loaded program in fuel-bounded slices and services 
 ### Allocator Lock
 
 spacewasm exposes a _single, process-wide_ heap allocator with no per-call context, so in a deployment with more than one `WasmSequencer` the active allocator must be selected out-of-band. The `fprime_spacewasm` shim keeps a small registry (capacity `MAX_SEQUENCERS`) of per-instance page pools, and each instance registers a slot at construction. A process-wide mutex brackets the allocating operations — store creation, store teardown, and module load — selecting the calling instance's allocator for their duration; execution runs outside the lock against the already-allocated store. Consequently the allocating operations of all instances are serialized process-wide (execution is not), and the number of live instances is capped at `MAX_SEQUENCERS`.
+
+Running the interpreter outside the lock is safe only because execution never allocates: all allocation happens during load and teardown, and running a loaded module touches only the memory already reserved for its store (guest `memory.grow` is disabled, so a sequence cannot request new pages mid-run). This invariant is enforced fail-fast — an unexpected allocation during execution aborts rather than drawing from another instance's pool — so relaxing it would require holding the lock across execution as well.
+
+**Limitation.** The lock is held for the whole of a load, and a load streams the module file from disk, so it spans a blocking file read. While one instance is loading it does no other work, and every other instance blocks on the lock as soon as it tries to create, tear down, or load a store, so a slow or large load can briefly stall all instances. This is acceptable because loads are infrequent and module files are small, but operators should avoid concurrent loads across instances and stage modules during quiet periods.
+
+### Scheduling and CPU Budget
+
+The interpreter runs a loaded program in fuel-bounded slices: each slice executes at most `INSTRUCTION_FUEL` instructions and then yields. The bound is per slice, not a total budget, so a guest that loops forever simply keeps producing slices. Between slices the component drains its own message queue, which keeps `PAUSE`, `CANCEL`, and the host-function timeout responsive while a sequence runs.
+
+**Fuel yields to the component queue, not the OS scheduler.** Yielding between slices does not sleep the thread: a compute-only guest that never blocks on a host function or sleep stays in the run loop and can consume a full core. `INSTRUCTION_FUEL` trades responsiveness for throughput; it does not cap total CPU. Fairness between threads is the scheduler's job, set by task priority.
+
+**Operator guidance.** Give the `WasmSequencer` instance a task priority below the deployment's mission-critical threads (rate groups, the command dispatcher, control loops) so a runaway guest cannot starve them, and keep the scheduler preemptive. Priority is set where the instance is defined in the topology.
 
 ### Ports
 
@@ -167,7 +179,7 @@ Guest arguments are validated on every call; invalid input (bad pointers, oversi
 |---|---|---|---|
 | `SEQ_BASE_DIR` | `string` | `""` | Base directory that sequence file paths are resolved against. |
 | `INSTRUCTION_FUEL` | `FwSizeType` | `1000` | IR instructions executed per interpreter cycle; larger values run faster but respond to `PAUSE` less quickly. |
-| `HOST_FUNCTION_TIMEOUT_SECS` | `F32` | `0` | Timeout for a blocked host function (a dispatched command or a blocking `serial_recv`); `<= 0` disables it. |
+| `HOST_FUNCTION_TIMEOUT_SECS` | `F32` | `60` | Timeout in seconds for a blocked host function (a dispatched command or a blocking `serial_recv`); `<= 0` disables it. |
 
 ## Telemetry and Events
 

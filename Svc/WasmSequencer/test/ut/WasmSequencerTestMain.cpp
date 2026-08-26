@@ -680,6 +680,31 @@ TEST_F(WasmSequencerTester, WaitFromReadyRespondsImmediately) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
+TEST_F(WasmSequencerTester, WaitDuringLoadRespondsOnLoadComplete) {
+    // A WAIT that queues while a LOAD is in flight must be answered when the load settles to
+    // READY. respond_noblock_OK is the LOAD's only completion action -- a LOAD never runs
+    // main, so respond_block_OK/respond_block_ERROR never fire for it -- so it must drain
+    // m_waiting. Previously it did not, orphaning the WAIT until an unrelated later sequence
+    // answered it. start.wasm has a start function, so a LOAD parks in RUNNING_START (running
+    // that start function): a busy state in which a WAIT queues rather than answering now.
+    StagedAsset file_asset(*this, "start.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_LOAD(0, 60, file, Fw::CmdStringArg(""));
+    this->dispatchUntilControllerState(ControllerState::RUNNING_START);
+    ASSERT_EQ(this->controllerState(), ControllerState::RUNNING_START);
+
+    // Controller is busy (RUNNING_START), so WAIT queues into m_waiting.
+    this->sendCmd_WAIT(0, 61);
+
+    // The start function finishes and the load settles to READY, which must answer both the
+    // NO_BLOCK LOAD and the queued WAIT with OK.
+    this->dispatchUntilControllerState(ControllerState::READY);
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 60, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_WAIT, 61, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
 // ----------------------------------------------------------------------
 // Invalid-state command rejections
 // ----------------------------------------------------------------------
@@ -1138,6 +1163,37 @@ TEST_F(WasmSequencerTester, ArgsMixedStructRoundTrip) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
+TEST_F(WasmSequencerTester, ArgsOversizedSizeRejected) {
+    // Regression for a host-memory out-of-bounds read (CWE-125). SeqArgs carries a
+    // ground-controlled $size next to a fixed SequenceArgumentsMaxSize (12) byte buffer, and
+    // $size is deserialized without clamping. A crafted RUN whose $size exceeds the buffer
+    // capacity must be rejected at dispatch: the host must never copy more than the buffer
+    // holds, or it leaks adjacent host memory into guest linear memory. args.wasm declares a
+    // 64-byte guest buffer, so a claimed size of 32 (>12 capacity, <=64 guest len) slips past
+    // the destination-too-small guard and, absent the source-capacity guard, over-reads.
+    U8 argBytes[SequenceArgumentsMaxSize];
+    for (FwSizeType i = 0; i < sizeof argBytes; i++) {
+        argBytes[i] = static_cast<U8>(0xA0 + i);
+    }
+    Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
+    args.set_size(32);  // claim 32 arg bytes though only 12 physically exist
+
+    StagedAsset file_asset(*this, "args.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 206, file, BLOCK, args);
+    this->dispatchAll();
+
+    // Rejected before any guest write: BufferTooLarge(ARGS, requested=32, capacity=12), the
+    // sequence fails, and the guest never resumes (nothing leaked, no SequenceSucceeded).
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_BufferTooLarge_SIZE(1);
+    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::ARGS, 32,
+                                 static_cast<U32>(SequenceArgumentsMaxSize));
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
+    this->assertSequenceFailureCount(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
 // ----------------------------------------------------------------------
 // Time host function (fprime.time)
 // ----------------------------------------------------------------------
@@ -1574,6 +1630,33 @@ TEST_F(WasmSequencerTester, RelativeSleepWakes) {
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, RelativeSleepDeadlineOverflowDoesNotWakeEarly) {
+    // Regression for the relative-sleep deadline overflow: a duration whose whole-seconds
+    // part is U32_MAX passes the wasmRsleep gate but, added to a non-zero current time,
+    // overflows the U32 seconds field of Fw::Time. The deadline must saturate to the far
+    // future instead of wrapping into the past, so the guest stays asleep.
+    StagedAsset file_asset(*this, "rsleep_near_max.wasm");
+    const Fw::String& file = file_asset.file();
+
+    // Non-zero epoch so now + U32_MAX overflows the U32 seconds field.
+    this->setTestTime(Fw::Time(10, 0));
+    this->sendCmd_RUN(0, 104, file, BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
+    ASSERT_TRUE(this->hasPendingTimer());
+    // The gate must NOT have rejected this sleep; it passes in isolation.
+    ASSERT_EVENTS_SleepDurationTooLarge_SIZE(0);
+
+    // A checkTimers tick far in the future but well below U32_MAX seconds must NOT wake the
+    // guest. Pre-fix, the wrapped deadline (~9 s) is in the past, so the guest would resume
+    // here and the sequence would finish.
+    this->setTestTime(Fw::Time(1000000, 0));
+    this->invoke_to_checkTimers(0, 0);
+    this->dispatchAll();
+    ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
+    ASSERT_TRUE(this->hasPendingTimer());
 }
 
 TEST_F(WasmSequencerTester, AbsoluteSleepWakes) {
@@ -2279,9 +2362,12 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutTimeIncomparableFails) {
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 401, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-TEST_F(WasmSequencerTester, HostFunctionTimeoutDisabledByDefault) {
-    // With HOST_FUNCTION_TIMEOUT_SECS left at its 0 default, no amount of elapsed time
-    // times out an awaiting command.
+TEST_F(WasmSequencerTester, HostFunctionTimeoutDisabledByZero) {
+    // With HOST_FUNCTION_TIMEOUT_SECS explicitly set to 0 (disabled), no amount of elapsed
+    // time times out an awaiting command. The shipped default is now 60s, so a test that
+    // wants the disabled behavior must set the parameter to 0 rather than rely on the default.
+    this->paramSet_HOST_FUNCTION_TIMEOUT_SECS(0.0f, Fw::ParamValid::VALID);
+    this->component.loadParameters();
     this->setTestTime(Fw::Time(0, 0));
 
     StagedAsset file_asset(*this, "cmd.wasm");

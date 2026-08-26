@@ -51,7 +51,7 @@ foreach(_dest IN LISTS _fp_cfg_dests)
     endif()
 endforeach()
 if(NOT WASM_SEQ_CONFIG_DIR)
-    status(FATAL_ERROR "Could not find WasmSequencerSpacewasmConfig.h config directory")
+    fprime_cmake_fatal_error("Could not find WasmSequencerSpacewasmConfig.h config directory")
 endif()
 set(WASM_SEQ_CONFIG_HEADER "${WASM_SEQ_CONFIG_DIR}/WasmSequencerSpacewasmConfig.h")
 

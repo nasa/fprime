@@ -18,15 +18,4 @@ module Svc {
 
   @ Port to cancel a sequence
   port CmdSeqCancel
-
-  @ Port to request a sequence file be loaded (and staged) under a module name
-  port SeqLoadIn(
-    filename: string size FileNameStringSize      @< Sequence file to load
-    name: string size SequenceModuleNameSize      @< Module name to load the sequence under (empty for a single unnamed module)
-  )
-
-  port SeqInvokeIn(
-    name: string size FileNameStringSize @< Name of sequence to invoke
-    args: SeqArgs                        @< Sequence Arguments
-  )
 }
