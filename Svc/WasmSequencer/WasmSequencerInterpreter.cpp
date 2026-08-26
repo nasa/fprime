@@ -608,7 +608,7 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_checkTimeo
     const F32 timeoutSecs = this->paramGet_HOST_FUNCTION_TIMEOUT_SECS(prmValid);
 
     // A non-positive or out-of-range timeout disables the check entirely.
-    if (timeoutSecs <= 0.0f || timeoutSecs > static_cast<F32>(std::numeric_limits<U32>::max())) {
+    if (timeoutSecs <= 0.0f || timeoutSecs >= static_cast<F32>(std::numeric_limits<U32>::max())) {
         return;
     }
 

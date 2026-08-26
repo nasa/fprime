@@ -81,6 +81,9 @@ state machine ControllerStateMachine {
     @ Responds to request with EXECUTION_ERROR
     action respond_ERROR: RequestContext
 
+    @ Increment the SequencesFailed telemetry counter
+    action incrementSequenceFailure
+
     @ Responds to request with BUSY
     @ Emit an event to say why we are rejecting this request in the current state
     action respondInvoke_BUSY: InvokeRequest
@@ -196,7 +199,10 @@ state machine ControllerStateMachine {
 
     state INVOKING {
         on invoked enter INVOKE_CANCEL_CHECK
-        on invokeFailed do { respond_ERROR } enter READY
+        on invokeFailed do {
+            incrementSequenceFailure
+            respond_ERROR
+        } enter READY
         on cancel do { setCancelRequested }
         on run do { respondLoad_BUSY }
         on load do { respondLoad_BUSY }
@@ -205,7 +211,9 @@ state machine ControllerStateMachine {
 
     @ Honor a cancel latched while resolving the invoke, before running main
     choice INVOKE_CANCEL_CHECK {
-        if cancelRequested do { cancelPendingRequest } enter IDLE else enter MAIN_CHECK
+        if cancelRequested do {
+            cancelPendingRequest
+        } enter IDLE else enter MAIN_CHECK
     }
 
     @ Make sure the module we want to run has a main function
@@ -214,6 +222,7 @@ state machine ControllerStateMachine {
             invokeMain
         } enter MAIN_INVOKE_CHECK else do {
             reportModuleInvalidMain
+            incrementSequenceFailure
             respond_ERROR
         } enter READY
     }
@@ -225,13 +234,14 @@ state machine ControllerStateMachine {
             runEngine
         } enter RUNNING_MAIN else do {
             reportModuleMainInvokeFailed
+            incrementSequenceFailure
             respond_ERROR
         } enter IDLE
     }
 
     state LOADING_TO_READY {
         on loadSucceeded enter LOAD_READY_CANCEL_CHECK
-        on loadFailed do { respond_ERROR } enter IDLE
+        on loadFailed do { incrementSequenceFailure, respond_ERROR } enter IDLE
         on cancel do { setCancelRequested }
 
         on run do { respondLoad_BUSY }
@@ -241,7 +251,9 @@ state machine ControllerStateMachine {
 
     @ Honor a cancel latched while loading, before running the start function
     choice LOAD_READY_CANCEL_CHECK {
-        if cancelRequested do { cancelPendingRequest } enter IDLE else enter START_CHECK
+        if cancelRequested do {
+            cancelPendingRequest
+        } enter IDLE else enter START_CHECK
     }
 
     choice START_CHECK {
@@ -255,6 +267,7 @@ state machine ControllerStateMachine {
             runEngine
         } enter RUNNING_START else do {
             reportModuleStartInvokeFailed
+            incrementSequenceFailure
             respond_ERROR
         } enter IDLE
     }
@@ -266,6 +279,8 @@ state machine ControllerStateMachine {
             if interpreterSucceeded do {
                 respond_noblock_OK
             } enter READY else do {
+                # reportModuleStartFailed increments SequencesFailed/SequencesCancelled
+                # Do not incrementSequenceFailure
                 reportModuleStartFailed
                 respond_ERROR
             } enter IDLE
@@ -278,7 +293,7 @@ state machine ControllerStateMachine {
 
     state LOADING_TO_RUN {
         on loadSucceeded enter LOAD_RUN_CANCEL_CHECK
-        on loadFailed do { respond_ERROR } enter IDLE
+        on loadFailed do { incrementSequenceFailure, respond_ERROR } enter IDLE
         on cancel do { setCancelRequested }
 
         on run do { respondLoad_BUSY }
@@ -288,13 +303,16 @@ state machine ControllerStateMachine {
 
     @ Honor a cancel latched while loading, before starting/running the module
     choice LOAD_RUN_CANCEL_CHECK {
-        if cancelRequested do { cancelPendingRequest } enter IDLE else enter MAIN_CHECK_PENDING_START_AND_MAIN
+        if cancelRequested do {
+            cancelPendingRequest
+        } enter IDLE else enter MAIN_CHECK_PENDING_START_AND_MAIN
     }
 
     @ Make sure the module we want to run has a main function
     choice MAIN_CHECK_PENDING_START_AND_MAIN {
         if moduleHasValidMain enter START_CHECK_PENDING_MAIN else do {
             reportModuleInvalidMain
+            incrementSequenceFailure
             respond_ERROR
             # The module loaded fine; it just has no runnable main. Stay in READY
             # (the store is valid) rather than tearing everything down
@@ -315,6 +333,7 @@ state machine ControllerStateMachine {
             runEngine
         } enter RUNNING_START_PENDING_MAIN else do {
             reportModuleStartInvokeFailed
+            incrementSequenceFailure
             # The RUN has not been answered yet (respond_noblock_OK is only reached after
             # the start completes and main is invoked), so respond regardless of block.
             respond_ERROR
@@ -335,14 +354,17 @@ state machine ControllerStateMachine {
                 reportModuleStartFailed
                 # The RUN has not been answered yet (respond_noblock_OK is only reached
                 # after the start completes and main is invoked), so respond regardless
-                # of block.
+                # of block. reportModuleStartFailed increments SequencesFailed/SequencesCancelled
+                # Do not incrementSequenceFailure
                 respond_ERROR
             } enter IDLE
         }
 
         @ Honor a cancel latched during the start->main gap, before invoking main
         choice START_MAIN_CANCEL_CHECK {
-            if cancelRequested do { cancelPendingRequest } enter IDLE else do { invokeMain } enter MAIN_INVOKE_CHECK
+            if cancelRequested do {
+                cancelPendingRequest
+            } enter IDLE else do { invokeMain } enter MAIN_INVOKE_CHECK
         }
 
         on run do { respondLoad_BUSY }

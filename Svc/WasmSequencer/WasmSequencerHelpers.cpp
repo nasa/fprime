@@ -50,10 +50,19 @@ U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
         return nullptr;
     }
 
-    // Round the current offset up to the requested alignment.
+    // Reject any request that cannot possibly fit the fixed pool up front.
+    if (size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE ||
+        align > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
+        return nullptr;
+    }
+
+    // Round the current offset up to the requested alignment
     const FwSizeType a = (align < 1) ? 1 : static_cast<FwSizeType>(align);
-    FwSizeType start = (this->m_guest_pool_offset + a - 1) & ~(a - 1);
-    if (start + size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
+    const FwSizeType start = (this->m_guest_pool_offset + a - 1) & ~(a - 1);
+
+    // Compare against the pre-subtracted bound so `start + size` cannot overflow.
+    // `size <= GUEST_MEMORY_SIZE` (checked above) makes the subtraction non-negative.
+    if (start > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE - size) {
         return nullptr;
     }
     this->m_guest_pool_offset = start + size;
@@ -69,6 +78,10 @@ void WasmSequencer ::guestDealloc(const U8* ptr, const U32 size) {
 
 U8* WasmSequencer ::guestAllocCallback(void* userdata, size_t size, size_t align) {
     FW_ASSERT(userdata != nullptr);
+    // A request that does not fit the fixed guest pool cannot be satisfied
+    if (size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE || align > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
+        return nullptr;
+    }
     return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<U32>(size), static_cast<U32>(align));
 }
 

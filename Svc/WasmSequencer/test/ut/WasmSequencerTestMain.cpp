@@ -60,10 +60,10 @@ TEST_F(WasmSequencerTester, LoadEmptyModuleReady) {
 }
 
 TEST_F(WasmSequencerTester, LoadResolvesAgainstSeqBaseDir) {
-    // With SEQ_BASE_DIR set, the base dir is prepended verbatim to the requested
-    // (bare) file name (no separator inserted). copyAsset stages the module in the
-    // CWD, so a base dir of "./" resolves "empty.wasm" -> "./empty.wasm", which
-    // opens successfully.
+    // With SEQ_BASE_DIR set, the base dir is prepended to the requested (bare) file
+    // name. A base dir that already ends in '/' has no extra separator inserted, so a
+    // base dir of "./" resolves "empty.wasm" -> "./empty.wasm" (copyAsset stages the
+    // module in the CWD), which opens successfully.
     this->paramSet_SEQ_BASE_DIR(Fw::ParamString("./"), Fw::ParamValid::VALID);
     this->component.loadParameters();
 
@@ -93,6 +93,28 @@ TEST_F(WasmSequencerTester, LoadAgainstMissingBaseDirFailsToOpen) {
     // The path that failed to open is the base dir joined with the file name.
     ASSERT_STREQ(this->eventHistory_FileOpenError->at(0).fileName.toChar(), "no_such_dir/empty.wasm");
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 12, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+TEST_F(WasmSequencerTester, LoadInsertsSeparatorForBaseDirWithoutTrailingSlash) {
+    // A base dir without a trailing '/' must still resolve to "<base>/<file>" rather
+    // than concatenating verbatim ("<base><file>"). The verbatim join both mis-resolved
+    // ordinary names and could escape the containment boundary ("seqs" + "_priv/x.wasm"
+    // -> "seqs_priv/x.wasm", a sibling directory). Here the same missing directory as
+    // the previous test is configured without the trailing slash and must resolve to
+    // the identical path.
+    this->paramSet_SEQ_BASE_DIR(Fw::ParamString("no_such_dir"), Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    StagedAsset file_asset(*this, "empty.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_LOAD(0, 13, file, Fw::CmdStringArg(""));
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    // Exactly one '/' is inserted between the base dir and the file name.
+    ASSERT_STREQ(this->eventHistory_FileOpenError->at(0).fileName.toChar(), "no_such_dir/empty.wasm");
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 13, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 TEST_F(WasmSequencerTester, LoadRejectsPathTraversalOutsideBaseDir) {
@@ -200,6 +222,13 @@ TEST_F(WasmSequencerTester, LoadStartModuleTrapRespondsError) {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 41, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
+
+    // Regression for the SequencesFailed double-count: a start-phase runtime failure
+    // once ran both reportModuleStartFailed and respond_ERROR (each bumping the
+    // counter). It must now count exactly once, and never as a cancel.
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
 }
 
 TEST_F(WasmSequencerTester, LoadStartModuleTwiceDoesNotWedge) {
@@ -519,6 +548,12 @@ TEST_F(WasmSequencerTester, RunStartTrapsToIdle) {
     ASSERT_EVENTS_SequenceTrapped(0, 0, WasmSequencer_SequencePhase::START, WasmSequencer_TrapReason::UNREACHABLE);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 28, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
+
+    // Regression for the SequencesFailed double-count on the RUN-with-start path
+    // (RUNNING_START_PENDING_MAIN): the start-phase failure counts exactly once.
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
 }
 
 TEST_F(WasmSequencerTester, RunStartOverflowTrapsToIdle) {
@@ -540,6 +575,12 @@ TEST_F(WasmSequencerTester, RunStartOverflowTrapsToIdle) {
     ASSERT_EVENTS_ModuleStartInvokeFailed_SIZE(1);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 29, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
+
+    // This start-invoke-setup failure counts as one failed sequence (owned by the
+    // countSequenceFailure action, since respond_ERROR no longer counts).
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
 }
 
 // NOTE: the startPause branch (a start function that calls a pausing host
@@ -1294,6 +1335,28 @@ TEST_F(WasmSequencerTester, TelemetryInitialDefaults) {
     ASSERT_TLM_SeqName_SIZE(0);
 }
 
+TEST_F(WasmSequencerTester, TelemetryInterpreterStateReflectsEngine) {
+    // The InterpreterState channel must report the *interpreter* state machine's
+    // state, which is distinct from ControllerState. Guard against a copy-paste
+    // transpose (writing controller_getState() into the InterpreterState channel, or
+    // vice versa) by asserting both at a moment they necessarily differ: mid-run the
+    // controller is RUNNING_MAIN while the interpreter is RUNNING_SPINNING.
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+
+    StagedAsset file_asset(*this, "loop.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 310, file, NO_BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
+
+    this->flushTelemetry();
+    ASSERT_TLM_ControllerState(0, ControllerState::RUNNING_MAIN);
+    ASSERT_TLM_InterpreterState(0, InterpreterState::RUNNING_SPINNING);
+
+    // Clean up the still-running sequence.
+    this->sendCmd_CANCEL(0, 311);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+}
+
 TEST_F(WasmSequencerTester, TelemetrySuccessCountAndName) {
     // A completed RUN increments SequencesSucceeded, leaves the component READY, and
     // records the sequence name as the filename stem (empty.wasm -> "empty").
@@ -1310,6 +1373,11 @@ TEST_F(WasmSequencerTester, TelemetrySuccessCountAndName) {
     ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
     ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::NONE);
     ASSERT_TLM_SeqName(0, "empty");
+
+    // SequenceStarting fires exactly once per RUN and carries the started module's
+    // index (module 0 here). Previously this event was only ever asserted _SIZE(0).
+    ASSERT_EVENTS_SequenceStarting_SIZE(1);
+    ASSERT_EVENTS_SequenceStarting(0, 0);
 }
 
 TEST_F(WasmSequencerTester, TelemetrySuccessCountAccumulates) {
@@ -1936,6 +2004,8 @@ TEST_F(WasmSequencerTester, RunWithStartCancelledInStartMainGapDiverts) {
     this->flushTelemetry();
     ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
     ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(0));
+    // A cancel during the start->main window is counted as cancelled only, never failed.
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(0));
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 

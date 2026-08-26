@@ -296,6 +296,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
+    //! Implementation for action incrementSequenceFailure of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Increment the SequencesFailed telemetry counter
+    void Svc_WasmSequencer_ControllerStateMachine_action_incrementSequenceFailure(
+        SmId smId,                                               //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        ) override;
+
     //! Implementation for action respondInvoke_BUSY of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Responds to request with BUSY
@@ -934,7 +942,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Backing storage for m_serialInQueue: one contiguous byte buffer per serial-in
     //! port, handed to the matching CircularBuffer via setup() in the constructor.
-    U8 m_serialInQueueData[NUM_SERIALIN_INPUT_PORTS][Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_SIZE];
+    U8 m_serialInQueueData[NUM_SERIALIN_INPUT_PORTS][Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_SIZE]{};
 
     //! Queues (or queue) that handle inputs on the serial input port. Each is backed by
     //! the corresponding row of m_serialInQueueData (see the setup() loop in the ctor).

@@ -61,11 +61,16 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_ERR
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_RequestContext& value) {
-    this->m_tlm.sequencesFailed++;
     this->respondToRequest(value, Fw::CmdResponse::EXECUTION_ERROR);
 
     // Respond to all wait requests
     this->respondToWaiting(Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_incrementSequenceFailure(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
+    this->m_tlm.sequencesFailed++;
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_setCancelRequested(
@@ -166,7 +171,16 @@ bool WasmSequencer ::resolveSequencePath(const Fw::StringBase& fileName, Fw::Str
         return false;
     }
 
-    const Fw::FormatStatus fmtStatus = filePath.format("%s%s", baseDir.toChar(), fileName.toChar());
+    // Join the base dir and file name with exactly one '/' separator. Without an
+    // explicit separator a base dir that lacks a trailing slash both mis-resolves
+    // ordinary names ("seqs" + "a.wasm" -> "seqsa.wasm") and can escape the
+    // containment boundary ("seqs" + "_priv/x.wasm" -> "seqs_priv/x.wasm", a sibling
+    // directory). The ".." rejection above plus a guaranteed base-dir prefix keeps
+    // the resolved path inside the configured directory.
+    const FwSizeType baseLen = static_cast<FwSizeType>(baseDir.length());
+    const char* const separator = (baseLen > 0 && baseDir.toChar()[baseLen - 1] == '/') ? "" : "/";
+
+    const Fw::FormatStatus fmtStatus = filePath.format("%s%s%s", baseDir.toChar(), separator, fileName.toChar());
     if (fmtStatus != Fw::FormatStatus::SUCCESS) {
         FW_ASSERT(fmtStatus == Fw::FormatStatus::OVERFLOWED, static_cast<FwAssertArgType>(fmtStatus));
         this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, fileName);
@@ -366,6 +380,7 @@ void WasmSequencer ::reportSequenceRuntimeFailure(WasmSequencer_ModuleIdx module
         case WasmSequencer_ExitReason::HOST_FAILURE:
         case WasmSequencer_ExitReason::UNEXPECTED_REPLY:
         case WasmSequencer_ExitReason::TIMER_INCOMPARABLE:
+        default:
             this->m_tlm.sequencesFailed++;
             this->log_WARNING_HI_SequenceHostFailure(moduleIdx, phase, this->m_exit.reason,
                                                      this->m_exit.lastHostFunction);
