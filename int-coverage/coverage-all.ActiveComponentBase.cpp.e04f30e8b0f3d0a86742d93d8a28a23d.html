@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-25 22:12:36</td>
+      <td>2026-08-26 23:07:34</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>21</td>
+      <td>20</td>
       <td>27</td>
-      <td class="coverage-medium">77.8%</td>
+      <td class="coverage-low">74.1%</td>
     </tr>
   </table>
 </div>
@@ -71,7 +71,7 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l16">Fw::ActiveComponentBase::ActiveComponentBase(char const*) (line 16)</a></td><td>called 20 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l112">Fw::ActiveComponentBase::dispatch() (line 112)</a></td><td>called 6074 times</td><td>73.0%</td></tr>
+    <tr><td><a href="#l112">Fw::ActiveComponentBase::dispatch() (line 112)</a></td><td>called 6133 times</td><td>64.0%</td></tr>
     <tr><td><a href="#l49">Fw::ActiveComponentBase::exit() (line 49)</a></td><td>called 20 times</td><td>70.0%</td></tr>
     <tr><td><a href="#l122">Fw::ActiveComponentBase::finalizer() (line 122)</a></td><td>called 20 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l25">Fw::ActiveComponentBase::getToStringFormatString() (line 25)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -80,7 +80,7 @@
     <tr><td><a href="#l60">Fw::ActiveComponentBase::join(void**) (line 60)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l120">Fw::ActiveComponentBase::preamble() (line 120)</a></td><td>called 15 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l101">Fw::ActiveComponentBase::s_taskLoop(void*) (line 101)</a></td><td>called 20 times</td><td>83.0%</td></tr>
-    <tr><td><a href="#l64">Fw::ActiveComponentBase::s_taskStateMachine(void*) (line 64)</a></td><td>called 6112 times</td><td>73.0%</td></tr>
+    <tr><td><a href="#l64">Fw::ActiveComponentBase::s_taskStateMachine(void*) (line 64)</a></td><td>called 6171 times</td><td>73.0%</td></tr>
     <tr><td><a href="#l30">Fw::ActiveComponentBase::start(unsigned char, unsigned long, unsigned long, int) (line 30)</a></td><td>called 20 times</td><td>68.0%</td></tr>
     <tr><td><a href="#l18">Fw::ActiveComponentBase::~ActiveComponentBase() (line 18)</a></td><td>called 20 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l10">Fw::ActiveComponentExitSerializableBuffer::ActiveComponentExitSerializableBuffer() (line 10)</a></td><td>called 20 times</td><td>100.0%</td></tr>
@@ -599,14 +599,14 @@
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6112</td>
+      <td class="linecount coveredLine">6171</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">s_taskStateMachine</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">component_pointer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6112</td>
+      <td class="linecount coveredLine">6171</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">component_pointer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -620,7 +620,7 @@
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6113</td>
+      <td class="linecount coveredLine">6174</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ActiveComponentBase</span><span class="o">*</span><span class="w"> </span><span class="n">component</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ActiveComponentBase</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">component_pointer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -658,14 +658,14 @@
           <summary class="linebranchSummary">3/5</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 20 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 6073 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 6134 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 20 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">6113</td>
+      <td class="linecount partialCoveredLine">6174</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">component</span><span class="o">-&gt;</span><span class="n">m_stage</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -728,7 +728,7 @@
       <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6073</td>
+      <td class="linecount coveredLine">6134</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Lifecycle</span><span class="o">::</span><span class="no">DISPATCHING</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -737,19 +737,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 18 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 6056 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 20 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 6115 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">6073</td>
+      <td class="linecount coveredLine">6134</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">component</span><span class="o">-&gt;</span><span class="n">dispatch</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">MsgDispatchStatus</span><span class="o">::</span><span class="n">MSG_DISPATCH_EXIT</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">18</td>
+      <td class="linecount coveredLine">20</td>
       <td class="src coveredLine"><span class="w">                </span><span class="n">component</span><span class="o">-&gt;</span><span class="n">m_stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Lifecycle</span><span class="o">::</span><span class="n">FINALIZING</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -763,7 +763,7 @@
       <td class="lineno"><a id="l85" href="#l85">85</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6074</td>
+      <td class="linecount coveredLine">6135</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -861,7 +861,7 @@
       <td class="lineno"><a id="l99" href="#l99">99</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6114</td>
+      <td class="linecount coveredLine">6175</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -919,19 +919,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 6115 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 6176 times.</div>
             <div class="takenBranch">&check; Branch 1 taken 20 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">6135</td>
+      <td class="linecount coveredLine">6196</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">component</span><span class="o">-&gt;</span><span class="n">m_stage</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">Lifecycle</span><span class="o">::</span><span class="n">DONE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l108" href="#l108">108</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6115</td>
+      <td class="linecount coveredLine">6176</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">s_taskStateMachine</span><span class="p">(</span><span class="n">component</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -959,7 +959,7 @@
       <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6074</td>
+      <td class="linecount coveredLine">6133</td>
       <td class="src coveredLine"><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">MsgDispatchStatus</span><span class="w"> </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">dispatch</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -973,18 +973,18 @@
       <td class="lineno"><a id="l114" href="#l114">114</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/6</summary>
+          <summary class="linebranchSummary">2/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 6062 times.</div>
+            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 6127 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 6062 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 6127 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">6074</td>
+      <td class="linecount partialCoveredLine">6133</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_task</span><span class="p">.</span><span class="n">isCooperative</span><span class="p">()</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">m_queue</span><span class="p">.</span><span class="n">getMessagesAvailable</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1005,7 +1005,7 @@
       <td class="lineno"><a id="l117" href="#l117">117</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6062</td>
+      <td class="linecount coveredLine">6127</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">doDispatch</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
