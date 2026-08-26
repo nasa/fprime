@@ -101,6 +101,27 @@ void WasmSequencerTester ::connectSerialOutTo(FwIndexType portNum, Fw::InputPort
     this->component.set_serialOut_OutputPort(portNum, &port);
 }
 
+void WasmSequencerTester ::disconnectGetTlmChan(FwIndexType portNum) {
+    Fw::OutputTlmGetPort& port = this->component.m_getTlmChan_OutputPort[portNum];
+    port.~OutputTlmGetPort();
+    new (&port) Fw::OutputTlmGetPort();
+    port.init();
+}
+
+void WasmSequencerTester ::disconnectGetParam(FwIndexType portNum) {
+    Fw::OutputPrmGetPort& port = this->component.m_getParam_OutputPort[portNum];
+    port.~OutputPrmGetPort();
+    new (&port) Fw::OutputPrmGetPort();
+    port.init();
+}
+
+void WasmSequencerTester ::disconnectCmdOut(FwIndexType portNum) {
+    Fw::OutputComPort& port = this->component.m_cmdOut_OutputPort[portNum];
+    port.~OutputComPort();
+    new (&port) Fw::OutputComPort();
+    port.init();
+}
+
 Svc::SeqArgs WasmSequencerTester ::makeSeqArgs(const U8* bytes, FwSizeType size) {
     Svc::SeqArgs args;
     Svc::SeqArgs::Type_of_buffer buffer = {};

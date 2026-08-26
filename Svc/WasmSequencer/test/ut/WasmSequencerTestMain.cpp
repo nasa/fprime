@@ -498,6 +498,12 @@ TEST_F(WasmSequencerTester, RunExitNonZeroFails) {
     ASSERT_EVENTS_SequenceExited(0, 0, WasmSequencer_SequencePhase::MAIN, 1);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 26, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
+
+    // Pin the SequencesFailed increment on the HOST_EXIT (non-zero-exit) branch:
+    // assertSequenceFailureCount above only counts the event, not the counter.
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
 }
 
 TEST_F(WasmSequencerTester, RunPanicFails) {
@@ -896,6 +902,57 @@ TEST_F(WasmSequencerTester, TelemetryRead) {
     this->assertSequenceFailureCount(0);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
+}
+
+TEST_F(WasmSequencerTester, TelemetryReadPortNotConnectedTraps) {
+    // getTlmChan is a plain (not-required) output port. With it disconnected, tlm()
+    // must not invoke the generated invoker (which would FW_ASSERT); instead it logs
+    // HostFunctionInvalidPort(TELEMETRY) and traps the sequence.
+    this->disconnectGetTlmChan(0);
+
+    StagedAsset file_asset(*this, "tlm.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 74, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidPort_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidPort(0, WasmSequencer_HostFunction::TELEMETRY, 0, 0);
+    this->assertSequenceFailureCount(1);
+    // The port was never invoked.
+    ASSERT_from_getTlmChan_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, ParameterReadPortNotConnectedTraps) {
+    // getParam disconnected: prm() logs HostFunctionInvalidPort(PARAMETER) and traps.
+    this->disconnectGetParam(0);
+
+    StagedAsset file_asset(*this, "prm.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 75, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidPort_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidPort(0, WasmSequencer_HostFunction::PARAMETER, 0, 0);
+    this->assertSequenceFailureCount(1);
+    ASSERT_from_getParam_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, CommandPortNotConnectedTraps) {
+    // cmdOut disconnected: cmd() logs HostFunctionInvalidPort(COMMAND) and traps.
+    this->disconnectCmdOut(0);
+
+    StagedAsset file_asset(*this, "cmd.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 76, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidPort_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidPort(0, WasmSequencer_HostFunction::COMMAND, 0, 0);
+    this->assertSequenceFailureCount(1);
+    ASSERT_from_cmdOut_SIZE(0);
 }
 
 TEST_F(WasmSequencerTester, TelemetryReadValueMismatchTraps) {
@@ -1442,6 +1499,52 @@ TEST_F(WasmSequencerTester, TelemetryTrapRecordsReasonAndFails) {
     ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::UNREACHABLE);
 }
 
+TEST_F(WasmSequencerTester, LastTrapReasonClearedAcrossSequences) {
+    // LastTrapReason must reflect only the current sequence. A trap records UNREACHABLE;
+    // a subsequent clean run must reset it to NONE (clearExitStatus at RUNNING entry),
+    // so stale trap telemetry never leaks from a prior sequence into a later one.
+    StagedAsset trap_asset(*this, "unreachable.wasm");
+    this->sendCmd_RUN(0, 600, trap_asset.file(), BLOCK, {});
+    this->dispatchAll();
+    this->flushTelemetry();
+    ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::UNREACHABLE);
+
+    // A later successful run clears the recorded trap reason.
+    StagedAsset ok_asset(*this, "empty.wasm");
+    this->sendCmd_RUN(0, 601, ok_asset.file(), BLOCK, {});
+    this->dispatchAll();
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    this->flushTelemetry();
+    ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::NONE);
+}
+
+TEST_F(WasmSequencerTester, LastHostFunctionClearedAcrossSequences) {
+    // lastHostFunction (reported in SequenceHostFailure) must reflect only the current
+    // sequence. Sequence A fails inside the COMMAND host function, leaving
+    // lastHostFunction = COMMAND. Sequence B then fails via an unexpected reply while
+    // spinning -- it awaited no host function, so it must report NONE, not the stale
+    // COMMAND. clearExitStatus resets lastHostFunction at RUNNING entry.
+    {
+        StagedAsset bad(*this, "cmd_badptr.wasm");
+        this->sendCmd_RUN(0, 610, bad.file(), BLOCK, {});
+        this->dispatchAll();
+        ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
+                                          WasmSequencer_ExitReason::HOST_FAILURE,
+                                          WasmSequencer_HostFunction::COMMAND);
+    }
+    this->clearHistory();
+
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+    StagedAsset loopmod(*this, "loop.wasm");
+    this->sendCmd_RUN(0, 611, loopmod.file(), NO_BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
+    this->invoke_to_cmdResponseIn(0, 0, this->currentCmdUid(), Fw::CmdResponse::OK);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
+                                      WasmSequencer_ExitReason::UNEXPECTED_REPLY,
+                                      WasmSequencer_HostFunction::NONE);
+}
+
 TEST_F(WasmSequencerTester, TelemetryCancelledCount) {
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
@@ -1580,6 +1683,11 @@ TEST_F(WasmSequencerTester, CommandBadPointerFails) {
     ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::COMMAND,
                                              WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
     this->assertSequenceFailureCount(1);
+    // The guest-memory read failure aborts the sequence as a HOST_FAILURE, naming the
+    // COMMAND host function (pins the HOST_FAILURE exit-reason and its payload).
+    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
+                                      WasmSequencer_ExitReason::HOST_FAILURE,
+                                      WasmSequencer_HostFunction::COMMAND);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 92, Fw::CmdResponse::EXECUTION_ERROR);
     // No command was actually dispatched.
     ASSERT_from_cmdOut_SIZE(0);
@@ -1781,6 +1889,24 @@ TEST_F(WasmSequencerTester, SleepDurationOverflowFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
+TEST_F(WasmSequencerTester, AbsoluteSleepDurationOverflowFails) {
+    // Absolute-sleep analogue of SleepDurationOverflowFails: an asleep() whose
+    // whole-seconds part (micros / 1e6) overflows the U32 seconds field of Fw::Time
+    // is rejected by wasmAsleep with SleepDurationTooLarge(ASLEEP) -> TRAP; the
+    // sequence fails to IDLE. (Exercises the ASLEEP guard distinct from the RSLEEP one.)
+    StagedAsset file_asset(*this, "asleep_overflow.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 104, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_SleepDurationTooLarge_SIZE(1);
+    ASSERT_EVENTS_SleepDurationTooLarge(0, WasmSequencer_HostFunction::ASLEEP, static_cast<U64>(0x7FFFFFFFFFFFFFFFULL));
+    this->assertSequenceFailureCount(1);
+    ASSERT_EVENTS_SequenceTrapped(0, 0, WasmSequencer_SequencePhase::MAIN, WasmSequencer_TrapReason::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
 // ----------------------------------------------------------------------
 // PAUSE / CONTINUE / CANCEL across the run state machine (loop.wasm)
 // ----------------------------------------------------------------------
@@ -1806,7 +1932,10 @@ TEST_F(WasmSequencerTester, PauseThenContinueCompletes) {
     this->sendCmd_CONTINUE(0, 112);
     this->dispatchUntilControllerState(ControllerState::READY);
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
-    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    // CONTINUE from PAUSED answers OK (RUN OK index 0, PAUSE OK index 1, CONTINUE index 2).
+    ASSERT_CMD_RESPONSE(2, OPCODE_CONTINUE, 112, Fw::CmdResponse::OK);
+    // Value-assert the success event's module index (not just its presence).
+    ASSERT_EVENTS_SequenceSucceeded(0, 0);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
@@ -1823,7 +1952,8 @@ TEST_F(WasmSequencerTester, CancelWhileSpinning) {
     this->dispatchUntilControllerState(ControllerState::IDLE);
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_SequenceCancelled_SIZE(1);
+    // Value-assert the cancel event's module index and phase (cancelled while in main).
+    ASSERT_EVENTS_SequenceCancelled(0, 0, WasmSequencer_SequencePhase::MAIN);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
@@ -2398,7 +2528,14 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsAwaitingCommand) {
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     this->assertSequenceFailureCount(1);
+    // A reply timeout aborts as a host failure naming the awaited COMMAND, and counts
+    // one failed sequence (pins the REPLY_TIMEOUT exit-reason and the counter).
+    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
+                                      WasmSequencer_ExitReason::REPLY_TIMEOUT,
+                                      WasmSequencer_HostFunction::COMMAND);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 400, Fw::CmdResponse::EXECUTION_ERROR);
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
 }
 
 TEST_F(WasmSequencerTester, HostFunctionTimeoutTimeIncomparableFails) {
@@ -2429,6 +2566,9 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutTimeIncomparableFails) {
                                       WasmSequencer_ExitReason::TIMER_INCOMPARABLE,
                                       WasmSequencer_HostFunction::COMMAND);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 401, Fw::CmdResponse::EXECUTION_ERROR);
+    // Pins the SequencesFailed increment on the default/host-failure branch.
+    this->flushTelemetry();
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
 }
 
 TEST_F(WasmSequencerTester, HostFunctionTimeoutDisabledByZero) {
@@ -2742,6 +2882,11 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileSpinningFails) {
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     this->assertSequenceFailureCount(1);
+    // An unexpected reply while spinning aborts as UNEXPECTED_REPLY; no host function
+    // was awaited, so the reported host function is NONE (pins the exit-reason payload).
+    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
+                                      WasmSequencer_ExitReason::UNEXPECTED_REPLY,
+                                      WasmSequencer_HostFunction::NONE);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
@@ -2858,7 +3003,79 @@ TEST_F(WasmSequencerTester, WaitFinishQueueOverflow) {
     // All queued WAITs are drained on finish and the sequence returns to READY.
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_EVENTS_TooManyBlockingCommands_SIZE(1);
+    // The overflowing (9th) WAIT is rejected immediately with EXECUTION_ERROR. It is
+    // handled while spinning, so its response lands right after the RUN's load-time OK
+    // (index 0) and before the eight enqueued WAITs drain OK on finish.
+    ASSERT_CMD_RESPONSE(1, OPCODE_WAIT, 189, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenRunningSequenceCancelled) {
+    // A WAIT queued while a sequence runs is answered EXECUTION_ERROR when that
+    // sequence is cancelled: respond_block_ERROR drains m_waiting on the main-phase
+    // failure path.
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+
+    StagedAsset file_asset(*this, "loop.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 500, file, NO_BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
+
+    this->sendCmd_WAIT(0, 501);  // queues: controller busy in RUNNING_MAIN
+    this->sendCmd_CANCEL(0, 502);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    // RUN answered OK at load (0); CANCEL answers OK synchronously (1); the queued
+    // WAIT is drained EXECUTION_ERROR when the cancel fails the sequence (2).
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 500, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_CANCEL, 502, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(2, OPCODE_WAIT, 501, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenRunWithStartCancelled) {
+    // A WAIT queued while a RUN-with-start runs its start function is answered
+    // EXECUTION_ERROR when a cancel latched in RUNNING_START_PENDING_MAIN diverts the
+    // sequence to IDLE at START_MAIN_CANCEL_CHECK: cancelPendingRequest drains m_waiting.
+    // The dispatch sequence mirrors RunWithStartCancelledInStartMainGapDiverts so the
+    // cancel is honored via the load-window latch (not the running-engine path).
+    StagedAsset file_asset(*this, "start.wasm");
+    const Fw::String& file = file_asset.file();
+
+    this->sendCmd_RUN(0, 510, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::RUNNING_START_PENDING_MAIN);
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
+    this->dispatchOne();  // run the (empty) start spin -> interpreterFinished queued
+
+    this->sendCmd_WAIT(0, 511);   // queues: controller still RUNNING_START_PENDING_MAIN
+    this->sendCmd_CANCEL(0, 512);  // latched, honored at START_MAIN_CANCEL_CHECK
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    // CANCEL answers OK synchronously (0); cancelPendingRequest answers the diverted
+    // RUN (1) and the queued WAIT (2) both with EXECUTION_ERROR.
+    ASSERT_CMD_RESPONSE(0, OPCODE_CANCEL, 512, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_RUN, 510, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(2, OPCODE_WAIT, 511, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenStartFails) {
+    // A WAIT queued while a LOAD-with-start runs is answered EXECUTION_ERROR when the
+    // start function traps: respond_ERROR drains m_waiting on the start-phase failure.
+    StagedAsset file_asset(*this, "start_trap.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_LOAD(0, 520, file, Fw::CmdStringArg(""));
+    this->dispatchUntilControllerState(ControllerState::RUNNING_START);
+
+    this->sendCmd_WAIT(0, 521);  // queues: controller busy running the start function
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    // The failed LOAD (0) and the queued WAIT (1) are both answered EXECUTION_ERROR.
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 520, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(1, OPCODE_WAIT, 521, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 // ----------------------------------------------------------------------
@@ -2877,6 +3094,8 @@ TEST_F(WasmSequencerTester, ContinueWhileSpinningIsOk) {
     this->dispatchUntilControllerState(ControllerState::READY);
     // CONTINUE while running just responds OK; the loop still finishes.
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    // The RUN (NO_BLOCK) answered OK at load (index 0); CONTINUE answers OK (index 1).
+    ASSERT_CMD_RESPONSE(1, OPCODE_CONTINUE, 141, Fw::CmdResponse::OK);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 

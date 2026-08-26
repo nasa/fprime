@@ -114,6 +114,13 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! "serial port send failed" error path.
     void connectSerialOutTo(FwIndexType portNum, Fw::InputPortBase& port);
 
+    //! Reset a plain (not-required) typed output port to an unconnected state (same
+    //! placement-new idiom as disconnectSerialOut). Used to exercise the host's
+    //! "output port not connected" guards for the tlm / prm / cmd host functions.
+    void disconnectGetTlmChan(FwIndexType portNum);
+    void disconnectGetParam(FwIndexType portNum);
+    void disconnectCmdOut(FwIndexType portNum);
+
     // ----------------------------------------------------------------------
     // Dispatch / state helpers
     // ----------------------------------------------------------------------
