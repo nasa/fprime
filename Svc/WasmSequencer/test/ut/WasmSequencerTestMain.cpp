@@ -1187,8 +1187,7 @@ TEST_F(WasmSequencerTester, ArgsOversizedSizeRejected) {
     // sequence fails, and the guest never resumes (nothing leaked, no SequenceSucceeded).
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_BufferTooLarge_SIZE(1);
-    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::ARGS, 32,
-                                 static_cast<U32>(SequenceArgumentsMaxSize));
+    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::ARGS, 32, static_cast<U32>(SequenceArgumentsMaxSize));
     ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
     this->assertSequenceFailureCount(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);

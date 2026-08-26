@@ -390,8 +390,8 @@ void WasmSequencer ::dispatchRelativeSleep() {
     const U32 useconds = static_cast<U32>(this->m_pendingHostFunction.u.rsleep.us % 1000000);
 
     const Fw::Time now = this->getTime();
-    const U64 deadlineSeconds = static_cast<U64>(now.getSeconds()) + seconds +
-                                (static_cast<U64>(now.getUSeconds()) + useconds) / 1000000u;
+    const U64 deadlineSeconds =
+        static_cast<U64>(now.getSeconds()) + seconds + (static_cast<U64>(now.getUSeconds()) + useconds) / 1000000u;
 
     Fw::Time timer = now;
     if (deadlineSeconds > static_cast<U64>(std::numeric_limits<U32>::max())) {
@@ -419,8 +419,7 @@ void WasmSequencer ::dispatchAbsoluteSleep() {
 void WasmSequencer ::dispatchArgs() {
     const FwSizeType argCapacity = static_cast<FwSizeType>(sizeof(this->m_args.get_buffer()));
     if (this->m_args.get_size() > argCapacity) {
-        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::ARGS,
-                                            static_cast<U32>(this->m_args.get_size()),
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::ARGS, static_cast<U32>(this->m_args.get_size()),
                                             static_cast<U32>(argCapacity));
         this->interpreter_sendSignal_hostResponseFailure();
         return;
