@@ -3679,8 +3679,8 @@ TEST_F(WasmSequencerTester, SpacewasmPanicBridgeAssertsFsw) {
     ::Test::UnitTestAssert assertHook;
     const char filename[] = "engine.rs";
     const char msg[] = "internal invariant violated";
-    spacewasm_panic(reinterpret_cast<const U8*>(filename), sizeof(filename) - 1, 42,
-                    reinterpret_cast<const U8*>(msg), sizeof(msg) - 1);
+    spacewasm_panic(reinterpret_cast<const U8*>(filename), sizeof(filename) - 1, 42, reinterpret_cast<const U8*>(msg),
+                    sizeof(msg) - 1);
     ASSERT_TRUE(assertHook.assertFailed());
 
     ::Test::UnitTestAssert::File file;
