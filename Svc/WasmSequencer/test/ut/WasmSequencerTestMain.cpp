@@ -7,9 +7,13 @@
 #include "WasmSequencerGTestBase.hpp"
 #include "WasmSequencerTester.hpp"
 
+#include <cstring>
+
 #include "Fw/Port/InputPortBase.hpp"
+#include "Fw/Test/UnitTestAssert.hpp"
 #include "WasmSequencer_ControllerStateMachine_StateEnumAc.hpp"
 #include "config/FwPacketDescriptorTypeAliasAc.h"
+#include "spacewasm.h"
 
 namespace Svc {
 
@@ -3657,6 +3661,33 @@ TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
     ASSERT_CMD_RESPONSE(5, OPCODE_CANCEL, 6, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(6, OPCODE_RUN, 7, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(7, OPCODE_RUN, 8, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+// spacewasm_panic is the #[panic_handler] the whole fprime_spacewasm staticlib
+// registers (see spacewasm_c_api's "provide-panic-handler" feature): it fires on
+// any internal Rust panic in the engine, not on a guest trap (that's the separate
+// fprime_v1.panic host import exercised by panic.wasm above). It is declared
+// `-> !` -- it must not return -- so its only contract to verify is that it
+// reports the panic and maps it to an FSW assertion.
+//
+// A death test (fork + expect abort) would exercise this too, but the forked
+// child's coverage counters are lost on abort() before gcov's atexit flush
+// runs -- the lines would execute but never show as covered. Swap in the
+// non-aborting ::Test::UnitTestAssert hook instead so the assert fires in this
+// process and gcov sees it.
+TEST_F(WasmSequencerTester, SpacewasmPanicBridgeAssertsFsw) {
+    ::Test::UnitTestAssert assertHook;
+    const char filename[] = "engine.rs";
+    const char msg[] = "internal invariant violated";
+    spacewasm_panic(reinterpret_cast<const U8*>(filename), sizeof(filename) - 1, 42,
+                    reinterpret_cast<const U8*>(msg), sizeof(msg) - 1);
+    ASSERT_TRUE(assertHook.assertFailed());
+
+    ::Test::UnitTestAssert::File file;
+    FwSizeType lineNo = 0, numArgs = 0;
+    FwAssertArgType arg1 = 0, arg2 = 0, arg3 = 0, arg4 = 0, arg5 = 0, arg6 = 0;
+    assertHook.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
+    ASSERT_NE(strstr(file.toChar(), "WasmSequencerHelpers.cpp"), nullptr);
 }
 
 // ----------------------------------------------------------------------

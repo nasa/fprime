@@ -114,6 +114,7 @@ register_fprime_ut(
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/WasmSequencerTester.cpp"
     DEPENDS
         STest # For rules-based testing
+        Fw_Test # For Test::UnitTestAssert (non-aborting FW_ASSERT hook)
     UT_AUTO_HELPERS
 )
 
