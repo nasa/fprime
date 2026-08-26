@@ -175,6 +175,9 @@ state machine InterpreterStateMachine {
     @ Dequeue a serial message into the host guest memory and resume the interpreter
     action dequeueSerialAndResume: FwIndexType
 
+    @ Return true `dequeueSerialAndResume` processed a message successfully
+    guard deqeueSucceeded
+
     #######################
     # Interpreter signals #
     #######################
@@ -251,7 +254,11 @@ state machine InterpreterStateMachine {
                 on checkTimers do { checkSleepTimers }
             }
 
-            on serialInMessage if blockingSerialIn do { dequeueSerialAndResume }
+            on serialInMessage if blockingSerialIn do { dequeueSerialAndResume } enter DEQUEUE_CHECK
+
+            choice DEQUEUE_CHECK {
+                if deqeueSucceeded enter PAUSE_CHECK else do { setExitReason_HOST_FAILURE } enter IDLE
+            }
 
             on hostResume do { resume } enter PAUSE_CHECK
             on hostResumeI32 do { resumeI32 } enter PAUSE_CHECK

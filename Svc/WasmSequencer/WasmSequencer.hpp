@@ -733,6 +733,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         const FwIndexType& value                                   //!< The value
     ) const override;
 
+    //! Implementation for guard deqeueSucceeded of state machine Svc_WasmSequencer_InterpreterStateMachine
+    //!
+    //! Return true `dequeueSerialAndResume` processed a message successfully
+    bool Svc_WasmSequencer_InterpreterStateMachine_guard_deqeueSucceeded(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
+    ) const override;
+
   private:
     /// The global allocator callbacks
     U8* globalAlloc(U32 size, U32 align);
@@ -851,6 +859,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! HOST_FUNCTION_TIMEOUT_SECS. Only meaningful while awaiting one of those.
     Fw::Time m_hostFunctionStart;
     bool m_hasHostFunctionStart;
+
+    bool m_dequeueSucceeded;
 
     //! Flag indicating a function invocation failed
     spacewasm_status_t m_invokeStatus;

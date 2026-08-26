@@ -55,6 +55,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_hasPendingTimer(false),
       m_hostFunctionStart(),
       m_hasHostFunctionStart(false),
+      m_dequeueSucceeded(false),
       m_invokeStatus(SPACEWASM_OK),
       m_pendingPause(false),
       m_cancelRequested(false),
