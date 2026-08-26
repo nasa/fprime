@@ -1,38 +1,38 @@
 module Fw {
-  
-  @ Data structure for Time 
-  dictionary struct TimeValue {
-    timeBase: TimeBase  @< basis of time (defined by system)
-    timeContext: FwTimeContextStoreType  @< user settable value. Could be reboot count, node, etc
-    seconds: U32  @< seconds portion of Time
-    useconds: U32  @< microseconds portion of Time
-  }
 
-  type Time
+    @ Data structure for Time
+    dictionary struct TimeValue {
+        timeBase: TimeBase                   @< basis of time (defined by system)
+        timeContext: FwTimeContextStoreType  @< user settable value. Could be reboot count, node, etc
+        seconds: U32                         @< seconds portion of Time
+        useconds: U32                        @< microseconds portion of Time
+    }
 
-  @ Time port
-  port Time(
-    ref $time: Fw.Time @< Reference to Time object
-  )
+    type Time
 
-  @ Data structure for Time Interval
-  dictionary struct TimeIntervalValue {
-    seconds: U32  @< seconds portion of TimeInterval
-    useconds: U32  @< microseconds portion of TimeInterval
-  }
+    @ Time port
+    port Time(
+        ref $time: Fw.Time  @< Reference to Time object
+    )
 
-  type TimeInterval
+    @ Data structure for Time Interval
+    dictionary struct TimeIntervalValue {
+        seconds: U32   @< seconds portion of TimeInterval
+        useconds: U32  @< microseconds portion of TimeInterval
+    }
 
-  @ Time interval port
-  port TimeInterval(
-    ref timeInterval: Fw.TimeInterval @< Reference to TimeInterval object
-  )
+    type TimeInterval
 
-  dictionary enum TimeComparison {
-    LT = -1
-    EQ = 0
-    GT = 1
-    INCOMPARABLE = 2
-  }
+    @ Time interval port
+    port TimeInterval(
+        ref timeInterval: Fw.TimeInterval  @< Reference to TimeInterval object
+    )
+
+    dictionary enum TimeComparison {
+        LT           = -1
+        EQ           = 0
+        GT           = 1
+        INCOMPARABLE = 2
+    }
 
 }

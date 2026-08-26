@@ -36,7 +36,7 @@ struct PushTlmValDirective {
     chanId: FwChanIdType
 }
 
-@ pushes a tlm buffer to the stack, and then pushes the time 
+@ pushes a tlm buffer to the stack, and then pushes the time
 @ of the tlm meas to the stack
 struct PushTlmValAndTimeDirective {
     @ the tlm channel id to get the time and value of
@@ -213,9 +213,13 @@ internal port directive_if(directive: IfDirective) priority 6 assert
 
 internal port directive_noOp(directive: NoOpDirective) priority 6 assert
 
-internal port directive_pushTlmVal(directive: PushTlmValDirective) priority 6 assert
+internal port directive_pushTlmVal(directive: PushTlmValDirective) \
+    priority 6 \
+    assert
 
-internal port directive_pushTlmValAndTime(directive: PushTlmValAndTimeDirective) priority 6 assert
+internal port directive_pushTlmValAndTime(directive: PushTlmValAndTimeDirective) \
+    priority 6 \
+    assert
 
 internal port directive_pushPrm(directive: PushPrmDirective) priority 6 assert
 
@@ -227,7 +231,11 @@ internal port directive_exit(directive: ExitDirective) priority 6 assert
 
 internal port directive_allocate(directive: AllocateDirective) priority 6 assert
 
-internal port directive_storeRelConstOffset(directive: StoreRelConstOffsetDirective) priority 6 assert
+internal port directive_storeRelConstOffset(
+    directive: StoreRelConstOffsetDirective
+) \
+    priority 6 \
+    assert
 
 internal port directive_loadRel(directive: LoadRelDirective) priority 6 assert
 
@@ -259,8 +267,14 @@ internal port directive_loadAbs(directive: LoadAbsDirective) priority 6 assert
 
 internal port directive_storeAbs(directive: StoreAbsDirective) priority 6 assert
 
-internal port directive_storeAbsConstOffset(directive: StoreAbsConstOffsetDirective) priority 6 assert
+internal port directive_storeAbsConstOffset(
+    directive: StoreAbsConstOffsetDirective
+) \
+    priority 6 \
+    assert
 
 internal port directive_popEvent(directive: PopEventDirective) priority 6 assert
 
-internal port directive_popSerializable(directive: PopSerializableDirective) priority 6 assert
+internal port directive_popSerializable(directive: PopSerializableDirective) \
+    priority 6 \
+    assert

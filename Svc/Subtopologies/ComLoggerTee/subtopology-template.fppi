@@ -6,11 +6,11 @@ instance comLog: Svc.ComLogger base id BASE_ID \
 
 instance comSplitter: Svc.ComSplitter base id BASE_ID + 0x0100
 
-topology Subtopology{
+topology Subtopology {
     instance comLog
     instance comSplitter
 
-    connections ComSplitter{
+    connections ComSplitter {
         comSplitter.comOut -> comLog.comIn
     }
 

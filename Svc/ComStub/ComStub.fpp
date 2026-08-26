@@ -14,7 +14,7 @@ module Svc {
         # ----------------------------------------------------------------------
         # Additional ports to connect to an AsyncByteStreamDriver (asynchronous)
         # ----------------------------------------------------------------------
-    
+
         @ Send (write) data to the driver asynchronously
         output port drvAsyncSendOut: Fw.BufferSend
 

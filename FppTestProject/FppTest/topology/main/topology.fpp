@@ -1,17 +1,17 @@
 module FppTest {
 
-  topology Receiver {
-    instance receiver1
-    instance receiver2
-  }
+    topology Receiver {
+        instance receiver1
+        instance receiver2
+    }
 
-  deployment topology FppTest {
+    deployment topology FppTest {
 
-    instance Sync
-    instance Guarded
-    instance Async
-    instance TopPorts
+        instance Sync
+        instance Guarded
+        instance Async
+        instance TopPorts
 
-  }
+    }
 
 }

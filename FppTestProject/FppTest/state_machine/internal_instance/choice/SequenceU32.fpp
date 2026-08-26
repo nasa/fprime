@@ -1,13 +1,13 @@
 module FppTest {
 
-  module SmInstanceChoice {
+    module SmInstanceChoice {
 
-    active component SequenceU32 {
+        active component SequenceU32 {
 
-      state machine instance smChoiceSequenceU32: SmChoice.SequenceU32
+            state machine instance smChoiceSequenceU32: SmChoice.SequenceU32
+
+        }
 
     }
-
-  }
 
 }

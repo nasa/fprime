@@ -18,7 +18,6 @@ module Drv {
         guarded input port recvReturnIn: Fw.BufferSend
     }
 
-
     # ----------------------------------------------------------------------
     # Client interface
     # Use this interface to connect to a ByteStreamDriver

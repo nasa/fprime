@@ -7,43 +7,48 @@ module Svc {
         output port compressChunk: CompressChunk
 
         @ Chunk size to use when passing data to the compression backend
-        param CHUNK_SIZE: FwSizeStoreType default 32*1024
-        
+        param CHUNK_SIZE: FwSizeStoreType default 32 * 1024
+
         @ Number of bytes to use in a compression chunk
         param ENABLE: Fw.Enabled default Fw.Enabled.ENABLED
 
-        event CompressionComplete(dp_id: FwDpIdType,
-                                  initial_size: FwSizeType
-                                  final_size: FwSizeType) \
-            severity diagnostic id 0 \
+        event CompressionComplete(
+            dp_id: FwDpIdType
+            initial_size: FwSizeType
+            final_size: FwSizeType
+        ) \
+            severity diagnostic \
+            id 0 \
             format "Compressed Data Product {} from {} to {} bytes"
 
-        event DidNotCompress(dp_id: FwDpIdType,
-                             data_size: FwSizeType) \
+        event DidNotCompress(dp_id: FwDpIdType, data_size: FwSizeType) \
             severity activity low \
             format "Unable to reduce size of Data Product {}. Uncompressed size {}" \
             throttle 10
 
         @ Error occurred when deserializing the container header
-        event InvalidHeader(buffer_size: FwSizeType @< The incoming buffer size
-                            error_code: U32 @< The error code
-                            ) \
+        event InvalidHeader(
+            buffer_size: FwSizeType  @< The incoming buffer size
+            error_code: U32          @< The error code
+        ) \
             severity warning high \
             format "Received buffer of size {}; deserialization of container header failed with error code {}" \
             throttle 10
 
         @ Received buffer is too small to hold a data product packet
-        event BufferTooSmallForPacket(buffer_size: FwSizeType @< The incoming buffer size
-                                      min_size: FwSizeType @< The minimum required size
-                                      ) \
+        event BufferTooSmallForPacket(
+            buffer_size: FwSizeType  @< The incoming buffer size
+            min_size: FwSizeType     @< The minimum required size
+        ) \
             severity warning high \
             format "Received buffer has size {}; minimum required size is {}" \
             throttle 10
 
         @ Received container is too large for its size to be stored in a record size field
-        event ContainerTooLarge(dp_id: FwDpIdType @< The data product ID
-                                data_size: FwSizeType @< The container data size
-                                ) \
+        event ContainerTooLarge(
+            dp_id: FwDpIdType      @< The data product ID
+            data_size: FwSizeType  @< The container data size
+        ) \
             severity warning high \
             format "Data Product {} has data size {}, too large for a record size field" \
             throttle 10

@@ -1,15 +1,15 @@
 module FppTest {
 
-  module Array {
+    module Array {
 
-    enum E {
-      A,
-      B,
-      C,
+        enum E {
+            A
+            B
+            C
+        }
+
+        array Enum = [3] E default [E.A, E.B, E.C]
+
     }
-
-    array Enum = [3] E default [ E.A, E.B, E.C ]
-
-  }
 
 }

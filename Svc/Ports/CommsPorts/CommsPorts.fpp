@@ -12,7 +12,7 @@ module Svc {
         data: Fw.Buffer
         context: ComCfg.FrameContext
     }
- 
+
     @ Port for sending communications data (frames) buffer along with context information
     port ComDataWithContext(ref data: Fw.Buffer, context: ComCfg.FrameContext)
 

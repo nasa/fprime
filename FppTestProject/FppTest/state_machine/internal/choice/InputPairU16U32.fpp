@@ -1,9 +1,9 @@
 module FppTest {
 
-  module SmChoice {
+    module SmChoice {
 
-    include "include/InputPairU16U32.fppi"
+        include "include/InputPairU16U32.fppi"
 
-  }
+    }
 
 }

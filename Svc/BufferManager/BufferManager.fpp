@@ -1,49 +1,49 @@
 module Svc {
 
-  @ A component for managing memory buffers
-  passive component BufferManager {
+    @ A component for managing memory buffers
+    passive component BufferManager {
 
-    # ----------------------------------------------------------------------
-    # General ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # General ports
+        # ----------------------------------------------------------------------
 
-    @ Mutex locked Buffer send in input port
-    guarded input port bufferSendIn: Fw.BufferSend
+        @ Mutex locked Buffer send in input port
+        guarded input port bufferSendIn: Fw.BufferSend
 
-    @ Mutex locked Buffer callee input port
-    guarded input port bufferGetCallee: Fw.BufferGet
+        @ Mutex locked Buffer callee input port
+        guarded input port bufferGetCallee: Fw.BufferGet
 
-    @ Schedule input port
-    guarded input port schedIn: Svc.Sched
+        @ Schedule input port
+        guarded input port schedIn: Svc.Sched
 
-    # ----------------------------------------------------------------------
-    # Special ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Special ports
+        # ----------------------------------------------------------------------
 
-    @ Port for getting the time
-    time get port timeCaller
+        @ Port for getting the time
+        time get port timeCaller
 
-    @ Port for emitting events
-    event port eventOut
+        @ Port for emitting events
+        event port eventOut
 
-    @ Port for emitting text events
-    text event port textEventOut
+        @ Port for emitting text events
+        text event port textEventOut
 
-    @ Port for emitting Telemetry
-    telemetry port tlmOut
+        @ Port for emitting Telemetry
+        telemetry port tlmOut
 
-    # ----------------------------------------------------------------------
-    # Events
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Events
+        # ----------------------------------------------------------------------
 
-    include "Events.fppi"
+        include "Events.fppi"
 
-    # ----------------------------------------------------------------------
-    # Telemetry
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Telemetry
+        # ----------------------------------------------------------------------
 
-    include "Telemetry.fppi"
+        include "Telemetry.fppi"
 
-  }
+    }
 
 }

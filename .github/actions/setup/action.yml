@@ -22,4 +22,6 @@ runs:
     shell: bash
   - run: which fpp-check
     shell: bash
-    
+  - run: which fpp-format
+    shell: bash
+

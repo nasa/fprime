@@ -45,22 +45,22 @@ module Ref {
         }
 
         struct StructWithStringMembers {
-            stringMember: string size stringSize,
+            stringMember: string size stringSize
             stringArrayMember: StringArray
         }
 
         struct StructWithEverything {
-            integerMember: I32Alias,
-            floatMember: F32,
-            stringMember: string size stringSize,
-            booleanMember: bool,
-            enumMember: ColorEnum,
-            arrayMemberU32: [2] U32Array,
-            F32Array: F32Array,
-            U32Array: U32Array,
+            integerMember: I32Alias
+            floatMember: F32
+            stringMember: string size stringSize
+            booleanMember: bool
+            enumMember: ColorEnum
+            arrayMemberU32: [2] U32Array
+            F32Array: F32Array
+            U32Array: U32Array
             enumArray: EnumArray
-            stringArray: StringArray,
-            booleanArray: BooleanArray,
+            stringArray: StringArray
+            booleanArray: BooleanArray
             structWithStrings: StructWithStringMembers
             nestedArrays: ArrayOfStringArray
         }
@@ -69,10 +69,17 @@ module Ref {
         async command SelectColor(color: ColorEnum) opcode 0
 
         @ Command for generating a DP
-        sync command Dp(reqType: DpReqType, $priority: U32, proc: Fw.DpCfg.ProcType)
-        
+        sync command Dp(
+            reqType: DpReqType
+            $priority: U32
+            proc: Fw.DpCfg.ProcType
+        )
+
         @ Color selected event
-        event ColorSelected(color: ColorEnum) severity activity high id 0 format "Color selected {}"
+        event ColorSelected(color: ColorEnum) \
+            severity activity high \
+            id 0 \
+            format "Color selected {}"
 
         @ DP started event
         event DpStarted(records: U32) \

@@ -1,9 +1,9 @@
 module FppTest {
 
-  module SmState {
+    module SmState {
 
-    include "include/BasicTestStruct.fppi"
+        include "include/BasicTestStruct.fppi"
 
-  }
+    }
 
 }

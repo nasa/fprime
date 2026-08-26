@@ -1,95 +1,95 @@
 module Fw {
 
-  @ A string stored in a fixed-size buffer
-  type String
+    @ A string stored in a fixed-size buffer
+    type String
 
-  @ A value of polymorphic type
-  type PolyType
+    @ A value of polymorphic type
+    type PolyType
 
-  @ FPP shadow-enum representing Fw::FormatStatus
-  enum StringFormatStatus : U8 {
-    SUCCESS, @< Format worked
-    OVERFLOWED, @< Format overflowed
-    INVALID_FORMAT_STRING, @< Format provided invalid format string
-    SIZE_OVERFLOW, @< FwSizeType overflowed the range of size_t
-    OTHER_ERROR @< An error was returned from an underlying call
-  }
+    @ FPP shadow-enum representing Fw::FormatStatus
+    enum StringFormatStatus : U8 {
+        SUCCESS                @< Format worked
+        OVERFLOWED             @< Format overflowed
+        INVALID_FORMAT_STRING  @< Format provided invalid format string
+        SIZE_OVERFLOW          @< FwSizeType overflowed the range of size_t
+        OTHER_ERROR            @< An error was returned from an underlying call
+    }
 
-  @ Serialization status
-  enum SerialStatus : U8 {
-    OK, @< Serialization operation succeeded
-    FORMAT_ERROR @< Data was the wrong format (e.g. wrong packet type)
-    NO_ROOM_LEFT  @< No room left in the buffer to serialize data
-  }
+    @ Serialization status
+    enum SerialStatus : U8 {
+        OK            @< Serialization operation succeeded
+        FORMAT_ERROR  @< Data was the wrong format (e.g. wrong packet type)
+        NO_ROOM_LEFT  @< No room left in the buffer to serialize data
+    }
 
-  @ Deserialization status
-  enum DeserialStatus : U8 {
-    OK = 0
-    BUFFER_EMPTY = 3 @< Deserialization buffer was empty when trying to read data
-    FORMAT_ERROR = 4  @< Deserialization data had incorrect values (unexpected data types)
-    SIZE_MISMATCH = 5 @< Data was left in in the buffer, but not enough to deserialize
-    TYPE_MISMATCH = 6 @< Deserialized type ID didn't match
-  }
+    @ Deserialization status
+    enum DeserialStatus : U8 {
+        OK            = 0
+        BUFFER_EMPTY  = 3  @< Deserialization buffer was empty when trying to read data
+        FORMAT_ERROR  = 4  @< Deserialization data had incorrect values (unexpected data types)
+        SIZE_MISMATCH = 5  @< Data was left in in the buffer, but not enough to deserialize
+        TYPE_MISMATCH = 6  @< Deserialized type ID didn't match
+    }
 
-  @ Enabled and disabled states
-  enum Enabled : U8 {
-    DISABLED @< Disabled state
-    ENABLED @< Enabled state
-  }
+    @ Enabled and disabled states
+    enum Enabled : U8 {
+        DISABLED  @< Disabled state
+        ENABLED   @< Enabled state
+    }
 
-  @ On and off states
-  enum On : U8 {
-    OFF @< Off state
-    ON @< On state
-  }
+    @ On and off states
+    enum On : U8 {
+        OFF  @< Off state
+        ON   @< On state
+    }
 
-  @ Logic states
-  enum Logic : U8 {
-    LOW @< Logic low state
-    HIGH @< Logic high state
-  }
+    @ Logic states
+    enum Logic : U8 {
+        LOW   @< Logic low state
+        HIGH  @< Logic high state
+    }
 
-  @ Open and closed states
-  enum Open : U8 {
-    CLOSED @< Closed state
-    OPEN @< Open state
-  }
+    @ Open and closed states
+    enum Open : U8 {
+        CLOSED  @< Closed state
+        OPEN    @< Open state
+    }
 
-  @ Direction states
-  enum Direction : U8 {
-    IN @< In direction
-    OUT @< Out direction
-    INOUT @< In/Out direction
-  }
+    @ Direction states
+    enum Direction : U8 {
+        IN     @< In direction
+        OUT    @< Out direction
+        INOUT  @< In/Out direction
+    }
 
-  @ Active and inactive states
-  enum Active : U8 {
-    INACTIVE @< Inactive state
-    ACTIVE @< Active state
-  }
+    @ Active and inactive states
+    enum Active : U8 {
+        INACTIVE  @< Inactive state
+        ACTIVE    @< Active state
+    }
 
-  @ Health states
-  enum Health : U8 {
-    HEALTHY @< Healthy state
-    SICK @< Sick state
-    FAILED @< Failed state
-  }
+    @ Health states
+    enum Health : U8 {
+        HEALTHY  @< Healthy state
+        SICK     @< Sick state
+        FAILED   @< Failed state
+    }
 
-  @ Success/Failure
-  enum Success : U8 {
-      FAILURE @< Representing failure
-      SUCCESS @< Representing success
-  }
+    @ Success/Failure
+    enum Success : U8 {
+        FAILURE  @< Representing failure
+        SUCCESS  @< Representing success
+    }
 
-  @ Wait or don't wait for something
-  enum Wait : U8 {
-    WAIT @< Wait for something
-    NO_WAIT @< Don't wait for something
-  }
+    @ Wait or don't wait for something
+    enum Wait : U8 {
+        WAIT     @< Wait for something
+        NO_WAIT  @< Don't wait for something
+    }
 
-  enum Completed : U8 {
-    COMPLETED @< Completed successfully
-    CANCELED @< Canceled before completion
-    FAILED @< Failed to complete
-  }
+    enum Completed : U8 {
+        COMPLETED  @< Completed successfully
+        CANCELED   @< Canceled before completion
+        FAILED     @< Failed to complete
+    }
 }

@@ -42,16 +42,16 @@ module ComCcsdsSdls {
 
         connections Decryption {
             # CcsdsSdlsDeframer <-> SdlsSaRouter (decryption requests and returns)
-            sdlsDeframer.decryptOut       -> decryptionSaRouter.dataIn
-            decryptionSaRouter.dataOut    -> sdlsDeframer.decryptIn
-            sdlsDeframer.decryptReturnOut -> decryptionSaRouter.dataReturnIn
+            sdlsDeframer.decryptOut            -> decryptionSaRouter.dataIn
+            decryptionSaRouter.dataOut         -> sdlsDeframer.decryptIn
+            sdlsDeframer.decryptReturnOut      -> decryptionSaRouter.dataReturnIn
             decryptionSaRouter.bufferReturnOut -> sdlsDeframer.bufferReturnIn
 
             # SdlsSaRouter <-> default decryptor
             decryptionSaRouter.saDataOut[SdlsCfg.SaRouterPorts.PLAINTEXT]       -> decryptor.decryptIn
-            decryptor.decryptOut          -> decryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+            decryptor.decryptOut                                                -> decryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
             decryptionSaRouter.saDataReturnOut[SdlsCfg.SaRouterPorts.PLAINTEXT] -> decryptor.decryptReturnIn
-            decryptor.bufferReturnOut     -> decryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+            decryptor.bufferReturnOut                                           -> decryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
         }
 
         # ----------------------------------------------------------------------
@@ -60,17 +60,17 @@ module ComCcsdsSdls {
 
         # Upstream boundary (transfer frame layer)
         @ Input port receiving TC-deframed SDLS frames from the transfer frame layer
-        port dataIn        = sdlsDeframer.dataIn
+        port dataIn = sdlsDeframer.dataIn
 
         @ Output port returning ownership of uplinked buffers to the transfer frame layer
         port dataReturnOut = sdlsDeframer.dataReturnOut
 
         # Downstream boundary (packet layer)
         @ Output port sending decrypted data to the packet layer
-        port dataOut       = sdlsDeframer.dataOut
+        port dataOut = sdlsDeframer.dataOut
 
         @ Input port receiving back ownership of decrypted buffers from the packet layer
-        port dataReturnIn  = sdlsDeframer.dataReturnIn
+        port dataReturnIn = sdlsDeframer.dataReturnIn
     } # end SdlsDecryption
 
     # This subtopology boxes the SDLS encryption layer: the SDLS framer (SA prepend),
@@ -99,16 +99,16 @@ module ComCcsdsSdls {
 
         connections Encryption {
             # CcsdsSdlsFramer <-> SdlsSaRouter (encryption requests and returns)
-            sdlsFramer.encryptOut       -> encryptionSaRouter.dataIn
-            encryptionSaRouter.dataOut  -> sdlsFramer.encryptIn
-            sdlsFramer.encryptReturnOut -> encryptionSaRouter.dataReturnIn
+            sdlsFramer.encryptOut              -> encryptionSaRouter.dataIn
+            encryptionSaRouter.dataOut         -> sdlsFramer.encryptIn
+            sdlsFramer.encryptReturnOut        -> encryptionSaRouter.dataReturnIn
             encryptionSaRouter.bufferReturnOut -> sdlsFramer.bufferReturnIn
 
             # SdlsSaRouter <-> default encryptor
             encryptionSaRouter.saDataOut[SdlsCfg.SaRouterPorts.PLAINTEXT]       -> encryptor.encryptIn
-            encryptor.encryptOut        -> encryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+            encryptor.encryptOut                                                -> encryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
             encryptionSaRouter.saDataReturnOut[SdlsCfg.SaRouterPorts.PLAINTEXT] -> encryptor.encryptReturnIn
-            encryptor.bufferReturnOut   -> encryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+            encryptor.bufferReturnOut                                           -> encryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
         }
 
         # ----------------------------------------------------------------------
@@ -117,27 +117,27 @@ module ComCcsdsSdls {
 
         # Upstream boundary (packet layer)
         @ Input port receiving packet-layer data to frame into SDLS frames
-        port dataIn        = sdlsFramer.dataIn
+        port dataIn = sdlsFramer.dataIn
 
         @ Output port returning ownership of downlinked buffers to the packet layer
         port dataReturnOut = sdlsFramer.dataReturnOut
 
         @ Output port forwarding com status to the packet layer
-        port comStatusOut  = sdlsFramer.comStatusOut
+        port comStatusOut = sdlsFramer.comStatusOut
 
         # Downstream boundary (transfer frame layer)
         @ Output port sending SDLS frames to the transfer frame layer
-        port dataOut       = sdlsFramer.dataOut
+        port dataOut = sdlsFramer.dataOut
 
         @ Input port receiving back ownership of SDLS frame buffers from the transfer frame layer
-        port dataReturnIn  = sdlsFramer.dataReturnIn
+        port dataReturnIn = sdlsFramer.dataReturnIn
 
         @ Input port receiving com status from the transfer frame layer
-        port comStatusIn   = sdlsFramer.comStatusIn
+        port comStatusIn = sdlsFramer.comStatusIn
 
         # Buffer management boundary
         @ Output port allocating SDLS frame buffers
-        port bufferAllocate   = sdlsFramer.bufferAllocate
+        port bufferAllocate = sdlsFramer.bufferAllocate
 
         @ Output port deallocating SDLS frame buffers
         port bufferDeallocate = sdlsFramer.bufferDeallocate
@@ -212,16 +212,16 @@ module ComCcsdsSdls {
         # ----------------------------------------------------------------------
 
         @ Output port sending TM transfer frames to the com interface
-        port dataOut       = ComCcsds.framer.dataOut
+        port dataOut = ComCcsds.framer.dataOut
 
         @ Input port receiving back ownership of transmitted frame buffers from the com interface
-        port dataReturnIn  = ComCcsds.framer.dataReturnIn
+        port dataReturnIn = ComCcsds.framer.dataReturnIn
 
         @ Input port receiving com status from the com interface
-        port comStatusIn   = ComCcsds.framer.comStatusIn
+        port comStatusIn = ComCcsds.framer.comStatusIn
 
         @ Input port receiving raw uplink data from the com interface
-        port dataIn        = ComCcsds.frameAccumulator.dataIn
+        port dataIn = ComCcsds.frameAccumulator.dataIn
 
         @ Output port returning ownership of received uplink buffers to the com interface
         port dataReturnOut = ComCcsds.frameAccumulator.dataReturnOut
@@ -235,12 +235,12 @@ module ComCcsdsSdls {
 
         connections ComStub {
             # FramingSubtopology <-> ComStub (Downlink)
-            FramingSubtopology.dataOut  -> ComCcsds.comStub.dataIn
+            FramingSubtopology.dataOut     -> ComCcsds.comStub.dataIn
             ComCcsds.comStub.dataReturnOut -> FramingSubtopology.dataReturnIn
             ComCcsds.comStub.comStatusOut  -> FramingSubtopology.comStatusIn
 
             # ComStub <-> FramingSubtopology (Uplink)
-            ComCcsds.comStub.dataOut -> FramingSubtopology.dataIn
+            ComCcsds.comStub.dataOut         -> FramingSubtopology.dataIn
             FramingSubtopology.dataReturnOut -> ComCcsds.comStub.dataReturnIn
         }
 
@@ -250,13 +250,13 @@ module ComCcsdsSdls {
 
         # Command routing
         @ Output port sending routed command packets to the command dispatcher
-        port commandOut         = ComCcsds.fprimeRouter.commandOut
+        port commandOut = ComCcsds.fprimeRouter.commandOut
 
         @ Input port receiving command response messages back into the router
-        port cmdResponseIn      = ComCcsds.fprimeRouter.cmdResponseIn
+        port cmdResponseIn = ComCcsds.fprimeRouter.cmdResponseIn
 
         @ Output port sending uplinked file packets to the file handling stack
-        port fileUplinkOut          = ComCcsds.fprimeRouter.fileOut
+        port fileUplinkOut = ComCcsds.fprimeRouter.fileOut
 
         @ Input port receiving back buffer ownership from the file handling stack
         port fileUplinkReturnIn = ComCcsds.fprimeRouter.fileBufferReturnIn
@@ -266,37 +266,37 @@ module ComCcsdsSdls {
         port comPacketQueueIn = ComCcsds.comQueue.comPacketQueueIn
 
         @ Input port array for queueing Fw::Buffers
-        port bufferQueueIn    = ComCcsds.comQueue.bufferQueueIn
+        port bufferQueueIn = ComCcsds.comQueue.bufferQueueIn
 
         @ Output port array returning ownership of Fw::Buffers to their original sender after dequeuing
-        port bufferReturnOut  = ComCcsds.comQueue.bufferReturnOut
+        port bufferReturnOut = ComCcsds.comQueue.bufferReturnOut
 
         # ComDriver interface (via ComStub)
         @ Input port receiving data read from the ByteStream driver
-        port drvReceiveIn        = ComCcsds.comStub.drvReceiveIn
+        port drvReceiveIn = ComCcsds.comStub.drvReceiveIn
 
         @ Output port returning ownership of the buffer that came in on drvReceiveIn back to the driver
         port drvReceiveReturnOut = ComCcsds.comStub.drvReceiveReturnOut
 
         @ Output port sending framed data to the ByteStream driver for transmission
-        port drvSendOut          = ComCcsds.comStub.drvSendOut
+        port drvSendOut = ComCcsds.comStub.drvSendOut
 
         @ Input port receiving the ready signal when the ByteStream driver has connected
-        port drvConnected        = ComCcsds.comStub.drvConnected
+        port drvConnected = ComCcsds.comStub.drvConnected
 
         # Buffer management for ComDriver
         @ Input port for requesting (allocating) a new Fw::Buffer from the comms buffer pool
         port commsBufferGetCallee = ComCcsds.commsBufferManager.bufferGetCallee
 
         @ Input port for deallocating Fw::Buffers back into the comms buffer pool
-        port commsBufferSendIn    = ComCcsds.commsBufferManager.bufferSendIn
+        port commsBufferSendIn = ComCcsds.commsBufferManager.bufferSendIn
 
         # Scheduling
         @ Input port for scheduling ComQueue telemetry output
-        port comQueueRun          = ComCcsds.comQueue.run
+        port comQueueRun = ComCcsds.comQueue.run
 
         @ Rate-group driven timeout to flush the ComAggregator buffer
-        port aggregatorTimeout    = ComCcsds.aggregator.timeout
+        port aggregatorTimeout = ComCcsds.aggregator.timeout
 
         @ Input port triggering commsBufferManager telemetry output
         port bufferManagerSchedIn = ComCcsds.commsBufferManager.schedIn

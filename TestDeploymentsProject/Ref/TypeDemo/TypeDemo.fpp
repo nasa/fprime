@@ -18,7 +18,7 @@ module Ref {
     @ Structure of enums
     struct ChoicePair {
         @ The first choice to make
-        firstChoice: Choice,
+        firstChoice: Choice
         @ The second choice to make
         secondChoice: Choice
     }
@@ -26,7 +26,7 @@ module Ref {
     @ Structure of enums (with an multi-dimensional array and structure)
     struct ChoiceSlurry {
         @ A large set of disorganized choices
-        tooManyChoices: TooManyChoices,
+        tooManyChoices: TooManyChoices
         @ A singular choice
         separateChoice: Choice
         @ A pair of choices
@@ -36,19 +36,19 @@ module Ref {
     }
 
     @ Set of floating points to emit
-    array FloatSet = [3] F32;
+    array FloatSet = [3] F32
 
     @ All scalar inputs
     struct ScalarStruct {
-        i8: I8,
-        i16: I16,
-        i32: I32,
-        i64: I64,
-        u8: U8,
-        u16: U16,
-        u32: U32,
-        u64: U64,
-        f32: F32,
+        i8: I8
+        i16: I16
+        i32: I32
+        i64: I64
+        u8: U8
+        u16: U16
+        u32: U32
+        u64: U64
+        f32: F32
         f64: F64
     }
 
@@ -67,7 +67,9 @@ module Ref {
         telemetry ChoiceCh: Choice
 
         @ Single choice event
-        event ChoiceEv($choice: Choice) severity activity high format "Choice: {}"
+        event ChoiceEv($choice: Choice) \
+            severity activity high \
+            format "Choice: {}"
 
         @ Single enumeration parameter
         param CHOICE_PRM: Choice
@@ -84,9 +86,9 @@ module Ref {
         @ Multiple choice command via Array with a preceding and following argument
         sync command CHOICES_WITH_FRIENDS(
             @ Number of times to repeat the choices
-            repeat: U8,
+            repeat: U8
             @ A set of choices
-            choices: ManyChoices,
+            choices: ManyChoices
             @ Limit to the number of repetitions
             repeat_max: U8
         )
@@ -95,7 +97,9 @@ module Ref {
         telemetry ChoicesCh: ManyChoices
 
         @ Multiple choice event via Array
-        event ChoicesEv(choices: ManyChoices) severity activity high format "Choices: {}"
+        event ChoicesEv(choices: ManyChoices) \
+            severity activity high \
+            format "Choices: {}"
 
         @ Multiple enumeration parameter via Array
         param CHOICES_PRM: ManyChoices
@@ -112,9 +116,9 @@ module Ref {
         @ Too many choices command via Array with a preceding and following argument
         sync command EXTRA_CHOICES_WITH_FRIENDS(
             @ Number of times to repeat the choices
-            repeat: U8,
+            repeat: U8
             @ Way to many choices to make
-            choices: TooManyChoices,
+            choices: TooManyChoices
             @ Limit to the number of repetitions
             repeat_max: U8
         )
@@ -123,7 +127,9 @@ module Ref {
         telemetry ExtraChoicesCh: TooManyChoices
 
         @ Too many choice event via Array
-        event ExtraChoicesEv(choices: TooManyChoices) severity activity high format "Choices: {}"
+        event ExtraChoicesEv(choices: TooManyChoices) \
+            severity activity high \
+            format "Choices: {}"
 
         @ Too many enumeration parameter via Array
         param EXTRA_CHOICES_PRM: ManyChoices
@@ -140,9 +146,9 @@ module Ref {
         @ Multiple choices command via Structure with a preceding and following argument
         sync command CHOICE_PAIR_WITH_FRIENDS(
             @ Number of times to repeat the choices
-            repeat: U8,
+            repeat: U8
             @ A pair of choices
-            choices: ChoicePair,
+            choices: ChoicePair
             @ Limit to the number of repetitions
             repeat_max: U8
         )
@@ -151,7 +157,9 @@ module Ref {
         telemetry ChoicePairCh: ChoicePair
 
         @ Multiple choice event via Structure
-        event ChoicePairEv(choices: ChoicePair) severity activity high format "Choices: {}"
+        event ChoicePairEv(choices: ChoicePair) \
+            severity activity high \
+            format "Choices: {}"
 
         @ Multiple enumeration parameter via Structure
         param CHOICE_PAIR_PRM: ChoicePair
@@ -168,9 +176,9 @@ module Ref {
         @ Multiple choices command via Complex Structure with a preceding and following argument
         sync command GLUTTON_OF_CHOICE_WITH_FRIENDS(
             @ Number of times to repeat the choices
-            repeat: U8,
+            repeat: U8
             @ A phenomenal amount of choice
-            choices: ChoiceSlurry,
+            choices: ChoiceSlurry
             @ Limit to the number of repetitions
             repeat_max: U8
         )
@@ -179,7 +187,9 @@ module Ref {
         telemetry ChoiceSlurryCh: ChoiceSlurry
 
         @ Multiple choice event via Complex Structure
-        event ChoiceSlurryEv(choices: ChoiceSlurry) severity activity high format "Choices: {}"
+        event ChoiceSlurryEv(choices: ChoiceSlurry) \
+            severity activity high \
+            format "Choices: {}"
 
         @ Multiple enumeration parameter via Complex Structure
         param GLUTTON_OF_CHOICE_PRM: ChoiceSlurry
@@ -189,23 +199,31 @@ module Ref {
         #####
 
         @ Single choice parameter event
-        event ChoicePrmEv($choice: Choice, validity: Fw.ParamValid) severity activity high \
+        event ChoicePrmEv($choice: Choice, validity: Fw.ParamValid) \
+            severity activity high \
             format "CHOICE_PRM: {} with validity: {}"
 
         @ Multiple choice parameter event via Array
-        event ChoicesPrmEv(choices: ManyChoices, validity: Fw.ParamValid) severity activity high \
+        event ChoicesPrmEv(choices: ManyChoices, validity: Fw.ParamValid) \
+            severity activity high \
             format "CHOICES_PRM: {} with validity: {}"
 
         @ Too many choice parameter event via Array
-        event ExtraChoicesPrmEv(choices: TooManyChoices, validity: Fw.ParamValid) severity activity high \
+        event ExtraChoicesPrmEv(
+            choices: TooManyChoices
+            validity: Fw.ParamValid
+        ) \
+            severity activity high \
             format "EXTRA_CHOICES_PRM: {} with validity: {}"
 
         @ Multiple choice parameter event via Structure
-        event ChoicePairPrmEv(choices: ChoicePair, validity: Fw.ParamValid) severity activity high \
+        event ChoicePairPrmEv(choices: ChoicePair, validity: Fw.ParamValid) \
+            severity activity high \
             format "CHOICE_PAIR_PRM: {} with validity: {}"
 
         @ Multiple choice parameter event via Complex Structure
-        event ChoiceSlurryPrmEv(choices: ChoiceSlurry, validity: Fw.ParamValid) severity activity high \
+        event ChoiceSlurryPrmEv(choices: ChoiceSlurry, validity: Fw.ParamValid) \
+            severity activity high \
             format "GLUTTON_OF_CHOICE_PRM: {} with validity: {}"
 
         @ Dump the typed parameters
@@ -215,7 +233,8 @@ module Ref {
         # FloatSet outputs
         #####
         @ A set of floats in an event
-        event FloatEv(float1: F32, float2: F32, float3: F32, floats: FloatSet) severity activity high \
+        event FloatEv(float1: F32, float2: F32, float3: F32, floats: FloatSet) \
+            severity activity high \
             format "Floats: {} {} {} as a set: {}"
 
         @ Float output channel 1
@@ -237,7 +256,8 @@ module Ref {
         sync command SEND_SCALARS(scalar_input: ScalarStruct)
 
         @ Event for scalar struct
-        event ScalarStructEv(scalar_argument: ScalarStruct) severity activity high \
+        event ScalarStructEv(scalar_argument: ScalarStruct) \
+            severity activity high \
             format "ScalarStruct: {}"
 
         @ Scalar struct channel
@@ -272,7 +292,6 @@ module Ref {
 
         @ Scalar F64 channel
         telemetry ScalarF64Ch: F64
-
 
         # ----------------------------------------------------------------------
         # Special ports

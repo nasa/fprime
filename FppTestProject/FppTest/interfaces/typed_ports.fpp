@@ -38,7 +38,6 @@ module FppTest {
 
     }
 
-
     interface TypedPortsGuardedInputs {
         # ----------------------------------------------------------------------
         # Typed input ports with no return type

@@ -16,7 +16,7 @@ module SdlsCfg {
 
     @ Enumeration of the downstream crypto component ports on the SdlsSaRouter
     enum SaRouterPorts : FwIndexType {
-        PLAINTEXT = 0
+        PLAINTEXT   = 0
         UNCONNECTED = 1
     }
 
@@ -27,7 +27,7 @@ module SdlsCfg {
     @ This default configuration maps SA 0 to the plain-text (no security) port; the second
     @ entry maps SA 1 to a port that standard topologies may leave unconnected.
     array SaMap = [SaRouterMapEntryCount] Svc.Ccsds.SaMapEntry default [
-        { securityAssociationIndex = 0, portIndex = SaRouterPorts.PLAINTEXT },
+        { securityAssociationIndex = 0, portIndex = SaRouterPorts.PLAINTEXT }
         { securityAssociationIndex = 1, portIndex = SaRouterPorts.UNCONNECTED }
     ]
 

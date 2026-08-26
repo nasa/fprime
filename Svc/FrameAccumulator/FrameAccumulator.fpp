@@ -30,7 +30,7 @@ module Svc {
             format "A valid frame was detected but dropped"
 
         ###############################################################################
-        # Standard AC Ports for Events 
+        # Standard AC Ports for Events
         ###############################################################################
         @ Port for requesting the current time
         time get port timeCaller

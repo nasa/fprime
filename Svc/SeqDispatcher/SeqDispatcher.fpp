@@ -3,8 +3,8 @@ module Svc {
     active component SeqDispatcher {
 
         enum CmdSequencerState : U8 {
-            AVAILABLE = 0
-            RUNNING_SEQUENCE_BLOCK = 1
+            AVAILABLE                 = 0
+            RUNNING_SEQUENCE_BLOCK    = 1
             RUNNING_SEQUENCE_NO_BLOCK = 2
         }
 

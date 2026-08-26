@@ -1,13 +1,15 @@
 module FppTest {
 
-  module SmInstanceChoice {
+    module SmInstanceChoice {
 
-    active component ChoiceToChoice {
+        active component ChoiceToChoice {
 
-      state machine instance smChoiceChoiceToChoice: SmChoice.ChoiceToChoice priority 4 hook
+            state machine instance smChoiceChoiceToChoice: SmChoice.ChoiceToChoice \
+                priority 4 \
+                hook
+
+        }
 
     }
-
-  }
 
 }

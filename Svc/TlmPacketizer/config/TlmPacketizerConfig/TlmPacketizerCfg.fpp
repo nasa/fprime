@@ -7,10 +7,10 @@ module Svc {
     @ Each section creates output indices for each telemetry group
     enum TelemetrySection {
         # REALTIME is a project-selected name. Default configuration uses REALTIME as this is a common section
-        REALTIME, @< OPTIONAL: realtime telemetry downlink through communication stack
+        REALTIME  @< OPTIONAL: realtime telemetry downlink through communication stack
         # RECORDED is a project-selected name. Default configuration uses RECORDED as this is a common section
-        RECORDED, @< OPTIONAL: recorded telemetry stored on disk for later retrieval
-        NUM_SECTIONS,     @< REQUIRED: Counter, leave as last element.
+        RECORDED      @< OPTIONAL: recorded telemetry stored on disk for later retrieval
+        NUM_SECTIONS  @< REQUIRED: Counter, leave as last element.
     }
 
     @ Greatest packet group
@@ -28,16 +28,22 @@ module Svc {
     @ section/group. The values must be greater than or equal to 0 and less than TELEMETRY_SEND_PORTS.
     @
     @ This default configuration sends all telemetry on port 0 restoring the original TlmPacketizer behavior.
-    constant TELEMETRY_SEND_PORT_MAPPING = [
-        [0, 0, 0, 0],
-        [1, 1, 1, 1],
-    ]
+    constant TELEMETRY_SEND_PORT_MAPPING = [[0, 0, 0, 0], [1, 1, 1, 1]]
 
     @ Default configuration for section ENABLED states. In the default configuration, all sections start ENABLED.
-    constant TELEMETRY_SECTION_ENABLED_DEFAULTS = [Fw.Enabled.ENABLED, Fw.Enabled.ENABLED]
+    constant TELEMETRY_SECTION_ENABLED_DEFAULTS = [
+        Fw.Enabled.ENABLED
+        Fw.Enabled.ENABLED
+    ]
 
     @ Default Group configuration. The group is ENABLED, not forced, and uses output-on-change with no min or max time thresholds.
-    constant DEFAULT_GROUP_CONFIG = { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 }
+    constant DEFAULT_GROUP_CONFIG = {
+        enabled = Fw.Enabled.ENABLED
+        forceEnabled = Fw.Enabled.DISABLED
+        rateLogic = RateLogic.ON_CHANGE_MIN
+        min = 0
+        max = 0
+    }
 
     @ Sets the default configuration for all sections and groups. Each section/group can be overridden. This acts as
     @ the default value for the SECTION_CONFIGS parameter. Thus runtime commands and parameter updates chan change this
@@ -48,24 +54,24 @@ module Svc {
         # REALTIME section
         [
             # Group 0
-            DEFAULT_GROUP_CONFIG,
+            DEFAULT_GROUP_CONFIG
             # Group 1
-            DEFAULT_GROUP_CONFIG,
+            DEFAULT_GROUP_CONFIG
             # Group 2
-            DEFAULT_GROUP_CONFIG,
+            DEFAULT_GROUP_CONFIG
             # Group 3
-            DEFAULT_GROUP_CONFIG,
-        ],
+            DEFAULT_GROUP_CONFIG
+        ]
         # RECORDED section
         [
             # Group 0
-            DEFAULT_GROUP_CONFIG,
+            DEFAULT_GROUP_CONFIG
             # Group 1
-            DEFAULT_GROUP_CONFIG,
+            DEFAULT_GROUP_CONFIG
             # Group 2
-            DEFAULT_GROUP_CONFIG,
+            DEFAULT_GROUP_CONFIG
             # Group 3
-            DEFAULT_GROUP_CONFIG,
+            DEFAULT_GROUP_CONFIG
         ]
     ]
 }

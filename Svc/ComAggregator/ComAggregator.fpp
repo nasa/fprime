@@ -23,7 +23,7 @@ module Svc {
         @ Check if not empty
         guard isNotEmpty
 
-        @ Check if last status is good 
+        @ Check if last status is good
         guard isGood: Fw.Success
 
         @ Clear the buffer fill state, last status
@@ -38,30 +38,32 @@ module Svc {
         @ Hold a buffer
         action doHold: Svc.ComDataContextPair
 
-
         @ Assert no status when in fill state
         action assertNoStatus
 
         @ The IS_FULL_THEN_SEND choice: this will check if the aggregation buffer is too-full to allow another buffer.
         @ Otherwise, it will continue to fill.
         choice IS_FULL_THEN_SEND {
-            if isFull do { doHold, doSend } enter WAIT_STATUS \
-                else enter WILL_FILL_THEN_SEND
+            if isFull do {
+                doHold
+                doSend
+            } enter WAIT_STATUS else enter WILL_FILL_THEN_SEND
         }
 
         @ The WILL_FILL_THEN_SEND choice: this will check if the buffer will be exactly filled by the incoming buffer.
         @ Otherwise, it will continue to fill.
         choice WILL_FILL_THEN_SEND {
-            if willFill do { doFill, doSend } enter WAIT_STATUS \
-                else do { doFill } enter FILL
+            if willFill do {
+                doFill
+                doSend
+            } enter WAIT_STATUS else do { doFill } enter FILL
         }
 
         @ The IS_GOOD_STATUS choice
         choice IS_GOOD_STATUS {
-            if isGood do { doClear } enter FILL \
-                else enter WAIT_STATUS
+            if isGood do { doClear } enter FILL else enter WAIT_STATUS
         }
-        
+
         @ Wait for com status from downstream
         state WAIT_STATUS {
             # ASSERT: fill cannot happen before initial 'status'

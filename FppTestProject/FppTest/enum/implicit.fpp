@@ -1,16 +1,16 @@
 module FppTest {
 
-  module Enum {
+    module Enum {
 
-    @ An enum with implicit constant values
-    enum Implicit {
-      A, @< Member A
-      B,
-      C,
-      D,
-      E,
+        @ An enum with implicit constant values
+        enum Implicit {
+            A  @< Member A
+            B
+            C
+            D
+            E
+        }
+
     }
-
-  }
 
 }

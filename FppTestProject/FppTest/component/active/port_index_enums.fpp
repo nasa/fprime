@@ -1,13 +1,13 @@
 enum TypedPortIndex {
-  TYPED
-  SERIAL
+    TYPED
+    SERIAL
 }
 
 enum SerialPortIndex {
-  NO_ARGS
-  PRIMITIVE
-  STRING
-  ENUM
-  ARRAY
-  STRUCT
+    NO_ARGS
+    PRIMITIVE
+    STRING
+    ENUM
+    ARRAY
+    STRUCT
 }

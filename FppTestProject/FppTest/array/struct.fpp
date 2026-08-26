@@ -1,14 +1,14 @@
 module FppTest {
 
-  module Array {
+    module Array {
 
-    struct S {
-      mU32: U32
-      mU32Arr: [3] U32
+        struct S {
+            mU32: U32
+            mU32Arr: [3] U32
+        }
+
+        array Struct = [3] S
+
     }
-
-    array Struct = [3] S
-
-  }
 
 }

@@ -1,13 +1,13 @@
 module FppTest {
 
-  module SmInstanceState {
+    module SmInstanceState {
 
-    active component BasicString {
+        active component BasicString {
 
-      state machine instance smStateBasicString: SmState.BasicString
+            state machine instance smStateBasicString: SmState.BasicString
+
+        }
 
     }
-
-  }
 
 }

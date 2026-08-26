@@ -1,4 +1,4 @@
-module CdhCore{
+module CdhCore {
 
     instance tlmSend: Svc.TlmChan base id CdhCoreConfig.BASE_ID + 0x06000 \
         queue size CdhCoreConfig.QueueSizes.tlmSend \
@@ -17,8 +17,8 @@ module CdhCore{
     #    # This name will need to be updated if wishing to use this in a custom deployment
     #    phase Fpp.ToCpp.Phases.configComponents """
     #    CdhCore::tlmSend.setPacketList(
-    #        Ref::Ref_RefPacketsTlmPackets::packetList, 
-    #        Ref::Ref_RefPacketsTlmPackets::omittedChannels, 
+    #        Ref::Ref_RefPacketsTlmPackets::packetList,
+    #        Ref::Ref_RefPacketsTlmPackets::omittedChannels,
     #        1
     #    );
     #    """

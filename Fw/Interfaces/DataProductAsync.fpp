@@ -11,5 +11,5 @@ module Fw {
         @ Data product send port: sends the filled data product container
         product send port productSendOut
 
-  }
+    }
 }

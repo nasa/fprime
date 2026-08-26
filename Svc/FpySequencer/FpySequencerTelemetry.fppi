@@ -48,7 +48,7 @@ telemetry Debug_StackSize: Fpy.StackSizeType update on change
 # breakpoint telemetry
 @ whether or not to break at the breakpoint index
 telemetry BreakpointInUse: bool update on change
-@ the current breakpoint index. The sequence will break at this point 
+@ the current breakpoint index. The sequence will break at this point
 @ just before dispatching the directive at this index
 telemetry BreakpointIndex: U32 update on change
 @ whether or not to remove the breakpoint after breaking on it

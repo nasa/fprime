@@ -1,13 +1,15 @@
 module FppTest {
 
-  module SmInstanceChoice {
+    module SmInstanceChoice {
 
-    active component BasicU32 {
+        active component BasicU32 {
 
-      state machine instance smChoiceBasicU32: SmChoice.BasicU32 priority 2 block
+            state machine instance smChoiceBasicU32: SmChoice.BasicU32 \
+                priority 2 \
+                block
+
+        }
 
     }
-
-  }
 
 }

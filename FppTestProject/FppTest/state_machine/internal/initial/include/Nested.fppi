@@ -1,23 +1,23 @@
 @ A state machine with nested initial transitions
 state machine Nested {
 
-  @ Action a
-  action a
+    @ Action a
+    action a
 
-  initial do { a } enter S
+    initial do { a } enter S
 
-  @ State S
-  state S {
+    @ State S
+    state S {
 
-    entry do { a, a }
+        entry do { a, a }
 
-    initial enter T
+        initial enter T
 
-    @ State S.T
-    state T {
-      entry do { a, a, a }
+        @ State S.T
+        state T {
+            entry do { a, a, a }
+        }
+
     }
-
-  }
 
 }

@@ -1,5 +1,3 @@
-
-
 module Os {
 
     @ File open mode permission bits
@@ -30,7 +28,5 @@ module Os {
     @ The FILE_DEFAULT_CREATE_MODE constant @ is a bitfield of the
     @ above FILE_MODE_* bits that should be present in the created file
     @ The default value corresponds to a mode of 666 (a+rw) on Linux
-    constant FILE_DEFAULT_CREATE_MODE = FILE_MODE_IRUSR + FILE_MODE_IWUSR + \
-                                        FILE_MODE_IRGRP + FILE_MODE_IWGRP + \
-                                        FILE_MODE_IROTH + FILE_MODE_IWOTH
+    constant FILE_DEFAULT_CREATE_MODE = FILE_MODE_IRUSR + FILE_MODE_IWUSR + FILE_MODE_IRGRP + FILE_MODE_IWGRP + FILE_MODE_IROTH + FILE_MODE_IWOTH
 }

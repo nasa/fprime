@@ -8,4 +8,5 @@ param STATEMENT_TIMEOUT_SECS: F32 default 0
 @ a '/' separator is always inserted between this base dir and the input
 @ sequence file path before resolution occurs following the rules of
 @ Os::File::open.
-param SEQ_BASE_DIR: string size FileNameStringSize default Fpy.DEFAULT_SEQ_BASE_DIR
+param SEQ_BASE_DIR: string size FileNameStringSize \
+    default Fpy.DEFAULT_SEQ_BASE_DIR

@@ -3,26 +3,26 @@ module FileHandlingCfdpConfig {
     constant BASE_ID = 0x07000000
 
     module QueueSizes {
-        constant cfdpManager   = 30
-        constant fileManager   = 10
-        constant prmDb         = 10
+        constant cfdpManager = 30
+        constant fileManager = 10
+        constant prmDb       = 10
     }
 
     module StackSizes {
-        constant cfdpManager   = 128 * 1024
-        constant fileManager   = 64 * 1024
-        constant prmDb         = 64 * 1024
+        constant cfdpManager = 128 * 1024
+        constant fileManager = 64 * 1024
+        constant prmDb       = 64 * 1024
     }
 
     module Priorities {
-        constant cfdpManager   = 24
-        constant fileManager   = 22
-        constant prmDb         = 21
+        constant cfdpManager = 24
+        constant fileManager = 22
+        constant prmDb       = 21
     }
 
     module CpuAffinities {
-        constant cfdpManager   = Os.TASK_DEFAULT
-        constant fileManager   = Os.TASK_DEFAULT
-        constant prmDb         = Os.TASK_DEFAULT
+        constant cfdpManager = Os.TASK_DEFAULT
+        constant fileManager = Os.TASK_DEFAULT
+        constant prmDb       = Os.TASK_DEFAULT
     }
 }

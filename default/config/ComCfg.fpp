@@ -11,19 +11,19 @@ module ComCfg {
     dictionary constant SpacecraftId = 0x0044
 
     @ Fixed size of CCSDS TM frames
-    dictionary constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
+    dictionary constant TmFrameFixedSize = 1024 # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
 
     @ Upper Bound on Fixed size of CCSDS AOS frames
     constant AosMaxFrameFixedSize = 1536
 
     @ Aggregation buffer for ComAggregator component
-    constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
+    constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2 # 2 header (6) + 1 idle byte + 2 trailer bytes
 
     @ Packet Version Numbers are 3 bits with only 2 currently valid values
     dictionary enum Pvn : U8 {
-        SPACE_PACKET_PROTOCOL         = 0x0   @< Fully Featured CCSDS Space Packet Protocol
-        ENCAPSULATION_PACKET_PROTOCOL = 0x7   @< Bare-bones CCSDS Encapsulation Packet Protocol
-        INVALID_UNINITIALIZED         = 0x8   @< Anything equal or higher value is invalid and should not be used
+        SPACE_PACKET_PROTOCOL         = 0x0  @< Fully Featured CCSDS Space Packet Protocol
+        ENCAPSULATION_PACKET_PROTOCOL = 0x7  @< Bare-bones CCSDS Encapsulation Packet Protocol
+        INVALID_UNINITIALIZED         = 0x8  @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
 
     @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF

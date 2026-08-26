@@ -10,33 +10,19 @@ event InvalidSeqCancelCall($state: I32) \
     severity warning high \
     format "Cannot cancel sequence from a port in state {}"
 
-event FileOpenError(
-    filePath: string
-    errorCode: I32
-) \
+event FileOpenError(filePath: string, errorCode: I32) \
     severity warning high \
     format "File open error encountered while opening {}: {}"
 
-event FileWriteError(
-    writeSize: FwSizeType
-    filePath: string
-    errorCode: I32
-) \
+event FileWriteError(writeSize: FwSizeType, filePath: string, errorCode: I32) \
     severity warning high \
     format "File write error encountered while writing {} bytes to {}: {}"
 
-event FileReadError(
-    readStage: FileReadStage
-    filePath: string
-    errorCode: I32
-) \
+event FileReadError(readStage: FileReadStage, filePath: string, errorCode: I32) \
     severity warning high \
     format "File read error encountered while reading {} of file {}: {}"
 
-event EndOfFileError(
-    readStage: FileReadStage
-    filePath: string
-) \
+event EndOfFileError(readStage: FileReadStage, filePath: string) \
     severity warning high \
     format "End of file encountered unexpectedly while reading {} of file {}"
 
@@ -50,44 +36,27 @@ event FileReadDeserializeError(
     severity warning high \
     format "Deserialize error encountered while reading {} of file {}: {} ({} bytes left out of {})"
 
-event WrongSchemaVersion(
-    expected: U8
-    actual: U8
-) \
+event WrongSchemaVersion(expected: U8, actual: U8) \
     severity warning high \
     format "Expected schema version {}, found {}"
 
-event WrongCRC(
-    expected: U32
-    actual: U32
-) \
+event WrongCRC(expected: U32, actual: U32) \
     severity warning high \
     format "Expected CRC {}, actual was {}"
 
-event ExtraBytesInSequence(
-    remaining: FwSizeType
-) \
+event ExtraBytesInSequence(remaining: FwSizeType) \
     severity warning high \
     format "File had {} extra bytes at the end"
 
-event InsufficientBufferSpace(
-    bufferSize: U64
-    filePath: string
-) \
+event InsufficientBufferSpace(bufferSize: U64, filePath: string) \
     severity warning high \
     format "Buffer capacity of {} was not big enough for sequence {}"
 
-event FileApiError(
-    filePath: string
-    errorCode: I32
-) \
+event FileApiError(filePath: string, errorCode: I32) \
     severity warning high \
     format "File system API error encountered while operating on file {}: {}"
 
-event SequenceFilePathTooLong(
-    baseDir: string
-    fileName: string
-) \
+event SequenceFilePathTooLong(baseDir: string, fileName: string) \
     severity warning high \
     format "Sequence file path was truncated: base directory {} and file name {} together exceed the maximum path length"
 
@@ -102,30 +71,19 @@ event CommandFailed(
     severity warning high \
     format "Failed to execute command opcode {} index {} in sequence file {}: response was {}"
 
-event SequenceDone(
-    filePath: string
-) \
+event SequenceDone(filePath: string) \
     severity activity high \
     format "Completed sequence file {}"
 
-event SequenceCancelled(
-    filePath: string
-) \
+event SequenceCancelled(filePath: string) \
     severity activity high \
     format "Cancelled sequence file {}"
 
-event SequenceExitedWithError(
-    filePath: string
-    errorCode: I32
-) \
+event SequenceExitedWithError(filePath: string, errorCode: I32) \
     severity warning high \
     format "Sequence {} exited with error code {}"
 
-event UnknownSequencerDirective(
-    $opcode: U8
-    stmtIdx: U32
-    filePath: string
-) \
+event UnknownSequencerDirective($opcode: U8, stmtIdx: U32, filePath: string) \
     severity warning high \
     format "Unknown sequencer directive id {} at index {} in file {}"
 
@@ -189,47 +147,27 @@ event DirectiveDeserializeError(
     severity warning high \
     format "Deserialize error encountered while reading directive opcode {} at index {}: {} ({} bytes left out of {})"
 
-event MismatchedTimeBase(
-    internalTimeBase: I32
-    otherTimeBase: I32
-) \
+event MismatchedTimeBase(internalTimeBase: I32, otherTimeBase: I32) \
     severity warning high \
     format "getTime() time base was {}, but tried to operate on it with time base {}"
 
-event MismatchedTimeContext(
-    internalTimeContext: I32
-    otherTimeContext: I32
-) \
+event MismatchedTimeContext(internalTimeContext: I32, otherTimeContext: I32) \
     severity warning high \
     format "getTime() time context was {}, but tried to operate on it with time context {}"
 
-event CommandTimedOut(
-    opCode: FwOpcodeType
-    stmtIdx: U32
-    filePath: string
-) \
+event CommandTimedOut(opCode: FwOpcodeType, stmtIdx: U32, filePath: string) \
     severity warning high \
     format "A command opcode {} at index {} timed out in sequence {}, causing the sequence to fail"
 
-event DirectiveTimedOut(
-    opCode: U8
-    stmtIdx: U32
-    filePath: string
-) \
+event DirectiveTimedOut(opCode: U8, stmtIdx: U32, filePath: string) \
     severity warning high \
     format "A directive opcode {} at index {} timed out in sequence {}, causing the sequence to fail"
 
-event TooManySequenceArgs(
-    count: U8
-    max: U8
-) \
+event TooManySequenceArgs(count: U8, max: U8) \
     severity warning high \
     format "A sequence specified it had {} args but the max was {}"
 
-event TooManySequenceDirectives(
-    count: U16
-    max: U16
-) \
+event TooManySequenceDirectives(count: U16, max: U16) \
     severity warning high \
     format "A sequence specified it had {} directives but the max was {}"
 
@@ -241,81 +179,48 @@ event ArgSizeMismatch(
     severity warning high \
     format "Expected {} bytes of arguments, but received {} in sequence file {}"
 
-event ArgSizeExceedsCapacity(
-    actual: FwSizeType
-    capacity: FwSizeType
-) \
+event ArgSizeExceedsCapacity(actual: FwSizeType, capacity: FwSizeType) \
     severity warning high \
     format "Argument size {} exceeds the {} byte argument buffer"
 
-event ArgTotalSizeExceedsStackLimit(
-    argSize: Fpy.StackSizeType
-) \
+event ArgTotalSizeExceedsStackLimit(argSize: Fpy.StackSizeType) \
     severity warning high \
     format "Arguments of size {} would exceed max stack size."
 
-event SequencePaused(
-    stmtIdx: U32
-) \
+event SequencePaused(stmtIdx: U32) \
     severity activity high \
     format "Sequence paused before dispatching directive index {}"
 
-event BreakpointSet(
-    breakpointIdx: U32
-    breakOnce: bool
-) \
+event BreakpointSet(breakpointIdx: U32, breakOnce: bool) \
     severity activity high \
     format "Breakpoint set before directive index {}. Will break once: {}"
 
-event BreakpointCleared() \
-    severity activity high \
-    format "Breakpoint cleared"
+event BreakpointCleared() severity activity high format "Breakpoint cleared"
 
-event LogFatal(
-    filePath: string
-    message: string
-) \
+event LogFatal(filePath: string, message: string) \
     severity fatal \
     format "Sequence {}: {}"
 
-event LogWarningHi(
-    filePath: string
-    message: string
-) \
+event LogWarningHi(filePath: string, message: string) \
     severity warning high \
     format "Sequence {}: {}"
 
-event LogWarningLo(
-    filePath: string
-    message: string
-) \
+event LogWarningLo(filePath: string, message: string) \
     severity warning low \
     format "Sequence {}: {}"
 
-event LogCommand(
-    filePath: string
-    message: string
-) \
+event LogCommand(filePath: string, message: string) \
     severity command \
     format "Sequence {}: {}"
 
-event LogActivityHi(
-    filePath: string
-    message: string
-) \
+event LogActivityHi(filePath: string, message: string) \
     severity activity high \
     format "Sequence {}: {}"
 
-event LogActivityLo(
-    filePath: string
-    message: string
-) \
+event LogActivityLo(filePath: string, message: string) \
     severity activity low \
     format "Sequence {}: {}"
 
-event LogDiagnostic(
-    filePath: string
-    message: string
-) \
+event LogDiagnostic(filePath: string, message: string) \
     severity diagnostic \
     format "Sequence {}: {}"

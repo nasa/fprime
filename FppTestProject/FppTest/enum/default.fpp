@@ -1,16 +1,16 @@
 module FppTest {
 
-  module Enum {
+    module Enum {
 
-    @ An enum with specified default values
-    enum Default {
-      A,
-      B,
-      C,
-      D,
-      E,
-    } default C
+        @ An enum with specified default values
+        enum Default {
+            A
+            B
+            C
+            D
+            E
+        } default C
 
-  }
+    }
 
 }

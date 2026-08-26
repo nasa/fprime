@@ -1,7 +1,7 @@
 module Svc {
 
     enum ZLibData {
-        BINARY,
+        BINARY
         TEXT
     }
 

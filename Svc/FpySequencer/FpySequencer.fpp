@@ -22,7 +22,9 @@ module Svc {
         include "FpySequencerParams.fppi"
 
         # sm signals have highest priority besides ping
-        state machine instance sequencer: SequencerStateMachine priority 9 assert
+        state machine instance sequencer: SequencerStateMachine \
+            priority 9 \
+            assert
 
         @ output port for commands from the seq
         output port cmdOut: Fw.Com

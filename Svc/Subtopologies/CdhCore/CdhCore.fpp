@@ -18,14 +18,13 @@ module CdhCore {
     # Queued Components
     # ----------------------------------------------------------------------
     instance $health: Svc.Health base id CdhCoreConfig.BASE_ID + 0x002000 \
-        queue size CdhCoreConfig.QueueSizes.$health \
-    {
-        phase Fpp.ToCpp.Phases.configConstants """
+        queue size CdhCoreConfig.QueueSizes.$health {
+            phase Fpp.ToCpp.Phases.configConstants """
         enum {
             HEALTH_WATCHDOG_CODE = 0x123
         };
         """
-        phase Fpp.ToCpp.Phases.configComponents """
+            phase Fpp.ToCpp.Phases.configComponents """
         // Health is supplied a set of ping entires.
         CdhCore::health.setPingEntries(
             ConfigObjects::CdhCore_health::pingEntries,
@@ -33,13 +32,12 @@ module CdhCore {
             ConfigConstants::CdhCore_health::HEALTH_WATCHDOG_CODE
         );
         """
-    }
+        }
 
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance version: Svc.Version base id CdhCoreConfig.BASE_ID + 0x003000 \
-    {
+    instance version: Svc.Version base id CdhCoreConfig.BASE_ID + 0x003000 {
         phase Fpp.ToCpp.Phases.configComponents """
         // Startup TLM and Config verbosity for Versions
         CdhCore::version.config(true);
@@ -78,13 +76,13 @@ module CdhCore {
         # ----------------------------------------------------------------------
 
         @ Input port for receiving command buffers from sequencers or other command buffer sources
-        port seqCmdBuff   = cmdDisp.seqCmdBuff
+        port seqCmdBuff = cmdDisp.seqCmdBuff
 
         @ Output port returning command execution status to the command source
         port seqCmdStatus = cmdDisp.seqCmdStatus
 
         @ Output port for sending event packets from the EventManager
-        port eventsPktSend  = events.PktSend
+        port eventsPktSend = events.PktSend
 
         @ Output port sending packetized telemetry to the comm stack for downlink
         port tlmSendPktSend = tlmSend.PktSend
@@ -96,10 +94,10 @@ module CdhCore {
         port cmdDispRun = cmdDisp.run
 
         @ Input port for scheduling the Health component
-        port healthRun  = $health.Run
+        port healthRun = $health.Run
 
         @ Input port for scheduling the EventManager (dropped event telemetry)
-        port eventsRun  = events.run
+        port eventsRun = events.run
 
     } # end topology
 } # end CdhCore Subtopology

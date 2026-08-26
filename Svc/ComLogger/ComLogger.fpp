@@ -1,55 +1,55 @@
 module Svc {
 
-  @ A component for logging Com buffers
-  active component ComLogger {
+    @ A component for logging Com buffers
+    active component ComLogger {
 
-    # ----------------------------------------------------------------------
-    # General ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # General ports
+        # ----------------------------------------------------------------------
 
-    @ Com input port
-    async input port comIn: Fw.Com
+        @ Com input port
+        async input port comIn: Fw.Com
 
-    @ Ping input port
-    async input port pingIn: Svc.Ping
+        @ Ping input port
+        async input port pingIn: Svc.Ping
 
-    @ Ping output port
-    output port pingOut: Svc.Ping
+        @ Ping output port
+        output port pingOut: Svc.Ping
 
-    # ----------------------------------------------------------------------
-    # Special ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Special ports
+        # ----------------------------------------------------------------------
 
-    @ Command registration port
-    command reg port cmdRegOut
+        @ Command registration port
+        command reg port cmdRegOut
 
-    @ Command received port
-    command recv port cmdIn
+        @ Command received port
+        command recv port cmdIn
 
-    @ Command response port
-    command resp port cmdResponseOut
+        @ Command response port
+        command resp port cmdResponseOut
 
-    @ Event port
-    event port logOut
+        @ Event port
+        event port logOut
 
-    @ Text event port
-    text event port LogText
+        @ Text event port
+        text event port LogText
 
-    @ Time get port
-    time get port timeCaller
+        @ Time get port
+        time get port timeCaller
 
-    # ----------------------------------------------------------------------
-    # Commands
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Commands
+        # ----------------------------------------------------------------------
 
-    include "Commands.fppi"
+        include "Commands.fppi"
 
-    # ----------------------------------------------------------------------
-    # Events
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Events
+        # ----------------------------------------------------------------------
 
-    include "Events.fppi"
+        include "Events.fppi"
 
-  }
+    }
 
 }

@@ -8,8 +8,7 @@ module DpCompression {
 
     instance dpZLibCompressor: Svc.DpZLibCompressor base id DpCompressionConfig.BASE_ID + 0x01000
 
-    instance dpZLibCompressorBufferManager: Svc.BufferManager base id DpCompressionConfig.BASE_ID + 0x02000 \ 
-    {
+    instance dpZLibCompressorBufferManager: Svc.BufferManager base id DpCompressionConfig.BASE_ID + 0x02000 {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;
         """
@@ -37,14 +36,13 @@ module DpCompression {
         instance dpCompressProc
         instance dpZLibCompressor
         instance dpZLibCompressorBufferManager
-        
 
         connections DpCompression {
-            dpCompressProc.compressChunk -> dpZLibCompressor.compressChunk
-            dpZLibCompressor.bufferCompressionGet -> dpZLibCompressorBufferManager.bufferGetCallee
+            dpCompressProc.compressChunk             -> dpZLibCompressor.compressChunk
+            dpZLibCompressor.bufferCompressionGet    -> dpZLibCompressorBufferManager.bufferGetCallee
             dpZLibCompressor.bufferCompressionReturn -> dpZLibCompressorBufferManager.bufferSendIn
 
-            dpZLibCompressor.bufferZLibGet -> dpZLibCompressorBufferManager.bufferGetCallee
+            dpZLibCompressor.bufferZLibGet    -> dpZLibCompressorBufferManager.bufferGetCallee
             dpZLibCompressor.bufferZLibReturn -> dpZLibCompressorBufferManager.bufferSendIn
         }
         # ----------------------------------------------------------------------

@@ -7,15 +7,14 @@ module FileHandlingCfdp {
         queue size FileHandlingCfdpConfig.QueueSizes.cfdpManager \
         stack size FileHandlingCfdpConfig.StackSizes.cfdpManager \
         priority FileHandlingCfdpConfig.Priorities.cfdpManager \
-        cpu FileHandlingCfdpConfig.CpuAffinities.cfdpManager \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
+        cpu FileHandlingCfdpConfig.CpuAffinities.cfdpManager {
+            phase Fpp.ToCpp.Phases.configComponents """
         FileHandlingCfdp::cfdpManager.configure(FileHandlingCfdp::Allocation::memAllocator);
         """
-        phase Fpp.ToCpp.Phases.tearDownComponents """
+            phase Fpp.ToCpp.Phases.tearDownComponents """
         FileHandlingCfdp::cfdpManager.cleanup();
         """
-    }
+        }
 
     instance fileManager: Svc.FileManager base id FileHandlingCfdpConfig.BASE_ID + 0x01000 \
         queue size FileHandlingCfdpConfig.QueueSizes.fileManager \
@@ -27,15 +26,14 @@ module FileHandlingCfdp {
         queue size FileHandlingCfdpConfig.QueueSizes.prmDb \
         stack size FileHandlingCfdpConfig.StackSizes.prmDb \
         priority FileHandlingCfdpConfig.Priorities.prmDb \
-        cpu FileHandlingCfdpConfig.CpuAffinities.prmDb \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
+        cpu FileHandlingCfdpConfig.CpuAffinities.prmDb {
+            phase Fpp.ToCpp.Phases.configComponents """
             FileHandlingCfdp::prmDb.configure("PrmDb.dat");
         """
-        phase Fpp.ToCpp.Phases.readParameters """
+            phase Fpp.ToCpp.Phases.readParameters """
             FileHandlingCfdp::prmDb.readParamFile();
         """
-    }
+        }
 
     topology Subtopology {
         # Active Components
