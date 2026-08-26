@@ -51,8 +51,7 @@ U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
     }
 
     // Reject any request that cannot possibly fit the fixed pool up front.
-    if (size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE ||
-        align > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
+    if (size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE || align > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
         return nullptr;
     }
 

@@ -1529,8 +1529,7 @@ TEST_F(WasmSequencerTester, LastHostFunctionClearedAcrossSequences) {
         this->sendCmd_RUN(0, 610, bad.file(), BLOCK, {});
         this->dispatchAll();
         ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
-                                          WasmSequencer_ExitReason::HOST_FAILURE,
-                                          WasmSequencer_HostFunction::COMMAND);
+                                          WasmSequencer_ExitReason::HOST_FAILURE, WasmSequencer_HostFunction::COMMAND);
     }
     this->clearHistory();
 
@@ -1541,8 +1540,7 @@ TEST_F(WasmSequencerTester, LastHostFunctionClearedAcrossSequences) {
     this->invoke_to_cmdResponseIn(0, 0, this->currentCmdUid(), Fw::CmdResponse::OK);
     this->dispatchUntilControllerState(ControllerState::IDLE);
     ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
-                                      WasmSequencer_ExitReason::UNEXPECTED_REPLY,
-                                      WasmSequencer_HostFunction::NONE);
+                                      WasmSequencer_ExitReason::UNEXPECTED_REPLY, WasmSequencer_HostFunction::NONE);
 }
 
 TEST_F(WasmSequencerTester, TelemetryCancelledCount) {
@@ -1685,8 +1683,7 @@ TEST_F(WasmSequencerTester, CommandBadPointerFails) {
     this->assertSequenceFailureCount(1);
     // The guest-memory read failure aborts the sequence as a HOST_FAILURE, naming the
     // COMMAND host function (pins the HOST_FAILURE exit-reason and its payload).
-    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
-                                      WasmSequencer_ExitReason::HOST_FAILURE,
+    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN, WasmSequencer_ExitReason::HOST_FAILURE,
                                       WasmSequencer_HostFunction::COMMAND);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 92, Fw::CmdResponse::EXECUTION_ERROR);
     // No command was actually dispatched.
@@ -2530,8 +2527,7 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsAwaitingCommand) {
     this->assertSequenceFailureCount(1);
     // A reply timeout aborts as a host failure naming the awaited COMMAND, and counts
     // one failed sequence (pins the REPLY_TIMEOUT exit-reason and the counter).
-    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
-                                      WasmSequencer_ExitReason::REPLY_TIMEOUT,
+    ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN, WasmSequencer_ExitReason::REPLY_TIMEOUT,
                                       WasmSequencer_HostFunction::COMMAND);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 400, Fw::CmdResponse::EXECUTION_ERROR);
     this->flushTelemetry();
@@ -2885,8 +2881,7 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileSpinningFails) {
     // An unexpected reply while spinning aborts as UNEXPECTED_REPLY; no host function
     // was awaited, so the reported host function is NONE (pins the exit-reason payload).
     ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
-                                      WasmSequencer_ExitReason::UNEXPECTED_REPLY,
-                                      WasmSequencer_HostFunction::NONE);
+                                      WasmSequencer_ExitReason::UNEXPECTED_REPLY, WasmSequencer_HostFunction::NONE);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
@@ -3048,7 +3043,7 @@ TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenRunWithStartCancelled) {
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
     this->dispatchOne();  // run the (empty) start spin -> interpreterFinished queued
 
-    this->sendCmd_WAIT(0, 511);   // queues: controller still RUNNING_START_PENDING_MAIN
+    this->sendCmd_WAIT(0, 511);    // queues: controller still RUNNING_START_PENDING_MAIN
     this->sendCmd_CANCEL(0, 512);  // latched, honored at START_MAIN_CANCEL_CHECK
     this->dispatchUntilControllerState(ControllerState::IDLE);
 
