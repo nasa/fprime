@@ -1,9 +1,9 @@
 module FppTest {
 
-  module SmState {
+    module SmState {
 
-    include "include/BasicU32.fppi"
+        include "include/BasicU32.fppi"
 
-  }
+    }
 
 }

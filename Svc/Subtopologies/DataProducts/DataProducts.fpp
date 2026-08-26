@@ -1,23 +1,22 @@
-module DataProducts{
+module DataProducts {
 
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    
+
     instance dpCat: Svc.DpCatalog base id DataProductsConfig.BASE_ID + 0x00000 \
         queue size DataProductsConfig.QueueSizes.dpCat \
         stack size DataProductsConfig.StackSizes.dpCat \
         priority DataProductsConfig.Priorities.dpCat \
-        cpu DataProductsConfig.CpuAffinities.dpCat \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
+        cpu DataProductsConfig.CpuAffinities.dpCat {
+            phase Fpp.ToCpp.Phases.configComponents """
             Fw::FileNameString dpDir(DataProductsConfig::Paths::dpDir);
             Fw::FileNameString dpState(DataProductsConfig::Paths::dpState);
             Os::FileSystem::createDirectory(dpDir.toChar());
             Fw::ExternalArray<Fw::FileNameString> dpDirs(&dpDir, 1);
             DataProducts::dpCat.configure(dpDirs, dpState, 0, DataProducts::Allocation::memAllocator);
         """
-    }
+        }
 
     instance dpMgr: Svc.DpManager base id DataProductsConfig.BASE_ID + 0x01000 \
         queue size DataProductsConfig.QueueSizes.dpMgr \
@@ -29,20 +28,18 @@ module DataProducts{
         queue size DataProductsConfig.QueueSizes.dpWriter \
         stack size DataProductsConfig.StackSizes.dpWriter \
         priority DataProductsConfig.Priorities.dpWriter \
-        cpu DataProductsConfig.CpuAffinities.dpWriter \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
+        cpu DataProductsConfig.CpuAffinities.dpWriter {
+            phase Fpp.ToCpp.Phases.configComponents """
             DataProducts::dpWriter.configure(dpDir);
         """
-    }
+        }
 
     instance dpBufferAccumulator: Svc.BufferAccumulator base id DataProductsConfig.BASE_ID + 0x04000 \
         queue size DataProductsConfig.QueueSizes.dpBufferAccumulator \
         stack size DataProductsConfig.StackSizes.dpBufferAccumulator \
         priority DataProductsConfig.Priorities.dpBufferAccumulator \
-        cpu DataProductsConfig.CpuAffinities.dpBufferAccumulator \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
+        cpu DataProductsConfig.CpuAffinities.dpBufferAccumulator {
+            phase Fpp.ToCpp.Phases.configComponents """
             DataProducts::dpBufferAccumulator.allocateQueue(
                 DataProductsConfig::BufferAccumulator::allocatorId,
                 DataProducts::Allocation::memAllocator,
@@ -50,17 +47,16 @@ module DataProducts{
                 Svc::BufferAccumulator_OpState::DRAIN
             );
         """
-        phase Fpp.ToCpp.Phases.tearDownComponents """
+            phase Fpp.ToCpp.Phases.tearDownComponents """
             DataProducts::dpBufferAccumulator.deallocateQueue(DataProducts::Allocation::memAllocator);
         """
-    }
-    
+        }
+
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    
-    instance dpBufferManager: Svc.BufferManager base id DataProductsConfig.BASE_ID + 0x03000 \ 
-    {
+
+    instance dpBufferManager: Svc.BufferManager base id DataProductsConfig.BASE_ID + 0x03000 {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;
         """
@@ -92,10 +88,10 @@ module DataProducts{
 
         connections DataProducts {
             # DpMgr, BufferAccumulator, and DpWriter connections. Have explicit port indexes for demo
-            dpMgr.bufferGetOut[0] -> dpBufferManager.bufferGetCallee
-            dpMgr.productSendOut[0] -> dpBufferAccumulator.bufferSendInFill
-            dpBufferAccumulator.bufferSendOutDrain -> dpWriter.bufferSendIn
-            dpWriter.deallocBufferSendOut -> dpBufferAccumulator.bufferSendInReturn
+            dpMgr.bufferGetOut[0]                   -> dpBufferManager.bufferGetCallee
+            dpMgr.productSendOut[0]                 -> dpBufferAccumulator.bufferSendInFill
+            dpBufferAccumulator.bufferSendOutDrain  -> dpWriter.bufferSendIn
+            dpWriter.deallocBufferSendOut           -> dpBufferAccumulator.bufferSendInReturn
             dpBufferAccumulator.bufferSendOutReturn -> dpBufferManager.bufferSendIn
 
             dpWriter.dpWrittenOut -> dpCat.addToCat
@@ -106,19 +102,19 @@ module DataProducts{
         # ----------------------------------------------------------------------
 
         @ Input port array for responding to data product get requests from client components
-        port productGetIn       = dpMgr.productGetIn
+        port productGetIn = dpMgr.productGetIn
 
         @ Input port array for receiving data product buffer requests from client components
-        port productRequestIn   = dpMgr.productRequestIn
+        port productRequestIn = dpMgr.productRequestIn
 
         @ Input port array for receiving filled data product buffers from client components
-        port productSendIn      = dpMgr.productSendIn
+        port productSendIn = dpMgr.productSendIn
 
         @ Output port array for sending requested data product buffers to client components
         port productResponseOut = dpMgr.productResponseOut
 
         @ Output port for sending file downlink requests to a file downlink component
-        port dpCatFileOut  = dpCat.fileOut
+        port dpCatFileOut = dpCat.fileOut
 
         @ Input port for receiving file downlink completion notifications
         port dpCatFileDone = dpCat.fileDone
@@ -127,13 +123,13 @@ module DataProducts{
         port dpBufferManagerSchedIn = dpBufferManager.schedIn
 
         @ Input port for scheduling dpWriter telemetry output
-        port dpWriterSchedIn        = dpWriter.schedIn
+        port dpWriterSchedIn = dpWriter.schedIn
 
         @ Output port for processing data products
-        port dpWriterProcOut        = dpWriter.procBufferSendOut
+        port dpWriterProcOut = dpWriter.procBufferSendOut
 
         @ Input port for scheduling dpMgr telemetry output
-        port dpMgrSchedIn           = dpMgr.schedIn
+        port dpMgrSchedIn = dpMgr.schedIn
 
     } # end topology
 } # end DataProducts Subtopology

@@ -1,46 +1,46 @@
 module Drv {
 
-  passive component LinuxUartDriver {
+    passive component LinuxUartDriver {
 
-    # ----------------------------------------------------------------------
-    # General ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # General ports
+        # ----------------------------------------------------------------------
 
-    import ByteStreamDriver
+        import ByteStreamDriver
 
-    @ Allocation port used for allocating memory in the receive task
-    output port allocate: Fw.BufferGet
+        @ Allocation port used for allocating memory in the receive task
+        output port allocate: Fw.BufferGet
 
-    @ Deallocation of allocated buffers
-    output port deallocate: Fw.BufferSend
+        @ Deallocation of allocated buffers
+        output port deallocate: Fw.BufferSend
 
-    @ The rate group input for sending telemetry
-    sync input port run: Svc.Sched
+        @ The rate group input for sending telemetry
+        sync input port run: Svc.Sched
 
-    # ----------------------------------------------------------------------
-    # Special ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Special ports
+        # ----------------------------------------------------------------------
 
-    event port Log
+        event port Log
 
-    telemetry port Tlm
+        telemetry port Tlm
 
-    text event port LogText
+        text event port LogText
 
-    time get port Time
+        time get port Time
 
-    # ----------------------------------------------------------------------
-    # Events
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Events
+        # ----------------------------------------------------------------------
 
-    include "Events.fppi"
+        include "Events.fppi"
 
-    # ----------------------------------------------------------------------
-    # Telemetry
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Telemetry
+        # ----------------------------------------------------------------------
 
-    include "Telemetry.fppi"
+        include "Telemetry.fppi"
 
-  }
+    }
 
 }

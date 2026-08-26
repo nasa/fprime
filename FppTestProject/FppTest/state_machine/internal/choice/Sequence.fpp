@@ -1,9 +1,9 @@
 module FppTest {
 
-  module SmChoice {
+    module SmChoice {
 
-    include "include/Sequence.fppi"
+        include "include/Sequence.fppi"
 
-  }
+    }
 
 }

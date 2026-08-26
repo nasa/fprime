@@ -1,8 +1,8 @@
 module Svc {
 
-  enum ZLibData {
-    BINARY
-    TEXT
-  }
+    enum ZLibData {
+        BINARY
+        TEXT
+    }
 
 }

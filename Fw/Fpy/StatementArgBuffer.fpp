@@ -1,3 +1,3 @@
 module Fw {
-  type StatementArgBuffer
+    type StatementArgBuffer
 }

@@ -1,55 +1,55 @@
 module Svc {
 
-  @ A component for uplinking files
-  active component FileUplink {
+    @ A component for uplinking files
+    active component FileUplink {
 
-    # ----------------------------------------------------------------------
-    # General Ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # General Ports
+        # ----------------------------------------------------------------------
 
-    @ Buffer send in
-    async input port bufferSendIn: Fw.BufferSend
+        @ Buffer send in
+        async input port bufferSendIn: Fw.BufferSend
 
-    @ Buffer send out
-    output port bufferSendOut: Fw.BufferSend
+        @ Buffer send out
+        output port bufferSendOut: Fw.BufferSend
 
-    @ Ping in
-    async input port pingIn: Svc.Ping
+        @ Ping in
+        async input port pingIn: Svc.Ping
 
-    @ Ping out
-    output port pingOut: Svc.Ping
+        @ Ping out
+        output port pingOut: Svc.Ping
 
-    @ Announce a received file for further processing
-    output port fileAnnounce: Svc.FileAnnounce
+        @ Announce a received file for further processing
+        output port fileAnnounce: Svc.FileAnnounce
 
-    # ----------------------------------------------------------------------
-    # F Prime Role Ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # F Prime Role Ports
+        # ----------------------------------------------------------------------
 
-    @ Time get
-    time get port timeCaller
+        @ Time get
+        time get port timeCaller
 
-    @ Telemetry
-    telemetry port tlmOut
+        @ Telemetry
+        telemetry port tlmOut
 
-    @ Event
-    event port eventOut
+        @ Event
+        event port eventOut
 
-    @ Text event
-    text event port LogText
+        @ Text event
+        text event port LogText
 
-    # ----------------------------------------------------------------------
-    # Telemetry
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Telemetry
+        # ----------------------------------------------------------------------
 
-    include "Telemetry.fppi"
+        include "Telemetry.fppi"
 
-    # ----------------------------------------------------------------------
-    # Events
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Events
+        # ----------------------------------------------------------------------
 
-    include "Events.fppi"
+        include "Events.fppi"
 
-  }
+    }
 
 }

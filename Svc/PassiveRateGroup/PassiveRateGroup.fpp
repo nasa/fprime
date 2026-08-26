@@ -1,48 +1,48 @@
 module Svc {
 
-  @ A rate group passive component with input and output scheduler ports
-  passive component PassiveRateGroup {
+    @ A rate group passive component with input and output scheduler ports
+    passive component PassiveRateGroup {
 
-    @ The rate group cycle input
-    sync input port CycleIn: Cycle
+        @ The rate group cycle input
+        sync input port CycleIn: Cycle
 
-    @ Scheduler output port to rate group members
-    output port RateGroupMemberOut: [PassiveRateGroupOutputPorts] Sched
+        @ Scheduler output port to rate group members
+        output port RateGroupMemberOut: [PassiveRateGroupOutputPorts] Sched
 
-    @ Max execution time of rate group cycle
-    telemetry MaxCycleTime: U32 update on change format "{} us"
+        @ Max execution time of rate group cycle
+        telemetry MaxCycleTime: U32 update on change format "{} us"
 
-    @ Execution time of current cycle
-    telemetry CycleTime: U32 format "{} us"
+        @ Execution time of current cycle
+        telemetry CycleTime: U32 format "{} us"
 
-    @ Count of number of cycles
-    telemetry CycleCount: U32
+        @ Count of number of cycles
+        telemetry CycleCount: U32
 
-    array CycleTime = [PassiveRateGroupOutputPorts] U32 default 0
-    telemetry PortCycleTime: CycleTime
+        array CycleTime = [PassiveRateGroupOutputPorts] U32 default 0
+        telemetry PortCycleTime: CycleTime
 
-    @ High water marks for port cycle times
-    telemetry PortCycleTimeHWM: CycleTime update on change
+        @ High water marks for port cycle times
+        telemetry PortCycleTimeHWM: CycleTime update on change
 
-    @ Clear max cycle time and port cycle time high water marks (cycle count is not cleared)
-    sync command CLEAR_STATISTICS
+        @ Clear max cycle time and port cycle time high water marks (cycle count is not cleared)
+        sync command CLEAR_STATISTICS
 
-    # Standard ports
-    @ A port for getting the time
-    time get port Time
+        # Standard ports
+        @ A port for getting the time
+        time get port Time
 
-    @ A port for emitting telemetry
-    telemetry port Tlm
+        @ A port for emitting telemetry
+        telemetry port Tlm
 
-    @ Port for receiving commands
-    command recv port CmdDisp
+        @ Port for receiving commands
+        command recv port CmdDisp
 
-    @ Port for sending command responses
-    command resp port CmdStatus
+        @ Port for sending command responses
+        command resp port CmdStatus
 
-    @ Port for sending command registration requests
-    command reg port CmdReg
+        @ Port for sending command registration requests
+        command reg port CmdReg
 
-  }
+    }
 
 }

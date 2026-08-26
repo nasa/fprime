@@ -1,26 +1,26 @@
 @ A basic state machine with a self transition
 state machine BasicSelf {
 
-  @ Action a
-  action a
+    @ Action a
+    action a
 
-  @ Signal s
-  signal s
+    @ Signal s
+    signal s
 
-  initial enter S
+    initial enter S
 
-  @ State S
-  state S {
+    @ State S
+    state S {
 
-    @ Entry
-    entry do { a }
+        @ Entry
+        entry do { a }
 
-    @ Exit
-    exit do { a, a }
+        @ Exit
+        exit do { a, a }
 
-    @ State transition
-    on s do { a, a, a } enter S
+        @ State transition
+        on s do { a, a, a } enter S
 
-  }
+    }
 
 }

@@ -1,13 +1,13 @@
 module FppTest {
 
-  module SmInstanceState {
+    module SmInstanceState {
 
-    active component StateToChoice {
+        active component StateToChoice {
 
-      state machine instance smStateStateToChoice: SmState.StateToChoice
+            state machine instance smStateStateToChoice: SmState.StateToChoice
+
+        }
 
     }
-
-  }
 
 }

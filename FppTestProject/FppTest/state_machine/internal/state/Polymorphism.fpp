@@ -1,9 +1,9 @@
 module FppTest {
 
-  module SmState {
+    module SmState {
 
-    include "include/Polymorphism.fppi"
+        include "include/Polymorphism.fppi"
 
-  }
+    }
 
 }

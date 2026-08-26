@@ -1,18 +1,11 @@
 module FppTest {
-    instance framework: Framework \
-        base id 0x3010 \
+    instance framework: Framework base id 0x3010 \
         queue size 10 \
         stack size 32 * 1024
 
-    instance comp1: Comp \
-        base id 0x3020 \
-        queue size 10 \
-        stack size 32 * 1024
+    instance comp1: Comp base id 0x3020 queue size 10 stack size 32 * 1024
 
-    instance comp2: Comp \
-        base id 0x4020 \
-        queue size 10 \
-        stack size 32 * 1024
+    instance comp2: Comp base id 0x4020 queue size 10 stack size 32 * 1024
 
     deployment topology SpecialPorts {
         instance framework
@@ -30,18 +23,18 @@ module FppTest {
         connections SP {
             framework.syncOut -> comp1.syncIn
             framework.syncOut -> comp2.syncIn
-            comp1.syncOut -> framework.syncIn
-            comp2.syncOut -> framework.syncIn
+            comp1.syncOut     -> framework.syncIn
+            comp2.syncOut     -> framework.syncIn
 
-            comp1.productGetOut -> framework.productGetIn[0]
-            comp1.productRequestOut -> framework.productRequestIn[0]
+            comp1.productGetOut             -> framework.productGetIn[0]
+            comp1.productRequestOut         -> framework.productRequestIn[0]
             framework.productResponseOut[0] -> comp1.productRecvIn
-            comp1.productSendOut -> framework.productSendIn[0]
+            comp1.productSendOut            -> framework.productSendIn[0]
 
-            comp2.productGetOut -> framework.productGetIn[1]
-            comp2.productRequestOut -> framework.productRequestIn[1]
+            comp2.productGetOut             -> framework.productGetIn[1]
+            comp2.productRequestOut         -> framework.productRequestIn[1]
             framework.productResponseOut[1] -> comp2.productRecvIn
-            comp2.productSendOut -> framework.productSendIn[1]
+            comp2.productSendOut            -> framework.productSendIn[1]
         }
     }
 }

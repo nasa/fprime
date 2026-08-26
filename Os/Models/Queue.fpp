@@ -4,25 +4,25 @@
 # ======================================================================
 
 module Os {
-  @ FPP shadow-enum representing Os::Queue::Status
-  enum QueueStatus : U8 {
-    OP_OK              @<  message sent/received okay
-    ALREADY_CREATED    @<  creating an already created queue
-    EMPTY              @<  If non-blocking, all the messages have been drained.
-    UNINITIALIZED      @<  Queue wasn't initialized successfully
-    SIZE_MISMATCH      @<  attempted to send or receive with buffer too large, too small
-    SEND_ERROR         @<  message send error
-    RECEIVE_ERROR      @<  message receive error
-    INVALID_PRIORITY   @<  invalid priority requested
-    FULL               @<  Queue was full when attempting to send a message
-    NOT_SUPPORTED      @<  Queue feature is not supported
-    ALLOCATION_FAILED  @<  required memory could not be allocated
-    UNKNOWN_ERROR      @<  Unexpected error; can't match with returns
-  }
+    @ FPP shadow-enum representing Os::Queue::Status
+    enum QueueStatus : U8 {
+        OP_OK              @<  message sent/received okay
+        ALREADY_CREATED    @<  creating an already created queue
+        EMPTY              @<  If non-blocking, all the messages have been drained.
+        UNINITIALIZED      @<  Queue wasn't initialized successfully
+        SIZE_MISMATCH      @<  attempted to send or receive with buffer too large, too small
+        SEND_ERROR         @<  message send error
+        RECEIVE_ERROR      @<  message receive error
+        INVALID_PRIORITY   @<  invalid priority requested
+        FULL               @<  Queue was full when attempting to send a message
+        NOT_SUPPORTED      @<  Queue feature is not supported
+        ALLOCATION_FAILED  @<  required memory could not be allocated
+        UNKNOWN_ERROR      @<  Unexpected error; can't match with returns
+    }
 
-  @ FPP shadow-enum representing Os::Queue::BlockingType
-  enum QueueBlockingType : U8 {
-    BLOCKING     @< Message will block until space is available
-    NONBLOCKING  @< Message will return with status when space is unavailable
-  }
+    @ FPP shadow-enum representing Os::Queue::BlockingType
+    enum QueueBlockingType : U8 {
+        BLOCKING     @< Message will block until space is available
+        NONBLOCKING  @< Message will return with status when space is unavailable
+    }
 }

@@ -1,16 +1,16 @@
 module FppTest {
 
-  active component Receiver {
+    active component Receiver {
 
-    import TypedPortsSyncInputs
-    import TypedPortsGuardedInputs
-    import TypedPortsAsync
+        import TypedPortsSyncInputs
+        import TypedPortsGuardedInputs
+        import TypedPortsAsync
 
-    output port replyOut: [SenderId.N] Reply
+        output port replyOut: [SenderId.N] Reply
 
-    sync input port serialIn: [TestDeploymentPort.N] serial
-    output port serialReplyOut: [SenderId.N] Reply
+        sync input port serialIn: [TestDeploymentPort.N] serial
+        output port serialReplyOut: [SenderId.N] Reply
 
-  }
+    }
 
 }

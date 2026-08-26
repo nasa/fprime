@@ -1,13 +1,13 @@
 module FppTest {
 
-  module SmInstanceState {
+    module SmInstanceState {
 
-    active component BasicGuardTestArray {
+        active component BasicGuardTestArray {
 
-      state machine instance smStateBasicGuardTestArray: SmState.BasicGuardTestArray
+            state machine instance smStateBasicGuardTestArray: SmState.BasicGuardTestArray
+
+        }
 
     }
-
-  }
 
 }

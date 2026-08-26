@@ -6,8 +6,8 @@
 
 module Svc {
 
-  @ Port for dispatching files
-  port FileDispatch(
-    ref file_name: string  @< The file to dispatch
-  )
+    @ Port for dispatching files
+    port FileDispatch(
+        ref file_name: string  @< The file to dispatch
+    )
 }

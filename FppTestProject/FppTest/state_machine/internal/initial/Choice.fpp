@@ -1,9 +1,9 @@
 module FppTest {
 
-  module SmInitial {
+    module SmInitial {
 
-    include "include/Choice.fppi"
+        include "include/Choice.fppi"
 
-  }
+    }
 
 }

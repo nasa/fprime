@@ -9,16 +9,16 @@ telemetry HiBuffs: U32 id 0x02 update on change
 
 @ The number of requests that couldn't return a buffer
 telemetry NoBuffs: U32 \
-  id 0x03 \
-  update on change \
-  high {
-    red 1
-  }
+    id 0x03 \
+    update on change \
+    high {
+        red 1
+    }
 
 @ The number of empty buffers returned
 telemetry EmptyBuffs: U32 \
-  id 0x04 \
-  update on change \
-  high {
-    red 1
-  }
+    id 0x04 \
+    update on change \
+    high {
+        red 1
+    }

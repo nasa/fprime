@@ -1,13 +1,13 @@
 module ComFprime {
 
     enum Ports_ComPacketQueue : U8 {
-        EVENTS,
-        TELEMETRY,
-    };
+        EVENTS
+        TELEMETRY
+    }
 
     enum Ports_ComBufferQueue : U8 {
         FILE
-    };
+    }
 
     # ----------------------------------------------------------------------
     # Active Components
@@ -16,12 +16,11 @@ module ComFprime {
         queue size ComFprimeConfig.QueueSizes.comQueue \
         stack size ComFprimeConfig.StackSizes.comQueue \
         priority ComFprimeConfig.Priorities.comQueue \
-        cpu ComFprimeConfig.CpuAffinities.comQueue \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
+        cpu ComFprimeConfig.CpuAffinities.comQueue {
+            phase Fpp.ToCpp.Phases.configComponents """
         using namespace ComFprime;
         Svc::ComQueue::QueueConfigurationTable configurationTable;
-        
+
         // Events (highest-priority)
         configurationTable.entries[Ports_ComPacketQueue::EVENTS].depth = ComFprimeConfig::QueueDepths::events;
         configurationTable.entries[Ports_ComPacketQueue::EVENTS].priority = ComFprimeConfig::QueuePriorities::events;
@@ -34,20 +33,19 @@ module ComFprime {
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComFprime::comQueue.configure(configurationTable, 0, ComFprime::Allocation::memAllocator);
         """
-        phase Fpp.ToCpp.Phases.tearDownComponents """
+            phase Fpp.ToCpp.Phases.tearDownComponents """
         ComFprime::comQueue.cleanup();
         """
-    }
+        }
 
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x01000 \ 
-    {
+    instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x01000 {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::FrameDetectors::FprimeFrameDetector frameDetector;
         """
-        
+
         phase Fpp.ToCpp.Phases.configComponents """
         ComFprime::frameAccumulator.configure(
             ConfigObjects::ComFprime_frameAccumulator::frameDetector,
@@ -62,12 +60,11 @@ module ComFprime {
         """
     }
 
-    instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x02000 \
-    {
+    instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x02000 {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;
         """
-        
+
         phase Fpp.ToCpp.Phases.configComponents """
         memset(&ConfigObjects::ComFprime_commsBufferManager::bins, 0, sizeof(ConfigObjects::ComFprime_commsBufferManager::bins));
         ConfigObjects::ComFprime_commsBufferManager::bins.bins[0].bufferSize = ComFprimeConfig::BuffMgr::commsBuffSize;
@@ -127,7 +124,7 @@ module ComFprime {
             framer.bufferAllocate   -> commsBufferManager.bufferGetCallee
             framer.bufferDeallocate -> commsBufferManager.bufferSendIn
             # ComStatus passback
-            framer.comStatusOut  -> comQueue.comStatusIn
+            framer.comStatusOut -> comQueue.comStatusIn
             # (Outgoing) Framer <-> ComInterface connections shall be established by the user
         }
 
@@ -145,7 +142,6 @@ module ComFprime {
         }
     } # end FramingSubtopology
 
-
     # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
     topology Subtopology {
         import FramingSubtopology
@@ -159,23 +155,23 @@ module ComFprime {
             comStub.comStatusOut     -> ComFprime.framer.comStatusIn
 
             # ComStub <-> FrameAccumulator (Uplink)
-            comStub.dataOut -> ComFprime.frameAccumulator.dataIn
+            comStub.dataOut                          -> ComFprime.frameAccumulator.dataIn
             ComFprime.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
         }
 
         # ----------------------------------------------------------------------
         # Topology ports
         # ----------------------------------------------------------------------
-        
+
         # Command routing
         @ Output port sending routed command packets to the command dispatcher
-        port commandOut         = fprimeRouter.commandOut
+        port commandOut = fprimeRouter.commandOut
 
         @ Input port receiving command response messages back into the router
-        port cmdResponseIn      = fprimeRouter.cmdResponseIn
+        port cmdResponseIn = fprimeRouter.cmdResponseIn
 
         @ Output port sending uplinked file packets to the file handling stack
-        port fileUplinkOut          = fprimeRouter.fileOut
+        port fileUplinkOut = fprimeRouter.fileOut
 
         @ Input port receiving back buffer ownership from the file handling stack
         port fileUplinkReturnIn = fprimeRouter.fileBufferReturnIn
@@ -185,30 +181,30 @@ module ComFprime {
         port comPacketQueueIn = comQueue.comPacketQueueIn
 
         @ Input port array for queueing Fw::Buffers
-        port bufferQueueIn    = comQueue.bufferQueueIn
+        port bufferQueueIn = comQueue.bufferQueueIn
 
         @ Output port array returning ownership of Fw::Buffers to their original sender after dequeuing
-        port bufferReturnOut  = comQueue.bufferReturnOut
+        port bufferReturnOut = comQueue.bufferReturnOut
 
         # ComDriver interface (via ComStub)
-        @ Input port receiving data read from the ByteStream driver 
-        port drvReceiveIn        = comStub.drvReceiveIn
+        @ Input port receiving data read from the ByteStream driver
+        port drvReceiveIn = comStub.drvReceiveIn
 
         @ Output port returning ownership of the buffer that came in on drvReceiveIn back to the driver
         port drvReceiveReturnOut = comStub.drvReceiveReturnOut
 
         @ Output port sending framed data to the ByteStream driver for transmission
-        port drvSendOut          = comStub.drvSendOut
+        port drvSendOut = comStub.drvSendOut
 
         @ Input port receiving the ready signal when the ByteStream driver has connected
-        port drvConnected        = comStub.drvConnected
+        port drvConnected = comStub.drvConnected
 
         # Buffer management for ComDriver
         @ Input port for requesting (allocating) a new Fw::Buffer from the comms buffer pool
         port commsBufferGetCallee = commsBufferManager.bufferGetCallee
 
         @ Input port for deallocating Fw::Buffers back into the comms buffer pool
-        port commsBufferSendIn    = commsBufferManager.bufferSendIn
+        port commsBufferSendIn = commsBufferManager.bufferSendIn
 
         # Scheduling
         @ Input port for scheduling ComQueue telemetry output

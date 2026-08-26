@@ -1,11 +1,11 @@
 @ Signal Generator Settings
 async command Settings(
-  Frequency: U32
-  Amplitude: F32
-  Phase: F32
-  SigType: Ref.SignalType
+    Frequency: U32
+    Amplitude: F32
+    Phase: F32
+    SigType: Ref.SignalType
 ) \
-  opcode 0x00
+    opcode 0x00
 
 @ Toggle Signal Generator On/Off.
 async command Toggle opcode 1
@@ -14,8 +14,8 @@ async command Toggle opcode 1
 async command Skip opcode 2
 
 enum DpReqType {
-  IMMEDIATE
-  ASYNC
+    IMMEDIATE
+    ASYNC
 }
 
 @ Signal Generator Settings

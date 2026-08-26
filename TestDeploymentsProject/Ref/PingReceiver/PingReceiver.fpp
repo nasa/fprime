@@ -1,75 +1,75 @@
 module Ref {
 
-  @ A rate group active component with input and output ping ports
-  active component PingReceiver {
+    @ A rate group active component with input and output ping ports
+    active component PingReceiver {
 
-    # ----------------------------------------------------------------------
-    # General Ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # General Ports
+        # ----------------------------------------------------------------------
 
-    @ The ping input port
-    async input port PingIn: Svc.Ping
+        @ The ping input port
+        async input port PingIn: Svc.Ping
 
-    @ The ping input port
-    output port PingOut: Svc.Ping
+        @ The ping input port
+        output port PingOut: Svc.Ping
 
-    # ----------------------------------------------------------------------
-    # Special ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Special ports
+        # ----------------------------------------------------------------------
 
-    @ Command receive port
-    command recv port CmdDisp
+        @ Command receive port
+        command recv port CmdDisp
 
-    @ Command registration port
-    command reg port CmdReg
+        @ Command registration port
+        command reg port CmdReg
 
-    @ Command response port
-    command resp port CmdStatus
+        @ Command response port
+        command resp port CmdStatus
 
-    @ Event port
-    event port Log
+        @ Event port
+        event port Log
 
-    @ Text event port
-    text event port LogText
+        @ Text event port
+        text event port LogText
 
-    @ Time get port
-    time get port Time
+        @ Time get port
+        time get port Time
 
-    @ Telemetry port
-    telemetry port Tlm
+        @ Telemetry port
+        telemetry port Tlm
 
-    # ----------------------------------------------------------------------
-    # Commands
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Commands
+        # ----------------------------------------------------------------------
 
-    @ Command to disable ping response
-    async command PR_StopPings opcode 0
+        @ Command to disable ping response
+        async command PR_StopPings opcode 0
 
-    # ----------------------------------------------------------------------
-    # Events
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Events
+        # ----------------------------------------------------------------------
 
-    @ Disabled ping responses
-    event PR_PingsDisabled \
-      severity activity high \
-      id 0 \
-      format "PingReceiver ping responses disabled"
+        @ Disabled ping responses
+        event PR_PingsDisabled \
+            severity activity high \
+            id 0 \
+            format "PingReceiver ping responses disabled"
 
-    @ Got ping
-    event PR_PingReceived(
-      code: U32  @< Ping code
-    ) \
-      severity diagnostic \
-      id 1 \
-      format "PingReceiver pinged with code {}"
+        @ Got ping
+        event PR_PingReceived(
+            code: U32  @< Ping code
+        ) \
+            severity diagnostic \
+            id 1 \
+            format "PingReceiver pinged with code {}"
 
-    # ----------------------------------------------------------------------
-    # Telemetry
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Telemetry
+        # ----------------------------------------------------------------------
 
-    @ Number of pings received
-    telemetry PR_NumPings: U32 id 0
+        @ Number of pings received
+        telemetry PR_NumPings: U32 id 0
 
-  }
+    }
 
 }

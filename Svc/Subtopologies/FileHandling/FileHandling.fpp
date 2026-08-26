@@ -13,16 +13,15 @@ module FileHandling {
         queue size FileHandlingConfig.QueueSizes.fileDownlink \
         stack size FileHandlingConfig.StackSizes.fileDownlink \
         priority FileHandlingConfig.Priorities.fileDownlink \
-        cpu FileHandlingConfig.CpuAffinities.fileDownlink \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
+        cpu FileHandlingConfig.CpuAffinities.fileDownlink {
+            phase Fpp.ToCpp.Phases.configComponents """
         FileHandling::fileDownlink.configure(
             FileHandlingConfig::DownlinkConfig::cooldown,
             FileHandlingConfig::DownlinkConfig::cycleTime,
             FileHandlingConfig::DownlinkConfig::fileQueueDepth
         );
         """
-    }
+        }
 
     instance fileManager: Svc.FileManager base id FileHandlingConfig.BASE_ID + 0x02000 \
         queue size FileHandlingConfig.QueueSizes.fileManager \
@@ -34,12 +33,11 @@ module FileHandling {
         queue size FileHandlingConfig.QueueSizes.prmDb \
         stack size FileHandlingConfig.StackSizes.prmDb \
         priority FileHandlingConfig.Priorities.prmDb \
-        cpu FileHandlingConfig.CpuAffinities.prmDb \
-    {
-        phase Fpp.ToCpp.Phases.readParameters """
+        cpu FileHandlingConfig.CpuAffinities.prmDb {
+            phase Fpp.ToCpp.Phases.readParameters """
             FileHandling::prmDb.readParamFile();
         """
-    }
+        }
 
     topology Subtopology {
         #Active Components
@@ -56,19 +54,19 @@ module FileHandling {
         port fileDownlinkBufferSendOut = fileDownlink.bufferSendOut
 
         @ Input port for returning ownership of buffers sent on fileDownlinkBufferSendOut
-        port fileDownlinkBufferReturn  = fileDownlink.bufferReturn
+        port fileDownlinkBufferReturn = fileDownlink.bufferReturn
 
         @ Mutex-locked input port for requesting a file downlink
-        port fileDownlinkSendFile      = fileDownlink.SendFile
+        port fileDownlinkSendFile = fileDownlink.SendFile
 
         @ Output port for notifying that a file downlink has completed
-        port fileDownlinkFileComplete  = fileDownlink.FileComplete
+        port fileDownlinkFileComplete = fileDownlink.FileComplete
 
         @ Input port for scheduling fileDownlink
-        port fileDownlinkRun           = fileDownlink.Run
+        port fileDownlinkRun = fileDownlink.Run
 
         @ Input port for receiving uplinked file packets
-        port fileUplinkBufferSendIn  = fileUplink.bufferSendIn
+        port fileUplinkBufferSendIn = fileUplink.bufferSendIn
 
         @ Output port for returning ownership of received uplink buffers
         port fileUplinkBufferSendOut = fileUplink.bufferSendOut

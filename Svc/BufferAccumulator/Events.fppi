@@ -6,30 +6,30 @@ event BA_QueueFull severity warning high id 0x01 format "Queue full"
 
 @ Got DrainBuffers command while executing DrainBuffers command
 event BA_StillDraining(numDrained: U32, numToDrain: U32) \
-  severity warning high \
-  id 0x02 \
-  format "Still draining {} of {}"
+    severity warning high \
+    id 0x02 \
+    format "Still draining {} of {}"
 
 @ Got DrainBuffers command while in DRAIN mode
 event BA_AlreadyDraining \
-  severity warning high \
-  id 0x03 \
-  format "Already in DRAIN mode"
+    severity warning high \
+    id 0x03 \
+    format "Already in DRAIN mode"
 
 @ Ran out of buffers while executing DrainBuffers command
 event BA_DrainStalled(numDrained: U32, numToDrain: U32) \
-  severity warning high \
-  id 0x04 \
-  format "Drain stalling - only drained {} of {}"
+    severity warning high \
+    id 0x04 \
+    format "Drain stalling - only drained {} of {}"
 
 @ Finished DrainBuffers command
 event BA_PartialDrainDone(numDrained: U32) \
-  severity activity high \
-  id 0x05 \
-  format "Partial drain of {} finished"
+    severity activity high \
+    id 0x05 \
+    format "Partial drain of {} finished"
 
 @ Not enough buffers to complete requested drain, and NOBLOCK was set; will only drain what we have
 event BA_NonBlockDrain(numWillDrain: U32, numReqDrain: U32) \
-  severity warning low \
-  id 0x06 \
-  format "Only have {}; requested drain of {}"
+    severity warning low \
+    id 0x06 \
+    format "Only have {}; requested drain of {}"

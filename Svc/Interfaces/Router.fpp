@@ -1,30 +1,30 @@
 module Svc {
-  interface Router {
-    # ---------------------------------------------
-    # Router <-> Deframers
-    # ---------------------------------------------
+    interface Router {
+        # ---------------------------------------------
+        # Router <-> Deframers
+        # ---------------------------------------------
 
-    @ Receiving data (Fw::Buffer) to be routed with optional context to help with routing
-    guarded input port dataIn: Svc.ComDataWithContext
+        @ Receiving data (Fw::Buffer) to be routed with optional context to help with routing
+        guarded input port dataIn: Svc.ComDataWithContext
 
-    @ Port for returning ownership of data (includes Fw.Buffer) received on dataIn
-    output port dataReturnOut: Svc.ComDataWithContext
+        @ Port for returning ownership of data (includes Fw.Buffer) received on dataIn
+        output port dataReturnOut: Svc.ComDataWithContext
 
-    # ---------------------------------------------
-    # Router <-> CmdDispatch/FileUplink
-    # ---------------------------------------------
+        # ---------------------------------------------
+        # Router <-> CmdDispatch/FileUplink
+        # ---------------------------------------------
 
-    @ Port for sending file packets as Fw::Buffer (ownership passed to receiver)
-    output port fileOut: Fw.BufferSend
+        @ Port for sending file packets as Fw::Buffer (ownership passed to receiver)
+        output port fileOut: Fw.BufferSend
 
-    @ Port for receiving back ownership of buffers sent on fileOut or any other
-    @ output port that passes buffer ownership to the receiver
-    guarded input port fileBufferReturnIn: Fw.BufferSend
+        @ Port for receiving back ownership of buffers sent on fileOut or any other
+        @ output port that passes buffer ownership to the receiver
+        guarded input port fileBufferReturnIn: Fw.BufferSend
 
-    @ Port for sending command packets as Fw::ComBuffers
-    output port commandOut: Fw.Com
+        @ Port for sending command packets as Fw::ComBuffers
+        output port commandOut: Fw.Com
 
-    @ Port for receiving command responses from a command dispatcher (can be a no-op)
-    sync input port cmdResponseIn: Fw.CmdResponse
-  }
+        @ Port for receiving command responses from a command dispatcher (can be a no-op)
+        sync input port cmdResponseIn: Fw.CmdResponse
+    }
 }

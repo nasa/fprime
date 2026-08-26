@@ -1,38 +1,38 @@
 module Fw {
 
-  @ Data structure for Time
-  dictionary struct TimeValue {
-    timeBase: TimeBase                   @< basis of time (defined by system)
-    timeContext: FwTimeContextStoreType  @< user settable value. Could be reboot count, node, etc
-    seconds: U32                         @< seconds portion of Time
-    useconds: U32                        @< microseconds portion of Time
-  }
+    @ Data structure for Time
+    dictionary struct TimeValue {
+        timeBase: TimeBase                   @< basis of time (defined by system)
+        timeContext: FwTimeContextStoreType  @< user settable value. Could be reboot count, node, etc
+        seconds: U32                         @< seconds portion of Time
+        useconds: U32                        @< microseconds portion of Time
+    }
 
-  type Time
+    type Time
 
-  @ Time port
-  port Time(
-    ref $time: Fw.Time  @< Reference to Time object
-  )
+    @ Time port
+    port Time(
+        ref $time: Fw.Time  @< Reference to Time object
+    )
 
-  @ Data structure for Time Interval
-  dictionary struct TimeIntervalValue {
-    seconds: U32   @< seconds portion of TimeInterval
-    useconds: U32  @< microseconds portion of TimeInterval
-  }
+    @ Data structure for Time Interval
+    dictionary struct TimeIntervalValue {
+        seconds: U32   @< seconds portion of TimeInterval
+        useconds: U32  @< microseconds portion of TimeInterval
+    }
 
-  type TimeInterval
+    type TimeInterval
 
-  @ Time interval port
-  port TimeInterval(
-    ref timeInterval: Fw.TimeInterval  @< Reference to TimeInterval object
-  )
+    @ Time interval port
+    port TimeInterval(
+        ref timeInterval: Fw.TimeInterval  @< Reference to TimeInterval object
+    )
 
-  dictionary enum TimeComparison {
-    LT           = -1
-    EQ           = 0
-    GT           = 1
-    INCOMPARABLE = 2
-  }
+    dictionary enum TimeComparison {
+        LT           = -1
+        EQ           = 0
+        GT           = 1
+        INCOMPARABLE = 2
+    }
 
 }

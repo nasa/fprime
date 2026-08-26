@@ -1,21 +1,21 @@
 module FppTest {
 
-  module SmHarness {
+    module SmHarness {
 
-    type TestAbsType
+        type TestAbsType
 
-    enum TestEnum {
-      A
-      B
-      C
+        enum TestEnum {
+            A
+            B
+            C
+        }
+
+        array TestArray = [3] U32
+
+        struct TestStruct {
+            x: U32
+        }
+
     }
-
-    array TestArray = [3] U32
-
-    struct TestStruct {
-      x: U32
-    }
-
-  }
 
 }

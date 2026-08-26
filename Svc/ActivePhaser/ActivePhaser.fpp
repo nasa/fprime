@@ -1,55 +1,55 @@
 module Svc {
-  @ A rate group active component that schedules output port calls at pre-defined start times
-  active component ActivePhaser {
+    @ A rate group active component that schedules output port calls at pre-defined start times
+    active component ActivePhaser {
 
-    # ----------------------------------------------------------------------
-    # General Ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # General Ports
+        # ----------------------------------------------------------------------
 
-    @ The rate group cycle input. Cycles arriving while the queue is full are dropped
-    @ silently and by design: unlike ActiveRateGroup, ActivePhaser reports no cycle-slip
-    @ event or channel. A dropped cycle leaves the phase base permanently lagged, which is
-    @ the intended behavior, so operators should not expect a slip indication here.
-    async input port CycleIn: Svc.Cycle drop
+        @ The rate group cycle input. Cycles arriving while the queue is full are dropped
+        @ silently and by design: unlike ActiveRateGroup, ActivePhaser reports no cycle-slip
+        @ event or channel. A dropped cycle leaves the phase base permanently lagged, which is
+        @ the intended behavior, so operators should not expect a slip indication here.
+        async input port CycleIn: Svc.Cycle drop
 
-    @ Scheduler output port to rate group members
-    output port PhaserMemberOut: [ActiveRateGroupOutputPorts] Sched
+        @ Scheduler output port to rate group members
+        output port PhaserMemberOut: [ActiveRateGroupOutputPorts] Sched
 
-    @ An internal port for sending data of type T. Dropped ticks are silent by design; see
-    @ the note on CycleIn.
-    internal port Tick drop
+        @ An internal port for sending data of type T. Dropped ticks are silent by design; see
+        @ the note on CycleIn.
+        internal port Tick drop
 
-    # ----------------------------------------------------------------------
-    # Events
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Events
+        # ----------------------------------------------------------------------
 
-    @ Warning event that rate group has had a missed deadline
-    event MissedDeadline(
-      p: FwIndexType  @< Port that is delayed
-      start: U32      @< Start of execution window
-      length: U32     @< Length of the execution window
-      ticks: U32      @< Time in ticks the deadline was late
-    ) \
-      severity warning high \
-      id 0 \
-      format "Port {} schedule at {} for {} ticks was long by {} ticks" \
-      throttle 5
+        @ Warning event that rate group has had a missed deadline
+        event MissedDeadline(
+            p: FwIndexType  @< Port that is delayed
+            start: U32      @< Start of execution window
+            length: U32     @< Length of the execution window
+            ticks: U32      @< Time in ticks the deadline was late
+        ) \
+            severity warning high \
+            id 0 \
+            format "Port {} schedule at {} for {} ticks was long by {} ticks" \
+            throttle 5
 
-    # ----------------------------------------------------------------------
-    # Special ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Special ports
+        # ----------------------------------------------------------------------
 
-    @ Port for requesting the current time
-    time get port timeCaller
+        @ Port for requesting the current time
+        time get port timeCaller
 
-    @ Port for sending textual representation of events
-    text event port logTextOut
+        @ Port for sending textual representation of events
+        text event port logTextOut
 
-    @ Port for sending events to downlink
-    event port logOut
+        @ Port for sending events to downlink
+        event port logOut
 
-    @ Port for sending telemetry channels to downlink
-    telemetry port tlmOut
+        @ Port for sending telemetry channels to downlink
+        telemetry port tlmOut
 
-  }
+    }
 }

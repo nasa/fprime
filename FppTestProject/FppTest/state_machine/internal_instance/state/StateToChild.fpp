@@ -1,13 +1,13 @@
 module FppTest {
 
-  module SmInstanceState {
+    module SmInstanceState {
 
-    active component StateToChild {
+        active component StateToChild {
 
-      state machine instance smStateStateToChild: SmState.StateToChild
+            state machine instance smStateStateToChild: SmState.StateToChild
+
+        }
 
     }
-
-  }
 
 }

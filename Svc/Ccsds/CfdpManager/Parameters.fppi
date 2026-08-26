@@ -28,27 +28,27 @@ param FileInDefaultPriority: U8 default 0
 
 @ Parameter configuration for an array CFDP channels
 param ChannelConfig: Cfdp.ChannelArrayParams \
-  default [
-    {
-      ack_limit = 10
-      nack_limit = 10
-      ack_timer = 2
-      inactivity_timer = 120
-      dequeue_enabled = Fw.Enabled.ENABLED
-      move_dir = ""
-      max_outgoing_pdus_per_cycle = 64
-      tmp_dir = "/tmp"
-      fail_dir = "/fail"
-    }
-    {
-      ack_limit = 10
-      nack_limit = 10
-      ack_timer = 2
-      inactivity_timer = 120
-      dequeue_enabled = Fw.Enabled.ENABLED
-      move_dir = ""
-      max_outgoing_pdus_per_cycle = 64
-      tmp_dir = "/tmp"
-      fail_dir = "/fail"
-    }
-  ]
+    default [
+        {
+            ack_limit = 10
+            nack_limit = 10
+            ack_timer = 2
+            inactivity_timer = 120
+            dequeue_enabled = Fw.Enabled.ENABLED
+            move_dir = ""
+            max_outgoing_pdus_per_cycle = 64
+            tmp_dir = "/tmp"
+            fail_dir = "/fail"
+        }
+        {
+            ack_limit = 10
+            nack_limit = 10
+            ack_timer = 2
+            inactivity_timer = 120
+            dequeue_enabled = Fw.Enabled.ENABLED
+            move_dir = ""
+            max_outgoing_pdus_per_cycle = 64
+            tmp_dir = "/tmp"
+            fail_dir = "/fail"
+        }
+    ]

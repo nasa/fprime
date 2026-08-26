@@ -3,26 +3,26 @@ constant basicGuardStringSize = 80
 @ A basic state machine with a string guard
 state machine BasicGuardString {
 
-  @ Action a
-  action a: string
+    @ Action a
+    action a: string
 
-  @ Guard g
-  guard g: string
+    @ Guard g
+    guard g: string
 
-  @ Signal s
-  signal s: string size basicGuardStringSize
+    @ Signal s
+    signal s: string size basicGuardStringSize
 
-  initial enter S
+    initial enter S
 
-  @ State S
-  state S {
+    @ State S
+    state S {
 
-    @ State transition
-    on s if g do { a } enter T
+        @ State transition
+        on s if g do { a } enter T
 
-  }
+    }
 
-  @ State T
-  state T
+    @ State T
+    state T
 
 }

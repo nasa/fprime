@@ -1,7 +1,7 @@
 enum FormalParamEnum {
-  X
-  Y
-  Z
+    X
+    Y
+    Z
 }
 
 array FormalParamArray = [3] U32
@@ -13,10 +13,10 @@ type FormalAliasString = string size 32
 type FormalAliasStringZero = string size 0
 
 struct FormalParamStruct {
-  x: U32
-  y: string
-  z: FormalAliasString
-  z0: FormalAliasStringZero
+    x: U32
+    y: string
+    z: FormalAliasString
+    z0: FormalAliasStringZero
 }
 
 array FormalAliasStringArray = [3] FormalAliasString

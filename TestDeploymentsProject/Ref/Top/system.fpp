@@ -1,3 +1,3 @@
 module Ref {
-  system Ref: Ref
+    system Ref: Ref
 }

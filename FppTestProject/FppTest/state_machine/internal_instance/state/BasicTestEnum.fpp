@@ -1,13 +1,13 @@
 module FppTest {
 
-  module SmInstanceState {
+    module SmInstanceState {
 
-    active component BasicTestEnum {
+        active component BasicTestEnum {
 
-      state machine instance smStateBasicTestEnum: SmState.BasicTestEnum
+            state machine instance smStateBasicTestEnum: SmState.BasicTestEnum
+
+        }
 
     }
-
-  }
 
 }

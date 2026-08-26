@@ -1,17 +1,19 @@
 module FppTest {
 
-  module SmInstanceInitial {
+    module SmInstanceInitial {
 
-    active component Choice {
+        active component Choice {
 
-      include "../../internal/initial/include/Choice.fppi"
+            include "../../internal/initial/include/Choice.fppi"
 
-      state machine instance $choice: Choice priority 1 assert
+            state machine instance $choice: Choice priority 1 assert
 
-      state machine instance smInitialChoice: SmInitial.Choice priority 2 block
+            state machine instance smInitialChoice: SmInitial.Choice \
+                priority 2 \
+                block
+
+        }
 
     }
-
-  }
 
 }

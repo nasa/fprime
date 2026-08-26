@@ -1,27 +1,27 @@
 module Svc {
 
-  @ A component for turning FW_ASSERTs into FATALs
-  passive component AssertFatalAdapter {
+    @ A component for turning FW_ASSERTs into FATALs
+    passive component AssertFatalAdapter {
 
-    # ----------------------------------------------------------------------
-    # Events
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Events
+        # ----------------------------------------------------------------------
 
-    include "AssertFatalEvents.fppi"
+        include "AssertFatalEvents.fppi"
 
-    # ----------------------------------------------------------------------
-    # Special ports
-    # ----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Special ports
+        # ----------------------------------------------------------------------
 
-    @ Port for emitting events
-    event port Log
+        @ Port for emitting events
+        event port Log
 
-    @ Port for emitting text events
-    text event port LogText
+        @ Port for emitting text events
+        text event port LogText
 
-    @ Port for getting the time
-    time get port Time
+        @ Port for getting the time
+        time get port Time
 
-  }
+    }
 
 }

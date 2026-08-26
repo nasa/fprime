@@ -1,6 +1,6 @@
 module Fw {
-  interface Channel {
-    @ Telemetry port
-    telemetry port tlmOut
-  }
+    interface Channel {
+        @ Telemetry port
+        telemetry port tlmOut
+    }
 }

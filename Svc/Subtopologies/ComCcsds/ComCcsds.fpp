@@ -2,8 +2,8 @@ module ComCcsds {
 
     # ComPacket Queue enum for queue types
     enum Ports_ComPacketQueue : U8 {
-        EVENTS,
-        TELEMETRY 
+        EVENTS
+        TELEMETRY
     }
 
     enum Ports_ComBufferQueue : U8 {
@@ -17,9 +17,8 @@ module ComCcsds {
         queue size ComCcsdsConfig.QueueSizes.comQueue \
         stack size ComCcsdsConfig.StackSizes.comQueue \
         priority ComCcsdsConfig.Priorities.comQueue \
-        cpu ComCcsdsConfig.CpuAffinities.comQueue \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
+        cpu ComCcsdsConfig.CpuAffinities.comQueue {
+            phase Fpp.ToCpp.Phases.configComponents """
         using namespace ComCcsds;
         Svc::ComQueue::QueueConfigurationTable configurationTable;
 
@@ -38,17 +37,15 @@ module ComCcsds {
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComCcsds::comQueue.configure(configurationTable, 0, ComCcsds::Allocation::memAllocator);
         """
-        phase Fpp.ToCpp.Phases.tearDownComponents """
+            phase Fpp.ToCpp.Phases.tearDownComponents """
         ComCcsds::comQueue.cleanup();
         """
-    }
+        }
 
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance frameAccumulator: Svc.FrameAccumulator base id ComCcsdsConfig.BASE_ID + 0x01000 \ 
-    {
-
+    instance frameAccumulator: Svc.FrameAccumulator base id ComCcsdsConfig.BASE_ID + 0x01000 {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::FrameDetectors::CcsdsTcFrameDetector frameDetector;
         """
@@ -66,8 +63,7 @@ module ComCcsds {
         """
     }
 
-    instance commsBufferManager: Svc.BufferManager base id ComCcsdsConfig.BASE_ID + 0x02000 \
-    {
+    instance commsBufferManager: Svc.BufferManager base id ComCcsdsConfig.BASE_ID + 0x02000 {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;
         """
@@ -172,16 +168,16 @@ module ComCcsds {
         # ----------------------------------------------------------------------
 
         @ Output port sending aggregated space packets to the downstream framing layer
-        port dataOut       = aggregator.dataOut
+        port dataOut = aggregator.dataOut
 
         @ Input port receiving back ownership of downlinked buffers from the downstream framing layer
-        port dataReturnIn  = aggregator.dataReturnIn
+        port dataReturnIn = aggregator.dataReturnIn
 
         @ Input port receiving com status from the downstream framing layer
-        port comStatusIn   = aggregator.comStatusIn
+        port comStatusIn = aggregator.comStatusIn
 
         @ Input port receiving space packets from the downstream framing layer for deframing
-        port dataIn        = spacePacketDeframer.dataIn
+        port dataIn = spacePacketDeframer.dataIn
 
         @ Output port returning ownership of uplinked buffers to the downstream framing layer
         port dataReturnOut = spacePacketDeframer.dataReturnOut
@@ -191,7 +187,7 @@ module ComCcsds {
         port bufferGetCallee = commsBufferManager.bufferGetCallee
 
         @ Input port for deallocating Fw::Buffers back into the comms buffer pool
-        port bufferSendIn    = commsBufferManager.bufferSendIn
+        port bufferSendIn = commsBufferManager.bufferSendIn
     } # end SpacePacketFraming
 
     # This subtopology uses SpacePacketFraming with a ComStub component for Com Interface,
@@ -208,7 +204,7 @@ module ComCcsds {
             comStub.comStatusOut       -> SpacePacketFraming.comStatusIn
 
             # ComStub <-> SpacePacketFraming (Uplink)
-            comStub.dataOut -> SpacePacketFraming.dataIn
+            comStub.dataOut                  -> SpacePacketFraming.dataIn
             SpacePacketFraming.dataReturnOut -> comStub.dataReturnIn
         }
 
@@ -218,13 +214,13 @@ module ComCcsds {
 
         # Command routing
         @ Output port sending routed command packets to the command dispatcher
-        port commandOut         = fprimeRouter.commandOut
+        port commandOut = fprimeRouter.commandOut
 
         @ Input port receiving command response messages back into the router
-        port cmdResponseIn      = fprimeRouter.cmdResponseIn
+        port cmdResponseIn = fprimeRouter.cmdResponseIn
 
         @ Output port sending uplinked file packets to the file handling stack
-        port fileUplinkOut          = fprimeRouter.fileOut
+        port fileUplinkOut = fprimeRouter.fileOut
 
         @ Input port receiving back buffer ownership from the file handling stack
         port fileUplinkReturnIn = fprimeRouter.fileBufferReturnIn
@@ -234,37 +230,37 @@ module ComCcsds {
         port comPacketQueueIn = comQueue.comPacketQueueIn
 
         @ Input port array for queueing Fw::Buffers
-        port bufferQueueIn    = comQueue.bufferQueueIn
+        port bufferQueueIn = comQueue.bufferQueueIn
 
         @ Output port array returning ownership of Fw::Buffers to their original sender after dequeuing
-        port bufferReturnOut  = comQueue.bufferReturnOut
+        port bufferReturnOut = comQueue.bufferReturnOut
 
         # ComDriver interface (via ComStub)
         @ Input port receiving data read from the ByteStream driver
-        port drvReceiveIn        = comStub.drvReceiveIn
+        port drvReceiveIn = comStub.drvReceiveIn
 
         @ Output port returning ownership of the buffer that came in on drvReceiveIn back to the driver
         port drvReceiveReturnOut = comStub.drvReceiveReturnOut
 
         @ Output port sending framed data to the ByteStream driver for transmission
-        port drvSendOut          = comStub.drvSendOut
+        port drvSendOut = comStub.drvSendOut
 
         @ Input port receiving the ready signal when the ByteStream driver has connected
-        port drvConnected        = comStub.drvConnected
+        port drvConnected = comStub.drvConnected
 
         # Buffer management for ComDriver
         @ Input port for requesting (allocating) a new Fw::Buffer from the comms buffer pool
         port commsBufferGetCallee = commsBufferManager.bufferGetCallee
 
         @ Input port for deallocating Fw::Buffers back into the comms buffer pool
-        port commsBufferSendIn    = commsBufferManager.bufferSendIn
+        port commsBufferSendIn = commsBufferManager.bufferSendIn
 
         # Scheduling
         @ Input port for scheduling ComQueue telemetry output
-        port comQueueRun          = comQueue.run
+        port comQueueRun = comQueue.run
 
         @ Rate-group driven timeout to flush the ComAggregator buffer
-        port aggregatorTimeout    = aggregator.timeout
+        port aggregatorTimeout = aggregator.timeout
 
         @ Input port triggering commsBufferManager telemetry output
         port bufferManagerSchedIn = commsBufferManager.schedIn
@@ -310,39 +306,39 @@ module ComCcsds {
 
         # Upstream boundary (packet layer)
         @ Input port receiving space packets from the packet layer for TM framing
-        port dataIn        = framer.dataIn
+        port dataIn = framer.dataIn
 
         @ Output port returning ownership of downlinked buffers to the packet layer
         port dataReturnOut = framer.dataReturnOut
 
         @ Output port forwarding com status to the packet layer
-        port comStatusOut  = framer.comStatusOut
+        port comStatusOut = framer.comStatusOut
 
         @ Output port sending TC-deframed data to the packet layer
-        port dataOut       = tcDeframer.dataOut
+        port dataOut = tcDeframer.dataOut
 
         @ Input port receiving back ownership of uplinked buffers from the packet layer
-        port dataReturnIn  = tcDeframer.dataReturnIn
+        port dataReturnIn = tcDeframer.dataReturnIn
 
         # Downstream boundary (Svc.Com interface)
         @ Output port sending TM transfer frames to the com interface
-        port framedDataOut       = framer.dataOut
+        port framedDataOut = framer.dataOut
 
         @ Input port receiving back ownership of transmitted frame buffers from the com interface
-        port framedDataReturnIn  = framer.dataReturnIn
+        port framedDataReturnIn = framer.dataReturnIn
 
         @ Input port receiving com status from the com interface
-        port framedComStatusIn   = framer.comStatusIn
+        port framedComStatusIn = framer.comStatusIn
 
         @ Input port receiving raw uplink data from the com interface
-        port framedDataIn        = frameAccumulator.dataIn
+        port framedDataIn = frameAccumulator.dataIn
 
         @ Output port returning ownership of received uplink buffers to the com interface
         port framedDataReturnOut = frameAccumulator.dataReturnOut
 
         # Buffer management boundary
         @ Output port for allocating accumulation buffers
-        port bufferAllocate   = frameAccumulator.bufferAllocate
+        port bufferAllocate = frameAccumulator.bufferAllocate
 
         @ Output port for deallocating accumulation buffers
         port bufferDeallocate = frameAccumulator.bufferDeallocate
@@ -386,8 +382,8 @@ module ComCcsds {
             TmTcFraming.bufferDeallocate -> SpacePacketFraming.bufferSendIn
             TmTcFraming.bufferAllocate   -> SpacePacketFraming.bufferGetCallee
             # TmTcFraming <-> SpacePacketFraming
-            TmTcFraming.dataOut               -> SpacePacketFraming.dataIn
-            SpacePacketFraming.dataReturnOut  -> TmTcFraming.dataReturnIn
+            TmTcFraming.dataOut              -> SpacePacketFraming.dataIn
+            SpacePacketFraming.dataReturnOut -> TmTcFraming.dataReturnIn
         }
 
         # ----------------------------------------------------------------------
@@ -395,16 +391,16 @@ module ComCcsds {
         # ----------------------------------------------------------------------
 
         @ Output port sending TM transfer frames to the com interface
-        port dataOut       = framer.dataOut
+        port dataOut = framer.dataOut
 
         @ Input port receiving back ownership of transmitted frame buffers from the com interface
-        port dataReturnIn  = framer.dataReturnIn
+        port dataReturnIn = framer.dataReturnIn
 
         @ Input port receiving com status from the com interface
-        port comStatusIn   = framer.comStatusIn
+        port comStatusIn = framer.comStatusIn
 
         @ Input port receiving raw uplink data from the com interface
-        port dataIn        = frameAccumulator.dataIn
+        port dataIn = frameAccumulator.dataIn
 
         @ Output port returning ownership of received uplink buffers to the com interface
         port dataReturnOut = frameAccumulator.dataReturnOut
@@ -423,7 +419,7 @@ module ComCcsds {
             comStub.comStatusOut       -> FramingSubtopology.comStatusIn
 
             # ComStub <-> FramingSubtopology (Uplink)
-            comStub.dataOut -> FramingSubtopology.dataIn
+            comStub.dataOut                  -> FramingSubtopology.dataIn
             FramingSubtopology.dataReturnOut -> comStub.dataReturnIn
         }
 
@@ -433,13 +429,13 @@ module ComCcsds {
 
         # Command routing
         @ Output port sending routed command packets to the command dispatcher
-        port commandOut         = fprimeRouter.commandOut
+        port commandOut = fprimeRouter.commandOut
 
         @ Input port receiving command response messages back into the router
-        port cmdResponseIn      = fprimeRouter.cmdResponseIn
+        port cmdResponseIn = fprimeRouter.cmdResponseIn
 
         @ Output port sending uplinked file packets to the file handling stack
-        port fileUplinkOut          = fprimeRouter.fileOut
+        port fileUplinkOut = fprimeRouter.fileOut
 
         @ Input port receiving back buffer ownership from the file handling stack
         port fileUplinkReturnIn = fprimeRouter.fileBufferReturnIn
@@ -449,37 +445,37 @@ module ComCcsds {
         port comPacketQueueIn = comQueue.comPacketQueueIn
 
         @ Input port array for queueing Fw::Buffers
-        port bufferQueueIn    = comQueue.bufferQueueIn
+        port bufferQueueIn = comQueue.bufferQueueIn
 
         @ Output port array returning ownership of Fw::Buffers to their original sender after dequeuing
-        port bufferReturnOut  = comQueue.bufferReturnOut
+        port bufferReturnOut = comQueue.bufferReturnOut
 
         # ComDriver interface (via ComStub)
-        @ Input port receiving data read from the ByteStream driver 
-        port drvReceiveIn        = comStub.drvReceiveIn
+        @ Input port receiving data read from the ByteStream driver
+        port drvReceiveIn = comStub.drvReceiveIn
 
         @ Output port returning ownership of the buffer that came in on drvReceiveIn back to the driver
         port drvReceiveReturnOut = comStub.drvReceiveReturnOut
 
         @ Output port sending framed data to the ByteStream driver for transmission
-        port drvSendOut          = comStub.drvSendOut
+        port drvSendOut = comStub.drvSendOut
 
         @ Input port receiving the ready signal when the ByteStream driver has connected
-        port drvConnected        = comStub.drvConnected
+        port drvConnected = comStub.drvConnected
 
         # Buffer management for ComDriver
         @ Input port for requesting (allocating) a new Fw::Buffer from the comms buffer pool
         port commsBufferGetCallee = commsBufferManager.bufferGetCallee
 
         @ Input port for deallocating Fw::Buffers back into the comms buffer pool
-        port commsBufferSendIn    = commsBufferManager.bufferSendIn
+        port commsBufferSendIn = commsBufferManager.bufferSendIn
 
         # Scheduling
         @ Input port for scheduling ComQueue telemetry output
-        port comQueueRun          = comQueue.run
+        port comQueueRun = comQueue.run
 
         @ Rate-group driven timeout to flush the ComAggregator buffer
-        port aggregatorTimeout    = aggregator.timeout
+        port aggregatorTimeout = aggregator.timeout
 
         @ Input port triggering commsBufferManager telemetry output
         port bufferManagerSchedIn = commsBufferManager.schedIn

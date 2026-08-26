@@ -1,13 +1,13 @@
 module FppTest {
 
-  module SmInstanceState {
+    module SmInstanceState {
 
-    active component Polymorphism {
+        active component Polymorphism {
 
-      state machine instance smStatePolymorphism: SmState.Polymorphism
+            state machine instance smStatePolymorphism: SmState.Polymorphism
+
+        }
 
     }
-
-  }
 
 }

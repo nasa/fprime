@@ -1,9 +1,9 @@
 module FppTest {
 
-  module SmInitial {
+    module SmInitial {
 
-    include "include/Nested.fppi"
+        include "include/Nested.fppi"
 
-  }
+    }
 
 }

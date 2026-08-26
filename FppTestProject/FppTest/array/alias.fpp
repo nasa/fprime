@@ -1,19 +1,19 @@
 module FppTest {
 
-  module Array {
+    module Array {
 
-    type EA = E
+        type EA = E
 
-    array ArrayOfAlias = [3] EA default [E.A, E.B, E.C]
+        array ArrayOfAlias = [3] EA default [E.A, E.B, E.C]
 
-    type AString = string size 32
-    type AStringZero = string size 0
+        type AString = string size 32
+        type AStringZero = string size 0
 
-    array AliasString = [3] AString
-    array AliasStringZero = [3] AStringZero
+        array AliasString = [3] AString
+        array AliasStringZero = [3] AStringZero
 
-    type AliasOfArray = ArrayOfAlias
+        type AliasOfArray = ArrayOfAlias
 
-  }
+    }
 
 }
