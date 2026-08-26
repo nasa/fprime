@@ -1,4 +1,5 @@
 telemetry packets RefPackets {
+
   packet CDH id 1 group 1 {
     CdhCore.cmdDisp.CommandsDispatched
 
@@ -284,6 +285,7 @@ telemetry packets RefPackets {
   #DpCompression.dpZLibCompressorBufferManager.NoBuffs
   #DpCompression.dpZLibCompressorBufferManager.EmptyBuffs
   #}
+
 } omit {
   CdhCore.cmdDisp.CommandErrors
   cmdSeq.CS_CurrentSequence
