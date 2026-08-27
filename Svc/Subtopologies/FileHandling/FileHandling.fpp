@@ -36,6 +36,9 @@ module FileHandling {
         priority FileHandlingConfig.Priorities.prmDb \
         cpu FileHandlingConfig.CpuAffinities.prmDb \
     {
+        phase Fpp.ToCpp.Phases.configComponents """
+            FileHandling::prmDb.configure(FileHandlingConfig::Paths::prmDbFile);
+        """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandling::prmDb.readParamFile();
         """
