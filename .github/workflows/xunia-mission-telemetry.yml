@@ -1,0 +1,24 @@
+name: XUNIA Mission Telemetry
+
+on:
+  pull_request:
+    paths:
+      - 'XUNIA/mission_telemetry_twin/**'
+      - '.github/workflows/xunia-mission-telemetry.yml'
+  push:
+    branches: [devel]
+    paths:
+      - 'XUNIA/mission_telemetry_twin/**'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run isolated simulation bridge tests
+        working-directory: XUNIA/mission_telemetry_twin
+        run: python -m unittest -v test_telemetry_bridge.py
