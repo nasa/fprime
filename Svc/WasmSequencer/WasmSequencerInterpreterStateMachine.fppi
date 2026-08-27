@@ -254,10 +254,14 @@ state machine InterpreterStateMachine {
                 on checkTimers do { checkSleepTimers }
             }
 
-            on serialInMessage if blockingSerialIn do { dequeueSerialAndResume } enter DEQUEUE_CHECK
+            on serialInMessage if blockingSerialIn do {
+                dequeueSerialAndResume
+            } enter DEQUEUE_CHECK
 
             choice DEQUEUE_CHECK {
-                if deqeueSucceeded enter PAUSE_CHECK else do { setExitReason_HOST_FAILURE } enter IDLE
+                if deqeueSucceeded enter PAUSE_CHECK else do {
+                    setExitReason_HOST_FAILURE
+                } enter IDLE
             }
 
             on hostResume do { resume } enter PAUSE_CHECK
