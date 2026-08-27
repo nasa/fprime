@@ -11,6 +11,44 @@ This guide shows how to add a project-specific data type identified by a custom 
 
 This guide assumes the standard CCSDS communication stack (`Svc.ComCcsds` subtopology). The same concepts apply to the F´ Protocol stack (`Svc.ComFprime`), where the APID acts as the packet descriptor. For background, see the [Communication Stack](../../reference/system-functional/communication.md) and [CCSDS Protocol](../../reference/system-functional/ccsds-protocol.md) references.
 
+## Packet Format Overview
+
+Inside the communication stack, every F´ packet has the same simple structure: a packet descriptor (the APID) followed by user data.
+
+```
++---------------------------+---------------------------------------------+
+| APID / Packet Descriptor  | User Data                                   |
+| (FwPacketDescriptorType,  | (format defined by the data type)           |
+|  2 bytes by default)      |                                             |
++---------------------------+---------------------------------------------+
+```
+
+The descriptor tells the stack (and the ground system) how to interpret the user data. For the standard data types the user data is defined by the framework, for example:
+
+| APID | User Data |
+|---|---|
+| `FW_PACKET_COMMAND` | opcode (`FwOpcodeType`) + serialized command arguments |
+| `FW_PACKET_TELEM` | channel ID + time tag + serialized channel value |
+| `FW_PACKET_LOG` | event ID + time tag + serialized event arguments |
+| `FW_PACKET_FILE` | file packet (START/DATA/END/CANCEL) contents |
+| `MY_PROJECT_DATA` (custom) | **anything the project defines** |
+
+For a custom APID, the user data format is entirely up to the project — the framework only reads the leading descriptor and passes the rest through opaquely.
+
+When the CCSDS stack is used, each such packet is carried as the payload of a CCSDS Space Packet ([CCSDS 133.0-B-2](https://ccsds.org/Pubs/133x0b2e2.pdf)), whose 6-byte primary header carries the APID and a per-APID sequence count:
+
+```
+<------------- Space Packet Primary Header (6 bytes) -------------->
++---------+----------+----------+-----------+----------+-----------+----------------+
+| Version | Type     | Sec. Hdr | APID      | Seq flags| Seq count | Data Length    |
+| (3 bit) | (1 bit)  | (1 bit)  | (11 bits) | (2 bits) | (14 bits) | (2 bytes)      |
++---------+----------+----------+-----------+----------+-----------+----------------+
+| Packet Data Field: the F´ packet shown above (APID descriptor + user data)        |
++------------------------------------------------------------------------------------+
+```
+
+The Space Packet header APID is filled from the same `ComCfg::Apid` value, which is why a custom data type only needs one new enumeration entry to be identified consistently at every layer.
+
 ## 1. Define the Custom APID
 
 APIDs are defined in the `ComCfg::Apid` enumeration in `config/ComCfg.fpp`. Projects override this file through the standard [configuration override mechanism](../../user-manual/build-system/settings.md) (`config_directory` in `settings.ini`).
