@@ -180,7 +180,7 @@ The F´ GDS natively produces and consumes only the standard F´ data types. Pro
 - **Downlink**: implement a [Data Handler plugin](../../reference/gds-plugins/data-handler.md) registered for your custom descriptor to consume the data on the ground (log it, forward it to another service, etc.).
 - **Uplink**: sending custom-APID data from the ground is project-specific; a common approach is a custom GDS application or plugin that builds the packet (APID + payload) and submits it through the GDS uplink path.
 
-If you are integrating with a non-F´ ground system, the custom APID simply needs to be part of your ground software's packet definitions.
+If you are integrating with a non-F´ ground system, refer to that GDS's documentation for instructions on defining and handling custom packet types and APIDs.
 
 ## References
 
