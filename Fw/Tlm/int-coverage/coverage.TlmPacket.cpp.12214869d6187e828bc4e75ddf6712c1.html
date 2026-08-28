@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-26 23:08:07</td>
+      <td>2026-08-28 01:00:03</td>
     </tr>
   </table>
 </div>
@@ -70,17 +70,17 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l13">Fw::TlmPacket::TlmPacket() (line 13)</a></td><td>called 239 times</td><td>62.0%</td></tr>
-    <tr><td><a href="#l63">Fw::TlmPacket::addValue(unsigned int, Fw::Time&amp;, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 63)</a></td><td>called 2969 times</td><td>83.0%</td></tr>
+    <tr><td><a href="#l13">Fw::TlmPacket::TlmPacket() (line 13)</a></td><td>called 237 times</td><td>62.0%</td></tr>
+    <tr><td><a href="#l63">Fw::TlmPacket::addValue(unsigned int, Fw::Time&amp;, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 63)</a></td><td>called 2941 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l137">Fw::TlmPacket::deserializeFrom(Fw::SerialBufferBase&amp;, Fw::Endianness) (line 137)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l97">Fw::TlmPacket::extractValue(unsigned int&amp;, Fw::Time&amp;, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;, unsigned long) (line 97)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l55">Fw::TlmPacket::getBuffer() (line 55)</a></td><td>called 232 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l51">Fw::TlmPacket::getNumEntries() (line 51)</a></td><td>called 239 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l55">Fw::TlmPacket::getBuffer() (line 55)</a></td><td>called 235 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l51">Fw::TlmPacket::getNumEntries() (line 51)</a></td><td>called 237 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l33">Fw::TlmPacket::resetPktDeser() (line 33)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l20">Fw::TlmPacket::resetPktSer() (line 20)</a></td><td>called 241 times</td><td>83.0%</td></tr>
+    <tr><td><a href="#l20">Fw::TlmPacket::resetPktSer() (line 20)</a></td><td>called 238 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l127">Fw::TlmPacket::serializeTo(Fw::SerialBufferBase&amp;, Fw::Endianness) const (line 127)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l59">Fw::TlmPacket::setBuffer(Fw::LinearBufferTemplate&lt;512ul&gt;&amp;) (line 59)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l18">Fw::TlmPacket::~TlmPacket() (line 18)</a></td><td>called 239 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l18">Fw::TlmPacket::~TlmPacket() (line 18)</a></td><td>called 237 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -184,18 +184,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 239 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 237 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">239</td>
+      <td class="linecount coveredLine">237</td>
       <td class="src coveredLine"><span class="n">TlmPacket</span><span class="o">::</span><span class="n">TlmPacket</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_numEntries</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239</td>
+      <td class="linecount coveredLine">237</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ComPacketType</span><span class="o">::</span><span class="n">FW_PACKET_TELEM</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -204,18 +204,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 239 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 237 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">239</td>
+      <td class="linecount coveredLine">237</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlmBuffer</span><span class="p">.</span><span class="n">resetSer</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l16" href="#l16">16</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239</td>
+      <td class="linecount coveredLine">237</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -229,7 +229,7 @@
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">478</td>
+      <td class="linecount coveredLine">474</td>
       <td class="src coveredLine"><span class="n">TlmPacket</span><span class="o">::~</span><span class="n">TlmPacket</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -243,14 +243,14 @@
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">241</td>
+      <td class="linecount coveredLine">238</td>
       <td class="src coveredLine"><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">TlmPacket</span><span class="o">::</span><span class="n">resetPktSer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">241</td>
+      <td class="linecount coveredLine">238</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlmBuffer</span><span class="p">.</span><span class="n">resetSer</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -264,7 +264,7 @@
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">241</td>
+      <td class="linecount coveredLine">238</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -285,7 +285,7 @@
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">241</td>
+      <td class="linecount coveredLine">238</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">ComPacketType</span><span class="o">::</span><span class="n">FW_PACKET_TELEM</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_type</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_type</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -313,7 +313,7 @@
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">241</td>
+      <td class="linecount coveredLine">238</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">serializeBase</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlmBuffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -460,14 +460,14 @@
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239</td>
+      <td class="linecount coveredLine">237</td>
       <td class="src coveredLine"><span class="n">FwSizeType</span><span class="w"> </span><span class="n">TlmPacket</span><span class="o">::</span><span class="n">getNumEntries</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239</td>
+      <td class="linecount coveredLine">237</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -488,14 +488,14 @@
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">232</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">ComBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">TlmPacket</span><span class="o">::</span><span class="n">getBuffer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">232</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlmBuffer</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -544,7 +544,7 @@
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2969</td>
+      <td class="linecount coveredLine">2941</td>
       <td class="src coveredLine"><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">TlmPacket</span><span class="o">::</span><span class="n">addValue</span><span class="p">(</span><span class="n">FwChanIdType</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">Time</span><span class="o">&amp;</span><span class="w"> </span><span class="n">timeTag</span><span class="p">,</span><span class="w"> </span><span class="n">TlmBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -558,7 +558,7 @@
       <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2969</td>
+      <td class="linecount coveredLine">2941</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlmBuffer</span><span class="p">.</span><span class="n">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlmBuffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -567,19 +567,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2967 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2969</td>
+      <td class="linecount coveredLine">2941</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="k">sizeof</span><span class="p">(</span><span class="n">FwChanIdType</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Time</span><span class="o">::</span><span class="n">SERIALIZED_SIZE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">())</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">left</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_NO_ROOM_LEFT</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -621,7 +621,7 @@
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2967</td>
+      <td class="linecount coveredLine">2940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlmBuffer</span><span class="p">.</span><span class="n">serializeFrom</span><span class="p">(</span><span class="n">id</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -631,11 +631,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 2967 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2967</td>
+      <td class="linecount partialCoveredLine">2940</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -670,7 +670,7 @@
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2967</td>
+      <td class="linecount coveredLine">2940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlmBuffer</span><span class="p">.</span><span class="n">serializeFrom</span><span class="p">(</span><span class="n">timeTag</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -680,11 +680,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 2967 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2967</td>
+      <td class="linecount partialCoveredLine">2940</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -719,7 +719,7 @@
       <td class="lineno"><a id="l85" href="#l85">85</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2967</td>
+      <td class="linecount coveredLine">2940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlmBuffer</span><span class="p">.</span><span class="n">serializeFrom</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getBuffAddr</span><span class="p">(),</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">(),</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Serialization</span><span class="o">::</span><span class="n">OMIT_LENGTH</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -729,11 +729,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 2967 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2967</td>
+      <td class="linecount partialCoveredLine">2940</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -768,7 +768,7 @@
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2967</td>
+      <td class="linecount coveredLine">2940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -782,7 +782,7 @@
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2967</td>
+      <td class="linecount coveredLine">2940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
