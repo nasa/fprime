@@ -174,6 +174,9 @@ If your project needs more elaborate routing (multiple custom APIDs to multiple 
 
 The F´ GDS natively produces and consumes only the standard F´ data types. Project-specific APIDs require GDS extensions through the [plugin system](../operate/develop-gds-plugins.md):
 
+> [!NOTE]
+> Custom APID and data-type support is outside the primary scope of the F´ GDS. The available support is minimal and projects should expect to provide their own GDS plugin or application code.
+
 - **Downlink**: implement a [Data Handler plugin](../../reference/gds-plugins/data-handler.md) registered for your custom descriptor to consume the data on the ground (log it, forward it to another service, etc.).
 - **Uplink**: sending custom-APID data from the ground is project-specific; a common approach is a custom GDS application or plugin that builds the packet (APID + payload) and submits it through the GDS uplink path.
 
