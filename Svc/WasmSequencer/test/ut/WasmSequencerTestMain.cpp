@@ -948,6 +948,67 @@ TEST_F(WasmSequencerTester, ParameterReadPortNotConnectedTraps) {
     ASSERT_from_getParam_SIZE(0);
 }
 
+TEST_F(WasmSequencerTester, TelemetryReadIdNegativeTraps) {
+    // A negative channel id cannot fit FwChanIdType (unsigned); tlm() must reject it
+    // with HostFunctionInvalidId instead of truncating/aliasing another channel.
+    StagedAsset file_asset(*this, "tlm_badid_negative.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 77, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidId_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidId(0, WasmSequencer_HostFunction::TELEMETRY, -1);
+    this->assertSequenceFailureCount(1);
+    // The port was never invoked: the id is rejected before dispatch.
+    ASSERT_from_getTlmChan_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, TelemetryReadIdTooLargeTraps) {
+    // A channel id one past FwChanIdType's (U32) range must be rejected with
+    // HostFunctionInvalidId rather than silently wrapping to alias id 0.
+    StagedAsset file_asset(*this, "tlm_badid_toolarge.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 78, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidId_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidId(0, WasmSequencer_HostFunction::TELEMETRY, static_cast<I64>(0x100000000LL));
+    this->assertSequenceFailureCount(1);
+    ASSERT_from_getTlmChan_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, ParameterReadIdNegativeTraps) {
+    // A negative parameter id cannot fit FwPrmIdType (unsigned); prm() must reject it
+    // with HostFunctionInvalidId instead of truncating/aliasing another parameter.
+    StagedAsset file_asset(*this, "prm_badid_negative.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 79, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidId_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidId(0, WasmSequencer_HostFunction::PARAMETER, -1);
+    this->assertSequenceFailureCount(1);
+    ASSERT_from_getParam_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, ParameterReadIdTooLargeTraps) {
+    // A parameter id one past FwPrmIdType's (U32) range must be rejected with
+    // HostFunctionInvalidId rather than silently wrapping to alias id 0.
+    StagedAsset file_asset(*this, "prm_badid_toolarge.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 80, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidId_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidId(0, WasmSequencer_HostFunction::PARAMETER, static_cast<I64>(0x100000000LL));
+    this->assertSequenceFailureCount(1);
+    ASSERT_from_getParam_SIZE(0);
+}
+
 TEST_F(WasmSequencerTester, CommandPortNotConnectedTraps) {
     // cmdOut disconnected: cmd() logs HostFunctionInvalidPort(COMMAND) and traps.
     this->disconnectCmdOut(0);
