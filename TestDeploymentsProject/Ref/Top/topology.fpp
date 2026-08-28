@@ -102,6 +102,7 @@ module Ref {
       #connection to FileManager listing feature command for sequencing
       rateGroup2Comp.RateGroupMemberOut[5] -> FileHandling.Subtopology.fileManagerSchedIn
       rateGroup2Comp.RateGroupMemberOut[6] -> wasmSeq.checkTimers
+      rateGroup2Comp.RateGroupMemberOut[7] -> wasmSeq.writeTelemetry
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
