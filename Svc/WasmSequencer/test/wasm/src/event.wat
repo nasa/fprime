@@ -1,5 +1,5 @@
 ;; Emits a single ACTIVITY_HI (severity id 5) guest event with a fixed message.
-;; Exercises the EVENT host function -> dispatchPendingHostFunction -> log_ACTIVITY_HI_LogActivityHi.
+;; Exercises the EVENT host function -> dispatchPendingHostFunction -> dispatchEvent -> log_ACTIVITY_HI_LogActivityHi.
 (module
   (import "fprime_v1" "event" (func $event (param i32 i32 i32)))
   (memory 64 (pagesize 1))

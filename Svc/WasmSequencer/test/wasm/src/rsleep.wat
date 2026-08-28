@@ -1,5 +1,5 @@
 ;; Sleeps for 1 second (1_000_000 us) relative, then returns.
-;; Exercises RSLEEP host fn -> pending timer -> checkTimers/checkShouldWake wake path.
+;; Exercises RSLEEP host fn -> pending timer -> checkTimers/checkSleepTimers wake path.
 (module
   (import "fprime_v1" "rsleep" (func $rsleep (param i64)))
   (memory 1 (pagesize 1))

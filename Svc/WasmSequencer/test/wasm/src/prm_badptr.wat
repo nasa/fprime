@@ -1,5 +1,6 @@
-;; Reads param 7 into an out-of-bounds pointer. spacewasm_mem_write of the value
-;; fails -> HostFunctionInvalidPointer(PARAMETER) + stmtResponse_failure.
+;; Reads param 7 into an out-of-bounds pointer. writeGuestMemory of the value at
+;; dispatch time fails -> HostFunctionInvalidPointer(PARAMETER) ->
+;; interpreter_sendSignal_hostResponseFailure -> ExitReason::HOST_FAILURE -> SequenceHostFailure.
 (module
   (import "fprime_v1" "prm" (func $prm (param i64 i32 i32) (result i32)))
   (memory 64 (pagesize 1))

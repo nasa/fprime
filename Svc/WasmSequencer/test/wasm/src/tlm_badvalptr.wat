@@ -1,6 +1,7 @@
 ;; Reads tlm chan 42; the time pointer is valid (write succeeds) but the value
-;; pointer is out of bounds so the SECOND mem_write (value) fails ->
-;; HostFunctionInvalidPointer(TELEMETRY) + stmtResponse_failure.
+;; pointer is out of bounds so the SECOND writeGuestMemory (value) call fails at
+;; dispatch time -> HostFunctionInvalidPointer(TELEMETRY) ->
+;; interpreter_sendSignal_hostResponseFailure -> ExitReason::HOST_FAILURE -> SequenceHostFailure.
 (module
   (import "fprime_v1" "tlm" (func $tlm (param i64 i32 i32 i32 i32) (result i32)))
   (memory 64 (pagesize 1))

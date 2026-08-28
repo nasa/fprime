@@ -1,6 +1,5 @@
-;; Calls prm with value_size > FW_PARAM_BUFFER_MAX_SIZE (506)
-;; Host function writes a parameter of size 4
-;; Test checks that 4 bytes were written
+;; Requests value_size 64, larger than the 4-byte parameter value the host returns.
+;; Test checks that only the 4 real bytes round-tripped and nothing was written past them.
 (module
   (import "fprime_v1" "prm"
     (func $prm (param i64 i32 i32) (result i32)))

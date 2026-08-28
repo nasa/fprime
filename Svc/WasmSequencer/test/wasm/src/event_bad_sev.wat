@@ -1,4 +1,6 @@
-;; Calls event with an invalid severity id (99) -> HostFunctionInvalidSeverity + TRAP HOST.
+;; Calls event with an invalid severity id (99) -> dispatchEvent logs
+;; HostFunctionInvalidSeverity (WARNING_HI) and unconditionally resumes the
+;; interpreter -- execution continues normally, no trap.
 (module
   (import "fprime_v1" "event" (func $event (param i32 i32 i32)))
   (memory 1 (pagesize 1))

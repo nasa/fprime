@@ -1,4 +1,4 @@
-;; Calls tlm with time_size != Fw::Time::SERIALIZED_SIZE (11) -> BufferTooLarge + TRAP.
+;; Calls tlm with time_size < Fw::Time::SERIALIZED_SIZE (11) -> BufferTooSmall + TRAP.
 (module
   (import "fprime_v1" "tlm"
     (func $tlm (param i64 i32 i32 i32 i32) (result i32)))

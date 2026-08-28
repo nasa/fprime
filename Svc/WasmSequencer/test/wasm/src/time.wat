@@ -1,7 +1,7 @@
 ;; Reads the current F´ system time into guest memory.
 ;; time(time_ptr, time_size) -> ()
-;; time_size == SERIALIZED_SIZE (11) so the handler's size guards pass; the host
-;; serializes Fw::Time into [time_ptr] and resumes -> stmtSuccess.
+;; time_size == SERIALIZED_SIZE (11) so wasmTime's size guards pass; dispatchTime
+;; serializes Fw::Time into [time_ptr] and resumes -> hostResume.
 ;; A clean SequenceSucceeded proves the TIME host function round trip.
 (module
   (import "fprime_v1" "time" (func $time (param i32 i32)))

@@ -1,5 +1,6 @@
 ;; Emits an event with an out-of-bounds message pointer. spacewasm_mem_read of
-;; the message fails -> HostFunctionInvalidPointer(EVENT) + stmtResponse_failure.
+;; the message fails -> HostFunctionInvalidPointer(EVENT) -> hostResponseFailure
+;; -> ExitReason::HOST_FAILURE -> SequenceHostFailure.
 (module
   (import "fprime_v1" "event" (func $event (param i32 i32 i32)))
   (memory 64 (pagesize 1))

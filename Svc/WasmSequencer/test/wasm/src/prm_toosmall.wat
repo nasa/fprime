@@ -1,6 +1,7 @@
 ;; Requests value_size 2, smaller than the 4-byte parameter value the host returns.
-;; The host rejects it at dispatch: BufferTooSmall(PARAMETER, 2, 4) ->
-;; stmtResponse_failure -> SequenceFailed, without writing anything to guest memory.
+;; dispatchParameter rejects it after pausing: BufferTooSmall(PARAMETER, 2, 4) ->
+;; interpreter_sendSignal_hostResponseFailure -> ExitReason::HOST_FAILURE -> SequenceHostFailure,
+;; without writing anything to guest memory.
 (module
   (import "fprime_v1" "prm"
     (func $prm (param i64 i32 i32) (result i32)))

@@ -1,6 +1,8 @@
-;; Reads args into an out-of-bounds pointer. The buffer is large enough (so the
-;; BufferTooSmall guard passes), but spacewasm_mem_write of the args fails ->
-;; HostFunctionInvalidPointer(ARGS) + stmtResponse_failure -> SequenceFailed.
+;; Reads args into an out-of-bounds pointer. The buffer is large enough (so
+;; dispatchArgs' BufferTooSmall check passes), but writeGuestMemory's
+;; spacewasm_mem_write fails -> HostFunctionInvalidPointer(ARGS) ->
+;; interpreter_sendSignal_hostResponseFailure -> ExitReason::HOST_FAILURE ->
+;; SequenceHostFailure.
 (module
   (import "fprime_v1" "args"
     (func $args (param i32 i32) (result i32)))

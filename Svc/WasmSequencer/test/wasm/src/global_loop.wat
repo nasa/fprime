@@ -1,7 +1,7 @@
 ;; A long counted busy-loop (like loop.wat) that ALSO exports a mutable global.
 ;; With a small INSTRUCTION_FUEL parameter the loop spans many SPINNING ->
-;; OUT_OF_FUEL -> PAUSE_CHECK cycles, letting a test hold the engine in
-;; RUNNING_SPINNING / RUNNING_PAUSED while it dispatches GLOBAL_GET / GLOBAL_SET.
+;; (interpreterOutOfFuel) -> PAUSE_CHECK cycles, letting a test hold the engine in
+;; SPINNING / PAUSED (children of RUNNING) while it dispatches GLOBAL_GET / GLOBAL_SET.
 ;; This proves the global commands act on the live store mid-sequence and are not
 ;; rejected by the controller (unlike RUN/LOAD/INVOKE, which return BUSY).
 (module
