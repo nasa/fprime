@@ -38,7 +38,7 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_spin(
     // A fuel value of 0 would allow the SPINNING loop to self-signal with zero forward
     // progress every cycle, livelocking the component thread until CANCEL. Clamp to a
     // minimum of 1 to guarantee forward progress.
-    const auto fuel = (fuelParam == 0) ? static_cast<decltype(fuelParam)>(1) : fuelParam;
+    const auto fuel = (fuelParam == 0) ? 1 : fuelParam;
 
     spacewasm_trap_t trap = SPACEWASM_TRAP_NONE;
     const spacewasm_run_status_t runStatus = spacewasm_run(this->m_wasm, fuel, &trap);
