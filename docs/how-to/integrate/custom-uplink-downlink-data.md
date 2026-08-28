@@ -27,24 +27,22 @@ The descriptor tells the stack (and the ground system) how to interpret the user
 
 | APID | User Data |
 |---|---|
-| `FW_PACKET_COMMAND` | opcode (`FwOpcodeType`) + serialized command arguments |
-| `FW_PACKET_TELEM` | channel ID + time tag + serialized channel value |
-| `FW_PACKET_LOG` | event ID + time tag + serialized event arguments |
-| `FW_PACKET_FILE` | file packet (START/DATA/END/CANCEL) contents |
-| `MY_PROJECT_DATA` (custom) | **anything the project defines** |
+| `FW_PACKET_COMMAND` | `[opcode][serialized command arguments]` |
+| `FW_PACKET_TELEM` | `[channel ID][time tag][serialized channel value]` |
+| `FW_PACKET_LOG` | `[event ID][time tag][serialized event arguments]` |
+| `FW_PACKET_FILE` | `[file packet: START/DATA/END/CANCEL]` |
+| `MY_PROJECT_DATA` (custom) | `[project-defined fields]` |
 
 For a custom APID, the user data format is entirely up to the project — the framework only reads the leading descriptor and passes the rest through opaquely.
 
 When the CCSDS stack is used, each such packet is carried as the payload of a CCSDS Space Packet ([CCSDS 133.0-B-2](https://ccsds.org/Pubs/133x0b2e2.pdf)), whose 6-byte primary header carries the APID and a per-APID sequence count:
 
 ```
-<------------- Space Packet Primary Header (6 bytes) -------------->
-+---------+----------+----------+-----------+----------+-----------+----------------+
-| Version | Type     | Sec. Hdr | APID      | Seq flags| Seq count | Data Length    |
-| (3 bit) | (1 bit)  | (1 bit)  | (11 bits) | (2 bits) | (14 bits) | (2 bytes)      |
-+---------+----------+----------+-----------+----------+-----------+----------------+
-| Packet Data Field: the F´ packet shown above (APID descriptor + user data)        |
-+------------------------------------------------------------------------------------+
++--------------------------------------+---------------------------------------------+
+| Space Packet Header (6 bytes)        | Packet Data Field                          |
+| (version, type, APID, sequence,      | F´ packet: APID / descriptor + user data   |
+|  length, and other CCSDS fields)     |                                             |
++--------------------------------------+---------------------------------------------+
 ```
 
 The Space Packet header APID is filled from the same `ComCfg::Apid` value, which is why a custom data type only needs one new enumeration entry to be identified consistently at every layer.
@@ -128,6 +126,9 @@ Depending on how much of the subtopology configuration your project overrides, t
 
 Buffers sent to `Svc.ComQueue` are returned on the matching `bufferReturnOut` port after the data has been framed and sent. The producer owns deallocation: return the buffer to the buffer manager it was allocated from when it comes back on `dataReturnIn`.
 
+> [!IMPORTANT]
+> Every buffer must be returned through the matching ownership-return port after processing. Failing to return a buffer results in a memory leak and can eventually exhaust the communications buffer pool.
+
 ## 3. Uplink: Receiving Custom Data
 
 ### How the framework routes incoming data
@@ -155,8 +156,8 @@ void MyProjectRouter ::dataIn_handler(FwIndexType portNum,
 }
 ```
 
-> [!WARNING]
-> Buffers received on `unknownDataOut` are passed without copying and **must** be returned to `Svc.FprimeRouter` through its `fileBufferReturnIn` port when processing is complete. Failing to do so leaks buffers from the uplink pool.
+> [!IMPORTANT]
+> Buffers received on `unknownDataOut` are passed without copying and **must** be returned to `Svc.FprimeRouter` through its `fileBufferReturnIn` port when processing is complete. Failing to do so results in a memory leak and can eventually exhaust the uplink buffer pool.
 
 ### Wire it into the topology
 
