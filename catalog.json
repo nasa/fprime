@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "cd3845fc2ba957aa65751c4851046ee1c7d3ef3b",
-  "generated_at": "2026-08-28T22:21:59Z",
+  "generated_at": "2026-08-28T22:27:21Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -30,7 +30,7 @@
     "function_covered": 1527,
     "function_total": 3973,
     "branch_pct": 18.69,
-    "branch_covered": 2845,
+    "branch_covered": 2846,
     "branch_total": 15225,
     "report": "int-coverage/coverage-all.html",
     "tier": "bronze"
@@ -3324,8 +3324,8 @@
         "function_pct": 78.12,
         "function_covered": 25,
         "function_total": 32,
-        "branch_pct": 60.98,
-        "branch_covered": 25,
+        "branch_pct": 63.41,
+        "branch_covered": 26,
         "branch_total": 41,
         "report": "Fw/Comp/int-coverage/index.html",
         "tier": "bronze"
