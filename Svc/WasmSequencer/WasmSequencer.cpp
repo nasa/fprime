@@ -312,6 +312,12 @@ void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 }
 
 void WasmSequencer ::PAUSE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    if (this->interpreter_getState() == WasmSequencer_InterpreterStateMachine_State::IDLE) {
+        this->log_WARNING_LO_SequenceNotRunning();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
     this->m_pendingPause = true;
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
