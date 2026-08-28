@@ -2,8 +2,8 @@
   "schema": 6,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "efce12d7e030b98779cbd367e51b2cc1eaebfbc2",
-  "generated_at": "2026-08-28T01:01:27Z",
+  "commit": "cd3845fc2ba957aa65751c4851046ee1c7d3ef3b",
+  "generated_at": "2026-08-28T22:09:05Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
