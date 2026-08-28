@@ -127,7 +127,8 @@ sequenceDiagram
     Engine-->>Ctrl: loadSucceeded
 
     opt module has a start function
-        Ctrl->>Interp: invokeStart, runEngine
+        Ctrl->>Engine: invokeStart
+        Ctrl->>Interp: runEngine
         Note over Ctrl: enter RUNNING_START*
         Interp-->>Ctrl: engineFinished
     end
