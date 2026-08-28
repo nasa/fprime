@@ -56,9 +56,6 @@ void configureTopology() {
 
     // Restrict uplinked files to a sandbox directory to prevent path-traversal writes
     FileHandling::fileUplink.configure("/tmp/uplink/");
-
-    // PrmDb file name must be supplied by the using topology
-    FileHandling::prmDb.configure("PrmDb.dat");
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref

@@ -32,7 +32,6 @@ The **FileHandling subtopology** packages the core file-transfer services common
 ### 2.3 Required Inputs for Operation
 
 * **Rate Groups**: Connect scheduler outputs to the **Run** (scheduling) ports of `fileDownlink`.
-* **PrmDb file name**: Call `FileHandling::prmDb.configure(<file name>)` from your topology setup code before parameters are loaded; the subtopology does not set a file name itself, and `PrmDb` asserts if parameters are read or saved without one.
 * **Communication/Framing Stack**: Wire file-packet ports between FileHandling and your COM/framing subtopology (e.g., `ComCcsds`, `ComFprime`, `FramingFprime`, `FramingCcsds`) to complete uplink/downlink paths.
 
 > [!WARNING]
@@ -91,6 +90,7 @@ topology Flight {
 * **Stack sizes** — Task stacks for active components (`fileUplink`, `fileDownlink`).
 * **Priorities** — RTOS priorities for the active/queued components as applicable.
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
+* **Paths** — File paths used by the subtopology; `Paths.prmDbFile` sets the `prmDb` parameter storage file (default `PrmDb.dat`).
 
 > These knobs tailor runtime footprint and scheduling without modifying the subtopology wiring.
 
