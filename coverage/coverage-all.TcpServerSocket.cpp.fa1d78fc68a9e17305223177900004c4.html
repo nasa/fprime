@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-26 22:01:17</td>
+      <td>2026-08-28 00:15:21</td>
     </tr>
   </table>
 </div>
@@ -73,7 +73,7 @@
     <tr><td><a href="#l41">Drv::TcpServerSocket::TcpServerSocket() (line 41)</a></td><td>called 15 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l43">Drv::TcpServerSocket::getListenPort() (line 43)</a></td><td>called 221 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l107">Drv::TcpServerSocket::openProtocol(Drv::SocketDescriptor&amp;) (line 107)</a></td><td>called 325 times</td><td>85.0%</td></tr>
-    <tr><td><a href="#l139">Drv::TcpServerSocket::recvProtocol(Drv::SocketDescriptor const&amp;, unsigned char*, unsigned long) (line 139)</a></td><td>called 606 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l139">Drv::TcpServerSocket::recvProtocol(Drv::SocketDescriptor const&amp;, unsigned char*, unsigned long) (line 139)</a></td><td>called 603 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l132">Drv::TcpServerSocket::sendProtocol(Drv::SocketDescriptor const&amp;, unsigned char const*, unsigned long) (line 132)</a></td><td>called 224 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l48">Drv::TcpServerSocket::startup(Drv::SocketDescriptor&amp;) (line 48)</a></td><td>called 14 times</td><td>77.0%</td></tr>
     <tr><td><a href="#l100">Drv::TcpServerSocket::terminate(Drv::SocketDescriptor const&amp;) (line 100)</a></td><td>called 17 times</td><td>100.0%</td></tr>
@@ -1143,7 +1143,7 @@
       <td class="lineno"><a id="l139" href="#l139">139</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">606</td>
+      <td class="linecount coveredLine">603</td>
       <td class="src coveredLine"><span class="n">FwSignedSizeType</span><span class="w"> </span><span class="n">TcpServerSocket</span><span class="o">::</span><span class="n">recvProtocol</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SocketDescriptor</span><span class="o">&amp;</span><span class="w"> </span><span class="n">socketDescriptor</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -1178,7 +1178,7 @@
       <td class="lineno"><a id="l144" href="#l144">144</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">606</td>
+      <td class="linecount coveredLine">603</td>
       <td class="src coveredLine"><span class="w">        </span><span class="o">::</span><span class="n">recv</span><span class="p">(</span><span class="n">socketDescriptor</span><span class="p">.</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">size</span><span class="p">),</span><span class="w"> </span><span class="n">SOCKET_IP_RECV_FLAGS</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
