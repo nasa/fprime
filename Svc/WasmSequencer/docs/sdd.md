@@ -146,7 +146,13 @@ sequenceDiagram
 
 ![Interpreter State Machine Diagram](InterpreterStateMachine.svg)
 
-The interpreter executes the loaded program in fuel-bounded slices and services the host functions it calls. Each slice runs the interpreter until it finishes, traps, exhausts its fuel (loop and spin again — the point at which a pending `PAUSE` or `CANCEL` takes effect), or a guest host call pauses it. Most host functions (reading time, telemetry, parameters or arguments, emitting an event, sending serial output) complete immediately and resume the guest. Two are asynchronous: a dispatched command (`cmd`) awaits its response on `cmdResponseIn`, and a blocking `serial_recv` awaits an inbound message on `serialIn` — both bounded by the `HOST_FUNCTION_TIMEOUT_SECS` parameter and checked on the `checkTimers` tick. Sleeps (`rsleep`/`asleep`) are not bounded by that parameter; they wait on their own guest-requested wake timer, also checked each `checkTimers` tick. When the program ends the interpreter records why — a normal finish (with its return code), a guest `exit`/`panic` (with its code), or a byte-code trap (with its reason) — and reports it to the controller, which emits the matching completion event.
+The interpreter executes the loaded program and services the host functions it calls, one fuel-bounded slice at a time.
+
+- **Slices are fuel-bounded.** Each slice spins the interpreter loop until it finishes, traps, exhausts its `INSTRUCTION_FUEL`, or a guest host call pauses it. Running out of fuel simply starts another slice; a pending `PAUSE` or `CANCEL` is checked between slices, which is where either takes effect.
+- **Every host function pauses the interpreter and is dispatched through `AWAITING_RESPONSE`**, but most resolve immediately within that same dispatch: reading time, telemetry, parameters, or invocation arguments, emitting an event, and sending serial output all signal their own resume before the guest ever actually waits.
+- **Two host functions wait for an asynchronous reply.** A dispatched command (`cmd`) awaits its response on `cmdResponseIn`, and a blocking `serial_recv` awaits an inbound message on `serialIn`. Both are bounded by the `HOST_FUNCTION_TIMEOUT_SECS` parameter, checked on each `checkTimers` tick.
+- **Sleeps run on their own timer.** `rsleep`/`asleep` wait on a guest-requested wake time rather than the host-function timeout, but are likewise checked each `checkTimers` tick.
+- **Completion hands back execution to the controller.** When the program ends, the interpreter records why — a normal finish (with its return code), a guest `exit`/`panic` (with its code), or a byte-code trap (with its reason) — and signals the controller, which emits the matching completion event.
 
 ### Allocator Lock
 
