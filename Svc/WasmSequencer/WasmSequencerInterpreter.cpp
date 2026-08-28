@@ -494,6 +494,7 @@ void WasmSequencer ::dispatchSerialOut() {
 void WasmSequencer ::dispatchSerialRecv() {
     const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.u.serialRecv.index);
     FW_ASSERT(portNum < NUM_SERIALIN_INPUT_PORTS, portNum);
+    Os::ScopeLock scopeLock(this->m_serialInMutex);
     auto& queue = this->m_serialInQueue[portNum];
 
     // Check if there is an available message on the queue
@@ -648,6 +649,7 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_dequeueSer
     const FwIndexType& value) {
     const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.u.serialRecv.index);
     FW_ASSERT(portNum < NUM_SERIALIN_INPUT_PORTS, portNum);
+    Os::ScopeLock scopeLock(this->m_serialInMutex);
     auto& queue = this->m_serialInQueue[portNum];
 
     this->m_dequeueSucceeded = false;

@@ -66,8 +66,12 @@ WasmSequencer ::WasmSequencer(const char* const compName)
 
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    for (FwIndexType i = 0; i < Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS; i++) {
-        this->m_serialInQueue[i].setup(this->m_serialInQueueData[i], Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_SIZE);
+    {
+        Os::ScopeLock scopeLock(this->m_serialInMutex);
+        for (FwIndexType i = 0; i < Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS; i++) {
+            this->m_serialInQueue[i].setup(this->m_serialInQueueData[i],
+                                           Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_SIZE);
+        }
     }
 }
 
@@ -173,6 +177,7 @@ void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
 void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
     FW_ASSERT(portNum < Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS, portNum,
               Svc::Wasm::SerialPortInIndex::MAX_SERIAL_PORTS);
+    Os::ScopeLock scopeLock(this->m_serialInMutex);
     auto& queue = this->m_serialInQueue[portNum];
 
     // Each message is framed on the queue as [U32 length][payload]

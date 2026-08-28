@@ -938,6 +938,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! the corresponding row of m_serialInQueueData (see the setup() loop in the ctor).
     Types::CircularBuffer m_serialInQueue[NUM_SERIALIN_INPUT_PORTS];
 
+    //! A lock for guarding the serialInQueue
+    Os::Mutex m_serialInMutex;
+
     //! A host function call the guest requested that is pending dispatch by the
     //! engine state machine (see dispatchPendingHostFunction). `kind` selects
     //! which arm of the `u` union carries the call's arguments.
