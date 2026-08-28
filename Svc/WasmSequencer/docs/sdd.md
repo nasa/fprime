@@ -4,72 +4,68 @@ A sequence engine based around a WebAssembly (Wasm) interpreter.
 
 ## Introduction
 
-The WasmSequencer is a component that implements the F Prime sequencing paradigm to dispatch commands, events, read telemetry parameters and more. It is based around the [WebAssembly](https://webassembly.org/) standard.
+WasmSequencer is a component that implements the F Prime sequencing paradigm to dispatch commands, events read telemetry parameters and more. It is based around the [WebAssembly](https://webassembly.org/) standard.
 
-The component integrates a [WebAssembly interpreter](https://github.com/nasa/spacewasm) capable of loading, validating and executing WebAssembly modules as well as a state machine to manage the interpreter.
+The component integrates a [WebAssembly interpreter](https://github.com/nasa/spacewasm) capable of loading validating and executing WebAssembly modules two state machines to manage the life-cycle and execution of the interpreter.
 
-This document assumes a general familiarity with the capabilities and design of WebAssembly and Wasm nomenclature,
-for more information, please see [WebAssembly Docs](https://webassembly.org/) for in-depth documentation
-and specification of the Wasm standard.
+This document assumes a general familiarity with the capabilities and design of WebAssembly and Wasm nomenclature, for more information, please see [WebAssembly Docs](https://webassembly.org/) for in-depth documentation and specification of the Wasm standard.
 
 ## Build Dependencies
 
-The [spacewasm](https://github.com/nasa/spacewasm) engine is written in Rust and compiled into a static
-library at build time, so building this component requires a [Rust toolchain](https://www.rust-lang.org/tools/install)
-(`cargo` and `rustc`) on the `PATH`. This is the framework's only Rust dependency, so it is treated as
-optional: `cmake/required.cmake` detects `cargo`, and `Svc/CMakeLists.txt` skips `Svc::WasmSequencer`.
+The [spacewasm](https://github.com/nasa/spacewasm) engine is written in Rust and compiled into a static library at build time, so building this component requires a [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) on the `PATH`. This is the framework's only Rust dependency, so it is treated as optional: `cmake/required.cmake` detects `cargo`, and `Svc/CMakeLists.txt` skips `Svc::WasmSequencer`.
 
 ## Requirements
 
-| Name         | Description                                                                                                                                                                         | Rationale                                                                                                                                                                                                                                                                       | Validation |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| WASM-SEQ-001 | The sequencer shall support loading and validating WebAssembly modules.                                                                                                             | Sequences are distributed as WebAssembly binaries; a module must be decoded and validated before execution so a malformed or untrusted binary cannot corrupt the host.                                                                                                          | Unit Test  |
-| WASM-SEQ-002 | The sequencer shall support loading multiple named modules so that the exports of one module may be referenced by another.                                                          | Larger sequences are composed from reusable library modules; naming lets inter-module imports and exports resolve within a single store.                                                                                                                                        | Unit Test  |
-| WASM-SEQ-003 | The sequencer shall allocate its module store for a fixed, configured capacity and shall reset it on a failed load.                                                                 | Flight software forbids heap fragmentation; a fixed-capacity store with a full reset on failure keeps allocation deterministic and returns to a known-good state.                                                                                                               | Unit Test  |
-| WASM-SEQ-004 | The sequencer shall resolve sequence file paths relative to a configurable base directory.                                                                                          | Onboard sequence storage varies by deployment; a parameterized base directory avoids hard-coding filesystem layout into the flight software.                                                                                                                                    | Unit Test  |
-| WASM-SEQ-005 | The sequencer shall support running sequences with arguments.                                                                                                                       | Passing arguments at dispatch time lets a single sequence binary be parameterized, so operators can reuse one module across scenarios instead of rebuilding per run.                                                                                                            | Unit Test  |
-| WASM-SEQ-006 | The sequencer shall support invoking a previously loaded module's entry point on demand.                                                                                            | Decoupling load from invoke lets a module be validated and staged ahead of time, then executed without re-reading the file.                                                                                                                                                     | Unit Test  |
-| WASM-SEQ-007 | The sequencer shall support both blocking and non-blocking sequence execution.                                                                                                      | Blocking lets a controlling sequence or operator serialize on completion; non-blocking allows fire-and-forget dispatch. Both are needed depending on the caller's intent.                                                                                                       | Unit Test  |
-| WASM-SEQ-008 | The sequencer shall bound the number of interpreter instructions executed per cycle.                                                                                                | Fuelling the interpreter keeps a long-running or malicious guest from starving the component thread and preserves responsiveness to pause and cancellation.                                                                                                                     | Unit Test  |
-| WASM-SEQ-009 | The sequencer shall support pausing a running sequence before the next directive and later resuming it.                                                                             | Operators need to halt a sequence at a safe point for inspection or intervention and resume it without restarting from the beginning.                                                                                                                                           | Unit Test  |
-| WASM-SEQ-010 | The sequencer shall support cancelling a loading, ready, or running sequence and returning to the idle state.                                                                       | An operator must be able to abort a misbehaving or unneeded sequence at any point and clear the store to a known-good idle state.                                                                                                                                               | Unit Test  |
-| WASM-SEQ-011 | The sequencer shall fail a sequence whose current blocking host function does not complete within a configurable timeout.                                                           | A command or serial reply that never arrives would block the sequencer indefinitely; a per-host-function timeout bounds the wait and fails the sequence safely.                                                                                                                 | Unit Test  |
-| WASM-SEQ-012 | The sequencer shall let a sequence read the current spacecraft time, telemetry channel values, and parameter values.                                                                | Time-aware and conditional sequences must branch on the host's authoritative time, live telemetry, and configured parameters rather than guest-local state.                                                                                                                     | Unit Test  |
-| WASM-SEQ-013 | The sequencer shall support sending commands for dispatch.                                                                                                                          | Command dispatch is the primary mechanism by which a sequence actuates the spacecraft, driving the F´ command dispatcher exactly as a ground command would.                                                                                                                     | Unit Test  |
-| WASM-SEQ-014 | The sequencer shall let a sequence emit events at the non-reserved F´ severities.                                                                                                   | Guest programs need operator-visible logging; restricting to non-reserved severities prevents untrusted code from triggering the FATAL handler or spoofing command events.                                                                                                      | Unit Test  |
-| WASM-SEQ-015 | The sequencer shall let a sequence sleep for a relative or absolute duration.                                                                                                       | Sequences must pace their actions against wall-clock time (settling delays, timed maneuvers) without busy-waiting and consuming interpreter fuel.                                                                                                                               | Unit Test  |
-| WASM-SEQ-016 | The sequencer shall let a sequence send a fire-and-forget message out a serial output port.                                                                                         | One-way and telemetry-style peripherals are driven by pushing bytes to a selected serial port index without stalling the sequence; the send resumes the sequence as soon as the port accepts it, and fails gracefully if the port is unconnected or the payload exceeds the configured maximum. | Unit Test  |
-| WASM-SEQ-017 | The sequencer shall let a sequence read a message from a serial input port, either blocking until one arrives or returning immediately when none is queued.                         | Request/response peripherals answer on a serial input; a blocking read lets a sequence wait for the reply (bounded by the per-host-function timeout) while a non-blocking read lets it poll without stalling. Inbound messages are buffered in a per-port queue.                | Unit Test  |
-| WASM-SEQ-018 | The sequencer shall treat a sequence that terminates with a zero return value or a zero exit code as a success, and a non-zero return value, a non-zero exit code, or a panic as a failure. | Guests need a clean way to end execution; treating a zero return or exit(0) as success and any non-zero return value, non-zero exit code, or panic as a failure lets the host report the correct verdict to the awaiting command.                                               | Unit Test  |
-| WASM-SEQ-019 | The sequencer shall validate all host-function arguments from the guest and never fault the host on invalid input, reporting an event and failing or trapping the sequence instead. | Untrusted guest code must never be able to crash the host. This covers oversized/undersized buffers, out-of-range or unconnected serial ports, invalid guest memory pointers, and reserved-severity event requests, all of which are rejected gracefully rather than asserting. | Unit Test  |
-| WASM-SEQ-020 | The sequencer shall report its current state, running sequence name, and most recent trap reason as telemetry.                                                                      | Operators need continuous visibility into what the sequencer is doing and why a sequence stopped without pulling a full event log.                                                                                                                                              | Unit Test  |
-| WASM-SEQ-021 | The sequencer shall count and report sequences succeeded, failed, and cancelled, and commands dispatched and failed.                                                                | Aggregate counters give operators a quick health indicator and let ground trend sequence and command reliability over a mission.                                                                                                                                                | Unit Test  |
+| Name         | Description                                                                                                                                                                                 | Rationale                                                                                                                                                                                                                                                                                       | Validation |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| WASM-SEQ-001 | The sequencer shall support loading and validating WebAssembly modules.                                                                                                                     | Sequences are distributed as WebAssembly binaries; a module must be decoded and validated before execution so a malformed or untrusted binary cannot corrupt the host.                                                                                                                          | Unit Test  |
+| WASM-SEQ-002 | The sequencer shall support loading multiple named modules so that the exports of one module may be referenced by another.                                                                  | Larger sequences are composed from reusable library modules; naming lets inter-module imports and exports resolve within a single store.                                                                                                                                                        | Unit Test  |
+| WASM-SEQ-003 | The sequencer shall allocate its module store for a fixed, configured capacity and shall reset it on a failed load.                                                                         | Flight software forbids heap fragmentation; a fixed-capacity store with a full reset on failure keeps allocation deterministic and returns to a known-good state.                                                                                                                               | Unit Test  |
+| WASM-SEQ-004 | The sequencer shall resolve sequence file paths relative to a configurable base directory.                                                                                                  | Onboard sequence storage varies by deployment; a parameterized base directory avoids hard-coding filesystem layout into the flight software.                                                                                                                                                    | Unit Test  |
+| WASM-SEQ-005 | The sequencer shall support running sequences with arguments.                                                                                                                               | Passing arguments at dispatch time lets a single sequence binary be parameterized, so operators can reuse one module across scenarios instead of rebuilding per run.                                                                                                                            | Unit Test  |
+| WASM-SEQ-006 | The sequencer shall support invoking a previously loaded module's entry point on demand.                                                                                                    | Decoupling load from invoke lets a module be validated and staged ahead of time, then executed without re-reading the file.                                                                                                                                                                     | Unit Test  |
+| WASM-SEQ-007 | The sequencer shall support both blocking and non-blocking sequence execution.                                                                                                              | Blocking lets a controlling sequence or operator serialize on completion; non-blocking allows fire-and-forget dispatch. Both are needed depending on the caller's intent.                                                                                                                       | Unit Test  |
+| WASM-SEQ-008 | The sequencer shall bound the number of interpreter instructions executed per cycle.                                                                                                        | Fuelling the interpreter keeps a long-running or malicious guest from starving the component thread and preserves responsiveness to pause and cancellation.                                                                                                                                     | Unit Test  |
+| WASM-SEQ-009 | The sequencer shall support pausing a running sequence before the next directive and later resuming it.                                                                                     | Operators need to halt a sequence at a safe point for inspection or intervention and resume it without restarting from the beginning.                                                                                                                                                           | Unit Test  |
+| WASM-SEQ-010 | The sequencer shall support cancelling a loading, ready, or running sequence and returning to the idle state.                                                                               | An operator must be able to abort a misbehaving or unneeded sequence at any point and clear the store to a known-good idle state.                                                                                                                                                               | Unit Test  |
+| WASM-SEQ-011 | The sequencer shall fail a sequence whose current blocking host function does not complete within a configurable timeout.                                                                   | A command or serial reply that never arrives would block the sequencer indefinitely; a per-host-function timeout bounds the wait and fails the sequence safely.                                                                                                                                 | Unit Test  |
+| WASM-SEQ-012 | The sequencer shall let a sequence read the current spacecraft time, telemetry channel values, and parameter values.                                                                        | Time-aware and conditional sequences must branch on the host's authoritative time, live telemetry, and configured parameters rather than guest-local state.                                                                                                                                     | Unit Test  |
+| WASM-SEQ-013 | The sequencer shall support sending commands for dispatch.                                                                                                                                  | Command dispatch is the primary mechanism by which a sequence actuates the spacecraft, driving the F´ command dispatcher exactly as a ground command would.                                                                                                                                     | Unit Test  |
+| WASM-SEQ-014 | The sequencer shall let a sequence emit events at the non-reserved F´ severities.                                                                                                           | Guest programs need operator-visible logging; restricting to non-reserved severities prevents untrusted code from triggering the FATAL handler or spoofing command events.                                                                                                                      | Unit Test  |
+| WASM-SEQ-015 | The sequencer shall let a sequence sleep for a relative or absolute duration.                                                                                                               | Sequences must pace their actions against wall-clock time (settling delays, timed maneuvers) without busy-waiting and consuming interpreter fuel.                                                                                                                                               | Unit Test  |
+| WASM-SEQ-016 | The sequencer shall let a sequence send a fire-and-forget message out a serial output port.                                                                                                 | One-way and telemetry-style peripherals are driven by pushing bytes to a selected serial port index without stalling the sequence; the send resumes the sequence as soon as the port accepts it, and fails gracefully if the port is unconnected or the payload exceeds the configured maximum. | Unit Test  |
+| WASM-SEQ-017 | The sequencer shall let a sequence read a message from a serial input port, either blocking until one arrives or returning immediately when none is queued.                                 | Request/response peripherals answer on a serial input; a blocking read lets a sequence wait for the reply (bounded by the per-host-function timeout) while a non-blocking read lets it poll without stalling. Inbound messages are buffered in a per-port queue.                                | Unit Test  |
+| WASM-SEQ-018 | The sequencer shall treat a sequence that terminates with a zero return value or a zero exit code as a success, and a non-zero return value, a non-zero exit code, or a panic as a failure. | Guests need a clean way to end execution; treating a zero return or exit(0) as success and any non-zero return value, non-zero exit code, or panic as a failure lets the host report the correct verdict to the awaiting command.                                                               | Unit Test  |
+| WASM-SEQ-019 | The sequencer shall validate all host-function arguments from the guest and never fault the host on invalid input, reporting an event and failing or trapping the sequence instead.         | Untrusted guest code must never be able to crash the host. This covers oversized/undersized buffers, out-of-range or unconnected serial ports, invalid guest memory pointers, and reserved-severity event requests, all of which are rejected gracefully rather than asserting.                 | Unit Test  |
+| WASM-SEQ-020 | The sequencer shall report its current state, running sequence name, and most recent trap reason as telemetry.                                                                              | Operators need continuous visibility into what the sequencer is doing and why a sequence stopped without pulling a full event log.                                                                                                                                                              | Unit Test  |
+| WASM-SEQ-021 | The sequencer shall count and report sequences succeeded, failed, and cancelled, and commands dispatched and failed.                                                                        | Aggregate counters give operators a quick health indicator and let ground trend sequence and command reliability over a mission.                                                                                                                                                                | Unit Test  |
 
 ## Design
 
-The design of this component is tightly coupled with the [spacewasm](https://github.com/nasa/spacewasm) WebAssembly engine, which performs module loading, validation, and instruction execution. `Svc::WasmSequencer` is an **active** component (it owns a thread; the queue depth is set per instance in the topology) built around two FPP state machines: a **controller** that manages the module lifecycle (load, validate, initialize, run) and an **interpreter** that executes Wasm instructions and services the host functions a running sequence calls.
+The design of this component is tightly coupled with the [spacewasm](https://github.com/nasa/spacewasm) WebAssembly engine, which performs module loading, validation, and instruction execution. `Svc::WasmSequencer` is an active component built around two FPP state machines: a **controller** that manages the module lifecycle (load, validate, initialize, run) and an **interpreter** that executes Wasm instructions and services the host functions a running sequence calls.
 
 ### WebAssembly Engine
 
 The engine, [spacewasm](https://github.com/nasa/spacewasm), implements the official WebAssembly [specification](https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/) with the following features:
 
-| Feature | Description |
-| --- | --- |
-| [MVP](https://github.com/WebAssembly/design/blob/main/MVP.md) | The Wasm MVP |
+| Feature                                                                           | Description                        |
+| --------------------------------------------------------------------------------- | ---------------------------------- |
+| [MVP](https://github.com/WebAssembly/design/blob/main/MVP.md)                     | The Wasm MVP                       |
 | [Import/Export of mutable globals](https://github.com/WebAssembly/mutable-global) | Mutable globals (part of Wasm 1.0) |
-| [Custom Page Sizes](https://github.com/WebAssembly/custom-page-sizes) | Linear memory sizes < 64 KiB |
+| [Custom Page Sizes](https://github.com/WebAssembly/custom-page-sizes)             | Linear memory page sizes < 64 KiB  |
 
-Rather than JIT-compiling to native code, spacewasm is an _interpreter_ — more precisely an _IR interpreter_: during load it translates Wasm byte-code into a resolved intermediate representation that it then decodes and executes in a loop. This is slower than a production JIT but gives the determinism and safety guarantees flight software needs. This document does not cover the engine's internals; see the [spacewasm repository](https://github.com/nasa/spacewasm). A few of its design choices drive this component:
+Unlike most production-grade Wasm engines, spacewasm is an _interpreter_ — more precisely an _IR interpreter_: during load it translates Wasm byte-code into a resolved intermediate representation that it then decodes and executes in a loop. This is slower than a production JIT but gives the determinism and safety guarantees as well as extremely low memory footprint. This document does not cover the engine's internals; see the [spacewasm repository](https://github.com/nasa/spacewasm). A few of its design choices drive this component:
 
 - **Fuel.** The interpreter loop runs at most a bounded number of IR instructions per call and then yields, so a long-running or malicious guest cannot starve the component thread and pause/cancel stay responsive. The bound is the `INSTRUCTION_FUEL` parameter. This bounds per-cycle work, not total CPU; see [Scheduling and CPU Budget](#scheduling-and-cpu-budget).
 - **Dynamic memory.** spacewasm allocates its module data structures and compiled byte-code from a "global allocator" the embedder provides. This component backs it with a fixed static pool (`SPACEWASM_PAGE_SIZE` × `SPACEWASM_MAX_PAGES`), keeping peak memory deterministic and free of heap fragmentation. Guest linear memory is served from a separate per-load pool (`GUEST_MEMORY_SIZE`).
-- **Panics.** spacewasm is written in Rust and compiled with `panic = "abort"`. A panic is routed through a `spacewasm_panic` callback that logs the location to `Os::Console` and then `FW_ASSERT(false)` — terminal for the FSW, and distinct from a guest-level `panic()` (which fails only the sequence). This path is reserved for a engine invariant violation: untrusted or malformed module bytes are contractually handled by graceful `SPACEWASM_ERR_*` load-failure codes (surfaced as load-failure events), not panics. To keep the panic path from firing on arbitrary input, the upstream engine is [fuzzed](https://github.com/nasa/spacewasm/tree/main/fuzz/fuzz_targets); its pinned release exercises the decode / validate / compile entry points that run against a ground-uplinked module. The assurance is therefore only as strong as the pinned release's upstream fuzzing.
+- **Panics.** spacewasm is written in Rust and compiled with `panic = "abort"`. A panic is routed through a `spacewasm_panic` callback that logs the location to `Os::Console` and then `FW_ASSERT(false)` — terminal for the FSW, and distinct from a guest-level `panic()` (which fails only the sequence). This path is reserved for a engine invariant violation: untrusted or malformed module bytes are contractually handled by graceful `SPACEWASM_ERR_*` load-failure codes (surfaced as load-failure events), not panics. To keep the panic path from firing on arbitrary input, the upstream engine is [fuzzed](https://github.com/nasa/spacewasm/tree/main/fuzz/fuzz_targets) against valid and invalid Wasm modules using industry standard practices.
 
-**Specification divergences.** spacewasm diverges from the spec in a few documented ways for determinism:
+**Specification divergences.** spacewasm diverges from the spec in a few documented ways for determinism and adherence to flight-software standards:
 
-1. `memory.grow` can be disabled at load time; WasmSequencer disables it to keep its allocator simple (this may be relaxed later).
+1. `memory.grow` can be disabled at load time; WasmSequencer disables it to keep its allocator simple (this may be relaxed in the future).
 2. A failed module load invalidates the whole store (the engine compiles all modules into one append-only IR arena and commits guest memory eagerly, neither of which can be partially rolled back), so the controller rebuilds the store from scratch on any load failure — the behavior required by WASM-SEQ-003.
 3. A module's optional `start` function must resolve to a Wasm function, not a host function, so it can be driven through the same fuel-bounded run loop as `main`.
+   - This divergence is a minor detail/technically and cannot surface to users as start function must be of signature `[] -> []` and WasmSequener does not expose any `[] -> []` host functions.
 
 ### Modules, Names, and Linking
 
@@ -89,6 +85,16 @@ INVOKE  "app"
 
 A loaded module's exported, mutable globals can additionally be read and written from the ground between runs with `GLOBAL_GET` / `GLOBAL_SET`, addressed by module name.
 
+### Guest Module Entry Points
+
+`LOAD` only decodes, validates, and links a module — it has no entry-point requirements. A module intended purely as a library (imported by another module, or only read/written via `GLOBAL_GET`/`GLOBAL_SET`) needs neither a `main` nor a `start` function.
+
+`RUN` and `INVOKE` need a resolvable `main`, and this is where entry-point requirements apply:
+
+- **`main`** must be exported under the name `main` with signature `[] -> []` or `[] -> [i32]`. No arguments are passed through `main` itself — a sequence reads its invocation arguments via the `args` host function instead. A void `main` counts as returning `0`; any other non-zero return fails the run (WASM-SEQ-018). A module with no `main`, or a `main` of some other signature, fails validation and emits `InvalidModuleEntrypoint` — the module stays loaded (the store is still valid) but the `RUN`/`INVOKE` request itself fails with `ERROR`.
+- **`start`** is optional and, if present, runs once before `main` — intended for guest-side setup. It is the Wasm-spec `start` section (not a named export), so it can only be a guest-defined function, never a host import (checked at load time), and the spec fixes its signature at `[] -> []`.
+- `start` only runs once per load. `RUN` runs it (if present) followed by `main`; a plain `LOAD` runs it (if present) but does not run `main`; `INVOKE` runs only `main` — it assumes any `start` already ran during the module's original `LOAD`.
+
 ### State Machines
 
 The component is driven by two state machines whose (flattened) leaf states are reported on telemetry. The transition detail is in the diagrams below; the FPP sources are `WasmSequencerControllerStateMachine.fppi` and `WasmSequencerInterpreterStateMachine.fppi`.
@@ -97,7 +103,43 @@ The component is driven by two state machines whose (flattened) leaf states are 
 
 ![Controller State Machine Diagram](ControllerStateMachine.svg)
 
-The controller owns the module lifecycle. From `IDLE` (no store) a `LOAD` reads and validates a module into the store and settles in `READY`; a `RUN` does the same and then chains into running the module's optional `start` function and its `main` entry point. Because a failed load invalidates the store, the controller returns to `IDLE` — whose entry rebuilds a fresh store — on any load failure, and resets the store before every `RUN`. Execution is handed to the interpreter, which reports back when it finishes; the controller then classifies the outcome (a success only if the run finished with a zero return/exit code) and answers the caller — a `BLOCK` caller (and any pending `WAIT`) on completion, a `NO_BLOCK` caller as soon as the sequence starts. Requests that arrive while the controller is busy are rejected with `BUSY`. Cancelling a running sequence is realized through the interpreter: `CANCEL` signals the interpreter, which unwinds and reports back so the controller can count the sequence as cancelled.
+The controller owns the module lifecycle: load, validate, and run. It starts in `IDLE` with no store. `LOAD` reads and validates a module into the store and settles in `READY`. `RUN` resets the store, does the same load, and then chains into the module's optional `start` function and its `main` entry point.
+
+A few rules apply regardless of which state the controller is in:
+
+- **A failed load invalidates the whole store.** spacewasm cannot partially roll back a load, so any load failure sends the controller back to `IDLE`, whose entry rebuilds a fresh store.
+- **Acknowledgement timing depends on `BLOCK`.** A `NO_BLOCK` caller is acknowledged as soon as the sequence starts running; a `BLOCK` caller (and any pending `WAIT`) is acknowledged only once the run finishes. A run only counts as a success if it exits with a zero return/exit code.
+- **The controller rejects concurrent requests.** A `RUN`/`LOAD`/`INVOKE` that arrives while the controller is already loading or running is rejected with `BUSY`.
+- **Cancellation goes through the interpreter.** `CANCEL` signals the interpreter, which unwinds execution and reports back so the controller can count the sequence as cancelled.
+
+The diagram below traces a `RUN`'s nominal life cycle end-to-end. `LOAD` follows the same load/start path but settles in `READY` without invoking `main`; `INVOKE` skips straight to the main-invoke step on a module already loaded by an earlier `LOAD`.
+
+```mermaid
+sequenceDiagram
+    actor Caller
+    participant Ctrl as Controller
+    participant Engine as spacewasm
+    participant Interp as Interpreter
+
+    Caller->>Ctrl: RUN(file, args, block)
+    Note over Ctrl: enter LOADING*
+    Ctrl->>Engine: load module
+    Engine-->>Ctrl: loadSucceeded
+
+    opt module has a start function
+        Ctrl->>Interp: invokeStart, runEngine
+        Note over Ctrl: enter RUNNING_START*
+        Interp-->>Ctrl: engineFinished
+    end
+
+    Ctrl->>Engine: invokeMain
+    Ctrl->>Caller: OK (NO_BLOCK reply, sequence has started)
+    Ctrl->>Interp: runEngine
+    Note over Ctrl: enter RUNNING_MAIN
+    Interp-->>Ctrl: engineFinished
+    Ctrl->>Caller: OK (BLOCK caller + any pending WAIT)
+    Note over Ctrl: enter READY
+```
 
 #### Interpreter
 
@@ -123,20 +165,20 @@ The interpreter runs a loaded program in fuel-bounded slices: each slice execute
 
 ### Ports
 
-| Port Type | Name | Direction | Kind | Usage |
-|---|---|---|---|---|
-| `Fw.Com` | `cmdOut` | Output | — | Dispatches commands to the command dispatcher (backs the guest `cmd`). |
-| `Fw.CmdResponse` | `cmdResponseIn` | Input | async | Receives responses to dispatched commands. |
-| `Fw.TlmGet` | `getTlmChan` | Output | — | Reads telemetry channel values (backs the guest `tlm`). |
-| `Fw.PrmGet` | `getParam` | Output | — | Reads parameter values (backs the guest `prm`). |
-| `Svc.Sched` | `checkTimers` | Input | async | Periodically drives sleep-wake and host-function-timeout checks. |
-| `Svc.Sched` | `writeTelemetry` | Input | async (drop) | Optional periodic telemetry write. |
-| `serial` | `serialOut[]` | Output | — | Serial output triggered by the guest `serial_send`. |
-| `serial` | `serialIn[]` | Input | guarded | Inbound serial messages, queued per port. |
-| `Svc.CmdSeqIn` | `seqRunIn` | Input | async | Request to run a sequence (as the `RUN` command). |
-| `Svc.CmdSeqCancel` | `seqCancelIn` | Input | async | Request to cancel the running sequence (as `CANCEL`). |
-| `Svc.CmdSeqIn` | `seqStartOut` | Output | — | Signalled when a sequence begins running. |
-| `Fw.CmdResponse` | `seqDoneOut` | Output | — | Signalled when a sequence finishes. |
+| Port Type          | Name             | Direction | Kind         | Usage                                                                  |
+| ------------------ | ---------------- | --------- | ------------ | ---------------------------------------------------------------------- |
+| `Fw.Com`           | `cmdOut`         | Output    | —            | Dispatches commands to the command dispatcher (backs the guest `cmd`). |
+| `Fw.CmdResponse`   | `cmdResponseIn`  | Input     | async        | Receives responses to dispatched commands.                             |
+| `Fw.TlmGet`        | `getTlmChan`     | Output    | —            | Reads telemetry channel values (backs the guest `tlm`).                |
+| `Fw.PrmGet`        | `getParam`       | Output    | —            | Reads parameter values (backs the guest `prm`).                        |
+| `Svc.Sched`        | `checkTimers`    | Input     | async        | Periodically drives sleep-wake and host-function-timeout checks.       |
+| `Svc.Sched`        | `writeTelemetry` | Input     | async (drop) | Optional periodic telemetry write.                                     |
+| `serial`           | `serialOut[]`    | Output    | —            | Serial output triggered by the guest `serial_send`.                    |
+| `serial`           | `serialIn[]`     | Input     | guarded      | Inbound serial messages, queued per port.                              |
+| `Svc.CmdSeqIn`     | `seqRunIn`       | Input     | async        | Request to run a sequence (as the `RUN` command).                      |
+| `Svc.CmdSeqCancel` | `seqCancelIn`    | Input     | async        | Request to cancel the running sequence (as `CANCEL`).                  |
+| `Svc.CmdSeqIn`     | `seqStartOut`    | Output    | —            | Signalled when a sequence begins running.                              |
+| `Fw.CmdResponse`   | `seqDoneOut`     | Output    | —            | Signalled when a sequence finishes.                                    |
 
 The serial-port array bound comes from the `Svc.Wasm.SerialPortOutIndex` / `SerialPortInIndex` enums in `config/WasmSequencerCfg.fpp`. The component also uses the standard command, event, telemetry, parameter, and time special ports.
 
@@ -144,42 +186,42 @@ The serial-port array bound comes from the `Svc.Wasm.SerialPortOutIndex` / `Seri
 
 All commands are asynchronous except `CANCEL`, which is synchronous.
 
-| Command | Description |
-|---|---|
-| `RUN` | Reset the store, then load, invoke `main`, and run a module in one step; waits for completion when `$block == BLOCK`. |
-| `LOAD` | Load and validate a module into the store under the given name (an empty name for a single standalone module); its exports can then be referenced by other modules. |
-| `INVOKE` | Invoke `main` on an already-loaded module. |
-| `WAIT` | Wait for the running sequence to finish and return its result. |
-| `CANCEL` | Cancel a loading/running sequence and return to idle. |
-| `PAUSE` / `CONTINUE` | Pause the running sequence at the next boundary / resume it. |
-| `GLOBAL_SET_I32` / `_I64` / `_F32` / `_F64` | Set an exported, mutable global of the given type. |
-| `GLOBAL_GET` | Read an exported global's value and report it in an event. |
+| Command                                     | Description                                                                                                                                                         |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `RUN`                                       | Reset the store, then load, invoke `main`, and run a module in one step; waits for completion when `$block == BLOCK`.                                               |
+| `LOAD`                                      | Load and validate a module into the store under the given name (an empty name for a single standalone module); its exports can then be referenced by other modules. |
+| `INVOKE`                                    | Invoke `main` on an already-loaded module.                                                                                                                          |
+| `WAIT`                                      | Wait for the running sequence to finish and return its result.                                                                                                      |
+| `CANCEL`                                    | Cancel a loading/running sequence and return to idle.                                                                                                               |
+| `PAUSE` / `CONTINUE`                        | Pause the running sequence at the next boundary / resume it.                                                                                                        |
+| `GLOBAL_SET_I32` / `_I64` / `_F32` / `_F64` | Set an exported, mutable global of the given type.                                                                                                                  |
+| `GLOBAL_GET`                                | Read an exported global's value and report it in an event.                                                                                                          |
 
 ## Host Functions
 
-A running sequence reaches the host through a single Wasm import module, `fprime_v1`. These imports are the programming interface exposed to guest programs:
+A running sequence reaches the host through a single Wasm import module, `fprime_v1`. These imports are the programming interface exposed to guest programs. Exact signatures, parameter/return semantics, and status enums are declared in [`spacewasm_include/fprime.h`](../spacewasm_include/fprime.h), the canonical guest header a Wasm module is compiled against; the table below only summarizes intent.
 
-| Import | Purpose |
-|---|---|
-| `exit` / `panic` | End the sequence with an exit code / abort it with a panic code. |
-| `args` | Read the sequence's invocation arguments. |
-| `time` | Read the current spacecraft time. |
-| `tlm` / `prm` | Read a telemetry channel / parameter value. |
-| `cmd` | Dispatch an F´ command and await its response. |
-| `event` | Emit a log event (non-reserved F´ severities only). |
-| `rsleep` / `asleep` | Sleep for a relative / absolute duration. |
-| `serial_send` | Send bytes out a serial port (fire-and-forget). |
-| `serial_recv` | Read bytes from a serial input port (blocking or non-blocking). |
+| Import              | Purpose                                                          |
+| ------------------- | ---------------------------------------------------------------- |
+| `exit` / `panic`    | End the sequence with an exit code / abort it with a panic code. |
+| `args`              | Read the sequence's invocation arguments.                        |
+| `time`              | Read the current spacecraft time.                                |
+| `tlm` / `prm`       | Read a telemetry channel / parameter value.                      |
+| `cmd`               | Dispatch an F´ command and await its response.                   |
+| `event`             | Emit a log event (non-reserved F´ severities only).              |
+| `rsleep` / `asleep` | Sleep for a relative / absolute duration.                        |
+| `serial_send`       | Send bytes out a serial port (fire-and-forget).                  |
+| `serial_recv`       | Read bytes from a serial input port (blocking or non-blocking).  |
 
 Guest arguments are validated on every call; invalid input (bad pointers, oversized/undersized buffers, out-of-range or unconnected ports, reserved event severities) fails or traps the sequence and emits a warning event rather than faulting the host (WASM-SEQ-019).
 
 ## Parameters
 
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `SEQ_BASE_DIR` | `string` | `""` | Base directory that sequence file paths are resolved against. |
-| `INSTRUCTION_FUEL` | `FwSizeType` | `1000` | IR instructions executed per interpreter cycle; larger values run faster but respond to `PAUSE` less quickly. |
-| `HOST_FUNCTION_TIMEOUT_SECS` | `F32` | `60` | Timeout in seconds for a blocked host function (a dispatched command or a blocking `serial_recv`); `<= 0` disables it. |
+| Parameter                    | Type         | Default | Description                                                                                                            |
+| ---------------------------- | ------------ | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `SEQ_BASE_DIR`               | `string`     | `""`    | Base directory that sequence file paths are resolved against.                                                          |
+| `INSTRUCTION_FUEL`           | `FwSizeType` | `1000`  | IR instructions executed per interpreter cycle; larger values run faster but respond to `PAUSE` less quickly.          |
+| `HOST_FUNCTION_TIMEOUT_SECS` | `F32`        | `60`    | Timeout in seconds for a blocked host function (a dispatched command or a blocking `serial_recv`); `<= 0` disables it. |
 
 ## Telemetry and Events
 
@@ -187,25 +229,63 @@ The full set of telemetry channels and events, with their arguments, is defined 
 
 ## Configuration
 
-Compile-time configuration lives in `config/WasmSequencerConfig.hpp`:
+WasmSequencer configuration is split across three files, each with a different audience and rebuild cost.
 
-| Constant | Value | Purpose |
-|---|---|---|
-| `SPACEWASM_PAGE_SIZE` × `SPACEWASM_MAX_PAGES` | `8192` × `4` | Fixed static pool backing the interpreter store and compiled byte-code (must match the `spacewasm_c_api` crate). |
-| `GUEST_MEMORY_SIZE` | `2048` | Pool backing guest linear memory (bounds the largest guest memory accepted; `memory.grow` is disabled). |
-| `GUEST_STACK_SIZE` | `256` | Guest operand stack size per store. |
-| `MAX_GUEST_MODULES` | `8` | Maximum modules loadable into a store. |
-| `MAX_CODE_PAGES` | `256` | Maximum number of compiled code pages allowed across all modules loaded onto a store. |
-| `MAX_SERIAL_PORT_SIZE` | `256` | Maximum `serial_send` payload; a larger request traps the guest. |
-| `SERIAL_IN_QUEUE_SIZE` / `_FULL_BEHAVIOR` | `256` / `DROP_OLDEST` | Size and overflow policy of each inbound `serialIn` queue. |
-| `LOAD_READ_CHUNK_SIZE` | `512` | Buffer size for streaming a module file into the decoder. |
-| `MAX_CONCURRENT_WAIT_COMMANDS` | `8` | Maximum number of concurrent `WAIT` commands each WasmSequencer can service. |
+### `config/WasmSequencerConfig.hpp`
 
-Runtime behavior is controlled through the parameters above; the serial-port index enums and default base directory live in `config/WasmSequencerCfg.fpp`.
+C++ compile-time constants consumed directly by the component:
+
+| Constant                        | Value         | Purpose                                                                                                                                                                      |
+| ------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DYNAMIC_MEMORY_SIZE`           | `32768`       | Fixed static pool backing the interpreter store and compiled byte-code (`SPACEWASM_PAGE_SIZE` x `SPACEWASM_MAX_PAGES`, sourced from `WasmSequencerSpacewasmConfig.h` below). |
+| `GUEST_MEMORY_SIZE`             | `2048`        | Pool backing guest linear memory (bounds the largest guest memory accepted; `memory.grow` is disabled).                                                                      |
+| `GUEST_STACK_SIZE`              | `256`         | Guest operand stack size per store.                                                                                                                                          |
+| `MAX_GUEST_MODULES`             | `8`           | Maximum modules loadable into a store.                                                                                                                                       |
+| `MAX_CODE_PAGES`                | `256`         | Maximum number of compiled code pages allowed across all modules loaded onto a store.                                                                                        |
+| `MAX_SERIAL_OUT_SIZE`           | `256`         | Maximum `serial_send` payload; a larger request traps the guest.                                                                                                             |
+| `SERIAL_IN_QUEUE_SIZE`          | `256`         | Size of each inbound `serialIn` queue.                                                                                                                                       |
+| `SERIAL_IN_QUEUE_FULL_BEHAVIOR` | `DROP_OLDEST` | Overflow policy of each inbound `serialIn` queue.                                                                                                                            |
+| `LOAD_READ_CHUNK_SIZE`          | `512`         | Buffer size for streaming a module file into the decoder.                                                                                                                    |
+| `MAX_CONCURRENT_WAIT_COMMANDS`  | `8`           | Maximum number of concurrent `WAIT` commands each WasmSequencer can service.                                                                                                 |
+
+### `config/WasmSequencerSpacewasmConfig.h`
+
+Shared preprocessor constants that must agree between the C++ component and the Rust `spacewasm` crate; single-sourced here and read on the Rust side by `build.rs` so the two languages cannot drift:
+
+| Constant                       | Value  | Purpose                                                                                                                                                                                                                         |
+| ------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WASM_SEQ_SPACEWASM_PAGE_SIZE` | `8192` | Size in bytes of each page served to the spacewasm interpreter heap.                                                                                                                                                            |
+| `WASM_SEQ_SPACEWASM_MAX_PAGES` | `4`    | Maximum number of interpreter-heap pages; backs the C++ static pool (`DYNAMIC_MEMORY_SIZE` above).                                                                                                                              |
+| `WASM_SEQ_MAX_SEQUENCERS`      | `8`    | Maximum number of WasmSequencer instances that may register a global allocator slot process-wide (Rust `ALLOCATORS` array length). A component instantiated beyond this count fails allocator registration with `ERR_CAPACITY`. |
+
+### `config/WasmSequencerCfg.fpp`
+
+FPP dictionary constants and the serial-port index enums:
+
+| Constant / Enum                            | Value                  | Purpose                                                                                                                                                                                         |
+| ------------------------------------------ | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DEFAULT_SEQ_BASE_DIR`                     | `""`                   | Default value of the `SEQ_BASE_DIR` parameter: a literal prefix prepended to each requested sequence file path.                                                                                 |
+| `MODULE_NAME_STRING_SIZE`                  | `16`                   | Buffer size (bytes) for a WebAssembly module name (LOAD/INVOKE and the commands/events that reference a loaded module by name).                                                                 |
+| `GLOBAL_NAME_STRING_SIZE`                  | `16`                   | Buffer size (bytes) for a WebAssembly global export name (`GLOBAL_SET_*`/`GLOBAL_GET` and their events).                                                                                        |
+| `GUEST_EVENT_MESSAGE_SIZE`                 | `128`                  | Maximum length (bytes) of a guest-emitted event message (`event` host function).                                                                                                                |
+| `DEFAULT_INSTRUCTION_FUEL`                 | `1000`                 | Default value of the `INSTRUCTION_FUEL` parameter: number of Wasm instructions to execute per interpreter cycle.                                                                                |
+| `SerialPortOutIndex` / `SerialPortInIndex` | `MAX_SERIAL_PORTS = 5` | Mission-specific serial-port index enums (the shipped `EXAMPLE_PORT_*` values are placeholders to be renamed per deployment); `MAX_SERIAL_PORTS` bounds the `serialOut`/`serialIn` port arrays. |
+
+Runtime behavior is controlled through the `WasmSequencerConfig.hpp` parameters above.
 
 ## Unit Testing
 
-Unit tests live in `test/ut/`. To run them with coverage:
+Most tests exercise the interpreter by running a tiny WebAssembly module — one per host function or error path — staged from prebuilt fixtures in `test/wasm/`, assembled from the human-readable `.wat` sources in `test/wasm/src/`.
+
+To add a new fixture, write a `.wat` file in `test/wasm/src/`, then regenerate all `.wasm` binaries with:
+
+```
+python3 test/wasm/build_wasm.py
+```
+
+This requires [`wat2wasm`](https://github.com/WebAssembly/wabt) (from WABT) on `PATH`, built with custom-page-size support. The `.wasm` binaries are committed alongside their `.wat` sources so the unit tests don't depend on WABT being installed to build or run.
+
+To run the unit tests with coverage:
 
 ```
 fprime-util check --coverage
