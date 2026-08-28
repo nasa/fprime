@@ -4,9 +4,9 @@
 // \brief  cpp file for WasmSequencer controller state machine
 // ======================================================================
 
-#include "Os/File.hpp"
 #include "Fw/Cmd/CmdResponseEnumAc.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Os/File.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_LoadRequestSerializableAc.hpp"
