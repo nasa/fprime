@@ -192,6 +192,7 @@ bool WasmSequencer ::resolveSequencePath(const Fw::StringBase& fileName, Fw::Str
     return true;
 }
 
+namespace {
 struct WasmFileReader {
     explicit WasmFileReader(Os::File& loadFile) : m_loadFile(loadFile) {}
 
@@ -229,6 +230,7 @@ struct WasmFileReader {
     //! Buffer handed to the streaming loader, filled from `m_loadFile`.
     U8 m_readBuf[Svc::WasmSequencerConfig::LOAD_READ_CHUNK_SIZE]{};
 };
+}  // namespace
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     SmId smId,
