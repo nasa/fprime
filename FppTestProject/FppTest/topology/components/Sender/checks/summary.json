@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-26T22:02:26Z",
+  "generated_at": "2026-08-28T00:06:09Z",
   "ref": "devel",
-  "commit": "7d8f579f159d2f7c2d4984d92828575e37f87fa6",
+  "commit": "efce12d7e030b98779cbd367e51b2cc1eaebfbc2",
   "passed": 2,
   "failed": 1,
   "skipped": 13,

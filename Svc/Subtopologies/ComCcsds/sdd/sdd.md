@@ -62,7 +62,64 @@ Each layer topology exposes its open boundary as **topology ports** (e.g. `Space
 `TmTcFraming.framedDataIn`, `FramingSubtopology.comStatusIn`), so composing topologies and deployments wire
 to the layer's ports rather than to individual component instances.
 
-### 2.2 Required Inputs for Operation
+### 2.2 Data Flow - Uplink
+
+On uplink, raw bytes from the com interface are accumulated into TC Transfer Frames,
+deframed into Space Packets, and routed into the flight software.
+
+```mermaid
+flowchart LR
+    subgraph TMTC["ComCcsds.TmTcFraming (transfer frame layer)"]
+        frameAccumulator["frameAccumulator<br>Svc.FrameAccumulator"]
+        tcDeframer["tcDeframer<br>Svc.Ccsds.TcDeframer"]
+    end
+
+    subgraph SPF["ComCcsds.SpacePacketFraming (packet layer)"]
+        spacePacketDeframer["spacePacketDeframer<br>Svc.Ccsds.SpacePacketDeframer"]
+        fprimeRouter["fprimeRouter<br>Svc.FprimeRouter"]
+    end
+
+    com["ComInterface<br>comStub (variant A) or external (variant B)"]
+    fsw["Flight software<br>(command dispatch, file uplink, ...)"]
+
+    com -->|raw bytes| frameAccumulator
+    frameAccumulator -->|TC Transfer Frame| tcDeframer
+    tcDeframer -->|Space Packet| spacePacketDeframer
+    spacePacketDeframer -->|F´ packet| fprimeRouter
+    fprimeRouter -->|commands / files| fsw
+```
+
+### 2.3 Data Flow - Downlink
+
+On downlink, COM data is queued, framed into CCSDS Space Packets, aggregated, and framed
+into TM Transfer Frames for transmission by the com interface.
+
+```mermaid
+flowchart LR
+    subgraph SPF["ComCcsds.SpacePacketFraming (packet layer)"]
+        comQueue["comQueue<br>Svc.ComQueue"]
+        spacePacketFramer["spacePacketFramer<br>Svc.Ccsds.SpacePacketFramer"]
+        aggregator["aggregator<br>Svc.ComAggregator"]
+    end
+
+    subgraph TMTC["ComCcsds.TmTcFraming (transfer frame layer)"]
+        framer["framer<br>Svc.Ccsds.TmFramer"]
+    end
+
+    com["ComInterface<br>comStub (variant A) or external (variant B)"]
+    src["Packet sources<br>(telemetry, events, file downlink)"]
+
+    src -->|COM data| comQueue
+    comQueue -->|Fw::Buffer| spacePacketFramer
+    spacePacketFramer -->|Space Packet| aggregator
+    aggregator -->|aggregated Space Packets| framer
+    framer -->|TM Transfer Frame| com
+```
+
+For the variant of these flows with an SDLS security layer inserted between the packet and
+transfer frame layers, see the [ComCcsdsSdls subtopology](../../ComCcsdsSdls/docs/sdd.md).
+
+### 2.4 Required Inputs for Operation
 
 * **Rate Groups:** Connect a rate group to **`comQueue.run`**. This is not required for the subtopology to function, but defines the rate at which ComQueue will send telemetry.
 * **Transport Endpoint:**
@@ -71,7 +128,7 @@ to the layer's ports rather than to individual component instances.
   * **Variant B:** Provide your own **`Svc::ComInterface`** and wire it to the **CCSDS framer/deframer ports** in the subtopology.
 * **Flight-side hookups:** Wire the **router** outputs (commands/files) into your CDH stack (e.g., command dispatcher, file uplink), and feed **packet sources** (telemetry/events/file downlink) into **`comQueue`**.
 
-### 2.3 Limitations
+### 2.5 Limitations
 
 These subtopologies focus on the **CCSDS framing and deframing setup** and does not provide wider CDH.
 
