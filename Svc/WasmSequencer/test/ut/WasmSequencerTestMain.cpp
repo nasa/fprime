@@ -775,6 +775,16 @@ TEST_F(WasmSequencerTester, ContinueFromIdleInvalid) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
+TEST_F(WasmSequencerTester, PauseFromIdleInvalid) {
+    this->sendCmd_PAUSE(0, 51);
+    this->dispatchAll();
+    ASSERT_EVENTS_SequenceNotRunning_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_PAUSE, 51, Fw::CmdResponse::EXECUTION_ERROR);
+    // The rejected command leaves the component in IDLE.
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
 // ----------------------------------------------------------------------
 // Static mapping helpers (direct unit tests)
 // ----------------------------------------------------------------------
