@@ -35,9 +35,7 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_spin(
 
     Fw::ParamValid prmValid;
     const auto fuelParam = this->paramGet_INSTRUCTION_FUEL(prmValid);
-    // A fuel value of 0 would allow the SPINNING loop to self-signal with zero forward
-    // progress every cycle, livelocking the component thread until CANCEL. Clamp to a
-    // minimum of 1 to guarantee forward progress.
+    // Min of 1 so we don't spin the component queue forever
     const auto fuel = (fuelParam == 0) ? 1 : fuelParam;
 
     spacewasm_trap_t trap = SPACEWASM_TRAP_NONE;
@@ -86,10 +84,6 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_reset(
     FW_ASSERT(this->m_wasm);
     auto status = spacewasm_reset(this->m_wasm);
     FW_ASSERT(status == SPACEWASM_OK);
-
-    // This only resets the spacewasm engine's execution state (operand stack, pc,
-    // fp, sp). The exit-status record (reason / last host function / trap reason) is
-    // cleared separately by clearExitStatus.
 }
 
 void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_clearExitStatus(
@@ -543,9 +537,7 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_setContext
     this->m_executingContext = value;
 
     // A fresh execution window is starting. Bump the sequence counter so any command
-    // dispatched from this program carries a distinct cmdUid (see makeCmdUid), letting
-    // cmdResponseIn_handler recognize a response that arrives late, after its
-    // originating sequence has ended.
+    // dispatched from this program carries a distinct cmdUid
     this->m_sequencesStarted++;
 }
 

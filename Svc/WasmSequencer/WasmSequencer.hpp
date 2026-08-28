@@ -13,7 +13,6 @@
 #include "Fw/Types/LinearBufferTemplate.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
-#include "Os/File.hpp"
 #include "Svc/Seq/SeqArgsSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
@@ -770,9 +769,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Fill `m_readBuf` with the next chunk of the module file being loaded.
     spacewasm_read_result_t readModuleChunk(const U8** outBuf, size_t* outLen);
 
-    //! C-callback trampoline for the streaming module reader
-    static spacewasm_read_result_t readModuleChunkCallback(void* userdata, const U8** outBuf, size_t* outLen);
-
     //! Create a fresh interpreter store with the given module capacity,
     //! destroying any existing store first.
     void createStore();
@@ -831,9 +827,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Current bump offset into `m_guest_pool`.
     FwSizeType m_guest_pool_offset;
 
-    //! Buffer handed to the streaming loader, filled from `m_loadFile`.
-    U8 m_readBuf[Svc::WasmSequencerConfig::LOAD_READ_CHUNK_SIZE]{};
-
     //! Opaque handle to the spacewasm engine, or null.
     spacewasm_t* m_wasm;
 
@@ -878,9 +871,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Latches a CANCEL that arrives while a sequence is loading/resolving
     bool m_cancelRequested;
-
-    //! Currently loading file handle
-    Os::File* m_loadFile;
 
     //! Backing state for the periodically-written telemetry channels (see
     //! writeTelemetry_handler). Grouped so the counters read as one unit.

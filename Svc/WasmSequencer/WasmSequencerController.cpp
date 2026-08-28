@@ -4,6 +4,7 @@
 // \brief  cpp file for WasmSequencer controller state machine
 // ======================================================================
 
+#include "Os/File.hpp"
 #include "Fw/Cmd/CmdResponseEnumAc.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
@@ -11,6 +12,7 @@
 #include "Svc/WasmSequencer/WasmSequencer_LoadRequestSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ModuleIdxAliasAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_SignalSourceEnumAc.hpp"
+#include "spacewasm.h"
 
 namespace Svc {
 
@@ -190,6 +192,46 @@ bool WasmSequencer ::resolveSequencePath(const Fw::StringBase& fileName, Fw::Str
     return true;
 }
 
+struct WasmFileReader {
+    WasmFileReader(Os::File* loadFile) : m_loadFile(loadFile) {}
+
+    spacewasm_read_result_t readChunk(const U8** outBuf, std::size_t* outLen) {
+        FW_ASSERT(this->m_loadFile != nullptr);
+
+        FwSizeType size = sizeof(this->m_readBuf);
+        const Os::File::Status status = this->m_loadFile->read(this->m_readBuf, size);
+
+        spacewasm_read_result_t readStatus;
+        if (status != Os::File::Status::OP_OK) {
+            *outLen = 0;
+            readStatus = SPACEWASM_READ_ERROR;
+        } else {
+            // `size` is updated in-place with the number of bytes actually read.
+            *outBuf = this->m_readBuf;
+            *outLen = static_cast<std::size_t>(size);
+
+            if (size == 0) {
+                readStatus = SPACEWASM_READ_EOF;
+            } else {
+                readStatus = SPACEWASM_READ_OK;
+            }
+        }
+
+        return readStatus;
+    }
+
+    static spacewasm_read_result_t readChunkCallback(void* userdata, const U8** outBuf, size_t* outLen) {
+        FW_ASSERT(userdata != nullptr);
+        return static_cast<WasmFileReader*>(userdata)->readChunk(outBuf, outLen);
+    }
+
+    //! Currently loading file handle
+    Os::File* m_loadFile;
+
+    //! Buffer handed to the streaming loader, filled from `m_loadFile`.
+    U8 m_readBuf[Svc::WasmSequencerConfig::LOAD_READ_CHUNK_SIZE]{};
+};
+
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
@@ -216,9 +258,6 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
         return;
     }
 
-    // Expose the open file to the streaming read trampoline for the duration of
-    // this decode.
-    this->m_loadFile = &file;
     this->m_lastLoadFileName = value.get_fileName();
 
     this->takeAllocatorLock();
@@ -233,15 +272,16 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     U32 moduleIndex = 0;
     Svc::WasmSequencer_RequestContext next = value.get_context();
 
+    WasmFileReader reader(&file);
+
     auto status = spacewasm_load_module(this->m_wasm, value.get_moduleName().toChar(),
-                                        &WasmSequencer::readModuleChunkCallback, this, alloc, &moduleIndex);
+                                        &WasmFileReader::readChunkCallback, &reader, alloc, &moduleIndex);
 
     spacewasm_allocator_destroy(alloc);
     next.set_moduleIdx(static_cast<WasmSequencer_ModuleIdx>(moduleIndex));
 
     this->releaseAllocatorLock();
 
-    this->m_loadFile = nullptr;
     file.close();
 
     if (status == SPACEWASM_OK) {
