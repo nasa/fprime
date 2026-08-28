@@ -9,7 +9,6 @@
 async command RUN(
     fileName: string size FileNameStringSize  @< The name of the sequence file
     @ Block until sequence has finished running
-    @ Binary arguments to pass to the sequence
     $block: Svc.BlockState
     @ Optional arguments to execute the sequence with
     @ Depending on the sequence being loaded these arguments may differ
@@ -31,7 +30,7 @@ async command LOAD(
 async command INVOKE(
     $module: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to invoke a function from
     $block: Svc.BlockState                             @< Block until sequence has finished running
-    seqArgs: Svc.SeqArgs                               @< Arguments to invalid sequence entrypoint with
+    seqArgs: Svc.SeqArgs                               @< Arguments to invoke the sequence entrypoint with
 ) \
     opcode 2
 
@@ -89,9 +88,9 @@ async command GLOBAL_SET_F64(
     opcode 10
 
 @ Get the current value of a global variable and emit an event
-@ Command fails if the module is not found, global is not exported, mutable, or of f64 type
+@ Command fails if the module is not found or the global is not exported
 async command GLOBAL_GET(
-    moduleName: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to set global for
+    moduleName: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to get global for
     name: string size Wasm.GLOBAL_NAME_STRING_SIZE        @< Name of the global
 ) \
     opcode 11

@@ -237,6 +237,14 @@ event SleepDurationTooLarge(host_function: HostFunction, micros: U64) \
     severity warning high \
     format "Host function {} requested a sleep of {} us that overflows the host timer"
 
+@ A guest host function supplied a 64-bit id (telemetry channel or parameter
+@ id) that does not fit in the narrower id type used by the framework. Casting
+@ it directly would silently alias a different, valid id, so the request is
+@ rejected rather than truncated.
+event HostFunctionInvalidId(host_function: HostFunction, $id: I64) \
+    severity warning high \
+    format "Host function {} requested id {} outside representable id range"
+
 @ A command response arrived carrying a context (cmdUid) from a previous
 @ sequence run. Reported (not failed) because a late reply after CANCEL is nominal.
 event CmdResponseFromOldSequence(

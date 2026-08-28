@@ -132,7 +132,7 @@ The interpreter runs a loaded program in fuel-bounded slices: each slice execute
 | `Svc.Sched` | `checkTimers` | Input | async | Periodically drives sleep-wake and host-function-timeout checks. |
 | `Svc.Sched` | `writeTelemetry` | Input | async (drop) | Optional periodic telemetry write. |
 | `serial` | `serialOut[]` | Output | — | Serial output triggered by the guest `serial_send`. |
-| `serial` | `serialIn[]` | Input | async | Inbound serial messages, queued per port. |
+| `serial` | `serialIn[]` | Input | guarded | Inbound serial messages, queued per port. |
 | `Svc.CmdSeqIn` | `seqRunIn` | Input | async | Request to run a sequence (as the `RUN` command). |
 | `Svc.CmdSeqCancel` | `seqCancelIn` | Input | async | Request to cancel the running sequence (as `CANCEL`). |
 | `Svc.CmdSeqIn` | `seqStartOut` | Output | — | Signalled when a sequence begins running. |
@@ -195,9 +195,11 @@ Compile-time configuration lives in `config/WasmSequencerConfig.hpp`:
 | `GUEST_MEMORY_SIZE` | `2048` | Pool backing guest linear memory (bounds the largest guest memory accepted; `memory.grow` is disabled). |
 | `GUEST_STACK_SIZE` | `256` | Guest operand stack size per store. |
 | `MAX_GUEST_MODULES` | `8` | Maximum modules loadable into a store. |
+| `MAX_CODE_PAGES` | `256` | Maximum number of compiled code pages allowed across all modules loaded onto a store. |
 | `MAX_SERIAL_PORT_SIZE` | `256` | Maximum `serial_send` payload; a larger request traps the guest. |
 | `SERIAL_IN_QUEUE_SIZE` / `_FULL_BEHAVIOR` | `256` / `DROP_OLDEST` | Size and overflow policy of each inbound `serialIn` queue. |
 | `LOAD_READ_CHUNK_SIZE` | `512` | Buffer size for streaming a module file into the decoder. |
+| `MAX_CONCURRENT_WAIT_COMMANDS` | `8` | Maximum number of concurrent `WAIT` commands each WasmSequencer can service. |
 
 Runtime behavior is controlled through the parameters above; the serial-port index enums and default base directory live in `config/WasmSequencerCfg.fpp`.
 

@@ -48,10 +48,10 @@ constexpr FwSizeType GUEST_MEMORY_SIZE = 2048;
 /// the sequencer's preamble will trigger an assertion.
 constexpr U8 MAX_GUEST_MODULES = 8;
 
-/// Maximum size of a serial port invocation leaving the WasmSequencer.
+/// Maximum size of a serial_out invocation leaving the WasmSequencer.
 /// Data will be copied out of the Wasm guest into WasmSequencer memory to
 /// invoke the serial output port
-constexpr U32 MAX_SERIAL_PORT_SIZE = 256;
+constexpr U32 MAX_SERIAL_OUT_SIZE = 256;
 
 /// Buffer size to allocate for streaming a Wasm module from the filesystem to the decoder/validator
 constexpr FwSizeType LOAD_READ_CHUNK_SIZE = 512;

@@ -82,7 +82,7 @@ void WasmSequencerTester ::flushTelemetry() {
 }
 
 void WasmSequencerTester ::enqueueSerialIn(FwIndexType portNum, const U8* bytes, FwSizeType size) {
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> msg(bytes, size);
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> msg(bytes, size);
     this->invoke_to_serialIn(portNum, msg);
     this->dispatchAll();
 }

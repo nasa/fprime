@@ -311,6 +311,9 @@ TEST_F(WasmSequencerTester, LoadBigMemFailsAllocator) {
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
+    // The oversized guest memory request fails the allocator with
+    // ERR_GUEST_MEMORY_ALLOC_FAILED.
+    ASSERT_EVENTS_ModuleLoadFailed(0, WasmSequencer_Status::ERR_GUEST_MEMORY_ALLOC_FAILED);
     // A failed load must return the guest allocator to empty (no fragmentation).
     ASSERT_EQ(this->getGuestOffset(), static_cast<FwSizeType>(0));
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
@@ -435,6 +438,8 @@ TEST_F(WasmSequencerTester, RunMainInvokeFails) {
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_ModuleMainInvokeFailed_SIZE(1);
+    // spacewasm_invoke traps at call setup with ERR_STACK_OVERFLOW.
+    ASSERT_EVENTS_ModuleMainInvokeFailed(0, WasmSequencer_Status::ERR_STACK_OVERFLOW);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 40, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
@@ -3140,7 +3145,7 @@ TEST_F(WasmSequencerTester, SerialOutInvalidPortTraps) {
 }
 
 TEST_F(WasmSequencerTester, SerialOutPayloadTooLargeTraps) {
-    // serial_send with a payload larger than MAX_SERIAL_PORT_SIZE is rejected in the host
+    // serial_send with a payload larger than MAX_SERIAL_OUT_SIZE is rejected in the host
     // function with a trap (BufferTooLarge) before any port invocation.
     StagedAsset file_asset(*this, "serial_out_toobig.wasm");
     const Fw::String& file = file_asset.file();
@@ -3150,7 +3155,7 @@ TEST_F(WasmSequencerTester, SerialOutPayloadTooLargeTraps) {
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_BufferTooLarge_SIZE(1);
     ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::SERIAL_OUT, 300,
-                                 Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE);
+                                 Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE);
     this->assertSequenceFailureCount(1);
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
 }
@@ -3242,7 +3247,7 @@ TEST_F(WasmSequencerTester, SerialRecvBlocksThenWakesOnMessage) {
 
     // Deliver the message the guest is waiting for.
     const U8 msg[4] = {0xAA, 0xBB, 0xCC, 0xDD};
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> in(msg, sizeof msg);
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> in(msg, sizeof msg);
     this->invoke_to_serialIn(2, in);
     this->dispatchUntilControllerState(ControllerState::READY);
 
@@ -3429,8 +3434,8 @@ TEST_F(WasmSequencerTester, SerialInEnqueueFramesRawSizePrefixedMessages) {
     const U8 msgA[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
     const U8 msgB[3] = {0xAA, 0xBB, 0xCC};
 
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> a(msgA, sizeof msgA);
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> b(msgB, sizeof msgB);
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> a(msgA, sizeof msgA);
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> b(msgB, sizeof msgB);
     this->invoke_to_serialIn(0, a);
     this->invoke_to_serialIn(0, b);
     this->dispatchAll();
@@ -3462,13 +3467,13 @@ TEST_F(WasmSequencerTester, SerialInQueueFullDropsOldest) {
     // Each frame is (4 + payload) bytes. Use ~1/3-capacity payloads so three frames nearly
     // fill the queue and a fourth forces at least one drop.
     const FwSizeType payload = (capacity / 3) - sizeof(U32);
-    U8 buf[Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE];
+    U8 buf[Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE];
 
     for (U32 n = 0; n < 3; n++) {
         for (FwSizeType i = 0; i < payload; i++) {
             buf[i] = static_cast<U8>(n);  // frame n filled with byte value n
         }
-        Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m(buf, payload);
+        Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> m(buf, payload);
         this->invoke_to_serialIn(0, m);
         this->dispatchAll();
     }
@@ -3478,7 +3483,7 @@ TEST_F(WasmSequencerTester, SerialInQueueFullDropsOldest) {
     for (FwSizeType i = 0; i < payload; i++) {
         buf[i] = static_cast<U8>(3);
     }
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m(buf, payload);
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> m(buf, payload);
     this->invoke_to_serialIn(0, m);
     this->dispatchAll();
 
@@ -3508,8 +3513,8 @@ TEST_F(WasmSequencerTester, SerialInOversizedFrameDroppedNotAsserted) {
 
     // One byte too large to ever fit, so this is a reject (not a DROP_OLDEST eviction).
     const FwSizeType oversized = maxPayload + 1;
-    ASSERT_LE(oversized, static_cast<FwSizeType>(Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE));
-    U8 payload[Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE];
+    ASSERT_LE(oversized, static_cast<FwSizeType>(Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE));
+    U8 payload[Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE];
     for (FwSizeType i = 0; i < oversized; i++) {
         payload[i] = static_cast<U8>(i);
     }
@@ -3539,7 +3544,7 @@ TEST_F(WasmSequencerTester, SerialInMaxSizeFrameEnqueued) {
     const FwSizeType headerSize = sizeof(U32);
     const FwSizeType maxPayload = capacity - headerSize;
 
-    U8 payload[Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE];
+    U8 payload[Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE];
     for (FwSizeType i = 0; i < maxPayload; i++) {
         payload[i] = static_cast<U8>(i);
     }

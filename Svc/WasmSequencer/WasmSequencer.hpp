@@ -563,7 +563,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Implementation for action finish of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! Send a signal back to the controller state machine that we have finished executing
-    //! The response codes are stored in m_exitReason, m_exitCode, m_tlmLastTrapReason
+    //! The response codes are stored in m_exit (reason, code, lastTrapReason)
     void Svc_WasmSequencer_InterpreterStateMachine_action_finish(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
@@ -741,10 +741,10 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         const FwIndexType& value                                   //!< The value
     ) const override;
 
-    //! Implementation for guard deqeueSucceeded of state machine Svc_WasmSequencer_InterpreterStateMachine
+    //! Implementation for guard dequeueSucceeded of state machine Svc_WasmSequencer_InterpreterStateMachine
     //!
     //! Return true `dequeueSerialAndResume` processed a message successfully
-    bool Svc_WasmSequencer_InterpreterStateMachine_guard_deqeueSucceeded(
+    bool Svc_WasmSequencer_InterpreterStateMachine_guard_dequeueSucceeded(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_InterpreterStateMachine::Signal signal  //!< The signal
     ) const override;
@@ -812,11 +812,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Read `len` bytes of guest linear memory at `addr` into `dst` (via
     //! spacewasm_mem_read on the pending host function's caller).
-    Fw::Success readGuestOrFail(WasmSequencer_HostFunction::T kind, U32 addr, U8* dst, FwSizeType len);
+    Fw::Success readGuestMemory(WasmSequencer_HostFunction::T kind, U32 addr, U8* dst, FwSizeType len);
 
     //! Write `len` bytes from `src` into guest linear memory at `addr` (via
-    //! spacewasm_mem_write). Same failure contract as readGuestOrFail.
-    Fw::Success writeGuestOrFail(WasmSequencer_HostFunction::T kind, U32 addr, const U8* src, FwSizeType len);
+    //! spacewasm_mem_write)
+    Fw::Success writeGuestMemory(WasmSequencer_HostFunction::T kind, U32 addr, const U8* src, FwSizeType len);
 
     //! Fixed-size pool backing the process-wide spacewasm global page allocator.
     alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE]{};
@@ -863,7 +863,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     bool m_hasPendingTimer;
 
     //! Wall-clock time at which the current blocking async host function
-    //! (COMMAND / ASYNC_PORT) began awaiting its reply. Used to enforce
+    //! (COMMAND / blocking SERIAL_RECV) began awaiting its reply. Used to enforce
     //! HOST_FUNCTION_TIMEOUT_SECS. Only meaningful while awaiting one of those.
     Fw::Time m_hostFunctionStart;
     bool m_hasHostFunctionStart;
@@ -938,7 +938,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     ExitStatus m_exit;
 
     //! Buffer to hold the serial output port invocation invoked by the guest
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m_serialOutBuffer;
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> m_serialOutBuffer;
 
     //! Backing storage for m_serialInQueue: one contiguous byte buffer per serial-in
     //! port, handed to the matching CircularBuffer via setup() in the constructor.

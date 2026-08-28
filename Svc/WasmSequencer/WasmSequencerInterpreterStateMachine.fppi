@@ -102,7 +102,7 @@ state machine InterpreterStateMachine {
     action setLastHostFunction
 
     @ Send a signal back to the controller state machine that we have finished executing
-    @ The response codes are stored in m_exitReason, m_exitCode, m_tlmLastTrapReason
+    @ The response codes are stored in m_exit (reason, code, lastTrapReason)
     action finish
 
     ###############
@@ -176,7 +176,7 @@ state machine InterpreterStateMachine {
     action dequeueSerialAndResume: FwIndexType
 
     @ Return true `dequeueSerialAndResume` processed a message successfully
-    guard deqeueSucceeded
+    guard dequeueSucceeded
 
     #######################
     # Interpreter signals #
@@ -259,7 +259,7 @@ state machine InterpreterStateMachine {
             } enter DEQUEUE_CHECK
 
             choice DEQUEUE_CHECK {
-                if deqeueSucceeded enter PAUSE_CHECK else do {
+                if dequeueSucceeded enter PAUSE_CHECK else do {
                     setExitReason_HOST_FAILURE
                 } enter IDLE
             }

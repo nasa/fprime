@@ -26,7 +26,7 @@ struct InvokeRequest {
 struct RequestContext {
     source: SignalSource   @< The originating signal source
     $opcode: FwOpcodeType  @< If 'source' == COMMAND, this is the opcode to reply to
-    cmdSeq: U32            @< If 'source' == COMMAND, this is the opcode to reply to
+    cmdSeq: U32            @< If 'source' == COMMAND, this is the command sequence number to reply with
     $block: BlockState     @< Should we reply after we initialize or block until we finish executing
     moduleIdx: ModuleIdx   @< Module index to invoke start/main function, filled in for LOAD/RUN
 }
@@ -53,7 +53,7 @@ state machine ControllerStateMachine {
     @ Action to save the invoke arguments and emit an 'invoked' signal
     action processInvoke: InvokeRequest
 
-    @ Signal sent
+    @ Signal emitted by processInvoke when the requested module was resolved successfully
     signal invoked: RequestContext
 
     @ Signal emitted by processInvoke when the requested module could not be

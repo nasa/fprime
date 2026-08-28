@@ -228,8 +228,9 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     spacewasm_allocator_t* alloc =
         spacewasm_allocator_new(&WasmSequencer::guestAllocCallback, &WasmSequencer::guestReallocCallback,
                                 &WasmSequencer::guestDeallocCallback, /* userdata */ this);
+    FW_ASSERT(alloc != nullptr);
 
-    U32 moduleIndex;
+    U32 moduleIndex = 0;
     Svc::WasmSequencer_RequestContext next = value.get_context();
 
     auto status = spacewasm_load_module(this->m_wasm, value.get_moduleName().toChar(),

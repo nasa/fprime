@@ -220,6 +220,11 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadTelemetry(spacewasm_caller_t*
         this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::TELEMETRY, time_size,
                                             Fw::Time::SERIALIZED_SIZE);
         return_status = SPACEWASM_TRAP;
+    } else if (id < 0 || id > static_cast<I64>(std::numeric_limits<FwChanIdType>::max())) {
+        // A guest id that does not fit FwChanIdType would silently alias a different,
+        // valid channel if cast directly. Reject it instead of truncating.
+        this->log_WARNING_HI_HostFunctionInvalidId(WasmSequencer_HostFunction::TELEMETRY, id);
+        return_status = SPACEWASM_TRAP;
     } else {
         this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::TELEMETRY;
         this->m_pendingHostFunction.caller = caller;
@@ -258,6 +263,13 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadParameter(spacewasm_caller_t*
     // unconnected deployment before dispatching; the generated invoker would FW_ASSERT.
     if (!this->isConnected_getParam_OutputPort(0)) {
         this->log_WARNING_HI_HostFunctionInvalidPort(WasmSequencer_HostFunction::PARAMETER, 0, 0);
+        return SPACEWASM_TRAP;
+    }
+
+    if (id < 0 || id > static_cast<I64>(std::numeric_limits<FwPrmIdType>::max())) {
+        // A guest id that does not fit FwPrmIdType would silently alias a different,
+        // valid parameter if cast directly. Reject it instead of truncating.
+        this->log_WARNING_HI_HostFunctionInvalidId(WasmSequencer_HostFunction::PARAMETER, id);
         return SPACEWASM_TRAP;
     }
 
@@ -408,9 +420,9 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialOut(spacewasm_caller_t* cal
     const U32 ptr = static_cast<U32>(params[1].u.i32_);
     const U32 len = static_cast<U32>(params[2].u.i32_);
 
-    if (len > Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE) {
+    if (len > Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE) {
         this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::SERIAL_OUT, len,
-                                            Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE);
+                                            Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE);
         return SPACEWASM_TRAP;
     }
 

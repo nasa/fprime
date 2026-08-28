@@ -244,7 +244,7 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     U32 serialOutCount;
     //! Port number and payload captured from the most recent serialOut invocation
     FwIndexType lastSerialOutPort;
-    U8 lastSerialOutData[Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE];
+    U8 lastSerialOutData[Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE];
     FwSizeType lastSerialOutSize;
 
     //! Number of seqStartOut invocations observed, and the arguments of the last one.
