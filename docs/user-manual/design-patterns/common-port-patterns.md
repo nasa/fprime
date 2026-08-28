@@ -128,7 +128,7 @@ The callback port pattern is used to separate a request from the response allowi
 
 ## Parallel Ports
 
-Parallel ports can be used to manage a sets of ports (e.g. [callback ports](#callback-ports)) that connect to external component(s) in parallel order. For example, a component who performs dispatches and receives responses to/from multiple components must have a paired relationship between the dispatch and response ports connected to each remote component. Parallel ports manage these kinds of inter-port relationships ensuring that they act as a single unit i.e. dispatch and response ports are attached to the same remote component.
+Parallel ports can be used to manage sets of ports (e.g. [callback ports](#callback-ports)) that connect to external component(s) in parallel order. For example, a component who performs dispatches and receives responses to/from multiple components must have a paired relationship between the dispatch and response ports connected to each remote component. Parallel ports manage these kinds of inter-port relationships ensuring that they act as a single unit i.e. dispatch and response ports are attached to the same remote component.
 
 The advantage of the parallel ports is that these relationships are treated like parallel arrays. FPP modeling provides checks for parallel ports connections to help validate these relationships.
 
