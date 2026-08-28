@@ -222,8 +222,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadTelemetry(spacewasm_caller_t*
         return_status = SPACEWASM_TRAP;
     } else if (id < 0 || static_cast<U64>(id) > static_cast<U64>(std::numeric_limits<FwChanIdType>::max())) {
         // A guest id that does not fit FwChanIdType would silently alias a different,
-        // valid channel if cast directly. Reject it instead of truncating. Compare in U64 so the
-        // bound holds even if FwChanIdType is configured wider than I64's positive range.
+        // valid channel if cast directly. Reject it instead of truncating.
         this->log_WARNING_HI_HostFunctionInvalidId(WasmSequencer_HostFunction::TELEMETRY, id);
         return_status = SPACEWASM_TRAP;
     } else {
