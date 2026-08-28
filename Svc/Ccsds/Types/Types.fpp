@@ -28,6 +28,7 @@ module Ccsds {
         ENCRYPTION_FAILURE = 3  @< Encryption operation failed
         DECRYPTION_FAILURE = 4  @< Decryption operation failed
         KEY_ERROR = 5           @< Key retrieval failed
+        MAC_VERIFICATION_FAILURE = 6 @< Frame failed its authentication check
     }
 
     @ An on-stack buffer sized to hold an SDLS key

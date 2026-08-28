@@ -17,14 +17,19 @@ namespace Ccsds {
 SdlsSaRouter ::SdlsSaRouter(const char* const compName) : SdlsSaRouterComponentBase(compName) {
     // Load the compile-time SA-to-port map from configuration
     const SdlsCfg::SaMap saMap;
+    this->configure(saMap);
+}
+
+SdlsSaRouter ::~SdlsSaRouter() {}
+
+void SdlsSaRouter ::configure(const SdlsCfg::SaMap& saMap) {
+    this->m_saMap.clear();
     for (SdlsCfg::SaMap::SizeType i = 0; i < SdlsCfg::SaMap::SIZE; i++) {
         const Fw::Success status =
             this->m_saMap.insert(saMap[i].get_securityAssociationIndex(), saMap[i].get_portIndex());
         FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(i));
     }
 }
-
-SdlsSaRouter ::~SdlsSaRouter() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports

@@ -111,6 +111,13 @@ void TmFramer ::fill_with_idle_packet(Fw::SerialBufferBase& serializer) {
     constexpr U16 idleApid = static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET);
     const U16 startIndex = static_cast<U16>(serializer.getSize());
     const U16 idlePacketSize = static_cast<U16>(endIndex - startIndex);
+
+    // A data field that is already exactly full needs no filler
+    // Svc.Ccsds.SpacePacketIdleFiller pads before encryption, deployments without it won't reach this
+    if (idlePacketSize == 0) {
+        return;
+    }
+
     // Length token is defined as the number of bytes of payload data minus 1
     const U16 lengthToken = static_cast<U16>(idlePacketSize - SpacePacketHeader::SERIALIZED_SIZE - 1);
 

@@ -11,5 +11,6 @@ register_fprime_module(
     DEPENDS
         Svc_Subtopologies_ComCcsdsSdls_ComCcsdsSdlsConfig
         Svc_Subtopologies_ComCcsds
+        Svc_Ccsds_SpacePacketIdleFiller
     INTERFACE
 )
