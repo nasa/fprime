@@ -53,7 +53,10 @@ constexpr U8 MAX_GUEST_MODULES = 8;
 /// invoke the serial output port
 constexpr U32 MAX_SERIAL_OUT_SIZE = 256;
 
-/// Buffer size to allocate for streaming a Wasm module from the filesystem to the decoder/validator
+/// Buffer size to allocate for streaming a Wasm module from the filesystem to the decoder/validator.
+/// NOTE: this buffer is stack-allocated on the component task's stack for the duration of a module load
+/// so it must stay small relative to the task stack. Raising it materially (e.g. to several KiB) risks a
+// stack overflow inside the spacewasm load call chain on the flight target.
 constexpr FwSizeType LOAD_READ_CHUNK_SIZE = 512;
 
 enum class SerialInQueueFullBehavior {
@@ -65,7 +68,10 @@ enum class SerialInQueueFullBehavior {
 
 constexpr SerialInQueueFullBehavior SERIAL_IN_QUEUE_FULL_BEHAVIOR = SerialInQueueFullBehavior::DROP_OLDEST;
 
-/// Size of each serialIn port in bytes
+/// Size of each serialIn port in bytes; the largest receivable frame is this minus a 4-byte length
+/// header (252 B at the default). An inbound frame larger than that ceiling is dropped with the
+/// SerialInFrameTooLarge event, so size this queue deliberately relative to the serial_out payloads
+/// peers may send (up to MAX_SERIAL_OUT_SIZE bytes).
 constexpr FwSizeType SERIAL_IN_QUEUE_SIZE = 256;
 
 /// Maximum number of concurrent `WAIT` commands each WasmSequencer can service

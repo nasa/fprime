@@ -220,9 +220,10 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadTelemetry(spacewasm_caller_t*
         this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::TELEMETRY, time_size,
                                             Fw::Time::SERIALIZED_SIZE);
         return_status = SPACEWASM_TRAP;
-    } else if (id < 0 || id > static_cast<I64>(std::numeric_limits<FwChanIdType>::max())) {
+    } else if (id < 0 || static_cast<U64>(id) > static_cast<U64>(std::numeric_limits<FwChanIdType>::max())) {
         // A guest id that does not fit FwChanIdType would silently alias a different,
-        // valid channel if cast directly. Reject it instead of truncating.
+        // valid channel if cast directly. Reject it instead of truncating. Compare in U64 so the
+        // bound holds even if FwChanIdType is configured wider than I64's positive range.
         this->log_WARNING_HI_HostFunctionInvalidId(WasmSequencer_HostFunction::TELEMETRY, id);
         return_status = SPACEWASM_TRAP;
     } else {
@@ -266,9 +267,10 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadParameter(spacewasm_caller_t*
         return SPACEWASM_TRAP;
     }
 
-    if (id < 0 || id > static_cast<I64>(std::numeric_limits<FwPrmIdType>::max())) {
+    if (id < 0 || static_cast<U64>(id) > static_cast<U64>(std::numeric_limits<FwPrmIdType>::max())) {
         // A guest id that does not fit FwPrmIdType would silently alias a different,
-        // valid parameter if cast directly. Reject it instead of truncating.
+        // valid parameter if cast directly. Reject it instead of truncating. Compare in U64 so the
+        // bound holds even if FwPrmIdType is configured wider than I64's positive range.
         this->log_WARNING_HI_HostFunctionInvalidId(WasmSequencer_HostFunction::PARAMETER, id);
         return SPACEWASM_TRAP;
     }

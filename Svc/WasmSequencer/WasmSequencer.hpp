@@ -766,9 +766,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     static U8* guestReallocCallback(void* userdata, U8* ptr, size_t old_size, size_t new_size, size_t align);
     static void guestDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align);
 
-    //! Fill `m_readBuf` with the next chunk of the module file being loaded.
-    spacewasm_read_result_t readModuleChunk(const U8** outBuf, size_t* outLen);
-
     //! Create a fresh interpreter store with the given module capacity,
     //! destroying any existing store first.
     void createStore();

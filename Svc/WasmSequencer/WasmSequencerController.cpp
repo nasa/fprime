@@ -193,13 +193,11 @@ bool WasmSequencer ::resolveSequencePath(const Fw::StringBase& fileName, Fw::Str
 }
 
 struct WasmFileReader {
-    WasmFileReader(Os::File* loadFile) : m_loadFile(loadFile) {}
+    explicit WasmFileReader(Os::File& loadFile) : m_loadFile(loadFile) {}
 
     spacewasm_read_result_t readChunk(const U8** outBuf, std::size_t* outLen) {
-        FW_ASSERT(this->m_loadFile != nullptr);
-
         FwSizeType size = sizeof(this->m_readBuf);
-        const Os::File::Status status = this->m_loadFile->read(this->m_readBuf, size);
+        const Os::File::Status status = this->m_loadFile.read(this->m_readBuf, size);
 
         spacewasm_read_result_t readStatus;
         if (status != Os::File::Status::OP_OK) {
@@ -226,7 +224,7 @@ struct WasmFileReader {
     }
 
     //! Currently loading file handle
-    Os::File* m_loadFile;
+    Os::File& m_loadFile;
 
     //! Buffer handed to the streaming loader, filled from `m_loadFile`.
     U8 m_readBuf[Svc::WasmSequencerConfig::LOAD_READ_CHUNK_SIZE]{};
@@ -267,12 +265,19 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     spacewasm_allocator_t* alloc =
         spacewasm_allocator_new(&WasmSequencer::guestAllocCallback, &WasmSequencer::guestReallocCallback,
                                 &WasmSequencer::guestDeallocCallback, /* userdata */ this);
-    FW_ASSERT(alloc != nullptr);
+    if (alloc == nullptr) {
+        // We could not create the guest memory allocator
+        this->log_WARNING_HI_ModuleLoadFailed(WasmSequencer_Status(SPACEWASM_ERR_ALLOC_FAILED));
+        this->releaseAllocatorLock();
+        file.close();
+        this->controller_sendSignal_loadFailed(value.get_context());
+        return;
+    }
 
     U32 moduleIndex = 0;
     Svc::WasmSequencer_RequestContext next = value.get_context();
 
-    WasmFileReader reader(&file);
+    WasmFileReader reader(file);
 
     auto status = spacewasm_load_module(this->m_wasm, value.get_moduleName().toChar(),
                                         &WasmFileReader::readChunkCallback, &reader, alloc, &moduleIndex);
