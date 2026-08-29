@@ -69,13 +69,13 @@ timeout</code></td><td><code>U64</code></td><td></td></tr>
 
 ### 3.4 Functional Description
 
-Each `*In` port handler validates its arguments before performing any file operation. Malformed inputs — such as an empty path, an invalid (null or zero-length) buffer, a write offset past the end of the buffer, or a path too long for the filename buffer — are reported by emitting an `InvalidInput` warning event and returning `INVALID_INPUT` to the client, rather than triggering an `FW_ASSERT`. This ensures that invalid, externally supplied (e.g. ground-commanded) inputs are surfaced to operators as telemetry instead of causing an assertion failure.
+Each `*In` port handler validates its arguments before performing any file operation. Malformed inputs — such as an empty path, an invalid (null or zero-length) buffer, a write offset past the end of the buffer, or a path that leaves no room for the `.CRC32` hash-file extension within `FileNameStringSize` — are reported by emitting an `InvalidInput` warning event and returning `INVALID_INPUT` to the client, rather than triggering an `FW_ASSERT`. This ensures that invalid, externally supplied (e.g. ground-commanded) inputs are surfaced to operators as telemetry instead of causing an assertion failure.
 
 #### 3.4.1 writeIn_handler
 
 Calling component passes in a buffer for writing to file, the file location is *path*, and the offset to start writing at.
 
-1. Validate inputs. If the path is empty, the buffer is invalid, the write offset is past the end of the buffer, or the path is too long for the filename buffer, emit an `InvalidInput` event and return `INVALID_INPUT`
+1. Validate inputs. If the path is empty, the buffer is invalid, the write offset is past the end of the buffer, or the path plus the hash-file extension exceeds `FileNameStringSize`, emit an `InvalidInput` event and return `INVALID_INPUT`
 2. If not in IDLE state, return NOT_IDLE
 3. Set state to WRITING
 4. Open a file at the provided path and write contents of client-provided buffer to it
@@ -86,7 +86,7 @@ Calling component passes in a buffer for writing to file, the file location is *
 
 Calling component passes in a file path *path* to read and a buffer for client to read from
 
-1. Validate inputs. If the path is empty or the buffer is invalid, emit an `InvalidInput` event and return `INVALID_INPUT`
+1. Validate inputs. If the path is empty, the buffer is invalid, or the path plus the hash-file extension exceeds `FileNameStringSize`, emit an `InvalidInput` event and return `INVALID_INPUT`
 2. If not in IDLE state, return NOT_IDLE
 3. Set state to READING
 4. Verify checksum. If checksum fails, return FAILED_CRC and set state to IDLE
@@ -96,7 +96,7 @@ Calling component passes in a file path *path* to read and a buffer for client t
 
 #### 3.4.3 verifyIn_handler
 
-1. Validate the input path. If the path is empty, emit an `InvalidInput` event and return `INVALID_INPUT`
+1. Validate the input path. If the path is empty or the path plus the hash-file extension exceeds `FileNameStringSize`, emit an `InvalidInput` event and return `INVALID_INPUT`
 2. Verify checksum. If checksum fails, return FAILED_CRC
 3. Get file size. If file size fails, return FAILED_FILE_SIZE
 4. Return file size to client

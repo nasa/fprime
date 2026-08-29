@@ -89,6 +89,8 @@ class FileWorker : public FileWorkerComponentBase {
                  Utils::HashBuffer& hashBuffer,
                  const U8* const data,
                  const FwSizeType size);
+    //! True if path plus the hash-file extension fits in an Fw::FileNameString
+    static bool pathFitsWithHashExtension(const Fw::StringBase& path);
     bool writeBufferToFile(Fw::Buffer& buffer, const char* fileName, FwSizeType offset, bool append);
     void writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName, FwSizeType offset, bool append);
     FwSizeType writeToFile(const U8* data, FwSizeType size, Os::File& file, const char* fileName);
