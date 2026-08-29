@@ -1,0 +1,21 @@
+# sloc v0.1.0
+AAA # fn main
+TCG # argv 1 dir
+GAT # walk_dir dir files
+AAC # let total_files = files.len()
+AAC # let mut total_lines: usize = 0
+AAC # let mut sloc: usize = 0
+AGA # loop file in files
+TGC # read_file file content
+TAT # split_lines content lines
+AAC # let n = lines.len()
+AAC # total_lines += n
+AGA # loop line in lines
+AAC # let t = line.trim()
+CAA # if !t.is_empty() && !t.starts_with("//")
+AAC # sloc += 1
+TTT # end
+TTT # end
+TTT # end
+GAA # println! "Files: {} Total: {} SLOC: {}" total_files total_lines sloc
+TTT # end
