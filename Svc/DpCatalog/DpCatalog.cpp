@@ -784,6 +784,7 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     // check file status
     if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
         this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());
+        this->m_hasCurrentXmit = false;
         this->m_xmitInProgress = false;
         this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -791,14 +792,22 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
 
     // Catalog cleared while this file was sent; clear xmit state and answer any waited command
     if (!this->m_catalogBuilt) {
+        this->log_WARNING_HI_StaleFileDone(this->m_currXmitFileName, resp.get_status());
         this->m_hasCurrentXmit = false;
         this->m_xmitInProgress = false;
         this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
-    // Should have a valid current transmit entry
-    FW_ASSERT(this->m_hasCurrentXmit);
+    // Late fileDone with no current transmit (STOP+BUILD or CLEAR+BUILD race, or double fileDone)
+    // Previously FW_ASSERT(m_hasCurrentXmit) -> FATAL #5777. Handle gracefully like #5624 sendNextEntry wedges.
+    if (!this->m_hasCurrentXmit) {
+        this->log_WARNING_HI_StaleFileDone(this->m_currXmitFileName, resp.get_status());
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
 
     // Reduce pending
     this->m_pendingDpBytes -= this->m_currentXmitEntry.record.get_size();
