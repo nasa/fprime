@@ -146,5 +146,9 @@ When data products are downlinked, the tree is traversed in priority order. As e
 
 When a data product is downlinked, it is marked in the node as completed, but the state is also written to a file so that downlinked state is preserved across restarts of the software. When the catalog is built, the state file is first read into a data structure in memory.
 
+#### 3.7.4 FileDone Handling
+
+`fileDone` is hermetic: late `fileDone` after `STOP_XMIT_CATALOG` + `BUILD_CATALOG` (or `CLEAR_CATALOG` + `BUILD_CATALOG`) is treated as stale — emits `StaleFileDone` `WARNING_HI` `id 50`, clears `m_hasCurrentXmit`/`m_xmitInProgress`/`m_xmitGeneration`, and answers the waited `START_XMIT_CATALOG` with `EXECUTION_ERROR` via `dispatchWaitedResponse`. Retry exhaustion (`SEND_RETRY` limit) is not a wedge — it is treated as success. Generation counter `m_xmitGeneration` / `m_currentXmitGeneration` is bumped on `START_XMIT_CATALOG` and `BUILD_CATALOG` so stale `fileDone` from a prior generation is ignored even if `m_hasCurrentXmit` is already false.
+
 ## 6 Unit Testing
 
