@@ -538,6 +538,16 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testBuffersExhaustedEvent();
     void testChunklistUnavailableEvent();
 
+    // Receive directory (rx_dir)
+    //! Configure channel 0 with the given rx_dir (other fields keep sane test values)
+    void setChannel0RxDir(const char* rxDir);
+    //! Metadata PDU whose destination resolves outside rx_dir is rejected: event, no file, transaction finished
+    void testRxDestPathRejectedEvent();
+    //! Relative destination is resolved inside rx_dir and the transaction proceeds normally
+    void testRxDestPathContained();
+    //! Late Metadata (Class 2, temp file already open) with a destination outside rx_dir fails the transaction
+    void testRxDestPathRejectedLateMetadata();
+
     // PDU Deserialization Failure Events
     void testFailPduHeaderDeserializationEvent();
     void testFailMetadataPduDeserializationEvent();

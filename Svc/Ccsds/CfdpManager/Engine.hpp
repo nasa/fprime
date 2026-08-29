@@ -430,12 +430,30 @@ class Engine {
      * @brief Handle receipt of metadata PDU
      *
      * This should only be invoked for buffers that have been identified
-     * as a metadata PDU. PDU validation already done in MetadataPdu::fromBuffer.
+     * as a metadata PDU. Structural PDU validation is done in
+     * MetadataPdu::fromSerialBuffer; this function additionally validates the
+     * destination filename against the channel's `rx_dir` sandbox (if configured)
+     * and stores the canonical, contained path in the transaction history.
      *
      * @param txn  Pointer to the transaction state
      * @param pdu  The metadata PDU
+     * @return true if the metadata was accepted; false if the destination path
+     *         was rejected (event logged, fault counted, dst_filename left empty)
      */
-    void recvMd(Transaction* txn, const MetadataPdu& pdu);
+    bool recvMd(Transaction* txn, const MetadataPdu& pdu);
+
+    /**
+     * @brief Validate and canonicalize a received destination path against the channel rx_dir
+     *
+     * If the channel's `rx_dir` parameter is empty the path is accepted unchanged.
+     * Otherwise the path is resolved (relative paths are resolved against rx_dir,
+     * `.`/`..` segments are collapsed) and must remain inside rx_dir.
+     *
+     * @param chan_num  Channel number whose rx_dir applies
+     * @param path      In: path from the Metadata PDU. Out: canonical absolute path on success
+     * @return true if accepted, false if rejected
+     */
+    bool validateRxDestPath(U8 chan_num, Fw::String& path);
 
     /**
      * @brief Unpack a file data PDU from a received message

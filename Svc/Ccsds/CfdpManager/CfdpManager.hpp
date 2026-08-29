@@ -466,6 +466,12 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! \return Path to directory where failed transfers are moved
     Fw::String getFailDirParam(U8 channelIndex);
 
+    //! Get the receive sandbox directory parameter for a channel
+    //!
+    //! \param channelIndex [in] Index of the channel
+    //! \return Directory that received-file destination paths must resolve inside; empty means unrestricted
+    Fw::String getRxDirParam(U8 channelIndex);
+
     //! Get the ACK limit parameter for a channel
     //!
     //! \param channelIndex [in] Index of the channel

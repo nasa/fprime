@@ -649,6 +649,18 @@ Fw::String CfdpManager::getFailDirParam(U8 channelIndex) {
     return paramArray[channelIndex].get_fail_dir();
 }
 
+Fw::String CfdpManager::getRxDirParam(U8 channelIndex) {
+    Fw::ParamValid valid;
+
+    FW_ASSERT(channelIndex < Cfdp::NumChannels, channelIndex, Cfdp::NumChannels);
+
+    // Check for coding errors as all CFDP parameters must have a default
+    ChannelArrayParams paramArray = paramGet_ChannelConfig(valid);
+    FW_ASSERT(FW_PARAM_OK(valid), static_cast<FwAssertArgType>(valid.e));
+
+    return paramArray[channelIndex].get_rx_dir();
+}
+
 U8 CfdpManager::getAckLimitParam(U8 channelIndex) {
     Fw::ParamValid valid;
 
