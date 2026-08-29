@@ -247,8 +247,8 @@ void CfdpManagerTester::testRxDestPathRejectedEvent() {
     this->setChannel0RxDir(rxDir);
     this->clearHistory();
 
-    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100,
-                          srcFile, dstFile, Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100, srcFile,
+                          dstFile, Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     // Rejection event carries the rejected path and the configured directory; no MetadataReceived
@@ -338,8 +338,8 @@ void CfdpManagerTester::testRxDestPathRejectedLateMetadata() {
     Fw::String tempPath = txn->m_history->fnames.dst_filename;
 
     this->clearEvents();
-    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq,
-                          sizeof(data), "/ground/late.bin", dstFile, Cfdp::Class::CLASS_2, 1);
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, sizeof(data),
+                          "/ground/late.bin", dstFile, Cfdp::Class::CLASS_2, 1);
     this->component.doDispatch();
 
     ASSERT_EVENTS_RxDestPathRejected_SIZE(1);

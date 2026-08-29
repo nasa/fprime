@@ -37,9 +37,9 @@
 // ======================================================================
 
 #include <string.h>
-#include <new>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/FilePathUtils.hpp>
+#include <new>
 
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/FileSystem.hpp>
