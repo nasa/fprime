@@ -67,11 +67,14 @@ void ComStub::drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port 
     } else {
         // Return buffer ownership and send status
         this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
-        this->m_reinitialize = (sendStatus.e != Drv::ByteStreamStatus::OP_OK);
+        bool isError = (sendStatus.e != Drv::ByteStreamStatus::OP_OK);
+        this->m_reinitialize = isError;
+        if (isError && this->isConnected_drvReinitRequestOut_OutputPort(0)) {
+            this->drvReinitRequestOut_out(0);
+        }
         this->m_retry_count = 0;  // Reset retry count
         // Send Com status
-        Fw::Success comSuccess =
-            (sendStatus.e == Drv::ByteStreamStatus::OP_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
+        Fw::Success comSuccess = isError ? Fw::Success::FAILURE : Fw::Success::SUCCESS;
         this->comStatusOut_out(0, comSuccess);
     }
 }
@@ -97,12 +100,15 @@ void ComStub::handleSynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameC
     if (sendStatus == Drv::ByteStreamStatus::OP_OK) {
         comSuccess = Fw::Success::SUCCESS;
     } else if (sendStatus == Drv::ByteStreamStatus::SEND_RETRY) {
-        // Retry exhaustion requires a driver reconnect to emit the recovery SUCCESS
-        this->m_reinitialize = true;
-        Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
+        // Retry exhaustion - drop stale packet and continue (was: wedge with m_reinitialize+FAILURE #5234)
+        Fw::Logger::log("ComStub retry limit exceeded, dropping stale packet");
+        comSuccess = Fw::Success::SUCCESS;
     } else {
-        // Other error - need to reinitialize
+        // Other error - request driver reinit hermetically (was: wedge #5234 V2)
         this->m_reinitialize = true;
+        if (this->isConnected_drvReinitRequestOut_OutputPort(0)) {
+            this->drvReinitRequestOut_out(0);
+        }
     }
 
     // Return buffer and send status
@@ -122,13 +128,11 @@ void ComStub::handleAsyncRetry(Fw::Buffer& fwBuffer) {
         this->m_retry_count++;
         this->drvAsyncSendOut_out(0, fwBuffer);
     } else {
-        // Exceeded retry limit - return buffer and notify failure
-        // Retry exhaustion requires a driver reconnect to emit the recovery SUCCESS
-        this->m_reinitialize = true;
+        // Exceeded retry limit - drop stale packet and continue (was: wedge #5234)
         this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
-        Fw::Success comStatus = Fw::Success::FAILURE;
+        Fw::Success comStatus = Fw::Success::SUCCESS;
         this->comStatusOut_out(0, comStatus);
-        Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
+        Fw::Logger::log("ComStub retry limit exceeded, dropping stale packet");
         this->m_retry_count = 0;  // Reset retry count
     }
 }

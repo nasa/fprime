@@ -21,5 +21,8 @@ module Svc {
         @ Callback from drvAsyncSendOut (retrieving status and ownership of sent buffer)
         sync input port drvAsyncSendReturnIn: Drv.ByteStreamData
 
+        @ Request driver reinitialization after OTHER_ERROR (hermetic, #5234 V2)
+        output port drvReinitRequestOut: Drv.ByteStreamReinitRequest
+
     }
 }

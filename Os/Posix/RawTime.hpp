@@ -88,6 +88,17 @@ class PosixRawTime : public RawTimeInterface {
   private:
     //! Handle for PosixRawTime
     PosixRawTimeHandle m_handle;
+
+  public:
+    //! \brief Set the clock source used by now()
+    //! \param clockId clock id (e.g. CLOCK_MONOTONIC, CLOCK_BOOTTIME, CLOCK_REALTIME)
+    static void setClockSource(clockid_t clockId);
+
+    //! \brief Get the current clock source
+    static clockid_t getClockSource();
+
+  private:
+    static clockid_t s_clockId;
 };
 
 }  // namespace RawTime

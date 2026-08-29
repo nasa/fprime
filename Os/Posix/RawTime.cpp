@@ -12,8 +12,18 @@ namespace Os {
 namespace Posix {
 namespace RawTime {
 
+clockid_t PosixRawTime::s_clockId = CLOCK_MONOTONIC;
+
+void PosixRawTime::setClockSource(clockid_t clockId) {
+    s_clockId = clockId;
+}
+
+clockid_t PosixRawTime::getClockSource() {
+    return s_clockId;
+}
+
 PosixRawTime::Status PosixRawTime::now() {
-    int status = clock_gettime(CLOCK_REALTIME, &this->m_handle.m_timespec);
+    int status = clock_gettime(s_clockId, &this->m_handle.m_timespec);
     if (status != 0) {
         return errno_to_rawtime_status(errno);
     }

@@ -24,4 +24,7 @@ module Drv {
     @ Signal indicating the driver is ready to send and received data
     port ByteStreamReady()
 
+    @ Request driver reinitialization (ComStub -> driver, hermetic #5234 V2)
+    port ByteStreamReinitRequest()
+
 }
