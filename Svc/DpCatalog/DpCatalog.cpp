@@ -1,4 +1,4 @@
-// ======================================================================
+﻿// ======================================================================
 
 // \title  DpCatalog.cpp
 // \author tcanham
@@ -354,7 +354,8 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
 
     this->log_ACTIVITY_HI_CatalogBuildComplete();
 
-    // Flag so addToCat knows it is good to go
+    // Flag so addToCat knows it is good to go - bump generation to invalidate any in-flight fileDone
+    ++this->m_xmitGeneration;
     this->m_catalogBuilt = true;
 
     return Fw::CmdResponse::OK;
@@ -706,6 +707,7 @@ void DpCatalog::sendNextEntry() {
     // Save current entry for fileDone_handler
     this->m_currentXmitEntry = entry;
     this->m_hasCurrentXmit = true;
+    this->m_currentXmitGeneration = this->m_xmitGeneration;
 
     // Build file name based on the found entry
     Fw::FormatStatus formatStatus =
@@ -799,9 +801,9 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
         return;
     }
 
-    // Late fileDone with no current transmit (STOP+BUILD or CLEAR+BUILD race, or double fileDone)
+    // Late fileDone with no current transmit or stale generation (STOP+BUILD or CLEAR+BUILD race, or double fileDone)
     // Previously FW_ASSERT(m_hasCurrentXmit) -> FATAL #5777. Handle gracefully like #5624 sendNextEntry wedges.
-    if (!this->m_hasCurrentXmit) {
+    if (!this->m_hasCurrentXmit || this->m_currentXmitGeneration != this->m_xmitGeneration) {
         this->log_WARNING_HI_StaleFileDone(this->m_currXmitFileName, resp.get_status());
         this->m_hasCurrentXmit = false;
         this->m_xmitInProgress = false;
@@ -948,9 +950,9 @@ Fw::CmdResponse DpCatalog::doCatalogXmit() {
         return Fw::CmdResponse::EXECUTION_ERROR;
     }
 
-    // start transmission
+    // start transmission - bump generation so stale fileDones from prior session are ignored
     this->m_xmitBytes = 0;
-
+    ++this->m_xmitGeneration;
     this->m_xmitInProgress = true;
     // Step 3b - search for and send first entry
     this->sendNextEntry();
@@ -994,3 +996,4 @@ void DpCatalog ::dispatchWaitedResponse(Fw::CmdResponse response) {
 }
 
 }  // namespace Svc
+

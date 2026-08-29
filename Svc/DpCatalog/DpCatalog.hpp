@@ -259,6 +259,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     bool m_catalogBuilt = false;            //!< catalog build is complete (can add DPs at runtime)
     bool m_xmitInProgress = false;          //!< set if DP files are in the process of being sent
     Fw::FileNameString m_currXmitFileName;  //!< current file being transmitted
+    U32 m_xmitGeneration = 0;               //!< generation counter for stale fileDone detection (v2)
+    U32 m_currentXmitGeneration = 0;        //!< generation of m_currentXmitEntry
     bool m_xmitCmdWait = false;             //!< true if waiting for transmission complete to complete xmit command
     U64 m_xmitBytes = 0;                    //!< bytes transmitted for downlink session
     FwOpcodeType m_xmitOpCode = 0;          //!< stored xmit command opcode
