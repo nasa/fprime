@@ -381,11 +381,11 @@ Signal FpySequencer::pushTlmVal_directiveHandler(const FpySequencer_PushTlmValDi
         error = DirectiveError::TLM_CHAN_NOT_FOUND;
         return Signal::stmtResponse_failure;
     }
-
-    if (Fpy::MAX_STACK_SIZE - tlmValue.getSize() < this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + tlmValue.getSize() > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
+
     this->m_runtime.stack.push(tlmValue.getBuffAddr(), static_cast<Fpy::StackSizeType>(tlmValue.getSize()));
     return Signal::stmtResponse_success;
 }
@@ -415,7 +415,7 @@ Signal FpySequencer::pushTlmValAndTime_directiveHandler(const FpySequencer_PushT
     FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
 
     // check that our stack won't overflow if we put both val and time on it
-    if (Fpy::MAX_STACK_SIZE - tlmValue.getSize() - timeEsb.getSize() < this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + tlmValue.getSize() + timeEsb.getSize() > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -442,7 +442,7 @@ Signal FpySequencer::pushPrm_directiveHandler(const FpySequencer_PushPrmDirectiv
         return Signal::stmtResponse_failure;
     }
 
-    if (Fpy::MAX_STACK_SIZE - prmValue.getSize() < this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + prmValue.getSize() > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -454,7 +454,7 @@ Signal FpySequencer::pushPrm_directiveHandler(const FpySequencer_PushPrmDirectiv
 Signal FpySequencer::constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error) {
     // the cmd response code will be pushed to the stack when it comes back, so make sure
     // there is room for it now, before the cmd is dispatched
-    if (Fpy::MAX_STACK_SIZE - sizeof(Fw::CmdResponse::SerialType) < this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + sizeof(Fw::CmdResponse::SerialType) > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1246,7 +1246,7 @@ Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& dir
 }
 
 Signal FpySequencer::allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error) {
-    if (directive.get_size() > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + directive.get_size() > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1276,7 +1276,7 @@ Signal FpySequencer::storeHelper(Fpy::StackSizeType destOffset, Fpy::StackSizeTy
 
 //! Helper to load value from srcOffset and push to stack top
 Signal FpySequencer::loadHelper(Fpy::StackSizeType srcOffset, Fpy::StackSizeType size, DirectiveError& error) {
-    if (size > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + size > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1312,7 +1312,7 @@ Signal FpySequencer::loadRel_directiveHandler(const FpySequencer_LoadRelDirectiv
 }
 
 Signal FpySequencer::pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error) {
-    if (directive.get__valSize() > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + directive.get__valSize() > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1389,7 +1389,7 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
     // the cmd response code will be pushed to the stack when it comes back, so make sure
     // there is room for it now, before the cmd is dispatched. popping the opcode above
     // frees some room, but FwOpcodeType is configurable so it may not be enough
-    if (Fpy::MAX_STACK_SIZE - sizeof(Fw::CmdResponse::SerialType) < this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + sizeof(Fw::CmdResponse::SerialType) > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1407,7 +1407,7 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
 }
 
 Signal FpySequencer::pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error) {
-    if (Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE < this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + Fw::Time::SERIALIZED_SIZE > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1439,7 +1439,7 @@ Signal FpySequencer::setSeed_directiveHandler(const FpySequencer_SetSeedDirectiv
 }
 
 Signal FpySequencer::pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive, DirectiveError& error) {
-    if (Fpy::MAX_STACK_SIZE - sizeof(U32) < this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + sizeof(U32) > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1511,7 +1511,7 @@ Signal FpySequencer::peek_directiveHandler(const FpySequencer_PeekDirective& dir
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    if (byteCount > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + byteCount > Fpy::MAX_STACK_SIZE) {
         // we would overflow the stack if we pushed this many bytes to it
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
@@ -1648,7 +1648,7 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
     this->m_runtime.stack.size -= callArgsSize;
 
     // Push the return value
-    if (returnValSize > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+    if (this->m_runtime.stack.size + returnValSize > Fpy::MAX_STACK_SIZE) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
