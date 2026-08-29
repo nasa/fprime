@@ -9,6 +9,12 @@ module Fw {
                    ref fwBuffer: Fw.Buffer
                  )
 
+  @ Port for sending a buffer where the caller retains ownership
+  port BufferSendNonOwning(
+                   @ The buffer
+                   ref fwBuffer: Fw.Buffer
+                 )
+
   @ Port for getting a buffer
   @ Returns the buffer
   port BufferGet(
