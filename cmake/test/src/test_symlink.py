@@ -24,6 +24,17 @@ _ = cmake.get_build(
     install_directory=tempfile.mkdtemp(),
 )
 
+_ = cmake.get_build(
+    "SYMLINKED_SETTINGS_BUILD",
+    settings.REF_APP_PATH,
+    cmake_arguments={
+        "FPRIME_SETTINGS_FILE": SYMLINK_PATH
+        / "TestDeploymentsProject"
+        / "settings.ini"
+    },
+    make_targets=[],
+)
+
 
 @pytest.fixture(scope="session")
 def symlink_maker():
@@ -35,3 +46,10 @@ def symlink_maker():
 def test_unittest_run(SYMLINKED_UT_BUILD, symlink_maker):
     """Basic run test for ref"""
     cmake.assert_process_success(SYMLINKED_UT_BUILD, errors_ok=True)
+
+
+def test_symlinked_settings_path(SYMLINKED_SETTINGS_BUILD, symlink_maker):
+    """Equivalent settings.ini paths through symlinks are accepted"""
+    cmake.assert_process_success(
+        SYMLINKED_SETTINGS_BUILD, errors_ok=True, targets=[]
+    )
