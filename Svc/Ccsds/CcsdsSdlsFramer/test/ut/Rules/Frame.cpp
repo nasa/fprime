@@ -4,8 +4,8 @@
 // \brief  Rule implementations for the Frame rule group
 //
 // These rules exercise the framing path (dataIn): SA selection from the
-// frame context, SA selection from the SA_INDEX parameter, and the
-// encryption-failure error path.
+// SA_INDEX parameter (with a differing context SA index reported and ignored),
+// SA selection with an unset context, and the encryption-failure error path.
 // ======================================================================
 
 #include "STest/Pick/Pick.hpp"
@@ -26,10 +26,11 @@ bool CcsdsSdlsFramerTester::Frame__ContextSa__precondition() const {
 void CcsdsSdlsFramerTester::Frame__ContextSa__action() {
     this->clearHistory();
 
-    // Pick an SA index distinct from the unset sentinel and set it in the context
+    // Pick an SA index distinct from both the unset sentinel and the configured parameter, and set
+    // it in the context: the parameter must win and the request must be reported
     const U16 unsetSaIndex = ComCfg::FrameContext().get_saIndex();
     U16 sa = static_cast<U16>(STest::Pick::lowerUpper(0, 0xFFFF));
-    if (sa == unsetSaIndex) {
+    while ((sa == unsetSaIndex) || (sa == TEST_PARAM_SA_INDEX)) {
         sa = static_cast<U16>(sa - 1);
     }
     U8 storage[TEST_BUFFER_SIZE];
@@ -39,14 +40,20 @@ void CcsdsSdlsFramerTester::Frame__ContextSa__action() {
 
     this->invoke_to_dataIn(0, buffer, context);
 
-    // The context's SA index must reach the encryption helper
+    // The configured SA index, not the context's, must reach the encryption helper and be recorded
     ASSERT_from_encryptOut_SIZE(1);
     const FromPortEntry_encryptOut& entry = this->fromPortHistory_encryptOut->at(0);
-    ASSERT_EQ(entry.securityAssociationIndex, sa);
-    ASSERT_EQ(entry.context.get_saIndex(), sa);
+    ASSERT_EQ(entry.securityAssociationIndex, TEST_PARAM_SA_INDEX);
+    ASSERT_EQ(entry.context.get_saIndex(), TEST_PARAM_SA_INDEX);
 
-    // Nominal path: no events, no direct data return
-    ASSERT_EVENTS_SIZE(0);
+    // The ignored request is reported (throttled, so at most one per application of this rule and
+    // possibly none late in a long randomized run); nothing else is raised and no direct data return
+    ASSERT_EVENTS_EncryptionFailed_SIZE(0);
+    ASSERT_EVENTS_BufferAllocationFailed_SIZE(0);
+    ASSERT_LE(this->eventHistory_ContextSaIndexIgnored->size(), 1u);
+    if (this->eventHistory_ContextSaIndexIgnored->size() == 1) {
+        ASSERT_EVENTS_ContextSaIndexIgnored(0, sa, TEST_PARAM_SA_INDEX);
+    }
     ASSERT_from_dataReturnOut_SIZE(0);
 }
 

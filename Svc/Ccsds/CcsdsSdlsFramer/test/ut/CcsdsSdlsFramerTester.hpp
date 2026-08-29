@@ -36,6 +36,9 @@ class CcsdsSdlsFramerTester : public CcsdsSdlsFramerGTestBase {
     //! Security association index staged into the SA_INDEX parameter
     static const U16 TEST_PARAM_SA_INDEX = 27;
 
+    //! Assert that exactly one ContextSaIndexIgnored event was raised (fresh tester, throttle not engaged)
+    void assertContextSaIgnoredReported();
+
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction

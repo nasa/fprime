@@ -53,6 +53,11 @@ Fw::Buffer CcsdsSdlsFramerTester ::from_bufferAllocate_handler(FwIndexType portN
     return Fw::Buffer(this->m_allocationStorage, static_cast<Fw::Buffer::SizeType>(size));
 }
 
+void CcsdsSdlsFramerTester::assertContextSaIgnoredReported() {
+    ASSERT_EVENTS_ContextSaIndexIgnored_SIZE(1);
+    ASSERT_EQ(this->eventHistory_ContextSaIndexIgnored->at(0).configured, TEST_PARAM_SA_INDEX);
+}
+
 }  // namespace Ccsds
 
 }  // namespace Svc

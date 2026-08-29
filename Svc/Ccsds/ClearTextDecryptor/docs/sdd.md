@@ -24,6 +24,12 @@ The `Svc::Ccsds::ClearTextDecryptor` component is a pass-through implementation 
 | sync input    | decryptReturnIn | Svc.ComDataWithContext        | Receives back ownership of buffers sent on `decryptOut`. |
 | output        | bufferReturnOut | Svc.ComDataWithContext        | Returns the incoming iv/data buffer for deallocation. |
 
+## Events
+
+| Name | Severity | Description |
+|------|----------|-------------|
+| NullCipherInUse | WARNING_HI (throttle 5) | Raised for every frame handled, carrying the SA index. Its presence in telemetry means a frame was accepted or emitted with no authentication and no decryption; a deployment requiring security must replace this component and must not leave any SA mapped to it. |
+
 ## Requirements
 
 | Name | Description | Validation |
@@ -32,6 +38,7 @@ The `Svc::Ccsds::ClearTextDecryptor` component is a pass-through implementation 
 | SVC-CCSDS-CLEARTEXT-DECRYPTOR-002 | The ClearTextDecryptor shall perform no authentication and no decryption, passing the received buffer and context unmodified out `decryptOut`. | Unit Test |
 | SVC-CCSDS-CLEARTEXT-DECRYPTOR-003 | The ClearTextDecryptor shall pass an `SdlsStatus.SUCCESS` status forward for every request. | Unit Test |
 | SVC-CCSDS-CLEARTEXT-DECRYPTOR-004 | Upon receiving ownership of a buffer back on `decryptReturnIn`, the ClearTextDecryptor shall pass it upstream via `bufferReturnOut` for deallocation. | Unit Test |
+| SVC-CCSDS-CLEARTEXT-DECRYPTOR-005 | The ClearTextDecryptor shall raise a throttled `NullCipherInUse` WARNING_HI event, carrying the SA index, for every frame it handles, so that the absence of security is visible in telemetry. | Unit Test |
 
 ## See Also
 

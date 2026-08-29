@@ -12,21 +12,24 @@
 
 using Svc::Ccsds::CcsdsSdlsFramerTester;
 
-// Verify dataIn selects the SA index from the context and forwards data to
-// the encryption helper.
+// Verify dataIn encrypts with the configured SA_INDEX even when the frame
+// context requests a different SA index, and reports the ignored request.
 TEST(CcsdsSdlsFramer, FrameContextSa) {
-    COMMENT("Select the SA index from the frame context and forward data to the encryption helper.");
+    COMMENT("Ignore a differing frame context SA index, report it, and encrypt with the configured SA_INDEX.");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-001");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-002");
+    REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-009");
     CcsdsSdlsFramerTester tester;
     CcsdsSdlsFramerTester::Frame__ContextSa rule;
     rule.apply(tester);
+    // On a fresh tester the throttle has not engaged: exactly one report is expected
+    tester.assertContextSaIgnoredReported();
 }
 
-// Verify dataIn falls back to the SA_INDEX parameter when the context does
+// Verify dataIn uses the SA_INDEX parameter, silently, when the context does
 // not specify an SA index.
 TEST(CcsdsSdlsFramer, FrameParameterSa) {
-    COMMENT("Fall back to the SA_INDEX parameter when the frame context does not specify an SA index.");
+    COMMENT("Use the SA_INDEX parameter without a report when the frame context does not specify an SA index.");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-001");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-002");
     CcsdsSdlsFramerTester tester;

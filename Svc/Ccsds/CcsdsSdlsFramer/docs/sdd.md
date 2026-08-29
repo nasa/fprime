@@ -6,7 +6,7 @@ The `Svc::Ccsds::CcsdsSdlsFramer` component frames buffers into CCSDS SDLS (Spac
 
 Framing an SDLS frame proceeds as follows:
 
-1. Determine the security association (SA) index: from the frame context when set, otherwise from the `SA_INDEX` parameter.
+1. Select the security association (SA) index from the `SA_INDEX` parameter. The parameter is authoritative: an SA index carried in the incoming frame context (for example one echoed from an uplink frame) does not select the encryptor; if it differs from the parameter it is reported with a throttled `ContextSaIndexIgnored` event and ignored.
 2. Record the SA index in the frame context and pass the data, SA index, and context to the encryption helper.
 3. Check the status passed forward with the encrypted data; on failure raise an event and return the buffer.
 4. Upon receiving successfully encrypted data back, allocate a frame buffer and prepend the 16-bit SA index.
@@ -19,13 +19,14 @@ Buffer ownership follows the standard F Prime data-with-context return pattern: 
 | Name | Description | Rationale | Validation |
 |---|---|---|---|
 | SVC-CCSDS-SDLS-FRAMER-001 | The CcsdsSdlsFramer shall accept data with frame context via the `Svc.Framer` interface (`dataIn`). | Standard framing pipeline entry point. | Unit test |
-| SVC-CCSDS-SDLS-FRAMER-002 | The CcsdsSdlsFramer shall determine the security association (SA) index from the frame context when set, otherwise from the `SA_INDEX` parameter, record it in the frame context, and pass the data, SA index, and context to the encryption helper via `encryptOut`. | The SA index selects the encryption path; upstream components may override the configured default. | Unit test |
+| SVC-CCSDS-SDLS-FRAMER-002 | The CcsdsSdlsFramer shall select the security association (SA) index from the `SA_INDEX` parameter, record it in the frame context, and pass the data, SA index, and context to the encryption helper via `encryptOut`. | The configured SA selects the encryption path; data arriving on the link must not be able to choose it. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-003 | Upon receiving encrypted data on `encryptIn`, the CcsdsSdlsFramer shall allocate a frame buffer via `bufferAllocate`, prepend the 16-bit SA index to the encrypted data, return ownership of the encrypted buffer via `encryptReturnOut`, and pass the resulting SDLS frame downstream via `dataOut`. | The SA index must lead the frame so the receiving deframer can extract it; prepending requires a new allocation. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-004 | Upon a non-SUCCESS status passed forward on `encryptIn`, the CcsdsSdlsFramer shall emit the `EncryptionFailed` WARNING_HI event and return ownership of the accompanying buffer to the encryption subsystem via `encryptReturnOut`, and emit a ready-for-more com status on `comStatusOut`. | Encryption failures must be visible to the system, the buffer must not leak, and a ComQueue-driven downlink must not stall. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-005 | The CcsdsSdlsFramer shall deallocate frame buffers received back on `dataReturnIn` via `bufferDeallocate`. | The framer allocated the frame buffer and must release it. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-006 | The CcsdsSdlsFramer shall return original data buffers received back from the encryption helper (`bufferReturnIn`) upstream via `dataReturnOut`. | Original data buffers must return to their upstream allocator. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-007 | The CcsdsSdlsFramer shall pass com status received on `comStatusIn` through to `comStatusOut` unmodified. | Ready signals must traverse the framing pipeline. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-008 | Upon an invalid or undersized buffer allocation, the CcsdsSdlsFramer shall emit the `BufferAllocationFailed` WARNING_HI event, deallocate the undersized buffer when valid, return the encrypted buffer via `encryptReturnOut`, and emit a ready-for-more com status on `comStatusOut`. | Allocation failures must be reported, no buffer may leak, and a ComQueue-driven downlink must not stall; invalid buffers need not be deallocated. | Unit test |
+| SVC-CCSDS-SDLS-FRAMER-009 | When the incoming frame context carries an SA index that is set and differs from `SA_INDEX`, the CcsdsSdlsFramer shall raise a throttled `ContextSaIndexIgnored` event and encrypt with `SA_INDEX`. | Makes an unexpected SA request visible without letting it change the encryption path. | Unit test |
 
 ## Design
 
@@ -46,17 +47,17 @@ The component is passive with no commands or telemetry. It composes two interfac
 | output | bufferAllocate | Fw.BufferGet | Allocates the frame buffer for the SA prepend. |
 | output | bufferDeallocate | Fw.BufferSend | Deallocates frame buffers. |
 
-Events: `EncryptionFailed` (WARNING_HI, carries the `SdlsStatus`) and `BufferAllocationFailed` (WARNING_HI, carries the requested size as `FwSizeType`).
+Events: `EncryptionFailed` (WARNING_HI, carries the `SdlsStatus`), `BufferAllocationFailed` (WARNING_HI, carries the requested size as `FwSizeType`), and `ContextSaIndexIgnored` (WARNING_LO, throttled; carries the requested and configured SA indices when an incoming frame context asked for an SA other than `SA_INDEX`).
 
-Parameters: `SA_INDEX` (U16, default 0) — the SA index used when the incoming frame context does not specify one (context `saIndex` equal to its default value of 0xFFFF is treated as unset).
+Parameters: `SA_INDEX` (U16, default 0) — the SA index used to encrypt every downlink frame. A context `saIndex` equal to its default value of 0xFFFF is "unset" and raises no report; any other value that differs from `SA_INDEX` is reported and ignored.
 
 ## Configuration
 
-The `SA_INDEX` parameter selects the default security association for downlink frames.
+The `SA_INDEX` parameter selects the security association for downlink frames. It is the only input to that selection.
 
 ## Unit Testing
 
-Rule-based testing (STest) with rules covering both SA selection paths, both error paths, the encrypted-data framing path, the ownership return paths, and the comStatus pass-through; a 10000-step randomized scenario interleaves all rules. Requirements are traced with `REQUIREMENT()` macros in the test main.
+Rule-based testing (STest) with rules covering SA selection with and without a (differing) context SA index, both error paths, the encrypted-data framing path, the ownership return paths, and the comStatus pass-through; a 10000-step randomized scenario interleaves all rules. Requirements are traced with `REQUIREMENT()` macros in the test main.
 
 ## See Also
 
