@@ -1,7 +1,6 @@
 ﻿module Drv {
 
-  @ DEPRECATED: Use PosixUartDriver
-  passive component LinuxUartDriver {
+  passive component PosixUartDriver {
 
     # ----------------------------------------------------------------------
     # General ports
