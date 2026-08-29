@@ -9,6 +9,7 @@
 
 #include <atomic>
 #include "Fw/Types/BasicTypes.hpp"
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
