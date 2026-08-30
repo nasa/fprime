@@ -7,10 +7,56 @@
 #ifndef Svc_WasmSequencerTester_HPP
 #define Svc_WasmSequencerTester_HPP
 
+#include "Fw/Types/MallocAllocator.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "Svc/WasmSequencer/WasmSequencerGTestBase.hpp"
 
 namespace Svc {
+
+//! A malloc-backed MemAllocator that remembers every block it hands out and frees any
+//! still-outstanding block on destruction. The component under test allocates its backing
+//! pools in configure() and (currently) never deallocates them, so a plain MallocAllocator
+//! would leak on every test. This tracking allocator lets the UT run leak-clean (e.g. under
+//! LeakSanitizer on Linux CI) whether or not the component ever calls deallocate(); a matching
+//! deallocate() un-tracks the block so there is no double free if the component is later fixed.
+class TrackingMallocAllocator final : public Fw::MallocAllocator {
+  public:
+    TrackingMallocAllocator() : m_count(0) {}
+    ~TrackingMallocAllocator() override {
+        // Free anything the component allocated but never handed back.
+        for (FwSizeType i = 0; i < this->m_count; i++) {
+            if (this->m_ptrs[i] != nullptr) {
+                Fw::MallocAllocator::deallocate(0, this->m_ptrs[i]);
+                this->m_ptrs[i] = nullptr;
+            }
+        }
+    }
+
+    void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable, FwSizeType alignment) override {
+        void* ptr = Fw::MallocAllocator::allocate(identifier, size, recoverable, alignment);
+        if (ptr != nullptr) {
+            FW_ASSERT(this->m_count < MAX_TRACKED, static_cast<FwAssertArgType>(this->m_count));
+            this->m_ptrs[this->m_count] = ptr;
+            this->m_count++;
+        }
+        return ptr;
+    }
+
+    void deallocate(const FwEnumStoreType identifier, void* ptr) override {
+        for (FwSizeType i = 0; i < this->m_count; i++) {
+            if (this->m_ptrs[i] == ptr) {
+                this->m_ptrs[i] = nullptr;
+                break;
+            }
+        }
+        Fw::MallocAllocator::deallocate(identifier, ptr);
+    }
+
+  private:
+    static const FwSizeType MAX_TRACKED = 32;
+    void* m_ptrs[MAX_TRACKED];
+    FwSizeType m_count;
+};
 
 class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Test {
   public:
@@ -26,6 +72,19 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
 
     // Queue depth supplied to the component instance under test
     static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 20;
+
+    // ----------------------------------------------------------------------
+    // Backing-store sizes handed to component.configure() in the tester ctor.
+    // These mirror the previous static config so existing behavioral tests are
+    // unchanged: dynamic pool = 4 * SPACEWASM_PAGE_SIZE, guest pool = 2048 B,
+    // Wasm stack = 256 B, serialOut buffer = 256 B, and each serialIn queue =
+    // 256 B with DROP_OLDEST behavior.
+    // ----------------------------------------------------------------------
+    static const FwSizeType DYNAMIC_POOL_PAGES = 4;
+    static const FwSizeType GUEST_POOL_SIZE = 2048;
+    static const FwSizeType WASM_STACK_SIZE = 256;
+    static const U32 SERIAL_OUT_MAX_SIZE = 256;
+    static const FwSizeType SERIAL_IN_QUEUE_SIZE = 256;
 
     static const FwOpcodeType OPCODE_RUN = WasmSequencer::OPCODE_RUN;
     static const FwOpcodeType OPCODE_WAIT = WasmSequencer::OPCODE_WAIT;
@@ -180,12 +239,23 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     // White-box accessors into the component under test
     // ----------------------------------------------------------------------
 
-    //! Whether page `i` of the global page pool is currently handed out (white-box).
-    bool isPageUsed(FwSizeType i) const { return this->component.m_page_used[i]; }
-    FwSizeType getGuestOffset() const { return this->component.m_guest_pool_offset; }
+    //! Number of dynamic (interpreter-heap) pages currently handed out by the page allocator (white-box).
+    FwSizeType dynamicPagesUsed() const { return this->component.m_dynamicPagesUsed; }
+    //! Total number of dynamic pages the pool was configured with (white-box).
+    FwSizeType dynamicPagesCapacity() const { return this->component.m_dynamicPoolPageCount; }
+    //! Current bump offset into the guest linear-memory pool (white-box).
+    FwSizeType getGuestOffset() const { return this->component.m_guestPoolOffset; }
     //! Access the inbound serial queue for a given port index (white-box). Friendship is not
     //! inherited by the generated TEST_F subclass, so expose it through the tester.
     Types::CircularBuffer& serialInQueue(FwIndexType portNum) { return this->component.m_serialInQueue[portNum]; }
+    //! Override the configured queue-full behavior for a serialIn port index (white-box). The tester
+    //! ctor configures every port with DROP_OLDEST; tests that exercise DROP_NEWEST/ASSERT set it here.
+    void setSerialInFullBehavior(FwIndexType portNum, WasmSequencer::SerialInQueueFullBehavior behavior) {
+        this->component.m_serialInFullBehavior[portNum] = behavior;
+    }
+    //! Reset a serialIn queue to the un-setup (no backing buffer, capacity 0) state, modeling a port
+    //! that configure() was given size 0. Placement-new reset mirrors the disconnectSerialOut idiom.
+    void unsetupSerialInQueue(FwIndexType portNum);
     WasmSequencer_HostFunction getPendingHostFunctionKind() const { return this->component.m_pendingHostFunction.kind; }
     //! Forward to the component's private static mapping helpers (friendship
     //! does not extend to the generated TEST_F subclass, so expose them here).
@@ -245,7 +315,7 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     U32 serialOutCount;
     //! Port number and payload captured from the most recent serialOut invocation
     FwIndexType lastSerialOutPort;
-    U8 lastSerialOutData[Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE];
+    U8 lastSerialOutData[SERIAL_OUT_MAX_SIZE];
     FwSizeType lastSerialOutSize;
 
     //! Number of seqStartOut invocations observed, and the arguments of the last one.
@@ -272,6 +342,11 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
+
+    //! Allocator backing the component's configure() pools. Declared before `component` so the
+    //! component is destroyed first (its destroyStore() runs while the pools are still valid) and
+    //! this allocator then frees any pools the component did not deallocate.
+    TrackingMallocAllocator m_allocator;
 
     //! The component under test
     WasmSequencer component;

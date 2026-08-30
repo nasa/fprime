@@ -58,11 +58,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     };
 
     //! Configuration struct for the serialIn queues
+    //!
+    //! Default-construct then populate per port index, e.g.
+    //! `SerialInQueueConfig cfg; cfg.sizes[0] = 256; cfg.fullBehavior[0] = SerialInQueueFullBehavior::DROP_OLDEST;`
+    //! A port left at size 0 gets no queue (all inbound frames on that index are dropped).
     struct SerialInQueueConfig {
-        explicit SerialInQueueConfig() : sizes{0}, fullBehavior{SerialInQueueFullBehavior::DROP_NEWEST} {}
+        SerialInQueueConfig() : sizes{0}, fullBehavior{SerialInQueueFullBehavior::DROP_NEWEST} {}
 
-        const FwSizeType sizes[NUM_SERIALIN_INPUT_PORTS];
-        const SerialInQueueFullBehavior fullBehavior[NUM_SERIALIN_INPUT_PORTS];
+        FwSizeType sizes[NUM_SERIALIN_INPUT_PORTS];
+        SerialInQueueFullBehavior fullBehavior[NUM_SERIALIN_INPUT_PORTS];
     };
 
     //! SpaceWasm has a hard-coded memory alignment requirement
@@ -868,11 +872,16 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Stores dynamic memory allocated to hold each loaded module in the store (and the store itself).
     U8* m_dynamicPool;
 
+    //! Number of `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` allocated for the dynamic memory pool
+    FwSizeType m_dynamicPoolPageCount;
+
     //! Number of currently used
     FwSizeType m_dynamicPagesUsed;
 
-    //! Number of `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` allocated for the dynamic memory pool
-    FwSizeType m_dynamicPoolPageCount;
+    //! A deallocation has poisoned the dynamic allocator
+    //! No more allocations can happen until every page is dropped.
+    //! SpaceWasm will drop everything in one shot so this simply helps us guard this invariant with an assertion
+    bool m_dynamicPoolPoisoned;
 
     //! Pool backing the per-load guest linear-memory allocator; a simple
     //! bump allocator (guest modules are compiled with memory.grow disabled).

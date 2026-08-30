@@ -12,6 +12,7 @@
 #include "Svc/WasmSequencer/WasmSequencer_LoadRequestSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ModuleIdxAliasAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_SignalSourceEnumAc.hpp"
+#include "config/FwAssertArgTypeAliasAc.h"
 #include "spacewasm.h"
 
 namespace Svc {
@@ -262,7 +263,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
 
     this->takeAllocatorLock();
 
-    // A per-load guest linear-memory allocator. Backed by m_guest_pool; released
+    // A per-load guest linear-memory allocator. Backed by m_guestPool; released
     // immediately after load (the module retains its own reference).
     spacewasm_allocator_t* alloc =
         spacewasm_allocator_new(&WasmSequencer::guestAllocCallback, &WasmSequencer::guestReallocCallback,
@@ -366,7 +367,17 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_resetStore(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    this->createStore();
+    if (this->m_wasm == nullptr) {
+        // The store has not been created yet.
+        // This should be the initial transition
+        FW_ASSERT(signal == Svc_WasmSequencer_ControllerStateMachine::Signal::__FPRIME_INITIAL_TRANSITION,
+                  static_cast<FwAssertArgType>(signal));
+
+        // `configure()` will initialize the first store
+    } else {
+        this->destroyStore();
+        this->createStore();
+    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runEngine(

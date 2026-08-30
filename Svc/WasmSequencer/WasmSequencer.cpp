@@ -24,7 +24,6 @@
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "config/FwAssertArgTypeAliasAc.h"
 #include "config/FwSizeTypeAliasAc.h"
-#include "config/WasmSequencerSpacewasmConfig.h"
 
 namespace Svc {
 
@@ -49,7 +48,14 @@ void WasmSequencer ::globalDeallocCallback(void* userdata, U8* ptr, size_t size,
 
 WasmSequencer ::WasmSequencer(const char* const compName)
     : WasmSequencerComponentBase(compName),
+      m_dynamicPool(nullptr),
+      m_dynamicPoolPageCount(0),
+      m_dynamicPagesUsed(0),
+      m_dynamicPoolPoisoned(false),
+      m_guestPool(nullptr),
+      m_guestPoolSize(0),
       m_guestPoolOffset(0),
+      m_wasmStackSize(0),
       m_wasm(nullptr),
       m_hasExecutingContext(false),
       m_pendingTimer(),
@@ -85,13 +91,12 @@ void WasmSequencer ::configure(FwSizeType dynamicMemPageCount,
                                FwSizeType serialOutMaxSize,
                                SerialInQueueConfig serialInQueueCfg,
                                Fw::MemAllocator& mallocator) {
+    FW_ASSERT(this->m_wasm == nullptr);
+
     // Allocate the dynamic memory pool
     {
         auto actualSize = dynamicMemPageCount * Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE;
-        auto ptr = mallocator.allocate(0, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
-        FW_ASSERT(this->m_dynamicPool != nullptr, static_cast<FwAssertArgType>(dynamicMemPageCount),
-                  WASM_SEQ_SPACEWASM_PAGE_SIZE);
-
+        auto ptr = mallocator.checkedAllocate(0, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
         this->m_dynamicPagesUsed = 0;
         this->m_dynamicPoolPageCount = dynamicMemPageCount;
         this->m_dynamicPool = reinterpret_cast<U8*>(ptr);
@@ -100,9 +105,7 @@ void WasmSequencer ::configure(FwSizeType dynamicMemPageCount,
     // Allocate the guest memory pool
     {
         auto actualSize = wasmGuestMemorySize;
-        auto ptr = mallocator.allocate(1, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
-        FW_ASSERT(this->m_guestPool != nullptr, static_cast<FwAssertArgType>(wasmGuestMemorySize));
-
+        auto ptr = mallocator.checkedAllocate(1, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
         this->m_guestPoolOffset = 0;
         this->m_guestPoolSize = actualSize;
         this->m_guestPool = reinterpret_cast<U8*>(ptr);
@@ -111,12 +114,13 @@ void WasmSequencer ::configure(FwSizeType dynamicMemPageCount,
     // The Wasm stack is allocated into the dynamic pool during store initialization
     this->m_wasmStackSize = wasmStackSize;
 
+    // Allocate the initial store
+    this->createStore();
+
     // Allocate the serialOut buffer
     if (serialOutMaxSize > 0) {
         auto actualSize = serialOutMaxSize;
-        auto ptr = mallocator.allocate(2, actualSize);
-        FW_ASSERT(ptr != nullptr, static_cast<FwAssertArgType>(serialOutMaxSize));
-
+        auto ptr = mallocator.checkedAllocate(2, actualSize);
         this->m_serialOutBuffer.setExtBuffer(reinterpret_cast<U8*>(ptr), actualSize);
     }
 
@@ -126,9 +130,7 @@ void WasmSequencer ::configure(FwSizeType dynamicMemPageCount,
         for (FwIndexType i = 0; i < NUM_SERIALIN_INPUT_PORTS; i++) {
             if (serialInQueueCfg.sizes[i] > 0) {
                 auto actualSize = serialInQueueCfg.sizes[i];
-                auto ptr = mallocator.allocate(3 + i, actualSize);
-                FW_ASSERT(ptr != nullptr, i, static_cast<FwAssertArgType>(serialInQueueCfg.sizes[i]));
-
+                auto ptr = mallocator.checkedAllocate(3 + i, actualSize);
                 this->m_serialInQueue[i].setup(reinterpret_cast<U8*>(ptr), actualSize);
                 this->m_serialInFullBehavior[i] = serialInQueueCfg.fullBehavior[i];
             } else {
@@ -152,6 +154,8 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
                                            FwOpcodeType opCode,
                                            U32 cmdSeq,
                                            const Fw::CmdResponse& response) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     // The CmdDisp echoes back the context we sent, not a real cmdSeq. We packed
     // our cmdUid into that context (see makeCmdUid); rename for clarity.
     const U32 cmdUid = cmdSeq;
@@ -196,6 +200,8 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 }
 
 void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     auto now = this->getTime();
 
     this->tlmWrite_ControllerState(this->controller_getState(), now);
@@ -210,6 +216,8 @@ void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
 }
 
 void WasmSequencer ::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     Fw::String runModuleName = "";
 
     this->controller_sendSignal_run(Svc::WasmSequencer_LoadRequest(
@@ -221,6 +229,8 @@ void WasmSequencer ::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase&
 }
 
 void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     this->controller_sendSignal_cancel();
     this->interpreter_sendSignal_cancel();
 }
@@ -230,6 +240,8 @@ void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
 // ----------------------------------------------------------------------
 
 void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     FW_ASSERT(portNum < NUM_SERIALIN_INPUT_PORTS, portNum, NUM_SERIALIN_INPUT_PORTS);
     Os::ScopeLock scopeLock(this->m_serialInMutex);
     auto& queue = this->m_serialInQueue[portNum];
@@ -310,6 +322,8 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
                                     const Fw::CmdStringArg& fileName,
                                     const Svc::BlockState& block,
                                     const SeqArgs& seqArgs) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     Fw::String runModuleName = "";
     this->controller_sendSignal_run(Svc::WasmSequencer_LoadRequest(
         fileName, runModuleName, seqArgs,
@@ -320,6 +334,8 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
 }
 
 void WasmSequencer ::WAIT_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     switch (this->controller_getState()) {
         case WasmSequencer_ControllerStateMachine_State::IDLE:
         case WasmSequencer_ControllerStateMachine_State::READY:
@@ -340,6 +356,8 @@ void WasmSequencer ::LOAD_cmdHandler(FwOpcodeType opCode,
                                      U32 cmdSeq,
                                      const Fw::CmdStringArg& fileName,
                                      const Fw::CmdStringArg& name) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     this->controller_sendSignal_load(Svc::WasmSequencer_LoadRequest(
         fileName, name, Svc::SeqArgs(),
         Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_LOAD,
@@ -353,6 +371,8 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
                                        const Fw::CmdStringArg& module,
                                        const Svc::BlockState& block,
                                        const Svc::SeqArgs& seqArgs) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     this->controller_sendSignal_invoke(Svc::WasmSequencer_InvokeRequest(
         module, seqArgs,
         Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_INVOKE,
@@ -362,6 +382,8 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     this->controller_sendSignal_cancel();
     this->interpreter_sendSignal_cmdCancel(WasmSequencer_CommandRequest(opCode, cmdSeq));
 }
@@ -378,6 +400,8 @@ void WasmSequencer ::PAUSE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 }
 
 void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     switch (this->interpreter_getState()) {
         case WasmSequencer_InterpreterStateMachine_State::RUNNING_AWAITING_RESPONSE_SLEEPING:
         case WasmSequencer_InterpreterStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING:
@@ -403,6 +427,8 @@ void WasmSequencer ::GLOBAL_SET_I32_cmdHandler(FwOpcodeType opCode,
                                                const Fw::CmdStringArg& moduleName,
                                                const Fw::CmdStringArg& name,
                                                I32 value) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     spacewasm_value_t s_value;
     s_value.tag = SPACEWASM_I32;
     s_value.u.i32_ = value;
@@ -421,6 +447,8 @@ void WasmSequencer ::GLOBAL_SET_I64_cmdHandler(FwOpcodeType opCode,
                                                const Fw::CmdStringArg& moduleName,
                                                const Fw::CmdStringArg& name,
                                                I64 value) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     spacewasm_value_t s_value;
     s_value.tag = SPACEWASM_I64;
     s_value.u.i64_ = value;
@@ -439,6 +467,8 @@ void WasmSequencer ::GLOBAL_SET_F32_cmdHandler(FwOpcodeType opCode,
                                                const Fw::CmdStringArg& moduleName,
                                                const Fw::CmdStringArg& name,
                                                F32 value) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     spacewasm_value_t s_value;
     s_value.tag = SPACEWASM_F32;
     s_value.u.f32_ = value;
@@ -457,6 +487,8 @@ void WasmSequencer ::GLOBAL_SET_F64_cmdHandler(FwOpcodeType opCode,
                                                const Fw::CmdStringArg& moduleName,
                                                const Fw::CmdStringArg& name,
                                                F64 value) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     spacewasm_value_t g_value;
     g_value.tag = SPACEWASM_F64;
     g_value.u.f64_ = value;
@@ -474,6 +506,8 @@ void WasmSequencer ::GLOBAL_GET_cmdHandler(FwOpcodeType opCode,
                                            U32 cmdSeq,
                                            const Fw::CmdStringArg& moduleName,
                                            const Fw::CmdStringArg& name) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
     spacewasm_value_t g_value;
     auto status = this->getGlobal(moduleName, name, g_value);
     if (status == SPACEWASM_OK) {
@@ -499,20 +533,6 @@ void WasmSequencer ::GLOBAL_GET_cmdHandler(FwOpcodeType opCode,
         this->log_WARNING_LO_GlobalGetFailed(moduleName, name, status);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
-}
-
-void WasmSequencer ::takeAllocatorLock() {
-    getGlobalAllocatorLock()->lock();
-
-    auto status = spacewasm_fprime_acquire_global_allocator(this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-}
-
-void WasmSequencer ::releaseAllocatorLock() {
-    auto status = spacewasm_fprime_release_global_allocator(this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-    getGlobalAllocatorLock()->unlock();
 }
 
 }  // namespace Svc

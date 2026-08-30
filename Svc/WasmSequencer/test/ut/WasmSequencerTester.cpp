@@ -36,6 +36,18 @@ WasmSequencerTester ::WasmSequencerTester()
       seqDoneOutCount(0),
       lastSeqDoneResponse(Fw::CmdResponse::OK),
       component("WasmSequencer") {
+    // configure() is REQUIRED *before* init(): the controller state machine's initial state (IDLE)
+    // entry creates the interpreter store, which allocates pages from the dynamic pool that
+    // configure() sets up. initComponents() runs the SM initial transitions, so configure() must
+    // run first. Sizes mirror the previous static config so existing behavioral tests are unchanged.
+    WasmSequencer::SerialInQueueConfig serialInCfg;
+    for (FwIndexType i = 0; i < WasmSequencer::NUM_SERIALIN_INPUT_PORTS; i++) {
+        serialInCfg.sizes[i] = SERIAL_IN_QUEUE_SIZE;
+        serialInCfg.fullBehavior[i] = WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST;
+    }
+    this->component.configure(DYNAMIC_POOL_PAGES, GUEST_POOL_SIZE, WASM_STACK_SIZE, SERIAL_OUT_MAX_SIZE, serialInCfg,
+                              this->m_allocator);
+
     this->initComponents();
     this->connectPorts();
 
@@ -82,7 +94,7 @@ void WasmSequencerTester ::flushTelemetry() {
 }
 
 void WasmSequencerTester ::enqueueSerialIn(FwIndexType portNum, const U8* bytes, FwSizeType size) {
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> msg(bytes, size);
+    Fw::LinearBufferTemplate<SERIAL_OUT_MAX_SIZE> msg(bytes, size);
     this->invoke_to_serialIn(portNum, msg);
     this->dispatchAll();
 }
@@ -99,6 +111,15 @@ void WasmSequencerTester ::disconnectSerialOut(FwIndexType portNum) {
 
 void WasmSequencerTester ::connectSerialOutTo(FwIndexType portNum, Fw::InputPortBase& port) {
     this->component.set_serialOut_OutputPort(portNum, &port);
+}
+
+void WasmSequencerTester ::unsetupSerialInQueue(FwIndexType portNum) {
+    // Destroy and re-default-construct the CircularBuffer so it has no backing store (capacity 0),
+    // as if configure() had been given size 0 for this port (setup() never called). The original
+    // backing buffer is owned by the tester's allocator and freed at teardown, so this does not leak.
+    Types::CircularBuffer& queue = this->component.m_serialInQueue[portNum];
+    queue.~CircularBuffer();
+    new (&queue) Types::CircularBuffer();
 }
 
 void WasmSequencerTester ::disconnectGetTlmChan(FwIndexType portNum) {

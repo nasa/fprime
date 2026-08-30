@@ -488,11 +488,4 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialRecv(spacewasm_caller_t* ca
     return SPACEWASM_PAUSE;
 }
 
-Os::Mutex* WasmSequencer::getGlobalAllocatorLock() {
-    //! Process-wide lock serializing access to the spacewasm global-allocator registry.
-    //! Initialized by the first component instance's constructor
-    static Os::Mutex s_globalAllocatorLock;
-    return &s_globalAllocatorLock;
-}
-
 }  // namespace Svc

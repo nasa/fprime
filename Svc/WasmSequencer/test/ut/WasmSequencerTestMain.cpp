@@ -2096,6 +2096,40 @@ TEST_F(WasmSequencerTester, CancelFromIdleStaysIdle) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
+TEST_F(WasmSequencerTester, CancelCommandFromIdleRespondsOk) {
+    // The memory/cancel rework moved the CANCEL command response out of the handler (which used to
+    // call cmdResponse_out(OK) directly) and into the interpreter state machine (signal cmdCancel ->
+    // action cmdReplyOK). From IDLE, cmdCancel replies OK without leaving IDLE. This guards that the
+    // operator still receives a response for CANCEL (a dropped/unhandled signal would hang the cmd).
+    this->sendCmd_CANCEL(0, 400);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->interpreterState(), InterpreterState::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_CANCEL, 400, Fw::CmdResponse::OK);
+}
+
+TEST_F(WasmSequencerTester, CancelCommandWhileRunningRespondsOk) {
+    // From RUNNING, the interpreter cmdCancel transition sets the CANCEL exit reason, replies OK via
+    // cmdReplyOK, and returns to IDLE. Asserts the operator's CANCEL is acknowledged with OK (the
+    // deferred, SM-driven reply), in addition to the sequence emitting a cancellation.
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+    StagedAsset file_asset(*this, "loop.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 401, file, NO_BLOCK, {});
+    this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
+
+    this->sendCmd_CANCEL(0, 402);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    ASSERT_EQ(this->interpreterState(), InterpreterState::IDLE);
+    // RUN(NO_BLOCK) already replied OK at start (index 0); CANCEL replies OK via cmdReplyOK (index 1).
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 401, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_CANCEL, 402, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SequenceCancelled_SIZE(1);
+}
+
 // ----------------------------------------------------------------------
 // CANCEL during the load/start window (before the engine runs)
 //
@@ -2270,7 +2304,13 @@ TEST_F(WasmSequencerTester, SeqCancelInDuringLoadDiverts) {
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
+    // seqCancelIn is a SYNC port: its handler (and thus its `cancel` signal) runs the instant
+    // invoke_to_seqCancelIn is called. seqRunIn is async, so its `run` signal is only queued when
+    // the queued port message is dispatched. Dispatch the RUN port message first so the controller
+    // is in LOADING_TO_RUN when the cancel signal is processed (where it latches); otherwise the
+    // cancel would be processed in IDLE (a no-op) ahead of the run and the sequence would not divert.
     this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
+    this->dispatchOne();
     this->invoke_to_seqCancelIn(0);
     this->dispatchAll();
 
@@ -3226,7 +3266,7 @@ TEST_F(WasmSequencerTester, SerialOutPayloadTooLargeTraps) {
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_BufferTooLarge_SIZE(1);
     ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::SERIAL_OUT, 300,
-                                 Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE);
+                                 SERIAL_OUT_MAX_SIZE);
     this->assertSequenceFailureCount(1);
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
 }
@@ -3318,7 +3358,7 @@ TEST_F(WasmSequencerTester, SerialRecvBlocksThenWakesOnMessage) {
 
     // Deliver the message the guest is waiting for.
     const U8 msg[4] = {0xAA, 0xBB, 0xCC, 0xDD};
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> in(msg, sizeof msg);
+    Fw::LinearBufferTemplate<SERIAL_OUT_MAX_SIZE> in(msg, sizeof msg);
     this->invoke_to_serialIn(2, in);
     this->dispatchUntilControllerState(ControllerState::READY);
 
@@ -3505,8 +3545,8 @@ TEST_F(WasmSequencerTester, SerialInEnqueueFramesRawSizePrefixedMessages) {
     const U8 msgA[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
     const U8 msgB[3] = {0xAA, 0xBB, 0xCC};
 
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> a(msgA, sizeof msgA);
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> b(msgB, sizeof msgB);
+    Fw::LinearBufferTemplate<SERIAL_OUT_MAX_SIZE> a(msgA, sizeof msgA);
+    Fw::LinearBufferTemplate<SERIAL_OUT_MAX_SIZE> b(msgB, sizeof msgB);
     this->invoke_to_serialIn(0, a);
     this->invoke_to_serialIn(0, b);
     this->dispatchAll();
@@ -3526,25 +3566,23 @@ TEST_F(WasmSequencerTester, SerialInEnqueueFramesRawSizePrefixedMessages) {
 }
 
 TEST_F(WasmSequencerTester, SerialInQueueFullDropsOldest) {
-    // The default queue-full behavior is DROP_OLDEST. Fill the queue near capacity, then push
-    // a message that does not fit; the handler drops whole frames from the front until the new
-    // message fits. Verify the newest message survives and the total never exceeds capacity.
-    ASSERT_EQ(Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_FULL_BEHAVIOR,
-              Svc::WasmSequencerConfig::SerialInQueueFullBehavior::DROP_OLDEST);
-
+    // The tester configures serialIn[0] with DROP_OLDEST (see WasmSequencerTester ctor). Fill the
+    // queue near capacity, then push a message that does not fit; the handler drops whole frames
+    // from the front until the new message fits. Verify the newest message survives and the total
+    // never exceeds capacity.
     Types::CircularBuffer& queue = this->serialInQueue(0);
     const FwSizeType capacity = queue.get_capacity();
 
     // Each frame is (4 + payload) bytes. Use ~1/3-capacity payloads so three frames nearly
     // fill the queue and a fourth forces at least one drop.
     const FwSizeType payload = (capacity / 3) - sizeof(U32);
-    U8 buf[Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE];
+    U8 buf[SERIAL_OUT_MAX_SIZE];
 
     for (U32 n = 0; n < 3; n++) {
         for (FwSizeType i = 0; i < payload; i++) {
             buf[i] = static_cast<U8>(n);  // frame n filled with byte value n
         }
-        Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> m(buf, payload);
+        Fw::LinearBufferTemplate<SERIAL_OUT_MAX_SIZE> m(buf, payload);
         this->invoke_to_serialIn(0, m);
         this->dispatchAll();
     }
@@ -3554,7 +3592,7 @@ TEST_F(WasmSequencerTester, SerialInQueueFullDropsOldest) {
     for (FwSizeType i = 0; i < payload; i++) {
         buf[i] = static_cast<U8>(3);
     }
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> m(buf, payload);
+    Fw::LinearBufferTemplate<SERIAL_OUT_MAX_SIZE> m(buf, payload);
     this->invoke_to_serialIn(0, m);
     this->dispatchAll();
 
@@ -3584,8 +3622,8 @@ TEST_F(WasmSequencerTester, SerialInOversizedFrameDroppedNotAsserted) {
 
     // One byte too large to ever fit, so this is a reject (not a DROP_OLDEST eviction).
     const FwSizeType oversized = maxPayload + 1;
-    ASSERT_LE(oversized, static_cast<FwSizeType>(Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE));
-    U8 payload[Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE];
+    ASSERT_LE(oversized, static_cast<FwSizeType>(SERIAL_OUT_MAX_SIZE));
+    U8 payload[SERIAL_OUT_MAX_SIZE];
     for (FwSizeType i = 0; i < oversized; i++) {
         payload[i] = static_cast<U8>(i);
     }
@@ -3615,7 +3653,7 @@ TEST_F(WasmSequencerTester, SerialInMaxSizeFrameEnqueued) {
     const FwSizeType headerSize = sizeof(U32);
     const FwSizeType maxPayload = capacity - headerSize;
 
-    U8 payload[Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE];
+    U8 payload[SERIAL_OUT_MAX_SIZE];
     for (FwSizeType i = 0; i < maxPayload; i++) {
         payload[i] = static_cast<U8>(i);
     }
@@ -3629,6 +3667,66 @@ TEST_F(WasmSequencerTester, SerialInMaxSizeFrameEnqueued) {
     U32 framedSize = 0;
     ASSERT_EQ(queue.peek(framedSize), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(framedSize, static_cast<U32>(maxPayload));
+}
+
+TEST_F(WasmSequencerTester, SerialInQueueFullDropsNewest) {
+    // Per-instance queue-full behavior (new in the memory rework): override serialIn[1] to
+    // DROP_NEWEST (the tester configures every port as DROP_OLDEST). Fill the queue near capacity,
+    // then push a frame that does not fit; DROP_NEWEST discards the NEW frame and leaves the
+    // existing frames (and their order) untouched -- the opposite of the DROP_OLDEST test above.
+    this->setSerialInFullBehavior(1, WasmSequencer::SerialInQueueFullBehavior::DROP_NEWEST);
+
+    Types::CircularBuffer& queue = this->serialInQueue(1);
+    const FwSizeType capacity = queue.get_capacity();
+
+    // Three ~1/3-capacity frames (byte values 0,1,2) nearly fill the queue; a fourth cannot fit.
+    const FwSizeType payload = (capacity / 3) - sizeof(U32);
+    U8 buf[SERIAL_OUT_MAX_SIZE];
+    for (U32 n = 0; n < 3; n++) {
+        for (FwSizeType i = 0; i < payload; i++) {
+            buf[i] = static_cast<U8>(n);
+        }
+        Fw::LinearBufferTemplate<SERIAL_OUT_MAX_SIZE> m(buf, payload);
+        this->invoke_to_serialIn(1, m);
+        this->dispatchAll();
+    }
+    const FwSizeType allocatedBefore = queue.get_allocated_size();
+
+    // Push a fourth frame (byte value 3) that cannot fit alongside the three -> DROP_NEWEST.
+    for (FwSizeType i = 0; i < payload; i++) {
+        buf[i] = static_cast<U8>(3);
+    }
+    Fw::LinearBufferTemplate<SERIAL_OUT_MAX_SIZE> m(buf, payload);
+    this->invoke_to_serialIn(1, m);
+    this->dispatchAll();
+
+    // Nothing evicted, nothing added: the queue is byte-for-byte what it was before the 4th frame.
+    ASSERT_EQ(queue.get_allocated_size(), allocatedBefore);
+    // The oldest surviving frame is still frame 0 (DROP_OLDEST would have evicted it here).
+    U32 frontSize = 0;
+    ASSERT_EQ(queue.peek(frontSize), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(frontSize, static_cast<U32>(payload));
+    U8 frontByte = 0xFF;
+    ASSERT_EQ(queue.peek(frontByte, sizeof(U32)), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(frontByte, static_cast<U8>(0)) << "DROP_NEWEST must not evict the oldest frame";
+    // A frame that fits the empty queue is not the oversized-frame path, so no warning is emitted.
+    ASSERT_EVENTS_SerialInFrameTooLarge_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, SerialInZeroSizeQueueDropsFramesWithoutCrashing) {
+    // A serialIn port configured with size 0 gets no queue (configure() skips setup()), leaving a
+    // capacity-0 CircularBuffer. Inbound frames on that index -- which come from external hardware
+    // or ground -- must be dropped with a warning, never asserting or dereferencing a null store.
+    this->unsetupSerialInQueue(3);
+    Types::CircularBuffer& queue = this->serialInQueue(3);
+    ASSERT_EQ(queue.get_capacity(), static_cast<FwSizeType>(0));
+
+    const U8 msg[4] = {0x01, 0x02, 0x03, 0x04};
+    this->enqueueSerialIn(3, msg, sizeof msg);  // invokes serialIn[3] + dispatches; must not crash
+
+    // Nothing was enqueued and the frame was reported too large for the (zero) capacity.
+    ASSERT_EQ(queue.get_allocated_size(), static_cast<FwSizeType>(0));
+    ASSERT_EVENTS_SerialInFrameTooLarge_SIZE(1);
 }
 
 // ----------------------------------------------------------------------

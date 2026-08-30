@@ -8,6 +8,7 @@
 #include "Fw/Types/StringBase.hpp"
 #include "Os/Console.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
+#include "Svc/WasmSequencer/fprime_spacewasm/include/fprime_spacewasm.h"
 #include "config/FwAssertArgTypeAliasAc.h"
 #include "config/FwSizeTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
@@ -23,6 +24,7 @@ U8* WasmSequencer ::globalAlloc(const U32 size, const U32 align) {
     // SPACEWASM_PAGE_SIZE, aligned no more than the pool's alignment.
     FW_ASSERT(size == Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE, static_cast<FwAssertArgType>(size));
     FW_ASSERT(align <= 8, static_cast<FwAssertArgType>(align));
+    FW_ASSERT(!this->m_dynamicPoolPoisoned);
 
     if (this->m_dynamicPagesUsed < m_dynamicPoolPageCount) {
         auto page = &this->m_dynamicPool[this->m_dynamicPagesUsed * Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE];
@@ -50,6 +52,7 @@ void WasmSequencer ::globalDealloc(const U8* ptr) {
     // We will assert that the used page count drops to zero once store destruction completes
     FW_ASSERT(this->m_dynamicPagesUsed > 0);
     this->m_dynamicPagesUsed -= 1;
+    this->m_dynamicPoolPoisoned = true;
 }
 
 U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
@@ -106,8 +109,7 @@ void WasmSequencer ::guestDeallocCallback(void* userdata, U8* ptr, size_t size, 
 }
 
 void WasmSequencer ::createStore() {
-    this->destroyStore();
-
+    FW_ASSERT(this->m_wasm == nullptr);
     static_assert(WasmSequencerConfig::MAX_GUEST_MODULES <= 255,
                   "SpaceWasm does not support more than 255 WebAssembly guest modules");
 
@@ -141,12 +143,12 @@ void WasmSequencer ::createStore() {
 }
 
 void WasmSequencer ::destroyStore() {
-    if (this->m_wasm != nullptr) {
-        this->takeAllocatorLock();
-        spacewasm_destroy(this->m_wasm);
-        this->releaseAllocatorLock();
-        this->m_wasm = nullptr;
-    }
+    FW_ASSERT(this->m_wasm != nullptr);
+
+    this->takeAllocatorLock();
+    spacewasm_destroy(this->m_wasm);
+    this->releaseAllocatorLock();
+    this->m_wasm = nullptr;
 
     // Make sure we cleanly deallocated all the dynamic memory
     FW_ASSERT(this->m_dynamicPagesUsed == 0, static_cast<FwAssertArgType>(this->m_dynamicPagesUsed));
@@ -154,11 +156,7 @@ void WasmSequencer ::destroyStore() {
     // Reset the guest linear-memory bump allocator; all guest allocations were
     // owned by the store that just went away.
     this->m_guestPoolOffset = 0;
-
-    // Clear any pending state.
-    this->m_invokeStatus = SPACEWASM_OK;
-    this->m_exit.reason = WasmSequencer_ExitReason::UNKNOWN;
-    this->m_exit.code = 0;
+    this->m_dynamicPoolPoisoned = false;
 }
 
 spacewasm_status_t WasmSequencer ::validateModuleMain(WasmSequencer_ModuleIdx moduleIdx) const {
@@ -372,6 +370,27 @@ bool WasmSequencer ::pathHasParentTraversal(const Fw::StringBase& path) {
         }
     }
     return false;
+}
+
+Os::Mutex* WasmSequencer::getGlobalAllocatorLock() {
+    //! Process-wide lock serializing access to the spacewasm global-allocator registry.
+    //! Initialized by the first component instance's constructor
+    static Os::Mutex s_globalAllocatorLock;
+    return &s_globalAllocatorLock;
+}
+
+void WasmSequencer ::takeAllocatorLock() {
+    getGlobalAllocatorLock()->lock();
+
+    auto status = spacewasm_fprime_acquire_global_allocator(this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+}
+
+void WasmSequencer ::releaseAllocatorLock() {
+    auto status = spacewasm_fprime_release_global_allocator(this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    getGlobalAllocatorLock()->unlock();
 }
 
 //! Panic hook the spacewasm interpreter calls on a fatal internal error.
