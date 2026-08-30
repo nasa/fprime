@@ -21,6 +21,15 @@ event ModuleNotFound(module_name: string size Wasm.MODULE_NAME_STRING_SIZE) \
     severity warning low \
     format "Module with name {} is not loaded into the store"
 
+@ A guest memory.grow could not be serviced by the guest bump allocator and was rejected.
+@ The guest sees memory.grow return -1; execution continues.
+event MemoryGrowRejected(
+    $reason: MemoryGrowFailReason  @< why the grow was rejected
+    requestedSize: U64             @< the requested new linear-memory size in bytes
+) \
+    severity warning low \
+    format "Guest memory.grow rejected: {} (requested {} bytes)"
+
 event GlobalSetFailed(
     module_name: string size Wasm.MODULE_NAME_STRING_SIZE
     globalName: string size Wasm.GLOBAL_NAME_STRING_SIZE

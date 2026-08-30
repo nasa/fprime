@@ -230,6 +230,18 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     FwSizeType dynamicPagesCapacity() const { return this->component.m_heapPageCount; }
     //! Current bump offset into the guest linear-memory pool (white-box).
     FwSizeType getGuestOffset() const { return this->component.m_guestPoolOffset; }
+    //! Total size of the guest linear-memory pool (white-box).
+    FwSizeType guestPoolSize() const { return this->component.m_guestPoolSize; }
+    //! Drive the guest bump allocator directly (the callbacks are private). Used by the memory.grow
+    //! (guestRealloc) tests to exercise the grow logic without a live spacewasm store.
+    U8* wbGuestAlloc(U32 size, U32 align) { return this->component.guestAlloc(size, align); }
+    U8* wbGuestRealloc(U8* ptr, FwSizeType oldSize, FwSizeType newSize, U32 align) {
+        return this->component.guestRealloc(ptr, oldSize, newSize, align);
+    }
+    //! Drive the raw spacewasm realloc callback (with size_t sizes) to exercise the truncation guard.
+    U8* wbGuestReallocCallback(U8* ptr, size_t oldSize, size_t newSize, size_t align) {
+        return WasmSequencer::guestReallocCallback(&this->component, ptr, oldSize, newSize, align);
+    }
     //! White-box: simulate the spacewasm page allocator freeing a live page and then requesting a new
     //! one within the same store lifetime. The dynamic-page allocator is a bump index guarded by a
     //! poison flag: any free poisons the pool so a subsequent alloc fails fast rather than possibly

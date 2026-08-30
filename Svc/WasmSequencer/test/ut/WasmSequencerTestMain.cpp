@@ -3870,6 +3870,147 @@ TEST_F(WasmSequencerConfigTester, SerialInQueueFullBehaviorAssertAborts) {
 }
 
 // ----------------------------------------------------------------------
+// memory.grow (guest linear-memory realloc). The guest allocator is a bump pool; guestRealloc grows
+// the top-of-bump allocation in place if it fits, else fails (guest sees memory.grow -> -1, no trap).
+// End-to-end tests drive real guest modules; white-box tests exercise guestRealloc's branches directly.
+// ----------------------------------------------------------------------
+
+TEST_F(WasmSequencerTester, MemoryGrowSucceedsAndRegionUsable) {
+    // A guest whose linear memory is the sole (last) guest allocation grows it in place, checks the
+    // grow reported the previous size (1 page), writes/reads the new region, and exits cleanly.
+    StagedAsset file_asset(*this, "mem_grow.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 600, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 600, Fw::CmdResponse::OK);
+    this->assertSequenceFailureCount(0);
+}
+
+TEST_F(WasmSequencerTester, MemoryGrowBeyondPoolReturnsMinusOneGracefully) {
+    // A grow the guest pool cannot satisfy must fail gracefully: guestRealloc returns null and
+    // memory.grow yields -1 to the guest (no trap). The module asserts it received -1 and exits clean.
+    StagedAsset file_asset(*this, "mem_grow_toobig.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 601, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 601, Fw::CmdResponse::OK);
+    this->assertSequenceFailureCount(0);
+    // The rejected grow is diagnosed: last allocation, but 1 + 4096 = 4097 B exceeds the pool.
+    ASSERT_EVENTS_MemoryGrowRejected_SIZE(1);
+    ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::INSUFFICIENT_POOL_SPACE,
+                                     static_cast<U64>(4097));
+}
+
+TEST_F(WasmSequencerTester, GuestReallocGrowsLastAllocationInPlace) {
+    // The top-of-bump allocation grows in place: same base pointer, offset advances by the delta.
+    U8* a = this->wbGuestAlloc(100, 1);
+    ASSERT_NE(a, nullptr);
+    ASSERT_EQ(this->getGuestOffset(), static_cast<FwSizeType>(100));
+
+    U8* grown = this->wbGuestRealloc(a, 100, 200, 1);
+    ASSERT_EQ(grown, a);
+    ASSERT_EQ(this->getGuestOffset(), static_cast<FwSizeType>(200));
+    ASSERT_EVENTS_MemoryGrowRejected_SIZE(0);  // a successful grow emits no rejection event
+}
+
+TEST_F(WasmSequencerTester, GuestReallocRejectsNonLastAllocation) {
+    // Only the top-of-bump allocation may grow. With another allocation after `a`, growing `a` must
+    // fail (null) and leave the bump offset untouched.
+    U8* a = this->wbGuestAlloc(100, 1);
+    U8* b = this->wbGuestAlloc(50, 1);
+    ASSERT_NE(a, nullptr);
+    ASSERT_NE(b, nullptr);
+    const FwSizeType offsetBefore = this->getGuestOffset();
+
+    ASSERT_EQ(this->wbGuestRealloc(a, 100, 120, 1), nullptr);
+    ASSERT_EQ(this->getGuestOffset(), offsetBefore);
+    ASSERT_EVENTS_MemoryGrowRejected_SIZE(1);
+    ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::NOT_LAST_ALLOCATION,
+                                     static_cast<U64>(120));
+}
+
+TEST_F(WasmSequencerTester, GuestReallocRejectsGrowBeyondPool) {
+    // Growing the last allocation past the end of the pool must fail (null) without moving the offset.
+    U8* a = this->wbGuestAlloc(100, 1);
+    ASSERT_NE(a, nullptr);
+    const FwSizeType offsetBefore = this->getGuestOffset();
+    const U32 tooBig = static_cast<U32>(this->guestPoolSize()) + 1;
+
+    ASSERT_EQ(this->wbGuestRealloc(a, 100, tooBig, 1), nullptr);
+    ASSERT_EQ(this->getGuestOffset(), offsetBefore);
+    ASSERT_EVENTS_MemoryGrowRejected_SIZE(1);
+    ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::INSUFFICIENT_POOL_SPACE,
+                                     static_cast<U64>(tooBig));
+}
+
+TEST_F(WasmSequencerTester, GuestReallocExactFitToPoolEndSucceeds) {
+    // Growing the last allocation to exactly fill the pool is allowed (the bound is <=, not <).
+    U8* a = this->wbGuestAlloc(100, 1);
+    ASSERT_NE(a, nullptr);
+    const U32 exact = static_cast<U32>(this->guestPoolSize());
+
+    U8* grown = this->wbGuestRealloc(a, 100, exact, 1);
+    ASSERT_EQ(grown, a);
+    ASSERT_EQ(this->getGuestOffset(), this->guestPoolSize());
+    ASSERT_EVENTS_MemoryGrowRejected_SIZE(0);  // exact fit succeeds; no rejection event
+}
+
+TEST_F(WasmSequencerTester, GuestReallocRejectsFourGiBGrowWithoutTruncation) {
+    // A wasm32 memory can grow to exactly 2^32 bytes. The realloc callback must NOT narrow the size
+    // to U32 -- 2^32 aliases to 0, which would falsely succeed and make spacewasm zero-fill ~4 GiB
+    // past the pool. Drive the raw size_t callback and require it to reject the request outright.
+    U8* a = this->wbGuestAlloc(100, 1);
+    ASSERT_NE(a, nullptr);
+    const FwSizeType offsetBefore = this->getGuestOffset();
+
+    // 2^32 exactly -- the value that narrows to 0 under a U32 cast. size_t must be 64-bit to hold it;
+    // on a 32-bit host the truncation cannot occur, so there is nothing to guard against.
+    if (sizeof(size_t) >= 8) {
+        const size_t fourGiB = static_cast<size_t>(1ULL << 32);
+        ASSERT_EQ(this->wbGuestReallocCallback(a, 100, fourGiB, 1), nullptr);
+        ASSERT_EQ(this->getGuestOffset(), offsetBefore);  // bump cursor untouched
+        ASSERT_EVENTS_MemoryGrowRejected_SIZE(1);
+        ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::INSUFFICIENT_POOL_SPACE,
+                                         static_cast<U64>(fourGiB));
+    }
+}
+
+TEST_F(WasmSequencerTester, MemoryGrowFailsWhenNotLastAllocation) {
+    // End-to-end multi-module scenario: module "a"'s linear memory is allocated first, then loading
+    // module "b" allocates guest memory after it, so "a" is no longer the last bump allocation.
+    // Invoking "a" (whose main does memory.grow) must fail the grow -- the guest sees -1 and exits
+    // cleanly -- and the component emits MemoryGrowRejected(NOT_LAST_ALLOCATION) to diagnose it.
+    StagedAsset a_asset(*this, "mem_grow_notlast.wasm");
+    StagedAsset b_asset(*this, "mem_holder.wasm");
+
+    // dispatchAll (not dispatchUntilControllerState(READY)) because the 2nd LOAD and the INVOKE both
+    // start and end in READY -- dispatchUntilControllerState is a no-op there and would leave them
+    // queued/undispatched.
+    this->sendCmd_LOAD(0, 700, a_asset.file(), Fw::CmdStringArg("a"));
+    this->dispatchAll();
+    this->sendCmd_LOAD(0, 701, b_asset.file(), Fw::CmdStringArg("b"));
+    this->dispatchAll();
+
+    // Invoke "a": its memory (offset 0) is behind "b", so guestRealloc rejects the grow -> guest -1.
+    this->sendCmd_INVOKE(0, 702, Fw::CmdStringArg("a"), BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);  // "a" received -1 and exited cleanly (no trap)
+    this->assertSequenceFailureCount(0);
+    // Diagnosed as not-the-last-allocation; "a" requested growth to 1 + 63 = 64 bytes.
+    ASSERT_EVENTS_MemoryGrowRejected_SIZE(1);
+    ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::NOT_LAST_ALLOCATION,
+                                     static_cast<U64>(64));
+}
+
+// ----------------------------------------------------------------------
 // End-to-end lifecycle: many loads/runs with failures interspersed, driving
 // the controller through IDLE <-> READY <-> RUNNING repeatedly and checking
 // that the store recovers from every failure mode and the cumulative counters

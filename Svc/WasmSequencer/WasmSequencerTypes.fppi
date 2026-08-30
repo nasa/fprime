@@ -19,6 +19,12 @@ enum SequencePhase : U8 {
     MAIN   @< The module's main entrypoint
 }
 
+@ Why a guest memory.grow request could not be serviced by the guest bump allocator
+enum MemoryGrowFailReason : U8 {
+    NOT_LAST_ALLOCATION      @< The memory is not the last allocation in the guest pool; it cannot grow in place
+    INSUFFICIENT_POOL_SPACE  @< The grown size would exceed the configured guest memory pool
+}
+
 @ Corresponds to spacewasm_status_t
 enum Status : I32 {
     OK                                      = 0

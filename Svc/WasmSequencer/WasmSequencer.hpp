@@ -814,8 +814,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     static void globalDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align);
 
     /// The Wasm guest allocator callbacks for this component
-    U8* guestAlloc(U32 size, U32 align);
-    void guestDealloc(const U8* ptr, U32 size);
+    U8* guestAlloc(FwSizeType size, U32 align);
+    U8* guestRealloc(U8* ptr, FwSizeType oldSize, FwSizeType newSize, U32 align);
+    void guestDealloc(const U8* ptr, FwSizeType size);
 
     // Guest allocator callbacks passed to C API
     static U8* guestAllocCallback(void* userdata, size_t size, size_t align);

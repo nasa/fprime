@@ -4,10 +4,12 @@
 // \brief  cpp file for WasmSequencer component implementation class helpers
 // ======================================================================
 
+#include <cstddef>
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Os/Console.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_MemoryGrowFailReasonEnumAc.hpp"
 #include "Svc/WasmSequencer/fprime_spacewasm/include/fprime_spacewasm.h"
 #include "config/FwAssertArgTypeAliasAc.h"
 #include "config/FwSizeTypeAliasAc.h"
@@ -61,7 +63,7 @@ void WasmSequencer ::globalDealloc(const U8* ptr) {
     this->m_heapPoisoned = true;
 }
 
-U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
+U8* WasmSequencer ::guestAlloc(FwSizeType size, U32 align) {
     if (size == 0) {
         return nullptr;
     }
@@ -84,7 +86,45 @@ U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
     return &this->m_guestPool[start];
 }
 
-void WasmSequencer ::guestDealloc(const U8* ptr, const U32 size) {
+U8* WasmSequencer ::guestRealloc(U8* ptr, FwSizeType oldSize, FwSizeType newSize, U32 align) {
+    // We have received a memory.grow request.
+    // The following MUST be true for us to actually give the guest it's memory (otherwise fail):
+    // 1. This linear memory is the final allocated memory in the guest bump allocator
+    // 2. We have enough space free to actually do this request
+    // 3. You buy me a donut.
+
+    std::ptrdiff_t moduleMemOffset = ptr - this->m_guestPool;
+
+    // The pointer must lie within our guest pool.
+    FW_ASSERT(moduleMemOffset >= 0, static_cast<FwAssertArgType>(moduleMemOffset));
+    const FwSizeType offset = static_cast<FwSizeType>(moduleMemOffset);
+
+    // Check 1. i.e. the pointer is what we expect given old_size and current guest offset
+    if (offset + oldSize == this->m_guestPoolOffset) {
+        // Check 2. We have enough space in the guest pool to service this request
+        if (offset + newSize <= this->m_guestPoolSize) {
+            // ...now the donuts
+            // Allocate the new guest memory size
+            this->m_guestPoolOffset = offset + newSize;
+
+            // We return the same pointer since this is a strict grow and
+            // we already reserved the slot in front of this memory
+            return ptr;
+        }
+
+        // We are the last allocation, but the grown size does not fit the guest pool.
+        this->log_WARNING_LO_MemoryGrowRejected(WasmSequencer_MemoryGrowFailReason::INSUFFICIENT_POOL_SPACE,
+                                                static_cast<U64>(newSize));
+        return nullptr;
+    }
+
+    // We are not the last allocation in the bump pool, so we cannot grow in place.
+    this->log_WARNING_LO_MemoryGrowRejected(WasmSequencer_MemoryGrowFailReason::NOT_LAST_ALLOCATION,
+                                            static_cast<U64>(newSize));
+    return nullptr;
+}
+
+void WasmSequencer ::guestDealloc(const U8* ptr, const FwSizeType size) {
     // Bump allocator: individual frees are no-ops. The whole guest pool is reset
     // when a new store is created (destroyStore).
     (void)ptr;
@@ -93,25 +133,21 @@ void WasmSequencer ::guestDealloc(const U8* ptr, const U32 size) {
 
 U8* WasmSequencer ::guestAllocCallback(void* userdata, size_t size, size_t align) {
     FW_ASSERT(userdata != nullptr);
-    return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<U32>(size), static_cast<U32>(align));
+    return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<FwSizeType>(size), static_cast<U32>(align));
 }
 
 U8* WasmSequencer ::guestReallocCallback(void* userdata, U8* ptr, size_t old_size, size_t new_size, size_t align) {
-    (void)userdata;
-    (void)ptr;
-    (void)old_size;
-    (void)new_size;
-    (void)align;
-
-    // memory.grow is disabled for guest modules, so a reallocation should never be
-    // requested. Returning nullptr bubbles up as a reallocation failure if it is.
-    return nullptr;
+    FW_ASSERT(userdata != nullptr);
+    // Do NOT narrow old_size/new_size to U32: a 4 GiB grow (new_size == 2^32) would alias to 0 and
+    // be accepted as a no-op grow. Pass full width; guestRealloc's fits-pool check rejects it.
+    return static_cast<WasmSequencer*>(userdata)->guestRealloc(
+        ptr, static_cast<FwSizeType>(old_size), static_cast<FwSizeType>(new_size), static_cast<U32>(align));
 }
 
 void WasmSequencer ::guestDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align) {
     FW_ASSERT(userdata != nullptr);
     (void)align;
-    static_cast<WasmSequencer*>(userdata)->guestDealloc(ptr, static_cast<U32>(size));
+    static_cast<WasmSequencer*>(userdata)->guestDealloc(ptr, static_cast<FwSizeType>(size));
 }
 
 void WasmSequencer ::createStore() {
@@ -128,7 +164,7 @@ void WasmSequencer ::createStore() {
     this->hostFprimeV1(&host);
 
     spacewasm_compiler_options_t options;
-    options.allow_memory_grow = false;
+    options.allow_memory_grow = true;  // implemented in a restricted way (see guestRealloc)
     options.max_backpatch_iterations = Svc::WasmSequencerConfig::MAX_BACKPATCH_ITERATIONS;
     options.max_code_pages = Svc::WasmSequencerConfig::MAX_CODE_PAGES;
 
@@ -139,7 +175,7 @@ void WasmSequencer ::createStore() {
 
     // Make sure the store allocation succeeded.
     // Failure means the heap memory is too small to host this number of modules + Wasm stack...
-    // 
+    //
     // If status == SPACEWASM_ERR_PAGE_TOO_SMALL:
     // - Increase Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE
     // If SPACEWASM_ERR_OUT_OF_MEMORY / SPACEWASM_ERR_ALLOC_FAILED:
