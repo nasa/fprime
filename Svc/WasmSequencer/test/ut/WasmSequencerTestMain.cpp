@@ -3417,8 +3417,7 @@ TEST_F(WasmSequencerTester, SerialOutPayloadTooLargeTraps) {
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_BufferTooLarge_SIZE(1);
-    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::SERIAL_OUT, 300,
-                                 SERIAL_OUT_MAX_SIZE);
+    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::SERIAL_OUT, 300, SERIAL_OUT_MAX_SIZE);
     this->assertSequenceFailureCount(1);
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
 }
@@ -4115,8 +4114,7 @@ TEST_F(WasmSequencerTester, GuestReallocRejectsNonLastAllocation) {
     ASSERT_EQ(this->wbGuestRealloc(a, 100, 120, 1), nullptr);
     ASSERT_EQ(this->getGuestOffset(), offsetBefore);
     ASSERT_EVENTS_MemoryGrowRejected_SIZE(1);
-    ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::NOT_LAST_ALLOCATION,
-                                     static_cast<U64>(120));
+    ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::NOT_LAST_ALLOCATION, static_cast<U64>(120));
 }
 
 // Requirement: WASM-SEQ-022
@@ -4194,8 +4192,7 @@ TEST_F(WasmSequencerTester, MemoryGrowFailsWhenNotLastAllocation) {
     this->assertSequenceFailureCount(0);
     // Diagnosed as not-the-last-allocation; "a" requested growth to 1 + 63 = 64 bytes.
     ASSERT_EVENTS_MemoryGrowRejected_SIZE(1);
-    ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::NOT_LAST_ALLOCATION,
-                                     static_cast<U64>(64));
+    ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::NOT_LAST_ALLOCATION, static_cast<U64>(64));
 }
 
 // ----------------------------------------------------------------------
