@@ -39,9 +39,6 @@ constexpr U8 MAX_GUEST_MODULES = 8;
 /// You'll only see this on massive modules (eg. Pyodide).
 constexpr U32 MAX_BACKPATCH_ITERATIONS = 32768;
 
-/// Maximum number of WasmSequencer instances that may register a global
-/// allocator slot process-wide
-constexpr FwSizeType MAX_SEQUENCERS = WASM_SEQ_MAX_SEQUENCERS;
 
 /// Buffer size to allocate for streaming a Wasm module from the filesystem to the decoder/validator.
 /// NOTE: this buffer is stack-allocated on the component task's stack for the duration of a module load

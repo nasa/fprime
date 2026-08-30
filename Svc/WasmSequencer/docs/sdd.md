@@ -588,7 +588,6 @@ C++ compile-time constants consumed directly by the component. Per-instance memo
 | ------------------------------ | ------- | ------------------------------------------------------------------------------------------- |
 | `SPACEWASM_PAGE_SIZE`          | -       | Must map to `WASM_SEQ_SPACEWASM_PAGE_SIZE` in `WasmSequencerSpacewasmConfig.h` (see below). |
 | `SPACEWASM_MAX_PAGES`          | -       | Must map to `WASM_SEQ_SPACEWASM_MAX_PAGES` in `WasmSequencerSpacewasmConfig.h` (see below). |
-| `MAX_SEQUENCERS`               | -       | Must map to `WASM_SEQ_MAX_SEQUENCERS` in `WasmSequencerSpacewasmConfig.h` (see below).      |
 | `MAX_CODE_PAGES`               | `256`   | Maximum compiled code pages allowed across all modules loaded onto a store.                 |
 | `MAX_GUEST_MODULES`            | `8`     | Maximum modules loadable into a store.                                                      |
 | `MAX_BACKPATCH_ITERATIONS`     | `32768` | Upper bound on the control-flow backpatch-resolution loop during module load.               |
