@@ -28,7 +28,7 @@ module Svc {
     async input port controlIn: EnableSection
 
     @ Ping input port
-    async input port pingIn: Svc.Ping
+    async input port pingIn: Svc.Ping drop
 
     @ Ping output port
     output port pingOut: Svc.Ping

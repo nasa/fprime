@@ -92,7 +92,7 @@ for port definition syntax.
 | Need | Port | Import |
 |---|---|---|
 | Rate-group scheduling | `sync input port run: Svc.Sched` | `import Svc.Sched` |
-| Health ping | `async input port pingIn: Svc.Ping` | `import Svc.Ping` |
+| Health ping | `async input port pingIn: Svc.Ping drop` | `import Svc.Ping` |
 | Time access | `time get port timeCaller` | (special port) |
 | Command handling | `command recv port cmdIn` | (special port) |
 | Event logging | `event port eventOut` | (special port) |
