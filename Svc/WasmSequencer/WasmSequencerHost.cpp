@@ -421,9 +421,9 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialOut(spacewasm_caller_t* cal
     const U32 ptr = static_cast<U32>(params[1].u.i32_);
     const U32 len = static_cast<U32>(params[2].u.i32_);
 
-    if (len > Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE) {
+    if (len > this->m_serialOutBuffer.getCapacity()) {
         this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::SERIAL_OUT, len,
-                                            Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE);
+                                            static_cast<U32>(this->m_serialOutBuffer.getCapacity()));
         return SPACEWASM_TRAP;
     }
 

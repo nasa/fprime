@@ -8,6 +8,7 @@
 #include "Fw/Types/StringBase.hpp"
 #include "Os/Console.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
+#include "config/FwAssertArgTypeAliasAc.h"
 #include "config/FwSizeTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
 #include "spacewasm.h"
@@ -21,28 +22,34 @@ U8* WasmSequencer ::globalAlloc(const U32 size, const U32 align) {
     // The spacewasm PageAllocator only ever requests fixed-size pages of exactly
     // SPACEWASM_PAGE_SIZE, aligned no more than the pool's alignment.
     FW_ASSERT(size == Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE, static_cast<FwAssertArgType>(size));
-    FW_ASSERT(align <= 16, static_cast<FwAssertArgType>(align));
+    FW_ASSERT(align <= 8, static_cast<FwAssertArgType>(align));
 
-    for (U32 page = 0; page < Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES; page++) {
-        if (!this->m_page_used[page]) {
-            this->m_page_used[page] = true;
-            return &this->m_memory_pool[page * Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE];
-        }
+    if (this->m_dynamicPagesUsed < m_dynamicPoolPageCount) {
+        auto page = &this->m_dynamicPool[this->m_dynamicPagesUsed * Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE];
+        this->m_dynamicPagesUsed += 1;
+        return page;
+    } else {
+        // Out of pages.
+        return nullptr;
     }
-    // Out of pages.
-    return nullptr;
 }
 
 void WasmSequencer ::globalDealloc(const U8* ptr) {
     if (ptr == nullptr) {
         return;
     }
-    const FwSizeType offset = static_cast<FwSizeType>(ptr - this->m_memory_pool);
+
+    // Make sure the pointer that was given back to us
+    const FwSizeType offset = static_cast<FwSizeType>(ptr - this->m_dynamicPool);
     FW_ASSERT((offset % Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE) == 0, static_cast<FwAssertArgType>(offset));
     const U32 page = static_cast<U32>(offset / Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE);
-    FW_ASSERT(page < Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES, static_cast<FwAssertArgType>(page));
-    FW_ASSERT(this->m_page_used[page], static_cast<FwAssertArgType>(page));
-    this->m_page_used[page] = false;
+    FW_ASSERT(page < this->m_dynamicPoolPageCount, static_cast<FwAssertArgType>(page));
+
+    // Decrement the number of pages used.
+    // Deallocation only happens when the store is being destroyed.
+    // We will assert that the used page count drops to zero once store destruction completes
+    FW_ASSERT(this->m_dynamicPagesUsed > 0);
+    this->m_dynamicPagesUsed -= 1;
 }
 
 U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
@@ -50,22 +57,22 @@ U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
         return nullptr;
     }
 
-    // Reject any request that cannot possibly fit the fixed pool up front.
-    if (size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE || align > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
+    // Reject any request that cannot possibly fit the guest pool up front.
+    if (size > this->m_guestPoolSize || align > SPACEWASM_MEMORY_ALIGNMENT) {
         return nullptr;
     }
 
     // Round the current offset up to the requested alignment
     const FwSizeType a = (align < 1) ? 1 : static_cast<FwSizeType>(align);
-    const FwSizeType start = (this->m_guest_pool_offset + a - 1) & ~(a - 1);
+    const FwSizeType start = (this->m_guestPoolOffset + a - 1) & ~(a - 1);
 
     // Compare against the pre-subtracted bound so `start + size` cannot overflow.
-    // `size <= GUEST_MEMORY_SIZE` (checked above) makes the subtraction non-negative.
-    if (start > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE - size) {
+    // `size <= this->m_guestPoolSize` (checked above) makes the subtraction non-negative.
+    if (start > this->m_guestPoolSize - size) {
         return nullptr;
     }
-    this->m_guest_pool_offset = start + size;
-    return &this->m_guest_pool[start];
+    this->m_guestPoolOffset = start + size;
+    return &this->m_guestPool[start];
 }
 
 void WasmSequencer ::guestDealloc(const U8* ptr, const U32 size) {
@@ -77,10 +84,6 @@ void WasmSequencer ::guestDealloc(const U8* ptr, const U32 size) {
 
 U8* WasmSequencer ::guestAllocCallback(void* userdata, size_t size, size_t align) {
     FW_ASSERT(userdata != nullptr);
-    // A request that does not fit the fixed guest pool cannot be satisfied
-    if (size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE || align > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
-        return nullptr;
-    }
     return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<U32>(size), static_cast<U32>(align));
 }
 
@@ -118,15 +121,20 @@ void WasmSequencer ::createStore() {
 
     spacewasm_compiler_options_t options;
     options.allow_memory_grow = false;
-    options.max_backpatch_iterations = 0;
+    options.max_backpatch_iterations = Svc::WasmSequencerConfig::MAX_BACKPATCH_ITERATIONS;
     options.max_code_pages = Svc::WasmSequencerConfig::MAX_CODE_PAGES;
 
-    status = spacewasm_new(&host, Svc::WasmSequencerConfig::GUEST_STACK_SIZE, WasmSequencerConfig::MAX_GUEST_MODULES,
-                           options, &this->m_wasm);
+    status =
+        spacewasm_new(&host, this->m_wasmStackSize, WasmSequencerConfig::MAX_GUEST_MODULES, options, &this->m_wasm);
 
     this->releaseAllocatorLock();
 
-    // If the store allocation fails, this means the dynamic memory is too small to host this number of modules...
+    // Make sure the store allocation succeeded.
+    // Failure means the dynamic memory is too small to host this number of modules + Wasm stack...
+    // Try one the following:
+    // - Increase dynamicMemPageCount in configure()
+    // - Lower MAX_GUEST_MODULES in WasmSequencerConfig.hpp
+    // - Lower wasmStackSize in configure()
     FW_ASSERT(status == SPACEWASM_OK, status);
 
     this->log_DIAGNOSTIC_StoreAllocationSucceeded(WasmSequencerConfig::MAX_GUEST_MODULES);
@@ -140,9 +148,12 @@ void WasmSequencer ::destroyStore() {
         this->m_wasm = nullptr;
     }
 
+    // Make sure we cleanly deallocated all the dynamic memory
+    FW_ASSERT(this->m_dynamicPagesUsed == 0, static_cast<FwAssertArgType>(this->m_dynamicPagesUsed));
+
     // Reset the guest linear-memory bump allocator; all guest allocations were
     // owned by the store that just went away.
-    this->m_guest_pool_offset = 0;
+    this->m_guestPoolOffset = 0;
 
     // Clear any pending state.
     this->m_invokeStatus = SPACEWASM_OK;
@@ -185,7 +196,7 @@ void WasmSequencer ::respondToRequest(const Svc::WasmSequencer_RequestContext& v
         case WasmSequencer_SignalSource::COMMAND_INVOKE:
         case WasmSequencer_SignalSource::COMMAND_LOAD:
             // The request originated from a command; answer it on cmdResponse.
-            this->cmdResponse_out(value.get_opcode(), value.get_cmdSeq(), response);
+            this->cmdResponse_out(value.get_cmdCtx().get_opcode(), value.get_cmdCtx().get_cmdSeq(), response);
             break;
         case WasmSequencer_SignalSource::PORT_RUN:
         case WasmSequencer_SignalSource::PORT_INVOKE:

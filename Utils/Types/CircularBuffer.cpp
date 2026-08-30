@@ -226,7 +226,6 @@ Fw::SerializeStatus CircularBuffer ::trim(FwSizeType amount) {
 }
 
 FwSizeType CircularBuffer ::get_capacity() const {
-    FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
     return m_store_size;
 }
 

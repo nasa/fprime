@@ -20,36 +20,16 @@ module Svc {
         @ instructions to execute per interpreter cycle
         dictionary constant DEFAULT_INSTRUCTION_FUEL = 1000
 
-        dictionary enum SerialPortOutIndex: U8 {
-            @ Example serial port 0 - rename to application-specific name (e.g., TIME_SYNC_PORT)
-            EXAMPLE_PORT_0 = 0
-            @ Example serial port 1 - rename to application-specific name (e.g., SENSOR_DATA_PORT)
-            EXAMPLE_PORT_1 = 1
-            @ Example serial port 2 - rename to application-specific name
-            EXAMPLE_PORT_2 = 2
-            @ Example serial port 3 - rename to application-specific name
-            EXAMPLE_PORT_3 = 3
-            @ Example serial port 4 - rename to application-specific name
-            EXAMPLE_PORT_4 = 4
+        @ Maximum number of serialOut ports per WasmSequencer instance.
+        @ Each index may specify a distinct purpose.
+        @ This contract is specified by the topology connection per-sequencer instance
+        dictionary constant MAX_SERIAL_OUT_PORTS = 5
 
-            @ REQUIRED: Maximum number of serial ports. This sentinel value MUST be named
-            MAX_SERIAL_PORTS = 5
-        }
-
-        dictionary enum SerialPortInIndex: U8 {
-            @ Example serial port 0 - rename to application-specific name (e.g., TIME_SYNC_PORT)
-            EXAMPLE_PORT_0 = 0
-            @ Example serial port 1 - rename to application-specific name (e.g., SENSOR_DATA_PORT)
-            EXAMPLE_PORT_1 = 1
-            @ Example serial port 2 - rename to application-specific name
-            EXAMPLE_PORT_2 = 2
-            @ Example serial port 3 - rename to application-specific name
-            EXAMPLE_PORT_3 = 3
-            @ Example serial port 4 - rename to application-specific name
-            EXAMPLE_PORT_4 = 4
-
-            @ REQUIRED: Maximum number of serial ports. This sentinel value MUST be named
-            MAX_SERIAL_PORTS = 5
-        }
+        @ Maximum number of serialIn ports per WasmSequencer instance.
+        @ Each index may specify a distinct purpose.
+        @ This contract is specified by the topology connection per-sequencer instance
+        @ Each serialIn port index will get it's own queue.
+        @ When initializing each instance, each port index must be given a queue size.
+        dictionary constant MAX_SERIAL_IN_PORTS = 5
     }
 }

@@ -1,9 +1,12 @@
 @ Run a Wasm module main function on it's own in the interpreter
 @ This command first resets the store (discarding any modules previously staged
 @ with LOAD), then is short-hand for:
-@ 1. LOAD [fileName] ""
-@ 2. INVOKE "" "main"
-@ 3. CONTINUE
+@
+@ ```sh
+@ CANCEL # doesn't actually cancel a sequence, just resets the store
+@ LOAD [fileName] ""
+@ INVOKE "" [block] [seqArgs]
+@ ```
 @
 @ If $block == Svc.BlockState.BLOCK this command will wait for completion.
 async command RUN(

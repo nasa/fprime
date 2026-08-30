@@ -10,7 +10,8 @@
 #include "Fw/Cmd/CmdResponseEnumAc.hpp"
 #include "Fw/DataStructures/FifoQueue.hpp"
 #include "Fw/Types/FileNameString.hpp"
-#include "Fw/Types/LinearBufferTemplate.hpp"
+#include "Fw/Types/MemAllocator.hpp"
+#include "Fw/Types/Serializable.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Svc/Seq/SeqArgsSerializableAc.hpp"
@@ -47,6 +48,44 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! process-wide global-allocator registry; copying would double-free both.
     WasmSequencer(const WasmSequencer&) = delete;
     WasmSequencer& operator=(const WasmSequencer&) = delete;
+
+    //! Configuration to select what happens when a serialIn fills
+    enum class SerialInQueueFullBehavior {
+        DROP_NEWEST,  //!< Drop the latest message if it cannot fit in the remaining queue space
+        DROP_OLDEST,  //!< Oldest message[s] will be de-queued and dropped to make space for the new message. Keep
+                      //!< dropping messages until enough space is made
+        ASSERT,       //!< Trigger an assertion if the queue fills and cannot process another message
+    };
+
+    //! Configuration struct for the serialIn queues
+    struct SerialInQueueConfig {
+        const FwSizeType sizes[NUM_SERIALIN_INPUT_PORTS];
+        const SerialInQueueFullBehavior fullBehavior[NUM_SERIALIN_INPUT_PORTS];
+    };
+
+    //! SpaceWasm has a hard-coded memory alignment requirement
+    constexpr static FwSizeType SPACEWASM_MEMORY_ALIGNMENT = 8;
+
+    //! type IrWord = U16
+    //! type IrPage = [256] IrWord => sizeof(IrPage) == 512
+    constexpr static FwSizeType SPACEWASM_IR_PAGE_SIZE = 512;
+    static_assert(Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE >= SPACEWASM_IR_PAGE_SIZE,
+                  "SpaceWasm does not support dynamic memory pages smaller than a single IR page (512 bytes)");
+
+    //! [REQUIRED] Configure and allocate the dynamic backing pools for dynamic memory, guest memory, Wasm stack,
+    //! serialIn queues, and the serialOut buffer.
+    void configure(
+        FwSizeType dynamicMemPageCount,  //!< Number of `WASM_SEQ_SPACEWASM_PAGE_SIZE` pages to allocate
+                                         //!< for the backing dynamic memory pool
+        FwSizeType wasmGuestMemorySize,  //!< Size (in bytes) for the backing pool holding guest linear memory. This
+                                         //!< is shared across all modules loaded into the store.
+        FwSizeType wasmStackSize,     //!< Size of the WebAssembly stack in bytes. The Wasm stack is allocated into the
+                                      //!< dynamic memory pool.
+        FwSizeType serialOutMaxSize,  //!< Size of serialOut buffer for copying from guest memory and
+                                      //!< invoking serialOut_out
+        SerialInQueueConfig serialInQueueConfig,  //!< Size/queueFullBehavior of each serialIn port index
+        Fw::MemAllocator& mallocator              //!< MemAllocator for allocating buffers
+    );
 
   private:
     // ----------------------------------------------------------------------
@@ -114,9 +153,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Run a Wasm module main function on it's own in the interpreter
     //! This command first resets the store (discarding any modules previously staged
     //! with LOAD), then is short-hand for:
-    //! 1. LOAD [fileName] ""
-    //! 2. INVOKE "" "main"
-    //! 3. CONTINUE
+    //!
+    //! ```sh
+    //! CANCEL # doesn't actually cancel a sequence, just resets the store
+    //! LOAD [fileName] ""
+    //! INVOKE "" [block] [seqArgs]
+    //! ```
     //!
     //! If $block == Svc.BlockState.BLOCK this command will wait for completion.
     void RUN_cmdHandler(
@@ -124,7 +166,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         U32 cmdSeq,                        //!< The command sequence number
         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
         const Svc::BlockState& block,      //!< Block until sequence has finished running
-                                           //!< Binary arguments to pass to the sequence
         const Svc::SeqArgs& seqArgs        //!< Optional arguments to execute the sequence with
                                            //!< Depending on the sequence being loaded these arguments may differ
         ) override;
@@ -148,7 +189,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                            U32 cmdSeq,                      //!< The command sequence number
                            const Fw::CmdStringArg& module,  //!< Name of the module to invoke a function from
                            const Svc::BlockState& block,    //!< Block until sequence has finished running
-                           const Svc::SeqArgs& seqArgs      //!< Arguments to invalid sequence entrypoint with
+                           const Svc::SeqArgs& seqArgs      //!< Arguments to invoke the sequence entrypoint with
                            ) override;
 
     //! Handler implementation for command WAIT
@@ -231,10 +272,10 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Handler implementation for command GLOBAL_GET
     //!
     //! Get the current value of a global variable and emit an event
-    //! Command fails if the module is not found, global is not exported, mutable, or of f64 type
+    //! Command fails if the module is not found or the global is not exported
     void GLOBAL_GET_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
                                U32 cmdSeq,                          //!< The command sequence number
-                               const Fw::CmdStringArg& moduleName,  //!< Name of the module to set global for
+                               const Fw::CmdStringArg& moduleName,  //!< Name of the module to get global for
                                const Fw::CmdStringArg& name         //!< Name of the global
                                ) override;
 
@@ -461,6 +502,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
         const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action cmdReplyOK of state machine Svc_WasmSequencer_InterpreterStateMachine
+    //!
+    //! Respond to a pending command with OK
+    void Svc_WasmSequencer_InterpreterStateMachine_action_cmdReplyOK(
+        SmId smId,                                                 //!< The state machine id
+        Svc_WasmSequencer_InterpreterStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_CommandRequest& value             //!< The value
         ) override;
 
     //! Implementation for action signalEntered of state machine Svc_WasmSequencer_InterpreterStateMachine
@@ -811,20 +861,31 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! spacewasm_mem_write)
     Fw::Success writeGuestMemory(WasmSequencer_HostFunction::T kind, U32 addr, const U8* src, FwSizeType len);
 
-    //! Fixed-size pool backing the process-wide spacewasm global page allocator.
-    alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE]{};
+    //! Pool backing the process-wide spacewasm global page allocator.
+    //! Sized at `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` * m_dynamicPoolPageN.
+    //! Stores dynamic memory allocated to hold each loaded module in the store (and the store itself).
+    U8* m_dynamicPool;
 
-    //! Whether each page of `m_memory_pool` is currently handed out; entry i tracks page i.
-    bool m_page_used[Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES]{};
+    //! Number of currently used 
+    FwSizeType m_dynamicPagesUsed;
 
-    //! Fixed-size pool backing the per-load guest linear-memory allocator; a simple
+    //! Number of `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` allocated for the dynamic memory pool
+    FwSizeType m_dynamicPoolPageCount;
+
+    //! Pool backing the per-load guest linear-memory allocator; a simple
     //! bump allocator (guest modules are compiled with memory.grow disabled).
-    alignas(16) U8 m_guest_pool[Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE]{};
+    U8* m_guestPool;
 
-    //! Current bump offset into `m_guest_pool`.
-    FwSizeType m_guest_pool_offset;
+    //! Total size allocated allocated for m_guestPool
+    FwSizeType m_guestPoolSize;
 
-    //! Opaque handle to the spacewasm engine, or null.
+    //! Current bump offset into `m_guestPool`.
+    FwSizeType m_guestPoolOffset;
+
+    //! Wasm stack size in bytes. Stack is allocated into dynamic memory pool
+    FwSizeType m_wasmStackSize;
+
+    //! Opaque handle to the spacewasm engine, or null (before the store is initialized).
     spacewasm_t* m_wasm;
 
     //! Pending command waiting for a response
@@ -922,14 +983,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         WasmSequencer_TrapReason lastTrapReason{WasmSequencer_TrapReason::NONE};
     };
 
+    //! Status codes for exit reason. Set by the interpreter state machine.
     ExitStatus m_exit;
 
     //! Buffer to hold the serial output port invocation invoked by the guest
-    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_OUT_SIZE> m_serialOutBuffer;
+    Fw::ExternalSerializeBuffer m_serialOutBuffer;
 
-    //! Backing storage for m_serialInQueue: one contiguous byte buffer per serial-in
-    //! port, handed to the matching CircularBuffer via setup() in the constructor.
-    U8 m_serialInQueueData[NUM_SERIALIN_INPUT_PORTS][Svc::WasmSequencerConfig::SERIAL_IN_QUEUE_SIZE]{};
+    //! Queue full behavior for each serialIn input port
+    SerialInQueueFullBehavior m_serialInFullBehavior[NUM_SERIALIN_INPUT_PORTS];
 
     //! Queues (or queue) that handle inputs on the serial input port. Each is backed by
     //! the corresponding row of m_serialInQueueData (see the setup() loop in the ctor).

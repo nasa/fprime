@@ -20,59 +20,33 @@
 namespace Svc {
 namespace WasmSequencerConfig {
 constexpr FwSizeType SPACEWASM_PAGE_SIZE = WASM_SEQ_SPACEWASM_PAGE_SIZE;
-constexpr FwSizeType SPACEWASM_MAX_PAGES = WASM_SEQ_SPACEWASM_MAX_PAGES;
 
-/// Maximum number of WasmSequencer instances that may register a global
-/// allocator slot process-wide
-constexpr FwSizeType MAX_SEQUENCERS = WASM_SEQ_MAX_SEQUENCERS;
-
-/// Total static pool backing the interpreter heap: 4 * 8192 = 32 KiB.
-constexpr FwSizeType DYNAMIC_MEMORY_SIZE = SPACEWASM_PAGE_SIZE * SPACEWASM_MAX_PAGES;
-
-/// Size in bytes of the guest operand stack allocated per store
-/// (spacewasm_store_new `stack_size`).
-constexpr FwSizeType GUEST_STACK_SIZE = 256;
-
-/// Maximum number of compiled code pages allowed across all modules loaded onto
+/// Maximum number of compiled IR code pages allowed across all modules loaded onto
 /// a store (spacewasm_compiler_options_t `max_code_pages`).
 constexpr U32 MAX_CODE_PAGES = 256;
-
-/// Static pool backing the per-load guest linear-memory allocator
-/// (spacewasm_allocator_new). A Wasm page is 64 KiB; modules are compiled with
-/// memory.grow disabled, so this bounds the largest guest linear memory the
-/// sequencer will accept.
-constexpr FwSizeType GUEST_MEMORY_SIZE = 2048;
 
 /// The maximum number of Wasm modules allowed to load into the sequencer's store.
 /// If this sequencer does not have enough memory to dynamic allocate this store,
 /// the sequencer's preamble will trigger an assertion.
 constexpr U8 MAX_GUEST_MODULES = 8;
 
-/// Maximum size of a serial_out invocation leaving the WasmSequencer.
-/// Data will be copied out of the Wasm guest into WasmSequencer memory to
-/// invoke the serial output port
-constexpr U32 MAX_SERIAL_OUT_SIZE = 256;
+/// Configures the control-flow backpatch chain length resolution limit.
+/// This is only needed to give a bound to a potentially long loop during load time.
+/// Set this to `0` to disable this upper limit. It is theoritically impossible for this
+// loop go on forever but we set it to a large number by default for FSW completeness.
+/// If you see a `ERR_POSSIBLE_BACKPATCH_CYCLE` error, it is safe to increase this number.
+/// You'll only see this on massive modules (eg. Pyodide).
+constexpr U32 MAX_BACKPATCH_ITERATIONS = 32768;
+
+/// Maximum number of WasmSequencer instances that may register a global
+/// allocator slot process-wide
+constexpr FwSizeType MAX_SEQUENCERS = WASM_SEQ_MAX_SEQUENCERS;
 
 /// Buffer size to allocate for streaming a Wasm module from the filesystem to the decoder/validator.
 /// NOTE: this buffer is stack-allocated on the component task's stack for the duration of a module load
 /// so it must stay small relative to the task stack. Raising it materially (e.g. to several KiB) risks a
 // stack overflow inside the spacewasm load call chain on the flight target.
 constexpr FwSizeType LOAD_READ_CHUNK_SIZE = 512;
-
-enum class SerialInQueueFullBehavior {
-    DROP_OLDEST,  //!< Oldest message will be de-queued and dropped to make space for the new message. Keep dropping
-                  //!< messages until enough space is made
-    DROP_NEWEST,  //!< Drop the latest message if it cannot fit in the remaining queue space
-    ASSERT,       //!< Trigger an assertion if the queue fills and cannot process another message
-};
-
-constexpr SerialInQueueFullBehavior SERIAL_IN_QUEUE_FULL_BEHAVIOR = SerialInQueueFullBehavior::DROP_OLDEST;
-
-/// Size of each serialIn port in bytes; the largest receivable frame is this minus a 4-byte length
-/// header (252 B at the default). An inbound frame larger than that ceiling is dropped with the
-/// SerialInFrameTooLarge event, so size this queue deliberately relative to the serial_out payloads
-/// peers may send (up to MAX_SERIAL_OUT_SIZE bytes).
-constexpr FwSizeType SERIAL_IN_QUEUE_SIZE = 256;
 
 /// Maximum number of concurrent `WAIT` commands each WasmSequencer can service
 constexpr FwSizeType MAX_CONCURRENT_WAIT_COMMANDS = 8;

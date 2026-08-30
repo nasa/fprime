@@ -8,6 +8,12 @@ enum SignalSource : U8 {
     PORT_INVOKE
 }
 
+@ A struct holding the context needed to reply to a command request
+struct CommandRequest {
+    $opcode: FwOpcodeType  @< opcode to reply to
+    cmdSeq: U32            @< command sequence number to reply with
+}
+
 struct LoadRequest {
     fileName: string size FileNameStringSize
     moduleName: string size Wasm.MODULE_NAME_STRING_SIZE
@@ -24,11 +30,10 @@ struct InvokeRequest {
 @ A struct holding information about where an asynchronous request originated
 @ and information about how to reply to the request
 struct RequestContext {
-    source: SignalSource   @< The originating signal source
-    $opcode: FwOpcodeType  @< If 'source' == COMMAND, this is the opcode to reply to
-    cmdSeq: U32            @< If 'source' == COMMAND, this is the command sequence number to reply with
-    $block: BlockState     @< Should we reply after we initialize or block until we finish executing
-    moduleIdx: ModuleIdx   @< Module index to invoke start/main function, filled in for LOAD/RUN
+    source: SignalSource    @< The originating signal source
+    cmdCtx: CommandRequest  @< If 'source' == COMMAND this holds the opcode/cmdSeq
+    $block: BlockState      @< Should we reply after we initialize or block until we finish executing
+    moduleIdx: ModuleIdx    @< Module index to invoke start/main function, filled in for LOAD/RUN
 }
 
 @ diagram-layout engine=elk direction=LR cycleBreaking=MODEL_ORDER considerModelOrder=NODES_AND_EDGES nodePlacement=BRANDES_KOEPF nodeSpacing=60 rankSpacing=60

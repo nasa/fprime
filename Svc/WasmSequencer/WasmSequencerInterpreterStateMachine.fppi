@@ -56,7 +56,13 @@ state machine InterpreterStateMachine {
     signal cmd_CONTINUE
 
     @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes
-    signal cmd_CANCEL
+    signal cmdCancel: CommandRequest
+
+    @ Called on cancel port invocation
+    signal cancel
+
+    @ Respond to a pending command with OK
+    action cmdReplyOK: CommandRequest
 
     ###############
     # Guards      #
@@ -195,6 +201,11 @@ state machine InterpreterStateMachine {
     state IDLE {
         entry do { clearContext, reset }
         on run do { setContext } enter RUNNING
+
+        # acknowledge any CANCEL commands, these may clear the store.
+        # The interpreter is responsible for responding to the command
+        # and we are not running anything so just respond.
+        on cmdCancel do { cmdReplyOK }
     }
 
     @ sequencer is executing the loaded/invoked Wasm program
@@ -296,9 +307,10 @@ state machine InterpreterStateMachine {
         } enter IDLE
 
         ####################
-        # commands         #
+        # cancellation     #
         ####################
 
-        on cmd_CANCEL do { setExitReason_CANCEL } enter IDLE
+        on cancel do { setExitReason_CANCEL } enter IDLE
+        on cmdCancel do { setExitReason_CANCEL, cmdReplyOK } enter IDLE
     }
 }

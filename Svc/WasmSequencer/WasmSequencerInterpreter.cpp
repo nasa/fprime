@@ -22,6 +22,13 @@ namespace Svc {
 // Implementations for internal state machine actions
 // ----------------------------------------------------------------------
 
+void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_cmdReplyOK(
+    SmId smId,
+    Svc_WasmSequencer_InterpreterStateMachine::Signal signal,
+    const Svc::WasmSequencer_CommandRequest& value) {
+    this->cmdResponse_out(value.get_opcode(), value.get_cmdSeq(), Fw::CmdResponse::OK);
+}
+
 void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_signalEntered(
     SmId smId,
     Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {

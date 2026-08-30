@@ -13,10 +13,11 @@
 #define WASMSEQUENCER_SPACEWASM_CONFIG_H
 
 // Size in bytes of each page served to the spacewasm interpreter heap.
+// Controls the size granularity with which a WasmSequencer instance's heap can be sized
 #define WASM_SEQ_SPACEWASM_PAGE_SIZE 8192
 
-// Maximum number of interpreter-heap pages. Backs the C++ static pool
-// (m_memory_pool = PAGE_SIZE * MAX_PAGES)
+// Maximum number of interpreter-heap pages across all WasmSequencer instances
+// Individual sequencers can allocate fewer pages
 #define WASM_SEQ_SPACEWASM_MAX_PAGES 4
 
 // Maximum number of WasmSequencer instances that may register a global

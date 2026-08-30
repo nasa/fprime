@@ -33,18 +33,18 @@ module Svc {
         @ Port for sending a serial port invocation
         @ This is invoked by calling serial_out inside the wasm module
         @ If the port is not connected, the sequence will error out
-        output port serialOut: [Wasm.SerialPortOutIndex.MAX_SERIAL_PORTS] serial
+        output port serialOut: [Wasm.MAX_SERIAL_OUT_PORTS] serial
 
         @ Port for receiving serial messages from other components.
         @ All port indices will be placed into their own internal binary queue to be
         @ handled by the serial_recv host function.
-        guarded input port serialIn: [Wasm.SerialPortInIndex.MAX_SERIAL_PORTS] serial
+        guarded input port serialIn: [Wasm.MAX_SERIAL_IN_PORTS] serial
 
         @ port for requests to run sequences
         async input port seqRunIn: Svc.CmdSeqIn assert
 
         @ port for requesting to cancel the currently running sequence
-        async input port seqCancelIn: Svc.CmdSeqCancel assert
+        sync input port seqCancelIn: Svc.CmdSeqCancel
 
         @ called when a sequence begins running
         output port seqStartOut: Svc.CmdSeqIn
