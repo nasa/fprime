@@ -70,6 +70,8 @@ enum { WARN = 3, FATAL = 5 };
 // Definitions are placed within a namespace named after the deployment
 namespace Ref {
 
+extern Fw::MemAllocator& memAllocator;
+
 /**
  * \brief required type definition to carry state
  *

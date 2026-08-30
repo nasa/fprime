@@ -61,7 +61,18 @@ module Ref {
   instance wasmSeq: Svc.WasmSequencer base id 0x10007000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
-    priority 20
+    priority 20 {
+      phase Fpp.ToCpp.Phases.configComponents """
+        wasmSeq.configure(
+            /* dynamicMemPageCount */ 4,
+            /* wasmGuestMemorySize */ 1024 * 8,
+            /* wasmStackSize */ 1024 * 2,
+            /* serialOutMaxSize */ 0,
+            /* serialInQueueConfig */ Svc::WasmSequencer::SerialInQueueConfig(),
+            memAllocator
+        );
+        """
+    }
 
   instance dpDemo: Ref.DpDemo base id 0x0A10 \
     queue size Default.QUEUE_SIZE \
