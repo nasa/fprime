@@ -544,7 +544,7 @@ The full set of telemetry channels and events, with their arguments, is defined 
 
 ## Configuration
 
-WasmSequencer configuration has two layers: **per-instance runtime setup** through the required `configure()` call (memory-pool sizes and per-port serialIn policy, chosen when the instance is created in the topology), and **compile-time constants** split across three files with different audiences and rebuild costs.
+WasmSequencer configuration has two layers: **per-instance runtime setup** through the required `configure()` call (memory-pool sizes and per-port serialIn policy, chosen when the instance is created in the topology), and **compile-time constants** split across three files with different audiences.
 
 ### Per-instance setup: `configure()`
 
@@ -560,6 +560,27 @@ void configure(
     Fw::MemAllocator& mallocator              // allocator for all of the above
 );
 ```
+
+For example, in an `instances.fpp`:
+
+```fpp
+instance wasmSeq: Svc.WasmSequencer base id 0x10007000 \
+    queue size Default.QUEUE_SIZE \
+    stack size Default.STACK_SIZE \
+    priority 20 {
+      phase Fpp.ToCpp.Phases.configComponents """
+        wasmSeq.configure(
+            /* dynamicMemPageCount */ 4,
+            /* wasmGuestMemorySize */ 1024 * 8,
+            /* wasmStackSize */ 1024 * 2,
+            /* serialOutMaxSize */ 0,
+            /* serialInQueueConfig */ Svc::WasmSequencer::SerialInQueueConfig(),
+            memAllocator
+        );
+        """
+    }
+```
+
 
 | Parameter             | Purpose                                                                                                                                           |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
