@@ -127,11 +127,15 @@ void WasmSequencerTester ::connectSerialOutTo(FwIndexType portNum, Fw::InputPort
 
 void WasmSequencerTester ::unsetupSerialInQueue(FwIndexType portNum) {
     // Destroy and re-default-construct the CircularBuffer so it has no backing store (capacity 0),
-    // as if configure() had been given size 0 for this port (setup() never called). The original
-    // backing buffer is owned by the tester's allocator and freed at teardown, so this does not leak.
+    // as if configure() had been given size 0 for this port (setup() never called).
     Types::CircularBuffer& queue = this->component.m_serialInQueue[portNum];
+    U8* const buffer = queue.get_buffer();
     queue.~CircularBuffer();
     new (&queue) Types::CircularBuffer();
+    if (buffer != nullptr) {
+        this->m_allocator.deallocate(
+            static_cast<FwIndexType>(this->component.m_heapPageCount) + 3 + portNum, buffer);
+    }
 }
 
 void WasmSequencerTester ::disconnectGetTlmChan(FwIndexType portNum) {
