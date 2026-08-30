@@ -59,6 +59,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Configuration struct for the serialIn queues
     struct SerialInQueueConfig {
+        explicit SerialInQueueConfig() : sizes{0}, fullBehavior{SerialInQueueFullBehavior::DROP_NEWEST} {}
+
         const FwSizeType sizes[NUM_SERIALIN_INPUT_PORTS];
         const SerialInQueueFullBehavior fullBehavior[NUM_SERIALIN_INPUT_PORTS];
     };
@@ -866,7 +868,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Stores dynamic memory allocated to hold each loaded module in the store (and the store itself).
     U8* m_dynamicPool;
 
-    //! Number of currently used 
+    //! Number of currently used
     FwSizeType m_dynamicPagesUsed;
 
     //! Number of `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` allocated for the dynamic memory pool
