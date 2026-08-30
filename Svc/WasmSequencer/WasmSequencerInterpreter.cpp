@@ -88,9 +88,12 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_spin(
 void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_reset(
     SmId smId,
     Svc_WasmSequencer_InterpreterStateMachine::Signal signal) {
-    FW_ASSERT(this->m_wasm);
-    auto status = spacewasm_reset(this->m_wasm);
-    FW_ASSERT(status == SPACEWASM_OK);
+    if (this->m_wasm != nullptr) {
+        auto status = spacewasm_reset(this->m_wasm);
+        FW_ASSERT(status == SPACEWASM_OK);
+    } else {
+        FW_ASSERT(signal == Svc_WasmSequencer_InterpreterStateMachine::Signal::__FPRIME_INITIAL_TRANSITION);
+    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_clearExitStatus(

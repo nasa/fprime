@@ -78,15 +78,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     static_assert(Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE >= SPACEWASM_IR_PAGE_SIZE,
                   "SpaceWasm does not support dynamic memory pages smaller than a single IR page (512 bytes)");
 
-    //! [REQUIRED] Configure and allocate the dynamic backing pools for dynamic memory, guest memory, Wasm stack,
+    //! [REQUIRED] Configure and allocate the dynamic backing pools for heap memory, guest memory, Wasm stack,
     //! serialIn queues, and the serialOut buffer.
     void configure(
-        FwSizeType dynamicMemPageCount,  //!< Number of `WASM_SEQ_SPACEWASM_PAGE_SIZE` pages to allocate
+        FwSizeType heapMemPageCount,     //!< Number of `WASM_SEQ_SPACEWASM_PAGE_SIZE` pages to allocate
                                          //!< for the backing dynamic memory pool
         FwSizeType wasmGuestMemorySize,  //!< Size (in bytes) for the backing pool holding guest linear memory. This
                                          //!< is shared across all modules loaded into the store.
         FwSizeType wasmStackSize,     //!< Size of the WebAssembly stack in bytes. The Wasm stack is allocated into the
-                                      //!< dynamic memory pool.
+                                      //!< heap memory pool.
         FwSizeType serialOutMaxSize,  //!< Size of serialOut buffer for copying from guest memory and
                                       //!< invoking serialOut_out
         SerialInQueueConfig serialInQueueConfig,  //!< Size/queueFullBehavior of each serialIn port index
@@ -867,21 +867,23 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! spacewasm_mem_write)
     Fw::Success writeGuestMemory(WasmSequencer_HostFunction::T kind, U32 addr, const U8* src, FwSizeType len);
 
-    //! Pool backing the process-wide spacewasm global page allocator.
-    //! Sized at `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` * m_dynamicPoolPageN.
-    //! Stores dynamic memory allocated to hold each loaded module in the store (and the store itself).
-    U8* m_dynamicPool;
+    Fw::MemAllocator* m_allocator = nullptr;
 
-    //! Number of `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` allocated for the dynamic memory pool
-    FwSizeType m_dynamicPoolPageCount;
+    //! Page pool backing the process-wide spacewasm global page allocator for this instance.
+    //! Each page is `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` with m_dynamicPoolPageCount pages.
+    //! Stores dynamic memory allocated to hold each loaded module in the store (and the store itself).
+    U8** m_heapPages;
+
+    //! Number of dynamic pages allocated for the dynamic memory pool
+    FwSizeType m_heapPageCount;
 
     //! Number of currently used
-    FwSizeType m_dynamicPagesUsed;
+    FwSizeType m_heapPagesUsed;
 
-    //! A deallocation has poisoned the dynamic allocator
+    //! A deallocation has poisoned the heap allocator
     //! No more allocations can happen until every page is dropped.
     //! SpaceWasm will drop everything in one shot so this simply helps us guard this invariant with an assertion
-    bool m_dynamicPoolPoisoned;
+    bool m_heapPoisoned;
 
     //! Pool backing the per-load guest linear-memory allocator; a simple
     //! bump allocator (guest modules are compiled with memory.grow disabled).
@@ -893,7 +895,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Current bump offset into `m_guestPool`.
     FwSizeType m_guestPoolOffset;
 
-    //! Wasm stack size in bytes. Stack is allocated into dynamic memory pool
+    //! Wasm stack size in bytes. Stack is allocated into heap memory pool
     FwSizeType m_wasmStackSize;
 
     //! Opaque handle to the spacewasm engine, or null (before the store is initialized).

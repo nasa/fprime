@@ -22,7 +22,9 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-WasmSequencerTester ::WasmSequencerTester()
+WasmSequencerTester ::WasmSequencerTester() : WasmSequencerTester(true) {}
+
+WasmSequencerTester ::WasmSequencerTester(bool autoConfigure)
     : WasmSequencerGTestBase("WasmSequencerTester", WasmSequencerTester::MAX_HISTORY_SIZE),
       nextTlmId(0),
       nextPrmId(0),
@@ -36,30 +38,40 @@ WasmSequencerTester ::WasmSequencerTester()
       seqDoneOutCount(0),
       lastSeqDoneResponse(Fw::CmdResponse::OK),
       component("WasmSequencer") {
-    // configure() is REQUIRED *before* init(): the controller state machine's initial state (IDLE)
-    // entry creates the interpreter store, which allocates pages from the dynamic pool that
-    // configure() sets up. initComponents() runs the SM initial transitions, so configure() must
-    // run first. Sizes mirror the previous static config so existing behavioral tests are unchanged.
-    WasmSequencer::SerialInQueueConfig serialInCfg;
-    for (FwIndexType i = 0; i < WasmSequencer::NUM_SERIALIN_INPUT_PORTS; i++) {
-        serialInCfg.sizes[i] = SERIAL_IN_QUEUE_SIZE;
-        serialInCfg.fullBehavior[i] = WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST;
-    }
-    this->component.configure(DYNAMIC_POOL_PAGES, GUEST_POOL_SIZE, WASM_STACK_SIZE, SERIAL_OUT_MAX_SIZE, serialInCfg,
-                              this->m_allocator);
-
     this->initComponents();
     this->connectPorts();
+
+    // configure() allocates the component's backing pools and creates the initial interpreter store.
+    // It runs after init() and port wiring (the interpreter SM's initial reset tolerates a null
+    // store) and is REQUIRED before the component is exercised. A derived fixture may pass
+    // autoConfigure=false to configure with a custom config per test instead.
+    if (autoConfigure) {
+        this->configureWith(TestConfig());
+    }
 
     // Load parameters so INSTRUCTION_FUEL (and friends) take their declared
     // defaults. Without this the component's cached fuel is 0 and the interpreter
     // never makes progress (spins forever on OUT_OF_FUEL). Tests that need a
     // specific fuel value call paramSet_* and re-drive loading themselves.
     this->component.loadParameters();
+
+    // configure() (via createStore) emits a construction-time StoreAllocationSucceeded event; reset
+    // the history so each test starts from a clean baseline.
+    this->clearHistory();
 }
 
 WasmSequencerTester ::~WasmSequencerTester() {
     this->component.deinit();
+}
+
+void WasmSequencerTester ::configureWith(const TestConfig& cfg) {
+    WasmSequencer::SerialInQueueConfig serialInCfg;
+    for (FwIndexType i = 0; i < WasmSequencer::NUM_SERIALIN_INPUT_PORTS; i++) {
+        serialInCfg.sizes[i] = cfg.serialInSizes[i];
+        serialInCfg.fullBehavior[i] = cfg.serialInBehaviors[i];
+    }
+    this->component.configure(cfg.dynPages, cfg.guestSize, cfg.stackSize, cfg.serialOutMax, serialInCfg,
+                              this->m_allocator);
 }
 
 // ----------------------------------------------------------------------

@@ -20,6 +20,7 @@
 namespace Svc {
 namespace WasmSequencerConfig {
 constexpr FwSizeType SPACEWASM_PAGE_SIZE = WASM_SEQ_SPACEWASM_PAGE_SIZE;
+constexpr FwSizeType SPACEWASM_MAX_PAGES = WASM_SEQ_SPACEWASM_MAX_PAGES;
 
 /// Maximum number of compiled IR code pages allowed across all modules loaded onto
 /// a store (spacewasm_compiler_options_t `max_code_pages`).

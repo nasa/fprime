@@ -421,7 +421,10 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialOut(spacewasm_caller_t* cal
     const U32 ptr = static_cast<U32>(params[1].u.i32_);
     const U32 len = static_cast<U32>(params[2].u.i32_);
 
-    if (len > this->m_serialOutBuffer.getCapacity()) {
+    // Reject if the payload does not fit the copy-out buffer. A serialOut buffer that was never
+    // configured (serialOutMaxSize == 0 in configure()) is null-backed with capacity 0; trap even a
+    // zero-length send in that case rather than forwarding a null-backed buffer to serialOut_out.
+    if (len > this->m_serialOutBuffer.getCapacity() || this->m_serialOutBuffer.getBuffAddr() == nullptr) {
         this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::SERIAL_OUT, len,
                                             static_cast<U32>(this->m_serialOutBuffer.getCapacity()));
         return SPACEWASM_TRAP;

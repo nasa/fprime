@@ -13,51 +13,6 @@
 
 namespace Svc {
 
-//! A malloc-backed MemAllocator that remembers every block it hands out and frees any
-//! still-outstanding block on destruction. The component under test allocates its backing
-//! pools in configure() and (currently) never deallocates them, so a plain MallocAllocator
-//! would leak on every test. This tracking allocator lets the UT run leak-clean (e.g. under
-//! LeakSanitizer on Linux CI) whether or not the component ever calls deallocate(); a matching
-//! deallocate() un-tracks the block so there is no double free if the component is later fixed.
-class TrackingMallocAllocator final : public Fw::MallocAllocator {
-  public:
-    TrackingMallocAllocator() : m_count(0) {}
-    ~TrackingMallocAllocator() override {
-        // Free anything the component allocated but never handed back.
-        for (FwSizeType i = 0; i < this->m_count; i++) {
-            if (this->m_ptrs[i] != nullptr) {
-                Fw::MallocAllocator::deallocate(0, this->m_ptrs[i]);
-                this->m_ptrs[i] = nullptr;
-            }
-        }
-    }
-
-    void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable, FwSizeType alignment) override {
-        void* ptr = Fw::MallocAllocator::allocate(identifier, size, recoverable, alignment);
-        if (ptr != nullptr) {
-            FW_ASSERT(this->m_count < MAX_TRACKED, static_cast<FwAssertArgType>(this->m_count));
-            this->m_ptrs[this->m_count] = ptr;
-            this->m_count++;
-        }
-        return ptr;
-    }
-
-    void deallocate(const FwEnumStoreType identifier, void* ptr) override {
-        for (FwSizeType i = 0; i < this->m_count; i++) {
-            if (this->m_ptrs[i] == ptr) {
-                this->m_ptrs[i] = nullptr;
-                break;
-            }
-        }
-        Fw::MallocAllocator::deallocate(identifier, ptr);
-    }
-
-  private:
-    static const FwSizeType MAX_TRACKED = 32;
-    void* m_ptrs[MAX_TRACKED];
-    FwSizeType m_count;
-};
-
 class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Test {
   public:
     // ----------------------------------------------------------------------
@@ -74,11 +29,9 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 20;
 
     // ----------------------------------------------------------------------
-    // Backing-store sizes handed to component.configure() in the tester ctor.
-    // These mirror the previous static config so existing behavioral tests are
-    // unchanged: dynamic pool = 4 * SPACEWASM_PAGE_SIZE, guest pool = 2048 B,
-    // Wasm stack = 256 B, serialOut buffer = 256 B, and each serialIn queue =
-    // 256 B with DROP_OLDEST behavior.
+    // Backing-store sizes handed to component.configure() in the tester ctor:
+    // dynamic pool = 4 * SPACEWASM_PAGE_SIZE, guest pool = 2048 B, Wasm stack =
+    // 256 B, serialOut buffer = 256 B, each serialIn queue = 256 B / DROP_OLDEST.
     // ----------------------------------------------------------------------
     static const FwSizeType DYNAMIC_POOL_PAGES = 4;
     static const FwSizeType GUEST_POOL_SIZE = 2048;
@@ -119,6 +72,38 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     ~WasmSequencerTester();
 
   protected:
+    // ----------------------------------------------------------------------
+    // Configuration (multi-config support)
+    // ----------------------------------------------------------------------
+
+    //! Delegated-to constructor. When autoConfigure is false the component is initialized and wired
+    //! but NOT configured, so a derived fixture (WasmSequencerConfigTester) can drive
+    //! component.configure() with a custom config per test to exercise per-config branches and
+    //! misconfigurations. The event history is cleared either way.
+    explicit WasmSequencerTester(bool autoConfigure);
+
+    //! A configuration for component.configure(); the defaults match the tester's standard sizing.
+    struct TestConfig {
+        FwSizeType dynPages = DYNAMIC_POOL_PAGES;
+        FwSizeType guestSize = GUEST_POOL_SIZE;
+        FwSizeType stackSize = WASM_STACK_SIZE;
+        FwSizeType serialOutMax = SERIAL_OUT_MAX_SIZE;
+        FwSizeType serialInSizes[WasmSequencer::NUM_SERIALIN_INPUT_PORTS];
+        WasmSequencer::SerialInQueueFullBehavior serialInBehaviors[WasmSequencer::NUM_SERIALIN_INPUT_PORTS];
+        TestConfig() {
+            for (FwIndexType i = 0; i < WasmSequencer::NUM_SERIALIN_INPUT_PORTS; i++) {
+                this->serialInSizes[i] = SERIAL_IN_QUEUE_SIZE;
+                this->serialInBehaviors[i] = WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST;
+            }
+        }
+    };
+
+    //! Drive component.configure() from a TestConfig (using the tester's tracking allocator).
+    void configureWith(const TestConfig& cfg);
+
+    //! Whether the component currently owns an interpreter store (white-box; configure() creates it).
+    bool isStoreCreated() const { return this->component.m_wasm != nullptr; }
+
     // ----------------------------------------------------------------------
     // Golden-module helpers
     // ----------------------------------------------------------------------
@@ -240,11 +225,21 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     // ----------------------------------------------------------------------
 
     //! Number of dynamic (interpreter-heap) pages currently handed out by the page allocator (white-box).
-    FwSizeType dynamicPagesUsed() const { return this->component.m_dynamicPagesUsed; }
+    FwSizeType dynamicPagesUsed() const { return this->component.m_heapPagesUsed; }
     //! Total number of dynamic pages the pool was configured with (white-box).
-    FwSizeType dynamicPagesCapacity() const { return this->component.m_dynamicPoolPageCount; }
+    FwSizeType dynamicPagesCapacity() const { return this->component.m_heapPageCount; }
     //! Current bump offset into the guest linear-memory pool (white-box).
     FwSizeType getGuestOffset() const { return this->component.m_guestPoolOffset; }
+    //! White-box: simulate the spacewasm page allocator freeing a live page and then requesting a new
+    //! one within the same store lifetime. The dynamic-page allocator is a bump index guarded by a
+    //! poison flag: any free poisons the pool so a subsequent alloc fails fast rather than possibly
+    //! aliasing a still-live page (spacewasm frees pages in forward-scan, not LIFO, order). Intended
+    //! for a death test -- it deliberately trips the guard.
+    void pokePageFreeThenReAlloc() {
+        FW_ASSERT(this->component.m_heapPagesUsed > 0);
+        this->component.globalDealloc(this->component.m_heapPages[0]);
+        (void)this->component.globalAlloc(static_cast<U32>(Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE), 8u);
+    }
     //! Access the inbound serial queue for a given port index (white-box). Friendship is not
     //! inherited by the generated TEST_F subclass, so expose it through the tester.
     Types::CircularBuffer& serialInQueue(FwIndexType portNum) { return this->component.m_serialInQueue[portNum]; }
@@ -343,10 +338,8 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     // Member variables
     // ----------------------------------------------------------------------
 
-    //! Allocator backing the component's configure() pools. Declared before `component` so the
-    //! component is destroyed first (its destroyStore() runs while the pools are still valid) and
-    //! this allocator then frees any pools the component did not deallocate.
-    TrackingMallocAllocator m_allocator;
+    //! Allocator backing the component's configure() pools
+    Fw::MallocAllocator m_allocator;
 
     //! The component under test
     WasmSequencer component;
@@ -360,6 +353,18 @@ inline WasmSequencerTester::StagedAsset::StagedAsset(WasmSequencerTester& tester
 inline WasmSequencerTester::StagedAsset::~StagedAsset() {
     this->m_tester.removeFile(this->m_name);
 }
+
+//! Fixture variant that does NOT auto-configure the component, so each test drives
+//! component.configure() with its own TestConfig. Used to exercise per-config branches
+//! (serialIn sizes/behaviors, serialOut buffer sizing) and misconfigurations (assert paths).
+class WasmSequencerConfigTester : public WasmSequencerTester {
+  public:
+    WasmSequencerConfigTester() : WasmSequencerTester(/*autoConfigure=*/false) {}
+    // No custom teardown needed: the component destructor tolerates a never-configured instance
+    // (its m_wasm / m_allocator null guards skip destroyStore and deallocate). So a configure-failure
+    // death test, whose failing configure runs only in a forked child, leaves the parent's component
+    // unconfigured and it tears down cleanly -- exercising those null guards.
+};
 
 }  // namespace Svc
 

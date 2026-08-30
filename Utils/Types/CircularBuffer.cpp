@@ -237,4 +237,8 @@ void CircularBuffer ::clear_high_water_mark() {
     m_high_water_mark = 0;
 }
 
+U8* CircularBuffer ::get_buffer() {
+    return m_store;
+}
+
 }  // End Namespace Types

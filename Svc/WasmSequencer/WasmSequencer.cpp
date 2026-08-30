@@ -23,6 +23,7 @@
 #include "Svc/WasmSequencer/fprime_spacewasm/include/fprime_spacewasm.h"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "config/FwAssertArgTypeAliasAc.h"
+#include "config/FwIndexTypeAliasAc.h"
 #include "config/FwSizeTypeAliasAc.h"
 
 namespace Svc {
@@ -48,10 +49,10 @@ void WasmSequencer ::globalDeallocCallback(void* userdata, U8* ptr, size_t size,
 
 WasmSequencer ::WasmSequencer(const char* const compName)
     : WasmSequencerComponentBase(compName),
-      m_dynamicPool(nullptr),
-      m_dynamicPoolPageCount(0),
-      m_dynamicPagesUsed(0),
-      m_dynamicPoolPoisoned(false),
+      m_heapPages(nullptr),
+      m_heapPageCount(0),
+      m_heapPagesUsed(0),
+      m_heapPoisoned(false),
       m_guestPool(nullptr),
       m_guestPoolSize(0),
       m_guestPoolOffset(0),
@@ -76,7 +77,39 @@ WasmSequencer ::WasmSequencer(const char* const compName)
 }
 
 WasmSequencer ::~WasmSequencer() {
-    this->destroyStore();
+    if (this->m_wasm != nullptr) {
+        this->destroyStore();
+    }
+
+    if (this->m_allocator != nullptr) {
+        // Deallocate each heap page
+        for (FwSizeType i = 0; i < this->m_heapPageCount; i++) {
+            this->m_allocator->deallocate(static_cast<FwIndexType>(i) + 1, this->m_heapPages[i]);
+            this->m_heapPages[i] = nullptr;
+        }
+
+        // Deallocate the heap page pool
+        this->m_allocator->deallocate(0, this->m_heapPages);
+
+        // Deallocate the guest memory pool
+        if (this->m_guestPool != nullptr) {
+            this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_heapPageCount) + 1, this->m_guestPool);
+        }
+
+        // Deallocate the serialOut buffer
+        if (this->m_serialOutBuffer.getBuffAddr() != nullptr) {
+            this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_heapPageCount) + 2,
+                                          this->m_serialOutBuffer.getBuffAddr());
+        }
+
+        // Deallocate the serialIn queues
+        for (FwIndexType i = 0; i < NUM_SERIALIN_INPUT_PORTS; i++) {
+            if (this->m_serialInQueue[i].get_capacity() > 0) {
+                this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_heapPageCount) + 3 + i,
+                                              this->m_serialInQueue[i].get_buffer());
+            }
+        }
+    }
 
     // Release our slot in the process-wide global-allocator registry so it can
     // be reused by a later sequencer instance.
@@ -85,42 +118,55 @@ WasmSequencer ::~WasmSequencer() {
     getGlobalAllocatorLock()->unlock();
 }
 
-void WasmSequencer ::configure(FwSizeType dynamicMemPageCount,
+void WasmSequencer ::configure(FwSizeType heapMemPageCount,
                                FwSizeType wasmGuestMemorySize,
                                FwSizeType wasmStackSize,
                                FwSizeType serialOutMaxSize,
                                SerialInQueueConfig serialInQueueCfg,
                                Fw::MemAllocator& mallocator) {
     FW_ASSERT(this->m_wasm == nullptr);
+    FW_ASSERT(this->m_allocator == nullptr);
 
-    // Allocate the dynamic memory pool
+    // Allocate the heap memory pool
     {
-        auto actualSize = dynamicMemPageCount * Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE;
-        auto ptr = mallocator.checkedAllocate(0, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
-        this->m_dynamicPagesUsed = 0;
-        this->m_dynamicPoolPageCount = dynamicMemPageCount;
-        this->m_dynamicPool = reinterpret_cast<U8*>(ptr);
+        FW_ASSERT(heapMemPageCount > 0 && heapMemPageCount <= Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES,
+                  static_cast<FwAssertArgType>(heapMemPageCount), Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES);
+
+        // Allocate the heap page list
+        {
+            FwSizeType actualSize = sizeof(U8*) * heapMemPageCount;
+            auto ptr = mallocator.checkedAllocate(0, actualSize);
+            this->m_heapPages = reinterpret_cast<U8**>(ptr);
+        }
+
+        // Allocate each heap page
+        for (FwSizeType i = 0; i < heapMemPageCount; i++) {
+            auto actualSize = Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE;
+            auto ptr =
+                mallocator.checkedAllocate(static_cast<FwIndexType>(i) + 1, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
+            this->m_heapPages[i] = reinterpret_cast<U8*>(ptr);
+        }
+        this->m_heapPageCount = heapMemPageCount;
+        this->m_heapPagesUsed = 0;
     }
 
     // Allocate the guest memory pool
     {
         auto actualSize = wasmGuestMemorySize;
-        auto ptr = mallocator.checkedAllocate(1, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
+        auto ptr = mallocator.checkedAllocate(static_cast<FwIndexType>(this->m_heapPageCount) + 1, actualSize,
+                                              SPACEWASM_MEMORY_ALIGNMENT);
         this->m_guestPoolOffset = 0;
         this->m_guestPoolSize = actualSize;
         this->m_guestPool = reinterpret_cast<U8*>(ptr);
     }
 
-    // The Wasm stack is allocated into the dynamic pool during store initialization
+    // The Wasm stack is allocated into the heap during store initialization
     this->m_wasmStackSize = wasmStackSize;
-
-    // Allocate the initial store
-    this->createStore();
 
     // Allocate the serialOut buffer
     if (serialOutMaxSize > 0) {
         auto actualSize = serialOutMaxSize;
-        auto ptr = mallocator.checkedAllocate(2, actualSize);
+        auto ptr = mallocator.checkedAllocate(static_cast<FwIndexType>(this->m_heapPageCount) + 2, actualSize);
         this->m_serialOutBuffer.setExtBuffer(reinterpret_cast<U8*>(ptr), actualSize);
     }
 
@@ -130,7 +176,8 @@ void WasmSequencer ::configure(FwSizeType dynamicMemPageCount,
         for (FwIndexType i = 0; i < NUM_SERIALIN_INPUT_PORTS; i++) {
             if (serialInQueueCfg.sizes[i] > 0) {
                 auto actualSize = serialInQueueCfg.sizes[i];
-                auto ptr = mallocator.checkedAllocate(3 + i, actualSize);
+                auto ptr =
+                    mallocator.checkedAllocate(static_cast<FwIndexType>(this->m_heapPageCount) + 3 + i, actualSize);
                 this->m_serialInQueue[i].setup(reinterpret_cast<U8*>(ptr), actualSize);
                 this->m_serialInFullBehavior[i] = serialInQueueCfg.fullBehavior[i];
             } else {
@@ -139,6 +186,10 @@ void WasmSequencer ::configure(FwSizeType dynamicMemPageCount,
             }
         }
     }
+
+    // Allocate the initial store
+    this->createStore();
+    this->m_allocator = &mallocator;
 }
 
 // ----------------------------------------------------------------------
@@ -255,8 +306,11 @@ void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase&
     // Make sure the queue is sized to hold this framed message at all. This does
     // not check free space, only that the queue's capacity is large enough.
     if (headerSize + payloadSize > capacity) {
+        // The largest payload this queue could ever hold is capacity - headerSize. A queue smaller
+        // than the header (including a port left un-configured with capacity 0) can hold nothing.
+        const FwSizeType maxPayload = (capacity > headerSize) ? (capacity - headerSize) : 0;
         this->log_WARNING_HI_SerialInFrameTooLarge(static_cast<U32>(portNum), static_cast<U32>(payloadSize),
-                                                   static_cast<U32>(capacity - headerSize));
+                                                   static_cast<U32>(maxPayload));
         return;
     }
 
