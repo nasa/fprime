@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-29 22:11:08</td>
+      <td>2026-08-30 22:11:24</td>
     </tr>
   </table>
 </div>
@@ -70,10 +70,10 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l73">Os::Linux::Cpu::LinuxCpu::_getCount(unsigned long&amp;) (line 73)</a></td><td>called 949 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l83">Os::Linux::Cpu::LinuxCpu::_getTicks(Os::Generic::UsedTotal&amp;, unsigned long) (line 83)</a></td><td>called 948 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l73">Os::Linux::Cpu::LinuxCpu::_getCount(unsigned long&amp;) (line 73)</a></td><td>called 941 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l83">Os::Linux::Cpu::LinuxCpu::_getTicks(Os::Generic::UsedTotal&amp;, unsigned long) (line 83)</a></td><td>called 940 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l99">Os::Linux::Cpu::LinuxCpu::getHandle() (line 99)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l30">Os::Linux::Cpu::getCpuData(unsigned long, unsigned long*) (line 30)</a></td><td>called 948 times</td><td>66.0%</td></tr>
+    <tr><td><a href="#l30">Os::Linux::Cpu::getCpuData(unsigned long, unsigned long*) (line 30)</a></td><td>called 940 times</td><td>66.0%</td></tr>
   </table>
 </details>
 
@@ -294,7 +294,7 @@
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="n">CpuInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">getCpuData</span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">cpu_index</span><span class="p">,</span><span class="w"> </span><span class="n">ProcCpuData</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -303,11 +303,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="w"> </span><span class="n">file</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -321,7 +321,7 @@
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">PROC_STAT_PATH</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/proc/stat&quot;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -330,13 +330,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 940 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">948</td>
+      <td class="linecount partialCoveredLine">940</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">file</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">PROC_STAT_PATH</span><span class="p">,</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">Mode</span><span class="o">::</span><span class="n">OPEN_READ</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -371,7 +371,7 @@
       <td class="lineno"><a id="l39" href="#l39">39</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">line_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cpu_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -380,19 +380,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 3318 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 3290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4266</td>
+      <td class="linecount coveredLine">4230</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">line_count</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3318</td>
+      <td class="linecount coveredLine">3290</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">read_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="w"> </span><span class="n">proc_stat_line</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -408,11 +408,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 3318 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 3290 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">3318</td>
+      <td class="linecount coveredLine">3290</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">file</span><span class="p">.</span><span class="n">readline</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">proc_stat_line</span><span class="p">),</span><span class="w"> </span><span class="n">read_size</span><span class="p">,</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">WaitType</span><span class="o">::</span><span class="n">NO_WAIT</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -422,11 +422,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 3318 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 3290 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3318</td>
+      <td class="linecount partialCoveredLine">3290</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">file_status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -447,7 +447,7 @@
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3318</td>
+      <td class="linecount coveredLine">3290</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">proc_stat_line</span><span class="p">[</span><span class="n">read_size</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Null terminate, read_size is at most LINE_SIZE</span></td>
     </tr>
     <tr class="source-line">
@@ -464,11 +464,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 3318 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 3290 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3318</td>
+      <td class="linecount partialCoveredLine">3290</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">::</span><span class="n">strncmp</span><span class="p">(</span><span class="n">proc_stat_line</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cpu&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -496,7 +496,7 @@
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">token_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">proc_stat_line</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w">  </span><span class="c1">// Length of &quot;cpu&quot;</span></td>
     </tr>
     <tr class="source-line">
@@ -505,26 +505,26 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 7584 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 7520 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">8532</td>
+      <td class="linecount coveredLine">8460</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ProcCpuMeasures</span><span class="o">::</span><span class="n">MAX_CPU_TICK_TYPES</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7584</td>
+      <td class="linecount coveredLine">7520</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">15168</td>
+      <td class="linecount coveredLine">15040</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">StringToNumberStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">string_to_number</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
@@ -540,11 +540,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 7584 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 7520 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">7584</td>
+      <td class="linecount coveredLine">7520</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">sizeof</span><span class="w"> </span><span class="n">proc_stat_line</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">token_start</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">proc_stat_line</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -568,11 +568,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 7584 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 7520 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">7584</td>
+      <td class="linecount partialCoveredLine">7520</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">StringToNumberStatus</span><span class="o">::</span><span class="n">SUCCESSFUL_CONVERSION</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -593,7 +593,7 @@
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7584</td>
+      <td class="linecount coveredLine">7520</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -609,14 +609,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 948 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 6636 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 940 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 6580 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">7584</td>
+      <td class="linecount partialCoveredLine">7520</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ProcCpuMeasures</span><span class="o">::</span><span class="n">CPU_NUMBER</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">cpu_index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -644,14 +644,14 @@
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">CpuInterface</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -665,14 +665,14 @@
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">949</td>
+      <td class="linecount coveredLine">941</td>
       <td class="src coveredLine"><span class="n">CpuInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">LinuxCpu::_getCount</span><span class="p">(</span><span class="n">FwSizeType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cpu_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">949</td>
+      <td class="linecount coveredLine">941</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">cpus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sysconf</span><span class="p">(</span><span class="n">_SC_NPROCESSORS_ONLN</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -681,30 +681,30 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 949 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 941 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 949 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 941 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 949 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 941 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">949</td>
+      <td class="linecount partialCoveredLine">941</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">cpus</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">cpus</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">949</td>
+      <td class="linecount coveredLine">941</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">cpu_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">cpus</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">949</td>
+      <td class="linecount coveredLine">941</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -746,14 +746,14 @@
       <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="n">CpuInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">LinuxCpu::_getTicks</span><span class="p">(</span><span class="n">Os</span><span class="o">::</span><span class="n">Cpu</span><span class="o">::</span><span class="n">Ticks</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ticks</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">cpu_index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -762,11 +762,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">CpuInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_getCount</span><span class="p">(</span><span class="n">count</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -776,11 +776,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">948</td>
+      <td class="linecount partialCoveredLine">940</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">CpuInterface</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -797,11 +797,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">948</td>
+      <td class="linecount partialCoveredLine">940</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cpu_index</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -822,7 +822,7 @@
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ProcCpuData</span><span class="w"> </span><span class="n">cpu_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
@@ -831,25 +831,25 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 948 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 940 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getCpuData</span><span class="p">(</span><span class="n">cpu_index</span><span class="p">,</span><span class="w"> </span><span class="n">cpu_data</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ticks</span><span class="p">.</span><span class="n">used</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cpu_data</span><span class="p">[</span><span class="n">ProcCpuMeasures</span><span class="o">::</span><span class="n">USER</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cpu_data</span><span class="p">[</span><span class="n">ProcCpuMeasures</span><span class="o">::</span><span class="n">NICE</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cpu_data</span><span class="p">[</span><span class="n">ProcCpuMeasures</span><span class="o">::</span><span class="n">SYSTEM</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ticks</span><span class="p">.</span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks</span><span class="p">.</span><span class="n">used</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cpu_data</span><span class="p">[</span><span class="n">ProcCpuMeasures</span><span class="o">::</span><span class="n">IDLE</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
@@ -863,7 +863,7 @@
       <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">948</td>
+      <td class="linecount coveredLine">940</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
