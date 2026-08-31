@@ -141,7 +141,8 @@ void WasmSequencerTester ::unsetupSerialInQueue(FwIndexType portNum) {
     queue.~CircularBuffer();
     new (&queue) Types::CircularBuffer();
     if (buffer != nullptr) {
-        this->m_allocator.deallocate(static_cast<FwIndexType>(this->component.m_config.heapPages) + 3 + portNum, buffer);
+        this->m_allocator.deallocate(static_cast<FwIndexType>(this->component.m_config.heapPages) + 3 + portNum,
+                                     buffer);
     }
 }
 
