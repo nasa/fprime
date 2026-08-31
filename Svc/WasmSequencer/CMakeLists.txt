@@ -10,6 +10,13 @@
 #
 ####
 
+if (NOT CARGO)
+    get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+    fprime_cmake_status("[rust] cargo not found which is required for ${MODULE_NAME}")
+    append_list_property("${MODULE_NAME}" GLOBAL PROPERTY RESTRICTED_TARGETS)
+    return()
+endif()
+
 set(FPRIME_SPACEWASM_DIR  "${CMAKE_CURRENT_LIST_DIR}/fprime_spacewasm")
 set(FPRIME_SPACEWASM_TDIR "${CMAKE_CURRENT_BINARY_DIR}/fprime_spacewasm_target")
 
@@ -55,25 +62,23 @@ if(NOT WASM_SEQ_CONFIG_DIR)
 endif()
 set(WASM_SEQ_CONFIG_HEADER "${WASM_SEQ_CONFIG_DIR}/WasmSequencerSpacewasmConfig.h")
 
-if (CARGO)
-    # Optimization/codegen flags live in the crate's [profile.release]
-    # (opt-level, lto, codegen-units, panic=abort); --release selects it.
-    add_custom_command(
-        OUTPUT  "${FPRIME_SPACEWASM_LIB}"
-        COMMAND "${CMAKE_COMMAND}" -E env "WASM_SEQ_CONFIG_DIR=${WASM_SEQ_CONFIG_DIR}"
-                "${CARGO}" build --locked ${FPRIME_SPACEWASM_PROFILE_FLAG}
-                --manifest-path "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
-                --target        "${RUST_TARGET_TRIPLE}"
-                --target-dir    "${FPRIME_SPACEWASM_TDIR}"
-        DEPENDS "${FPRIME_SPACEWASM_DIR}/src/lib.rs"
-                "${FPRIME_SPACEWASM_DIR}/build.rs"
-                "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
-                "${FPRIME_SPACEWASM_DIR}/Cargo.lock"
-                "${WASM_SEQ_CONFIG_HEADER}"
-        COMMENT "Building fprime_spacewasm Rust static library"
-        VERBATIM
-    )
-endif()
+# Optimization/codegen flags live in the crate's [profile.release]
+# (opt-level, lto, codegen-units, panic=abort); --release selects it.
+add_custom_command(
+    OUTPUT  "${FPRIME_SPACEWASM_LIB}"
+    COMMAND "${CMAKE_COMMAND}" -E env "WASM_SEQ_CONFIG_DIR=${WASM_SEQ_CONFIG_DIR}"
+            "${CARGO}" build --locked ${FPRIME_SPACEWASM_PROFILE_FLAG}
+            --manifest-path "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
+            --target        "${RUST_TARGET_TRIPLE}"
+            --target-dir    "${FPRIME_SPACEWASM_TDIR}"
+    DEPENDS "${FPRIME_SPACEWASM_DIR}/src/lib.rs"
+            "${FPRIME_SPACEWASM_DIR}/build.rs"
+            "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
+            "${FPRIME_SPACEWASM_DIR}/Cargo.lock"
+            "${WASM_SEQ_CONFIG_HEADER}"
+    COMMENT "Building fprime_spacewasm Rust static library"
+    VERBATIM
+)
 
 add_custom_target(fprime_spacewasm_build DEPENDS "${FPRIME_SPACEWASM_LIB}")
 

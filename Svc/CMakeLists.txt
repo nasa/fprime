@@ -80,10 +80,4 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ccsds/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComAggregator/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComRetry/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PassThroughRouter/")
-
-# Components that depend on Rust/Cargo
-if (CARGO)
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/WasmSequencer/")
-else()
-    fprime_cmake_status("[rust] cargo not found; skipping Svc/WasmSequencer")
-endif()
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/WasmSequencer/")
