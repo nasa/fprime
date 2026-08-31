@@ -16,6 +16,16 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpDemo/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BlockDriver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
 
+# Select AES-256-GCM instead
+find_package(OpenSSL REQUIRED)
+register_fprime_config(
+        Ref_SdlsConfigOverride
+    CONFIGURATION_OVERRIDES
+        "${CMAKE_CURRENT_LIST_DIR}/config/ComCcsdsSdlsConfig.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/config/ComCfg.fpp"
+    INTERFACE
+)
+
 register_fprime_deployment(
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"
