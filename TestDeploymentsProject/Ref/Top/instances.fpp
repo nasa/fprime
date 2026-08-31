@@ -63,14 +63,7 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 20 {
       phase Fpp.ToCpp.Phases.configComponents """
-        wasmSeq.configure(
-            /* dynamicMemPageCount */ 4,
-            /* wasmGuestMemorySize */ 1024 * 8,
-            /* wasmStackSize */ 1024 * 2,
-            /* serialOutMaxSize */ 0,
-            /* serialInQueueConfig */ Svc::WasmSequencer::SerialInQueueConfig(),
-            memAllocator
-        );
+        wasmSeq.configure(Svc::WasmSequencer::Config(), memAllocator);
         """
     }
 

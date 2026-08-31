@@ -118,41 +118,36 @@ WasmSequencer ::~WasmSequencer() {
     getGlobalAllocatorLock()->unlock();
 }
 
-void WasmSequencer ::configure(FwSizeType heapMemPageCount,
-                               FwSizeType wasmGuestMemorySize,
-                               FwSizeType wasmStackSize,
-                               FwSizeType serialOutMaxSize,
-                               SerialInQueueConfig serialInQueueCfg,
-                               Fw::MemAllocator& mallocator) {
+void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) {
     FW_ASSERT(this->m_wasm == nullptr);
     FW_ASSERT(this->m_allocator == nullptr);
 
     // Allocate the heap memory pool
     {
-        FW_ASSERT(heapMemPageCount > 0 && heapMemPageCount <= Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES,
-                  static_cast<FwAssertArgType>(heapMemPageCount), Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES);
+        FW_ASSERT(cfg.heapPages > 0 && cfg.heapPages <= Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES,
+                  static_cast<FwAssertArgType>(cfg.heapPages), Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES);
 
         // Allocate the heap page list
         {
-            FwSizeType actualSize = sizeof(U8*) * heapMemPageCount;
+            FwSizeType actualSize = sizeof(U8*) * cfg.heapPages;
             auto ptr = mallocator.checkedAllocate(0, actualSize);
             this->m_heapPages = reinterpret_cast<U8**>(ptr);
         }
 
         // Allocate each heap page
-        for (FwSizeType i = 0; i < heapMemPageCount; i++) {
+        for (FwSizeType i = 0; i < cfg.heapPages; i++) {
             auto actualSize = Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE;
             auto ptr =
                 mallocator.checkedAllocate(static_cast<FwIndexType>(i) + 1, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
             this->m_heapPages[i] = reinterpret_cast<U8*>(ptr);
         }
-        this->m_heapPageCount = heapMemPageCount;
+        this->m_heapPageCount = cfg.heapPages;
         this->m_heapPagesUsed = 0;
     }
 
     // Allocate the guest memory pool
     {
-        auto actualSize = wasmGuestMemorySize;
+        auto actualSize = cfg.guestMemorySize;
         auto ptr = mallocator.checkedAllocate(static_cast<FwIndexType>(this->m_heapPageCount) + 1, actualSize,
                                               SPACEWASM_MEMORY_ALIGNMENT);
         this->m_guestPoolOffset = 0;
@@ -160,12 +155,13 @@ void WasmSequencer ::configure(FwSizeType heapMemPageCount,
         this->m_guestPool = reinterpret_cast<U8*>(ptr);
     }
 
-    // The Wasm stack is allocated into the heap during store initialization
-    this->m_wasmStackSize = wasmStackSize;
+    // These are allocated into the heap during store initialization
+    this->m_wasmStackSize = cfg.stackSize;
+    this->m_wasmMaxCodePages = cfg.maxCodePages;
 
     // Allocate the serialOut buffer
-    if (serialOutMaxSize > 0) {
-        auto actualSize = serialOutMaxSize;
+    if (cfg.serialOutMax > 0) {
+        auto actualSize = cfg.serialOutMax;
         auto ptr = mallocator.checkedAllocate(static_cast<FwIndexType>(this->m_heapPageCount) + 2, actualSize);
         this->m_serialOutBuffer.setExtBuffer(reinterpret_cast<U8*>(ptr), actualSize);
     }
@@ -174,12 +170,12 @@ void WasmSequencer ::configure(FwSizeType heapMemPageCount,
     {
         Os::ScopeLock scopeLock(this->m_serialInMutex);
         for (FwIndexType i = 0; i < NUM_SERIALIN_INPUT_PORTS; i++) {
-            if (serialInQueueCfg.sizes[i] > 0) {
-                auto actualSize = serialInQueueCfg.sizes[i];
+            if (cfg.serialIn[i].size > 0) {
+                auto actualSize = cfg.serialIn[i].size;
                 auto ptr =
                     mallocator.checkedAllocate(static_cast<FwIndexType>(this->m_heapPageCount) + 3 + i, actualSize);
                 this->m_serialInQueue[i].setup(reinterpret_cast<U8*>(ptr), actualSize);
-                this->m_serialInFullBehavior[i] = serialInQueueCfg.fullBehavior[i];
+                this->m_serialInFullBehavior[i] = cfg.serialIn[i].fullBehavior;
             } else {
                 // Queue is zero size, always drop
                 this->m_serialInFullBehavior[i] = SerialInQueueFullBehavior::DROP_NEWEST;

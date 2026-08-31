@@ -22,10 +22,6 @@ namespace WasmSequencerConfig {
 constexpr FwSizeType SPACEWASM_PAGE_SIZE = WASM_SEQ_SPACEWASM_PAGE_SIZE;
 constexpr FwSizeType SPACEWASM_MAX_PAGES = WASM_SEQ_SPACEWASM_MAX_PAGES;
 
-/// Maximum number of compiled IR code pages allowed across all modules loaded onto
-/// a store (spacewasm_compiler_options_t `max_code_pages`).
-constexpr U32 MAX_CODE_PAGES = 256;
-
 /// The maximum number of Wasm modules allowed to load into the sequencer's store.
 /// If this sequencer does not have enough memory to dynamic allocate this store,
 /// the sequencer's preamble will trigger an assertion.

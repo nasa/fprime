@@ -166,7 +166,7 @@ void WasmSequencer ::createStore() {
     spacewasm_compiler_options_t options;
     options.allow_memory_grow = true;  // implemented in a restricted way (see guestRealloc)
     options.max_backpatch_iterations = Svc::WasmSequencerConfig::MAX_BACKPATCH_ITERATIONS;
-    options.max_code_pages = Svc::WasmSequencerConfig::MAX_CODE_PAGES;
+    options.max_code_pages = this->m_wasmMaxCodePages;
 
     status =
         spacewasm_new(&host, this->m_wasmStackSize, WasmSequencerConfig::MAX_GUEST_MODULES, options, &this->m_wasm);

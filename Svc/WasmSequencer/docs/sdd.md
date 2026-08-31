@@ -168,10 +168,10 @@ A module's exported globals can be printed in an event using `GLOBAL_GET` and wr
 
 `RUN` and `INVOKE` require an exported `main` function with the one following signatures:
 
-- `[] -> []`. In C: `void main()`. A sequence that returns from this function is counted as a successful run. Sequences with void returns can exist with failure by using the `exit` with a non-zero code or `panic` host functions.
+- `[] -> []`. In C: `void main()`. A sequence that returns from this function is counted as a successful run. Sequences with void returns can exit with failure by using the `exit` with a non-zero code or `panic` host functions.
 - `[] -> [i32]` In C: `int main()`. Supports `exit`/`panic` like the void return version. Returning from this function has the same behavior as `exit` (zero for success, non-zero for failure).
 
-`start` is optional and, if present, runs once before `main`. It is indended for host-side setup. It is the Wasm-spec `start` section (not a named export), so it can only be a guest-defined function, never a host import (checked at load time), and the spec fixes its signature at `[] -> []`. `LOAD` will execute the optional `start` function before completing.
+`start` is optional and, if present, runs once before `main`. It is indended for host-side setup. It is the Wasm-spec `start` section (not a named export), so it can only be a guest-defined function, never a host import (checked at load time), and the spec fixes its signature to `[] -> []`. `LOAD` will execute the optional `start` function before completing.
 
 ### State Machines
 
@@ -286,7 +286,7 @@ packet-beta
 16-31: "Memory A (16B)"
 ```
 
-Both of these behaviors are _NOT_ supported in WasmSequencer's guest allocator. In this scenario we would reject any Memory A `memory.grow` requests. Only Memory B growth requests are allowed. Guest memory growth failures emit an event noting the reason for the failure (not last memory or out of memory). This restriction allows `memory.grow` to always be O(1) time complexity and avoids any memory fragmentation.
+Both of these behaviors are _NOT_ supported in WasmSequencer's guest allocator. In this scenario we would reject any Memory A `memory.grow` requests. Only Memory B growth requests are allowed. Guest memory growth failures emit an event noting the reason for the failure (not last memory or out of memory). This restriction allows `memory.grow` to have O(1) time complexity and avoids any memory fragmentation.
 
 This means that only the _final_ allocated linear memory (usually in the last module) can actually service `memory.grow`s. For single module stores, there is no `memory.grow` restriction.
 
@@ -347,17 +347,17 @@ All commands are asynchronous except `CANCEL`, which is synchronous.
 
 A running sequence reaches the host through a single Wasm import module, `fprime_v1`. These imports are the programming interface exposed to guest programs. Exact signatures, parameter/return semantics, and status enums are declared in [`spacewasm_include/fprime.h`](../spacewasm_include/fprime.h), the canonical guest header a Wasm module is compiled against. The table below only summarizes intent.
 
-| Import              | Purpose                                                                                              |
-| ------------------- | ---------------------------------------------------------------------------------------------------- |
-| `exit` / `panic`    | End the sequence with an exit code / abort it with a panic code.                                     |
-| `args`              | Read the sequence's invocation arguments.                                                            |
-| `time`              | Read the current spacecraft time.                                                                    |
-| `tlm` / `prm`       | Read a telemetry channel / parameter value.                                                          |
-| `cmd`               | Dispatch an F´ command and await its response.                                                       |
-| `event`             | Emit a log event (non-reserved F´ severities only).                                                  |
-| `rsleep` / `asleep` | Sleep for a relative / absolute duration.                                                            |
-| `serial_send`       | Send bytes out a serial port. (See [serial ports](#serial-ports)).                                   |
-| `serial_recv`       | Read bytes from a serial input port (blocking or non-blocking). (See [serial ports](#serial-ports)). |
+| Import              | Purpose                                                                                                         |
+| ------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `exit` / `panic`    | End the sequence with an exit code / abort it with a panic code.                                                |
+| `args`              | Read the sequence's invocation arguments.                                                                       |
+| `time`              | Read the current spacecraft time.                                                                               |
+| `tlm` / `prm`       | Read a telemetry channel / parameter value.                                                                     |
+| `cmd`               | Dispatch an F´ command and await its response.                                                                  |
+| `event`             | Emit an F´ event the given string content. Only `WARNING_[LO/HI]`, `ACTIVITY_[LO/HI]` and `DIAGNOSTIC` allowed. |
+| `rsleep` / `asleep` | Sleep for a relative / absolute duration.                                                                       |
+| `serial_send`       | Send bytes out a serial port. (See [serial ports](#serial-ports)).                                              |
+| `serial_recv`       | Read bytes from a serial input port (blocking or non-blocking). (See [serial ports](#serial-ports)).            |
 
 Guest arguments are validated on every call; invalid input (bad pointers, oversized/undersized buffers, out-of-range or unconnected ports, reserved event severities) fails or traps the sequence and emits a warning event rather than faulting the host (WASM-SEQ-019).
 
@@ -378,9 +378,9 @@ When a command response times out, the sequence exits with failure. If the opera
 
 ## Serial Ports
 
-Most of the host functions in `fprime_v1` interface with F´ framework functionality. The two serial functions `serial_out` and `serial_recv` provide generic functionality where projects can interface with any other components in F´ outside of the base framework. This allows arbitrary data to be passed across the sequence/flight-software boundary as needed by a project.
+Most of the host functions in `fprime_v1` interface with F´ framework functionality. The two serial functions `serial_out` and `serial_recv` provide generic functionality where projects can interface with any other components in F´ outside of the interfaces of the base framework. This allows arbitrary data to be passed across the sequence/flight-software boundary as needed by a project.
 
-Serial ports (both in and out) utilize each index for a distinct purpose. There are a couple of patterns that are important to understand when using this functionality. This section will outline an example that show-cases these patterns.
+Serial ports (both in and out) can utilize each index for a distinct purpose. There are a couple of patterns that are important to understand when using this functionality. This section will outline an example that show-cases these patterns.
 
 In this example we will instantiate two WasmSequencer instances with different behaviors assigned to their serial ports. The first sequencer is responsible for performing a "visual odometry" for a rover and sending a pose refinement after tracking subsequent images. The second sequence is responsible to responding faults that are announced on an input.
 
@@ -447,24 +447,22 @@ instance voSeq: Svc.WasmSequencer base id 0x10007000 \
     stack size Default.STACK_SIZE \
     priority 20 {
         phase Fpp.ToCpp.Phases.configConstants """
-        // SerialInQueueConfig is default-constructed (all sizes 0) and then populated per port index.
-        Svc::WasmSequencer::SerialInQueueConfig queueConfig;
-        // Size the REPLY_IMAGE queue to hold a single image plus its 4-byte length frame.
-        queueConfig.sizes[VoSequencerInPorts::REPLY_IMAGE] = sizeof(U32) + ImageData::SERIALIZED_SIZE;
-        // Keep the latest image if an unprocessed one is still queued.
-        queueConfig.fullBehavior[VoSequencerInPorts::REPLY_IMAGE] =
-            Svc::WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST;
+        // Config is default-constructed and then populated field by field.
+        Svc::WasmSequencer::Config wasmConfig;
+        wasmConfig.heapPages       = Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES;
+        wasmConfig.guestMemorySize = ImageData::SERIALIZED_SIZE + 4096;  // an image plus guest scratch
+        wasmConfig.stackSize       = 256;   // 32-bit words
+        wasmConfig.serialOutMax    = 256;
+        // Size the REPLY_IMAGE queue to hold a single image plus its 4-byte length frame,
+        // and keep the latest image if an unprocessed one is still queued.
+        wasmConfig.serialIn[VoSequencerInPorts::REPLY_IMAGE] = {
+            /* size         */ sizeof(U32) + ImageData::SERIALIZED_SIZE,
+            /* fullBehavior */ Svc::WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST
+        };
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        voSeq.configure(
-            /* heapMemPageCount    */ Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES,
-            /* wasmGuestMemorySize */ ImageData::SERIALIZED_SIZE + 4096,  // an image plus guest scratch
-            /* wasmStackSize       */ 256,
-            /* serialOutMaxSize    */ 256,
-            ConfigObjects::voSeq::queueConfig,
-            mallocator
-        );
+        voSeq.configure(ConfigObjects::voSeq::wasmConfig, mallocator);
         """
     }
 
@@ -473,24 +471,21 @@ instance fpSeq: Svc.WasmSequencer base id 0x10008000 \
     stack size Default.STACK_SIZE \
     priority 20 {
         phase Fpp.ToCpp.Phases.configConstants """
-        Svc::WasmSequencer::SerialInQueueConfig queueConfig;
-        // Hold up to 10 FaultAnnouncement messages (each with its 4-byte length frame).
-        queueConfig.sizes[FpPortInPorts::FAULT_ANNOUNCEMENT] =
-            10 * (sizeof(U32) + FaultAnnouncement::SERIALIZED_SIZE);
-        // Assert if we don't process these messages fast enough!
-        queueConfig.fullBehavior[FpPortInPorts::FAULT_ANNOUNCEMENT] =
-            Svc::WasmSequencer::SerialInQueueFullBehavior::ASSERT;
+        Svc::WasmSequencer::Config wasmConfig;
+        wasmConfig.heapPages       = Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES;
+        wasmConfig.guestMemorySize = 4096;
+        wasmConfig.stackSize       = 256;   // 32-bit words
+        wasmConfig.serialOutMax    = 0;     // fpSeq only receives faults; no serialOut
+        // Hold up to 10 FaultAnnouncement messages (each with its 4-byte length frame),
+        // and assert if we don't process them fast enough!
+        wasmConfig.serialIn[FpPortInPorts::FAULT_ANNOUNCEMENT] = {
+            /* size         */ 10 * (sizeof(U32) + FaultAnnouncement::SERIALIZED_SIZE),
+            /* fullBehavior */ Svc::WasmSequencer::SerialInQueueFullBehavior::ASSERT
+        };
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        fpSeq.configure(
-            /* heapMemPageCount    */ Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES,
-            /* wasmGuestMemorySize */ 4096,
-            /* wasmStackSize       */ 256,
-            /* serialOutMaxSize    */ 0,   // fpSeq only receives faults; no serialOut
-            ConfigObjects::fpSeq::queueConfig,
-            mallocator
-        );
+        fpSeq.configure(ConfigObjects::fpSeq::wasmConfig, mallocator);
         """
     }
 
@@ -525,10 +520,15 @@ topology AwesomeTopology {
 This lengthy example show-cases three serial port patterns:
 
 1. Asynchronous send/reply using output and input serial ports
+   - `ACQUIRE_IMAGE` -> `REPLY_IMAGE`
 2. Synchronous port invocation using only an output serial port
+   - `VO_REFINE`
 3. Event-driven input queues using only an input serial port
+   - `FAULT_ANNOUNCEMENT`
 
-When using serial ports on WasmSequencer, size each `serialIn` queue and pick its overflow policy per that port's purpose through the `SerialInQueueConfig` passed to `configure()`: `DROP_OLDEST` for latest-value streams (e.g. imagery), `DROP_NEWEST` to preserve an existing backlog, or `ASSERT` for events that must never be dropped. `serialOut` carries no queue — a guest `serial_send` synchronously invokes the connected input port.
+When using serial ports on WasmSequencer, size each `serialIn` queue and pick its overflow policy per that port's purpose through the `serialIn[]` field of the `Config` passed to `configure()`: `DROP_OLDEST` for latest-value streams (e.g. imagery), `DROP_NEWEST` to preserve an existing backlog, or `ASSERT` for events that must never be dropped. `serialOut` carries no queue — a guest `serial_send` synchronously invokes the connected input port.
+
+The Wasm guest and host do not share address spaces. This means that pointers in Wasm (`i32`) are simply offsets in the respective linear memory not true pointers. Pointers from the host cannot be accessed by the guest. When passing data across the guest/host boundary, the data must be serialized by _value_ rather than by reference (no serializing addresses) otherwise the data will not be accessible from the other end.
 
 ## Parameters
 
@@ -548,17 +548,28 @@ WasmSequencer configuration has two layers: **per-instance runtime setup** throu
 
 ### Per-instance setup: `configure()`
 
-Each instance **must** be configured exactly once at setup — in the topology's `configComponents` phase, after `init()` and before the instance runs anything (see the [Serial Ports](#serial-ports) example). `configure()` allocates the instance's backing pools from the supplied `Fw::MemAllocator` (retained so the destructor can free them) and creates the initial interpreter store:
+Each instance **must** be configured exactly once at setup — in the topology's `configComponents` phase, after `init()` and before the instance runs anything (see the [Serial Ports](#serial-ports) example). `configure()` takes a single `Config` struct plus the allocator; it allocates the instance's backing pools from the supplied `Fw::MemAllocator` (retained so the destructor can free them) and creates the initial interpreter store:
 
 ```cpp
-void configure(
-    FwSizeType heapMemPageCount,              // interpreter-heap pages to allocate (<= SPACEWASM_MAX_PAGES)
-    FwSizeType wasmGuestMemorySize,           // bytes for the shared guest linear-memory pool
-    FwSizeType wasmStackSize,                 // Wasm operand-stack size in bytes (carved from the heap pool)
-    FwSizeType serialOutMaxSize,              // max serial_send payload; 0 leaves serialOut unconfigured
-    SerialInQueueConfig serialInQueueConfig,  // per-index serialIn queue size + overflow policy
-    Fw::MemAllocator& mallocator              // allocator for all of the above
-);
+void configure(const Config& cfg, Fw::MemAllocator& mallocator);
+```
+
+`Config` is default-constructed and then populated field by field. All fields have sensible defaults, so a minimal setup only overrides what it needs:
+
+```cpp
+struct SerialInQueueConfig {
+    FwSizeType                size         = 0;  // queue size in bytes; 0 = no queue
+    SerialInQueueFullBehavior fullBehavior = SerialInQueueFullBehavior::DROP_NEWEST;  // overflow policy
+};
+
+struct Config {
+    FwSizeType heapPages       = 8;      // interpreter-heap pages to allocate (<= SPACEWASM_MAX_PAGES)
+    FwSizeType guestMemorySize = 8192;   // bytes for the shared guest linear-memory pool
+    FwSizeType stackSize       = 1024;   // Wasm operand-stack size in 32-bit words (carved from the heap pool)
+    U32        maxCodePages    = 256;    // capacity of the code-page pointer table (see below)
+    FwSizeType serialOutMax    = 0;      // max serial_send payload; 0 leaves serialOut unconfigured
+    SerialInQueueConfig serialIn[NUM_SERIALIN_INPUT_PORTS];  // per-index queue size + overflow policy
+};
 ```
 
 For example, in an `instances.fpp`:
@@ -568,48 +579,64 @@ instance wasmSeq: Svc.WasmSequencer base id 0x10007000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 20 {
+      phase Fpp.ToCpp.Phases.configConstants """
+        Svc::WasmSequencer::Config wasmConfig;
+        wasmConfig.heapPages       = 4;
+        wasmConfig.guestMemorySize = 1024 * 8;
+        wasmConfig.stackSize       = 1024 * 2;   // 32-bit words
+        wasmConfig.serialOutMax    = 0;
+        // serialIn queues left at their defaults (all sizes 0)
+        """
       phase Fpp.ToCpp.Phases.configComponents """
-        wasmSeq.configure(
-            /* dynamicMemPageCount */ 4,
-            /* wasmGuestMemorySize */ 1024 * 8,
-            /* wasmStackSize */ 1024 * 2,
-            /* serialOutMaxSize */ 0,
-            /* serialInQueueConfig */ Svc::WasmSequencer::SerialInQueueConfig(),
-            memAllocator
-        );
+        wasmSeq.configure(ConfigObjects::wasmSeq::wasmConfig, memAllocator);
         """
     }
 ```
 
+To use the default settings (serial ports disabled)
 
-| Parameter             | Purpose                                                                                                                                           |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `heapMemPageCount`    | Number of `SPACEWASM_PAGE_SIZE` pages for the interpreter heap (store + compiled IR). Must be `<= SPACEWASM_MAX_PAGES`.                           |
-| `wasmGuestMemorySize` | Size in bytes of the guest linear-memory pool, shared by every loaded module (see [Guest Memory](#guest-memory)).                                 |
-| `wasmStackSize`       | Wasm operand-stack size in bytes, carved from the heap pool when the store is created.                                                            |
-| `serialOutMaxSize`    | Largest `serial_send` payload copied out of guest memory; a larger request traps the guest. `0` leaves `serialOut` unconfigured (any send traps). |
-| `serialInQueueConfig` | Per-`serialIn`-index queue size (bytes) and overflow policy; see below.                                                                           |
-| `mallocator`          | `Fw::MemAllocator` used for every allocation above; the same instance is retained and used to free the pools at destruction.                      |
+```fpp
+instance wasmSeq: Svc.WasmSequencer base id 0x10007000 \
+  queue size Default.QUEUE_SIZE \
+  stack size Default.STACK_SIZE \
+  priority 20 {
+    phase Fpp.ToCpp.Phases.configComponents """
+      wasmSeq.configure(Svc::WasmSequencer::Config(), memAllocator);
+      """
+  }
+```
 
-`SerialInQueueConfig` is default-constructed (every index size `0`, so unconfigured indices drop all inbound frames) and then populated per port index:
+
+| Field             | Purpose                                                                                                                                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `heapPages`       | Number of `SPACEWASM_PAGE_SIZE` pages for the interpreter heap (store + compiled IR). Must be `> 0` and `<= SPACEWASM_MAX_PAGES`.                                                                            |
+| `guestMemorySize` | Size in bytes of the guest linear-memory pool, shared by every loaded module (see [Guest Memory](#guest-memory)).                                                                                            |
+| `stackSize`       | Wasm operand-stack size in 32-bit words, carved from the heap pool when the store is created.                                                                                                                |
+| `maxCodePages`    | Capacity of the compiled-code-page pointer table across all loaded modules. Costs `maxCodePages * sizeof(void*)` in the heap pool up front; the code pages themselves (512 bytes each) are allocated lazily. |
+| `serialOutMax`    | Largest `serial_send` payload copied out of guest memory; a larger request traps the guest. `0` leaves `serialOut` unconfigured (any send traps).                                                            |
+| `serialIn`        | Per-`serialIn`-index queue config (`.size` in bytes, `.fullBehavior` policy). A `.size` of `0` leaves that index without a queue (all inbound frames on it are dropped). See below.                          |
+| `mallocator`      | `Fw::MemAllocator` used for every allocation above; the same instance is retained and used to free the pools at destruction.                                                                                 |
+
+Each `serialIn[]` element defaults to size `0` (unconfigured indices drop all inbound frames) and `DROP_NEWEST`, then is populated per port index:
 
 ```cpp
-Svc::WasmSequencer::SerialInQueueConfig cfg;
-cfg.sizes[PORT]        = /* bytes */;   // 0 leaves that index without a queue
-cfg.fullBehavior[PORT] = Svc::WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST;  // or DROP_NEWEST / ASSERT
+Svc::WasmSequencer::Config cfg;
+cfg.serialIn[PORT] = {
+    /* size         */ /* bytes */,   // 0 leaves that index without a queue
+    /* fullBehavior */ Svc::WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST  // or DROP_NEWEST / ASSERT
+};
 ```
 
 Each `serialIn` frame is stored framed as `[U32 length][payload]`, so size a queue as `N * (sizeof(U32) + maxPayload)` to hold `N` messages. The overflow policy applies when a new frame does not fit: `DROP_OLDEST` evicts oldest frames until it fits, `DROP_NEWEST` drops the incoming frame, and `ASSERT` faults the component (reserve this for ports where losing a message is a mission failure).
 
 ### `config/WasmSequencerConfig.hpp`
 
-C++ compile-time constants consumed directly by the component. Per-instance memory sizing — heap page count, guest pool size, Wasm stack size, serialOut buffer size, and each serialIn queue's size and overflow policy — is **not** compile-time; it is passed to `configure()` when the instance is set up (see the [Serial Ports](#serial-ports) example).
+C++ compile-time constants consumed directly by the component. Per-instance memory sizing — heap page count, guest pool size, Wasm stack size, code-page table capacity, serialOut buffer size, and each serialIn queue's size and overflow policy — is **not** compile-time; it is passed to `configure()` when the instance is set up (see the [Serial Ports](#serial-ports) example).
 
 | Constant                       | Value   | Purpose                                                                                     |
 | ------------------------------ | ------- | ------------------------------------------------------------------------------------------- |
 | `SPACEWASM_PAGE_SIZE`          | -       | Must map to `WASM_SEQ_SPACEWASM_PAGE_SIZE` in `WasmSequencerSpacewasmConfig.h` (see below). |
 | `SPACEWASM_MAX_PAGES`          | -       | Must map to `WASM_SEQ_SPACEWASM_MAX_PAGES` in `WasmSequencerSpacewasmConfig.h` (see below). |
-| `MAX_CODE_PAGES`               | `256`   | Maximum compiled code pages allowed across all modules loaded onto a store.                 |
 | `MAX_GUEST_MODULES`            | `8`     | Maximum modules loadable into a store.                                                      |
 | `MAX_BACKPATCH_ITERATIONS`     | `32768` | Upper bound on the control-flow backpatch-resolution loop during module load.               |
 | `LOAD_READ_CHUNK_SIZE`         | `512`   | Buffer size for streaming a module file into the decoder.                                   |
@@ -622,7 +649,7 @@ Shared preprocessor constants that must agree between the C++ component and the 
 | Constant                       | Value  | Purpose                                                                                                                                                                                                                         |
 | ------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `WASM_SEQ_SPACEWASM_PAGE_SIZE` | `8192` | Size in bytes of each page served to the spacewasm interpreter heap.                                                                                                                                                            |
-| `WASM_SEQ_SPACEWASM_MAX_PAGES` | `4`    | Maximum interpreter-heap pages a single instance may allocate; caps `configure()`'s `heapMemPageCount`                                                                                                                          |
+| `WASM_SEQ_SPACEWASM_MAX_PAGES` | `32`   | Maximum interpreter-heap pages a single instance may allocate; caps `configure()`'s `Config::heapPages`                                                                                                                         |
 | `WASM_SEQ_MAX_SEQUENCERS`      | `8`    | Maximum number of WasmSequencer instances that may register a global allocator slot process-wide (Rust `ALLOCATORS` array length). A component instantiated beyond this count fails allocator registration with `ERR_CAPACITY`. |
 
 ### `config/WasmSequencerCfg.fpp`

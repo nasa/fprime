@@ -57,41 +57,73 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         ASSERT,       //!< Trigger an assertion if the queue fills and cannot process another message
     };
 
-    //! Configuration struct for the serialIn queues
-    //!
-    //! Default-construct then populate per port index, e.g.
-    //! `SerialInQueueConfig cfg; cfg.sizes[0] = 256; cfg.fullBehavior[0] = SerialInQueueFullBehavior::DROP_OLDEST;`
-    //! A port left at size 0 gets no queue (all inbound frames on that index are dropped).
-    struct SerialInQueueConfig {
-        SerialInQueueConfig() : sizes{0}, fullBehavior{SerialInQueueFullBehavior::DROP_NEWEST} {}
-
-        FwSizeType sizes[NUM_SERIALIN_INPUT_PORTS];
-        SerialInQueueFullBehavior fullBehavior[NUM_SERIALIN_INPUT_PORTS];
-    };
-
     //! SpaceWasm has a hard-coded memory alignment requirement
     constexpr static FwSizeType SPACEWASM_MEMORY_ALIGNMENT = 8;
 
+    //! Heap pages must be able to hold IR pages (512 bytes) minimum
     //! type IrWord = U16
     //! type IrPage = [256] IrWord => sizeof(IrPage) == 512
     constexpr static FwSizeType SPACEWASM_IR_PAGE_SIZE = 512;
     static_assert(Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE >= SPACEWASM_IR_PAGE_SIZE,
                   "SpaceWasm does not support dynamic memory pages smaller than a single IR page (512 bytes)");
 
+    //! Per-port serialIn queue configuration.
+    struct SerialInQueueConfig {
+        //! Queue size in bytes. A port left at size 0 gets no queue (all inbound frames on that index are dropped).
+        FwSizeType size = 0;
+        //! Overflow policy applied when a new frame does not fit.
+        SerialInQueueFullBehavior fullBehavior = SerialInQueueFullBehavior::DROP_NEWEST;
+    };
+
+    //! Memory resource configuration for WasmSequencer.
+    //! See the [sizing guide](docs/sdd.md#sizing-guide) for how to configure this.
+    struct Config {
+        //! Number of `WASM_SEQ_SPACEWASM_PAGE_SIZE` pages to allocate
+        //! for the backing heap memory pool.
+        //! This is used for store the loaded Wasm modules and their IR (executable code)
+        //! but NOT for the guest memory (linear memory).
+        FwSizeType heapPages = 8;
+
+        //! Guest linear memory pool shared across all loaded modules
+        //! Note that a `.wasm` module will specify its linear memory size up-front in multiples of page-sizes
+        //! By default Wasm pages are 64k. if custom-page-sizes is enabled, page sizes are 1 byte.
+        FwSizeType guestMemorySize = 8192;
+
+        //! Wasm operand stack. The operand stack holds function parameters, locals and temporary operands.
+        //! When Wasm code calls another function, its frame will be pushed to the stack.
+        //!
+        //! This size is in units of 32-bit words.
+        //! The Wasm stack will be allocated from the heap memory pool
+        FwSizeType stackSize = 1024;
+
+        //! Allocates an empty list of pointers into the heap (i.e. sizeof(void*) * maxCodePages capacity).
+        //! A fixed capacity for holding decoded Wasm executable instructions in units of _Code Pages_.
+        //! Each page is 512 bytes (256 16-bit words) where each word holds a single resolved instruction (intermediate
+        //! representation - IR).
+        //!
+        //! This should be sized large enough to hold all the code pages you will need.
+        //! Note that this does not allocate the code pages themselves, it just incurs a `maxCodePages * sizeof(void*)`
+        //! allocates to the heap. From there, each code page (512 bytes) will be lazily allocated to the heap as needed
+        //! by .wasm modules.
+        //!
+        //! The larger this number is the higher overhead needed in the Wasm heap.
+        U32 maxCodePages = 256;
+
+        //! Size (in bytes) of the serialOut buffer used to copy a `serial_send` payload out of guest memory
+        //! before invoking the connected serialOut port. A value of 0 leaves serialOut unconfigured (disabled
+        //! serial_send).
+        FwSizeType serialOutMax = 0;
+
+        //! Per-port serialIn queue sizing and overflow policy. Default-construct the Config then populate
+        //! per port index, e.g.
+        //! `Config cfg; cfg.serialIn[0] = {256, SerialInQueueFullBehavior::DROP_OLDEST};`
+        //! A port left at size 0 gets no queue (all inbound frames on that index are dropped).
+        SerialInQueueConfig serialIn[NUM_SERIALIN_INPUT_PORTS];
+    };
+
     //! [REQUIRED] Configure and allocate the dynamic backing pools for heap memory, guest memory, Wasm stack,
     //! serialIn queues, and the serialOut buffer.
-    void configure(
-        FwSizeType heapMemPageCount,     //!< Number of `WASM_SEQ_SPACEWASM_PAGE_SIZE` pages to allocate
-                                         //!< for the backing dynamic memory pool
-        FwSizeType wasmGuestMemorySize,  //!< Size (in bytes) for the backing pool holding guest linear memory. This
-                                         //!< is shared across all modules loaded into the store.
-        FwSizeType wasmStackSize,     //!< Size of the WebAssembly stack in bytes. The Wasm stack is allocated into the
-                                      //!< heap memory pool.
-        FwSizeType serialOutMaxSize,  //!< Size of serialOut buffer for copying from guest memory and
-                                      //!< invoking serialOut_out
-        SerialInQueueConfig serialInQueueConfig,  //!< Size/queueFullBehavior of each serialIn port index
-        Fw::MemAllocator& mallocator              //!< MemAllocator for allocating buffers
-    );
+    void configure(const Config& cfg, Fw::MemAllocator& mallocator);
 
   private:
     // ----------------------------------------------------------------------
@@ -896,8 +928,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Current bump offset into `m_guestPool`.
     FwSizeType m_guestPoolOffset;
 
-    //! Wasm stack size in bytes. Stack is allocated into heap memory pool
+    //! Wasm stack size in 32-bit words. Stack is allocated into heap memory pool
     FwSizeType m_wasmStackSize;
+
+    //! Maximum number of code pages in the store to track.
+    //! This preallocates a Vec<Box<Page>> into the store (heap allocation).
+    U32 m_wasmMaxCodePages;
 
     //! Opaque handle to the spacewasm engine, or null (before the store is initialized).
     spacewasm_t* m_wasm;

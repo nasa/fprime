@@ -65,13 +65,16 @@ WasmSequencerTester ::~WasmSequencerTester() {
 }
 
 void WasmSequencerTester ::configureWith(const TestConfig& cfg) {
-    WasmSequencer::SerialInQueueConfig serialInCfg;
+    WasmSequencer::Config componentCfg;
+    componentCfg.heapPages = cfg.dynPages;
+    componentCfg.guestMemorySize = cfg.guestSize;
+    componentCfg.stackSize = cfg.stackSize;
+    componentCfg.serialOutMax = cfg.serialOutMax;
     for (FwIndexType i = 0; i < WasmSequencer::NUM_SERIALIN_INPUT_PORTS; i++) {
-        serialInCfg.sizes[i] = cfg.serialInSizes[i];
-        serialInCfg.fullBehavior[i] = cfg.serialInBehaviors[i];
+        componentCfg.serialIn[i].size = cfg.serialInSizes[i];
+        componentCfg.serialIn[i].fullBehavior = cfg.serialInBehaviors[i];
     }
-    this->component.configure(cfg.dynPages, cfg.guestSize, cfg.stackSize, cfg.serialOutMax, serialInCfg,
-                              this->m_allocator);
+    this->component.configure(componentCfg, this->m_allocator);
 }
 
 // ----------------------------------------------------------------------

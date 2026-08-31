@@ -18,7 +18,7 @@
 
 // Maximum number of interpreter-heap pages across all WasmSequencer instances
 // Individual sequencers can allocate fewer pages
-#define WASM_SEQ_SPACEWASM_MAX_PAGES 4
+#define WASM_SEQ_SPACEWASM_MAX_PAGES 32
 
 // Maximum number of WasmSequencer instances that may register a global
 // allocator slot process-wide. Backs the Rust ALLOCATORS array length; a
