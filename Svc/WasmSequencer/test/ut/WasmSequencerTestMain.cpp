@@ -4,9 +4,9 @@
 // \brief  cpp file for WasmSequencer component test main function
 // ======================================================================
 
+#include <Fw/Test/UnitTest.hpp>
 #include "WasmSequencerGTestBase.hpp"
 #include "WasmSequencerTester.hpp"
-#include <Fw/Test/UnitTest.hpp>
 
 #include <cstring>
 
@@ -4841,8 +4841,7 @@ TEST_F(WasmSequencerTester, GlobalSetAllTypesIndependent) {
 
 TEST_F(WasmSequencerTester, GlobalSetF64TypeMismatchEmitsFailure) {
     REQUIREMENT("WASM-SEQ-023");
-    
-    
+
     // Rounds out the SET-failure coverage: the F64 command must also emit
     // GlobalSetFailed on error, matching the I32/I64/F32 handlers. g_i32 is an
     // i32 global, so the F64 command's SPACEWASM_F64 tag is a type mismatch.
