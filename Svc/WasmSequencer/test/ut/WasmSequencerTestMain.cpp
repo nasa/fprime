@@ -6,6 +6,7 @@
 
 #include "WasmSequencerGTestBase.hpp"
 #include "WasmSequencerTester.hpp"
+#include <Fw/Test/UnitTest.hpp>
 
 #include <cstring>
 
@@ -51,8 +52,8 @@ TEST_F(WasmSequencerTester, InitialStateIsIdle) {
 // LOAD (nominal + failures)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadEmptyModuleReady) {
+    REQUIREMENT("WASM-SEQ-001");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -65,8 +66,8 @@ TEST_F(WasmSequencerTester, LoadEmptyModuleReady) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-004
 TEST_F(WasmSequencerTester, LoadResolvesAgainstSeqBaseDir) {
+    REQUIREMENT("WASM-SEQ-004");
     // With SEQ_BASE_DIR set, the base dir is prepended to the requested (bare) file
     // name. A base dir that already ends in '/' has no extra separator inserted, so a
     // base dir of "./" resolves "empty.wasm" -> "./empty.wasm" (copyAsset stages the
@@ -84,8 +85,8 @@ TEST_F(WasmSequencerTester, LoadResolvesAgainstSeqBaseDir) {
     ASSERT_EVENTS_FileOpenError_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-004
 TEST_F(WasmSequencerTester, LoadAgainstMissingBaseDirFailsToOpen) {
+    REQUIREMENT("WASM-SEQ-004");
     // A non-empty base dir that does not contain the file resolves to a path that
     // cannot be opened; the load fails with FileOpenError and returns to IDLE.
     this->paramSet_SEQ_BASE_DIR(Fw::ParamString("no_such_dir/"), Fw::ParamValid::VALID);
@@ -103,8 +104,8 @@ TEST_F(WasmSequencerTester, LoadAgainstMissingBaseDirFailsToOpen) {
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 12, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-// Requirement: WASM-SEQ-004
 TEST_F(WasmSequencerTester, LoadInsertsSeparatorForBaseDirWithoutTrailingSlash) {
+    REQUIREMENT("WASM-SEQ-004");
     // A base dir without a trailing '/' must still resolve to "<base>/<file>" rather
     // than concatenating verbatim ("<base><file>"). The verbatim join both mis-resolved
     // ordinary names and could escape the containment boundary ("seqs" + "_priv/x.wasm"
@@ -126,8 +127,8 @@ TEST_F(WasmSequencerTester, LoadInsertsSeparatorForBaseDirWithoutTrailingSlash) 
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 13, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-// Requirement: WASM-SEQ-004
 TEST_F(WasmSequencerTester, LoadRejectsPathTraversalOutsideBaseDir) {
+    REQUIREMENT("WASM-SEQ-004");
     // With SEQ_BASE_DIR configured it is a containment boundary: a ground-supplied
     // file name containing a ".." component could escape the base dir. The load is
     // rejected up front with SequenceFilePathNotContained (no open is attempted)
@@ -147,8 +148,9 @@ TEST_F(WasmSequencerTester, LoadRejectsPathTraversalOutsideBaseDir) {
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 20, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-// Requirement: WASM-SEQ-004
 TEST_F(WasmSequencerTester, SeqRunPathTooLongEmitsEvent) {
+    REQUIREMENT("WASM-SEQ-004");
+
     // Joining SEQ_BASE_DIR with a long file name overflows the internal file-path
     // buffer (Fw::String, 256 bytes). Command string args are too short to reach
     // that, so the RUN arrives over seqRunIn, which carries a longer file name. The
@@ -186,8 +188,8 @@ TEST_F(WasmSequencerTester, SeqRunPathTooLongEmitsEvent) {
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
 }
 
-// Requirement: WASM-SEQ-002
 TEST_F(WasmSequencerTester, LoadNamedModuleReady) {
+    REQUIREMENT("WASM-SEQ-002");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -199,8 +201,8 @@ TEST_F(WasmSequencerTester, LoadNamedModuleReady) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadStartModuleRespondsOk) {
+    REQUIREMENT("WASM-SEQ-001");
     // A LOAD whose module carries a (running) Wasm start function drives
     // STARTING -> startInvoked -> RUNNING and spins the start to completion. The
     // load command must be answered when the start finishes and we settle in
@@ -218,8 +220,9 @@ TEST_F(WasmSequencerTester, LoadStartModuleRespondsOk) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018, WASM-SEQ-021
 TEST_F(WasmSequencerTester, LoadStartModuleTrapRespondsError) {
+    REQUIREMENT("WASM-SEQ-018");
+    REQUIREMENT("WASM-SEQ-021");
     // The module's start function begins running then traps (unreachable). The
     // pending load command must receive EXECUTION_ERROR as we fall back to IDLE.
     StagedAsset file_asset(*this, "start_trap.wasm");
@@ -245,8 +248,8 @@ TEST_F(WasmSequencerTester, LoadStartModuleTrapRespondsError) {
     ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadStartModuleTwiceDoesNotWedge) {
+    REQUIREMENT("WASM-SEQ-001");
     // Regression: a LOAD-with-start must settle back in READY on completion so a
     // second LOAD-with-start is accepted rather than rejected as BUSY (the SM only
     // rejects load/run signals while a prior request is still in flight).
@@ -269,8 +272,8 @@ TEST_F(WasmSequencerTester, LoadStartModuleTwiceDoesNotWedge) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadFileNotFound) {
+    REQUIREMENT("WASM-SEQ-001");
     // No copyAsset: the file simply does not exist in the CWD.
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("does_not_exist.wasm");
@@ -287,8 +290,8 @@ TEST_F(WasmSequencerTester, LoadFileNotFound) {
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 12, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadMalformedMagic) {
+    REQUIREMENT("WASM-SEQ-001");
     StagedAsset file_asset(*this, "malformed.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 13, file, Fw::CmdStringArg(""));
@@ -302,8 +305,8 @@ TEST_F(WasmSequencerTester, LoadMalformedMagic) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadTruncated) {
+    REQUIREMENT("WASM-SEQ-001");
     StagedAsset file_asset(*this, "truncated.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 14, file, Fw::CmdStringArg(""));
@@ -316,8 +319,8 @@ TEST_F(WasmSequencerTester, LoadTruncated) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-003
 TEST_F(WasmSequencerTester, LoadBigMemFailsAllocator) {
+    REQUIREMENT("WASM-SEQ-003");
     // Requests more guest pages than the 2048-byte guest pool can back.
     StagedAsset file_asset(*this, "bigmem.wasm");
     const Fw::String& file = file_asset.file();
@@ -334,8 +337,8 @@ TEST_F(WasmSequencerTester, LoadBigMemFailsAllocator) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadBadImportNameFails) {
+    REQUIREMENT("WASM-SEQ-001");
     StagedAsset file_asset(*this, "bad_import_name.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 16, file, Fw::CmdStringArg(""));
@@ -348,8 +351,8 @@ TEST_F(WasmSequencerTester, LoadBadImportNameFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadBadImportModuleFails) {
+    REQUIREMENT("WASM-SEQ-001");
     StagedAsset file_asset(*this, "bad_import_module.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 17, file, Fw::CmdStringArg(""));
@@ -363,8 +366,8 @@ TEST_F(WasmSequencerTester, LoadBadImportModuleFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadBadImportSigFails) {
+    REQUIREMENT("WASM-SEQ-001");
     StagedAsset file_asset(*this, "bad_import_sig.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 18, file, Fw::CmdStringArg(""));
@@ -382,8 +385,8 @@ TEST_F(WasmSequencerTester, LoadBadImportSigFails) {
 // RUN (nominal completion, start functions, traps)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-007
 TEST_F(WasmSequencerTester, RunEmptyNoBlock) {
+    REQUIREMENT("WASM-SEQ-007");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -398,8 +401,8 @@ TEST_F(WasmSequencerTester, RunEmptyNoBlock) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-007
 TEST_F(WasmSequencerTester, RunEmptyBlock) {
+    REQUIREMENT("WASM-SEQ-007");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -413,8 +416,8 @@ TEST_F(WasmSequencerTester, RunEmptyBlock) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, RunStartModule) {
+    REQUIREMENT("WASM-SEQ-018");
     // Module with a `start` function that runs at instantiation.
     StagedAsset file_asset(*this, "start.wasm");
     const Fw::String& file = file_asset.file();
@@ -428,8 +431,8 @@ TEST_F(WasmSequencerTester, RunStartModule) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, RunNoMainFailsInvoke) {
+    REQUIREMENT("WASM-SEQ-001");
     // Valid module that exports `other` but not `main`.
     StagedAsset file_asset(*this, "no_main.wasm");
     const Fw::String& file = file_asset.file();
@@ -445,8 +448,8 @@ TEST_F(WasmSequencerTester, RunNoMainFailsInvoke) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, RunMainInvokeFails) {
+    REQUIREMENT("WASM-SEQ-018");
     // A module whose `main` declares more locals than fit the guest stack. main
     // has a valid [] -> [] signature so moduleHasValidMain passes, but
     // spacewasm_invoke fails at call setup (StackOverflow), taking the
@@ -467,8 +470,8 @@ TEST_F(WasmSequencerTester, RunMainInvokeFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, RunMainReturningNonZeroFails) {
+    REQUIREMENT("WASM-SEQ-018");
     // main has the [] -> i32 signature (the other form validateModuleMain
     // accepts) and returns a non-zero value (42). A non-zero return value is a
     // sequence failure, reported via SequenceExited carrying the returned code --
@@ -490,8 +493,8 @@ TEST_F(WasmSequencerTester, RunMainReturningNonZeroFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, RunUnreachableTraps) {
+    REQUIREMENT("WASM-SEQ-018");
     StagedAsset file_asset(*this, "unreachable.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -505,8 +508,8 @@ TEST_F(WasmSequencerTester, RunUnreachableTraps) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, RunDivZeroTraps) {
+    REQUIREMENT("WASM-SEQ-018");
     StagedAsset file_asset(*this, "divzero.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -519,8 +522,9 @@ TEST_F(WasmSequencerTester, RunDivZeroTraps) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018, WASM-SEQ-021
 TEST_F(WasmSequencerTester, RunExitNonZeroFails) {
+    REQUIREMENT("WASM-SEQ-018");
+    REQUIREMENT("WASM-SEQ-021");
     // exit.wasm calls fprime_v1.exit(1). A non-zero exit is a program failure,
     // surfaced as a ProgramExited event (not a trap) with an EXECUTION_ERROR.
     StagedAsset file_asset(*this, "exit.wasm");
@@ -542,8 +546,8 @@ TEST_F(WasmSequencerTester, RunExitNonZeroFails) {
     ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, RunPanicFails) {
+    REQUIREMENT("WASM-SEQ-018");
     // panic.wasm calls fprime_v1.panic(7). A panic is a program failure, surfaced
     // as a PanicOccurred event (not a trap).
     StagedAsset file_asset(*this, "panic.wasm");
@@ -559,8 +563,8 @@ TEST_F(WasmSequencerTester, RunPanicFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, RunExitZeroSucceeds) {
+    REQUIREMENT("WASM-SEQ-018");
     // exit0.wasm calls fprime_v1.exit(0). A zero exit code is a clean success:
     // no trap, no ProgramExited event, and an OK response.
     StagedAsset file_asset(*this, "exit0.wasm");
@@ -576,8 +580,9 @@ TEST_F(WasmSequencerTester, RunExitZeroSucceeds) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018, WASM-SEQ-021
 TEST_F(WasmSequencerTester, RunStartTrapsToIdle) {
+    REQUIREMENT("WASM-SEQ-018");
+    REQUIREMENT("WASM-SEQ-021");
     // A module whose `start` function contains `unreachable`. The interpreter
     // begins the start function (startInvoked -> RUNNING) and traps while
     // spinning, surfacing as a SequenceTrap and returning to IDLE with an
@@ -601,8 +606,9 @@ TEST_F(WasmSequencerTester, RunStartTrapsToIdle) {
     ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
 }
 
-// Requirement: WASM-SEQ-018, WASM-SEQ-021
 TEST_F(WasmSequencerTester, RunStartOverflowTrapsToIdle) {
+    REQUIREMENT("WASM-SEQ-018");
+    REQUIREMENT("WASM-SEQ-021");
     // A module whose `start` function declares more locals than fit the guest
     // stack. spacewasm_invoke_start fails at call setup (StackOverflow) and
     // returns SPACEWASM_RUN_TRAP *directly* -- exercising the startError branch
@@ -639,8 +645,8 @@ TEST_F(WasmSequencerTester, RunStartOverflowTrapsToIdle) {
 // INVOKE
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-006
 TEST_F(WasmSequencerTester, InvokeAfterLoad) {
+    REQUIREMENT("WASM-SEQ-006");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -660,8 +666,9 @@ TEST_F(WasmSequencerTester, InvokeAfterLoad) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-006, WASM-SEQ-018
 TEST_F(WasmSequencerTester, InvokeTrapAfterExitZeroIsNotMisreported) {
+    REQUIREMENT("WASM-SEQ-006");
+    REQUIREMENT("WASM-SEQ-018");
     // Regression: exit(0) returns the component to READY without resetting the
     // store, leaving the host exit disposition (HOST_EXIT/0) stale. A subsequent
     // invoke that genuinely traps must reset that disposition per-invoke so the
@@ -694,8 +701,9 @@ TEST_F(WasmSequencerTester, InvokeTrapAfterExitZeroIsNotMisreported) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-006, WASM-SEQ-007
 TEST_F(WasmSequencerTester, InvokeNoBlockRespondsImmediately) {
+    REQUIREMENT("WASM-SEQ-006");
+    REQUIREMENT("WASM-SEQ-007");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -713,8 +721,8 @@ TEST_F(WasmSequencerTester, InvokeNoBlockRespondsImmediately) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-006
 TEST_F(WasmSequencerTester, InvokeUnknownModule) {
+    REQUIREMENT("WASM-SEQ-006");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -733,8 +741,8 @@ TEST_F(WasmSequencerTester, InvokeUnknownModule) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-006
 TEST_F(WasmSequencerTester, InvokeFromIdleInvalid) {
+    REQUIREMENT("WASM-SEQ-006");
     // INVOKE is only valid from READY. From IDLE the controller rejects it as BUSY
     // (ControllerBusy for the COMMAND_INVOKE signal in the IDLE state).
     this->sendCmd_INVOKE(0, 34, Fw::CmdStringArg(""), NO_BLOCK, {});
@@ -750,8 +758,8 @@ TEST_F(WasmSequencerTester, InvokeFromIdleInvalid) {
 // WAIT
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-007
 TEST_F(WasmSequencerTester, WaitFromIdleRespondsImmediately) {
+    REQUIREMENT("WASM-SEQ-007");
     this->sendCmd_WAIT(0, 40);
     this->dispatchAll();
     ASSERT_CMD_RESPONSE(0, OPCODE_WAIT, 40, Fw::CmdResponse::OK);
@@ -759,8 +767,8 @@ TEST_F(WasmSequencerTester, WaitFromIdleRespondsImmediately) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-007
 TEST_F(WasmSequencerTester, WaitFromReadyRespondsImmediately) {
+    REQUIREMENT("WASM-SEQ-007");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 41, file, Fw::CmdStringArg(""));
@@ -774,8 +782,8 @@ TEST_F(WasmSequencerTester, WaitFromReadyRespondsImmediately) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-007
 TEST_F(WasmSequencerTester, WaitDuringLoadRespondsOnLoadComplete) {
+    REQUIREMENT("WASM-SEQ-007");
     // A WAIT that queues while a LOAD is in flight must be answered when the load settles to
     // READY. respond_noblock_OK is the LOAD's only completion action -- a LOAD never runs
     // main, so respond_block_OK/respond_block_ERROR never fire for it -- so it must drain
@@ -804,8 +812,8 @@ TEST_F(WasmSequencerTester, WaitDuringLoadRespondsOnLoadComplete) {
 // Invalid-state command rejections
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-009
 TEST_F(WasmSequencerTester, ContinueFromIdleInvalid) {
+    REQUIREMENT("WASM-SEQ-009");
     this->sendCmd_CONTINUE(0, 50);
     this->dispatchAll();
     ASSERT_EVENTS_SequenceNotRunning_SIZE(1);
@@ -815,8 +823,8 @@ TEST_F(WasmSequencerTester, ContinueFromIdleInvalid) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-009
 TEST_F(WasmSequencerTester, PauseFromIdleInvalid) {
+    REQUIREMENT("WASM-SEQ-009");
     this->sendCmd_PAUSE(0, 51);
     this->dispatchAll();
     ASSERT_EVENTS_SequenceNotRunning_SIZE(1);
@@ -830,8 +838,8 @@ TEST_F(WasmSequencerTester, PauseFromIdleInvalid) {
 // Static mapping helpers (direct unit tests)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-020
 TEST_F(WasmSequencerTester, MapTrapReasonAllCases) {
+    REQUIREMENT("WASM-SEQ-020");
     using TR = WasmSequencer_TrapReason;
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_UNREACHABLE), TR::UNREACHABLE);
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_HOST), TR::HOST);
@@ -857,8 +865,8 @@ TEST_F(WasmSequencerTester, MapTrapReasonAllCases) {
 // Host functions: EVENT
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-014
 TEST_F(WasmSequencerTester, EventActivityHi) {
+    REQUIREMENT("WASM-SEQ-014");
     StagedAsset file_asset(*this, "event.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -872,8 +880,9 @@ TEST_F(WasmSequencerTester, EventActivityHi) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-014, WASM-SEQ-019
 TEST_F(WasmSequencerTester, EventAllSeverities) {
+    REQUIREMENT("WASM-SEQ-014");
+    REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "event_all_sev.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -903,8 +912,9 @@ TEST_F(WasmSequencerTester, EventAllSeverities) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-014, WASM-SEQ-019
 TEST_F(WasmSequencerTester, EventMessageTruncatedToMax) {
+    REQUIREMENT("WASM-SEQ-014");
+    REQUIREMENT("WASM-SEQ-019");
     // The guest passes a 250-byte message length; the host clamps it to
     // FW_LOG_STRING_MAX_SIZE (200) before reading (wasmEvent len clamp). The
     // emitted event string is exactly 200 'A' characters.
@@ -927,8 +937,8 @@ TEST_F(WasmSequencerTester, EventMessageTruncatedToMax) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, EventBadSeverityReported) {
+    REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "event_bad_sev.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -950,8 +960,8 @@ TEST_F(WasmSequencerTester, EventBadSeverityReported) {
 // Host functions: TELEMETRY
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-012
 TEST_F(WasmSequencerTester, TelemetryRead) {
+    REQUIREMENT("WASM-SEQ-012");
     U8 raw[4] = {0x11, 0x22, 0x33, 0x44};
     this->nextTlmValue = Fw::TlmBuffer(raw, sizeof raw);
     this->nextTlmTime = Fw::Time(1000, 2000);
@@ -970,8 +980,8 @@ TEST_F(WasmSequencerTester, TelemetryRead) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TelemetryReadPortNotConnectedTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // getTlmChan is a plain (not-required) output port. With it disconnected, tlm()
     // must not invoke the generated invoker (which would FW_ASSERT); instead it logs
     // HostFunctionInvalidPort(TELEMETRY) and traps the sequence.
@@ -990,8 +1000,8 @@ TEST_F(WasmSequencerTester, TelemetryReadPortNotConnectedTraps) {
     ASSERT_from_getTlmChan_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, ParameterReadPortNotConnectedTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // getParam disconnected: prm() logs HostFunctionInvalidPort(PARAMETER) and traps.
     this->disconnectGetParam(0);
 
@@ -1007,8 +1017,8 @@ TEST_F(WasmSequencerTester, ParameterReadPortNotConnectedTraps) {
     ASSERT_from_getParam_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TelemetryReadIdNegativeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // A negative channel id cannot fit FwChanIdType (unsigned); tlm() must reject it
     // with HostFunctionInvalidId instead of truncating/aliasing another channel.
     StagedAsset file_asset(*this, "tlm_badid_negative.wasm");
@@ -1024,8 +1034,8 @@ TEST_F(WasmSequencerTester, TelemetryReadIdNegativeTraps) {
     ASSERT_from_getTlmChan_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TelemetryReadIdTooLargeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // A channel id one past FwChanIdType's (U32) range must be rejected with
     // HostFunctionInvalidId rather than silently wrapping to alias id 0.
     StagedAsset file_asset(*this, "tlm_badid_toolarge.wasm");
@@ -1040,8 +1050,8 @@ TEST_F(WasmSequencerTester, TelemetryReadIdTooLargeTraps) {
     ASSERT_from_getTlmChan_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, ParameterReadIdNegativeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // A negative parameter id cannot fit FwPrmIdType (unsigned); prm() must reject it
     // with HostFunctionInvalidId instead of truncating/aliasing another parameter.
     StagedAsset file_asset(*this, "prm_badid_negative.wasm");
@@ -1056,8 +1066,8 @@ TEST_F(WasmSequencerTester, ParameterReadIdNegativeTraps) {
     ASSERT_from_getParam_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, ParameterReadIdTooLargeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // A parameter id one past FwPrmIdType's (U32) range must be rejected with
     // HostFunctionInvalidId rather than silently wrapping to alias id 0.
     StagedAsset file_asset(*this, "prm_badid_toolarge.wasm");
@@ -1072,8 +1082,8 @@ TEST_F(WasmSequencerTester, ParameterReadIdTooLargeTraps) {
     ASSERT_from_getParam_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, CommandPortNotConnectedTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // cmdOut disconnected: cmd() logs HostFunctionInvalidPort(COMMAND) and traps.
     this->disconnectCmdOut(0);
 
@@ -1089,8 +1099,8 @@ TEST_F(WasmSequencerTester, CommandPortNotConnectedTraps) {
     ASSERT_from_cmdOut_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-012
 TEST_F(WasmSequencerTester, TelemetryReadValueMismatchTraps) {
+    REQUIREMENT("WASM-SEQ-012");
     U8 raw[4] = {0xDE, 0xAD, 0xBE, 0xEF};
     this->nextTlmValue = Fw::TlmBuffer(raw, sizeof raw);
     this->nextTlmTime = Fw::Time(1000, 2000);
@@ -1110,8 +1120,8 @@ TEST_F(WasmSequencerTester, TelemetryReadValueMismatchTraps) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "tlm_badtime.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_RUN(0, 71, file, BLOCK, {});
@@ -1127,8 +1137,8 @@ TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTraps) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTooLargeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "tlm_bigtime.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_RUN(0, 74, file, BLOCK, {});
@@ -1144,8 +1154,9 @@ TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTooLargeTraps) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-012, WASM-SEQ-019
 TEST_F(WasmSequencerTester, TelemetryOversizedRequestWritesOnlyValueBytes) {
+    REQUIREMENT("WASM-SEQ-012");
+    REQUIREMENT("WASM-SEQ-019");
     U8 raw[4] = {0x11, 0x22, 0x33, 0x44};
     this->nextTlmValue = Fw::TlmBuffer(raw, sizeof raw);
     this->nextTlmTime = Fw::Time(1000, 2000);
@@ -1165,8 +1176,8 @@ TEST_F(WasmSequencerTester, TelemetryOversizedRequestWritesOnlyValueBytes) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TelemetryUndersizedRequestFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // A value_size (2) smaller than the actual serialized value (4) is rejected at
     // dispatch with BufferTooSmall; nothing is written into guest memory.
     U8 raw[4] = {0x11, 0x22, 0x33, 0x44};
@@ -1193,8 +1204,8 @@ TEST_F(WasmSequencerTester, TelemetryUndersizedRequestFails) {
 // Host functions: PARAMETER
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-012
 TEST_F(WasmSequencerTester, ParameterRead) {
+    REQUIREMENT("WASM-SEQ-012");
     U8 raw[4] = {0xAA, 0xBB, 0xCC, 0xDD};
     this->nextPrmValue = Fw::ParamBuffer(raw, sizeof raw);
     this->nextPrmId = 7;
@@ -1212,8 +1223,8 @@ TEST_F(WasmSequencerTester, ParameterRead) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-012
 TEST_F(WasmSequencerTester, ParameterReadValueMismatchTraps) {
+    REQUIREMENT("WASM-SEQ-012");
     U8 raw[4] = {0x00, 0x11, 0x22, 0x33};
     this->nextPrmValue = Fw::ParamBuffer(raw, sizeof raw);
     this->nextPrmId = 7;
@@ -1232,8 +1243,9 @@ TEST_F(WasmSequencerTester, ParameterReadValueMismatchTraps) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-012, WASM-SEQ-019
 TEST_F(WasmSequencerTester, ParameterOversizedRequestWritesOnlyValueBytes) {
+    REQUIREMENT("WASM-SEQ-012");
+    REQUIREMENT("WASM-SEQ-019");
     // Mirror of TelemetryOversizedRequestWritesOnlyValueBytes: an oversized len (64)
     // for a 4-byte value writes only the real value bytes. prm_toobig poisons the byte
     // past the value and traps unless it survives, so success proves no stack leak.
@@ -1255,8 +1267,8 @@ TEST_F(WasmSequencerTester, ParameterOversizedRequestWritesOnlyValueBytes) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, ParameterUndersizedRequestFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // A len (2) smaller than the actual serialized value (4) is rejected at dispatch
     // with BufferTooSmall; nothing is written into guest memory.
     U8 raw[4] = {0xAA, 0xBB, 0xCC, 0xDD};
@@ -1281,8 +1293,8 @@ TEST_F(WasmSequencerTester, ParameterUndersizedRequestFails) {
 // Host functions: ARGS (sequence arguments host->guest round trip)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-005
 TEST_F(WasmSequencerTester, ArgsRoundTrip) {
+    REQUIREMENT("WASM-SEQ-005");
     // The RUN command carries the sequence arguments; the guest args() host call reads
     // them back into linear memory. args.wasm requests a 64-byte buffer, verifies the
     // returned count is 4, that the injected pattern round-trips verbatim, and that the
@@ -1302,8 +1314,8 @@ TEST_F(WasmSequencerTester, ArgsRoundTrip) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-005
 TEST_F(WasmSequencerTester, ArgsRoundTripMismatchTraps) {
+    REQUIREMENT("WASM-SEQ-005");
     // Negative control: inject a different pattern than args.wasm hard-codes. The guest
     // reads the args back, sees the mismatch, and traps (UNREACHABLE). This proves the
     // round-trip check in ArgsRoundTrip is real: if the host dropped the args, this test
@@ -1323,8 +1335,8 @@ TEST_F(WasmSequencerTester, ArgsRoundTripMismatchTraps) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-005
 TEST_F(WasmSequencerTester, ArgsEmpty) {
+    REQUIREMENT("WASM-SEQ-005");
     // No arguments supplied (default-constructed SeqArgs, size 0). args_empty.wasm
     // asserts the returned count is 0 and that nothing was written to guest memory.
     StagedAsset file_asset(*this, "args_empty.wasm");
@@ -1338,8 +1350,8 @@ TEST_F(WasmSequencerTester, ArgsEmpty) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, ArgsUndersizedBufferFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // The guest declares a 2-byte buffer but 4 arg bytes are present. Writing them would
     // overrun the guest's intent, so the host rejects it at dispatch with
     // BufferTooSmall(ARGS, 2, 4) -> SequenceTrapped, writing nothing to guest memory.
@@ -1358,8 +1370,8 @@ TEST_F(WasmSequencerTester, ArgsUndersizedBufferFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, ArgsBadPointerFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // The guest declares an ample buffer (passes the too-small guard) but points args()
     // at an out-of-bounds address. The mem_write fails ->
     // HostFunctionInvalidPointer(ARGS) -> SequenceTrapped.
@@ -1379,8 +1391,8 @@ TEST_F(WasmSequencerTester, ArgsBadPointerFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-005
 TEST_F(WasmSequencerTester, ArgsMixedStructRoundTrip) {
+    REQUIREMENT("WASM-SEQ-005");
     // Fill the argument buffer to its maximum (SequenceArgumentsMaxSize) with a mixed,
     // packed little-endian struct and validate every field round-trips. This exercises
     // the host->guest arg copy at the full buffer size across differently-sized fields:
@@ -1410,8 +1422,8 @@ TEST_F(WasmSequencerTester, ArgsMixedStructRoundTrip) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, ArgsOversizedSizeRejected) {
+    REQUIREMENT("WASM-SEQ-019");
     // Regression for a host-memory out-of-bounds read (CWE-125). SeqArgs carries a
     // ground-controlled $size next to a fixed SequenceArgumentsMaxSize (12) byte buffer, and
     // $size is deserialized without clamping. A crafted RUN whose $size exceeds the buffer
@@ -1445,8 +1457,8 @@ TEST_F(WasmSequencerTester, ArgsOversizedSizeRejected) {
 // Time host function (fprime.time)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-012
 TEST_F(WasmSequencerTester, TimeRead) {
+    REQUIREMENT("WASM-SEQ-012");
     // The guest calls time(0, SERIALIZED_SIZE) into a valid buffer. The host
     // getTime()s the injected test time, serializes it into guest memory, and
     // resumes. A clean SequenceSucceeded proves the TIME host function round trip.
@@ -1463,8 +1475,8 @@ TEST_F(WasmSequencerTester, TimeRead) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TimeBadPointerFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // The guest requests a valid time_size but points time() at an out-of-bounds
     // address. The size guards pass; the service block's mem_write then fails ->
     // HostFunctionInvalidPointer(TIME) -> SequenceTrapped.
@@ -1481,8 +1493,8 @@ TEST_F(WasmSequencerTester, TimeBadPointerFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TimeBadSizeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // The guest requests a time_size of 8 < Fw::Time::SERIALIZED_SIZE (11), which
     // cannot hold the serialized time. wasmTime rejects it up front with
     // BufferTooSmall(TIME, 8, 11) -> TRAP (HOST trap reason); nothing is written.
@@ -1499,8 +1511,8 @@ TEST_F(WasmSequencerTester, TimeBadSizeTraps) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TimeBadSizeTooLargeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // The guest requests a time_size of 16 > Fw::Time::SERIALIZED_SIZE (11), which
     // must match exactly. wasmTime rejects it up front with
     // BufferTooLarge(TIME, 16, 11) -> TRAP (HOST trap reason); nothing is written.
@@ -1521,8 +1533,9 @@ TEST_F(WasmSequencerTester, TimeBadSizeTooLargeTraps) {
 // Telemetry channels (populated by the counters, flushed via writeTelemetry)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-020, WASM-SEQ-021
 TEST_F(WasmSequencerTester, TelemetryInitialDefaults) {
+    REQUIREMENT("WASM-SEQ-020");
+    REQUIREMENT("WASM-SEQ-021");
     // A fresh component reports zeroed counters, IDLE state, no trap, empty name.
     this->flushTelemetry();
 
@@ -1547,8 +1560,8 @@ TEST_F(WasmSequencerTester, TelemetryInitialDefaults) {
     ASSERT_TLM_SeqName_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-020
 TEST_F(WasmSequencerTester, TelemetryInterpreterStateReflectsEngine) {
+    REQUIREMENT("WASM-SEQ-020");
     // The InterpreterState channel must report the *interpreter* state machine's
     // state, which is distinct from ControllerState. Guard against a copy-paste
     // transpose (writing controller_getState() into the InterpreterState channel, or
@@ -1570,8 +1583,9 @@ TEST_F(WasmSequencerTester, TelemetryInterpreterStateReflectsEngine) {
     this->dispatchUntilControllerState(ControllerState::IDLE);
 }
 
-// Requirement: WASM-SEQ-020, WASM-SEQ-021
 TEST_F(WasmSequencerTester, TelemetrySuccessCountAndName) {
+    REQUIREMENT("WASM-SEQ-020");
+    REQUIREMENT("WASM-SEQ-021");
     // A completed RUN increments SequencesSucceeded, leaves the component READY, and
     // records the sequence name as the filename stem (empty.wasm -> "empty").
     StagedAsset file_asset(*this, "empty.wasm");
@@ -1594,8 +1608,8 @@ TEST_F(WasmSequencerTester, TelemetrySuccessCountAndName) {
     ASSERT_EVENTS_SequenceStarting(0, 0);
 }
 
-// Requirement: WASM-SEQ-021
 TEST_F(WasmSequencerTester, TelemetrySuccessCountAccumulates) {
+    REQUIREMENT("WASM-SEQ-021");
     // Counters are cumulative across sequences: two successful runs -> 2.
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
@@ -1616,8 +1630,8 @@ TEST_F(WasmSequencerTester, TelemetrySuccessCountAccumulates) {
     ASSERT_TLM_SequencesFailed(0, static_cast<U64>(0));
 }
 
-// Requirement: WASM-SEQ-020
 TEST_F(WasmSequencerTester, TelemetryLoadNameRecordsModuleName) {
+    REQUIREMENT("WASM-SEQ-020");
     // LOAD records the user-provided module name verbatim (not the filename).
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
@@ -1629,8 +1643,8 @@ TEST_F(WasmSequencerTester, TelemetryLoadNameRecordsModuleName) {
     ASSERT_TLM_SeqName(0, "mod");
 }
 
-// Requirement: WASM-SEQ-021
 TEST_F(WasmSequencerTester, TelemetryFailedCount) {
+    REQUIREMENT("WASM-SEQ-021");
     // A no-main module fails to invoke -> SequencesFailed increments, others stay 0.
     StagedAsset file_asset(*this, "no_main.wasm");
     const Fw::String& file = file_asset.file();
@@ -1644,8 +1658,9 @@ TEST_F(WasmSequencerTester, TelemetryFailedCount) {
     ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::NONE);
 }
 
-// Requirement: WASM-SEQ-020, WASM-SEQ-021
 TEST_F(WasmSequencerTester, TelemetryTrapRecordsReasonAndFails) {
+    REQUIREMENT("WASM-SEQ-020");
+    REQUIREMENT("WASM-SEQ-021");
     // A trap records LastTrapReason and counts as a failed sequence.
     StagedAsset file_asset(*this, "unreachable.wasm");
     const Fw::String& file = file_asset.file();
@@ -1660,8 +1675,8 @@ TEST_F(WasmSequencerTester, TelemetryTrapRecordsReasonAndFails) {
     ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::UNREACHABLE);
 }
 
-// Requirement: WASM-SEQ-020
 TEST_F(WasmSequencerTester, LastTrapReasonClearedAcrossSequences) {
+    REQUIREMENT("WASM-SEQ-020");
     // LastTrapReason must reflect only the current sequence. A trap records UNREACHABLE;
     // a subsequent clean run must reset it to NONE (clearExitStatus at RUNNING entry),
     // so stale trap telemetry never leaks from a prior sequence into a later one.
@@ -1680,8 +1695,8 @@ TEST_F(WasmSequencerTester, LastTrapReasonClearedAcrossSequences) {
     ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::NONE);
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, LastHostFunctionClearedAcrossSequences) {
+    REQUIREMENT("WASM-SEQ-018");
     // lastHostFunction (reported in SequenceHostFailure) must reflect only the current
     // sequence. Sequence A fails inside the COMMAND host function, leaving
     // lastHostFunction = COMMAND. Sequence B then fails via an unexpected reply while
@@ -1706,8 +1721,9 @@ TEST_F(WasmSequencerTester, LastHostFunctionClearedAcrossSequences) {
                                       WasmSequencer_ExitReason::UNEXPECTED_REPLY, WasmSequencer_HostFunction::NONE);
 }
 
-// Requirement: WASM-SEQ-010, WASM-SEQ-021
 TEST_F(WasmSequencerTester, TelemetryCancelledCount) {
+    REQUIREMENT("WASM-SEQ-010");
+    REQUIREMENT("WASM-SEQ-021");
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -1724,8 +1740,9 @@ TEST_F(WasmSequencerTester, TelemetryCancelledCount) {
     ASSERT_TLM_SequencesFailed(0, static_cast<U64>(0));
 }
 
-// Requirement: WASM-SEQ-013, WASM-SEQ-021
 TEST_F(WasmSequencerTester, TelemetryCommandsDispatchedAndFailed) {
+    REQUIREMENT("WASM-SEQ-013");
+    REQUIREMENT("WASM-SEQ-021");
     // cmd.wasm dispatches one command out cmdOut; feeding a non-OK response bumps
     // CommandsFailed while CommandsDispatched counts the dispatch.
     StagedAsset file_asset(*this, "cmd.wasm");
@@ -1744,8 +1761,9 @@ TEST_F(WasmSequencerTester, TelemetryCommandsDispatchedAndFailed) {
     ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(1));
 }
 
-// Requirement: WASM-SEQ-013, WASM-SEQ-021
 TEST_F(WasmSequencerTester, TelemetryCommandOkDoesNotCountFailed) {
+    REQUIREMENT("WASM-SEQ-013");
+    REQUIREMENT("WASM-SEQ-021");
     // An OK command response dispatches but does not increment CommandsFailed.
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
@@ -1765,8 +1783,8 @@ TEST_F(WasmSequencerTester, TelemetryCommandOkDoesNotCountFailed) {
 // Host functions: COMMAND (byte-fidelity of guest bytes -> cmdOut ComBuffer)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, CommandByteFidelityAndResume) {
+    REQUIREMENT("WASM-SEQ-013");
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -1804,8 +1822,8 @@ TEST_F(WasmSequencerTester, CommandByteFidelityAndResume) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, CommandTooBigTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "cmd_toobig.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_RUN(0, 91, file, BLOCK, {});
@@ -1822,8 +1840,8 @@ TEST_F(WasmSequencerTester, CommandTooBigTraps) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, UnexpectedCmdResponseFromIdle) {
+    REQUIREMENT("WASM-SEQ-013");
     // A cmdResponseIn while not awaiting a response is "unexpected". From IDLE
     // the state machine raises stmtUnexpected; it must not crash.
     this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
@@ -1836,8 +1854,8 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseFromIdle) {
 // Host-function invalid-pointer error paths (guest passes an OOB pointer)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, CommandBadPointerFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // cmd() with an out-of-bounds buffer pointer: spacewasm_mem_read fails ->
     // HostFunctionInvalidPointer(COMMAND) -> stmtFailure -> IDLE.
     StagedAsset file_asset(*this, "cmd_badptr.wasm");
@@ -1861,8 +1879,8 @@ TEST_F(WasmSequencerTester, CommandBadPointerFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, EventBadPointerFails) {
+    REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "event_badptr.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_RUN(0, 93, file, BLOCK, {});
@@ -1876,8 +1894,8 @@ TEST_F(WasmSequencerTester, EventBadPointerFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, ParameterBadPointerFails) {
+    REQUIREMENT("WASM-SEQ-019");
     U8 raw[4] = {0xAA, 0xBB, 0xCC, 0xDD};
     this->nextPrmValue = Fw::ParamBuffer(raw, sizeof raw);
     this->nextPrmId = 7;
@@ -1898,8 +1916,8 @@ TEST_F(WasmSequencerTester, ParameterBadPointerFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, TelemetryBadTimePointerFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // The time write (first mem_write) fails on an OOB time pointer.
     U8 raw[4] = {0x11, 0x22, 0x33, 0x44};
     this->nextTlmValue = Fw::TlmBuffer(raw, sizeof raw);
@@ -1922,8 +1940,9 @@ TEST_F(WasmSequencerTester, TelemetryBadTimePointerFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-012, WASM-SEQ-019
 TEST_F(WasmSequencerTester, TelemetryBadValuePointerFails) {
+    REQUIREMENT("WASM-SEQ-012");
+    REQUIREMENT("WASM-SEQ-019");
     // The time write succeeds but the value write (second mem_write) fails on an
     // OOB value pointer.
     U8 raw[4] = {0x11, 0x22, 0x33, 0x44};
@@ -1951,8 +1970,8 @@ TEST_F(WasmSequencerTester, TelemetryBadValuePointerFails) {
 // Sleep host functions + checkTimers wake path
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-015
 TEST_F(WasmSequencerTester, RelativeSleepWakes) {
+    REQUIREMENT("WASM-SEQ-015");
     StagedAsset file_asset(*this, "rsleep.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -1979,8 +1998,8 @@ TEST_F(WasmSequencerTester, RelativeSleepWakes) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-015
 TEST_F(WasmSequencerTester, RelativeSleepDeadlineOverflowDoesNotWakeEarly) {
+    REQUIREMENT("WASM-SEQ-015");
     // Regression for the relative-sleep deadline overflow: a duration whose whole-seconds
     // part is U32_MAX passes the wasmRsleep gate but, added to a non-zero current time,
     // overflows the U32 seconds field of Fw::Time. The deadline must saturate to the far
@@ -2007,8 +2026,8 @@ TEST_F(WasmSequencerTester, RelativeSleepDeadlineOverflowDoesNotWakeEarly) {
     ASSERT_TRUE(this->hasPendingTimer());
 }
 
-// Requirement: WASM-SEQ-015
 TEST_F(WasmSequencerTester, AbsoluteSleepWakes) {
+    REQUIREMENT("WASM-SEQ-015");
     StagedAsset file_asset(*this, "asleep.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -2025,8 +2044,8 @@ TEST_F(WasmSequencerTester, AbsoluteSleepWakes) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-015
 TEST_F(WasmSequencerTester, SleepTimeBaseMismatchFails) {
+    REQUIREMENT("WASM-SEQ-015");
     StagedAsset file_asset(*this, "rsleep.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -2046,8 +2065,8 @@ TEST_F(WasmSequencerTester, SleepTimeBaseMismatchFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SleepDurationOverflowFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // A guest sleep whose whole-seconds part (micros / 1e6) overflows the U32
     // seconds field of Fw::Time is rejected up front by wasmRsleep with
     // SleepDurationTooLarge -> TRAP (HOST trap reason), rather than silently
@@ -2065,8 +2084,8 @@ TEST_F(WasmSequencerTester, SleepDurationOverflowFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, AbsoluteSleepDurationOverflowFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // Absolute-sleep analogue of SleepDurationOverflowFails: an asleep() whose
     // whole-seconds part (micros / 1e6) overflows the U32 seconds field of Fw::Time
     // is rejected by wasmAsleep with SleepDurationTooLarge(ASLEEP) -> TRAP; the
@@ -2088,8 +2107,8 @@ TEST_F(WasmSequencerTester, AbsoluteSleepDurationOverflowFails) {
 // PAUSE / CONTINUE / CANCEL across the run state machine (loop.wasm)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-009
 TEST_F(WasmSequencerTester, PauseThenContinueCompletes) {
+    REQUIREMENT("WASM-SEQ-009");
     // Tiny fuel makes the busy-loop span many OUT_OF_FUEL cycles so PAUSE can
     // land between host-function dispatches deterministically.
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
@@ -2117,8 +2136,9 @@ TEST_F(WasmSequencerTester, PauseThenContinueCompletes) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-008, WASM-SEQ-010
 TEST_F(WasmSequencerTester, CancelWhileSpinning) {
+    REQUIREMENT("WASM-SEQ-008");
+    REQUIREMENT("WASM-SEQ-010");
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -2136,8 +2156,8 @@ TEST_F(WasmSequencerTester, CancelWhileSpinning) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-010
 TEST_F(WasmSequencerTester, CancelWhilePaused) {
+    REQUIREMENT("WASM-SEQ-010");
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -2155,8 +2175,8 @@ TEST_F(WasmSequencerTester, CancelWhilePaused) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-010
 TEST_F(WasmSequencerTester, CancelWhileAwaitingResponse) {
+    REQUIREMENT("WASM-SEQ-010");
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_RUN(0, 125, file, BLOCK, {});
@@ -2172,8 +2192,8 @@ TEST_F(WasmSequencerTester, CancelWhileAwaitingResponse) {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-010
 TEST_F(WasmSequencerTester, CancelFromReadyReturnsIdle) {
+    REQUIREMENT("WASM-SEQ-010");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 130, file, Fw::CmdStringArg(""));
@@ -2185,8 +2205,9 @@ TEST_F(WasmSequencerTester, CancelFromReadyReturnsIdle) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-003, WASM-SEQ-010
 TEST_F(WasmSequencerTester, CancelFromIdleStaysIdle) {
+    REQUIREMENT("WASM-SEQ-003");
+    REQUIREMENT("WASM-SEQ-010");
     // CANCEL from IDLE is a self-transition back to IDLE (cmd_CANCEL IDLE branch): it
     // re-enters IDLE (resetStore) without emitting a cancellation and does not crash.
     this->sendCmd_CANCEL(0, 132);
@@ -2203,8 +2224,8 @@ TEST_F(WasmSequencerTester, CancelFromIdleStaysIdle) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-010
 TEST_F(WasmSequencerTester, CancelCommandFromIdleRespondsOk) {
+    REQUIREMENT("WASM-SEQ-010");
     // The CANCEL command is answered by the interpreter state machine (signal cmdCancel -> action
     // cmdReplyOK). From IDLE, cmdCancel replies OK without leaving IDLE. This guards that the operator
     // receives a response for CANCEL (a dropped/unhandled signal would hang the command).
@@ -2216,8 +2237,8 @@ TEST_F(WasmSequencerTester, CancelCommandFromIdleRespondsOk) {
     ASSERT_CMD_RESPONSE(0, OPCODE_CANCEL, 400, Fw::CmdResponse::OK);
 }
 
-// Requirement: WASM-SEQ-010
 TEST_F(WasmSequencerTester, CancelCommandWhileRunningRespondsOk) {
+    REQUIREMENT("WASM-SEQ-010");
     // From RUNNING, the interpreter cmdCancel transition sets the CANCEL exit reason, replies OK via
     // cmdReplyOK, and returns to IDLE. Asserts the operator's CANCEL is acknowledged with OK, in
     // addition to the sequence emitting a cancellation.
@@ -2251,8 +2272,9 @@ TEST_F(WasmSequencerTester, CancelCommandWhileRunningRespondsOk) {
 // the divert fires deterministically.
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-010, WASM-SEQ-021
 TEST_F(WasmSequencerTester, RunCancelledDuringLoadDiverts) {
+    REQUIREMENT("WASM-SEQ-010");
+    REQUIREMENT("WASM-SEQ-021");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -2279,8 +2301,9 @@ TEST_F(WasmSequencerTester, RunCancelledDuringLoadDiverts) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-010, WASM-SEQ-021
 TEST_F(WasmSequencerTester, LoadCancelledDuringLoadDiverts) {
+    REQUIREMENT("WASM-SEQ-010");
+    REQUIREMENT("WASM-SEQ-021");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -2298,8 +2321,9 @@ TEST_F(WasmSequencerTester, LoadCancelledDuringLoadDiverts) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-010, WASM-SEQ-021
 TEST_F(WasmSequencerTester, InvokeCancelledDuringInvokingDiverts) {
+    REQUIREMENT("WASM-SEQ-010");
+    REQUIREMENT("WASM-SEQ-021");
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -2325,8 +2349,9 @@ TEST_F(WasmSequencerTester, InvokeCancelledDuringInvokingDiverts) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-010, WASM-SEQ-021
 TEST_F(WasmSequencerTester, RunWithStartCancelledInStartMainGapDiverts) {
+    REQUIREMENT("WASM-SEQ-010");
+    REQUIREMENT("WASM-SEQ-021");
     // start.wasm has both a start function and a main. A CANCEL latched after the
     // start finishes but before main is invoked (the interpreter-idle start->main gap)
     // must prevent main from running. Regression guard for the RUNNING_START_PENDING_MAIN
@@ -2362,8 +2387,9 @@ TEST_F(WasmSequencerTester, RunWithStartCancelledInStartMainGapDiverts) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-010, WASM-SEQ-021
 TEST_F(WasmSequencerTester, CancelAfterEngineRunningCountsOnce) {
+    REQUIREMENT("WASM-SEQ-010");
+    REQUIREMENT("WASM-SEQ-021");
     // A CANCEL after the engine is already RUNNING is handled by the interpreter path
     // (not the load-window latch); it must still count exactly once.
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
@@ -2383,8 +2409,9 @@ TEST_F(WasmSequencerTester, CancelAfterEngineRunningCountsOnce) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-010, WASM-SEQ-021
 TEST_F(WasmSequencerTester, CancelLatchDoesNotLeak) {
+    REQUIREMENT("WASM-SEQ-010");
+    REQUIREMENT("WASM-SEQ-021");
     // After a divert, the cancel latch is cleared by the next attempt: a subsequent
     // RUN of a good module runs to success rather than being spuriously diverted.
     StagedAsset file_asset(*this, "empty.wasm");
@@ -2411,8 +2438,9 @@ TEST_F(WasmSequencerTester, CancelLatchDoesNotLeak) {
     ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(1));  // the second attempt
 }
 
-// Requirement: WASM-SEQ-010, WASM-SEQ-021
 TEST_F(WasmSequencerTester, SeqCancelInDuringLoadDiverts) {
+    REQUIREMENT("WASM-SEQ-010");
+    REQUIREMENT("WASM-SEQ-021");
     // The seqCancelIn port latches a cancel during load like the CANCEL command. A
     // port-sourced RUN cancelled before it runs emits no cmdResponse and neither
     // seqStartOut nor seqDoneOut (the pair stays balanced, as on the load-failure path).
@@ -2438,8 +2466,9 @@ TEST_F(WasmSequencerTester, SeqCancelInDuringLoadDiverts) {
     ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
 }
 
-// Requirement: WASM-SEQ-010, WASM-SEQ-021
 TEST_F(WasmSequencerTester, CancelDuringFailedInvokeDoesNotLeakToNextInvoke) {
+    REQUIREMENT("WASM-SEQ-010");
+    REQUIREMENT("WASM-SEQ-021");
     // A cancel latched during an invoke that then FAILS to resolve returns the
     // controller to READY (not IDLE), bypassing the cancel-check. Entering READY must
     // acknowledge/clear the latch, so a subsequent uncancelled INVOKE runs normally
@@ -2474,8 +2503,8 @@ TEST_F(WasmSequencerTester, CancelDuringFailedInvokeDoesNotLeakToNextInvoke) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhilePausedFails) {
+    REQUIREMENT("WASM-SEQ-013");
     // A cmdResponseIn while RUNNING_PAUSED (not awaiting a host command) is unexpected
     // and fails the sequence (stmtUnexpected from RUNNING_PAUSED -> IDLE).
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
@@ -2503,8 +2532,9 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhilePausedFails) {
 // (mirrors the FpySequencer port contract)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-005, WASM-SEQ-018
 TEST_F(WasmSequencerTester, SeqStartDoneEmittedOnRunCommandSuccess) {
+    REQUIREMENT("WASM-SEQ-005");
+    REQUIREMENT("WASM-SEQ-018");
     // A RUN command that runs to completion reports a start (echoing the file and
     // args) and then a done with OK to internal callers.
     const U8 argBytes[] = {0xDE, 0xAD, 0xBE, 0xEF};
@@ -2527,8 +2557,8 @@ TEST_F(WasmSequencerTester, SeqStartDoneEmittedOnRunCommandSuccess) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, SeqDoneEmittedWithErrorOnRunFailure) {
+    REQUIREMENT("WASM-SEQ-018");
     // A RUN whose module traps reports a start, then a done with EXECUTION_ERROR.
     StagedAsset file_asset(*this, "unreachable.wasm");
     const Fw::String& file = file_asset.file();
@@ -2546,8 +2576,8 @@ TEST_F(WasmSequencerTester, SeqDoneEmittedWithErrorOnRunFailure) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-010
 TEST_F(WasmSequencerTester, SeqDoneEmittedWithErrorOnRunCancel) {
+    REQUIREMENT("WASM-SEQ-010");
     // Cancelling a running RUN reports the start, then a done with EXECUTION_ERROR.
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
@@ -2568,8 +2598,8 @@ TEST_F(WasmSequencerTester, SeqDoneEmittedWithErrorOnRunCancel) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-006
 TEST_F(WasmSequencerTester, InvokeDoesNotEmitSeqStartOrDone) {
+    REQUIREMENT("WASM-SEQ-006");
     // seqStart/seqDone are RUN-scoped. An INVOKE (which also exercises the engine)
     // must not report a start or done to internal callers.
     StagedAsset file_asset(*this, "empty.wasm");
@@ -2588,8 +2618,9 @@ TEST_F(WasmSequencerTester, InvokeDoesNotEmitSeqStartOrDone) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-005, WASM-SEQ-018
 TEST_F(WasmSequencerTester, SeqRunInPortRunsSequence) {
+    REQUIREMENT("WASM-SEQ-005");
+    REQUIREMENT("WASM-SEQ-018");
     // The seqRunIn port drives a non-blocking RUN: it reports a start, runs to
     // completion in READY, and reports a done with OK. There is no command
     // response because the run was requested from a port, not a command.
@@ -2615,8 +2646,8 @@ TEST_F(WasmSequencerTester, SeqRunInPortRunsSequence) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-018
 TEST_F(WasmSequencerTester, SeqRunInFromReadyRuns) {
+    REQUIREMENT("WASM-SEQ-018");
     // seqRunIn is valid from READY (a prior LOAD left a store). It resets the
     // store, loads, and runs the new module.
     StagedAsset file_asset(*this, "empty.wasm");
@@ -2635,8 +2666,8 @@ TEST_F(WasmSequencerTester, SeqRunInFromReadyRuns) {
     ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::OK);
 }
 
-// Requirement: WASM-SEQ-024
 TEST_F(WasmSequencerTester, SeqRunInWhileRunningRejected) {
+    REQUIREMENT("WASM-SEQ-024");
     // seqRunIn is only valid from IDLE or READY. A run request while already
     // running is rejected as BUSY (ControllerBusy for the PORT_RUN signal in the
     // RUNNING_MAIN state) and leaves the run untouched.
@@ -2663,8 +2694,8 @@ TEST_F(WasmSequencerTester, SeqRunInWhileRunningRejected) {
     this->dispatchUntilControllerState(ControllerState::IDLE);
 }
 
-// Requirement: WASM-SEQ-010
 TEST_F(WasmSequencerTester, SeqCancelInCancelsRunningSequence) {
+    REQUIREMENT("WASM-SEQ-010");
     // The seqCancelIn port cancels a running sequence just like the CANCEL command,
     // driving it back to IDLE and reporting a done with EXECUTION_ERROR.
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
@@ -2684,8 +2715,8 @@ TEST_F(WasmSequencerTester, SeqCancelInCancelsRunningSequence) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-009
 TEST_F(WasmSequencerTester, PauseAtHostFunctionThenContinueResumes) {
+    REQUIREMENT("WASM-SEQ-009");
     // cmd.wasm reaches the cmd host function on its very first spin. dispatchUntilState
     // stops at RUNNING_SPINNING with the entry `entered` signal still queued (before that
     // first spin runs), so a PAUSE queued now is processed right after the spin that hits
@@ -2720,8 +2751,8 @@ TEST_F(WasmSequencerTester, PauseAtHostFunctionThenContinueResumes) {
     ASSERT_from_cmdOut_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, CheckTimersWhileAwaitingWithoutTimer) {
+    REQUIREMENT("WASM-SEQ-013");
     // A COMMAND host function parks in AWAITING_RESPONSE with NO pending timer (unlike
     // sleep). A checkTimers tick there takes the CHECK_TIMERS else branch
     // (guard_pendingTimer false -> checkTimeout only) and stays awaiting.
@@ -2747,8 +2778,9 @@ TEST_F(WasmSequencerTester, CheckTimersWhileAwaitingWithoutTimer) {
 // Host-function timeout for blocking async host functions
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-011, WASM-SEQ-021
 TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsAwaitingCommand) {
+    REQUIREMENT("WASM-SEQ-011");
+    REQUIREMENT("WASM-SEQ-021");
     // With HOST_FUNCTION_TIMEOUT_SECS set, a command that never gets a response times
     // out on a checkTimers tick past the deadline and fails the sequence.
     this->paramSet_HOST_FUNCTION_TIMEOUT_SECS(5.0f, Fw::ParamValid::VALID);
@@ -2782,8 +2814,9 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsAwaitingCommand) {
     ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
 }
 
-// Requirement: WASM-SEQ-011, WASM-SEQ-021
 TEST_F(WasmSequencerTester, HostFunctionTimeoutTimeIncomparableFails) {
+    REQUIREMENT("WASM-SEQ-011");
+    REQUIREMENT("WASM-SEQ-021");
     // While AWAITING_RESPONSE for a COMMAND (WAITING, not sleeping), a checkTimers
     // tick runs checkTimeout. If the current time is incomparable to the host function
     // start (the time base/context changed), the deadline cannot be evaluated:
@@ -2816,8 +2849,8 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutTimeIncomparableFails) {
     ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
 }
 
-// Requirement: WASM-SEQ-011
 TEST_F(WasmSequencerTester, HostFunctionTimeoutDisabledByZero) {
+    REQUIREMENT("WASM-SEQ-011");
     // With HOST_FUNCTION_TIMEOUT_SECS explicitly set to 0 (disabled), no amount of elapsed
     // time times out an awaiting command. The shipped default is now 60s, so a test that
     // wants the disabled behavior must set the parameter to 0 rather than rely on the default.
@@ -2843,8 +2876,9 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutDisabledByZero) {
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-011, WASM-SEQ-017
 TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsBlockingSerialRecv) {
+    REQUIREMENT("WASM-SEQ-011");
+    REQUIREMENT("WASM-SEQ-017");
     // The host-function timeout applies equally to a blocking serial_recv parked waiting for a
     // message that never arrives: dispatchPendingHostFunction arms the host-function timeout clock in the
     // BLOCKING/empty-queue branch, so checkTimeout eventually fails the sequence.
@@ -2871,8 +2905,8 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsBlockingSerialRecv) {
 // Command context (cmdUid): late-reply and wrong-instance detection
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, LateCmdResponseFromOldSequenceIgnored) {
+    REQUIREMENT("WASM-SEQ-013");
     // A response tagged with a previous sequence's cmdUid is a nominal late reply
     // (e.g. after a CANCEL). It is reported, not failed, and does not disturb the
     // sequence currently awaiting its own response.
@@ -2904,8 +2938,8 @@ TEST_F(WasmSequencerTester, LateCmdResponseFromOldSequenceIgnored) {
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, WrongCmdResponseIndexFails) {
+    REQUIREMENT("WASM-SEQ-013");
     // A response from the current sequence but a different command instance (wrong
     // low-half index) is an integrity error and fails the sequence.
     StagedAsset file_asset(*this, "cmd.wasm");
@@ -2930,8 +2964,8 @@ TEST_F(WasmSequencerTester, WrongCmdResponseIndexFails) {
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 411, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, SequenceIndexIncrementsAcrossRuns) {
+    REQUIREMENT("WASM-SEQ-013");
     // Regression for the cmdUid sequence-index counter (m_sequencesStarted): each
     // freshly-invoked program must stamp a DISTINCT sequence index into the high half
     // of the cmdUid it attaches to dispatched commands. If the counter never advanced
@@ -2971,8 +3005,8 @@ TEST_F(WasmSequencerTester, SequenceIndexIncrementsAcrossRuns) {
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, LateCmdResponseFromPreviousRunIgnored) {
+    REQUIREMENT("WASM-SEQ-013");
     // End-to-end companion to LateCmdResponseFromOldSequenceIgnored. Rather than
     // synthesizing a stale cmdUid, this runs two real sequences and delivers the
     // ACTUAL cmdUid dispatched by the first (cancelled) run to the live second run.
@@ -3021,8 +3055,8 @@ TEST_F(WasmSequencerTester, LateCmdResponseFromPreviousRunIgnored) {
 // Commands rejected / queued while a sequence is running
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-024
 TEST_F(WasmSequencerTester, RunWhileRunningRejected) {
+    REQUIREMENT("WASM-SEQ-024");
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -3046,8 +3080,8 @@ TEST_F(WasmSequencerTester, RunWhileRunningRejected) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-024
 TEST_F(WasmSequencerTester, LoadWhileRunningRejected) {
+    REQUIREMENT("WASM-SEQ-024");
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -3071,8 +3105,8 @@ TEST_F(WasmSequencerTester, LoadWhileRunningRejected) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-024
 TEST_F(WasmSequencerTester, InvokeWhileRunningRejected) {
+    REQUIREMENT("WASM-SEQ-024");
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -3099,8 +3133,8 @@ TEST_F(WasmSequencerTester, InvokeWhileRunningRejected) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-007
 TEST_F(WasmSequencerTester, WaitWhileRunningQueuesUntilFinish) {
+    REQUIREMENT("WASM-SEQ-007");
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -3121,8 +3155,8 @@ TEST_F(WasmSequencerTester, WaitWhileRunningQueuesUntilFinish) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileSpinningFails) {
+    REQUIREMENT("WASM-SEQ-013");
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -3145,8 +3179,8 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileSpinningFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-013
 TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileAwaitingSleepFails) {
+    REQUIREMENT("WASM-SEQ-013");
     // While AWAITING_RESPONSE for a NON-command host function (a sleep), an incoming
     // cmdResponseIn is unexpected: cmdResponseIn_handler sees the pending kind is not
     // COMMAND and raises stmtUnexpected from RUNNING_AWAITING_RESPONSE -> IDLE.
@@ -3168,8 +3202,8 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileAwaitingSleepFails) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-001
 TEST_F(WasmSequencerTester, LoadWhileReadyReloads) {
+    REQUIREMENT("WASM-SEQ-001");
     // A LOAD from READY is accepted (cmd_LOAD READY branch: pendLoad + enter LOADING)
     // and reloads the module, ending back in READY.
     StagedAsset file_asset(*this, "empty.wasm");
@@ -3186,8 +3220,8 @@ TEST_F(WasmSequencerTester, LoadWhileReadyReloads) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-009
 TEST_F(WasmSequencerTester, PauseWhileAwaitingResponseIsPending) {
+    REQUIREMENT("WASM-SEQ-009");
     // PAUSE from RUNNING_AWAITING_RESPONSE records a pending pause (cmd_PAUSE
     // AWAITING_RESPONSE branch: action_pendPause) without leaving the state. When the
     // command response arrives, the pending pause takes effect at PAUSE_CHECK.
@@ -3214,8 +3248,8 @@ TEST_F(WasmSequencerTester, PauseWhileAwaitingResponseIsPending) {
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-009
 TEST_F(WasmSequencerTester, PauseWhilePausedIsIdempotent) {
+    REQUIREMENT("WASM-SEQ-009");
     // PAUSE from RUNNING_PAUSED is a self-transition that just re-records the pending
     // pause (cmd_PAUSE RUNNING_PAUSED branch: action_pendPause); it stays paused.
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
@@ -3241,8 +3275,8 @@ TEST_F(WasmSequencerTester, PauseWhilePausedIsIdempotent) {
     ASSERT_EVENTS_SequenceCancelled_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-007
 TEST_F(WasmSequencerTester, WaitFinishQueueOverflow) {
+    REQUIREMENT("WASM-SEQ-007");
     // The WAIT queue (m_waiting) is 8 deep. Fill it with WAITs while a sequence is
     // running; the 9th overflows and is rejected with TooManyBlockingCommands +
     // EXECUTION_ERROR (WAIT_cmdHandler enqueue-failure).
@@ -3270,8 +3304,9 @@ TEST_F(WasmSequencerTester, WaitFinishQueueOverflow) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-007, WASM-SEQ-010
 TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenRunningSequenceCancelled) {
+    REQUIREMENT("WASM-SEQ-007");
+    REQUIREMENT("WASM-SEQ-010");
     // A WAIT queued while a sequence runs is answered EXECUTION_ERROR when that
     // sequence is cancelled: respond_block_ERROR drains m_waiting on the main-phase
     // failure path.
@@ -3295,8 +3330,9 @@ TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenRunningSequenceCancelled) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-007, WASM-SEQ-010
 TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenRunWithStartCancelled) {
+    REQUIREMENT("WASM-SEQ-007");
+    REQUIREMENT("WASM-SEQ-010");
     // A WAIT queued while a RUN-with-start runs its start function is answered
     // EXECUTION_ERROR when a cancel latched in RUNNING_START_PENDING_MAIN diverts the
     // sequence to IDLE at START_MAIN_CANCEL_CHECK: cancelPendingRequest drains m_waiting.
@@ -3323,8 +3359,9 @@ TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenRunWithStartCancelled) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-007, WASM-SEQ-018
 TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenStartFails) {
+    REQUIREMENT("WASM-SEQ-007");
+    REQUIREMENT("WASM-SEQ-018");
     // A WAIT queued while a LOAD-with-start runs is answered EXECUTION_ERROR when the
     // start function traps: respond_ERROR drains m_waiting on the start-phase failure.
     StagedAsset file_asset(*this, "start_trap.wasm");
@@ -3345,8 +3382,8 @@ TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenStartFails) {
 // Continue is a no-op while already running
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-009
 TEST_F(WasmSequencerTester, ContinueWhileSpinningIsOk) {
+    REQUIREMENT("WASM-SEQ-009");
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -3367,8 +3404,8 @@ TEST_F(WasmSequencerTester, ContinueWhileSpinningIsOk) {
 // Host functions: SERIAL_OUT (fire-and-forget: guest bytes -> serialOut buffer)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-016
 TEST_F(WasmSequencerTester, SerialOutByteFidelityAndResume) {
+    REQUIREMENT("WASM-SEQ-016");
     StagedAsset file_asset(*this, "serial_out.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -3390,8 +3427,8 @@ TEST_F(WasmSequencerTester, SerialOutByteFidelityAndResume) {
     }
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialOutInvalidPortTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // serial_send with an out-of-range port index is rejected in the host function with a
     // trap before any port invocation.
     StagedAsset file_asset(*this, "serial_out_badport.wasm");
@@ -3406,8 +3443,8 @@ TEST_F(WasmSequencerTester, SerialOutInvalidPortTraps) {
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialOutPayloadTooLargeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // serial_send with a payload larger than MAX_SERIAL_OUT_SIZE is rejected in the host
     // function with a trap (BufferTooLarge) before any port invocation.
     StagedAsset file_asset(*this, "serial_out_toobig.wasm");
@@ -3422,8 +3459,8 @@ TEST_F(WasmSequencerTester, SerialOutPayloadTooLargeTraps) {
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialOutBadPointerFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // serial_send with an out-of-bounds data pointer: spacewasm_mem_read fails ->
     // HostFunctionInvalidPointer(SERIAL_OUT) -> stmtFailure -> IDLE. The port is
     // never invoked.
@@ -3440,8 +3477,8 @@ TEST_F(WasmSequencerTester, SerialOutBadPointerFails) {
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialOutDisconnectedPortTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // serial_send to an in-range but DISCONNECTED port is rejected in the host function with a
     // trap (HostFunctionInvalidPort) before any invocation. The guest targets port index 3,
     // which we leave unconnected.
@@ -3459,8 +3496,8 @@ TEST_F(WasmSequencerTester, SerialOutDisconnectedPortTraps) {
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
 }
 
-// Requirement: WASM-SEQ-016
 TEST_F(WasmSequencerTester, SerialOutSendFailureFailsSequence) {
+    REQUIREMENT("WASM-SEQ-016");
     // If the connected serial output port reports a serialization failure, the host emits
     // SerialPortSendFailed and fails the sequence. The normal tester InputSerializePort always
     // returns OK, so we re-point serialOut[3] at a stub that returns FW_SERIALIZE_NO_ROOM_LEFT.
@@ -3483,8 +3520,8 @@ TEST_F(WasmSequencerTester, SerialOutSendFailureFailsSequence) {
 // Host functions: SERIAL_RECV (read from the inbound serialIn queue)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialRecvBlockingDeliversMessageAtDataPtr) {
+    REQUIREMENT("WASM-SEQ-017");
     // Pre-load a 4-byte message on serialIn[2], then RUN a guest that blocking-receives it.
     // The guest asserts (via unreachable) that the payload lands exactly at data_ptr (not
     // data_ptr+4), that actual_size_ptr holds 4, and that the bytes just before/after are
@@ -3501,8 +3538,8 @@ TEST_F(WasmSequencerTester, SerialRecvBlockingDeliversMessageAtDataPtr) {
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialRecvBlocksThenWakesOnMessage) {
+    REQUIREMENT("WASM-SEQ-017");
     // With an empty queue, a blocking serial_recv parks in AWAITING_RESPONSE.WAITING. When a
     // message subsequently arrives on serialIn[2], the serialInMessage signal wakes the
     // engine, the payload is dequeued into guest memory, and the sequence completes.
@@ -3522,8 +3559,8 @@ TEST_F(WasmSequencerTester, SerialRecvBlocksThenWakesOnMessage) {
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialRecvMultiChunkMessage) {
+    REQUIREMENT("WASM-SEQ-017");
     // A 40-byte message exercises the chunked copy path in dequeueSerialAndResume (one full
     // 32-byte chunk + an 8-byte partial). The guest validates the ramp payload landed at
     // data_ptr with the correct length, proving the multi-chunk copy is byte-accurate.
@@ -3542,8 +3579,8 @@ TEST_F(WasmSequencerTester, SerialRecvMultiChunkMessage) {
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialRecvExactChunkMultipleMessage) {
+    REQUIREMENT("WASM-SEQ-017");
     // A message whose payload is exactly CHUNK_SIZE (32 bytes) is the boundary case for the
     // chunked copy loop: the full-chunk loop must consume all 32 bytes, leaving zero for the
     // partial-chunk branch. A clean finish proves the loop bound handles the exact multiple.
@@ -3562,8 +3599,8 @@ TEST_F(WasmSequencerTester, SerialRecvExactChunkMultipleMessage) {
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialRecvNonBlockingEmptyReturnsEmptyStatus) {
+    REQUIREMENT("WASM-SEQ-017");
     // A NONBLOCKING serial_recv on an empty queue does not park: the host resumes the guest
     // immediately with status 1 (EMPTY) and writes nothing into the data buffer. The guest
     // asserts both, so a clean finish proves the empty-nonblocking fast path.
@@ -3576,8 +3613,8 @@ TEST_F(WasmSequencerTester, SerialRecvNonBlockingEmptyReturnsEmptyStatus) {
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialRecvInvalidPortTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // serial_recv with an out-of-range port index is rejected in the host function with a
     // trap before parking to wait.
     StagedAsset file_asset(*this, "serial_recv_badport.wasm");
@@ -3592,8 +3629,8 @@ TEST_F(WasmSequencerTester, SerialRecvInvalidPortTraps) {
     this->assertSequenceFailureCount(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialRecvInvalidBlockingTypeTraps) {
+    REQUIREMENT("WASM-SEQ-019");
     // serial_recv with an out-of-range block_type (256) must trap. 256's low byte is 0, so a
     // truncated-U8 validation would wrongly accept it as BLOCKING; the host must validate the
     // full-width value and emit InvalidBlockingTypeValue instead.
@@ -3608,8 +3645,8 @@ TEST_F(WasmSequencerTester, SerialRecvInvalidBlockingTypeTraps) {
     this->assertSequenceFailureCount(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialRecvMessageLargerThanGuestBufferFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // The guest declares an 8-byte buffer (data_size = 4 in the module) but the injected
     // message is 8 bytes -- larger than the guest buffer. The host must fail the host call
     // (BufferTooSmall) rather than overflow guest memory, and leave the message on the queue.
@@ -3630,8 +3667,8 @@ TEST_F(WasmSequencerTester, SerialRecvMessageLargerThanGuestBufferFails) {
     this->assertSequenceFailureCount(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialRecvBadPointerFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // A blocking serial_recv with an out-of-bounds actual_size_ptr: when the host dequeues a
     // delivered message, the first spacewasm_mem_write (of the size to actual_size_ptr) fails
     // -> HostFunctionInvalidPointer(SERIAL_RECV, ERR_MEM_OUT_OF_BOUNDS) -> stmtFailure -> IDLE.
@@ -3653,8 +3690,8 @@ TEST_F(WasmSequencerTester, SerialRecvBadPointerFails) {
     this->assertSequenceFailureCount(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialRecvBadDataPointerPartialChunkFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // actual_size_ptr is valid, so the size write succeeds, but data_ptr is out of bounds.
     // With a small (4-byte) message the payload copy runs through the final partial-chunk
     // branch, whose spacewasm_mem_write fails -> HostFunctionInvalidPointer(SERIAL_RECV) ->
@@ -3675,8 +3712,8 @@ TEST_F(WasmSequencerTester, SerialRecvBadDataPointerPartialChunkFails) {
     this->assertSequenceFailureCount(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerTester, SerialRecvBadDataPointerFullChunkFails) {
+    REQUIREMENT("WASM-SEQ-019");
     // Same as above but with a 40-byte message so the copy takes the multi-chunk path: the
     // FIRST full 32-byte chunk write to the OOB data_ptr fails, covering the full-chunk
     // write-failure branch (distinct from the final partial-chunk branch).
@@ -3702,8 +3739,8 @@ TEST_F(WasmSequencerTester, SerialRecvBadDataPointerFullChunkFails) {
 // serialIn inbound queue: enqueue framing and queue-full behavior (white-box)
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialInEnqueueFramesRawSizePrefixedMessages) {
+    REQUIREMENT("WASM-SEQ-017");
     // serialIn_handler must enqueue each message as a raw [U32 size][payload] frame using the
     // raw CircularBuffer::serialize overload (no length token). Enqueue two messages and
     // verify the queue holds exactly (4 + size) bytes per frame and the raw big-endian size
@@ -3731,8 +3768,8 @@ TEST_F(WasmSequencerTester, SerialInEnqueueFramesRawSizePrefixedMessages) {
     ASSERT_EQ(firstPayloadByte, msgA[0]);
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialInQueueFullDropsOldest) {
+    REQUIREMENT("WASM-SEQ-017");
     // The tester configures serialIn[0] with DROP_OLDEST (see WasmSequencerTester ctor). Fill the
     // queue near capacity, then push a message that does not fit; the handler drops whole frames
     // from the front until the new message fits. Verify the newest message survives and the total
@@ -3778,8 +3815,8 @@ TEST_F(WasmSequencerTester, SerialInQueueFullDropsOldest) {
     ASSERT_GT(frontByte, static_cast<U8>(0)) << "oldest frame (byte 0) should have been dropped";
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialInOversizedFrameDroppedNotAsserted) {
+    REQUIREMENT("WASM-SEQ-017");
     // serialIn is fed by external hardware/ground data, so a frame larger than the
     // queue could EVER hold (payload > capacity minus the 4-byte length header) must be
     // dropped with a warning rather than asserting and crashing flight software.
@@ -3812,8 +3849,8 @@ TEST_F(WasmSequencerTester, SerialInOversizedFrameDroppedNotAsserted) {
     ASSERT_EVENTS_SerialInFrameTooLarge_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialInMaxSizeFrameEnqueued) {
+    REQUIREMENT("WASM-SEQ-017");
     // The exact-fit boundary: a payload of (capacity - header) is the largest frame
     // that fits and MUST be enqueued, not dropped. Guards the '>' drop guard against
     // regressing to '>=' (which would reject the maximum legal frame).
@@ -3838,8 +3875,8 @@ TEST_F(WasmSequencerTester, SerialInMaxSizeFrameEnqueued) {
     ASSERT_EQ(framedSize, static_cast<U32>(maxPayload));
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialInQueueFullDropsNewest) {
+    REQUIREMENT("WASM-SEQ-017");
     // Per-instance queue-full behavior: override serialIn[1] to DROP_NEWEST (the tester configures
     // every port as DROP_OLDEST). Fill the queue near capacity,
     // then push a frame that does not fit; DROP_NEWEST discards the NEW frame and leaves the
@@ -3883,8 +3920,8 @@ TEST_F(WasmSequencerTester, SerialInQueueFullDropsNewest) {
     ASSERT_EVENTS_SerialInFrameTooLarge_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerTester, SerialInZeroSizeQueueDropsFramesWithoutCrashing) {
+    REQUIREMENT("WASM-SEQ-017");
     // A serialIn port configured with size 0 gets no queue (configure() skips setup()), leaving a
     // capacity-0 CircularBuffer. Inbound frames on that index -- which come from external hardware
     // or ground -- must be dropped with a warning, never asserting or dereferencing a null store.
@@ -3910,8 +3947,8 @@ TEST_F(WasmSequencerTester, SerialInZeroSizeQueueDropsFramesWithoutCrashing) {
 // misconfiguration assert paths (death tests).
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerConfigTester, SerialInPerPortBehaviorsWiredByConfigure) {
+    REQUIREMENT("WASM-SEQ-017");
     // configure() must wire each serialIn port index to its own size + full behavior. Configure
     // port 1 = DROP_NEWEST, port 2 = DROP_OLDEST (both 256 B), and port 3 = size 0 (no queue), then
     // confirm each port obeys its own configured policy.
@@ -3954,8 +3991,8 @@ TEST_F(WasmSequencerConfigTester, SerialInPerPortBehaviorsWiredByConfigure) {
     ASSERT_EVENTS_SerialInFrameTooLarge_SIZE(1);
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerConfigTester, SerialOutUnconfiguredTrapsSend) {
+    REQUIREMENT("WASM-SEQ-019");
     // A component configured with serialOutMax == 0 has no serialOut copy buffer; any serial_send
     // from a guest must trap (BufferTooLarge, capacity 0) rather than forward a null-backed buffer.
     WasmSequencer::Config cfg = this->standardConfig();
@@ -3975,8 +4012,8 @@ TEST_F(WasmSequencerConfigTester, SerialOutUnconfiguredTrapsSend) {
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
 }
 
-// Requirement: WASM-SEQ-019
 TEST_F(WasmSequencerConfigTester, SerialOutBufferSizeFromConfig) {
+    REQUIREMENT("WASM-SEQ-019");
     // The serialOut copy-buffer size (the BufferTooLarge threshold) comes from per-instance config.
     // Configure a 4-byte serialOut buffer; the guest's 8-byte serial_send is rejected.
     WasmSequencer::Config cfg = this->standardConfig();
@@ -4003,8 +4040,8 @@ TEST_F(WasmSequencerConfigTester, ConfigureTwiceAsserts) {
     ASSERT_DEATH_IF_SUPPORTED(this->configureWith(this->standardConfig()), "Assert: ");
 }
 
-// Requirement: WASM-SEQ-003
 TEST_F(WasmSequencerConfigTester, ConfigureTooManyDynamicPagesAsserts) {
+    REQUIREMENT("WASM-SEQ-003");
     // Requesting more dynamic pages than the process-wide maximum (SPACEWASM_MAX_PAGES backs the
     // per-instance page-pointer array) is a misconfiguration caught up front by configure().
     WasmSequencer::Config cfg = this->standardConfig();
@@ -4012,8 +4049,8 @@ TEST_F(WasmSequencerConfigTester, ConfigureTooManyDynamicPagesAsserts) {
     ASSERT_DEATH_IF_SUPPORTED(this->configureWith(cfg), "Assert: ");
 }
 
-// Requirement: WASM-SEQ-003
 TEST_F(WasmSequencerConfigTester, ConfigureStackTooLargeForPoolAsserts) {
+    REQUIREMENT("WASM-SEQ-003");
     // A Wasm stack far larger than the dynamic pool can back makes store creation fail, tripping
     // the "dynamic memory too small" assertion in createStore().
     WasmSequencer::Config cfg = this->standardConfig();
@@ -4021,8 +4058,8 @@ TEST_F(WasmSequencerConfigTester, ConfigureStackTooLargeForPoolAsserts) {
     ASSERT_DEATH_IF_SUPPORTED(this->configureWith(cfg), "Assert: ");
 }
 
-// Requirement: WASM-SEQ-003
 TEST_F(WasmSequencerConfigTester, PageFreeThenReAllocPoisonAsserts) {
+    REQUIREMENT("WASM-SEQ-003");
     // Verifies the dynamic-page allocator's safety guard: because spacewasm frees pages in
     // forward-scan (non-LIFO) order, the bump allocator poisons the pool on any free so a later
     // allocation aborts (fail-fast) instead of potentially handing back a still-live page. This is
@@ -4031,8 +4068,8 @@ TEST_F(WasmSequencerConfigTester, PageFreeThenReAllocPoisonAsserts) {
     ASSERT_DEATH_IF_SUPPORTED(this->pokePageFreeThenReAlloc(), "Assert: ");
 }
 
-// Requirement: WASM-SEQ-017
 TEST_F(WasmSequencerConfigTester, SerialInQueueFullBehaviorAssertAborts) {
+    REQUIREMENT("WASM-SEQ-017");
     // A serialIn port configured with the ASSERT full-behavior fails fast (aborts) when a frame
     // cannot fit, instead of dropping it (DROP_OLDEST/DROP_NEWEST).
     WasmSequencer::Config cfg = this->standardConfig();
@@ -4054,8 +4091,8 @@ TEST_F(WasmSequencerConfigTester, SerialInQueueFullBehaviorAssertAborts) {
 // End-to-end tests drive real guest modules; white-box tests exercise guestRealloc's branches directly.
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-022
 TEST_F(WasmSequencerTester, MemoryGrowSucceedsAndRegionUsable) {
+    REQUIREMENT("WASM-SEQ-022");
     // A guest whose linear memory is the sole (last) guest allocation grows it in place, checks the
     // grow reported the previous size (1 page), writes/reads the new region, and exits cleanly.
     StagedAsset file_asset(*this, "mem_grow.wasm");
@@ -4069,8 +4106,8 @@ TEST_F(WasmSequencerTester, MemoryGrowSucceedsAndRegionUsable) {
     this->assertSequenceFailureCount(0);
 }
 
-// Requirement: WASM-SEQ-022
 TEST_F(WasmSequencerTester, MemoryGrowBeyondPoolReturnsMinusOneGracefully) {
+    REQUIREMENT("WASM-SEQ-022");
     // A grow the guest pool cannot satisfy must fail gracefully: guestRealloc returns null and
     // memory.grow yields -1 to the guest (no trap). The module asserts it received -1 and exits clean.
     StagedAsset file_asset(*this, "mem_grow_toobig.wasm");
@@ -4088,8 +4125,8 @@ TEST_F(WasmSequencerTester, MemoryGrowBeyondPoolReturnsMinusOneGracefully) {
                                      static_cast<U64>(4097));
 }
 
-// Requirement: WASM-SEQ-022
 TEST_F(WasmSequencerTester, GuestReallocGrowsLastAllocationInPlace) {
+    REQUIREMENT("WASM-SEQ-022");
     // The top-of-bump allocation grows in place: same base pointer, offset advances by the delta.
     U8* a = this->wbGuestAlloc(100, 1);
     ASSERT_NE(a, nullptr);
@@ -4101,8 +4138,8 @@ TEST_F(WasmSequencerTester, GuestReallocGrowsLastAllocationInPlace) {
     ASSERT_EVENTS_MemoryGrowRejected_SIZE(0);  // a successful grow emits no rejection event
 }
 
-// Requirement: WASM-SEQ-022
 TEST_F(WasmSequencerTester, GuestReallocRejectsNonLastAllocation) {
+    REQUIREMENT("WASM-SEQ-022");
     // Only the top-of-bump allocation may grow. With another allocation after `a`, growing `a` must
     // fail (null) and leave the bump offset untouched.
     U8* a = this->wbGuestAlloc(100, 1);
@@ -4117,8 +4154,8 @@ TEST_F(WasmSequencerTester, GuestReallocRejectsNonLastAllocation) {
     ASSERT_EVENTS_MemoryGrowRejected(0, WasmSequencer_MemoryGrowFailReason::NOT_LAST_ALLOCATION, static_cast<U64>(120));
 }
 
-// Requirement: WASM-SEQ-022
 TEST_F(WasmSequencerTester, GuestReallocRejectsGrowBeyondPool) {
+    REQUIREMENT("WASM-SEQ-022");
     // Growing the last allocation past the end of the pool must fail (null) without moving the offset.
     U8* a = this->wbGuestAlloc(100, 1);
     ASSERT_NE(a, nullptr);
@@ -4132,8 +4169,8 @@ TEST_F(WasmSequencerTester, GuestReallocRejectsGrowBeyondPool) {
                                      static_cast<U64>(tooBig));
 }
 
-// Requirement: WASM-SEQ-022
 TEST_F(WasmSequencerTester, GuestReallocExactFitToPoolEndSucceeds) {
+    REQUIREMENT("WASM-SEQ-022");
     // Growing the last allocation to exactly fill the pool is allowed (the bound is <=, not <).
     U8* a = this->wbGuestAlloc(100, 1);
     ASSERT_NE(a, nullptr);
@@ -4145,8 +4182,8 @@ TEST_F(WasmSequencerTester, GuestReallocExactFitToPoolEndSucceeds) {
     ASSERT_EVENTS_MemoryGrowRejected_SIZE(0);  // exact fit succeeds; no rejection event
 }
 
-// Requirement: WASM-SEQ-022
 TEST_F(WasmSequencerTester, GuestReallocRejectsFourGiBGrowWithoutTruncation) {
+    REQUIREMENT("WASM-SEQ-022");
     // A wasm32 memory can grow to exactly 2^32 bytes. The realloc callback must NOT narrow the size
     // to U32 -- 2^32 aliases to 0, which would falsely succeed and make spacewasm zero-fill ~4 GiB
     // past the pool. Drive the raw size_t callback and require it to reject the request outright.
@@ -4166,8 +4203,8 @@ TEST_F(WasmSequencerTester, GuestReallocRejectsFourGiBGrowWithoutTruncation) {
     }
 }
 
-// Requirement: WASM-SEQ-022
 TEST_F(WasmSequencerTester, MemoryGrowFailsWhenNotLastAllocation) {
+    REQUIREMENT("WASM-SEQ-022");
     // End-to-end multi-module scenario: module "a"'s linear memory is allocated first, then loading
     // module "b" allocates guest memory after it, so "a" is no longer the last bump allocation.
     // Invoking "a" (whose main does memory.grow) must fail the grow -- the guest sees -1 and exits
@@ -4202,8 +4239,9 @@ TEST_F(WasmSequencerTester, MemoryGrowFailsWhenNotLastAllocation) {
 // track correctly across the whole session.
 // ----------------------------------------------------------------------
 
-// Requirement: WASM-SEQ-003, WASM-SEQ-021
 TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
+    REQUIREMENT("WASM-SEQ-003");
+    REQUIREMENT("WASM-SEQ-021");
     // Tiny fuel so loop.wasm spins across many cycles and CANCEL lands mid-run.
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
@@ -4353,8 +4391,8 @@ TEST_F(WasmSequencerTester, SpacewasmPanicBridgeAssertsFsw) {
 
 // --- GLOBAL_GET: read the declared initial value of each typed global -------
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalGetReadsInitialI32) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 60, file, Fw::CmdStringArg(""));
@@ -4373,8 +4411,8 @@ TEST_F(WasmSequencerTester, GlobalGetReadsInitialI32) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalGetReadsInitialI64) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 62, file, Fw::CmdStringArg(""));
@@ -4388,8 +4426,8 @@ TEST_F(WasmSequencerTester, GlobalGetReadsInitialI64) {
     ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 63, Fw::CmdResponse::OK);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalGetReadsInitialF32) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 64, file, Fw::CmdStringArg(""));
@@ -4403,8 +4441,8 @@ TEST_F(WasmSequencerTester, GlobalGetReadsInitialF32) {
     ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 65, Fw::CmdResponse::OK);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalGetReadsInitialF64) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 66, file, Fw::CmdStringArg(""));
@@ -4418,8 +4456,8 @@ TEST_F(WasmSequencerTester, GlobalGetReadsInitialF64) {
     ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 67, Fw::CmdResponse::OK);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalGetReadsConstGlobal) {
+    REQUIREMENT("WASM-SEQ-023");
     // A const (immutable) global is still readable via GET.
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
@@ -4436,8 +4474,8 @@ TEST_F(WasmSequencerTester, GlobalGetReadsConstGlobal) {
 
 // --- GLOBAL_SET_* then GLOBAL_GET: full round trip per type -----------------
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetGetRoundTripI32) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 70, file, Fw::CmdStringArg(""));
@@ -4457,8 +4495,8 @@ TEST_F(WasmSequencerTester, GlobalSetGetRoundTripI32) {
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetGetRoundTripI64) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 73, file, Fw::CmdStringArg(""));
@@ -4477,8 +4515,8 @@ TEST_F(WasmSequencerTester, GlobalSetGetRoundTripI64) {
     ASSERT_CMD_RESPONSE(2, OPCODE_GLOBAL_GET, 75, Fw::CmdResponse::OK);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetGetRoundTripF32) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 76, file, Fw::CmdStringArg(""));
@@ -4495,8 +4533,8 @@ TEST_F(WasmSequencerTester, GlobalSetGetRoundTripF32) {
     ASSERT_CMD_RESPONSE(2, OPCODE_GLOBAL_GET, 78, Fw::CmdResponse::OK);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetGetRoundTripF64) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 79, file, Fw::CmdStringArg(""));
@@ -4515,8 +4553,8 @@ TEST_F(WasmSequencerTester, GlobalSetGetRoundTripF64) {
 
 // --- Named-module addressing ------------------------------------------------
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetGetNamedModule) {
+    REQUIREMENT("WASM-SEQ-023");
     // LOAD gives the module an explicit name; the global commands must
     // resolve globals by that same name rather than the empty string.
     StagedAsset file_asset(*this, "globals.wasm");
@@ -4544,8 +4582,8 @@ TEST_F(WasmSequencerTester, GlobalSetGetNamedModule) {
 
 // --- Failure: type mismatch (set the wrong-typed value) ---------------------
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetTypeMismatchI64OnI32) {
+    REQUIREMENT("WASM-SEQ-023");
     // g_i32 is an i32 global; setting it via the I64 command is a type mismatch.
     // set_global checks type before mutability, so the code is TYPE_MISMATCH.
     StagedAsset file_asset(*this, "globals.wasm");
@@ -4565,8 +4603,8 @@ TEST_F(WasmSequencerTester, GlobalSetTypeMismatchI64OnI32) {
     ASSERT_EVENTS_GlobalValueI32(0, "", "g_i32", 100);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetTypeMismatchF32OnI32) {
+    REQUIREMENT("WASM-SEQ-023");
     // Setting the i32 global via the F32 command is likewise a type mismatch.
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
@@ -4583,8 +4621,8 @@ TEST_F(WasmSequencerTester, GlobalSetTypeMismatchF32OnI32) {
 
 // --- Failure: immutable global ----------------------------------------------
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetConstIsNotMutable) {
+    REQUIREMENT("WASM-SEQ-023");
     // c_i32 is a const i32. Setting it with a matching-typed value passes the
     // type check and then fails the mutability check.
     StagedAsset file_asset(*this, "globals.wasm");
@@ -4606,8 +4644,8 @@ TEST_F(WasmSequencerTester, GlobalSetConstIsNotMutable) {
 
 // --- Failure: unknown global / unknown module -------------------------------
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetUnknownGlobalNotFound) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 94, file, Fw::CmdStringArg(""));
@@ -4622,8 +4660,8 @@ TEST_F(WasmSequencerTester, GlobalSetUnknownGlobalNotFound) {
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalGetUnknownGlobalNotFound) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 96, file, Fw::CmdStringArg(""));
@@ -4638,8 +4676,8 @@ TEST_F(WasmSequencerTester, GlobalGetUnknownGlobalNotFound) {
     ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 97, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetUnknownModuleNotFound) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 98, file, Fw::CmdStringArg(""));
@@ -4654,8 +4692,8 @@ TEST_F(WasmSequencerTester, GlobalSetUnknownModuleNotFound) {
     ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I32, 99, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalGetUnknownModuleNotFound) {
+    REQUIREMENT("WASM-SEQ-023");
     StagedAsset file_asset(*this, "globals.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 100, file, Fw::CmdStringArg(""));
@@ -4671,8 +4709,8 @@ TEST_F(WasmSequencerTester, GlobalGetUnknownModuleNotFound) {
 
 // --- From IDLE (empty store, no modules loaded) -----------------------------
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetFromIdleModuleNotFound) {
+    REQUIREMENT("WASM-SEQ-023");
     // From IDLE the store exists (IDLE's entry action creates an empty store)
     // but has no modules, so the lookup fails cleanly with NOT_FOUND rather than
     // crashing. State is unaffected.
@@ -4688,8 +4726,8 @@ TEST_F(WasmSequencerTester, GlobalSetFromIdleModuleNotFound) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalGetFromIdleModuleNotFound) {
+    REQUIREMENT("WASM-SEQ-023");
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
 
     this->sendCmd_GLOBAL_GET(0, 103, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
@@ -4704,8 +4742,8 @@ TEST_F(WasmSequencerTester, GlobalGetFromIdleModuleNotFound) {
 
 // --- Interaction with execution ---------------------------------------------
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetPersistsIntoInvoke) {
+    REQUIREMENT("WASM-SEQ-023");
     // global_incr.wasm's main does g_i32 += 10. LOAD keeps the store, so a
     // GLOBAL_SET before INVOKE is observed by main, and a GLOBAL_GET after sees
     // main's write-back. This proves the set mutates the same store the engine
@@ -4735,8 +4773,8 @@ TEST_F(WasmSequencerTester, GlobalSetPersistsIntoInvoke) {
     ASSERT_CMD_RESPONSE(3, OPCODE_GLOBAL_GET, 107, Fw::CmdResponse::OK);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetOverwrittenAfterRunResetsStore) {
+    REQUIREMENT("WASM-SEQ-023");
     // RUN (unlike INVOKE) does resetStore before load, so any pre-RUN global
     // state is discarded and the module comes back at its declared init. Here
     // main runs once as part of RUN (g_i32: 0 -> 10); a GET afterward reads 10,
@@ -4767,8 +4805,8 @@ TEST_F(WasmSequencerTester, GlobalSetOverwrittenAfterRunResetsStore) {
     ASSERT_EVENTS_GlobalValueI32(1, "", "g_i32", 10);
 }
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetAllTypesIndependent) {
+    REQUIREMENT("WASM-SEQ-023");
     // Setting each typed global does not disturb the others: set all four, then
     // read all four back and confirm each holds exactly what was written.
     StagedAsset file_asset(*this, "globals.wasm");
@@ -4801,8 +4839,10 @@ TEST_F(WasmSequencerTester, GlobalSetAllTypesIndependent) {
 
 // --- F64 set failure (symmetry with the I32/I64/F32 failure-event fix) -------
 
-// Requirement: WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalSetF64TypeMismatchEmitsFailure) {
+    REQUIREMENT("WASM-SEQ-023");
+    
+    
     // Rounds out the SET-failure coverage: the F64 command must also emit
     // GlobalSetFailed on error, matching the I32/I64/F32 handlers. g_i32 is an
     // i32 global, so the F64 command's SPACEWASM_F64 tag is a type mismatch.
@@ -4821,8 +4861,9 @@ TEST_F(WasmSequencerTester, GlobalSetF64TypeMismatchEmitsFailure) {
 
 // --- Dispatched mid-sequence (engine RUNNING) -------------------------------
 
-// Requirement: WASM-SEQ-009, WASM-SEQ-023
 TEST_F(WasmSequencerTester, GlobalGetSetWhileSequencePaused) {
+    REQUIREMENT("WASM-SEQ-009");
+    REQUIREMENT("WASM-SEQ-023");
     // The GLOBAL_* commands are plain async handlers that touch the live store
     // directly; unlike RUN/LOAD/INVOKE they are NOT gated by the controller and
     // are never rejected with BUSY while a sequence is in flight. Drive
