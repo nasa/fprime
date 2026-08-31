@@ -28,7 +28,7 @@ U8* WasmSequencer ::globalAlloc(const U32 size, const U32 align) {
     FW_ASSERT(align <= 8, static_cast<FwAssertArgType>(align));
     FW_ASSERT(!this->m_heapPoisoned);
 
-    if (this->m_heapPagesUsed < m_heapPageCount) {
+    if (this->m_heapPagesUsed < this->m_config.heapPages) {
         auto page = this->m_heapPages[this->m_heapPagesUsed];
         FW_ASSERT(page != nullptr);
         this->m_heapPagesUsed += 1;
@@ -46,7 +46,7 @@ void WasmSequencer ::globalDealloc(const U8* ptr) {
 
     // Make sure the pointer that was given back to us is ours
     bool found = false;
-    for (FwSizeType i = 0; i < this->m_heapPageCount; i++) {
+    for (FwSizeType i = 0; i < this->m_config.heapPages; i++) {
         if (ptr == this->m_heapPages[i]) {
             found = true;
             break;
@@ -69,7 +69,7 @@ U8* WasmSequencer ::guestAlloc(FwSizeType size, U32 align) {
     }
 
     // Reject any request that cannot possibly fit the guest pool up front.
-    if (size > this->m_guestPoolSize || align > SPACEWASM_MEMORY_ALIGNMENT) {
+    if (size > this->m_config.guestMemorySize || align > SPACEWASM_MEMORY_ALIGNMENT) {
         return nullptr;
     }
 
@@ -78,8 +78,8 @@ U8* WasmSequencer ::guestAlloc(FwSizeType size, U32 align) {
     const FwSizeType start = (this->m_guestPoolOffset + a - 1) & ~(a - 1);
 
     // Compare against the pre-subtracted bound so `start + size` cannot overflow.
-    // `size <= this->m_guestPoolSize` (checked above) makes the subtraction non-negative.
-    if (start > this->m_guestPoolSize - size) {
+    // `size <= this->m_config.guestMemorySize` (checked above) makes the subtraction non-negative.
+    if (start > this->m_config.guestMemorySize - size) {
         return nullptr;
     }
     this->m_guestPoolOffset = start + size;
@@ -102,7 +102,7 @@ U8* WasmSequencer ::guestRealloc(U8* ptr, FwSizeType oldSize, FwSizeType newSize
     // Check 1. i.e. the pointer is what we expect given old_size and current guest offset
     if (offset + oldSize == this->m_guestPoolOffset) {
         // Check 2. We have enough space in the guest pool to service this request
-        if (offset + newSize <= this->m_guestPoolSize) {
+        if (offset + newSize <= this->m_config.guestMemorySize) {
             // ...now the donuts
             // Allocate the new guest memory size
             this->m_guestPoolOffset = offset + newSize;
@@ -152,8 +152,6 @@ void WasmSequencer ::guestDeallocCallback(void* userdata, U8* ptr, size_t size, 
 
 void WasmSequencer ::createStore() {
     FW_ASSERT(this->m_wasm == nullptr);
-    static_assert(WasmSequencerConfig::MAX_GUEST_MODULES <= 255,
-                  "SpaceWasm does not support more than 255 WebAssembly guest modules");
 
     this->takeAllocatorLock();
 
@@ -166,10 +164,9 @@ void WasmSequencer ::createStore() {
     spacewasm_compiler_options_t options;
     options.allow_memory_grow = true;  // implemented in a restricted way (see guestRealloc)
     options.max_backpatch_iterations = Svc::WasmSequencerConfig::MAX_BACKPATCH_ITERATIONS;
-    options.max_code_pages = this->m_wasmMaxCodePages;
+    options.max_code_pages = this->m_config.maxCodePages;
 
-    status =
-        spacewasm_new(&host, this->m_wasmStackSize, WasmSequencerConfig::MAX_GUEST_MODULES, options, &this->m_wasm);
+    status = spacewasm_new(&host, this->m_config.stackSize, this->m_config.maxGuestModules, options, &this->m_wasm);
 
     this->releaseAllocatorLock();
 
@@ -179,12 +176,12 @@ void WasmSequencer ::createStore() {
     // If status == SPACEWASM_ERR_PAGE_TOO_SMALL:
     // - Increase Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE
     // If SPACEWASM_ERR_OUT_OF_MEMORY / SPACEWASM_ERR_ALLOC_FAILED:
-    // - Increase heapMemPageCount in configure()
-    // - Lower MAX_GUEST_MODULES in WasmSequencerConfig.hpp
-    // - Lower wasmStackSize in configure()
+    // - Increase heapPages in configure()
+    // - Lower maxGuestModules in configure()
+    // - Lower stackSize in configure()
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    this->log_DIAGNOSTIC_StoreAllocationSucceeded(WasmSequencerConfig::MAX_GUEST_MODULES);
+    this->log_DIAGNOSTIC_StoreAllocationSucceeded(this->m_config.maxGuestModules);
 }
 
 void WasmSequencer ::destroyStore() {

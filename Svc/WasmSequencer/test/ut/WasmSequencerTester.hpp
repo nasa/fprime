@@ -82,24 +82,13 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! misconfigurations. The event history is cleared either way.
     explicit WasmSequencerTester(bool autoConfigure);
 
-    //! A configuration for component.configure(); the defaults match the tester's standard sizing.
-    struct TestConfig {
-        FwSizeType dynPages = DYNAMIC_POOL_PAGES;
-        FwSizeType guestSize = GUEST_POOL_SIZE;
-        FwSizeType stackSize = WASM_STACK_SIZE;
-        FwSizeType serialOutMax = SERIAL_OUT_MAX_SIZE;
-        FwSizeType serialInSizes[WasmSequencer::NUM_SERIALIN_INPUT_PORTS];
-        WasmSequencer::SerialInQueueFullBehavior serialInBehaviors[WasmSequencer::NUM_SERIALIN_INPUT_PORTS];
-        TestConfig() {
-            for (FwIndexType i = 0; i < WasmSequencer::NUM_SERIALIN_INPUT_PORTS; i++) {
-                this->serialInSizes[i] = SERIAL_IN_QUEUE_SIZE;
-                this->serialInBehaviors[i] = WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST;
-            }
-        }
-    };
+    //! Build a WasmSequencer::Config pre-populated with the tester's standard sizing (the defaults
+    //! used by the auto-configuring fixture). Tests that need a variant start from this and tweak
+    //! individual fields.
+    WasmSequencer::Config standardConfig() const;
 
-    //! Drive component.configure() from a TestConfig (using the tester's tracking allocator).
-    void configureWith(const TestConfig& cfg);
+    //! Drive component.configure() from a WasmSequencer::Config (using the tester's tracking allocator).
+    void configureWith(const WasmSequencer::Config& cfg);
 
     //! Whether the component currently owns an interpreter store (white-box; configure() creates it).
     bool isStoreCreated() const { return this->component.m_wasm != nullptr; }
@@ -227,11 +216,11 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! Number of dynamic (interpreter-heap) pages currently handed out by the page allocator (white-box).
     FwSizeType dynamicPagesUsed() const { return this->component.m_heapPagesUsed; }
     //! Total number of dynamic pages the pool was configured with (white-box).
-    FwSizeType dynamicPagesCapacity() const { return this->component.m_heapPageCount; }
+    FwSizeType dynamicPagesCapacity() const { return this->component.m_config.heapPages; }
     //! Current bump offset into the guest linear-memory pool (white-box).
     FwSizeType getGuestOffset() const { return this->component.m_guestPoolOffset; }
     //! Total size of the guest linear-memory pool (white-box).
-    FwSizeType guestPoolSize() const { return this->component.m_guestPoolSize; }
+    FwSizeType guestPoolSize() const { return this->component.m_config.guestMemorySize; }
     //! Drive the guest bump allocator directly (the callbacks are private). Used by the memory.grow
     //! (guestRealloc) tests to exercise the grow logic without a live spacewasm store.
     U8* wbGuestAlloc(U32 size, U32 align) { return this->component.guestAlloc(size, align); }
@@ -258,7 +247,7 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! Override the configured queue-full behavior for a serialIn port index (white-box). The tester
     //! ctor configures every port with DROP_OLDEST; tests that exercise DROP_NEWEST/ASSERT set it here.
     void setSerialInFullBehavior(FwIndexType portNum, WasmSequencer::SerialInQueueFullBehavior behavior) {
-        this->component.m_serialInFullBehavior[portNum] = behavior;
+        this->component.m_config.serialIn[portNum].fullBehavior = behavior;
     }
     //! Reset a serialIn queue to the un-setup (no backing buffer, capacity 0) state, modeling a port
     //! that configure() was given size 0. Placement-new reset mirrors the disconnectSerialOut idiom.
@@ -367,7 +356,8 @@ inline WasmSequencerTester::StagedAsset::~StagedAsset() {
 }
 
 //! Fixture variant that does NOT auto-configure the component, so each test drives
-//! component.configure() with its own TestConfig. Used to exercise per-config branches
+//! component.configure() with its own WasmSequencer::Config (via standardConfig()). Used to
+//! exercise per-config branches
 //! (serialIn sizes/behaviors, serialOut buffer sizing) and misconfigurations (assert paths).
 class WasmSequencerConfigTester : public WasmSequencerTester {
   public:

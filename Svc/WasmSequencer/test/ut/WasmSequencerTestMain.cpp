@@ -2199,7 +2199,7 @@ TEST_F(WasmSequencerTester, CancelFromIdleStaysIdle) {
     // configure() is cleared from the history by the tester ctor, so the single
     // event asserted here is the one produced by this CANCEL's store reset.)
     ASSERT_EVENTS_StoreAllocationSucceeded_SIZE(1);
-    ASSERT_EVENTS_StoreAllocationSucceeded(0, WasmSequencerConfig::MAX_GUEST_MODULES);
+    ASSERT_EVENTS_StoreAllocationSucceeded(0, static_cast<U16>(this->standardConfig().maxGuestModules));
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
@@ -3905,7 +3905,7 @@ TEST_F(WasmSequencerTester, SerialInZeroSizeQueueDropsFramesWithoutCrashing) {
 
 // ----------------------------------------------------------------------
 // configure() config-space coverage (WasmSequencerConfigTester defers configure()
-// so each test supplies its own TestConfig). Exercises the per-config branches --
+// so each test supplies its own WasmSequencer::Config (via standardConfig())). Exercises the per-config branches --
 // distinct serialIn sizes/behaviors, serialOut buffer sizing -- and the
 // misconfiguration assert paths (death tests).
 // ----------------------------------------------------------------------
@@ -3915,10 +3915,10 @@ TEST_F(WasmSequencerConfigTester, SerialInPerPortBehaviorsWiredByConfigure) {
     // configure() must wire each serialIn port index to its own size + full behavior. Configure
     // port 1 = DROP_NEWEST, port 2 = DROP_OLDEST (both 256 B), and port 3 = size 0 (no queue), then
     // confirm each port obeys its own configured policy.
-    TestConfig cfg;
-    cfg.serialInBehaviors[1] = WasmSequencer::SerialInQueueFullBehavior::DROP_NEWEST;
-    cfg.serialInBehaviors[2] = WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST;
-    cfg.serialInSizes[3] = 0;
+    WasmSequencer::Config cfg = this->standardConfig();
+    cfg.serialIn[1].fullBehavior = WasmSequencer::SerialInQueueFullBehavior::DROP_NEWEST;
+    cfg.serialIn[2].fullBehavior = WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST;
+    cfg.serialIn[3].size = 0;
     this->configureWith(cfg);
     this->clearHistory();
 
@@ -3958,7 +3958,7 @@ TEST_F(WasmSequencerConfigTester, SerialInPerPortBehaviorsWiredByConfigure) {
 TEST_F(WasmSequencerConfigTester, SerialOutUnconfiguredTrapsSend) {
     // A component configured with serialOutMax == 0 has no serialOut copy buffer; any serial_send
     // from a guest must trap (BufferTooLarge, capacity 0) rather than forward a null-backed buffer.
-    TestConfig cfg;
+    WasmSequencer::Config cfg = this->standardConfig();
     cfg.serialOutMax = 0;
     this->configureWith(cfg);
     this->clearHistory();
@@ -3979,7 +3979,7 @@ TEST_F(WasmSequencerConfigTester, SerialOutUnconfiguredTrapsSend) {
 TEST_F(WasmSequencerConfigTester, SerialOutBufferSizeFromConfig) {
     // The serialOut copy-buffer size (the BufferTooLarge threshold) comes from per-instance config.
     // Configure a 4-byte serialOut buffer; the guest's 8-byte serial_send is rejected.
-    TestConfig cfg;
+    WasmSequencer::Config cfg = this->standardConfig();
     cfg.serialOutMax = 4;
     this->configureWith(cfg);
     this->clearHistory();
@@ -3999,16 +3999,16 @@ TEST_F(WasmSequencerConfigTester, SerialOutBufferSizeFromConfig) {
 TEST_F(WasmSequencerConfigTester, ConfigureTwiceAsserts) {
     // configure() is one-shot: a second call (which would leak the first pools and rebind a live
     // store) trips the FW_ASSERT(m_wasm == nullptr) guard.
-    this->configureWith(TestConfig());
-    ASSERT_DEATH_IF_SUPPORTED(this->configureWith(TestConfig()), "Assert: ");
+    this->configureWith(this->standardConfig());
+    ASSERT_DEATH_IF_SUPPORTED(this->configureWith(this->standardConfig()), "Assert: ");
 }
 
 // Requirement: WASM-SEQ-003
 TEST_F(WasmSequencerConfigTester, ConfigureTooManyDynamicPagesAsserts) {
     // Requesting more dynamic pages than the process-wide maximum (SPACEWASM_MAX_PAGES backs the
     // per-instance page-pointer array) is a misconfiguration caught up front by configure().
-    TestConfig cfg;
-    cfg.dynPages = Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES + 1;
+    WasmSequencer::Config cfg = this->standardConfig();
+    cfg.heapPages = Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES + 1;
     ASSERT_DEATH_IF_SUPPORTED(this->configureWith(cfg), "Assert: ");
 }
 
@@ -4016,7 +4016,7 @@ TEST_F(WasmSequencerConfigTester, ConfigureTooManyDynamicPagesAsserts) {
 TEST_F(WasmSequencerConfigTester, ConfigureStackTooLargeForPoolAsserts) {
     // A Wasm stack far larger than the dynamic pool can back makes store creation fail, tripping
     // the "dynamic memory too small" assertion in createStore().
-    TestConfig cfg;
+    WasmSequencer::Config cfg = this->standardConfig();
     cfg.stackSize = 1u << 20;  // 1 MiB stack vs a 4-page (32 KiB) dynamic pool
     ASSERT_DEATH_IF_SUPPORTED(this->configureWith(cfg), "Assert: ");
 }
@@ -4027,7 +4027,7 @@ TEST_F(WasmSequencerConfigTester, PageFreeThenReAllocPoisonAsserts) {
     // forward-scan (non-LIFO) order, the bump allocator poisons the pool on any free so a later
     // allocation aborts (fail-fast) instead of potentially handing back a still-live page. This is
     // the mechanism that prevents the live-page aliasing / heap-corruption class of bug.
-    this->configureWith(TestConfig());
+    this->configureWith(this->standardConfig());
     ASSERT_DEATH_IF_SUPPORTED(this->pokePageFreeThenReAlloc(), "Assert: ");
 }
 
@@ -4035,9 +4035,9 @@ TEST_F(WasmSequencerConfigTester, PageFreeThenReAllocPoisonAsserts) {
 TEST_F(WasmSequencerConfigTester, SerialInQueueFullBehaviorAssertAborts) {
     // A serialIn port configured with the ASSERT full-behavior fails fast (aborts) when a frame
     // cannot fit, instead of dropping it (DROP_OLDEST/DROP_NEWEST).
-    TestConfig cfg;
-    cfg.serialInSizes[2] = 32;
-    cfg.serialInBehaviors[2] = WasmSequencer::SerialInQueueFullBehavior::ASSERT;
+    WasmSequencer::Config cfg = this->standardConfig();
+    cfg.serialIn[2].size = 32;
+    cfg.serialIn[2].fullBehavior = WasmSequencer::SerialInQueueFullBehavior::ASSERT;
     this->configureWith(cfg);
 
     // One 24-byte frame (4-byte header + 20-byte payload) fits the 32-byte queue.

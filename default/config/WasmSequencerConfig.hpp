@@ -22,11 +22,6 @@ namespace WasmSequencerConfig {
 constexpr FwSizeType SPACEWASM_PAGE_SIZE = WASM_SEQ_SPACEWASM_PAGE_SIZE;
 constexpr FwSizeType SPACEWASM_MAX_PAGES = WASM_SEQ_SPACEWASM_MAX_PAGES;
 
-/// The maximum number of Wasm modules allowed to load into the sequencer's store.
-/// If this sequencer does not have enough memory to dynamic allocate this store,
-/// the sequencer's preamble will trigger an assertion.
-constexpr U8 MAX_GUEST_MODULES = 8;
-
 /// Configures the control-flow backpatch chain length resolution limit.
 /// This is only needed to give a bound to a potentially long loop during load time.
 /// Set this to `0` to disable this upper limit. It is theoritically impossible for this

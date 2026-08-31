@@ -46,7 +46,7 @@ WasmSequencerTester ::WasmSequencerTester(bool autoConfigure)
     // store) and is REQUIRED before the component is exercised. A derived fixture may pass
     // autoConfigure=false to configure with a custom config per test instead.
     if (autoConfigure) {
-        this->configureWith(TestConfig());
+        this->configureWith(this->standardConfig());
     }
 
     // Load parameters so INSTRUCTION_FUEL (and friends) take their declared
@@ -64,17 +64,22 @@ WasmSequencerTester ::~WasmSequencerTester() {
     this->component.deinit();
 }
 
-void WasmSequencerTester ::configureWith(const TestConfig& cfg) {
-    WasmSequencer::Config componentCfg;
-    componentCfg.heapPages = cfg.dynPages;
-    componentCfg.guestMemorySize = cfg.guestSize;
-    componentCfg.stackSize = cfg.stackSize;
-    componentCfg.serialOutMax = cfg.serialOutMax;
+WasmSequencer::Config WasmSequencerTester ::standardConfig() const {
+    WasmSequencer::Config cfg;
+    cfg.heapPages = DYNAMIC_POOL_PAGES;
+    cfg.guestMemorySize = GUEST_POOL_SIZE;
+    cfg.stackSize = WASM_STACK_SIZE;
+    cfg.serialOutMax = SERIAL_OUT_MAX_SIZE;
+    // maxGuestModules is left at Config's default (8), which matches the tester's standard sizing.
     for (FwIndexType i = 0; i < WasmSequencer::NUM_SERIALIN_INPUT_PORTS; i++) {
-        componentCfg.serialIn[i].size = cfg.serialInSizes[i];
-        componentCfg.serialIn[i].fullBehavior = cfg.serialInBehaviors[i];
+        cfg.serialIn[i].size = SERIAL_IN_QUEUE_SIZE;
+        cfg.serialIn[i].fullBehavior = WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST;
     }
-    this->component.configure(componentCfg, this->m_allocator);
+    return cfg;
+}
+
+void WasmSequencerTester ::configureWith(const WasmSequencer::Config& cfg) {
+    this->component.configure(cfg, this->m_allocator);
 }
 
 // ----------------------------------------------------------------------
@@ -136,7 +141,7 @@ void WasmSequencerTester ::unsetupSerialInQueue(FwIndexType portNum) {
     queue.~CircularBuffer();
     new (&queue) Types::CircularBuffer();
     if (buffer != nullptr) {
-        this->m_allocator.deallocate(static_cast<FwIndexType>(this->component.m_heapPageCount) + 3 + portNum, buffer);
+        this->m_allocator.deallocate(static_cast<FwIndexType>(this->component.m_config.heapPages) + 3 + portNum, buffer);
     }
 }
 

@@ -109,6 +109,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         //! The larger this number is the higher overhead needed in the Wasm heap.
         U32 maxCodePages = 256;
 
+        //! Maximum number of Wasm modules that may be loaded into the sequencer's store.
+        U8 maxGuestModules = 8;
+
         //! Size (in bytes) of the serialOut buffer used to copy a `serial_send` payload out of guest memory
         //! before invoking the connected serialOut port. A value of 0 leaves serialOut unconfigured (disabled
         //! serial_send).
@@ -902,13 +905,13 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     Fw::MemAllocator* m_allocator = nullptr;
 
+    //! Memory-resource configuration captured by configure()
+    Config m_config;
+
     //! Page pool backing the process-wide spacewasm global page allocator for this instance.
-    //! Each page is `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` with m_dynamicPoolPageCount pages.
+    //! Each page is `Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE` with m_config.heapPages pages.
     //! Stores dynamic memory allocated to hold each loaded module in the store (and the store itself).
     U8** m_heapPages;
-
-    //! Number of dynamic pages allocated for the dynamic memory pool
-    FwSizeType m_heapPageCount;
 
     //! Number of currently used
     FwSizeType m_heapPagesUsed;
@@ -922,18 +925,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! bump allocator (guest modules are compiled with memory.grow disabled).
     U8* m_guestPool;
 
-    //! Total size allocated allocated for m_guestPool
-    FwSizeType m_guestPoolSize;
-
     //! Current bump offset into `m_guestPool`.
     FwSizeType m_guestPoolOffset;
-
-    //! Wasm stack size in 32-bit words. Stack is allocated into heap memory pool
-    FwSizeType m_wasmStackSize;
-
-    //! Maximum number of code pages in the store to track.
-    //! This preallocates a Vec<Box<Page>> into the store (heap allocation).
-    U32 m_wasmMaxCodePages;
 
     //! Opaque handle to the spacewasm engine, or null (before the store is initialized).
     spacewasm_t* m_wasm;
@@ -1038,9 +1031,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Buffer to hold the serial output port invocation invoked by the guest
     Fw::ExternalSerializeBuffer m_serialOutBuffer;
-
-    //! Queue full behavior for each serialIn input port
-    SerialInQueueFullBehavior m_serialInFullBehavior[NUM_SERIALIN_INPUT_PORTS];
 
     //! Queues (or queue) that handle inputs on the serial input port. Each is backed by
     //! the corresponding row of m_serialInQueueData (see the setup() loop in the ctor).
