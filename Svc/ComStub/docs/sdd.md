@@ -6,7 +6,7 @@
 [communication adapter interface](../../../docs/reference/communication-adapter-interface.md) required
 to work with F´ communication components. Projects would typically switch this component out for a
 radio manager component. The purpose of ComStub is to implement the communication adapter interface by delegating
-to a [`Drv.ByteStreamDriver`](../../../Drv/Interfaces/docs/sdd.md) (e.g. `Drv.TcpClient` or `Drv.LinuxUartDriver`) to send and receive data.
+to a [`Drv.ByteStreamDriver`](../../../Drv/Interfaces/docs/sdd.md) (e.g. `Drv.TcpClient` or `Drv.PosixUartDriver`) to send and receive data.
 
 The `Svc::ComStub` is written to work with both `Drv.ByteStreamDriver` and `Drv.AsyncByteStreamDriver`. It will behave accordingly based on the connected ports:
 

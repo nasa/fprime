@@ -1,6 +1,6 @@
 module Drv {
 
-  passive component LinuxUartDriver {
+  passive component PosixUartDriver {
 
     # ----------------------------------------------------------------------
     # General ports

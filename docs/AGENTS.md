@@ -25,7 +25,7 @@ Also at this level:
 
 - **Component design (SDDs)**: framework modules document themselves in
   `<Module>/docs/sdd.md`, e.g. `Svc/CmdDispatcher/docs/sdd.md`,
-  `Fw/Buffer/docs/sdd.md`, `Drv/LinuxUartDriver/docs/sdd.md`. The SDD is the
+  `Fw/Buffer/docs/sdd.md`, `Drv/PosixUartDriver/docs/sdd.md`. The SDD is the
   authoritative description of a single module's interface and behavior — read
   it before changing that module, and update it when the FPP model or the
   external behavior changes.
