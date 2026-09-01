@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "cd3845fc2ba957aa65751c4851046ee1c7d3ef3b",
-  "generated_at": "2026-09-01T21:20:14Z",
+  "generated_at": "2026-09-01T22:12:48Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -23,14 +23,14 @@
     "tier": "silver"
   },
   "overall_int": {
-    "line_pct": 29.47,
-    "line_covered": 8704,
+    "line_pct": 29.46,
+    "line_covered": 8703,
     "line_total": 29538,
     "function_pct": 38.43,
     "function_covered": 1527,
     "function_total": 3973,
-    "branch_pct": 18.69,
-    "branch_covered": 2845,
+    "branch_pct": 18.71,
+    "branch_covered": 2848,
     "branch_total": 15225,
     "report": "int-coverage/coverage-all.html",
     "tier": "bronze"
@@ -4460,14 +4460,14 @@
         "tier": "silver"
       },
       "int": {
-        "line_pct": 41.13,
-        "line_covered": 102,
+        "line_pct": 40.73,
+        "line_covered": 101,
         "line_total": 248,
         "function_pct": 40.68,
         "function_covered": 24,
         "function_total": 59,
-        "branch_pct": 32.74,
-        "branch_covered": 37,
+        "branch_pct": 31.86,
+        "branch_covered": 36,
         "branch_total": 113,
         "report": "Fw/Time/int-coverage/index.html",
         "tier": "bronze"
@@ -4806,8 +4806,8 @@
         "function_pct": 40.69,
         "function_covered": 236,
         "function_total": 580,
-        "branch_pct": 25.61,
-        "branch_covered": 370,
+        "branch_pct": 25.67,
+        "branch_covered": 371,
         "branch_total": 1445,
         "report": "Os/int-coverage/index.html",
         "tier": "bronze"
@@ -9643,8 +9643,8 @@
         "function_pct": 100.0,
         "function_covered": 7,
         "function_total": 7,
-        "branch_pct": 55.36,
-        "branch_covered": 31,
+        "branch_pct": 60.71,
+        "branch_covered": 34,
         "branch_total": 56,
         "report": "Svc/FprimeRouter/int-coverage/index.html",
         "tier": "bronze"
