@@ -4,7 +4,7 @@
 
 The PosixUartDriver component provides a POSIX implementation of a UART (Universal Asynchronous Receiver-Transmitter) serial communication driver. It implements the byte stream driver model interface (see [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp)) to enable serial communication with external devices through UART ports on POSIX systems.
 
-The component wraps POSIX termios API functionality to provide configurable serial communication with support for various baud rates, flow control options, and parity settings. It implements bidirectional communication using a dedicated receive thread and synchronous send operations. `Drv/LinuxUartDriver` remains available as a deprecated compatibility alias.
+The component wraps POSIX termios API functionality to provide configurable serial communication with support for various baud rates, flow control options, and parity settings. It implements bidirectional communication using a dedicated receive thread and synchronous send operations.
 
 For more information on the ByteStreamDriverModel see: [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
 
