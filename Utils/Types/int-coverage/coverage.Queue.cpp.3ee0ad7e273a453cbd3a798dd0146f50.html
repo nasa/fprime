@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-01 22:12:36</td>
+      <td>2026-09-02 22:13:56</td>
     </tr>
   </table>
 </div>
@@ -77,15 +77,15 @@
     <tr><td><a href="#l175">Fw::SerializeStatus Types::Queue::popFront_impl&lt;Fw::LinearBufferBase&gt;(Fw::LinearBufferBase&amp;) (line 175)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l175">Fw::SerializeStatus Types::Queue::popFront_impl&lt;Fw::Serializable&gt;(Fw::Serializable&amp;) (line 175)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l15">Types::Queue::Queue() (line 15)</a></td><td>called 3 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l198">Types::Queue::clear_high_water_mark() (line 198)</a></td><td>called 708 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l198">Types::Queue::clear_high_water_mark() (line 198)</a></td><td>called 702 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l158">Types::Queue::dequeue(Fw::LinearBufferBase&amp;) (line 158)</a></td><td>called 677 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l154">Types::Queue::dequeue(Fw::Serializable&amp;) (line 154)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l98">Types::Queue::dequeue(unsigned char*, unsigned long) (line 98)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l94">Types::Queue::enqueue(Fw::LinearBufferBase const&amp;) (line 94)</a></td><td>called 677 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l90">Types::Queue::enqueue(Fw::Serializable const&amp;) (line 90)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l36">Types::Queue::enqueue(unsigned char const*, unsigned long) (line 36)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l202">Types::Queue::getQueueSize() const (line 202)</a></td><td>called 2287 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l193">Types::Queue::get_high_water_mark() const (line 193)</a></td><td>called 708 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l202">Types::Queue::getQueueSize() const (line 202)</a></td><td>called 2275 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l193">Types::Queue::get_high_water_mark() const (line 193)</a></td><td>called 702 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l189">Types::Queue::popFront(Fw::LinearBufferBase&amp;) (line 189)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l185">Types::Queue::popFront(Fw::Serializable&amp;) (line 185)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l162">Types::Queue::popFront(unsigned char*, unsigned long) (line 162)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -1474,21 +1474,21 @@
       <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">708</td>
+      <td class="linecount coveredLine">702</td>
       <td class="src coveredLine"><span class="n">FwSizeType</span><span class="w"> </span><span class="n">Queue</span><span class="o">::</span><span class="n">get_high_water_mark</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">708</td>
+      <td class="linecount coveredLine">702</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">m_message_size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_message_size</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">708</td>
+      <td class="linecount coveredLine">702</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_internal</span><span class="p">.</span><span class="n">get_high_water_mark</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">m_message_size</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1509,21 +1509,21 @@
       <td class="lineno"><a id="l198" href="#l198">198</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">708</td>
+      <td class="linecount coveredLine">702</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Queue</span><span class="o">::</span><span class="n">clear_high_water_mark</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l199" href="#l199">199</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">708</td>
+      <td class="linecount coveredLine">702</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_internal</span><span class="p">.</span><span class="n">clear_high_water_mark</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l200" href="#l200">200</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">708</td>
+      <td class="linecount coveredLine">702</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1537,21 +1537,21 @@
       <td class="lineno"><a id="l202" href="#l202">202</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2287</td>
+      <td class="linecount coveredLine">2275</td>
       <td class="src coveredLine"><span class="n">FwSizeType</span><span class="w"> </span><span class="n">Queue</span><span class="o">::</span><span class="n">getQueueSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l203" href="#l203">203</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2287</td>
+      <td class="linecount coveredLine">2275</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">m_message_size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_message_size</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l204" href="#l204">204</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2287</td>
+      <td class="linecount coveredLine">2275</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_internal</span><span class="p">.</span><span class="n">get_allocated_size</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">m_message_size</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
