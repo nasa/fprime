@@ -58,20 +58,14 @@ def test_command_and_event_with_many_args(fprime_test_api: IntegrationTestAPI):
 
 def test_telemetry_update(fprime_test_api: IntegrationTestAPI):
     """Test that we can receive telemetry updates with expected values"""
-
-    cmd_dispatched_channel = fprime_test_api.get_telemetry_pred("CommandsDispatched")
     fprime_test_api.set_tlm_packet_level(3)
-    # Clear stale telemetry, then wait for fresh telemetry after command completes
     fprime_test_api.clear_histories()
-
-    begin_result = fprime_test_api.await_telemetry(cmd_dispatched_channel, timeout=3)
-    begin_tlm_val = begin_result.val_obj.val
-
-    # Send command and wait for completion with assert
+    # Read two samples so the second is guaranteed fresh (not stale from prior test)
+    samples = fprime_test_api.await_telemetry_count(2, "CommandsDispatched", timeout=10)
+    assert len(samples) >= 2
+    before = samples[-1].val_obj.val
     fprime_test_api.send_and_assert_command(
         f"{fprime_test_api.get_mnemonic('Svc.CommandDispatcher')}.CMD_NO_OP"
     )
-    # Clear stale telemetry, then wait for fresh telemetry after command completes
     fprime_test_api.clear_histories()
-    end_result = fprime_test_api.await_telemetry(cmd_dispatched_channel, timeout=3)
-    assert end_result.val_obj.val == begin_tlm_val + 1
+    fprime_test_api.assert_telemetry("CommandsDispatched", value=before + 1, timeout=10)
