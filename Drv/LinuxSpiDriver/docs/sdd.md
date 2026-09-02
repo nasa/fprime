@@ -37,7 +37,7 @@ The LinuxSpiDriver is a passive component. All operations execute synchronously 
 | `SPI_ConfigError` | warning high | Error configuring mode, bits-per-word, or clock frequency |
 | `SPI_WriteError` | warning high | Error performing a bus transfer (throttled after 5 occurrences) |
 | `SPI_ConfigMismatch` | warning low | Read-back of a configured parameter did not match the written value |
-| `SPI_PortOpened` | activity high | Device successfully opened and configured |
+| `SPI_PortOpened` | activity high | Device successfully opened and configured (declared in the model but not currently emitted) |
 
 ### 3.3 Telemetry
 

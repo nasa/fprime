@@ -22,9 +22,9 @@ advantage of the autocoding capabilities of fprime. To add new modules to the CM
 Each of these steps are described in detail below. Further usage documentation on the functions used to perform these
 steps can be found in [API](./cmake-api.md). This document will explain the usage of core F´ CMake functions.
 
-## Step 1, Step 2, and Step 3: Define A CMakeList.txt File
+## Step 1, Step 2, and Step 3: Define A CMakeLists.txt File
 
-The CMakeList.txt file defines the steps needed to build **something** in CMake.  In fprime, we use this file to define the source, autocoder, and module dependencies for modules in fprime. A `register_` function is called to tie into the fprime autocoder environment. This keeps fprime modules simple, although all of CMake's power can be used when needed.
+The CMakeLists.txt file defines the steps needed to build **something** in CMake.  In fprime, we use this file to define the source, autocoder, and module dependencies for modules in fprime. A `register_` function is called to tie into the fprime autocoder environment. This keeps fprime modules simple, although all of CMake's power can be used when needed.
 
 Users need only set the `AUTOCODER_INPUTS` and `SOURCES` directives to a list of autocoder and code sources as part of the
 `register_fprime_module` call to setup a module for fprime (Port/Component). Deployments are done similarly but use the

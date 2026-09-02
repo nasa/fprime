@@ -5,7 +5,7 @@ systems. It was designed for projects that have not already chosen a GDS, for de
 project's GDS is fully online, and for integration testers who wish to automate tests against F´ software. This guide
 will give you a quick introduction to what the F´ GDS is and how you can use it.
 
-- [A Brief Guide to the F´ Ground Data System](#a-brief-guide-to-the-f-ground-data-system)
+- [The F´ Ground Data System](#the-f-ground-data-system)
   - [What is the GDS?](#what-is-the-gds)
   - [Getting Started](#getting-started)
     - [Running the GDS](#running-the-gds)
@@ -56,7 +56,7 @@ To start the GDS with the default settings (IP adapter, default ports, loading t
 navigate to the project directory and run `fprime-gds`. This will launch both the `Ref` flight software and the GDS layer along with the browser pointed at the GDS.
 
 ```bash
-$ cd fprime/Ref
+$ cd fprime/TestDeploymentsProject/Ref
 $ fprime-gds
 ```
 

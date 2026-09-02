@@ -21,7 +21,7 @@ The `Svc::Ccsds::ClearTextEncryptor` component is a pass-through implementation 
 |---------------|-----------------|-------------------------------|-------------|
 | guarded input | encryptIn       | Svc.Ccsds.CcsdsSdlsEncryption | Receives the SA index and iv/data buffer (from `CcsdsSdlsEncrypt` interface). |
 | output        | encryptOut      | Svc.Ccsds.CcsdsSdlsData       | Sends the operation status and (unmodified) data downstream. |
-| sync input    | encryptReturnIn | Svc.ComDataWithContext        | Receives back ownership of buffers sent on `encryptOut`. |
+| guarded input | encryptReturnIn | Svc.ComDataWithContext        | Receives back ownership of buffers sent on `encryptOut`. |
 | output        | bufferReturnOut | Svc.ComDataWithContext        | Returns the incoming iv/data buffer for deallocation. |
 
 ## Requirements

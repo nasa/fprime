@@ -41,7 +41,7 @@ To create a Data Handler plugin, subclass the [`DataHandlerPlugin`](https://gith
 
 
 - `data_callback(data, source)`:  
-  Handle incoming decoded data. The `data` type depends on the descriptor. The `source` argument is unused GDS plugins.
+  Handle incoming decoded data. The `data` type depends on the descriptor. The `source` argument is unused in GDS plugins.
 
 ```python
 from fprime_gds.common.handlers import DataHandlerPlugin

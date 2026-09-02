@@ -233,7 +233,7 @@ auto iter = set.begin();
 // Check that iter is not at the end
 ASSERT_NE(iter, set.end());
 // Increment iter
-it++;
+iter++;
 // Check that iter is at the end
 ASSERT_EQ(iter, set.end());
 ```
@@ -246,7 +246,7 @@ Success find(const T& element) override
 
 1. Set `Nil nil = {}`.
 
-1. Return `m_impl.find(key, nil)`.
+1. Return `m_impl.find(element, nil)`.
 
 _Example:_
 ```c++
@@ -307,7 +307,7 @@ ASSERT_EQ(size, 1);
 Success insert(const T& element) override
 ```
 
-Return `m_impl.insert(key, Nil())`.
+Return `m_impl.insert(element, Nil())`.
 
 _Example:_
 ```c++
@@ -331,7 +331,7 @@ Success remove(const T& element) override
 
 1. Set `Nil nil = {}`.
 
-1. Return `m_impl.remove(key, nil)`.
+1. Return `m_impl.remove(element, nil)`.
 
 _Example:_
 ```c++
@@ -386,7 +386,7 @@ void setStorage(ByteArray data, FwSizeType capacity)
 [`getByteArrayAlignment()`](#getByteArrayAlignment) and must
 contain at least [`getByteArraySize(capacity)`](#getByteArraySize) bytes.
 
-1. Call `m_entries.setStorage(data, capacity)`.
+1. Call `m_impl.setStorage(data, capacity)`.
 
 1. Call `clear()`.
 
@@ -409,7 +409,7 @@ set.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 static constexpr U8 getByteArrayAlignment()
 ```
 
-Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
+Return `ArraySetOrMapImpl<T, Nil>::getByteArrayAlignment()`.
 
 <a name="getByteArraySize"></a>
 ### 7.2. getByteArraySize
@@ -418,4 +418,4 @@ Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ```
 
-Return `ArraySetOrMapImpl<Entry>::getByteArraySize(capacity)`.
+Return `ArraySetOrMapImpl<T, Nil>::getByteArraySize(capacity)`.
