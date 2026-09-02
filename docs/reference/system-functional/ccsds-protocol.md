@@ -33,7 +33,7 @@ The Space Packet layer provides application-level packet framing per CCSDS 133.0
 
 The APID Manager tracks per-APID sequence counts for both outgoing and incoming Space Packets. It provides incrementing sequence counts to the Space Packet Framer for each APID and validates received sequence counts in the Space Packet Deframer to detect packet loss.
 
-By default, APIDs are assigned based on the F Prime data descriptor type (commands, telemetry, events, files, packetized telemetry). Missions requiring custom APID assignments can replace the default APID Manager component with a project-specific implementation.
+By default, APIDs are assigned based on the F Prime data descriptor type (commands, telemetry, events, files, packetized telemetry). Missions requiring custom APID assignments can replace the default APID Manager component with a project-specific implementation. To add project-specific data types with their own APIDs, see the [Add Custom Uplink and Downlink Data Types](../../how-to/develop/custom-uplink-downlink-data.md) guide.
 
 ### TM Space Data Link Protocol
 

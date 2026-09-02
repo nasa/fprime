@@ -47,7 +47,7 @@ Instances defined in this module:
 | `decryptionSaRouter` | `Svc.Ccsds.SdlsSaRouter`  | Passive | Routes decryption requests by SA index to the mapped downstream decryptor.                    |
 | `sdlsFramer`   | `Svc.Ccsds.CcsdsSdlsFramer`     | Passive | Delegates encryption and prepends the SA index to build the SDLS frame.                       |
 | `encryptionSaRouter` | `Svc.Ccsds.SdlsSaRouter`  | Passive | Routes encryption requests by SA index to the mapped downstream encryptor.                    |
-| `decryptor`    | `Svc.Ccsds.ClearTextDecryptor`* | Passive | Default decryptor for the base SA (**pass-through, NO security**). *Configurable — see 2.3.   |
+| `decryptor`    | `Svc.Ccsds.ClearTextDecryptor`* | Passive | Default decryptor for the base SA (**pass-through, NO security**). *Configurable — see 2.4.   |
 
 The layers are wired together exclusively through their **topology ports** (e.g. `ComCcsds.TmTcFraming.dataOut -> SdlsDecryption.dataIn`, `SdlsDecryption.dataOut -> ComCcsds.SpacePacketFraming.dataIn`); the `Subtopology` variant additionally instantiates `ComCcsds.comStub`.
 
@@ -55,39 +55,119 @@ The layers are wired together exclusively through their **topology ports** (e.g.
 > **A. "With ComStub" (`Subtopology`):** includes `Svc::ComStub` and exposes **ByteStream** ports to your driver.
 > **B. "With External ComInterface" (`FramingSubtopology`):** you **provide** an `Svc.ComInterface` implementation in the deployment.
 
-### 2.2 Uplink Data Flow (with SDLS)
+### 2.2 Data Flow - Uplink
 
-```
-[ ComCcsds.TmTcFraming ]      [    SdlsDecryption    ]      [ ComCcsds.SpacePacketFraming ]
-frameAccumulator -> tcDeframer -> sdlsDeframer -> spacePacketDeframer -> fprimeRouter
-                                       |  ^
-                            decryptOut v  | decryptIn (decrypted data)
-                            decryptionSaRouter
-                                       |  ^
-                          saDataOut[0] v  | saDataIn[0]
-                                    decryptor
+For reference, the standard (non-SDLS) CCSDS uplink flow is diagrammed in the
+[ComCcsds SDD, "Data Flow - Uplink"](../../ComCcsds/docs/sdd.md#22-data-flow---uplink).
+The SDLS stack inserts the `SdlsDecryption` layer between the transfer frame layer and
+the packet layer. The `decryptionSaRouter` routes each frame by its SA index to the
+decryptor mapped to that SA — the default `decryptor` on the `PLAINTEXT` port, or an
+additional project-supplied decryptor connected in the deployment (see 2.4, 2.5):
+
+```mermaid
+flowchart LR
+    subgraph TMTC["ComCcsds.TmTcFraming (transfer frame layer)"]
+        frameAccumulator["frameAccumulator<br>Svc.FrameAccumulator"]
+        tcDeframer["tcDeframer<br>Svc.Ccsds.TcDeframer"]
+    end
+
+    subgraph DEC["SdlsDecryption (this module)"]
+        sdlsDeframer["sdlsDeframer<br>Svc.Ccsds.CcsdsSdlsDeframer"]
+        decryptionSaRouter["decryptionSaRouter<br>Svc.Ccsds.SdlsSaRouter"]
+        decryptor["decryptor*<br>Svc.Ccsds.ClearTextDecryptor"]
+        decryptor2["additional decryptor<br>(project-supplied)"]
+    end
+
+    subgraph SPF["ComCcsds.SpacePacketFraming (packet layer)"]
+        spacePacketDeframer["spacePacketDeframer<br>Svc.Ccsds.SpacePacketDeframer"]
+        fprimeRouter["fprimeRouter<br>Svc.FprimeRouter"]
+    end
+
+    com["ComInterface"]
+    fsw["Flight software<br>(command dispatch, file uplink, ...)"]
+
+    com -->|raw bytes| frameAccumulator
+    frameAccumulator -->|TC Transfer Frame| tcDeframer
+    tcDeframer -->|SDLS frame| sdlsDeframer
+    sdlsDeframer -->|decryptOut| decryptionSaRouter
+    decryptionSaRouter -->|"saDataOut[SA 0]"| decryptor
+    decryptor -->|"saDataIn[SA 0]"| decryptionSaRouter
+    decryptionSaRouter -.->|"saDataOut[SA 1]"| decryptor2
+    decryptor2 -.->|"saDataIn[SA 1]"| decryptionSaRouter
+    decryptionSaRouter -->|decryptIn| sdlsDeframer
+    sdlsDeframer -->|decrypted Space Packet| spacePacketDeframer
+    spacePacketDeframer -->|F´ packet| fprimeRouter
+    fprimeRouter -->|commands / files| fsw
 ```
 
-The downlink path inserts the mirrored `SdlsEncryption` layer (`sdlsFramer` → `encryptionSaRouter` → `encryptor`) between `SpacePacketFraming.dataOut` and `TmTcFraming.dataIn`.
+### 2.3 Data Flow - Downlink
+
+For reference, the standard (non-SDLS) CCSDS downlink flow is diagrammed in the
+[ComCcsds SDD, "Data Flow - Downlink"](../../ComCcsds/docs/sdd.md#23-data-flow---downlink).
+The SDLS stack inserts the mirrored `SdlsEncryption` layer between the packet layer and
+the transfer frame layer, with the `encryptionSaRouter` routing by SA index to the
+default `encryptor` or an additional project-supplied encryptor:
+
+```mermaid
+flowchart LR
+    subgraph SPF["ComCcsds.SpacePacketFraming (packet layer)"]
+        comQueue["comQueue<br>Svc.ComQueue"]
+        spacePacketFramer["spacePacketFramer<br>Svc.Ccsds.SpacePacketFramer"]
+        aggregator["aggregator<br>Svc.ComAggregator"]
+    end
+
+    subgraph ENC["SdlsEncryption (this module)"]
+        sdlsFramer["sdlsFramer<br>Svc.Ccsds.CcsdsSdlsFramer"]
+        encryptionSaRouter["encryptionSaRouter<br>Svc.Ccsds.SdlsSaRouter"]
+        encryptor["encryptor*<br>Svc.Ccsds.ClearTextEncryptor"]
+        encryptor2["additional encryptor<br>(project-supplied)"]
+    end
+
+    subgraph TMTC["ComCcsds.TmTcFraming (transfer frame layer)"]
+        framer["framer<br>Svc.Ccsds.TmFramer"]
+    end
+
+    com["ComInterface"]
+    src["Packet sources<br>(telemetry, events, file downlink)"]
+
+    src -->|COM data| comQueue
+    comQueue -->|Fw::Buffer| spacePacketFramer
+    spacePacketFramer -->|Space Packet| aggregator
+    aggregator -->|Space Packets| sdlsFramer
+    sdlsFramer -->|encryptOut| encryptionSaRouter
+    encryptionSaRouter -->|"saDataOut[SA 0]"| encryptor
+    encryptor -->|"saDataIn[SA 0]"| encryptionSaRouter
+    encryptionSaRouter -.->|"saDataOut[SA 1]"| encryptor2
+    encryptor2 -.->|"saDataIn[SA 1]"| encryptionSaRouter
+    encryptionSaRouter -->|encryptIn| sdlsFramer
+    sdlsFramer -->|SDLS frame| framer
+    framer -->|TM Transfer Frame| com
+```
+
+\* The `encryptor`/`decryptor` instances default to the ClearText implementations (NO
+security) and are configurable — see 2.4. Dashed connections show an additional
+crypto component mapped to a second SA; in the default configuration SA 1 routes to
+the `UNCONNECTED` port (see 2.5) and the second component is supplied and wired by the
+deployment.
 
 The `sdlsDeframer` extracts the leading 16-bit SA index, records it in the frame context, and sends the remaining iv/data to the `decryptionSaRouter`, which maps the SA to the decryptor on the mapped port. Decrypted data flows back through the router and deframer to the `spacePacketDeframer`. Buffer ownership returns flow the reverse paths (`dataReturnIn` → `decryptReturnOut` → decryptor; decryptor `bufferReturnOut` → router `bufferReturnOut` → deframer `dataReturnOut`).
 
-### 2.3 Selecting a Different Decryptor
+### 2.4 Selecting a Different Decryptor
 
 The `decryptor` instance is defined in the configuration module (`ComCcsdsSdlsConfig/ComCcsdsSdlsConfig.fpp`), not in the subtopology itself. Projects override the configuration module (CMake `CONFIGURATION_OVERRIDES`) to instantiate a different component implementing the `Svc.Ccsds.CcsdsSdlsDecrypt` interface. To route additional SAs to additional decryptors, also override the `SdlsSaRouter` configuration (`SdlsCfg.SaMap`, `SdlsCfg.SaRouterPortCount`) and connect the added router ports in the deployment topology.
 
-### 2.4 Default SA Map
+### 2.5 Default SA Map
 
 The `SdlsSaRouter` default configuration is two deep: `{ SA 0 -> SaRouterPorts.PLAINTEXT, SA 1 -> SaRouterPorts.UNCONNECTED }`. Each subtopology connects only the `PLAINTEXT` port (the default decryptor/encryptor); the `UNCONNECTED` port is left unconnected, so its SA returns `UNKNOWN_PORT` unless a deployment connects an additional crypto component. The SA mapping is configurable by overriding the `SdlsSaRouter` configuration module.
 
-### 2.5 Required Inputs for Operation
+### 2.6 Required Inputs for Operation
 
 * **Rate Groups:** Connect a rate group to the **`comQueueRun`** (telemetry send rate) and **`aggregatorTimeout`** topology ports.
 * **Transport Endpoint:** wire the ComStub ByteStream ports (variant A) or an external `Svc.ComInterface` (variant B) as documented in the usage note in `ComCcsdsSdls.fpp`.
 
 ## 3. Configuration
 
-`ComCcsdsSdlsConfig` supplies the `BASE_ID` for the SDLS instances and the `decryptor` instance definition (see 2.3). The reused packet and transfer frame layers are configured through `ComCcsdsConfig` (queue sizes, priorities, buffer sizing, memory allocator), exactly as when using `ComCcsds` directly.
+`ComCcsdsSdlsConfig` supplies the `BASE_ID` for the SDLS instances and the `decryptor` instance definition (see 2.4). The reused packet and transfer frame layers are configured through `ComCcsdsConfig` (queue sizes, priorities, buffer sizing, memory allocator), exactly as when using `ComCcsds` directly.
 
 ## 4. See Also
 

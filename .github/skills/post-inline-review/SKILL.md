@@ -258,7 +258,7 @@ The agent uses this to:
 
 ---
 
-## 7. Rate limits and retries
+## 7. Rate limits, retries, and pagination
 
 - Treat any `5xx` response as retryable with exponential backoff
   (1s, 2s, 4s, 8s, give up).
@@ -268,6 +268,33 @@ The agent uses this to:
   retry).
 - Do NOT retry `422` errors — they indicate a malformed request and
   retrying will produce the same error.
+
+### Secondary rate limits — abort, never retry
+
+`TOKEN` is shared with other services, so tripping GitHub's
+secondary (abuse-detection) limit for content creation disrupts
+more than this review. On a `429`, or a `403` whose body mentions
+"secondary rate limit":
+
+- Stop issuing content-creation calls (POST/PATCH to comments,
+  reviews, statuses) immediately.
+- Report the abort to the orchestrator as
+  `FAILED: secondary rate limit`; do not retry or wait it out.
+- Keep write bursts small in the first place: space
+  content-creation calls out rather than firing them all at once.
+
+### Pagination discipline
+
+- Every list endpoint returns one page (default 30 items). Always
+  request `per_page=100` and loop until a short page is returned
+  (REST) or `hasNextPage` is false (GraphQL). Silent truncation
+  from an unpaginated call drops findings and PRs without any
+  error.
+- For the Search API, verify the total number of items fetched
+  equals `total_count`; on mismatch, log a warning — the search
+  index may be inconsistent and results may be missing.
+- The Search API has its own 30 req/min limit; pause briefly
+  between search pages.
 
 ---
 

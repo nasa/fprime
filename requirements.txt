@@ -23,9 +23,9 @@ Flask-RESTful==0.3.10
 fprime-fpl-layout==1.0.4
 fprime-fpl-write-pic==1.0.4
 fprime-fpy==0.5.1
-fprime-fpp==3.3.0a16
-fprime-gds==4.3.0a1
-fprime-tools==4.3.0a6
+fprime-fpp==3.3.0
+fprime-gds==4.3.0
+fprime-tools==4.3.0
 fprime-visual==1.0.2
 gcovr==8.2
 idna==3.15

@@ -46,6 +46,9 @@ class FileDispatcherTester final : public FileDispatcherGTestBase {
     //! Dispatch test
     void dispatchTest();
 
+    //! Dispatch a maximum-length (FileNameStringSize) file name without truncation
+    void dispatchMaxLengthNameTest();
+
     //! Dispatch disabled test
     void dispatchAllDisabledTest();
 

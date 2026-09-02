@@ -41,7 +41,10 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Install cppcheck
-        run: sudo apt-get update && sudo apt-get install cppcheck xsltproc -y
+        timeout-minutes: 10
+        run: |
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install cppcheck xsltproc -y
 
       - name: Install sarif tool
         run: npm i -g @microsoft/sarif-multitool@5.6.0
