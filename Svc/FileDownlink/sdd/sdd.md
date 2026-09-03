@@ -51,9 +51,9 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
    > configure a downlink sandbox: `FileHandling` only calls the
    > `configure(cooldown, cycleTime, fileQueueDepth)` overload, which does not set a sandbox.
 
-### 3.3 Ports
+### 3.2 Ports
 
-#### 3.3.1 Role Ports
+#### 3.2.1 Role Ports
 
 Name | Type | Role
 -----| ---- | ----
@@ -64,29 +64,32 @@ Name | Type | Role
 `tlmOut` | [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Telemetry
 `eventOut` | [`Fw::LogEvent`](../../../Fw/Log/docs/sdd.md) | LogEvent
 
-#### 3.3.2 Component-Specific Ports
+#### 3.2.2 Component-Specific Ports
 
 Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
-`sendFile` | `Svc::SendFileRequest` | guarded_input | Enqueues file for downlink
-`fileComplete` | `Svc::SendFileComplete` | output | Emits notifications when a file downlink initiated by a port completes
+`SendFile` | `Svc::SendFileRequest` | guarded_input | Enqueues file for downlink
+`FileComplete` | `Svc::SendFileComplete` | output | Emits notifications when a file downlink initiated by a port completes
 `Run` | `Svc::Sched` | async_input | Periodic clock input used to trigger internal state machine
-<a name="bufferGet">`bufferGet`</a> | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.md) | output (caller) | Requests buffers for sending file packets.
 <a name="bufferSendOut">`bufferSendOut`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | output | Sends buffers containing file packets.
+<a name="bufferReturn">`bufferReturn`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | async_input | Receives back ownership of buffers sent on `bufferSendOut`.
+`pingIn` | `Svc::Ping` | async_input | Ping input from health checker
+`pingOut` | `Svc::Ping` | output | Ping response to health checker
 
-### 3.4 Constants
+### 3.3 Constants and Configuration
 
-`FileDownlink` has the following constants, initialized
-at component instantiation time:
+The downlink packet size is the compile-time configuration constant `FILEDOWNLINK_INTERNAL_BUFFER_SIZE`;
+packets are stored in an internal memory store.
 
-* *downlinkPacketSize*: The size of the packets to use on downlink.
+`FileDownlink` has the following values, set via `configure()` at initialization time:
+
 * *cooldown*: The amount of time in ms to wait in a cooldown state before starting next downlink.
 * *cycle time*: Frequency in ms of clock pulses sent to `Run` port, used for cooldown.
 * *file queue depth*: The maximum number of files that can be held in the internal file downlink
   queue. Attempting to dispatch a SendFile command or port call while the queue is full will result
-  in a busy error response.
+  in an error response (`STATUS_ERROR` on the port, `EXECUTION_ERROR` for the command).
 
-### 3.5 State
+### 3.4 State
 
 `FileDownlink` maintains a *mode* equal to
 one of the following values:
@@ -103,11 +106,11 @@ one of the following values:
 
 The initial value is IDLE.
 
-### 3.6 Commands
+### 3.5 Commands
 
 `FileDownlink` recognizes the commands described in the following sections.
 
-#### 3.6.1 SendFile/SendPartial
+#### 3.5.1 SendFile/SendPartial
 
 SendFile is an asynchronous command that adds a file to the file downlink queue.
 It has two arguments:
@@ -123,10 +126,10 @@ SendPartial also includes the following fields:
 When the downlink completes or fails, a CmdResponse packet will be sent indicating success or
 failure.
 
-#### 3.6.2 Cancel
+#### 3.5.2 Cancel
 
-Cancel is a synchronous command.
-If *mode* = DOWNLINK, it sets *mode* to CANCEL.
+Cancel is an asynchronous command.
+If *mode* = DOWNLINK or *mode* = WAIT, it sets *mode* to CANCEL.
 Otherwise it does nothing.
 
 ## 4 Checklists

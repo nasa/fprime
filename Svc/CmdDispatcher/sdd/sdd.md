@@ -32,11 +32,13 @@ The `Svc::CmdDispatcher` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.md) | cmdSend | Output | n/a | Send commands to components
+[`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.md) | compCmdSend | Output | n/a | Send commands to components
 [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | compCmdStat | Input | Asynchronous | Port for components to report command status
 [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | seqCmdStatus | Output | n/a | Send command status to command buffer source
-[`Fw::Com`](../../../Fw/Com/docs/sdd.md) | seqCmdBuff | Input | Asynchronous | Receive command buffer
-[`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | cmdReg | Input | Guarded | Command Registration
+[`Fw::Com`](../../../Fw/Com/docs/sdd.md) | seqCmdBuff | Input | Asynchronous (`hook` overflow behavior) | Receive command buffer
+[`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | compCmdReg | Input | Guarded | Command Registration
+[`Svc::Ping`](../../Ping/docs/sdd.md) | pingIn | Input | Asynchronous | Ping input from health checker
+[`Svc::Ping`](../../Ping/docs/sdd.md) | pingOut | Output | n/a | Ping response to health checker
 [`Svc::Sched`](../../Sched/docs/sdd.md) | run | Input | Asynchronous | Report telemetry
 
 ### 3.2 Functional Description

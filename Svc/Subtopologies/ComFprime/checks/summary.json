@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-02T21:12:41Z",
+  "generated_at": "2026-09-03T21:13:22Z",
   "ref": "devel",
-  "commit": "ebd8e41885af62a7bcacef721593f2f7f9c5a24e",
-  "passed": 0,
-  "failed": 4,
+  "commit": "e84571354780ca40b390e7c376427a6bbf1cb097",
+  "passed": 1,
+  "failed": 3,
   "skipped": 12,
   "checks": [
     {
@@ -48,11 +48,9 @@
       "name": "Requirements mapped to design artifacts",
       "category": "design",
       "module": "/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime",
-      "status": "fail",
-      "failures": [
-        "requirement 'SVC-COMFPRIME-007' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:145) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
-      ],
-      "detail": "7 requirement(s) checked"
+      "status": "pass",
+      "failures": [],
+      "detail": "6 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -136,15 +134,14 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime",
       "status": "fail",
       "failures": [
-        "requirement 'SVC-COMFPRIME-001' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:139) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-COMFPRIME-002' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:140) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-COMFPRIME-003' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:141) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-COMFPRIME-004' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:142) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-COMFPRIME-005' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:143) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-COMFPRIME-006' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:144) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-COMFPRIME-007' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:145) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'SVC-COMFPRIME-001' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:140) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-COMFPRIME-002' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:141) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-COMFPRIME-003' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:142) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-COMFPRIME-004' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:143) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-COMFPRIME-005' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:144) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-COMFPRIME-006' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:145) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "7 requirement(s) checked"
+      "detail": "6 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -153,15 +150,14 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime",
       "status": "fail",
       "failures": [
-        "requirement 'SVC-COMFPRIME-001' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:139) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
-        "requirement 'SVC-COMFPRIME-002' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:140) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
-        "requirement 'SVC-COMFPRIME-003' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:141) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
-        "requirement 'SVC-COMFPRIME-004' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:142) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
-        "requirement 'SVC-COMFPRIME-005' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:143) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
-        "requirement 'SVC-COMFPRIME-006' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:144) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
-        "requirement 'SVC-COMFPRIME-007' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:145) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')"
+        "requirement 'SVC-COMFPRIME-001' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:140) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
+        "requirement 'SVC-COMFPRIME-002' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:141) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
+        "requirement 'SVC-COMFPRIME-003' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:142) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
+        "requirement 'SVC-COMFPRIME-004' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:143) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
+        "requirement 'SVC-COMFPRIME-005' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:144) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
+        "requirement 'SVC-COMFPRIME-006' (/home/runner/work/fprime/fprime/Svc/Subtopologies/ComFprime/docs/sdd.md:145) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')"
       ],
-      "detail": "7 requirement(s) checked"
+      "detail": "6 requirement(s) checked"
     },
     {
       "id": "U3",

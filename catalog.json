@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "e84571354780ca40b390e7c376427a6bbf1cb097",
-  "generated_at": "2026-09-03T21:10:35Z",
+  "generated_at": "2026-09-03T21:13:27Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -9242,7 +9242,7 @@
         "report": "Svc/FileManager/checks/index.html"
       },
       "sdd": {
-        "tier": "silver",
+        "tier": "gold",
         "has_sdd": true,
         "report": "Svc/FileManager/sdd/index.html"
       },
@@ -9252,7 +9252,7 @@
         "int": "bronze",
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "silver"
+        "sdd": "gold"
       }
     },
     {
@@ -11311,8 +11311,8 @@
         }
       },
       "checks": {
-        "passed": 0,
-        "failed": 4,
+        "passed": 1,
+        "failed": 3,
         "skipped": 12,
         "tier": "bronze",
         "report": "Svc/Subtopologies/ComFprime/checks/index.html"

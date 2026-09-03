@@ -21,7 +21,7 @@ The `Svc::Ccsds::ClearTextDecryptor` component is a pass-through implementation 
 |---------------|-----------------|-------------------------------|-------------|
 | guarded input | decryptIn       | Svc.Ccsds.CcsdsSdlsEncryption | Receives the SA index and iv/data buffer (from `CcsdsSdlsDecrypt` interface). |
 | output        | decryptOut      | Svc.Ccsds.CcsdsSdlsData       | Sends the operation status and (unmodified) data downstream. |
-| sync input    | decryptReturnIn | Svc.ComDataWithContext        | Receives back ownership of buffers sent on `decryptOut`. |
+| guarded input | decryptReturnIn | Svc.ComDataWithContext        | Receives back ownership of buffers sent on `decryptOut`. |
 | output        | bufferReturnOut | Svc.ComDataWithContext        | Returns the incoming iv/data buffer for deallocation. |
 
 ## Requirements

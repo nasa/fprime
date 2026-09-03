@@ -4,16 +4,16 @@ This package provides generic implementations of various OSAL modules. These are
 
 Available implementations:
 
-1. [Os::PriorityQueue](#ospriorityqueue) - Heap-based priority queue implementation using Os::Mutex for thread safety
-2. [Os::LocklessPriorityQueue](#oslocklesspriorityqueue) - ISR-safe, lockless priority queue with at-initialization memory allocation
-3. [Os::PriorityMemQueue](#osprioritymemqueue) - ISR-safe, heap-based priority queue with per-priority memory pools and configuration
+1. [Os::Generic::PriorityQueue](#osgenericpriorityqueue) - Heap-based priority queue implementation using Os::Mutex for thread safety
+2. [Os::Generic::LocklessPriorityQueue](#osgenericlocklesspriorityqueue) - ISR-safe, lockless priority queue with at-initialization memory allocation
+3. [Os::Generic::PriorityMemQueue](#osgenericprioritymemqueue) - ISR-safe, heap-based priority queue with per-priority memory pools and configuration
 
 
-## Os::PriorityQueue
+## Os::Generic::PriorityQueue
 
-Os::PriorityQueue is an in-memory implementation of Os::Queue. It allows projects that desire in-memory queue support to use Os::Queues.  Os::PriorityQueue allocates memory for its underlying data structures through the registered `Fw::MemAllocator` and deallocates it through the same allocator. These actions are taken during `create` and object destruction. This implies that Os::PriorityQueue should be instantiated and initialized during system initialization.
+Os::Generic::PriorityQueue is an in-memory implementation of Os::Queue. It allows projects that desire in-memory queue support to use Os::Queues.  Os::Generic::PriorityQueue allocates memory for its underlying data structures through the registered `Fw::MemAllocator` and deallocates it through the same allocator. These actions are taken during `create` and object destruction. This implies that Os::Generic::PriorityQueue should be instantiated and initialized during system initialization.
 
-For memory protection, Os::PriorityQueue delegates to Os::Mutex and Os::ConditionVariable.
+For memory protection, Os::Generic::PriorityQueue delegates to Os::Mutex and Os::ConditionVariable.
 
 > [!WARNING]
 > This Queue implementation is insufficient to be used for sending messages in ISR context due to the use of Os::Mutex as mentioned in above.
@@ -42,11 +42,11 @@ PQ-013 | The PriorityQueue shall use a max-heap data structure for O(log n) prio
 PQ-014 | The PriorityQueue shall NOT be ISR-safe due to mutex usage | Inspection
 
 > [!NOTE]
-> Os::PriorityQueue is simpler than Os::PriorityMemQueue but lacks ISR safety and per-priority configuration capabilities.
+> Os::Generic::PriorityQueue is simpler than Os::Generic::PriorityMemQueue but lacks ISR safety and per-priority configuration capabilities.
 
-### Os::PriorityQueue Key Algorithms
+### Os::Generic::PriorityQueue Key Algorithms
 
-Os::PriorityQueue stores messages in a set of dynamically allocated unordered parallel arrays. These arrays store: message data, and message data size respectively. There is also an index-free list that stores the indices that are available for storage in the fixed size arrays.
+Os::Generic::PriorityQueue stores messages in a set of dynamically allocated unordered parallel arrays. These arrays store: message data, and message data size respectively. There is also an index-free list that stores the indices that are available for storage in the fixed size arrays.
 
 In order to prioritize messages, a [Types::MaxHeap](#typesmaxheap-data-structure) data structure is used.
 
@@ -66,16 +66,16 @@ When an index is pulled from this structure, the root is removed as it is the hi
 
 `heapify` starts at the newly ill-ordered root. It iteratively swaps this node with the highest-priority child until this node is the largest of the three (parent, left child, and right child) or until this node is swapped into a leaf position without children. The max-heap invariant is now restored.
 
-## Os::LocklessPriorityQueue
+## Os::Generic::LocklessPriorityQueue
 
-Os::LocklessPriorityQueue is an ISR-safe, lockless implementation of Os::Queue that provides strict-priority delivery without requiring any operating-system lock. It is intended for flight-software contexts where a producer or consumer may run in interrupt context and therefore cannot block on an OS-level mutex or condition variable.
+Os::Generic::LocklessPriorityQueue is an ISR-safe, lockless implementation of Os::Queue that provides strict-priority delivery without requiring any operating-system lock. It is intended for flight-software contexts where a producer or consumer may run in interrupt context and therefore cannot block on an OS-level mutex or condition variable.
 
 All memory is allocated exactly once during `create` through the registered `Fw::MemAllocator`. No allocation occurs during `send`, `receive`, `getMessagesAvailable`, or `getMessageHighWaterMark`. The non-blocking variants of `send` and `receive` use only lock-free atomic operations and bounded `memcpy`, making them safe to invoke from ISR context.
 
 > [!NOTE]
 > The blocking variants (`BlockingType::BLOCKING`) spin-wait and must not be invoked from ISR context.
 
-### Os::LocklessPriorityQueue Key Algorithms
+### Os::Generic::LocklessPriorityQueue Key Algorithms
 
 The queue stores messages in a fixed pool of pre-allocated slots. Each slot is governed by a four-state atomic state machine (`FREE -> WRITING -> READY -> READING -> FREE`) with an embedded ABA tag that prevents the ABA problem across concurrent producers and consumers.
 
@@ -84,9 +84,9 @@ Producers scan the slot array for a `FREE` slot, claim it via compare-exchange, 
 All non-blocking control paths are bounded by `depth * MAX_RETRY_PASSES`. The detailed algorithm, memory-ordering rationale, and requirements traceability are documented in [sdd-lockless-queue.md](sdd-lockless-queue.md).
 
 
-## Os::PriorityMemQueue
+## Os::Generic::PriorityMemQueue
 
-Os::PriorityMemQueue is an ISR-safe and SMP-safe, priority-based memory queue implementation for F´ using lock-free atomic circular buffers (`AtomicQueue`). Each priority level has its own dedicated `AtomicQueue`, providing O(1) enqueue and dequeue without mutexes or interrupt disable.
+Os::Generic::PriorityMemQueue is an ISR-safe and SMP-safe, priority-based memory queue implementation for F´ using lock-free atomic circular buffers (`AtomicQueue`). Each priority level has its own dedicated `AtomicQueue`, providing O(1) enqueue and dequeue without mutexes or interrupt disable.
 
 The key components are:
 
@@ -120,7 +120,7 @@ PMQ-014 | The PriorityMemQueue shall provide per-priority O(1) enqueue and deque
 > Send/receive operations from ISR context must not use blocking behavior 
 
 > [!NOTE]
-> Os::PriorityMemQueue provides ISR safety and per-priority configuration at the cost of increased complexity and memory usage compared to Os::PriorityQueue.
+> Os::Generic::PriorityMemQueue provides ISR safety and per-priority configuration at the cost of increased complexity and memory usage compared to Os::Generic::PriorityQueue.
 
 ### AtomicQueue-Based Architecture
 
@@ -133,11 +133,12 @@ PMQ-014 | The PriorityMemQueue shall provide per-priority O(1) enqueue and deque
 
 #### Per-Priority AtomicQueues
 
-Each priority level has its own dedicated `AtomicQueue`, allocated via the F´ memory allocator:
+Each priority level has its own dedicated `AtomicQueue`, allocated via the F´ memory allocator.
+The following is an abridged sketch of the handle (see `Os/Generic/PriorityMemQueue.hpp` for the full definition):
 
 ```cpp
 struct PriorityMemQueueHandle {
-    I8 m_priorityMap[32];                  // Priority→index mapping (-1 = unused)
+    I8 m_priorityMap[Queue::MAX_PRIORITIES];  // Priority→index mapping (-1 = unused)
     Types::AtomicQueue* m_atomicQueues;    // Array sized to configured priorities
     FwSizeType m_numActivePriorities;      // Number of configured priorities
     std::atomic<U32> m_priorityMask;       // Bit mask of enabled priorities
