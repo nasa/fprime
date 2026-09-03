@@ -18,8 +18,9 @@ async command SendPartial(
                          ) \
   opcode 0x02
 
-@ Force-complete the active downlink and drain queued requests with error responses, without
-@ waiting on outstanding buffer returns. Unlike Cancel, this breaks the buffer flow-control
+@ Force-complete the active downlink and drain queued requests, without waiting on outstanding
+@ buffer returns. Port clients receive STATUS_ERROR for every affected request; command responses
+@ follow FILEDOWNLINK_COMMAND_FAILURES_DISABLED. Unlike Cancel, this breaks the buffer flow-control
 @ protocol: use it only to recover when the downstream component will never return the
 @ outstanding buffer. If that component later revives and reads the buffer, it may emit stale
 @ packet data.

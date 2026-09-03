@@ -349,10 +349,14 @@ class FileDownlink final : public FileDownlinkComponentBase {
     void getBuffer(Fw::Buffer& buffer, PacketType type);
     // Downlink the "next" packet
     void downlinkPacket();
-    // Finish the file transfer
-    void finishHelper(bool is_cancel);
+    // Finish the file transfer, responding to its requester with the given status
+    void finishHelper(bool is_cancel, SendFileStatus response);
     // Convert internal status enum to a command response
     Fw::CmdResponse statusToCmdResp(SendFileStatus status);
+    // Status reported for a request the component abandons without completing it (Reset). Port
+    // clients always receive STATUS_ERROR so that they do not treat an unsent file as delivered;
+    // command responses honor FILEDOWNLINK_COMMAND_FAILURES_DISABLED.
+    SendFileStatus abortStatus(const FileEntry& entry) const;
     // Send response for the current file downlink
     void sendResponse(SendFileStatus resp);
     // Send response for a given file downlink request

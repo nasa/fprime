@@ -103,7 +103,7 @@ event SourceOutOfSandbox(
   id 0x12 \
   format "Source file {} is outside the configured read sandbox"
 
-@ The File Downlink component was reset by command. Queued downlink requests are dropped with error responses.
+@ The File Downlink component was reset by command. The active and queued downlink requests are dropped: port clients receive STATUS_ERROR, command responses follow FILEDOWNLINK_COMMAND_FAILURES_DISABLED.
 event DownlinkReset(
                      queuedFilesDropped: U32 @< Number of queued downlink requests dropped
                    ) \

@@ -167,7 +167,7 @@ void FileDownlink ::bufferReturn_handler(const FwIndexType portNum, Fw::Buffer& 
               static_cast<FwAssertArgType>(this->m_mode.get()));
     // If the last packet has been sent (and is returning now) then finish the file
     if (this->m_lastCompletedType == Fw::FilePacket::T_END || this->m_lastCompletedType == Fw::FilePacket::T_CANCEL) {
-        finishHelper(this->m_lastCompletedType == Fw::FilePacket::T_CANCEL);
+        finishHelper(this->m_lastCompletedType == Fw::FilePacket::T_CANCEL, SendFileStatus::STATUS_OK);
         return;
     }
     // If waiting and a buffer is in-bound, then switch to downlink mode
@@ -263,7 +263,8 @@ void FileDownlink ::Cancel_cmdHandler(const FwOpcodeType opCode, const U32 cmdSe
 
 void FileDownlink ::Reset_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
     const Mode::Type mode = this->m_mode.get();
-    // Force-complete any active transfer without waiting on the outstanding buffer return
+    // Force-complete any active transfer without waiting on the outstanding buffer return. The
+    // transfer did not complete, so its requester is answered with the abort status.
     if (mode == Mode::DOWNLINK || mode == Mode::WAIT || mode == Mode::CANCEL) {
         // Best effort: skip a duplicate cancel packet when one is known to be outstanding.
         // finishHelper() below clears m_lastCompletedType, so this only covers a cancel packet
@@ -271,7 +272,7 @@ void FileDownlink ::Reset_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq
         if (this->m_lastCompletedType != Fw::FilePacket::T_CANCEL) {
             this->sendCancelPacket();
         }
-        this->finishHelper(true);
+        this->finishHelper(true, this->abortStatus(this->m_curEntry));
     }
     // Advance past all handed-out buffer IDs so a late return of an outstanding buffer is
     // dropped as stale rather than driving the state machine
@@ -302,6 +303,13 @@ Fw::CmdResponse FileDownlink ::statusToCmdResp(SendFileStatus status) {
 
     // It's impossible to reach this, but added to suppress gcc missing return warning
     return Fw::CmdResponse::EXECUTION_ERROR;
+}
+
+SendFileStatus FileDownlink ::abortStatus(const FileEntry& entry) const {
+    if (entry.source == FileDownlink::PORT) {
+        return SendFileStatus::STATUS_ERROR;
+    }
+    return FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR;
 }
 
 void FileDownlink ::sendResponse(SendFileStatus resp) {
@@ -338,8 +346,7 @@ U32 FileDownlink ::drainFileQueue() {
         // The queue is created with this fixed message size; a short read would silently strand
         // the request's caller without a response
         FW_ASSERT(sizeof(entry) == real_size, static_cast<FwAssertArgType>(real_size));
-        this->sendResponse(
-            entry, FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
+        this->sendResponse(entry, this->abortStatus(entry));
         drained++;
     }
     return drained;
@@ -559,7 +566,7 @@ void FileDownlink ::downlinkPacket() {
     this->m_curTimer = 0;
 }
 
-void FileDownlink ::finishHelper(bool cancel) {
+void FileDownlink ::finishHelper(bool cancel, SendFileStatus response) {
     // Complete command and switch to IDLE
     if (not cancel) {
         this->m_filesSent.fileSent();
@@ -568,7 +575,7 @@ void FileDownlink ::finishHelper(bool cancel) {
         this->log_ACTIVITY_HI_DownlinkCanceled(this->m_file.getSourceName(), this->m_file.getDestName());
     }
     this->enterCooldown();
-    sendResponse(SendFileStatus::STATUS_OK);
+    sendResponse(response);
 }
 
 void FileDownlink ::getBuffer(Fw::Buffer& buffer, PacketType type) {
