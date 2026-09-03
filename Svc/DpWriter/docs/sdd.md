@@ -29,13 +29,14 @@ receive this notification and use it to update the data product catalog.
 
 Requirement | Description | Rationale | Verification Method
 ----------- | ----------- | ----------| -------------------
-SVC-DPWRITER-001 | `Svc::DpWriter` shall provide a port for receiving `Fw::Buffer` objects pointing to filled data product containers. | The purpose of `DpWriter` is to write the data products to disk. | Unit Test
+SVC-DPWRITER-001 | `Svc::DpWriter` shall provide an array of ports for receiving `Fw::Buffer` objects pointing to filled data product containers. | The purpose of `DpWriter` is to write the data products to disk and the array permits multiple independent routing paths. | Unit Test
 SVC-DPWRITER-002 | `Svc::DpWriter` shall provide an array of ports for sending `Fw::Buffer` objects for processing. | This requirement supports downstream processing of the data in the buffer. | Unit Test
 SVC-DPWRITER-003 | On receiving a data product container _C_, `Svc::DpWriter` shall use the processing type field of the header of _C_ to select zero or more processing ports to invoke, in port order. | The processing type field is a bit mask. A one in bit `2^n` in the bit mask selects port index `n`. | Unit Test
 SVC-DPWRITER-004 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall write _B_ to disk. | The purpose of `DpWriter` is to write data products to the disk. | Unit Test
-SVC-DPWRITER-005 | `Svc::DpWriter` shall provide a port for notifying other components that data products have been written. | This requirement allows `Svc::DpCatalog` or a similar component to update its catalog in real time. | Unit Test
+SVC-DPWRITER-005 | `Svc::DpWriter` shall provide an array of ports for notifying other components that data products have been written. A notification shall use the same routing port index as the corresponding input buffer. | This requirement allows `Svc::DpCatalog` or a similar component to update its catalog in real time while preserving fused-instance routing. | Unit Test
 SVC-DPWRITER-006 | `Svc::DpManager` shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors. | This requirement establishes the telemetry interface for the component. | Unit test
 SVC-DPWRITER-007 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall re-parse the container header and shrink the size of the product. | Allows processing interfaces to compress data products and communicate that compressed state back to `Svc::DpWriter`. | Unit Test
+SVC-DPWRITER-008 | `Svc::DpWriter` shall return each valid received buffer on the `deallocBufferSendOut` port whose index matches the `bufferSendIn` port that received it. | Matching send and return paths allows a fused `DpWriter` instance to route buffers back toward the correct allocator. | Unit Test
 
 ## 3. Design
 
@@ -52,14 +53,16 @@ The diagram below shows the `DpWriter` component.
 | Kind | Name | Port Type | Usage |
 |------|------|-----------|-------|
 | `async input` | `schedIn` | `Svc.Sched` | Schedule in port |
-| `async input` | `bufferSendIn` | `Fw.BufferSend` | Port for receiving data products to write to disk |
+| `async input` | `bufferSendIn` | `[DpWriterNumPorts] Fw.BufferSend` | Ports for receiving data products to write to disk |
 | `output` | `procBufferSendOut` | `[DpWriterNumProcPorts] Fw.BufferSend` | Port for processing data products |
-| `output` | `dpWrittenOut` | `DpWritten` | Port for sending `DpWritten` notifications |
-| `output` | `deallocBufferSendOut` | `Fw.BufferSend` | Port for deallocating data product buffers |
+| `output` | `dpWrittenOut` | `[DpWriterNumPorts] DpWritten` | Ports for sending `DpWritten` notifications |
+| `output` | `deallocBufferSendOut` | `[DpWriterNumPorts] Fw.BufferSend` | Ports for returning data product buffers |
 | `time get` | `timeGetOut` | `Fw.Time` | Time get port |
 | `telemetry` | `tlmOut` | `Fw.Tlm` | Telemetry port |
 | `event` | `eventOut` | `Fw.Log` | Event port |
 | `text event` | `textEventOut` | `Fw.LogText` | Text event port |
+
+The `bufferSendIn`, `dpWrittenOut`, and `deallocBufferSendOut` arrays form matching routing paths. A buffer received at index _N_ is notified and returned through index _N_.
 
 ### 3.3. State
 
@@ -70,6 +73,11 @@ The diagram below shows the `DpWriter` component.
 1. `numBytes (U64)`: The number of bytes written.
 
 ### 3.4. Compile-Time Setup
+
+1. The configuration constant [`DpWriterNumPorts`](../../../default/config/AcConstants.fpp)
+   specifies the number of matched input, notification, and buffer-return routing paths.
+   Its default value is one, preserving the one-to-one `DpManager` to `DpWriter` pattern.
+   Projects that fuse several logical writer paths into one instance can override this value.
 
 1. The configuration constant [`DpWriterNumProcPorts`](../../../default/config/AcConstants.fpp)
    specifies the number of ports for connecting components that perform
@@ -96,7 +104,7 @@ This handler sends out the state variables as telemetry.
 
 #### 3.6.2. bufferSendIn
 
-This handler receives a mutable reference to a buffer `B`.
+This handler receives a mutable reference to a buffer `B` on routing port _N_.
 It does the following:
 
 1. Check that `B` is valid. If not, emit a warning event.
@@ -122,8 +130,8 @@ It does the following:
       memory pointed to by `B`. Let the resulting bit mask be `M`.
 
    1. Visit the port numbers of `procBufferSendOut` in order.
-      For each port number `N`, if `N` is set in `M`, then invoke
-      `procBufferSendOut` at port number `N`, passing in `B`.
+      For each port number `P`, if `P` is set in `M`, then invoke
+      `procBufferSendOut` at port number `P`, passing in `B`.
       This step updates the memory pointed to by `B` in place.
 
    1. Re-parse the container header pointed to by `B`. If necessary,
@@ -134,10 +142,10 @@ It does the following:
       Format**](#file_format) section. For the time stamp, use the time
       provided by `timeGetOut`.
 
-1. If the file write succeeded and `dpWrittenOut` is connected, then send the
-   file name, priority, and file size out on `dpWrittenOut`.
+1. If the file write succeeded and `dpWrittenOut[N]` is connected, then send the
+   file name, priority, and file size out on `dpWrittenOut[N]`.
 
-1. If `B` is valid, then send `B` on `deallocBufferSendOut`.
+1. If `B` is valid, then send `B` on `deallocBufferSendOut[N]`.
 
 <a name="file_format"></a>
 ## 4. File Format
