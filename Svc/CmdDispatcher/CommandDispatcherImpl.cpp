@@ -149,8 +149,28 @@ void CommandDispatcherImpl::CMD_TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 c
 }
 
 void CommandDispatcherImpl::CMD_CLEAR_TRACKING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    // clear tracking table
+    // Preserve this command's own entry so its OK status still reaches the caller
+    SequenceTrackerEntry selfEntry = {};
+    const bool selfTracked = (this->m_sequenceTracker.find(cmdSeq, selfEntry) == Fw::Success::SUCCESS);
+
+    // Notify every other caller that its pending status will never arrive
+    for (const auto& entry : this->m_sequenceTracker) {
+        if (entry.getKey() == cmdSeq) {
+            continue;
+        }
+        const SequenceTrackerEntry& trackedCmd = entry.getValue();
+        FW_ASSERT(trackedCmd.callerPort < this->getNum_seqCmdStatus_OutputPorts());
+        if (this->isConnected_seqCmdStatus_OutputPort(trackedCmd.callerPort)) {
+            this->seqCmdStatus_out(trackedCmd.callerPort, trackedCmd.opCode, trackedCmd.context,
+                                   Fw::CmdResponse::CLEARED);
+        }
+    }
+
     this->m_sequenceTracker.clear();
+    if (selfTracked) {
+        const Fw::Success status = this->m_sequenceTracker.insert(cmdSeq, selfEntry);
+        FW_ASSERT(status == Fw::Success::SUCCESS);
+    }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
