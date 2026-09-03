@@ -238,8 +238,11 @@ void FileDownlinkTester ::resetWedgedDownlink() {
     this->component.doDispatch();  // Dispatch reset command
     ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
     ASSERT_EQ(2u, this->m_heldCount);  // The cancel packet was sent (and is also never returned)
+    // The wedged command did not complete; its response follows FILEDOWNLINK_COMMAND_FAILURES_DISABLED
+    const Fw::CmdResponse activeResp =
+        FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR;
     ASSERT_CMD_RESPONSE_SIZE(2);
-    ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, activeResp);
     ASSERT_CMD_RESPONSE(1, FileDownlink::OPCODE_RESET, CMD_SEQ, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DownlinkCanceled_SIZE(1);
     ASSERT_EVENTS_DownlinkReset_SIZE(1);
@@ -308,14 +311,14 @@ void FileDownlinkTester ::resetDrainsQueue() {
     ASSERT_EVENTS_DownlinkReset_SIZE(1);
     ASSERT_EVENTS_DownlinkReset(0, 2);
 
-    // The active port request completes with the cancel status, the queued one with an error
-    const SendFileStatus::T queuedStatus =
-        FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR;
+    // Reset never completes a transfer: both port requests, active and queued, receive STATUS_ERROR
+    // regardless of FILEDOWNLINK_COMMAND_FAILURES_DISABLED, so a port client such as DpCatalog
+    // keeps the file for a retry instead of treating it as delivered
     ASSERT_from_FileComplete_SIZE(2);
-    ASSERT_from_FileComplete(0, Svc::SendFileResponse(SendFileStatus(SendFileStatus::STATUS_OK), activeContext));
-    ASSERT_from_FileComplete(1, Svc::SendFileResponse(SendFileStatus(queuedStatus), queuedContext));
+    ASSERT_from_FileComplete(0, Svc::SendFileResponse(SendFileStatus(SendFileStatus::STATUS_ERROR), activeContext));
+    ASSERT_from_FileComplete(1, Svc::SendFileResponse(SendFileStatus(SendFileStatus::STATUS_ERROR), queuedContext));
 
-    // The queued command receives an error response; the reset command succeeds
+    // The queued command's response follows the flag; the reset command succeeds
     const Fw::CmdResponse queuedResp =
         FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR;
     ASSERT_CMD_RESPONSE_SIZE(2);
@@ -410,6 +413,10 @@ void FileDownlinkTester ::resetDrainBounded() {
     ASSERT_EVENTS_DownlinkReset_SIZE(1);
     ASSERT_EVENTS_DownlinkReset(0, FILE_QUEUE_DEPTH);
     ASSERT_from_FileComplete_SIZE(FILE_QUEUE_DEPTH);
+    // Every drained port request is reported as an error, not as delivered
+    for (U32 i = 0; i < FILE_QUEUE_DEPTH; i++) {
+        ASSERT_EQ(SendFileStatus::STATUS_ERROR, this->fromPortHistory_FileComplete->at(i).resp.get_status());
+    }
 
     this->removeFile(sourceFileName);
 }

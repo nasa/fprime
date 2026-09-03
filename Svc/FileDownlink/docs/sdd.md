@@ -151,17 +151,20 @@ Reset is an asynchronous command that recovers the component when the downstream
 never returns the outstanding buffer. It force-completes the active downlink, if any, without
 waiting on the buffer return: `FileDownlink` sends a cancel packet, emits `DownlinkCanceled`,
 responds to the originating command or port request, and enters COOLDOWN. It then drains the
-file queue, responding to each queued request with an error, and emits `DownlinkReset` with the
-number of requests dropped. A single Reset drops at most *file queue depth* requests; if
-delivering a drop response causes a client to synchronously submit another request, that request
-may be dropped by the same Reset. As with all downlink failure responses,
-`FILEDOWNLINK_COMMAND_FAILURES_DISABLED` maps these error responses to OK; the `DownlinkReset`
-count is then the only indication that queued requests were dropped. Port clients therefore see
-`SendFileStatus::STATUS_OK` for requests that were dropped without a single packet being sent:
-`Svc::DpCatalog`, for example, will mark the data product TRANSMITTED and remove it from the
-catalog. Deployments that cannot tolerate that must set `FILEDOWNLINK_COMMAND_FAILURES_DISABLED`
-to false, which makes both the drain and the pre-existing failure paths report `STATUS_ERROR`. Late returns of buffers that were outstanding at the time of the
-Reset are ignored.
+file queue, responding to each queued request, and emits `DownlinkReset` with the number of
+requests dropped. A single Reset drops at most *file queue depth* requests; if delivering a drop
+response causes a client to synchronously submit another request, that request may be dropped by
+the same Reset. Late returns of buffers that were outstanding at the time of the Reset are
+ignored.
+
+Reset never completes a transfer, so every request it drops, active or queued, is reported to
+port clients as `SendFileStatus::STATUS_ERROR` regardless of
+`FILEDOWNLINK_COMMAND_FAILURES_DISABLED`; a port client such as `Svc::DpCatalog` therefore keeps
+the product for a later retry. Command responses follow the flag as elsewhere: `OK` when it is
+set, `EXECUTION_ERROR` otherwise. This differs from Cancel: a cancellation that completes on its
+own still reports `STATUS_OK` to port clients, as do the pre-existing failure paths (file open
+error, zero-size file, offset past end of file, read error) when the flag is set, so those paths
+can still lead a port client to treat an unsent file as delivered.
 
 > [!WARNING]
 > Reset breaks the buffer flow-control protocol: the internal packet buffers are eligible for
