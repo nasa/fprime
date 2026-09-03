@@ -50,6 +50,11 @@ void ClearTextEncryptorTester ::testEncryptPassThrough() {
     ASSERT_from_encryptOut(0, Svc::Ccsds::SdlsStatus::SUCCESS, buffer, context);
     ASSERT_from_bufferReturnOut_SIZE(0);
     ASSERT_EQ(::memcmp(storage, original, TEST_BUFFER_SIZE), 0);
+
+    // The null cipher must announce itself on every frame it handles
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_NullCipherInUse_SIZE(1);
+    ASSERT_EVENTS_NullCipherInUse(0, sa);
 }
 
 void ClearTextEncryptorTester ::testReturnPassThrough() {
