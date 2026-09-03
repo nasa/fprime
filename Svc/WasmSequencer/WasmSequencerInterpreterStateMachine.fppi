@@ -195,7 +195,7 @@ state machine InterpreterStateMachine {
     @ No more fuel (ran to instruction bound)
     signal interpreterOutOfFuel
     @ An asynchronous host function has been called and has requested the interpreter pause
-    signal interpreterPause
+    signal interpreterHostFunctionNeedsPause
 
     @ The idle state means there is no function running in the engine
     state IDLE {
@@ -233,7 +233,7 @@ state machine InterpreterStateMachine {
             } enter IDLE
 
             on interpreterOutOfFuel enter PAUSE_CHECK
-            on interpreterPause enter HOST_FUNCTION
+            on interpreterHostFunctionNeedsPause enter HOST_FUNCTION
             on interpreterTrap do {
                 setTrapReason
                 setExitReason_INTERPRETER_TRAP

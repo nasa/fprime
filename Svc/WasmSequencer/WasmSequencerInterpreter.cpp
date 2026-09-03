@@ -74,7 +74,7 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_spin(
             }
             break;
         case SPACEWASM_RUN_PAUSE:
-            this->interpreter_sendSignal_interpreterPause();
+            this->interpreter_sendSignal_interpreterHostFunctionNeedsPause();
             break;
         case SPACEWASM_RUN_OUT_OF_FUEL:
             this->interpreter_sendSignal_interpreterOutOfFuel();
