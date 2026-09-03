@@ -421,6 +421,7 @@ endfunction()
 #     CONFIGURATION_OVERRIDES
 #         FpConfig.fpp
 #         FpConfig.hpp
+# )
 # ```
 ####
 function(register_fprime_config)
