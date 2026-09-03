@@ -352,12 +352,14 @@ A blocking `serial_recv` timeout simply fails the sequence. Later messages comin
 
 Every command dispatch will block until a response (or timeout) is reached. Each command is dispatched with a unique identifier (UID). The UID consists of the following:
 
--  **Sequence Execution ID** (`seqId`): Incremented every time the interpreter starts executing a start/main.
--  **Command Index** (`cmdId`): Incremented on every command dispatch.
+-  **Sequence Execution ID** (`seqId`): Incremented every time the interpreter starts executing a start/main. Limited to 16-bits.
+-  **Command Index** (`cmdId`): Incremented on every command dispatch. Limited to 16-bits.
 
 The UID is sent to the `CmdDispatcher` along with the `ComBuffer` holding the serialized command. Once the implementing component responds, the dispatcher will reply to WasmSequencer with a reply code and the same UID.
 
 When a command response times out, the sequence exits with failure. If the operator starts another sequence, `seqId` will be incremented and `cmdId` will be cleared. If the timeout from the previous `seqId` comes during the execution of this new sequence, WasmSequencer will drop response and emit a `CmdResponseFromOldSequence` event.
+
+Both the `seqId` and `cmdId` are limited to 16-bit counters and wrap around once they overflow. There exists a scenario where 65,536 sequences run and finish followed by a reply from a previously timed-out command. This would cause an aliased UID.
 
 ## Serial Ports
 
