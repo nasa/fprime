@@ -15,7 +15,7 @@ This section describes some important WebAssembly concepts and how WasmSequencer
 
 There are four distict types who share the same name (and meaning) with their F´ equivalents: `i32`, `i64`, `f32`, `f64`.
 
-Notice that these are a _subset_ of the typical representable scalars. These types are used to describe global variables, function parameters, return values, local variables etc. Wasm can still operate on memory using aribtrary bit-width scalars. This is similar to a standard computer instruction set with 32 and 64-bit floating and integer register.
+Notice that these are a _subset_ of the typical representable scalars. These types are used to describe global variables, function parameters, return values, local variables etc. Wasm can still operate on memory using aribtrary bit-width scalars. This is similar to a standard computer instruction set with 32 and 64-bit floating and integer registers.
 
 ### Functions
 
@@ -256,11 +256,11 @@ The interpreter executes the loaded program and services the host functions it c
 
 This section describes the restrictions that WasmSequencer places on guest (linear) memory and it's growth (`memory.grow` instruction). First it is important to give a bit of context on how linear memory works in Wasm. Wasm defines every guest memory (linear memory) in units of _pages_. Wasm 1.0 defines each page as 64KiB however SpaceWasm implements the [custom page sizes](https://github.com/WebAssembly/custom-page-sizes) proposal which also allows pages to be 1 byte, effectively allowing arbitrarily sized linear memory allocations. Wasm memories are defined as a single minimum size and an optional maximum in page units (1 or 64k bytes). When a module is first instantiated, the linear memory (if defined) is sized to the minimum size. Finally, Wasm 1.0 defines a single instruction `memory.grow` that allows the guest to request a linear memory to grow by given number of pages. The total pages a module can request is bounded by the memory maximum (if it exists) _and_ 4GiB as Wasm 1.0 uses a 32-bit address space.
 
-Now we will define how WasmSequencer implements guest linear memory. Guest memory in WasmSequencer is a single pool of memory allocated in the `configure()` stage of the component initialization. This pool provides the guest memory pages across every module loaded into the store. WasmSequencer keeps track of the currently allocated memory in this pool using an offset relative to the start of the pool (starts at zero). When a new module is loaded, WasmSequencer's guest allocator will bump this offset up to the guest pool size before rejecting a new guest memory allocation.
+Now we will define how WasmSequencer implements guest linear memory. Guest memory in WasmSequencer is a single pool of memory allocated in the `configure()` stage of the component initialization. This pool provides the guest memory pages across every module loaded into the store. WasmSequencer keeps track of the currently allocated memory in this pool using an offset relative to the start of the pool (starts at zero). When a new module is loaded, WasmSequencer's guest allocator will bump this offset up to the guest pool size. Once the guest pool size has been reached, new guest memory allocations are rejected.
 
-Since the guest memory allocator is a simple bump allocator, `memory.grow` can _only_ succeed if the requested growth is at the tail end of the bump allocator. The guest allocator does not implement any sort of `realloc`-like move as this would be very complex and cause memory fragmentation. Here is an example to illustrate the fragmentation that is not allowed:
+Since the guest memory allocator is a simple bump allocator, `memory.grow` can _only_ succeed if the requested growth is at the tail end of the bump allocator. The guest allocator does not implement any sort of `realloc`-like move as this would be very complex and cause memory fragmentation.
 
-We start with two memories allocated and some free space:
+For example:
 
 ```mermaid
 packet-beta
@@ -269,25 +269,7 @@ packet-beta
 16-31: "Free (16B)"
 ```
 
-Now when we try to `memory.grow` Memory A to 16B we must either move Memory B out of the way:
-
-```mermaid
-packet-beta
-0-15: "Memory A (16B)"
-16-23: "Memory B (8B)"
-24-31: "Free (8B)"
-```
-
-...or move memory A to another slot:
-
-```mermaid
-packet-beta
-0-7: "Free (8B)"
-8-15: "Memory B (8B)"
-16-31: "Memory A (16B)"
-```
-
-Both of these behaviors are _NOT_ supported in WasmSequencer's guest allocator. In this scenario we would reject any Memory A `memory.grow` requests. Only Memory B growth requests are allowed. Guest memory growth failures emit an event noting the reason for the failure (not last memory or out of memory). This restriction allows `memory.grow` to have O(1) time complexity and avoids any memory fragmentation.
+In this scenario, only Memory B can service a `memory.grow` up to `24B` to fill the free space. See [appendix](#disallowed-memorygrow) for a detailed explanation of this restriction.
 
 This means that only the _final_ allocated linear memory (usually in the last module) can actually service `memory.grow`s. For single module stores, there is no `memory.grow` restriction.
 
@@ -670,10 +652,6 @@ FPP dictionary constants and the serial-port index enums:
 
 Runtime behavior is controlled through the `WasmSequencerConfig.hpp` parameters above.
 
-### Sizing Guide
-
-
-
 ## Unit Testing
 
 Most tests exercise the interpreter by running a tiny WebAssembly module — one per host function or error path — staged from prebuilt fixtures in `test/wasm/`, assembled from the human-readable `.wat` sources in `test/wasm/src/`.
@@ -693,3 +671,38 @@ To run the unit tests with coverage:
 ```
 fprime-util check --coverage
 ```
+
+## Appendix
+
+### Disallowed `memory.grow`
+
+This section will describe the disallowed form of `memory.grow` and explain why it is not allowed in WasmSequencer.
+
+We start with two memories allocated and some free space:
+
+```mermaid
+packet-beta
+0-7: "Memory A (8B)"
+8-15: "Memory B (8B)"
+16-31: "Free (16B)"
+```
+
+Now when we try to `memory.grow` Memory A to 16B we must either move Memory B out of the way:
+
+```mermaid
+packet-beta
+0-15: "Memory A (16B)"
+16-23: "Memory B (8B)"
+24-31: "Free (8B)"
+```
+
+...or move memory A to another slot:
+
+```mermaid
+packet-beta
+0-7: "Free (8B)"
+8-15: "Memory B (8B)"
+16-31: "Memory A (16B)"
+```
+
+Both of these behaviors are _NOT_ supported in WasmSequencer's guest allocator. In this scenario we would reject any Memory A `memory.grow` requests. Only Memory B growth requests are allowed. Guest memory growth failures emit an event noting the reason for the failure (not last memory or out of memory). This restriction allows `memory.grow` to have O(1) time complexity and avoids any memory fragmentation.
