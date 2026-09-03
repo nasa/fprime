@@ -24,7 +24,7 @@ _ = cmake.get_build(
     install_directory=tempfile.mkdtemp(),
 )
 
-_ = cmake.get_build(
+_2 = cmake.get_build(
     "SYMLINKED_SETTINGS_BUILD",
     settings.REF_APP_PATH,
     cmake_arguments={
