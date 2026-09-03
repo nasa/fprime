@@ -42,7 +42,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     );
 
     //! Destroy WasmSequencer object
-    ~WasmSequencer();
+    ~WasmSequencer() = default;
 
     //! WasmSequencer owns a raw spacewasm_t* handle and a slot in the
     //! process-wide global-allocator registry; copying would double-free both.
@@ -127,6 +127,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! [REQUIRED] Configure and allocate the dynamic backing pools for heap memory, guest memory, Wasm stack,
     //! serialIn queues, and the serialOut buffer.
     void configure(const Config& cfg, Fw::MemAllocator& mallocator);
+
+    //! Tear down the allocations made by `configure()`
+    void deinit() override;
 
   private:
     // ----------------------------------------------------------------------

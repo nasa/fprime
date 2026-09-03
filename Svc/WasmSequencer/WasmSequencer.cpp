@@ -64,59 +64,18 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_invokeStatus(SPACEWASM_OK),
       m_pendingPause(false),
       m_cancelRequested(false),
-      m_sequencesStarted(0) {
+      m_sequencesStarted(0) {}
+
+
+void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) {
+    FW_ASSERT(this->m_wasm == nullptr);
+    FW_ASSERT(this->m_allocator == nullptr);
+
     getGlobalAllocatorLock()->lock();
     const auto status = spacewasm_fprime_register_global_allocator(&globalAllocCallback, &globalDeallocCallback, this);
     getGlobalAllocatorLock()->unlock();
 
     FW_ASSERT(status == SPACEWASM_OK, status);
-}
-
-WasmSequencer ::~WasmSequencer() {
-    if (this->m_wasm != nullptr) {
-        this->destroyStore();
-    }
-
-    if (this->m_allocator != nullptr) {
-        // Deallocate each heap page
-        for (FwSizeType i = 0; i < this->m_config.heapPages; i++) {
-            this->m_allocator->deallocate(static_cast<FwIndexType>(i) + 1, this->m_heapPages[i]);
-            this->m_heapPages[i] = nullptr;
-        }
-
-        // Deallocate the heap page pool
-        this->m_allocator->deallocate(0, this->m_heapPages);
-
-        // Deallocate the guest memory pool
-        if (this->m_guestPool != nullptr) {
-            this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 1, this->m_guestPool);
-        }
-
-        // Deallocate the serialOut buffer
-        if (this->m_serialOutBuffer.getBuffAddr() != nullptr) {
-            this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 2,
-                                          this->m_serialOutBuffer.getBuffAddr());
-        }
-
-        // Deallocate the serialIn queues
-        for (FwIndexType i = 0; i < NUM_SERIALIN_INPUT_PORTS; i++) {
-            if (this->m_serialInQueue[i].get_capacity() > 0) {
-                this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 3 + i,
-                                              this->m_serialInQueue[i].get_buffer());
-            }
-        }
-    }
-
-    // Release our slot in the process-wide global-allocator registry so it can
-    // be reused by a later sequencer instance.
-    getGlobalAllocatorLock()->lock();
-    (void)spacewasm_fprime_deregister_global_allocator(this);
-    getGlobalAllocatorLock()->unlock();
-}
-
-void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) {
-    FW_ASSERT(this->m_wasm == nullptr);
-    FW_ASSERT(this->m_allocator == nullptr);
 
     this->m_config = cfg;
 
@@ -175,6 +134,54 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
     // Allocate the initial store
     this->m_allocator = &mallocator;
     this->createStore();
+}
+
+void WasmSequencer ::deinit() {
+    if (this->m_wasm != nullptr) {
+        this->destroyStore();
+    }
+
+    if (this->m_allocator != nullptr) {
+        // Deallocate each heap page
+        for (FwSizeType i = 0; i < this->m_config.heapPages; i++) {
+            this->m_allocator->deallocate(static_cast<FwIndexType>(i) + 1, this->m_heapPages[i]);
+            this->m_heapPages[i] = nullptr;
+        }
+
+        // Deallocate the heap page pool
+        this->m_allocator->deallocate(0, this->m_heapPages);
+
+        // Deallocate the guest memory pool
+        if (this->m_guestPool != nullptr) {
+            this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 1, this->m_guestPool);
+        }
+
+        // Deallocate the serialOut buffer
+        if (this->m_serialOutBuffer.getBuffAddr() != nullptr) {
+            this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 2,
+                                          this->m_serialOutBuffer.getBuffAddr());
+        }
+
+        // Deallocate the serialIn queues
+        for (FwIndexType i = 0; i < NUM_SERIALIN_INPUT_PORTS; i++) {
+            if (this->m_serialInQueue[i].get_capacity() > 0) {
+                this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 3 + i,
+                                              this->m_serialInQueue[i].get_buffer());
+            }
+        }
+    }
+
+    // Release our slot in the process-wide global-allocator registry so it can
+    // be reused by a later sequencer instance.
+    getGlobalAllocatorLock()->lock();
+    (void)spacewasm_fprime_deregister_global_allocator(this);
+    getGlobalAllocatorLock()->unlock();
+
+    // Clean up dangling pointers
+    this->m_allocator = nullptr;
+    this->m_wasm = nullptr;
+
+    WasmSequencerComponentBase::deinit();
 }
 
 // ----------------------------------------------------------------------
