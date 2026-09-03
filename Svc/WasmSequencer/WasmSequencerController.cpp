@@ -427,7 +427,7 @@ void WasmSequencer ::reportSequenceRuntimeFailure(WasmSequencer_ModuleIdx module
             this->m_tlm.sequencesFailed++;
             this->log_WARNING_HI_SequenceTrapped(moduleIdx, phase, this->m_exit.lastTrapReason);
             break;
-        case WasmSequencer_ExitReason::INTERPRETER_FINISHED:
+        case WasmSequencer_ExitReason::INTERPRETER_FINISHED:  // fallthrough is intended
         case WasmSequencer_ExitReason::HOST_EXIT:
             // Only reached on the failure path: a non-zero main return value or a
             // non-zero fprime.exit code.
