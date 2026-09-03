@@ -211,6 +211,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_resetRuntime(
     // explicitly call dtor
     this->m_runtime.~Runtime();
     new (&this->m_runtime) Runtime();
+    this->m_debug.cachedStmtIndex = 0xFFFFFFFF;
 }
 
 //! Implementation for action validate of state machine
