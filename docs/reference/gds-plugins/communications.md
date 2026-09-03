@@ -25,7 +25,7 @@ This plugin runs in the communications process in the GDS.
 
 ## Required Interface
 
-To create a custom communication plugin, subclass the [`BaseAdapter`](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/communication/adapters/base.py#L16) class and implement the `read()` and `write()` methods.
+To create a custom communication plugin, subclass the [`BaseAdapter`](https://github.com/nasa/fprime-gds/blob/devel/src/fprime_gds/common/communication/adapters/base.py#L16) class and implement the `read()` and `write()` methods.
 
 ```python
 from fprime_gds.common.communication.adapters.base import BaseAdapter

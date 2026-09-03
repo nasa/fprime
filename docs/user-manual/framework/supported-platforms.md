@@ -48,7 +48,7 @@ A **platform** refers to a combination of hardware and operating system (OS). A 
 We welcome contributions to expand the list of supported platforms! Here’s how to get started:
 
 1. Pick a hardware and OS platform that is not in development or is not listed.
-1. Create a platform library. Take a look at [`How-To: Develop an F Prime Library`](https://fprime.jpl.nasa.gov/latest/docs/how-to/develop-fprime-libraries/).
+1. Create a platform library. Take a look at [`How-To: Develop an F Prime Library`](../../how-to/develop/develop-fprime-libraries.md).
 1. Create a reference project for your platform that uses your platform library. Use [`fprime-vxworks-reference`](https://github.com/fprime-community/fprime-vxworks-reference) or [`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) as examples for the file structure.
 1. Include build, run, and hardware setup instructions in a README.md.
 1. Set up CI for your reference project and have CI run the F Prime provided integration test scripts.

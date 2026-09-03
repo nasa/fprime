@@ -3,7 +3,7 @@
 ## 1 Introduction
 
 This module provides a type `Fw::FilePacket`.
-It represents an ISF file packet.
+It represents an F Prime file packet.
 
 ## 2 Design
 

@@ -331,7 +331,7 @@ include(CTest)
 # includes, etc. Default is FPRIME_FRAMEWORK_PATH if the PROJECT_SOURCE_DIR is a child of FPRIME_FRAMEWORK_PATH
 # otherwise PROJECT_SOURCE_DIR is used as the project root.
 #
-# e.g. `-DFPRIME_FRAMEWORK_PATH=/path/to/fprime/project`
+# e.g. `-DFPRIME_PROJECT_ROOT=/path/to/fprime/project`
 #
 # FPRIME_LIBRARY_LOCATIONS: locations of libraries included in the build. CMake list supplied in ; separated format like
 # other CMake lists. Default: "", no libraries available.

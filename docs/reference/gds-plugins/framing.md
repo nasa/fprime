@@ -41,6 +41,6 @@ class NullFramer(FramerDeframer):
     def frame(self, data: bytes) -> bytes:
         return data
 
-    def deframe(self, data: bytes) -> Tuple[bytes, bytes, bytes]:
+    def deframe(self, data: bytes, no_copy=False) -> Tuple[bytes, bytes, bytes]:
         return data, b"", b""
 ```

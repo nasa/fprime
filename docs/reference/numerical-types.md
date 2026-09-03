@@ -118,6 +118,13 @@ Projects may configure the framework types that the framework and components use
 | FwSizeType       | Sizes                        | PlatformSizeType       | PRI_FwSizeType       | No     | Minimum 4 Bytes |
 | FwSignedSizeType | Signed sizes                 | PlatformSignedSizeType | PRI_FwSignedSizeType | Yes    | Minimum 4 Bytes |
 | FwAssertArgType  | Arguments to asserts         | PlatformAssertArgType  | PRI_FwAssertArgType  | Yes/No | Any             |
+| FwTaskPriorityType | Task priorities            | PlatformTaskPriorityType | PRI_FwTaskPriorityType | Yes/No | Any           |
+| FwQueuePriorityType | Queue priorities          | PlatformQueuePriorityType | PRI_FwQueuePriorityType | Yes/No | Any         |
+| FwTaskIdType     | Task identifiers             | PlatformTaskIdType     | PRI_FwTaskIdType     | Yes/No | Any             |
+| FwIdType         | Identifiers (base type for the GDS id types below) | U32 | PRI_FwIdType    | No     | 4 Bytes         |
+
+This list is not exhaustive; see `default/config/FpConfig.fpp` for the complete set of configurable
+types (e.g. `FwDpPriorityType`, `FwTraceIdType`).
 
 There is also a set of framework types that are used across F´ deployments and specifically interact with ground data
 systems. These GDS types have defaults based on configurable platform independent fixed-widths as shown below:
@@ -129,10 +136,10 @@ systems. These GDS types have defaults based on configurable platform independen
 | FwTimeBaseStoreType    | Time base                  | U16                   | PRI_FwTimeBaseStoreType    |
 | FwTimeContextStoreType | Time context               | U8                    | PRI_FwTimeContextStoreType |
 | FwPacketDescriptorType | F´ packet descriptor field | U32                   | PRI_FwPacketDescriptorType |
-| FwOpcodeType           | F´ command opcodes         | U32                   | PRI_FwOpcodeType           |
-| FwChanIdType           | F´ channel ids             | U32                   | PRI_FwChanIdType           |
-| FwEventIdType          | F´ event ids               | U32                   | PRI_FwEventIdType          |
-| FwPrmIdType            | F´ parameter ids           | U32                   | PRI_FwPrmIdType            |
+| FwOpcodeType           | F´ command opcodes         | FwIdType (U32)        | PRI_FwOpcodeType           |
+| FwChanIdType           | F´ channel ids             | FwIdType (U32)        | PRI_FwChanIdType           |
+| FwEventIdType          | F´ event ids               | FwIdType (U32)        | PRI_FwEventIdType          |
+| FwPrmIdType            | F´ parameter ids           | FwIdType (U32)        | PRI_FwPrmIdType            |
 | FwTlmPacketizeIdType   | F´ telemetry packet ids    | U16                   | PRI_FwTlmPacketizeIdType   |
 
 > [!NOTE]

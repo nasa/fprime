@@ -119,7 +119,7 @@ GDS Options:
   --packet-spec PACKET_SPEC
                         Path to packet specification.
   -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
-                        [default: /workspaces/macos/DefaultMission/logs]
+                        [default: <project>/logs]
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
   --log-to-stdout       Log to standard out along with log output files
@@ -166,7 +166,7 @@ like this:
 fprime-cli: error: No valid project dictionary found
 ```
 
-Running commands from your project folder (e.g. inside `fprime/Ref`) should work to find a dictionary, but if you want
+Running commands from your project folder (e.g. inside your deployment folder, such as `TestDeploymentsProject/Ref` in the fprime repository) should work to find a dictionary, but if you want
 to run commands for a different deployment or project, you can specify the dictionary file exactly using the
 `--dictionary` option with the file's path.
 `fprime-cli command-send --dictionary build-artifacts/Linux/Ref/Top/RefTopologyDictionary.json`.
@@ -276,7 +276,7 @@ GDS Options:
   --packet-spec PACKET_SPEC
                         Path to packet specification.
   -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
-                        [default: /workspaces/macos/DefaultMission/logs]
+                        [default: <project>/logs]
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
   --log-to-stdout       Log to standard out along with log output files
@@ -342,7 +342,7 @@ GDS Options:
   --packet-spec PACKET_SPEC
                         Path to packet specification.
   -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
-                        [default: /workspaces/macos/DefaultMission/logs]
+                        [default: <project>/logs]
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
   --log-to-stdout       Log to standard out along with log output files
@@ -417,7 +417,7 @@ GDS Options:
   --packet-spec PACKET_SPEC
                         Path to packet specification.
   -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. 
-                        [default: /workspaces/macos/DefaultMission/logs]
+                        [default: <project>/logs]
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
   --log-to-stdout       Log to standard out along with log output files
