@@ -73,9 +73,9 @@ class AESEncryptorTester final : public AESEncryptorGTestBase {
     //! builds from the ground segment's contract. Covers SVC-CCSDS-AES-ENCRYPTOR-002.
     void testAuthMaskLayout();
 
-    //! configure() changes the virtual channel bound into the AAD.
-    //! Covers SVC-CCSDS-AES-ENCRYPTOR-008.
-    void testConfiguredVcIdIsAuthenticated();
+    //! The virtual channel bound into the AAD is the one on the frame context, which is
+    //! also the one Svc::Ccsds::TmFramer writes into the header. Covers SVC-CCSDS-AES-ENCRYPTOR-008.
+    void testContextVcIdIsAuthenticated();
 
     //! Two frames with identical plaintext get different IVs and different ciphertext.
     //! Covers SVC-CCSDS-AES-ENCRYPTOR-003.
@@ -120,7 +120,9 @@ class AESEncryptorTester final : public AESEncryptorGTestBase {
     // ----------------------------------------------------------------------
 
     //! Stand in for the key manager, supplying what setKey() last configured
-    Svc::Ccsds::SdlsStatus from_keyGet_handler(FwIndexType portNum, Svc::Ccsds::SdlsKeyBuffer& key) override;
+    Svc::Ccsds::SdlsStatus from_keyGet_handler(FwIndexType portNum,
+                                               U16 securityAssociationIndex,
+                                               Svc::Ccsds::SdlsKeyBuffer& key) override;
 
     //! Records the emitted frame, and when returnSynchronously() is set, hands it straight
     //! back on encryptReturnIn from inside this call
@@ -143,7 +145,7 @@ class AESEncryptorTester final : public AESEncryptorGTestBase {
     void setKey(const U8* key, FwSizeType keyLen, Svc::Ccsds::SdlsStatus status);
 
     //! Fill the harness storage with a recognizable pattern and hand it to the component
-    Fw::Buffer sendEncrypt(FwSizeType plainLen, U16 spi);
+    Fw::Buffer sendEncrypt(FwSizeType plainLen, U16 spi, U8 vcId = TEST_VC_ID);
 
     //! Assert that exactly one buffer came out on encryptOut carrying the given status
     void assertStatus(Svc::Ccsds::SdlsStatus status);

@@ -13,7 +13,13 @@
 # Module names are derived from the path from the nearest project/library/framework
 # root when not specifically overridden by the developer, i.e. the module defined by
 # `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
-find_package(OpenSSL REQUIRED)
+# AESDecryptor requires OpenSSL - only add if available
+find_package(OpenSSL)
+
+if (NOT OPENSSL_FOUND)
+    message(STATUS "Unable to add Svc_Encryption_AESDecryptor. OpenSSL not found")
+    return()
+endif()
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/AESDecryptorConfig")
 

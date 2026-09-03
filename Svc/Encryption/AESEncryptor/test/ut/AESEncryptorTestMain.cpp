@@ -31,11 +31,11 @@ TEST(Nominal, AuthMaskLayout) {
     tester.testAuthMaskLayout();
 }
 
-TEST(Nominal, ConfiguredVcIdIsAuthenticated) {
+TEST(Nominal, ContextVcIdIsAuthenticated) {
     REQUIREMENT("SVC-CCSDS-AES-ENCRYPTOR-008");
-    COMMENT("configure() changes the virtual channel bound into the AAD");
+    COMMENT("The virtual channel bound into the AAD is the one on the frame context");
     Svc::Ccsds::AESEncryptorTester tester;
-    tester.testConfiguredVcIdIsAuthenticated();
+    tester.testContextVcIdIsAuthenticated();
 }
 
 TEST(Nominal, IvIsFreshPerFrame) {

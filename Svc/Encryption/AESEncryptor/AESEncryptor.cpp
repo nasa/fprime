@@ -9,14 +9,11 @@
 
 #include <openssl/evp.h>
 #include <openssl/rand.h>
-#include <cstring>
 
 namespace Svc {
 
 namespace Ccsds {
 
-//! Virtual channel authenticated in the AAD when configure() is not called
-static constexpr U8 DEFAULT_VC_ID = 1;
 //! Length of the AES-GCM initialization vector, in bytes
 static constexpr U32 GCM_IV_LEN = 12;
 //! Length of the AES-GCM authentication tag (the SDLS MAC), in bytes
@@ -33,28 +30,15 @@ static_assert(GCM_IV_LEN + GCM_TAG_LEN == SdlsCfg::AesFrameOverhead,
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
+// Build the cipher state once so that encrypting a frame allocates nothing.
+// Only the key and the IV change, and those are supplied per
+// frame by a single EVP_EncryptInit_ex.
 AESEncryptor ::AESEncryptor(const char* const compName)
     : AESEncryptorComponentBase(compName),
       m_outBuf(),
       m_bufferState(BufferOwnershipState::OWNED),
       m_cipher(nullptr),
-      m_ctx(nullptr),
-      m_vcId(DEFAULT_VC_ID) {}
-
-AESEncryptor ::~AESEncryptor() {
-    EVP_CIPHER_CTX_free(this->m_ctx);
-    EVP_CIPHER_free(this->m_cipher);
-}
-
-void AESEncryptor ::configure(U8 vcId) {
-    this->m_vcId = vcId;
-
-    // Build the cipher state once so that encrypting a frame allocates nothing. The
-    // algorithm and the IV length never change; only the key and the IV do, and those are
-    // supplied per frame by a single EVP_EncryptInit_ex.
-    if (this->m_ctx != nullptr) {
-        return;  // already built; this call is only changing the virtual channel
-    }
+      m_ctx(nullptr) {
     this->m_cipher = EVP_CIPHER_fetch(nullptr, "AES-256-GCM", nullptr);
     FW_ASSERT(this->m_cipher != nullptr);
     this->m_ctx = EVP_CIPHER_CTX_new();
@@ -64,6 +48,11 @@ void AESEncryptor ::configure(U8 vcId) {
     FW_ASSERT(status == 1, static_cast<FwAssertArgType>(status));
     status = EVP_CIPHER_CTX_ctrl(this->m_ctx, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(GCM_IV_LEN), nullptr);
     FW_ASSERT(status == 1, static_cast<FwAssertArgType>(status));
+}
+
+AESEncryptor ::~AESEncryptor() {
+    EVP_CIPHER_CTX_free(this->m_ctx);
+    EVP_CIPHER_free(this->m_cipher);
 }
 
 // ----------------------------------------------------------------------
@@ -94,7 +83,7 @@ void AESEncryptor ::encryptIn_handler(FwIndexType portNum,
     }
 
     Svc::Ccsds::SdlsKeyBuffer key;
-    const Svc::Ccsds::SdlsStatus keyStatus = this->keyGet_out(0, key);
+    const Svc::Ccsds::SdlsStatus keyStatus = this->keyGet_out(0, securityAssociationIndex, key);
     if ((keyStatus != Svc::Ccsds::SdlsStatus::SUCCESS) || (key.getSize() != AES_256_KEY_LEN)) {
         this->failFrame(data, context, Svc::Ccsds::SdlsStatus::KEY_ERROR);
         return;
@@ -111,12 +100,11 @@ void AESEncryptor ::encryptIn_handler(FwIndexType portNum,
 
     int len = 0;
     int cipherLen = 0;
-    U8 tag[GCM_TAG_LEN] = {};
     // Authenticated but not encrypted. A null output pointer makes EVP_EncryptUpdate consume
     // the input as AAD; it must precede any plaintext.
-    const Svc::Ccsds::Utils::SdlsTmAuthMask aad(this->m_vcId, securityAssociationIndex);
+    const Svc::Ccsds::Utils::SdlsTmAuthMask aad(context.get_vcId(), securityAssociationIndex);
 
-    // Re-keying the context configure() built. Passing a null cipher here reuses the
+    // Re-keying the context the constructor built. Passing a null cipher here reuses the
     // algorithm and IV length already set, which is what keeps this path allocation-free.
     bool encryptSucceeded =
         (EVP_EncryptInit_ex(this->m_ctx, nullptr, nullptr, key.getBuffAddr(), iv) == 1) &&
@@ -128,8 +116,9 @@ void AESEncryptor ::encryptIn_handler(FwIndexType portNum,
     }
     if (encryptSucceeded) {
         cipherLen += len;
-        encryptSucceeded =
-            (EVP_CIPHER_CTX_ctrl(this->m_ctx, EVP_CTRL_GCM_GET_TAG, static_cast<int>(GCM_TAG_LEN), tag) == 1);
+        // The MAC is written straight into its place in m_outBuf, after the ciphertext
+        encryptSucceeded = (EVP_CIPHER_CTX_ctrl(this->m_ctx, EVP_CTRL_GCM_GET_TAG, static_cast<int>(GCM_TAG_LEN),
+                                                ciphertext + cipherLen) == 1);
     }
 
     if (!encryptSucceeded) {
@@ -137,7 +126,6 @@ void AESEncryptor ::encryptIn_handler(FwIndexType portNum,
         return;
     }
 
-    (void)::memcpy(ciphertext + cipherLen, tag, GCM_TAG_LEN);
     const U32 outLen = GCM_IV_LEN + static_cast<U32>(cipherLen) + GCM_TAG_LEN;
     Fw::Buffer cipherBuf(this->m_outBuf, outLen);
 
@@ -159,6 +147,8 @@ void AESEncryptor ::encryptReturnIn_handler(FwIndexType portNum,
     }
     // Only m_outBuf is ever emitted on encryptOut, so anything else is a wiring error
     FW_ASSERT(data.getData() == this->m_outBuf);
+    FW_ASSERT(this->m_bufferState == BufferOwnershipState::NOT_OWNED,
+              static_cast<FwAssertArgType>(this->m_bufferState));
     this->m_bufferState = BufferOwnershipState::OWNED;
 }
 

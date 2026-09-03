@@ -17,8 +17,6 @@ namespace Ccsds {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-//! Default virtual channel, matching ComCfg::FrameContext
-static constexpr U8 DEFAULT_VC_ID = 1;
 //! Length of the AES-GCM initialization vector, in bytes
 static constexpr U32 GCM_IV_LEN = 12;
 //! Length of the AES-GCM authentication tag (the SDLS MAC), in bytes
@@ -26,23 +24,11 @@ static constexpr U32 GCM_TAG_LEN = 16;
 //! Length of an AES-256 key, in bytes
 static constexpr FwSizeType AES_256_KEY_LEN = 32;
 
+// Build the cipher state once so that decrypting a frame allocates nothing. 
+// Only the key and the IV change and those are supplied per
+// frame by a single EVP_DecryptInit_ex.
 AESDecryptor ::AESDecryptor(const char* const compName)
-    : AESDecryptorComponentBase(compName), m_cipher(nullptr), m_ctx(nullptr), m_vcId(DEFAULT_VC_ID) {}
-
-AESDecryptor ::~AESDecryptor() {
-    EVP_CIPHER_CTX_free(this->m_ctx);
-    EVP_CIPHER_free(this->m_cipher);
-}
-
-void AESDecryptor ::configure(U8 vcId) {
-    this->m_vcId = vcId;
-
-    // Build the cipher state once so that decrypting a frame allocates nothing. The
-    // algorithm and the IV length never change; only the key and the IV do, and those are
-    // supplied per frame by a single EVP_DecryptInit_ex.
-    if (this->m_ctx != nullptr) {
-        return;
-    }
+    : AESDecryptorComponentBase(compName), m_cipher(nullptr), m_ctx(nullptr) {
     this->m_cipher = EVP_CIPHER_fetch(nullptr, "AES-256-GCM", nullptr);
     FW_ASSERT(this->m_cipher != nullptr);
     this->m_ctx = EVP_CIPHER_CTX_new();
@@ -51,6 +37,11 @@ void AESDecryptor ::configure(U8 vcId) {
     FW_ASSERT(status == 1, static_cast<FwAssertArgType>(status));
     status = EVP_CIPHER_CTX_ctrl(this->m_ctx, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(GCM_IV_LEN), nullptr);
     FW_ASSERT(status == 1, static_cast<FwAssertArgType>(status));
+}
+
+AESDecryptor ::~AESDecryptor() {
+    EVP_CIPHER_CTX_free(this->m_ctx);
+    EVP_CIPHER_free(this->m_cipher);
 }
 
 // ----------------------------------------------------------------------
@@ -77,7 +68,7 @@ void AESDecryptor ::decryptIn_handler(FwIndexType portNum,
     }
 
     Svc::Ccsds::SdlsKeyBuffer key;
-    const Svc::Ccsds::SdlsStatus keyStatus = this->keyGet_out(0, key);
+    const Svc::Ccsds::SdlsStatus keyStatus = this->keyGet_out(0, securityAssociationIndex, key);
     if ((keyStatus != Svc::Ccsds::SdlsStatus::SUCCESS) || (key.getSize() != AES_256_KEY_LEN)) {
         // A wrong-sized key would decrypt under the wrong material rather than failing
         this->decryptOut_out(0, Svc::Ccsds::SdlsStatus::KEY_ERROR, data, context);
@@ -89,9 +80,8 @@ void AESDecryptor ::decryptIn_handler(FwIndexType portNum,
     const U32 cipherLen = static_cast<U32>(data.getSize()) - GCM_IV_LEN - GCM_TAG_LEN;
     U8* const tag = ciphertext + cipherLen;
 
-    // Authenticated but not encrypted; the VC comes from configure() because the TC primary
-    // header that carried it was stripped upstream
-    const Svc::Ccsds::Utils::SdlsTcAuthMask aad(this->m_vcId, securityAssociationIndex);
+    // Authenticated but not encrypted; the VC travels in the context
+    const Svc::Ccsds::Utils::SdlsTcAuthMask aad(context.get_vcId(), securityAssociationIndex);
 
     int len = 0;
     int plainLen = 0;
@@ -117,7 +107,7 @@ void AESDecryptor ::decryptIn_handler(FwIndexType portNum,
         this->decryptOut_out(0, Svc::Ccsds::SdlsStatus::MAC_VERIFICATION_FAILURE, data, context);
         return;
     }
-    plainLen += len;
+    FW_ASSERT(len == 0, static_cast<FwAssertArgType>(len));
 
     // Move to the plaintext
     data.advance(static_cast<FwSignedSizeType>(GCM_IV_LEN));

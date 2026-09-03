@@ -100,9 +100,9 @@ class AESDecryptorTester final : public AESDecryptorGTestBase {
     //! Covers SVC-CCSDS-AES-DECRYPTOR-002.
     void testWrongSecurityAssociation();
 
-    //! configure() may be called again to change the virtual channel, keeping the cipher
-    //! context it built the first time. Covers SVC-CCSDS-AES-DECRYPTOR-002.
-    void testReconfigureChangesVc();
+    //! The virtual channel authenticated in the AAD comes from the frame context, so frames
+    //! for different VCs authenticate independently. Covers SVC-CCSDS-AES-DECRYPTOR-002.
+    void testVcFromContext();
 
     //! A good frame still decrypts after a rejected one. The cipher context is built once and
     //! reused, so a failed MAC check must not leave it unusable. Covers SVC-CCSDS-AES-DECRYPTOR-003.
@@ -134,7 +134,9 @@ class AESDecryptorTester final : public AESDecryptorGTestBase {
     // ----------------------------------------------------------------------
 
     //! Stand in for the key manager, supplying whatever setKey() last configured
-    Svc::Ccsds::SdlsStatus from_keyGet_handler(FwIndexType portNum, Svc::Ccsds::SdlsKeyBuffer& key) override;
+    Svc::Ccsds::SdlsStatus from_keyGet_handler(FwIndexType portNum,
+                                               U16 securityAssociationIndex,
+                                               Svc::Ccsds::SdlsKeyBuffer& key) override;
 
     // ----------------------------------------------------------------------
     // Helper functions
@@ -153,8 +155,8 @@ class AESDecryptorTester final : public AESDecryptorGTestBase {
     //! return a buffer wrapping it
     Fw::Buffer buildFrame(const U8* plaintext, FwSizeType plainLen, U8 vcId, U16 spi);
 
-    //! Hand a frame to the component
-    void sendDecrypt(Fw::Buffer& data, U16 spi);
+    //! Hand a frame to the component, naming the virtual channel on the context
+    void sendDecrypt(Fw::Buffer& data, U16 spi, U8 vcId = TEST_VC_ID);
 
     //! Assert that exactly one buffer came out on decryptOut carrying the given status
     void assertStatus(Svc::Ccsds::SdlsStatus status);

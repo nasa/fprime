@@ -7,12 +7,12 @@ The `Svc::Ccsds::AESEncryptor` component encrypts and authenticates downlink dat
 Encrypting a frame proceeds as follows:
 
 1. Receive an SA index, plaintext buffer, and frame context on `encryptIn`.
-2. Request an AES-256 key via `keyGet`; on failure or a wrong-sized key, report `KEY_ERROR`.
+2. Request the AES-256 key for the frame's security association via `keyGet`; on failure or a wrong-sized key, report `KEY_ERROR`.
 3. Draw a fresh IV, encrypt the plaintext into a per-instance output store, authenticating the SA index and virtual channel as AES-GCM additional authenticated data (AAD).
 4. Emit `IV (12) | ciphertext | MAC (16)` on `encryptOut` with status `SUCCESS`.
 5. Return the plaintext buffer via `bufferReturnOut` on every path — it is copied, not encrypted in place.
 
-The AAD is built by `Svc::Ccsds::Utils::SdlsTmAuthMask`, whose layout matches the ground segment's independent implementation of the same contract. The virtual channel comes from `configure()` rather than a header field, since the TM primary header does not yet exist at encryption time.
+The AAD is built by `Svc::Ccsds::Utils::SdlsTmAuthMask`, whose layout matches the ground segment's independent implementation of the same contract. The TM primary header does not yet exist at encryption time, so the virtual channel comes from the frame context — the same field `Svc::Ccsds::TmFramer` reads when it builds that header downstream, so the AAD always authenticates the VC actually transmitted.
 
 The output store is a single per-instance buffer; it must be returned on `encryptReturnIn` before the next frame, and a frame arriving while it is still in flight is dropped with `ENCRYPTION_FAILURE` and the `OutputBufferBusy` event rather than overwriting unsent ciphertext.
 
@@ -27,14 +27,14 @@ The output store is a single per-instance buffer; it must be returned on `encryp
 | SVC-CCSDS-AES-ENCRYPTOR-005 | The AESEncryptor shall return `ENCRYPTION_FAILURE` when the plaintext plus IV and MAC would exceed `SdlsCfg.AesMaxOutputSize`. | That is the size of the output store. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-006 | The AESEncryptor shall return the incoming plaintext buffer on `bufferReturnOut`, unmodified. | The plaintext belongs to its sender and is not encrypted in place. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-007 | The AESEncryptor shall mark its output store available again when the emitted buffer arrives on `encryptReturnIn`. | The store is component memory, not allocator memory. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-008 | `configure()` shall set the virtual channel ID authenticated in the AAD. | The TM primary header does not exist at encryption time. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-008 | The AESEncryptor shall authenticate, in the AAD, the virtual channel ID carried on the frame context. | The TM primary header does not exist at encryption time; the context carries the VC that `Svc::Ccsds::TmFramer` will write into it. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-009 | The AESEncryptor shall drop a frame with `ENCRYPTION_FAILURE` and the `OutputBufferBusy` event, rather than overwrite its output store, when a previously emitted frame has not yet returned on `encryptReturnIn`. | The store is a single buffer; overwriting it would let the new frame's MAC cover a silent substitution. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-010 | The AESEncryptor shall emit on `encryptOut` only its own output store, and shall return the incoming plaintext on `bufferReturnOut` on every path, with a failed frame reporting its status against an empty buffer. | Keeps buffer ownership unambiguous on the return path. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-011 | The AESEncryptor shall return `ENCRYPTION_FAILURE` rather than emit a frame if the CSPRNG cannot supply an IV. | Encrypting under a stale or predictable IV is worse than dropping the frame. | Inspection |
 
 ## Design
 
-The component is passive with no commands, telemetry, or parameters, and allocates no memory after `configure()`. It composes two interfaces:
+The component is passive with no commands, telemetry, or parameters, and allocates no memory after construction. It composes two interfaces:
 
 | Kind | Name | Port Type | Description |
 |---|---|---|---|
@@ -42,7 +42,7 @@ The component is passive with no commands, telemetry, or parameters, and allocat
 | output | encryptOut | Svc.Ccsds.CcsdsSdlsData | Sends the operation status and encrypted data downstream. |
 | sync input | encryptReturnIn | Svc.ComDataWithContext | Receives back ownership of buffers sent on `encryptOut`. |
 | output | bufferReturnOut | Svc.ComDataWithContext | Returns the incoming plaintext buffer for deallocation. |
-| output | keyGet | Svc.Ccsds.SdlsKey | Requests the AES-256 key for the frame. |
+| output | keyGet | Svc.Ccsds.SdlsKey | Requests the AES-256 key bound to the frame's security association. |
 
 Events: `OutputBufferBusy` (WARNING_HI).
 
@@ -55,7 +55,7 @@ Compile time, in `config/AESEncryptorConfig` (project-overridable):
 
 A deployment should hold `AesMaxOutputSize` to `AesFrameOverhead` plus its largest plaintext with a `static_assert`, as `TestDeploymentsProject/Ref` does in `Ref/Top/RefTopology.cpp`.
 
-Runtime: `configure(U8 vcId)` must be called during topology setup — a frame arriving first asserts. It sets the authenticated virtual channel and builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `encryptIn` free of dynamic allocation. Calling it again changes the virtual channel and keeps the context already built.
+Runtime: none. The constructor builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `encryptIn` free of dynamic allocation, and the authenticated virtual channel arrives per frame on the frame context.
 
 ## Unit Testing
 

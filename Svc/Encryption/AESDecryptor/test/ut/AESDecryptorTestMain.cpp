@@ -79,11 +79,11 @@ TEST(OffNominal, WrongSecurityAssociation) {
     tester.testWrongSecurityAssociation();
 }
 
-TEST(Nominal, ReconfigureChangesVc) {
+TEST(Nominal, VcFromContext) {
     REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-002");
-    COMMENT("configure() may be called again to change the virtual channel");
+    COMMENT("The virtual channel authenticated in the AAD comes from the frame context");
     Svc::Ccsds::AESDecryptorTester tester;
-    tester.testReconfigureChangesVc();
+    tester.testVcFromContext();
 }
 
 TEST(Nominal, RecoversAfterMacFailure) {

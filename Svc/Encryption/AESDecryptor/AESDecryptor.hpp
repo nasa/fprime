@@ -35,16 +35,6 @@ class AESDecryptor final : public AESDecryptorComponentBase {
     AESDecryptor(AESDecryptor&&) = delete;
     AESDecryptor& operator=(AESDecryptor&&) = delete;
 
-    //! Set the virtual channel this component decrypts for, and build the cipher context.
-    //!
-    //! vcId MUST match the value passed to Svc::Ccsds::TcDeframer::configure(), 
-    //! or every frame fails its MAC check. Calling it again changes the VC and keeps the context.
-    //!
-    //! This limits the component to a single virtual channel. Supporting several would
-    //! require the VCID to travel on the frame context.
-    void configure(U8 vcId  //!< Virtual channel ID (6 bits)
-    );
-
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
@@ -70,14 +60,11 @@ class AESDecryptor final : public AESDecryptorComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
 
-    //! AES-256-GCM implementation, fetched once by configure() rather than per frame
+    //! AES-256-GCM implementation, fetched once at construction rather than per frame
     EVP_CIPHER* m_cipher;
 
-    //! Cipher context, created once by configure() and re-keyed per frame 
+    //! Cipher context, created once at construction and re-keyed per frame
     EVP_CIPHER_CTX* m_ctx;
-
-    //! Virtual channel ID authenticated in the SDLS additional authenticated data
-    U8 m_vcId;
 };
 
 }  // namespace Ccsds

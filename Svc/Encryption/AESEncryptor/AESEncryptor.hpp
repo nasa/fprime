@@ -41,10 +41,6 @@ class AESEncryptor final : public AESEncryptorComponentBase {
     AESEncryptor(AESEncryptor&&) = delete;
     AESEncryptor& operator=(AESEncryptor&&) = delete;
 
-    //! Set the virtual channel ID authenticated in the AAD, and build the cipher context.
-    void configure(U8 vcId  //!< Virtual channel ID (3 bits, TM)
-    );
-
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
@@ -84,14 +80,11 @@ class AESEncryptor final : public AESEncryptorComponentBase {
     //! If  m_outBuf is free for the next frame
     BufferOwnershipState m_bufferState;
 
-    //! AES-256-GCM implementation, fetched once by configure() rather than per frame
+    //! AES-256-GCM implementation, fetched once at construction rather than per frame
     EVP_CIPHER* m_cipher;
 
-    //! Cipher context, created once by configure() and re-keyed per frame
+    //! Cipher context, created once at construction and re-keyed per frame
     EVP_CIPHER_CTX* m_ctx;
-
-    //! Virtual channel ID authenticated in the AAD
-    U8 m_vcId;
 };
 
 }  // namespace Ccsds

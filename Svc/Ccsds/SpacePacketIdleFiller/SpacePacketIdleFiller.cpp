@@ -92,6 +92,8 @@ void SpacePacketIdleFiller ::dataReturnIn_handler(FwIndexType portNum,
                                                   const ComCfg::FrameContext& context) {
     // Only component storage ever goes out on dataOut, so only it comes back here
     FW_ASSERT(data.getData() == &this->m_fillBuffer[0]);
+    FW_ASSERT(this->m_bufferState == BufferOwnershipState::NOT_OWNED,
+              static_cast<FwAssertArgType>(this->m_bufferState));
     this->m_bufferState = BufferOwnershipState::OWNED;
 }
 

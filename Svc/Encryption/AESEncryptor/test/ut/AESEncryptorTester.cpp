@@ -128,7 +128,6 @@ AESEncryptorTester ::AESEncryptorTester()
       m_returnSynchronously(false) {
     this->initComponents();
     this->connectPorts();
-    this->component.configure(TEST_VC_ID);
     this->setKey(TEST_KEY, AES_256_KEY_LEN, Svc::Ccsds::SdlsStatus::SUCCESS);
 }
 
@@ -139,8 +138,9 @@ AESEncryptorTester ::~AESEncryptorTester() {}
 // ----------------------------------------------------------------------
 
 Svc::Ccsds::SdlsStatus AESEncryptorTester ::from_keyGet_handler(FwIndexType portNum,
+                                                                U16 securityAssociationIndex,
                                                                 Svc::Ccsds::SdlsKeyBuffer& key) {
-    this->pushFromPortEntry_keyGet(key);
+    this->pushFromPortEntry_keyGet(securityAssociationIndex, key);
     if (this->m_keyStatus != Svc::Ccsds::SdlsStatus::SUCCESS) {
         const Fw::SerializeStatus status = key.setBuffLen(0);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
@@ -218,11 +218,10 @@ void AESEncryptorTester ::testAuthMaskLayout() {
     }
 }
 
-void AESEncryptorTester ::testConfiguredVcIdIsAuthenticated() {
+void AESEncryptorTester ::testContextVcIdIsAuthenticated() {
     const U8 otherVcId = TEST_VC_ID + 1;
-    this->component.configure(otherVcId);
     const FwSizeType plainLen = 32;
-    const Fw::Buffer sent = this->sendEncrypt(plainLen, TEST_SPI);
+    const Fw::Buffer sent = this->sendEncrypt(plainLen, TEST_SPI, otherVcId);
     this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
 
     // Authenticated under the new channel
@@ -235,7 +234,7 @@ void AESEncryptorTester ::testConfiguredVcIdIsAuthenticated() {
     U8 recovered[TEST_BUFFER_SIZE];
     ASSERT_FALSE(gcmDecrypt(TEST_KEY, frame, staleAad, TM_AAD_LEN, frame + GCM_IV_LEN, plainLen,
                             frame + GCM_IV_LEN + plainLen, recovered))
-        << "The frame authenticated under a virtual channel it was not configured for";
+        << "The frame authenticated under a virtual channel other than the one on its context";
 }
 
 void AESEncryptorTester ::testIvIsFreshPerFrame() {
@@ -395,7 +394,7 @@ void AESEncryptorTester ::setKey(const U8* key, FwSizeType keyLen, Svc::Ccsds::S
     this->m_keyStatus = status;
 }
 
-Fw::Buffer AESEncryptorTester ::sendEncrypt(FwSizeType plainLen, U16 spi) {
+Fw::Buffer AESEncryptorTester ::sendEncrypt(FwSizeType plainLen, U16 spi, U8 vcId) {
     FW_ASSERT(plainLen <= TEST_BUFFER_SIZE, static_cast<FwAssertArgType>(plainLen));
     this->clearHistory();
     for (FwSizeType i = 0; i < plainLen; i++) {
@@ -403,6 +402,9 @@ Fw::Buffer AESEncryptorTester ::sendEncrypt(FwSizeType plainLen, U16 spi) {
     }
     Fw::Buffer plaintext(this->m_storage, plainLen);
     ComCfg::FrameContext context;
+    // The VC reaches the component on the context, the same field Svc::Ccsds::TmFramer
+    // reads to build the transmitted header
+    context.set_vcId(vcId);
     this->invoke_to_encryptIn(0, spi, plaintext, context);
     return plaintext;
 }

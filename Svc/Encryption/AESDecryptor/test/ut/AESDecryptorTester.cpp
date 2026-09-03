@@ -114,7 +114,6 @@ AESDecryptorTester ::AESDecryptorTester()
       m_oversize() {
     this->initComponents();
     this->connectPorts();
-    this->component.configure(TEST_VC_ID);
     this->setKey(KAT_KEY, AES_256_KEY_LEN, Svc::Ccsds::SdlsStatus::SUCCESS);
 }
 
@@ -125,8 +124,9 @@ AESDecryptorTester ::~AESDecryptorTester() {}
 // ----------------------------------------------------------------------
 
 Svc::Ccsds::SdlsStatus AESDecryptorTester ::from_keyGet_handler(FwIndexType portNum,
+                                                                U16 securityAssociationIndex,
                                                                 Svc::Ccsds::SdlsKeyBuffer& key) {
-    this->pushFromPortEntry_keyGet(key);
+    this->pushFromPortEntry_keyGet(securityAssociationIndex, key);
     if (this->m_keyStatus != Svc::Ccsds::SdlsStatus::SUCCESS) {
         const Fw::SerializeStatus status = key.setBuffLen(0);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
@@ -276,19 +276,19 @@ void AESDecryptorTester ::testWrongSecurityAssociation() {
     this->assertStatus(Svc::Ccsds::SdlsStatus::MAC_VERIFICATION_FAILURE);
 }
 
-void AESDecryptorTester ::testReconfigureChangesVc() {
+void AESDecryptorTester ::testVcFromContext() {
     const U8 otherVcId = TEST_VC_ID + 1;
-    this->component.configure(otherVcId);
 
     U8 plaintext[32];
     (void)::memset(plaintext, 0x66, sizeof plaintext);
+    // A frame authenticated for another VC decrypts when the context names that VC
     Fw::Buffer frame = this->buildFrame(plaintext, sizeof plaintext, otherVcId, TEST_SPI);
-    this->sendDecrypt(frame, TEST_SPI);
+    this->sendDecrypt(frame, TEST_SPI, otherVcId);
     this->assertPlaintext(plaintext, sizeof plaintext);
 
-    // The channel it was configured for before no longer authenticates
-    Fw::Buffer stale = this->buildFrame(plaintext, sizeof plaintext, TEST_VC_ID, TEST_SPI);
-    this->sendDecrypt(stale, TEST_SPI);
+    // The same frame under a context naming a different VC no longer authenticates
+    Fw::Buffer stale = this->buildFrame(plaintext, sizeof plaintext, otherVcId, TEST_SPI);
+    this->sendDecrypt(stale, TEST_SPI, TEST_VC_ID);
     this->assertStatus(Svc::Ccsds::SdlsStatus::MAC_VERIFICATION_FAILURE);
 }
 
@@ -395,9 +395,11 @@ Fw::Buffer AESDecryptorTester ::buildFrame(const U8* plaintext, FwSizeType plain
     return Fw::Buffer(this->m_storage, frameLen);
 }
 
-void AESDecryptorTester ::sendDecrypt(Fw::Buffer& data, U16 spi) {
+void AESDecryptorTester ::sendDecrypt(Fw::Buffer& data, U16 spi, U8 vcId) {
     this->clearHistory();
     ComCfg::FrameContext context;
+    // The VC reaches the component on the context, as TcDeframer sets it upstream
+    context.set_vcId(vcId);
     this->invoke_to_decryptIn(0, spi, data, context);
 }
 

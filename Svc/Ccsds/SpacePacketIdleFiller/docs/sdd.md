@@ -7,8 +7,8 @@ The `Svc::Ccsds::SpacePacketIdleFiller` component pads a buffer to a fixed size 
 - Computes `gap = targetSize - inputSize` for each buffer received on `dataIn`.
 - `gap` at least 7: copies the input, appends one idle Space Packet of `gap` bytes, and emits at `targetSize` on `dataOut`.
 - `gap` of 0: copies the input and emits it unchanged at `targetSize`.
-- `gap` of 1 to 6: raises `GapTooSmall` and drops the buffer (no conformant Space Packet fits in fewer than 7 bytes).
-- `gap` negative: raises `InputTooLarge` and drops the buffer.
+- `gap` of 1 to 6: emits the `GapTooSmall` event and drops the buffer (no conformant Space Packet fits in fewer than 7 bytes).
+- `gap` negative: emits the `InputTooLarge` event and drops the buffer.
 - Returns the incoming buffer on `dataReturnOut` as soon as it has been copied.
 - A drop is followed by `Fw::Success::SUCCESS` on `comStatusOut`, releasing the com token so `Svc::ComAggregator` does not stall.
 - Passes status received on `comStatusIn` through to `comStatusOut` unmodified.
@@ -37,7 +37,7 @@ The emitted idle packet matches what `Svc::Ccsds::TmFramer` produces: APID `0x7F
 
 `configure(FwSizeType targetSize)` must be called during topology setup; a buffer arriving first asserts. `targetSize` is the plaintext size that exactly fills the transfer frame data field once framing and security overhead are added. For a 1024-byte TM frame carrying SDLS AES-256-GCM, `1024 - 6 (TM header) - 2 (FECF) - 2 (SPI) - 12 (IV) - 16 (MAC) = 986`.
 
-The deployment must also cap its upstream aggregation buffer at `targetSize - 7`, so a buffer either fills the target exactly or leaves room for a well-formed idle packet; the component cannot check this itself, since `ComCfg::AggregationSize` belongs to the aggregator, not to this generic `Svc` component. `TestDeploymentsProject/Ref` enforces both with a `static_assert` in `Ref/Top/RefTopology.cpp` alongside the `configure()` call.
+The deployment must also cap its upstream aggregation buffer at `targetSize - 7`, so a buffer either fills the target exactly or leaves room for a well-formed idle packet
 
 ## Requirements
 
@@ -57,8 +57,6 @@ The deployment must also cap its upstream aggregation buffer at `targetSize - 7`
 ## Deployment Notes
 
 Instantiated inside `ComCcsdsSdls.SdlsEncryption`, ahead of `sdlsFramer`, and so present in every topology built on it (`ComCcsdsSdls.FramingSubtopology`, `ComCcsdsSdls.Subtopology`). The non-SDLS `ComCcsds.Subtopology` has no encryption layer and does not instantiate it.
-
-`Svc::Ccsds::TmFramer::fill_with_idle_packet` gained an early return for a data field that is already full (a gap of exactly zero), unreachable for deployments that do not use this component.
 
 ## See Also
 
