@@ -44,19 +44,19 @@ When the component receives the `PRM_SAVE_FILE` command, it saves the entire tab
 
 The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied path into the staging database. Paths rejected by the load sandbox emit a `PrmFileReadError` event with an `OPEN` stage.
 
-> [!IMPORTANT]
-> The load sandbox is **fail-closed**: until `configureLoadSandbox(directory)` is called, every
-> `PRM_LOAD_FILE` open is rejected (emitting `PrmFileReadError` with an `OPEN` stage) — an
-> unconfigured `PrmDb` cannot load parameter files by ground command. A deployment **must** call
-> `configureLoadSandbox(directory)` during topology setup to enable `PRM_LOAD_FILE` and select the
-> allowed base directory. The stock `FileHandling` and `FileHandlingCfdp` subtopologies do this for
-> you, confining loads to `"."` (the deployment working-directory subtree); `../` traversal and
-> absolute paths are rejected.
+> [!WARNING]
+> The load sandbox is **fail-open**: if `configureLoadSandbox(directory)` is never called, any path
+> accessible to the process is accepted, permitting arbitrary path access via ground command. This
+> default is intentionally insecure for backwards compatibility. Security-conscious deployments
+> **must** call `configureLoadSandbox(directory)` during topology setup. Note that the stock
+> `FileHandling` and `FileHandlingCfdp` subtopologies configure the load sandbox to `"/"`, which is
+> equally unrestricted; deployments using them **must** call `configureLoadSandbox(directory)`
+> again from topology setup code with a restricted directory, after which `../` traversal and
+> absolute paths outside it are rejected.
 > This is distinct from `configure(file)`, which sets the store-file name and is **not** a load
 > sandbox. The load and store paths remain distinct: startup `readParamFile` and `PRM_SAVE_FILE`
 > operate on the configured store file and are not gated by the load sandbox; only `PRM_LOAD_FILE`
-> staging loads are. A deployment that genuinely requires unrestricted load access must opt in
-> explicitly by configuring the load sandbox to `"/"`.
+> staging loads are.
 
 The fields for each parameter value as stored in the parameter file are as follows:
 

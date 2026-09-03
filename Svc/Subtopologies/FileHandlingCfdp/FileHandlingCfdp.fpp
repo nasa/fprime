@@ -31,10 +31,8 @@ module FileHandlingCfdp {
     {
         phase Fpp.ToCpp.Phases.configComponents """
             FileHandlingCfdp::prmDb.configure("PrmDb.dat");
-            // Confine ground-commanded PRM_LOAD_FILE reads to the sandbox directory.
-            // Os::SandboxedFile is fail-closed, so this must be set or PRM_LOAD_FILE is denied.
-            // "." = deployment working-directory subtree; see FileHandlingConfig::FileSystem.
-            FileHandlingCfdp::prmDb.configureLoadSandbox(".");
+            // Sandbox for PRM_LOAD_FILE reads; "/" is unrestricted. Re-configure to restrict.
+            FileHandlingCfdp::prmDb.configureLoadSandbox("/");
         """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandlingCfdp::prmDb.readParamFile();

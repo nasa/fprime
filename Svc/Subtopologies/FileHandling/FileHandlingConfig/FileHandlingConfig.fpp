@@ -33,6 +33,7 @@ module FileHandlingConfig {
     # File paths used by the subtopology
     module Paths {
         constant prmDbFile = "PrmDb.dat"       # Parameter database storage file
+        constant sandboxDir = "/"              # File-access sandbox for fileUplink, fileDownlink, prmDb ("/" = unrestricted)
     }
 
     # File downlink configuration constants
@@ -41,14 +42,4 @@ module FileHandlingConfig {
         constant cycleTime      = 1000         # File downlink cycle time in ms
         constant fileQueueDepth = 10           # File downlink queue depth
     }
-
-    # File-access sandbox base directory.
-    # The value is applied in FileHandling.fpp's configComponents phases (as a C++
-    # string literal, because FPP string constants live in this INTERFACE config
-    # library's unlinked FppConstantsAc.cpp and cannot be referenced from topology
-    # autocode). Keep this comment and the literals in FileHandling.fpp in sync.
-    #   Default "." confines all ground-commanded file reads/writes (FileUplink,
-    #   FileDownlink, PrmDb PRM_LOAD_FILE) to the deployment working-directory subtree,
-    #   rejecting "../" traversal and absolute-path escapes. A deployment that truly
-    #   needs unrestricted access must set the literals to "/" as a deliberate opt-in.
 }

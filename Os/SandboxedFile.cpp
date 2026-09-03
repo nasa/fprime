@@ -9,10 +9,7 @@
 
 namespace Os {
 
-// Fail-closed by default: an unconfigured sandbox denies every open (open() returns
-// OUTSIDE_SANDBOX while m_configured is false). Callers must configure() an allowed
-// directory before use. This prevents ground-supplied paths from reaching the OS layer
-// unconfined when a deployment omits configuration (CWE-22 / CWE-23).
+// Fail-closed: open() returns OUTSIDE_SANDBOX until configure() is called
 SandboxedFile::SandboxedFile() : m_file(), m_allowedDirectory(""), m_configured(false) {}
 
 SandboxedFile::~SandboxedFile() {
