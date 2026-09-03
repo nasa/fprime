@@ -143,10 +143,16 @@ void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manage
     // walk through bins and add up the sizes
     for (U16 bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
         if (this->m_bufferBins.bins[bin].numBuffers) {
-            memorySize += (this->m_bufferBins.bins[bin].bufferSize *
-                           this->m_bufferBins.bins[bin].numBuffers) +  // allocate each set of buffer memory
-                          (static_cast<FwSizeType>(sizeof(AllocatedBuffer)) *
-                           this->m_bufferBins.bins[bin].numBuffers);  // allocate the structs to track the buffers
+            const FwSizeType bufferSize = this->m_bufferBins.bins[bin].bufferSize;
+            const FwSizeType numBuffers = static_cast<FwSizeType>(this->m_bufferBins.bins[bin].numBuffers);
+            const FwSizeType perBuffer = bufferSize + static_cast<FwSizeType>(sizeof(AllocatedBuffer));
+
+            FW_ASSERT(perBuffer >= bufferSize);  // addition didn't wrap
+            FW_ASSERT(perBuffer <= std::numeric_limits<FwSizeType>::max() / numBuffers);  // multiply safe
+            const FwSizeType binTotal = perBuffer * numBuffers;
+            FW_ASSERT(memorySize <= std::numeric_limits<FwSizeType>::max() - binTotal);  // accumulate safe
+            memorySize += binTotal;
+
             // Total structures is bounded by U16 maximum value to fit in half of context (U32)
             FW_ASSERT((std::numeric_limits<U16>::max() - this->m_numStructs) >=
                       this->m_bufferBins.bins[bin].numBuffers);
