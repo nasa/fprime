@@ -11,7 +11,7 @@ module Svc {
     output port PingSend: [HealthPingPorts] Svc.Ping
 
     @ Ping return port
-    async input port PingReturn: [HealthPingPorts] Svc.Ping drop
+    async input port PingReturn: [HealthPingPorts] Svc.Ping
 
     @ Run port
     sync input port Run: Svc.Sched
