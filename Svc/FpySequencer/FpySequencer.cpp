@@ -436,6 +436,31 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_Debug_StackSize(this->m_debug.stackSize);
 }
 
+// ----------------------------------------------------------------------
+// Pre-message hook overrides for typed async input ports
+// ----------------------------------------------------------------------
+
+void FpySequencer::checkOverflow() {
+    if (this->m_queue.getMessagesAvailable() > this->m_queue.getDepth() - Fpy::LOAD_MARGIN) {
+        this->sequencer_sendSignal_cmd_CANCEL();
+    }
+}
+
+void FpySequencer::checkTimers_preMsgHook(FwIndexType portNum, U32 context) {
+    checkOverflow();
+}
+
+void FpySequencer::cmdResponseIn_preMsgHook(FwIndexType portNum,
+                                            FwOpcodeType opCode,
+                                            U32 cmdSeq,
+                                            const Fw::CmdResponse& response) {
+    checkOverflow();
+}
+
+void FpySequencer::tlmWrite_preMsgHook(FwIndexType portNum, U32 context) {
+    checkOverflow();
+}
+
 void FpySequencer::updateDebugTelemetryStruct() {
     // only send debug tlm when we are paused
     if (this->sequencer_getState() == State::RUNNING_PAUSED) {

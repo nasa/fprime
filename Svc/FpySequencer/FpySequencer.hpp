@@ -537,6 +537,23 @@ class FpySequencer : public FpySequencerComponentBase {
                           U32 context           //!< The call order
                           ) override;
 
+    // ----------------------------------------------------------------------
+    // Pre-message hook overrides for typed async input ports
+    // ----------------------------------------------------------------------
+
+    void checkOverflow();
+    //! Pre-message hook for async input port checkTimers
+    void checkTimers_preMsgHook(FwIndexType portNum, U32 context) override;
+
+    //! Pre-message hook for async input port cmdResponseIn
+    void cmdResponseIn_preMsgHook(FwIndexType portNum,
+                                  FwOpcodeType opCode,
+                                  U32 cmdSeq,
+                                  const Fw::CmdResponse& response) override;
+
+    // ! Pre-message hook for async input port tlmWrite
+    void tlmWrite_preMsgHook(FwIndexType portNum, U32 context) override;
+
     //! Internal interface handler for directive_waitAbs
     void directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) override;
 
