@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-02 22:12:07</td>
+      <td>2026-09-03 22:12:29</td>
     </tr>
   </table>
 </div>
@@ -72,7 +72,7 @@
     </tr>
     <tr><td><a href="#l11">Os::FileSystem::FileSystem() (line 11)</a></td><td>called 1 time</td><td>80.0%</td></tr>
     <tr><td><a href="#l57">Os::FileSystem::_changeWorkingDirectory(char const*) (line 57)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l63">Os::FileSystem::_getFreeSpace(char const*, unsigned long&amp;, unsigned long&amp;) (line 63)</a></td><td>called 234 times</td><td>71.0%</td></tr>
+    <tr><td><a href="#l63">Os::FileSystem::_getFreeSpace(char const*, unsigned long&amp;, unsigned long&amp;) (line 63)</a></td><td>called 235 times</td><td>71.0%</td></tr>
     <tr><td><a href="#l44">Os::FileSystem::_getPathType(char const*, Os::FileSystemInterface::PathType&amp;) (line 44)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l50">Os::FileSystem::_getWorkingDirectory(char*, unsigned long) (line 50)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l25">Os::FileSystem::_removeDirectory(char const*) (line 25)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -85,10 +85,10 @@
     <tr><td><a href="#l111">Os::FileSystem::createDirectory(char const*, bool) (line 111)</a></td><td>called 1 time</td><td>71.0%</td></tr>
     <tr><td><a href="#l148">Os::FileSystem::exists(char const*) (line 148)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l227">Os::FileSystem::getFileSize(char const*, unsigned long&amp;) (line 227)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l103">Os::FileSystem::getFreeSpace(char const*, unsigned long&amp;, unsigned long&amp;) (line 103)</a></td><td>called 234 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l103">Os::FileSystem::getFreeSpace(char const*, unsigned long&amp;, unsigned long&amp;) (line 103)</a></td><td>called 235 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l20">Os::FileSystem::getHandle() (line 20)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l138">Os::FileSystem::getPathType(char const*) (line 138)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l74">Os::FileSystem::getSingleton() (line 74)</a></td><td>called 235 times</td><td>82.0%</td></tr>
+    <tr><td><a href="#l74">Os::FileSystem::getSingleton() (line 74)</a></td><td>called 236 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l95">Os::FileSystem::getWorkingDirectory(char*, unsigned long) (line 95)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l263">Os::FileSystem::handleDirectoryError(Os::DirectoryInterface::Status) (line 263)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l244">Os::FileSystem::handleFileError(Os::FileInterface::Status) (line 244)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -558,28 +558,28 @@
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="n">FileSystem</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">FileSystem</span><span class="o">::</span><span class="n">_getFreeSpace</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">totalBytes</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">freeBytes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">FileSystemInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">path</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">_getFreeSpace</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">totalBytes</span><span class="p">,</span><span class="w"> </span><span class="n">freeBytes</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -635,7 +635,7 @@
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">236</td>
       <td class="src coveredLine"><span class="n">FileSystem</span><span class="o">&amp;</span><span class="w"> </span><span class="n">FileSystem</span><span class="o">::</span><span class="n">getSingleton</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -645,7 +645,7 @@
           <summary class="linebranchSummary">4/7</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 234 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 235 times.</div>
             <div class="takenBranch">&check; Branch 3 taken 1 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
@@ -654,14 +654,14 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">235</td>
+      <td class="linecount partialCoveredLine">236</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">FileSystem</span><span class="w"> </span><span class="n">s_singleton</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">236</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s_singleton</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -850,14 +850,14 @@
       <td class="lineno"><a id="l103" href="#l103">103</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="n">FileSystem</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">FileSystem</span><span class="o">::</span><span class="n">getFreeSpace</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">totalBytes</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">freeBytes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">FileSystem</span><span class="o">::</span><span class="n">getSingleton</span><span class="p">().</span><span class="n">_getFreeSpace</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">totalBytes</span><span class="p">,</span><span class="w"> </span><span class="n">freeBytes</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

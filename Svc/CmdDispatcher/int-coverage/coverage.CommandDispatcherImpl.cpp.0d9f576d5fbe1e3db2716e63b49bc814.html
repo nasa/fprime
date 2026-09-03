@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-02 22:13:13</td>
+      <td>2026-09-03 22:13:30</td>
     </tr>
   </table>
 </div>
@@ -41,8 +41,8 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>59</td>
-      <td>96</td>
-      <td class="coverage-low">61.5%</td>
+      <td>110</td>
+      <td class="coverage-low">53.6%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -53,8 +53,8 @@
     <tr>
       <th scope="row">Branches:</th>
       <td>47</td>
-      <td>92</td>
-      <td class="coverage-low">51.1%</td>
+      <td>113</td>
+      <td class="coverage-low">41.6%</td>
     </tr>
   </table>
 </div>
@@ -77,10 +77,10 @@
     <tr><td><a href="#l21">Svc::CommandDispatcherImpl::CommandDispatcherImpl(char const*) (line 21)</a></td><td>called 1 time</td><td>62.0%</td></tr>
     <tr><td><a href="#l26">Svc::CommandDispatcherImpl::compCmdReg_handler(short, unsigned int) (line 26)</a></td><td>called 104 times</td><td>61.0%</td></tr>
     <tr><td><a href="#l40">Svc::CommandDispatcherImpl::compCmdStat_handler(short, unsigned int, unsigned int, Fw::CmdResponse const&amp;) (line 40)</a></td><td>called 145 times</td><td>65.0%</td></tr>
-    <tr><td><a href="#l157">Svc::CommandDispatcherImpl::pingIn_handler(short, unsigned int) (line 157)</a></td><td>called 59 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l126">Svc::CommandDispatcherImpl::run_handler(short, unsigned int) (line 126)</a></td><td>called 234 times</td><td>58.0%</td></tr>
+    <tr><td><a href="#l177">Svc::CommandDispatcherImpl::pingIn_handler(short, unsigned int) (line 177)</a></td><td>called 59 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l126">Svc::CommandDispatcherImpl::run_handler(short, unsigned int) (line 126)</a></td><td>called 235 times</td><td>58.0%</td></tr>
     <tr><td><a href="#l71">Svc::CommandDispatcherImpl::seqCmdBuff_handler(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 71)</a></td><td>called 145 times</td><td>41.0%</td></tr>
-    <tr><td><a href="#l162">Svc::CommandDispatcherImpl::seqCmdBuff_overflowHook(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 162)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l182">Svc::CommandDispatcherImpl::seqCmdBuff_overflowHook(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 182)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l24">Svc::CommandDispatcherImpl::~CommandDispatcherImpl() (line 24)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -1127,7 +1127,7 @@
       <td class="lineno"><a id="l126" href="#l126">126</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CommandDispatcherImpl</span><span class="w"> </span><span class="o">::</span><span class="n">run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1136,12 +1136,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 234 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 234 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 235 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 235 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_CommandsDropped</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numCmdsDropped</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1150,12 +1150,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 234 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 234 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 235 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 235 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_CommandErrors</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numCmdErrors</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1164,19 +1164,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 234 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 234 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 235 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 235 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_CommandsDispatched</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numCmdsDispatched</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l130" href="#l130">130</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">234</td>
+      <td class="linecount coveredLine">235</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1369,161 +1369,161 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// clear tracking table</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Preserve this command&#39;s own entry so its OK status still reaches the caller</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l153" href="#l153">153</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceTracker</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">SequenceTrackerEntry</span><span class="w"> </span><span class="n">selfEntry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l154" href="#l154">154</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">selfTracked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceTracker</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">selfEntry</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l155" href="#l155">155</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="linecount "></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l156" href="#l156">156</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Notify every other caller that its pending status will never arrive</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l157" href="#l157">157</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">59</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CommandDispatcherImpl</span><span class="o">::</span><span class="n">pingIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceTracker</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l158" href="#l158">158</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// respond to ping</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="n">getKey</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l159" href="#l159">159</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">59</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">pingOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">);</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">continue</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l160" href="#l160">160</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">59</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l161" href="#l161">161</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l162" href="#l162">162</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CommandDispatcherImpl</span><span class="o">::</span><span class="n">seqCmdBuff_overflowHook</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ComBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l163" href="#l163">163</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Note: 0 = Reserved opcode</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l164" href="#l164">164</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CmdDispatcherCfg</span><span class="o">::</span><span class="n">IncludeCommandOpcodesInEvents</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l165" href="#l165">165</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdPacket</span><span class="w"> </span><span class="n">cmdPkt</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l166" href="#l166">166</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmdPkt</span><span class="p">.</span><span class="n">deserializeFrom</span><span class="p">(</span><span class="n">data</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l167" href="#l167">167</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l168" href="#l168">168</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="n">opcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmdPkt</span><span class="p">.</span><span class="n">getOpCode</span><span class="p">();</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l169" href="#l169">169</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l170" href="#l170">170</a></td>
+      <td class="lineno"><a id="l161" href="#l161">161</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">SequenceTrackerEntry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">trackedCmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">getValue</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l162" href="#l162">162</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">trackedCmd</span><span class="p">.</span><span class="n">callerPort</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getNum_seqCmdStatus_OutputPorts</span><span class="p">());</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l163" href="#l163">163</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">isConnected_seqCmdStatus_OutputPort</span><span class="p">(</span><span class="n">trackedCmd</span><span class="p">.</span><span class="n">callerPort</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l164" href="#l164">164</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">seqCmdStatus_out</span><span class="p">(</span><span class="n">trackedCmd</span><span class="p">.</span><span class="n">callerPort</span><span class="p">,</span><span class="w"> </span><span class="n">trackedCmd</span><span class="p">.</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">trackedCmd</span><span class="p">.</span><span class="n">context</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l165" href="#l165">165</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                   </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">CLEARED</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l166" href="#l166">166</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l167" href="#l167">167</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l171" href="#l171">171</a></td>
+      <td class="lineno"><a id="l168" href="#l168">168</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
+      <td class="lineno"><a id="l169" href="#l169">169</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceTracker</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l170" href="#l170">170</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">selfTracked</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l171" href="#l171">171</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceTracker</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">selfEntry</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
       <td class="lineno"><a id="l172" href="#l172">172</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_CommandDroppedQueueOverflow</span><span class="p">(</span><span class="n">CmdDispatcherCfg</span><span class="o">::</span><span class="n">getEventOpcode</span><span class="p">(</span><span class="n">opcode</span><span class="p">),</span><span class="w"> </span><span class="n">context</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l173" href="#l173">173</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Increment CommandsDroppedBufOverflow counter</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l174" href="#l174">174</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numCmdsDropped</span><span class="o">++</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l175" href="#l175">175</a></td>
@@ -1543,11 +1543,151 @@
       <td class="lineno"><a id="l177" href="#l177">177</a></td>
       <td class="linebranch">
       </td>
+      <td class="linecount coveredLine">59</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CommandDispatcherImpl</span><span class="o">::</span><span class="n">pingIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l178" href="#l178">178</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// respond to ping</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l179" href="#l179">179</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">59</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">pingOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l180" href="#l180">180</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">59</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l181" href="#l181">181</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l182" href="#l182">182</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CommandDispatcherImpl</span><span class="o">::</span><span class="n">seqCmdBuff_overflowHook</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ComBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l183" href="#l183">183</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Note: 0 = Reserved opcode</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l184" href="#l184">184</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CmdDispatcherCfg</span><span class="o">::</span><span class="n">IncludeCommandOpcodesInEvents</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l185" href="#l185">185</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdPacket</span><span class="w"> </span><span class="n">cmdPkt</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l186" href="#l186">186</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmdPkt</span><span class="p">.</span><span class="n">deserializeFrom</span><span class="p">(</span><span class="n">data</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l187" href="#l187">187</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l188" href="#l188">188</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">opcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmdPkt</span><span class="p">.</span><span class="n">getOpCode</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l189" href="#l189">189</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l190" href="#l190">190</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l191" href="#l191">191</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l192" href="#l192">192</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_CommandDroppedQueueOverflow</span><span class="p">(</span><span class="n">CmdDispatcherCfg</span><span class="o">::</span><span class="n">getEventOpcode</span><span class="p">(</span><span class="n">opcode</span><span class="p">),</span><span class="w"> </span><span class="n">context</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l193" href="#l193">193</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Increment CommandsDroppedBufOverflow counter</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l194" href="#l194">194</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numCmdsDropped</span><span class="o">++</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l195" href="#l195">195</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l196" href="#l196">196</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l197" href="#l197">197</a></td>
+      <td class="linebranch">
+      </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l178" href="#l178">178</a></td>
+      <td class="lineno"><a id="l198" href="#l198">198</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
