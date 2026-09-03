@@ -386,7 +386,7 @@ void WasmSequencer ::dispatchEvent() {
         case Fw::LogSeverity::DIAGNOSTIC:
             this->log_DIAGNOSTIC_LogDiagnostic(msg);
             break;
-        case Fw::LogSeverity::FATAL:
+        case Fw::LogSeverity::FATAL:  // fallthrough to catch restricted severities
         case Fw::LogSeverity::COMMAND:
         default:
             this->log_WARNING_HI_HostFunctionInvalidSeverity(rawSeverity, msg);

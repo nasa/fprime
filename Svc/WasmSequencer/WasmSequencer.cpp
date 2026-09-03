@@ -66,7 +66,6 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_cancelRequested(false),
       m_sequencesStarted(0) {}
 
-
 void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) {
     FW_ASSERT(this->m_wasm == nullptr);
     FW_ASSERT(this->m_allocator == nullptr);
