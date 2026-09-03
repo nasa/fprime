@@ -54,7 +54,7 @@ static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<size
               "Maximum value of FwSizeType less than the maximum value of size_t. Configure a larger type.");
 
 //!\brief default copy constructor
-PosixFile::PosixFile(const PosixFile& other) {
+PosixFile::PosixFile(const PosixFile& other) : FileInterface(other) {
     // Must properly duplicate the file handle
     this->m_handle.m_file_descriptor = fcntl(other.m_handle.m_file_descriptor, F_DUPFD, 0);
 }

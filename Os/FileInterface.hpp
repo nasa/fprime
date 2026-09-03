@@ -8,7 +8,6 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/ConstStringBase.hpp>
 #include <Os/Os.hpp>
-#include <Utils/Hash/Hash.hpp>
 #include "config/OsDelegateFile.hpp"
 
 // Forward declaration for UTs
@@ -84,10 +83,10 @@ class FileInterface {
     //!
     virtual ~FileInterface() = default;
 
-    //! \brief copy constructor that copies the mode/CRC state tracked by this base class
+    //! \brief copy constructor that copies the mode state tracked by this base class
     FileInterface(const FileInterface& other);
 
-    //! \brief assignment operator that copies the mode/CRC state tracked by this base class
+    //! \brief assignment operator that copies the mode state tracked by this base class
     FileInterface& operator=(const FileInterface& other);
 
     //! \brief determine if the file is open
@@ -369,6 +368,29 @@ class FileInterface {
     //!
     virtual FileHandle* getHandle() = 0;
 
+    // ----------------------------------------------------------------------
+    // CRC interface
+    //
+    // Design note (see Os/DelegateFile.hpp for the full rationale):
+    // The CRC computation needs cross-call scratch state -- an incremental
+    // `Utils::Hash` accumulator and a `FW_FILE_CHUNK_SIZE`-byte read buffer.
+    // That state deliberately does *not* live here on `FileInterface`.
+    // Concrete `FileInterface` implementations (`Os::Posix::File::PosixFile`,
+    // `Os::Stub::File::StubFile`, ...) are placement-new'd into a fixed-size
+    // (`FW_FILE_HANDLE_MAX_SIZE`) byte array by `Os::Delegate::makeDelegate`;
+    // embedding the ~512-byte CRC buffer in that state would blow the
+    // handle-size budget (and be duplicated into every implementation).
+    // Instead the CRC state and the real algorithm live on the wrapper
+    // (`Os::DelegateFile`, which is what `Os::File` aliases), whose storage is
+    // *not* handle-size-constrained. These methods are therefore `virtual`
+    // with a base implementation that reports the capability is unavailable;
+    // `DelegateFile` overrides them with the working implementation, driving
+    // I/O through the (virtual) `read()` so it transparently reaches the
+    // selected delegate. `m_mode` stays on this base class because it guards
+    // many non-CRC operations (`isOpen`, `readline`, seek checks) and is
+    // shared with the delegate mode-tracking contract.
+    // ----------------------------------------------------------------------
+
     //! \brief calculate the CRC32 of the entire file
     //!
     //! Calculates the CRC32 of the file's contents. The `crc` parameter will be updated to contain the CRC or 0 on
@@ -391,10 +413,15 @@ class FileInterface {
     //! while (size == FW_FILE_CHUNK_SIZE);
     //! m_file.finalize(crc);
     //! ```
+    //!
+    //! \note The base-class implementation returns `NOT_SUPPORTED`; the CRC
+    //! scratch state and algorithm live on `Os::DelegateFile` (see the design
+    //! note above), which overrides this method.
+    //!
     //! \param crc: U32 bit value to fill with CRC
     //! \return OP_OK on success otherwise error status
     //!
-    Status calculateCrc(U32& crc);
+    virtual Status calculateCrc(U32& crc);
 
     //! \brief calculate the CRC32 of the next section of data
     //!
@@ -408,10 +435,14 @@ class FileInterface {
     //!
     //! It is illegal for size to be less than or equal to 0 or greater than FW_FILE_CHUNK_SIZE.
     //!
+    //! \note The base-class implementation returns `NOT_SUPPORTED`; the CRC
+    //! scratch state and algorithm live on `Os::DelegateFile` (see the design
+    //! note above), which overrides this method.
+    //!
     //! \param size: size of data to read for CRC
     //! \return: status of the CRC calculation
     //!
-    Status incrementalCrc(FwSizeType& size);
+    virtual Status incrementalCrc(FwSizeType& size);
 
     //! \brief finalize and retrieve the CRC value
     //!
@@ -421,10 +452,14 @@ class FileInterface {
     //!
     //! On error crc will be set to 0.
     //!
+    //! \note The base-class implementation returns `NOT_SUPPORTED`; the CRC
+    //! scratch state and algorithm live on `Os::DelegateFile` (see the design
+    //! note above), which overrides this method.
+    //!
     //! \param crc: value to fill
     //! \return status of the CRC calculation
     //!
-    Status finalizeCrc(U32& crc);
+    virtual Status finalizeCrc(U32& crc);
 
     //! \brief provide a pointer to a file delegate object
     //!
@@ -471,12 +506,14 @@ class FileInterface {
     void setMode(Mode mode);
 
   private:
+    //! \brief seed value for a fresh CRC-32 calculation
+    //!
+    //! Part of the CRC contract shared with the shadow model in the unit tests. This is a compile-time
+    //! constant with no per-instance storage cost, so it stays on the interface even though the CRC scratch
+    //! state and algorithm live on `Os::DelegateFile` (see the CRC design note above).
     static const U32 INITIAL_CRC = 0xFFFFFFFF;  //!< Initial value for CRC calculation
 
     Mode m_mode = Mode::OPEN_NO_MODE;  //!< Stores mode for error checking
-
-    Utils::Hash m_hash;  //!< Hash object for incremental CRC calculation
-    U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];
 };
 }  // namespace Os
 #endif  // OS_FILEINTERFACE_HPP_

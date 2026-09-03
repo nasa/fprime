@@ -4,11 +4,13 @@
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Os/DelegateFile.hpp>
+#include <config/FppConstantsAc.hpp>
+#include <limits>
 
 namespace Os {
 
 DelegateFile::DelegateFile()
-    : FileInterface(), m_handle_storage(), m_delegate(*FileInterface::getDelegate(m_handle_storage)) {
+    : FileInterface(), m_handle_storage(), m_delegate(*FileInterface::getDelegate(m_handle_storage)), m_crc_buffer() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -23,7 +25,9 @@ DelegateFile::~DelegateFile() {
 DelegateFile::DelegateFile(const DelegateFile& other)
     : FileInterface(other),
       m_handle_storage(),
-      m_delegate(*FileInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
+      m_delegate(*FileInterface::getDelegate(m_handle_storage, &other.m_delegate)),
+      m_hash(other.m_hash),
+      m_crc_buffer() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -36,6 +40,7 @@ DelegateFile& DelegateFile::operator=(const DelegateFile& other) {
         }
         this->m_delegate.~FileInterface();
         FileInterface::operator=(other);
+        this->m_hash = other.m_hash;
         (void)FileInterface::getDelegate(m_handle_storage, &other.m_delegate);
         FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     }
@@ -56,6 +61,8 @@ DelegateFile::Status DelegateFile::open(const char* filepath,
     DelegateFile::Status status = this->m_delegate.open(filepath, requested_mode, overwrite);
     if (status == DelegateFile::Status::OP_OK) {
         this->setMode(requested_mode);
+        // Reset any open CRC calculation to match the freshly-opened file
+        this->m_hash.init();
     }
     return status;
 }
@@ -148,6 +155,60 @@ DelegateFile::Status DelegateFile::write(const U8* buffer, FwSizeType& size, Del
 FileHandle* DelegateFile::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
+}
+
+// ----------------------------------------------------------------------
+// CRC implementation
+//
+// Relocated from FileInterface so the scratch buffer is charged to this
+// wrapper's (unconstrained) storage rather than the fixed-size delegate
+// handle. The algorithm is unchanged; it drives I/O through the virtual
+// `this->read()`, which dispatches to the selected delegate.
+// ----------------------------------------------------------------------
+
+DelegateFile::Status DelegateFile::calculateCrc(U32& crc) {
+    DelegateFile::Status status = DelegateFile::Status::OP_OK;
+    FwSizeType size = FW_FILE_CHUNK_SIZE;
+    crc = 0;
+    for (FwSizeType i = 0; i < std::numeric_limits<FwSizeType>::max(); i++) {
+        status = this->incrementalCrc(size);
+        // Break on eof or error
+        if ((size != FW_FILE_CHUNK_SIZE) || (status != DelegateFile::OP_OK)) {
+            break;
+        }
+    }
+    // When successful, finalize the CRC
+    if (status == DelegateFile::OP_OK) {
+        status = this->finalizeCrc(crc);
+    }
+    return status;
+}
+
+DelegateFile::Status DelegateFile::incrementalCrc(FwSizeType& size) {
+    DelegateFile::Status status = DelegateFile::Status::OP_OK;
+    FW_ASSERT(size <= FW_FILE_CHUNK_SIZE, FwAssertArgType(size));
+    if (not this->isOpen()) {
+        status = DelegateFile::Status::NOT_OPENED;
+    } else if (OPEN_READ != this->getMode()) {
+        status = DelegateFile::Status::INVALID_MODE;
+    } else {
+        // Read data without waiting for additional data to be available
+        status = this->read(this->m_crc_buffer, size, DelegateFile::WaitType::NO_WAIT);
+        if (OP_OK == status) {
+            FW_ASSERT(size <= FW_FILE_CHUNK_SIZE, FwAssertArgType(size));
+            this->m_hash.update(this->m_crc_buffer, size);
+        }
+    }
+    return status;
+}
+
+DelegateFile::Status DelegateFile::finalizeCrc(U32& crc) {
+    this->m_hash.finalize(crc);
+    // Historically, the CRC calculation in File omitted the final 1's complement step. Utils::Hash performs that step
+    // and as such, we must undo it before returning the value to ensure backwards compatibility.
+    crc = ~crc;
+    this->m_hash.init();
+    return DelegateFile::Status::OP_OK;
 }
 
 }  // namespace Os

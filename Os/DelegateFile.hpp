@@ -5,11 +5,17 @@
 #ifndef OS_DELEGATEFILE_HPP_
 #define OS_DELEGATEFILE_HPP_
 
+#include <Utils/Hash/Hash.hpp>
 #include "Os/FileInterface.hpp"
 
 namespace Os {
 
 class DelegateFile final : public FileInterface {
+    // The file unit-test harness reaches into the CRC scratch state (`m_hash`) to check the running
+    // accumulator against its shadow model. That state moved here from `FileInterface`, so the tester
+    // must befriend this wrapper too (it is already a friend of `FileInterface`).
+    friend struct Os::Test::FileTest::Tester;
+
   public:
     //! \brief constructor
     //!
@@ -29,6 +35,12 @@ class DelegateFile final : public FileInterface {
     // ------------------------------------
     // Functions overrides
     // ------------------------------------
+
+    // Bring the FileInterface convenience overloads into scope; overriding a
+    // single `open` overload below would otherwise hide all of them.
+    using FileInterface::open;
+    using FileInterface::read;
+    using FileInterface::write;
 
     //! \brief open file with supplied path and mode
     //!
@@ -154,6 +166,29 @@ class DelegateFile final : public FileInterface {
     //!
     FileHandle* getHandle() override;
 
+    // ------------------------------------
+    // CRC overrides
+    //
+    // The CRC scratch state (`m_hash` accumulator + `m_crc_buffer` read
+    // buffer) and the working algorithm live here on the wrapper rather than
+    // on `FileInterface`, because concrete `FileInterface` implementations are
+    // placement-new'd into a fixed-size (`FW_FILE_HANDLE_MAX_SIZE`) slot and
+    // could not afford the ~`FW_FILE_CHUNK_SIZE`-byte buffer. `DelegateFile`'s
+    // own storage is not handle-size-constrained, so it can carry the buffer
+    // once and drive the CRC through the (virtual) `read()`, transparently
+    // reaching the selected delegate. See Os/FileInterface.hpp for the full
+    // design note.
+    // ------------------------------------
+
+    //! \brief calculate the CRC32 of the entire file. See FileInterface::calculateCrc.
+    Status calculateCrc(U32& crc) override;
+
+    //! \brief calculate the CRC32 of the next section of data. See FileInterface::incrementalCrc.
+    Status incrementalCrc(FwSizeType& size) override;
+
+    //! \brief finalize and retrieve the CRC value. See FileInterface::finalizeCrc.
+    Status finalizeCrc(U32& crc) override;
+
   private:
     // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
@@ -161,6 +196,11 @@ class DelegateFile final : public FileInterface {
     //
     alignas(FW_HANDLE_ALIGNMENT) FileHandleStorage m_handle_storage;  //!< Storage for aligned FileHandle data
     FileInterface& m_delegate;                                        //!< Delegate for the real implementation
+
+    // CRC scratch state -- see the "CRC overrides" note above. Kept off the
+    // handle-size-constrained delegate and on this wrapper instead.
+    Utils::Hash m_hash;                   //!< Hash object for incremental CRC calculation
+    U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];  //!< Read buffer for incremental CRC calculation
 };
 }  // namespace Os
 

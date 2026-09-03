@@ -31,6 +31,10 @@ class DelegateDirectory final : public DirectoryInterface {
     // Implementation-specific Directory member functions
     // ------------------------------------------------------------
 
+    // Bring the DirectoryInterface convenience overloads into scope; overriding a
+    // single `read` overload below would otherwise hide all of them.
+    using DirectoryInterface::read;
+
     //! \brief Open or create a directory
     //!
     //! Using the path provided, this function will open or create a directory.
