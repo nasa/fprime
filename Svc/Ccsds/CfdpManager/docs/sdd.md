@@ -117,7 +117,7 @@ The design of `CfdpManager` assumes the following:
 
 6. For Class 2 transfers, the remote entity implements the CFDP protocol correctly and responds to PDUs according to the specification.
 
-7. Received files are written to a temporary directory (`ChannelConfig.tmp_dir` per-channel parameter) during transfer and moved to their final destination upon successful completion.
+7. For Class 2 transfers in which File Data PDUs arrive before the Metadata PDU, received data is staged in a temporary file under `ChannelConfig.tmp_dir` and moved to the final destination once the Metadata PDU arrives. In every other case (Metadata first, and all Class 1 transfers) the destination file named by the Metadata PDU is opened directly; `tmp_dir` staging is **not** a general mitigation for untrusted destination paths (see Security Considerations).
 
 8. Port-initiated file transfers (via `fileIn`) use default configuration parameters (`FileInDefaultChannel`, `FileInDefaultDestEntityId`, `FileInDefaultClass`, `FileInDefaultKeep`, and `FileInDefaultPriority`).
 
@@ -128,9 +128,12 @@ CfdpManager follows a layered security architecture where authentication and aut
 - **Physical/Network Layer Security**: Hardware encryption at the radio level, or network-layer protocols like Bundle Protocol Security or IPsec
 - **Application Layer**: CfdpManager assumes CFDP traffic originates from authenticated sources validated at lower layers
 
-CfdpManager accepts destination file paths as specified in incoming CFDP Metadata PDUs without application-layer path validation. This approach is consistent with the CCSDS 727.0-B-5 CFDP standard, which assumes operation over authenticated communication channels.
+The destination file path carried in an incoming CFDP Metadata PDU is supplied by the remote entity. Deserialization enforces only structural limits (non-empty, at most `MaxFilePathSize` octets). Beyond that, CfdpManager offers an optional per-channel receive directory, `ChannelConfig.rx_dir`, which mirrors the `Os::SandboxedFile` confinement used by `Svc::FileUplink`, `Svc::FileDownlink`, and `Svc::PrmDb`:
 
-For mission deployments, ensure radio links employ hardware encryption or cryptographic authentication, ground systems implement proper authentication and authorization controls, and operational procedures include verification of file paths before commanding transfers.
+- When `rx_dir` is **empty (the default)** destination paths are accepted as-is, consistent with the CCSDS 727.0-B-5 CFDP standard's assumption of operation over authenticated channels. This is a fail-open default chosen for backward compatibility.
+- When `rx_dir` is **set**, every received destination path is canonicalized with `Os::FilePathUtils::resolvePath` (relative paths are resolved against `rx_dir`; `.` and `..` segments are collapsed textually, without following symlinks) and must remain inside `rx_dir` per `Os::FilePathUtils::checkContainment`. The check is applied once, in `Engine::recvMd`, before the path is stored in the transaction history, so every downstream file operation (`open`, `moveFile`, `removeFile`) only ever sees a validated path. A rejected path raises the `RxDestPathRejected` warning, increments the channel's `faultFileOpen` counter, and terminates the transaction without opening, moving, or removing any file (for a Class 2 transfer whose temporary file was already open, the transaction is finished with `FILESTORE_REJECTION` against the temporary file only). This keeps a mistyped or unexpected destination from writing outside the area the mission has set aside for received files.
+
+Deployments are encouraged to set `rx_dir` on every receiving channel. In all deployments, ensure radio links employ hardware encryption or cryptographic authentication, ground systems implement proper authentication and authorization controls, and operational procedures include verification of file paths before commanding transfers.
 
 #### Input Robustness
 
@@ -431,7 +434,7 @@ These constants are defined in the `Svc.Ccsds.Cfdp` module and must be configure
 | Constant | Purpose |
 |----------|---------|
 | `NumChannels` | Number of CFDP channels to instantiate. Determines the size of channel-specific port arrays and the number of independent CFDP channel instances. Each channel has its own transaction pool, configuration, and state. |
-| `MaxFilePathSize` | Maximum length for file path strings. Used to size string parameters (`ChannelConfig.tmp_dir`, `ChannelConfig.fail_dir`, `ChannelConfig.move_dir`) and internal file path buffers. |
+| `MaxFilePathSize` | Maximum length for file path strings. Used to size string parameters (`ChannelConfig.tmp_dir`, `ChannelConfig.fail_dir`, `ChannelConfig.move_dir`, `ChannelConfig.rx_dir`) and internal file path buffers. |
 | `MaxPduSize` | Maximum PDU size in bytes. Limits the maximum possible TX PDU size. Must respect any CCSDS packet size limits on the system. |
 
 ### FPP Types (CfdpCfg.fpp)
@@ -615,8 +618,9 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | ChannelConfig.dequeue_enabled | Enable or disable transaction dequeuing and processing for this channel. Can be used to pause channel activity |
 | ChannelConfig.move_dir | Directory path to move source files after successful TX (transmit) transactions when keep is set to DELETE. If set, provides an archive mechanism to preserve files instead of deleting them. If empty or if the move fails, source files are deleted from the filesystem. Only applies to sending files, not receiving |
 | ChannelConfig.max_outgoing_pdus_per_cycle | Maximum number of outgoing PDUs to transmit per execution cycle. Throttles transmission rate to prevent overwhelming downstream components |
-| ChannelConfig.tmp_dir | Directory path for storing temporary files during receive (RX) transactions. Files are written here during transfer and moved to their final destination upon successful completion |
+| ChannelConfig.tmp_dir | Directory path for temporary files during receive (RX) transactions. Only used for Class 2 transfers whose File Data PDUs arrive before the Metadata PDU; the temporary file is moved to the final destination once Metadata arrives |
 | ChannelConfig.fail_dir | Directory path for storing files from polling operations that failed to transfer successfully. If empty or if the move fails, files are deleted from the filesystem |
+| ChannelConfig.rx_dir | Receive sandbox directory. If non-empty, destination paths from incoming Metadata PDUs are resolved against this directory and rejected if they resolve outside it (see Security Considerations). If empty (default), destination paths are accepted as-is |
 
 ### Deep Space Timer Configuration
 
