@@ -115,7 +115,11 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     // Shrink size to that of the encapsulated data field ( header | data | trailer )
     data.setSize(total_frame_length - TCHeader::SERIALIZED_SIZE - TCTrailer::SERIALIZED_SIZE);
 
-    this->dataOut_out(0, data, context);
+    // Carry the VC on in the context
+    ComCfg::FrameContext contextCopy = context;
+    contextCopy.set_vcId(vc_id);
+    
+    this->dataOut_out(0, data, contextCopy);
 }
 
 void TcDeframer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
