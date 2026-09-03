@@ -227,6 +227,7 @@ The controller manages the following failure points during a module's load, init
 
 - A module fails to load/validate.
 - A cancellation mid-load.
+- A module with given name could not be found in the during an `INVOKE`<sup>+</sup>.
 - A module's start function could not be invoked<sup>*</sup>.
 - A module has an invalid `main` (missing or invalid signature)<sup>+</sup>.
 - A module's `main` function could not be invoked<sup>*</sup>.
@@ -237,7 +238,7 @@ Most failures will clear the store and return to `IDLE`.
 
 **<sup>*</sup>** Function invocations can fail if the stack frame required to run the function overflows the interpreter's allocated stack.
 
-**<sup>+</sup>** Invalid `main` signatures detected during `INVOKE` are the only recoverable error and will return to `READY` _without_ clearing the store.
+**<sup>+</sup>** Recoverable errors during `INVOKE` that will return to `READY` _without_ clearing the store.
 
 #### Interpreter
 
