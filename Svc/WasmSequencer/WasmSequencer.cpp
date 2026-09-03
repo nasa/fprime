@@ -400,7 +400,7 @@ void WasmSequencer ::LOAD_cmdHandler(FwOpcodeType opCode,
     this->controller_sendSignal_load(Svc::WasmSequencer_LoadRequest(
         fileName, name, Svc::SeqArgs(),
         Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_LOAD,
-                                          WasmSequencer_CommandRequest(opCode, cmdSeq), Svc::BlockState::NO_BLOCK,
+                                          WasmSequencer_CommandRequest(opCode, cmdSeq), Svc::BlockState::BLOCK,
                                           /* moduleIdx */ 0  // placeholder, gets filled in after load
                                           )));
 }

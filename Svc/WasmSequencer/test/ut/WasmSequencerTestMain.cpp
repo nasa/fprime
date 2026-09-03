@@ -793,8 +793,8 @@ TEST_F(WasmSequencerTester, WaitDuringLoadRespondsOnLoadComplete) {
     StagedAsset file_asset(*this, "start.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 60, file, Fw::CmdStringArg(""));
-    this->dispatchUntilControllerState(ControllerState::RUNNING_START);
-    ASSERT_EQ(this->controllerState(), ControllerState::RUNNING_START);
+    this->dispatchUntilControllerState(ControllerState::LOAD_RUNNING_START);
+    ASSERT_EQ(this->controllerState(), ControllerState::LOAD_RUNNING_START);
 
     // Controller is busy (RUNNING_START), so WAIT queues into m_waiting.
     this->sendCmd_WAIT(0, 61);
@@ -3367,7 +3367,7 @@ TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenStartFails) {
     StagedAsset file_asset(*this, "start_trap.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 520, file, Fw::CmdStringArg(""));
-    this->dispatchUntilControllerState(ControllerState::RUNNING_START);
+    this->dispatchUntilControllerState(ControllerState::LOAD_RUNNING_START);
 
     this->sendCmd_WAIT(0, 521);  // queues: controller busy running the start function
     this->dispatchUntilControllerState(ControllerState::IDLE);

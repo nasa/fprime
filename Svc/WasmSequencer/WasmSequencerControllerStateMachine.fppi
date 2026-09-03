@@ -258,31 +258,31 @@ state machine ControllerStateMachine {
     choice LOAD_READY_CANCEL_CHECK {
         if cancelRequested do {
             cancelPendingRequest
-        } enter IDLE else enter START_CHECK
+        } enter IDLE else enter LOAD_START_CHECK
     }
 
-    choice START_CHECK {
+    choice LOAD_START_CHECK {
         if moduleHasStart do {
             invokeStart
-        } enter START_INVOKE_CHECK else do { respond_noblock_OK } enter READY
+        } enter LOAD_START_INVOKE_CHECK else do { respond_block_OK } enter READY
     }
 
-    choice START_INVOKE_CHECK {
+    choice LOAD_START_INVOKE_CHECK {
         if invokeSucceeded do {
             runEngine
-        } enter RUNNING_START else do {
+        } enter LOAD_RUNNING_START else do {
             reportModuleStartInvokeFailed
             incrementSequenceFailure
             respond_ERROR
         } enter IDLE
     }
 
-    state RUNNING_START {
+    state LOAD_RUNNING_START {
         on engineFinished enter INTERPRETER_STATUS
 
         choice INTERPRETER_STATUS {
             if interpreterSucceeded do {
-                respond_noblock_OK
+                respond_block_OK
             } enter READY else do {
                 # reportModuleStartFailed increments SequencesFailed/SequencesCancelled
                 # Do not incrementSequenceFailure
