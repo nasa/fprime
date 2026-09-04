@@ -10,6 +10,7 @@
 #include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
 #include <cstdio>
 #include <cstring>
+#include <limits>
 
 // Check the CMD_DISPATCHER_DISPATCH_TABLE_SIZE and CMD_DISPATCHER_SEQUENCER_TABLE_SIZE for overflow
 static_assert(CMD_DISPATCHER_DISPATCH_TABLE_SIZE <= std::numeric_limits<FwOpcodeType>::max(),
@@ -19,25 +20,39 @@ static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE <= std::numeric_limits<U32>::m
 
 namespace Svc {
 CommandDispatcherImpl::CommandDispatcherImpl(const char* name)
-    : CommandDispatcherComponentBase(name), m_seq(0), m_numCmdsDispatched(0), m_numCmdErrors(0), m_numCmdsDropped(0) {}
+    : CommandDispatcherComponentBase(name),
+      m_seq(0),
+      m_seqWrapped(false),
+      m_numCmdsDispatched(0),
+      m_numCmdErrors(0),
+      m_numCmdsDropped(0) {}
 
 CommandDispatcherImpl::~CommandDispatcherImpl() {}
 
-U32 CommandDispatcherImpl::allocateSequenceNumber() {
-    SequenceTrackerEntry trackedCmd;
-    const FwSizeType numTrackedCommands = this->m_sequenceTracker.getSize();
+void CommandDispatcherImpl::advanceSequenceNumber() {
+    if (this->m_seq == std::numeric_limits<U32>::max()) {
+        this->m_seqWrapped = true;
+    }
+    ++this->m_seq;
+}
 
-    // At most numTrackedCommands keys can collide. If all of them do, the next
-    // key is necessarily free because the tracker holds fewer than 2^32 keys.
-    for (FwSizeType i = 0; i < numTrackedCommands; ++i) {
-        if (this->m_sequenceTracker.find(this->m_seq, trackedCmd) != Fw::Success::SUCCESS) {
-            break;
+U32 CommandDispatcherImpl::allocateSequenceNumber() {
+    // Before the first wrap, m_seq is monotonic and cannot collide with a tracked key
+    if (this->m_seqWrapped) {
+        SequenceTrackerEntry trackedCmd;
+        const FwSizeType numTrackedCommands = this->m_sequenceTracker.getSize();
+
+        // At most numTrackedCommands keys can collide, so the loop is bounded by the table size
+        for (FwSizeType i = 0; i < numTrackedCommands; ++i) {
+            if (this->m_sequenceTracker.find(this->m_seq, trackedCmd) != Fw::Success::SUCCESS) {
+                break;
+            }
+            this->advanceSequenceNumber();
         }
-        ++this->m_seq;
     }
 
     const U32 sequenceNumber = this->m_seq;
-    ++this->m_seq;
+    this->advanceSequenceNumber();
     return sequenceNumber;
 }
 
@@ -138,7 +153,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
             this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::INVALID_OPCODE);
         }
         // Preserve the existing behavior of consuming a sequence number for an invalid opcode.
-        ++this->m_seq;
+        this->advanceSequenceNumber();
     }
 }
 

@@ -35,6 +35,8 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
 
     U32 getSequenceNumber() const { return this->m_impl.m_seq; }
 
+    bool hasSequenceNumberWrapped() const { return this->m_impl.m_seqWrapped; }
+
     U32 allocateSequenceNumber() { return this->m_impl.allocateSequenceNumber(); }
 
     bool trackSequenceNumber(U32 sequenceNumber) {

@@ -55,6 +55,7 @@ When the command dispatcher receives a command buffer, it decodes the opcode. It
 Note #1: this requires that the component sending the command buffer have connections to the same `seqCmdBuff` and `seqCmdStatus` port numbers.
 Note #2: the `seqCmdStatus` port utilize the same type as the `compCmdStat`, the `Fw::CmdResponse`. This has been done to avoid creation of similar types for status ports. However, the `Fw::CmdResponse::cmdSeq` argument of the `seqCmdStatus` doesn't have any meaning for the calling sequencer. Therefore, as it has been mentioned before, instead of forwarding a command sequence number, the context value is transferred.
 Note #3: the `CMD_CLEAR_TRACKING` command empties the pending command table. Before doing so, every pending command (other than `CMD_CLEAR_TRACKING` itself) is reported to its source via `seqCmdStatus` with the `Fw::CmdResponse::CLEARED` status, so callers do not wait indefinitely for a completion that will never be delivered. `CMD_CLEAR_TRACKING` then completes with `Fw::CmdResponse::OK`.
+Note #4: sequence numbers are assigned from a monotonically increasing `U32` counter. Once the counter has wrapped around, the dispatcher checks the pending command table before assigning a sequence number and skips any value still associated with an outstanding command, so a wrapped counter cannot overwrite a pending entry. No such check is performed before the first wraparound, since a monotonic counter cannot collide with a pending entry.
 
 ### 3.3 Scenarios
 
@@ -128,6 +129,7 @@ Date | Description
 5/17/2021 | Added CMD Reregistration option
 5/05/2025 | Added a note about Fw::CmdResponse::cmdSeq usage in seqCmdStatus
 9/03/2026 | CMD_CLEAR_TRACKING reports Fw::CmdResponse::CLEARED to callers of pending commands
+9/03/2026 | Added a note about sequence number allocation after wraparound
 
 
 
