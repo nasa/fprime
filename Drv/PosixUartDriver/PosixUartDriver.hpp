@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  LinuxUartDriverImpl.hpp
+// \title  PosixUartDriverImpl.hpp
 // \author tcanham
-// \brief  hpp file for LinuxUartDriver component implementation class
+// \brief  hpp file for PosixUartDriver component implementation class
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
@@ -10,10 +10,10 @@
 //
 // ======================================================================
 
-#ifndef LinuxUartDriver_HPP
-#define LinuxUartDriver_HPP
+#ifndef PosixUartDriver_HPP
+#define PosixUartDriver_HPP
 
-#include <Drv/LinuxUartDriver/LinuxUartDriverComponentAc.hpp>
+#include <Drv/PosixUartDriver/PosixUartDriverComponentAc.hpp>
 #include <Os/Mutex.hpp>
 #include <Os/Task.hpp>
 
@@ -22,15 +22,15 @@
 
 namespace Drv {
 
-class LinuxUartDriver final : public LinuxUartDriverComponentBase {
+class PosixUartDriver final : public PosixUartDriverComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct object LinuxUartDriver
+    //! Construct object PosixUartDriver
     //!
-    LinuxUartDriver(const char* const compName /*!< The component name*/
+    PosixUartDriver(const char* const compName /*!< The component name*/
     );
 
     //! Configure UART parameters
@@ -97,9 +97,9 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     //! Join thread
     Os::Task::Status join();
 
-    //! Destroy object LinuxUartDriver
+    //! Destroy object PosixUartDriver
     //!
-    ~LinuxUartDriver();
+    ~PosixUartDriver();
 
   private:
     // ----------------------------------------------------------------------

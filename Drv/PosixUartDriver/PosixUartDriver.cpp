@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  LinuxUartDriverImpl.cpp
+// \title  PosixUartDriverImpl.cpp
 // \author tcanham
-// \brief  cpp file for LinuxUartDriver component implementation class
+// \brief  cpp file for PosixUartDriver component implementation class
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <unistd.h>
-#include <Drv/LinuxUartDriver/LinuxUartDriver.hpp>
+#include <Drv/PosixUartDriver/PosixUartDriver.hpp>
 #include <Os/TaskString.hpp>
 
 #include "Fw/Types/BasicTypes.hpp"
@@ -27,8 +27,8 @@ namespace Drv {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-LinuxUartDriver ::LinuxUartDriver(const char* const compName)
-    : LinuxUartDriverComponentBase(compName),
+PosixUartDriver ::PosixUartDriver(const char* const compName)
+    : PosixUartDriverComponentBase(compName),
       m_fd(-1),
       m_allocationSize(0),
       m_device("NOT_EXIST"),
@@ -36,7 +36,7 @@ LinuxUartDriver ::LinuxUartDriver(const char* const compName)
       m_bytesReceived(0),
       m_quitReadThread(false) {}
 
-bool LinuxUartDriver::open(const char* const device,
+bool PosixUartDriver::open(const char* const device,
                            UartBaudRate baud,
                            UartFlowControl fc,
                            UartParity parity,
@@ -295,7 +295,7 @@ bool LinuxUartDriver::open(const char* const device,
     return true;
 }
 
-LinuxUartDriver ::~LinuxUartDriver() {
+PosixUartDriver ::~PosixUartDriver() {
     if (this->m_fd != -1) {
         (void)close(this->m_fd);
     }
@@ -305,12 +305,12 @@ LinuxUartDriver ::~LinuxUartDriver() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void LinuxUartDriver ::run_handler(FwIndexType portNum, U32 context) {
+void PosixUartDriver ::run_handler(FwIndexType portNum, U32 context) {
     this->tlmWrite_BytesSent(this->m_bytesSent);
     this->tlmWrite_BytesRecv(this->m_bytesReceived);
 }
 
-Drv::ByteStreamStatus LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBuffer) {
+Drv::ByteStreamStatus PosixUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBuffer) {
     Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OP_OK;
     if (this->m_fd == -1 || serBuffer.getData() == nullptr || serBuffer.getSize() == 0) {
         status = Drv::ByteStreamStatus::OTHER_ERROR;
@@ -332,14 +332,14 @@ Drv::ByteStreamStatus LinuxUartDriver ::send_handler(const FwIndexType portNum, 
     return status;
 }
 
-void LinuxUartDriver::recvReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void PosixUartDriver::recvReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->deallocate_out(0, fwBuffer);
 }
 
-void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
+void PosixUartDriver ::serialReadTaskEntry(void* ptr) {
     FW_ASSERT(ptr != nullptr);
     Drv::ByteStreamStatus status = ByteStreamStatus::OTHER_ERROR;  // added by m.chase 03.06.2017
-    LinuxUartDriver* comp = reinterpret_cast<LinuxUartDriver*>(ptr);
+    PosixUartDriver* comp = reinterpret_cast<PosixUartDriver*>(ptr);
     // @non-terminating@: read thread runs until quit is requested
     while (!comp->m_quitReadThread) {
         Fw::Buffer buff = comp->allocate_out(0, comp->m_allocationSize);
@@ -385,7 +385,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     }
 }
 
-void LinuxUartDriver ::start(FwTaskPriorityType priority,
+void PosixUartDriver ::start(FwTaskPriorityType priority,
                              Os::Task::ParamType stackSize,
                              Os::Task::ParamType cpuAffinity) {
     Os::TaskString task("SerReader");
@@ -394,11 +394,11 @@ void LinuxUartDriver ::start(FwTaskPriorityType priority,
     FW_ASSERT(stat == Os::Task::OP_OK, stat);
 }
 
-void LinuxUartDriver ::quitReadThread() {
+void PosixUartDriver ::quitReadThread() {
     this->m_quitReadThread = true;
 }
 
-Os::Task::Status LinuxUartDriver ::join() {
+Os::Task::Status PosixUartDriver ::join() {
     return m_readTask.join();
 }
 
