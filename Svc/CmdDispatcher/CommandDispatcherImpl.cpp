@@ -152,6 +152,8 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
             this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::INVALID_OPCODE);
         }
+        // Preserve the existing behavior of consuming a sequence number for an invalid opcode.
+        this->advanceSequenceNumber();
     }
 }
 
