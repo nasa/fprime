@@ -1,6 +1,6 @@
-# Svc::Ccsds::AESDecryptor
+# Svc::Ccsds::AesGcmDecryptor
 
-The `Svc::Ccsds::AESDecryptor` component decrypts and authenticates uplink data under AES-256-GCM, per CCSDS. It implements `Svc.Ccsds.CcsdsSdlsDecrypt` toward a decryption client (typically [`Svc::Ccsds::CcsdsSdlsDeframer`](../../../Ccsds/CcsdsSdlsDeframer/docs/sdd.md) via [`Svc::Ccsds::SdlsSaRouter`](../../../Ccsds/SdlsSaRouter/docs/sdd.md)) and `Svc.Ccsds.SdlsKeyInterfaceClient` toward a key supplier such as [`Svc::Ccsds::SdlsFileKeyManager`](../../../Ccsds/SdlsFileKeyManager/docs/sdd.md). It is the security-providing alternative to [`Svc::Ccsds::ClearTextDecryptor`](../../../Ccsds/ClearTextDecryptor/docs/sdd.md), and the uplink mirror of [`Svc::Ccsds::AESEncryptor`](../../AESEncryptor/docs/sdd.md).
+The `Svc::Ccsds::AesGcmDecryptor` component decrypts and authenticates uplink data under AES-256-GCM, per CCSDS. It implements `Svc.Ccsds.CcsdsSdlsDecrypt` toward a decryption client (typically [`Svc::Ccsds::CcsdsSdlsDeframer`](../../CcsdsSdlsDeframer/docs/sdd.md) via [`Svc::Ccsds::SdlsSaRouter`](../../SdlsSaRouter/docs/sdd.md)) and `Svc.Ccsds.SdlsKeyInterfaceClient` toward a key supplier such as [`Svc::Ccsds::SdlsFileKeyManager`](../../SdlsFileKeyManager/docs/sdd.md). It is the security-providing alternative to [`Svc::Ccsds::ClearTextDecryptor`](../../ClearTextDecryptor/docs/sdd.md), and the uplink mirror of [`Svc::Ccsds::AesGcmEncryptor`](../../AesGcmEncryptor/docs/sdd.md).
 
 ## Introduction
 
@@ -21,11 +21,11 @@ The AAD is built by `Svc::Ccsds::Utils::SdlsTcAuthMask`, whose layout matches th
 
 | Name | Description | Rationale | Validation |
 |---|---|---|---|
-| SVC-CCSDS-AES-DECRYPTOR-001 | On a successful request, the AESDecryptor shall decrypt the buffer in place and emit the plaintext on `decryptOut` with status `SUCCESS`. | Plaintext is never longer than ciphertext, so no second buffer is needed. | Unit Test |
-| SVC-CCSDS-AES-DECRYPTOR-002 | The AESDecryptor shall authenticate, as AES-GCM AAD, the masked TC primary header carrying the virtual channel ID together with the SA index, and reject a frame authenticated for any other VC or SA. | CCSDS 355.0-B-2 binds a frame to its VC and SA. | Unit Test |
-| SVC-CCSDS-AES-DECRYPTOR-003 | The AESDecryptor shall return `MAC_VERIFICATION_FAILURE`, distinct from `DECRYPTION_FAILURE`, when the IV, ciphertext, or MAC has been modified or the frame was not built for this SA and VC, and shall remain able to decrypt subsequent frames. | CCSDS 355.0-B-2 sect. 3.3.3.2 requires an authentication verdict distinguishable from a processing error; the two call for different ground responses. | Unit Test |
-| SVC-CCSDS-AES-DECRYPTOR-004 | The AESDecryptor shall return `DECRYPTION_FAILURE`, without requesting a key, for a buffer too short to hold an IV and a MAC or larger than `SdlsCfg.AesMaxInputSize`. | An uplink buffer is attacker-influenced and must be bounded before use; the ciphertext length is handed to OpenSSL as an `int`. | Unit Test |
-| SVC-CCSDS-AES-DECRYPTOR-005 | The AESDecryptor shall return `KEY_ERROR` when the key manager reports failure or supplies a key that is not AES-256 sized. | A wrong-sized key would otherwise decrypt under unintended material. | Unit Test |
+| SVC-CCSDS-AES-DECRYPTOR-001 | On a successful request, the AesGcmDecryptor shall decrypt the buffer in place and emit the plaintext on `decryptOut` with status `SUCCESS`. | Plaintext is never longer than ciphertext, so no second buffer is needed. | Unit Test |
+| SVC-CCSDS-AES-DECRYPTOR-002 | The AesGcmDecryptor shall authenticate, as AES-GCM AAD, the masked TC primary header carrying the virtual channel ID together with the SA index, and reject a frame authenticated for any other VC or SA. | CCSDS 355.0-B-2 binds a frame to its VC and SA. | Unit Test |
+| SVC-CCSDS-AES-DECRYPTOR-003 | The AesGcmDecryptor shall return `MAC_VERIFICATION_FAILURE`, distinct from `DECRYPTION_FAILURE`, when the IV, ciphertext, or MAC has been modified or the frame was not built for this SA and VC, and shall remain able to decrypt subsequent frames. | CCSDS 355.0-B-2 sect. 3.3.3.2 requires an authentication verdict distinguishable from a processing error; the two call for different ground responses. | Unit Test |
+| SVC-CCSDS-AES-DECRYPTOR-004 | The AesGcmDecryptor shall return `DECRYPTION_FAILURE`, without requesting a key, for a buffer too short to hold an IV and a MAC or larger than `SdlsCfg.AesMaxInputSize`. | An uplink buffer is attacker-influenced and must be bounded before use; the ciphertext length is handed to OpenSSL as an `int`. | Unit Test |
+| SVC-CCSDS-AES-DECRYPTOR-005 | The AesGcmDecryptor shall return `KEY_ERROR` when the key manager reports failure or supplies a key that is not AES-256 sized. | A wrong-sized key would otherwise decrypt under unintended material. | Unit Test |
 | SVC-CCSDS-AES-DECRYPTOR-006 | The buffer emitted on `decryptOut` shall retain the allocation context and original allocation pointer of the buffer received on `decryptIn`. | `Svc.BufferManager` deallocates by context and asserts the data pointer lies within the slot it issued. | Unit Test |
 | SVC-CCSDS-AES-DECRYPTOR-007 | A buffer received on `decryptReturnIn` shall be returned on `bufferReturnOut`. | Every buffer emitted is the one that arrived. | Unit Test |
 
@@ -45,9 +45,9 @@ The component emits no events: every outcome, including a failed authentication,
 
 ## Configuration
 
-Compile time, in `config/AESDecryptorConfig` (project-overridable): `SdlsCfg.AesMaxInputSize` — the largest frame body accepted, as it arrives once the SA index has been stripped. A deployment sizes it against its TC frame length minus the primary header, the FECF, and the 2-byte SPI.
+Compile time, in `config/AesGcmDecryptorConfig` (project-overridable): `SdlsCfg.AesMaxInputSize` — the largest frame body accepted, as it arrives once the SA index has been stripped. A deployment sizes it against its TC frame length minus the primary header, the FECF, and the 2-byte SPI.
 
-Runtime: none. The constructor builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `decryptIn` free of dynamic allocation, and the authenticated virtual channel arrives per frame on the frame context. See [`Svc/Encryption/AESEncryptor`](../../AESEncryptor/docs/sdd.md) for measured allocation counts; the decrypt path behaves the same way.
+Runtime: none. The constructor builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `decryptIn` free of dynamic allocation, and the authenticated virtual channel arrives per frame on the frame context. See [`Svc/Ccsds/AesGcmEncryptor`](../../AesGcmEncryptor/docs/sdd.md) for measured allocation counts; the decrypt path behaves the same way.
 
 ## Unit Testing
 
@@ -55,8 +55,8 @@ Direct tests covering in-place decryption and its allocation context, both shape
 
 ## See Also
 
-- [`Svc/Ccsds/Interfaces/CcsdsSdlsDecrypt.fpp`](../../../Ccsds/Interfaces/CcsdsSdlsDecrypt.fpp)
-- [`Svc/Ccsds/Interfaces/SdlsKey.fpp`](../../../Ccsds/Interfaces/SdlsKey.fpp)
-- [`Svc/Encryption/AESEncryptor`](../../AESEncryptor/docs/sdd.md)
-- [`Svc/Ccsds/CcsdsSdlsDeframer`](../../../Ccsds/CcsdsSdlsDeframer/docs/sdd.md)
-- [`Svc/Ccsds/SdlsSaRouter`](../../../Ccsds/SdlsSaRouter/docs/sdd.md)
+- [`Svc/Ccsds/Interfaces/CcsdsSdlsDecrypt.fpp`](../../Interfaces/CcsdsSdlsDecrypt.fpp)
+- [`Svc/Ccsds/Interfaces/SdlsKey.fpp`](../../Interfaces/SdlsKey.fpp)
+- [`Svc/Ccsds/AesGcmEncryptor`](../../AesGcmEncryptor/docs/sdd.md)
+- [`Svc/Ccsds/CcsdsSdlsDeframer`](../../CcsdsSdlsDeframer/docs/sdd.md)
+- [`Svc/Ccsds/SdlsSaRouter`](../../SdlsSaRouter/docs/sdd.md)

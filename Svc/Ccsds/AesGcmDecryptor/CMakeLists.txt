@@ -13,36 +13,36 @@
 # Module names are derived from the path from the nearest project/library/framework
 # root when not specifically overridden by the developer, i.e. the module defined by
 # `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
-# AESDecryptor requires OpenSSL - only add if available
+# AesGcmDecryptor requires OpenSSL - only add if available
 find_package(OpenSSL)
 
 if (NOT OPENSSL_FOUND)
-    message(STATUS "Unable to add Svc_Encryption_AESDecryptor. OpenSSL not found")
+    message(STATUS "Unable to add Svc_Ccsds_AesGcmDecryptor. OpenSSL not found")
     return()
 endif()
 
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/AESDecryptorConfig")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/AesGcmDecryptorConfig")
 
 register_fprime_library(
     AUTOCODER_INPUTS
-        "${CMAKE_CURRENT_LIST_DIR}/AESDecryptor.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/AesGcmDecryptor.fpp"
     SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/AESDecryptor.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/AesGcmDecryptor.cpp"
    DEPENDS
         OpenSSL::Crypto
-        Svc_Encryption_AESDecryptor_config_AESDecryptorConfig
+        Svc_Ccsds_AesGcmDecryptor_config_AesGcmDecryptorConfig
 )
 
 ### Unit Tests ###
 register_fprime_ut(
     AUTOCODER_INPUTS
-       "${CMAKE_CURRENT_LIST_DIR}/AESDecryptor.fpp"
+       "${CMAKE_CURRENT_LIST_DIR}/AesGcmDecryptor.fpp"
     SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/AESDecryptorTestMain.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/AESDecryptorTester.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/AesGcmDecryptorTestMain.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/AesGcmDecryptorTester.cpp"
     DEPENDS
         STest # For rules-based testing
         OpenSSL::Crypto
-        Svc_Encryption_AESDecryptor_config_AESDecryptorConfig
+        Svc_Ccsds_AesGcmDecryptor_config_AesGcmDecryptorConfig
     UT_AUTO_HELPERS
 )

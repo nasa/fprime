@@ -1,7 +1,7 @@
 module Svc {
 module Ccsds{
     @ AES decryptor
-    passive component AESDecryptor {
+    passive component AesGcmDecryptor {
         import Svc.Ccsds.CcsdsSdlsDecrypt
         import Svc.Ccsds.SdlsKeyInterfaceClient
 

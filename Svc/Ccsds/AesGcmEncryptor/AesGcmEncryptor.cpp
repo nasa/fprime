@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  AESEncryptor.cpp
+// \title  AesGcmEncryptor.cpp
 // \author cadena and claradavisb
-// \brief  cpp file for AESEncryptor component implementation class
+// \brief  cpp file for AesGcmEncryptor component implementation class
 // ======================================================================
 
-#include "Svc/Encryption/AESEncryptor/AESEncryptor.hpp"
+#include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptor.hpp"
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 
 #include <openssl/evp.h>
@@ -33,12 +33,15 @@ static_assert(GCM_IV_LEN + GCM_TAG_LEN == SdlsCfg::AesFrameOverhead,
 // Build the cipher state once so that encrypting a frame allocates nothing.
 // Only the key and the IV change, and those are supplied per
 // frame by a single EVP_EncryptInit_ex.
-AESEncryptor ::AESEncryptor(const char* const compName)
-    : AESEncryptorComponentBase(compName),
+AesGcmEncryptor ::AesGcmEncryptor(const char* const compName)
+    : AesGcmEncryptorComponentBase(compName),
       m_outBuf(),
       m_bufferState(BufferOwnershipState::OWNED),
       m_cipher(nullptr),
-      m_ctx(nullptr) {
+      m_ctx(nullptr),
+      m_aad(0, 0),
+      m_aadVcId(0),
+      m_aadSaIndex(0) {
     this->m_cipher = EVP_CIPHER_fetch(nullptr, "AES-256-GCM", nullptr);
     FW_ASSERT(this->m_cipher != nullptr);
     this->m_ctx = EVP_CIPHER_CTX_new();
@@ -50,7 +53,7 @@ AESEncryptor ::AESEncryptor(const char* const compName)
     FW_ASSERT(status == 1, static_cast<FwAssertArgType>(status));
 }
 
-AESEncryptor ::~AESEncryptor() {
+AesGcmEncryptor ::~AesGcmEncryptor() {
     EVP_CIPHER_CTX_free(this->m_ctx);
     EVP_CIPHER_free(this->m_cipher);
 }
@@ -59,7 +62,7 @@ AESEncryptor ::~AESEncryptor() {
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void AESEncryptor ::encryptIn_handler(FwIndexType portNum,
+void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
                                       U16 securityAssociationIndex,
                                       Fw::Buffer& data,
                                       const ComCfg::FrameContext& context) {
@@ -102,13 +105,21 @@ void AESEncryptor ::encryptIn_handler(FwIndexType portNum,
     int cipherLen = 0;
     // Authenticated but not encrypted. A null output pointer makes EVP_EncryptUpdate consume
     // the input as AAD; it must precede any plaintext.
-    const Svc::Ccsds::Utils::SdlsTmAuthMask aad(context.get_vcId(), securityAssociationIndex);
+    // The mask depends only on the VC and the SA, so it is rebuilt when either changes
+    // rather than per frame
+    const U8 vcId = context.get_vcId();
+    if ((vcId != this->m_aadVcId) || (securityAssociationIndex != this->m_aadSaIndex)) {
+        this->m_aad = Svc::Ccsds::Utils::SdlsTmAuthMask(vcId, securityAssociationIndex);
+        this->m_aadVcId = vcId;
+        this->m_aadSaIndex = securityAssociationIndex;
+    }
 
     // Re-keying the context the constructor built. Passing a null cipher here reuses the
     // algorithm and IV length already set, which is what keeps this path allocation-free.
     bool encryptSucceeded =
         (EVP_EncryptInit_ex(this->m_ctx, nullptr, nullptr, key.getBuffAddr(), iv) == 1) &&
-        (EVP_EncryptUpdate(this->m_ctx, nullptr, &len, aad.bytes, static_cast<int>(sizeof(aad.bytes))) == 1) &&
+        (EVP_EncryptUpdate(this->m_ctx, nullptr, &len, this->m_aad.bytes,
+                           static_cast<int>(sizeof(this->m_aad.bytes))) == 1) &&
         (EVP_EncryptUpdate(this->m_ctx, ciphertext, &len, data.getData(), static_cast<int>(data.getSize())) == 1);
     if (encryptSucceeded) {
         cipherLen = len;
@@ -138,7 +149,7 @@ void AESEncryptor ::encryptIn_handler(FwIndexType portNum,
     this->encryptOut_out(0, Svc::Ccsds::SdlsStatus::SUCCESS, cipherBuf, context);
 }
 
-void AESEncryptor ::encryptReturnIn_handler(FwIndexType portNum,
+void AesGcmEncryptor ::encryptReturnIn_handler(FwIndexType portNum,
                                             Fw::Buffer& data,
                                             const ComCfg::FrameContext& context) {
     // A failed frame reported its status with an empty buffer
@@ -156,7 +167,7 @@ void AESEncryptor ::encryptReturnIn_handler(FwIndexType portNum,
 // Helpers
 // ----------------------------------------------------------------------
 
-void AESEncryptor ::failFrame(Fw::Buffer& data,
+void AesGcmEncryptor ::failFrame(Fw::Buffer& data,
                               const ComCfg::FrameContext& context,
                               Svc::Ccsds::SdlsStatus status) {
     // Return the plaintext to its sender

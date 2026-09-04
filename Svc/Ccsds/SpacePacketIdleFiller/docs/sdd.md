@@ -62,4 +62,4 @@ Instantiated inside `ComCcsdsSdls.SdlsEncryption`, ahead of `sdlsFramer`, and so
 
 - [`Svc/Ccsds/TmFramer`](../../TmFramer/docs/sdd.md)
 - [`Svc/Ccsds/SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md)
-- [`Svc/Encryption/AESEncryptor`](../../../Encryption/AESEncryptor/docs/sdd.md)
+- [`Svc/Ccsds/AesGcmEncryptor`](../../AesGcmEncryptor/docs/sdd.md)

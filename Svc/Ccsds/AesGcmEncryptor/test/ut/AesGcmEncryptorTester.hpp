@@ -1,20 +1,20 @@
 // ======================================================================
-// \title  AESEncryptorTester.hpp
+// \title  AesGcmEncryptorTester.hpp
 // \author vivi and claradavisb
-// \brief  hpp file for AESEncryptor component test harness implementation class
+// \brief  hpp file for AesGcmEncryptor component test harness implementation class
 // ======================================================================
 
-#ifndef Svc_Ccsds_AESEncryptorTester_HPP
-#define Svc_Ccsds_AESEncryptorTester_HPP
+#ifndef Svc_Ccsds_AesGcmEncryptorTester_HPP
+#define Svc_Ccsds_AesGcmEncryptorTester_HPP
 
-#include "Svc/Encryption/AESEncryptor/AESEncryptor.hpp"
-#include "Svc/Encryption/AESEncryptor/AESEncryptorGTestBase.hpp"
+#include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptor.hpp"
+#include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptorGTestBase.hpp"
 
 namespace Svc {
 
 namespace Ccsds {
 
-class AESEncryptorTester final : public AESEncryptorGTestBase {
+class AesGcmEncryptorTester final : public AesGcmEncryptorGTestBase {
   public:
     // ----------------------------------------------------------------------
     // Constants
@@ -49,11 +49,11 @@ class AESEncryptorTester final : public AESEncryptorGTestBase {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct object AESEncryptorTester
-    AESEncryptorTester();
+    //! Construct object AesGcmEncryptorTester
+    AesGcmEncryptorTester();
 
-    //! Destroy object AESEncryptorTester
-    ~AESEncryptorTester();
+    //! Destroy object AesGcmEncryptorTester
+    ~AesGcmEncryptorTester();
 
   public:
     // ----------------------------------------------------------------------
@@ -160,7 +160,7 @@ class AESEncryptorTester final : public AESEncryptorGTestBase {
     // ----------------------------------------------------------------------
 
     //! The component under test
-    AESEncryptor component;
+    AesGcmEncryptor component;
 
     //! Key handed out on keyGet
     U8 m_key[AES_256_KEY_LEN];

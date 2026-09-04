@@ -1,6 +1,6 @@
-# Svc::Ccsds::AESEncryptor
+# Svc::Ccsds::AesGcmEncryptor
 
-The `Svc::Ccsds::AESEncryptor` component encrypts and authenticates downlink data under AES-256-GCM, per CCSDS [Space Data Link Security Protocol (CCSDS 355.0-B-2)](https://ccsds.org/Pubs/355x0b2.pdf). It implements `Svc.Ccsds.CcsdsSdlsEncrypt` toward an encryption client (typically [`Svc::Ccsds::CcsdsSdlsFramer`](../../../Ccsds/CcsdsSdlsFramer/docs/sdd.md) via [`Svc::Ccsds::SdlsSaRouter`](../../../Ccsds/SdlsSaRouter/docs/sdd.md)) and `Svc.Ccsds.SdlsKeyInterfaceClient` toward a key supplier such as [`Svc::Ccsds::SdlsFileKeyManager`](../../../Ccsds/SdlsFileKeyManager/docs/sdd.md). It is the security-providing alternative to [`Svc::Ccsds::ClearTextEncryptor`](../../../Ccsds/ClearTextEncryptor/docs/sdd.md), and the downlink mirror of [`Svc::Ccsds::AESDecryptor`](../../AESDecryptor/docs/sdd.md).
+The `Svc::Ccsds::AesGcmEncryptor` component encrypts and authenticates downlink data under AES-256-GCM, per CCSDS [Space Data Link Security Protocol (CCSDS 355.0-B-2)](https://ccsds.org/Pubs/355x0b2.pdf). It implements `Svc.Ccsds.CcsdsSdlsEncrypt` toward an encryption client (typically [`Svc::Ccsds::CcsdsSdlsFramer`](../../CcsdsSdlsFramer/docs/sdd.md) via [`Svc::Ccsds::SdlsSaRouter`](../../SdlsSaRouter/docs/sdd.md)) and `Svc.Ccsds.SdlsKeyInterfaceClient` toward a key supplier such as [`Svc::Ccsds::SdlsFileKeyManager`](../../SdlsFileKeyManager/docs/sdd.md). It is the security-providing alternative to [`Svc::Ccsds::ClearTextEncryptor`](../../ClearTextEncryptor/docs/sdd.md), and the downlink mirror of [`Svc::Ccsds::AesGcmDecryptor`](../../AesGcmDecryptor/docs/sdd.md).
 
 ## Introduction
 
@@ -20,17 +20,17 @@ The output store is a single per-instance buffer; it must be returned on `encryp
 
 | Name | Description | Rationale | Validation |
 |---|---|---|---|
-| SVC-CCSDS-AES-ENCRYPTOR-001 | On a successful request, the AESEncryptor shall emit on `encryptOut` a buffer laid out as IV (12) \| ciphertext \| MAC (16), with status `SUCCESS`. | The security header and trailer `Svc.Ccsds.CcsdsSdlsFramer` expects. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-002 | The AESEncryptor shall authenticate, as AES-GCM AAD, the masked TM primary header carrying the virtual channel ID together with the SA index. | CCSDS 355.0-B-2 binds a frame to its VC and SA. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-003 | The AESEncryptor shall draw a fresh IV from the CSPRNG for every frame. | A repeated IV under one key forfeits GCM's confidentiality and authenticity. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-004 | The AESEncryptor shall return `KEY_ERROR` when the key manager reports failure or supplies a key that is not AES-256 sized. | A wrong-sized key would otherwise encrypt under unintended material. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-005 | The AESEncryptor shall return `ENCRYPTION_FAILURE` when the plaintext plus IV and MAC would exceed `SdlsCfg.AesMaxOutputSize`. | That is the size of the output store. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-006 | The AESEncryptor shall return the incoming plaintext buffer on `bufferReturnOut`, unmodified. | The plaintext belongs to its sender and is not encrypted in place. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-007 | The AESEncryptor shall mark its output store available again when the emitted buffer arrives on `encryptReturnIn`. | The store is component memory, not allocator memory. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-008 | The AESEncryptor shall authenticate, in the AAD, the virtual channel ID carried on the frame context. | The TM primary header does not exist at encryption time; the context carries the VC that `Svc::Ccsds::TmFramer` will write into it. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-009 | The AESEncryptor shall drop a frame with `ENCRYPTION_FAILURE` and the `OutputBufferBusy` event, rather than overwrite its output store, when a previously emitted frame has not yet returned on `encryptReturnIn`. | The store is a single buffer; overwriting it would let the new frame's MAC cover a silent substitution. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-010 | The AESEncryptor shall emit on `encryptOut` only its own output store, and shall return the incoming plaintext on `bufferReturnOut` on every path, with a failed frame reporting its status against an empty buffer. | Keeps buffer ownership unambiguous on the return path. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-011 | The AESEncryptor shall return `ENCRYPTION_FAILURE` rather than emit a frame if the CSPRNG cannot supply an IV. | Encrypting under a stale or predictable IV is worse than dropping the frame. | Inspection |
+| SVC-CCSDS-AES-ENCRYPTOR-001 | On a successful request, the AesGcmEncryptor shall emit on `encryptOut` a buffer laid out as IV (12) \| ciphertext \| MAC (16), with status `SUCCESS`. | The security header and trailer `Svc.Ccsds.CcsdsSdlsFramer` expects. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-002 | The AesGcmEncryptor shall authenticate, as AES-GCM AAD, the masked TM primary header carrying the virtual channel ID together with the SA index. | CCSDS 355.0-B-2 binds a frame to its VC and SA. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-003 | The AesGcmEncryptor shall draw a fresh IV from the CSPRNG for every frame. | A repeated IV under one key forfeits GCM's confidentiality and authenticity. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-004 | The AesGcmEncryptor shall return `KEY_ERROR` when the key manager reports failure or supplies a key that is not AES-256 sized. | A wrong-sized key would otherwise encrypt under unintended material. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-005 | The AesGcmEncryptor shall return `ENCRYPTION_FAILURE` when the plaintext plus IV and MAC would exceed `SdlsCfg.AesMaxOutputSize`. | That is the size of the output store. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-006 | The AesGcmEncryptor shall return the incoming plaintext buffer on `bufferReturnOut`, unmodified. | The plaintext belongs to its sender and is not encrypted in place. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-007 | The AesGcmEncryptor shall mark its output store available again when the emitted buffer arrives on `encryptReturnIn`. | The store is component memory, not allocator memory. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-008 | The AesGcmEncryptor shall authenticate, in the AAD, the virtual channel ID carried on the frame context. | The TM primary header does not exist at encryption time; the context carries the VC that `Svc::Ccsds::TmFramer` will write into it. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-009 | The AesGcmEncryptor shall drop a frame with `ENCRYPTION_FAILURE` and the `OutputBufferBusy` event, rather than overwrite its output store, when a previously emitted frame has not yet returned on `encryptReturnIn`. | The store is a single buffer; overwriting it would let the new frame's MAC cover a silent substitution. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-010 | The AesGcmEncryptor shall emit on `encryptOut` only its own output store, and shall return the incoming plaintext on `bufferReturnOut` on every path, with a failed frame reporting its status against an empty buffer. | Keeps buffer ownership unambiguous on the return path. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-011 | The AesGcmEncryptor shall return `ENCRYPTION_FAILURE` rather than emit a frame if the CSPRNG cannot supply an IV. | Encrypting under a stale or predictable IV is worse than dropping the frame. | Inspection |
 
 ## Design
 
@@ -48,7 +48,7 @@ Events: `OutputBufferBusy` (WARNING_HI).
 
 ## Configuration
 
-Compile time, in `config/AESEncryptorConfig` (project-overridable):
+Compile time, in `config/AesGcmEncryptorConfig` (project-overridable):
 
 - `SdlsCfg.AesMaxOutputSize` — size of the output store, and the largest frame the component can emit.
 - `SdlsCfg.AesFrameOverhead` — bytes AES-256-GCM adds to the plaintext (12-byte IV + 16-byte MAC); the component `static_assert`s that this agrees with its own IV and MAC lengths.
@@ -63,8 +63,8 @@ Direct tests covering the frame layout and AAD, IV freshness, both key-error pat
 
 ## See Also
 
-- [`Svc/Ccsds/Interfaces/CcsdsSdlsEncrypt.fpp`](../../../Ccsds/Interfaces/CcsdsSdlsEncrypt.fpp)
-- [`Svc/Ccsds/Interfaces/SdlsKey.fpp`](../../../Ccsds/Interfaces/SdlsKey.fpp)
-- [`Svc/Encryption/AESDecryptor`](../../AESDecryptor/docs/sdd.md)
-- [`Svc/Ccsds/CcsdsSdlsFramer`](../../../Ccsds/CcsdsSdlsFramer/docs/sdd.md)
-- [`Svc/Ccsds/SdlsSaRouter`](../../../Ccsds/SdlsSaRouter/docs/sdd.md)
+- [`Svc/Ccsds/Interfaces/CcsdsSdlsEncrypt.fpp`](../../Interfaces/CcsdsSdlsEncrypt.fpp)
+- [`Svc/Ccsds/Interfaces/SdlsKey.fpp`](../../Interfaces/SdlsKey.fpp)
+- [`Svc/Ccsds/AesGcmDecryptor`](../../AesGcmDecryptor/docs/sdd.md)
+- [`Svc/Ccsds/CcsdsSdlsFramer`](../../CcsdsSdlsFramer/docs/sdd.md)
+- [`Svc/Ccsds/SdlsSaRouter`](../../SdlsSaRouter/docs/sdd.md)

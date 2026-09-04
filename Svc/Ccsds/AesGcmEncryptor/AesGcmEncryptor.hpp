@@ -1,14 +1,15 @@
 // ======================================================================
-// \title  AESEncryptor.hpp
+// \title  AesGcmEncryptor.hpp
 // \author cadena and claradavisb
-// \brief  hpp file for AESEncryptor component implementation class
+// \brief  hpp file for AesGcmEncryptor component implementation class
 // ======================================================================
 
-#ifndef Svc_Ccsds_AESEncryptor_HPP
-#define Svc_Ccsds_AESEncryptor_HPP
+#ifndef Svc_Ccsds_AesGcmEncryptor_HPP
+#define Svc_Ccsds_AesGcmEncryptor_HPP
 
-#include "AESEncryptorConfig/FppConstantsAc.hpp"
-#include "Svc/Encryption/AESEncryptor/AESEncryptorComponentAc.hpp"
+#include "AesGcmEncryptorConfig/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
+#include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptorComponentAc.hpp"
 
 #include <openssl/evp.h>
 
@@ -16,7 +17,7 @@ namespace Svc {
 
 namespace Ccsds {
 
-class AESEncryptor final : public AESEncryptorComponentBase {
+class AesGcmEncryptor final : public AesGcmEncryptorComponentBase {
     //! If  m_outBuf is available, or still in flight downstream
     enum class BufferOwnershipState {
         NOT_OWNED,  //!< m_outBuf has been emitted and not yet returned
@@ -28,18 +29,18 @@ class AESEncryptor final : public AESEncryptorComponentBase {
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct AESEncryptor object
-    explicit AESEncryptor(const char* const compName  //!< The component name
+    //! Construct AesGcmEncryptor object
+    explicit AesGcmEncryptor(const char* const compName  //!< The component name
     );
 
-    //! Destroy AESEncryptor object
-    ~AESEncryptor();
+    //! Destroy AesGcmEncryptor object
+    ~AesGcmEncryptor();
 
 
-    AESEncryptor(const AESEncryptor&) = delete;
-    AESEncryptor& operator=(const AESEncryptor&) = delete;
-    AESEncryptor(AESEncryptor&&) = delete;
-    AESEncryptor& operator=(AESEncryptor&&) = delete;
+    AesGcmEncryptor(const AesGcmEncryptor&) = delete;
+    AesGcmEncryptor& operator=(const AesGcmEncryptor&) = delete;
+    AesGcmEncryptor(AesGcmEncryptor&&) = delete;
+    AesGcmEncryptor& operator=(AesGcmEncryptor&&) = delete;
 
   private:
     // ----------------------------------------------------------------------
@@ -85,6 +86,15 @@ class AESEncryptor final : public AESEncryptorComponentBase {
 
     //! Cipher context, created once at construction and re-keyed per frame
     EVP_CIPHER_CTX* m_ctx;
+
+    //! AAD for the VC and SA in m_aadVcId and m_aadSaIndex.
+    Svc::Ccsds::Utils::SdlsTmAuthMask m_aad;
+
+    //! Virtual channel m_aad was built for
+    U8 m_aadVcId;
+
+    //! Security association index m_aad was built for
+    U16 m_aadSaIndex;
 };
 
 }  // namespace Ccsds

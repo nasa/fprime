@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  AESEncryptorTester.cpp
+// \title  AesGcmEncryptorTester.cpp
 // \author vivi and claradavisb
-// \brief  cpp file for AESEncryptor component test harness implementation class
+// \brief  cpp file for AesGcmEncryptor component test harness implementation class
 // ======================================================================
 
-#include "AESEncryptorTester.hpp"
+#include "AesGcmEncryptorTester.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 
@@ -15,18 +15,18 @@ namespace Svc {
 
 namespace Ccsds {
 
-const FwSizeType AESEncryptorTester::MAX_HISTORY_SIZE;
-const FwEnumStoreType AESEncryptorTester::TEST_INSTANCE_ID;
-const FwSizeType AESEncryptorTester::AES_256_KEY_LEN;
-const FwSizeType AESEncryptorTester::GCM_IV_LEN;
-const FwSizeType AESEncryptorTester::GCM_TAG_LEN;
-const U8 AESEncryptorTester::TEST_VC_ID;
-const U16 AESEncryptorTester::TEST_SPI;
-const FwSizeType AESEncryptorTester::TEST_BUFFER_SIZE;
+const FwSizeType AesGcmEncryptorTester::MAX_HISTORY_SIZE;
+const FwEnumStoreType AesGcmEncryptorTester::TEST_INSTANCE_ID;
+const FwSizeType AesGcmEncryptorTester::AES_256_KEY_LEN;
+const FwSizeType AesGcmEncryptorTester::GCM_IV_LEN;
+const FwSizeType AesGcmEncryptorTester::GCM_TAG_LEN;
+const U8 AesGcmEncryptorTester::TEST_VC_ID;
+const U16 AesGcmEncryptorTester::TEST_SPI;
+const FwSizeType AesGcmEncryptorTester::TEST_BUFFER_SIZE;
 
 namespace {
 
-const U8 TEST_KEY[AESEncryptorTester::AES_256_KEY_LEN] = {
+const U8 TEST_KEY[AesGcmEncryptorTester::AES_256_KEY_LEN] = {
     0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
     0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57,
     0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F};
@@ -37,7 +37,7 @@ const U8 TEST_KEY[AESEncryptorTester::AES_256_KEY_LEN] = {
 
 //! Length of the AAD an SDLS-protected TM transfer frame authenticates: the 6-byte primary
 //! header, the 2-byte SPI, and the 12-byte IV field
-constexpr FwSizeType TM_AAD_LEN = 6 + 2 + AESEncryptorTester::GCM_IV_LEN;
+constexpr FwSizeType TM_AAD_LEN = 6 + 2 + AesGcmEncryptorTester::GCM_IV_LEN;
 
 //! Build the TM additional authenticated data.
 //! The primary header masked to 0x0E at byte 1 (the 3-bit VCID in bits
@@ -62,7 +62,7 @@ void gcmEncrypt(const U8* key,
     ASSERT_NE(ctx, nullptr);
     int len = 0;
     ASSERT_EQ(EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, nullptr, nullptr), 1);
-    ASSERT_EQ(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(AESEncryptorTester::GCM_IV_LEN),
+    ASSERT_EQ(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(AesGcmEncryptorTester::GCM_IV_LEN),
                                   nullptr),
               1);
     ASSERT_EQ(EVP_EncryptInit_ex(ctx, nullptr, nullptr, key, iv), 1);
@@ -73,7 +73,7 @@ void gcmEncrypt(const U8* key,
     int finalLen = 0;
     ASSERT_EQ(EVP_EncryptFinal_ex(ctx, ciphertext + plainLen, &finalLen), 1);
     ASSERT_EQ(finalLen, 0) << "GCM is a stream cipher mode; it emits no trailing block";
-    ASSERT_EQ(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, static_cast<int>(AESEncryptorTester::GCM_TAG_LEN), tag),
+    ASSERT_EQ(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, static_cast<int>(AesGcmEncryptorTester::GCM_TAG_LEN), tag),
               1);
     EVP_CIPHER_CTX_free(ctx);
 }
@@ -94,7 +94,7 @@ bool gcmDecrypt(const U8* key,
     int len = 0;
     bool decryptedAndVerified =
         (EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, nullptr, nullptr) == 1) &&
-        (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(AESEncryptorTester::GCM_IV_LEN),
+        (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(AesGcmEncryptorTester::GCM_IV_LEN),
                              nullptr) == 1) &&
         (EVP_DecryptInit_ex(ctx, nullptr, nullptr, key, iv) == 1) &&
         (EVP_DecryptUpdate(ctx, nullptr, &len, aad, static_cast<int>(aadLen)) == 1);
@@ -104,7 +104,7 @@ bool gcmDecrypt(const U8* key,
     if (decryptedAndVerified) {
         // EVP_CTRL_GCM_SET_TAG takes a non-const pointer it only reads
         decryptedAndVerified =
-            (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, static_cast<int>(AESEncryptorTester::GCM_TAG_LEN),
+            (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, static_cast<int>(AesGcmEncryptorTester::GCM_TAG_LEN),
                                  const_cast<U8*>(tag)) == 1) &&
             (EVP_DecryptFinal_ex(ctx, plaintext + cipherLen, &len) == 1);
     }
@@ -118,9 +118,9 @@ bool gcmDecrypt(const U8* key,
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-AESEncryptorTester ::AESEncryptorTester()
-    : AESEncryptorGTestBase("AESEncryptorTester", AESEncryptorTester::MAX_HISTORY_SIZE),
-      component("AESEncryptor"),
+AesGcmEncryptorTester ::AesGcmEncryptorTester()
+    : AesGcmEncryptorGTestBase("AesGcmEncryptorTester", AesGcmEncryptorTester::MAX_HISTORY_SIZE),
+      component("AesGcmEncryptor"),
       m_key(),
       m_keyLen(AES_256_KEY_LEN),
       m_keyStatus(Svc::Ccsds::SdlsStatus::SUCCESS),
@@ -131,13 +131,13 @@ AESEncryptorTester ::AESEncryptorTester()
     this->setKey(TEST_KEY, AES_256_KEY_LEN, Svc::Ccsds::SdlsStatus::SUCCESS);
 }
 
-AESEncryptorTester ::~AESEncryptorTester() {}
+AesGcmEncryptorTester ::~AesGcmEncryptorTester() {}
 
 // ----------------------------------------------------------------------
 // Handler overrides
 // ----------------------------------------------------------------------
 
-Svc::Ccsds::SdlsStatus AESEncryptorTester ::from_keyGet_handler(FwIndexType portNum,
+Svc::Ccsds::SdlsStatus AesGcmEncryptorTester ::from_keyGet_handler(FwIndexType portNum,
                                                                 U16 securityAssociationIndex,
                                                                 Svc::Ccsds::SdlsKeyBuffer& key) {
     this->pushFromPortEntry_keyGet(securityAssociationIndex, key);
@@ -152,7 +152,7 @@ Svc::Ccsds::SdlsStatus AESEncryptorTester ::from_keyGet_handler(FwIndexType port
     return Svc::Ccsds::SdlsStatus::SUCCESS;
 }
 
-void AESEncryptorTester ::from_encryptOut_handler(FwIndexType portNum,
+void AesGcmEncryptorTester ::from_encryptOut_handler(FwIndexType portNum,
                                                   const Svc::Ccsds::SdlsStatus& status,
                                                   Fw::Buffer& data,
                                                   const ComCfg::FrameContext& context) {
@@ -170,7 +170,7 @@ void AESEncryptorTester ::from_encryptOut_handler(FwIndexType portNum,
 // Tests
 // ----------------------------------------------------------------------
 
-void AESEncryptorTester ::testEncryptNominal() {
+void AesGcmEncryptorTester ::testEncryptNominal() {
     const FwSizeType plainLen = 64;
     const Fw::Buffer sent = this->sendEncrypt(plainLen, TEST_SPI);
 
@@ -182,7 +182,7 @@ void AESEncryptorTester ::testEncryptNominal() {
     this->assertFrameDecryptsTo(sent.getData(), plainLen, TEST_VC_ID, TEST_SPI);
 }
 
-void AESEncryptorTester ::testCiphertextAndMacMatch() {
+void AesGcmEncryptorTester ::testCiphertextAndMacMatch() {
     const FwSizeType plainLen = 48;
     const Fw::Buffer sent = this->sendEncrypt(plainLen, TEST_SPI);
     this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
@@ -201,7 +201,7 @@ void AESEncryptorTester ::testCiphertextAndMacMatch() {
         << "MAC differs from the reference implementation; the AAD is the usual cause";
 }
 
-void AESEncryptorTester ::testAuthMaskLayout() {
+void AesGcmEncryptorTester ::testAuthMaskLayout() {
     // Spot-check the ends of the VCID field as well as an ordinary value: a shift or mask
     // error shows up at the boundaries first
     const U8 vcIds[] = {0, 1, TEST_VC_ID, 0x07};
@@ -218,7 +218,7 @@ void AESEncryptorTester ::testAuthMaskLayout() {
     }
 }
 
-void AESEncryptorTester ::testContextVcIdIsAuthenticated() {
+void AesGcmEncryptorTester ::testContextVcIdIsAuthenticated() {
     const U8 otherVcId = TEST_VC_ID + 1;
     const FwSizeType plainLen = 32;
     const Fw::Buffer sent = this->sendEncrypt(plainLen, TEST_SPI, otherVcId);
@@ -237,7 +237,7 @@ void AESEncryptorTester ::testContextVcIdIsAuthenticated() {
         << "The frame authenticated under a virtual channel other than the one on its context";
 }
 
-void AESEncryptorTester ::testIvIsFreshPerFrame() {
+void AesGcmEncryptorTester ::testIvIsFreshPerFrame() {
     const FwSizeType plainLen = 32;
     (void)this->sendEncrypt(plainLen, TEST_SPI);
     this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
@@ -260,7 +260,7 @@ void AESEncryptorTester ::testIvIsFreshPerFrame() {
         << "Identical plaintext produced identical ciphertext";
 }
 
-void AESEncryptorTester ::testEmptyPlaintext() {
+void AesGcmEncryptorTester ::testEmptyPlaintext() {
     const Fw::Buffer sent = this->sendEncrypt(0, TEST_SPI);
 
     this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
@@ -268,7 +268,7 @@ void AESEncryptorTester ::testEmptyPlaintext() {
     this->assertFrameDecryptsTo(sent.getData(), 0, TEST_VC_ID, TEST_SPI);
 }
 
-void AESEncryptorTester ::testOutputCapacityBoundary() {
+void AesGcmEncryptorTester ::testOutputCapacityBoundary() {
     const FwSizeType maxOutput = SdlsCfg::AesMaxOutputSize;
     const FwSizeType largest = maxOutput - GCM_IV_LEN - GCM_TAG_LEN;
     ASSERT_LE(largest, TEST_BUFFER_SIZE) << "Test storage is too small to reach the boundary";
@@ -291,7 +291,7 @@ void AESEncryptorTester ::testOutputCapacityBoundary() {
     ASSERT_EQ(this->fromPortHistory_bufferReturnOut->at(0).data.getData(), sent.getData());
 }
 
-void AESEncryptorTester ::testKeyUnavailable() {
+void AesGcmEncryptorTester ::testKeyUnavailable() {
     this->setKey(nullptr, 0, Svc::Ccsds::SdlsStatus::KEY_ERROR);
 
     (void)this->sendEncrypt(32, TEST_SPI);
@@ -299,7 +299,7 @@ void AESEncryptorTester ::testKeyUnavailable() {
     this->assertStatus(Svc::Ccsds::SdlsStatus::KEY_ERROR);
 }
 
-void AESEncryptorTester ::testWrongKeySize() {
+void AesGcmEncryptorTester ::testWrongKeySize() {
     // An AES-128 key is long enough to use, and silently wrong if it were used
     this->setKey(TEST_KEY, 16, Svc::Ccsds::SdlsStatus::SUCCESS);
 
@@ -308,7 +308,7 @@ void AESEncryptorTester ::testWrongKeySize() {
     this->assertStatus(Svc::Ccsds::SdlsStatus::KEY_ERROR);
 }
 
-void AESEncryptorTester ::testPlaintextReturnedUnmodified() {
+void AesGcmEncryptorTester ::testPlaintextReturnedUnmodified() {
     const FwSizeType plainLen = 40;
     U8 original[plainLen];
     const Fw::Buffer sent = this->sendEncrypt(plainLen, TEST_SPI);
@@ -321,7 +321,7 @@ void AESEncryptorTester ::testPlaintextReturnedUnmodified() {
         << "The plaintext buffer was modified in place";
 }
 
-void AESEncryptorTester ::testOutputBufferReclaimed() {
+void AesGcmEncryptorTester ::testOutputBufferReclaimed() {
     (void)this->sendEncrypt(32, TEST_SPI);
     this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
     Fw::Buffer emitted = this->fromPortHistory_encryptOut->at(0).data;
@@ -343,7 +343,7 @@ void AESEncryptorTester ::testOutputBufferReclaimed() {
     ASSERT_from_bufferReturnOut_SIZE(0);
 }
 
-void AESEncryptorTester ::testSynchronousReturn() {
+void AesGcmEncryptorTester ::testSynchronousReturn() {
     this->m_returnSynchronously = true;
     for (FwSizeType frame = 0; frame < 3; frame++) {
         (void)this->sendEncrypt(32, TEST_SPI);
@@ -352,7 +352,7 @@ void AESEncryptorTester ::testSynchronousReturn() {
     ASSERT_EVENTS_OutputBufferBusy_SIZE(0);
 }
 
-void AESEncryptorTester ::testOutputBufferBusy() {
+void AesGcmEncryptorTester ::testOutputBufferBusy() {
     // Emit a frame and do not return it
     const FwSizeType plainLen = 48;
     (void)this->sendEncrypt(plainLen, TEST_SPI);
@@ -384,7 +384,7 @@ void AESEncryptorTester ::testOutputBufferBusy() {
 // Helper functions
 // ----------------------------------------------------------------------
 
-void AESEncryptorTester ::setKey(const U8* key, FwSizeType keyLen, Svc::Ccsds::SdlsStatus status) {
+void AesGcmEncryptorTester ::setKey(const U8* key, FwSizeType keyLen, Svc::Ccsds::SdlsStatus status) {
     FW_ASSERT(keyLen <= AES_256_KEY_LEN, static_cast<FwAssertArgType>(keyLen));
     (void)::memset(this->m_key, 0, sizeof this->m_key);
     if (key != nullptr) {
@@ -394,7 +394,7 @@ void AESEncryptorTester ::setKey(const U8* key, FwSizeType keyLen, Svc::Ccsds::S
     this->m_keyStatus = status;
 }
 
-Fw::Buffer AESEncryptorTester ::sendEncrypt(FwSizeType plainLen, U16 spi, U8 vcId) {
+Fw::Buffer AesGcmEncryptorTester ::sendEncrypt(FwSizeType plainLen, U16 spi, U8 vcId) {
     FW_ASSERT(plainLen <= TEST_BUFFER_SIZE, static_cast<FwAssertArgType>(plainLen));
     this->clearHistory();
     for (FwSizeType i = 0; i < plainLen; i++) {
@@ -409,13 +409,13 @@ Fw::Buffer AESEncryptorTester ::sendEncrypt(FwSizeType plainLen, U16 spi, U8 vcI
     return plaintext;
 }
 
-void AESEncryptorTester ::assertStatus(Svc::Ccsds::SdlsStatus status) {
+void AesGcmEncryptorTester ::assertStatus(Svc::Ccsds::SdlsStatus status) {
     // Every path through encryptIn ends in exactly one encryptOut
     ASSERT_from_encryptOut_SIZE(1);
     ASSERT_EQ(this->fromPortHistory_encryptOut->at(0).status, status);
 }
 
-void AESEncryptorTester ::assertFrameDecryptsTo(const U8* expected, FwSizeType expectedLen, U8 vcId, U16 spi) {
+void AesGcmEncryptorTester ::assertFrameDecryptsTo(const U8* expected, FwSizeType expectedLen, U8 vcId, U16 spi) {
     const Fw::Buffer out = this->fromPortHistory_encryptOut->at(0).data;
     ASSERT_EQ(out.getSize(), GCM_IV_LEN + expectedLen + GCM_TAG_LEN);
     const U8* const frame = out.getData();

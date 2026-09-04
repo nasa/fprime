@@ -1,14 +1,15 @@
 // ======================================================================
-// \title  AESDecryptor.hpp
+// \title  AesGcmDecryptor.hpp
 // \author cadena and claradavisb
-// \brief  hpp file for AESDecryptor component implementation class
+// \brief  hpp file for AesGcmDecryptor component implementation class
 // ======================================================================
 
-#ifndef Svc_Ccsds_AESDecryptor_HPP
-#define Svc_Ccsds_AESDecryptor_HPP
+#ifndef Svc_Ccsds_AesGcmDecryptor_HPP
+#define Svc_Ccsds_AesGcmDecryptor_HPP
 
-#include "AESDecryptorConfig/FppConstantsAc.hpp"
-#include "Svc/Encryption/AESDecryptor/AESDecryptorComponentAc.hpp"
+#include "AesGcmDecryptorConfig/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
+#include "Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptorComponentAc.hpp"
 
 #include <openssl/evp.h>
 
@@ -16,24 +17,24 @@ namespace Svc {
 
 namespace Ccsds {
 
-class AESDecryptor final : public AESDecryptorComponentBase {
+class AesGcmDecryptor final : public AesGcmDecryptorComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct AESDecryptor object
-    explicit AESDecryptor(const char* const compName  //!< The component name
+    //! Construct AesGcmDecryptor object
+    explicit AesGcmDecryptor(const char* const compName  //!< The component name
     );
 
-    //! Destroy AESDecryptor object
-    ~AESDecryptor();
+    //! Destroy AesGcmDecryptor object
+    ~AesGcmDecryptor();
 
     // The component owns an OpenSSL cipher context and a fetched algorithm, it must not be copied or moved
-    AESDecryptor(const AESDecryptor&) = delete;
-    AESDecryptor& operator=(const AESDecryptor&) = delete;
-    AESDecryptor(AESDecryptor&&) = delete;
-    AESDecryptor& operator=(AESDecryptor&&) = delete;
+    AesGcmDecryptor(const AesGcmDecryptor&) = delete;
+    AesGcmDecryptor& operator=(const AesGcmDecryptor&) = delete;
+    AesGcmDecryptor(AesGcmDecryptor&&) = delete;
+    AesGcmDecryptor& operator=(AesGcmDecryptor&&) = delete;
 
   private:
     // ----------------------------------------------------------------------
@@ -65,6 +66,15 @@ class AESDecryptor final : public AESDecryptorComponentBase {
 
     //! Cipher context, created once at construction and re-keyed per frame
     EVP_CIPHER_CTX* m_ctx;
+
+    //! AAD for the VC and SA in m_aadVcId and m_aadSaIndex.
+    Svc::Ccsds::Utils::SdlsTcAuthMask m_aad;
+
+    //! Virtual channel m_aad was built for
+    U8 m_aadVcId;
+
+    //! Security association index m_aad was built for
+    U16 m_aadSaIndex;
 };
 
 }  // namespace Ccsds

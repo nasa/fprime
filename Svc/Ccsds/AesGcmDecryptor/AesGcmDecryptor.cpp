@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  AESDecryptor.cpp
+// \title  AesGcmDecryptor.cpp
 // \author cadena and claradavisb
-// \brief  cpp file for AESDecryptor component implementation class
+// \brief  cpp file for AesGcmDecryptor component implementation class
 // ======================================================================
 
-#include "Svc/Encryption/AESDecryptor/AESDecryptor.hpp"
+#include "Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptor.hpp"
 #include <openssl/evp.h>
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 #include "SdlsKeyConfig/FppConstantsAc.hpp"
@@ -27,8 +27,13 @@ static constexpr FwSizeType AES_256_KEY_LEN = 32;
 // Build the cipher state once so that decrypting a frame allocates nothing. 
 // Only the key and the IV change and those are supplied per
 // frame by a single EVP_DecryptInit_ex.
-AESDecryptor ::AESDecryptor(const char* const compName)
-    : AESDecryptorComponentBase(compName), m_cipher(nullptr), m_ctx(nullptr) {
+AesGcmDecryptor ::AesGcmDecryptor(const char* const compName)
+    : AesGcmDecryptorComponentBase(compName),
+      m_cipher(nullptr),
+      m_ctx(nullptr),
+      m_aad(0, 0),
+      m_aadVcId(0),
+      m_aadSaIndex(0) {
     this->m_cipher = EVP_CIPHER_fetch(nullptr, "AES-256-GCM", nullptr);
     FW_ASSERT(this->m_cipher != nullptr);
     this->m_ctx = EVP_CIPHER_CTX_new();
@@ -39,7 +44,7 @@ AESDecryptor ::AESDecryptor(const char* const compName)
     FW_ASSERT(status == 1, static_cast<FwAssertArgType>(status));
 }
 
-AESDecryptor ::~AESDecryptor() {
+AesGcmDecryptor ::~AesGcmDecryptor() {
     EVP_CIPHER_CTX_free(this->m_ctx);
     EVP_CIPHER_free(this->m_cipher);
 }
@@ -48,7 +53,7 @@ AESDecryptor ::~AESDecryptor() {
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void AESDecryptor ::decryptIn_handler(FwIndexType portNum,
+void AesGcmDecryptor ::decryptIn_handler(FwIndexType portNum,
                                       U16 securityAssociationIndex,
                                       Fw::Buffer& data,
                                       const ComCfg::FrameContext& context) {
@@ -81,15 +86,22 @@ void AESDecryptor ::decryptIn_handler(FwIndexType portNum,
     U8* const tag = ciphertext + cipherLen;
 
     // Authenticated but not encrypted; the VC travels in the context
-    const Svc::Ccsds::Utils::SdlsTcAuthMask aad(context.get_vcId(), securityAssociationIndex);
+    // The mask depends only on the VC and the SA, so it is rebuilt when either changes
+    // rather than per frame
+    const U8 vcId = context.get_vcId();
+    if ((vcId != this->m_aadVcId) || (securityAssociationIndex != this->m_aadSaIndex)) {
+        this->m_aad = Svc::Ccsds::Utils::SdlsTcAuthMask(vcId, securityAssociationIndex);
+        this->m_aadVcId = vcId;
+        this->m_aadSaIndex = securityAssociationIndex;
+    }
 
     int len = 0;
     int plainLen = 0;
 
     const bool rekeyed = EVP_DecryptInit_ex(this->m_ctx, nullptr, nullptr, key.getBuffAddr(), iv) == 1;
     const bool aadAbsorbed =
-        rekeyed && (EVP_DecryptUpdate(this->m_ctx, nullptr, &len, aad.bytes, static_cast<int>(sizeof(aad.bytes))) ==
-                    1);
+        rekeyed && (EVP_DecryptUpdate(this->m_ctx, nullptr, &len, this->m_aad.bytes,
+                                      static_cast<int>(sizeof(this->m_aad.bytes))) == 1);
     const bool decrypted =
         aadAbsorbed &&
         (EVP_DecryptUpdate(this->m_ctx, ciphertext, &len, ciphertext, static_cast<int>(cipherLen)) == 1);
@@ -115,7 +127,7 @@ void AESDecryptor ::decryptIn_handler(FwIndexType portNum,
     this->decryptOut_out(0, Svc::Ccsds::SdlsStatus::SUCCESS, data, context);
 }
 
-void AESDecryptor ::decryptReturnIn_handler(FwIndexType portNum,
+void AesGcmDecryptor ::decryptReturnIn_handler(FwIndexType portNum,
                                             Fw::Buffer& data,
                                             const ComCfg::FrameContext& context) {
     this->bufferReturnOut_out(0, data, context);

@@ -1,6 +1,6 @@
 # ======================================================================
-# AESEncryptorCfg.fpp
-# Compile-time configuration for the AESEncryptor component
+# AesGcmEncryptorCfg.fpp
+# Compile-time configuration for the AesGcmEncryptor component
 # ======================================================================
 
 module SdlsCfg {
@@ -10,7 +10,7 @@ module SdlsCfg {
     @ Overriding this will fail the build.
     constant AesFrameOverhead = 28
 
-    @ Largest output AESEncryptor can produce: the largest plaintext it accepts plus the
+    @ Largest output AesGcmEncryptor can produce: the largest plaintext it accepts plus the
     @ 12-byte IV and 16-byte MAC
     constant AesMaxOutputSize = 1024
 
