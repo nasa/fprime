@@ -33,9 +33,14 @@ set(FPRIME_UTIL_CRITICAL_LIST
 function(ini_to_cache)
     set(CALCULATED_INI "${CMAKE_SOURCE_DIR}/settings.ini")
 
-    # Check if settings.ini is defined and is not what is expected
-    if (DEFINED FPRIME_SETTINGS_FILE AND NOT FPRIME_SETTINGS_FILE STREQUAL "${CALCULATED_INI}")
-        message(FATAL_ERROR "Provided settings.ini '${FPRIME_SETTINGS_FILE}' not expected file '${CALCULATED_INI}'")
+    # Check if settings.ini is defined and is not what is expected. Resolve symlinks before comparison so equivalent
+    # paths to the same settings file are accepted.
+    if (DEFINED FPRIME_SETTINGS_FILE)
+        get_filename_component(FPRIME_SETTINGS_FILE_REAL "${FPRIME_SETTINGS_FILE}" REALPATH)
+        get_filename_component(CALCULATED_INI_REAL "${CALCULATED_INI}" REALPATH)
+        if (NOT "${FPRIME_SETTINGS_FILE_REAL}" STREQUAL "${CALCULATED_INI_REAL}")
+            message(FATAL_ERROR "Provided settings.ini '${FPRIME_SETTINGS_FILE}' not expected file '${CALCULATED_INI}'")
+        endif()
     endif()
     # Execute the process
     execute_process(COMMAND ${PYTHON}
