@@ -6,6 +6,8 @@
 
 #include "ComAggregatorTester.hpp"
 #include "STest/Random/Random.hpp"
+#include "STest/Scenario/BoundedScenario.hpp"
+#include "STest/Scenario/RandomScenario.hpp"
 
 TEST(Nominal, Initial) {
     Svc::ComAggregatorTester tester;
@@ -94,6 +96,28 @@ TEST(Spanning, SpanCompleteMiddleFrame) {
 TEST(Spanning, IdlePacketSpansFrames) {
     Svc::ComAggregatorTester tester;
     tester.test_spanning_idle_span();
+}
+
+// Randomized spanning: apply rules in a random sequence against the shadow byte-stream model
+TEST(Spanning, RandomizedTesting) {
+    const U32 numRulesToApply = 10000;
+    Svc::ComAggregatorTester tester;
+    tester.spanning_rbt_start();
+    Svc::ComAggregatorTester::Spanning__SendPacket ruleSendPacket;
+    Svc::ComAggregatorTester::Spanning__SendPacketWhileWaiting ruleSendPacketWhileWaiting;
+    Svc::ComAggregatorTester::Spanning__Timeout ruleTimeout;
+    Svc::ComAggregatorTester::Spanning__StatusFailure ruleStatusFailure;
+    Svc::ComAggregatorTester::Spanning__ReturnAndStatus ruleReturnAndStatus;
+
+    STest::Rule<Svc::ComAggregatorTester>* rules[] = {
+        &ruleSendPacket, &ruleSendPacketWhileWaiting, &ruleTimeout, &ruleStatusFailure, &ruleReturnAndStatus,
+    };
+
+    STest::RandomScenario<Svc::ComAggregatorTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
+    STest::BoundedScenario<Svc::ComAggregatorTester> bounded("Bounded Random Rules Scenario", random, numRulesToApply);
+    const U32 numSteps = bounded.run(tester);
+    printf("Ran %u steps.\n", numSteps);
+    tester.spanning_rbt_finish();
 }
 
 int main(int argc, char** argv) {

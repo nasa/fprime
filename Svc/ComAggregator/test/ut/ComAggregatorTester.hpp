@@ -7,9 +7,11 @@
 #ifndef Svc_ComAggregatorTester_HPP
 #define Svc_ComAggregatorTester_HPP
 
+#include <deque>
 #include <vector>
 #include "Svc/ComAggregator/ComAggregator.hpp"
 #include "Svc/ComAggregator/ComAggregatorGTestBase.hpp"
+#include "TestUtils/RuleBasedTesting.hpp"
 
 namespace Svc {
 
@@ -110,6 +112,45 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Helper to return the emitted aggregate and send a SUCCESS status
     void return_and_status(U32 index);
 
+  public:
+    // ----------------------------------------------------------------------
+    // Spanning rules (rule-based testing)
+    //
+    // Shadow model: the aggregator emits a byte stream of packets and idle fill,
+    // cut into capacity-sized aggregates. m_stream holds the bytes not yet emitted.
+    // ----------------------------------------------------------------------
+
+    //! Send a packet while filling: fits, exactly fills, or splits into the next aggregate
+    FW_RBT_DEFINE_RULE(ComAggregatorTester, Spanning, SendPacket);
+
+    //! Send a packet while an aggregate is outstanding: packet is held whole
+    FW_RBT_DEFINE_RULE(ComAggregatorTester, Spanning, SendPacketWhileWaiting);
+
+    //! Timeout while filling: residual space is idle-filled, spanning the idle packet if needed
+    FW_RBT_DEFINE_RULE(ComAggregatorTester, Spanning, Timeout);
+
+    //! Failure status while an aggregate is outstanding: nothing changes
+    FW_RBT_DEFINE_RULE(ComAggregatorTester, Spanning, StatusFailure);
+
+    //! Return the outstanding aggregate with SUCCESS: held data refills, possibly a full aggregate
+    FW_RBT_DEFINE_RULE(ComAggregatorTester, Spanning, ReturnAndStatus);
+
+    //! Enable spanning and run the initial status handshake
+    void spanning_rbt_start();
+
+    //! Release any packets not yet returned
+    void spanning_rbt_finish();
+
+  private:
+    //! Append a random packet to the shadow stream and send it to the component
+    void shadow_send_packet();
+
+    //! Validate the emitted aggregate against the head of the shadow stream and consume it
+    void shadow_emit();
+
+    //! Validate the oldest unreturned packet was returned and release it
+    void shadow_expect_return(U32 index);
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -130,6 +171,21 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     ComAggregator component;
     //! Shadow aggregation for validation
     std::vector<U8> m_aggregation;
+
+    //! Spanning shadow: bytes not yet emitted in an aggregate
+    std::vector<U8> m_stream;
+    //! Spanning shadow: offsets into m_stream where a packet header starts (ascending)
+    std::vector<FwSizeType> m_headers;
+    //! Spanning shadow: packets sent to the component and not yet returned, in order
+    std::deque<U8*> m_unreturned;
+    //! Spanning shadow: an aggregate has been emitted and awaits return and status
+    bool m_outstanding = false;
+    //! Spanning shadow: a packet is retained by the component pending full consumption
+    bool m_heldPending = false;
+    //! Spanning shadow: the last emitted aggregate, for return
+    Fw::Buffer m_outFrame;
+    //! Spanning shadow: the context of the last emitted aggregate
+    ComCfg::FrameContext m_outContext;
 };
 
 }  // namespace Svc
