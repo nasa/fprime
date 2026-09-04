@@ -128,6 +128,9 @@ module Svc {
     @ Total number of Com buffers logged since initialization
     telemetry NumBuffersLogged: U32 id 0x01
 
+    @ Number of Com buffers dropped due to allocation failure
+    telemetry NumBuffersDropped: U32 id 0x02
+
     # ----------------------------------------------------------------------
     # Products
     # ----------------------------------------------------------------------

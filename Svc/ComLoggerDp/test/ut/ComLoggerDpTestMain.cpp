@@ -78,6 +78,12 @@ TEST(Nominal, ClearCounters) {
     tester.testClearCounters();
 }
 
+// Test buffer overflow handling
+TEST(Nominal, BufferOverflow) {
+    Svc::ComLoggerDpTester tester;
+    tester.testBufferOverflow();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -18,9 +18,13 @@ The ComLoggerDp component logs `Fw::ComBuffer` buffers (e.g., framed telemetry, 
 
 ## 3. Design
 
+![ComLoggerDp Component Diagram](ComLoggerDp.png)
+
 The ComLoggerDp is an active component. Com buffers arriving on the async `comIn` port are dispatched on the component's thread and written synchronously to data product records. The component maintains state for whether logging is enabled, the current container being filled, and the number of packets to pack per container.
 
 ### 3.1 Component Architecture
+
+*Figure 1: ComLoggerDp component interface showing input/output ports and data flow directions.*
 
 The component uses a stateful design that:
 1. Allocates a data product container when logging is enabled and the first packet arrives
@@ -64,6 +68,7 @@ The component uses a stateful design that:
 | `m_packetsPerContainer` | `U32` | `0` | Target number of packets per container |
 | `m_currentPacketCount` | `U32` | `0` | Current count of packets in the active container |
 | `m_numBuffersLogged` | `U32` | `0` | Total number of buffers logged since initialization |
+| `m_numBuffersDropped` | `U32` | `0` | Number of buffers dropped due to allocation failure |
 | `m_priority` | `FwDpPriorityType` | `5` | Priority for data product containers |
 
 ### 3.4 Configuration
@@ -87,7 +92,7 @@ The component requires calling `configure(bool enabled)` during initialization t
 | `StartComDp` | 0x00 | `packetsPerContainer: U32`<br>`priority: U32` | Starts recording Com buffers into data products with the specified configuration. Validates that `packetsPerContainer > 0`. Logs `ComDpStarted` event on success. |
 | `UpdatePriority` | 0x01 | `priority: U32` | Updates the priority of the currently active container (if any) and stores the priority for future containers. Logs `PriorityUpdated` event. |
 | `StopComDp` | 0x02 | None | Stops recording and sends any partial container. Logs `ComDpStopped` event with count of partial containers sent. |
-| `CLEAR_COUNTERS` | 0x03 | None | Clears the `NumBuffersLogged` telemetry counter to 0 and resets the `DpBufferError` event throttle. Logs `CountersCleared` event. |
+| `CLEAR_COUNTERS` | 0x03 | None | Clears the `NumBuffersLogged` and `NumBuffersDropped` telemetry counters to 0 and resets the `DpBufferError` event throttle. Logs `CountersCleared` event. |
 
 ### 3.6 Events
 
@@ -105,6 +110,7 @@ The component requires calling `configure(bool enabled)` during initialization t
 |---|---|---|---|
 | `LoggingEnabled` | 0x00 | `bool` | Whether data product logging is currently active |
 | `NumBuffersLogged` | 0x01 | `U32` | Total number of Com buffers logged since initialization |
+| `NumBuffersDropped` | 0x02 | `U32` | Number of Com buffers dropped due to container allocation failure |
 
 Telemetry is written periodically when the `schedIn` port is invoked (typically connected to a rate group).
 
@@ -128,8 +134,9 @@ The component uses private helper functions to share logic between command handl
 
 - `startRecordingInternal(U32 packetsPerContainer, U32 priority)`: Validates parameters, stores configuration, enables logging, and logs event. Returns `true` on success, `false` on validation failure.
 - `stopRecordingInternal()`: Sends any partial container, disables logging, logs event, and returns the number of partial containers sent.
+- `handleBufferDrop(U32 size)`: Logs `DpBufferError` event and increments `m_numBuffersDropped` counter. Called when a buffer must be dropped due to allocation or serialization failure.
 
-This design allows both command-based and port-based control to use the same implementation.
+This design allows both command-based and port-based control to use the same implementation, and provides consistent error handling across different failure modes.
 
 ### 3.10 Operational Flow
 
@@ -146,9 +153,17 @@ This design allows both command-based and port-based control to use the same imp
 1. Com buffer arrives on `comIn` port
 2. If not enabled, return immediately
 3. If `m_currentPacketCount == 0`, allocate a new container via `productGetOut`
-   - If allocation fails, log `DpBufferError` event and return
+   - If allocation fails, call `handleBufferDrop()` and return
 4. Set container priority to `m_priority`
 5. Serialize Com buffer data into container as a `ComBufferRecord`
+   - If serialization fails (container may be full):
+     - Send current partial container if it has packets
+     - Reset `m_currentPacketCount`
+     - Allocate a new container
+     - If new allocation fails, call `handleBufferDrop()` and return
+     - Set priority on new container
+     - Retry serialization
+     - If retry fails, call `handleBufferDrop()` and return
 6. Increment `m_currentPacketCount` and `m_numBuffersLogged`
 7. If container is full (`m_currentPacketCount >= m_packetsPerContainer`):
    - Send container via `productSendOut`
@@ -179,7 +194,8 @@ The component includes comprehensive unit tests covering all functionality:
 | `PriorityPreserved` | Tests that priority from `StartComDp` is preserved and applied even when starting from disabled state | SVC-COMLOGGER-002, SVC-COMLOGGER-004 |
 | `StartRecordingPort` | Tests starting recording via `startRecordingIn` port with encoded configuration | SVC-COMLOGGER-002 |
 | `StopRecordingPort` | Tests stopping recording via `stopRecordingIn` port | SVC-COMLOGGER-003 |
-| `ClearCounters` | Tests `CLEAR_COUNTERS` command, verifies `NumBuffersLogged` is reset and `DpBufferError` throttle is cleared | - |
+| `ClearCounters` | Tests `CLEAR_COUNTERS` command, verifies `NumBuffersLogged` and `NumBuffersDropped` are reset and `DpBufferError` throttle is cleared | - |
+| `BufferOverflow` | Tests that large buffers are handled correctly and serialization status is checked | - |
 
 All tests verify:
 - Correct port behavior
@@ -285,6 +301,7 @@ Monitor the following telemetry channels:
 
 - `LoggingEnabled`: Boolean indicating if logging is active
 - `NumBuffersLogged`: Total count of Com buffers logged since initialization
+- `NumBuffersDropped`: Count of Com buffers dropped due to allocation failures
 
 ### 5.7 Typical Use Case: Downlink Recording
 

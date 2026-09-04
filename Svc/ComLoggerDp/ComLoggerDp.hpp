@@ -121,6 +121,10 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! \return Number of partial containers sent
     U32 stopRecordingInternal();
 
+    //! Internal function to handle buffer drop (log event and increment counter)
+    //! \param size: Size of the buffer being dropped
+    void handleBufferDrop(U32 size);
+
   private:
     // ----------------------------------------------------------------------
     // Private member variables
@@ -140,6 +144,9 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
 
     //! Total number of buffers logged since initialization
     U32 m_numBuffersLogged{0};
+
+    //! Number of buffers dropped due to allocation failure
+    U32 m_numBuffersDropped{0};
 
     //! Priority for data products
     FwDpPriorityType m_priority{5};  // Default priority from FPP

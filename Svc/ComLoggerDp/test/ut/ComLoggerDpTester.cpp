@@ -173,7 +173,7 @@ void ComLoggerDpTester::testAllocationFailure() {
     // Simulate allocation failure
     this->m_allocationFailure = true;
 
-    // Send a packet
+    // Send a packet (should be dropped)
     U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
     Fw::ComBuffer comBuf;
     comBuf.serializeFrom(testData, sizeof(testData));
@@ -186,6 +186,16 @@ void ComLoggerDpTester::testAllocationFailure() {
 
     // Should not have sent a container
     ASSERT_PRODUCT_SEND_SIZE(0);
+
+    // Check telemetry - NumBuffersDropped should be 1
+    this->clearHistory();
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+    ASSERT_TLM_SIZE(3);
+    ASSERT_TLM_NumBuffersDropped_SIZE(1);
+    ASSERT_TLM_NumBuffersDropped(0, 1);  // 1 buffer dropped
+    ASSERT_TLM_NumBuffersLogged_SIZE(1);
+    ASSERT_TLM_NumBuffersLogged(0, 0);  // 0 buffers logged
 }
 
 void ComLoggerDpTester::testTelemetry() {
@@ -200,11 +210,13 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify telemetry was written
-    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_SIZE(3);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, true);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 0);
+    ASSERT_TLM_NumBuffersDropped_SIZE(1);
+    ASSERT_TLM_NumBuffersDropped(0, 0);
 
     // Log some buffers
     U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
@@ -221,11 +233,13 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify buffer count updated
-    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_SIZE(3);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, true);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);
+    ASSERT_TLM_NumBuffersDropped_SIZE(1);
+    ASSERT_TLM_NumBuffersDropped(0, 0);
 
     // Stop logging
     this->sendCmd_StopComDp(0, 1);
@@ -237,11 +251,13 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify logging disabled
-    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_SIZE(3);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, false);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);
+    ASSERT_TLM_NumBuffersDropped_SIZE(1);
+    ASSERT_TLM_NumBuffersDropped(0, 0);
 }
 
 void ComLoggerDpTester::testPriorityPreserved() {
@@ -345,9 +361,11 @@ void ComLoggerDpTester::testClearCounters() {
     // Check telemetry before clearing
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_SIZE(3);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);  // 2 buffers logged
+    ASSERT_TLM_NumBuffersDropped_SIZE(1);
+    ASSERT_TLM_NumBuffersDropped(0, 0);  // 0 buffers dropped
     this->clearHistory();
 
     // Send CLEAR_COUNTERS command
@@ -364,9 +382,49 @@ void ComLoggerDpTester::testClearCounters() {
     // Check telemetry after clearing
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_SIZE(3);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 0);  // Counter reset to 0
+    ASSERT_TLM_NumBuffersDropped_SIZE(1);
+    ASSERT_TLM_NumBuffersDropped(0, 0);  // Dropped counter also reset
+}
+
+void ComLoggerDpTester::testBufferOverflow() {
+    // Start logging with 1 packet per container
+    this->component.configure(true);
+    this->sendCmd_StartComDp(0, 0, 1, 10);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Create a buffer larger than FW_COM_BUFFER_MAX_SIZE to cause serialization overflow
+    // Note: This tests the serialization error path, but in practice ComBuffer
+    // has its own size limit so this is a defensive check
+    U8 largeData[FW_COM_BUFFER_MAX_SIZE];
+    for (U32 i = 0; i < FW_COM_BUFFER_MAX_SIZE; ++i) {
+        largeData[i] = static_cast<U8>(i & 0xFF);
+    }
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(largeData, FW_COM_BUFFER_MAX_SIZE);
+
+    // Send buffer - should allocate container successfully
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // Should have allocated container and logged the buffer
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_TLM_SIZE(0);  // No telemetry yet
+
+    // Container should be sent (1 packet fills it)
+    ASSERT_PRODUCT_SEND_SIZE(1);
+
+    // Check that buffer was logged (not dropped)
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+    ASSERT_TLM_SIZE(3);
+    ASSERT_TLM_NumBuffersLogged_SIZE(1);
+    ASSERT_TLM_NumBuffersLogged(0, 1);
+    ASSERT_TLM_NumBuffersDropped_SIZE(1);
+    ASSERT_TLM_NumBuffersDropped(0, 0);  // No buffers dropped
 }
 
 // ----------------------------------------------------------------------

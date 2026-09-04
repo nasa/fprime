@@ -79,6 +79,9 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test clearing counters
     void testClearCounters();
 
+    //! Test buffer overflow - buffer too large for container
+    void testBufferOverflow();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

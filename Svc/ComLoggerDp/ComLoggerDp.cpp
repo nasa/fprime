@@ -50,7 +50,7 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
 
         // Check for allocation failure
         if (status != Fw::Success::SUCCESS) {
-            this->log_WARNING_HI_DpBufferError(static_cast<U32>(containerSize));
+            this->handleBufferDrop(static_cast<U32>(containerSize));
             return;
         }
 
@@ -64,13 +64,44 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
 
     // Serialize the ComBuffer data directly into the container as a ComBufferRecord
     // The size is determined by the actual ComBuffer size
-    this->m_container.serializeRecord_ComBufferRecord(dataPtr, dataSize);
+    Fw::SerializeStatus serStatus = this->m_container.serializeRecord_ComBufferRecord(dataPtr, dataSize);
+
+    // Check for serialization failure - might be due to container being full
+    if (serStatus != Fw::FW_SERIALIZE_OK) {
+        // Send the current partial container
+        if (this->m_currentPacketCount > 0) {
+            this->dpSend(this->m_container);
+        }
+        this->m_currentPacketCount = 0;
+
+        // Try to allocate a new container and retry serialization
+        const FwSizeType containerSize = this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE);
+        const Fw::Success status = this->dpGet_ComBuffContainer(containerSize, this->m_container);
+
+        // If allocation fails, drop the buffer
+        if (status != Fw::Success::SUCCESS) {
+            this->handleBufferDrop(static_cast<U32>(containerSize));
+            return;
+        }
+
+        // Set priority on the new container
+        this->m_container.setPriority(this->m_priority);
+
+        // Retry serialization with the new container
+        serStatus = this->m_container.serializeRecord_ComBufferRecord(dataPtr, dataSize);
+
+        // If serialization still fails, drop the buffer
+        if (serStatus != Fw::FW_SERIALIZE_OK) {
+            this->handleBufferDrop(static_cast<U32>(dataSize));
+            return;
+        }
+    }
 
     // Increment counters
     ++this->m_currentPacketCount;
     ++this->m_numBuffersLogged;
 
-    // Check if container is full
+    // Check if container has reached the limit
     if (this->m_currentPacketCount >= this->m_packetsPerContainer) {
         // Send the container
         this->dpSend(this->m_container);
@@ -93,6 +124,7 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
     // Write telemetry
     this->tlmWrite_LoggingEnabled(this->m_enabled);
     this->tlmWrite_NumBuffersLogged(this->m_numBuffersLogged);
+    this->tlmWrite_NumBuffersDropped(this->m_numBuffersDropped);
 }
 
 void ComLoggerDp ::startRecordingIn_handler(FwIndexType portNum, U32 config) {
@@ -164,6 +196,11 @@ U32 ComLoggerDp ::stopRecordingInternal() {
     return numSent;
 }
 
+void ComLoggerDp ::handleBufferDrop(U32 size) {
+    this->log_WARNING_HI_DpBufferError(size);
+    ++this->m_numBuffersDropped;
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for commands
 // ----------------------------------------------------------------------
@@ -206,6 +243,9 @@ void ComLoggerDp ::StopComDp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 void ComLoggerDp ::CLEAR_COUNTERS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Clear the NumBuffersLogged counter
     this->m_numBuffersLogged = 0;
+
+    // Clear the NumBuffersDropped counter
+    this->m_numBuffersDropped = 0;
 
     // Clear the DpBufferError event throttle
     this->log_WARNING_HI_DpBufferError_ThrottleClear();
