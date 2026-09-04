@@ -255,7 +255,8 @@ LinearBufferBase::serializeFrom(const U8* buff,
     }
 
     // make sure we have enough space
-    if (this->m_serLoc + length > this->m_capacity) {
+    // Note: m_serLoc <= m_capacity is a class invariant, so this subtraction cannot underflow.
+    if (length > this->m_capacity - this->m_serLoc) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
@@ -280,7 +281,9 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(co
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(const LinearBufferBase& val,
                                                                               Endianness mode) {
     Serializable::SizeType size = val.getSize();
-    if (this->m_serLoc + size + static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) > this->m_capacity) {
+    // Note: m_serLoc <= m_capacity is a class invariant, so this subtraction cannot underflow.
+    Serializable::SizeType available = this->m_capacity - this->m_serLoc;
+    if (size > available || static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) > available - size) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
