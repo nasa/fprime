@@ -10,10 +10,14 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#if !defined(SPACEWASM_NORETURN)
-#  if defined(__has_c_attribute) && __has_c_attribute(noreturn)
+#if !defined(SPACEWASM_NORETURN) && defined(__has_c_attribute)
+#  if __has_c_attribute(noreturn)
 #    define SPACEWASM_NORETURN [[noreturn]] /* Standard C23 attribute */
-#  elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+#  endif
+#endif
+
+#if !defined(SPACEWASM_NORETURN)
+#  if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
 #    define SPACEWASM_NORETURN _Noreturn /* Standard C11 keyword */
 #  elif defined(__GNUC__) || defined(__clang__)
 #    define SPACEWASM_NORETURN __attribute__((noreturn)) /* GCC / Clang extension */
