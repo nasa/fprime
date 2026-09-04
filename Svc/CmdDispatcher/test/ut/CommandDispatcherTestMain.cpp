@@ -5,6 +5,8 @@
  *      Author: tcanham
  */
 
+#include <limits>
+
 #include <gtest/gtest.h>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Test/UnitTest.hpp>
@@ -225,6 +227,75 @@ TEST(CmdDispTestOffNominal, CommandQueueOverflow) {
     connectPorts(impl, tester);
 
     tester.runCommandQueueOverflow();
+}
+
+TEST(CmdDispTestOffNominal, SequenceNumberWrapSkipsTrackedIds) {
+    TEST_CASE(102.2.6, "Sequence Number Wraparound");
+    COMMENT("Verify sequence number allocation skips IDs that are still tracked across U32 wraparound.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+    tester.init();
+
+    const U32 maxSequenceNumber = std::numeric_limits<U32>::max();
+
+    // An early command (sequence number 0) is still outstanding when the counter reaches its maximum
+    ASSERT_TRUE(tester.trackSequenceNumber(0));
+    tester.setSequenceNumber(maxSequenceNumber);
+    EXPECT_FALSE(tester.hasSequenceNumberWrapped());
+
+    // Allocating the maximum value wraps the counter to 0 and latches the wrap flag
+    EXPECT_EQ(maxSequenceNumber, tester.allocateSequenceNumber());
+    ASSERT_TRUE(tester.trackSequenceNumber(maxSequenceNumber));
+    EXPECT_EQ(0U, tester.getSequenceNumber());
+    EXPECT_TRUE(tester.hasSequenceNumberWrapped());
+
+    // 0 is still tracked, so the next allocation must skip it
+    EXPECT_EQ(1U, tester.allocateSequenceNumber());
+    EXPECT_EQ(2U, tester.getSequenceNumber());
+}
+
+TEST(CmdDispTestOffNominal, SequenceNumberNoScanBeforeWrap) {
+    TEST_CASE(102.2.7, "Sequence Number Allocation Before Wraparound");
+    COMMENT("Verify sequence number allocation does not scan the tracker until the U32 counter has wrapped.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+    tester.init();
+
+    // Force an (otherwise impossible) collision at the current sequence number; no scan is expected before a wrap
+    const U32 sequenceNumber = 7;
+    ASSERT_TRUE(tester.trackSequenceNumber(sequenceNumber));
+    tester.setSequenceNumber(sequenceNumber);
+
+    EXPECT_FALSE(tester.hasSequenceNumberWrapped());
+    EXPECT_EQ(sequenceNumber, tester.allocateSequenceNumber());
+    EXPECT_EQ(sequenceNumber + 1, tester.getSequenceNumber());
+    EXPECT_FALSE(tester.hasSequenceNumberWrapped());
+}
+
+TEST(CmdDispTestOffNominal, SequenceNumberWrapOnInvalidOpcode) {
+    TEST_CASE(102.2.8, "Sequence Number Wraparound On Invalid Opcode");
+    COMMENT("Verify the wrap flag is latched when an invalid opcode consumes the maximum sequence number.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.setSequenceNumber(std::numeric_limits<U32>::max());
+    EXPECT_FALSE(tester.hasSequenceNumberWrapped());
+    tester.runInvalidOpcodeDispatch();
+    EXPECT_EQ(0U, tester.getSequenceNumber());
+    EXPECT_TRUE(tester.hasSequenceNumberWrapped());
 }
 
 #ifndef TGT_OS_TYPE_VXWORKS

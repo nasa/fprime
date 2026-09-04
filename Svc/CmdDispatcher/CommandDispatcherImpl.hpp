@@ -145,6 +145,15 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param context call value defined by user
     void seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
 
+    //! \brief Increment m_seq, latching m_seqWrapped when the U32 counter wraps
+    void advanceSequenceNumber();
+
+    //! \brief Select an unused command sequence number and advance m_seq
+    //!
+    //! Once the sequence counter has wrapped, search the active sequence tracker
+    //! starting at m_seq so an outstanding command's sequence number is not reused.
+    U32 allocateSequenceNumber();
+
     //! \brief map from opcode to output port index
     //!
     //! Maps each registered command opcode to the output port index of the
@@ -167,7 +176,8 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //! \brief map from command sequence number to pending command state
     Fw::ArrayMap<U32, SequenceTrackerEntry, CMD_DISPATCHER_SEQUENCER_TABLE_SIZE> m_sequenceTracker;
 
-    U32 m_seq;  //!< current command sequence number
+    U32 m_seq;          //!< current command sequence number
+    bool m_seqWrapped;  //!< set once m_seq has wrapped; enables tracker scan on allocation
 
     U32 m_numCmdsDispatched;  //!< number of commands dispatched
     U32 m_numCmdErrors;       //!< number of commands with an error
