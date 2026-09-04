@@ -226,7 +226,6 @@ Fw::SerializeStatus CircularBuffer ::trim(FwSizeType amount) {
 }
 
 FwSizeType CircularBuffer ::get_capacity() const {
-    FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
     return m_store_size;
 }
 
@@ -236,6 +235,10 @@ FwSizeType CircularBuffer ::get_high_water_mark() const {
 
 void CircularBuffer ::clear_high_water_mark() {
     m_high_water_mark = 0;
+}
+
+U8* CircularBuffer ::get_buffer() {
+    return m_store;
 }
 
 }  // End Namespace Types

@@ -36,7 +36,7 @@ jobs:
       uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel rust cargo
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -60,7 +60,7 @@ jobs:
       uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel rust cargo
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -85,7 +85,7 @@ jobs:
       uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel rust cargo
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4

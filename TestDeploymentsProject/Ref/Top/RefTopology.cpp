@@ -14,12 +14,17 @@
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
+#include "Fw/Types/MemAllocator.hpp"
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
 // Instantiate a malloc allocator for cmdSeq buffer allocation
 Fw::MallocAllocator mallocator;
+
+namespace Ref {
+Fw::MemAllocator& memAllocator = mallocator;
+}
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers

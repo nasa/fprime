@@ -11,6 +11,7 @@ include(utilities)
 
 find_program(PYTHON NAMES python3 python)
 find_program(FPUTIL NAMES fprime-util)
+find_program(CARGO NAMES cargo)
 
 locate_fpp_tools()
 
@@ -35,3 +36,7 @@ fprime_cmake_status("[fpp-tools] fpp-depend found at: ${FPP_DEPEND}")
 fprime_cmake_status("[fpp-tools] fpp-to-cpp found at: ${FPP_TO_CPP}")
 fprime_cmake_status("[fpp-tools] fpp-to-dict found at: ${FPP_TO_DICT}")
 fprime_cmake_status("[fpp-tools] fpp-locate-defs found at: ${FPP_LOCATE_DEFS}")
+
+if (CARGO)
+    fprime_cmake_status("[rust] cargo found at: ${CARGO}")
+endif()
