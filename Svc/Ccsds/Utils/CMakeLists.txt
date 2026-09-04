@@ -14,6 +14,7 @@ register_fprime_library(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/IdlePacket.cpp"
   HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/CRC16.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/IdlePacket.hpp"
   DEPENDS
     Svc_Ccsds_Types
