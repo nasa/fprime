@@ -25,11 +25,15 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
 All uplinked file paths are validated against the sandbox directory before writing.
 
    > [!WARNING]
-   > The sandbox is **fail-open**: until `configure(directory)` is called, the sandbox defaults to
-   > `/`, which permits writing to any absolute path accessible to the process. This default is
-   > intentionally insecure for backwards compatibility. Security-conscious deployments **must**
-   > call `configure(directory)` during topology setup to restrict file access. Note that the
-   > stock `FileHandling` subtopology does **not** configure a sandbox.
+   > The sandbox is **fail-closed**: until `configure(directory)` is called, every open is
+   > rejected with `OUTSIDE_SANDBOX` — an unconfigured `FileUplink` cannot write anywhere.
+   > A deployment **must** call `configure(directory)` during topology setup to enable uplink
+   > writes and to select the allowed base directory. Note that the stock `FileHandling`
+   > subtopology configures the sandbox to `"/"` for backwards compatibility, which permits
+   > writing to **any absolute path accessible to the process**. Security-conscious deployments
+   > using that subtopology **must** call `configure(directory)` again from topology setup code
+   > with a restricted directory; paths that resolve outside it — `../` traversal and absolute
+   > paths — are then rejected.
 
 3. In the nominal case of file uplink
 

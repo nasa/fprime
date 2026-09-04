@@ -31,6 +31,8 @@ module FileHandlingCfdp {
     {
         phase Fpp.ToCpp.Phases.configComponents """
             FileHandlingCfdp::prmDb.configure("PrmDb.dat");
+            // Sandbox for all PrmDb file access; "/" is unrestricted. Re-configure to restrict.
+            FileHandlingCfdp::prmDb.configureSandbox("/");
         """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandlingCfdp::prmDb.readParamFile();

@@ -9,7 +9,8 @@
 
 namespace Os {
 
-SandboxedFile::SandboxedFile() : m_file(), m_allowedDirectory("/"), m_configured(true) {}
+// Fail-closed: open() returns OUTSIDE_SANDBOX until configure() is called
+SandboxedFile::SandboxedFile() : m_file(), m_allowedDirectory(""), m_configured(false) {}
 
 SandboxedFile::~SandboxedFile() {
     if (m_file.isOpen()) {

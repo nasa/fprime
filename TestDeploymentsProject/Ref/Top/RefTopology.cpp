@@ -54,8 +54,10 @@ void configureTopology() {
     // Command sequencer needs to allocate memory to hold contents of command sequences
     cmdSeq.allocateBuffer(0, mallocator, 5 * 1024);
 
-    // Restrict uplinked files to a sandbox directory to prevent path-traversal writes
-    FileHandling::fileUplink.configure("/tmp/uplink/");
+    // Restrict file access to the working directory (where PrmDb.dat lives)
+    FileHandling::fileUplink.configure(".");
+    FileHandling::fileDownlink.configure(".");
+    FileHandling::prmDb.configureSandbox(".");
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -76,6 +78,8 @@ void setupTopology(const TopologyState& state) {
     configureTopology();
     // Autocoded command registration. Function provided by autocoder.
     regCommands();
+    // Autocoded parameter file read (prmDb). Function provided by autocoder.
+    readParameters();
     // Autocoded parameter loading. Function provided by autocoder.
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
