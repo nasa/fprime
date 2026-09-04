@@ -372,3 +372,44 @@ def test_file_uplink_sandbox(fprime_test_api):
         fprime_test_api.send_and_assert_command(
             "FileHandling.fileManager.RemoveFile", args=[uploaded, True], max_delay=5
         )
+
+
+def test_prm_db_sandbox(fprime_test_api):
+    """Test that PrmDb file access is confined to its sandbox directory.
+
+    The Ref deployment sandboxes PrmDb to "." (the working directory of the flight
+    software process). Saving the store file and loading it back by a relative path
+    should succeed, while loading an absolute path outside the working directory
+    should fail with a PrmFileReadError and no PrmFileLoadComplete event.
+    """
+    # --- Save the active database to the store file (PrmDb.dat in the CWD) ---
+    fprime_test_api.clear_histories()
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.prmDb.PRM_SAVE_FILE", max_delay=5
+    )
+    fprime_test_api.assert_event("FileHandling.prmDb.PrmFileSaveComplete", timeout=5)
+
+    # --- Loading a path OUTSIDE the sandbox must be rejected ---
+    fprime_test_api.clear_histories()
+    results = fprime_test_api.send_and_await_event(
+        "FileHandling.prmDb.PRM_LOAD_FILE",
+        args=["/tmp/evil/escaped.prm", "RESET"],
+        events=["FileHandling.prmDb.PrmFileReadError"],
+        timeout=5,
+    )
+    assert len(results) == 1, "Expected PrmFileReadError for path outside sandbox"
+    fprime_test_api.assert_event_count(
+        0, "FileHandling.prmDb.PrmFileLoadComplete", timeout=1
+    )
+
+    # --- Loading the store file by a path INSIDE the sandbox must succeed ---
+    fprime_test_api.clear_histories()
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.prmDb.PRM_LOAD_FILE", args=["PrmDb.dat", "RESET"], max_delay=5
+    )
+    fprime_test_api.assert_event("FileHandling.prmDb.PrmFileLoadComplete", timeout=5)
+
+    # Commit the staged load so PrmDb returns to the IDLE state for later tests
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.prmDb.PRM_COMMIT_STAGED", max_delay=5
+    )

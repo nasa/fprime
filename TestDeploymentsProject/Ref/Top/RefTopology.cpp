@@ -78,6 +78,8 @@ void setupTopology(const TopologyState& state) {
     configureTopology();
     // Autocoded command registration. Function provided by autocoder.
     regCommands();
+    // Autocoded parameter file read (prmDb). Function provided by autocoder.
+    readParameters();
     // Autocoded parameter loading. Function provided by autocoder.
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
