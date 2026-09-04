@@ -102,3 +102,21 @@ event SourceOutOfSandbox(
   severity warning high \
   id 0x12 \
   format "Source file {} is outside the configured read sandbox"
+
+@ The File Downlink component was reset by command. The active and queued downlink requests are dropped: port clients receive STATUS_ERROR, command responses follow FILEDOWNLINK_COMMAND_FAILURES_DISABLED.
+event DownlinkReset(
+                     queuedFilesDropped: U32 @< Number of queued downlink requests dropped
+                   ) \
+  severity activity high \
+  id 0x13 \
+  format "File downlink reset; dropped {} queued downlink requests"
+
+@ A downlink has been waiting longer than the configured stall timeout for a buffer to be returned. The downstream component may be failing to return buffers; the Reset command recovers the component if the buffer never comes back.
+event DownlinkStalled(
+                       sourceFileName: string size 100 @< The source file name
+                       destFileName: string size 100 @< The destination file name
+                       waitTimeMs: U32 @< Time in milliseconds spent waiting for a buffer return
+                     ) \
+  severity warning high \
+  id 0x14 \
+  format "Downlink of file {} to file {} has waited {} ms for a buffer return"

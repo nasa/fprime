@@ -17,7 +17,7 @@
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include "FileDownlinkGTestBase.hpp"
 
-#define MAX_HISTORY_SIZE 10
+#define MAX_HISTORY_SIZE 20
 #define FILE_BUFFER_CAPACITY 100
 
 namespace Svc {
@@ -116,6 +116,25 @@ class FileDownlinkTester : public FileDownlinkGTestBase {
     //! Reject a source path outside the configured read sandbox
     void sourceOutOfSandbox();
 
+    //! Reset a downlink whose outstanding buffer is never returned,
+    //! then verify the component recovers
+    void resetWedgedDownlink();
+
+    //! Reset with queued downlink requests and verify each receives an error response
+    void resetDrainsQueue();
+
+    //! Reset while a cancel packet is outstanding must not send a second cancel packet
+    void resetWithCancelPacketOutstanding();
+
+    //! A request enqueued while Reset drains the queue is retained, not drained
+    void resetDrainBounded();
+
+    //! Send a reset command in idle mode
+    void resetInIdleMode();
+
+    //! Warn when a downlink waits too long on a buffer return, in WAIT and in CANCEL mode
+    void downlinkStallWarning();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for from ports
@@ -175,6 +194,9 @@ class FileDownlinkTester : public FileDownlinkGTestBase {
     //!
     void removeFile(const char* const name  //!< The file name
     );
+
+    //! Return all held buffers to the component and dispatch each
+    void returnHeldBuffers();
 
     // ----------------------------------------------------------------------
     // Private static methods
@@ -242,6 +264,19 @@ class FileDownlinkTester : public FileDownlinkGTestBase {
     //! The current sequence index
     //!
     U32 sequenceIndex;
+
+    //! Whether from_bufferSendOut_handler returns buffers to the component.
+    //! Set to false to simulate a downstream component that never returns them.
+    bool m_returnBuffers;
+
+    //! Buffers held while m_returnBuffers is false, available for late return
+    Fw::Buffer m_heldBuffers[4];
+
+    //! Number of buffers held
+    U32 m_heldCount;
+
+    //! When true, every FileComplete response triggers another SendFile port request
+    bool m_reenqueueOnFileComplete;
 };
 
 }  // end namespace Svc

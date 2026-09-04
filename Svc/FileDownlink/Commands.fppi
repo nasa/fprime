@@ -17,3 +17,12 @@ async command SendPartial(
                            length: U32 @< Number of bytes to send from starting offset. Length of 0 implies until the end of the file
                          ) \
   opcode 0x02
+
+@ Force-complete the active downlink and drain queued requests, without waiting on outstanding
+@ buffer returns. Port clients receive STATUS_ERROR for every affected request; command responses
+@ follow FILEDOWNLINK_COMMAND_FAILURES_DISABLED. Unlike Cancel, this breaks the buffer flow-control
+@ protocol: use it only to recover when the downstream component will never return the
+@ outstanding buffer. If that component later revives and reads the buffer, it may emit stale
+@ packet data.
+async command Reset \
+  opcode 0x03

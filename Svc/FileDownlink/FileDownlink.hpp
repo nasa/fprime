@@ -232,9 +232,11 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! Configure FileDownlink component
     //!
-    void configure(U32 cooldown,       //!< Cooldown (in ms) between finishing a downlink and starting the next file.
-                   U32 cycleTime,      //!< Rate at which we are running
-                   U32 fileQueueDepth  //!< Max number of items in file downlink queue
+    void configure(
+        U32 cooldown,         //!< Cooldown (in ms) between finishing a downlink and starting the next file.
+        U32 cycleTime,        //!< Rate at which we are running
+        U32 fileQueueDepth,   //!< Max number of items in file downlink queue
+        U32 stallTimeout = 0  //!< Time (in ms) waiting on a buffer return before a DownlinkStalled warning. 0 disables.
     );
 
     //! Restrict SendFile / SendPartial reads to paths under the configured directory.
@@ -304,6 +306,12 @@ class FileDownlink final : public FileDownlinkComponentBase {
                            const U32 cmdSeq            //!< The command sequence number
     );
 
+    //! Implementation for FileDownlink_Reset command handler
+    //!
+    void Reset_cmdHandler(const FwOpcodeType opCode,  //!< The opcode
+                          const U32 cmdSeq            //!< The command sequence number
+    );
+
     //! Implementation for FILE_DWN_SEND_PARTIAL command handler
     //!
     void SendPartial_cmdHandler(
@@ -335,19 +343,26 @@ class FileDownlink final : public FileDownlinkComponentBase {
     void sendFilePacket(const Fw::FilePacket& filePacket);
 
     // State-helper functions
-    void exitFileTransfer();
     void enterCooldown();
 
     // Function to acquire a buffer internally
     void getBuffer(Fw::Buffer& buffer, PacketType type);
     // Downlink the "next" packet
     void downlinkPacket();
-    // Finish the file transfer
-    void finishHelper(bool is_cancel);
+    // Finish the file transfer, responding to its requester with the given status
+    void finishHelper(bool is_cancel, SendFileStatus response);
     // Convert internal status enum to a command response
     Fw::CmdResponse statusToCmdResp(SendFileStatus status);
-    // Send response after completing file downlink
+    // Status reported for a request the component abandons without completing it (Reset). Port
+    // clients always receive STATUS_ERROR so that they do not treat an unsent file as delivered;
+    // command responses honor FILEDOWNLINK_COMMAND_FAILURES_DISABLED.
+    SendFileStatus abortStatus(const FileEntry& entry) const;
+    // Send response for the current file downlink
     void sendResponse(SendFileStatus resp);
+    // Send response for a given file downlink request
+    void sendResponse(const FileEntry& entry, SendFileStatus resp);
+    // Drain the file queue, responding to each request with an error. Returns the number drained.
+    U32 drainFileQueue();
 
   private:
     // ----------------------------------------------------------------------
@@ -381,9 +396,6 @@ class FileDownlink final : public FileDownlinkComponentBase {
     //! The current sequence index
     U32 m_sequenceIndex;
 
-    //! Timeout threshold (milliseconds) while in WAIT state
-    U32 m_timeout;
-
     //! Cooldown (in ms) between finishing a downlink and starting the next file.
     U32 m_cooldown;
 
@@ -393,11 +405,14 @@ class FileDownlink final : public FileDownlinkComponentBase {
     //! rate (milliseconds) at which we are running
     U32 m_cycleTime;
 
+    //! Time (in ms) waiting on a buffer return before a DownlinkStalled warning. 0 disables the warning.
+    U32 m_stallTimeout;
+
+    //! Max number of items in the file downlink queue
+    U32 m_fileQueueDepth;
+
     ////! Buffer for sending file data
     Fw::Buffer m_buffer;
-
-    //! Buffer size for file data
-    U32 m_bufferSize;
 
     //! Current byte offset in file
     U32 m_byteOffset;
