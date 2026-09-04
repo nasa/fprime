@@ -134,7 +134,7 @@ void ComLoggerDp ::startRecordingIn_handler(FwIndexType portNum, U32 config) {
     // Decode configuration from packed U32
     // Upper 16 bits: packetsPerContainer, lower 16 bits: priority
     const U32 packetsPerContainer = (config >> 16) & 0xFFFF;
-    const U32 priority = config & 0xFFFF;
+    const FwDpPriorityType priority = static_cast<FwDpPriorityType>(config & 0xFFFF);
 
     // Call internal helper function
     this->startRecordingInternal(packetsPerContainer, priority);
@@ -152,21 +152,21 @@ void ComLoggerDp ::stopRecordingIn_handler(FwIndexType portNum) {
 // Private helper functions
 // ----------------------------------------------------------------------
 
-bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, U32 priority) {
+bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority) {
     // Validate packetsPerContainer is non-zero
     if (packetsPerContainer == 0) {
         return false;
     }
 
+    // If recording is already active and there's a partial container, send it before reconfiguring
+    if (this->m_enabled && (this->m_currentPacketCount > 0)) {
+        this->dpSend(this->m_container);
+    }
+
     // Store configuration
     this->m_packetsPerContainer = packetsPerContainer;
     this->m_currentPacketCount = 0;
-    this->m_priority = static_cast<FwDpPriorityType>(priority);
-
-    // Update the container priority if logging is already active and there's an active container
-    if (this->m_enabled && (this->m_currentPacketCount > 0)) {
-        this->m_container.setPriority(this->m_priority);
-    }
+    this->m_priority = priority;
 
     // Enable logging
     this->m_enabled = true;
@@ -217,9 +217,9 @@ void ComLoggerDp ::StartComDp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 pa
     }
 }
 
-void ComLoggerDp ::UpdatePriority_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 priority) {
+void ComLoggerDp ::UpdatePriority_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpPriorityType priority) {
     // Store the new priority
-    this->m_priority = static_cast<FwDpPriorityType>(priority);
+    this->m_priority = priority;
 
     // Update priority if logging is enabled and there's an active container
     if (this->m_enabled && (this->m_currentPacketCount > 0)) {

@@ -63,13 +63,13 @@ module Svc {
     @ Starts recording ComBuffers at the specified priority
     async command StartComDp (
         packetsPerContainer: U32
-        $priority: U32
+        $priority: FwDpPriorityType
     ) \
     opcode 0x00
 
     @ Updates currently generating data products. If off, no effect
     async command UpdatePriority (
-        $priority: U32
+        $priority: FwDpPriorityType
     ) \
     opcode 0x01
 

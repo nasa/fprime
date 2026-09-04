@@ -115,7 +115,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! \param packetsPerContainer: Number of packets per container
     //! \param priority: Data product priority
     //! \return true if successful, false if validation failed
-    bool startRecordingInternal(U32 packetsPerContainer, U32 priority);
+    bool startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority);
 
     //! Internal function to stop recording
     //! \return Number of partial containers sent
