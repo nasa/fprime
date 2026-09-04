@@ -23,7 +23,7 @@ module Cfdp {
         async input port run1Hz: Svc.Sched
 
         @ Ping in port
-        async input port pingIn: Svc.Ping
+        async input port pingIn: Svc.Ping drop
 
         @ Ping out port
         output port pingOut: Svc.Ping

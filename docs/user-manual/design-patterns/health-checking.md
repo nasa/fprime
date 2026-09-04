@@ -49,7 +49,7 @@ Implementation of the health checking pattern involves placing a pair of `Svc.Pi
 ```
 active component CriticalComponent {
     @ Ping input port to show responsiveness
-    async input port pingIn: Svc.Ping
+    async input port pingIn: Svc.Ping drop
 
     @ Ping output port for response to the ping
     output port pingOut: Svc.Ping

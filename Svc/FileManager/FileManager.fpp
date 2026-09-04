@@ -8,7 +8,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Ping input port
-    async input port pingIn: Svc.Ping
+    async input port pingIn: Svc.Ping drop
 
     @ Scheduler input port for rate group operations
     sync input port schedIn: Sched

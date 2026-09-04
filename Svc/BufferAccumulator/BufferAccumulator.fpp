@@ -36,7 +36,7 @@ module Svc {
     text event port eventOutText
 
     @ Ping input port for health
-    async input port pingIn: [1] Svc.Ping
+    async input port pingIn: [1] Svc.Ping drop
 
     @ Ping output port for health
     output port pingOut: [1] Svc.Ping
