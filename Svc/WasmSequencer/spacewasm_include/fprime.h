@@ -107,6 +107,8 @@ enum FprimeCmdResponse {
     FPRIME_CMD_EXECUTION_ERROR = 4,
     /// Component busy
     FPRIME_CMD_BUSY = 5,
+    /// Command tracking was cleared before the command completed
+    FPRIME_CMD_CLEARED = 5,
 };
 
 /// @brief Dispatch a command, blocking call.
