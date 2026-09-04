@@ -29,7 +29,7 @@ The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` packa
 | FPY-SEQ-009 | The sequencer shall support sequence-local variables.                                                                                             | Unit Test                       |
 | FPY-SEQ-010 | The sequencer shall support dispatching commands with dynamic and constant arguments.                                                             | Unit Test                       |
 | FPY-SEQ-011 | The sequencer shall support running sequences with arguments.                                                                                     | Unit Test                       |
-| FPY-SEQ-012 | The sequencer shall read a binary-encoded sequence file of the format described in [TBD]()                                                        | Unit Test                       |
+| FPY-SEQ-012 | The sequencer shall read a binary-encoded sequence file of the format produced by the `fprime-fpyc` compiler (in the `fprime-gds` package)                                                        | Unit Test                       |
 | FPY-SEQ-013 | The sequencer shall support sending commands for dispatch.                                                                                        | Unit Test                       |
 | FPY-SEQ-014 | The sequencer shall support parameterized sequences.                                                                                              | Unit Test                       |
 | FPY-SEQ-015 | The sequencer shall support conversions between F Prime signed, unsigned, and floating-point primitive types and their equivalent 64-bit types.   | Unit Test                       |

@@ -78,10 +78,11 @@ be useful
 | Kind         | Name           | Port Type             | Usage                                                                             |
 |--------------|----------------|-----------------------|-----------------------------------------------------------------------------------|
 | `sync input` | `drvConnected` | `Drv.ByteStreamReady` | Port called when the underlying driver has connected                              |
-| `sync input` | `drvReceiveIn`    | `Drv.ByteStreamRecv`  | Port receiving `Fw::Buffers` from underlying communications bus driver            |
+| `sync input` | `drvReceiveIn`    | `Drv.ByteStreamData`  | Port receiving `Fw::Buffers` from underlying communications bus driver            |
 | `output`     | `drvSendOut`   | `Drv.ByteStreamSend`  | Port providing received `Fw::Buffers` to the underlying communications bus driver |
-| `sync input` | `drvSendReturnIn`    | `Drv.ByteStreamData`  | Port receiving status and ownership of buffer sent out on `drvSendOut`            |
 | `output`     | `drvReceiveReturnOut`   | `Fw.BufferSend`  | Port returning ownership of buffer that came in on `drvReceiveIn`                 |
+| `output`     | `drvAsyncSendOut`   | `Fw.BufferSend`  | Port sending `Fw::Buffers` to an asynchronous byte stream driver                  |
+| `sync input` | `drvAsyncSendReturnIn` | `Drv.ByteStreamData` | Port receiving status and ownership of buffer sent out on `drvAsyncSendOut`   |
 
 
 ### 4.2. State, Configuration, and Runtime Setup
@@ -97,15 +98,26 @@ track of a `m_retry_count` to limit the number of retries on an attempt to send 
 The `dataIn` port handler receives an `Fw::Buffer` from the F´ system for transmission to the ground. Typically, it
 is connected to the output of the `Svc::Framer` component. In this `Svc::ComStub` implementation, it passes this
 `Fw::Buffer` directly to the `drvSendOut` port. It will retry when that port responds with a `RETRY` request. Otherwise, 
- the `comStatusOut` port will be invoked to indicate success or failure. Retries attempts are limited before the port
-asserts.
+ the `comStatusOut` port will be invoked to indicate success or failure. Retry attempts are limited; when the limit is
+exceeded, a message is logged via `Fw::Logger` and `Fw::Success::FAILURE` is emitted on `comStatusOut`.
 
-#### 4.3.1 drvConnected
+#### 4.3.2 drvConnected
 
 This port receives the connected signal from the driver and responds with exactly one `Fw::Success::SUCCESS` invocation to the
 `comStatusOut` port. This initiates data flow from `Svc::ComQueue` at start-up, or resumes data flow after a previous failure when the driver reconnects. This is one of the three valid contexts for `Fw::Success::SUCCESS` as defined in the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol).
 
-#### 4.3.1 drvReceiveIn
+#### 4.3.3 drvReceiveIn
 
 The `drvReceiveIn` handler receives data read from the driver and supplies it out the `dataOut` port. It is usually
 connected to the `Svc::Deframer` component
+
+#### 4.3.4 dataReturnIn
+
+The `dataReturnIn` handler receives back ownership of buffers sent out on `dataOut` and returns them to the driver
+via `drvReceiveReturnOut`.
+
+#### 4.3.5 drvAsyncSendReturnIn
+
+The `drvAsyncSendReturnIn` handler receives the send status and buffer ownership from an asynchronous driver send.
+On `RETRY` status it resends the buffer on `drvAsyncSendOut` up to the retry limit; otherwise it returns the buffer
+via `dataReturnOut` and reports success or failure on `comStatusOut`.

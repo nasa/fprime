@@ -155,7 +155,7 @@ Some systems, even baremetal systems, require the use of **Active Components**. 
 
 The standard baremetal pattern uses only passive components. Thread virtualization is an advanced alternative approach when active components are needed.
 
-To activate this feature see: [Configuring F´](../framework/configuring-fprime.md). The following sections describe how the thread virtualization system works internally.
+This feature is enabled with the CMake option `FPRIME_USE_BAREMETAL_SCHEDULER` (see [cmake/options.cmake](../../../cmake/options.cmake)). The following sections describe how the thread virtualization system works internally.
 
 ### Defining Custom Tasks
 

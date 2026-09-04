@@ -102,7 +102,7 @@ Defined as `= default`.
 RedBlackTreeSet<T, C>& operator=(const RedBlackTreeSet<T, C>& set)
 ```
 
-Return `m_extSet.copyDataFrom(set)`.
+Call `m_extSet.copyDataFrom(set)` and return `*this`.
 
 _Example:_
 ```c++
@@ -118,8 +118,8 @@ ASSERT_EQ(s2.getSize(), 0);
 // Call the copy assignment operator
 s2 = s1;
 ASSERT_EQ(s2.getSize(), 1);
-status = s2.find(element);
-ASSERT_EQ(status, Success::SUCCESS);
+const auto findStatus = s2.find(element);
+ASSERT_EQ(findStatus, Success::SUCCESS);
 ```
 
 ### 6.2. begin
@@ -135,7 +135,7 @@ _Example:_
 using Set = RedBlackTreeSet<U32, 10>;
 Set set;
 // Insert an element in the set
-const auto status = map.insert(42);
+const auto status = set.insert(42);
 ASSERT_EQ(status, Fw::Success::SUCCESS);
 // Get a set const iterator object
 auto it = set.begin();
@@ -182,7 +182,7 @@ auto iter = set.begin();
 // Check that iter is not at the end
 ASSERT_NE(iter, set.end());
 // Increment iter
-it++;
+iter++;
 // Check that iter is at the end
 ASSERT_EQ(iter, set.end());
 ```

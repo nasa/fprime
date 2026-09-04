@@ -64,7 +64,7 @@ This command will ask for some input. Sample responses are below:
   [2/2] Project top-level namespace [MyFprimeProject]: MyProject
 ```
 
-1.  This commands perform the following actions:
+This command performs the following actions:
     - Create a new git repository with the standard F´ project structure
     - Create a new virtual environment within the project and install dependencies
 

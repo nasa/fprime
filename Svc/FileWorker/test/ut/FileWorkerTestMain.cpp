@@ -56,6 +56,11 @@ TEST(Nominal, testTimeout) {
     tester.testTimeout();
 }
 
+TEST(Nominal, testPathTooLong) {
+    Svc::FileWorkerTester tester;
+    tester.testPathTooLong();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -15,6 +15,7 @@
 #include <STest/STest/Pick/Pick.hpp>
 #include <Utils/CRCChecker.hpp>
 #include <Utils/Hash/Hash.hpp>
+#include <string>
 #include <vector>
 
 namespace {
@@ -186,3 +187,37 @@ TEST_F(CRCCheckerTest, RandomizedSoak) {
 }
 
 }  // namespace
+
+TEST_F(CRCCheckerTest, FileNameTooLong) {
+    // A filename that leaves no room for the hash extension in Fw::FileNameString must be reported
+    // as FAILED_FILE_NAME_TOO_LONG by every helper, never asserted on.
+    const FwSizeType ext = Utils::Hash::getFileExtensionLength();
+    const FwSizeType longestOk = FileNameStringSize - ext;  // Fw::FileNameString holds FileNameStringSize chars
+    const U8 data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+    for (FwSizeType len : {longestOk + 1, static_cast<FwSizeType>(FileNameStringSize)}) {
+        std::string name(static_cast<size_t>(len), 'x');
+        writeFile(name.c_str(), data, sizeof(data));
+
+        ASSERT_EQ(Utils::create_checksum_file(name.c_str()), Utils::FAILED_FILE_NAME_TOO_LONG) << "len " << len;
+        U32 fromFile = 0;
+        ASSERT_EQ(Utils::read_crc32_from_file(name.c_str(), fromFile), Utils::FAILED_FILE_NAME_TOO_LONG)
+            << "len " << len;
+        U32 expected = 0;
+        U32 actual = 0;
+        ASSERT_EQ(Utils::verify_checksum(name.c_str(), expected, actual), Utils::FAILED_FILE_NAME_TOO_LONG)
+            << "len " << len;
+
+        (void)Os::FileSystem::removeFile(name.c_str());
+    }
+
+    // The longest name that fits round-trips normally
+    std::string okName(static_cast<size_t>(longestOk), 'y');
+    writeFile(okName.c_str(), data, sizeof(data));
+    ASSERT_EQ(Utils::create_checksum_file(okName.c_str()), Utils::PASSED_FILE_CRC_WRITE);
+    U32 expected = 0;
+    U32 actual = 0;
+    ASSERT_EQ(Utils::verify_checksum(okName.c_str(), expected, actual), Utils::PASSED_FILE_CRC_CHECK);
+    ASSERT_EQ(expected, 0xCBF43926u);
+    removeTestFiles(okName.c_str());
+}

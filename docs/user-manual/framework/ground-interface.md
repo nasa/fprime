@@ -3,7 +3,7 @@
 This guide will discuss the F´ ground interface layers and how to customize them. There are two parts to the ground
 interface: the spacecraft side, and the ground side. This guide will primarily focus on the spacecraft side adaptation
 as the most common pattern is to adapt F´ flight software for some other ground system (e.g.
-[Cosmos]( https://github.com/BallAerospace/COSMOS), [OpenMCT](https://nasa.github.io/openmct/), etc). This
+[OpenC3 COSMOS](https://github.com/OpenC3/cosmos), [OpenMCT](https://nasa.github.io/openmct/), etc). This
 document will walk through common adaptations in hopes that projects will not need to replace the ground interface
 entirely.
 
@@ -52,7 +52,7 @@ following `Drv.ByteStreamStatus` values directly from the send call, and the cal
 
 1. ByteStreamStatus.OP_OK: indicates the send was successful
 2. ByteStreamStatus.SEND_RETRY: indicates subsequent retransmission will likely succeed
-3. ByteStreamStatus.OTHER_ERROR: send failed, the data was not sent, and future success cannot be predicted
+3. ByteStreamStatus.OTHER_ERROR: an error occurred, the data was not sent, and retrying may succeed
 
 Asynchronous drivers (implementing `Drv.AsyncByteStreamDriver`) take ownership of the buffer on send and return both
 the status and the buffer through their `sendReturnOut` callback port.
