@@ -116,7 +116,9 @@ for naming conventions:
 - Parameters: `PascalCase`
 
 For each construct, derive names, types, and semantics from the
-confirmed requirements. Ask the user if:
+confirmed requirements. Define an event for each command that
+describes what the command did, including the command arguments, so
+the implementation can emit it. Ask the user if:
 - The command kind (sync/async/guarded) is ambiguous
 - The event severity level is unclear
 - Parameter defaults or valid ranges are unspecified
