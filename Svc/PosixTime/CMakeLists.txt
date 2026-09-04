@@ -24,4 +24,6 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PosixTimeMain.cpp"
+  DEPENDS
+    STest
 )

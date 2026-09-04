@@ -370,13 +370,14 @@ void Os::Test::FileSystem::Tester::GetSetWorkingDirectory::action(Os::Test::File
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to get original working directory";
     std::string original_cwd(cwdBuffer);
 
-    // Change working directory
+    // Change working directory. Tracked paths are relative to the original working directory.
     std::string other_dir = state.get_random_directory().path;
+    std::string expected_cwd = original_cwd + "/" + other_dir;
     status = Os::FileSystem::getSingleton().changeWorkingDirectory(other_dir.c_str());
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to change working directory";
     status = Os::FileSystem::getSingleton().getWorkingDirectory(cwdBuffer, cwdSize);
-    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to change working directory back";
-    ASSERT_TRUE(other_dir.compare(cwdBuffer)) << "getWorkingDirectory did not return the expected directory";
+    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to get new working directory";
+    ASSERT_EQ(expected_cwd.compare(cwdBuffer), 0) << "getWorkingDirectory did not return the expected directory";
 
     // Change back to original working directory
     // This is done so that this test does not affect the working directory of other tests during random testing

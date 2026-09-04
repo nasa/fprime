@@ -103,8 +103,10 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
                 EXPECT_EQ(status2, Drv::SOCK_SUCCESS)
                     << "On iteration: " << i << " and receive thread: " << recv_thread;
                 if (status2 == Drv::SOCK_SUCCESS) {
-                    while (not m_spinner) {
+                    for (U32 wait = 0; (wait < 1000) && (not m_spinner); wait++) {
+                        Os::Task::delay(Fw::TimeInterval(0, 10000));
                     }
+                    EXPECT_TRUE(m_spinner) << "Timed out waiting for receive";
                 }
             }
         }
@@ -157,7 +159,7 @@ bool TcpServerTester::wait_on_started(bool open, U32 iterations) {
 TcpServerTester ::TcpServerTester()
     : TcpServerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TcpServer"),
-      m_data_buffer(m_data_storage, 0),
+      m_data_buffer(m_data_storage, sizeof(m_data_storage)),
       m_spinner(true) {
     this->initComponents();
     this->connectPorts();

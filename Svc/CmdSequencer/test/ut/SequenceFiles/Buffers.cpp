@@ -19,20 +19,15 @@ namespace SequenceFiles {
 
 namespace Buffers {
 
-FwSizeType FileBuffer ::getCapacity() const {
-    return sizeof(m_buff);
+FileBuffer::FileBuffer() : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {}
+
+FileBuffer::FileBuffer(const FileBuffer& other) : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.getBuffAddr(), other.getSize());
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
 FwSizeType FileBuffer ::getBuffCapacity() const {
     return this->getCapacity();
-}
-
-U8* FileBuffer ::getBuffAddr() {
-    return m_buff;
-}
-
-const U8* FileBuffer ::getBuffAddr() const {
-    return m_buff;
 }
 
 void write(const Fw::LinearBufferBase& buffer, const char* fileName) {

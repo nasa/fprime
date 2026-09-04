@@ -41,13 +41,13 @@ simulate a system-driven clock.
 
 The passive and active rate groups receive the input source signal or "tick" at the divided rate as provided from the
 rate group driver these components are attached to. These components then call each of those components at the
-subdivided rate. For example, if the rate group driver is being called at 1000Hz it will provide a repeated divide this
-signal into a set of slower rates (e.g. 100Hz, 10Hz, and 1Hz) and call a rate group at this rate.
+subdivided rate. For example, if the rate group driver is being called at 1000Hz it will divide this
+signal into a set of slower rates (e.g. 100Hz, 10Hz, and 1Hz) and call a rate group at each of these rates.
 
 Passive rate groups and the rate group driver are passive components.  Thus, all work done by the rate group driver, the
 passive rate groups, and any synchronous ports triggered on components attached to the rate group will be performed in
 the context of the caller of the rate group driver. This has the advantage of ensuring synchronous and high-priority
-execution, but care must be taken to ensure that this work quick and critical because it will delay other rate groups
+execution, but care must be taken to ensure that this work is quick because it will delay other rate groups
 from executing.
 
 Active rate groups run on a thread and thus there is some jitter between the system driver and the execution of the rate

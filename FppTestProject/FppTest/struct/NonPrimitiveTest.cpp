@@ -39,7 +39,7 @@ class NonPrimitiveTest : public ::testing::Test {
                        static_cast<F64>(FppTest::Utils::getNonzeroU32()));
 
         for (U32 i = 0; i < 3; i++) {
-            testU32Arr[0] = FppTest::Utils::getNonzeroU32();
+            testU32Arr[i] = FppTest::Utils::getNonzeroU32();
         }
 
         for (U32 i = 0; i < 3; i++) {
@@ -283,8 +283,14 @@ TEST_F(NonPrimitiveTest, ToString) {
     NonPrimitive s(testString, testEnum, testArray, testArray, testStruct, testStruct, testU32Arr, testStructArr);
     std::stringstream buf1, buf2;
 
+    // 1. Test operator<< output (truncates to default Fw::String capacity)
     buf1 << s;
 
+    // 2. Test s.toString() output (uses full buffer capacity)
+    Fw::StringTemplate<1024> str;
+    s.toString(str);
+
+    // Build the expected full string representation
     buf2 << "( "
          << "mString = " << testString << ", "
          << "mEnum = " << testEnum << ", "
@@ -293,13 +299,16 @@ TEST_F(NonPrimitiveTest, ToString) {
          << "mStruct = " << testStruct << ", "
          << "mAliasStruct = " << testStruct << ", "
          << "mU32Arr = [ " << testU32Arr[0] << ", " << testU32Arr[1] << ", " << testU32Arr[2] << " ], "
-         << "mStructArr = [ " << testStructArr[0] << ", " << testStructArr[1] << ", " << testStructArr[2] << " ] "
+         << "mStructArr = [ " << testStructArr[0] << ", " << testStructArr[1] << ", " << testStructArr[2] << " ]"
          << " )";
 
-    // Truncate string output
-    Fw::String s2(buf2.str().c_str());
+    // Verify truncated operator<< output against standard Fw::String
+    Fw::String sTruncated(buf2.str().c_str());
+    ASSERT_STREQ(buf1.str().c_str(), sTruncated.toChar());
 
-    ASSERT_STREQ(buf1.str().c_str(), s2.toChar());
+    // Verify full s.toString() output against large capacity buffer
+    Fw::StringTemplate<1024> sFull(buf2.str().c_str());
+    ASSERT_STREQ(str.toChar(), sFull.toChar());
 }
 
 }  // namespace Struct

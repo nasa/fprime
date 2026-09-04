@@ -17,6 +17,7 @@ module ComCcsds {
         queue size ComCcsdsConfig.QueueSizes.comQueue \
         stack size ComCcsdsConfig.StackSizes.comQueue \
         priority ComCcsdsConfig.Priorities.comQueue \
+        cpu ComCcsdsConfig.CpuAffinities.comQueue \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         using namespace ComCcsds;
@@ -101,6 +102,7 @@ module ComCcsds {
         queue size ComCcsdsConfig.QueueSizes.aggregator \
         stack size ComCcsdsConfig.StackSizes.aggregator \
         priority ComCcsdsConfig.Priorities.aggregator \
+        cpu ComCcsdsConfig.CpuAffinities.aggregator \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::packetSpanning != 0);

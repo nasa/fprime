@@ -156,7 +156,101 @@ MutexHandle* MyOsMutex::getHandle() {
 
 ---
 
+## Step 2.5 — Optional: Override for Compile-Time Selection (Performance Optimization)
+
+By default, F´ uses **link-time selection** with runtime virtual dispatch through the delegate pattern (see [OSAL SDD §5.2](../../../Os/docs/sdd.md#52-selection-mechanisms-link-time-vs-compile-time)). For performance-critical platforms (e.g., bare-metal embedded systems with tight timing constraints), projects can override the default configuration to enable compile-time selection that eliminates virtual dispatch overhead and enables aggressive compiler optimizations including function inlining and link-time optimization (LTO).
+
+> [!NOTE]
+> The F´ OSAL provides default configuration headers (e.g., `default/config/OsDelegateRawTime.hpp`) that enable aliasing and default to link-time selection. These are part of F´'s core configuration. This step describes how **projects** can override these defaults for their specific deployments.
+
+### Why Compile-Time Selection?
+
+See [OSAL SDD §5.2.2 "Compile-Time Selection"](../../../Os/docs/sdd.md#522-compile-time-selection-performance-optimization) for a detailed explanation of the trade-offs between link-time and compile-time selection. In summary:
+
+- **Link-time selection (default)** uses virtual dispatch (~10-50 cycles overhead) but provides runtime flexibility
+- **Compile-time selection** enables inlining and LTO, eliminating call overhead for performance-critical code
+
+This optimization is most valuable for bare-metal systems with high-frequency operations like telemetry timestamping.
+
+### How Projects Override for Compile-Time Selection
+
+Projects override compile-time selection by providing their own configuration header that replaces F´'s default. For `RawTime`, create a project-specific override of `config/OsDelegateRawTime.hpp`:
+
+**Step 1:** In your project's config directory, create `config/OsDelegateRawTime.hpp`:
+
+```c++
+// my-project/config/OsDelegateRawTime.hpp
+#ifndef CONFIG_OS_DELEGATERAWTIME_HPP
+#define CONFIG_OS_DELEGATERAWTIME_HPP
+
+// Guard against circular dependencies (same as F´ default)
+#if defined(OS_RAWTIME_HPP_) || defined(OS_RAWTIMEINTERFACE_HPP_) || defined(OS_DELEGATERAWTIME_HPP_)
+#error "config/OsDelegateRawTime.hpp must not include Os OSAL headers - circular dependency detected"
+#endif
+
+// Forward-declare your concrete implementation class
+namespace MyPlatform {
+    class MyRawTime;
+}
+
+namespace Os {
+    // Alias Os::RawTime directly to your implementation (no delegate wrapper)
+    using RawTime = MyPlatform::MyRawTime;
+}
+
+// Point to your implementation header (will be included after RawTimeInterface.hpp)
+#define OS_RAW_TIME_HEADER "MyPlatform/Os/RawTime.hpp"
+
+#endif  // CONFIG_OS_DELEGATERAWTIME_HPP
+```
+
+**Step 2:** Register the config header in your project's `config/CMakeLists.txt`:
+
+```cmake
+register_fprime_config(
+    # ... project config name & other options 
+    CONFIGURATION_OVERRIDES
+        "${CMAKE_CURRENT_LIST_DIR}/OsDelegateRawTime.hpp"
+        # ... other project override config headers
+)
+```
+
+**Step 3:** Ensure your implementation class inherits from `RawTimeInterface`:
+
+```c++
+// MyPlatform/Os/RawTime.hpp
+#include <Os/RawTimeInterface.hpp>
+
+namespace MyPlatform {
+
+class MyRawTime : public Os::RawTimeInterface {
+    // Implementation of RawTimeInterface methods
+    // Now called directly without delegation wrapper
+    // ...
+};
+
+}  // namespace MyPlatform
+```
+
+### Important Constraints
+
+See [OSAL SDD §5.2.2](../../../Os/docs/sdd.md#522-compile-time-selection-performance-optimization) for the complete list of constraints. Key points:
+
+- **ABI Compatibility**: All files must use the same configuration
+- **No Circular Dependencies**: Config header must not include Os OSAL headers
+- **Interface Inheritance Required**: Implementation must inherit from interface
+- **Skip the Delegate Factory**: No `Default*.cpp` needed for compile-time selection
+
+### Which Services Support Compile-Time Selection?
+
+See [OSAL SDD §5.2.2](../../../Os/docs/sdd.md#522-compile-time-selection-performance-optimization) for OS services which support aliasing. 
+
+---
+
 ## Step 3 — Register the Delegate Factory
+
+> [!NOTE]
+> If you enabled compile-time selection in Step 2.5, you can skip creating `DefaultMutex.cpp` (or `DefaultRawTime.cpp` etc.) since the delegate factory is not used. Jump directly to Step 4.
 
 Create `FprimeMyOs/Os/DefaultMutex.cpp`. This file provides the `getDelegate()` factory function that the `Os::Mutex` wrapper calls to construct the implementation:
 
@@ -182,7 +276,11 @@ MutexInterface* MutexInterface::getDelegate(MutexHandleStorage& aligned_new_memo
 - `alignof(MyOsMutex)` is compatible with `FW_HANDLE_ALIGNMENT`
 
 > [!NOTE]
-> Some interfaces (such `FileInterface`) require a copy-constructor-supporting `getDelegate` signature that takes an additional `const FileInterface* to_copy` parameter, also supported by `makeDelegate`. Check each interface header for the exact `getDelegate` signature required.
+> Some interfaces require additional parameters in their `getDelegate` signature:
+> - `FileInterface` takes an optional `const FileInterface* to_copy` parameter for copy construction
+> - `RawTimeInterface` takes optional `const RawTimeInterface* to_copy` and `RawTimeSource source` parameters to support both copy construction and selectable timer sources
+> 
+> The `makeDelegate` helper supports all these signatures. Check each interface header for the exact `getDelegate` signature required.
 
 ---
 
@@ -236,7 +334,7 @@ The process described above for `Os::Mutex` is the same for every OSAL module. F
 4. Register with `register_os_implementation` in `CMakeLists.txt`.
 
 > [!NOTE]
-> F´ provides `Os_Generic_PriorityQueue`, a platform-independent queue implementation that most platforms use. You do not need to write an OS-specific queue unless the generic one is unsuitable for your target.
+> F´ provides two platform-independent queue implementations: `Os_Generic_PriorityQueue` (mutex-based — the default on most platforms) and `Os_Generic_LocklessPriorityQueue` (lockless, ISR-safe — opt-in for targets that send or receive from interrupt context). You do not need to write an OS-specific queue unless neither generic implementation is suitable for your target.
 
 The full set of [OSAL modules](../../../Os/docs/sdd.md#2-core-services) that can be implemented is:
 
@@ -251,7 +349,7 @@ The full set of [OSAL modules](../../../Os/docs/sdd.md#2-core-services) that can
 | **FileSystem** | `FileSystemInterface` | `rename()`, `remove()`, `stat()` |
 | **Directory** | `DirectoryInterface` | `open()`, `read()`, `close()` |
 | **Console** | `ConsoleInterface` | `write()` |
-| **RawTime** | `RawTimeInterface` | `now()`, `getTimeInterval()` |
+| **RawTime** | `RawTimeInterface` | `now()`, `getTimeInterval()` (getDelegate takes `RawTimeSource`) |
 | **Cpu** | `CpuInterface` | `getCount()`, `getTicks()` |
 | **Memory** | `MemoryInterface` | `getUsage()` |
 

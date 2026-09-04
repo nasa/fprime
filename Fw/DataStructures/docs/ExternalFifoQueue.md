@@ -32,9 +32,9 @@ storing the items on the queue.
 
 ```mermaid
 classDiagram
-    FifoQueue *-- ExternalArray
-    FifoQueue *-- CircularIndex
-    FifoQueue *-- CircularIndex
+    ExternalFifoQueue *-- ExternalArray
+    ExternalFifoQueue *-- CircularIndex
+    ExternalFifoQueue *-- CircularIndex
 ```
 
 ## 4. Public Constructors and Destructors

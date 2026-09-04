@@ -11,6 +11,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
 #include <Utils/Types/Queue.hpp>
+#include <atomic>
 #include <limits>
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/Mutex.hpp"
@@ -217,12 +218,26 @@ class ComQueue final : public ComQueueComponentBase {
     // Helper Functions
     // ----------------------------------------------------------------------
 
-    //! Enqueues a message on the appropriate queue
+    //! Enqueues an Fw::ComBuffer on the appropriate com queue
     //!
     bool enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
-                 QueueType queueType,         //!< Type of the queue and message data
-                 const U8* data,              //!< Pointer to the message data
-                 const FwSizeType size        //!< Size of the message
+                 const Fw::ComBuffer& data    //!< Com buffer to enqueue
+    );
+
+    //! Enqueues an Fw::Buffer on the appropriate buffer queue
+    //!
+    bool enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
+                 const Fw::Buffer& data       //!< Buffer to enqueue
+    );
+
+    //! Handles overflow events, throttling, and queue processing after an enqueue attempt
+    //! \return true when the message was accepted onto the queue, false otherwise
+    //!
+    bool handleEnqueueStatus(const FwIndexType queueNum,       //!< Index of the queue enqueued to
+                             QueueType queueType,              //!< Type of the queue and message data
+                             const FwIndexType portNum,        //!< Port number associated with the queue
+                             const bool preEmptiveOverflow,    //!< Whether an entry was pre-emptively dropped
+                             const Fw::SerializeStatus status  //!< Status of the enqueue attempt
     );
 
     //! Send a chosen Fw::ComBuffer
@@ -256,7 +271,7 @@ class ComQueue final : public ComQueueComponentBase {
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
     bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles
     SendState m_state;                                  //!< State of the component
-    BufferState m_buffer_state;                         //!< Ownership state of buffer
+    std::atomic<BufferState> m_buffer_state;  //!< Ownership state of buffer, shared with the sync dataReturnIn caller
 
     // Storage for Fw::MemAllocator properties
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID

@@ -47,9 +47,11 @@ File::Status computeHash(const char* fileName, Utils::HashBuffer& hashBuffer) {
     }
     file.close();
 
-    // We should not have left the loop because of cnt > max_itr:
-    FW_ASSERT(size == 0);
-    FW_ASSERT(cnt <= max_itr);
+    // The iteration bound is computed from the size at open; a file that grows while
+    // being hashed exhausts it with data still unread, which is an error, not a bug
+    if (size != 0) {
+        return File::BAD_SIZE;
+    }
 
     // Calculate hash:
     Utils::HashBuffer computedHashBuffer;
@@ -133,7 +135,9 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    FW_ASSERT(false, status);
+                    // Unlisted statuses (e.g. NOT_SUPPORTED, INVALID_ARGUMENT) can
+                    // legitimately come from the OS layer; report rather than assert
+                    return ValidateFile::OTHER_ERROR;
             }
             break;
         case HashFileType:
@@ -153,7 +157,9 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    FW_ASSERT(false, status);
+                    // Unlisted statuses (e.g. NOT_SUPPORTED, INVALID_ARGUMENT) can
+                    // legitimately come from the OS layer; report rather than assert
+                    return ValidateFile::OTHER_ERROR;
             }
             break;
         default:

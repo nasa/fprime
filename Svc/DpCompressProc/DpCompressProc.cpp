@@ -9,6 +9,7 @@
 #include "Svc/DpCompressProc/DpCompressProc.hpp"
 
 #include <Fw/Dp/DpContainer.hpp>
+#include <Fw/Prm/ParamValid.hpp>
 
 namespace Svc {
 
@@ -43,7 +44,7 @@ void DpCompressProc::serializeCompressionHeader(Fw::LinearBufferBase& serializer
 void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     Fw::ParamValid param_valid;
     Fw::Enabled en_compression = paramGet_ENABLE(param_valid);
-    FW_ASSERT((param_valid == Fw::ParamValid::DEFAULT) || (param_valid == Fw::ParamValid::VALID), param_valid);
+    FW_ASSERT(FW_PARAM_OK(param_valid), param_valid);
     if (en_compression == Fw::Enabled::DISABLED) {
         // Bypass compression
         return;
@@ -67,8 +68,21 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         return;
     }
 
+    // Record sizes are stored as FwSizeStoreType. Give up on any buffer
+    // whose contents could overflow a record size field
+    if (fwBuffer.getSize() >= std::numeric_limits<FwSizeStoreType>::max()) {
+        this->log_WARNING_HI_ContainerTooLarge(container.getId(), container.getDataSize());
+        return;
+    }
+    // Consistency check: the header's data size must fit within the buffer
+    if (container.getDataSize() > fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE) {
+        this->log_WARNING_HI_BufferTooSmallForPacket(fwBuffer.getSize(),
+                                                     Fw::DpContainer::MIN_PACKET_SIZE + container.getDataSize());
+        return;
+    }
+
     FwSizeType prm_chunk_size = paramGet_CHUNK_SIZE(param_valid);
-    FW_ASSERT((param_valid == Fw::ParamValid::DEFAULT) || (param_valid == Fw::ParamValid::VALID), param_valid);
+    FW_ASSERT(FW_PARAM_OK(param_valid), param_valid);
 
     if (prm_chunk_size > container.getDataSize()) {
         prm_chunk_size = container.getDataSize();
@@ -120,7 +134,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
     state = INIT;
 
-    FwSizeStoreType uncompressed_size = 0;
+    FwSizeType uncompressed_size = 0;
     U8* uncompressed_head = nullptr;
     Fw::SerializeStatus ser_stat = Fw::FW_SERIALIZE_OK;
 
@@ -208,7 +222,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
             alg = compressChunk_out(0, compression_buffer, min_compression, compression_offset);
 
             if (alg != CompressionAlgorithm::UNCOMPRESSED) {
-                FW_ASSERT(compression_buffer.getSize() <= min_compression);
+                // The compressor writes up to min_compression bytes of compressed
+                // data after write_offset bytes of reserved space
+                FW_ASSERT(compression_buffer.getSize() <= min_compression + compression_offset,
+                          static_cast<FwAssertArgType>(compression_buffer.getSize()),
+                          static_cast<FwAssertArgType>(min_compression),
+                          static_cast<FwAssertArgType>(compression_offset));
             }
         }
 
@@ -239,18 +258,15 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     // 3. Write a compressed header to the compressed data
                     // 4. Serialize compressed data
 
-                    // Assert the next few serialization operations will stay within the
-                    // data that has been read so far
-                    FW_ASSERT(deser_loc >=
-                                  (uncompressed_size +
-                                   2 * static_cast<FwSizeType>(CompressionMetadata::SERIALIZED_SIZE) + compressed_size),
-                              static_cast<FwAssertArgType>(deser_loc), uncompressed_size,
-                              CompressionMetadata::SERIALIZED_SIZE, compressed_size);
+                    // Assert that the serialization operations in Case A will stay within deser_loc bounds
+                    FW_ASSERT(deser_loc >= (uncompressed_size + 2 * compression_header_size + compressed_size),
+                              static_cast<FwAssertArgType>(deser_loc), static_cast<FwAssertArgType>(uncompressed_size),
+                              static_cast<FwAssertArgType>(compressed_size));
                     (void)std::memmove(data_buffer.getData() + compression_header_size, data_buffer.getData(),
                                        uncompressed_size);
 
                     // Serialize the header bytes to the front of the data
-                    serializeCompressionHeader(data_reser, uncompressed_size,
+                    serializeCompressionHeader(data_reser, static_cast<FwSizeStoreType>(uncompressed_size),
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
                     // Move the serializer past the uncompressed chunk manually
@@ -278,7 +294,14 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     // 2. Serialize uncompressed data
                     // 3. Write header for compressed data at data_reser location
                     // 4. Serialize compressed data
-                    serializeCompressionHeader(data_reser, uncompressed_size,
+
+                    // Assert that the serialization operations in Case E will stay within deser_loc bounds
+                    FW_ASSERT(
+                        deser_loc >=
+                            (data_reser.getSize() + uncompressed_size + 2 * compression_header_size + compressed_size),
+                        static_cast<FwAssertArgType>(deser_loc), static_cast<FwAssertArgType>(data_reser.getSize()),
+                        static_cast<FwAssertArgType>(uncompressed_size), static_cast<FwAssertArgType>(compressed_size));
+                    serializeCompressionHeader(data_reser, static_cast<FwSizeStoreType>(uncompressed_size),
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
                     FW_ASSERT(uncompressed_head != nullptr);
@@ -333,7 +356,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     FW_ASSERT(false, state);
                     break;
             }
-            uncompressed_size = static_cast<FwSizeStoreType>(uncompressed_size + chunk_size);
+            uncompressed_size += chunk_size;
         }
 
         // Confirm that the serialized location has not jumped ahead of the deserialize location
@@ -353,7 +376,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
             // 1. Write header for uncompressed data.
             //    data_reser has been kept at this location
             // 2. Serialize uncompressed data
-            serializeCompressionHeader(data_reser, uncompressed_size,
+            serializeCompressionHeader(data_reser, static_cast<FwSizeStoreType>(uncompressed_size),
                                        CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
             FW_ASSERT(uncompressed_head != nullptr);

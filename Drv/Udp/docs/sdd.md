@@ -9,7 +9,7 @@ For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverMode
 
 ## Design
 
-The TcpClient component implements the design specified by the [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
+The Udp component implements the design specified by the [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
 
 ## Usage
 
@@ -47,7 +47,7 @@ bool constructApp(bool dump, U32 port_number, char* ipv4_address) {
     if (ipv4_address != nullptr && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         // Needed for receiving only, remove if not configuring to receive
-        comm.startSocketTask(name);
+        comm.start(name);
     }
 }
 

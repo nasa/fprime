@@ -81,6 +81,22 @@ TEST(Transaction, Class2TxPortBasedNack) {
     tester.testClass2TxPortBasedNack();
 }
 
+TEST(Transaction, Class2RxZeroLengthFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxZeroLengthFile();
+}
+
+TEST(Transaction, Class2RxFileDataOffsetOverflow) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxFileDataOffsetOverflow();
+}
+
+// Regression test for GHSA-mh5x-2m6h-8267: a zero-length FileData segment must not assert/FATAL
+TEST(Transaction, Class2RxZeroLengthFileData) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxZeroLengthFileData();
+}
+
 TEST(Transaction, MultipleTransactionsInSeries) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testMultipleTransactionsInSeries();
@@ -139,6 +155,16 @@ TEST(Command, PollDirectoryInvalidChannel) {
 TEST(Command, PollDirectoryBusy) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testPollDirectoryBusy();
+}
+
+TEST(Command, PollDirectoryInvalidInterval) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPollDirectoryInvalidInterval();
+}
+
+TEST(Command, PollDirectoryTimerExpiry) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPollDirectoryTimerExpiry();
 }
 
 TEST(Command, SetChannelFlowNominal) {

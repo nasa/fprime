@@ -59,11 +59,9 @@ bool LinuxUartDriver::open(const char* const device,
     if (fd == -1) {
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
-        this->log_WARNING_HI_OpenError(_arg, this->m_fd, _err);
+        this->log_WARNING_HI_OpenError(_arg, fd, _err);
         return false;
     }
-
-    this->m_fd = fd;
 
     // Configure blocking reads
     struct termios cfg;
@@ -288,6 +286,7 @@ bool LinuxUartDriver::open(const char* const device,
     }
 
     // All done!
+    this->m_fd = fd;
     Fw::LogStringArg _arg = device;
     this->log_ACTIVITY_HI_PortOpened(_arg);
     if (this->isConnected_ready_OutputPort(0)) {

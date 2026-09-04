@@ -40,6 +40,14 @@ module Svc {
             format "Received buffer has size {}; minimum required size is {}" \
             throttle 10
 
+        @ Received container is too large for its size to be stored in a record size field
+        event ContainerTooLarge(dp_id: FwDpIdType @< The data product ID
+                                data_size: FwSizeType @< The container data size
+                                ) \
+            severity warning high \
+            format "Data Product {} has data size {}, too large for a record size field" \
+            throttle 10
+
         @ Record ID used to mark compressed records in a data product
         product record CompressionRecord: U8 array
 

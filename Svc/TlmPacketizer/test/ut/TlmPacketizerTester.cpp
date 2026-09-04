@@ -1898,6 +1898,28 @@ void TlmPacketizerTester::duplicateChannelIdConflictingSizeTest() {
                               "TlmPacketizer.cpp");
 }
 
+void TlmPacketizerTester::oversizedChannelTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList, ignore, 2);
+    Fw::Time ts;
+    Fw::TlmBuffer buff;
+
+    // Channel 100 is configured with size 2; send an 8-byte value
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U64>(0xDEADBEEF12345678ULL)));
+    this->invoke_to_TlmRecv(0, 100, ts, buff);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_OversizedChannel_SIZE(1);
+    ASSERT_EVENTS_OversizedChannel(0, 100, sizeof(U64), 2);
+
+    // A correctly-sized value on the same channel is still accepted
+    this->clearEvents();
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(15)));
+    this->invoke_to_TlmRecv(0, 100, ts, buff);
+    ASSERT_EVENTS_SIZE(0);
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------

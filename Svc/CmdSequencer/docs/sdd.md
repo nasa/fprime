@@ -15,7 +15,7 @@ ISF-CMDS-002 | The `Svc::CmdSequencer` component shall validate the sequence fil
 ISF-CMDS-003 | The `Svc::CmdSequencer` component shall provide a command to validate the sequence file. | Unit Test | Waiting to validate the file only when running it can cause operational issues
 ISF-CMDS-004 | The `Svc::CmdSequencer` component shall cancel the sequence upon receiving a failed command status. | Unit Test | A sequence should not continue if a command fails since subsequent commands may depend on the outcome
 ISF-CMDS-005 | The `Svc::CmdSequencer` component shall provide a command to cancel the existing sequence | Unit Test | Operator should be able to cancel the sequence if it is hung or needs to be stopped.
-ISF-CMDS-006 | The `Svc::CmdSequencer` component shall provide an overall sequence timeout. | Unit Test | Sequencer should quit if a component fails to send a command response
+ISF-CMDS-006 | The `Svc::CmdSequencer` component shall provide a per-command timeout that restarts for each dispatched command. | Unit Test | Sequencer should quit if a component fails to send a command response
 
 ## 3 Design
 
@@ -44,6 +44,9 @@ schedIn|Svc::Sched|async input|Scheduler input - timed commands will be checked
 comCmdOut|Fw::Com|output|Sends command buffers for each command in sequence
 cmdResponseIn|Fw::CmdResponse|async input|Received status of last dispatched command
 seqRunIn|Svc::CmdSeqIn|async input|Receives requests for running sequences from other components
+seqDispatchIn|Svc::FileDispatch|async input|Receives file dispatches to run sequences
+seqCancelIn|Svc::CmdSeqCancel|async input|Receives requests to cancel the running sequence
+seqStartOut|Svc::CmdSeqIn|output|Notifies that a sequence has started running
 seqDone|Fw::CmdResponse|output|outputs status of sequence run; meant to be used with `seqRunIn`
 
 #### 3.2.2 Command Handlers
@@ -51,7 +54,7 @@ seqDone|Fw::CmdResponse|output|outputs status of sequence run; meant to be used 
 ##### 3.2.2.1 CS_Validate
 The `CS_Validate` command will validate that the format and checksum of a sequence file are correct without executing any commands in the file. This allows operators to validate a file prior to executing it.
 ##### 3.2.2.2 CS_Run
-The `CS_Run` command will execute a sequence. If a prior sequence is still running, it will be canceled. If a command returns a failed status, the sequence will be aborted.
+The `CS_Run` command will execute a sequence. If a prior sequence is still running, the command is rejected with an execution error; the running sequence must complete or be canceled first. If a command returns a failed status, the sequence will be aborted.
 ##### 3.2.2.3 CS_Cancel
 The `CS_Cancel` command will cancel an existing sequence. If there is no sequence currently executing, the command will emit a warning event but not fail.
 ##### 3.2.2.4 CS_Manual
@@ -62,6 +65,8 @@ The `CS_Start` command will execute the first command in the sequence in manual 
 The `CS_Step` command will execute subsequent commands after receiving the `CS_Start` command.
 ##### 3.2.2.7 CS_Auto
 The `CS_Auto` command will change the sequencing mode from manual to automatic, which means that the sequencer will automatically execute commands upon loading. This command can only be run when there are no currently executing sequences. If a sequence is executing, a `CS_Cancel` followed by a `CS_Auto` will get the sequencer back to executing sequences automatically.
+##### 3.2.2.8 CS_JOIN_WAIT
+The `CS_JOIN_WAIT` command waits for the running sequence to finish before returning its command response. It is intended for use after a `CS_RUN` issued in `NO_BLOCK` mode. If no sequence is running, it emits a warning event and returns OK immediately. If a completion response is already owed to a BLOCK-mode `CS_RUN` caller or a previous `CS_JOIN_WAIT` caller, the command is rejected with an execution error.
 
 #### 3.2.3 Port Handlers
 
@@ -76,9 +81,13 @@ The `cmdResponseIn` port is called when a command in a sequence is completed. If
 <a name="seqRunIn"></a>
 ##### 3.2.3.3 seqRunIn
 
-This port takes a single argument `filename` of type `Fw::String`. In
+This port takes two arguments: `filename`, the sequence file name, and
+`args` of type `Svc.SeqArgs` (currently unused by this component). In
 general, sending `filename` on this port has the same  effect as issuing
-a `CS_Run` command with `filename` as the file name argument.
+a `CS_Run` command with `filename` as the file name argument. If the
+sequencer is in manual stepping mode (see `CS_Manual`), the request is
+rejected: the `CS_InvalidMode` event is emitted and `EXECUTION_ERROR` is
+returned on the `seqDone` port.
 
 If `filename` is empty, then `CmdSequencer` runs the sequence stored in the
 sequence buffer, without loading a sequence first. In order for this to work:
@@ -286,7 +295,7 @@ __Absolute Command:__
 
 where:
 
-`R` - Relative time descriptor
+`A` - Absolute time descriptor
 
 `YYYY` - Year
 

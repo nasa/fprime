@@ -127,8 +127,9 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!
     //!  This command will clear the table tracking the completion of commands.
     //!  It is meant to be used if the tracking table has gotten full because of
-    //!  a software failure. It is dangerous in that it can clear a command
-    //!  that a sequencer is waiting for.
+    //!  a software failure. Each caller with a pending command is sent a
+    //!  Fw::CmdResponse::CLEARED status on its seqCmdStatus port so it does not
+    //!  wait indefinitely for a completion that will never arrive.
     //!
     //!  \param opCode the CLEAR_TRACKING opcode.
     //!  \param cmdSeq the assigned sequence number for the command

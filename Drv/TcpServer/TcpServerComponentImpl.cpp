@@ -105,9 +105,9 @@ void TcpServerComponentImpl::readLoop() {
             (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
             continue;
         }
-    } while (this->running() && status != SOCK_SUCCESS && this->m_reopen);
+    } while (this->running() && status != SOCK_SUCCESS && this->getAutomaticOpen());
     // Loop exit implies startup succeeded, a stop was requested, or reopen is disabled
-    FW_ASSERT(status == SOCK_SUCCESS || (not this->running()) || (not this->m_reopen),
+    FW_ASSERT(status == SOCK_SUCCESS || (not this->running()) || (not this->getAutomaticOpen()),
               static_cast<FwAssertArgType>(status));
     // If start up was successful then perform normal operations
     if (this->running() && status == SOCK_SUCCESS) {

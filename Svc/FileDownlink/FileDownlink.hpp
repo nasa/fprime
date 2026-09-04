@@ -238,7 +238,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
     );
 
     //! Restrict SendFile / SendPartial reads to paths under the configured directory.
-    //! Mirrors Svc::FileUplink::configure. Default sandbox is unrestricted until called.
+    //! Fail-open: until called, the sandbox defaults to `/` (any readable path is allowed).
     void configure(const char* directory);
 
     //! Cleans up file queue before dispatching to underlying component

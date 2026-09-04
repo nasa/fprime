@@ -17,6 +17,7 @@
 
 #include <gtest/gtest.h>
 #include <Fw/Types/SerialBuffer.hpp>
+#include <Svc/Ccsds/CfdpManager/Chunk.hpp>
 #include <Svc/Ccsds/CfdpManager/Clist.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <Svc/Ccsds/CfdpManager/Utils.hpp>
@@ -555,6 +556,56 @@ TEST(FileDataPduHelper, EmptyPayloadToBuffer) {
     Fw::Buffer txBuffer(storage, sizeof(storage));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.toBuffer(txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
+}
+
+TEST(ChunkHelper, ComputeGapsZeroTotalHasNoGaps) {
+    // A zero-length file holds no data, so gap computation must report no gaps
+    Chunk chunkMem[4];
+    CfdpChunkList chunks(4, chunkMem);
+    EXPECT_EQ(0U, chunks.computeGaps(1, 0, 0, nullptr, nullptr));
+}
+
+TEST(ChunkHelper, AddZeroSizeChunkIgnored) {
+    // A zero-length FileData segment (PDU payload length equal to the encoded offset length)
+    // produces add(offset, 0). This carries no bytes and must be ignored rather than tracked;
+    // a zero-size chunk would otherwise reach combineNext() and trip its non-rollover assert
+    // (chunk_end > offset), turning attacker-controlled protocol input into a fatal abort.
+    Chunk chunkMem[4];
+    CfdpChunkList chunks(4, chunkMem);
+
+    chunks.add(0, 0);
+    EXPECT_EQ(0U, chunks.getCount());
+    EXPECT_EQ(nullptr, chunks.getFirstChunk());
+
+    // A zero-size add at a non-zero offset must be ignored the same way
+    chunks.add(4096, 0);
+    EXPECT_EQ(0U, chunks.getCount());
+
+    // A subsequent real chunk is still tracked normally
+    chunks.add(0, 10);
+    EXPECT_EQ(1U, chunks.getCount());
+}
+
+TEST(FileDataPduHelper, TruncatedOffsetRejected) {
+    // A PDU truncated in the middle of the file offset must be rejected rather than
+    // leaving a stale offset behind
+    FileDataPdu txPdu;
+    const U8 testData[] = {0x01, 0x02, 0x03, 0x04};
+    txPdu.initialize(PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, 4096, sizeof(testData),
+                     testData);
+
+    U8 storage[512];
+    Fw::Buffer txBuffer(storage, sizeof(storage));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.toBuffer(txBuffer));
+
+    // Keep the header plus two of the four offset bytes
+    const U32 truncatedSize = txPdu.asHeader().getBufferSize() + 2;
+    ASSERT_LT(truncatedSize, txBuffer.getSize());
+
+    FileDataPdu rxPdu;
+    Fw::SerialBuffer sb(storage, truncatedSize);
+    sb.setBuffLen(truncatedSize);
+    EXPECT_NE(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb));
 }
 
 // ======================================================================

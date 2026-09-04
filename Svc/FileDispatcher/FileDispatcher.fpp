@@ -19,6 +19,9 @@ module Svc {
         # @ File dispatched event
         event FileDispatched(file_name: string size FileNameStringSize, file_type: Svc.FileDispatcherCfg.FileDispatchPort) severity activity high format "File {} dispatched to {}"
 
+        # @ File matched a dispatch entry whose output port is not connected
+        event FileDispatchPortNotConnected(file_name: string size FileNameStringSize, file_type: Svc.FileDispatcherCfg.FileDispatchPort) severity warning low format "File {} matched {} but the dispatch port is not connected" throttle 5
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

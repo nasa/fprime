@@ -23,6 +23,18 @@ module FileHandlingConfig {
         constant prmDb         = 21
     }
 
+    module CpuAffinities {
+        constant fileUplink    = Os.TASK_DEFAULT
+        constant fileDownlink  = Os.TASK_DEFAULT
+        constant fileManager   = Os.TASK_DEFAULT
+        constant prmDb         = Os.TASK_DEFAULT
+    }
+
+    # File paths used by the subtopology
+    module Paths {
+        constant prmDbFile = "PrmDb.dat"       # Parameter database storage file
+    }
+
     # File downlink configuration constants
     module DownlinkConfig {
         constant cooldown       = 1000         # File downlink cooldown in ms  

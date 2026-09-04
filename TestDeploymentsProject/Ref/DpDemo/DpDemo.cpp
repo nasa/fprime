@@ -16,6 +16,7 @@ DpDemo ::DpDemo(const char* const compName) : DpDemoComponentBase(compName) {
     this->selectedColor = DpDemo_ColorEnum::RED;
     this->numRecords = 0;
     this->dpPriority = 0;
+    this->dpInProgress = false;
 }
 
 DpDemo ::~DpDemo() {}
@@ -114,15 +115,23 @@ void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode,
         return;
     }
 
-    this->numRecords = 15;  // 15 records in current demo
-    FwSizeType dpSize = DpDemo_StringAlias::SERIALIZED_SIZE + sizeof(DpDemo_BoolAlias) + sizeof(DpDemo_I32Alias) +
-                        sizeof(DpDemo_F64Alias) + DpDemo_U32Array::SERIALIZED_SIZE + DpDemo_F32Array::SERIALIZED_SIZE +
-                        DpDemo_BooleanArray::SERIALIZED_SIZE + DpDemo_EnumArray::SERIALIZED_SIZE +
-                        DpDemo_StringArray::SERIALIZED_SIZE + DpDemo_StructWithEverything::SERIALIZED_SIZE +
-                        DpDemo_StructWithStringMembers::SERIALIZED_SIZE + (DpDemo_StringArray::SERIALIZED_SIZE * 3) +
-                        (DpDemo_StringArray::SERIALIZED_SIZE * 1) +
-                        (DpDemo_StructWithStringMembers::SERIALIZED_SIZE * 2) +
-                        DpDemo_ArrayOfStringArray::SERIALIZED_SIZE + (numRecords * sizeof(FwDpIdType));
+    this->numRecords = 14;  // 14 records in current demo
+
+    // Element counts for the variable length array records serialized below
+    const FwSizeType stringArrayElements = 3;
+    const FwSizeType arrayArrayElements = 1;
+    const FwSizeType structArrayElements = 2;
+
+    // The generated SIZE_OF_*_RECORD constants already account for the record
+    // id, and for array records the serialized length prefix, so the demo no
+    // longer has to reproduce the layout by hand
+    FwSizeType dpSize = SIZE_OF_StringRecord_RECORD + SIZE_OF_BooleanRecord_RECORD + SIZE_OF_I32Record_RECORD +
+                        SIZE_OF_F64Record_RECORD + SIZE_OF_U32ArrayRecord_RECORD + SIZE_OF_F32ArrayRecord_RECORD +
+                        SIZE_OF_BooleanArrayRecord_RECORD + SIZE_OF_EnumArrayRecord_RECORD +
+                        SIZE_OF_StructWithEverythingRecord_RECORD + SIZE_OF_ArrayOfStringArrayRecord_RECORD +
+                        SIZE_OF_ArrayOfStructsRecord_RECORD + SIZE_OF_StringArrayRecord_RECORD(stringArrayElements) +
+                        SIZE_OF_ArrayArrayRecord_RECORD(arrayArrayElements) +
+                        SIZE_OF_StructArrayRecord_RECORD(structArrayElements);
 
     this->dpPriority = static_cast<FwDpPriorityType>(priority);
     this->dpProc = proc;
@@ -143,6 +152,9 @@ void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode,
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         }
     } else if (reqType == DpDemo_DpReqType::ASYNC) {
+        // Response is deferred until the requested container arrives
+        this->pendingOpCode = opCode;
+        this->pendingCmdSeq = cmdSeq;
         this->dpRequest_DpDemoContainer(dpSize);
     } else {
         // should never get here
@@ -163,11 +175,13 @@ void DpDemo ::dpRecv_DpDemoContainer_handler(DpContainer& container, Fw::Success
         this->dpContainer.setPriority(this->dpPriority);
         this->dpContainer.setProcTypes(this->dpProc);
         this->log_ACTIVITY_LO_DpStarted(this->numRecords);
+        this->cmdResponse_out(this->pendingOpCode, this->pendingCmdSeq, Fw::CmdResponse::OK);
     } else {
         this->log_WARNING_HI_DpMemoryFail();
         // cleanup
         this->dpInProgress = false;
         this->numRecords = 0;
+        this->cmdResponse_out(this->pendingOpCode, this->pendingCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 }
 

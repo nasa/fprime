@@ -14,8 +14,10 @@
 #define Svc_FileManager_HPP
 
 #include <atomic>
+#include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
 #include "Svc/FileManager/FileManagerComponentAc.hpp"
+#include "config/FileManagerConfig.hpp"
 
 namespace Svc {
 
@@ -71,7 +73,7 @@ class FileManager final : public FileManagerComponentBase {
                                     const Fw::CmdStringArg& dirName  //!< The directory to remove
                                     ) override;
 
-    //! Implementation for ConcatFiles command handler
+    //! Implementation for AppendFile command handler
     //! Append 1 file's contents to the end of another.
     void AppendFile_cmdHandler(const FwOpcodeType opCode,       //!< The opcode
                                const U32 cmdSeq,                //!< The command sequence number
@@ -95,11 +97,23 @@ class FileManager final : public FileManagerComponentBase {
 
     //! Handler implementation for command CalculateCrc
     //!
-    //! List the contents of a directory
+    //! Calculate the CRC of a file
     void CalculateCrc_cmdHandler(FwOpcodeType opCode,              //!< The opcode
                                  U32 cmdSeq,                       //!< The command sequence number
                                  const Fw::CmdStringArg& filename  //!< The file to CRC
                                  ) override;
+
+    //! Implementation for GenerateDp command handler
+    //! Package a file into a data product, split into chunks
+    void GenerateDp_cmdHandler(FwOpcodeType opCode,                    //!< The opcode
+                               U32 cmdSeq,                             //!< The command sequence number
+                               const Fw::CmdStringArg& fileName,       //!< The file to package as a data product
+                               U32 chunkSize,                          //!< The maximum number of file bytes per chunk
+                               U64 beginOffset,                        //!< The offset in the file at which to start
+                               U64 endOffset,                          //!< The offset at which to stop, exclusive
+                               U32 priority,                           //!< The container priority; 0 means the default
+                               const FileManager_GenerateDpMode& mode  //!< Paced or immediate chunk emission
+                               ) override;
 
     //! Handler implementation for pingIn
     //!
@@ -161,8 +175,8 @@ class FileManager final : public FileManagerComponentBase {
     // ----------------------------------------------------------------------
     // The FileManager uses an asynchronous state machine to process
     // directory listings through Rate Group 2. This prevents event
-    // flooding and ensures bounded execution time by processing one
-    // directory entry per rate tick (0.5Hz).
+    // flooding and ensures bounded execution time by processing
+    // FILES_PER_RATE_TICK directory entries per rate tick.
 
     //! Directory listing state enumeration
     enum ListDirectoryState {
@@ -189,6 +203,63 @@ class FileManager final : public FileManagerComponentBase {
     U32 m_currentCmdSeq;
 
     std::atomic<bool> m_runQueued;
+
+    // ----------------------------------------------------------------------
+    // Data product generation state machine variables
+    // ----------------------------------------------------------------------
+    // Files are packaged into data products one chunk at a time, paced by
+    // the rate group in the same way as directory listing. This keeps the
+    // work bounded per tick and lets the command succeed regardless of how
+    // large the buffers allocated to data products are.
+
+    //! Data product generation state enumeration
+    enum GenerateDpState {
+        DP_IDLE,        //!< Not currently generating a data product
+        DP_IN_PROGRESS  //!< Currently emitting file chunks via rate group
+    };
+
+    //! Current state of data product generation
+    GenerateDpState m_dpState;
+
+    //! File handle for the file being packaged
+    Os::File m_dpFile;
+
+    //! Name of the file being packaged (stored for records and events)
+    Fw::String m_dpFileName;
+
+    //! Total size of the file being packaged
+    FwSizeType m_dpFileSize;
+
+    //! Offset of the next chunk to read from the file
+    U64 m_dpOffset;
+
+    //! Number of file bytes to read per chunk
+    U32 m_dpChunkSize;
+
+    //! Offset at which packaging stops, exclusive
+    U64 m_dpEndOffset;
+
+    //! Priority to use for the containers of the current request
+    FwDpPriorityType m_dpPriority;
+
+    //! Number of chunks emitted so far (for the completion event)
+    U32 m_dpChunkCount;
+
+    //! Command opcode stored for the deferred response
+    FwOpcodeType m_dpOpCode;
+
+    //! Command sequence number stored for the deferred response
+    U32 m_dpCmdSeq;
+
+    //! Read buffer for one chunk; sized by configuration so that no
+    //! dynamic allocation is needed in flight code
+    U8 m_dpBuffer[FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE];
+
+    //! Emit chunks of the current file; a limit of zero emits all remaining chunks
+    void processDpChunks(U32 chunkLimit);
+
+    //! Close out data product generation and respond to the command
+    void finishDpGeneration();
 };
 
 }  // end namespace Svc

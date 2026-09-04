@@ -13,7 +13,10 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 FileWorker ::FileWorker(const char* const compName)
-    : FileWorkerComponentBase(compName), m_state(FileWorkerState::FW_STATE_IDLE), m_abort(false), m_chunkSize(0) {}
+    : FileWorkerComponentBase(compName),
+      m_state(FileWorkerState::FW_STATE_IDLE),
+      m_abort(false),
+      m_chunkSize(BLOCK_SIZE_BYTES) {}
 
 void FileWorker ::configure(U64 chunkSize) {
     FW_ASSERT(chunkSize > 0);
@@ -34,6 +37,13 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
     // Validate inputs before processing file
     if (path.length() == 0) {
         this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("readIn"), Fw::LogStringArg("empty path"));
+        this->readDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        return;
+    }
+    // The path must leave room for the hash-file extension appended by the CRC helpers; a port
+    // argument can legally be up to FileNameStringSize characters, which is too long.
+    if (!FileWorker::pathFitsWithHashExtension(path)) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("readIn"), Fw::LogStringArg("path too long"));
         this->readDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
         return;
     }
@@ -82,7 +92,7 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
     FileWorkerStatus workerStat = this->readBufferFromFile(buffer, fileName);
 
     // Report 0 bytes on a failed or aborted read so readDoneOut does not imply success.
-    this->readDoneOut_out(0, workerStat, (workerStat == FW_STATUS_DONE_READ) ? fileSize : 0);
+    this->readDoneOut_out(0, workerStat, (workerStat == FW_STATUS_DONE_READ) ? buffer.getSize() : 0);
     this->m_state = FW_STATE_IDLE;
 }
 
@@ -90,6 +100,13 @@ void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& pa
     // Validate inputs before processing file
     if (path.length() == 0) {
         this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("verifyIn"), Fw::LogStringArg("empty path"));
+        this->verifyDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        return;
+    }
+    // The path must leave room for the hash-file extension appended by the CRC helpers; a port
+    // argument can legally be up to FileNameStringSize characters, which is too long.
+    if (!FileWorker::pathFitsWithHashExtension(path)) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("verifyIn"), Fw::LogStringArg("path too long"));
         this->verifyDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
         return;
     }
@@ -107,7 +124,7 @@ void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& pa
         workerStat = FW_STATUS_FAILED_CRC;
     }
 
-    if (crc != crcFromFile) {
+    if (crc != crcCalculated) {
         workerStat = FW_STATUS_FAILED_CRC;
         this->log_WARNING_LO_CrcVerificationError(crc, crcCalculated);
     }
@@ -130,6 +147,13 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
     // Validate inputs before processing file
     if (path.length() == 0) {
         this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("empty path"));
+        this->writeDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        return;
+    }
+    // The path must leave room for the hash-file extension appended by the CRC helpers; a port
+    // argument can legally be up to FileNameStringSize characters, which is too long.
+    if (!FileWorker::pathFitsWithHashExtension(path)) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("path too long"));
         this->writeDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
         return;
     }
@@ -196,6 +220,11 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
 // Helper functions
 // ----------------------------------------------------------------------
 
+bool FileWorker ::pathFitsWithHashExtension(const Fw::StringBase& path) {
+    // Fw::FileNameString holds FileNameStringSize characters plus the terminator
+    return (path.length() + Utils::Hash::getFileExtensionLength()) <= FileNameStringSize;
+}
+
 Svc ::FileWorkerStatus FileWorker ::readBufferFromFile(Fw::Buffer& buffer, const char* const fileName) {
     FW_ASSERT(buffer.getData() != nullptr);
     FW_ASSERT(fileName != nullptr);
@@ -259,17 +288,23 @@ Svc ::FileWorkerReadStatus FileWorker ::readFile(Fw::Buffer& buffer,
 
         case FW_READ_TIMEOUT:
             // Determine true timeout
-            static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
-            numChunks = (size / BLOCK_SIZE_BYTES);
-            if (size % BLOCK_SIZE_BYTES > 0) {
+            FW_ASSERT(this->m_chunkSize > 0);
+            numChunks = (size / this->m_chunkSize);
+            if (size % this->m_chunkSize > 0) {
                 numChunks += 1;
             }
             timeout = numChunks * TIMEOUT_MS;
             this->log_WARNING_HI_ReadTimeout(bytesRead, size, fileNameStr, timeout);
             break;
 
+        case FW_READ_UNKNOWN:
+            // The read loop ran out of iterations: a read larger than
+            // MAX_LOOP_ITERATIONS * BLOCK_SIZE_BYTES cannot complete
+            this->log_WARNING_HI_ReadError(bytesRead, size, fileNameStr);
+            break;
+
         default:
-            FW_ASSERT(false);  // Should not get here
+            FW_ASSERT(false, static_cast<FwAssertArgType>(readStat));
             break;
     }
 
@@ -284,9 +319,9 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer,
     FW_ASSERT(size > 0);
 
     // Determine true timeout
-    static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
-    FwSizeType numChunks = (size / BLOCK_SIZE_BYTES);
-    if (size % BLOCK_SIZE_BYTES > 0) {
+    FW_ASSERT(this->m_chunkSize > 0);
+    FwSizeType numChunks = (size / this->m_chunkSize);
+    if (size % this->m_chunkSize > 0) {
         numChunks += 1;
     }
     U64 timeout = numChunks * TIMEOUT_MS;
@@ -295,8 +330,8 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer,
     bytesRead = 0;
     Fw::Time start = this->getTime();
 
-    for (U32 i = 0; i < MAX_LOOP_ITERATIONS; i++) {
-        FwSizeType readAmt = FW_MIN(size - bytesRead, BLOCK_SIZE_BYTES);
+    for (FwSizeType i = 0; i < numChunks; i++) {
+        FwSizeType readAmt = FW_MIN(size - bytesRead, this->m_chunkSize);
         FwSizeType readAmtActual = readAmt;
         Os::File::Status ret = file.read(buffer.getData() + bytesRead, readAmtActual);
 
@@ -440,9 +475,15 @@ void FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     // Construct hash file name
     const char* ext = Utils::Hash::getFileExtensionString();
     FW_ASSERT(ext != nullptr);
-    char hashFileName[FileNameStringSize];
-    Fw::FormatStatus status = Fw::stringFormat(hashFileName, sizeof(hashFileName), "%s%s", fileName, ext);
-    FW_ASSERT(status == Fw::FormatStatus::SUCCESS);
+    // Same capacity as the CRC helpers so read, verify, and write agree on the longest legal path
+    Fw::FileNameString hashFileNameString;
+    Fw::FormatStatus status = hashFileNameString.format("%s%s", fileName, ext);
+    if (status != Fw::FormatStatus::SUCCESS) {
+        // writeIn_handler rejects such paths up front; report rather than assert if one gets here
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("path too long"));
+        return;
+    }
+    const char* const hashFileName = hashFileNameString.toChar();
 
     // Compute hash
     Utils::HashBuffer hashBuffer;
@@ -506,18 +547,20 @@ FwSizeType FileWorker ::writeToFile(const U8* data, FwSizeType size, Os::File& f
     FW_ASSERT(fileName != nullptr);
 
     // Determine true timeout
-    static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
-    FwSizeType numChunks = (size / BLOCK_SIZE_BYTES);
-    if (size % BLOCK_SIZE_BYTES > 0) {
+    FW_ASSERT(this->m_chunkSize > 0);
+    FwSizeType numChunks = (size / this->m_chunkSize);
+    if (size % this->m_chunkSize > 0) {
         numChunks += 1;
     }
     U64 timeout = numChunks * TIMEOUT_MS;
 
-    // Write loop
+    // Write loop: legal short writes make progress but consume an iteration, so
+    // allow extra iterations beyond the chunk count before giving up
+    const FwSizeType maxIterations = numChunks + MAX_LOOP_ITERATIONS;
     FwSizeType bytesWritten = 0;
     Fw::Time start = this->getTime();
-    for (U32 i = 0; i < MAX_LOOP_ITERATIONS; i++) {
-        FwSizeType writeAmt = FW_MIN(size - bytesWritten, BLOCK_SIZE_BYTES);
+    for (FwSizeType i = 0; (i < maxIterations) && (bytesWritten < size); i++) {
+        FwSizeType writeAmt = FW_MIN(size - bytesWritten, this->m_chunkSize);
         Os::File::Status ret = file.write(data + bytesWritten, writeAmt);
 
         if (Os::File::OP_OK != ret || writeAmt == 0) {
@@ -548,10 +591,6 @@ FwSizeType FileWorker ::writeToFile(const U8* data, FwSizeType size, Os::File& f
         }
 
         bytesWritten += writeAmt;
-        if (bytesWritten >= size) {
-            // Finished, break out
-            break;
-        }
     }
 
     return bytesWritten;

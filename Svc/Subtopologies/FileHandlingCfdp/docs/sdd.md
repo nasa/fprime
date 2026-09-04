@@ -9,7 +9,7 @@ The **FileHandlingCfdp subtopology** packages CFDP-based file-transfer services 
 | SVC-FILEHANDLINGCFDP-001 | The subtopology shall provide **CFDP file transfer functionality** for reliable bidirectional file delivery.    | Inspection |
 | SVC-FILEHANDLINGCFDP-002 | The subtopology shall provide **on-board file management functionality** (e.g., list, remove, hash, mkdir).     | Inspection |
 | SVC-FILEHANDLINGCFDP-003 | The subtopology shall provide **parameter management** via the filesystem.                                      | Inspection |
-| SVC-FILEHANDLINGCFDP-004 | The subtopology shall support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities). | Inspection |
+| SVC-FILEHANDLINGCFDP-004 | The subtopology shall support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities). | Inspection |
 | SVC-FILEHANDLINGCFDP-005 | The subtopology shall expose **rate-group connection points** for the CFDP manager component.                   | Inspection |
 
 
@@ -25,7 +25,7 @@ The **FileHandlingCfdp subtopology** packages CFDP-based file-transfer services 
 
 ### 2.2 Configuration Hooks inside the Subtopology
 
-* Uses **instance properties** (IDs, queue sizes, stack sizes, priorities) defined in `FileHandlingCfdpConfig` for these static instances (see §4).
+* Uses **instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities) defined in `FileHandlingCfdpConfig` for these static instances (see §4).
 * **CfdpManager configuration**: The `cfdpManager` instance is configured with a memory allocator in the `configComponents` phase to allocate the internal CFDP engine.
 * **PrmDb configuration**: The `prmDb` instance is configured with a parameter file name (`PrmDb.dat`) and reads parameters during the `readParameters` phase.
 
@@ -34,6 +34,15 @@ The **FileHandlingCfdp subtopology** packages CFDP-based file-transfer services 
 * **Rate Groups**: Connect scheduler outputs to the **run1Hz** (1 Hz scheduling) port of `cfdpManager` to drive CFDP protocol timers and transaction processing.
 * **Communication/Framing Stack**: Wire CFDP PDU ports between FileHandlingCfdp and your COM/framing subtopology (e.g., `ComCcsds`, `FprimeRouter`) to complete uplink/downlink paths for CFDP PDUs.
 * **Buffer Management**: Connect buffer allocation/deallocation ports to downstream buffer managers (typically part of your COM subtopology).
+
+> [!WARNING]
+> **This subtopology is not configured to be secure by default.** For backwards compatibility, it
+> intentionally does **not** configure a load sandbox for `prmDb`: `PRM_LOAD_FILE` may load from
+> **any absolute path accessible to the process** via ground command. Security-conscious
+> deployments **must** call `FileHandlingCfdp::prmDb.configureLoadSandbox(<directory>)` from
+> topology setup code (note: `prmDb.configure(<file name>)` sets the store-file name and is
+> **not** a load sandbox). Additionally, CFDP file transfers via `cfdpManager` are not sandboxed:
+> ground-commanded transactions may read or write any path accessible to the process.
 
 ### 2.4 Differences from FileHandling Subtopology
 
@@ -112,6 +121,7 @@ See the [CfdpManager SDD](../../../Ccsds/CfdpManager/docs/sdd.md) for detailed c
 * **Queue sizes** — Queue depths for `cfdpManager`, `fileManager`, `prmDb`.
 * **Stack sizes** — Task stacks for active components.
 * **Priorities** — RTOS priorities for the active/queued components.
+* **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
 
 > These knobs tailor runtime footprint and scheduling without modifying the subtopology wiring.
 

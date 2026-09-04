@@ -37,6 +37,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <limits>
+
 #include <Fw/Types/SuccessEnumAc.hpp>
 #include <Os/FileSystem.hpp>
 
@@ -507,15 +509,25 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
     U16 dataSize = fd.getDataSize();
     const U8* dataPtr = fd.getData();
 
-    // Reject file data past the declared file size (subtraction form avoids offset + dataSize overflow).
-    if ((ret == Cfdp::Status::SUCCESS) && this->m_flags.rx.md_recv) {
-        if ((offset > this->m_fsize) || ((this->m_fsize - offset) < dataSize)) {
+    // Reject file data past the declared file size, or past the addressable offset space when no
+    // metadata has been received yet (subtraction form avoids offset + dataSize overflow).
+    if (ret == Cfdp::Status::SUCCESS) {
+        const FileSize bound = this->m_flags.rx.md_recv ? this->m_fsize : std::numeric_limits<FileSize>::max();
+        if ((offset > bound) || ((bound - offset) < dataSize)) {
             this->m_cfdpManager->log_WARNING_LO_RxFileDataOutOfBounds(
-                this->getClass(), this->m_history->src_eid, this->m_history->seq_num, offset, dataSize, this->m_fsize);
+                this->getClass(), this->m_history->src_eid, this->m_history->seq_num, offset, dataSize, bound);
             this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
             this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
             ret = Cfdp::Status::ERROR;
         }
+    }
+
+    // A zero-length FileData segment is syntactically valid (payload length equals the encoded
+    // offset length) but carries no bytes. There is nothing to seek to, write, or track as a gap,
+    // so treat it as a successful no-op. This avoids a pointless file I/O round trip and prevents
+    // a zero-size interval from ever reaching the chunk tracker.
+    if ((ret == Cfdp::Status::SUCCESS) && (dataSize == 0)) {
+        return ret;
     }
 
     // Seek to file offset if needed

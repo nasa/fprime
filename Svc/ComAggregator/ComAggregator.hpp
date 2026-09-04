@@ -195,8 +195,9 @@ class ComAggregator final : public ComAggregatorComponentBase {
                   "Aggregation store must hold the largest configured aggregation size");
 
     U8 m_frameBufferStore[ComCfg::AggregationSpanningSize];  //!< Buffer to hold the frame data
-    Fw::Buffer::OwnershipState m_bufferState =
-        Fw::Buffer::OwnershipState::OWNED;  //!< whether m_frameBuffer is owned by TmFramer
+    std::atomic<Fw::Buffer::OwnershipState> m_bufferState{
+        Fw::Buffer::OwnershipState::OWNED};  //!< whether m_frameBuffer is owned by TmFramer; shared with the sync
+                                             //!< dataReturnIn caller
     Fw::Buffer m_frameBuffer;
     Fw::ExternalSerializeBufferWithMemberCopy m_frameSerializer;  //!< Serializer for m_frameBuffer
     ComCfg::FrameContext m_lastContext;                           //!< Context for the current frame

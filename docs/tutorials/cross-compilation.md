@@ -14,8 +14,8 @@ This tutorial will use 64-bit ARM Linux (e.g. a Raspberry Pi 4/5) as an example.
 
 F´ cross-compiles for 64-bit ARM Linux using the `aarch64-clang-linux` toolchain. This approach uses a generic
 clang/lld installation together with a *sysroot* (a directory tree containing the target's C library, C++ library,
-and headers). Because clang is inherently a cross-compiler, the same setup works natively on Linux **and** macOS
-hosts — no per-host GNU cross-toolchain (nor Docker container on macOS) is required.
+and headers). Since clang is inherently a cross-compiler, the same setup works natively on Linux **and** macOS
+hosts.
 
 ### Setup Prerequisites
 
@@ -25,6 +25,7 @@ To run through this tutorial, you must have a computer that meets the following 
 2. Administrator access
 3. 5GB of free disk space, 8 GB of RAM
 4. Knowledge of the command line for your operating system (Bash, Powershell, Zsh, etc).
+5. [F Prime Setup](https://fprime.jpl.nasa.gov/latest/docs/getting-started/installing-fprime/)
 
 ### Installing Dependencies
 
@@ -55,24 +56,22 @@ Choose the operating system you are using to install F Prime:
 
     **macOS**
 
-    macOS, like Linux, is a Unix system and thus may be used directly for most of this
-    tutorial. Mac users must install the following utilities
-    *and ensure they are available on the command line path*.
-
-    1. [Python 3](https://www.python.org/downloads/release/python-3913/)
-    2. [CMake](https://cmake.org/download/)
-    3. clang and lld
-
     The clang shipped with Xcode does not include `lld`, so download an official
     [llvm.org release](https://github.com/llvm/llvm-project/releases) for your Mac,
-    extract it, and point the `LLVM_TOOLS_PATH` environment variable at the extracted
-    directory (the one containing `bin/`).
+    extract it, and point the `PATH` environment variable at the extracted
+    directory (the one containing `bin/`) and also set `LLVM_TOOLS_PATH` to the same path.
 
-    CMake requires one additional step to ensure it is on the path:
+    >[!TIP]
+    > On newer macOS systems you may need to clear the quarantine flag on the download.
 
+    **Example Commands:** Assuming download of `LLVM-22.1.8-macOS-ARM64.tar.xz`
     ```bash
-    sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
+    xattr -d com.apple.quarantine LLVM-22.1.8-macOS-ARM64.tar.xz
+    tar -xf LLVM-22.1.8-macOS-ARM64.tar.xz
+    export PATH="`pwd`/LLVM-22.1.8-macOS-ARM64/bin:${PATH}"
+    export LLVM_TOOLS_PATH="`pwd`/LLVM-22.1.8-macOS-ARM64/bin:${PATH}"
     ```
+
 
 === "Ubuntu 20.04 / 22.04 / Generic Linux"
 
@@ -86,8 +85,16 @@ Choose the operating system you are using to install F Prime:
     ```
 
     Alternatively, an official [llvm.org release](https://github.com/llvm/llvm-project/releases)
-    may be downloaded and extracted anywhere; point the `LLVM_TOOLS_PATH` environment variable
-    at the extracted directory.
+    may be downloaded and extracted anywhere; point your PATH and LLVM_TOOLS_PATH to the extracted
+    folder.
+
+    **Example Commands:** Assuming download of LLVM-22.1.8-Linux-X64.tar.xz
+    ```bash
+    tar -xf LLVM-22.1.8-Linux-X64.tar.xz
+    export PATH="`pwd`/LLVM-22.1.8-Linux-X64/bin:${PATH}"
+    export LLVM_TOOLS_PATH="`pwd`/LLVM-22.1.8-Linux-X64/bin:${PATH}"
+    ```
+
 
 To verify the tools are available, run:
 
@@ -96,8 +103,7 @@ clang --version
 ld.lld --version
 ```
 
-Any output other than "file/command not found" is good. If the tools are not on your `PATH`,
-set `LLVM_TOOLS_PATH` to the root of your LLVM installation (the directory containing `bin/`).
+Any output other than "file/command not found" is good.
 
 ## Obtaining a Sysroot
 
@@ -108,10 +114,10 @@ Linux targets (e.g. Raspberry Pi 4/5) is published at
 Download and extract it:
 
 ```bash
-sudo mkdir -p /opt/sysroots
-sudo chown $USER /opt/sysroots
-curl -Ls https://github.com/fprime-community/fprime-rpi-5-sysroot/archive/refs/tags/v0.1.tar.gz | tar -C /opt/sysroots -xz
-export AARCH64_SYSROOT=/opt/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
+mkdir -p $HOME/sysroots
+chown $USER $HOME/sysroots
+curl -Ls https://github.com/fprime-community/fprime-rpi-5-sysroot/archive/refs/tags/v0.1.tar.gz | tar -C $HOME/sysroots -xz
+export AARCH64_SYSROOT=$HOME/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
 ```
 
 The sysroot contains no host binaries, so the same download works from Linux and macOS hosts.
@@ -122,7 +128,7 @@ The sysroot contains no host binaries, so the same download works from Linux and
 
 ## Cross-Compilation Tutorial - Compiling for ARM
 
-In this section, we will learn how to cross-compile for different architectures. This tutorial will use the Raspberry Pi ARM x64 as an example. In order to fully benefit from this tutorial, the user should acquire a Raspberry Pi.
+In this section, we will learn how to cross-compile for different architectures. This tutorial will use the 64-bit ARM (aarch64) Raspberry Pi as an example. In order to fully benefit from this tutorial, the user should acquire a Raspberry Pi.
 
 The user should also have an understanding of the Raspberry Pi and specifically how to SSH into the Pi and run applications.
 
@@ -147,7 +153,7 @@ on 64-bit ARM Linux the platform is called `aarch64-clang-linux`. This toolchain
 Here is how to build for the 64-bit ARM Linux platform:
 
 ```sh
-export AARCH64_SYSROOT=/opt/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
+export AARCH64_SYSROOT=$HOME/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
 
 #You can check to make sure the environment variable is set by running:
 echo $AARCH64_SYSROOT
@@ -161,7 +167,7 @@ fprime-util build aarch64-clang-linux
 
 ## F´ Running on ARM Linux Tutorial
 
-For this tutorial, the assumption is that the ARM Linux machine is available on the network, is running SSH, and the username, password, device address, and host address are known. Without this configuration, users should skip to the next section of the tutorial.
+For this tutorial, the assumption is that the ARM Linux machine is available on the network, is running SSH, and the username, password, device address, and host address are known. Without this configuration, users will not be able to complete this section of the tutorial.
 
 First, in a terminal upload the software to hardware platform. This is done with:
 
@@ -172,7 +178,7 @@ scp build-artifacts/aarch64-clang-linux/<name-of-deployment>/bin/<name-of-deploy
 > Users must fill in the username and device address above.
 
 Next run the F´ GDS without launching the native compilation (`-n`) and with the 
-dictionary from the build above (`--dictionary ../build-artifacts/<platform name>/<name-of-deployment>/dict/<.json document>`).
+dictionary from the build above (`--dictionary build-artifacts/<platform name>/<name-of-deployment>/dict/<.json document>`).
 
 ```sh
 # In: project root folder

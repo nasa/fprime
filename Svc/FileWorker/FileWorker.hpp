@@ -9,6 +9,7 @@
 
 #include <atomic>
 #include "Fw/Types/BasicTypes.hpp"
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
@@ -35,6 +36,8 @@ class FileWorker : public FileWorkerComponentBase {
     //! Destroy FileWorker object
     ~FileWorker();
 
+    //! Set the file I/O chunk size. Optional: defaults to BLOCK_SIZE_BYTES.
+    //! Timeouts scale with the chunk count implied by the configured size.
     void configure(U64 chunkSize);
 
   private:
@@ -87,6 +90,8 @@ class FileWorker : public FileWorkerComponentBase {
                  Utils::HashBuffer& hashBuffer,
                  const U8* const data,
                  const FwSizeType size);
+    //! True if path plus the hash-file extension fits in an Fw::FileNameString
+    static bool pathFitsWithHashExtension(const Fw::StringBase& path);
     bool writeBufferToFile(Fw::Buffer& buffer, const char* fileName, FwSizeType offset, bool append);
     void writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName, FwSizeType offset, bool append);
     FwSizeType writeToFile(const U8* data, FwSizeType size, Os::File& file, const char* fileName);

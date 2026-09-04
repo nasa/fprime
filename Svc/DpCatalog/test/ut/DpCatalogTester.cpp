@@ -329,7 +329,9 @@ Svc::SendFileResponse DpCatalogTester ::from_fileOut_handler(FwIndexType portNum
                                                              U32 length) {
     // Tell the DpCatalog that the xmit succeeded
     this->pushFromPortEntry_fileOut(sourceFileName, destFileName, offset, length);
-    this->invoke_to_fileDone(0, Svc::SendFileResponse());
+    if (this->m_autoFileDone) {
+        this->invoke_to_fileDone(0, Svc::SendFileResponse());
+    }
 
     return Svc::SendFileResponse();
 }
@@ -677,42 +679,44 @@ void DpCatalogTester ::test_BadFileDone() {
     this->component.doDispatch();
     ASSERT_EVENTS_DpFileXmitError_SIZE(1);
 
-    // Now configure and place component in wait operations
-
+    // Now configure with one DP so a transmit stays in flight
     Fw::FileNameString stateFile("");
     Fw::MallocAllocator alloc;
 
     Fw::FileNameString dirs[1];
-    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 0), stateFile, 100, alloc);
+    dirs[0] = "./DpTest_BadFileDone";
+    this->makeDpDir(dirs[0].toChar());
+    Fw::Time time(1000, 100);
+    Fw::String dpFile = this->genDP(0x111, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
 
+    // Suppress the automatic successful fileDone so the transmit stays in flight
+    this->m_autoFileDone = false;
     this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
     this->component.doDispatch();
+    // Waited command: no response until the transmit finishes
     ASSERT_CMD_RESPONSE_SIZE(1);
 
-    // Clear that catalog to short circuit removal logic
-    // Simulate a file that failed after cleanup (otherwise it'd be in the catalog)
-    this->sendCmd_CLEAR_CATALOG(0, 12);
-    this->component.doDispatch();
-    ASSERT_CMD_RESPONSE_SIZE(2);
-    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_CLEAR_CATALOG, 12, Fw::CmdResponse::OK);
-
-    // Now send a file that will generate a wait response
+    // A failed fileDone halts the transmit and answers the waited command
     this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
     this->component.doDispatch();
     ASSERT_EVENTS_DpFileXmitError_SIZE(2);
-    ASSERT_CMD_RESPONSE_SIZE(3);
-    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::EXECUTION_ERROR);
 
-    // Finally, a file done that won't generate a delayed cmd response
+    // A further failed fileDone does not generate another delayed cmd response
     this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
     this->component.doDispatch();
     ASSERT_EVENTS_DpFileXmitError_SIZE(3);
-    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE_SIZE(2);
+
+    this->delDp(0x111, time, dirs[0].toChar());
     this->component.shutdown();
 }
 
@@ -752,12 +756,12 @@ void DpCatalogTester::test_MalformedFile() {
     this->sendCmd_BUILD_CATALOG(0, 0);
     this->component.doDispatch();
 
-    // 5. Command should generate event instead of ASSERT
+    // 5. Command should fail with an event instead of ASSERT
     ASSERT_CMD_RESPONSE_SIZE(1);
-    // ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 0, Fw::CmdResponse::EXECUTION_ERROR);
 
     // High-priority warning event should be caught by this test
-    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileCorruptedDataError_SIZE(1);
     ASSERT_EVENTS_FileCorruptedDataError(0, stateFile.toChar(), static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR));
 
@@ -841,6 +845,42 @@ void DpCatalogTester::test_NonCanonicalDpRejected() {
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(2);
     ASSERT_from_fileOut_SIZE(0);
+
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_NonDpFilesDoNotConsumeSlots() {
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_NonDpFiles");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+
+    // fill the directory with as many non-DP files as there are catalog slots
+    for (FwIndexType junk = 0; junk < DP_MAX_FILES; junk++) {
+        Fw::String junkName;
+        junkName.format("%s/junk_%03" PRI_FwIndexType ".txt", dir.toChar(), junk);
+        Os::File junkFile;
+        ASSERT_EQ(junkFile.open(junkName.toChar(), Os::File::Mode::OPEN_CREATE), Os::File::Status::OP_OK);
+        junkFile.close();
+    }
+
+    // generate enough DP files to fill every catalog slot
+    Fw::Time time(1000, 100);
+    for (FwIndexType dp = 0; dp < DP_MAX_FILES; dp++) {
+        Fw::String dpFile =
+            this->genDP(static_cast<FwDpIdType>(dp), 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(dpFile.toChar(), "");
+    }
+
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+
+    // every DP file must be cataloged despite the non-DP files
+    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
+    ASSERT_EVENTS_CatalogFull_SIZE(1);
 
     this->component.shutdown();
 }
