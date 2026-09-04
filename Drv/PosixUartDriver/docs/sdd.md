@@ -149,10 +149,10 @@ The component supports the following baud rates:
 | BAUD_1152K | 1152000 | Platform-dependent |
 | BAUD_1500K | 1500000 | Platform-dependent |
 | BAUD_2000K | 2000000 | Platform-dependent |
-| BAUD_2500K | 2500000 | Platform-dependent (if supported) |
-| BAUD_3000K | 3000000 | Platform-dependent (if supported) |
-| BAUD_3500K | 3500000 | Platform-dependent (if supported) |
-| BAUD_4000K | 4000000 | Platform-dependent (if supported) |
+| BAUD_2500K | 2500000 | Platform-dependent |
+| BAUD_3000K | 3000000 | Platform-dependent |
+| BAUD_3500K | 3500000 | Platform-dependent |
+| BAUD_4000K | 4000000 | Platform-dependent |
 
 ### 5.3 Thread Configuration
 
