@@ -9,7 +9,6 @@
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 
 #include <Os/File.hpp>
-#include <Os/SandboxedFile.hpp>
 #include <Utils/Hash/Hash.hpp>
 
 #include <cstdio>
@@ -51,9 +50,16 @@ void PrmDbImpl::configure(const char* file) {
     this->m_fileName = file;
 }
 
-void PrmDbImpl::configureLoadSandbox(const char* directory) {
+void PrmDbImpl::configureSandbox(const char* directory) {
     FW_ASSERT(directory != nullptr);
     this->m_sandboxDir = directory;
+}
+
+void PrmDbImpl::applySandbox(Os::SandboxedFile& file) const {
+    // Left unconfigured (fail-closed) when configureSandbox() was never called
+    if (this->m_sandboxDir.length() > 0) {
+        file.configure(this->m_sandboxDir.toChar());
+    }
 }
 
 void PrmDbImpl::readParamFile() {
@@ -128,7 +134,8 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     FW_ASSERT(this->m_fileName.length() > 0);
 
-    Os::File paramFile;
+    Os::SandboxedFile paramFile;
+    this->applySandbox(paramFile);
     WorkingBuffer buff;
 
     Os::File::Status stat = paramFile.open(this->m_fileName.toChar(), Os::File::OPEN_WRITE, Os::File::OVERWRITE);
@@ -391,24 +398,10 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     FW_ASSERT(dbType == PrmDbType::DB_ACTIVE or dbType == PrmDbType::DB_STAGING);
     FW_ASSERT(fileName.length() > 0);
 
-    // Commanded loads (staging) carry a ground-supplied path; always sandbox them.
-    // An unconfigured sandbox rejects every open (fail-closed).
-    if (dbType == PrmDbType::DB_STAGING) {
-        Os::SandboxedFile paramFile;
-        if (this->m_sandboxDir.length() > 0) {
-            paramFile.configure(this->m_sandboxDir.toChar());
-        }
-        return this->readParamFileWork(paramFile, fileName, dbType);
-    }
-    Os::File paramFile;
-    return this->readParamFileWork(paramFile, fileName, dbType);
-}
-
-template <typename FileType>
-PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileWork(FileType& paramFile,
-                                                      const Fw::StringBase& fileName,
-                                                      PrmDbType dbType) {
     Fw::String dbString = getDbString(dbType);
+
+    Os::SandboxedFile paramFile;
+    this->applySandbox(paramFile);
 
     Os::File::Status stat = paramFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {

@@ -936,7 +936,6 @@ void PrmDbTester::runPrmFileLoadNominal() {
     printDb(PrmDbType::DB_STAGING);
 
     // Send PRM_LOAD_FILE command with merge=true to merge with active database
-    this->m_impl.configureLoadSandbox("/prm");
     Os::Stub::File::Test::StaticData::setReadResult(m_io_data, Os::Stub::File::Test::StaticData::data.pointer);
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     this->clearEvents();
@@ -1099,7 +1098,6 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
 
     // Send PRM_LOAD_FILE command with merge=true to merge with active database
     // but with a file open error
-    this->m_impl.configureLoadSandbox("/prm");
     Os::Stub::File::Test::StaticData::setReadResult(m_io_data, Os::Stub::File::Test::StaticData::data.pointer);
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::DOESNT_EXIST);
     this->clearEvents();
@@ -1135,7 +1133,24 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
 void PrmDbTester::runPrmFileLoadSandboxViolation() {
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
 
-    // 0. With no sandbox configured, every commanded load is rejected (fail-closed)
+    // 0. With no sandbox configured, every file access is rejected (fail-closed)
+    this->clearEvents();
+    this->clearHistory();
+    this->m_impl.readParamFile();
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::OUTSIDE_SANDBOX);
+
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_SAVE_FILE(0, 8);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_SAVE_FILE, 8, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
+    ASSERT_EVENTS_PrmFileWriteError(0, PrmWriteError::OPEN, 0, Os::File::OUTSIDE_SANDBOX);
+
     this->clearEvents();
     this->clearHistory();
     this->sendCmd_PRM_LOAD_FILE(0, 9, Fw::String("/prm/good.prm"), PrmDb_Merge::RESET);
@@ -1148,8 +1163,8 @@ void PrmDbTester::runPrmFileLoadSandboxViolation() {
     ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::OUTSIDE_SANDBOX);
     ASSERT_EVENTS_PrmDbFileLoadFailed_SIZE(1);
 
-    // Restrict commanded loads to /prm
-    this->m_impl.configureLoadSandbox("/prm");
+    // Restrict all file access to /prm
+    this->m_impl.configureSandbox("/prm");
 
     // 1. A path escaping the sandbox must be rejected before any file I/O
     this->clearEvents();

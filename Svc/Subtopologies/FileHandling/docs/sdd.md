@@ -37,9 +37,9 @@ The **FileHandling subtopology** packages the core file-transfer services common
 > [!WARNING]
 > **This subtopology is not configured to be secure by default.** For backwards compatibility, its
 > `configComponents` phase configures the file-access sandboxes of `fileUplink`, `fileDownlink`,
-> and `prmDb` (`PRM_LOAD_FILE`) to `FileHandlingConfig::Paths::sandboxDir`, which defaults to
-> `"/"`. With that default, **any absolute path accessible to the process** may be written, read,
-> or loaded via ground command. (The underlying `Os::SandboxedFile` is fail-closed when left
+> and `prmDb` to `FileHandlingConfig::Paths::sandboxDir`, which defaults to `"/"`. With that
+> default, **any absolute path accessible to the process** may be written, read, or loaded via
+> ground command. (The underlying `Os::SandboxedFile` is fail-closed when left
 > unconfigured; this subtopology deliberately configures it open.)
 >
 > Deployments wishing restricted file security **must call `configure` again** from topology setup
@@ -49,8 +49,9 @@ The **FileHandling subtopology** packages the core file-transfer services common
 > * `FileHandling::fileDownlink.configure(<directory>)` — restrict downlink reads (this is the
 >   `configure(directory)` overload; the `configure(cooldown, cycleTime, fileQueueDepth)`
 >   overload does **not** set a sandbox).
-> * `FileHandling::prmDb.configureLoadSandbox(<directory>)` — restrict `PRM_LOAD_FILE` reads
->   (`prmDb.configure(<file name>)` sets the store-file name and is **not** a load sandbox).
+> * `FileHandling::prmDb.configureSandbox(<directory>)` — restrict all `prmDb` file access
+>   (startup read, `PRM_SAVE_FILE`, `PRM_LOAD_FILE`); the directory must contain the store file
+>   set by `prmDb.configure(<file name>)`, which is **not** itself a sandbox.
 >
 > Alternatively, override `FileHandlingConfig::Paths::sandboxDir` to apply a single restricted
 > directory to all three components. Paths resolving outside a restricted sandbox — `../`
@@ -100,7 +101,7 @@ topology Flight {
 * **Stack sizes** — Task stacks for active components (`fileUplink`, `fileDownlink`).
 * **Priorities** — RTOS priorities for the active/queued components as applicable.
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
-* **Paths** — File paths used by the subtopology; `Paths.prmDbFile` sets the `prmDb` parameter storage file (default `PrmDb.dat`); `Paths.sandboxDir` sets the file-access sandbox for `fileUplink`, `fileDownlink`, and `prmDb` loads (default `/`, unrestricted — see §2.3).
+* **Paths** — File paths used by the subtopology; `Paths.prmDbFile` sets the `prmDb` parameter storage file (default `PrmDb.dat`); `Paths.sandboxDir` sets the file-access sandbox for `fileUplink`, `fileDownlink`, and `prmDb` (default `/`, unrestricted — see §2.3).
 
 > These knobs tailor runtime footprint and scheduling without modifying the subtopology wiring.
 

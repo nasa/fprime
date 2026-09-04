@@ -46,8 +46,8 @@ module FileHandling {
     {
         phase Fpp.ToCpp.Phases.configComponents """
             FileHandling::prmDb.configure(FileHandlingConfig::Paths::prmDbFile);
-            // Sandbox for PRM_LOAD_FILE reads; "/" is unrestricted. Re-configure to restrict.
-            FileHandling::prmDb.configureLoadSandbox(FileHandlingConfig::Paths::sandboxDir);
+            // Sandbox for all PrmDb file access; "/" is unrestricted. Re-configure to restrict.
+            FileHandling::prmDb.configureSandbox(FileHandlingConfig::Paths::sandboxDir);
         """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandling::prmDb.readParamFile();

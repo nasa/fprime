@@ -37,14 +37,14 @@ The **FileHandlingCfdp subtopology** packages CFDP-based file-transfer services 
 
 > [!WARNING]
 > **This subtopology is not configured to be secure by default.** For backwards compatibility, its
-> `configComponents` phase configures the `prmDb` load sandbox to `"/"`, so `PRM_LOAD_FILE` may
-> load from **any absolute path accessible to the process** via ground command. Deployments
-> wishing restricted file security **must call `configureLoadSandbox` again** from topology setup
+> `configComponents` phase configures the `prmDb` file-access sandbox to `"/"`, so `PRM_LOAD_FILE`
+> may load from **any absolute path accessible to the process** via ground command. Deployments
+> wishing restricted file security **must call `configureSandbox` again** from topology setup
 > code (after the autocoded `configComponents` phase runs):
-> `FileHandlingCfdp::prmDb.configureLoadSandbox(<directory>)` (note: `prmDb.configure(<file name>)`
-> sets the store-file name and is **not** a load sandbox). Additionally, CFDP file transfers via
-> `cfdpManager` are not sandboxed: ground-commanded transactions may read or write any path
-> accessible to the process.
+> `FileHandlingCfdp::prmDb.configureSandbox(<directory>)`, where the directory contains the store
+> file set by `prmDb.configure(<file name>)` (which is **not** itself a sandbox). Additionally,
+> CFDP file transfers via `cfdpManager` are not sandboxed: ground-commanded transactions may read
+> or write any path accessible to the process.
 
 ### 2.4 Differences from FileHandling Subtopology
 

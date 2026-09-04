@@ -338,15 +338,15 @@ def test_system_resources(fprime_test_api):
 def test_file_uplink_sandbox(fprime_test_api):
     """Test that FileUplink sandbox rejects files outside the allowed directory.
 
-    The Ref deployment configures FileUplink with sandbox directory /tmp/fileUplink/.
-    Uploading to a path outside that directory should produce a FileOpenError event,
-    and no FileReceived event.
+    The Ref deployment sandboxes FileUplink to "." (the working directory of the
+    flight software process). Uploading to an absolute path outside that directory
+    should produce a FileOpenError event and no FileReceived event; uploading to a
+    path relative to the working directory should succeed.
     """
     import os
     import tempfile
 
-    # Create the sandbox directory so in-sandbox uplinks succeed
-    os.makedirs("/tmp/fileUplink", exist_ok=True)
+    uploaded = "ref_sandbox_test.bin"
 
     # Create a small temporary file to uplink
     with tempfile.NamedTemporaryFile(delete=False, suffix=".bin") as f:
@@ -358,18 +358,17 @@ def test_file_uplink_sandbox(fprime_test_api):
         fprime_test_api.clear_histories()
         fprime_test_api.uplink_file(local_file, destination="/tmp/evil/escaped.bin")
 
-        # Expect a FileOpenError warning because the path is outside /tmp/fileUplink/
+        # Expect a FileOpenError warning because the path is outside the working directory
         fprime_test_api.await_event("FileHandling.fileUplink.FileOpenError", timeout=10)
 
         # --- Test 2: uplink to a path INSIDE the sandbox should succeed ---
         fprime_test_api.clear_histories()
-        fprime_test_api.uplink_file(local_file, destination="/tmp/fileUplink/test.bin")
+        fprime_test_api.uplink_file(local_file, destination=uploaded)
 
         fprime_test_api.await_event("FileHandling.fileUplink.FileReceived", timeout=10)
     finally:
         os.unlink(local_file)
-        # Clean up uploaded file
-        try:
-            os.unlink("/tmp/fileUplink/test.bin")
-        except OSError:
-            pass  # uploaded file may not exist; nothing to clean up
+        # The flight software owns the working directory; ask it to remove the upload
+        fprime_test_api.send_and_assert_command(
+            "FileHandling.fileManager.RemoveFile", args=[uploaded, True], max_delay=5
+        )
