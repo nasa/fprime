@@ -53,7 +53,7 @@ module FppTest {
         output port PingSend: [2] Svc.Ping
 
         @ Ping return port
-        async input port PingReturn: [2] Svc.Ping
+        async input port PingReturn: [2] Svc.Ping drop
 
         output port syncOut: [2] Svc.Sched
         async input port syncIn: [2] Svc.Sched
