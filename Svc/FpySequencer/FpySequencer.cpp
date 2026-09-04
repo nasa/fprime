@@ -453,6 +453,14 @@ void FpySequencer::updateDebugTelemetryStruct() {
         FW_ASSERT(this->m_runtime.nextStatementIndex < Fpy::MAX_SEQUENCE_STATEMENT_COUNT,
                   static_cast<FwAssertArgType>(this->m_runtime.nextStatementIndex));
         const Fpy::Statement& nextStmt = this->m_sequenceObj.get_statements()[this->m_runtime.nextStatementIndex];
+        
+        // If we already tried this statement and it failed, skip deserializeDirective
+        // which emits WARNING_HI on every call (#5661)
+        if (this->m_debug.cachedStmtIndex == this->m_runtime.nextStatementIndex &&
+            !this->m_debug.nextStatementReadSuccess) {
+            this->m_debug.stackSize = this->m_runtime.stack.size;
+            return;
+        }
         DirectiveUnion directiveUnion;
         Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);
 
@@ -462,6 +470,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
             this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
             this->m_debug.nextCmdOpcode = 0;
             this->m_debug.nextStatementIndex = this->m_runtime.nextStatementIndex;
+            this->m_debug.cachedStmtIndex = this->m_runtime.nextStatementIndex;
             this->m_debug.stackSize = this->m_runtime.stack.size;
             return;
         }
