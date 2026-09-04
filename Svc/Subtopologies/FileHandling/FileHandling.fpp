@@ -10,7 +10,8 @@ module FileHandling {
         cpu FileHandlingConfig.CpuAffinities.fileUplink \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        FileHandling::fileUplink.configure(".");
+        // Sandbox for uplinked file writes; "/" is unrestricted. Re-configure to restrict.
+        FileHandling::fileUplink.configure(FileHandlingConfig::Paths::sandboxDir);
         """
     }
 
@@ -26,7 +27,8 @@ module FileHandling {
             FileHandlingConfig::DownlinkConfig::cycleTime,
             FileHandlingConfig::DownlinkConfig::fileQueueDepth
         );
-        FileHandling::fileDownlink.configure(".");
+        // Sandbox for downlinked file reads; "/" is unrestricted. Re-configure to restrict.
+        FileHandling::fileDownlink.configure(FileHandlingConfig::Paths::sandboxDir);
         """
     }
 
@@ -44,7 +46,8 @@ module FileHandling {
     {
         phase Fpp.ToCpp.Phases.configComponents """
             FileHandling::prmDb.configure(FileHandlingConfig::Paths::prmDbFile);
-            FileHandling::prmDb.configureLoadSandbox(".");
+            // Sandbox for PRM_LOAD_FILE reads; "/" is unrestricted. Re-configure to restrict.
+            FileHandling::prmDb.configureLoadSandbox(FileHandlingConfig::Paths::sandboxDir);
         """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandling::prmDb.readParamFile();
