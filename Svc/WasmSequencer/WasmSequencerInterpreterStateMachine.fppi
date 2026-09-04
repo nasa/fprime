@@ -1,36 +1,38 @@
 enum TrapReason {
     @ No recorded trap
-    NONE
+    NONE = -1
     @ Triggered by unreachable instruction
-    UNREACHABLE
+    UNREACHABLE = 0
     @ A host function has noted an unrecoverable failure
-    HOST
+    HOST = 1
     @ Integer or floating point division by zero
-    DIVIDE_BY_ZERO
+    DIVIDE_BY_ZERO = 2
     @ An indirect call tried to map to a table function out of range
-    INVALID_TABLE_INDEX
+    INVALID_TABLE_INDEX = 3
     @ The function type in an indirect call does not match the function pointer's type
-    INVALID_TABLE_FUNCTION_TYPE
+    INVALID_TABLE_FUNCTION_TYPE = 4
     @ An indirect call referenced an uninitialized table element
-    UNINITIALIZED_TABLE_ELEMENT
+    UNINITIALIZED_TABLE_ELEMENT = 5
     @ An imported global could not be read
-    GLOBAL_GET_FAILED
+    GLOBAL_GET_FAILED = 6
     @ An imported global could not be set
-    GLOBAL_SET_FAILED
+    GLOBAL_SET_FAILED = 7
     @ The interpreter ran out of memory
-    OUT_OF_MEMORY
+    OUT_OF_MEMORY = 8
     @ memory.grow failed because a host function has taken ownership of a memory
-    MEMORY_REF_NOT_UNIQUE
+    MEMORY_REF_NOT_UNIQUE = 9
     @ A memory operation is out of bounds
-    MEMORY_OUT_OF_BOUNDS
+    MEMORY_OUT_OF_BOUNDS = 10
     @ Ran out of stack space
-    STACK_OVERFLOW
+    STACK_OVERFLOW = 11
     @ Attempting to convert Inf to integer
-    UNREPRESENTABLE_RESULT
+    UNREPRESENTABLE_RESULT = 12
     @ Signed division causes integer overflow
-    INTEGER_OVERFLOW
+    INTEGER_OVERFLOW = 13
     @ Attempting to convert NaN to integer
-    BAD_CONVERSION_TO_INTEGER
+    BAD_CONVERSION_TO_INTEGER = 14
+    @ The IR decoder reached an opcode or immediate it cannot interpret.
+    MALFORMED_IR = 15
 }
 
 enum AllocError : U8 {

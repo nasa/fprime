@@ -107,7 +107,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         //! by .wasm modules.
         //!
         //! The larger this number is the higher overhead needed in the Wasm heap.
-        U32 maxCodePages = 256;
+        FwSizeType maxCodePages = 256;
 
         //! Maximum number of Wasm modules that may be loaded into the sequencer's store.
         U8 maxGuestModules = 8;

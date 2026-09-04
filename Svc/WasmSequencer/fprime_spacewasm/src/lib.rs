@@ -57,10 +57,6 @@ unsafe impl spacewasm::Allocator for FprimeWasmGlobalAllocator {
             panic!("allocator not registered");
         }
     }
-
-    fn memory_statistics(&self) -> spacewasm_memory_statistics_t {
-        unreachable!()
-    }
 }
 
 struct SequencerPageAllocator(spacewasm::PageAllocator<FprimeWasmGlobalAllocator, MAX_PAGES>);
@@ -95,10 +91,6 @@ unsafe impl spacewasm::Allocator for SwapableAllocator {
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: core::alloc::Layout) {
         unsafe { self.get().0.dealloc(ptr, layout) }
-    }
-
-    fn memory_statistics(&self) -> spacewasm_memory_statistics_t {
-        self.get().0.memory_statistics()
     }
 }
 

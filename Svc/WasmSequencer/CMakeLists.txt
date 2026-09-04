@@ -111,6 +111,13 @@ if(TARGET Svc_WasmSequencer)
 endif()
 
 ### Unit Tests ###
+
+# Override NORETURN on UT builds. We are manually triggering Rust panic to validate the connection
+# and need to return which would make UBSAN complain on `spacewasm_panic`.
+if(BUILD_TESTING AND TARGET Svc_WasmSequencer)
+    target_compile_definitions(Svc_WasmSequencer PUBLIC SPACEWASM_NORETURN=)
+endif()
+
 register_fprime_ut(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencer.fpp"

@@ -4634,7 +4634,7 @@ TEST_F(WasmSequencerTester, GlobalSetConstIsNotMutable) {
     this->dispatchAll();
 
     ASSERT_EVENTS_GlobalSetFailed_SIZE(1);
-    ASSERT_EVENTS_GlobalSetFailed(0, "", "c_i32", WasmSequencer_Status::ERR_GLOBAL_IS_NOT_MUTABLE);
+    ASSERT_EVENTS_GlobalSetFailed(0, "", "c_i32", WasmSequencer_Status::ERR_GLOBAL_NOT_MUTABLE);
     ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I32, 92, Fw::CmdResponse::EXECUTION_ERROR);
     // The const global is unchanged.
     this->sendCmd_GLOBAL_GET(0, 93, Fw::CmdStringArg(""), Fw::CmdStringArg("c_i32"));
