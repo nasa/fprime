@@ -29,6 +29,13 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
     //! Destroy SdlsSaRouter object
     ~SdlsSaRouter();
 
+    //! Replace this instance's SA-to-port routing table, overriding the compile-time default
+    //!
+    //! Each direction needs its own table; see SdlsSaRouterCfg.fpp. Call during topology
+    //! setup, before any frame is routed.
+    void configure(const SdlsCfg::SaMap& saMap  //!< SA-to-port map for this instance
+    );
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports

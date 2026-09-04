@@ -10,7 +10,7 @@ module Ccsds {
     passive component CcsdsSdlsFramer {
 
         @ Security association index used when the incoming frame context does not specify one
-        param SA_INDEX: U16 default 0
+        param SA_INDEX: U16 default 2
 
         @ Event raised when the encryption helper fails
         event EncryptionFailed(status: Svc.Ccsds.SdlsStatus) severity warning high format "Failed to encrypt frame: {}"
