@@ -26,8 +26,10 @@ TmFramer ::~TmFramer() {}
 // ----------------------------------------------------------------------
 
 void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
-              static_cast<FwAssertArgType>(data.getSize()));
+    FW_ASSERT(data.getSize() <= TmPayloadCapacity, static_cast<FwAssertArgType>(data.getSize()));
+    // The data must either fill the data field exactly or leave room for a minimum idle packet (4.2.2.5)
+    const FwSizeType residual = TmPayloadCapacity - data.getSize();
+    FW_ASSERT(residual == 0 || residual >= MIN_IDLE_PACKET_SIZE, static_cast<FwAssertArgType>(residual));
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
 
     // -----------------------------------------------
@@ -72,7 +74,7 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
 
     // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet.
     // A full data field (e.g. delivered by a spanning aggregator) requires no fill.
-    if (frameSerializer.getSize() < ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE) {
+    if (residual > 0) {
         this->fill_with_idle_packet(frameSerializer);
     }
 
@@ -119,7 +121,7 @@ void TmFramer ::fill_with_idle_packet(Fw::SerialBufferBase& serializer) {
     // Length token is defined as the number of bytes of payload data minus 1
     const U16 lengthToken = static_cast<U16>(idlePacketSize - SpacePacketHeader::SERIALIZED_SIZE - 1);
 
-    FW_ASSERT(idlePacketSize >= 7, static_cast<FwAssertArgType>(idlePacketSize));  // 7 bytes minimum for idle packet
+    FW_ASSERT(idlePacketSize >= MIN_IDLE_PACKET_SIZE, static_cast<FwAssertArgType>(idlePacketSize));
     FW_ASSERT(idlePacketSize <= ComCfg::TmFrameFixedSize, static_cast<FwAssertArgType>(idlePacketSize));
 
     SpacePacketHeader header;

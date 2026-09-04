@@ -26,6 +26,8 @@ class TmFramer final : public TmFramerComponentBase {
     static constexpr FwSizeType TmPayloadCapacity =
         ComCfg::TmFrameFixedSize - (TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE);
     static constexpr FwSizeType SppOverhead = (2 * SpacePacketHeader::SERIALIZED_SIZE) + 1;
+    //! Minimum SPP idle packet size: header plus one byte of idle data
+    static constexpr FwSizeType MIN_IDLE_PACKET_SIZE = SpacePacketHeader::SERIALIZED_SIZE + 1;
 
     // These are to ensure the frame can hold the packet buffer, its SP header and an idle packet of 1 byte
     // This is because TM specifies a frame to be padded with an idle packet of at least 1 byte of idle data

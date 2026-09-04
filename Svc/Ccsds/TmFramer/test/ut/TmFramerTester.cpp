@@ -178,9 +178,37 @@ void TmFramerTester ::testFirstHeaderPointerFromContext() {
               static_cast<U16>(TMSubfields::FHP_NO_PACKET_START));
 }
 
+void TmFramerTester ::testResidualTooSmallForIdlePacket() {
+    // Residual space that is neither zero nor large enough for a minimum idle packet is a caller error
+    const FwSizeType fullSize = TmFramer::TmPayloadCapacity;
+    U8 bufferData[fullSize];
+    ComCfg::FrameContext context;
+    for (FwSizeType residual = 1; residual < TmFramer::MIN_IDLE_PACKET_SIZE; ++residual) {
+        Fw::Buffer buffer(bufferData, fullSize - residual);
+        this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
+        ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
+    }
+    // Exactly a minimum idle packet of residual space is accepted and filled
+    Fw::Buffer buffer(bufferData, fullSize - TmFramer::MIN_IDLE_PACKET_SIZE);
+    this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(1);
+    const U8* frame = this->fromPortHistory_dataOut->at(0).data.getData();
+    const FwSizeType idleHeaderOffset = TMHeader::SERIALIZED_SIZE + buffer.getSize();
+    // Idle packet header: APID 0x7FF (version 0, no secondary header), unsegmented, length token 0
+    ASSERT_EQ(frame[idleHeaderOffset], 0x07);
+    ASSERT_EQ(frame[idleHeaderOffset + 1], 0xFF);
+    ASSERT_EQ(frame[idleHeaderOffset + 2], 0xC0);
+    ASSERT_EQ(frame[idleHeaderOffset + 3], 0x00);
+    ASSERT_EQ(frame[idleHeaderOffset + 4], 0x00);
+    ASSERT_EQ(frame[idleHeaderOffset + 5], 0x00);
+    const U8 idlePattern = this->component.IDLE_DATA_PATTERN;
+    ASSERT_EQ(frame[idleHeaderOffset + 6], idlePattern);
+}
+
 void TmFramerTester ::testFullDataFieldNoIdleFill() {
     // A data field delivered at full capacity (e.g. by a spanning aggregator) requires no idle fill
-    const FwSizeType fullSize = ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE;
+    const FwSizeType fullSize = TmFramer::TmPayloadCapacity;
     U8 bufferData[fullSize];
     for (FwSizeType i = 0; i < fullSize; ++i) {
         bufferData[i] = static_cast<U8>(i & 0xFF);

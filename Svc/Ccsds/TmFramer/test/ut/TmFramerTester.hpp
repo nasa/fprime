@@ -49,6 +49,7 @@ class TmFramerTester final : public TmFramerGTestBase {
     void testDataReturn();
     void testBufferOwnershipState();
     void testFirstHeaderPointerFromContext();
+    void testResidualTooSmallForIdlePacket();
     void testFullDataFieldNoIdleFill();
 
   private:
