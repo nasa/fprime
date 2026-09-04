@@ -391,11 +391,13 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     FW_ASSERT(dbType == PrmDbType::DB_ACTIVE or dbType == PrmDbType::DB_STAGING);
     FW_ASSERT(fileName.length() > 0);
 
-    // Commanded loads (staging) may carry a ground-supplied path; restrict them
-    // to the configured sandbox directory to prevent path traversal
-    if ((dbType == PrmDbType::DB_STAGING) && (this->m_sandboxDir.length() > 0)) {
+    // Commanded loads (staging) carry a ground-supplied path; always sandbox them.
+    // An unconfigured sandbox rejects every open (fail-closed).
+    if (dbType == PrmDbType::DB_STAGING) {
         Os::SandboxedFile paramFile;
-        paramFile.configure(this->m_sandboxDir.toChar());
+        if (this->m_sandboxDir.length() > 0) {
+            paramFile.configure(this->m_sandboxDir.toChar());
+        }
         return this->readParamFileWork(paramFile, fileName, dbType);
     }
     Os::File paramFile;

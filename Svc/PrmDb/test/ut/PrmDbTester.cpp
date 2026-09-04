@@ -872,7 +872,7 @@ void PrmDbTester::runDbCommitTest() {
 }
 
 void PrmDbTester::runPrmFileLoadNominal() {
-    Fw::String file = "TestFile.prm";
+    Fw::String file = "/prm/TestFile.prm";
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
 
     // Store pointers to databases before swap for verification
@@ -936,6 +936,7 @@ void PrmDbTester::runPrmFileLoadNominal() {
     printDb(PrmDbType::DB_STAGING);
 
     // Send PRM_LOAD_FILE command with merge=true to merge with active database
+    this->m_impl.configureLoadSandbox("/prm");
     Os::Stub::File::Test::StaticData::setReadResult(m_io_data, Os::Stub::File::Test::StaticData::data.pointer);
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     this->clearEvents();
@@ -1033,7 +1034,7 @@ void PrmDbTester::runPrmFileLoadNominal() {
 }
 
 void PrmDbTester::runPrmFileLoadWithErrors() {
-    Fw::String file = "TestFile.prm";
+    Fw::String file = "/prm/TestFile.prm";
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
 
     // Store pointers to databases before swap for verification
@@ -1098,6 +1099,7 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
 
     // Send PRM_LOAD_FILE command with merge=true to merge with active database
     // but with a file open error
+    this->m_impl.configureLoadSandbox("/prm");
     Os::Stub::File::Test::StaticData::setReadResult(m_io_data, Os::Stub::File::Test::StaticData::data.pointer);
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::DOESNT_EXIST);
     this->clearEvents();
@@ -1132,6 +1134,19 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
 
 void PrmDbTester::runPrmFileLoadSandboxViolation() {
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
+
+    // 0. With no sandbox configured, every commanded load is rejected (fail-closed)
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_LOAD_FILE(0, 9, Fw::String("/prm/good.prm"), PrmDb_Merge::RESET);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 9, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::OUTSIDE_SANDBOX);
+    ASSERT_EVENTS_PrmDbFileLoadFailed_SIZE(1);
 
     // Restrict commanded loads to /prm
     this->m_impl.configureLoadSandbox("/prm");

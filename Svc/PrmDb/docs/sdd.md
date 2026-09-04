@@ -45,12 +45,13 @@ When the component receives the `PRM_SAVE_FILE` command, it saves the entire tab
 The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied path into the staging database. Paths rejected by the load sandbox emit a `PrmFileReadError` event with an `OPEN` stage.
 
 > [!WARNING]
-> The load sandbox is **fail-open**: if `configureLoadSandbox(directory)` is never called, any path
-> accessible to the process is accepted, permitting arbitrary path access via ground command. This
-> default is intentionally insecure for backwards compatibility. Security-conscious deployments
-> **must** call `configureLoadSandbox(directory)` during topology setup. Note that the stock
-> `FileHandling` and `FileHandlingCfdp` subtopologies configure the load sandbox to `"/"`, which is
-> equally unrestricted; deployments using them **must** call `configureLoadSandbox(directory)`
+> The load sandbox is **fail-closed**: `PRM_LOAD_FILE` always reads through an `Os::SandboxedFile`,
+> so until `configureLoadSandbox(directory)` is called every commanded load is rejected with
+> `OUTSIDE_SANDBOX`. A deployment **must** call `configureLoadSandbox(directory)` during topology
+> setup to enable commanded loads and to select the allowed base directory. Note that the stock
+> `FileHandling` and `FileHandlingCfdp` subtopologies configure the load sandbox to `"/"` for
+> backwards compatibility, which permits loading from **any absolute path accessible to the
+> process**. Security-conscious deployments using them **must** call `configureLoadSandbox(directory)`
 > again from topology setup code with a restricted directory, after which `../` traversal and
 > absolute paths outside it are rejected.
 > This is distinct from `configure(file)`, which sets the store-file name and is **not** a load

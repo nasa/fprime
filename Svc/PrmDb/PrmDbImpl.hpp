@@ -59,8 +59,8 @@ class PrmDbImpl final : public PrmDbComponentBase {
 
     //!  \brief PrmDb load sandbox configure method
     //!
-    //!  Restricts the directory from which PRM_LOAD_FILE may read parameter
-    //!  files. If never called, any path is allowed (legacy behavior).
+    //!  Restricts the directory from which PRM_LOAD_FILE may read parameter files.
+    //!  Fail-closed: until called, every commanded load is rejected. Configure `/` to allow any path.
     //!
     //!  \param directory directory that ground-commanded parameter file loads are restricted to.
     void configureLoadSandbox(const char* directory);
@@ -93,7 +93,7 @@ class PrmDbImpl final : public PrmDbComponentBase {
   protected:
   private:
     Fw::String m_fileName;    //!< filename for parameter storage
-    Fw::String m_sandboxDir;  //!< directory restriction for commanded file loads (empty = unrestricted)
+    Fw::String m_sandboxDir;  //!< directory restriction for commanded file loads (empty = all loads rejected)
 
     PrmDbFileLoadState m_state;  // Current file load state of the parameter database
 
