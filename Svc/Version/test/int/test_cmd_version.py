@@ -54,9 +54,7 @@ def test_send_version_command(fprime_test_api):
 
         for result in event_cnt:
             msg = "{}".format(result.get_str())
-            msg_list = str(msg).split()
-            version = msg_list[6].replace("[", "")
-            report_ver_value = version.replace("]", "")
+            report_ver_value = msg.split("[")[-1].split("]")[0]
 
         # Channel (Telemetry) History search found the specified item: 2025-07-28T17:36:43.474180: CdhCore.version.ProjectVersion = v4.0.0a1-122-g7b6e9a2e1
         if count == 1:
@@ -71,8 +69,7 @@ def test_send_version_command(fprime_test_api):
             )
 
         if count == 1 or count == 2:
-            evr_ver_list = str(evr_ver).split()
-            evr_ver_value = evr_ver_list[3]
+            evr_ver_value = str(evr_ver).split("=")[-1].strip()
 
             assert (
                 evr_ver_value == report_ver_value
