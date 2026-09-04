@@ -112,11 +112,9 @@ endif()
 
 ### Unit Tests ###
 
-# Override NORETURN on UT builds. We are manually triggering Rust panic to validate the connection
-# and need to return which would make UBSAN complain on `spacewasm_panic`.
-if(BUILD_TESTING AND TARGET Svc_WasmSequencer)
-    target_compile_definitions(Svc_WasmSequencer PUBLIC SPACEWASM_NORETURN=)
-endif()
+# Disable NORETURN. We are using `FW_ASSERT(false)` which doesn't always respect noreturn
+# When FW_ASSERT(false) does not reset we accept the undefined behavior after the assert.
+target_compile_definitions(Svc_WasmSequencer PUBLIC SPACEWASM_NORETURN=)
 
 register_fprime_ut(
     AUTOCODER_INPUTS
