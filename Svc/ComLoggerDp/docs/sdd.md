@@ -24,8 +24,6 @@ The ComLoggerDp is an active component. Com buffers arriving on the async `comIn
 
 ### 3.1 Component Architecture
 
-*Figure 1: ComLoggerDp component interface showing input/output ports and data flow directions.*
-
 The component uses a stateful design that:
 1. Allocates a data product container when logging is enabled and the first packet arrives
 2. Serializes incoming Com buffers as records into the container
