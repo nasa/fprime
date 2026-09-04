@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-03 22:12:29</td>
+      <td>2026-09-04 22:11:55</td>
     </tr>
   </table>
 </div>
@@ -70,7 +70,7 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l41">Svc::RateGroupDriver::CycleIn_handler(short, Os::DelegateRawTime&amp;) (line 41)</a></td><td>called 235 times</td><td>85.0%</td></tr>
+    <tr><td><a href="#l41">Svc::RateGroupDriver::CycleIn_handler(short, Os::DelegateRawTime&amp;) (line 41)</a></td><td>called 241 times</td><td>85.0%</td></tr>
     <tr><td><a href="#l9">Svc::RateGroupDriver::RateGroupDriver(char const*) (line 9)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l12">Svc::RateGroupDriver::configure(Svc::RateGroupDriver::DividerSet const&amp;) (line 12)</a></td><td>called 1 time</td><td>75.0%</td></tr>
     <tr><td><a href="#l39">Svc::RateGroupDriver::~RateGroupDriver() (line 39)</a></td><td>called 1 time</td><td>100.0%</td></tr>
@@ -385,7 +385,7 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">241</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">RateGroupDriver</span><span class="o">::</span><span class="n">CycleIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cycleStart</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -406,7 +406,7 @@
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">241</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_configured</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -443,12 +443,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 705 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 235 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 723 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 241 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">940</td>
+      <td class="linecount coveredLine">964</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">RateGroupDriver</span><span class="o">::</span><span class="n">DIVIDER_SIZE</span><span class="p">;</span><span class="w"> </span><span class="n">entry</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -457,12 +457,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 705 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 723 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">705</td>
+      <td class="linecount partialCoveredLine">723</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dividers</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">divisor</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -471,12 +471,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 705 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 723 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">705</td>
+      <td class="linecount partialCoveredLine">723</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">isConnected_CycleOut_OutputPort</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entry</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -485,19 +485,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 412 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 423 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 300 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">705</td>
+      <td class="linecount coveredLine">723</td>
       <td class="src coveredLine"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ticks</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dividers</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">divisor</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dividers</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">offset</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">412</td>
+      <td class="linecount coveredLine">423</td>
       <td class="src coveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">CycleOut_out</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span><span class="w"> </span><span class="n">cycleStart</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -553,21 +553,21 @@
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">241</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_rollover</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">241</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ticks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ticks</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_rollover</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">235</td>
+      <td class="linecount coveredLine">241</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-03 22:14:02</td>
+      <td>2026-09-04 22:13:40</td>
     </tr>
   </table>
 </div>
@@ -73,9 +73,9 @@
     <tr><td><a href="#l6">Svc::EventSeverityFilter::EventSeverityFilter() (line 6)</a></td><td>called 2 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l39">Svc::EventSeverityFilter::fromIndex(unsigned long, Fw::LogSeverity&amp;) (line 39)</a></td><td>called 13 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l28">Svc::EventSeverityFilter::isEnabled(Fw::LogSeverity) const (line 28)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l19">Svc::EventSeverityFilter::isFiltered(Fw::LogSeverity) const (line 19)</a></td><td>called 1110 times</td><td>67.0%</td></tr>
+    <tr><td><a href="#l19">Svc::EventSeverityFilter::isFiltered(Fw::LogSeverity) const (line 19)</a></td><td>called 1146 times</td><td>67.0%</td></tr>
     <tr><td><a href="#l12">Svc::EventSeverityFilter::setFilter(Fw::LogSeverity, bool) (line 12)</a></td><td>called 25 times</td><td>69.0%</td></tr>
-    <tr><td><a href="#l47">Svc::EventSeverityFilter::toIndex(Fw::LogSeverity, unsigned long&amp;) (line 47)</a></td><td>called 1135 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l47">Svc::EventSeverityFilter::toIndex(Fw::LogSeverity, unsigned long&amp;) (line 47)</a></td><td>called 1171 times</td><td>89.0%</td></tr>
   </table>
 </details>
 
@@ -235,14 +235,14 @@
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1110</td>
+      <td class="linecount coveredLine">1146</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">EventSeverityFilter</span><span class="o">::</span><span class="n">isFiltered</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">LogSeverity</span><span class="w"> </span><span class="n">severity</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1110</td>
+      <td class="linecount coveredLine">1146</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -251,14 +251,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 1110 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 1110 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1146 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1146 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 1110 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1146 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1110</td>
+      <td class="linecount partialCoveredLine">1146</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">toIndex</span><span class="p">(</span><span class="n">severity</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -286,7 +286,7 @@
       <td class="lineno"><a id="l25" href="#l25">25</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1110</td>
+      <td class="linecount coveredLine">1146</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_enabled</span><span class="p">[</span><span class="n">index</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
@@ -447,7 +447,7 @@
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1135</td>
+      <td class="linecount coveredLine">1171</td>
       <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="w"> </span><span class="nf">EventSeverityFilter::toIndex</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">LogSeverity</span><span class="w"> </span><span class="n">severity</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -456,38 +456,38 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">6/7</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 16 times.</div>
             <div class="takenBranch">&check; Branch 1 taken 14 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 585 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 248 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 605 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 258 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 60 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 218 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1135</td>
+      <td class="linecount partialCoveredLine">1171</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">severity</span><span class="p">.</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l49" href="#l49">49</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10</td>
+      <td class="linecount coveredLine">16</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">WARNING_HI</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10</td>
+      <td class="linecount coveredLine">16</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10</td>
+      <td class="linecount coveredLine">16</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -515,42 +515,42 @@
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">585</td>
+      <td class="linecount coveredLine">605</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">COMMAND</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">585</td>
+      <td class="linecount coveredLine">605</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">585</td>
+      <td class="linecount coveredLine">605</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">248</td>
+      <td class="linecount coveredLine">258</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">ACTIVITY_HI</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">248</td>
+      <td class="linecount coveredLine">258</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l60" href="#l60">60</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">248</td>
+      <td class="linecount coveredLine">258</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">

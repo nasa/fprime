@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-03 22:12:29</td>
+      <td>2026-09-04 22:11:55</td>
     </tr>
   </table>
 </div>
@@ -75,7 +75,7 @@
     <tr><td><a href="#l382">init_crcdnp_tab (line 382)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l346">init_crckermit_tab (line 346)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l198">update_crc_16 (line 198)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l141">update_crc_ccitt (line 141)</a></td><td>called 239916 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l141">update_crc_ccitt (line 141)</a></td><td>called 252468 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l254">update_crc_dnp (line 254)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l227">update_crc_kermit (line 227)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l169">update_crc_sick (line 169)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -1076,7 +1076,7 @@
       <td class="lineno"><a id="l141" href="#l141">141</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239916</td>
+      <td class="linecount coveredLine">252468</td>
       <td class="src coveredLine"><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="nf">update_crc_ccitt</span><span class="p">(</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="n">crc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1104,7 +1104,7 @@
       <td class="lineno"><a id="l145" href="#l145">145</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239916</td>
+      <td class="linecount coveredLine">252468</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">short_c</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">0x00ff</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="p">)</span><span class="w"> </span><span class="n">c</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1121,11 +1121,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 239915 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 252467 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">239916</td>
+      <td class="linecount coveredLine">252468</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="o">!</span><span class="w"> </span><span class="n">crc_tabccitt_init</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="n">init_crcccitt_tab</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1139,14 +1139,14 @@
       <td class="lineno"><a id="l149" href="#l149">149</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239916</td>
+      <td class="linecount coveredLine">252468</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">crc</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">short_c</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l150" href="#l150">150</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239916</td>
+      <td class="linecount coveredLine">252468</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">crc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="p">)((</span><span class="n">crc</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">crc_tabccitt</span><span class="p">[</span><span class="n">tmp</span><span class="p">]);</span></td>
     </tr>
     <tr class="source-line">
@@ -1160,7 +1160,7 @@
       <td class="lineno"><a id="l152" href="#l152">152</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239916</td>
+      <td class="linecount coveredLine">252468</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">crc</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
