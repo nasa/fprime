@@ -14,6 +14,9 @@ namespace Svc {
 
 namespace Ccsds {
 
+// Bytes AES-256-GCM adds to the plaintext: a 12-byte IV ahead of the ciphertext and a
+//16-byte MAC after it.
+static constexpr U32 AesFrameOverhead = 28;
 //! Length of the AES-GCM initialization vector, in bytes
 static constexpr U32 GCM_IV_LEN = 12;
 //! Length of the AES-GCM authentication tag (the SDLS MAC), in bytes
