@@ -7,13 +7,12 @@
 #include "Svc/ComAggregator/ComAggregator.hpp"
 #include <cstring>
 #include "Fw/FPrimeBasicTypes.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 
 namespace Svc {
 
-// Definitions for ODR-use of static constexpr members (required until C++17)
+// Definition for ODR-use of static constexpr member (required until C++17)
 constexpr U16 ComAggregator::FHP_UNSET;
-constexpr U8 ComAggregator::IDLE_DATA_PATTERN;
-constexpr FwSizeType ComAggregator::MIN_IDLE_PACKET_SIZE;
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
@@ -219,6 +218,8 @@ void ComAggregator ::fillFromHeld() {
         const Fw::Buffer& held = this->m_held.get_data();
         const FwSizeType heldRemaining = held.getSize() - this->m_heldOffset;
         const FwSizeType fillSize = FW_MIN(this->remainingCapacity(), heldRemaining);
+        // Without spanning, a held packet must always fit in the cleared aggregate
+        FW_ASSERT(this->m_spanning || fillSize == heldRemaining, static_cast<FwAssertArgType>(heldRemaining));
         if (this->m_heldOffset == 0) {
             // The held packet's header starts at the current fill offset of this aggregate
             this->markFirstHeaderIfUnset();
@@ -249,32 +250,20 @@ void ComAggregator ::fillResidualWithIdle() {
     this->markFirstHeaderIfUnset();
     // Idle packet size: fill the residual space exactly, spanning a minimum-size idle packet
     // into the next aggregate when the residual space is too small (CCSDS 132.0-B-3 4.1.4)
-    const FwSizeType idleSize = FW_MAX(residual, MIN_IDLE_PACKET_SIZE);
-    Ccsds::SpacePacketHeader header;
-    header.set_packetIdentification(static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET));
-    // Sequence Flags = 0b11 (unsegmented) & unused sequence count
-    header.set_packetSequenceControl(static_cast<U16>(0x3 << Ccsds::SpacePacketSubfields::SeqFlagsOffset));
-    // Length token is defined as the number of bytes of payload data minus 1
-    header.set_packetDataLength(static_cast<U16>(idleSize - Ccsds::SpacePacketHeader::SERIALIZED_SIZE - 1));
     Fw::SerializeStatus status;
-    if (residual >= MIN_IDLE_PACKET_SIZE) {
+    if (residual >= Ccsds::Utils::IdlePacket::MIN_SIZE) {
         // Idle packet fits entirely within this aggregate
-        status = this->m_frameSerializer.serializeFrom(header);
+        status = Ccsds::Utils::IdlePacket::serialize(this->m_frameSerializer, residual);
         FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-        for (FwSizeType i = Ccsds::SpacePacketHeader::SERIALIZED_SIZE; i < idleSize; i++) {
-            status = this->m_frameSerializer.serializeFrom(IDLE_DATA_PATTERN);
-            FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-        }
     } else {
         // Stage a minimum-size idle packet, emit the leading bytes now and span the rest
-        U8 staging[MIN_IDLE_PACKET_SIZE];
+        U8 staging[Ccsds::Utils::IdlePacket::MIN_SIZE];
         Fw::ExternalSerializeBuffer stager(staging, sizeof(staging));
-        status = stager.serializeFrom(header);
+        status = Ccsds::Utils::IdlePacket::serialize(stager, Ccsds::Utils::IdlePacket::MIN_SIZE);
         FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-        staging[Ccsds::SpacePacketHeader::SERIALIZED_SIZE] = IDLE_DATA_PATTERN;
         status = this->m_frameSerializer.serializeFrom(staging, residual, Fw::Serialization::OMIT_LENGTH);
         FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-        this->m_pendingIdleCount = MIN_IDLE_PACKET_SIZE - residual;
+        this->m_pendingIdleCount = Ccsds::Utils::IdlePacket::MIN_SIZE - residual;
         (void)memcpy(this->m_pendingIdle, &staging[residual], this->m_pendingIdleCount);
     }
 }

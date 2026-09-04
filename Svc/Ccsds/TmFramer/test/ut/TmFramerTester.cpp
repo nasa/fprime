@@ -8,6 +8,7 @@
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 
 namespace Svc {
 
@@ -80,7 +81,7 @@ void TmFramerTester ::testNominalFraming() {
         TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
 
     // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
-    const U8 idlePattern = this->component.IDLE_DATA_PATTERN;
+    const U8 idlePattern = Utils::IdlePacket::DATA_PATTERN;
     const FwSizeType ideDataEndOffset = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
     for (FwSizeType i = expectedIdleDataOffset; i < ideDataEndOffset; ++i) {
         ASSERT_EQ(outBuffer.getData()[i], idlePattern)
@@ -176,6 +177,11 @@ void TmFramerTester ::testFirstHeaderPointerFromContext() {
     ASSERT_from_dataOut_SIZE(3);
     ASSERT_EQ(this->getFrameFhp(this->fromPortHistory_dataOut->at(2).data.getData()),
               static_cast<U16>(TMSubfields::FHP_NO_PACKET_START));
+
+    // An FHP outside the 11-bit field is a caller error
+    this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
+    context.set_firstHeaderPointer(static_cast<U16>(TMSubfields::fhpMask + 1));
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
 }
 
 void TmFramerTester ::testResidualTooSmallForIdlePacket() {
@@ -183,13 +189,13 @@ void TmFramerTester ::testResidualTooSmallForIdlePacket() {
     const FwSizeType fullSize = TmFramer::TmPayloadCapacity;
     U8 bufferData[fullSize];
     ComCfg::FrameContext context;
-    for (FwSizeType residual = 1; residual < TmFramer::MIN_IDLE_PACKET_SIZE; ++residual) {
+    for (FwSizeType residual = 1; residual < Utils::IdlePacket::MIN_SIZE; ++residual) {
         Fw::Buffer buffer(bufferData, fullSize - residual);
         this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
         ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
     }
     // Exactly a minimum idle packet of residual space is accepted and filled
-    Fw::Buffer buffer(bufferData, fullSize - TmFramer::MIN_IDLE_PACKET_SIZE);
+    Fw::Buffer buffer(bufferData, fullSize - Utils::IdlePacket::MIN_SIZE);
     this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
     this->invoke_to_dataIn(0, buffer, context);
     ASSERT_from_dataOut_SIZE(1);
@@ -202,7 +208,7 @@ void TmFramerTester ::testResidualTooSmallForIdlePacket() {
     ASSERT_EQ(frame[idleHeaderOffset + 3], 0x00);
     ASSERT_EQ(frame[idleHeaderOffset + 4], 0x00);
     ASSERT_EQ(frame[idleHeaderOffset + 5], 0x00);
-    const U8 idlePattern = this->component.IDLE_DATA_PATTERN;
+    const U8 idlePattern = Utils::IdlePacket::DATA_PATTERN;
     ASSERT_EQ(frame[idleHeaderOffset + 6], idlePattern);
 }
 

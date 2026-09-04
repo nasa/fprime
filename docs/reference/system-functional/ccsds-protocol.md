@@ -37,7 +37,7 @@ By default, APIDs are assigned based on the F Prime data descriptor type (comman
 
 ### TM Space Data Link Protocol
 
-The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.0-B-3) for downlink. It wraps payload data (such as Space Packets) into TM Transfer Frames for transmission over the space link. The current implementation supports a single Virtual Channel Identifier (VCID).
+The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.0-B-3) for downlink. It wraps payload data (such as Space Packets) into TM Transfer Frames for transmission over the space link. The current implementation supports a single Virtual Channel Identifier (VCID). When packet spanning is enabled in the upstream [ComAggregator](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md) (`ComCcsdsConfig.Aggregator.packetSpanning`), Space Packets may span consecutive TM Transfer Frames and the First Header Pointer in each frame locates the first packet header, per 132.0-B-3 section 4.1.2.7.6; spanning is disabled by default.
 
 ### TC Space Data Link Protocol
 

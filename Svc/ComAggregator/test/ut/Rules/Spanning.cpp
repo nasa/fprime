@@ -152,7 +152,7 @@ void ComAggregatorTester::Spanning__Timeout__action() {
     }
     // Residual space is filled by an idle packet, spanning into the next aggregate when too small
     const FwSizeType residual = CAPACITY - this->m_stream.size();
-    const FwSizeType idleSize = FW_MAX(residual, ComAggregator::MIN_IDLE_PACKET_SIZE);
+    const FwSizeType idleSize = FW_MAX(residual, Ccsds::Utils::IdlePacket::MIN_SIZE);
     this->m_headers.push_back(this->m_stream.size());
     append_idle_packet(this->m_stream, idleSize);
     ASSERT_from_dataReturnOut_SIZE(0);

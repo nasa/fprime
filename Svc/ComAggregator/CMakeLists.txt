@@ -21,6 +21,7 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/ComAggregator.cpp"
     DEPENDS
         Svc_Ccsds_Types
+        Svc_Ccsds_Utils
 )
 
 ### Unit Tests ###

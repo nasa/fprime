@@ -88,6 +88,12 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Tests an idle packet spanning across aggregates when residual space is below the minimum
     void test_spanning_idle_span();
 
+    //! Tests that configure() asserts once data has been aggregated
+    void test_configure_after_fill_asserts();
+
+    //! Tests that, without spanning, a held packet larger than an aggregate asserts
+    void test_oversize_hold_asserts();
+
     //! Helper to fill a buffer with random data
     Fw::Buffer fill_buffer(U32 size);
 

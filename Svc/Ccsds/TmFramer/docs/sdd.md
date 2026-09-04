@@ -34,7 +34,7 @@ For each frame generated, the `Svc::Ccsds::TmFramer` will populate the CCSDS TM 
 | Synchronization Flag | 0 | 0 as Packets are inserted |
 | Packet Order Flag | 0 | As per protocol 4.1.2.7.4 |
 | Segment Length Identifier | 0b11 | As per protocol 4.1.2.7.5 |
-| First Header Pointer | From context | Taken from `ComCfg::FrameContext.firstHeaderPointer` (default 0). An upstream spanning aggregator (e.g. `Svc::ComAggregator`) sets the offset of the first packet header in the data field, or `0x7FF` for continuation-only frames, per protocol 4.1.2.7.6. |
+| First Header Pointer | From context | Taken from `ComCfg::FrameContext.firstHeaderPointer` (default 0). An upstream spanning aggregator (e.g. `Svc::ComAggregator`) sets the offset of the first packet header in the data field, or `0x7FF` for continuation-only frames, per protocol 4.1.2.7.6. Values outside the 11-bit field are rejected by assertion. |
 
 ## Port Descriptions
 
@@ -66,3 +66,4 @@ For each frame generated, the `Svc::Ccsds::TmFramer` will populate the CCSDS TM 
 | SVC-Ccsds-TM-FRAMER-012 | The TmFramer shall manage Master Channel Frame Count and Virtual Channel Frame Count. | Unit Test |
 | SVC-Ccsds-TM-FRAMER-013 | The TmFramer shall fill the data field of the TM Transfer Frame with the payload data received on `dataIn`, and fill up the rest of the fixed-size frame with a single Idle Packet as defined by the protocol. When the payload data fills the data field exactly, no Idle Packet shall be inserted. | Unit Test |
 | SVC-Ccsds-TM-FRAMER-014 | The TmFramer shall assert that payload data received on `dataIn` either fills the data field exactly or leaves room for a minimum Idle Packet (header plus one byte). | Unit Test |
+| SVC-Ccsds-TM-FRAMER-015 | The TmFramer shall assert that the First Header Pointer received in the `dataIn` context fits within the 11-bit First Header Pointer field. | Unit Test |

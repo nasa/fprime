@@ -51,4 +51,6 @@ size:
   reported through `ComCfg::FrameContext.firstHeaderPointer` and written into the TM Data Field Status by
   `Svc::Ccsds::TmFramer`, per CCSDS 132.0-B-3 section 4.1.2.7.6.
 
-With spanning disabled (the default), incoming buffers are never split and behavior is unchanged.
+With spanning disabled (the default), incoming buffers are never split and behavior is unchanged; a buffer larger
+than `ComCfg::AggregationSize` is rejected by assertion rather than truncated. `configure()` must be called before
+any data is aggregated and asserts otherwise.

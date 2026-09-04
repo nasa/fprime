@@ -10,7 +10,7 @@
 #include <atomic>
 #include "Os/Mutex.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
-#include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 #include "Svc/ComAggregator/ComAggregatorComponentAc.hpp"
 
 namespace Svc {
@@ -185,14 +185,16 @@ class ComAggregator final : public ComAggregatorComponentBase {
     void fillResidualWithIdle();
 
   private:
-    static constexpr U16 FHP_UNSET = 0xFFFF;       //!< Sentinel: no packet header recorded in the current aggregate
-    static constexpr U8 IDLE_DATA_PATTERN = 0x44;  //!< Fill pattern for SPP idle packet data
-    //! Minimum SPP idle packet size: header plus one byte of idle data
-    static constexpr FwSizeType MIN_IDLE_PACKET_SIZE = Ccsds::SpacePacketHeader::SERIALIZED_SIZE + 1;
+    static constexpr U16 FHP_UNSET = 0xFFFF;  //!< Sentinel: no packet header recorded in the current aggregate
 
     static_assert(static_cast<FwSizeType>(ComCfg::AggregationSpanningSize) >=
                       static_cast<FwSizeType>(ComCfg::AggregationSize),
                   "Aggregation store must hold the largest configured aggregation size");
+    // Every packet header offset in an aggregate must be representable as an 11-bit First Header Pointer
+    // and distinct from the reserved values (CCSDS 132.0-B-3 4.1.2.7.6)
+    static_assert(static_cast<FwSizeType>(ComCfg::AggregationSpanningSize) <=
+                      static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY),
+                  "Aggregation spanning size must not exceed the TM First Header Pointer range");
 
     U8 m_frameBufferStore[ComCfg::AggregationSpanningSize];  //!< Buffer to hold the frame data
     std::atomic<Fw::Buffer::OwnershipState> m_bufferState{
@@ -205,12 +207,12 @@ class ComAggregator final : public ComAggregatorComponentBase {
     Svc::ComDataContextPair m_held;     //!< Held data while waiting for send
     std::atomic<bool> m_allow_timeout;  //!< Whether status has been received
 
-    bool m_spanning;                         //!< Whether packet spanning is enabled
-    FwSizeType m_capacity;                   //!< Active aggregation capacity in bytes
-    FwSizeType m_heldOffset;                 //!< Bytes of the held buffer already consumed into previous aggregates
-    U16 m_fhp;                               //!< First Header Pointer for the current aggregate (FHP_UNSET if none)
-    U8 m_pendingIdle[MIN_IDLE_PACKET_SIZE];  //!< Idle packet bytes spanning into the next aggregate
-    FwSizeType m_pendingIdleCount;           //!< Number of valid bytes in m_pendingIdle
+    bool m_spanning;          //!< Whether packet spanning is enabled
+    FwSizeType m_capacity;    //!< Active aggregation capacity in bytes
+    FwSizeType m_heldOffset;  //!< Bytes of the held buffer already consumed into previous aggregates
+    U16 m_fhp;                //!< First Header Pointer for the current aggregate (FHP_UNSET if none)
+    U8 m_pendingIdle[Ccsds::Utils::IdlePacket::MIN_SIZE];  //!< Idle packet bytes spanning into the next aggregate
+    FwSizeType m_pendingIdleCount;                         //!< Number of valid bytes in m_pendingIdle
 };
 
 }  // namespace Svc

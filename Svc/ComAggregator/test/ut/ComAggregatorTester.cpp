@@ -317,7 +317,7 @@ void ComAggregatorTester ::test_hold_while_waiting() {
 // ----------------------------------------------------------------------
 
 void ComAggregatorTester ::append_idle_packet(std::vector<U8>& expected, FwSizeType idleSize) {
-    ASSERT_GE(idleSize, ComAggregator::MIN_IDLE_PACKET_SIZE);
+    ASSERT_GE(idleSize, Ccsds::Utils::IdlePacket::MIN_SIZE);
     // packetIdentification: PVN 0, type TM, no secondary header, idle APID (all ones)
     expected.push_back(0x07);
     expected.push_back(0xFF);
@@ -329,7 +329,7 @@ void ComAggregatorTester ::append_idle_packet(std::vector<U8>& expected, FwSizeT
     expected.push_back(static_cast<U8>(lengthToken >> 8));
     expected.push_back(static_cast<U8>(lengthToken & 0xFF));
     for (FwSizeType i = Ccsds::SpacePacketHeader::SERIALIZED_SIZE; i < idleSize; i++) {
-        expected.push_back(ComAggregator::IDLE_DATA_PATTERN);
+        expected.push_back(Ccsds::Utils::IdlePacket::DATA_PATTERN);
     }
 }
 
@@ -465,7 +465,7 @@ void ComAggregatorTester ::test_spanning_idle_span() {
               Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
     ASSERT_from_dataOut_SIZE(1);
     std::vector<U8> idlePacket;
-    append_idle_packet(idlePacket, ComAggregator::MIN_IDLE_PACKET_SIZE);
+    append_idle_packet(idlePacket, Ccsds::Utils::IdlePacket::MIN_SIZE);
     std::vector<U8> expected1(packet.getData(), packet.getData() + PACKET_SIZE);
     expected1.insert(expected1.end(), idlePacket.begin(), idlePacket.begin() + static_cast<long>(RESIDUAL));
     this->expect_frame(0, expected1, 0);
@@ -476,13 +476,48 @@ void ComAggregatorTester ::test_spanning_idle_span() {
     ASSERT_EQ(this->dispatchOne(this->component),
               Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
     ASSERT_from_dataOut_SIZE(2);
-    const FwSizeType CONTINUATION = ComAggregator::MIN_IDLE_PACKET_SIZE - RESIDUAL;
+    const FwSizeType CONTINUATION = Ccsds::Utils::IdlePacket::MIN_SIZE - RESIDUAL;
     std::vector<U8> expected2(idlePacket.begin() + static_cast<long>(RESIDUAL), idlePacket.end());
     append_idle_packet(expected2, CAP - CONTINUATION);
     this->expect_frame(1, expected2, static_cast<U16>(CONTINUATION));
     this->return_and_status(1);
 
     delete[] packet.getData();
+    this->clearHistory();
+}
+
+// ----------------------------------------------------------------------
+// Assertion tests
+// ----------------------------------------------------------------------
+
+void ComAggregatorTester ::test_configure_after_fill_asserts() {
+    this->test_initial();
+    (void)this->test_fill(false);
+    ASSERT_DEATH_IF_SUPPORTED(this->component.configure(true), "ComAggregator.cpp");
+    this->clearHistory();
+}
+
+void ComAggregatorTester ::test_oversize_hold_asserts() {
+    // Precondition: fill has run, spanning disabled
+    ComCfg::FrameContext context;
+    this->invoke_to_timeout(0, 0);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(1);
+    Fw::Buffer aggregate = this->fromPortHistory_dataOut->at(0).data;
+
+    // Hold a packet that can never fit in a single aggregate
+    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(ComCfg::AggregationSize) + 1);
+    this->invoke_to_dataIn(0, oversize, context);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+
+    // Clearing the aggregate must assert rather than truncate the held packet
+    this->invoke_to_dataReturnIn(0, aggregate, context);
+    Fw::Success good = Fw::Success::SUCCESS;
+    this->invoke_to_comStatusIn(0, good);
+    ASSERT_DEATH_IF_SUPPORTED(this->dispatchOne(this->component), "ComAggregator.cpp");
+    delete[] oversize.getData();
     this->clearHistory();
 }
 

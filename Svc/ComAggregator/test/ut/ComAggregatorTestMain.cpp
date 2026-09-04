@@ -98,6 +98,18 @@ TEST(Spanning, IdlePacketSpansFrames) {
     tester.test_spanning_idle_span();
 }
 
+TEST(Assertions, ConfigureAfterFill) {
+    Svc::ComAggregatorTester tester;
+    tester.test_configure_after_fill_asserts();
+}
+
+TEST(Assertions, OversizeHoldWithoutSpanning) {
+    Svc::ComAggregatorTester tester;
+    tester.test_initial();
+    tester.test_fill_multi();
+    tester.test_oversize_hold_asserts();
+}
+
 // Randomized spanning: apply rules in a random sequence against the shadow byte-stream model
 TEST(Spanning, RandomizedTesting) {
     const U32 numRulesToApply = 10000;
