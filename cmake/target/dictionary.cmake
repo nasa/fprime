@@ -35,6 +35,7 @@ function(dictionary_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FUL
     # Remove the module from the list of dependencies
     list(REMOVE_ITEM DEPENDENCIES "${MODULE}")
     set(DICTIONARY_INSTALLED_FILES "")
+    set(DICTIONARY_DEP_TARGETS "")
 
     # Create a custom target with _dictionary suffix that depends on the generated files
     if(AUTOCODER_GENERATED_OTHER)
@@ -78,11 +79,16 @@ function(dictionary_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FUL
                 COMMAND "${CMAKE_COMMAND}" -E touch_nocreate ${INSTALLED_FILES}
                 DEPENDS ${DICTIONARY_FILES})
             list(APPEND DICTIONARY_INSTALLED_FILES ${INSTALLED_FILES})
+            list(APPEND DICTIONARY_DEP_TARGETS "${DEPENDENCY}_${TARGET}")
         endif()
     endforeach()
 
     # Create deployment level target depending on the installed dictionaries
     add_custom_target("${MODULE}_${TARGET}" DEPENDS ${DICTIONARY_INSTALLED_FILES})
+
+    if(DICTIONARY_DEP_TARGETS)
+        add_dependencies("${MODULE}_${TARGET}" ${DICTIONARY_DEP_TARGETS})
+    endif()
 
     # Make the deployment and dictionary targets depend on the deployment dictionary target
     add_dependencies("${MODULE}" "${MODULE}_${TARGET}")
