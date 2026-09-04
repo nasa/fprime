@@ -42,7 +42,8 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
     // Allocate container if needed
     if (this->m_currentPacketCount == 0) {
         // Calculate size needed for the requested number of packets
-        const FwSizeType containerSize = this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD;
+        // Each record holds up to FW_COM_BUFFER_MAX_SIZE bytes
+        const FwSizeType containerSize = this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE);
 
         // Get a container buffer
         const Fw::Success status = this->dpGet_ComBuffContainer(containerSize, this->m_container);
@@ -52,26 +53,22 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
             this->log_WARNING_HI_DpBufferError(static_cast<U32>(containerSize));
             return;
         }
+
+        // Set the priority on the newly allocated container
+        this->m_container.setPriority(this->m_priority);
     }
 
-    // Serialize the ComBuffer into the container as a ComBufferRecord
-    ComLoggerDp_ComBufferArray comArray{};
-
-    // Copy data from ComBuffer to array
+    // Get data from ComBuffer
     const FwSizeType dataSize = data.getSize();
     const U8* dataPtr = data.getBuffAddr();
 
-    // Copy only up to the array size
-    const FwSizeType copySize = (dataSize <= static_cast<FwSizeType>(FW_COM_BUFFER_MAX_SIZE)) ? dataSize : static_cast<FwSizeType>(FW_COM_BUFFER_MAX_SIZE);
-    for (FwSizeType i = 0; i < copySize; i++) {
-        comArray[i] = dataPtr[i];
-    }
+    // Serialize the ComBuffer data directly into the container as a ComBufferRecord
+    // The size is determined by the actual ComBuffer size
+    this->m_container.serializeRecord_ComBufferRecord(dataPtr, dataSize);
 
-    // Serialize the record into the container
-    this->m_container.serializeRecord_ComBufferRecord(comArray);
-
-    // Increment packet count
+    // Increment counters
     ++this->m_currentPacketCount;
+    ++this->m_numBuffersLogged;
 
     // Check if container is full
     if (this->m_currentPacketCount >= this->m_packetsPerContainer) {
@@ -88,53 +85,135 @@ void ComLoggerDp ::pingIn_handler(FwIndexType portNum, U32 key) {
     this->pingOut_out(portNum, key);
 }
 
+void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
+    // portNum and context are unused
+    (void)portNum;
+    (void)context;
+
+    // Write telemetry
+    this->tlmWrite_LoggingEnabled(this->m_enabled);
+    this->tlmWrite_NumBuffersLogged(this->m_numBuffersLogged);
+}
+
+void ComLoggerDp ::startRecordingIn_handler(FwIndexType portNum, U32 config) {
+    // portNum is unused
+    (void)portNum;
+
+    // Decode configuration from packed U32
+    // Upper 16 bits: packetsPerContainer, lower 16 bits: priority
+    const U32 packetsPerContainer = (config >> 16) & 0xFFFF;
+    const U32 priority = config & 0xFFFF;
+
+    // Call internal helper function
+    this->startRecordingInternal(packetsPerContainer, priority);
+}
+
+void ComLoggerDp ::stopRecordingIn_handler(FwIndexType portNum) {
+    // portNum is unused
+    (void)portNum;
+
+    // Call internal helper function
+    this->stopRecordingInternal();
+}
+
 // ----------------------------------------------------------------------
-// Handler implementations for commands
+// Private helper functions
 // ----------------------------------------------------------------------
 
-void ComLoggerDp ::StartComDp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 packetsPerContainer, U32 priority) {
+bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, U32 priority) {
     // Validate packetsPerContainer is non-zero
     if (packetsPerContainer == 0) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
-        return;
+        return false;
     }
 
     // Store configuration
     this->m_packetsPerContainer = packetsPerContainer;
     this->m_currentPacketCount = 0;
+    this->m_priority = static_cast<FwDpPriorityType>(priority);
 
-    // Update the container priority if logging is already active
-    if (this->m_enabled) {
-        this->m_container.setPriority(static_cast<FwDpPriorityType>(priority));
+    // Update the container priority if logging is already active and there's an active container
+    if (this->m_enabled && (this->m_currentPacketCount > 0)) {
+        this->m_container.setPriority(this->m_priority);
     }
 
     // Enable logging
     this->m_enabled = true;
 
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    // Log event
+    this->log_ACTIVITY_HI_ComDpStarted(packetsPerContainer);
+
+    return true;
 }
 
-void ComLoggerDp ::UpdatePriority_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 priority) {
-    // Only update priority if logging is enabled and there's an active container
-    if (this->m_enabled && (this->m_currentPacketCount > 0)) {
-        this->m_container.setPriority(static_cast<FwDpPriorityType>(priority));
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    } else {
-        // No active container, command has no effect
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    }
-}
+U32 ComLoggerDp ::stopRecordingInternal() {
+    U32 numSent = 0;
 
-void ComLoggerDp ::StopComDp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // If there's a partial container, send it before stopping
     if (this->m_enabled && (this->m_currentPacketCount > 0)) {
         this->dpSend(this->m_container);
+        numSent = 1;
         this->m_currentPacketCount = 0;
     }
 
     // Disable logging
     this->m_enabled = false;
 
+    // Log event
+    this->log_ACTIVITY_HI_ComDpStopped(numSent);
+
+    return numSent;
+}
+
+// ----------------------------------------------------------------------
+// Handler implementations for commands
+// ----------------------------------------------------------------------
+
+void ComLoggerDp ::StartComDp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 packetsPerContainer, U32 priority) {
+    // Call internal helper function
+    bool success = this->startRecordingInternal(packetsPerContainer, priority);
+
+    // Send command response
+    if (success) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+    }
+}
+
+void ComLoggerDp ::UpdatePriority_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 priority) {
+    // Store the new priority
+    this->m_priority = static_cast<FwDpPriorityType>(priority);
+
+    // Update priority if logging is enabled and there's an active container
+    if (this->m_enabled && (this->m_currentPacketCount > 0)) {
+        this->m_container.setPriority(this->m_priority);
+    }
+
+    // Log event
+    this->log_ACTIVITY_LO_PriorityUpdated(priority);
+
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void ComLoggerDp ::StopComDp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    // Call internal helper function
+    this->stopRecordingInternal();
+
+    // Send command response
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void ComLoggerDp ::CLEAR_COUNTERS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    // Clear the NumBuffersLogged counter
+    this->m_numBuffersLogged = 0;
+
+    // Clear the DpBufferError event throttle
+    this->log_WARNING_HI_DpBufferError_ThrottleClear();
+
+    // Log event
+    this->log_ACTIVITY_LO_CountersCleared();
+
+    // Send command response
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

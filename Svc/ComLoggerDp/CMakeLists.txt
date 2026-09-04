@@ -10,6 +10,7 @@
 
 register_fprime_module(
   AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/ComLoggerPorts.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ComLoggerDp.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/ComLoggerDp.cpp"
@@ -19,6 +20,7 @@ register_fprime_module(
 ### UTs ###
 register_fprime_ut(
   AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/ComLoggerPorts.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/ComLoggerDp.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComLoggerDpTester.cpp"

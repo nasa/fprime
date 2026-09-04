@@ -16,6 +16,15 @@ module Svc {
     @ Ping output port
     output port pingOut: Svc.Ping
 
+    @ Sched input port for writing telemetry
+    async input port schedIn: Svc.Sched
+
+    @ Port to start recording
+    async input port startRecordingIn: Svc.ComLoggerStart
+
+    @ Port to stop recording
+    async input port stopRecordingIn: Svc.ComLoggerStop
+
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------
@@ -37,6 +46,9 @@ module Svc {
 
     @ Time get port
     time get port timeCaller
+
+    @ Telemetry port
+    telemetry port tlmOut
 
     @ Data product get port
     product get port productGetOut
@@ -65,6 +77,10 @@ module Svc {
     async command StopComDp \
     opcode 0x02
 
+    @ Clears NumBuffersLogged counter and DpBufferError event throttle
+    async command CLEAR_COUNTERS \
+    opcode 0x03
+
 
     # ----------------------------------------------------------------------
     # Events
@@ -75,19 +91,49 @@ module Svc {
                     ) \
     severity warning high \
     id 0x00 \
-    format "Error getting ComDp buffer of size {}"
+    format "Error getting ComDp buffer of size {}" \
+    throttle DpBufferErrorThrottle
 
+    @ Started recording Com buffers
+    event ComDpStarted($packetsPerContainer: U32) \
+    severity activity high \
+    id 0x01 \
+    format "Started Com DP logging: {} packets per container"
+
+    @ Stopped recording Com buffers
+    event ComDpStopped($numSent: U32) \
+    severity activity high \
+    id 0x02 \
+    format "Stopped Com DP logging: sent {} partial container"
+
+    @ Updated data product priority
+    event PriorityUpdated($priority: U32) \
+    severity activity low \
+    id 0x03 \
+    format "Updated Com DP priority to {}"
+
+    @ Counters cleared
+    event CountersCleared \
+    severity activity low \
+    id 0x04 \
+    format "Cleared NumBuffersLogged counter and DpBufferError throttle"
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
+    @ Whether data product logging is currently active
+    telemetry LoggingEnabled: bool id 0x00
+
+    @ Total number of Com buffers logged since initialization
+    telemetry NumBuffersLogged: U32 id 0x01
 
     # ----------------------------------------------------------------------
     # Products
     # ----------------------------------------------------------------------
 
-
-    @ Array to hold ComBuffers
-    array ComBufferArray = [FW_COM_BUFFER_MAX_SIZE] U8
-
     @ Record for ComBuffers
-    product record ComBufferRecord: ComBufferArray id 0
+    product record ComBufferRecord: U8 array id 0
     @ Container for ComBuffers
     product container ComBuffContainer id 0 default priority 5    
 

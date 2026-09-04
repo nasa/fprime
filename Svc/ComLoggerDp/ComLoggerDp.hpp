@@ -52,6 +52,26 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
                         U32 key               //!< Value to return to pinger
                         ) override;
 
+    //! Handler implementation for schedIn
+    //!
+    //! Sched input port for writing telemetry
+    void schedIn_handler(FwIndexType portNum,  //!< The port number
+                         U32 context           //!< The call order
+                         ) override;
+
+    //! Handler implementation for startRecordingIn
+    //!
+    //! Port to start recording
+    void startRecordingIn_handler(FwIndexType portNum,  //!< The port number
+                                  U32 config            //!< Encoded configuration
+                                  ) override;
+
+    //! Handler implementation for stopRecordingIn
+    //!
+    //! Port to stop recording
+    void stopRecordingIn_handler(FwIndexType portNum  //!< The port number
+                                 ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands
@@ -79,6 +99,28 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
                               U32 cmdSeq            //!< The command sequence number
                               ) override;
 
+    //! Handler implementation for command CLEAR_COUNTERS
+    //!
+    //! Clears NumBuffersLogged counter and DpBufferError event throttle
+    void CLEAR_COUNTERS_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                   U32 cmdSeq            //!< The command sequence number
+                                   ) override;
+
+  private:
+    // ----------------------------------------------------------------------
+    // Private helper functions
+    // ----------------------------------------------------------------------
+
+    //! Internal function to start recording
+    //! \param packetsPerContainer: Number of packets per container
+    //! \param priority: Data product priority
+    //! \return true if successful, false if validation failed
+    bool startRecordingInternal(U32 packetsPerContainer, U32 priority);
+
+    //! Internal function to stop recording
+    //! \return Number of partial containers sent
+    U32 stopRecordingInternal();
+
   private:
     // ----------------------------------------------------------------------
     // Private member variables
@@ -95,6 +137,12 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
 
     //! Current count of packets in container
     U32 m_currentPacketCount{0};
+
+    //! Total number of buffers logged since initialization
+    U32 m_numBuffersLogged{0};
+
+    //! Priority for data products
+    FwDpPriorityType m_priority{5};  // Default priority from FPP
 };
 
 }  // namespace Svc

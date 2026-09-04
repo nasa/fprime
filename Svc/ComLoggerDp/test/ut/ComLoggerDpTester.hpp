@@ -64,6 +64,21 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test allocation failure
     void testAllocationFailure();
 
+    //! Test telemetry
+    void testTelemetry();
+
+    //! Test priority is preserved when starting logging
+    void testPriorityPreserved();
+
+    //! Test starting recording via port
+    void testStartRecordingPort();
+
+    //! Test stopping recording via port
+    void testStopRecordingPort();
+
+    //! Test clearing counters
+    void testClearCounters();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

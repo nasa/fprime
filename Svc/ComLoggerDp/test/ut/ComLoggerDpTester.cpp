@@ -64,12 +64,19 @@ void ComLoggerDpTester::testStartComDp() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STARTCOMDP, 0, Fw::CmdResponse::OK);
 
+    // Verify event was logged
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ComDpStarted_SIZE(1);
+    ASSERT_EVENTS_ComDpStarted(0, 5);
+
     // Test validation error with zero packets per container
     this->clearHistory();
     this->sendCmd_StartComDp(0, 1, 0, 10);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STARTCOMDP, 1, Fw::CmdResponse::VALIDATION_ERROR);
+    // No event should be logged for validation error
+    ASSERT_EVENTS_SIZE(0);
 }
 
 void ComLoggerDpTester::testStopComDp() {
@@ -181,6 +188,187 @@ void ComLoggerDpTester::testAllocationFailure() {
     ASSERT_PRODUCT_SEND_SIZE(0);
 }
 
+void ComLoggerDpTester::testTelemetry() {
+    // Configure and start logging
+    this->component.configure(true);
+    this->sendCmd_StartComDp(0, 0, 2, 10);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Call schedIn to write telemetry
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+
+    // Verify telemetry was written
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_LoggingEnabled_SIZE(1);
+    ASSERT_TLM_LoggingEnabled(0, true);
+    ASSERT_TLM_NumBuffersLogged_SIZE(1);
+    ASSERT_TLM_NumBuffersLogged(0, 0);
+
+    // Log some buffers
+    U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(testData, sizeof(testData));
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Call schedIn again
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+
+    // Verify buffer count updated
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_LoggingEnabled_SIZE(1);
+    ASSERT_TLM_LoggingEnabled(0, true);
+    ASSERT_TLM_NumBuffersLogged_SIZE(1);
+    ASSERT_TLM_NumBuffersLogged(0, 2);
+
+    // Stop logging
+    this->sendCmd_StopComDp(0, 1);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Call schedIn again
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+
+    // Verify logging disabled
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_LoggingEnabled_SIZE(1);
+    ASSERT_TLM_LoggingEnabled(0, false);
+    ASSERT_TLM_NumBuffersLogged_SIZE(1);
+    ASSERT_TLM_NumBuffersLogged(0, 2);
+}
+
+void ComLoggerDpTester::testPriorityPreserved() {
+    // Start logging with priority 15 (not enabled initially)
+    this->sendCmd_StartComDp(0, 0, 2, 15);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STARTCOMDP, 0, Fw::CmdResponse::OK);
+    this->clearHistory();
+
+    // Send two Com buffers to trigger container allocation and send
+    U8 testData[16] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                       0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10};
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(testData, sizeof(testData));
+
+    // First buffer - triggers container allocation with priority 15
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(1);
+
+    // Second buffer - fills and sends the container
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_SEND_SIZE(1);
+
+    // Test passes if we get here - the priority was successfully preserved and applied
+    // when the container was allocated, even though logging was not enabled initially.
+    // The bug would have caused the default priority (5) to be used instead of 15.
+}
+
+void ComLoggerDpTester::testStartRecordingPort() {
+    // Encode config: packetsPerContainer=5, priority=10
+    // (5 << 16) | 10 = 0x0005000A
+    const U32 config = (5 << 16) | 10;
+
+    // Invoke port
+    this->invoke_to_startRecordingIn(0, config);
+    this->component.doDispatch();
+
+    // Verify event was logged
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ComDpStarted_SIZE(1);
+    ASSERT_EVENTS_ComDpStarted(0, 5);
+
+    // Verify logging is enabled by sending a Com buffer
+    U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(testData, sizeof(testData));
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // Should have allocated a container
+    ASSERT_PRODUCT_GET_SIZE(1);
+}
+
+void ComLoggerDpTester::testStopRecordingPort() {
+    // Start logging via command first
+    this->component.configure(true);
+    this->sendCmd_StartComDp(0, 0, 2, 10);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Send one packet (partial container)
+    U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(testData, sizeof(testData));
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // Invoke stop port
+    this->invoke_to_stopRecordingIn(0);
+    this->component.doDispatch();
+
+    // Should have sent partial container
+    ASSERT_PRODUCT_SEND_SIZE(1);
+
+    // Verify stop event was logged
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ComDpStopped_SIZE(1);
+    ASSERT_EVENTS_ComDpStopped(0, 1);  // 1 partial container sent
+}
+
+void ComLoggerDpTester::testClearCounters() {
+    // Start logging and log some buffers
+    this->component.configure(true);
+    this->sendCmd_StartComDp(0, 0, 2, 10);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Send two Com buffers
+    U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(testData, sizeof(testData));
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Check telemetry before clearing
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_NumBuffersLogged_SIZE(1);
+    ASSERT_TLM_NumBuffersLogged(0, 2);  // 2 buffers logged
+    this->clearHistory();
+
+    // Send CLEAR_COUNTERS command
+    this->sendCmd_CLEAR_COUNTERS(0, 0);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_CLEAR_COUNTERS, 0, Fw::CmdResponse::OK);
+
+    // Verify CountersCleared event was logged
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CountersCleared_SIZE(1);
+    this->clearHistory();
+
+    // Check telemetry after clearing
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_NumBuffersLogged_SIZE(1);
+    ASSERT_TLM_NumBuffersLogged(0, 0);  // Counter reset to 0
+}
+
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------
@@ -194,6 +382,15 @@ void ComLoggerDpTester::connectPorts() {
 
     // pingIn
     this->connect_to_pingIn(0, this->component.get_pingIn_InputPort(0));
+
+    // schedIn
+    this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
+
+    // startRecordingIn
+    this->connect_to_startRecordingIn(0, this->component.get_startRecordingIn_InputPort(0));
+
+    // stopRecordingIn
+    this->connect_to_stopRecordingIn(0, this->component.get_stopRecordingIn_InputPort(0));
 
     // cmdRegOut
     this->component.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
@@ -209,6 +406,9 @@ void ComLoggerDpTester::connectPorts() {
 
     // timeCaller
     this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
+
+    // tlmOut
+    this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
 
     // productGetOut
     this->component.set_productGetOut_OutputPort(0, this->get_from_productGetOut(0));

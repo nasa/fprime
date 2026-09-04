@@ -48,6 +48,36 @@ TEST(OffNominal, AllocationFailure) {
     tester.testAllocationFailure();
 }
 
+// Test telemetry functionality
+TEST(Nominal, Telemetry) {
+    Svc::ComLoggerDpTester tester;
+    tester.testTelemetry();
+}
+
+// Test priority is preserved when starting from disabled state
+TEST(Nominal, PriorityPreserved) {
+    Svc::ComLoggerDpTester tester;
+    tester.testPriorityPreserved();
+}
+
+// Test starting recording via port
+TEST(Nominal, StartRecordingPort) {
+    Svc::ComLoggerDpTester tester;
+    tester.testStartRecordingPort();
+}
+
+// Test stopping recording via port
+TEST(Nominal, StopRecordingPort) {
+    Svc::ComLoggerDpTester tester;
+    tester.testStopRecordingPort();
+}
+
+// Test clearing counters
+TEST(Nominal, ClearCounters) {
+    Svc::ComLoggerDpTester tester;
+    tester.testClearCounters();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
