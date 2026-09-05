@@ -64,6 +64,9 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test allocation failure
     void testAllocationFailure();
 
+    //! Test port validation failure
+    void testPortValidationFailure();
+
     //! Test telemetry
     void testTelemetry();
 

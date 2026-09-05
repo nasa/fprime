@@ -48,6 +48,12 @@ TEST(OffNominal, AllocationFailure) {
     tester.testAllocationFailure();
 }
 
+// Test validation failure via port
+TEST(OffNominal, PortValidationFailure) {
+    Svc::ComLoggerDpTester tester;
+    tester.testPortValidationFailure();
+}
+
 // Test telemetry functionality
 TEST(Nominal, Telemetry) {
     Svc::ComLoggerDpTester tester;

@@ -96,14 +96,14 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     void StartComDp_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                U32 cmdSeq,           //!< The command sequence number
                                U32 packetsPerContainer,
-                               U32 priority) override;
+                               FwDpPriorityType priority) override;
 
     //! Handler implementation for command UpdatePriority
     //!
     //! Updates currently generating data products. If off, no effect
     void UpdatePriority_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                    U32 cmdSeq,           //!< The command sequence number
-                                   U32 priority) override;
+                                   FwDpPriorityType priority) override;
 
     //! Handler implementation for command StopComDp
     //!
@@ -133,6 +133,19 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Internal function to stop recording
     //! \return Number of partial containers sent
     U32 stopRecordingInternal();
+
+    //! Internal function to allocate and setup a new container
+    //! \return true if allocation succeeded, false if it failed
+    bool allocateAndSetupContainer();
+
+    //! Internal function to serialize packet with automatic retry on container full
+    //! \param dataPtr: Pointer to the packet data
+    //! \param dataSize: Size of the packet data
+    //! \return true if serialization succeeded, false if it failed
+    bool serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize);
+
+    //! Internal function to finalize a full container (send and reset)
+    void finalizeFullContainer();
 
     //! Internal function to handle buffer drop (log event and increment counter)
     //! \param size: Size of the buffer being dropped

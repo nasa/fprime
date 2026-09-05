@@ -198,6 +198,41 @@ void ComLoggerDpTester::testAllocationFailure() {
     ASSERT_TLM_NumBuffersLogged(0, 0);  // 0 buffers logged
 }
 
+void ComLoggerDpTester::testPortValidationFailure() {
+    // Configure component
+    this->component.configure(true);
+
+    // Try to start recording via port with invalid packetsPerContainer (0)
+    const U32 invalidPacketsPerContainer = 0;
+    const FwDpPriorityType priority = 10;
+
+    this->invoke_to_startRecordingIn(0, invalidPacketsPerContainer, priority);
+    this->component.doDispatch();
+
+    // Should have generated validation failure warning event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_StartRecordingFailed_SIZE(1);
+    ASSERT_EVENTS_StartRecordingFailed(0, invalidPacketsPerContainer);
+
+    // Should NOT have generated ComDpStarted event
+    ASSERT_EVENTS_ComDpStarted_SIZE(0);
+
+    // Verify logging is NOT enabled by trying to send a Com buffer
+    U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(testData, sizeof(testData));
+
+    this->clearHistory();
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // No events should be generated (logging not enabled)
+    ASSERT_EVENTS_SIZE(0);
+
+    // No data product should be sent
+    ASSERT_PRODUCT_SEND_SIZE(0);
+}
+
 void ComLoggerDpTester::testTelemetry() {
     // Configure and start logging
     this->component.configure(true);

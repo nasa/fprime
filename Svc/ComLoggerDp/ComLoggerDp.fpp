@@ -118,6 +118,14 @@ module Svc {
     id 0x04 \
     format "Cleared NumBuffersLogged counter and DpBufferError throttle"
 
+    @ Failed to start recording due to invalid configuration
+    event StartRecordingFailed(
+        $packetsPerContainer: U32 @< The invalid packets per container value
+    ) \
+    severity warning low \
+    id 0x05 \
+    format "Failed to start Com DP recording: packetsPerContainer {} is invalid (must be > 0)"
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
