@@ -74,9 +74,9 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Handler implementation for startRecordingIn
     //!
     //! Port to start recording
-    void startRecordingIn_handler(FwIndexType portNum,          //!< The port number
-                                  U32 packetsPerContainer,       //!< Number of packets per container
-                                  FwDpPriorityType priority      //!< Data product priority
+    void startRecordingIn_handler(FwIndexType portNum,       //!< The port number
+                                  U32 packetsPerContainer,   //!< Number of packets per container
+                                  FwDpPriorityType priority  //!< Data product priority
                                   ) override;
 
     //! Handler implementation for stopRecordingIn

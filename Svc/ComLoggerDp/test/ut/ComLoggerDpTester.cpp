@@ -38,8 +38,7 @@ void ComLoggerDpTester::testComLogging() {
     ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STARTCOMDP, 0, Fw::CmdResponse::OK);
 
     // Create and send a Com buffer
-    U8 testData[16] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-                       0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10};
+    U8 testData[16] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10};
     Fw::ComBuffer comBuf;
     comBuf.serializeFrom(testData, sizeof(testData));
 
@@ -191,9 +190,11 @@ void ComLoggerDpTester::testAllocationFailure() {
     // Should have generated an error event with correct size
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpBufferError_SIZE(1);
-    // Calculate expected container size: packetsPerContainer=2, each packet can hold FW_COM_BUFFER_MAX_SIZE + 4-byte sentry
+    // Calculate expected container size: packetsPerContainer=2, each packet can hold FW_COM_BUFFER_MAX_SIZE + 4-byte
+    // sentry
     const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
-    const FwSizeType expectedSize = 2 * ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
+    const FwSizeType expectedSize =
+        2 * ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
     ASSERT_EVENTS_DpBufferError(0, expectedSize);
 
     // Should not have sent a container
@@ -316,8 +317,7 @@ void ComLoggerDpTester::testPriorityPreserved() {
     this->clearHistory();
 
     // Send two Com buffers to trigger container allocation and send
-    U8 testData[16] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-                       0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10};
+    U8 testData[16] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10};
     Fw::ComBuffer comBuf;
     comBuf.serializeFrom(testData, sizeof(testData));
 
@@ -496,7 +496,8 @@ void ComLoggerDpTester::testDpBufferErrorThrottling() {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpBufferError_SIZE(1);
     const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
-    const FwSizeType expectedSize = 2 * ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
+    const FwSizeType expectedSize =
+        2 * ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
     ASSERT_EVENTS_DpBufferError(0, expectedSize);
 
     // Clear counters should clear the throttle
@@ -624,9 +625,7 @@ void ComLoggerDpTester::initComponents() {
     this->component.init(TEST_INSTANCE_QUEUE_DEPTH, TEST_INSTANCE_ID);
 }
 
-Fw::Success::T ComLoggerDpTester::productGet_handler(FwDpIdType id,
-                                                      FwSizeType dataSize,
-                                                      Fw::Buffer& buffer) {
+Fw::Success::T ComLoggerDpTester::productGet_handler(FwDpIdType id, FwSizeType dataSize, Fw::Buffer& buffer) {
     this->pushProductGetEntry(id, dataSize);
 
     if (this->m_allocationFailure) {

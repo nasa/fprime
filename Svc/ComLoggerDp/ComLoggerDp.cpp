@@ -165,7 +165,8 @@ bool ComLoggerDp ::allocateAndSetupContainer() {
     // Calculate size needed for the requested number of packets
     // Each record holds a 4-byte sentry plus up to FW_COM_BUFFER_MAX_SIZE bytes
     const FwSizeType sentrySize = sizeof(U32);
-    const FwSizeType containerSize = this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
+    const FwSizeType containerSize =
+        this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
 
     // Get a container buffer
     const Fw::Success status = this->dpGet_ComBuffContainer(containerSize, this->m_container);
@@ -242,7 +243,10 @@ void ComLoggerDp ::finalizeFullContainer() {
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-void ComLoggerDp ::StartComDp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 packetsPerContainer, FwDpPriorityType priority) {
+void ComLoggerDp ::StartComDp_cmdHandler(FwOpcodeType opCode,
+                                         U32 cmdSeq,
+                                         U32 packetsPerContainer,
+                                         FwDpPriorityType priority) {
     // Call internal helper function
     bool success = this->startRecordingInternal(packetsPerContainer, priority);
 
