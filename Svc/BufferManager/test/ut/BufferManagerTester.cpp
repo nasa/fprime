@@ -14,6 +14,7 @@
 #include <Fw/Test/UnitTest.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <cstdlib>
+#include <limits>
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100
@@ -478,6 +479,36 @@ void BufferManagerTester::bufferSizeTrimmed() {
     ASSERT_FALSE(this->component.m_buffers[0].allocated);
 
     this->component.cleanup();
+}
+
+void BufferManagerTester::setupSizeOverflowAsserts() {
+    // setup() adds up bufferSize + sizeof(AllocatedBuffer) per buffer, times numBuffers, across
+    // bins, and hands the total to the allocator. Each step is now checked before it can wrap;
+    // without the checks the total wrapped silently and the buffer structures were carved into
+    // an allocation far smaller than the manager believed it had.
+    const FwSizeType maxSize = std::numeric_limits<FwSizeType>::max();
+    BufferManagerComponentImpl::BufferBins bins;
+    TestAllocator alloc;
+
+    // bufferSize + sizeof(AllocatedBuffer) wraps
+    memset(&bins, 0, sizeof(bins));
+    bins.bins[0].bufferSize = maxSize;
+    bins.bins[0].numBuffers = 1;
+    ASSERT_DEATH_IF_SUPPORTED(this->component.setup(MGR_ID, MEM_ID, alloc, bins), "Assert: ");
+
+    // per-buffer size times numBuffers wraps
+    memset(&bins, 0, sizeof(bins));
+    bins.bins[0].bufferSize = maxSize / 2;
+    bins.bins[0].numBuffers = 3;
+    ASSERT_DEATH_IF_SUPPORTED(this->component.setup(MGR_ID, MEM_ID, alloc, bins), "Assert: ");
+
+    // the running total across bins wraps
+    memset(&bins, 0, sizeof(bins));
+    bins.bins[0].bufferSize = maxSize / 2;
+    bins.bins[0].numBuffers = 1;
+    bins.bins[1].bufferSize = maxSize / 2;
+    bins.bins[1].numBuffers = 1;
+    ASSERT_DEATH_IF_SUPPORTED(this->component.setup(MGR_ID, MEM_ID, alloc, bins), "Assert: ");
 }
 
 // ----------------------------------------------------------------------
