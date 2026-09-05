@@ -238,6 +238,11 @@ comLogger.init(QUEUE_DEPTH, INSTANCE_ID);
 comLogger.configure(false);
 ```
 
+Use the public helper function `ComLoggerDpBuffSize` to get the size
+of buffers needed to support the ComBuffer data products. This size
+can be used for Svc::BufferManager or equivalent.
+
+
 ### 5.3 Port Connections
 
 #### Typical Deployment Connections
