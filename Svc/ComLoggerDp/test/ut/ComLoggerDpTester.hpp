@@ -85,6 +85,15 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test buffer overflow - buffer too large for container
     void testBufferOverflow();
 
+    //! Test DpBufferError event throttling behavior
+    void testDpBufferErrorThrottling();
+
+    //! Test UpdatePriority when not recording
+    void testUpdatePriorityNotRecording();
+
+    //! Test UpdatePriority when no container allocated
+    void testUpdatePriorityNoContainer();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -95,6 +104,9 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
 
     //! Initialize components
     void initComponents();
+
+    //! Helper to start logging and clear history (reduces test duplication)
+    void startLoggingAndClearHistory(U32 packetsPerContainer, FwDpPriorityType priority);
 
   private:
     // ----------------------------------------------------------------------

@@ -90,6 +90,24 @@ TEST(Nominal, BufferOverflow) {
     tester.testBufferOverflow();
 }
 
+// Test DpBufferError event throttling
+TEST(OffNominal, DpBufferErrorThrottling) {
+    Svc::ComLoggerDpTester tester;
+    tester.testDpBufferErrorThrottling();
+}
+
+// Test UpdatePriority when not recording
+TEST(EdgeCases, UpdatePriorityNotRecording) {
+    Svc::ComLoggerDpTester tester;
+    tester.testUpdatePriorityNotRecording();
+}
+
+// Test UpdatePriority when no container allocated
+TEST(EdgeCases, UpdatePriorityNoContainer) {
+    Svc::ComLoggerDpTester tester;
+    tester.testUpdatePriorityNoContainer();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

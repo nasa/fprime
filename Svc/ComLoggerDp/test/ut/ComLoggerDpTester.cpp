@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "ComLoggerDpTester.hpp"
+#include "default/config/ComLoggerDpCfg.hpp"
 
 namespace Svc {
 
@@ -75,16 +76,16 @@ void ComLoggerDpTester::testStartComDp() {
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STARTCOMDP, 1, Fw::CmdResponse::VALIDATION_ERROR);
-    // No event should be logged for validation error
-    ASSERT_EVENTS_SIZE(0);
+
+    // Verify StartRecordingFailed event was logged (consistent with port path behavior)
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_StartRecordingFailed_SIZE(1);
+    ASSERT_EVENTS_StartRecordingFailed(0, 0);  // packetsPerContainer = 0
 }
 
 void ComLoggerDpTester::testStopComDp() {
     // Start logging
-    this->component.configure(true);
-    this->sendCmd_StartComDp(0, 0, 2, 10);
-    this->component.doDispatch();
-    this->clearHistory();
+    this->startLoggingAndClearHistory(2, 10);
 
     // Send one packet (partial container)
     U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
@@ -99,14 +100,16 @@ void ComLoggerDpTester::testStopComDp() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STOPCOMDP, 1, Fw::CmdResponse::OK);
     ASSERT_PRODUCT_SEND_SIZE(1);
+
+    // Verify ComDpStopped event was emitted with correct numSent
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ComDpStopped_SIZE(1);
+    ASSERT_EVENTS_ComDpStopped(0, 1);  // 1 partial container sent
 }
 
 void ComLoggerDpTester::testUpdatePriority() {
     // Start logging
-    this->component.configure(true);
-    this->sendCmd_StartComDp(0, 0, 3, 5);
-    this->component.doDispatch();
-    this->clearHistory();
+    this->startLoggingAndClearHistory(3, 5);
 
     // Send one packet to create active container
     U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
@@ -120,6 +123,11 @@ void ComLoggerDpTester::testUpdatePriority() {
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_UPDATEPRIORITY, 1, Fw::CmdResponse::OK);
+
+    // Verify PriorityUpdated event was emitted with correct priority value
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PriorityUpdated_SIZE(1);
+    ASSERT_EVENTS_PriorityUpdated(0, 15);  // Verify priority value
 }
 
 void ComLoggerDpTester::testPing() {
@@ -180,9 +188,13 @@ void ComLoggerDpTester::testAllocationFailure() {
     this->invoke_to_comIn(0, comBuf, 0);
     this->component.doDispatch();
 
-    // Should have generated an error event
+    // Should have generated an error event with correct size
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpBufferError_SIZE(1);
+    // Calculate expected container size: packetsPerContainer=2, each packet can hold FW_COM_BUFFER_MAX_SIZE + 4-byte sentry
+    const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
+    const FwSizeType expectedSize = 2 * ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
+    ASSERT_EVENTS_DpBufferError(0, expectedSize);
 
     // Should not have sent a container
     ASSERT_PRODUCT_SEND_SIZE(0);
@@ -462,9 +474,103 @@ void ComLoggerDpTester::testBufferOverflow() {
     ASSERT_TLM_NumBuffersDropped(0, 0);  // No buffers dropped
 }
 
+void ComLoggerDpTester::testDpBufferErrorThrottling() {
+    // Start logging
+    this->startLoggingAndClearHistory(2, 10);
+
+    // Simulate allocation failure
+    this->m_allocationFailure = true;
+
+    // Send multiple packets - should trigger multiple allocation failures
+    U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(testData, sizeof(testData));
+
+    // Trigger 5 allocation failures
+    for (int i = 0; i < 5; i++) {
+        this->invoke_to_comIn(0, comBuf, 0);
+        this->component.doDispatch();
+    }
+
+    // Should only have ONE DpBufferError event due to throttling
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpBufferError_SIZE(1);
+    const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
+    const FwSizeType expectedSize = 2 * ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
+    ASSERT_EVENTS_DpBufferError(0, expectedSize);
+
+    // Clear counters should clear the throttle
+    this->clearHistory();
+    this->sendCmd_CLEAR_COUNTERS(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_CountersCleared_SIZE(1);
+    this->clearHistory();
+
+    // Send another packet - should trigger event again (throttle cleared)
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpBufferError_SIZE(1);
+    ASSERT_EVENTS_DpBufferError(0, expectedSize);  // Same expectedSize from above
+}
+
+void ComLoggerDpTester::testUpdatePriorityNotRecording() {
+    // Don't start recording - logging disabled
+    this->component.configure(true);
+
+    // Try to update priority when not recording
+    this->sendCmd_UpdatePriority(0, 0, 15);
+    this->component.doDispatch();
+
+    // Command should succeed (priority is stored for future use)
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_UPDATEPRIORITY, 0, Fw::CmdResponse::OK);
+
+    // PriorityUpdated event is always emitted, even when not recording
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PriorityUpdated_SIZE(1);
+    ASSERT_EVENTS_PriorityUpdated(0, 15);
+}
+
+void ComLoggerDpTester::testUpdatePriorityNoContainer() {
+    // Start recording but don't send any packets (no container allocated yet)
+    this->startLoggingAndClearHistory(3, 5);
+
+    // Update priority when no container exists
+    this->sendCmd_UpdatePriority(0, 0, 15);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_UPDATEPRIORITY, 0, Fw::CmdResponse::OK);
+
+    // PriorityUpdated event is always emitted (priority stored for future containers)
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PriorityUpdated_SIZE(1);
+    ASSERT_EVENTS_PriorityUpdated(0, 15);
+
+    // Send a packet - new container should be created with NEW priority (15)
+    U8 testData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(testData, sizeof(testData));
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // Verify container was allocated with updated priority
+    ASSERT_PRODUCT_GET_SIZE(1);
+    // Priority verification would require inspecting the product priority,
+    // which is implementation-dependent
+}
+
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------
+
+void ComLoggerDpTester::startLoggingAndClearHistory(U32 packetsPerContainer, FwDpPriorityType priority) {
+    this->component.configure(true);
+    this->sendCmd_StartComDp(0, 0, packetsPerContainer, priority);
+    this->component.doDispatch();
+    this->clearHistory();
+}
 
 void ComLoggerDpTester::connectPorts() {
     // cmdIn

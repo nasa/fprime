@@ -250,6 +250,8 @@ void ComLoggerDp ::StartComDp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 pa
     if (success) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
+        // Log warning event for validation failure (consistent with port path)
+        this->log_WARNING_LO_StartRecordingFailed(packetsPerContainer);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
     }
 }
