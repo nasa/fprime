@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "14e385d9942cc12ea5650508aac3dde5f7db6dbd",
-  "generated_at": "2026-09-05T21:08:51Z",
+  "generated_at": "2026-09-05T21:11:10Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -6681,9 +6681,9 @@
       },
       "checks": {
         "passed": 2,
-        "failed": 0,
-        "skipped": 14,
-        "tier": "platinum",
+        "failed": 1,
+        "skipped": 13,
+        "tier": "bronze",
         "report": "Svc/Ccsds/ClearTextDecryptor/checks/index.html"
       },
       "sdd": {
@@ -6696,7 +6696,7 @@
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
-        "checks": "platinum",
+        "checks": "bronze",
         "sdd": "bronze"
       }
     },
@@ -6760,9 +6760,9 @@
       },
       "checks": {
         "passed": 2,
-        "failed": 0,
-        "skipped": 14,
-        "tier": "platinum",
+        "failed": 1,
+        "skipped": 13,
+        "tier": "bronze",
         "report": "Svc/Ccsds/ClearTextEncryptor/checks/index.html"
       },
       "sdd": {
@@ -6775,7 +6775,7 @@
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
-        "checks": "platinum",
+        "checks": "bronze",
         "sdd": "bronze"
       }
     },

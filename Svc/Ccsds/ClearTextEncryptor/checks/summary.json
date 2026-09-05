@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-04T21:12:14Z",
+  "generated_at": "2026-09-05T21:11:06Z",
   "ref": "devel",
-  "commit": "874df1f8eb1c078702b992cf62ea50449f9c58a9",
+  "commit": "14e385d9942cc12ea5650508aac3dde5f7db6dbd",
   "passed": 2,
-  "failed": 0,
-  "skipped": 14,
+  "failed": 1,
+  "skipped": 13,
   "checks": [
     {
       "id": "D1",
@@ -93,9 +93,11 @@
       "name": "Requirement per event",
       "category": "requirements",
       "module": "/home/runner/work/fprime/fprime/Svc/Ccsds/ClearTextEncryptor",
-      "status": "skip",
-      "failures": [],
-      "detail": "no events declared in the FPP model"
+      "status": "fail",
+      "failures": [
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/Ccsds/ClearTextEncryptor/docs/sdd.md); cannot trace 1 event(s)"
+      ],
+      "detail": "1 event(s) traced against 0 requirement(s)"
     },
     {
       "id": "R4",

@@ -43,13 +43,16 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
    `SourceOutOfSandbox`. This mirrors `Svc::FileUplink` write-side sandboxing.
 
    > [!WARNING]
-   > The sandbox is **fail-open**: until `configure(directory)` is called, the sandbox defaults to
-   > `/`, which permits reading any absolute path accessible to the process via ground command.
-   > This default is intentionally insecure for backwards compatibility. Security-conscious
-   > deployments **must** call `configure(directory)` during topology setup to restrict file
-   > access. Note that the stock `FileHandling` subtopology and reference topologies do **not**
-   > configure a downlink sandbox: `FileHandling` only calls the
-   > `configure(cooldown, cycleTime, fileQueueDepth)` overload, which does not set a sandbox.
+   > The sandbox is **fail-closed**: until `configure(directory)` is called, every source open is
+   > rejected with `OUTSIDE_SANDBOX` (emitting `SourceOutOfSandbox`) — an unconfigured
+   > `FileDownlink` cannot read anything. A deployment **must** call the `configure(directory)`
+   > overload during topology setup to enable downlink reads and select the allowed base
+   > directory (the `configure(cooldown, cycleTime, fileQueueDepth)` overload does **not** set a
+   > sandbox). Note that the stock `FileHandling` subtopology configures the sandbox to `"/"` for
+   > backwards compatibility, which permits reading **any absolute path accessible to the
+   > process** via ground command. Security-conscious deployments using that subtopology **must**
+   > call `configure(directory)` again from topology setup code with a restricted directory;
+   > paths that resolve outside it — `../` traversal and absolute paths — are then rejected.
 
 ### 3.2 Ports
 
