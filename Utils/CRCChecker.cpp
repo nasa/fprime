@@ -12,6 +12,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/FileNameString.hpp>
+#include <Fw/Types/SerialBuffer.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <Utils/CRCChecker.hpp>
@@ -89,9 +90,15 @@ crc_stat_t create_checksum_file(const char* const fname) {
         return FAILED_FILE_CRC_OPEN;
     }
 
-    // Write  checksum  file
-    bytes_to_write = sizeof(checksum);
-    stat = f.write(reinterpret_cast<U8*>(&checksum), bytes_to_write);
+    // Write checksum file. Serialize the value rather than writing the raw U32 bytes so that the
+    // file contents do not depend on the endianness of the processor.
+    U8 checksum_data[sizeof(checksum)];
+    Fw::SerialBuffer checksum_buffer(checksum_data, sizeof(checksum_data));
+    Fw::SerializeStatus ser_stat = checksum_buffer.serializeFrom(checksum);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == ser_stat, static_cast<FwAssertArgType>(ser_stat));
+
+    bytes_to_write = checksum_buffer.getSize();
+    stat = f.write(checksum_buffer.getBuffAddr(), bytes_to_write);
     if (stat != Os::File::OP_OK || sizeof(checksum) != bytes_to_write) {
         f.close();
         return FAILED_FILE_CRC_WRITE;
@@ -119,13 +126,20 @@ crc_stat_t read_crc32_from_file(const char* const fname, U32& checksum_from_file
         return FAILED_FILE_CRC_OPEN;
     }
 
-    // Read  checksum  file
+    // Read checksum file
+    U8 checksum_data[sizeof(checksum_from_file)];
     FwSizeType checksum_from_file_size = static_cast<FwSizeType>(sizeof(checksum_from_file));
-    stat = f.read(reinterpret_cast<U8*>(&checksum_from_file), checksum_from_file_size);
+    stat = f.read(checksum_data, checksum_from_file_size);
     if (stat != Os::File::OP_OK || checksum_from_file_size != sizeof(checksum_from_file)) {
         f.close();
         return FAILED_FILE_CRC_READ;
     }
+
+    // Deserialize the value to match the serialized form written by create_checksum_file
+    Fw::SerialBuffer checksum_buffer(checksum_data, sizeof(checksum_data));
+    checksum_buffer.fill();
+    Fw::SerializeStatus ser_stat = checksum_buffer.deserializeTo(checksum_from_file);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == ser_stat, static_cast<FwAssertArgType>(ser_stat));
 
     // close checksum file
     f.close();
