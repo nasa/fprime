@@ -222,6 +222,32 @@ TEST_F(FpySequencerTester, pushTlmValAndTime) {
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
 }
 
+// Largest possible request: a full telemetry buffer plus a time. FpySequencer.hpp only requires
+// MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE, so a configuration with MAX_STACK_SIZE == FW_TLM_BUFFER_MAX_SIZE
+// is allowed and there the request does not fit. The subtraction form
+// (MAX - tlmValue.getSize() - timeEsb.getSize() < stack.size) underflows in that configuration, accepts
+// the push, and the stack then asserts. The remaining-capacity form reports STACK_OVERFLOW.
+// In the default configuration (65535) the request fits and the test checks the exact resulting size.
+TEST_F(FpySequencerTester, pushTlmValAndTimeFullBuffer) {
+    FpySequencer_PushTlmValAndTimeDirective directive(456);
+    nextTlmId = 456;
+    nextTlmValue.setBuffLen(FW_TLM_BUFFER_MAX_SIZE);
+    nextTlmTime.set(888, 777);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    const FwSizeType needed = static_cast<FwSizeType>(FW_TLM_BUFFER_MAX_SIZE) + Fw::Time::SERIALIZED_SIZE;
+    Signal result = tester_pushTlmValAndTime_directiveHandler(directive, err);
+    if (needed > static_cast<FwSizeType>(Fpy::MAX_STACK_SIZE)) {
+        ASSERT_EQ(result, Signal::stmtResponse_failure);
+        ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+        ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
+    } else {
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, needed);
+    }
+}
+
 TEST_F(FpySequencerTester, pushPrm) {
     FpySequencer_PushPrmDirective directive(456);
     nextPrmId = 456;
