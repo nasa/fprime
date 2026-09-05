@@ -11,10 +11,10 @@
 
 namespace Svc {
 
-    //! Sentry value inserted before each ComBuffer in data products (0xDEADBEEF)
-    //! Used to identify buffer boundaries when reconstructing telemetry from partial containers
-    constexpr U32 ComLoggerDpSentry = 0xDEADBEEF;
+//! Sentry value inserted before each ComBuffer in data products (0xDEADBEEF)
+//! Used to identify buffer boundaries when reconstructing telemetry from partial containers
+constexpr U32 ComLoggerDpSentry = 0xDEADBEEF;
 
-}
+}  // namespace Svc
 
 #endif
