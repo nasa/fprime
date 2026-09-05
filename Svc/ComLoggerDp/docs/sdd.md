@@ -39,7 +39,7 @@ The component uses a stateful design that:
 | `comIn` | `Fw.Com` | Async port receiving Com buffers to be logged |
 | `pingIn` | `Svc.Ping` | Async port for health ping requests |
 | `schedIn` | `Svc.Sched` | Async port for periodic telemetry updates |
-| `startRecordingIn` | `Svc.ComLoggerStart` | Async port to start recording via port interface |
+| `startRecordingIn` | `Svc.ComLoggerStart` | Async port to start recording via port interface. Parameters: `packetsPerContainer` (U32), `priority` (FwDpPriorityType). Logs `StartRecordingFailed` event on validation failure. |
 | `stopRecordingIn` | `Svc.ComLoggerStop` | Async port to stop recording via port interface |
 | `cmdIn` | Command receive | Standard command receive port |
 
@@ -68,6 +68,7 @@ The component uses a stateful design that:
 | `m_numBuffersLogged` | `U32` | `0` | Total number of buffers logged since initialization |
 | `m_numBuffersDropped` | `U32` | `0` | Number of buffers dropped due to allocation failure |
 | `m_priority` | `FwDpPriorityType` | `5` | Priority for data product containers |
+| `m_recordBuffer` | `U8[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)]` | - | Buffer for building records with sentry value followed by ComBuffer data |
 
 ### 3.4 Configuration
 
@@ -76,8 +77,11 @@ The component uses FPP constants defined in `ComLoggerDpCfg.fpp` for configurati
 | Constant | Type | Default | Description |
 |---|---|---|---|
 | `DpBufferErrorThrottle` | `U32` | `1` | Throttle value for `DpBufferError` event - limits the number of times the event can be emitted consecutively |
+| `ComLoggerDpSentry` | `U32` | Deployment-specific | Sentry value prepended to each ComBuffer record for corruption detection during deserialization |
 
 These constants can be overridden in deployment-specific configuration files to tune behavior without modifying the component source.
+
+**Note on Sentry Values**: Each ComBuffer record now includes a 4-byte sentry value prepended to the data. This sentry serves as a corruption detection mechanism that allows downstream deserialization code to validate record integrity. The sentry is serialized using F Prime's serialization to handle endianness correctly across platforms.
 
 ### 3.5 Initialization
 
@@ -87,8 +91,8 @@ The component requires calling `configure(bool enabled)` during initialization t
 
 | Command | Opcode | Parameters | Description |
 |---|---|---|---|
-| `StartComDp` | 0x00 | `packetsPerContainer: U32`<br>`priority: U32` | Starts recording Com buffers into data products with the specified configuration. Validates that `packetsPerContainer > 0`. Logs `ComDpStarted` event on success. |
-| `UpdatePriority` | 0x01 | `priority: U32` | Updates the priority of the currently active container (if any) and stores the priority for future containers. Logs `PriorityUpdated` event. |
+| `StartComDp` | 0x00 | `packetsPerContainer: U32`<br>`priority: FwDpPriorityType` | Starts recording Com buffers into data products with the specified configuration. Validates that `packetsPerContainer > 0`. If validation fails, logs `StartRecordingFailed` event and returns `VALIDATION_ERROR`. If recording is already active with a partial container, sends the partial container before reconfiguring. Logs `ComDpStarted` event on success. |
+| `UpdatePriority` | 0x01 | `priority: FwDpPriorityType` | Updates the priority of the currently active container (if any) and stores the priority for future containers. Logs `PriorityUpdated` event. |
 | `StopComDp` | 0x02 | None | Stops recording and sends any partial container. Logs `ComDpStopped` event with count of partial containers sent. |
 | `CLEAR_COUNTERS` | 0x03 | None | Clears the `NumBuffersLogged` and `NumBuffersDropped` telemetry counters to 0 and resets the `DpBufferError` event throttle. Logs `CountersCleared` event. |
 
@@ -101,6 +105,7 @@ The component requires calling `configure(bool enabled)` during initialization t
 | `ComDpStopped` | 0x02 | ACTIVITY_HI | `numSent: U32` | None | Recording stopped, partial container sent if any |
 | `PriorityUpdated` | 0x03 | ACTIVITY_LO | `priority: U32` | None | Data product priority updated |
 | `CountersCleared` | 0x04 | ACTIVITY_LO | None | None | Counters and throttles cleared |
+| `StartRecordingFailed` | 0x05 | WARNING_LO | `packetsPerContainer: U32` | None | Failed to start recording due to invalid configuration (packetsPerContainer must be > 0) |
 
 ### 3.7 Telemetry
 
@@ -118,7 +123,7 @@ Telemetry is written periodically when the `schedIn` port is invoked (typically 
 
 | Record | ID | Type | Description |
 |---|---|---|---|
-| `ComBufferRecord` | 0 | `U8 array` | Variable-length array containing Com buffer data |
+| `ComBufferRecord` | 0 | `U8 array` | Variable-length array containing a 4-byte sentry value (serialized with proper endianness) followed by Com buffer data |
 
 #### 3.8.2 Containers
 
@@ -130,11 +135,14 @@ Telemetry is written periodically when the `schedIn` port is invoked (typically 
 
 The component uses private helper functions to share logic between command handlers and port handlers:
 
-- `startRecordingInternal(U32 packetsPerContainer, U32 priority)`: Validates parameters, stores configuration, enables logging, and logs event. Returns `true` on success, `false` on validation failure.
-- `stopRecordingInternal()`: Sends any partial container, disables logging, logs event, and returns the number of partial containers sent.
-- `handleBufferDrop(U32 size)`: Logs `DpBufferError` event and increments `m_numBuffersDropped` counter. Called when a buffer must be dropped due to allocation or serialization failure.
+- `startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority)`: Validates parameters, stores configuration, enables logging, and logs event. If recording is already active with a partial container, sends the partial container before reconfiguring. On validation failure, disables logging and returns `false`. Returns `true` on success.
+- `stopRecordingInternal()`: Sends any partial container, disables logging, logs event, and returns the number of partial containers sent (0 or 1).
+- `handleBufferDrop(U32 size)`: Logs `DpBufferError` event (with throttling) and increments `m_numBuffersDropped` counter. Called when a buffer must be dropped due to allocation or serialization failure.
+- `allocateAndSetupContainer()`: Allocates a new data product container with size calculated to hold `m_packetsPerContainer` records (each with sentry + ComBuffer data), sets the priority to `m_priority`, and returns `true` on success. On allocation failure, calls `handleBufferDrop()` and returns `false`.
+- `serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize)`: Builds a record with sentry value followed by ComBuffer data in `m_recordBuffer`, then serializes it into the current container. If the container is full, sends the partial container, allocates a new one, and retries serialization. Returns `true` on success, `false` if the packet cannot be serialized (allocation failure or packet too large).
+- `finalizeFullContainer()`: Sends the current full container via `productSendOut` and resets `m_currentPacketCount` to 0. Note that `dpSend()` invalidates the container; a new one will be allocated when the next packet arrives.
 
-This design allows both command-based and port-based control to use the same implementation, and provides consistent error handling across different failure modes.
+This design allows both command-based and port-based control to use the same implementation, provides consistent error handling across different failure modes, and encapsulates the complexity of sentry value handling and container management.
 
 ### 3.10 Operational Flow
 
@@ -142,30 +150,36 @@ This design allows both command-based and port-based control to use the same imp
 
 1. `StartComDp` command or `startRecordingIn` port is invoked
 2. `startRecordingInternal()` validates `packetsPerContainer > 0`
-3. Configuration is stored and logging is enabled
-4. `ComDpStarted` event is logged
-5. Component awaits incoming Com buffers
+   - If validation fails, disable logging and return failure
+   - Command handler sends `VALIDATION_ERROR` response and logs `StartRecordingFailed` event
+   - Port handler logs `StartRecordingFailed` event
+3. If recording is already active with a partial container, send it before reconfiguring
+4. Configuration is stored and logging is enabled
+5. `ComDpStarted` event is logged
+6. Component awaits incoming Com buffers
 
 #### 3.10.2 Recording Com Buffers
 
 1. Com buffer arrives on `comIn` port
 2. If not enabled, return immediately
-3. If `m_currentPacketCount == 0`, allocate a new container via `productGetOut`
-   - If allocation fails, call `handleBufferDrop()` and return
-4. Set container priority to `m_priority`
-5. Serialize Com buffer data into container as a `ComBufferRecord`
-   - If serialization fails (container may be full):
+3. If `m_currentPacketCount == 0`, call `allocateAndSetupContainer()`
+   - Allocates a new container with size for `m_packetsPerContainer` records (including sentry overhead)
+   - Sets container priority to `m_priority`
+   - If allocation fails, `handleBufferDrop()` is called and handler returns
+4. Call `serializePacketWithRetry()` to serialize the packet with sentry:
+   - Build record in `m_recordBuffer`: serialize sentry value (handles endianness), then append ComBuffer data
+   - Try to serialize the record into the container
+   - If serialization succeeds, return true
+   - If serialization fails (container is full):
      - Send current partial container if it has packets
-     - Reset `m_currentPacketCount`
-     - Allocate a new container
-     - If new allocation fails, call `handleBufferDrop()` and return
-     - Set priority on new container
-     - Retry serialization
-     - If retry fails, call `handleBufferDrop()` and return
-6. Increment `m_currentPacketCount` and `m_numBuffersLogged`
-7. If container is full (`m_currentPacketCount >= m_packetsPerContainer`):
-   - Send container via `productSendOut`
-   - Reset `m_currentPacketCount` to 0
+     - Reset `m_currentPacketCount` to 0
+     - Call `allocateAndSetupContainer()` to get a new container
+     - If allocation fails, `handleBufferDrop()` is called and return false
+     - Retry serialization with the new container
+     - If retry still fails (packet too large), call `handleBufferDrop()` and return false
+5. Increment `m_currentPacketCount` and `m_numBuffersLogged`
+6. If container is full (`m_currentPacketCount >= m_packetsPerContainer`):
+   - Call `finalizeFullContainer()` to send container and reset count
 
 #### 3.10.3 Stopping Recording
 
@@ -182,18 +196,22 @@ The component includes comprehensive unit tests covering all functionality:
 | Test | Description | Requirements Validated |
 |---|---|---|
 | `ComLogging` | Tests basic Com buffer logging with container allocation and sending when full | SVC-COMLOGGERDP-001 |
-| `StartComDp` | Tests `StartComDp` command with valid and invalid parameters, verifies event logging | SVC-COMLOGGER-002 |
-| `StopComDp` | Tests `StopComDp` command and verifies partial container is sent | SVC-COMLOGGER-003 |
-| `UpdatePriority` | Tests `UpdatePriority` command and verifies priority is updated on active container | SVC-COMLOGGER-004 |
+| `StartComDp` | Tests `StartComDp` command with valid and invalid parameters, verifies event logging including `StartRecordingFailed` event on validation error | SVC-COMLOGGER-002 |
+| `StopComDp` | Tests `StopComDp` command and verifies partial container is sent with correct `ComDpStopped` event | SVC-COMLOGGER-003 |
+| `UpdatePriority` | Tests `UpdatePriority` command and verifies priority is updated on active container with `PriorityUpdated` event | SVC-COMLOGGER-004 |
 | `Ping` | Tests ping functionality via `pingIn` port | - |
 | `ContainerFill` | Tests that containers are sent at the correct boundary and partial containers are not sent prematurely | SVC-COMLOGGERDP-001 |
-| `AllocationFailure` | Tests error handling when container allocation fails, verifies `DpBufferError` event | SVC-COMLOGGER-005 |
+| `AllocationFailure` | Tests error handling when container allocation fails, verifies `DpBufferError` event with correct size (including sentry overhead) | SVC-COMLOGGER-005 |
+| `PortValidationFailure` | Tests validation failure via `startRecordingIn` port with invalid parameters, verifies `StartRecordingFailed` event is logged | SVC-COMLOGGER-002 |
 | `Telemetry` | Tests that `LoggingEnabled` and `NumBuffersLogged` telemetry is written correctly via `schedIn` | - |
 | `PriorityPreserved` | Tests that priority from `StartComDp` is preserved and applied even when starting from disabled state | SVC-COMLOGGER-002, SVC-COMLOGGER-004 |
-| `StartRecordingPort` | Tests starting recording via `startRecordingIn` port with encoded configuration | SVC-COMLOGGER-002 |
+| `StartRecordingPort` | Tests starting recording via `startRecordingIn` port with separate parameters (no longer encoded) | SVC-COMLOGGER-002 |
 | `StopRecordingPort` | Tests stopping recording via `stopRecordingIn` port | SVC-COMLOGGER-003 |
 | `ClearCounters` | Tests `CLEAR_COUNTERS` command, verifies `NumBuffersLogged` and `NumBuffersDropped` are reset and `DpBufferError` throttle is cleared | - |
 | `BufferOverflow` | Tests that large buffers are handled correctly and serialization status is checked | - |
+| `DpBufferErrorThrottling` | Tests that `DpBufferError` event is properly throttled and that `CLEAR_COUNTERS` resets the throttle | SVC-COMLOGGER-005 |
+| `UpdatePriorityNotRecording` | Tests `UpdatePriority` command when not recording, verifies priority is stored for future use | SVC-COMLOGGER-004 |
+| `UpdatePriorityNoContainer` | Tests `UpdatePriority` command when recording but no container allocated yet, verifies new container gets updated priority | SVC-COMLOGGER-004 |
 
 All tests verify:
 - Correct port behavior
@@ -285,9 +303,10 @@ This stops recording and sends any partial container.
 The component can also be controlled via ports for integration with autonomous flight software or other components:
 
 ```cpp
-// Start recording: encode config as (packetsPerContainer << 16) | priority
-U32 config = (100 << 16) | 5;  // 100 packets per container, priority 5
-comLogger.get_startRecordingIn_InputPort(0)->invoke(config);
+// Start recording with separate parameters
+U32 packetsPerContainer = 100;
+FwDpPriorityType priority = 5;
+comLogger.get_startRecordingIn_InputPort(0)->invoke(packetsPerContainer, priority);
 
 // Stop recording
 comLogger.get_stopRecordingIn_InputPort(0)->invoke();
@@ -323,3 +342,4 @@ A common deployment pattern:
 | Date | Description |
 |---|---|
 | 2026-09-04 | Initial implementation with commands, ports, events, telemetry, and comprehensive unit tests |
+| 2026-09-04 | Added sentry value to ComBuffer records for corruption detection; refactored serialization logic into helper functions (`allocateAndSetupContainer`, `serializePacketWithRetry`, `finalizeFullContainer`); changed priority parameter type from U32 to FwDpPriorityType; updated `startRecordingIn` port to accept separate parameters instead of encoded U32; added `StartRecordingFailed` event; improved reconfiguration behavior to send partial containers before applying new settings; added explicit handling of validation failures on port invocation; enhanced unit tests with validation failure, throttling, and edge case coverage |
