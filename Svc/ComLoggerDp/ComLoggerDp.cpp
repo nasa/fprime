@@ -162,8 +162,9 @@ void ComLoggerDp ::handleBufferDrop(U32 size) {
 }
 
 bool ComLoggerDp ::allocateAndSetupContainer() {
-    // Calculate size needed for the requested number of packets
-    // Each record holds a 4-byte sentry plus up to FW_COM_BUFFER_MAX_SIZE bytes
+    // Calculate data size needed for the requested number of packets
+    // Each record holds a sentry plus up to FW_COM_BUFFER_MAX_SIZE bytes
+    // Note: DpManager adds the container header overhead, so we only request the data size
     const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
     const FwSizeType containerSize =
         this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
@@ -215,7 +216,7 @@ bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSi
 
     // Try to allocate a new container for retry
     if (!this->allocateAndSetupContainer()) {
-        return false; // can't get one, have to drop buffer
+        return false;  // can't get one, have to drop buffer
     }
 
     // Retry serialization with the new container

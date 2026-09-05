@@ -108,6 +108,12 @@ TEST(EdgeCases, UpdatePriorityNoContainer) {
     tester.testUpdatePriorityNoContainer();
 }
 
+// Test data product format validation (sentry + ComBuffer structure)
+TEST(Nominal, DataProductFormat) {
+    Svc::ComLoggerDpTester tester;
+    tester.testDataProductFormat();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

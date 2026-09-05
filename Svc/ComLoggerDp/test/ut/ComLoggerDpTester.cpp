@@ -190,8 +190,8 @@ void ComLoggerDpTester::testAllocationFailure() {
     // Should have generated an error event with correct size
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpBufferError_SIZE(1);
-    // Calculate expected container size: packetsPerContainer=2, each packet can hold FW_COM_BUFFER_MAX_SIZE + 4-byte
-    // sentry
+    // Calculate expected container size: packetsPerContainer=2, each packet can hold FW_COM_BUFFER_MAX_SIZE + sentry
+    // Note: This is the data size requested from dpGet, not the total container size
     const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
     const FwSizeType expectedSize =
         2 * ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
@@ -635,6 +635,90 @@ Fw::Success::T ComLoggerDpTester::productGet_handler(FwDpIdType id, FwSizeType d
     // Return a valid buffer
     buffer.set(this->m_buffer, dataSize);
     return Fw::Success::SUCCESS;
+}
+
+void ComLoggerDpTester::validateDataProductFormat(const Fw::Buffer& buffer,
+                                                  U32 expectedPacketCount,
+                                                  const U8* expectedData,
+                                                  FwSizeType expectedDataSize) {
+    // Get raw buffer pointer
+    const U8* bufPtr = buffer.getData();
+    FwSizeType bufSize = buffer.getSize();
+
+    // Expected sentry value (0xDEADBEEF serialized in F Prime big-endian format)
+    const U8 sentryBytes[4] = {0xDE, 0xAD, 0xBE, 0xEF};
+
+    // Search through the buffer for the expected pattern:
+    // Each record contains: sentry (4 bytes) + ComBuffer size (2 bytes big-endian) + ComBuffer data
+    // This validates that:
+    // 1. The sentry value (0xDEADBEEF) is correctly inserted before each ComBuffer
+    // 2. The ComBuffer data is correctly serialized after the sentry
+    // 3. The ground software can use the sentry to identify buffer boundaries
+    U32 foundCount = 0;
+
+    for (FwSizeType offset = 0; offset <= bufSize - (sizeof(sentryBytes) + 2 + expectedDataSize); offset++) {
+        // Check if we found a sentry at this position
+        bool sentryMatch = true;
+        for (FwSizeType i = 0; i < sizeof(sentryBytes); i++) {
+            if (bufPtr[offset + i] != sentryBytes[i]) {
+                sentryMatch = false;
+                break;
+            }
+        }
+
+        if (sentryMatch) {
+            // Check for ComBuffer size field (2 bytes big-endian) after sentry
+            // Expected size is 0x0010 (16 bytes) = 00 10 in big-endian
+            U16 comBufSize = (static_cast<U16>(bufPtr[offset + 4]) << 8) | bufPtr[offset + 5];
+
+            if (comBufSize == expectedDataSize) {
+                // Validate the ComBuffer data after sentry + size
+                bool dataMatch = true;
+                for (FwSizeType j = 0; j < expectedDataSize; j++) {
+                    if (bufPtr[offset + 6 + j] != expectedData[j]) {
+                        dataMatch = false;
+                        break;
+                    }
+                }
+
+                if (dataMatch) {
+                    foundCount++;
+                    // Skip past this match to find the next one
+                    offset += sizeof(sentryBytes) + 2 + expectedDataSize - 1;
+                }
+            }
+        }
+    }
+
+    // Verify we found the expected number of sentry + data patterns
+    ASSERT_EQ(foundCount, expectedPacketCount)
+        << "Expected to find " << expectedPacketCount << " sentry+size+data patterns, but found " << foundCount;
+}
+
+void ComLoggerDpTester::testDataProductFormat() {
+    // Start logging with 2 packets per container
+    this->startLoggingAndClearHistory(2, 10);
+
+    // Create test data with a recognizable pattern
+    U8 testData[16] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10};
+    Fw::ComBuffer comBuf;
+    comBuf.serializeFrom(testData, sizeof(testData));
+
+    // Send two packets to fill the container
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // Verify container was sent
+    ASSERT_PRODUCT_SEND_SIZE(1);
+
+    // Get the sent buffer from the test framework productSendHistory
+    DpSend dpSendEntry = this->productSendHistory->at(0);
+    Fw::Buffer sentBuffer = dpSendEntry.buffer;
+
+    // Validate the data product format
+    this->validateDataProductFormat(sentBuffer, 2, testData, sizeof(testData));
 }
 
 }  // namespace Svc

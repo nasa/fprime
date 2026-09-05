@@ -7,12 +7,38 @@
 #ifndef Svc_ComLoggerDp_HPP
 #define Svc_ComLoggerDp_HPP
 
+#include "Fw/Dp/DpContainer.hpp"
 #include "Svc/ComLoggerDp/ComLoggerDpComponentAc.hpp"
+#include "default/config/ComLoggerDpCfg.hpp"
 
 namespace Svc {
 
 class ComLoggerDp final : public ComLoggerDpComponentBase {
   public:
+    // ----------------------------------------------------------------------
+    // Public interface
+    // ----------------------------------------------------------------------
+
+    //! Calculate total buffer size needed for a data product container
+    //! This is the TOTAL size including:
+    //! - DpContainer header (packet descriptor, ID, priority, time tag, etc.)
+    //! - Header hash
+    //! - Record data (N packets × (sentry + ComBuffer data))
+    //! - Data hash
+    //!
+    //! Use this function to compute the size of buffers to allocate from
+    //! Svc::BufferManager or equivalent for holding complete data product containers.
+    //!
+    //! NOTE: This is NOT the size to pass to dpGet() - DpManager adds the header
+    //! overhead internally. This is for external buffer allocation only.
+    //!
+    //! \param packetsPerContainer: Number of packets that will fit in the container
+    //! \return Total buffer size in bytes needed for the complete container
+    static constexpr FwSizeType ComLoggerDpBuffSize(U32 packetsPerContainer) {
+        return DpContainer::MIN_PACKET_SIZE +
+               packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry));
+    }
+
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
@@ -35,10 +61,6 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
 
     //! Move assignment operator (deleted)
     ComLoggerDp& operator=(ComLoggerDp&&) = delete;
-
-    // ----------------------------------------------------------------------
-    // Public interface
-    // ----------------------------------------------------------------------
 
     //! Configure the ComLoggerDp
     //! \param enabled: whether data product logging is initially enabled

@@ -94,6 +94,9 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test UpdatePriority when no container allocated
     void testUpdatePriorityNoContainer();
 
+    //! Test data product format validation
+    void testDataProductFormat();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -107,6 +110,12 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
 
     //! Helper to start logging and clear history (reduces test duplication)
     void startLoggingAndClearHistory(U32 packetsPerContainer, FwDpPriorityType priority);
+
+    //! Validate data product format (sentry + ComBuffer structure)
+    void validateDataProductFormat(const Fw::Buffer& buffer,
+                                   U32 expectedPacketCount,
+                                   const U8* expectedData,
+                                   FwSizeType expectedDataSize);
 
   private:
     // ----------------------------------------------------------------------
