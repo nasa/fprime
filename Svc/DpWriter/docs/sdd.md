@@ -29,14 +29,14 @@ receive this notification and use it to update the data product catalog.
 
 Requirement | Description | Rationale | Verification Method
 ----------- | ----------- | ----------| -------------------
-SVC-DPWRITER-001 | `Svc::DpWriter` shall provide an array of ports for receiving `Fw::Buffer` objects pointing to filled data product containers. | The purpose of `DpWriter` is to write the data products to disk and the array permits multiple independent routing paths. | Unit Test
+SVC-DPWRITER-001 | `Svc::DpWriter` shall provide an array of ports for receiving `Fw::Buffer` objects pointing to filled data product containers. | The purpose of `DpWriter` is to write the data products to disk. The array permits the fusion of multiple logical writer components with separate routing paths into a single component. This fusion increases resource efficiency (it requires fewer component instances and threads), but it restricts concurrency by forcing sequential execution of all routing paths on the same thread. The component allows developers to manage this tradeoff. | Unit Test
 SVC-DPWRITER-002 | `Svc::DpWriter` shall provide an array of ports for sending `Fw::Buffer` objects for processing. | This requirement supports downstream processing of the data in the buffer. | Unit Test
 SVC-DPWRITER-003 | On receiving a data product container _C_, `Svc::DpWriter` shall use the processing type field of the header of _C_ to select zero or more processing ports to invoke, in port order. | The processing type field is a bit mask. A one in bit `2^n` in the bit mask selects port index `n`. | Unit Test
 SVC-DPWRITER-004 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall write _B_ to disk. | The purpose of `DpWriter` is to write data products to the disk. | Unit Test
-SVC-DPWRITER-005 | `Svc::DpWriter` shall provide an array of ports for notifying other components that data products have been written. A notification shall use the same routing port index as the corresponding input buffer. | This requirement allows `Svc::DpCatalog` or a similar component to update its catalog in real time while preserving fused-instance routing. | Unit Test
+SVC-DPWRITER-005 | `Svc::DpWriter` shall provide an array of ports for notifying other components that data products have been written. A notification shall use the same routing port index as the corresponding input buffer. | The notification output allows `Svc::DpCatalog` or a similar component to update a data product catalog in real time. It is possible to notify a single instance of `Svc::DpCatalog` of all outputs, by connecting all the output ports of `Svc::DpWriter` to that component. It is also possible to notify different components via the different output ports. The array preserves symmetry across the port behaviors of this component (input, buffer return, and notification). | Unit Test
 SVC-DPWRITER-006 | `Svc::DpManager` shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors. | This requirement establishes the telemetry interface for the component. | Unit test
 SVC-DPWRITER-007 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall re-parse the container header and shrink the size of the product. | Allows processing interfaces to compress data products and communicate that compressed state back to `Svc::DpWriter`. | Unit Test
-SVC-DPWRITER-008 | `Svc::DpWriter` shall return each valid received buffer on the `deallocBufferSendOut` port whose index matches the `bufferSendIn` port that received it. | Matching send and return paths allows a fused `DpWriter` instance to route buffers back toward the correct allocator. | Unit Test
+SVC-DPWRITER-008 | `Svc::DpWriter` shall return each valid received buffer on the `deallocBufferSendOut` port whose index matches the `bufferSendIn` port that received it. | Matching send and return paths allows a `DpWriter` instance to route buffers back toward the correct allocator. | Unit Test
 
 ## 3. Design
 
@@ -76,8 +76,8 @@ The `bufferSendIn`, `dpWrittenOut`, and `deallocBufferSendOut` arrays form match
 
 1. The configuration constant [`DpWriterNumPorts`](../../../default/config/AcConstants.fpp)
    specifies the number of matched input, notification, and buffer-return routing paths.
-   Its default value is one, preserving the one-to-one `DpManager` to `DpWriter` pattern.
-   Projects that fuse several logical writer paths into one instance can override this value.
+   Its default value is five, matching the default `DpManagerNumPorts` configuration.
+   Projects can override this value to fit their topology.
 
 1. The configuration constant [`DpWriterNumProcPorts`](../../../default/config/AcConstants.fpp)
    specifies the number of ports for connecting components that perform
