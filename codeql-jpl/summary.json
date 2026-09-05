@@ -1,8 +1,8 @@
 {
-  "findings": 404,
+  "findings": 400,
   "by_severity": {
     "error": 0,
-    "medium": 175,
+    "medium": 171,
     "low": 229
   },
   "worst": "medium",
