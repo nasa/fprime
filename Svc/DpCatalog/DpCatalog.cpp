@@ -731,7 +731,10 @@ void DpCatalog::sendNextEntry() {
         this->m_hasCurrentXmit = false;
         this->m_xmitInProgress = false;
         this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        return;
     }
+    // FileDownlink echoes this context in fileDone; it identifies this send (#5777)
+    this->m_currXmitContext = resp.get_context();
 }  // end sendNextEntry()
 
 bool DpCatalog::findNextEntry(DpStateEntry& entry) {
@@ -781,24 +784,27 @@ void DpCatalog::shutdown() {
 // ----------------------------------------------------------------------
 
 void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileResponse& resp) {
-    // check file status
-    if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
-        this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());
-        this->m_xmitInProgress = false;
-        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+    // Accept only the fileDone for the send in flight (matching FileDownlink context); anything
+    // else is a late callback from an abandoned send (#5777) and must not touch the current transmit
+    if (!this->m_hasCurrentXmit || resp.get_context() != this->m_currXmitContext) {
+        this->log_WARNING_HI_StaleFileDone(resp.get_context(), resp.get_status());
+        if (!this->m_hasCurrentXmit && this->m_xmitInProgress) {
+            // CLEAR_CATALOG dropped the send in flight but left the session open: close it so a
+            // waited START_XMIT_CATALOG is answered and the next one is not refused as in progress
+            this->m_xmitInProgress = false;
+            this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        }
         return;
     }
 
-    // Catalog cleared while this file was sent; clear xmit state and answer any waited command
-    if (!this->m_catalogBuilt) {
+    // check file status
+    if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
+        this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());
         this->m_hasCurrentXmit = false;
         this->m_xmitInProgress = false;
         this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
-
-    // Should have a valid current transmit entry
-    FW_ASSERT(this->m_hasCurrentXmit);
 
     // Reduce pending
     this->m_pendingDpBytes -= this->m_currentXmitEntry.record.get_size();
@@ -941,7 +947,6 @@ Fw::CmdResponse DpCatalog::doCatalogXmit() {
 
     // start transmission
     this->m_xmitBytes = 0;
-
     this->m_xmitInProgress = true;
     // Step 3b - search for and send first entry
     this->sendNextEntry();
@@ -955,8 +960,10 @@ void DpCatalog ::STOP_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
         this->log_ACTIVITY_HI_CatalogXmitStopped(this->m_xmitBytes);
-        // Disarm the flag so next sendNextEntry stops transmission
+        // Disarm both flags: xmitInProgress stops sendNextEntry iteration,
+        // hasCurrentXmit causes any late fileDone to be caught as stale
         this->m_xmitInProgress = false;
+        this->m_hasCurrentXmit = false;
         // Respond to original cmd to start xmit
         // (if we haven't already)
         this->dispatchWaitedResponse(Fw::CmdResponse::OK);

@@ -112,7 +112,7 @@ During initialization, the configuration function takes a set of parameters:
 |`BUILD_CATALOG`|none|Builds the in-RAM catalog by scanning the directories provided during initialization. Downlink state file will be read in to set downlink state for products|Prerequisite for executing `START_XMIT_CATALOG` command
 |`START_XMIT_CATALOG`| |Start transmitting the catalog to the ground in priority order
 | |wait|Wait for the transmission to complete before sending command completion status. Used when a sequence wishes to wait for completion before issuing subsequent commands.
-|`STOP_XMIT_CATALOG`|none|Stop existing catalog transmission. Will be completed when the current file is done transmitting.
+|`STOP_XMIT_CATALOG`|none|Stop existing catalog transmission. The command completes immediately; the file in flight is abandoned, its completion is reported as `StaleFileDone` and not recorded, so it is re-sent on the next `START_XMIT_CATALOG`.
 |`CLEAR_CATALOG`|none|Clears existing RAM catalog and resets downlink state. Should be followed by `BUILD_CATALOG`. Used for recovery if state file gets corrupted or out of sync with file system contents. |
 
 #### Sequence of Commands
@@ -144,6 +144,10 @@ When data products are downlinked, entries are retrieved in priority order by ca
 #### 3.6.5 State File
 
 When a data product is downlinked, it is marked in the node as completed, but the state is also written to a file so that downlinked state is preserved across restarts of the software. When the catalog is built, the state file is first read into a data structure in memory.
+
+#### 3.6.6 FileDone Handling
+
+Every `sendFile` call returns a `SendFileResponse` whose `context` FileDownlink assigns to that send and echoes back in `fileDone`. `DpCatalog` keeps the context of the send in flight and applies a `fileDone` only while a send is in flight and the context matches. Anything else is a late callback from a send abandoned by `STOP_XMIT_CATALOG`, `BUILD_CATALOG` or `CLEAR_CATALOG`: it is reported with `StaleFileDone` (`WARNING_HI`, id 50) and the transmit in flight, if any, is left untouched. When `CLEAR_CATALOG` dropped the send in flight, the stale callback also closes the abandoned session so a waited `START_XMIT_CATALOG` is answered with `EXECUTION_ERROR` and a later `START_XMIT_CATALOG` is not refused as in progress. This replaces the `FW_ASSERT` that made a late `fileDone` FATAL (#5777). Note: `FileComplete` must not be shared with other `SendFile` clients on the same FileDownlink; foreign completions would be reported as `StaleFileDone`.
 
 ## 4 Unit Testing
 

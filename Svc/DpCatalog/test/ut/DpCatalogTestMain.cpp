@@ -300,6 +300,21 @@ TEST(NominalManual, BadFileDone) {
     tester.test_BadFileDone();
 }
 
+TEST(NominalManual, StaleFileDoneAfterStopBuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_StaleFileDoneAfterStopBuild();
+}
+
+TEST(NominalManual, StaleFileDoneAfterClear) {
+    Svc::DpCatalogTester tester;
+    tester.test_StaleFileDoneAfterClear();
+}
+
+TEST(NominalManual, LateFileDoneNotAppliedToNewSend) {
+    Svc::DpCatalogTester tester;
+    tester.test_LateFileDoneNotAppliedToNewSend();
+}
+
 TEST(OffNominal, ProcessFileInvalidDir) {
     Svc::DpCatalogTester tester;
     tester.test_ProcessFileInvalidDir();

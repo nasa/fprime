@@ -327,13 +327,15 @@ Svc::SendFileResponse DpCatalogTester ::from_fileOut_handler(FwIndexType portNum
                                                              const Fw::StringBase& destFileName,
                                                              U32 offset,
                                                              U32 length) {
-    // Tell the DpCatalog that the xmit succeeded
+    // Accept the send with a distinct context per call, as FileDownlink does, so fileDone can be matched
     this->pushFromPortEntry_fileOut(sourceFileName, destFileName, offset, length);
+    this->m_lastContext = this->m_nextContext++;
+    const Svc::SendFileResponse resp(Svc::SendFileStatus::STATUS_OK, this->m_lastContext);
     if (this->m_autoFileDone) {
-        this->invoke_to_fileDone(0, Svc::SendFileResponse());
+        this->invoke_to_fileDone(0, resp);
     }
 
-    return Svc::SendFileResponse();
+    return resp;
 }
 
 void DpCatalogTester ::from_pingOut_handler(FwIndexType portNum, U32 key) {
@@ -674,10 +676,12 @@ void DpCatalogTester ::test_PingIn() {
 }
 
 void DpCatalogTester ::test_BadFileDone() {
-    // Test on unconfigured non-waiting component
+    // With no send in flight a fileDone is stale, whatever its status
     this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
     this->component.doDispatch();
-    ASSERT_EVENTS_DpFileXmitError_SIZE(1);
+    ASSERT_EVENTS_StaleFileDone_SIZE(1);
+    ASSERT_EVENTS_StaleFileDone(0, 0xDEADC0DE, Svc::SendFileStatus::STATUS_ERROR);
+    ASSERT_EVENTS_DpFileXmitError_SIZE(0);
 
     // Now configure with one DP so a transmit stays in flight
     Fw::FileNameString stateFile("");
@@ -703,20 +707,187 @@ void DpCatalogTester ::test_BadFileDone() {
     // Waited command: no response until the transmit finishes
     ASSERT_CMD_RESPONSE_SIZE(1);
 
-    // A failed fileDone halts the transmit and answers the waited command
-    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
+    // A failed fileDone for the send in flight halts the transmit and answers the waited command
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, this->m_lastContext));
     this->component.doDispatch();
-    ASSERT_EVENTS_DpFileXmitError_SIZE(2);
+    ASSERT_EVENTS_DpFileXmitError_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(2);
     ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::EXECUTION_ERROR);
 
-    // A further failed fileDone does not generate another delayed cmd response
-    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, 0xDEADC0DE));
+    // A further fileDone for that send is stale: no second delayed cmd response
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, this->m_lastContext));
     this->component.doDispatch();
-    ASSERT_EVENTS_DpFileXmitError_SIZE(3);
+    ASSERT_EVENTS_StaleFileDone_SIZE(2);
+    ASSERT_EVENTS_DpFileXmitError_SIZE(1);
     ASSERT_CMD_RESPONSE_SIZE(2);
 
     this->delDp(0x111, time, dirs[0].toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester ::test_StaleFileDoneAfterStopBuild() {
+    // #5777: STOP_XMIT_CATALOG then BUILD_CATALOG while a file is still in flight. The late
+    // fileDone for that file used to trip FW_ASSERT(m_hasCurrentXmit) and take the FSW down
+    Fw::FileNameString stateFile("");
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = "./DpTest_StaleAfterStopBuild";
+    this->makeDpDir(dirs[0].toChar());
+    Fw::Time time(1000, 100);
+    Fw::String dpFile = this->genDP(0x222, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+
+    // Start a transmit and leave the send in flight
+    this->m_autoFileDone = false;
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    const U32 abandoned = this->m_lastContext;
+
+    // STOP answers the waited START and itself; BUILD is accepted again
+    this->sendCmd_STOP_XMIT_CATALOG(0, 12);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_STOP_XMIT_CATALOG, 12, Fw::CmdResponse::OK);
+    this->sendCmd_BUILD_CATALOG(0, 13);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(4);
+    ASSERT_CMD_RESPONSE(3, DpCatalog::OPCODE_BUILD_CATALOG, 13, Fw::CmdResponse::OK);
+
+    // The late fileDone for the abandoned send is reported and ignored
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, abandoned));
+    this->component.doDispatch();
+    ASSERT_EVENTS_StaleFileDone_SIZE(1);
+    ASSERT_EVENTS_StaleFileDone(0, abandoned, Svc::SendFileStatus::STATUS_OK);
+    ASSERT_EVENTS_ProductComplete_SIZE(0);
+    ASSERT_CMD_RESPONSE_SIZE(4);
+
+    // The rebuilt catalog still transmits the product normally
+    this->m_autoFileDone = true;
+    this->sendCmd_START_XMIT_CATALOG(0, 14, Fw::Wait::WAIT, false);
+    this->component.doDispatch();  // command: sends the file and queues its fileDone
+    this->component.doDispatch();  // fileDone: completes the product and the transmit
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(5);
+    ASSERT_CMD_RESPONSE(4, DpCatalog::OPCODE_START_XMIT_CATALOG, 14, Fw::CmdResponse::OK);
+
+    this->delDp(0x222, time, dirs[0].toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester ::test_StaleFileDoneAfterClear() {
+    // CLEAR_CATALOG while a file is in flight, the recovery sdd.md documents, drops the send but
+    // leaves the transmit session open: the late fileDone must close it rather than assert
+    Fw::FileNameString stateFile("");
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = "./DpTest_StaleAfterClear";
+    this->makeDpDir(dirs[0].toChar());
+    Fw::Time time(1000, 100);
+    Fw::String dpFile = this->genDP(0x333, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    this->m_autoFileDone = false;
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    const U32 abandoned = this->m_lastContext;
+
+    // CLEAR is accepted mid-transmit; the waited START is still pending
+    this->sendCmd_CLEAR_CATALOG(0, 12);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_CLEAR_CATALOG, 12, Fw::CmdResponse::OK);
+
+    // The late fileDone is stale; it also closes the abandoned session and answers the START
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, abandoned));
+    this->component.doDispatch();
+    ASSERT_EVENTS_StaleFileDone_SIZE(1);
+    ASSERT_EVENTS_ProductComplete_SIZE(0);
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // With the session closed, BUILD is no longer refused as in progress
+    this->sendCmd_BUILD_CATALOG(0, 13);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(4);
+    ASSERT_CMD_RESPONSE(3, DpCatalog::OPCODE_BUILD_CATALOG, 13, Fw::CmdResponse::OK);
+
+    this->delDp(0x333, time, dirs[0].toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester ::test_LateFileDoneNotAppliedToNewSend() {
+    // A late fileDone from an abandoned send arrives while a newer send is in flight: it must
+    // neither complete nor abort the newer send. Only the matching context is applied
+    Fw::FileNameString stateFile("");
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = "./DpTest_LateFileDone";
+    this->makeDpDir(dirs[0].toChar());
+    Fw::Time time(1000, 100);
+    Fw::String dpFile = this->genDP(0x444, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+
+    // Send A in flight, then abandon it with STOP + BUILD and start send B of the same product
+    this->m_autoFileDone = false;
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
+    this->component.doDispatch();
+    const U32 sendA = this->m_lastContext;
+    this->sendCmd_STOP_XMIT_CATALOG(0, 12);
+    this->component.doDispatch();
+    this->sendCmd_BUILD_CATALOG(0, 13);
+    this->component.doDispatch();
+    this->sendCmd_START_XMIT_CATALOG(0, 14, Fw::Wait::WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_CMD_RESPONSE_SIZE(4);
+    const U32 sendB = this->m_lastContext;
+    ASSERT_NE(sendA, sendB);
+
+    // Late completion of A must not complete B
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, sendA));
+    this->component.doDispatch();
+    ASSERT_EVENTS_StaleFileDone_SIZE(1);
+    ASSERT_EVENTS_ProductComplete_SIZE(0);
+    ASSERT_CMD_RESPONSE_SIZE(4);
+
+    // Late error of A must not abort B
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_ERROR, sendA));
+    this->component.doDispatch();
+    ASSERT_EVENTS_StaleFileDone_SIZE(2);
+    ASSERT_EVENTS_StaleFileDone(1, sendA, Svc::SendFileStatus::STATUS_ERROR);
+    ASSERT_EVENTS_DpFileXmitError_SIZE(0);
+    ASSERT_CMD_RESPONSE_SIZE(4);
+
+    // B's own completion is applied normally
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, sendB));
+    this->component.doDispatch();
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(5);
+    ASSERT_CMD_RESPONSE(4, DpCatalog::OPCODE_START_XMIT_CATALOG, 14, Fw::CmdResponse::OK);
+
+    this->delDp(0x444, time, dirs[0].toChar());
     this->component.shutdown();
 }
 
