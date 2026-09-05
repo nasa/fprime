@@ -28,9 +28,6 @@ ComLoggerDpTester ::~ComLoggerDpTester() {
 // ----------------------------------------------------------------------
 
 void ComLoggerDpTester::testComLogging() {
-    // Configure component to be enabled initially
-    this->component.configure(true);
-
     // Start logging with 2 packets per container
     this->sendCmd_StartComDp(0, 0, 2, 10);
     this->component.doDispatch();
@@ -141,7 +138,6 @@ void ComLoggerDpTester::testPing() {
 
 void ComLoggerDpTester::testContainerFill() {
     // Start logging with 3 packets per container
-    this->component.configure(true);
     this->sendCmd_StartComDp(0, 0, 3, 10);
     this->component.doDispatch();
     this->clearHistory();
@@ -172,7 +168,6 @@ void ComLoggerDpTester::testContainerFill() {
 
 void ComLoggerDpTester::testAllocationFailure() {
     // Start logging
-    this->component.configure(true);
     this->sendCmd_StartComDp(0, 0, 2, 10);
     this->component.doDispatch();
     this->clearHistory();
@@ -212,9 +207,6 @@ void ComLoggerDpTester::testAllocationFailure() {
 }
 
 void ComLoggerDpTester::testPortValidationFailure() {
-    // Configure component
-    this->component.configure(true);
-
     // Try to start recording via port with invalid packetsPerContainer (0)
     const U32 invalidPacketsPerContainer = 0;
     const FwDpPriorityType priority = 10;
@@ -247,8 +239,7 @@ void ComLoggerDpTester::testPortValidationFailure() {
 }
 
 void ComLoggerDpTester::testTelemetry() {
-    // Configure and start logging
-    this->component.configure(true);
+    // Start logging
     this->sendCmd_StartComDp(0, 0, 2, 10);
     this->component.doDispatch();
     this->clearHistory();
@@ -363,7 +354,6 @@ void ComLoggerDpTester::testStartRecordingPort() {
 
 void ComLoggerDpTester::testStopRecordingPort() {
     // Start logging via command first
-    this->component.configure(true);
     this->sendCmd_StartComDp(0, 0, 2, 10);
     this->component.doDispatch();
     this->clearHistory();
@@ -390,7 +380,6 @@ void ComLoggerDpTester::testStopRecordingPort() {
 
 void ComLoggerDpTester::testClearCounters() {
     // Start logging and log some buffers
-    this->component.configure(true);
     this->sendCmd_StartComDp(0, 0, 2, 10);
     this->component.doDispatch();
     this->clearHistory();
@@ -438,7 +427,6 @@ void ComLoggerDpTester::testClearCounters() {
 
 void ComLoggerDpTester::testBufferOverflow() {
     // Start logging with 1 packet per container
-    this->component.configure(true);
     this->sendCmd_StartComDp(0, 0, 1, 10);
     this->component.doDispatch();
     this->clearHistory();
@@ -516,8 +504,8 @@ void ComLoggerDpTester::testDpBufferErrorThrottling() {
 }
 
 void ComLoggerDpTester::testUpdatePriorityNotRecording() {
-    // Don't start recording - logging disabled
-    this->component.configure(true);
+    // Don't start recording - logging disabled (configure with disabled state)
+    this->component.configure(false, 0, 0);
 
     // Try to update priority when not recording
     this->sendCmd_UpdatePriority(0, 0, 15);
@@ -567,7 +555,6 @@ void ComLoggerDpTester::testUpdatePriorityNoContainer() {
 // ----------------------------------------------------------------------
 
 void ComLoggerDpTester::startLoggingAndClearHistory(U32 packetsPerContainer, FwDpPriorityType priority) {
-    this->component.configure(true);
     this->sendCmd_StartComDp(0, 0, packetsPerContainer, priority);
     this->component.doDispatch();
     this->clearHistory();

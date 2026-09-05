@@ -22,8 +22,15 @@ ComLoggerDp ::~ComLoggerDp() {}
 // Public interface
 // ----------------------------------------------------------------------
 
-void ComLoggerDp ::configure(bool enabled) {
-    this->m_enabled = enabled;
+void ComLoggerDp ::configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority) {
+    // If enabling, use the internal start function which validates parameters
+    if (enabled) {
+        // This will validate packetsPerContainer and set m_enabled
+        this->startRecordingInternal(packetsPerContainer, priority);
+    } else {
+        // Just disable if not enabling
+        this->m_enabled = false;
+    }
 }
 
 // ----------------------------------------------------------------------

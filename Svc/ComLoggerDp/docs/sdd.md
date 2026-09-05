@@ -13,7 +13,7 @@ The ComLoggerDp component logs `Fw::ComBuffer` buffers (e.g., framed telemetry, 
 | SVC-COMLOGGER-003 | The ComLoggerDp component shall have a command to stop recording packets|
 | SVC-COMLOGGER-004 | The ComLoggerDp component shall have a command to modify the priority of existing data products|
 | SVC-COMLOGGER-005 | If the provided container buffer is not large enough to fit the requested number of records per container, emit a WARNING_LO event and adjust to the smaller size. The event should have a throttle value defined in an FPP configuration file with adefault of 1. Increment a DpBufferOverflow counter|
-| SVC-COMLOGGER-006 | A public `configure` function will specify whether data product logging is initially enabled|
+| SVC-COMLOGGER-006 | A public `configure` function will specify whether data product logging is initially enabled, and if enabled, the initial packets per container and priority|
 
 
 ## 3. Design
@@ -85,7 +85,7 @@ These constants can be overridden in deployment-specific configuration files to 
 
 ### 3.5 Initialization
 
-The component requires calling `configure(bool enabled)` during initialization to set the initial enabled state. Typically this is set to `false`, and logging is started later via command or port.
+The component requires calling `configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority)` during initialization to set the initial state. If `enabled` is `true`, the function internally validates that `packetsPerContainer > 0` and enables logging with the specified configuration. If `enabled` is `false`, the parameters are ignored and logging remains disabled. Typically `enabled` is set to `false`, and logging is started later via command or port.
 
 ### 3.5 Commands
 
@@ -234,8 +234,11 @@ Svc::ComLoggerDp comLogger("comLogger");
 // Initialize component with queue depth and instance ID
 comLogger.init(QUEUE_DEPTH, INSTANCE_ID);
 
-// Configure initial state (typically disabled)
-comLogger.configure(false);
+// Configure initial state (typically disabled; packetsPerContainer and priority are ignored when disabled)
+comLogger.configure(false, 0, 0);
+
+// Alternative: Configure with logging initially enabled
+// comLogger.configure(true, 100, 5);  // 100 packets per container at priority 5
 ```
 
 Use the public helper function `ComLoggerDpBuffSize` to get the size
@@ -329,7 +332,7 @@ Monitor the following telemetry channels:
 
 A common deployment pattern:
 
-1. System boots with `comLogger.configure(false)` - logging disabled
+1. System boots with `comLogger.configure(false, 0, 0)` - logging disabled
 2. Ground sends command to start high-rate telemetry recording when radio link is lost:
    ```
    StartComDp(packetsPerContainer: 200, priority: 10)
@@ -348,3 +351,4 @@ A common deployment pattern:
 |---|---|
 | 2026-09-04 | Initial implementation with commands, ports, events, telemetry, and comprehensive unit tests |
 | 2026-09-04 | Added sentry value to ComBuffer records for corruption detection; refactored serialization logic into helper functions (`allocateAndSetupContainer`, `serializePacketWithRetry`, `finalizeFullContainer`); changed priority parameter type from U32 to FwDpPriorityType; updated `startRecordingIn` port to accept separate parameters instead of encoded U32; added `StartRecordingFailed` event; improved reconfiguration behavior to send partial containers before applying new settings; added explicit handling of validation failures on port invocation; enhanced unit tests with validation failure, throttling, and edge case coverage |
+| 2026-09-05 | Updated `configure()` method to accept `packetsPerContainer` and `priority` parameters; when enabled, the method now internally calls `startRecordingInternal()` to validate and configure logging state; updated all unit tests and SDD documentation |

@@ -62,9 +62,10 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Move assignment operator (deleted)
     ComLoggerDp& operator=(ComLoggerDp&&) = delete;
 
-    //! Configure the ComLoggerDp
     //! \param enabled: whether data product logging is initially enabled
-    void configure(bool enabled);
+    //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true)
+    //! \param priority: data product priority
+    void configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority);
 
   private:
     // ----------------------------------------------------------------------
