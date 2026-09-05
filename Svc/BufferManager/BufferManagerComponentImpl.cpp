@@ -147,7 +147,7 @@ void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manage
             const FwSizeType numBuffers = static_cast<FwSizeType>(this->m_bufferBins.bins[bin].numBuffers);
             const FwSizeType perBuffer = bufferSize + static_cast<FwSizeType>(sizeof(AllocatedBuffer));
 
-            FW_ASSERT(perBuffer >= bufferSize);  // addition didn't wrap
+            FW_ASSERT(perBuffer >= bufferSize);                                           // addition didn't wrap
             FW_ASSERT(perBuffer <= std::numeric_limits<FwSizeType>::max() / numBuffers);  // multiply safe
             const FwSizeType binTotal = perBuffer * numBuffers;
             FW_ASSERT(memorySize <= std::numeric_limits<FwSizeType>::max() - binTotal);  // accumulate safe
