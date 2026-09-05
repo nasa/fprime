@@ -26,6 +26,9 @@ module Svc {
         @ Check if last status is good 
         guard isGood: Fw.Success
 
+        @ Check if the aggregation buffer was completely filled from held continuation data
+        guard isSpanFull
+
         @ Clear the buffer fill state, last status
         action doClear
 
@@ -38,6 +41,9 @@ module Svc {
         @ Hold a buffer
         action doHold: Svc.ComDataContextPair
 
+        @ Hold a buffer, first splitting its leading bytes into the remaining frame space when spanning
+        action doSplitHold: Svc.ComDataContextPair
+
 
         @ Assert no status when in fill state
         action assertNoStatus
@@ -45,7 +51,7 @@ module Svc {
         @ The IS_FULL_THEN_SEND choice: this will check if the aggregation buffer is too-full to allow another buffer.
         @ Otherwise, it will continue to fill.
         choice IS_FULL_THEN_SEND {
-            if isFull do { doHold, doSend } enter WAIT_STATUS \
+            if isFull do { doSplitHold, doSend } enter WAIT_STATUS \
                 else enter WILL_FILL_THEN_SEND
         }
 
@@ -58,8 +64,15 @@ module Svc {
 
         @ The IS_GOOD_STATUS choice
         choice IS_GOOD_STATUS {
-            if isGood do { doClear } enter FILL \
+            if isGood do { doClear } enter SPAN_CHECK \
                 else enter WAIT_STATUS
+        }
+
+        @ The SPAN_CHECK choice: after a clear, held continuation data may have completely refilled the
+        @ aggregation buffer (a packet spanning one or more full frames). If so, send again immediately.
+        choice SPAN_CHECK {
+            if isSpanFull do { doSend } enter WAIT_STATUS \
+                else enter FILL
         }
         
         @ Wait for com status from downstream

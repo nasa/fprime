@@ -36,8 +36,6 @@ class TmFramer final : public TmFramerComponentBase {
                   "TM Frame Fixed Size must be at least large enough to hold Tm Header + Footer, a full file buffer, 2 "
                   "SP headers, and 1 idle byte");
 
-    static constexpr U8 IDLE_DATA_PATTERN = 0x44;
-
     enum class BufferOwnershipState {
         NOT_OWNED,  //!< The buffer is currently not owned by the TmFramer
         OWNED,      //!< The buffer is currently owned by the TmFramer

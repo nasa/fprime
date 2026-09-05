@@ -312,4 +312,213 @@ void ComAggregatorTester ::test_hold_while_waiting() {
     this->clearHistory();
 }
 
+// ----------------------------------------------------------------------
+// Spanning tests
+// ----------------------------------------------------------------------
+
+void ComAggregatorTester ::append_idle_packet(std::vector<U8>& expected, FwSizeType idleSize) {
+    ASSERT_GE(idleSize, Ccsds::Utils::IdlePacket::MIN_SIZE);
+    // packetIdentification: PVN 0, type TM, no secondary header, idle APID (all ones)
+    expected.push_back(0x07);
+    expected.push_back(0xFF);
+    // packetSequenceControl: sequence flags 0b11 (unsegmented), count 0
+    expected.push_back(0xC0);
+    expected.push_back(0x00);
+    // packetDataLength: number of payload bytes minus 1
+    const U16 lengthToken = static_cast<U16>(idleSize - Ccsds::SpacePacketHeader::SERIALIZED_SIZE - 1);
+    expected.push_back(static_cast<U8>(lengthToken >> 8));
+    expected.push_back(static_cast<U8>(lengthToken & 0xFF));
+    for (FwSizeType i = Ccsds::SpacePacketHeader::SERIALIZED_SIZE; i < idleSize; i++) {
+        expected.push_back(Ccsds::Utils::IdlePacket::DATA_PATTERN);
+    }
+}
+
+void ComAggregatorTester ::spanning_send(Fw::Buffer& buffer) {
+    ComCfg::FrameContext context;
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+}
+
+void ComAggregatorTester ::expect_frame(U32 index, const std::vector<U8>& expected, U16 expectedFhp) {
+    ASSERT_GT(this->fromPortHistory_dataOut->size(), index);
+    const Fw::Buffer& frame = this->fromPortHistory_dataOut->at(index).data;
+    const ComCfg::FrameContext& context = this->fromPortHistory_dataOut->at(index).context;
+    // Spanning aggregates are always emitted at full capacity
+    ASSERT_EQ(frame.getSize(), static_cast<FwSizeType>(ComCfg::AggregationSpanningSize));
+    ASSERT_EQ(expected.size(), frame.getSize());
+    for (FwSizeType i = 0; i < expected.size(); i++) {
+        ASSERT_EQ(frame.getData()[i], expected[i]) << "Mismatch at frame offset " << i;
+    }
+    ASSERT_EQ(context.get_firstHeaderPointer(), expectedFhp);
+}
+
+void ComAggregatorTester ::return_and_status(U32 index) {
+    // Const cast is safe as data is not altered
+    this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(index).data),
+                                 this->fromPortHistory_dataOut->at(index).context);
+    Fw::Success good = Fw::Success::SUCCESS;
+    this->invoke_to_comStatusIn(0, good);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+}
+
+void ComAggregatorTester ::test_spanning_split_two() {
+    const FwSizeType CAP = ComCfg::AggregationSpanningSize;
+    const FwSizeType FIRST_SIZE = 100;
+    const FwSizeType SPAN_SIZE = CAP + 184;  // Overflows the first aggregate by 284 bytes
+    const FwSizeType FRAME1_PORTION = CAP - FIRST_SIZE;
+    const FwSizeType REMAINDER = SPAN_SIZE - FRAME1_PORTION;
+    this->component.configure(true);
+    this->test_initial();
+
+    // Partially fill with a whole packet, then send the spanning packet
+    Fw::Buffer first = this->fill_buffer(static_cast<U32>(FIRST_SIZE));
+    this->spanning_send(first);
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);  // Whole packet returned immediately
+    Fw::Buffer span = this->fill_buffer(static_cast<U32>(SPAN_SIZE));
+    this->spanning_send(span);
+
+    // Frame 1: whole first packet + leading portion of the spanning packet; first header at offset 0
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(1);  // Spanning packet is retained, not returned
+    std::vector<U8> expected1(first.getData(), first.getData() + FIRST_SIZE);
+    expected1.insert(expected1.end(), span.getData(), span.getData() + FRAME1_PORTION);
+    this->expect_frame(0, expected1, 0);
+    this->return_and_status(0);
+    ASSERT_from_dataReturnOut_SIZE(2);  // Remainder consumed: spanning packet returned
+
+    // Frame 2 (via timeout): spanning packet remainder + idle fill; first header after the continuation
+    this->invoke_to_timeout(0, 0);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(2);
+    std::vector<U8> expected2(span.getData() + FRAME1_PORTION, span.getData() + SPAN_SIZE);
+    append_idle_packet(expected2, CAP - REMAINDER);
+    this->expect_frame(1, expected2, static_cast<U16>(REMAINDER));
+    this->return_and_status(1);
+
+    delete[] first.getData();
+    delete[] span.getData();
+    this->clearHistory();
+}
+
+void ComAggregatorTester ::test_spanning_three_frames() {
+    const FwSizeType CAP = ComCfg::AggregationSpanningSize;
+    const FwSizeType FIRST_SIZE = 200;
+    const FwSizeType TAIL = 300;
+    // Starts in frame 1, spans the complete frame 2, and ends in frame 3
+    const FwSizeType SPAN_SIZE = (CAP - FIRST_SIZE) + CAP + TAIL;
+    this->component.configure(true);
+    this->test_initial();
+
+    Fw::Buffer first = this->fill_buffer(static_cast<U32>(FIRST_SIZE));
+    this->spanning_send(first);
+    Fw::Buffer span = this->fill_buffer(static_cast<U32>(SPAN_SIZE));
+    this->spanning_send(span);
+
+    // Frame 1: whole first packet + leading portion of the spanning packet
+    ASSERT_from_dataOut_SIZE(1);
+    std::vector<U8> expected1(first.getData(), first.getData() + FIRST_SIZE);
+    expected1.insert(expected1.end(), span.getData(), span.getData() + (CAP - FIRST_SIZE));
+    this->expect_frame(0, expected1, 0);
+    this->return_and_status(0);
+
+    // Frame 2: sent immediately on good status; continuation data only (no packet header starts here)
+    ASSERT_from_dataOut_SIZE(2);
+    ASSERT_from_dataReturnOut_SIZE(1);  // Spanning packet still retained
+    std::vector<U8> expected2(span.getData() + (CAP - FIRST_SIZE), span.getData() + (2 * CAP - FIRST_SIZE));
+    this->expect_frame(1, expected2, static_cast<U16>(Ccsds::TMSubfields::FHP_NO_PACKET_START));
+    this->return_and_status(1);
+    ASSERT_from_dataReturnOut_SIZE(2);  // Tail consumed: spanning packet returned
+
+    // Frame 3 (via timeout): spanning packet tail + idle fill
+    this->invoke_to_timeout(0, 0);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(3);
+    std::vector<U8> expected3(span.getData() + (2 * CAP - FIRST_SIZE), span.getData() + SPAN_SIZE);
+    append_idle_packet(expected3, CAP - TAIL);
+    this->expect_frame(2, expected3, static_cast<U16>(TAIL));
+    this->return_and_status(2);
+
+    delete[] first.getData();
+    delete[] span.getData();
+    this->clearHistory();
+}
+
+void ComAggregatorTester ::test_spanning_idle_span() {
+    const FwSizeType CAP = ComCfg::AggregationSpanningSize;
+    const FwSizeType RESIDUAL = 3;  // Below the minimum idle packet size: idle packet must span
+    const FwSizeType PACKET_SIZE = CAP - RESIDUAL;
+    this->component.configure(true);
+    this->test_initial();
+
+    Fw::Buffer packet = this->fill_buffer(static_cast<U32>(PACKET_SIZE));
+    this->spanning_send(packet);
+    ASSERT_from_dataOut_SIZE(0);
+
+    // Frame 1 (via timeout): packet + leading bytes of a minimum-size idle packet
+    this->invoke_to_timeout(0, 0);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(1);
+    std::vector<U8> idlePacket;
+    append_idle_packet(idlePacket, Ccsds::Utils::IdlePacket::MIN_SIZE);
+    std::vector<U8> expected1(packet.getData(), packet.getData() + PACKET_SIZE);
+    expected1.insert(expected1.end(), idlePacket.begin(), idlePacket.begin() + static_cast<long>(RESIDUAL));
+    this->expect_frame(0, expected1, 0);
+    this->return_and_status(0);
+
+    // Frame 2 (via timeout): trailing bytes of the spanned idle packet + a fresh idle fill
+    this->invoke_to_timeout(0, 0);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(2);
+    const FwSizeType CONTINUATION = Ccsds::Utils::IdlePacket::MIN_SIZE - RESIDUAL;
+    std::vector<U8> expected2(idlePacket.begin() + static_cast<long>(RESIDUAL), idlePacket.end());
+    append_idle_packet(expected2, CAP - CONTINUATION);
+    this->expect_frame(1, expected2, static_cast<U16>(CONTINUATION));
+    this->return_and_status(1);
+
+    delete[] packet.getData();
+    this->clearHistory();
+}
+
+// ----------------------------------------------------------------------
+// Assertion tests
+// ----------------------------------------------------------------------
+
+void ComAggregatorTester ::test_configure_after_fill_asserts() {
+    this->test_initial();
+    (void)this->test_fill(false);
+    ASSERT_DEATH_IF_SUPPORTED(this->component.configure(true), "ComAggregator.cpp");
+    this->clearHistory();
+}
+
+void ComAggregatorTester ::test_oversize_hold_asserts() {
+    // Precondition: fill has run, spanning disabled
+    ComCfg::FrameContext context;
+    this->invoke_to_timeout(0, 0);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(1);
+    Fw::Buffer aggregate = this->fromPortHistory_dataOut->at(0).data;
+
+    // Hold a packet that can never fit in a single aggregate
+    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(ComCfg::AggregationSize) + 1);
+    this->invoke_to_dataIn(0, oversize, context);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+
+    // Clearing the aggregate must assert rather than truncate the held packet
+    this->invoke_to_dataReturnIn(0, aggregate, context);
+    Fw::Success good = Fw::Success::SUCCESS;
+    this->invoke_to_comStatusIn(0, good);
+    ASSERT_DEATH_IF_SUPPORTED(this->dispatchOne(this->component), "ComAggregator.cpp");
+    delete[] oversize.getData();
+    this->clearHistory();
+}
+
 }  // namespace Svc

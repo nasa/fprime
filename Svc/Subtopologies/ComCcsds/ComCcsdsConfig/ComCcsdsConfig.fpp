@@ -35,6 +35,12 @@ module ComCcsdsConfig {
         constant file        = 1                   
     }
 
+    # Aggregator configuration constants
+    module Aggregator {
+        @ Enable CCSDS TM packet spanning across transfer frames (see Svc.ComAggregator)
+        constant packetSpanning = 0
+    }
+
     # Buffer management constants
     module BuffMgr {
         constant frameAccumulatorSize  = 2048     

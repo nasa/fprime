@@ -206,6 +206,7 @@ topology Flight {
 * **Stack sizes** — Task stack allocations for active components (if any beyond `ComQueue`).
 * **Priorities** — RTOS priorities for active/queued components as applicable.
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
+* **Aggregator** — `Aggregator.packetSpanning` enables CCSDS TM packet spanning across transfer frames in the `aggregator` instance (see `Svc.ComAggregator`); disabled (0) by default.
 
 ### 4.2 Buffer Manager Bin Configuration
 
