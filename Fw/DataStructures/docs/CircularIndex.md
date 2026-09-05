@@ -91,7 +91,7 @@ void setValue(FwSizeType value)
 ### 3.4. getModulus
 
 ```c++
-FwSizeType CircularIndex::getModulus() const
+FwSizeType getModulus() const
 ```
 
 1. Assert `m_value < m_modulus`.
@@ -118,7 +118,9 @@ FwSizeType increment(FwSizeType amount = 1)
 
 1. Set `offset = amount % m_modulus`.
 
-1. Call `setValue(m_value + offset)`.
+1. Set `toWrap = m_modulus - m_value`.
+
+1. If `offset < toWrap` then call `setValue(m_value + offset)`; otherwise call `setValue(offset - toWrap)`. This avoids overflowing `FwSizeType` in `m_value + offset`.
 
 1. Return `m_value`.
 
@@ -132,7 +134,7 @@ FwSizeType decrement(FwSizeType amount = 1)
 
 1. Set `offset = amount % m_modulus`.
 
-1. Call `setValue(m_value + m_modulus - offset)`.
+1. If `offset <= m_value` then call `setValue(m_value - offset)`; otherwise call `setValue(m_modulus - (offset - m_value))`. This avoids overflowing `FwSizeType` in `m_value + m_modulus`.
 
 1. Return `m_value`.
 

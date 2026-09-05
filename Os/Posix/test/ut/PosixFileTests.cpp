@@ -19,6 +19,8 @@ namespace Test {
 namespace FileTest {
 
 std::vector<std::shared_ptr<const std::string> > FILES;
+//! PID that owns the test files; death-test children inherit the signal handlers and must not clean up
+static pid_t OWNER_PID = 0;
 
 static const U32 MAX_FILES = 500;
 static const char BASE_PATH[] = "/tmp/fprime";
@@ -64,6 +66,10 @@ std::shared_ptr<std::string> get_test_filename(bool random) {
 //! Clean-up the files created during this test.
 //!
 void cleanup(int signal) {
+    // Forked death-test children share the filesystem with the parent: only the owning process may remove files
+    if (::getpid() != OWNER_PID) {
+        return;
+    }
     // Ensure the test files are removed only when the test was run
     for (const auto& val : FILES) {
         if (check_permissions(val->c_str(), F_OK)) {
@@ -90,6 +96,7 @@ void setUp(bool requires_io) {
     else if (requires_io && not check_permissions(BASE_PATH, R_OK | W_OK)) {
         GTEST_SKIP() << "Cannot read/write in directory: " << BASE_PATH;
     }
+    OWNER_PID = ::getpid();
     int signals[] = {SIGQUIT, SIGABRT, SIGTERM, SIGINT, SIGHUP};
     for (unsigned long i = 0; i < FW_NUM_ARRAY_ELEMENTS(signals); i++) {
         // Could not register signal handler

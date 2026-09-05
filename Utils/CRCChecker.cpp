@@ -77,9 +77,12 @@ crc_stat_t create_checksum_file(const char* const fname) {
     // generate checksum
     hash.finalize(checksum);
 
-    // open checksum file
+    // open checksum file. The filename is caller-supplied input: an overlong name is a reportable
+    // failure, not a coding error, so it must not assert.
     Fw::FormatStatus formatStatus = hashFilename.format("%s%s", fname, HASH_EXTENSION_STRING);
-    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        return FAILED_FILE_NAME_TOO_LONG;
+    }
 
     stat = f.open(hashFilename.toChar(), Os::File::OPEN_WRITE);
     if (stat != Os::File::OP_OK) {
@@ -105,9 +108,11 @@ crc_stat_t read_crc32_from_file(const char* const fname, U32& checksum_from_file
     Os::File::Status stat;
     Fw::FileNameString hashFilename;
     FW_ASSERT(fname != nullptr);
-    // open checksum file
+    // open checksum file. See create_checksum_file(): overlong names are reported, not asserted.
     Fw::FormatStatus formatStatus = hashFilename.format("%s%s", fname, HASH_EXTENSION_STRING);
-    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        return FAILED_FILE_NAME_TOO_LONG;
+    }
 
     stat = f.open(hashFilename.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {

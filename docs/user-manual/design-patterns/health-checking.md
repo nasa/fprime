@@ -2,7 +2,7 @@
 
 Certain services in flight software are critical for the correct execution of the system. For example, command dispatching is crucial to maintain control of the system. It is good practice to monitor these services to ensure they remain responsive during execution of the system. The health checking pattern is used to establish a component as a critical component of the system and periodically check it for responsiveness. 
 
-The fprime-examples repository provides an example of the health checking pattern in its [Manager Component](http://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker) as the Manager is intended to stay responsive at all times.
+The fprime-examples repository provides an example of the health checking pattern in its [Manager Component](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker) as the Manager is intended to stay responsive at all times.
 
 ## Applicability
 
@@ -17,7 +17,7 @@ Any `active` component that must remain responsive for the system's continued fu
 
 Additionally, if a component is at-risk for losing responsiveness (e.g. potentially long-running operations, unbounded file i/o, etc.), the health checking pattern can be applied to ensure it remains alive.
 
-Some active components may be deemed non-critical. For example, a [worker](./manager-worker.md) component taking to long to respond is likely not a system critical function. Likewise are idle tasks. These types of components are typically omitted from health checking.
+Some active components may be deemed non-critical. For example, a [worker](./manager-worker.md) component taking too long to respond is likely not a system critical function. Likewise are idle tasks. These types of components are typically omitted from health checking.
 
 ## Design
 
@@ -37,7 +37,7 @@ sequenceDiagram
 Thus the system will issue a `WARNING_HI` event if a component does not respond, and escalate to a `FATAL` event should the component remains unresponsive.
 
 > [!IMPORTANT]
-> Most `FATAL` events result in a reset/reboot of the system. This is chosen by the chose of `FatalHandler` component used on the project. The default `FATAL` handler aborts the software.
+> Most `FATAL` events result in a reset/reboot of the system. This is chosen by the choice of `FatalHandler` component used on the project. The default `FATAL` handler aborts the software.
 
 These timeouts are configured in counts of [Rate Group](./rate-group.md) ticks. The actual time of each timeout is the configured value multiplied by the period of the rate group `Svc.Health` is connected to.
 
@@ -49,7 +49,7 @@ Implementation of the health checking pattern involves placing a pair of `Svc.Pi
 ```
 active component CriticalComponent {
     @ Ping input port to show responsiveness
-    async input port pingIn: Svc.Ping
+    async input port pingIn: Svc.Ping drop
 
     @ Ping output port for response to the ping
     output port pingOut: Svc.Ping

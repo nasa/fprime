@@ -21,8 +21,14 @@ The `Svc::Ccsds::ClearTextEncryptor` component is a pass-through implementation 
 |---------------|-----------------|-------------------------------|-------------|
 | guarded input | encryptIn       | Svc.Ccsds.CcsdsSdlsEncryption | Receives the SA index and iv/data buffer (from `CcsdsSdlsEncrypt` interface). |
 | output        | encryptOut      | Svc.Ccsds.CcsdsSdlsData       | Sends the operation status and (unmodified) data downstream. |
-| sync input    | encryptReturnIn | Svc.ComDataWithContext        | Receives back ownership of buffers sent on `encryptOut`. |
+| guarded input | encryptReturnIn | Svc.ComDataWithContext        | Receives back ownership of buffers sent on `encryptOut`. |
 | output        | bufferReturnOut | Svc.ComDataWithContext        | Returns the incoming iv/data buffer for deallocation. |
+
+## Events
+
+| Name | Severity | Description |
+|------|----------|-------------|
+| NullCipherInUse | WARNING_HI (throttle 5) | Raised for every frame handled, carrying the SA index. Its presence in telemetry means a frame was accepted or emitted with no authentication and no encryption; a deployment requiring security must replace this component and must not leave any SA mapped to it. |
 
 ## Requirements
 
@@ -32,6 +38,7 @@ The `Svc::Ccsds::ClearTextEncryptor` component is a pass-through implementation 
 | SVC-CCSDS-CLEARTEXT-ENCRYPTOR-002 | The ClearTextEncryptor shall perform no authentication and no encryption, passing the received buffer and context unmodified out `encryptOut`. | Unit Test |
 | SVC-CCSDS-CLEARTEXT-ENCRYPTOR-003 | The ClearTextEncryptor shall pass an `SdlsStatus.SUCCESS` status forward for every request. | Unit Test |
 | SVC-CCSDS-CLEARTEXT-ENCRYPTOR-004 | Upon receiving ownership of a buffer back on `encryptReturnIn`, the ClearTextEncryptor shall pass it upstream via `bufferReturnOut` for deallocation. | Unit Test |
+| SVC-CCSDS-CLEARTEXT-ENCRYPTOR-005 | The ClearTextEncryptor shall raise a throttled `NullCipherInUse` WARNING_HI event, carrying the SA index, for every frame it handles, so that the absence of security is visible in telemetry. | Unit Test |
 
 ## See Also
 

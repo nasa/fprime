@@ -45,7 +45,8 @@ TEST(ParameterDbTest, NominalPopulateTest) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
     Svc::PrmDbTester tester(impl);
 
     tester.init();
@@ -64,7 +65,8 @@ TEST(ParameterDbTest, NominalFileSaveTest) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -84,7 +86,8 @@ TEST(ParameterDbTest, NominalFileLoadTest) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -122,7 +125,8 @@ TEST(ParameterDbTest, PrmMissingExtraParamsTest) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -142,7 +146,8 @@ TEST(ParameterDbTest, PrmFileReadError) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -162,7 +167,8 @@ TEST(ParameterDbTest, PrmFileWriteError) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -179,7 +185,8 @@ TEST(ParameterDbTest, PrmDbEqualTest) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -195,7 +202,8 @@ TEST(ParameterDbTest, PrmDbCopyTest) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -211,7 +219,8 @@ TEST(ParameterDbTest, PrmDbCommitTest) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -227,7 +236,8 @@ TEST(ParameterDbTest, PrmDbFileLoadNominal) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -243,7 +253,8 @@ TEST(ParameterDbTest, PrmDbFileLoadWithErrors) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -259,7 +270,8 @@ TEST(ParameterDbTest, PrmFileLoadIllegalActions) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -275,7 +287,7 @@ TEST(ParameterDbTest, PrmFileLoadSandboxViolation) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
 
     Svc::PrmDbTester tester(impl);
 
@@ -291,7 +303,8 @@ TEST(ParameterDbTest, PrmShorterSaveDoesNotCorrupt) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10, 0);
-    impl.configure("TestFile.prm");
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
 
     Svc::PrmDbTester tester(impl);
 

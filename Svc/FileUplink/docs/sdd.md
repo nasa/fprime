@@ -25,11 +25,15 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
 All uplinked file paths are validated against the sandbox directory before writing.
 
    > [!WARNING]
-   > The sandbox is **fail-open**: until `configure(directory)` is called, the sandbox defaults to
-   > `/`, which permits writing to any absolute path accessible to the process. This default is
-   > intentionally insecure for backwards compatibility. Security-conscious deployments **must**
-   > call `configure(directory)` during topology setup to restrict file access. Note that the
-   > stock `FileHandling` subtopology does **not** configure a sandbox.
+   > The sandbox is **fail-closed**: until `configure(directory)` is called, every open is
+   > rejected with `OUTSIDE_SANDBOX` — an unconfigured `FileUplink` cannot write anywhere.
+   > A deployment **must** call `configure(directory)` during topology setup to enable uplink
+   > writes and to select the allowed base directory. Note that the stock `FileHandling`
+   > subtopology configures the sandbox to `"/"` for backwards compatibility, which permits
+   > writing to **any absolute path accessible to the process**. Security-conscious deployments
+   > using that subtopology **must** call `configure(directory)` again from topology setup code
+   > with a restricted directory; paths that resolve outside it — `../` traversal and absolute
+   > paths — are then rejected.
 
 3. In the nominal case of file uplink
 
@@ -78,9 +82,14 @@ The initial value is START.
 An integer recording the sequence index of the last packet received.
 The initial value is zero.
 
-* <a name="writeFileDescriptor">*writeFileDescriptor*</a>:
-The file descriptor of the file, if any, that is currently open
-for writing.
+* <a name="writeFileDescriptor">*file*</a>:
+An object representing the file, if any, that is currently open for
+writing. The underlying OS file is an `Os::SandboxedFile`, which restricts
+write locations to a configured sandbox directory.
+
+* <a name="lastPacketWriteStatus">*lastPacketWriteStatus*</a>:
+The status of the last file write, used when deciding whether a
+duplicate packet may be skipped.
 
 ### 3.5 The bufferSendIn Port
 
@@ -98,12 +107,11 @@ to return the buffer for deallocation.
 Upon receipt of a START packet, `FileUplink` does the following:
 
 1. If [*receiveMode*](#receiveMode) is not START,
-then close the file at
-[*writeFileDescriptor*](#writeFileDescriptor)
+then close
+[*file*](#writeFileDescriptor)
 and issue an *InvalidReceiveMode* warning.
 
-2. Open the file for writing and set
-[*writeFileDescriptor*](#writeFileDescriptor).
+2. Open [*file*](#writeFileDescriptor) for writing.
 
 3. If step 2 succeeded, then set
 [*lastSequenceIndex*](#lastSequenceIndex)
@@ -124,19 +132,24 @@ and go to START mode.
 
 2. Otherwise
 
-    a. If *I* is not equal to *lastSequenceIndex + 1*, then issue a 
+    a. If [*lastPacketWriteStatus*](#lastPacketWriteStatus) is OK and
+*I* is equal to *lastSequenceIndex*, then issue a *PacketDuplicate*
+warning and skip the packet.
+
+    b. If *I* is not equal to *lastSequenceIndex + 1*, then issue a 
 *PacketOutOfOrder*
 warning reporting *lastSequenceIndex* and *I*.
 
-    b. If the packet offset and size are in bounds for the current file, then
+    c. If the packet offset and size are in bounds for the current file, then
 
-    1. Using *writeFileDescriptor*, write the file data in the 
+    1. Using [*file*](#writeFileDescriptor), write the file data in the 
 packet at offset specified in the packet.
 
     2. If there was an error writing the file, then issue a
-*FileWriteError* warning.
+*FileWriteError* warning. Record the write status in
+[*lastPacketWriteStatus*](#lastPacketWriteStatus).
 
-    c. Otherwise issue a *PacketOutOfBounds* warning.
+    d. Otherwise issue a *PacketOutOfBounds* warning.
 
 #### 3.5.3 END Packets
 
@@ -149,7 +162,7 @@ then do the following, where *I* is the sequence index of *P*:
 then issue a *PacketOutOfOrder* warning reporting 
 *lastSequenceIndex* and *I*.
 
-    b. Use *writeFileDescriptor* to do the following:
+    b. Use [*file*](#writeFileDescriptor) to do the following:
 
     1. Use the method described in &sect; 4.1.2 of the
 [CCSDS File Delivery Protocol (CFDP) Recommended Standard](https://public.ccsds.org/Pubs/727x0b4s.pdf)
@@ -176,8 +189,8 @@ Upon receipt of a cancel packet *P*, `FileUplink` does the following:
 
 1. Set *lastSequenceIndex* to zero.
 
-2. If *receiveMode* is not START, then close the file at
-*writeFileDescriptor*.
+2. If *receiveMode* is not START, then close
+[*file*](#writeFileDescriptor).
 
 3. Issue an *UplinkCanceled* event.
 
@@ -197,4 +210,9 @@ Checklist |
 
 ## 6 Unit Testing
 
+Unit tests are located in `Svc/FileUplink/test/ut`. To run them:
+
+```bash
+fprime-util check
+```
 

@@ -23,7 +23,7 @@ Each of these classes is explained in more detail below.
 - [Drv::UdpSocket](#drvudpsocket-class)
 - [Drv::SocketComponentHelper](#drvsocketreadtask-virtual-baseclass)
 
-> ![WARNING]
+> [!WARNING]
 > The core library is not thread-safe. Users of this library (i.e. F´ components) must provide synchronization calls.
 
 ## Drv::IpSocket Baseclass
@@ -105,7 +105,7 @@ message or this client will return an error. In other words, dropped packets wil
 above and an example instantiation is shown below.
 
 ```c++
-Drv::IpSocket& socket = Drv::TcpClientSocket;
+Drv::TcpClientSocket socket;
 ```
 
 ## Drv::TcpServerSocket Class
@@ -116,7 +116,7 @@ Since this class is intended to communicate with exactly one client, no listen q
 from clients will be ignored until the primary client has been closed. Like the TCP client packet drops will result in an
 error.
 
-> ![NOTE]
+> [!NOTE]
 > The `Drv::TcpServerSocket::open` call will block until a client connects to the server.
 
 In order to startup the server to listen, the `Drv::TcpServerSocket::startup` method should be called. It will create a
@@ -132,7 +132,7 @@ up the server to accept a new client.
 ## Example TcpServer Usage
 
 ```c++
-Drv::TcpServerSocket& server = Drv::; // Initialize the component
+Drv::TcpServerSocket server; // Initialize the component
 server.configure("127.0.0.1", 60210, 0, 100); // Use 127.0.0.1:60210 with a 100us send timeout
 ...
 server.startup(); // Listen on 127.0.0.1:60210
@@ -162,11 +162,11 @@ will result in an assertion failure. Other interaction with the UDP socket is as
 of instantiation and configuration are provided below.
 
 ```c++
-Drv::UdpSocket& socketSend = Drv::UdpSocket;
+Drv::UdpSocket socketSend;
 socketSend.configureSend(127.0.0.1, 60211, 0, 100); // Send only socket
 ...
 
-Drv::UdpSocket& socketRecv = Drv::UdpSocket;
+Drv::UdpSocket socketRecv;
 socketRecv.configureRecv(127.0.0.1, 60212); // Receive only socket
 ...
 

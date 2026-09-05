@@ -9,7 +9,7 @@ It is an abstract class representing a sized container.
 ### 1.1. Copy Constructor
 
 ```c++
-SizedContainer(const SizedContainer<T>& c)
+SizedContainer(const SizedContainer& c)
 ```
 
 Defined as `= delete`.
@@ -105,7 +105,7 @@ Return `true` if the container is empty.
 _Example:_
 ```c++
 void f(const SizedContainer& c) {
-    if (c.size() == 0) {
+    if (c.getSize() == 0) {
         ASSERT_TRUE(c.isEmpty());
     } else {
         ASSERT_FALSE(c.isEmpty());
@@ -124,7 +124,7 @@ Return `true` if the container is full.
 _Example:_
 ```c++
 void f(const SizedContainer& c) {
-    if (c.size() >= c.capacity()) {
+    if (c.getSize() >= c.getCapacity()) {
         ASSERT_TRUE(c.isFull());
     } else {
         ASSERT_FALSE(c.isFull());

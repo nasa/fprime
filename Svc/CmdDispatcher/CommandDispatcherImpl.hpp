@@ -127,8 +127,9 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!
     //!  This command will clear the table tracking the completion of commands.
     //!  It is meant to be used if the tracking table has gotten full because of
-    //!  a software failure. It is dangerous in that it can clear a command
-    //!  that a sequencer is waiting for.
+    //!  a software failure. Each caller with a pending command is sent a
+    //!  Fw::CmdResponse::CLEARED status on its seqCmdStatus port so it does not
+    //!  wait indefinitely for a completion that will never arrive.
     //!
     //!  \param opCode the CLEAR_TRACKING opcode.
     //!  \param cmdSeq the assigned sequence number for the command
@@ -143,6 +144,15 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param data the buffer containing the command.
     //!  \param context call value defined by user
     void seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
+
+    //! \brief Increment m_seq, latching m_seqWrapped when the U32 counter wraps
+    void advanceSequenceNumber();
+
+    //! \brief Select an unused command sequence number and advance m_seq
+    //!
+    //! Once the sequence counter has wrapped, search the active sequence tracker
+    //! starting at m_seq so an outstanding command's sequence number is not reused.
+    U32 allocateSequenceNumber();
 
     //! \brief map from opcode to output port index
     //!
@@ -166,7 +176,8 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //! \brief map from command sequence number to pending command state
     Fw::ArrayMap<U32, SequenceTrackerEntry, CMD_DISPATCHER_SEQUENCER_TABLE_SIZE> m_sequenceTracker;
 
-    U32 m_seq;  //!< current command sequence number
+    U32 m_seq;          //!< current command sequence number
+    bool m_seqWrapped;  //!< set once m_seq has wrapped; enables tracker scan on allocation
 
     U32 m_numCmdsDispatched;  //!< number of commands dispatched
     U32 m_numCmdErrors;       //!< number of commands with an error
