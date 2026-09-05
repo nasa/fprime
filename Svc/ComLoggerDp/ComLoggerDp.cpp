@@ -6,6 +6,7 @@
 
 #include "Svc/ComLoggerDp/ComLoggerDp.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
+#include "default/config/ComLoggerDpCfg.hpp"
 
 namespace Svc {
 
@@ -162,8 +163,9 @@ void ComLoggerDp ::handleBufferDrop(U32 size) {
 
 bool ComLoggerDp ::allocateAndSetupContainer() {
     // Calculate size needed for the requested number of packets
-    // Each record holds up to FW_COM_BUFFER_MAX_SIZE bytes
-    const FwSizeType containerSize = this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE);
+    // Each record holds a 4-byte sentry plus up to FW_COM_BUFFER_MAX_SIZE bytes
+    const FwSizeType sentrySize = sizeof(U32);
+    const FwSizeType containerSize = this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
 
     // Get a container buffer
     const Fw::Success status = this->dpGet_ComBuffContainer(containerSize, this->m_container);
@@ -180,8 +182,22 @@ bool ComLoggerDp ::allocateAndSetupContainer() {
 }
 
 bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize) {
-    // Try to serialize into the current container
-    Fw::SerializeStatus serStatus = this->m_container.serializeRecord_ComBufferRecord(dataPtr, dataSize);
+    // Create buffer with sentry followed by ComBuffer data
+    // Use sizeof to get sentry size (supports user changing the constant type)
+    const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
+    const FwSizeType totalSize = sentrySize + dataSize;
+
+    // Use F Prime serialization to insert sentry value (handles endianness automatically)
+    Fw::ExternalSerializeBuffer serBuf(this->m_recordBuffer, sizeof(this->m_recordBuffer));
+    Fw::SerializeStatus serStatus = serBuf.serializeFrom(ComLoggerDpSentry);
+    FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
+
+    // Copy ComBuffer data after sentry
+    serStatus = serBuf.serializeFrom(dataPtr, dataSize, Fw::Serialization::OMIT_LENGTH);
+    FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
+
+    // Try to serialize the complete record into the container
+    serStatus = this->m_container.serializeRecord_ComBufferRecord(this->m_recordBuffer, totalSize);
 
     // If serialization succeeded, we're done
     if (serStatus == Fw::FW_SERIALIZE_OK) {
@@ -202,7 +218,7 @@ bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSi
     }
 
     // Retry serialization with the new container
-    serStatus = this->m_container.serializeRecord_ComBufferRecord(dataPtr, dataSize);
+    serStatus = this->m_container.serializeRecord_ComBufferRecord(this->m_recordBuffer, totalSize);
 
     // If serialization still fails, the packet is too large for any container
     if (serStatus != Fw::FW_SERIALIZE_OK) {

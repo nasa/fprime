@@ -176,6 +176,10 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
 
     //! Priority for data products
     FwDpPriorityType m_priority{5};  // Default priority from FPP
+
+    //! Buffer for building records with sentry + ComBuffer data
+    //! Size: sentry (4 bytes) + max ComBuffer size
+    U8 m_recordBuffer[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)];
 };
 
 }  // namespace Svc
