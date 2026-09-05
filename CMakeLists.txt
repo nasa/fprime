@@ -6,6 +6,7 @@
 cmake_minimum_required(VERSION 3.18)
 project(FPrime C CXX)
 set(FPRIME_INCLUDE_FRAMEWORK_CODE OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(FPrime REQUIRED PATHS "${CMAKE_CURRENT_LIST_DIR}")
 register_fprime_project()
 
