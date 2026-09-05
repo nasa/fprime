@@ -24,6 +24,18 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Destroy ComLoggerDp object
     ~ComLoggerDp();
 
+    //! Copy constructor (deleted)
+    ComLoggerDp(const ComLoggerDp&) = delete;
+
+    //! Copy assignment operator (deleted)
+    ComLoggerDp& operator=(const ComLoggerDp&) = delete;
+
+    //! Move constructor (deleted)
+    ComLoggerDp(ComLoggerDp&&) = delete;
+
+    //! Move assignment operator (deleted)
+    ComLoggerDp& operator=(ComLoggerDp&&) = delete;
+
     // ----------------------------------------------------------------------
     // Public interface
     // ----------------------------------------------------------------------
@@ -62,8 +74,9 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Handler implementation for startRecordingIn
     //!
     //! Port to start recording
-    void startRecordingIn_handler(FwIndexType portNum,  //!< The port number
-                                  U32 config            //!< Encoded configuration
+    void startRecordingIn_handler(FwIndexType portNum,          //!< The port number
+                                  U32 packetsPerContainer,       //!< Number of packets per container
+                                  FwDpPriorityType priority      //!< Data product priority
                                   ) override;
 
     //! Handler implementation for stopRecordingIn

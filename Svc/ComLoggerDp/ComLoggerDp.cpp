@@ -127,14 +127,9 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
     this->tlmWrite_NumBuffersDropped(this->m_numBuffersDropped);
 }
 
-void ComLoggerDp ::startRecordingIn_handler(FwIndexType portNum, U32 config) {
+void ComLoggerDp ::startRecordingIn_handler(FwIndexType portNum, U32 packetsPerContainer, FwDpPriorityType priority) {
     // portNum is unused
     (void)portNum;
-
-    // Decode configuration from packed U32
-    // Upper 16 bits: packetsPerContainer, lower 16 bits: priority
-    const U32 packetsPerContainer = (config >> 16) & 0xFFFF;
-    const FwDpPriorityType priority = static_cast<FwDpPriorityType>(config & 0xFFFF);
 
     // Call internal helper function
     this->startRecordingInternal(packetsPerContainer, priority);

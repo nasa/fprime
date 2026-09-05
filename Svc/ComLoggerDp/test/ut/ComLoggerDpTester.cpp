@@ -290,12 +290,12 @@ void ComLoggerDpTester::testPriorityPreserved() {
 }
 
 void ComLoggerDpTester::testStartRecordingPort() {
-    // Encode config: packetsPerContainer=5, priority=10
-    // (5 << 16) | 10 = 0x0005000A
-    const U32 config = (5 << 16) | 10;
+    // Test parameters
+    const U32 packetsPerContainer = 5;
+    const FwDpPriorityType priority = 10;
 
     // Invoke port
-    this->invoke_to_startRecordingIn(0, config);
+    this->invoke_to_startRecordingIn(0, packetsPerContainer, priority);
     this->component.doDispatch();
 
     // Verify event was logged
