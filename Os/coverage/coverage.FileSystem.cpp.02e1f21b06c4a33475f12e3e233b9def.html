@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-04 21:14:38</td>
+      <td>2026-09-05 21:14:59</td>
     </tr>
   </table>
 </div>
@@ -74,8 +74,8 @@
     <tr><td><a href="#l63">Os::Posix::FileSystem::PosixFileSystem::_getFreeSpace(char const*, unsigned long&amp;, unsigned long&amp;) (line 63)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l106">Os::Posix::FileSystem::PosixFileSystem::_getPathType(char const*, Os::FileSystemInterface::PathType&amp;) (line 106)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l46">Os::Posix::FileSystem::PosixFileSystem::_getWorkingDirectory(char*, unsigned long) (line 46)</a></td><td>called 2 times</td><td>57.0%</td></tr>
-    <tr><td><a href="#l22">Os::Posix::FileSystem::PosixFileSystem::_removeDirectory(char const*) (line 22)</a></td><td>called 9 times</td><td>56.0%</td></tr>
-    <tr><td><a href="#l30">Os::Posix::FileSystem::PosixFileSystem::_removeFile(char const*) (line 30)</a></td><td>called 10 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l22">Os::Posix::FileSystem::PosixFileSystem::_removeDirectory(char const*) (line 22)</a></td><td>called 11 times</td><td>56.0%</td></tr>
+    <tr><td><a href="#l30">Os::Posix::FileSystem::PosixFileSystem::_removeFile(char const*) (line 30)</a></td><td>called 12 times</td><td>89.0%</td></tr>
     <tr><td><a href="#l38">Os::Posix::FileSystem::PosixFileSystem::_rename(char const*, char const*) (line 38)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l102">Os::Posix::FileSystem::PosixFileSystem::getHandle() (line 102)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
@@ -242,14 +242,14 @@
       <td class="lineno"><a id="l22" href="#l22">22</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
+      <td class="linecount coveredLine">11</td>
       <td class="src coveredLine"><span class="n">PosixFileSystem</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">PosixFileSystem::_removeDirectory</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
+      <td class="linecount coveredLine">11</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -259,13 +259,13 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 9 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 11 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 9 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 11 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">9</td>
+      <td class="linecount partialCoveredLine">11</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">::</span><span class="n">rmdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -286,7 +286,7 @@
       <td class="lineno"><a id="l27" href="#l27">27</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
+      <td class="linecount coveredLine">11</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -307,14 +307,14 @@
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="n">PosixFileSystem</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">PosixFileSystem::_removeFile</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -324,20 +324,20 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 4 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 9 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 3 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">10</td>
+      <td class="linecount partialCoveredLine">12</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">::</span><span class="n">unlink</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6</td>
+      <td class="linecount coveredLine">9</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">errno_to_filesystem_status</span><span class="p">(</span><span class="n">errno</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -351,7 +351,7 @@
       <td class="lineno"><a id="l35" href="#l35">35</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
