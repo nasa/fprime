@@ -46,7 +46,7 @@ constant BufferRepeaterOutputPorts = 10
 constant DpManagerNumPorts = 5
 
 @ Size of data product routing port arrays for DpWriter
-constant DpWriterNumPorts = 1
+constant DpWriterNumPorts = 5
 
 @ Size of processing port array for DpWriter
 constant DpWriterNumProcPorts = 5
