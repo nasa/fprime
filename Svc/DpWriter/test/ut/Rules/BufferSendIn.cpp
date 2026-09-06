@@ -16,6 +16,7 @@
 #include "STest/Pick/Pick.hpp"
 #include "Svc/DpWriter/test/ut/Rules/BufferSendIn.hpp"
 #include "Svc/DpWriter/test/ut/Rules/Testers.hpp"
+#include "config/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -466,6 +467,27 @@ void TestState ::action__BufferSendIn__FileWriteError() {
 // Non-rule tests
 // ----------------------------------------------------------------------
 
+void TestState::testRoutingPorts() {
+    auto& fileData = Os::Stub::File::Test::StaticData::data;
+    for (FwIndexType portNum = 0; portNum < DpWriterNumPorts; ++portNum) {
+        this->clearHistory();
+        this->abstractState.m_dpWrittenOutPortNumOpt.reset();
+        this->abstractState.m_deallocBufferSendOutPortNumOpt.reset();
+        fileData.pointer = 0;
+
+        Fw::Buffer buffer = this->abstractState.getDpBuffer();
+        this->invoke_to_bufferSendIn(portNum, buffer);
+        this->doDispatch();
+
+        ASSERT_from_dpWrittenOut_SIZE(1);
+        ASSERT_from_deallocBufferSendOut_SIZE(1);
+        ASSERT_TRUE(this->abstractState.m_dpWrittenOutPortNumOpt.has_value());
+        ASSERT_TRUE(this->abstractState.m_deallocBufferSendOutPortNumOpt.has_value());
+        ASSERT_EQ(this->abstractState.m_dpWrittenOutPortNumOpt.value(), portNum);
+        ASSERT_EQ(this->abstractState.m_deallocBufferSendOutPortNumOpt.value(), portNum);
+    }
+}
+
 void TestState ::testFileNameFormatError() {
     // Configure a prefix that fills the file name string, forcing a format overflow
     Fw::FileNameString prefix;
@@ -518,6 +540,11 @@ void Tester::FileOpenError() {
 void Tester::FileWriteError() {
     Testers::fileWriteStatus.ruleError.apply(this->testState);
     this->ruleFileWriteError.apply(this->testState);
+    this->testState.printEvents();
+}
+
+void Tester::RoutingPorts() {
+    this->testState.testRoutingPorts();
     this->testState.printEvents();
 }
 

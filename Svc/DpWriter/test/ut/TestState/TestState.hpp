@@ -49,6 +49,9 @@ class TestState : public DpWriterTester {
 
     //! Test the FileNameFormatError event and its throttle
     void testFileNameFormatError();
+
+    //! Test that all fused routing ports preserve the input port index
+    void testRoutingPorts();
 };
 
 }  // namespace Svc
