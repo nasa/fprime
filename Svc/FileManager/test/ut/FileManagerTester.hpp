@@ -143,6 +143,34 @@ class FileManagerTester : public FileManagerGTestBase {
     //! Report a serialization failure without failing the command
     void generateDpSerializationFailure();
 
+    // ----------------------------------------------------------------------
+    // Sandbox confinement tests
+    // ----------------------------------------------------------------------
+
+    //! Reject every path-taking command until configure() has been called
+    void sandboxUnconfiguredRejectsCommand();
+
+    //! Reject a single-path command (CreateDirectory) whose path escapes the sandbox
+    void sandboxRejectsEscapingPath();
+
+    //! A command whose path resolves inside the configured sandbox still succeeds
+    void sandboxAllowsConfiguredPath();
+
+    //! Reject MoveFile if either the source or destination escapes the sandbox
+    void sandboxRejectsMoveFileEitherLeg();
+
+    //! RemoveFile's ignoreErrors flag does not waive the sandbox check
+    void sandboxIgnoreErrorsStillRejected();
+
+    //! Reject ListDirectory before opening a directory outside the sandbox
+    void sandboxRejectsListDirectory();
+
+    //! Reject GenerateDp for a file outside the sandbox, per its always-OK response convention
+    void sandboxRejectsGenerateDp();
+
+    //! Reject CalculateCrc for a file outside the sandbox
+    void sandboxRejectsCalculateCrc();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods

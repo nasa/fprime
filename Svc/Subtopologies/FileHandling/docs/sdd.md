@@ -37,10 +37,11 @@ The **FileHandling subtopology** packages the core file-transfer services common
 > [!WARNING]
 > **This subtopology is not configured to be secure by default.** For backwards compatibility, its
 > `configComponents` phase configures the file-access sandboxes of `fileUplink`, `fileDownlink`,
-> and `prmDb` to `FileHandlingConfig::Paths::sandboxDir`, which defaults to `"/"`. With that
-> default, **any absolute path accessible to the process** may be written, read, or loaded via
-> ground command. (The underlying `Os::SandboxedFile` is fail-closed when left
-> unconfigured; this subtopology deliberately configures it open.)
+> `fileManager`, and `prmDb` to `FileHandlingConfig::Paths::sandboxDir`, which defaults to `"/"`.
+> With that default, **any absolute path accessible to the process** may be written, read,
+> managed, or loaded via ground command. (The underlying `Os::SandboxedFile` and `FileManager`'s
+> own path check are fail-closed when left unconfigured; this subtopology deliberately configures
+> them open.)
 >
 > Deployments wishing restricted file security **must call `configure` again** from topology setup
 > code (after the autocoded `configComponents` phase runs) with a restricted directory:
@@ -49,12 +50,15 @@ The **FileHandling subtopology** packages the core file-transfer services common
 > * `FileHandling::fileDownlink.configure(<directory>)` — restrict downlink reads (this is the
 >   `configure(directory)` overload; the `configure(cooldown, cycleTime, fileQueueDepth)`
 >   overload does **not** set a sandbox).
+> * `FileHandling::fileManager.configure(<directory>)` — restrict every `FileManager` command's
+>   path argument(s) (`CreateDirectory`, `RemoveFile`, `MoveFile`, `RemoveDirectory`,
+>   `AppendFile`, `FileSize`, `ListDirectory`, `CalculateCrc`, `GenerateDp`).
 > * `FileHandling::prmDb.configureSandbox(<directory>)` — restrict all `prmDb` file access
 >   (startup read, `PRM_SAVE_FILE`, `PRM_LOAD_FILE`); the directory must contain the store file
 >   set by `prmDb.configure(<file name>)`, which is **not** itself a sandbox.
 >
 > Alternatively, override `FileHandlingConfig::Paths::sandboxDir` to apply a single restricted
-> directory to all three components. Paths resolving outside a restricted sandbox — `../`
+> directory to all four components. Paths resolving outside a restricted sandbox — `../`
 > traversal sequences and absolute paths — are rejected before any file is opened. The `Ref`
 > deployment demonstrates the re-configure approach in `RefTopology.cpp`.
 
@@ -101,7 +105,7 @@ topology Flight {
 * **Stack sizes** — Task stacks for active components (`fileUplink`, `fileDownlink`).
 * **Priorities** — RTOS priorities for the active/queued components as applicable.
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
-* **Paths** — File paths used by the subtopology; `Paths.prmDbFile` sets the `prmDb` parameter storage file (default `PrmDb.dat`); `Paths.sandboxDir` sets the file-access sandbox for `fileUplink`, `fileDownlink`, and `prmDb` (default `/`, unrestricted — see §2.3).
+* **Paths** — File paths used by the subtopology; `Paths.prmDbFile` sets the `prmDb` parameter storage file (default `PrmDb.dat`); `Paths.sandboxDir` sets the file-access sandbox for `fileUplink`, `fileDownlink`, `fileManager`, and `prmDb` (default `/`, unrestricted — see §2.3).
 
 > These knobs tailor runtime footprint and scheduling without modifying the subtopology wiring.
 

@@ -413,3 +413,42 @@ def test_prm_db_sandbox(fprime_test_api):
     fprime_test_api.send_and_assert_command(
         "FileHandling.prmDb.PRM_COMMIT_STAGED", max_delay=5
     )
+
+
+def test_file_manager_sandbox(fprime_test_api):
+    """Test that FileManager file/directory access is confined to its sandbox directory.
+
+    The Ref deployment sandboxes FileManager to "." (the working directory of the
+    flight software process). Operating on a path outside that directory should be
+    rejected with a PathOutsideSandbox event, while a path inside it should succeed.
+    """
+    # --- Creating a directory OUTSIDE the sandbox must be rejected ---
+    fprime_test_api.clear_histories()
+    results = fprime_test_api.send_and_await_event(
+        "FileHandling.fileManager.CreateDirectory",
+        args=["/tmp/evil_ref_dir"],
+        events=["FileHandling.fileManager.PathOutsideSandbox"],
+        timeout=5,
+    )
+    assert len(results) == 1, "Expected PathOutsideSandbox for a path outside the sandbox"
+    fprime_test_api.assert_event_count(
+        0, "FileHandling.fileManager.CreateDirectorySucceeded", timeout=1
+    )
+
+    # --- Creating a directory INSIDE the sandbox must succeed ---
+    fprime_test_api.clear_histories()
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.fileManager.CreateDirectory",
+        args=["ref_sandbox_test_dir"],
+        max_delay=5,
+    )
+    fprime_test_api.assert_event(
+        "FileHandling.fileManager.CreateDirectorySucceeded", timeout=5
+    )
+
+    # Clean up
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.fileManager.RemoveDirectory",
+        args=["ref_sandbox_test_dir"],
+        max_delay=5,
+    )

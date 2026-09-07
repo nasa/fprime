@@ -36,7 +36,13 @@ module FileHandling {
         queue size FileHandlingConfig.QueueSizes.fileManager \
         stack size FileHandlingConfig.StackSizes.fileManager \
         priority FileHandlingConfig.Priorities.fileManager \
-        cpu FileHandlingConfig.CpuAffinities.fileManager
+        cpu FileHandlingConfig.CpuAffinities.fileManager \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        // Sandbox for FileManager file/directory operations; "/" is unrestricted. Re-configure to restrict.
+        FileHandling::fileManager.configure(FileHandlingConfig::Paths::sandboxDir);
+        """
+    }
 
     instance prmDb: Svc.PrmDb base id FileHandlingConfig.BASE_ID + 0x03000 \
         queue size FileHandlingConfig.QueueSizes.prmDb \

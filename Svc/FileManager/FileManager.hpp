@@ -14,7 +14,9 @@
 #define Svc_FileManager_HPP
 
 #include <atomic>
+#include "Fw/Types/String.hpp"
 #include "Os/File.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Os/FileSystem.hpp"
 #include "Svc/FileManager/FileManagerComponentAc.hpp"
 #include "config/FileManagerConfig.hpp"
@@ -37,6 +39,15 @@ class FileManager final : public FileManagerComponentBase {
     //! Destroy object FileManager
     //!
     ~FileManager();
+
+    //! Configure the sandbox directory restricting all ground-supplied paths
+    //!
+    //! Fail-closed: until called, every command with a path argument is rejected with a
+    //! PathOutsideSandbox warning. Configure `/` to allow any absolute path.
+    //!
+    //! \param sandboxDir: directory that all FileManager path arguments must resolve within
+    //!
+    void configure(const char* sandboxDir);
 
   private:
     // ----------------------------------------------------------------------
@@ -147,6 +158,16 @@ class FileManager final : public FileManagerComponentBase {
                              const Os::FileSystem::Status status  //!< The status
     );
 
+    //! Validate a ground-supplied path against the configured sandbox
+    //!
+    //! Resolves the path against CWD and checks containment against the configured
+    //! sandbox directory. Emits PathOutsideSandbox on rejection. Fails closed: rejects
+    //! every path if configure() has not been called.
+    //!
+    //! \param path: ground-supplied path to validate
+    //! \return true if the path is allowed
+    bool checkSandbox(const char* path);
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined internal interfaces
@@ -169,6 +190,12 @@ class FileManager final : public FileManagerComponentBase {
     //! The total number of errors
     //!
     U32 errorCount;
+
+    //! Whether configure() has been called; fail-closed (all paths rejected) until true
+    bool m_sandboxConfigured;
+
+    //! The configured sandbox directory (absolute, trailing '/'); valid only when m_sandboxConfigured
+    Fw::String m_sandboxDir;
 
     // ----------------------------------------------------------------------
     // Directory listing state machine variables

@@ -86,4 +86,30 @@ left for the deployment to
 connect; if they are not connected the command fails with an event rather than
 attempting to allocate a container.
 
+### Sandbox
+
+Every ground-supplied path argument — both paths of `MoveFile` and `AppendFile`
+included — is validated against a configured sandbox directory via
+`Os::FilePathUtils::resolvePath`/`checkContainment` before it reaches the OSAL. A
+path that resolves outside the sandbox is rejected with a `PathOutsideSandbox`
+warning instead of being passed to the filesystem.
+
+> [!WARNING]
+> The sandbox is **fail-closed**: until `configure(sandboxDir)` is called, every
+> command with a path argument is rejected with `PathOutsideSandbox` — an
+> unconfigured `FileManager` cannot touch the filesystem at all. A deployment
+> **must** call `configure(sandboxDir)` during topology setup to enable file
+> operations and to select the allowed base directory. Note that the stock
+> `FileHandling` subtopology configures the sandbox to `"/"` for backwards
+> compatibility, which permits operating on **any absolute path accessible to
+> the process**. Security-conscious deployments using that subtopology **must**
+> call `configure(sandboxDir)` again from topology setup code with a restricted
+> directory; paths that resolve outside it — `../` traversal and absolute paths
+> — are then rejected. `RemoveFile`'s `ignoreErrors` argument only waives
+> missing-file errors; it does not waive the sandbox check.
+
+`ListDirectory` re-validates each directory entry's constructed path before
+querying its type, as defense in depth against a platform that yields a `.`/`..`
+entry from `Os::Directory::read()` (the POSIX implementation filters both out).
+
 

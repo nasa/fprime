@@ -144,6 +144,46 @@ TEST(Test, generateDpCustomPriority) {
     tester.generateDpCustomPriority();
 }
 
+TEST(Test, sandboxUnconfiguredRejectsCommand) {
+    Svc::FileManagerTester tester;
+    tester.sandboxUnconfiguredRejectsCommand();
+}
+
+TEST(Test, sandboxRejectsEscapingPath) {
+    Svc::FileManagerTester tester;
+    tester.sandboxRejectsEscapingPath();
+}
+
+TEST(Test, sandboxAllowsConfiguredPath) {
+    Svc::FileManagerTester tester;
+    tester.sandboxAllowsConfiguredPath();
+}
+
+TEST(Test, sandboxRejectsMoveFileEitherLeg) {
+    Svc::FileManagerTester tester;
+    tester.sandboxRejectsMoveFileEitherLeg();
+}
+
+TEST(Test, sandboxIgnoreErrorsStillRejected) {
+    Svc::FileManagerTester tester;
+    tester.sandboxIgnoreErrorsStillRejected();
+}
+
+TEST(Test, sandboxRejectsListDirectory) {
+    Svc::FileManagerTester tester;
+    tester.sandboxRejectsListDirectory();
+}
+
+TEST(Test, sandboxRejectsGenerateDp) {
+    Svc::FileManagerTester tester;
+    tester.sandboxRejectsGenerateDp();
+}
+
+TEST(Test, sandboxRejectsCalculateCrc) {
+    Svc::FileManagerTester tester;
+    tester.sandboxRejectsCalculateCrc();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

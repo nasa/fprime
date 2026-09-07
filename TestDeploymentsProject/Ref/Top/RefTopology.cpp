@@ -57,6 +57,7 @@ void configureTopology() {
     // Restrict file access to the working directory (where PrmDb.dat lives)
     FileHandling::fileUplink.configure(".");
     FileHandling::fileDownlink.configure(".");
+    FileHandling::fileManager.configure(".");
     FileHandling::prmDb.configureSandbox(".");
 }
 

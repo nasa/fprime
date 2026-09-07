@@ -172,6 +172,27 @@ Status resolveFromCwd(const char* path, char* resolvedOut, FwSizeType resolvedSi
     return resolvePath(path, "/", resolvedOut, resolvedSize);
 }
 
+Status resolveDirectory(const char* directory, char* resolvedOut, FwSizeType resolvedSize) {
+    const Status resolveStatus = resolveFromCwd(directory, resolvedOut, resolvedSize);
+    if (resolveStatus != VALID) {
+        return resolveStatus;
+    }
+
+    const FwSizeType resolvedLen = Fw::StringUtils::string_length(resolvedOut, resolvedSize);
+    if (!isValidCString(resolvedLen, resolvedSize)) {
+        return INVALID_PATH;
+    }
+    FW_ASSERT(resolvedLen > 0);  // resolveFromCwd always yields at least "/"
+    if (resolvedOut[resolvedLen - 1] != '/') {
+        if (resolvedLen + 2 > resolvedSize) {
+            return TOO_LONG;
+        }
+        resolvedOut[resolvedLen] = '/';
+        resolvedOut[resolvedLen + 1] = '\0';
+    }
+    return VALID;
+}
+
 // Internal containment check on already-resolved paths.
 // Verifies that resolvedPath starts with allowedDirectory as a prefix,
 // and that the match occurs at a `/` boundary.

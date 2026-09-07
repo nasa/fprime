@@ -68,6 +68,19 @@ Status resolvePath(const Fw::ConstStringBase& path, const Fw::ConstStringBase& b
 //!
 Status resolveFromCwd(const char* path, char* resolvedOut, FwSizeType resolvedSize);
 
+//! \brief Resolve a directory path and ensure it ends with a trailing separator
+//!
+//! Convenience wrapper for configuring a sandbox: resolves the directory via
+//! resolveFromCwd() and appends a trailing `/` if not already present, so the
+//! result can be passed directly as the allowedDirectory argument to checkContainment().
+//!
+//! \param directory: input directory path (may be relative or absolute)
+//! \param resolvedOut: output buffer for the resolved directory (with trailing `/`)
+//! \param resolvedSize: size of the output buffer
+//! \return VALID on success, INVALID_PATH or TOO_LONG on failure
+//!
+Status resolveDirectory(const char* directory, char* resolvedOut, FwSizeType resolvedSize);
+
 //! \brief Check whether an already-resolved path is within an allowed directory
 //!
 //! Both arguments must already be canonical absolute paths (output of resolvePath

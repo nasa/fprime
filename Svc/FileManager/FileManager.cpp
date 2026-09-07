@@ -31,6 +31,7 @@ FileManager ::FileManager(const char* const compName  //!< The component name
     : FileManagerComponentBase(compName),
       commandCount(0),
       errorCount(0),
+      m_sandboxConfigured(false),
       m_listState(IDLE),
       m_totalEntries(0),
       m_currentOpCode(0),
@@ -49,6 +50,18 @@ FileManager ::FileManager(const char* const compName  //!< The component name
 
 FileManager ::~FileManager() {}
 
+void FileManager ::configure(const char* sandboxDir) {
+    FW_ASSERT(sandboxDir != nullptr);
+
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    const Os::FilePathUtils::Status resolveStatus =
+        Os::FilePathUtils::resolveDirectory(sandboxDir, resolved, sizeof(resolved));
+    FW_ASSERT(resolveStatus == Os::FilePathUtils::VALID, static_cast<FwAssertArgType>(resolveStatus));
+
+    this->m_sandboxDir = resolved;
+    this->m_sandboxConfigured = true;
+}
+
 // ----------------------------------------------------------------------
 // Command handler implementations
 // ----------------------------------------------------------------------
@@ -56,6 +69,11 @@ FileManager ::~FileManager() {}
 void FileManager ::CreateDirectory_cmdHandler(const FwOpcodeType opCode,
                                               const U32 cmdSeq,
                                               const Fw::CmdStringArg& dirName) {
+    if (!this->checkSandbox(dirName.toChar())) {
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringDirName(dirName.toChar());
     this->log_ACTIVITY_HI_CreateDirectoryStarted(logStringDirName);
     bool errorIfDirExists = true;
@@ -73,6 +91,12 @@ void FileManager ::RemoveFile_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
                                          const bool ignoreErrors) {
+    // ignoreErrors only waives missing-file errors below; it does not waive the sandbox check
+    if (!this->checkSandbox(fileName.toChar())) {
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_RemoveFileStarted(logStringFileName);
     const Os::FileSystem::Status status = Os::FileSystem::removeFile(fileName.toChar());
@@ -95,6 +119,14 @@ void FileManager ::MoveFile_cmdHandler(const FwOpcodeType opCode,
                                        const U32 cmdSeq,
                                        const Fw::CmdStringArg& sourceFileName,
                                        const Fw::CmdStringArg& destFileName) {
+    // Both legs are checked (rather than short-circuited) so a violation on either side is reported
+    const bool sourceAllowed = this->checkSandbox(sourceFileName.toChar());
+    const bool destAllowed = this->checkSandbox(destFileName.toChar());
+    if (!sourceAllowed || !destAllowed) {
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringSource(sourceFileName.toChar());
     Fw::LogStringArg logStringDest(destFileName.toChar());
     this->log_ACTIVITY_HI_MoveFileStarted(logStringSource, logStringDest);
@@ -111,6 +143,11 @@ void FileManager ::MoveFile_cmdHandler(const FwOpcodeType opCode,
 void FileManager ::RemoveDirectory_cmdHandler(const FwOpcodeType opCode,
                                               const U32 cmdSeq,
                                               const Fw::CmdStringArg& dirName) {
+    if (!this->checkSandbox(dirName.toChar())) {
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringDirName(dirName.toChar());
     this->log_ACTIVITY_HI_RemoveDirectoryStarted(logStringDirName);
     const Os::FileSystem::Status status = Os::FileSystem::removeDirectory(dirName.toChar());
@@ -127,6 +164,14 @@ void FileManager ::AppendFile_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const Fw::CmdStringArg& source,
                                          const Fw::CmdStringArg& target) {
+    // Both legs are checked (rather than short-circuited) so a violation on either side is reported
+    const bool sourceAllowed = this->checkSandbox(source.toChar());
+    const bool targetAllowed = this->checkSandbox(target.toChar());
+    if (!sourceAllowed || !targetAllowed) {
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringSource(source.toChar());
     Fw::LogStringArg logStringTarget(target.toChar());
     this->log_ACTIVITY_HI_AppendFileStarted(logStringSource, logStringTarget);
@@ -144,6 +189,11 @@ void FileManager ::AppendFile_cmdHandler(const FwOpcodeType opCode,
 }
 
 void FileManager ::FileSize_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const Fw::CmdStringArg& fileName) {
+    if (!this->checkSandbox(fileName.toChar())) {
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
 
@@ -164,6 +214,12 @@ void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode,
     // Check if we're already listing a directory
     if (m_listState == LISTING_IN_PROGRESS) {
         this->log_WARNING_HI_ListDirectoryError(dirName, static_cast<U32>(Os::Directory::OTHER_ERROR));
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
+
+    if (!this->checkSandbox(dirName.toChar())) {
         this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
         this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
         return;
@@ -195,6 +251,10 @@ void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode,
 }
 
 void FileManager ::CalculateCrc_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& filename) {
+    if (!this->checkSandbox(filename.toChar())) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
     Os::File file;
     U32 crcValue = 0;
     this->log_ACTIVITY_HI_CalculateCrcStarted(filename);
@@ -223,6 +283,11 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
                                          U32 priority,
                                          const FileManager_GenerateDpMode& mode) {
     Fw::LogStringArg logFileName(fileName.toChar());
+
+    if (!this->checkSandbox(fileName.toChar())) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        return;
+    }
 
     // Reject a second request while one is already running
     if (this->m_dpState != DP_IDLE) {
@@ -442,15 +507,22 @@ void FileManager ::run_internalInterfaceHandler() {
                 Fw::String fullPath;
                 Fw::FormatStatus formatStatus = fullPath.format("%s/%s", m_currentDirName.toChar(), filename.toChar());
 
+                // Re-check containment on the constructed entry path: dirName was already
+                // validated when the listing started, but this defends against an entry name
+                // that textually escapes it (e.g. a platform that yields a ".." entry).
+                const bool sandboxOk =
+                    (formatStatus == Fw::FormatStatus::SUCCESS) && this->checkSandbox(fullPath.toChar());
+
                 // Determine entry type
-                Os::FileSystem::PathType pathType = (formatStatus == Fw::FormatStatus::SUCCESS)
-                                                        ? Os::FileSystem::getPathType(fullPath.toChar())
-                                                        : Os::FileSystem::NOT_EXIST;
+                Os::FileSystem::PathType pathType =
+                    sandboxOk ? Os::FileSystem::getPathType(fullPath.toChar()) : Os::FileSystem::NOT_EXIST;
 
                 if (formatStatus != Fw::FormatStatus::SUCCESS) {
                     // Cannot determine the type of an entry whose path did not format
                     this->log_WARNING_HI_FileNameFormatError(filename,
                                                              static_cast<Fw::StringFormatStatus::T>(formatStatus));
+                } else if (!sandboxOk) {
+                    // PathOutsideSandbox was already logged by checkSandbox(); skip this entry
                 } else if (pathType == Os::FileSystem::FILE) {
                     // Regular file: get size and emit file event
                     FwSizeType fileSize;
@@ -501,6 +573,22 @@ void FileManager ::sendCommandResponse(const FwOpcodeType opCode,
                                        const Os::FileSystem::Status status) {
     this->cmdResponse_out(opCode, cmdSeq,
                           (status == Os::FileSystem::OP_OK) ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+bool FileManager ::checkSandbox(const char* path) {
+    bool allowed = false;
+    if (this->m_sandboxConfigured) {
+        char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+        const Os::FilePathUtils::Status resolveStatus =
+            Os::FilePathUtils::resolveFromCwd(path, resolved, sizeof(resolved));
+        allowed = (resolveStatus == Os::FilePathUtils::VALID) &&
+                  (Os::FilePathUtils::checkContainment(resolved, this->m_sandboxDir.toChar()) ==
+                   Os::FilePathUtils::VALID);
+    }
+    if (!allowed) {
+        this->log_WARNING_HI_PathOutsideSandbox(Fw::LogStringArg(path));
+    }
+    return allowed;
 }
 
 }  // namespace Svc

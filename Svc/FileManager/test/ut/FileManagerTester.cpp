@@ -30,6 +30,9 @@ namespace Svc {
 FileManagerTester ::FileManagerTester() : FileManagerGTestBase("Tester", MAX_HISTORY_SIZE), component("FileManager") {
     this->connectPorts();
     this->initComponents();
+    // Unrestricted by default so existing tests exercise real command behavior;
+    // sandbox-specific tests below reconfigure a restricted directory as needed.
+    this->component.configure("/");
 }
 
 FileManagerTester ::~FileManagerTester() {
@@ -835,6 +838,193 @@ void FileManagerTester ::listDirectoryFail() {
 
     // Assert failure
     this->assertFailure(FileManager::OPCODE_LISTDIRECTORY);
+}
+
+// ----------------------------------------------------------------------
+// Sandbox confinement tests
+// ----------------------------------------------------------------------
+
+void FileManagerTester ::sandboxUnconfiguredRejectsCommand() {
+    // Simulate a deployment that never called configure(); the constructor's
+    // configure("/") call is undone directly via friend access.
+    this->component.m_sandboxConfigured = false;
+
+    this->createDirectory("unconfigured_test_dir");
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_CREATEDIRECTORY, CMD_SEQ, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);  // Only PathOutsideSandbox; the sandbox check runs before the Started event
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(1);
+    ASSERT_EVENTS_PathOutsideSandbox(0, "unconfigured_test_dir");
+    ASSERT_TLM_Errors_SIZE(1);
+    ASSERT_TLM_Errors(0, 1);
+}
+
+void FileManagerTester ::sandboxRejectsEscapingPath() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+    this->system("mkdir sandbox_root");
+#else
+    FAIL();  // Commands not implemented for this OS
+#endif
+    this->component.configure("sandbox_root");
+
+    // Absolute path outside the configured sandbox
+    this->createDirectory("/tmp/fprime_sandbox_escape_test_dir");
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_CREATEDIRECTORY, CMD_SEQ, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(1);
+    ASSERT_EVENTS_PathOutsideSandbox(0, "/tmp/fprime_sandbox_escape_test_dir");
+    ASSERT_TLM_Errors_SIZE(1);
+    ASSERT_TLM_Errors(0, 1);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    // The directory must not have been created
+    this->system("! test -e /tmp/fprime_sandbox_escape_test_dir");
+    this->system("rm -rf sandbox_root");
+#endif
+}
+
+void FileManagerTester ::sandboxAllowsConfiguredPath() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+    this->system("mkdir sandbox_root");
+#else
+    FAIL();  // Commands not implemented for this OS
+#endif
+    this->component.configure("sandbox_root");
+
+    // A path inside the configured sandbox still works
+    this->createDirectory("sandbox_root/inner_dir");
+
+    this->assertSuccess(FileManager::OPCODE_CREATEDIRECTORY);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("test -d sandbox_root/inner_dir");
+    this->system("rm -rf sandbox_root");
+#endif
+}
+
+void FileManagerTester ::sandboxRejectsMoveFileEitherLeg() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+    this->system("mkdir sandbox_root");
+#else
+    FAIL();  // Commands not implemented for this OS
+#endif
+    this->component.configure("sandbox_root");
+
+    // Both legs are outside the sandbox; both violations are reported (no short-circuit)
+    this->moveFile("/tmp/fprime_sandbox_escape_src", "/tmp/fprime_sandbox_escape_dest");
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_MOVEFILE, CMD_SEQ, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(2);
+    ASSERT_EVENTS_PathOutsideSandbox(0, "/tmp/fprime_sandbox_escape_src");
+    ASSERT_EVENTS_PathOutsideSandbox(1, "/tmp/fprime_sandbox_escape_dest");
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+#endif
+}
+
+void FileManagerTester ::sandboxIgnoreErrorsStillRejected() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+    this->system("mkdir sandbox_root");
+#else
+    FAIL();  // Commands not implemented for this OS
+#endif
+    this->component.configure("sandbox_root");
+
+    // ignoreErrors=true waives missing-file errors, not the sandbox check
+    this->removeFile("/tmp/fprime_sandbox_escape_file", true);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_REMOVEFILE, CMD_SEQ, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PathOutsideSandbox(0, "/tmp/fprime_sandbox_escape_file");
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+#endif
+}
+
+void FileManagerTester ::sandboxRejectsListDirectory() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+    this->system("mkdir sandbox_root");
+#else
+    FAIL();  // Commands not implemented for this OS
+#endif
+    this->component.configure("sandbox_root");
+
+    // Outside the sandbox; rejected before the directory is ever opened
+    this->listDirectory("/tmp");
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_LISTDIRECTORY, CMD_SEQ, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PathOutsideSandbox(0, "/tmp");
+    ASSERT_EQ(FileManager::IDLE, this->component.m_listState);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+#endif
+}
+
+void FileManagerTester ::sandboxRejectsGenerateDp() {
+    this->resetDpState();
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+    this->system("mkdir sandbox_root");
+#else
+    FAIL();  // Commands not implemented for this OS
+#endif
+    this->component.configure("sandbox_root");
+
+    Fw::CmdStringArg cmdStringFile("/tmp/fprime_sandbox_escape_dp_file");
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+
+    // GenerateDp always responds OK per its convention; failures surface via events only
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PathOutsideSandbox(0, "/tmp/fprime_sandbox_escape_dp_file");
+    ASSERT_EVENTS_GenerateDpStarted_SIZE(0);
+    ASSERT_EQ(0u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+#endif
+}
+
+void FileManagerTester ::sandboxRejectsCalculateCrc() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+    this->system("mkdir sandbox_root");
+#else
+    FAIL();  // Commands not implemented for this OS
+#endif
+    this->component.configure("sandbox_root");
+
+    Fw::CmdStringArg cmdStringFile("/tmp/fprime_sandbox_escape_crc_file");
+    this->sendCmd_CalculateCrc(INSTANCE, CMD_SEQ, cmdStringFile);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_CALCULATECRC, CMD_SEQ, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PathOutsideSandbox(0, "/tmp/fprime_sandbox_escape_crc_file");
+    ASSERT_EVENTS_CalculateCrcStarted_SIZE(0);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -rf sandbox_root");
+#endif
 }
 
 // ----------------------------------------------------------------------
