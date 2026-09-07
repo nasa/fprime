@@ -7,7 +7,7 @@
 #ifndef Svc_Ccsds_AesGcmEncryptor_HPP
 #define Svc_Ccsds_AesGcmEncryptor_HPP
 
-#include "AesGcmEncryptorConfig/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 #include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptorComponentAc.hpp"
 
@@ -75,8 +75,8 @@ class AesGcmEncryptor final : public AesGcmEncryptorComponentBase {
     // ----------------------------------------------------------------------
 
     //! Storage for the assembled IV | ciphertext | MAC output, sized by
-    //! SdlsCfg.AesMaxOutputSize
-    U8 m_outBuf[SdlsCfg::AesMaxOutputSize];
+    //! ComCfg.TmFrameFixedSize
+    U8 m_outBuf[ComCfg::TmFrameFixedSize];
 
     //! If  m_outBuf is free for the next frame
     BufferOwnershipState m_bufferState;

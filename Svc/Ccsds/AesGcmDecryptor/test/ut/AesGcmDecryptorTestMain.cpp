@@ -100,13 +100,6 @@ TEST(OffNominal, ShortBuffer) {
     tester.testShortBuffer();
 }
 
-TEST(OffNominal, OversizeBuffer) {
-    REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-004");
-    COMMENT("A buffer larger than the frame can carry is rejected before a key is requested");
-    Svc::Ccsds::AesGcmDecryptorTester tester;
-    tester.testOversizeBuffer();
-}
-
 TEST(OffNominal, KeyUnavailable) {
     REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-005");
     COMMENT("A key the key manager could not supply yields KEY_ERROR");

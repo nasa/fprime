@@ -269,7 +269,7 @@ void AesGcmEncryptorTester ::testEmptyPlaintext() {
 }
 
 void AesGcmEncryptorTester ::testOutputCapacityBoundary() {
-    const FwSizeType maxOutput = SdlsCfg::AesMaxOutputSize;
+    const FwSizeType maxOutput = ComCfg::TmFrameFixedSize;
     const FwSizeType largest = maxOutput - GCM_IV_LEN - GCM_TAG_LEN;
     ASSERT_LE(largest, TEST_BUFFER_SIZE) << "Test storage is too small to reach the boundary";
 

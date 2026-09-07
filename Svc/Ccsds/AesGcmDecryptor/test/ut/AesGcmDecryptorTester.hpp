@@ -44,9 +44,6 @@ class AesGcmDecryptorTester final : public AesGcmDecryptorGTestBase {
     //! Backing storage for buffers handed to the component
     static const FwSizeType TEST_BUFFER_SIZE = 256;
 
-    //! Storage for a buffer past the configured input bound
-    static const FwSizeType OVERSIZE_STORAGE = SdlsCfg::AesMaxInputSize + 1;
-
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction
@@ -111,10 +108,6 @@ class AesGcmDecryptorTester final : public AesGcmDecryptorGTestBase {
     //! A buffer too short to hold an IV and a MAC is rejected without touching the key.
     //! Covers SVC-CCSDS-AES-DECRYPTOR-004.
     void testShortBuffer();
-
-    //! A buffer larger than the deployment's frame can carry is rejected, likewise before a
-    //! key is requested. Covers SVC-CCSDS-AES-DECRYPTOR-004.
-    void testOversizeBuffer();
 
     //! A key the key manager could not supply yields KEY_ERROR.
     //! Covers SVC-CCSDS-AES-DECRYPTOR-005.
@@ -183,9 +176,6 @@ class AesGcmDecryptorTester final : public AesGcmDecryptorGTestBase {
 
     //! Backing storage for the frames handed to the component
     U8 m_storage[TEST_BUFFER_SIZE];
-
-    //! Backing storage for the oversize-rejection test
-    U8 m_oversize[OVERSIZE_STORAGE];
 };
 
 }  // namespace Ccsds

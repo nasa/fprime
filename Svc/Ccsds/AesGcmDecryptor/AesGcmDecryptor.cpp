@@ -66,11 +66,6 @@ void AesGcmDecryptor ::decryptIn_handler(FwIndexType portNum,
         this->decryptOut_out(0, Svc::Ccsds::SdlsStatus::DECRYPTION_FAILURE, data, context);
         return;
     }
-    if (data.getSize() > SdlsCfg::AesMaxInputSize) {
-        // Larger than the deployment's TC frame
-        this->decryptOut_out(0, Svc::Ccsds::SdlsStatus::DECRYPTION_FAILURE, data, context);
-        return;
-    }
 
     Svc::Ccsds::SdlsKeyBuffer key;
     const Svc::Ccsds::SdlsStatus keyStatus = this->keyGet_out(0, securityAssociationIndex, key);

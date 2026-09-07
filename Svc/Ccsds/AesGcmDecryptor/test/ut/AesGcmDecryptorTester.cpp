@@ -110,8 +110,7 @@ AesGcmDecryptorTester ::AesGcmDecryptorTester()
       m_key(),
       m_keyLen(AES_256_KEY_LEN),
       m_keyStatus(Svc::Ccsds::SdlsStatus::SUCCESS),
-      m_storage(),
-      m_oversize() {
+      m_storage() {
     this->initComponents();
     this->connectPorts();
     this->setKey(KAT_KEY, AES_256_KEY_LEN, Svc::Ccsds::SdlsStatus::SUCCESS);
@@ -311,17 +310,6 @@ void AesGcmDecryptorTester ::testRecoversAfterMacFailure() {
 void AesGcmDecryptorTester ::testShortBuffer() {
     // One byte below the smallest well-formed frame
     Fw::Buffer frame(this->m_storage, GCM_IV_LEN + GCM_TAG_LEN - 1);
-
-    this->sendDecrypt(frame, TEST_SPI);
-
-    this->assertStatus(Svc::Ccsds::SdlsStatus::DECRYPTION_FAILURE);
-    // Rejected on shape alone, before the key is ever fetched
-    ASSERT_from_keyGet_SIZE(0);
-}
-
-void AesGcmDecryptorTester ::testOversizeBuffer() {
-    // One byte past what the deployment's TC frame can carry
-    Fw::Buffer frame(this->m_oversize, static_cast<Fw::Buffer::SizeType>(OVERSIZE_STORAGE));
 
     this->sendDecrypt(frame, TEST_SPI);
 

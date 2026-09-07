@@ -26,8 +26,8 @@ static constexpr FwSizeType AES_256_KEY_LEN = 32;
 
 // The configuration constant a deployment sizes against must match what this component
 // actually adds, or a topology could size its fill target to overrun the output store
-static_assert(GCM_IV_LEN + GCM_TAG_LEN == SdlsCfg::AesFrameOverhead,
-              "SdlsCfg.AesFrameOverhead disagrees with this component's IV and MAC lengths");
+static_assert(GCM_IV_LEN + GCM_TAG_LEN == AesFrameOverhead,
+              "AesFrameOverhead disagrees with this component's IV and MAC lengths");
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
@@ -83,7 +83,7 @@ void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
 
     // m_outBuf layout: IV (12) | ciphertext (N) | MAC (16)
     const FwSizeType requiredSize = static_cast<FwSizeType>(data.getSize()) + GCM_IV_LEN + GCM_TAG_LEN;
-    if (requiredSize > SdlsCfg::AesMaxOutputSize) {
+    if (requiredSize > ComCfg::TmFrameFixedSize) {
         this->failFrame(data, context, Svc::Ccsds::SdlsStatus::ENCRYPTION_FAILURE);
         return;
     }

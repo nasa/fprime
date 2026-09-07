@@ -21,8 +21,6 @@ if (NOT OPENSSL_FOUND)
     return()
 endif()
 
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/AesGcmDecryptorConfig")
-
 register_fprime_library(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/AesGcmDecryptor.fpp"
@@ -30,7 +28,6 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/AesGcmDecryptor.cpp"
    DEPENDS
         OpenSSL::Crypto
-        Svc_Ccsds_AesGcmDecryptor_config_AesGcmDecryptorConfig
 )
 
 ### Unit Tests ###
@@ -43,6 +40,5 @@ register_fprime_ut(
     DEPENDS
         STest # For rules-based testing
         OpenSSL::Crypto
-        Svc_Ccsds_AesGcmDecryptor_config_AesGcmDecryptorConfig
     UT_AUTO_HELPERS
 )
