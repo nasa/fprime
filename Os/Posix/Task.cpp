@@ -77,6 +77,20 @@ int set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& argume
 }
 
 int set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
+    if (arguments.m_priority == Os::Task::TASK_PRIORITY_OTHER) {
+        int status = pthread_attr_setschedpolicy(&attributes, SCHED_OTHER);
+        if (status == PosixTaskHandle::SUCCESS) {
+            status = pthread_attr_setinheritsched(&attributes, PTHREAD_EXPLICIT_SCHED);
+        }
+        if (status == PosixTaskHandle::SUCCESS) {
+            sched_param schedParam;
+            (void)memset(&schedParam, 0, sizeof(sched_param));
+            schedParam.sched_priority = 0;
+            status = pthread_attr_setschedparam(&attributes, &schedParam);
+        }
+        return status;
+    }
+
     const FwSizeType min_priority = static_cast<FwSizeType>(sched_get_priority_min(SCHED_POLICY));
     const FwSizeType max_priority = static_cast<FwSizeType>(sched_get_priority_max(SCHED_POLICY));
     int status = PosixTaskHandle::SUCCESS;
@@ -162,7 +176,8 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_stack_size(attributes, arguments);
     }
-    if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) && (expect_permission) &&
+    if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) &&
+        (arguments.m_priority == Os::Task::TASK_PRIORITY_OTHER || expect_permission) &&
         (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_priority_params(attributes, arguments);
     }

@@ -241,3 +241,22 @@ TEST(Functionality, RandomizedTesting) {
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);
 }
+
+// Ensure that a task can start with TASK_PRIORITY_OTHER
+TEST(Functionality, StartTaskPriorityOther) {
+    Os::Test::Task::Tester tester;
+    std::shared_ptr<Os::Test::Task::TestTaskInfo> new_task = std::make_shared<Os::Test::Task::TestTaskInfo>();
+    new_task->m_state = Os::Task::State::STARTING;
+    tester.m_tasks.push_back(new_task);
+
+    Fw::String name("OtherPriorityTask");
+    Os::Task::Arguments args(name, &Os::Test::Task::TestTaskInfo::standard_task, new_task.get(),
+                             Os::Task::TASK_PRIORITY_OTHER);
+    Os::Test::Task::TestTaskInfo::s_task_count += 1;
+    Os::Task::Status status = new_task->m_task.start(args);
+    ASSERT_EQ(status, Os::Task::Status::OP_OK);
+    ASSERT_EQ(tester.m_last_task, &new_task->m_task) << "New task not registered";
+    new_task->signal();
+    wait_for_state_with_timeout(*new_task, Os::Test::Task::TestTaskInfo::MIDDLE, 100);
+    new_task->stop();
+}

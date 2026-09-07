@@ -46,6 +46,12 @@ class TaskInterface {
     //! that is valid for the target platform.
     static constexpr FwTaskPriorityType TASK_PRIORITY_DEFAULT = std::numeric_limits<FwTaskPriorityType>::max();
 
+    //! Sentinel value to use a non-realtime / standard priority for the task (e.g. SCHED_OTHER in POSIX).
+    //!
+    //! Implementations of TaskInterface::start() should place the task in the platform's standard,
+    //! non-realtime time-sharing scheduler.
+    static constexpr FwTaskPriorityType TASK_PRIORITY_OTHER = std::numeric_limits<FwTaskPriorityType>::max() - 1;
+
     enum Status {
         OP_OK,             //!< message sent/received okay
         INVALID_HANDLE,    //!< Task handle invalid

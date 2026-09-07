@@ -8,6 +8,9 @@ module Os {
 @ CPU affinities must be a valid core index (< CPU_SETSIZE) or TASK_DEFAULT; others assert at startup
 constant TASK_DEFAULT = -1
 
+@ Sentinel for non-realtime / standard priority: casts to Os::Task::TASK_PRIORITY_OTHER
+constant TASK_PRIORITY_OTHER = -2
+
 @ FPP shadow-enum representing Os::Task::Status
 enum TaskStatus : U8 {
     OP_OK,             @< message sent/received okay
