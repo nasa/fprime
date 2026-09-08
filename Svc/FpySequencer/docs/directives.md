@@ -76,7 +76,7 @@ Does nothing.
 Pushes a telemetry value buffer to the stack.
 | Arg Name     | Arg Type | Source     | Description |
 |--------------|----------|------------|-------------|
-| chan_id      | U32      | hardcoded | the tlm channel id to get the time of |
+| chan_id      | U32      | hardcoded | the tlm channel id to get the value of |
 
 | Stack Result Type | Description |
 | ------------------|-------------|

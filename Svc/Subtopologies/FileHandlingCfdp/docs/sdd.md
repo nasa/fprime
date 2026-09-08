@@ -36,16 +36,22 @@ The **FileHandlingCfdp subtopology** packages CFDP-based file-transfer services 
 * **Buffer Management**: Connect buffer allocation/deallocation ports to downstream buffer managers (typically part of your COM subtopology).
 
 > [!WARNING]
-> **This subtopology is not configured to be secure by default.** For backwards compatibility, it
-> intentionally does **not** configure a load sandbox for `prmDb`: `PRM_LOAD_FILE` may load from
-> **any absolute path accessible to the process** via ground command. Security-conscious
-> deployments **must** call `FileHandlingCfdp::prmDb.configureLoadSandbox(<directory>)` from
-> topology setup code (note: `prmDb.configure(<file name>)` sets the store-file name and is
-> **not** a load sandbox). Additionally, CFDP file transfers via `cfdpManager` are not sandboxed
+> **This subtopology is not configured to be secure by default.** For backwards compatibility, its
+> `configComponents` phase configures the `prmDb` file-access sandbox to `"/"`, so `PRM_LOAD_FILE`
+> may load from **any absolute path accessible to the process** via ground command. Deployments
+> wishing restricted file security **must call `configureSandbox` again** from topology setup
+> code (after the autocoded `configComponents` phase runs):
+> `FileHandlingCfdp::prmDb.configureSandbox(<directory>)`, where the directory contains the store
+> file set by `prmDb.configure(<file name>)` (which is **not** itself a sandbox). Additionally,
+> CFDP file transfers via `cfdpManager` are not sandboxed: ground-commanded transactions may read
+> or write any path accessible to the process.
+>
+> Additionally, CFDP file transfers via `cfdpManager` are not sandboxed
 > by default: ground-commanded transactions may read any path accessible to the process, and
 > received files are written wherever the incoming Metadata PDU says. Set the per-channel
 > `cfdpManager.ChannelConfig[n].rx_dir` parameter to confine received files to a directory
 > (see the CfdpManager SDD, *Security Considerations*).
+
 
 ### 2.4 Differences from FileHandling Subtopology
 

@@ -707,18 +707,39 @@ void CommandDispatcherTester::runClearCommandTracking() {
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched(0, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1);
 
+    // verify both the test command and CLEAR_TRACKING are tracked
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 2);
+    this->m_seqStatusRcvd = false;
+
     // dispatch command from dispatcher to command handler
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+
+    // verify the pending test command's caller was told its status was cleared
+    ASSERT_TRUE(this->m_seqStatusRcvd);
+    ASSERT_EQ(this->m_seqStatusOpCode, testOpCode);
+    ASSERT_EQ(this->m_seqStatusCmdSeq, testContext);
+    ASSERT_EQ(this->m_seqStatusCmdResponse, Fw::CmdResponse::CLEARED);
+    ASSERT_EQ(this->m_seqStatusPortNum, 0);
+    // verify only CLEAR_TRACKING's own entry remains
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 1);
+    ASSERT_EQ(this->m_impl.m_sequenceTracker.find(1, entry), Fw::Success::SUCCESS);
+    ASSERT_EQ(entry.opCode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
+
+    // dispatch CLEAR_TRACKING's own completion status back to its caller
+    this->m_seqStatusRcvd = false;
+    ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+    ASSERT_TRUE(this->m_seqStatusRcvd);
+    ASSERT_EQ(this->m_seqStatusOpCode, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING);
+    ASSERT_EQ(this->m_seqStatusCmdSeq, testContext);
+    ASSERT_EQ(this->m_seqStatusCmdResponse, Fw::CmdResponse::OK);
     // verify tracking table empty
     ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
 
-    clearHistory();
-    // send command complete
+    // late completion of the cleared command must not produce a second status
+    this->m_seqStatusRcvd = false;
     this->invoke_to_compCmdStat(0, testOpCode, this->m_cmdSendCmdSeq, Fw::CmdResponse::OK);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
-
-    // verify no status returned
-    ASSERT_CMD_RESPONSE_SIZE(0);
+    ASSERT_FALSE(this->m_seqStatusRcvd);
 }
 
 void CommandDispatcherTester::runCommandQueueOverflow() {

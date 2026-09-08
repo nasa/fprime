@@ -7,7 +7,13 @@ module FileHandling {
         queue size FileHandlingConfig.QueueSizes.fileUplink \
         stack size FileHandlingConfig.StackSizes.fileUplink \
         priority FileHandlingConfig.Priorities.fileUplink \
-        cpu FileHandlingConfig.CpuAffinities.fileUplink
+        cpu FileHandlingConfig.CpuAffinities.fileUplink \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        // Sandbox for uplinked file writes; "/" is unrestricted. Re-configure to restrict.
+        FileHandling::fileUplink.configure(FileHandlingConfig::Paths::sandboxDir);
+        """
+    }
 
     instance fileDownlink: Svc.FileDownlink base id FileHandlingConfig.BASE_ID + 0x01000 \
         queue size FileHandlingConfig.QueueSizes.fileDownlink \
@@ -21,6 +27,8 @@ module FileHandling {
             FileHandlingConfig::DownlinkConfig::cycleTime,
             FileHandlingConfig::DownlinkConfig::fileQueueDepth
         );
+        // Sandbox for downlinked file reads; "/" is unrestricted. Re-configure to restrict.
+        FileHandling::fileDownlink.configure(FileHandlingConfig::Paths::sandboxDir);
         """
     }
 
@@ -38,6 +46,8 @@ module FileHandling {
     {
         phase Fpp.ToCpp.Phases.configComponents """
             FileHandling::prmDb.configure(FileHandlingConfig::Paths::prmDbFile);
+            // Sandbox for all PrmDb file access; "/" is unrestricted. Re-configure to restrict.
+            FileHandling::prmDb.configureSandbox(FileHandlingConfig::Paths::sandboxDir);
         """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandling::prmDb.readParamFile();

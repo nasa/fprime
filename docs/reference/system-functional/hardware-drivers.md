@@ -11,7 +11,7 @@
 - [F Prime TcpServer SDD](https://github.com/nasa/fprime/blob/devel/Drv/TcpServer/docs/sdd.md)
 - [F Prime Udp SDD](https://github.com/nasa/fprime/blob/devel/Drv/Udp/docs/sdd.md)
 - [F Prime Ip SDD](https://github.com/nasa/fprime/blob/devel/Drv/Ip/docs/sdd.md)
-- [F Prime LinuxUartDriver SDD](https://github.com/nasa/fprime/blob/devel/Drv/LinuxUartDriver/docs/sdd.md)
+- [F Prime PosixUartDriver SDD](https://github.com/nasa/fprime/blob/devel/Drv/PosixUartDriver/docs/sdd.md)
 - [F Prime LinuxGpioDriver SDD](https://github.com/nasa/fprime/blob/devel/Drv/LinuxGpioDriver/docs/sdd.md)
 - [F Prime LinuxI2cDriver](https://github.com/nasa/fprime/blob/devel/Drv/LinuxI2cDriver)
 - [F Prime LinuxSpiDriver](https://github.com/nasa/fprime/blob/devel/Drv/LinuxSpiDriver)
@@ -20,7 +20,7 @@
 
 The driver layer provides hardware abstraction components that bridge the flight software's port-based communication model to physical hardware interfaces. Drivers implement standardized FPP interfaces so that higher-level components can interact with hardware through typed ports without knowledge of the underlying hardware specifics. The primary driver model is the byte stream interface, which is used for serial, network, and other stream-oriented communication. Additional interfaces cover GPIO, I2C, and SPI peripherals.
 
-The F Prime core framework ships Linux-specific driver implementations. Other operating system and hardware platform support is provided by additional packages outside the core repository.
+The F Prime core framework ships POSIX and Linux-specific driver implementations. Other operating system and hardware platform support is provided by additional packages outside the core repository.
 
 ### Byte Stream Driver Model
 
@@ -53,7 +53,7 @@ These drivers share a common IP helper layer that provides socket management, ad
 
 ### Serial Communication
 
-The Linux UART Driver provides byte stream access to serial ports on Linux systems. It implements the byte stream driver model, allowing it to be used interchangeably with network drivers in the communication stack.
+The POSIX UART Driver provides byte stream access to serial ports on POSIX systems. It implements the byte stream driver model, allowing it to be used interchangeably with network drivers in the communication stack.
 
 ### GPIO
 

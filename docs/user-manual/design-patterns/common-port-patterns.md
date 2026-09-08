@@ -27,7 +27,7 @@ sequenceDiagram
 > [!WARNING]
 > When the value needed requires non-trivial work to compute a [Callback Port](#callback-ports) should be used instead.
 
-Synchronous get ports maintain the architectural distinction between components while facilitating the return of data possible like in a standard function call. However, since these port calls execute on the thread of the caller, they should not perform substantial work as that would slow down the calling component..
+Synchronous get ports maintain the architectural distinction between components while facilitating the return of data possible like in a standard function call. However, since these port calls execute on the thread of the caller, they should not perform substantial work as that would slow down the calling component.
 
 Synchronous get component port instances typically use a name of the form "get<Value>" to designate their function (e.g. getTemperature).
 
@@ -146,7 +146,7 @@ sequenceDiagram
 
 By connecting a given component from the set of external component using the same index across ports the source component implementations can correlate the messages by port index.
 
-Another place parallel ports were used is in the [Manager/Worker Pattern](http://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker). Here we matched the `start` and `done` ports to ensure the `done` call comes from the same worker the manager sent `start` to.
+Another place parallel ports were used is in the [Manager/Worker Pattern](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker). Here we matched the `start` and `done` ports to ensure the `done` call comes from the same worker the manager sent `start` to.
 
 ### Implementation
 

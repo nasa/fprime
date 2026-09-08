@@ -14,7 +14,7 @@ It stores a pointer to the backing memory _M_.
 |----|----|-------|
 |`typename`|`T`|The type of an array element|
 
-`Array` statically asserts that `T` is assignable to `T&`.
+`ExternalArray` statically asserts that `T` is assignable to `T&`.
 
 ## 2. Private Member Variables
 
@@ -75,7 +75,7 @@ Call `setStorage(data, size)`.
 _Example:_
 ```c++
 constexpr FwSizeType size = 3;
-constexpr U8 alignment = ExternalArray<U32>::byteArrayAlignment();
+constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
 constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
 alignas(alignment) U8 bytes[byteArraySize];
 ExternalArray<U32> a(ByteArray(&bytes[0], sizeof bytes), size);
@@ -171,12 +171,12 @@ _Example:_
 ```c++
 constexpr FwSizeType size = 10;
 U32 elements1[size];
-ExternalArray<U32> a1(elements, size);
+ExternalArray<U32> a1(elements1, size);
 for (FwSizeType i = 0; i < size; i++) {
     a1[i] = i;
 }
 U32 elements2[size];
-ExternalArray<U32> a2(elements, size);
+ExternalArray<U32> a2(elements2, size);
 a2.copyDataFrom(a1);
 for (FwSizeType i = 0; i < size; i++) {
     ASSERT_EQ(a2[i], a1[i]);
@@ -198,18 +198,18 @@ constexpr FwSizeType size = 3;
 U32 elements[size];
 ExternalArray<U32> a(elements, size);
 // Mutable pointer
-auto& elements1 = a.getElements();
+auto* elements1 = a.getElements();
 ASSERT_EQ(elements1[0], 0);
 elements1[0] = 1;
 // Constant pointer
-const auto& elements2 = a.getElements();
+const auto* elements2 = a.getElements();
 ASSERT_EQ(elements2[0], 1);
 ```
 
 ### 4.5. getSize
 
 ```c++
-FwSizeType getSize()
+FwSizeType getSize() const
 ```
 
 Return `m_size`.
@@ -278,7 +278,7 @@ and must contain at least [`getByteArraySize(size)`](#52-getbytearraysize) bytes
 _Example:_
 ```c++
 constexpr FwSizeType size = 3;
-constexpr U8 alignment = ExternalArray<U32>::byteArrayAlignment();
+constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
 constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
 alignas(alignment) U8 bytes[byteArraySize];
 ExternalArray<U32> a;
@@ -297,7 +297,7 @@ Return `alignof(T)`.
 
 _Example:_
 ```c++
-const U8 byteArrayAlignment = ExternalArray<U32>::getByteArrayAlignment(size);
+const U8 byteArrayAlignment = ExternalArray<U32>::getByteArrayAlignment();
 ASSERT_EQ(byteArrayAlignment, alignof(U32));
 ```
 

@@ -338,15 +338,15 @@ def test_system_resources(fprime_test_api):
 def test_file_uplink_sandbox(fprime_test_api):
     """Test that FileUplink sandbox rejects files outside the allowed directory.
 
-    The Ref deployment configures FileUplink with sandbox directory /tmp/uplink/.
-    Uploading to a path outside that directory should produce a FileOpenError event,
-    and no FileReceived event.
+    The Ref deployment sandboxes FileUplink to "." (the working directory of the
+    flight software process). Uploading to an absolute path outside that directory
+    should produce a FileOpenError event and no FileReceived event; uploading to a
+    path relative to the working directory should succeed.
     """
     import os
     import tempfile
 
-    # Create the sandbox directory so in-sandbox uplinks succeed
-    os.makedirs("/tmp/uplink", exist_ok=True)
+    uploaded = "ref_sandbox_test.bin"
 
     # Create a small temporary file to uplink
     with tempfile.NamedTemporaryFile(delete=False, suffix=".bin") as f:
@@ -358,18 +358,58 @@ def test_file_uplink_sandbox(fprime_test_api):
         fprime_test_api.clear_histories()
         fprime_test_api.uplink_file(local_file, destination="/tmp/evil/escaped.bin")
 
-        # Expect a FileOpenError warning because the path is outside /tmp/uplink/
+        # Expect a FileOpenError warning because the path is outside the working directory
         fprime_test_api.await_event("FileHandling.fileUplink.FileOpenError", timeout=10)
 
         # --- Test 2: uplink to a path INSIDE the sandbox should succeed ---
         fprime_test_api.clear_histories()
-        fprime_test_api.uplink_file(local_file, destination="/tmp/uplink/test.bin")
+        fprime_test_api.uplink_file(local_file, destination=uploaded)
 
         fprime_test_api.await_event("FileHandling.fileUplink.FileReceived", timeout=10)
     finally:
         os.unlink(local_file)
-        # Clean up uploaded file
-        try:
-            os.unlink("/tmp/uplink/test.bin")
-        except OSError:
-            pass  # uploaded file may not exist; nothing to clean up
+        # The flight software owns the working directory; ask it to remove the upload
+        fprime_test_api.send_and_assert_command(
+            "FileHandling.fileManager.RemoveFile", args=[uploaded, True], max_delay=5
+        )
+
+
+def test_prm_db_sandbox(fprime_test_api):
+    """Test that PrmDb file access is confined to its sandbox directory.
+
+    The Ref deployment sandboxes PrmDb to "." (the working directory of the flight
+    software process). Saving the store file and loading it back by a relative path
+    should succeed, while loading an absolute path outside the working directory
+    should fail with a PrmFileReadError and no PrmFileLoadComplete event.
+    """
+    # --- Save the active database to the store file (PrmDb.dat in the CWD) ---
+    fprime_test_api.clear_histories()
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.prmDb.PRM_SAVE_FILE", max_delay=5
+    )
+    fprime_test_api.assert_event("FileHandling.prmDb.PrmFileSaveComplete", timeout=5)
+
+    # --- Loading a path OUTSIDE the sandbox must be rejected ---
+    fprime_test_api.clear_histories()
+    results = fprime_test_api.send_and_await_event(
+        "FileHandling.prmDb.PRM_LOAD_FILE",
+        args=["/tmp/evil/escaped.prm", "RESET"],
+        events=["FileHandling.prmDb.PrmFileReadError"],
+        timeout=5,
+    )
+    assert len(results) == 1, "Expected PrmFileReadError for path outside sandbox"
+    fprime_test_api.assert_event_count(
+        0, "FileHandling.prmDb.PrmFileLoadComplete", timeout=1
+    )
+
+    # --- Loading the store file by a path INSIDE the sandbox must succeed ---
+    fprime_test_api.clear_histories()
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.prmDb.PRM_LOAD_FILE", args=["PrmDb.dat", "RESET"], max_delay=5
+    )
+    fprime_test_api.assert_event("FileHandling.prmDb.PrmFileLoadComplete", timeout=5)
+
+    # Commit the staged load so PrmDb returns to the IDLE state for later tests
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.prmDb.PRM_COMMIT_STAGED", max_delay=5
+    )

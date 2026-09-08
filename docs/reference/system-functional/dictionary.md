@@ -12,7 +12,7 @@ Commands are specified via the FPP modeling language and can include the followi
 - `opcode` - A unique numeric value for the command (integer)
 - `param-list` - A list of arguments for the command
     - `identifier` - The unique name of the parameter/argument
-    - `type` - Limited to "displayable types", and not arrays or structures. (INT, UINT, BOOL, ENUM, STRING)
+    - `type` - Limited to "displayable types" (INT, UINT, BOOL, ENUM, STRING, ARRAY, STRUCT)
 - `priority` - The priority of the command if it is of command-kind 'async'
 - `queue-full-behavior` - Specifies the behavior of the command when the queue is full. Only applicable to 'async' commands. 
     - `assert` - Results in a system assert if the queue is full
@@ -40,9 +40,9 @@ Telemetry packets are specified via the FPP modeling language and can include th
 - `identifier` - The unique name of the telemetry packet
 - `id` - A unique numeric value for the telemetry packet (integer)
 - `group` - The group of the telemetry packet
-- `telemetry-packet-member-sequence` - Can include individual telemetry indentifiers and/or imports of other telemetry packet fpp definitions
+- `telemetry-packet-member-sequence` - Can include individual telemetry identifiers and/or imports of other telemetry packet fpp definitions
 
-## Events [FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Components_Telemetry)
+## Events [FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Components_Events)
 
 Events are specified via the FPP modeling language and can include the following options:
 
@@ -51,7 +51,7 @@ Events are specified via the FPP modeling language and can include the following
 - `format` - Format string for the event
 - `throttle` - Defines the max number of events that can be reported in a given time period (also defines the time period)
 - `throttle-time` - Defines the time period for the throttle (integer)
-- `param-list` - A list of arguments for the command
+- `param-list` - A list of arguments for the event
     - `identifier` - The unique name of the parameter/argument
     - `type` - Limited to "displayable types" (INT, UINT, BOOL, ENUM, STRING, ARRAY, STRUCT)
 
@@ -68,7 +68,7 @@ Parameters are specific variables stored in non-volatile memory. Parameters are 
 
 ## Data Products [FPP User Guide](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Components_Data-Products)
 
-Data products are structured file data for downlink. They defined via the FPP modeling language as containers and data product records.
+Data products are structured file data for downlink. They are defined via the FPP modeling language as containers and data product records.
 
 Containers define the existence of the data product and can include the following options:
 

@@ -42,7 +42,7 @@ Defined as `= default`.
 ### 4.2. operator==
 
 ```c++
-bool operator==(const MapConstIterator& it)
+bool operator==(const MapConstIterator& it) const
 ```
 
 Compare two `MapConstIterator` instances for equality.
@@ -54,16 +54,16 @@ Compare two `MapConstIterator` instances for equality.
 ### 4.3. operator !=
 
 ```c++
-bool operator!=(const MapConstIterator& it)
+bool operator!=(const MapConstIterator& it) const
 ```
 
-Return the negation of `operator=`.
+Return the negation of `operator==`.
 
 ### 4.4. operator++
 
 ```c++
 MapConstIterator& operator++()
-MapConstIterator& operator++(int)
+MapConstIterator operator++(int)
 ```
 
 Increment the iterator.

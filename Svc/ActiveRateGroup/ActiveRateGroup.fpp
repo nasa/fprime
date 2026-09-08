@@ -15,7 +15,7 @@ module Svc {
     output port RateGroupMemberOut: [ActiveRateGroupOutputPorts] Sched
 
     @ Ping input port for health
-    async input port PingIn: Ping
+    async input port PingIn: Ping drop
 
     @ Ping output port for health
     output port PingOut: Ping

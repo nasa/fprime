@@ -189,6 +189,11 @@ class CircularBuffer {
      */
     void clear_high_water_mark();
 
+    /**
+     * Get the physical store backing this circular buffer
+     */
+    U8* get_buffer();
+
   private:
     //! Stack staging buffer size for object (de)serialization across the wrap boundary.
     //! Wrapping slots larger than this size assert; configured via CircularBufferCfg.hpp.

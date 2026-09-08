@@ -24,6 +24,28 @@ telemetry, and command responses.
 For each command, the component returns success or failure and emits status
 information for operators.
 
+### Ports
+
+Name | Type | Kind | Purpose
+---- | ---- | ---- | ----
+`schedIn` | `Svc.Sched` | sync input | Rate group input used to pace long-running operations
+`pingIn` | `Svc.Ping` | async input | Ping input from health checker
+`pingOut` | `Svc.Ping` | output | Ping response to health checker
+`run` | n/a | internal (drop) | Internal port for delegating `schedIn` calls in a controlled fashion
+
+The component also has the standard command, event, telemetry, time, and data
+product ports.
+
+### ListDirectory and Pacing
+
+`ListDirectory` runs asynchronously: the command handler opens the directory
+and defers the command response. The `schedIn` handler enqueues at most one
+internal `run` call at a time (guarded by an atomic flag); the internal handler
+then processes up to `FileManagerConfig::FILES_PER_RATE_TICK` directory entries
+per rate tick to prevent event flooding, sending the command response when the
+listing completes. Paced (`PACED` mode) data product generation is metered the
+same way, processing `FileManagerConfig::CHUNKS_PER_RATE_TICK` chunks per tick.
+
 ### GenerateDp
 
 `GenerateDp` packages a file into data products. The command takes the file

@@ -225,6 +225,7 @@ can be configured.
 |                        | FW_NO_ASSERT                     | Asserts turned off, removing all assert code.                      |                    |
 |                        | FW_FILEID_ASSERT                 | Asserts turned on, hash value used in place of __FILE__ on message |                    |
 |                        | FW_FILENAME_ASSERT               | Asserts turned on, __FILE__ macro is used in the assert message    |                    |
+|                        | FW_RELATIVE_PATH_ASSERT          | Asserts turned on, relative path within F´ or library used in the assert message |      |
 | FW_ASSERT_TEXT_SIZE    | The buffer size used to store the assert message  |                                                   | 120                |
 
 Setting assert level `FW_FILEID_ASSERT`  saves a lot of code space since no file name is stored. The make system
