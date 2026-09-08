@@ -279,4 +279,5 @@ event PathOutsideSandbox(
                             sandboxDir: string size FileNameStringSize @< The configured sandbox directory
                         ) \
   severity warning high \
+  id 0x23 \
   format "Path {} is outside the configured sandbox directory {}"
