@@ -1,0 +1,18 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../..
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+Svc/WasmSequencer/WasmSequencer.cpp          307     299    97%   33,338-339,341,465-466,572-573
+Svc/WasmSequencer/WasmSequencer.hpp            7       7   100%
+Svc/WasmSequencer/WasmSequencerController.cpp
+                                             229     218    95%   59,206-207,273-277,468,470-471
+Svc/WasmSequencer/WasmSequencerHelpers.cpp
+                                             232     223    96%   38,44,68,83,245-247,368-369
+Svc/WasmSequencer/WasmSequencerHost.cpp      256     256   100%
+Svc/WasmSequencer/WasmSequencerInterpreter.cpp
+                                             438     428    97%   57,82-84,194,196-197,613,632-633
+------------------------------------------------------------------------------
+TOTAL                                       1469    1431    97%
+------------------------------------------------------------------------------

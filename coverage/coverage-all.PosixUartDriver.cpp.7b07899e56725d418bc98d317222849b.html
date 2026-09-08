@@ -22,11 +22,11 @@
     </tr>
     <tr>
       <th scope="row">File:</th>
-      <td>Drv/LinuxUartDriver/LinuxUartDriver.cpp</td>
+      <td>Drv/PosixUartDriver/PosixUartDriver.cpp</td>
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-07 21:11:12</td>
+      <td>2026-09-08 21:16:37</td>
     </tr>
   </table>
 </div>
@@ -70,16 +70,16 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l30">Drv::LinuxUartDriver::LinuxUartDriver(char const*) (line 30)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l401">Drv::LinuxUartDriver::join() (line 401)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l39">Drv::LinuxUartDriver::open(char const*, Drv::LinuxUartDriver::UartBaudRate, Drv::LinuxUartDriver::UartFlowControl, Drv::LinuxUartDriver::UartParity, unsigned long) (line 39)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l397">Drv::LinuxUartDriver::quitReadThread() (line 397)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l335">Drv::LinuxUartDriver::recvReturnIn_handler(short, Fw::Buffer&amp;) (line 335)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l308">Drv::LinuxUartDriver::run_handler(short, unsigned int) (line 308)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l313">Drv::LinuxUartDriver::send_handler(short, Fw::Buffer&amp;) (line 313)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l339">Drv::LinuxUartDriver::serialReadTaskEntry(void*) (line 339)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l388">Drv::LinuxUartDriver::start(unsigned char, unsigned long, unsigned long) (line 388)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l298">Drv::LinuxUartDriver::~LinuxUartDriver() (line 298)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l30">Drv::PosixUartDriver::PosixUartDriver(char const*) (line 30)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l401">Drv::PosixUartDriver::join() (line 401)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l39">Drv::PosixUartDriver::open(char const*, Drv::PosixUartDriver::UartBaudRate, Drv::PosixUartDriver::UartFlowControl, Drv::PosixUartDriver::UartParity, unsigned long) (line 39)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l397">Drv::PosixUartDriver::quitReadThread() (line 397)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l335">Drv::PosixUartDriver::recvReturnIn_handler(short, Fw::Buffer&amp;) (line 335)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l308">Drv::PosixUartDriver::run_handler(short, unsigned int) (line 308)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l313">Drv::PosixUartDriver::send_handler(short, Fw::Buffer&amp;) (line 313)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l339">Drv::PosixUartDriver::serialReadTaskEntry(void*) (line 339)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l388">Drv::PosixUartDriver::start(unsigned char, unsigned long, unsigned long) (line 388)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l298">Drv::PosixUartDriver::~PosixUartDriver() (line 298)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
 </details>
 
@@ -105,7 +105,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// \title  LinuxUartDriverImpl.cpp</span></td>
+      <td class="src "><span class="c1">// \title  PosixUartDriverImpl.cpp</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l3" href="#l3">3</a></td>
@@ -119,7 +119,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// \brief  cpp file for LinuxUartDriver component implementation class</span></td>
+      <td class="src "><span class="c1">// \brief  cpp file for PosixUartDriver component implementation class</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l5" href="#l5">5</a></td>
@@ -189,7 +189,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Drv/LinuxUartDriver/LinuxUartDriver.hpp&gt;</span></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Drv/PosixUartDriver/PosixUartDriver.hpp&gt;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l15" href="#l15">15</a></td>
@@ -301,14 +301,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">LinuxUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">LinuxUartDriver</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">compName</span><span class="p">)</span></td>
+      <td class="src uncoveredLine"><span class="n">PosixUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">PosixUartDriver</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">compName</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">LinuxUartDriverComponentBase</span><span class="p">(</span><span class="n">compName</span><span class="p">),</span></td>
+      <td class="src "><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">PosixUartDriverComponentBase</span><span class="p">(</span><span class="n">compName</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
@@ -364,7 +364,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">LinuxUartDriver</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">device</span><span class="p">,</span></td>
+      <td class="src uncoveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">PosixUartDriver</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">device</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l40" href="#l40">40</a></td>
@@ -2177,7 +2177,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">LinuxUartDriver</span><span class="w"> </span><span class="o">::~</span><span class="n">LinuxUartDriver</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="n">PosixUartDriver</span><span class="w"> </span><span class="o">::~</span><span class="n">PosixUartDriver</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l299" href="#l299">299</a></td>
@@ -2247,7 +2247,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">LinuxUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">PosixUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l309" href="#l309">309</a></td>
@@ -2282,7 +2282,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">Drv</span><span class="o">::</span><span class="n">ByteStreamStatus</span><span class="w"> </span><span class="n">LinuxUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">send_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">serBuffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="n">Drv</span><span class="o">::</span><span class="n">ByteStreamStatus</span><span class="w"> </span><span class="n">PosixUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">send_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">serBuffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l314" href="#l314">314</a></td>
@@ -2436,7 +2436,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">LinuxUartDriver</span><span class="o">::</span><span class="n">recvReturnIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">PosixUartDriver</span><span class="o">::</span><span class="n">recvReturnIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l336" href="#l336">336</a></td>
@@ -2464,7 +2464,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">LinuxUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">serialReadTaskEntry</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">PosixUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">serialReadTaskEntry</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l340" href="#l340">340</a></td>
@@ -2485,7 +2485,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">LinuxUartDriver</span><span class="o">*</span><span class="w"> </span><span class="n">comp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">LinuxUartDriver</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">PosixUartDriver</span><span class="o">*</span><span class="w"> </span><span class="n">comp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">PosixUartDriver</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l343" href="#l343">343</a></td>
@@ -2807,7 +2807,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">LinuxUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">start</span><span class="p">(</span><span class="n">FwTaskPriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span></td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">PosixUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">start</span><span class="p">(</span><span class="n">FwTaskPriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l389" href="#l389">389</a></td>
@@ -2870,7 +2870,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">LinuxUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">quitReadThread</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">PosixUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">quitReadThread</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l398" href="#l398">398</a></td>
@@ -2898,7 +2898,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">LinuxUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">join</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">PosixUartDriver</span><span class="w"> </span><span class="o">::</span><span class="n">join</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l402" href="#l402">402</a></td>

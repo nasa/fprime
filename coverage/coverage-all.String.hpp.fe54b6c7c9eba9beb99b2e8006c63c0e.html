@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-07 21:11:12</td>
+      <td>2026-09-08 21:16:37</td>
     </tr>
   </table>
 </div>
@@ -40,21 +40,21 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>0</td>
-      <td>10</td>
-      <td class="coverage-none">0.0%</td>
+      <td>11</td>
+      <td>11</td>
+      <td class="coverage-high">100.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
-      <td>0</td>
-      <td>6</td>
-      <td class="coverage-none">0.0%</td>
+      <td>7</td>
+      <td>7</td>
+      <td class="coverage-high">100.0%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>0</td>
-      <td>2</td>
-      <td class="coverage-none">0.0%</td>
+      <td>3</td>
+      <td>3</td>
+      <td class="coverage-high">100.0%</td>
     </tr>
   </table>
 </div>
@@ -70,12 +70,13 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l25">Test::String::String(Test::String const&amp;) (line 25)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l29">Test::String::String(char const*) (line 29)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l48">Test::String::getCapacity() const (line 48)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l31">Test::String::operator=(Test::String const&amp;) (line 31)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l41">Test::String::operator=(char const*) (line 41)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l46">Test::String::toChar() const (line 46)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l23">Test::String::String() (line 23)</a></td><td>called 1 time</td><td>72.0%</td></tr>
+    <tr><td><a href="#l25">Test::String::String(Test::String const&amp;) (line 25)</a></td><td>called 1 time</td><td>72.0%</td></tr>
+    <tr><td><a href="#l29">Test::String::String(char const*) (line 29)</a></td><td>called 1 time</td><td>72.0%</td></tr>
+    <tr><td><a href="#l48">Test::String::getCapacity() const (line 48)</a></td><td>called 5 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l31">Test::String::operator=(Test::String const&amp;) (line 31)</a></td><td>called 2 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l41">Test::String::operator=(char const*) (line 41)</a></td><td>called 3 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l46">Test::String::toChar() const (line 46)</a></td><td>called 9 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -246,9 +247,15 @@
     <tr class="source-line">
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 11 taken 1 times.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">String</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">StringBase</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">String</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">StringBase</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
@@ -260,9 +267,15 @@
     <tr class="source-line">
       <td class="lineno"><a id="l25" href="#l25">25</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 11 taken 1 times.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">String</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">StringBase</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">String</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">StringBase</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
@@ -288,9 +301,15 @@
     <tr class="source-line">
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 11 taken 1 times.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">String</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">StringBase</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">String</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">StringBase</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
@@ -303,22 +322,22 @@
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">StringBase</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">src</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">StringBase</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">src</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
@@ -373,22 +392,22 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">3</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l42" href="#l42">42</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">StringBase</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">src</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">3</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">StringBase</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">src</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">3</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
@@ -408,8 +427,8 @@
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">toChar</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buf</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">toChar</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buf</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
@@ -422,8 +441,8 @@
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">StringBase</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">sizeof</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buf</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">StringBase</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">sizeof</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buf</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l49" href="#l49">49</a></td>
