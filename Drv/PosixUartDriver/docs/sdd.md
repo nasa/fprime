@@ -1,10 +1,10 @@
-# Drv::LinuxUartDriver
+# Drv::PosixUartDriver
 
 ## 1. Introduction
 
-The LinuxUartDriver component provides a Linux-specific implementation of a UART (Universal Asynchronous Receiver-Transmitter) serial communication driver. It implements the byte stream driver model interface (see [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp)) to enable serial communication with external devices through UART ports on Linux systems.
+The PosixUartDriver component provides a POSIX implementation of a UART (Universal Asynchronous Receiver-Transmitter) serial communication driver. It implements the byte stream driver model interface (see [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp)) to enable serial communication with external devices through UART ports on POSIX systems.
 
-The component wraps Linux termios API functionality to provide configurable serial communication with support for various baud rates, flow control options, and parity settings. It implements bidirectional communication using a dedicated receive thread and synchronous send operations.
+The component wraps POSIX termios API functionality to provide configurable serial communication with support for various baud rates, flow control options, and parity settings. It implements bidirectional communication using a dedicated receive thread and synchronous send operations.
 
 For more information on the ByteStreamDriverModel see: [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
 
@@ -12,24 +12,24 @@ For more information on the ByteStreamDriverModel see: [`Drv::ByteStreamDriverMo
 
 | Name | Description | Validation |
 |---|---|---|
-| LINUX-UART-COMP-001 | The LinuxUartDriver component shall implement the Drv.ByteStreamDriver interface | inspection |
-| LINUX-UART-COMP-002 | The LinuxUartDriver component shall provide configurable baud rates from 9600 to 4MHz | inspection |
-| LINUX-UART-COMP-003 | The LinuxUartDriver component shall provide configurable flow control (none/hardware) | inspection |
-| LINUX-UART-COMP-004 | The LinuxUartDriver component shall provide configurable parity (none/odd/even) | inspection |
-| LINUX-UART-COMP-005 | The LinuxUartDriver component shall provide a dedicated read thread for receiving data | inspection |
-| LINUX-UART-COMP-006 | The LinuxUartDriver component shall report telemetry for bytes sent and received | inspection |
-| LINUX-UART-COMP-007 | The LinuxUartDriver component shall handle UART errors and report them via events | inspection |
-| LINUX-UART-COMP-008 | The LinuxUartDriver component shall support buffer allocation for receive operations | inspection |
+| POSIX-UART-COMP-001 | The PosixUartDriver component shall implement the Drv.ByteStreamDriver interface | inspection |
+| POSIX-UART-COMP-002 | The PosixUartDriver component shall provide configurable baud rates from 9600 to 4MHz | inspection |
+| POSIX-UART-COMP-003 | The PosixUartDriver component shall provide configurable flow control (none/hardware) | inspection |
+| POSIX-UART-COMP-004 | The PosixUartDriver component shall provide configurable parity (none/odd/even) | inspection |
+| POSIX-UART-COMP-005 | The PosixUartDriver component shall provide a dedicated read thread for receiving data | inspection |
+| POSIX-UART-COMP-006 | The PosixUartDriver component shall report telemetry for bytes sent and received | inspection |
+| POSIX-UART-COMP-007 | The PosixUartDriver component shall handle UART errors and report them via events | inspection |
+| POSIX-UART-COMP-008 | The PosixUartDriver component shall support buffer allocation for receive operations | inspection |
 
 ## 3. Design
 
-The LinuxUartDriver component implements the design specified by the [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp) interface.
+The PosixUartDriver component implements the design specified by the [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp) interface.
 
 ### 3.1 Architecture
 
 The component consists of the following key elements:
 
-- **UART Configuration**: Handles device opening, baud rate, flow control, and parity settings using Linux termios API
+- **UART Configuration**: Handles device opening, baud rate, flow control, and parity settings using POSIX termios API
 - **Send Handler**: Synchronous transmission of data via the `send` port (guarded input port)
 - **Receive Thread**: Asynchronous reception of data via a dedicated thread that calls the `recv` output port
 - **Buffer Management**: Integration with F´ buffer allocation system for memory management
@@ -41,7 +41,7 @@ The component consists of the following key elements:
 When data is sent via the `send` input port:
 
 1. The component validates the file descriptor and buffer
-2. Data is written to the UART device using the Linux `write()` system call
+2. Data is written to the UART device using the POSIX `write()` system call
 3. Bytes sent counter is updated for telemetry
 4. Status is returned indicating success or failure
 
@@ -66,7 +66,7 @@ The component uses a single dedicated thread for receive operations (`serialRead
 
 ## 4. Usage
 
-The LinuxUartDriver must be configured with device parameters before use. The typical usage pattern is:
+The PosixUartDriver must be configured with device parameters before use. The typical usage pattern is:
 
 1. **Open Device**: Configure the UART device with desired parameters
 2. **Start Receive Thread**: Begin the receive thread for incoming data
@@ -75,16 +75,16 @@ The LinuxUartDriver must be configured with device parameters before use. The ty
 
 ### 4.1 Configuration Example
 
-The LinuxUartDriver should be instantiated in the FPP topology and configured using separate functions following F´ patterns:
+The PosixUartDriver should be instantiated in the FPP topology and configured using separate functions following F´ patterns:
 
 ```cpp
 // Configuration function - called during topology setup
 void configureTopology() {
     // Open UART device with configuration
     bool success = uart.open("/dev/ttyUSB0",                    // Device path
-                             Drv::LinuxUartDriver::BAUD_115K,   // 115200 baud rate
-                             Drv::LinuxUartDriver::NO_FLOW,     // No flow control
-                             Drv::LinuxUartDriver::PARITY_NONE, // No parity
+                             Drv::PosixUartDriver::BAUD_115K,   // 115200 baud rate
+                             Drv::PosixUartDriver::NO_FLOW,     // No flow control
+                             Drv::PosixUartDriver::PARITY_NONE, // No parity
                              1024);                             // Buffer size
     if (!success) {
         // Handle configuration error
@@ -125,10 +125,10 @@ connections RateGroups {
 
 | Parameter | Type | Description | Valid Values |
 |-----------|------|-------------|--------------|
-| device | const char* | Path to UART device | Linux device path (e.g., "/dev/ttyUSB0") |
-| baud | Drv::LinuxUartDriver::UartBaudRate | Communication baud rate | See baud rate enumeration |
-| fc | Drv::LinuxUartDriver::UartFlowControl | Flow control setting | NO_FLOW, HW_FLOW |
-| parity | Drv::LinuxUartDriver::UartParity | Parity setting | PARITY_NONE, PARITY_ODD, PARITY_EVEN |
+| device | const char* | Path to UART device | POSIX device path (e.g., "/dev/ttyUSB0") |
+| baud | Drv::PosixUartDriver::UartBaudRate | Communication baud rate | See baud rate enumeration |
+| fc | Drv::PosixUartDriver::UartFlowControl | Flow control setting | NO_FLOW, HW_FLOW |
+| parity | Drv::PosixUartDriver::UartParity | Parity setting | PARITY_NONE, PARITY_ODD, PARITY_EVEN |
 | allocationSize | FwSizeType | Receive buffer size | Positive integer (bytes) |
 
 ### 5.2 Baud Rate Options
@@ -143,16 +143,16 @@ The component supports the following baud rates:
 | BAUD_57600 | 57600 | All platforms |
 | BAUD_115K | 115200 | All platforms |
 | BAUD_230K | 230400 | All platforms |
-| BAUD_460K | 460800 | Linux only |
-| BAUD_921K | 921600 | Linux only |
-| BAUD_1000K | 1000000 | Linux only |
-| BAUD_1152K | 1152000 | Linux only |
-| BAUD_1500K | 1500000 | Linux only |
-| BAUD_2000K | 2000000 | Linux only |
-| BAUD_2500K | 2500000 | Linux only (if supported) |
-| BAUD_3000K | 3000000 | Linux only (if supported) |
-| BAUD_3500K | 3500000 | Linux only (if supported) |
-| BAUD_4000K | 4000000 | Linux only (if supported) |
+| BAUD_460K | 460800 | Platform-dependent |
+| BAUD_921K | 921600 | Platform-dependent |
+| BAUD_1000K | 1000000 | Platform-dependent |
+| BAUD_1152K | 1152000 | Platform-dependent |
+| BAUD_1500K | 1500000 | Platform-dependent |
+| BAUD_2000K | 2000000 | Platform-dependent |
+| BAUD_2500K | 2500000 | Platform-dependent |
+| BAUD_3000K | 3000000 | Platform-dependent |
+| BAUD_3500K | 3500000 | Platform-dependent |
+| BAUD_4000K | 4000000 | Platform-dependent |
 
 ### 5.3 Thread Configuration
 
