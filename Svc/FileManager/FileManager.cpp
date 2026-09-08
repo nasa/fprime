@@ -65,8 +65,9 @@ void FileManager ::configure(const char* sandboxDir) {
     // Ensure trailing '/'
     const FwSizeType resolvedLen = Fw::StringUtils::string_length(resolved, Os::FilePathUtils::MAX_PATH_LENGTH);
     FW_ASSERT(resolvedLen > 0);
-    FW_ASSERT(resolvedLen + 2 <= Os::FilePathUtils::MAX_PATH_LENGTH);
+    FW_ASSERT(resolvedLen < Os::FilePathUtils::MAX_PATH_LENGTH);
     if (resolved[resolvedLen - 1] != '/') {
+        FW_ASSERT(resolvedLen + 2 <= Os::FilePathUtils::MAX_PATH_LENGTH);
         resolved[resolvedLen] = '/';
         resolved[resolvedLen + 1] = '\0';
     }
