@@ -58,6 +58,15 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 20
 
+  instance wasmSeq: Svc.WasmSequencer base id 0x10007000 \
+    queue size Default.QUEUE_SIZE \
+    stack size Default.STACK_SIZE \
+    priority 20 {
+      phase Fpp.ToCpp.Phases.configComponents """
+        wasmSeq.configure(Svc::WasmSequencer::Config(), memAllocator);
+        """
+    }
+
   instance dpDemo: Ref.DpDemo base id 0x0A10 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
