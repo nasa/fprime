@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-09-08T21:11:35Z",
+  "ref": "devel",
+  "commit": "53d5030951b15c57e2bc7da56fd3c044e8aca06a",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 15,
+  "filled_sections": 9,
+  "prose_words": 497,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "parameters"
+  ],
+  "declared_kinds": [
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/devel/Drv/PosixUartDriver/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Drv::PosixUartDriver",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_drv_1_1_posix_uart_driver.html"
+    }
+  ]
+}

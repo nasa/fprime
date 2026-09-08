@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "53d5030951b15c57e2bc7da56fd3c044e8aca06a",
-  "generated_at": "2026-09-08T21:09:41Z",
+  "generated_at": "2026-09-08T21:11:35Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -857,15 +857,25 @@
         },
         "codeql-jpl": null
       },
-      "checks": null,
-      "sdd": null,
+      "checks": {
+        "passed": 1,
+        "failed": 4,
+        "skipped": 11,
+        "tier": "bronze",
+        "report": "Drv/PosixUartDriver/checks/index.html"
+      },
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Drv/PosixUartDriver/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
-        "checks": null,
-        "sdd": "bronze"
+        "checks": "bronze",
+        "sdd": "gold"
       }
     },
     {
@@ -12188,15 +12198,25 @@
         },
         "codeql-jpl": null
       },
-      "checks": null,
-      "sdd": null,
+      "checks": {
+        "passed": 2,
+        "failed": 8,
+        "skipped": 6,
+        "tier": "bronze",
+        "report": "Svc/WasmSequencer/checks/index.html"
+      },
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/WasmSequencer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
-        "checks": null,
-        "sdd": "bronze"
+        "checks": "bronze",
+        "sdd": "gold"
       }
     },
     {

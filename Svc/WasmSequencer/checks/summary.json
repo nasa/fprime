@@ -1,0 +1,226 @@
+{
+  "schema": 1,
+  "generated_at": "2026-09-08T21:11:30Z",
+  "ref": "devel",
+  "commit": "53d5030951b15c57e2bc7da56fd3c044e8aca06a",
+  "passed": 2,
+  "failed": 8,
+  "skipped": 6,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "pass",
+      "failures": [],
+      "detail": "6 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "pass",
+      "failures": [],
+      "detail": "12 command(s) checked"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "fail",
+      "failures": [
+        "state machine 'ControllerStateMachine' action 'processInvoke' has no 'action_processInvoke' implementation",
+        "state machine 'ControllerStateMachine' action 'setCancelRequested' has no 'action_setCancelRequested' implementation",
+        "state machine 'ControllerStateMachine' action 'clearCancelRequested' has no 'action_clearCancelRequested' implementation",
+        "state machine 'ControllerStateMachine' action 'cancelPendingRequest' has no 'action_cancelPendingRequest' implementation",
+        "state machine 'ControllerStateMachine' action 'respond_noblock_OK' has no 'action_respond_noblock_OK' implementation",
+        "state machine 'ControllerStateMachine' action 'respond_ERROR' has no 'action_respond_ERROR' implementation",
+        "state machine 'ControllerStateMachine' action 'incrementSequenceFailure' has no 'action_incrementSequenceFailure' implementation",
+        "state machine 'ControllerStateMachine' action 'respondInvoke_BUSY' has no 'action_respondInvoke_BUSY' implementation",
+        "state machine 'ControllerStateMachine' action 'respondInvoke_ERROR' has no 'action_respondInvoke_ERROR' implementation",
+        "state machine 'ControllerStateMachine' action 'respondLoad_BUSY' has no 'action_respondLoad_BUSY' implementation",
+        "state machine 'ControllerStateMachine' action 'respond_block_OK' has no 'action_respond_block_OK' implementation",
+        "state machine 'ControllerStateMachine' action 'respond_block_ERROR' has no 'action_respond_block_ERROR' implementation",
+        "state machine 'ControllerStateMachine' action 'load' has no 'action_load' implementation",
+        "state machine 'ControllerStateMachine' action 'invokeStart' has no 'action_invokeStart' implementation",
+        "state machine 'ControllerStateMachine' action 'invokeMain' has no 'action_invokeMain' implementation",
+        "state machine 'ControllerStateMachine' action 'reportModuleInvalidMain' has no 'action_reportModuleInvalidMain' implementation",
+        "state machine 'ControllerStateMachine' action 'reportModuleMainInvokeFailed' has no 'action_reportModuleMainInvokeFailed' implementation",
+        "state machine 'ControllerStateMachine' action 'reportModuleStartInvokeFailed' has no 'action_reportModuleStartInvokeFailed' implementation",
+        "state machine 'ControllerStateMachine' action 'reportModuleStarted' has no 'action_reportModuleStarted' implementation",
+        "state machine 'ControllerStateMachine' action 'reportModuleSucceeded' has no 'action_reportModuleSucceeded' implementation",
+        "state machine 'ControllerStateMachine' action 'reportModuleStartFailed' has no 'action_reportModuleStartFailed' implementation",
+        "state machine 'ControllerStateMachine' action 'reportModuleMainFailed' has no 'action_reportModuleMainFailed' implementation",
+        "state machine 'ControllerStateMachine' action 'resetStore' has no 'action_resetStore' implementation",
+        "state machine 'ControllerStateMachine' action 'runEngine' has no 'action_runEngine' implementation",
+        "state machine 'InterpreterStateMachine' action 'cmdReplyOK' has no 'action_cmdReplyOK' implementation",
+        "state machine 'InterpreterStateMachine' action 'signalEntered' has no 'action_signalEntered' implementation",
+        "state machine 'InterpreterStateMachine' action 'spin' has no 'action_spin' implementation",
+        "state machine 'InterpreterStateMachine' action 'reset' has no 'action_reset' implementation",
+        "state machine 'InterpreterStateMachine' action 'clearExitStatus' has no 'action_clearExitStatus' implementation",
+        "state machine 'InterpreterStateMachine' action 'setExitReason_INTERPRETER_FINISHED' has no 'action_setExitReason_INTERPRETER_FINISHED' implementation",
+        "state machine 'InterpreterStateMachine' action 'setExitReason_INTERPRETER_TRAP' has no 'action_setExitReason_INTERPRETER_TRAP' implementation",
+        "state machine 'InterpreterStateMachine' action 'setExitReason_REPLY_TIMEOUT' has no 'action_setExitReason_REPLY_TIMEOUT' implementation",
+        "state machine 'InterpreterStateMachine' action 'setExitReason_HOST_FAILURE' has no 'action_setExitReason_HOST_FAILURE' implementation",
+        "state machine 'InterpreterStateMachine' action 'setExitReason_TIMER_INCOMPARABLE' has no 'action_setExitReason_TIMER_INCOMPARABLE' implementation",
+        "state machine 'InterpreterStateMachine' action 'setExitReason_UNEXPECTED_REPLY' has no 'action_setExitReason_UNEXPECTED_REPLY' implementation",
+        "state machine 'InterpreterStateMachine' action 'setExitReason_CANCEL' has no 'action_setExitReason_CANCEL' implementation",
+        "state machine 'InterpreterStateMachine' action 'setExitCode' has no 'action_setExitCode' implementation",
+        "state machine 'InterpreterStateMachine' action 'setTrapReason' has no 'action_setTrapReason' implementation",
+        "state machine 'InterpreterStateMachine' action 'setLastHostFunction' has no 'action_setLastHostFunction' implementation",
+        "state machine 'InterpreterStateMachine' action 'finish' has no 'action_finish' implementation",
+        "state machine 'InterpreterStateMachine' action 'reportPaused' has no 'action_reportPaused' implementation",
+        "state machine 'InterpreterStateMachine' action 'clearPause' has no 'action_clearPause' implementation",
+        "state machine 'InterpreterStateMachine' action 'dispatchPendingHostFunction' has no 'action_dispatchPendingHostFunction' implementation",
+        "state machine 'InterpreterStateMachine' action 'clearPendingHostFunction' has no 'action_clearPendingHostFunction' implementation",
+        "state machine 'InterpreterStateMachine' action 'setContext' has no 'action_setContext' implementation",
+        "state machine 'InterpreterStateMachine' action 'clearContext' has no 'action_clearContext' implementation",
+        "state machine 'InterpreterStateMachine' action 'resume' has no 'action_resume' implementation",
+        "state machine 'InterpreterStateMachine' action 'resumeI32' has no 'action_resumeI32' implementation",
+        "state machine 'InterpreterStateMachine' action 'checkSleepTimers' has no 'action_checkSleepTimers' implementation",
+        "state machine 'InterpreterStateMachine' action 'checkTimeout' has no 'action_checkTimeout' implementation",
+        "state machine 'InterpreterStateMachine' action 'dequeueSerialAndResume' has no 'action_dequeueSerialAndResume' implementation"
+      ],
+      "detail": "51 action(s) checked"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no requirements found"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/Com' (from #include \"Fw/Com/ComPacket.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Com)",
+        "dependency 'Fw/DataStructures' (from #include \"Fw/DataStructures/FifoQueue.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_DataStructures)",
+        "dependency 'Fw/Types' (from #include \"Fw/Types/Assert.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Types)",
+        "dependency 'Os' (from #include \"Os/Mutex.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Os)"
+      ],
+      "detail": "5 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "fail",
+      "failures": [
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/WasmSequencer/docs/sdd.md); cannot trace 12 command(s)"
+      ],
+      "detail": "12 command(s) traced against 0 requirement(s)"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "fail",
+      "failures": [
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/WasmSequencer/docs/sdd.md); cannot trace 9 telemetry channel(s)"
+      ],
+      "detail": "9 telemetry channel(s) traced against 0 requirement(s)"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "fail",
+      "failures": [
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/WasmSequencer/docs/sdd.md); cannot trace 43 event(s)"
+      ],
+      "detail": "43 event(s) traced against 0 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "fail",
+      "failures": [
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/WasmSequencer/docs/sdd.md); cannot trace 3 parameter(s)"
+      ],
+      "detail": "3 parameter(s) traced against 0 requirement(s)"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "fail",
+      "failures": [
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/WasmSequencer/docs/sdd.md); cannot trace 12 port(s)"
+      ],
+      "detail": "12 port(s) traced against 0 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no requirements found"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no requirements found"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/WasmSequencer",
+      "status": "fail",
+      "failures": [
+        "unit-test dependency 'Fw/Port' (from #include \"Fw/Port/InputPortBase.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Fw/Types' (from #include \"Fw/Types/MallocAllocator.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Os' (from #include \"Os/FileSystem.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
+      ],
+      "detail": "3 dependency module(s) checked"
+    }
+  ]
+}

@@ -37,7 +37,7 @@ The **FileHandling subtopology** packages the core file-transfer services common
 > [!WARNING]
 > **This subtopology is not configured to be secure by default.** For backwards compatibility, its
 > `configComponents` phase configures the file-access sandboxes of `fileUplink`, `fileDownlink`,
-> and `prmDb` to `FileHandlingConfig::Paths::sandboxDir`, which defaults to `"/"`. With that
+> `fileManager`, and `prmDb` to `FileHandlingConfig::Paths::sandboxDir`, which defaults to `"/"`. With that
 > default, **any absolute path accessible to the process** may be written, read, or loaded via
 > ground command. (The underlying `Os::SandboxedFile` is fail-closed when left
 > unconfigured; this subtopology deliberately configures it open.)
@@ -46,6 +46,8 @@ The **FileHandling subtopology** packages the core file-transfer services common
 > code (after the autocoded `configComponents` phase runs) with a restricted directory:
 >
 > * `FileHandling::fileUplink.configure(<directory>)` — restrict uplinked file writes.
+> * `FileHandling::fileManager.configure(<directory>)` — restrict file-management command paths
+>   (create/remove/move/append/list/size/CRC/data-product generation).
 > * `FileHandling::fileDownlink.configure(<directory>)` — restrict downlink reads (this is the
 >   `configure(directory)` overload; the `configure(cooldown, cycleTime, fileQueueDepth)`
 >   overload does **not** set a sandbox).
