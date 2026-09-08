@@ -2,8 +2,8 @@
   "schema": 6,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "14e385d9942cc12ea5650508aac3dde5f7db6dbd",
-  "generated_at": "2026-09-07T22:13:19Z",
+  "commit": "53d5030951b15c57e2bc7da56fd3c044e8aca06a",
+  "generated_at": "2026-09-08T21:09:41Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -745,85 +745,6 @@
       }
     },
     {
-      "path": "Drv/LinuxUartDriver",
-      "has_ut": false,
-      "has_coverage": false,
-      "ut": null,
-      "int": {
-        "line_pct": 0.0,
-        "line_covered": 0,
-        "line_total": 234,
-        "function_pct": 0.0,
-        "function_covered": 0,
-        "function_total": 10,
-        "branch_pct": 0.0,
-        "branch_covered": 0,
-        "branch_total": 158,
-        "report": "Drv/LinuxUartDriver/int-coverage/index.html",
-        "tier": "bronze"
-      },
-      "codeql": {
-        "findings": 7,
-        "by_severity": {
-          "error": 0,
-          "medium": 0,
-          "low": 7
-        },
-        "worst": "low",
-        "tier": "silver",
-        "dismissed": 5,
-        "report": "Drv/LinuxUartDriver/codeql/index.html"
-      },
-      "codeql_checks": {
-        "codeql": {
-          "findings": 0,
-          "by_severity": {
-            "error": 0,
-            "medium": 0,
-            "low": 0
-          },
-          "worst": null,
-          "tier": "platinum",
-          "dismissed": 0,
-          "label": "Static Analysis (Security) [CodeQL]",
-          "report": "Drv/LinuxUartDriver/codeql/index.html"
-        },
-        "codeql-jpl": {
-          "findings": 7,
-          "by_severity": {
-            "error": 0,
-            "medium": 0,
-            "low": 7
-          },
-          "worst": "low",
-          "tier": "silver",
-          "dismissed": 5,
-          "label": "Static Analysis (JPL) [CodeQL]",
-          "report": "Drv/LinuxUartDriver/codeql-jpl/index.html"
-        }
-      },
-      "checks": {
-        "passed": 1,
-        "failed": 4,
-        "skipped": 11,
-        "tier": "bronze",
-        "report": "Drv/LinuxUartDriver/checks/index.html"
-      },
-      "sdd": {
-        "tier": "gold",
-        "has_sdd": true,
-        "report": "Drv/LinuxUartDriver/sdd/index.html"
-      },
-      "tiers": {
-        "overall": "bronze",
-        "ut": "bronze",
-        "int": "bronze",
-        "codeql": "silver",
-        "checks": "bronze",
-        "sdd": "gold"
-      }
-    },
-    {
       "path": "Drv/Ports/DataTypes",
       "has_ut": false,
       "has_coverage": false,
@@ -899,6 +820,51 @@
         "int": "bronze",
         "codeql": "platinum",
         "checks": "bronze",
+        "sdd": "bronze"
+      }
+    },
+    {
+      "path": "Drv/PosixUartDriver",
+      "has_ut": false,
+      "has_coverage": false,
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Drv/PosixUartDriver/codeql/index.html"
+      },
+      "codeql_checks": {
+        "codeql": {
+          "findings": 0,
+          "by_severity": {
+            "error": 0,
+            "medium": 0,
+            "low": 0
+          },
+          "worst": null,
+          "tier": "platinum",
+          "dismissed": 0,
+          "label": "Static Analysis (Security) [CodeQL]",
+          "report": "Drv/PosixUartDriver/codeql/index.html"
+        },
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "sdd": null,
+      "tiers": {
+        "overall": "bronze",
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum",
+        "checks": null,
         "sdd": "bronze"
       }
     },
@@ -12185,6 +12151,51 @@
         "int": "bronze",
         "codeql": "platinum",
         "checks": "bronze",
+        "sdd": "bronze"
+      }
+    },
+    {
+      "path": "Svc/WasmSequencer",
+      "has_ut": true,
+      "has_coverage": false,
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/WasmSequencer/codeql/index.html"
+      },
+      "codeql_checks": {
+        "codeql": {
+          "findings": 0,
+          "by_severity": {
+            "error": 0,
+            "medium": 0,
+            "low": 0
+          },
+          "worst": null,
+          "tier": "platinum",
+          "dismissed": 0,
+          "label": "Static Analysis (Security) [CodeQL]",
+          "report": "Svc/WasmSequencer/codeql/index.html"
+        },
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "sdd": null,
+      "tiers": {
+        "overall": "bronze",
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum",
+        "checks": null,
         "sdd": "bronze"
       }
     },
