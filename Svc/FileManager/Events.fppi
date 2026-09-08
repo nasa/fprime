@@ -272,3 +272,12 @@ event GenerateDpInvalidRange(fileName: string size FileNameStringSize @< The fil
   severity warning high \
   id 0x22 \
   format "Invalid offset range requested for file {}: [{}, {}) with file size {}"
+
+@ A command path argument was rejected by the configured sandbox directory
+event PathOutsideSandbox(
+                            path: string size FileNameStringSize @< The rejected path
+                            sandboxDir: string size FileNameStringSize @< The configured sandbox directory
+                        ) \
+  severity warning high \
+  id 0x23 \
+  format "Path {} is outside the configured sandbox directory {}"
