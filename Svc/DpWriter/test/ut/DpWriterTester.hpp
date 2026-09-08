@@ -50,10 +50,10 @@ class DpWriterTester : public DpWriterGTestBase {
                                         ) final;
 
     //! Handler implementation for dpWrittenOut
-    void from_dpWrittenOut_handler(FwIndexType portNum,                 //!< The port number
-                                   const Fw::FileNameString& fileName,  //!< The file name
-                                   FwDpPriorityType priority,           //!< The priority
-                                   FwSizeType fileSize                  //!< The file size
+    void from_dpWrittenOut_handler(FwIndexType portNum,             //!< The port number
+                                   const Fw::StringBase& fileName,  //!< The file name
+                                   FwDpPriorityType priority,       //!< The priority
+                                   FwSizeType fileSize              //!< The file size
                                    ) final;
 
     //! Handler implementation for deallocBufferSendOut
