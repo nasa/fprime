@@ -168,6 +168,10 @@ void WasmSequencer ::createStore() {
 
     status = spacewasm_new(&host, this->m_config.stackSize, this->m_config.maxGuestModules, options, &this->m_wasm);
 
+    this->m_guest_allocator =
+        spacewasm_allocator_new(&WasmSequencer::guestAllocCallback, &WasmSequencer::guestReallocCallback,
+                                &WasmSequencer::guestDeallocCallback, /* userdata */ this);
+
     this->releaseAllocatorLock();
 
     // Make sure the store allocation succeeded.
@@ -181,6 +185,9 @@ void WasmSequencer ::createStore() {
     // - Lower stackSize in configure()
     FW_ASSERT(status == SPACEWASM_OK, status);
 
+    // Make sure the guest allocator creation succeeded
+    FW_ASSERT(this->m_guest_allocator != nullptr);
+
     this->log_DIAGNOSTIC_StoreAllocationSucceeded(this->m_config.maxGuestModules);
 }
 
@@ -189,6 +196,7 @@ void WasmSequencer ::destroyStore() {
 
     this->takeAllocatorLock();
     spacewasm_destroy(this->m_wasm);
+    spacewasm_allocator_destroy(this->m_guest_allocator);
     this->releaseAllocatorLock();
     this->m_wasm = nullptr;
 
