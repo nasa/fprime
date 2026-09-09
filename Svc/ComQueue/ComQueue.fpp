@@ -19,7 +19,7 @@ module Svc {
       output port dataOut: Svc.ComDataWithContext
 
       @ Port for receiving the status signal
-      async input port comStatusIn: Fw.SuccessCondition
+      sync input port comStatusIn: Fw.SuccessCondition
 
       @ Port array for receiving Fw::ComBuffers
       async input port comPacketQueueIn: [ComQueueComPorts] Fw.Com drop
@@ -35,6 +35,9 @@ module Svc {
 
       @ Port for scheduling telemetry output
       async input port run: Svc.Sched drop
+
+      @ Port for sceduling queue processing
+      internal port processQueue drop
 
       # ----------------------------------------------------------------------
       # Special ports

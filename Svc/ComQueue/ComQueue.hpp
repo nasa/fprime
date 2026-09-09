@@ -14,7 +14,6 @@
 #include <atomic>
 #include <limits>
 #include "Fw/Types/MemAllocator.hpp"
-#include "Os/Mutex.hpp"
 
 namespace Svc {
 
@@ -197,6 +196,10 @@ class ComQueue final : public ComQueueComponentBase {
                      U32 context                /*!<The call order*/
                      ) override;
 
+    //! Schedules the processing of the queue
+    //!
+    void processQueue_internalInterfaceHandler() override;
+
     //! Handler implementation for dataReturnIn
     //!
     //! Port for returning ownership of Fw::Buffer to its sender
@@ -270,7 +273,7 @@ class ComQueue final : public ComQueueComponentBase {
     Types::Queue m_queues[TOTAL_PORT_COUNT];            //!< Stores queued data waiting for transmission
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
     bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles
-    SendState m_state;                                  //!< State of the component
+    std::atomic<SendState> m_state;                     //!< State of the component
     std::atomic<BufferState> m_buffer_state;  //!< Ownership state of buffer, shared with the sync dataReturnIn caller
 
     // Storage for Fw::MemAllocator properties

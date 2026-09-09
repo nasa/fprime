@@ -251,7 +251,7 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
         case WAITING:
             if (condition.e == Fw::Success::SUCCESS) {
                 this->m_state = READY;
-                this->processQueue();
+                this->processQueue_internalInterfaceInvoke();
                 // A message may or may not be sent. Thus, READY or WAITING are acceptable final states.
                 FW_ASSERT((this->m_state == WAITING || this->m_state == READY),
                           static_cast<FwAssertArgType>(this->m_state));
@@ -286,6 +286,18 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
         this->m_queues[i + COM_PORT_COUNT].clear_high_water_mark();
     }
     this->tlmWrite_buffQueueDepth(buffQueueDepth);
+
+    // if we are READY process queue in case the processQueue port call got dropped
+    if (this->m_state == READY) {
+        this->processQueue();
+    }
+}
+
+void ComQueue::processQueue_internalInterfaceHandler() {
+    // if we are still READY process queue
+    if (this->m_state == READY) {
+        this->processQueue();
+    } // Otherwise, a run tick or enqueue processQueue-ed btw comStatusIn & now
 }
 
 void ComQueue ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
