@@ -102,6 +102,51 @@ inline Interface* makeDelegate(StorageType& aligned_new_memory, const Interface*
     FW_ASSERT(interface != nullptr);
     return interface;
 }
+
+//! \brief Make a delegate of type Interface using Implementation with copy-constructor and constructor-argument support
+//!
+//! Behaves as the copy-constructor `makeDelegate` overload, except that when `to_copy` is `nullptr` the Implementation
+//! is constructed from `argument` rather than default-constructed. This supports delegates whose construction is
+//! parameterized (e.g. `RawTimeInterface` selecting a `RawTimeSource`).
+//!
+//! Example: RawTimeInterface getDelegate Supporting Copy-Constructor and Source Selection
+//!
+//! ```c++
+//! #include "Os/Delegate.hpp"
+//!
+//! namespace Os {
+//! RawTimeInterface* RawTimeInterface::getDelegate(RawTimeHandleStorage& aligned_new_memory,
+//!                                                 const RawTimeInterface* to_copy,
+//!                                                 RawTimeSource source) {
+//!   return Os::Delegate::makeDelegate<RawTimeInterface, Os::Posix::RawTime::PosixRawTime>(aligned_new_memory,
+//!                                                                                          to_copy, source);
+//! }
+//! }
+//! ```
+//! \tparam Interface: interface the delegate supports (e.g. RawTimeInterface)
+//! \tparam Implementation: implementation class of the delegate (e.g. PosixRawTime)
+//! \tparam Argument: type of the constructor argument
+//! \param aligned_new_memory: memory to be filled via placement new call
+//! \param to_copy: pointer to Interface to be copied by copy constructor, or nullptr to construct from `argument`
+//! \param argument: constructor argument used when `to_copy` is nullptr
+//! \return pointer to implementation result of placement new
+template <class Interface, class Implementation, class StorageType, class Argument>
+inline Interface* makeDelegate(StorageType& aligned_new_memory, const Interface* to_copy, const Argument& argument) {
+    const Implementation* copy_me = reinterpret_cast<const Implementation*>(to_copy);
+    // Ensure prerequisites before performing placement new
+    static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
+    static_assert(sizeof(Implementation) <= sizeof(aligned_new_memory), "Handle size not large enough");
+    static_assert((FW_HANDLE_ALIGNMENT % alignof(Implementation)) == 0, "Handle alignment invalid");
+    // Placement new the object and ensure non-null result
+    Implementation* interface = nullptr;
+    if (to_copy == nullptr) {
+        interface = new (aligned_new_memory) Implementation(argument);
+    } else {
+        interface = new (aligned_new_memory) Implementation(*copy_me);
+    }
+    FW_ASSERT(interface != nullptr);
+    return interface;
+}
 }  // namespace Delegate
 }  // namespace Os
 #endif
