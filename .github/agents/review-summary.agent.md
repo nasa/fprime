@@ -1,5 +1,5 @@
 ---
-description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, operational-consequences, and maintainability reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
+description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, operational-consequences, and maintainability reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section; on an all-Go verdict it requests the core maintainers as reviewers once per PR. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
 name: "F Prime PR Review Summary Aggregator"
 tools: [read, search]
 user-invocable: true
@@ -27,7 +27,9 @@ verdict, keyed by HTML marker for re-run handling.
 
 You post **no new inline comment threads**. Your only thread-level
 writes are the replies-plus-resolves of the de-duplication post-pass
-(§5h). You **do not** invoke other agents. You **do not** analyze
+(§5h); your only other write beyond the summary review is the
+one-time maintainer review request on an all-Go verdict (§5i).
+You **do not** invoke other agents. You **do not** analyze
 code. You aggregate.
 
 ---
@@ -81,6 +83,7 @@ Body shape:
 <!-- fprime-review-summary v1 -->
 <!-- reviewed_head: <full head SHA this summary describes> -->
 <!-- run: N -->
+<!-- maintainers_requested: <comma-separated logins, or none> -->
 ## Automated review summary  (run N)
 
 ### Recommend: Close
@@ -700,6 +703,45 @@ self-heals historic duplicates on every run.
 
 ---
 
+## §5i. Maintainer review request on all-Go (once per PR)
+
+When the review event is `APPROVE` (CI safety **and** Merge
+readiness both `Go`, §5c) and `Recommend: Close` did not fire,
+hand the PR to the humans by requesting the core maintainers as
+reviewers. This is the only automatic human ping on the happy path,
+so it fires **at most once per PR**.
+
+1. **Recipients**: the core-maintainer set per
+   `.github/skills/maintainer-lookup/SKILL.md` §1b (README
+   `Core Maintainer(s)` from the trusted `nasa/fprime` `devel`
+   checkout; no Security Overseer, no `git log` approvers), minus
+   the PR author (GitHub rejects requesting the author).
+2. **Already done?** Skip the request entirely when any holds:
+   - the prior summary review's `<!-- maintainers_requested: -->`
+     line lists one or more logins (requested on an earlier run —
+     a later Go after a No-Go does **not** re-request);
+   - a recipient is already in `requested_reviewers` or has
+     already submitted a review on the PR (remove them from the
+     list; re-requesting re-notifies).
+3. **Request**: one call,
+   `POST /repos/{o}/{r}/pulls/{n}/requested_reviewers` with
+   `{ "reviewers": [<remaining logins>] }`. Do this **before**
+   posting/updating the summary so the outcome can be recorded.
+4. **Record** the logins actually requested this run — plus any
+   carried over from the prior summary — in the
+   `maintainers_requested` line; `none` when nothing has ever been
+   requested. This line is the idempotency key across runs.
+5. **Degradation**: on `403`/`422` (token lacks write access,
+   reviewer not a collaborator) do not retry and do not fall back to
+   an `@`-mention; write `none`, and append one line to the summary
+   body's closing line: `Could not request maintainer review
+   (<status>).` Return `completed`, not `FAILED`.
+
+Never remove a reviewer, and never touch review requests on a
+`REQUEST_CHANGES` run.
+
+---
+
 ## Priorities applied
 
 - **P1 (no omission):** every reviewer in the registry that the
@@ -718,7 +760,8 @@ self-heals historic duplicates on every run.
 ## Status returned to the orchestrator
 
 After posting, updating in place, or dismissing-and-resubmitting the
-review (§5d), return:
+review (§5d), and the maintainer review request when due (§5i),
+return:
 
 - `completed` on success.
 - `FAILED: <one-line reason>` on an unrecoverable error (e.g.,
