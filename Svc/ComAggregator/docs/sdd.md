@@ -36,8 +36,8 @@ Aggregates buffers in the downlink chain. This is for use with systems that have
 ### Packet Spanning
 
 Calling `configure(true)` before startup enables CCSDS TM packet spanning. In this mode the aggregation capacity
-expands to the full TM data field (`ComCfg::AggregationSpanningSize`) and every emitted aggregate is exactly that
-size:
+expands to `ComCfg::AggregationSize + 7`, reclaiming the room the framer would otherwise reserve for a minimum idle
+packet; this is the full TM data field in the default configuration, and every emitted aggregate is exactly that size:
 
 - A packet that does not fit in the remaining space is split: its leading bytes complete the current aggregate and
   the remainder is retained. Retention of the underlying buffer (and its return) follows normal buffer ownership;
@@ -47,6 +47,8 @@ size:
   number of complete frames.
 - Residual space at send time (e.g. on timeout) is filled with an SPP idle packet (APID `0x7FF`). When fewer bytes
   remain than a minimum idle packet (header + 1 byte), the idle packet itself spans into the next aggregate.
+- Idle bytes carried into the next aggregate do not by themselves make it eligible for a timeout send, so idle-only
+  frames are never emitted.
 - The First Header Pointer (the data-field offset of the first packet header starting in the aggregate) is
   reported through `ComCfg::FrameContext.firstHeaderPointer` and written into the TM Data Field Status by
   `Svc::Ccsds::TmFramer`, per CCSDS 132.0-B-3 section 4.1.2.7.6.
@@ -54,3 +56,7 @@ size:
 With spanning disabled (the default), incoming buffers are never split and behavior is unchanged; a buffer larger
 than `ComCfg::AggregationSize` is rejected by assertion rather than truncated. `configure()` must be called before
 any data is aggregated and asserts otherwise.
+
+If a downstream frame is reported as failed, the unsent aggregate is dropped. With spanning enabled, the remainder
+of a packet whose head was in the dropped aggregate is dropped too; its buffer is returned and SUCCESS is emitted, so
+no orphan continuation data is downlinked.

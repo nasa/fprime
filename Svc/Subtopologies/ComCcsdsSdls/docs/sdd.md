@@ -172,6 +172,8 @@ The `SdlsSaRouter` default configuration is two deep: `{ SA 0 -> SaRouterPorts.P
 
 `ComCcsdsSdlsConfig` supplies the `BASE_ID` for the SDLS instances and the `decryptor` instance definition (see 2.4). The reused packet and transfer frame layers are configured through `ComCcsdsConfig` (queue sizes, priorities, buffer sizing, memory allocator), exactly as when using `ComCcsds` directly.
 
+`Svc.Ccsds.CcsdsSdlsFramer` prepends a 2-byte SA index to each aggregate, so projects must set `ComCfg.AggregationSize = TmFrameFixedSize - 6 - 2 - 2 - 7` (TM header, trailer, SA index, minimum idle packet) for the aggregator output to fit the TM data field, with or without `ComCcsdsConfig.Aggregator.enablePacketSpanning`; the First Header Pointer is relative to the data following the SA index (the SDLS security header is not part of the TM data field per CCSDS 355.0-B).
+
 ## 4. See Also
 
 - [ComCcsds subtopology](../../ComCcsds/docs/sdd.md)
