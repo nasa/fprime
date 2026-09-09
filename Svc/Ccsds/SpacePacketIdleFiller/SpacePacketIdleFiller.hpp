@@ -30,6 +30,13 @@ class SpacePacketIdleFiller final : public SpacePacketIdleFillerComponentBase {
     //! Smallest well-formed space packet: a header plus one byte of data
     static constexpr FwSizeType MIN_IDLE_PACKET_SIZE = SpacePacketHeader::SERIALIZED_SIZE + 1;
 
+    // The compile-time fill target must fit the frame data field, and the upstream aggregation
+    // buffer must stay a whole idle packet below it.
+    static_assert(ComCfg::SdlsFillTargetSize <= MAX_FILL_SIZE,
+                  "ComCfg.SdlsFillTargetSize exceeds the TM transfer frame data field");
+    static_assert(ComCfg::SdlsFillTargetSize >= ComCfg::AggregationSize + MIN_IDLE_PACKET_SIZE,
+                  "ComCfg.AggregationSize leaves a gap too small for an idle space packet");
+
     //! Fill byte, matching the pattern Svc.Ccsds.TmFramer emits
     static constexpr U8 IDLE_DATA_PATTERN = 0x44;
 
@@ -47,7 +54,8 @@ class SpacePacketIdleFiller final : public SpacePacketIdleFillerComponentBase {
     SpacePacketIdleFiller(SpacePacketIdleFiller&&) = delete;
     SpacePacketIdleFiller& operator=(SpacePacketIdleFiller&&) = delete;
 
-    //! Set the size every emitted buffer is padded to
+    //! Override the size every emitted buffer is padded to. Optional: the component defaults to
+    //! ComCfg.SdlsFillTargetSize. Call during topology setup, before any buffer is padded.
     void configure(FwSizeType targetSize);
 
   private:
@@ -78,11 +86,8 @@ class SpacePacketIdleFiller final : public SpacePacketIdleFillerComponentBase {
     //! Buffer holding the padded copy;
     U8 m_fillBuffer[MAX_FILL_SIZE];
 
-    //! Size every emitted buffer is padded to
+    //! Size every emitted buffer is padded to; ComCfg.SdlsFillTargetSize unless configure() overrides it
     FwSizeType m_targetSize;
-
-    //! Whether configure() has been called
-    bool m_configured;
 
     //! Whether m_fillBuffer is available
     BufferOwnershipState m_bufferState;

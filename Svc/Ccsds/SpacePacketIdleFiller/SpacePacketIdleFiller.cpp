@@ -18,8 +18,7 @@ namespace Ccsds {
 SpacePacketIdleFiller ::SpacePacketIdleFiller(const char* const compName)
     : SpacePacketIdleFillerComponentBase(compName),
       m_fillBuffer(),
-      m_targetSize(0),
-      m_configured(false),
+      m_targetSize(ComCfg::SdlsFillTargetSize),
       m_bufferState(BufferOwnershipState::OWNED) {}
 
 SpacePacketIdleFiller ::~SpacePacketIdleFiller() {}
@@ -28,8 +27,9 @@ void SpacePacketIdleFiller ::configure(FwSizeType targetSize) {
     FW_ASSERT(targetSize > 0, static_cast<FwAssertArgType>(targetSize));
     FW_ASSERT(targetSize <= MAX_FILL_SIZE, static_cast<FwAssertArgType>(targetSize),
               static_cast<FwAssertArgType>(MAX_FILL_SIZE));
+    // No check against ComCfg.AggregationSize here: an override exists so a project may pair this
+    // component with an upstream aggregator sized differently from the compile-time configuration.
     this->m_targetSize = targetSize;
-    this->m_configured = true;
 }
 
 // ----------------------------------------------------------------------
@@ -39,7 +39,6 @@ void SpacePacketIdleFiller ::configure(FwSizeType targetSize) {
 void SpacePacketIdleFiller ::dataIn_handler(FwIndexType portNum,
                                             Fw::Buffer& data,
                                             const ComCfg::FrameContext& context) {
-    FW_ASSERT(this->m_configured);
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED,
               static_cast<FwAssertArgType>(this->m_bufferState));
 

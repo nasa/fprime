@@ -16,8 +16,17 @@ module ComCfg {
     @ Upper Bound on Fixed size of CCSDS AOS frames
     constant AosMaxFrameFixedSize = 1536
 
-    @ Aggregation buffer for ComAggregator component
-    constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
+    @ Plaintext size that exactly fills the TM transfer frame data field once framing and
+    @ security overhead are added: TmFrameFixedSize - 6 (TM header) - 2 (SPI
+    @ prepended by Svc.Ccsds.CcsdsSdlsFramer) - 2 (FECF). A project selecting a real encryptor subtracts
+    @ its overhead as well -- 28 more for AES-256-GCM (12-byte IV + 16-byte MAC).
+    @ Svc.Ccsds.SpacePacketIdleFiller pads every downlink buffer to this size.
+    constant SdlsFillTargetSize = TmFrameFixedSize - 6 - 2 - 2
+
+    @ Aggregation buffer for ComAggregator component. Held one minimum idle packet (6 header
+    @ + 1 data) below the fill target, so every aggregate either fills the target exactly or
+    @ leaves room for a well-formed idle space packet.
+    constant AggregationSize = SdlsFillTargetSize - 7
 
     @ Packet Version Numbers are 3 bits with only 2 currently valid values
     dictionary enum Pvn : U8 {
