@@ -25,6 +25,7 @@ PosixRawTime::Status PosixRawTime::now() {
 }
 
 PosixRawTime::Status PosixRawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const {
+    // const_cast: RawTimeInterface::getHandle() is non-const; the handle is only read here
     const PosixRawTimeHandle* other_handle =
         static_cast<const PosixRawTimeHandle*>(const_cast<Os::RawTime&>(other).getHandle());
     FW_ASSERT(other_handle != nullptr);

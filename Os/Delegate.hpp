@@ -117,7 +117,7 @@ inline Interface* makeDelegate(StorageType& aligned_new_memory, const Interface*
 //! \return pointer to implementation result of placement new
 template <class Interface, class Implementation, class StorageType, class Argument>
 inline Interface* makeDelegate(StorageType& aligned_new_memory, const Interface* to_copy, const Argument& argument) {
-    const Implementation* copy_me = reinterpret_cast<const Implementation*>(to_copy);
+    const Implementation* copy_me = static_cast<const Implementation*>(to_copy);
     // Ensure prerequisites before performing placement new
     static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
     static_assert(sizeof(Implementation) <= sizeof(aligned_new_memory), "Handle size not large enough");
