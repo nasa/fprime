@@ -37,8 +37,8 @@ module ComCcsdsConfig {
 
     # Aggregator configuration constants
     module Aggregator {
-        @ Enable CCSDS TM packet spanning across transfer frames (see Svc.ComAggregator)
-        constant packetSpanning = 0
+        @ Controls whether to span packets across transfer frames (see Svc.ComAggregator)
+        constant enablePacketSpanning = false
     }
 
     # Buffer management constants

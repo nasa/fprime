@@ -105,7 +105,7 @@ module ComCcsds {
         cpu ComCcsdsConfig.CpuAffinities.aggregator \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::packetSpanning != 0);
+        ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::enablePacketSpanning);
         """
     }
 
