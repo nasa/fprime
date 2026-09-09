@@ -195,6 +195,28 @@ class FileManagerTester : public FileManagerGTestBase {
     //! Assert failed command execution
     void assertFailure(const FwOpcodeType opcode) const;
 
+    //! Assert that the last command was rejected by the sandbox: PathOutsideSandbox event,
+    //! VALIDATION_ERROR response, error counted, and no other events
+    void assertSandboxRejection(const FwOpcodeType opcode, const char* const path);
+
+  public:
+    // ----------------------------------------------------------------------
+    // Sandbox tests
+    // ----------------------------------------------------------------------
+
+    //! Escaping and absolute-outside paths are rejected by every command; contained paths work
+    void sandboxRejectsOutsidePaths();
+
+    //! An unconfigured FileManager rejects every command (fail-closed)
+    void sandboxFailClosed();
+
+    //! Relative paths and internal '..' segments resolve before containment is checked
+    void sandboxResolvesPaths();
+
+    //! configure("/") — the subtopology default — preserves the historical unrestricted
+    //! behavior: absolute paths anywhere on the filesystem are accepted
+    void sandboxOpenRootIsUnrestricted();
+
     // ----------------------------------------------------------------------
     // Data product test support
     // ----------------------------------------------------------------------

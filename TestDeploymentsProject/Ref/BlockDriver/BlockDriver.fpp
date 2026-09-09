@@ -19,7 +19,7 @@ module Ref {
     output port BufferOut: Drv.DataBuffer
 
     @ Input ping port
-    async input port PingIn: Svc.Ping
+    async input port PingIn: Svc.Ping drop
 
     @ Output ping port
     output port PingOut: Svc.Ping

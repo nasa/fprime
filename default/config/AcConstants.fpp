@@ -62,7 +62,10 @@ constant FwAssertTextSize = 256
 @ arguments in log message
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
-@ The maximum size in bytes for passing sequence arguments through CmdSeqIn ports
-@ Note: This must fit within FW_CMD_ARG_BUFFER_MAX_SIZE along with cmd arguments using Svc::SeqArgs
-@ Total serialized size: string length prefix + fileName + BlockState + SeqArgs(size + buffer)
-constant SequenceArgumentsMaxSize = FW_CMD_ARG_BUFFER_MAX_SIZE - sizeof(FwSizeStoreType) - FileNameStringSize - sizeof(U8) - sizeof(FwSizeType)
+@ The maximum size in bytes of the argument blob carried in a Svc::SeqArgs buffer
+@ (CmdSeqIn / RUN / INVOKE).
+@ Deliberately kept small (rather than derived from FW_CMD_ARG_BUFFER_MAX_SIZE) to
+@ keep SeqArgs easy to populate from fprime-gds. It must still fit within
+@ FW_CMD_ARG_BUFFER_MAX_SIZE alongside the other command arguments it travels with
+@ (filename length prefix + fileName + BlockState + the SeqArgs size field).
+constant SequenceArgumentsMaxSize = 12

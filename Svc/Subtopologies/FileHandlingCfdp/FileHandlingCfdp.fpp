@@ -21,7 +21,13 @@ module FileHandlingCfdp {
         queue size FileHandlingCfdpConfig.QueueSizes.fileManager \
         stack size FileHandlingCfdpConfig.StackSizes.fileManager \
         priority FileHandlingCfdpConfig.Priorities.fileManager \
-        cpu FileHandlingCfdpConfig.CpuAffinities.fileManager
+        cpu FileHandlingCfdpConfig.CpuAffinities.fileManager \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        // Sandbox for file-management command paths; "/" is unrestricted. Re-configure to restrict.
+        FileHandlingCfdp::fileManager.configure("/");
+        """
+    }
 
     instance prmDb: Svc.PrmDb base id FileHandlingCfdpConfig.BASE_ID + 0x02000 \
         queue size FileHandlingCfdpConfig.QueueSizes.prmDb \
@@ -31,6 +37,8 @@ module FileHandlingCfdp {
     {
         phase Fpp.ToCpp.Phases.configComponents """
             FileHandlingCfdp::prmDb.configure("PrmDb.dat");
+            // Sandbox for all PrmDb file access; "/" is unrestricted. Re-configure to restrict.
+            FileHandlingCfdp::prmDb.configureSandbox("/");
         """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandlingCfdp::prmDb.readParamFile();
