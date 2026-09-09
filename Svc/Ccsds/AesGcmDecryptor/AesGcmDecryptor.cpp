@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptor.hpp"
+#include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 #include "SdlsKeyConfig/FppConstantsAc.hpp"
@@ -94,6 +95,9 @@ void AesGcmDecryptor ::decryptIn_handler(FwIndexType portNum,
     int plainLen = 0;
 
     const bool rekeyed = EVP_DecryptInit_ex(this->m_ctx, nullptr, nullptr, key.getBuffAddr(), iv) == 1;
+    // The cipher context holds the key schedule now, so the stack copy is dead. 
+    // OPENSSL_cleanse wipes the stack copy to prevent it from being recovered by a memory dump or other attack. The key is not used again until the next frame, so it is safe to wipe it now.
+    OPENSSL_cleanse(key.getBuffAddr(), key.getCapacity());
     const bool aadAbsorbed =
         rekeyed && (EVP_DecryptUpdate(this->m_ctx, nullptr, &len, this->m_aad.bytes,
                                       static_cast<int>(sizeof(this->m_aad.bytes))) == 1);

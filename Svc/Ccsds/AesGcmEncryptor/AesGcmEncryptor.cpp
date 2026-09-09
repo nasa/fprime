@@ -7,6 +7,7 @@
 #include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptor.hpp"
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 
+#include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 
@@ -124,6 +125,9 @@ void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
         (EVP_EncryptUpdate(this->m_ctx, nullptr, &len, this->m_aad.bytes,
                            static_cast<int>(sizeof(this->m_aad.bytes))) == 1) &&
         (EVP_EncryptUpdate(this->m_ctx, ciphertext, &len, data.getData(), static_cast<int>(data.getSize())) == 1);
+    // The cipher context holds the key schedule now, so the stack copy is dead.
+    // OPENSSL_cleanse wipes the stack copy to prevent it from being recovered by a memory dump or other attack.
+    OPENSSL_cleanse(key.getBuffAddr(), key.getCapacity());
     if (encryptSucceeded) {
         cipherLen = len;
         encryptSucceeded = (EVP_EncryptFinal_ex(this->m_ctx, ciphertext + cipherLen, &len) == 1);
