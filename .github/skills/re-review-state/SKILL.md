@@ -56,6 +56,25 @@ prior comment, retrieve:
 - The `thread.comments[]` list (drives disagreement detection: the
   agent looks for any comment authored by a user other than itself).
 
+### 1b-bis. Locate the agent's prior metadata review
+
+```http
+GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews?per_page=100
+```
+
+Paginate; keep the review whose body starts with
+`<!-- fprime-agent: <self> v1 -->` (there is exactly one per agent for
+the life of the PR; if several exist from before in-place updates,
+take the newest). Record its `id` (Phase D updates it in place), its
+`run` line, and `last_reviewed_head`:
+
+- the `reviewed_head` line of the body, if present;
+- otherwise the review's `commit_id` (metadata written before that
+  field existed).
+
+If no such review exists, this is run 1 for the agent: Phase B uses
+the full PR diff and Phase D posts a fresh metadata review.
+
 ### 1c. Index by finding-key and site-key
 
 Build a dictionary keyed by `finding-key` (own comments only) whose
@@ -126,6 +145,46 @@ Where:
 The same finding (same symbol, same line content, same class) will
 produce the same `finding-key` across reformatting and line drift,
 which is the whole point.
+
+### 2a. Re-review scope for new below-must-fix findings
+
+Rule text: review contract §7 Phase B. Mechanics:
+
+1. Compute the incremental diff since the last pass. Preferred: in
+   the local clone of the review-target repo, after fetching the PR
+   head (`git fetch origin pull/{n}/head`),
+
+   ```bash
+   git diff --unified=0 <last_reviewed_head>...<head_sha>
+   ```
+
+   If `last_reviewed_head` is not in the local object store (the
+   author force-pushed and the old head was discarded), or no clone
+   is available, use
+   `GET /repos/{owner}/{repo}/compare/{last_reviewed_head}...{head_sha}`
+   instead — noting that its `files[]` list is capped at 300 entries
+   and is not paginated. Build `delta_hunks`: for each file, the set
+   of added / modified line ranges on the head side.
+2. Widen `delta_hunks` with **newly reached** code: symbols whose
+   callers were added or changed inside `delta_hunks`, per the
+   introduced/preexisting rules of `pr-diff-scoping` applied to this
+   incremental diff.
+3. For each `f` in `current_findings` with **no prior finding-key**
+   and `f.tag != must fix`: keep `f` only if `f.path/f.line` falls in
+   `delta_hunks` or its enclosing symbol is newly reached. Drop it
+   otherwise — it is outside this run's scope and is not counted in
+   any column. Must-fix candidates, incorrect-fix follow-ups (§3c),
+   and every finding with a prior key are never dropped.
+4. Fall back to **no scoping** (full PR diff, all tiers) when: there
+   is no prior metadata review; `last_reviewed_head == head_sha`;
+   neither `git diff` nor the compare call can resolve
+   `last_reviewed_head` (404 / unknown revision); or the compare
+   response has exactly 300 files (possible truncation). Always widen
+   on doubt; never narrow.
+
+Apply this filter *before* the site-key concurrence check in §3c so
+that out-of-scope observations do not generate concurrence replies
+either.
 
 ---
 
@@ -241,13 +300,31 @@ For each `k` in `new`:
 
 ## 4. Phase D — Update the per-agent metadata review
 
-Dismiss the prior metadata review (located by the HTML marker) via
-`PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}/dismissals` with message
-`Superseded by re-review run N.` Then submit a new review with the
-updated metadata body.
+Rewrite the body of the prior metadata review located in §1b-bis
+**in place**:
+
+```http
+PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}
+{ "body": "<updated metadata block>" }
+```
+
+This edits only the review's summary body; inline comments attached
+to that review (run 1's findings) are untouched, and no new
+notification or timeline entry is produced. Never dismiss the
+metadata review (GitHub rejects dismissal of `COMMENTED` reviews
+with a 422) and never post a second one. Only if the `PUT` fails
+with `404`/`403` (e.g. the prior review was authored under a
+different token identity) fall back to submitting a fresh
+metadata-only review; later runs take the newest marker match.
+
+Any **new** inline comments from Phase C go in one separate review
+with `body: ""` (`post-inline-review` §4); if there are none, post
+no review at all — the body update above is the entire footprint of
+a quiet run.
 
 Update:
 
+- The `reviewed_head` line: set to the head SHA analyzed this run.
 - The four tag columns: increment for any newly-posted comments
   (incorrect-fix follow-ups and brand-new findings). Never decrement.
 - The `outstanding` column: recompute as
@@ -351,8 +428,11 @@ maintainer ping makes the un-acknowledged finding visible. Increment
 ## 7. One-line summary
 
 `A: index prior comments by finding-key plus thread state.
-B: re-run analysis, compute current finding-keys.
+B: re-run analysis, compute current finding-keys; scope new
+below-must-fix findings to the diff since last_reviewed_head.
 C: decide per row of the contract §7 table — do-nothing,
 resolve, reply-improper-resolution, reply-disagreement, post-new,
 post-incorrect-fix-follow-up.
-D: dismiss prior metadata review, submit new one.`
+D: PUT the updated metadata body onto the existing review
+(reviewed_head, counts, run, since_last_run, verdict); post new
+inline comments, if any, in one empty-body review.`
