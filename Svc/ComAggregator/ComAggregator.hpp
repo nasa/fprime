@@ -39,6 +39,11 @@ class ComAggregator final : public ComAggregatorComponentBase {
     void configure(bool spanningEnabled  //!< Enable CCSDS TM packet spanning across aggregates
     );
 
+    //! Aggregation capacity with packet spanning: the non-spanning size plus the idle-packet room reclaimed because
+    //! the aggregator fills residual space itself
+    static constexpr FwSizeType SPANNING_CAPACITY =
+        static_cast<FwSizeType>(ComCfg::AggregationSize) + Ccsds::Utils::IdlePacket::MIN_SIZE;
+
     void preamble() override;
 
   private:
@@ -116,6 +121,13 @@ class ComAggregator final : public ComAggregatorComponentBase {
                                                    const Svc::ComDataContextPair& value    //!< The value
                                                    ) override;
 
+    //! Implementation for action doNoteFailure of state machine Svc_AggregationMachine
+    //!
+    //! Record that the last frame was not acknowledged
+    void Svc_AggregationMachine_action_doNoteFailure(SmId smId,                             //!< The state machine id
+                                                     Svc_AggregationMachine::Signal signal  //!< The signal
+                                                     ) override;
+
     //! Implementation for action assertNoStatus of state machine Svc_AggregationMachine
     //!
     //! Assert no status when in fill state
@@ -184,19 +196,18 @@ class ComAggregator final : public ComAggregatorComponentBase {
     //! aggregate when the residual space is smaller than a minimum idle packet
     void fillResidualWithIdle();
 
+    //! Return a consumed buffer and signal readiness for another buffer
+    void returnAndSignalReady(const Svc::ComDataContextPair& pair);
+
   private:
     static constexpr U16 FHP_UNSET = 0xFFFF;  //!< Sentinel: no packet header recorded in the current aggregate
 
-    static_assert(static_cast<FwSizeType>(ComCfg::AggregationSpanningSize) >=
-                      static_cast<FwSizeType>(ComCfg::AggregationSize),
-                  "Aggregation store must hold the largest configured aggregation size");
     // Every packet header offset in an aggregate must be representable as an 11-bit First Header Pointer
     // and distinct from the reserved values (CCSDS 132.0-B-3 4.1.2.7.6)
-    static_assert(static_cast<FwSizeType>(ComCfg::AggregationSpanningSize) <=
-                      static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY),
+    static_assert(SPANNING_CAPACITY <= static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY),
                   "Aggregation spanning size must not exceed the TM First Header Pointer range");
 
-    U8 m_frameBufferStore[ComCfg::AggregationSpanningSize];  //!< Buffer to hold the frame data
+    U8 m_frameBufferStore[SPANNING_CAPACITY];  //!< Buffer to hold the frame data
     std::atomic<Fw::Buffer::OwnershipState> m_bufferState{
         Fw::Buffer::OwnershipState::OWNED};  //!< whether m_frameBuffer is owned by TmFramer; shared with the sync
                                              //!< dataReturnIn caller
@@ -211,8 +222,10 @@ class ComAggregator final : public ComAggregatorComponentBase {
     FwSizeType m_capacity;    //!< Active aggregation capacity in bytes
     FwSizeType m_heldOffset;  //!< Bytes of the held buffer already consumed into previous aggregates
     U16 m_fhp;                //!< First Header Pointer for the current aggregate (FHP_UNSET if none)
-    U8 m_pendingIdle[Ccsds::Utils::IdlePacket::MIN_SIZE];  //!< Idle packet bytes spanning into the next aggregate
-    FwSizeType m_pendingIdleCount;                         //!< Number of valid bytes in m_pendingIdle
+    U8 m_pendingIdle[Ccsds::Utils::IdlePacket::MIN_SIZE] = {};  //!< Idle packet bytes spanning into the next aggregate
+    FwSizeType m_pendingIdleCount;                              //!< Number of valid bytes in m_pendingIdle
+    FwSizeType m_leadingIdleCount = 0;  //!< Number of carried idle bytes at the start of the current aggregate
+    bool m_lastFrameLost = false;       //!< Whether the last frame was not acknowledged
 };
 
 }  // namespace Svc

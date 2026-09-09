@@ -41,11 +41,6 @@ class TmFramer final : public TmFramerComponentBase {
     // minimum idle packet, otherwise dataIn_handler asserts at runtime
     static_assert(static_cast<FwSizeType>(ComCfg::AggregationSize) + Utils::IdlePacket::MIN_SIZE <= TmPayloadCapacity,
                   "ComCfg::AggregationSize must leave room for a minimum idle packet in the TM data field");
-    static_assert(static_cast<FwSizeType>(ComCfg::AggregationSpanningSize) == TmPayloadCapacity ||
-                      static_cast<FwSizeType>(ComCfg::AggregationSpanningSize) + Utils::IdlePacket::MIN_SIZE <=
-                          TmPayloadCapacity,
-                  "ComCfg::AggregationSpanningSize must fill the TM data field exactly or leave room for a minimum "
-                  "idle packet");
 
     enum class BufferOwnershipState {
         NOT_OWNED,  //!< The buffer is currently not owned by the TmFramer

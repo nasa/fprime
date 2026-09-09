@@ -44,6 +44,8 @@ module Svc {
         @ Hold a buffer, first splitting its leading bytes into the remaining frame space when spanning
         action doSplitHold: Svc.ComDataContextPair
 
+        @ Record that the last frame was not acknowledged
+        action doNoteFailure
 
         @ Assert no status when in fill state
         action assertNoStatus
@@ -65,7 +67,7 @@ module Svc {
         @ The IS_GOOD_STATUS choice
         choice IS_GOOD_STATUS {
             if isGood do { doClear } enter SPAN_CHECK \
-                else enter WAIT_STATUS
+                else do { doNoteFailure } enter WAIT_STATUS
         }
 
         @ The SPAN_CHECK choice: after a clear, held continuation data may have completely refilled the

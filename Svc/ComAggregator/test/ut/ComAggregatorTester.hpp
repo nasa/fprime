@@ -94,6 +94,12 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Tests that, without spanning, a held packet larger than an aggregate asserts
     void test_oversize_hold_asserts();
 
+    //! Tests that, without spanning, an oversized input asserts in the input handler
+    void test_oversize_fill_asserts();
+
+    //! Tests that a lost frame drops the remainder of a split packet
+    void test_spanning_failure_drops_split_remainder();
+
     //! Helper to fill a buffer with random data
     Fw::Buffer fill_buffer(U32 size);
 
@@ -186,8 +192,14 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     std::deque<U8*> m_unreturned;
     //! Spanning shadow: an aggregate has been emitted and awaits return and status
     bool m_outstanding = false;
+    //! Spanning shadow: the outstanding aggregate was reported lost
+    bool m_failurePending = false;
     //! Spanning shadow: a packet is retained by the component pending full consumption
     bool m_heldPending = false;
+    //! Spanning shadow: the retained packet has bytes in an emitted aggregate
+    bool m_heldConsumed = false;
+    //! Spanning shadow: number of carried idle bytes at the aggregate start
+    FwSizeType m_leadingIdleCount = 0;
     //! Spanning shadow: the last emitted aggregate, for return
     Fw::Buffer m_outFrame;
     //! Spanning shadow: the context of the last emitted aggregate

@@ -14,7 +14,7 @@
 namespace Svc {
 
 namespace {
-constexpr FwSizeType CAPACITY = ComCfg::AggregationSpanningSize;
+constexpr FwSizeType CAPACITY = ComAggregator::SPANNING_CAPACITY;
 // Packets up to two aggregates plus change exercise start, middle, and end spans
 constexpr U32 MAX_PACKET_SIZE = static_cast<U32>(2 * CAPACITY + 64);
 }  // namespace
@@ -65,6 +65,7 @@ void ComAggregatorTester::shadow_emit() {
 
     // Consume the emitted bytes from the shadow stream
     this->m_stream.erase(this->m_stream.begin(), this->m_stream.begin() + static_cast<long>(CAPACITY));
+    this->m_leadingIdleCount = this->m_leadingIdleCount > CAPACITY ? this->m_leadingIdleCount - CAPACITY : 0;
     std::vector<FwSizeType> remainingHeaders;
     for (FwSizeType offset : this->m_headers) {
         if (offset >= CAPACITY) {
@@ -101,17 +102,21 @@ void ComAggregatorTester::Spanning__SendPacket__action() {
         // Whole packet fits: aggregated and returned, nothing emitted
         ASSERT_from_dataOut_SIZE(0);
         ASSERT_from_dataReturnOut_SIZE(1);
+        ASSERT_from_comStatusOut_SIZE(1);
         this->shadow_expect_return(0);
         ASSERT_EQ(this->component.m_frameSerializer.getSize(), this->m_stream.size());
     } else if (this->m_stream.size() == CAPACITY) {
         // Whole packet exactly fills: aggregated, returned, and emitted
         ASSERT_from_dataReturnOut_SIZE(1);
+        ASSERT_from_comStatusOut_SIZE(1);
         this->shadow_expect_return(0);
         this->shadow_emit();
     } else {
         // Packet overflows: leading bytes emitted, the packet is retained for continuation
         ASSERT_from_dataReturnOut_SIZE(0);
+        ASSERT_from_comStatusOut_SIZE(0);
         this->m_heldPending = true;
+        this->m_heldConsumed = true;
         this->shadow_emit();
     }
 }
@@ -130,7 +135,9 @@ void ComAggregatorTester::Spanning__SendPacketWhileWaiting__action() {
     this->shadow_send_packet();
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(0);
+    ASSERT_from_comStatusOut_SIZE(0);
     this->m_heldPending = true;
+    this->m_heldConsumed = false;
 }
 
 // ----------------------------------------------------------------------
@@ -145,9 +152,11 @@ void ComAggregatorTester::Spanning__Timeout__action() {
     this->clearHistory();
     this->invoke_to_timeout(0, 0);
     ASSERT_EQ(this->dispatchOne(this->component), Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);
-    if (this->m_stream.empty()) {
+    if (this->m_stream.empty() || (!this->m_heldPending && this->m_stream.size() == this->m_leadingIdleCount)) {
         // Nothing aggregated: no empty aggregate is emitted
         ASSERT_from_dataOut_SIZE(0);
+        ASSERT_from_dataReturnOut_SIZE(0);
+        ASSERT_from_comStatusOut_SIZE(0);
         return;
     }
     // Residual space is filled by an idle packet, spanning into the next aggregate when too small
@@ -155,8 +164,11 @@ void ComAggregatorTester::Spanning__Timeout__action() {
     const FwSizeType idleSize = FW_MAX(residual, Ccsds::Utils::IdlePacket::MIN_SIZE);
     this->m_headers.push_back(this->m_stream.size());
     append_idle_packet(this->m_stream, idleSize);
+    const bool idleSpans = idleSize > residual;
     ASSERT_from_dataReturnOut_SIZE(0);
+    ASSERT_from_comStatusOut_SIZE(0);
     this->shadow_emit();
+    this->m_leadingIdleCount = idleSpans ? this->m_stream.size() : 0;
 }
 
 // ----------------------------------------------------------------------
@@ -174,6 +186,8 @@ void ComAggregatorTester::Spanning__StatusFailure__action() {
     ASSERT_EQ(this->dispatchOne(this->component), Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(0);
+    ASSERT_from_comStatusOut_SIZE(0);
+    this->m_failurePending = true;
 }
 
 // ----------------------------------------------------------------------
@@ -192,16 +206,70 @@ void ComAggregatorTester::Spanning__ReturnAndStatus__action() {
     ASSERT_EQ(this->dispatchOne(this->component), Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);
     this->m_outstanding = false;
 
+    if (this->m_failurePending) {
+        if (this->m_heldPending && this->m_heldConsumed) {
+            ASSERT_from_dataReturnOut_SIZE(1);
+            ASSERT_from_comStatusOut_SIZE(1);
+            this->shadow_expect_return(0);
+            this->m_heldPending = false;
+            this->m_heldConsumed = false;
+            ASSERT_from_dataOut_SIZE(0);
+            this->m_stream.clear();
+            this->m_headers.clear();
+            this->m_leadingIdleCount = 0;
+        } else if (this->m_heldPending) {
+            if (this->m_leadingIdleCount > 0) {
+                this->m_stream.erase(this->m_stream.begin(),
+                                     this->m_stream.begin() + static_cast<long>(this->m_leadingIdleCount));
+                for (FwSizeType& offset : this->m_headers) {
+                    offset -= this->m_leadingIdleCount;
+                }
+                this->m_leadingIdleCount = 0;
+            }
+            if (this->m_stream.size() <= CAPACITY) {
+                ASSERT_from_dataReturnOut_SIZE(1);
+                ASSERT_from_comStatusOut_SIZE(1);
+                this->shadow_expect_return(0);
+                this->m_heldPending = false;
+                this->m_heldConsumed = false;
+                if (this->m_stream.size() == CAPACITY) {
+                    this->shadow_emit();
+                } else {
+                    ASSERT_from_dataOut_SIZE(0);
+                }
+            } else {
+                ASSERT_from_dataReturnOut_SIZE(0);
+                ASSERT_from_comStatusOut_SIZE(0);
+                this->m_heldConsumed = true;
+                this->shadow_emit();
+                this->m_outstanding = true;
+            }
+        } else {
+            ASSERT_from_dataReturnOut_SIZE(0);
+            ASSERT_from_comStatusOut_SIZE(0);
+            ASSERT_from_dataOut_SIZE(0);
+            this->m_stream.clear();
+            this->m_headers.clear();
+            this->m_leadingIdleCount = 0;
+        }
+        this->m_failurePending = false;
+        return;
+    }
+
     // The held packet is always last in the stream: it is returned once it fits in the refilled aggregate
     if (this->m_heldPending && (this->m_stream.size() <= CAPACITY)) {
         ASSERT_from_dataReturnOut_SIZE(1);
+        ASSERT_from_comStatusOut_SIZE(1);
         this->shadow_expect_return(0);
         this->m_heldPending = false;
+        this->m_heldConsumed = false;
     } else {
         ASSERT_from_dataReturnOut_SIZE(0);
+        ASSERT_from_comStatusOut_SIZE(0);
     }
     if (this->m_stream.size() >= CAPACITY) {
         // Continuation data refilled a complete aggregate: emitted immediately
+        this->m_heldConsumed = true;
         this->shadow_emit();
     } else {
         ASSERT_from_dataOut_SIZE(0);

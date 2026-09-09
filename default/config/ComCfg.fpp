@@ -16,11 +16,8 @@ module ComCfg {
     @ Upper Bound on Fixed size of CCSDS AOS frames
     constant AosMaxFrameFixedSize = 1536
 
-    @ Aggregation buffer for ComAggregator component
-    constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
-
-    @ Aggregation buffer for ComAggregator component when packet spanning is enabled (full TM data field)
-    constant AggregationSpanningSize = TmFrameFixedSize - 6 - 2  # TM header (6) + trailer (2) bytes
+    @ Maximum aggregate size handed downstream by Svc.ComAggregator without packet spanning: the TM data field minus room for a minimum idle packet (SPP header + 1 byte). With spanning enabled the aggregator reclaims that room internally. Projects inserting a layer between the aggregator and Svc.Ccsds.TmFramer that adds bytes (e.g. the 2-byte SA index of Svc.Ccsds.CcsdsSdlsFramer) must subtract that overhead here.
+    constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2
 
     @ Packet Version Numbers are 3 bits with only 2 currently valid values
     dictionary enum Pvn : U8 {

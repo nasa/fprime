@@ -110,6 +110,16 @@ TEST(Assertions, OversizeHoldWithoutSpanning) {
     tester.test_oversize_hold_asserts();
 }
 
+TEST(Assertions, OversizeFillWithoutSpanning) {
+    Svc::ComAggregatorTester tester;
+    tester.test_oversize_fill_asserts();
+}
+
+TEST(Spanning, FailureDropsSplitRemainder) {
+    Svc::ComAggregatorTester tester;
+    tester.test_spanning_failure_drops_split_remainder();
+}
+
 // Randomized spanning: apply rules in a random sequence against the shadow byte-stream model
 TEST(Spanning, RandomizedTesting) {
     const U32 numRulesToApply = 10000;

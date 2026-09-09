@@ -46,10 +46,9 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
 
     // Data Field Status (Standard 4.1.2.7):
-    // - all flags to 0 except segment length id 0b11 per standard (4.1.2.7)
+    // - all flags to 0 except Segment Length Id 0b11 (Standard 4.1.2.7.5)
     // - First Header Pointer from context (Standard 4.1.2.7.6): set by an upstream aggregator when packets
     //   span frames; the default of 0 indicates a packet header at offset 0 of the data field
-    // Seg Length Id '11' (0x3) per Standard (4.1.2.7.5)
     const U16 dataFieldStatus =
         static_cast<U16>((0x3 << TMSubfields::segLengthOffset) | context.get_firstHeaderPointer());
 
