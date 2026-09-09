@@ -22,7 +22,9 @@ Every agent flags every in-scope finding it detects, regardless of
 who authored the PR.
 
 - **The agent's job is to flag.** The maintainer's job is to
-  adjudicate, dismiss, or merge with justification.
+  adjudicate, dismiss, or merge with justification. A core
+  maintainer resolving an agent's thread *is* that adjudication; the
+  agent accepts it and does not reopen or repost (§7 phase C).
 - A finding that appears legitimate *because* of the contributor's
   reputation is still flagged. Reputation is not evidence that the
   change is safe; only analysis is.
@@ -331,8 +333,11 @@ the agent also fetches via GraphQL:
 - **Reply chain** on the thread (any comments authored by users other
   than the agent itself).
 
-Resolution status drives the improperly-resolved case below; the
-reply chain drives disagreement handling (see §11).
+Resolution status drives the maintainer-adjudicated and
+improperly-resolved cases below — `resolvedBy.login` is checked
+against the core-maintainer set from
+`.github/skills/maintainer-lookup/SKILL.md` §1b; the reply chain
+drives disagreement handling (see §11).
 
 ### Phase B — Run scope checker on the new head
 
@@ -344,7 +349,8 @@ current set of finding-keys.
 | Prior key | Current key | Thread state | Meaning | Action |
 |---|---|---|---|---|
 | present | present | not resolved, no contributor replies | Same finding still applies | **Do nothing.** Leave comment as-is. **Never repost.** |
-| present | present | **resolved by contributor** | **Improperly resolved.** Finding still applies on the new head. | **Un-resolve + reply.** GraphQL `unresolveReviewThread`; reply with the improper-resolution body shape (§9). Append maintainer ping per §4. Increment `improperly resolved` in Since-last-run. |
+| present | present | **resolved by a core maintainer** | **Maintainer adjudicated.** The maintainer has decided the finding does not need to be fixed. | **Do nothing.** Leave the thread resolved; no reply, no un-resolve, no repost — on this and every later run. Count the finding as resolved (`outstanding` decrements; `resolved` in Since-last-run increments the first run this is observed). |
+| present | present | **resolved by anyone else** | **Improperly resolved.** Finding still applies on the new head. | **Un-resolve + reply.** GraphQL `unresolveReviewThread`; reply with the improper-resolution body shape (§9). Append maintainer ping per §4. Increment `improperly resolved` in Since-last-run. |
 | present | present | not resolved, but contributor has replied | Possible disagreement | **Reply + escalate** per §11. Increment `disagreements escalated` in Since-last-run. |
 | present | absent | not resolved | Cleanly fixed | **Resolve:** reply `[<review_label>] Fixed in <sha>.` + GraphQL `resolveReviewThread`. |
 | present | absent | already resolved | Cleanly fixed and acknowledged | **Reply only:** `[<review_label>] Fixed in <sha>.` (no need to re-resolve). |
@@ -359,7 +365,8 @@ metadata. Update cumulative tag counts, `outstanding`, `run`,
 `since_last_run`, verdict. The
 Since-last-run metadata carries six counters:
 
-- `X resolved` — prior findings the agent cleanly resolved this run.
+- `X resolved` — prior findings the agent cleanly resolved this run,
+  plus threads first observed as maintainer-adjudicated this run.
 - `Y still open` — prior findings that still apply (unchanged threads).
 - `Z newly added` — brand-new findings posted this run.
 - `W incorrect-fix follow-ups` — same-spot-different-finding-class new
@@ -373,7 +380,8 @@ Since-last-run metadata carries six counters:
 
 - Tag columns increment when new findings appear.
 - Tag columns NEVER decrement on resolution. (Priority 1 guarantee.)
-- `outstanding` = (cumulative findings) − (resolved findings).
+- `outstanding` = (cumulative findings) − (resolved findings), where
+  maintainer-adjudicated threads count as resolved.
 
 ### Resolution mechanism
 
@@ -394,9 +402,11 @@ degradation; the agent still decrements `outstanding` and increments
   comment from the same agent on this PR.
 - **Never resolve** a comment whose `finding-key` is still present on
   the new head, even if the author replied "fixed".
-- **Never silently accept** a contributor's resolution of a thread
+- **Never silently accept** a non-maintainer's resolution of a thread
   whose `finding-key` is still present. Un-resolve it and reply per
   the improperly-resolved row of phase C.
+- **Never reopen, reply to, or repost** a thread a core maintainer
+  resolved; that is the adjudication §0 defers to.
 - **Never argue.** On disagreement, the agent posts one polite
   escalation reply + maintainer ping, then stops. Further back-and-
   forth is for the maintainer (§11).

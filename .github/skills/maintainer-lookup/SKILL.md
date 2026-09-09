@@ -1,6 +1,6 @@
 ---
 name: maintainer-lookup
-description: Use when an agent needs to ping the right maintainer for a finding (low-confidence finding, improper resolution, disagreement escalation, or recommend-close).
+description: Use when an agent needs to ping the right maintainer for a finding (low-confidence finding, improper resolution, disagreement escalation, or recommend-close), or to decide whether a GitHub login is a core maintainer (e.g. who resolved a review thread).
 ---
 
 # Skill: Maintainer lookup (whom to ping)
@@ -80,6 +80,17 @@ fallback set:
 This guarantees that every low-confidence / improperly-resolved /
 disagreement ping has at least one recipient.
 
+## 1b. Core-maintainer set (identity check)
+
+When a caller needs to know whether a login *is* a maintainer — the
+re-review decision "was this thread resolved by a core maintainer?"
+(review contract §7 phase C) — use only the deterministic steps:
+the Step 1 README `Core Maintainer(s)` handles (Step 4 fallback if
+Step 1 yields nothing), plus the Step 2 Security Overseer for the
+security agent. Step 3 (`git log` approvers) is best-effort and is
+**not** part of this set. Compare logins case-insensitively without
+the leading `@`.
+
 ---
 
 ## 2. Per-trigger conventions
@@ -142,4 +153,5 @@ preserved.
 
 `README "Core Maintainer(s)" first → +Security Overseer for security
 agent → recent merge approvers from git log →
-fallback @LeStarch, @thomas-bc. De-duplicate, preserve order.`
+fallback @LeStarch, @thomas-bc. De-duplicate, preserve order.
+Identity check (§1b): README + Security Overseer only.`
