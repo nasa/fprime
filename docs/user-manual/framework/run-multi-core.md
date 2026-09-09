@@ -94,6 +94,26 @@ The subtopologies shipped with F´ expose this per instance through a `CpuAffini
 file (for example `CdhCoreConfig.CpuAffinities.cmdDisp`), which deployments override like any other
 subtopology configuration. See [Developing Subtopologies](../../how-to/develop/develop-subtopologies.md).
 
+### Non-Realtime Tasks on POSIX
+
+On POSIX platforms a numeric `priority` places the task under the realtime `SCHED_RR` policy, which requires
+scheduling privileges and is inappropriate for tasks that do blocking, non-deterministic work such as file I/O.
+Tasks on such platforms may instead be placed under the non-realtime `SCHED_OTHER` policy by using the
+`Os.Posix.TASK_PRIORITY_NON_REALTIME` sentinel (C++: `Os::Posix::Task::PosixTask::TASK_PRIORITY_NON_REALTIME`)
+as the priority. This requires no privileges and is applied whether or not realtime priorities are available.
+
+```
+instance fileManager: Svc.FileManager base id 0x2000 \
+    queue size 30 \
+    stack size 64 * 1024 \
+    priority Os.Posix.TASK_PRIORITY_NON_REALTIME
+```
+
+The sentinel is defined in `Os/Posix/Models/Task.fpp`, is only built for POSIX platforms, and is not used by
+the subtopologies shipped with F´. Deployments that want it must set it in their own instance definitions or
+subtopology configuration overrides. `TASK_PRIORITY_DEFAULT` remains the platform default (inherited
+scheduling), and numeric priorities remain `SCHED_RR`. See the [OSAL SDD](../../../Os/docs/sdd.md).
+
 ### Important Considerations
 
 **Synchronization objects** like mutexes are delegated to the OS and are SMP-safe based on the operating system

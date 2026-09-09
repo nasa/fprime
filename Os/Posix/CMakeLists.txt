@@ -7,6 +7,7 @@
 ####
 restrict_platforms(Posix)
 add_custom_target("${FPRIME_CURRENT_MODULE}")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Models")
 
 # -----------------------------------------
 ## Shared Section
@@ -33,7 +34,7 @@ register_fprime_module(
 register_os_implementation("File;FileSystem;Directory" Posix Os_Posix_Shared)
 register_os_implementation("Console" Posix)
 
-register_os_implementation("Task" Posix Os_Posix_Shared Fw_Time)
+register_os_implementation("Task" Posix Os_Posix_Shared Os_Posix_Models Fw_Time)
 register_os_implementation("Mutex;ConditionVariable" Posix Os_Posix_Shared)
 # POSIX unnamed semaphores (sem_init) are non-functional on macOS (return
 # ENOSYS) and sem_timedwait does not exist. The Darwin implementation
