@@ -252,9 +252,6 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
             if (condition.e == Fw::Success::SUCCESS) {
                 this->m_state = READY;
                 this->processQueue_internalInterfaceInvoke();
-                // A message may or may not be sent. Thus, READY or WAITING are acceptable final states.
-                FW_ASSERT((this->m_state == WAITING || this->m_state == READY),
-                          static_cast<FwAssertArgType>(this->m_state));
             } else {
                 this->m_state = WAITING;
             }
