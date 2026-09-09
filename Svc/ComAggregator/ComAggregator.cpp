@@ -13,7 +13,6 @@ namespace Svc {
 
 // Definition for ODR-use of static constexpr member (required until C++17)
 constexpr U16 ComAggregator::FHP_UNSET;
-constexpr FwSizeType ComAggregator::SPANNING_CAPACITY;
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
@@ -26,7 +25,7 @@ ComAggregator ::ComAggregator(const char* const compName)
       m_frameSerializer(m_frameBuffer.getSerializer()),
       m_allow_timeout(false),
       m_spanning(false),
-      m_capacity(ComCfg::AggregationSize),
+      m_capacity(static_cast<FwSizeType>(ComCfg::AggregationSize) - Ccsds::Utils::IdlePacket::MIN_SIZE),
       m_heldOffset(0),
       m_fhp(FHP_UNSET),
       m_pendingIdleCount(0),
@@ -39,7 +38,9 @@ void ComAggregator ::configure(bool spanningEnabled) {
     // Configuration must happen before any data is aggregated
     FW_ASSERT(this->m_frameSerializer.getSize() == 0, static_cast<FwAssertArgType>(this->m_frameSerializer.getSize()));
     this->m_spanning = spanningEnabled;
-    this->m_capacity = spanningEnabled ? SPANNING_CAPACITY : static_cast<FwSizeType>(ComCfg::AggregationSize);
+    this->m_capacity = spanningEnabled
+                           ? static_cast<FwSizeType>(ComCfg::AggregationSize)
+                           : static_cast<FwSizeType>(ComCfg::AggregationSize) - Ccsds::Utils::IdlePacket::MIN_SIZE;
 }
 
 void ComAggregator ::preamble() {
@@ -93,15 +94,7 @@ void ComAggregator ::Svc_AggregationMachine_action_doClear(SmId smId, Svc_Aggreg
     this->m_frameBuffer.setSize(sizeof(this->m_frameBufferStore));
     this->m_lastContext = ComCfg::FrameContext();
     this->m_fhp = FHP_UNSET;
-    if (this->m_lastFrameLost) {
-        this->m_pendingIdleCount = 0;
-        if (this->m_held.get_data().isValid() && this->m_heldOffset > 0) {
-            this->returnAndSignalReady(this->m_held);
-            this->m_held = Svc::ComDataContextPair();
-            this->m_heldOffset = 0;
-        }
-        this->m_lastFrameLost = false;
-    }
+    this->dropLostFrameState();
     this->m_leadingIdleCount = this->m_pendingIdleCount;
     // Write out any idle packet bytes spanning over from the previous aggregate
     if (this->m_pendingIdleCount > 0) {
@@ -197,6 +190,7 @@ bool ComAggregator ::Svc_AggregationMachine_guard_willFill(SmId smId,
 }
 
 bool ComAggregator ::Svc_AggregationMachine_guard_isNotEmpty(SmId smId, Svc_AggregationMachine::Signal signal) const {
+    // Carried-over idle bytes are not payload: an aggregate holding only those is empty for timeout purposes
     return this->m_frameSerializer.getSize() > this->m_leadingIdleCount;
 }
 
@@ -273,6 +267,18 @@ void ComAggregator ::fillResidualWithIdle() {
         FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
         this->m_pendingIdleCount = Ccsds::Utils::IdlePacket::MIN_SIZE - residual;
         (void)memcpy(this->m_pendingIdle, &staging[residual], this->m_pendingIdleCount);
+    }
+}
+
+void ComAggregator ::dropLostFrameState() {
+    if (this->m_lastFrameLost) {
+        this->m_pendingIdleCount = 0;
+        if (this->m_held.get_data().isValid() && this->m_heldOffset > 0) {
+            this->returnAndSignalReady(this->m_held);
+            this->m_held = Svc::ComDataContextPair();
+            this->m_heldOffset = 0;
+        }
+        this->m_lastFrameLost = false;
     }
 }
 

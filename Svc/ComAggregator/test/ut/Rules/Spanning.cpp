@@ -14,7 +14,7 @@
 namespace Svc {
 
 namespace {
-constexpr FwSizeType CAPACITY = ComAggregator::SPANNING_CAPACITY;
+constexpr FwSizeType CAPACITY = static_cast<FwSizeType>(ComCfg::AggregationSize);
 // Packets up to two aggregates plus change exercise start, middle, and end spans
 constexpr U32 MAX_PACKET_SIZE = static_cast<U32>(2 * CAPACITY + 64);
 }  // namespace

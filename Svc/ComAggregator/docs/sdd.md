@@ -36,8 +36,9 @@ Aggregates buffers in the downlink chain. This is for use with systems that have
 ### Packet Spanning
 
 Calling `configure(true)` before startup enables CCSDS TM packet spanning. In this mode the aggregation capacity
-expands to `ComCfg::AggregationSize + 7`, reclaiming the room the framer would otherwise reserve for a minimum idle
-packet; this is the full TM data field in the default configuration, and every emitted aggregate is exactly that size:
+is `ComCfg::AggregationSize`, the full TM data field by default, and every emitted aggregate is exactly that size.
+With spanning disabled, the maximum aggregate size is `ComCfg::AggregationSize - 7` so the TmFramer can add a
+minimum idle packet:
 
 - A packet that does not fit in the remaining space is split: its leading bytes complete the current aggregate and
   the remainder is retained. Retention of the underlying buffer (and its return) follows normal buffer ownership;
@@ -62,4 +63,6 @@ any data is aggregated and asserts otherwise.
 
 If a downstream frame is reported as failed, the unsent aggregate is dropped. With spanning enabled, the remainder
 of a packet whose head was in the dropped aggregate is dropped too; its buffer is returned and SUCCESS is emitted, so
-no orphan continuation data is downlinked.
+no orphan continuation data is downlinked. This relies on the dropping layer reporting FAILURE; a layer that drops
+the frame but reports SUCCESS, such as `Svc::Ccsds::CcsdsSdlsFramer` on encryption or allocation failure, lets the
+remainder go out as continuation bytes that the ground discards.

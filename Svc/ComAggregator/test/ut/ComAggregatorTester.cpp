@@ -11,6 +11,11 @@
 
 namespace Svc {
 
+namespace {
+constexpr FwSizeType NON_SPANNING_CAPACITY =
+    static_cast<FwSizeType>(ComCfg::AggregationSize) - Ccsds::Utils::IdlePacket::MIN_SIZE;
+}
+
 // ----------------------------------------------------------------------
 // Construction and destruction
 // ----------------------------------------------------------------------
@@ -84,7 +89,7 @@ Fw::Buffer ComAggregatorTester ::test_fill(bool expect_hold) {
     const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
     // Maximum size we can fill
     const FwSizeType MAX_FILL =
-        ComCfg::AggregationSize - ORIGINAL_LENGTH - ((ORIGINAL_LENGTH == ComCfg::AggregationSize) ? 0 : 1);
+        NON_SPANNING_CAPACITY - ORIGINAL_LENGTH - ((ORIGINAL_LENGTH == NON_SPANNING_CAPACITY) ? 0 : 1);
     if (MAX_FILL == 0) {
         // Nothing to fill
         return Fw::Buffer();
@@ -121,8 +126,8 @@ void ComAggregatorTester ::test_full() {
     // Precondition: fill has run
     // Chose a buffer that will be too large to fit but still will fit after being aggregated
     const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
-    const U32 BUFFER_LENGTH = STest::Pick::lowerUpper(static_cast<U32>(ComCfg::AggregationSize - ORIGINAL_LENGTH + 1),
-                                                      static_cast<U32>(ComCfg::AggregationSize));
+    const U32 BUFFER_LENGTH = STest::Pick::lowerUpper(static_cast<U32>(NON_SPANNING_CAPACITY - ORIGINAL_LENGTH + 1),
+                                                      static_cast<U32>(NON_SPANNING_CAPACITY));
     Fw::Buffer buffer = fill_buffer(BUFFER_LENGTH);
     ComCfg::FrameContext context;
 
@@ -161,7 +166,7 @@ void ComAggregatorTester ::test_exactly_full() {
     // Precondition: fill has run
     // Chose a buffer that will be too large to fit but still will fit after being aggregated
     const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
-    const U32 BUFFER_LENGTH = static_cast<U32>(ComCfg::AggregationSize - ORIGINAL_LENGTH);
+    const U32 BUFFER_LENGTH = static_cast<U32>(NON_SPANNING_CAPACITY - ORIGINAL_LENGTH);
     Fw::Buffer buffer = fill_buffer(BUFFER_LENGTH);
     ComCfg::FrameContext context;
 
@@ -345,7 +350,7 @@ void ComAggregatorTester ::expect_frame(U32 index, const std::vector<U8>& expect
     const Fw::Buffer& frame = this->fromPortHistory_dataOut->at(index).data;
     const ComCfg::FrameContext& context = this->fromPortHistory_dataOut->at(index).context;
     // Spanning aggregates are always emitted at full capacity
-    ASSERT_EQ(frame.getSize(), ComAggregator::SPANNING_CAPACITY);
+    ASSERT_EQ(frame.getSize(), static_cast<FwSizeType>(ComCfg::AggregationSize));
     ASSERT_EQ(expected.size(), frame.getSize());
     for (FwSizeType i = 0; i < expected.size(); i++) {
         ASSERT_EQ(frame.getData()[i], expected[i]) << "Mismatch at frame offset " << i;
@@ -364,7 +369,7 @@ void ComAggregatorTester ::return_and_status(U32 index) {
 }
 
 void ComAggregatorTester ::test_spanning_split_two() {
-    const FwSizeType CAP = ComAggregator::SPANNING_CAPACITY;
+    const FwSizeType CAP = static_cast<FwSizeType>(ComCfg::AggregationSize);
     const FwSizeType FIRST_SIZE = 100;
     const FwSizeType SPAN_SIZE = CAP + 184;  // Overflows the first aggregate by 284 bytes
     const FwSizeType FRAME1_PORTION = CAP - FIRST_SIZE;
@@ -410,7 +415,7 @@ void ComAggregatorTester ::test_spanning_split_two() {
 }
 
 void ComAggregatorTester ::test_spanning_three_frames() {
-    const FwSizeType CAP = ComAggregator::SPANNING_CAPACITY;
+    const FwSizeType CAP = static_cast<FwSizeType>(ComCfg::AggregationSize);
     const FwSizeType FIRST_SIZE = 200;
     const FwSizeType TAIL = 300;
     // Starts in frame 1, spans the complete frame 2, and ends in frame 3
@@ -459,7 +464,7 @@ void ComAggregatorTester ::test_spanning_three_frames() {
 }
 
 void ComAggregatorTester ::test_spanning_idle_span() {
-    const FwSizeType CAP = ComAggregator::SPANNING_CAPACITY;
+    const FwSizeType CAP = static_cast<FwSizeType>(ComCfg::AggregationSize);
     const FwSizeType RESIDUAL = 3;  // Below the minimum idle packet size: idle packet must span
     const FwSizeType PACKET_SIZE = CAP - RESIDUAL;
     this->component.configure(true);
@@ -535,7 +540,7 @@ void ComAggregatorTester ::test_oversize_hold_asserts() {
     ASSERT_from_dataOut_SIZE(1);
 
     // Hold a packet that can never fit in a single aggregate
-    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(ComCfg::AggregationSize) + 1);
+    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(NON_SPANNING_CAPACITY) + 1);
     ASSERT_DEATH_IF_SUPPORTED((this->invoke_to_dataIn(0, oversize, context), this->dispatchOne(this->component)),
                               "ComAggregator.cpp");
     delete[] oversize.getData();
@@ -545,7 +550,7 @@ void ComAggregatorTester ::test_oversize_hold_asserts() {
 void ComAggregatorTester ::test_oversize_fill_asserts() {
     this->test_initial();
     ComCfg::FrameContext context;
-    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(ComCfg::AggregationSize) + 1);
+    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(NON_SPANNING_CAPACITY) + 1);
     ASSERT_DEATH_IF_SUPPORTED((this->invoke_to_dataIn(0, oversize, context), this->dispatchOne(this->component)),
                               "ComAggregator.cpp");
     delete[] oversize.getData();
@@ -553,7 +558,7 @@ void ComAggregatorTester ::test_oversize_fill_asserts() {
 }
 
 void ComAggregatorTester ::test_spanning_failure_drops_split_remainder() {
-    const FwSizeType CAP = ComAggregator::SPANNING_CAPACITY;
+    const FwSizeType CAP = static_cast<FwSizeType>(ComCfg::AggregationSize);
     const FwSizeType FIRST_SIZE = 100;
     const FwSizeType SPAN_SIZE = CAP + 184;
     this->component.configure(true);
