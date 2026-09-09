@@ -260,7 +260,8 @@ The agent uses this to:
 1. Index its own prior comments by `finding-key` (parsed out of the
    HTML footer).
 2. Read `isResolved` and `resolvedBy.login` (drives the
-   improperly-resolved decision).
+   maintainer-adjudicated vs. improperly-resolved decision — a
+   core maintainer's resolution is final, `re-review-state` §3a-0).
 3. Read the reply chain (drives disagreement detection in review
    contract §11).
 
