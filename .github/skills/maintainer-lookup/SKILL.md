@@ -89,9 +89,10 @@ disagreement ping has at least one recipient.
 
 ## 1b. Core-maintainer set (identity check)
 
-When a caller needs to know whether a login *is* a maintainer — the
-re-review decision "was this thread resolved by a core maintainer?"
-(review contract §7 phase C) — use only the deterministic steps:
+When a caller needs the exact maintainer set — the re-review decision
+"was this thread resolved by a core maintainer?" (review contract §7
+phase C), or the aggregator's all-Go review request
+(`review-summary.agent.md` §5i) — use only the deterministic steps:
 the Step 1 README `Core Maintainer(s)` handles (Step 4 fallback if
 Step 1 yields nothing), plus the Step 2 Security Overseer for the
 security agent — all read from the trusted `nasa/fprime` `devel`

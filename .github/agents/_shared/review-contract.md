@@ -632,6 +632,11 @@ On re-runs the aggregator updates the body in place when the event
 is unchanged, and dismisses-and-resubmits only when the event flips
 or the prior review is already `DISMISSED` (§6).
 
+On an `APPROVE` event the aggregator additionally requests the core
+maintainers (`maintainer-lookup` §1b) as reviewers, once per PR,
+recorded in its `<!-- maintainers_requested: -->` line
+(`review-summary.agent.md` §5i). No other agent requests reviewers.
+
 ---
 
 ## 11. Disagreement handling
