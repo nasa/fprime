@@ -22,7 +22,9 @@ Every agent flags every in-scope finding it detects, regardless of
 who authored the PR.
 
 - **The agent's job is to flag.** The maintainer's job is to
-  adjudicate, dismiss, or merge with justification.
+  adjudicate, dismiss, or merge with justification. A core
+  maintainer resolving an agent's thread *is* that adjudication; the
+  agent accepts it and does not reopen or repost (§7 phase C).
 - A finding that appears legitimate *because* of the contributor's
   reputation is still flagged. Reputation is not evidence that the
   change is safe; only analysis is.
@@ -78,6 +80,7 @@ Review body shape (the ONLY content in the review body):
 
 ```
 <!-- fprime-agent: <agent-name> v1 -->
+<!-- reviewed_head: <full 40-char head SHA the agent analyzed> -->
 <!-- counts: {"must_fix": N, "suggestion": N, "could_fix": N, "future_work": N, "outstanding": N} -->
 <!-- verdict: Go | No-Go -->
 <!-- run: N -->
@@ -87,6 +90,15 @@ Review body shape (the ONLY content in the review body):
 This metadata is machine-readable by the aggregator but invisible to
 human reviewers browsing the PR. The visible output of each reviewer
 is its inline comments only.
+
+`reviewed_head` is the authoritative record of which head the
+metadata describes. It is needed because the metadata review is
+updated in place on re-runs (§6), and GitHub does not change a
+review's `commit_id` when its body is edited — so `commit_id` only
+records the head of run 1. Consumers (the aggregator, re-review Phase
+B, any external trigger deciding whether a PR needs a new pass) MUST
+read `reviewed_head` and fall back to `commit_id` only when the line
+is absent (metadata written before this field existed).
 
 ### Column semantics
 
@@ -219,17 +231,30 @@ This is a one-way orchestrator→agent prompt-level convention.
 ## 6. De-duplication
 
 Per-agent reviews are identified by their HTML comment marker
-(`<!-- fprime-agent: <name> v1 -->`); when re-running, the agent
-dismisses its prior review and submits a new one (since the
-review body carrying the metadata may change between runs).
+(`<!-- fprime-agent: <name> v1 -->`). There is exactly **one** such
+review per agent per PR for the life of the PR: when re-running, the
+agent **updates the body of its existing review in place** (REST
+`PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}`) rather than dismissing
+and resubmitting. Dismissal is not an option for these reviews —
+GitHub only allows dismissing `APPROVED` / `CHANGES_REQUESTED`
+reviews, and rejects it for `COMMENTED` ones with a 422 — and a body
+edit emits no new notification or timeline entry, so a quiet re-run
+produces no visible churn.
 
 Inline comments are identified by `(file_path, finding-key)` — see §7
-for finding-key.
+for finding-key. New inline comments on a re-run go in a separate
+review with an empty body (§10); if a re-run has no new inline
+comments, no such review is posted at all.
 
 The aggregator's review is identified by
-`<!-- fprime-review-summary v1 -->`; on re-runs, the aggregator
-dismisses its prior review and submits a new one (since the event
-APPROVE/REQUEST_CHANGES may change between runs).
+`<!-- fprime-review-summary v1 -->`. On re-runs the aggregator
+**updates it in place** when the review event is unchanged (the
+**quiet-run** path). It dismisses the prior review and submits a new
+one only when the event must flip between `APPROVE` and
+`REQUEST_CHANGES` (the event of a submitted review cannot be edited),
+or when the prior review is already `DISMISSED` (e.g. by branch
+protection's stale-review rule) so that no live review remains to
+update. Both paths leave exactly one live summary review on the PR.
 
 ### 6a. Cross-agent de-duplication (site-key + concurrence)
 
@@ -331,35 +356,72 @@ the agent also fetches via GraphQL:
 - **Reply chain** on the thread (any comments authored by users other
   than the agent itself).
 
-Resolution status drives the improperly-resolved case below; the
-reply chain drives disagreement handling (see §11).
+Resolution status drives the maintainer-adjudicated and
+improperly-resolved cases below — `resolvedBy.login` is checked
+against the core-maintainer set from
+`.github/skills/maintainer-lookup/SKILL.md` §1b; the reply chain
+drives disagreement handling (see §11).
 
 ### Phase B — Run scope checker on the new head
 
 Re-run full analysis against the new head commit, producing the
 current set of finding-keys.
 
+**Re-review scope for new findings (runs ≥ 2).** Let
+`last_reviewed_head` be the `reviewed_head` recorded in the agent's
+own prior metadata review (§2; fall back to that review's `commit_id`
+if the line is absent). Then:
+
+- **Must-fix candidates** are always in scope across the whole PR diff
+  (`<base>...<head>`), exactly as on run 1.
+- **Below-must-fix new findings** (`suggestion`, `could fix`,
+  `future work`) are in scope only where the incremental diff
+  `<last_reviewed_head>...<head>` reaches, applying the same
+  introduced/preexisting rules as `.github/skills/pr-diff-scoping/SKILL.md`
+  with the incremental diff in place of the PR diff: a line added or
+  modified since the last review, or unchanged code newly reached by
+  such a line. Below-must-fix issues on code untouched since
+  `last_reviewed_head` are outside this run's scope; they were already
+  in scope on the run that reviewed that code, so silence there is
+  not a new omission (Priority 1 applies to in-scope findings).
+- Findings with a **prior finding-key** (rows 1–5 of Phase C) and
+  **incorrect-fix follow-ups** are unaffected by scoping — they are
+  matched, resolved, un-resolved, or escalated across the whole PR.
+- If `last_reviewed_head` cannot be resolved or compared (e.g. it was
+  discarded by a force-push and the compare returns 404), or
+  `last_reviewed_head == <head>`, fall back to the full PR diff for
+  all tiers. When in doubt, widen the scope, never narrow it.
+
+The point is that a re-run responds to what the author changed:
+reposting low-severity observations on code the author has not
+touched since the last pass is churn, not review. Mechanics live in
+`.github/skills/re-review-state/SKILL.md` §2a.
+
 ### Phase C — Match and act
 
 | Prior key | Current key | Thread state | Meaning | Action |
 |---|---|---|---|---|
 | present | present | not resolved, no contributor replies | Same finding still applies | **Do nothing.** Leave comment as-is. **Never repost.** |
-| present | present | **resolved by contributor** | **Improperly resolved.** Finding still applies on the new head. | **Un-resolve + reply.** GraphQL `unresolveReviewThread`; reply with the improper-resolution body shape (§9). Append maintainer ping per §4. Increment `improperly resolved` in Since-last-run. |
+| present | present | **resolved by a core maintainer** | **Maintainer adjudicated.** The maintainer has decided the finding does not need to be fixed. | **Do nothing.** Leave the thread resolved; no reply, no un-resolve, no repost — on this and every later run. The resolved thread counts against `outstanding` via the Phase D recomputation. |
+| present | present | **resolved by anyone else** | **Improperly resolved.** Finding still applies on the new head. | **Un-resolve + reply.** GraphQL `unresolveReviewThread`; reply with the improper-resolution body shape (§9). Append maintainer ping per §4. Increment `improperly resolved` in Since-last-run. |
 | present | present | not resolved, but contributor has replied | Possible disagreement | **Reply + escalate** per §11. Increment `disagreements escalated` in Since-last-run. |
 | present | absent | not resolved | Cleanly fixed | **Resolve:** reply `[<review_label>] Fixed in <sha>.` + GraphQL `resolveReviewThread`. |
-| present | absent | already resolved | Cleanly fixed and acknowledged | **Reply only:** `[<review_label>] Fixed in <sha>.` (no need to re-resolve). |
+| present | absent | already resolved | Already settled (resolved by the agent on an earlier run, by a core maintainer, or by the contributor after fixing) | **Do nothing.** No reply, no re-resolve. |
 | absent | present, same `(file, symbol)` as a prior but different `finding_class` | n/a | Author attempted a fix that left a different problem in the same spot | **Incorrect-fix follow-up:** new inline comment, body starts with `[<review_label>] **<tag>** Follow-up to <link to prior>: <new issue>`. |
 | absent | present, no related prior, **another agent's open thread shares the site-key and describes the same issue** | n/a | Cross-agent duplicate (§6a) | **Concurrence reply** on the existing thread per §6a / §9; count the finding in own metadata; do not open a new thread. |
 | absent | present, no related prior | n/a | Brand-new finding (new code) | **Post a new comment.** |
 
 ### Phase D — Update per-agent review metadata
 
-Dismiss the prior review and submit a new one with updated hidden
-metadata. Update cumulative tag counts, `outstanding`, `run`,
-`since_last_run`, verdict. The
+Update the body of the prior metadata review in place (§6) with the
+refreshed hidden metadata: `reviewed_head` (the new head), cumulative
+tag counts, `outstanding`, `run`, `since_last_run`, verdict. Never
+dismiss it and never post a second metadata review. The
 Since-last-run metadata carries six counters:
 
-- `X resolved` — prior findings the agent cleanly resolved this run.
+- `X resolved` — own threads that became resolved since the prior
+  run, however they got there (agent, core maintainer, or contributor
+  after fixing): `max(0, R − R_prev)` per the recomputation below.
 - `Y still open` — prior findings that still apply (unchanged threads).
 - `Z newly added` — brand-new findings posted this run.
 - `W incorrect-fix follow-ups` — same-spot-different-finding-class new
@@ -373,7 +435,16 @@ Since-last-run metadata carries six counters:
 
 - Tag columns increment when new findings appear.
 - Tag columns NEVER decrement on resolution. (Priority 1 guarantee.)
-- `outstanding` = (cumulative findings) − (resolved findings).
+- `outstanding` is **recomputed from thread state every run, never
+  carried forward incrementally**: `outstanding = (cumulative tag-column
+  sum) − R`, where `R` = number of threads the agent counts in its tag
+  columns whose `isResolved` is true after this run's Phase C actions
+  (threads the agent replied `Fixed in` to but could not resolve for
+  permission reasons also count; threads it tried to un-resolve as
+  improperly resolved do not). `R_prev` = prior cumulative sum −
+  prior `outstanding`. A thread therefore counts as resolved exactly
+  once, no matter how many runs it stays resolved or whether its
+  finding-key later disappears.
 
 ### Resolution mechanism
 
@@ -385,8 +456,8 @@ external trigger provides:
 - A REST reply `[<review_label>] Fixed in <commit-sha>.` keeps an audit trail.
 
 If `resolveReviewThread` fails, the reply alone is acceptable
-degradation; the agent still decrements `outstanding` and increments
-"resolved" in Since-last-run.
+degradation; the thread still counts toward `R` above, and later runs
+skip it (an own `Fixed in` reply is already present).
 
 ### Guardrails (never)
 
@@ -394,9 +465,11 @@ degradation; the agent still decrements `outstanding` and increments
   comment from the same agent on this PR.
 - **Never resolve** a comment whose `finding-key` is still present on
   the new head, even if the author replied "fixed".
-- **Never silently accept** a contributor's resolution of a thread
+- **Never silently accept** a non-maintainer's resolution of a thread
   whose `finding-key` is still present. Un-resolve it and reply per
   the improperly-resolved row of phase C.
+- **Never reopen, reply to, or repost** a thread a core maintainer
+  resolved; that is the adjudication §0 defers to.
 - **Never argue.** On disagreement, the agent posts one polite
   escalation reply + maintainer ping, then stops. Further back-and-
   forth is for the maintainer (§11).
@@ -419,6 +492,8 @@ in strict order; the earlier wins.
 **Priority 1 — Do not discard or omit findings.**
 - If the agent saw something in-scope, it posts. Tag conveys
   importance; the agent does not gatekeep on "is it worth saying?"
+  Scope is defined by the PR diff (`pr-diff-scoping`) and, on re-runs,
+  by §7 Phase B; a finding outside that scope is not "omitted".
 - Low confidence is not a reason to omit (§4).
 - Every currently-true finding is reflected in the agent's summary
   counts even if its comment was inherited from a prior run.
@@ -540,7 +615,9 @@ mutations (`resolveReviewThread`, `unresolveReviewThread`), and the
 
 Each reviewer submits a single PR review (event: `COMMENT`) whose
 body is the hidden metadata block from §2 and whose inline comments
-are the findings.
+are the findings. On re-runs the metadata body is updated in place
+(§6) and any new inline comments go in one additional empty-body
+review; a re-run with nothing new to say posts no review at all.
 
 The aggregator submits a single PR review keyed by its HTML marker
 (`<!-- fprime-review-summary v1 -->`). The review event is:
@@ -549,10 +626,16 @@ The aggregator submits a single PR review keyed by its HTML marker
 - **`REQUEST_CHANGES`** when either verdict is `No-Go`.
 
 The review body contains the consolidated summary table (see
-`review-summary.agent.md`). On re-runs, the aggregator dismisses
-its prior review and submits a new one with the updated verdict and
-body, since the review event (APPROVE vs. REQUEST_CHANGES) may
-change between runs.
+`review-summary.agent.md`) and carries the
+`<!-- reviewed_head: <sha> -->` line immediately after the marker.
+On re-runs the aggregator updates the body in place when the event
+is unchanged, and dismisses-and-resubmits only when the event flips
+or the prior review is already `DISMISSED` (§6).
+
+On an `APPROVE` event the aggregator additionally requests the core
+maintainers (`maintainer-lookup` §1b) as reviewers, once per PR,
+recorded in its `<!-- maintainers_requested: -->` line
+(`review-summary.agent.md` §5i). No other agent requests reviewers.
 
 ---
 

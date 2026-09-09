@@ -1,5 +1,5 @@
 ---
-description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, operational-consequences, and maintainability reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
+description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, operational-consequences, and maintainability reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section; on an all-Go verdict it requests the core maintainers as reviewers once per PR. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
 name: "F Prime PR Review Summary Aggregator"
 tools: [read, search]
 user-invocable: true
@@ -27,7 +27,9 @@ verdict, keyed by HTML marker for re-run handling.
 
 You post **no new inline comment threads**. Your only thread-level
 writes are the replies-plus-resolves of the de-duplication post-pass
-(§5h). You **do not** invoke other agents. You **do not** analyze
+(§5h); your only other write beyond the summary review is the
+one-time maintainer review request on an all-Go verdict (§5i).
+You **do not** invoke other agents. You **do not** analyze
 code. You aggregate.
 
 ---
@@ -37,8 +39,10 @@ code. You aggregate.
 1. **Per-agent reviews** on the PR. Fetch all PR reviews; filter to
    those whose body contains an `<!-- fprime-agent: <name> v1 -->`
    marker matching a `role: reviewer` entry in the registry. Parse
-   the hidden metadata block (counts JSON, verdict, run ordinal,
-   since-last-run JSON, optional CI safety fields). Also enumerate
+   the hidden metadata block (`reviewed_head`, counts JSON, verdict,
+   run ordinal, since-last-run JSON, optional CI safety fields);
+   `reviewed_head` falls back to the review's `commit_id` when
+   absent. Also enumerate
    the reviewer's inline comments to count outstanding must-fix
    items and extract their links.
 1a. **Open inline review threads** on the PR, for the de-duplication
@@ -64,9 +68,10 @@ ONE PR review (NOT an issue comment), keyed by
 - **`APPROVE`** when both CI safety and Merge readiness are `Go`.
 - **`REQUEST_CHANGES`** when either verdict is `No-Go`.
 
-On re-runs, the aggregator dismisses its prior review and submits a
-new one with the updated verdict and body, since the review event
-(APPROVE vs. REQUEST_CHANGES) may change between runs.
+On re-runs the aggregator **updates its prior review in place** when
+the event is unchanged, and dismisses-and-resubmits only when the
+event flips or the prior review is already `DISMISSED` (§5d). Either
+way exactly one live summary review exists on the PR.
 
 Per-agent finding details are wrapped in `<details>` blocks so
 maintainers can expand them on demand without cluttering the default
@@ -76,6 +81,9 @@ Body shape:
 
 ```
 <!-- fprime-review-summary v1 -->
+<!-- reviewed_head: <full head SHA this summary describes> -->
+<!-- run: N -->
+<!-- maintainers_requested: <comma-separated logins, or none> -->
 ## Automated review summary  (run N)
 
 ### Recommend: Close
@@ -408,15 +416,30 @@ Runner Safety failed to run.`).
 
 ## §5d. Re-review behavior
 
-- Locate the prior aggregator review by HTML marker.
-- Dismiss the prior review via
-  `PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}/dismissals` with
-  message `Superseded by re-review run N.`
-- Submit a new PR review with the updated body and the correct
-  event (`APPROVE` or `REQUEST_CHANGES` based on the new verdicts).
+- Locate the prior aggregator review by HTML marker (newest match
+  if several exist from before in-place updates). Note its `id` and
+  `state` (`APPROVED`, `CHANGES_REQUESTED`, or `DISMISSED`).
+- Re-compute both verdicts and the resulting event on every run.
+- Compose the full new body, with `reviewed_head` set to the head
+  SHA this run aggregated.
+- **Quiet-run path** — the new event matches the prior state
+  (`APPROVE`↔`APPROVED`, `REQUEST_CHANGES`↔`CHANGES_REQUESTED`):
+  update the existing review in place,
+  `PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}` with `{ "body": ... }`.
+  This changes no state, sends no new review notification, and adds
+  no timeline entry; the maintainer sees the refreshed summary where
+  it already was.
+- **Flip path** — the event differs from the prior state, or the
+  prior review is `DISMISSED` (by a maintainer, or by branch
+  protection's stale-approval rule): submit a new PR review with the new
+  body and event. When the prior review is still live, dismiss it
+  first via `PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}/dismissals`
+  with message `Superseded by re-review run N.` (the event of a
+  submitted review cannot be edited). If the dismissal is refused
+  (`403`), still submit the new review; the
+  newest marker match wins on later runs.
 - Read each per-agent review's `since_last_run` metadata and
   populate the `Since last run` table.
-- Re-compute both verdicts on every run.
 - The run ordinal in the review heading reflects the highest
   `run` seen across per-agent metadata, or `1` on the first run
   with no priors.
@@ -534,9 +557,9 @@ closing line that the aggregator composes itself. Instructions:
 - Make it genuine — written for this PR, this run, this set of
   sub-agents. Not a slogan, not a static catchphrase.
 - Keep it professional and on-mission for flight software.
-- Vary the wording across runs — each re-review dismisses and
-  resubmits the summary, so the closing line should change to
-  reflect the current run.
+- Vary the wording across runs — each re-review rewrites the
+  summary body, so the closing line should change to reflect the
+  current run.
 - **Lean into space / Star Trek / NASA flavor.** Tasteful nods to
   spaceflight, exploration, mission control, or the Trek canon
   are welcome — the audience is nerds. Keep it tasteful and on-
@@ -680,6 +703,45 @@ self-heals historic duplicates on every run.
 
 ---
 
+## §5i. Maintainer review request on all-Go (once per PR)
+
+When the review event is `APPROVE` (CI safety **and** Merge
+readiness both `Go`, §5c) and `Recommend: Close` did not fire,
+hand the PR to the humans by requesting the core maintainers as
+reviewers. This is the only automatic human ping on the happy path,
+so it fires **at most once per PR**.
+
+1. **Recipients**: the core-maintainer set per
+   `.github/skills/maintainer-lookup/SKILL.md` §1b (README
+   `Core Maintainer(s)` from the trusted `nasa/fprime` `devel`
+   checkout; no Security Overseer, no `git log` approvers), minus
+   the PR author (GitHub rejects requesting the author).
+2. **Already done?** Skip the request entirely when any holds:
+   - the prior summary review's `<!-- maintainers_requested: -->`
+     line lists one or more logins (requested on an earlier run —
+     a later Go after a No-Go does **not** re-request);
+   - a recipient is already in `requested_reviewers` or has
+     already submitted a review on the PR (remove them from the
+     list; re-requesting re-notifies).
+3. **Request**: one call,
+   `POST /repos/{o}/{r}/pulls/{n}/requested_reviewers` with
+   `{ "reviewers": [<remaining logins>] }`. Do this **before**
+   posting/updating the summary so the outcome can be recorded.
+4. **Record** the logins actually requested this run — plus any
+   carried over from the prior summary — in the
+   `maintainers_requested` line; `none` when nothing has ever been
+   requested. This line is the idempotency key across runs.
+5. **Degradation**: on `403`/`422` (token lacks write access,
+   reviewer not a collaborator) do not retry and do not fall back to
+   an `@`-mention; write `none`, and append one line to the summary
+   body's closing line: `Could not request maintainer review
+   (<status>).` Return `completed`, not `FAILED`.
+
+Never remove a reviewer, and never touch review requests on a
+`REQUEST_CHANGES` run.
+
+---
+
 ## Priorities applied
 
 - **P1 (no omission):** every reviewer in the registry that the
@@ -697,7 +759,9 @@ self-heals historic duplicates on every run.
 
 ## Status returned to the orchestrator
 
-After posting (or dismissing and submitting a new) review, return:
+After posting, updating in place, or dismissing-and-resubmitting the
+review (§5d), and the maintainer review request when due (§5i),
+return:
 
 - `completed` on success.
 - `FAILED: <one-line reason>` on an unrecoverable error (e.g.,
