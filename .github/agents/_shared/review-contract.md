@@ -78,6 +78,7 @@ Review body shape (the ONLY content in the review body):
 
 ```
 <!-- fprime-agent: <agent-name> v1 -->
+<!-- reviewed_head: <full 40-char head SHA the agent analyzed> -->
 <!-- counts: {"must_fix": N, "suggestion": N, "could_fix": N, "future_work": N, "outstanding": N} -->
 <!-- verdict: Go | No-Go -->
 <!-- run: N -->
@@ -87,6 +88,15 @@ Review body shape (the ONLY content in the review body):
 This metadata is machine-readable by the aggregator but invisible to
 human reviewers browsing the PR. The visible output of each reviewer
 is its inline comments only.
+
+`reviewed_head` is the authoritative record of which head the
+metadata describes. It is needed because the metadata review is
+updated in place on re-runs (§6), and GitHub does not change a
+review's `commit_id` when its body is edited — so `commit_id` only
+records the head of run 1. Consumers (the aggregator, re-review Phase
+B, any external trigger deciding whether a PR needs a new pass) MUST
+read `reviewed_head` and fall back to `commit_id` only when the line
+is absent (metadata written before this field existed).
 
 ### Column semantics
 
@@ -219,17 +229,30 @@ This is a one-way orchestrator→agent prompt-level convention.
 ## 6. De-duplication
 
 Per-agent reviews are identified by their HTML comment marker
-(`<!-- fprime-agent: <name> v1 -->`); when re-running, the agent
-dismisses its prior review and submits a new one (since the
-review body carrying the metadata may change between runs).
+(`<!-- fprime-agent: <name> v1 -->`). There is exactly **one** such
+review per agent per PR for the life of the PR: when re-running, the
+agent **updates the body of its existing review in place** (REST
+`PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}`) rather than dismissing
+and resubmitting. Dismissal is not an option for these reviews —
+GitHub only allows dismissing `APPROVED` / `CHANGES_REQUESTED`
+reviews, and rejects it for `COMMENTED` ones with a 422 — and a body
+edit emits no new notification or timeline entry, so a quiet re-run
+produces no visible churn.
 
 Inline comments are identified by `(file_path, finding-key)` — see §7
-for finding-key.
+for finding-key. New inline comments on a re-run go in a separate
+review with an empty body (§10); if a re-run has no new inline
+comments, no such review is posted at all.
 
 The aggregator's review is identified by
-`<!-- fprime-review-summary v1 -->`; on re-runs, the aggregator
-dismisses its prior review and submits a new one (since the event
-APPROVE/REQUEST_CHANGES may change between runs).
+`<!-- fprime-review-summary v1 -->`. On re-runs the aggregator
+**updates it in place** when the review event is unchanged (the
+**quiet-run** path). It dismisses the prior review and submits a new
+one only when the event must flip between `APPROVE` and
+`REQUEST_CHANGES` (the event of a submitted review cannot be edited),
+or when the prior review is already `DISMISSED` (e.g. by branch
+protection's stale-review rule) so that no live review remains to
+update. Both paths leave exactly one live summary review on the PR.
 
 ### 6a. Cross-agent de-duplication (site-key + concurrence)
 
@@ -339,6 +362,36 @@ reply chain drives disagreement handling (see §11).
 Re-run full analysis against the new head commit, producing the
 current set of finding-keys.
 
+**Re-review scope for new findings (runs ≥ 2).** Let
+`last_reviewed_head` be the `reviewed_head` recorded in the agent's
+own prior metadata review (§2; fall back to that review's `commit_id`
+if the line is absent). Then:
+
+- **Must-fix candidates** are always in scope across the whole PR diff
+  (`<base>...<head>`), exactly as on run 1.
+- **Below-must-fix new findings** (`suggestion`, `could fix`,
+  `future work`) are in scope only where the incremental diff
+  `<last_reviewed_head>...<head>` reaches, applying the same
+  introduced/preexisting rules as `.github/skills/pr-diff-scoping/SKILL.md`
+  with the incremental diff in place of the PR diff: a line added or
+  modified since the last review, or unchanged code newly reached by
+  such a line. Below-must-fix issues on code untouched since
+  `last_reviewed_head` are outside this run's scope; they were already
+  in scope on the run that reviewed that code, so silence there is
+  not a new omission (Priority 1 applies to in-scope findings).
+- Findings with a **prior finding-key** (rows 1–5 of Phase C) and
+  **incorrect-fix follow-ups** are unaffected by scoping — they are
+  matched, resolved, un-resolved, or escalated across the whole PR.
+- If `last_reviewed_head` cannot be resolved or compared (e.g. it was
+  discarded by a force-push and the compare returns 404), or
+  `last_reviewed_head == <head>`, fall back to the full PR diff for
+  all tiers. When in doubt, widen the scope, never narrow it.
+
+The point is that a re-run responds to what the author changed:
+reposting low-severity observations on code the author has not
+touched since the last pass is churn, not review. Mechanics live in
+`.github/skills/re-review-state/SKILL.md` §2a.
+
 ### Phase C — Match and act
 
 | Prior key | Current key | Thread state | Meaning | Action |
@@ -354,9 +407,10 @@ current set of finding-keys.
 
 ### Phase D — Update per-agent review metadata
 
-Dismiss the prior review and submit a new one with updated hidden
-metadata. Update cumulative tag counts, `outstanding`, `run`,
-`since_last_run`, verdict. The
+Update the body of the prior metadata review in place (§6) with the
+refreshed hidden metadata: `reviewed_head` (the new head), cumulative
+tag counts, `outstanding`, `run`, `since_last_run`, verdict. Never
+dismiss it and never post a second metadata review. The
 Since-last-run metadata carries six counters:
 
 - `X resolved` — prior findings the agent cleanly resolved this run.
@@ -419,6 +473,8 @@ in strict order; the earlier wins.
 **Priority 1 — Do not discard or omit findings.**
 - If the agent saw something in-scope, it posts. Tag conveys
   importance; the agent does not gatekeep on "is it worth saying?"
+  Scope is defined by the PR diff (`pr-diff-scoping`) and, on re-runs,
+  by §7 Phase B; a finding outside that scope is not "omitted".
 - Low confidence is not a reason to omit (§4).
 - Every currently-true finding is reflected in the agent's summary
   counts even if its comment was inherited from a prior run.
@@ -540,7 +596,9 @@ mutations (`resolveReviewThread`, `unresolveReviewThread`), and the
 
 Each reviewer submits a single PR review (event: `COMMENT`) whose
 body is the hidden metadata block from §2 and whose inline comments
-are the findings.
+are the findings. On re-runs the metadata body is updated in place
+(§6) and any new inline comments go in one additional empty-body
+review; a re-run with nothing new to say posts no review at all.
 
 The aggregator submits a single PR review keyed by its HTML marker
 (`<!-- fprime-review-summary v1 -->`). The review event is:
@@ -549,10 +607,11 @@ The aggregator submits a single PR review keyed by its HTML marker
 - **`REQUEST_CHANGES`** when either verdict is `No-Go`.
 
 The review body contains the consolidated summary table (see
-`review-summary.agent.md`). On re-runs, the aggregator dismisses
-its prior review and submits a new one with the updated verdict and
-body, since the review event (APPROVE vs. REQUEST_CHANGES) may
-change between runs.
+`review-summary.agent.md`) and carries the
+`<!-- reviewed_head: <sha> -->` line immediately after the marker.
+On re-runs the aggregator updates the body in place when the event
+is unchanged, and dismisses-and-resubmits only when the event flips
+or the prior review is already `DISMISSED` (§6).
 
 ---
 

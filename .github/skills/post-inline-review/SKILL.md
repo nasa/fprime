@@ -85,9 +85,9 @@ Content-Type: application/json
 }
 ```
 
-**Re-run** — the inline-comments review has an **empty `body`** (no
-metadata); the metadata is dismissed and resubmitted separately per
-§4:
+**Re-run** — posted **only if there are new inline comments**; it
+has an **empty `body`** (no metadata), and the metadata review is
+updated in place separately per §4:
 
 ```json
 {
@@ -107,7 +107,10 @@ The **aggregator** (`review-summary`) uses `APPROVE` or
 verdicts — see review-contract.md §10.
 
 `commit_id` MUST be the head SHA the agent analyzed; this is what
-binds the comments to specific line positions.
+binds the comments to specific line positions. It is **not** a
+record of the last reviewed head — the `reviewed_head` line in the
+metadata body is (review contract §2), because a body edit leaves
+`commit_id` untouched.
 
 ---
 
@@ -156,19 +159,35 @@ combined review described in §2 (which also carries the inline
 `comments[]` array). There is no separate metadata-only review on
 first run.
 
-On re-run, the inline comments go in a fresh review with an empty
-`body` (see §2 re-run template). The metadata is handled
-separately: dismiss the prior metadata review via:
+On re-run, any new inline comments go in a fresh review with an
+empty `body` (see §2 re-run template); if there are none, that
+review is not posted. The metadata is handled separately by
+**editing the prior metadata review's body in place**:
 
 ```http
-PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/dismissals
+PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}
+Authorization: Bearer ${TOKEN}
+Content-Type: application/json
+
+{ "body": "<!-- fprime-agent: security-review v1 -->\n<!-- reviewed_head: <head SHA> -->\n<!-- counts: ... -->\n..." }
 ```
 
-Then submit a new metadata-only review (`event: COMMENT`, no
-`comments[]` array) with the updated body. The review body contains
-**only** HTML-comment metadata (counts, verdict, run ordinal,
-since-last-run) — no visible summary table. The HTML marker is
-the de-dup key.
+This endpoint ("Update a review for a pull request") changes only the
+summary body; the review's state, `commit_id`, and attached inline
+comments are unchanged, and no notification is sent. Do **not** use
+`PUT .../reviews/{review_id}/dismissals` on a metadata review: GitHub
+only dismisses `APPROVED` / `CHANGES_REQUESTED` reviews and returns
+`422 Can not dismiss a commented pull request review` for the
+`COMMENTED` reviews reviewers post. The review body contains **only**
+HTML-comment metadata (reviewed head, counts, verdict, run ordinal,
+since-last-run) — no visible summary table. The HTML marker is the
+de-dup key; `reviewed_head` is what tells the next run (and any
+external trigger) which head this metadata describes.
+
+If the `PUT` fails with `404`/`403` (review not editable by this
+token), fall back to submitting a fresh metadata-only review
+(`event: COMMENT`, no `comments[]`) and let later runs take the
+newest marker match.
 
 ---
 
@@ -254,6 +273,7 @@ The agent uses this to:
 | `resolveReviewThread` returns `403` or the token lacks the discussion-write scope | Post the `[<review_label>] Fixed in <sha>.` reply and proceed. The thread visibly remains open but the audit trail is preserved. Decrement `outstanding` and increment `resolved` in Since-last-run regardless. |
 | `unresolveReviewThread` returns `403` | Post the improperly-resolved reply anyway. The thread remains visibly resolved on GitHub but the reply + maintainer ping is visible inline. Increment `improperly resolved` regardless. |
 | Inline-comment POST returns `422 Pull Request Review thread cannot be created on this line of the diff` | The line is not in the PR's diff. Re-anchor to the nearest line that is in the diff (typically the function header) and prefix the comment body with `(Anchored above the offending line; the diff does not include line N.)` |
+| `PUT .../reviews/{review_id}` (body update) returns `404`/`403` | Submit a fresh metadata-only review instead (§4). Never attempt `/dismissals` on a `COMMENTED` review. |
 | Token missing entirely | Fail fast. The agent emits a single line to the orchestrator: `Cannot post review: TOKEN not provided.` and exits. The orchestrator treats this as a FAILED reviewer per review-summary.agent.md §5. |
 
 ---
@@ -302,10 +322,11 @@ more than this review. On a `429`, or a `403` whose body mentions
 
 1. Read PR head SHA. Bind every subsequent call to this SHA.
 2. Fetch the agent's prior metadata review by HTML marker (review
-   contract §6). Note its review ID, run count, and the
-   `finding-key` index.
+   contract §6). Note its review ID, run count, `reviewed_head`
+   (fallback: `commit_id`), and the `finding-key` index.
 3. Run the agent's analysis on the new head. Compute the new
-   `finding-key` set.
+   `finding-key` set; scope new below-must-fix findings to the diff
+   since `reviewed_head` (`re-review-state` §2a).
 4. Match prior vs current per review contract §7 phase C. Build the
    action list: `post-new`, `reply-fixed`, `resolve-thread`,
    `reply-improper`, `unresolve-thread`, `reply-disagreement`,
@@ -313,9 +334,9 @@ more than this review. On a `429`, or a `403` whose body mentions
 5. Execute the action list. Compose the per-agent hidden metadata
    block from the resulting state.
 6. POST the umbrella review (inline comments + hidden metadata body)
-   or, on re-run, POST the inline comments as a fresh review, dismiss
-   the prior metadata review, and submit a new one with the updated
-   metadata.
+   or, on re-run, `PUT` the updated metadata body onto the prior
+   metadata review and, only if there are new inline comments, POST
+   them as one fresh empty-body review.
 7. Return success to the orchestrator.
 
 ---
