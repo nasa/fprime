@@ -1,9 +1,9 @@
 {
-  "findings": 47,
+  "findings": 46,
   "by_severity": {
     "error": 0,
     "medium": 22,
-    "low": 25
+    "low": 24
   },
   "worst": "medium",
   "tier": "bronze",
