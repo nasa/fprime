@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-08 21:16:37</td>
+      <td>2026-09-09 21:13:28</td>
     </tr>
   </table>
 </div>
@@ -70,13 +70,13 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l1127">Svc::WasmSequencer::PendingHostFunction::Args::Args() (line 1127)</a></td><td>called 214 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l1049">Svc::WasmSequencer::PendingHostFunction::PendingHostFunction() (line 1049)</a></td><td>called 214 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l1051">Svc::WasmSequencer::PendingHostFunction::clear() (line 1051)</a></td><td>called 10 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l1050">Svc::WasmSequencer::PendingHostFunction::isPending() const (line 1050)</a></td><td>called 97 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l942">Svc::WasmSequencer::WaitingCmd::WaitingCmd() (line 942)</a></td><td>called 1923 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l943">Svc::WasmSequencer::WaitingCmd::WaitingCmd(unsigned int, unsigned int) (line 943)</a></td><td>called 14 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l45">Svc::WasmSequencer::~WasmSequencer() (line 45)</a></td><td>called 214 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1130">Svc::WasmSequencer::PendingHostFunction::Args::Args() (line 1130)</a></td><td>called 216 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1052">Svc::WasmSequencer::PendingHostFunction::PendingHostFunction() (line 1052)</a></td><td>called 216 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1054">Svc::WasmSequencer::PendingHostFunction::clear() (line 1054)</a></td><td>called 10 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1053">Svc::WasmSequencer::PendingHostFunction::isPending() const (line 1053)</a></td><td>called 97 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l945">Svc::WasmSequencer::WaitingCmd::WaitingCmd() (line 945)</a></td><td>called 1942 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l946">Svc::WasmSequencer::WaitingCmd::WaitingCmd(unsigned int, unsigned int) (line 946)</a></td><td>called 14 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l45">Svc::WasmSequencer::~WasmSequencer() (line 45)</a></td><td>called 216 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -402,7 +402,7 @@
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">428</td>
+      <td class="linecount coveredLine">432</td>
       <td class="src coveredLine"><span class="w">    </span><span class="o">~</span><span class="n">WasmSequencer</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -6647,77 +6647,77 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Pending command waiting for a response</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Opaque handle to the spacewasm guest memory allocator, or null (before store/allocator is initialized)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l938" href="#l938">938</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">WaitingCmd</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_allocator_t</span><span class="o">*</span><span class="w"> </span><span class="n">m_guest_allocator</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l939" href="#l939">939</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l940" href="#l940">940</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Pending command waiting for a response</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l941" href="#l941">941</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">WaitingCmd</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l942" href="#l942">942</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1923</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="n">WaitingCmd</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">opCode</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l943" href="#l943">943</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">14</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="n">WaitingCmd</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode_</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq_</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">opCode</span><span class="p">(</span><span class="n">opCode_</span><span class="p">),</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">(</span><span class="n">cmdSeq_</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l944" href="#l944">944</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">};</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l945" href="#l945">945</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">1942</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="n">WaitingCmd</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">opCode</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l946" href="#l946">946</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! WAIT commands waiting for sequence completion</span></td>
+      <td class="linecount coveredLine">14</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="n">WaitingCmd</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode_</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq_</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">opCode</span><span class="p">(</span><span class="n">opCode_</span><span class="p">),</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">(</span><span class="n">cmdSeq_</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l947" href="#l947">947</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">FifoQueue</span><span class="o">&lt;</span><span class="n">WaitingCmd</span><span class="p">,</span><span class="w"> </span><span class="n">WasmSequencerConfig</span><span class="o">::</span><span class="n">MAX_CONCURRENT_WAIT_COMMANDS</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_waiting</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l948" href="#l948">948</a></td>
@@ -6731,14 +6731,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Currently stored sequence arguments</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! WAIT commands waiting for sequence completion</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l950" href="#l950">950</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Svc</span><span class="o">::</span><span class="n">SeqArgs</span><span class="w"> </span><span class="n">m_args</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">FifoQueue</span><span class="o">&lt;</span><span class="n">WaitingCmd</span><span class="p">,</span><span class="w"> </span><span class="n">WasmSequencerConfig</span><span class="o">::</span><span class="n">MAX_CONCURRENT_WAIT_COMMANDS</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_waiting</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l951" href="#l951">951</a></td>
@@ -6752,14 +6752,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! File path of the last module load</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Currently stored sequence arguments</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l953" href="#l953">953</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">FileNameString</span><span class="w"> </span><span class="n">m_lastLoadFileName</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Svc</span><span class="o">::</span><span class="n">SeqArgs</span><span class="w"> </span><span class="n">m_args</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l954" href="#l954">954</a></td>
@@ -6773,14 +6773,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">WasmSequencer_RequestContext</span><span class="w"> </span><span class="n">m_executingContext</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! File path of the last module load</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l956" href="#l956">956</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_hasExecutingContext</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">FileNameString</span><span class="w"> </span><span class="n">m_lastLoadFileName</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l957" href="#l957">957</a></td>
@@ -6794,98 +6794,98 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Pending timer from sleep host function</span></td>
+      <td class="src "><span class="w">    </span><span class="n">WasmSequencer_RequestContext</span><span class="w"> </span><span class="n">m_executingContext</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l959" href="#l959">959</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Time</span><span class="w"> </span><span class="n">m_pendingTimer</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_hasExecutingContext</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l960" href="#l960">960</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_hasPendingTimer</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l961" href="#l961">961</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Pending timer from sleep host function</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l962" href="#l962">962</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Wall-clock time at which the current blocking async host function</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Time</span><span class="w"> </span><span class="n">m_pendingTimer</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l963" href="#l963">963</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! (COMMAND / blocking SERIAL_RECV) began awaiting its reply. Used to enforce</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_hasPendingTimer</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l964" href="#l964">964</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! HOST_FUNCTION_TIMEOUT_SECS. Only meaningful while awaiting one of those.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l965" href="#l965">965</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Time</span><span class="w"> </span><span class="n">m_hostFunctionStart</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Wall-clock time at which the current blocking async host function</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l966" href="#l966">966</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_hasHostFunctionStart</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! (COMMAND / blocking SERIAL_RECV) began awaiting its reply. Used to enforce</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l967" href="#l967">967</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! HOST_FUNCTION_TIMEOUT_SECS. Only meaningful while awaiting one of those.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l968" href="#l968">968</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_dequeueSucceeded</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Time</span><span class="w"> </span><span class="n">m_hostFunctionStart</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l969" href="#l969">969</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_hasHostFunctionStart</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l970" href="#l970">970</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Flag indicating a function invocation failed</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l971" href="#l971">971</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_status_t</span><span class="w"> </span><span class="n">m_invokeStatus</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_dequeueSucceeded</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l972" href="#l972">972</a></td>
@@ -6899,14 +6899,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Flag indicating interpreter is waiting to be paused</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Flag indicating a function invocation failed</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l974" href="#l974">974</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_pendingPause</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_status_t</span><span class="w"> </span><span class="n">m_invokeStatus</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l975" href="#l975">975</a></td>
@@ -6920,14 +6920,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Latches a CANCEL that arrives while a sequence is loading/resolving</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Flag indicating interpreter is waiting to be paused</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l977" href="#l977">977</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_cancelRequested</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_pendingPause</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l978" href="#l978">978</a></td>
@@ -6941,56 +6941,56 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Backing state for the periodically-written telemetry channels (see</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Latches a CANCEL that arrives while a sequence is loading/resolving</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l980" href="#l980">980</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! writeTelemetry_handler). Grouped so the counters read as one unit.</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_cancelRequested</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l981" href="#l981">981</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Telemetry</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l982" href="#l982">982</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Sequences successfully completed</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Backing state for the periodically-written telemetry channels (see</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l983" href="#l983">983</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">sequencesSucceeded</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! writeTelemetry_handler). Grouped so the counters read as one unit.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l984" href="#l984">984</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Telemetry</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l985" href="#l985">985</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Sequences that failed to validate or execute</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Sequences successfully completed</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l986" href="#l986">986</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">sequencesFailed</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
+      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">sequencesSucceeded</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l987" href="#l987">987</a></td>
@@ -7004,14 +7004,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Sequences that were cancelled</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Sequences that failed to validate or execute</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l989" href="#l989">989</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">sequencesCancelled</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
+      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">sequencesFailed</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l990" href="#l990">990</a></td>
@@ -7025,14 +7025,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Commands dispatched total</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Sequences that were cancelled</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l992" href="#l992">992</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">commandsDispatched</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
+      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">sequencesCancelled</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l993" href="#l993">993</a></td>
@@ -7046,14 +7046,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Number of commands that failed</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Commands dispatched total</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l995" href="#l995">995</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">commandsFailed</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
+      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">commandsDispatched</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l996" href="#l996">996</a></td>
@@ -7067,189 +7067,189 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Currently running sequence name</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Number of commands that failed</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l998" href="#l998">998</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">FileNameString</span><span class="w"> </span><span class="n">sequenceName</span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">};</span></td>
+      <td class="src "><span class="w">        </span><span class="n">U64</span><span class="w"> </span><span class="n">commandsFailed</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l999" href="#l999">999</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">};</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1000" href="#l1000">1000</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Currently running sequence name</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1001" href="#l1001">1001</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Telemetry</span><span class="w"> </span><span class="n">m_tlm</span><span class="p">;</span></td>
+      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">FileNameString</span><span class="w"> </span><span class="n">sequenceName</span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1002" href="#l1002">1002</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1003" href="#l1003">1003</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Sequences started counter (bumped whenever the interpreter</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1004" href="#l1004">1004</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! begins spinning a freshly-invoked program). The low 16 bits form the</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Telemetry</span><span class="w"> </span><span class="n">m_tlm</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1005" href="#l1005">1005</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! high half of the command context (cmdUid) so we can detect a command</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1006" href="#l1006">1006</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! response that arrives late, after its originating sequence has ended.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Sequences started counter (bumped whenever the interpreter</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1007" href="#l1007">1007</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">m_sequencesStarted</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! begins spinning a freshly-invoked program). The low 16 bits form the</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1008" href="#l1008">1008</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! high half of the command context (cmdUid) so we can detect a command</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1009" href="#l1009">1009</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Compose the command context (cmdUid) sent to the command dispatcher from</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! response that arrives late, after its originating sequence has ended.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1010" href="#l1010">1010</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! the current sequence counter and the m_tlm.commandsDispatched counter. The</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">m_sequencesStarted</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1011" href="#l1011">1011</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! low 16 bits of the latter form the low half of the cmdUid, letting us</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1012" href="#l1012">1012</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! detect a response for a different instance of the same opcode.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Compose the command context (cmdUid) sent to the command dispatcher from</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1013" href="#l1013">1013</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">makeCmdUid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! the current sequence counter and the m_tlm.commandsDispatched counter. The</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1014" href="#l1014">1014</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! low 16 bits of the latter form the low half of the cmdUid, letting us</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1015" href="#l1015">1015</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Why the last sequence ended. Set as the program runs and classified into</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! detect a response for a different instance of the same opcode.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1016" href="#l1016">1016</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! the appropriate completion event (see reportSequenceFailure in the controller).</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">makeCmdUid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1017" href="#l1017">1017</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">ExitStatus</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1018" href="#l1018">1018</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Reason the current program exited.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Why the last sequence ended. Set as the program runs and classified into</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1019" href="#l1019">1019</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! By default this is INTERPRETER but can be overriden from host functions</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! the appropriate completion event (see reportSequenceFailure in the controller).</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1020" href="#l1020">1020</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">WasmSequencer_ExitReason</span><span class="w"> </span><span class="n">reason</span><span class="p">{</span><span class="n">WasmSequencer_ExitReason</span><span class="o">::</span><span class="n">UNKNOWN</span><span class="p">};</span></td>
+      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">ExitStatus</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1021" href="#l1021">1021</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Reason the current program exited.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1022" href="#l1022">1022</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Currently stored exit code for non-INTERPRETER exits</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! By default this is INTERPRETER but can be overriden from host functions</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1023" href="#l1023">1023</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">I32</span><span class="w"> </span><span class="n">code</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
+      <td class="src "><span class="w">        </span><span class="n">WasmSequencer_ExitReason</span><span class="w"> </span><span class="n">reason</span><span class="p">{</span><span class="n">WasmSequencer_ExitReason</span><span class="o">::</span><span class="n">UNKNOWN</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1024" href="#l1024">1024</a></td>
@@ -7263,14 +7263,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Last run host function that could have caused the error</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Currently stored exit code for non-INTERPRETER exits</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1026" href="#l1026">1026</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">WasmSequencer_HostFunction</span><span class="w"> </span><span class="n">lastHostFunction</span><span class="p">{</span><span class="n">WasmSequencer_HostFunction</span><span class="o">::</span><span class="n">NONE</span><span class="p">};</span></td>
+      <td class="src "><span class="w">        </span><span class="n">I32</span><span class="w"> </span><span class="n">code</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1027" href="#l1027">1027</a></td>
@@ -7284,42 +7284,42 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Reason last sequence trapped</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Last run host function that could have caused the error</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1029" href="#l1029">1029</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">WasmSequencer_TrapReason</span><span class="w"> </span><span class="n">lastTrapReason</span><span class="p">{</span><span class="n">WasmSequencer_TrapReason</span><span class="o">::</span><span class="n">NONE</span><span class="p">};</span></td>
+      <td class="src "><span class="w">        </span><span class="n">WasmSequencer_HostFunction</span><span class="w"> </span><span class="n">lastHostFunction</span><span class="p">{</span><span class="n">WasmSequencer_HostFunction</span><span class="o">::</span><span class="n">NONE</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1030" href="#l1030">1030</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">};</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1031" href="#l1031">1031</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Reason last sequence trapped</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1032" href="#l1032">1032</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Status codes for exit reason. Set by the interpreter state machine.</span></td>
+      <td class="src "><span class="w">        </span><span class="n">WasmSequencer_TrapReason</span><span class="w"> </span><span class="n">lastTrapReason</span><span class="p">{</span><span class="n">WasmSequencer_TrapReason</span><span class="o">::</span><span class="n">NONE</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1033" href="#l1033">1033</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExitStatus</span><span class="w"> </span><span class="n">m_exit</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1034" href="#l1034">1034</a></td>
@@ -7333,14 +7333,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Buffer to hold the serial output port invocation invoked by the guest</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Status codes for exit reason. Set by the interpreter state machine.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1036" href="#l1036">1036</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">ExternalSerializeBuffer</span><span class="w"> </span><span class="n">m_serialOutBuffer</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">ExitStatus</span><span class="w"> </span><span class="n">m_exit</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1037" href="#l1037">1037</a></td>
@@ -7354,42 +7354,42 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Queues (or queue) that handle inputs on the serial input port. Each is backed by</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Buffer to hold the serial output port invocation invoked by the guest</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1039" href="#l1039">1039</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! the corresponding row of m_serialInQueueData (see the setup() loop in the ctor).</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">ExternalSerializeBuffer</span><span class="w"> </span><span class="n">m_serialOutBuffer</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1040" href="#l1040">1040</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Types</span><span class="o">::</span><span class="n">CircularBuffer</span><span class="w"> </span><span class="n">m_serialInQueue</span><span class="p">[</span><span class="n">NUM_SERIALIN_INPUT_PORTS</span><span class="p">];</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1041" href="#l1041">1041</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Queues (or queue) that handle inputs on the serial input port. Each is backed by</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1042" href="#l1042">1042</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! A lock for guarding the serialInQueue</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! the corresponding row of m_serialInQueueData (see the setup() loop in the ctor).</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1043" href="#l1043">1043</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">Mutex</span><span class="w"> </span><span class="n">m_serialInMutex</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Types</span><span class="o">::</span><span class="n">CircularBuffer</span><span class="w"> </span><span class="n">m_serialInQueue</span><span class="p">[</span><span class="n">NUM_SERIALIN_INPUT_PORTS</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1044" href="#l1044">1044</a></td>
@@ -7403,84 +7403,84 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! A host function call the guest requested that is pending dispatch by the</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! A lock for guarding the serialInQueue</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1046" href="#l1046">1046</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! engine state machine (see dispatchPendingHostFunction). `kind` selects</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">Mutex</span><span class="w"> </span><span class="n">m_serialInMutex</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1047" href="#l1047">1047</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! which arm of the `u` union carries the call&#39;s arguments.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1048" href="#l1048">1048</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">PendingHostFunction</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! A host function call the guest requested that is pending dispatch by the</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1049" href="#l1049">1049</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">214</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="n">PendingHostFunction</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! engine state machine (see dispatchPendingHostFunction). `kind` selects</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1050" href="#l1050">1050</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! which arm of the `u` union carries the call&#39;s arguments.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1051" href="#l1051">1051</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">PendingHostFunction</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1052" href="#l1052">1052</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">216</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="n">PendingHostFunction</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1053" href="#l1053">1053</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">97</td>
       <td class="src coveredLine"><span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isPending</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">kind</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">WasmSequencer_HostFunction</span><span class="o">::</span><span class="n">NONE</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1051" href="#l1051">1051</a></td>
+      <td class="lineno"><a id="l1054" href="#l1054">1054</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">kind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">WasmSequencer_HostFunction</span><span class="o">::</span><span class="n">NONE</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1052" href="#l1052">1052</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1053" href="#l1053">1053</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">WasmSequencer_HostFunction</span><span class="w"> </span><span class="n">kind</span><span class="p">{</span><span class="n">WasmSequencer_HostFunction</span><span class="o">::</span><span class="n">NONE</span><span class="p">};</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1054" href="#l1054">1054</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l1055" href="#l1055">1055</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">// Handle that holds the Wasm guest memory pointer</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1056" href="#l1056">1056</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">{</span><span class="nb">nullptr</span><span class="p">};</span></td>
+      <td class="src "><span class="w">        </span><span class="n">WasmSequencer_HostFunction</span><span class="w"> </span><span class="n">kind</span><span class="p">{</span><span class="n">WasmSequencer_HostFunction</span><span class="o">::</span><span class="n">NONE</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1057" href="#l1057">1057</a></td>
@@ -7494,539 +7494,539 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">//! Per-kind call arguments. Only the arm matching `kind` is live.</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">// Handle that holds the Wasm guest memory pointer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1059" href="#l1059">1059</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="k">union</span><span class="w"> </span><span class="nc">Args</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">        </span><span class="n">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">{</span><span class="nb">nullptr</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1060" href="#l1060">1060</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// COMMAND: encoded command payload in guest memory</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1061" href="#l1061">1061</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">//! Per-kind call arguments. Only the arm matching `kind` is live.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1062" href="#l1062">1062</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
+      <td class="src "><span class="w">        </span><span class="k">union</span><span class="w"> </span><span class="nc">Args</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1063" href="#l1063">1063</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// COMMAND: encoded command payload in guest memory</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1064" href="#l1064">1064</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">command</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1065" href="#l1065">1065</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1066" href="#l1066">1066</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// TELEMETRY: channel id plus where to write the serialized time and value</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1067" href="#l1067">1067</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">command</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1068" href="#l1068">1068</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">FwChanIdType</span><span class="w"> </span><span class="n">chanId</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1069" href="#l1069">1069</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">timePtr</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// TELEMETRY: channel id plus where to write the serialized time and value</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1070" href="#l1070">1070</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">timeLen</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1071" href="#l1071">1071</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">valuePtr</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                </span><span class="n">FwChanIdType</span><span class="w"> </span><span class="n">chanId</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1072" href="#l1072">1072</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">valueLen</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">timePtr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1073" href="#l1073">1073</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">telemetry</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">timeLen</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1074" href="#l1074">1074</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">valuePtr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1075" href="#l1075">1075</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// PARAMETER: parameter id plus where to write the serialized value</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">valueLen</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1076" href="#l1076">1076</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">telemetry</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1077" href="#l1077">1077</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">FwPrmIdType</span><span class="w"> </span><span class="n">prmId</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1078" href="#l1078">1078</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// PARAMETER: parameter id plus where to write the serialized value</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1079" href="#l1079">1079</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1080" href="#l1080">1080</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">parameter</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                </span><span class="n">FwPrmIdType</span><span class="w"> </span><span class="n">prmId</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1081" href="#l1081">1081</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1082" href="#l1082">1082</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// EVENT: raw guest-requested severity (may be out of range) plus the message</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1083" href="#l1083">1083</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">parameter</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1084" href="#l1084">1084</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">rawSeverity</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1085" href="#l1085">1085</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">msgPtr</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// EVENT: raw guest-requested severity (may be out of range) plus the message</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1086" href="#l1086">1086</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">msgLen</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1087" href="#l1087">1087</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">event</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">rawSeverity</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1088" href="#l1088">1088</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">msgPtr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1089" href="#l1089">1089</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// RSLEEP: relative sleep duration</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">msgLen</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1090" href="#l1090">1090</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">event</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1091" href="#l1091">1091</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U64</span><span class="w"> </span><span class="n">us</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1092" href="#l1092">1092</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">rsleep</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// RSLEEP: relative sleep duration</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1093" href="#l1093">1093</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1094" href="#l1094">1094</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// ASLEEP: absolute sleep time</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U64</span><span class="w"> </span><span class="n">us</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1095" href="#l1095">1095</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">rsleep</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1096" href="#l1096">1096</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U64</span><span class="w"> </span><span class="n">us</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1097" href="#l1097">1097</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">asleep</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// ASLEEP: absolute sleep time</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1098" href="#l1098">1098</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1099" href="#l1099">1099</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// ARGS: where to write the stored sequence arguments</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U64</span><span class="w"> </span><span class="n">us</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1100" href="#l1100">1100</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">asleep</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1101" href="#l1101">1101</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1102" href="#l1102">1102</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// ARGS: where to write the stored sequence arguments</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1103" href="#l1103">1103</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">args</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1104" href="#l1104">1104</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1105" href="#l1105">1105</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// TIME: where to write the serialized current time</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1106" href="#l1106">1106</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">args</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1107" href="#l1107">1107</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1108" href="#l1108">1108</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// TIME: where to write the serialized current time</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1109" href="#l1109">1109</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">time</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1110" href="#l1110">1110</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1111" href="#l1111">1111</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// SERIAL_OUT: serial output port index plus payload in guest memory</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1112" href="#l1112">1112</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">time</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1113" href="#l1113">1113</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">index</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1114" href="#l1114">1114</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// SERIAL_OUT: serial output port index plus payload in guest memory</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1115" href="#l1115">1115</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1116" href="#l1116">1116</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">serialOut</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">index</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1117" href="#l1117">1117</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1118" href="#l1118">1118</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// SERIAL_RECV: Read a message from the serialIn port queue given a port index</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">len</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1119" href="#l1119">1119</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">serialOut</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1120" href="#l1120">1120</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">index</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1121" href="#l1121">1121</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">dataPtr</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// SERIAL_RECV: Read a message from the serialIn port queue given a port index</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1122" href="#l1122">1122</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">dataSize</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1123" href="#l1123">1123</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">actualSizePtr</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">index</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1124" href="#l1124">1124</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="n">Svc</span><span class="o">::</span><span class="n">BlockState</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">blockingType</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">dataPtr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1125" href="#l1125">1125</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">serialRecv</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">dataSize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1126" href="#l1126">1126</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">actualSizePtr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1127" href="#l1127">1127</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">214</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="n">Args</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">command</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span><span class="w"> </span><span class="p">{}</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                </span><span class="n">Svc</span><span class="o">::</span><span class="n">BlockState</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">blockingType</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1128" href="#l1128">1128</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="n">u</span><span class="p">;</span></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="n">serialRecv</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1129" href="#l1129">1129</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">};</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1130" href="#l1130">1130</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">216</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="n">Args</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">command</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1131" href="#l1131">1131</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">PendingHostFunction</span><span class="w"> </span><span class="n">m_pendingHostFunction</span><span class="p">;</span></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="n">u</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1132" href="#l1132">1132</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1133" href="#l1133">1133</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Helper function for checking the signature of a modules main function</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1134" href="#l1134">1134</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_status_t</span><span class="w"> </span><span class="nf">validateModuleMain</span><span class="p">(</span><span class="n">WasmSequencer_ModuleIdx</span><span class="w"> </span><span class="n">moduleIdx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">PendingHostFunction</span><span class="w"> </span><span class="n">m_pendingHostFunction</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1135" href="#l1135">1135</a></td>
@@ -8040,63 +8040,63 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Report an engine-completion failure as the appropriate distinct event</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Helper function for checking the signature of a modules main function</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1137" href="#l1137">1137</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! (SequenceExited / SequencePanic / SequenceTrapped / SequenceHostFailure,</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_status_t</span><span class="w"> </span><span class="nf">validateModuleMain</span><span class="p">(</span><span class="n">WasmSequencer_ModuleIdx</span><span class="w"> </span><span class="n">moduleIdx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1138" href="#l1138">1138</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! or SequenceCancelled) and bump the matching telemetry counter. `phase`</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1139" href="#l1139">1139</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! records whether the failure occurred running the module&#39;s start function</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Report an engine-completion failure as the appropriate distinct event</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1140" href="#l1140">1140</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! or its main entrypoint.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! (SequenceExited / SequencePanic / SequenceTrapped / SequenceHostFailure,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1141" href="#l1141">1141</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">reportSequenceRuntimeFailure</span><span class="p">(</span><span class="n">WasmSequencer_ModuleIdx</span><span class="w"> </span><span class="n">moduleIdx</span><span class="p">,</span><span class="w"> </span><span class="n">WasmSequencer_SequencePhase</span><span class="w"> </span><span class="n">phase</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! or SequenceCancelled) and bump the matching telemetry counter. `phase`</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1142" href="#l1142">1142</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! records whether the failure occurred running the module&#39;s start function</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1143" href="#l1143">1143</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Respond to a request with certain reply</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! or its main entrypoint.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1144" href="#l1144">1144</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">respondToRequest</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">WasmSequencer_RequestContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">&amp;</span><span class="w"> </span><span class="n">response</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">reportSequenceRuntimeFailure</span><span class="p">(</span><span class="n">WasmSequencer_ModuleIdx</span><span class="w"> </span><span class="n">moduleIdx</span><span class="p">,</span><span class="w"> </span><span class="n">WasmSequencer_SequencePhase</span><span class="w"> </span><span class="n">phase</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1145" href="#l1145">1145</a></td>
@@ -8110,14 +8110,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Send response to all waiting requests</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Respond to a request with certain reply</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1147" href="#l1147">1147</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">respondToWaiting</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">&amp;</span><span class="w"> </span><span class="n">response</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">respondToRequest</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">WasmSequencer_RequestContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">&amp;</span><span class="w"> </span><span class="n">response</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1148" href="#l1148">1148</a></td>
@@ -8131,70 +8131,70 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Report that a RUN finished on seqDoneOut (if connected) with the given</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Send response to all waiting requests</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1150" href="#l1150">1150</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! response. Only emits for RUN-sourced requests, matching the RUN-gated</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">respondToWaiting</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">&amp;</span><span class="w"> </span><span class="n">response</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1151" href="#l1151">1151</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! seqStartOut in reportModuleStarted, so the seqStart/seqDone pair stays</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1152" href="#l1152">1152</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! balanced. A no-op for INVOKE/LOAD, so both controller completion actions</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Report that a RUN finished on seqDoneOut (if connected) with the given</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1153" href="#l1153">1153</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! (respond_block_OK and respond_block_ERROR, which send the final command</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! response. Only emits for RUN-sourced requests, matching the RUN-gated</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1154" href="#l1154">1154</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! response) can call it unconditionally.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! seqStartOut in reportModuleStarted, so the seqStart/seqDone pair stays</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1155" href="#l1155">1155</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">reportSeqDone</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">WasmSequencer_RequestContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">&amp;</span><span class="w"> </span><span class="n">response</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! balanced. A no-op for INVOKE/LOAD, so both controller completion actions</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1156" href="#l1156">1156</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! (respond_block_OK and respond_block_ERROR, which send the final command</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1157" href="#l1157">1157</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Set a global to a value given the name of the module, global export name and value</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! response) can call it unconditionally.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1158" href="#l1158">1158</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_status_t</span><span class="w"> </span><span class="nf">setGlobal</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">moduleName</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">spacewasm_value_t</span><span class="w"> </span><span class="n">value</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">reportSeqDone</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">WasmSequencer_RequestContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">&amp;</span><span class="w"> </span><span class="n">response</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1159" href="#l1159">1159</a></td>
@@ -8208,49 +8208,49 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the value of a global variable given its module name and global name</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Set a global to a value given the name of the module, global export name and value</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1161" href="#l1161">1161</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_status_t</span><span class="w"> </span><span class="nf">getGlobal</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">moduleName</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_status_t</span><span class="w"> </span><span class="nf">setGlobal</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">moduleName</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">spacewasm_value_t</span><span class="w"> </span><span class="n">value</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1162" href="#l1162">1162</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                 </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1163" href="#l1163">1163</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                 </span><span class="n">spacewasm_value_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the value of a global variable given its module name and global name</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1164" href="#l1164">1164</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_status_t</span><span class="w"> </span><span class="nf">getGlobal</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">moduleName</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1165" href="#l1165">1165</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Set up the fprime host interface</span></td>
+      <td class="src "><span class="w">                                 </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1166" href="#l1166">1166</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">hostFprimeV1</span><span class="p">(</span><span class="n">spacewasm_host_t</span><span class="o">*</span><span class="p">);</span></td>
+      <td class="src "><span class="w">                                 </span><span class="n">spacewasm_value_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1167" href="#l1167">1167</a></td>
@@ -8264,441 +8264,441 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">/// FPrime Wasm Interface Host Functions</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Set up the fprime host interface</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1169" href="#l1169">1169</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmExit</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">hostFprimeV1</span><span class="p">(</span><span class="n">spacewasm_host_t</span><span class="o">*</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1170" href="#l1170">1170</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1171" href="#l1171">1171</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">/// FPrime Wasm Interface Host Functions</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1172" href="#l1172">1172</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmExit</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1173" href="#l1173">1173</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                         </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1174" href="#l1174">1174</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmPanic</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                         </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1175" href="#l1175">1175</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                          </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                         </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1176" href="#l1176">1176</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                          </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1177" href="#l1177">1177</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                          </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmPanic</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1178" href="#l1178">1178</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                          </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1179" href="#l1179">1179</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmArgs</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                          </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1180" href="#l1180">1180</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                          </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1181" href="#l1181">1181</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1182" href="#l1182">1182</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmArgs</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1183" href="#l1183">1183</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                         </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1184" href="#l1184">1184</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmTime</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                         </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1185" href="#l1185">1185</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                         </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1186" href="#l1186">1186</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1187" href="#l1187">1187</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmTime</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1188" href="#l1188">1188</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                         </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1189" href="#l1189">1189</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmReadTelemetry</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                         </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1190" href="#l1190">1190</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                  </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                         </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1191" href="#l1191">1191</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1192" href="#l1192">1192</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                  </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmReadTelemetry</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1193" href="#l1193">1193</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                                  </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1194" href="#l1194">1194</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmReadParameter</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                                  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1195" href="#l1195">1195</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                  </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                                  </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1196" href="#l1196">1196</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1197" href="#l1197">1197</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                  </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmReadParameter</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1198" href="#l1198">1198</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                                  </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1199" href="#l1199">1199</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmCommand</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                                  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1200" href="#l1200">1200</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                            </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                                  </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1201" href="#l1201">1201</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                            </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1202" href="#l1202">1202</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                            </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmCommand</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1203" href="#l1203">1203</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                            </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1204" href="#l1204">1204</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmEvent</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                            </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1205" href="#l1205">1205</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                          </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                            </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1206" href="#l1206">1206</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                          </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1207" href="#l1207">1207</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                          </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmEvent</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1208" href="#l1208">1208</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                          </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1209" href="#l1209">1209</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmRsleep</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                          </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1210" href="#l1210">1210</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                           </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                          </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1211" href="#l1211">1211</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                           </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1212" href="#l1212">1212</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                           </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmRsleep</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1213" href="#l1213">1213</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                           </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1214" href="#l1214">1214</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmAsleep</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                           </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1215" href="#l1215">1215</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                           </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                           </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1216" href="#l1216">1216</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                           </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1217" href="#l1217">1217</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                           </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmAsleep</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1218" href="#l1218">1218</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                           </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1219" href="#l1219">1219</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmSerialOut</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                           </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1220" href="#l1220">1220</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                              </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                           </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1221" href="#l1221">1221</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                              </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1222" href="#l1222">1222</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                              </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmSerialOut</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1223" href="#l1223">1223</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                              </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1224" href="#l1224">1224</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmSerialRecv</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                              </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1225" href="#l1225">1225</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                               </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                              </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1226" href="#l1226">1226</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                               </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1227" href="#l1227">1227</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                               </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">spacewasm_hostcall_result_t</span><span class="w"> </span><span class="nf">wasmSerialRecv</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_caller_t</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1228" href="#l1228">1228</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                               </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1229" href="#l1229">1229</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! COMMAND: forward an encoded command from guest memory to the command dispatcher.</span></td>
+      <td class="src "><span class="w">                                               </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n_params</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1230" href="#l1230">1230</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchCommand</span><span class="p">();</span></td>
+      <td class="src "><span class="w">                                               </span><span class="k">struct</span><span class="w"> </span><span class="nc">spacewasm_value_t</span><span class="o">*</span><span class="w"> </span><span class="n">out_result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1231" href="#l1231">1231</a></td>
@@ -8712,14 +8712,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! TELEMETRY: read a telemetry channel and write its value + time into guest memory.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! COMMAND: forward an encoded command from guest memory to the command dispatcher.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1233" href="#l1233">1233</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchTelemetry</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchCommand</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1234" href="#l1234">1234</a></td>
@@ -8733,14 +8733,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! PARAMETER: read a parameter and write it into guest memory.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! TELEMETRY: read a telemetry channel and write its value + time into guest memory.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1236" href="#l1236">1236</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchParameter</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchTelemetry</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1237" href="#l1237">1237</a></td>
@@ -8754,14 +8754,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! EVENT: emit a guest-requested event at the guest-requested severity.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! PARAMETER: read a parameter and write it into guest memory.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1239" href="#l1239">1239</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchEvent</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchParameter</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1240" href="#l1240">1240</a></td>
@@ -8775,14 +8775,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! RSLEEP: arm a relative sleep timer.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! EVENT: emit a guest-requested event at the guest-requested severity.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1242" href="#l1242">1242</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchRelativeSleep</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchEvent</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1243" href="#l1243">1243</a></td>
@@ -8796,14 +8796,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! ASLEEP: arm an absolute sleep timer.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! RSLEEP: arm a relative sleep timer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1245" href="#l1245">1245</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchAbsoluteSleep</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchRelativeSleep</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1246" href="#l1246">1246</a></td>
@@ -8817,14 +8817,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! ARGS: write the stored sequence arguments into guest memory.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! ASLEEP: arm an absolute sleep timer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1248" href="#l1248">1248</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchArgs</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchAbsoluteSleep</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1249" href="#l1249">1249</a></td>
@@ -8838,14 +8838,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! TIME: write the current time into guest memory.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! ARGS: write the stored sequence arguments into guest memory.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1251" href="#l1251">1251</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchTime</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchArgs</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1252" href="#l1252">1252</a></td>
@@ -8859,14 +8859,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! SERIAL_OUT: copy a payload out of guest memory and invoke the serial output port.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! TIME: write the current time into guest memory.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1254" href="#l1254">1254</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchSerialOut</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchTime</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1255" href="#l1255">1255</a></td>
@@ -8880,14 +8880,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! SERIAL_RECV: check the serial input queue and either resume or block awaiting a message.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! SERIAL_OUT: copy a payload out of guest memory and invoke the serial output port.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1257" href="#l1257">1257</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchSerialRecv</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchSerialOut</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1258" href="#l1258">1258</a></td>
@@ -8901,66 +8901,87 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// A global static lock. This is needed to allow the global allocator in spacewasm</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! SERIAL_RECV: check the serial input queue and either resume or block awaiting a message.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1260" href="#l1260">1260</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// to not require to pass context to fine grained context to allocations.</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">dispatchSerialRecv</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1261" href="#l1261">1261</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Read more about this in the SDD.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1262" href="#l1262">1262</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Mutex</span><span class="o">*</span><span class="w"> </span><span class="nf">getGlobalAllocatorLock</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// A global static lock. This is needed to allow the global allocator in spacewasm</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1263" href="#l1263">1263</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// to not require to pass context to fine grained context to allocations.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1264" href="#l1264">1264</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Read more about this in the SDD.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1265" href="#l1265">1265</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Mutex</span><span class="o">*</span><span class="w"> </span><span class="nf">getGlobalAllocatorLock</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1266" href="#l1266">1266</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1267" href="#l1267">1267</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1268" href="#l1268">1268</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1269" href="#l1269">1269</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1270" href="#l1270">1270</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1271" href="#l1271">1271</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

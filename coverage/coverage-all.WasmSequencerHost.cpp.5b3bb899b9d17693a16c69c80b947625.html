@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-08 21:16:37</td>
+      <td>2026-09-09 21:13:28</td>
     </tr>
   </table>
 </div>
@@ -70,7 +70,7 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l39">Svc::WasmSequencer::hostFprimeV1(spacewasm_host_t*) (line 39)</a></td><td>called 323 times</td><td>68.0%</td></tr>
+    <tr><td><a href="#l39">Svc::WasmSequencer::hostFprimeV1(spacewasm_host_t*) (line 39)</a></td><td>called 325 times</td><td>68.0%</td></tr>
     <tr><td><a href="#l126">Svc::WasmSequencer::wasmArgs(spacewasm_caller_t*, spacewasm_value_t const*, unsigned long, spacewasm_value_t*) (line 126)</a></td><td>called 7 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l383">Svc::WasmSequencer::wasmAsleep(spacewasm_caller_t*, spacewasm_value_t const*, unsigned long, spacewasm_value_t*) (line 383)</a></td><td>called 2 times</td><td>81.0%</td></tr>
     <tr><td><a href="#l287">Svc::WasmSequencer::wasmCommand(spacewasm_caller_t*, spacewasm_value_t const*, unsigned long, spacewasm_value_t*) (line 287)</a></td><td>called 20 times</td><td>79.0%</td></tr>
@@ -378,7 +378,7 @@
       <td class="lineno"><a id="l39" href="#l39">39</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">WasmSequencer</span><span class="w"> </span><span class="o">::</span><span class="n">hostFprimeV1</span><span class="p">(</span><span class="n">spacewasm_host_t</span><span class="o">*</span><span class="w"> </span><span class="n">host</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -392,7 +392,7 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">module_idx</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -401,18 +401,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_module</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fprime_v1&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">module_idx</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -428,11 +428,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;exit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;i&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -446,7 +446,7 @@
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -462,11 +462,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;panic&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;i&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -480,7 +480,7 @@
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -496,11 +496,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;args&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;i&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -514,7 +514,7 @@
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -530,11 +530,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;time&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -548,7 +548,7 @@
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -564,11 +564,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tlm&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Iiiii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;i&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -582,7 +582,7 @@
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -598,11 +598,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;prm&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Iii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;i&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -616,7 +616,7 @@
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -632,11 +632,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cmd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;i&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -650,7 +650,7 @@
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -666,11 +666,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;event&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;iii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -684,7 +684,7 @@
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -700,11 +700,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;rsleep&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -718,7 +718,7 @@
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -734,11 +734,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;asleep&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -752,7 +752,7 @@
       <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -768,11 +768,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;serial_send&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;iii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -786,7 +786,7 @@
       <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -802,11 +802,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 323 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 325 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spacewasm_add_host_function</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="w"> </span><span class="n">module_idx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;serial_recv&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;iiiii&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;i&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -820,14 +820,14 @@
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SPACEWASM_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">323</td>
+      <td class="linecount coveredLine">325</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
