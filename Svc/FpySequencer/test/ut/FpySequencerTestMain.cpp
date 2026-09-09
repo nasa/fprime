@@ -5,6 +5,7 @@
 #include <cmath>
 #include "FpySequencerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include "Fw/Time/TimePortAc.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
 #include "Os/FileSystem.hpp"
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
@@ -15,6 +16,13 @@ namespace Svc {
 using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 using DirectiveError = Fpy::DirectiveErrorCode;
+
+namespace {
+// Only invoked if deserialization succeeds; the mismatch test below is constructed so it never is
+void unusedTimePortCallback(Fw::PassiveComponentBase* callComp, FwIndexType portNum, Fw::Time& time) {
+    FAIL() << "Time port callback should not run when the payload is too small to deserialize";
+}
+}  // namespace
 
 TEST_F(FpySequencerTester, waitRel) {
     FpySequencer_WaitRelDirective directive{};
@@ -5604,6 +5612,28 @@ TEST_F(FpySequencerTester, popSerializable_stackUnderflow) {
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 4);  // Stack unchanged
+}
+
+TEST_F(FpySequencerTester, popSerializable_typedPortDeserializeMismatch) {
+    // Port 2 is otherwise unused by these tests. Connect it to a genuine typed input port instead
+    // of the harness's generic serial capture, so an undersized payload triggers a real deserialize
+    // mismatch the way a typed serialOut connection does in a real deployment (nasa/fprime#5859),
+    // rather than the FW_ASSERT this used to hit.
+    Fw::InputTimePort typedPort;
+    typedPort.init();
+    typedPort.addCallComp(&this->cmp, &unusedTimePortCallback);
+    this->component.set_serialOut_OutputPort(2, &typedPort);
+
+    // Fw::Time's serialized size is well over 1 byte, so 1 byte fails to deserialize into it
+    tester_push<U8>(0xAB);
+
+    FpySequencer_PopSerializableDirective directive(2, 1);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_popSerializable_directiveHandler(directive, err);
+
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::SERIAL_PORT_WRITE_FAILURE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);  // Stack unchanged; nothing was popped
 }
 
 TEST_F(FpySequencerTester, popSerializable_multipleTypes) {
