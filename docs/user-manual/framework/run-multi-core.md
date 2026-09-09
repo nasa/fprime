@@ -114,6 +114,11 @@ the subtopologies shipped with F´. Deployments that want it must set it in thei
 subtopology configuration overrides. `TASK_PRIORITY_DEFAULT` remains the platform default (inherited
 scheduling), and numeric priorities remain `SCHED_RR`. See the [OSAL SDD](../../../Os/docs/sdd.md).
 
+A non-realtime task is scheduled only when no realtime task is runnable, so it must not be on the critical
+path of a realtime task: keep interactions to message queues, avoid sharing locks held for long, and expect
+its latency to be unbounded under realtime load. The task runs at the lowest static priority of `SCHED_OTHER`
+(`sched_get_priority_min(SCHED_OTHER)`, 0 on Linux).
+
 ### Important Considerations
 
 **Synchronization objects** like mutexes are delegated to the OS and are SMP-safe based on the operating system

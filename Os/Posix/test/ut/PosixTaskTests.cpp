@@ -21,7 +21,7 @@ struct ObservedSchedule {
 
 //! Task routine that records the scheduling policy and priority of the calling thread
 void recordScheduleRoutine(void* pointer) {
-    ObservedSchedule& observed = *reinterpret_cast<ObservedSchedule*>(pointer);
+    ObservedSchedule& observed = *static_cast<ObservedSchedule*>(pointer);
     int policy = -1;
     sched_param param;
     param.sched_priority = -1;
