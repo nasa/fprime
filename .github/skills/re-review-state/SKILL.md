@@ -219,12 +219,11 @@ For each `k` in `intersect`, decide which row of the table applies:
 #### 3a-0. Maintainer-adjudicated action
 
 The maintainer has ruled the finding does not need fixing. Post
-nothing, do not un-resolve, do not repost. Treat `k` as resolved:
-move it from `intersect` to the cumulative resolved set (so
-`outstanding` decrements), and increment `resolved` in
-Since-last-run the first run the thread is seen in this state. On
-every later run the thread lands in this row again and is left
-alone.
+nothing, do not un-resolve, do not repost. No counter bookkeeping
+here: the thread is `isResolved`, so the Phase D recomputation (§4)
+counts it in `R` — on this run, on every later run, and after the
+finding-key eventually disappears (§3b) — exactly once. Do not also
+report it under `still open`.
 
 #### 3a-i. Improper-resolution action
 
@@ -259,11 +258,12 @@ For each `k` in `resolved`:
 
 | `thread.isResolved` | Action |
 |---|---|
-| `false` | **Clean resolution.** Reply `[<review_label>] Fixed in <head-sha>.` + GraphQL `resolveReviewThread`. |
-| `true` | **Acknowledged.** Reply `[<review_label>] Fixed in <head-sha>.` only — no need to re-resolve. |
+| `false`, no own `Fixed in` reply | **Clean resolution.** Reply `[<review_label>] Fixed in <head-sha>.` + GraphQL `resolveReviewThread`. |
+| `false`, own `Fixed in` reply present | **Resolve failed earlier** (permissions). Retry `resolveReviewThread` once; do not reply again. |
+| `true` | **Already settled** (by the agent on an earlier run, a core maintainer, or the contributor after fixing). Do nothing — no reply, no re-resolve. |
 
-Increment `resolved` in Since-last-run. Decrement `outstanding` (do
-NOT decrement any tag column).
+No counter bookkeeping here either; `outstanding` and `resolved` come
+from the Phase D recomputation (§4). Never decrement any tag column.
 
 ### 3c. Current findings with no prior match (`new`)
 
@@ -342,9 +342,17 @@ Update:
 - The `reviewed_head` line: set to the head SHA analyzed this run.
 - The four tag columns: increment for any newly-posted comments
   (incorrect-fix follow-ups and brand-new findings). Never decrement.
-- The `outstanding` column: recompute as
-  `(cumulative tag-column sum) − (cumulative resolved count)`, where
-  maintainer-adjudicated threads (§3a-0) count as resolved.
+- The `outstanding` column: recompute from thread state, never by
+  adjusting the prior value. After the Phase C actions above, re-query
+  the threads the agent counts in its tag columns (its own comments
+  plus threads carrying its concurrence reply, §3c) and let `R` =
+  those with `isResolved == true`, plus unresolved ones carrying an
+  own `Fixed in` reply (resolve failed on permissions), minus any the
+  agent tried to un-resolve this run (§3a-i, even if that failed).
+  Then `outstanding = (cumulative tag-column sum) − R`. Adjudicated
+  (§3a-0), agent-resolved (§3b), and contributor-resolved-after-fixing
+  threads are all simply members of `R`; a thread is counted once
+  regardless of how many runs it has been resolved for.
 - The `Verdict:` line: `Go` iff outstanding must-fix == 0, else
   `No-Go`.
 - The `Run:` line: increment the run ordinal.
@@ -352,12 +360,14 @@ Update:
   (`resolved`, `still open`, `newly added`, `incorrect-fix
   follow-ups`, `improperly resolved`, `disagreements escalated`).
 
-`still open` = `|intersect|` (after subtracting maintainer-adjudicated,
-improperly-resolved and disagreement-escalated entries, since those
-are accounted in their own counters but still represent the same
-finding-keys that "remain open"; in the simple accounting model
-`still open` is `|intersect|` and the other counters are subsets
-reported separately).
+`resolved` = `max(0, R − R_prev)` where
+`R_prev = (prior cumulative tag-column sum) − (prior outstanding)`,
+both read from the prior metadata body. Threads that became resolved
+between runs are counted once, whoever resolved them.
+
+`still open` = `|intersect|` minus maintainer-adjudicated (§3a-0),
+improperly-resolved and disagreement-escalated entries; the latter
+two are reported in their own counters.
 
 The cumulative tag columns and outstanding-driven verdict are
 defined in the review contract §2.
