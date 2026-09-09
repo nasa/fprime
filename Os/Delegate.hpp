@@ -105,24 +105,9 @@ inline Interface* makeDelegate(StorageType& aligned_new_memory, const Interface*
 
 //! \brief Make a delegate of type Interface using Implementation with copy-constructor and constructor-argument support
 //!
-//! Behaves as the copy-constructor `makeDelegate` overload, except that when `to_copy` is `nullptr` the Implementation
-//! is constructed from `argument` rather than default-constructed. This supports delegates whose construction is
-//! parameterized (e.g. `RawTimeInterface` selecting a `RawTimeSource`).
+//! As the copy-constructor overload, except a null `to_copy` constructs the Implementation from `argument`
+//! (e.g. `RawTimeInterface` selecting a `RawTimeSource`).
 //!
-//! Example: RawTimeInterface getDelegate Supporting Copy-Constructor and Source Selection
-//!
-//! ```c++
-//! #include "Os/Delegate.hpp"
-//!
-//! namespace Os {
-//! RawTimeInterface* RawTimeInterface::getDelegate(RawTimeHandleStorage& aligned_new_memory,
-//!                                                 const RawTimeInterface* to_copy,
-//!                                                 RawTimeSource source) {
-//!   return Os::Delegate::makeDelegate<RawTimeInterface, Os::Posix::RawTime::PosixRawTime>(aligned_new_memory,
-//!                                                                                          to_copy, source);
-//! }
-//! }
-//! ```
 //! \tparam Interface: interface the delegate supports (e.g. RawTimeInterface)
 //! \tparam Implementation: implementation class of the delegate (e.g. PosixRawTime)
 //! \tparam Argument: type of the constructor argument

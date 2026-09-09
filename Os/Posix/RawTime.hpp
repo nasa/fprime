@@ -19,9 +19,8 @@ struct PosixRawTimeHandle : public RawTimeHandle {
 
 //! \brief Posix implementation of Os::RawTime
 //!
-//! Posix implementation of `RawTimeInterface` reading the clock selected by `RawTimeSource`. `RawTimeSource`
-//! enumerators carry `clockid_t` values (see `config/RawTimeSource.hpp`), so any clock supported by the platform's
-//! `clock_gettime()` may be selected. Intervals may only be computed between instances using the same clock.
+//! Posix implementation of `RawTimeInterface` reading the `clock_gettime()` clock selected by `RawTimeSource`.
+//! Intervals may only be computed between instances using the same clock.
 //!
 class PosixRawTime : public RawTimeInterface {
   public:
