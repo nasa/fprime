@@ -222,19 +222,19 @@ void ComQueueTester ::testPrioritySend() {
         Fw::Buffer buffer(&data[portNum + ComQueue::COM_PORT_COUNT][0], BUFFER_LENGTH);
         invoke_to_bufferQueueIn(portNum, buffer);
     }
+    this->dispatchAll();
 
     // Check that nothing has yet been sent
     ASSERT_from_dataOut_SIZE(0);
 
     for (FwIndexType index = 0; index < ComQueue::TOTAL_PORT_COUNT; index++) {
-        U8 orderKey;
         U32 previousSize = fromPortHistory_dataOut->size();
         emitOne();
         ASSERT_EQ(fromPortHistory_dataOut->size(), (index + 1));
         // Check that the size changed by exactly one
         ASSERT_EQ(fromPortHistory_dataOut->size(), (previousSize + 1));
 
-        orderKey = fromPortHistory_dataOut->at(index).data.getData()[BUFFER_DATA_OFFSET];
+        U8 orderKey = fromPortHistory_dataOut->at(index).data.getData()[BUFFER_DATA_OFFSET];
         ASSERT_EQ(orderKey, index);
     }
     clearFromPortHistory();
