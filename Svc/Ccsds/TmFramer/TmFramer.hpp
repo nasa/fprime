@@ -12,6 +12,7 @@
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 
 namespace Svc {
 
@@ -38,6 +39,12 @@ class TmFramer final : public TmFramerComponentBase {
 
     static_assert(static_cast<FwSizeType>(ComCfg::AggregationSize) <= TmPayloadCapacity,
                   "ComCfg::AggregationSize must fit in the TM data field");
+    // Aggregates from Svc::ComAggregator with spanning enabled are exactly ComCfg::AggregationSize bytes; the data
+    // field must then be exactly full or leave room for a minimum idle packet (dataIn_handler asserts otherwise)
+    static_assert(
+        TmPayloadCapacity - static_cast<FwSizeType>(ComCfg::AggregationSize) == 0 ||
+            TmPayloadCapacity - static_cast<FwSizeType>(ComCfg::AggregationSize) >= Utils::IdlePacket::MIN_SIZE,
+        "ComCfg::AggregationSize must fill the TM data field exactly or leave room for a minimum idle packet");
 
     enum class BufferOwnershipState {
         NOT_OWNED,  //!< The buffer is currently not owned by the TmFramer

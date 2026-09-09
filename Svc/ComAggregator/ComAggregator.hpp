@@ -204,11 +204,6 @@ class ComAggregator final : public ComAggregatorComponentBase {
 
     static_assert(static_cast<FwSizeType>(ComCfg::AggregationSize) > Ccsds::Utils::IdlePacket::MIN_SIZE,
                   "ComCfg::AggregationSize must exceed the minimum idle packet size");
-    // Every packet header offset in an aggregate must be representable as an 11-bit First Header Pointer
-    // and distinct from the reserved values (CCSDS 132.0-B-3 4.1.2.7.6)
-    static_assert(static_cast<FwSizeType>(ComCfg::AggregationSize) <=
-                      static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY),
-                  "ComCfg::AggregationSize must not exceed the TM First Header Pointer range");
 
     U8 m_frameBufferStore[ComCfg::AggregationSize];  //!< Buffer to hold the frame data
     std::atomic<Fw::Buffer::OwnershipState> m_bufferState{

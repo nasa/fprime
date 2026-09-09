@@ -37,6 +37,13 @@ ComAggregator ::~ComAggregator() {}
 void ComAggregator ::configure(bool spanningEnabled) {
     // Configuration must happen before any data is aggregated
     FW_ASSERT(this->m_frameSerializer.getSize() == 0, static_cast<FwAssertArgType>(this->m_frameSerializer.getSize()));
+    if (spanningEnabled) {
+        // Every packet header offset in an aggregate must be representable as an 11-bit First Header Pointer
+        // and distinct from the reserved values (CCSDS 132.0-B-3 4.1.2.7.6)
+        const FwSizeType aggregationSize = static_cast<FwSizeType>(ComCfg::AggregationSize);
+        const FwSizeType fhpRange = static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY);
+        FW_ASSERT(aggregationSize <= fhpRange, static_cast<FwAssertArgType>(aggregationSize));
+    }
     this->m_spanning = spanningEnabled;
     this->m_capacity = spanningEnabled
                            ? static_cast<FwSizeType>(ComCfg::AggregationSize)
