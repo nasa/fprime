@@ -193,7 +193,7 @@ void WasmSequencer ::createStore() {
 
 void WasmSequencer ::destroyStore() {
     FW_ASSERT(this->m_wasm != nullptr);
-    FW_ASSERT(this->m_allocator != nullptr);
+    FW_ASSERT(this->m_guest_allocator != nullptr);
 
     this->takeAllocatorLock();
     spacewasm_destroy(this->m_wasm);
