@@ -7,6 +7,7 @@
 #ifndef Svc_Ccsds_SdlsSaRouter_HPP
 #define Svc_Ccsds_SdlsSaRouter_HPP
 
+#include <Os/Mutex.hpp>
 #include "Fw/DataStructures/ArrayMap.hpp"
 #include "SdlsSaRouterConfig/FppConstantsAc.hpp"
 #include "SdlsSaRouterConfig/SaMapArrayAc.hpp"
@@ -79,6 +80,9 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
 
     //! Map from SA index to downstream port index
     Fw::ArrayMap<U16, FwIndexType, SdlsCfg::SaRouterMapEntryCount> m_saMap;
+
+    //! Mutex for protecting access to the router's internal state
+    Os::Mutex m_outstandingLock;
 
     // ----------------------------------------------------------------------
     // Constants

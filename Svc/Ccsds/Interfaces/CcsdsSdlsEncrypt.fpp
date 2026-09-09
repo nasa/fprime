@@ -14,6 +14,7 @@ module Ccsds {
         output port encryptOut: Svc.Ccsds.CcsdsSdlsData
 
         @ Port for receiving back ownership of buffers sent on encryptOut
+        @ Client returns this buffer from inside the encryptIn call chain, so a guard would re-lock
         sync input port encryptReturnIn: Svc.ComDataWithContext
 
         @ Port for returning the incoming iv/data buffer for deallocation

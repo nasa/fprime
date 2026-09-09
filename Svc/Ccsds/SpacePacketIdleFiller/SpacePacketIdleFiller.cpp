@@ -98,7 +98,9 @@ void SpacePacketIdleFiller ::dataReturnIn_handler(FwIndexType portNum,
 }
 
 void SpacePacketIdleFiller ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
-    this->comStatusOut_out(0, condition);
+    if (this->isConnected_comStatusOut_OutputPort(0)) {
+        this->comStatusOut_out(0, condition);
+    }
 }
 
 // ----------------------------------------------------------------------
