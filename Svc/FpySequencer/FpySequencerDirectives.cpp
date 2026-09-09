@@ -428,7 +428,6 @@ Signal FpySequencer::pushTlmValAndTime_directiveHandler(const FpySequencer_PushT
 }
 
 Signal FpySequencer::pushPrm_directiveHandler(const FpySequencer_PushPrmDirective& directive, DirectiveError& error) {
-    // PUSH_PRM reads sequence params through getParam, not the component prmGet port
     if (!this->isConnected_getParam_OutputPort(0)) {
         error = DirectiveError::PRM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
