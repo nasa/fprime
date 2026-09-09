@@ -200,6 +200,7 @@ void WasmSequencer ::destroyStore() {
     spacewasm_allocator_destroy(this->m_guest_allocator);
     this->releaseAllocatorLock();
     this->m_wasm = nullptr;
+    this->m_guest_allocator = nullptr;
 
     // Make sure we cleanly deallocated all the heap memory
     FW_ASSERT(this->m_heapPagesUsed == 0, static_cast<FwAssertArgType>(this->m_heapPagesUsed));
