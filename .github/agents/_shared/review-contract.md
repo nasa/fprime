@@ -402,11 +402,11 @@ touched since the last pass is churn, not review. Mechanics live in
 | Prior key | Current key | Thread state | Meaning | Action |
 |---|---|---|---|---|
 | present | present | not resolved, no contributor replies | Same finding still applies | **Do nothing.** Leave comment as-is. **Never repost.** |
-| present | present | **resolved by a core maintainer** | **Maintainer adjudicated.** The maintainer has decided the finding does not need to be fixed. | **Do nothing.** Leave the thread resolved; no reply, no un-resolve, no repost — on this and every later run. Count the finding as resolved (`outstanding` decrements; `resolved` in Since-last-run increments the first run this is observed). |
+| present | present | **resolved by a core maintainer** | **Maintainer adjudicated.** The maintainer has decided the finding does not need to be fixed. | **Do nothing.** Leave the thread resolved; no reply, no un-resolve, no repost — on this and every later run. The resolved thread counts against `outstanding` via the Phase D recomputation. |
 | present | present | **resolved by anyone else** | **Improperly resolved.** Finding still applies on the new head. | **Un-resolve + reply.** GraphQL `unresolveReviewThread`; reply with the improper-resolution body shape (§9). Append maintainer ping per §4. Increment `improperly resolved` in Since-last-run. |
 | present | present | not resolved, but contributor has replied | Possible disagreement | **Reply + escalate** per §11. Increment `disagreements escalated` in Since-last-run. |
 | present | absent | not resolved | Cleanly fixed | **Resolve:** reply `[<review_label>] Fixed in <sha>.` + GraphQL `resolveReviewThread`. |
-| present | absent | already resolved | Cleanly fixed and acknowledged | **Reply only:** `[<review_label>] Fixed in <sha>.` (no need to re-resolve). |
+| present | absent | already resolved | Already settled (resolved by the agent on an earlier run, by a core maintainer, or by the contributor after fixing) | **Do nothing.** No reply, no re-resolve. |
 | absent | present, same `(file, symbol)` as a prior but different `finding_class` | n/a | Author attempted a fix that left a different problem in the same spot | **Incorrect-fix follow-up:** new inline comment, body starts with `[<review_label>] **<tag>** Follow-up to <link to prior>: <new issue>`. |
 | absent | present, no related prior, **another agent's open thread shares the site-key and describes the same issue** | n/a | Cross-agent duplicate (§6a) | **Concurrence reply** on the existing thread per §6a / §9; count the finding in own metadata; do not open a new thread. |
 | absent | present, no related prior | n/a | Brand-new finding (new code) | **Post a new comment.** |
@@ -419,8 +419,9 @@ tag counts, `outstanding`, `run`, `since_last_run`, verdict. Never
 dismiss it and never post a second metadata review. The
 Since-last-run metadata carries six counters:
 
-- `X resolved` — prior findings the agent cleanly resolved this run,
-  plus threads first observed as maintainer-adjudicated this run.
+- `X resolved` — own threads that became resolved since the prior
+  run, however they got there (agent, core maintainer, or contributor
+  after fixing): `max(0, R − R_prev)` per the recomputation below.
 - `Y still open` — prior findings that still apply (unchanged threads).
 - `Z newly added` — brand-new findings posted this run.
 - `W incorrect-fix follow-ups` — same-spot-different-finding-class new
@@ -434,8 +435,16 @@ Since-last-run metadata carries six counters:
 
 - Tag columns increment when new findings appear.
 - Tag columns NEVER decrement on resolution. (Priority 1 guarantee.)
-- `outstanding` = (cumulative findings) − (resolved findings), where
-  maintainer-adjudicated threads count as resolved.
+- `outstanding` is **recomputed from thread state every run, never
+  carried forward incrementally**: `outstanding = (cumulative tag-column
+  sum) − R`, where `R` = number of threads the agent counts in its tag
+  columns whose `isResolved` is true after this run's Phase C actions
+  (threads the agent replied `Fixed in` to but could not resolve for
+  permission reasons also count; threads it tried to un-resolve as
+  improperly resolved do not). `R_prev` = prior cumulative sum −
+  prior `outstanding`. A thread therefore counts as resolved exactly
+  once, no matter how many runs it stays resolved or whether its
+  finding-key later disappears.
 
 ### Resolution mechanism
 
@@ -447,8 +456,8 @@ external trigger provides:
 - A REST reply `[<review_label>] Fixed in <commit-sha>.` keeps an audit trail.
 
 If `resolveReviewThread` fails, the reply alone is acceptable
-degradation; the agent still decrements `outstanding` and increments
-"resolved" in Since-last-run.
+degradation; the thread still counts toward `R` above, and later runs
+skip it (an own `Fixed in` reply is already present).
 
 ### Guardrails (never)
 

@@ -271,7 +271,7 @@ The agent uses this to:
 
 | Failure | Fallback |
 |---|---|
-| `resolveReviewThread` returns `403` or the token lacks the discussion-write scope | Post the `[<review_label>] Fixed in <sha>.` reply and proceed. The thread visibly remains open but the audit trail is preserved. Decrement `outstanding` and increment `resolved` in Since-last-run regardless. |
+| `resolveReviewThread` returns `403` or the token lacks the discussion-write scope | Post the `[<review_label>] Fixed in <sha>.` reply and proceed. The thread visibly remains open but the audit trail is preserved; the own `Fixed in` reply makes it count as resolved in the `re-review-state` §4 recomputation. |
 | `unresolveReviewThread` returns `403` | Post the improperly-resolved reply anyway. The thread remains visibly resolved on GitHub but the reply + maintainer ping is visible inline. Increment `improperly resolved` regardless. |
 | Inline-comment POST returns `422 Pull Request Review thread cannot be created on this line of the diff` | The line is not in the PR's diff. Re-anchor to the nearest line that is in the diff (typically the function header) and prefix the comment body with `(Anchored above the offending line; the diff does not include line N.)` |
 | `PUT .../reviews/{review_id}` (body update) returns `404`/`403` | Submit a fresh metadata-only review instead (§4). Never attempt `/dismissals` on a `COMMENTED` review. |
