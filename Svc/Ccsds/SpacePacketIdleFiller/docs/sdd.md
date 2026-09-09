@@ -35,9 +35,28 @@ The emitted idle packet matches what `Svc::Ccsds::TmFramer` produces: APID `0x7F
 
 ## Configuration
 
-`configure(FwSizeType targetSize)` must be called during topology setup; a buffer arriving first asserts. `targetSize` is the plaintext size that exactly fills the transfer frame data field once framing and security overhead are added. For a 1024-byte TM frame carrying SDLS AES-256-GCM, `1024 - 6 (TM header) - 2 (FECF) - 2 (SPI) - 12 (IV) - 16 (MAC) = 986`.
+The fill target defaults to `ComCfg.SdlsFillTargetSize`, so no topology setup call is required. That constant is the plaintext size which exactly fills the transfer frame data field once framing and security overhead are added, and it is derived from the frame geometry rather than written out:
 
-The deployment must also cap its upstream aggregation buffer at `targetSize - 7`, so a buffer either fills the target exactly or leaves room for a well-formed idle packet
+```
+SdlsFillTargetSize = TmFrameFixedSize - 6 (TM header) - 2 (SPI) - 2 (FECF)   # 1014 by default
+AggregationSize    = SdlsFillTargetSize - 7                                   # 1007 by default
+```
+
+A project selecting a real encryptor subtracts that component's overhead as well, by overriding `ComCfg` through CMake `CONFIGURATION_OVERRIDES`. For AES-256-GCM that is 28 bytes more (12-byte IV plus 16-byte MAC), giving `1024 - 6 - 2 - 2 - 12 - 16 = 986`, with `AggregationSize` 979.
+
+**Both constants must move together.** `AggregationSize` caps the upstream aggregation buffer, and the subtraction of 7 is what guarantees every aggregate either fills the target exactly or leaves room for a well-formed idle Space Packet. Defining it as `SdlsFillTargetSize - 7`, as the default does, preserves the relation automatically; writing an independent literal invites the two to drift.
+
+Getting it wrong has these consequences, which is why the component `static_assert`s both bounds rather than leaving them to run time:
+
+| Misconfiguration | Effect |
+|---|---|
+| `AggregationSize` > target | Every aggregate above the target is dropped with `InputTooLarge`; with the AES target of 986 and the pre-existing default of 1009, that is most full frames |
+| target − 7 < `AggregationSize` ≤ target | Aggregates in the last 6 bytes of the range are dropped with `GapTooSmall` — a partial, size-dependent outage that a log skim can easily miss |
+| target > frame data field | The padded buffer cannot fit the frame at all |
+
+The first two are caught by `static_assert(SdlsFillTargetSize >= AggregationSize + 7)` and the third by `static_assert(SdlsFillTargetSize <= MAX_FILL_SIZE)`, both in the component header, so a project that overrides one constant and forgets the other fails to build.
+
+`configure(FwSizeType targetSize)` remains available as an optional override, for a deployment pairing this component with an upstream aggregator sized differently from the compile-time configuration. It asserts only the intrinsic bounds (`targetSize` in `[1, MAX_FILL_SIZE]`); the relation to `ComCfg.AggregationSize` is deliberately not checked there, since that constant describes the default target rather than an overridden one. Call it during topology setup, before any buffer is padded.
 
 ## Requirements
 
@@ -53,6 +72,8 @@ The deployment must also cap its upstream aggregation buffer at `targetSize - 7`
 | SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-008 | The emitted buffer returning on `dataReturnIn` shall free the component storage for the next buffer. | Unit Test |
 | SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-009 | A status received on `comStatusIn` shall be forwarded on `comStatusOut` unchanged. | Unit Test |
 | SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-010 | A dropped buffer shall be followed by `Fw::Success::SUCCESS` on `comStatusOut`. | Unit Test |
+| SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-011 | The fill target shall default to `ComCfg.SdlsFillTargetSize`, so that the component operates correctly with no topology setup call. | Unit Test |
+| SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-012 | The component shall fail to compile if `ComCfg.SdlsFillTargetSize` exceeds the transfer frame data field, or if it is less than `ComCfg.AggregationSize` plus the minimum idle Space Packet size. | Inspection |
 
 ## Deployment Notes
 

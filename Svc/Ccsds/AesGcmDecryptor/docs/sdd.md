@@ -17,6 +17,15 @@ Decryption is in place, so the emitted buffer is the one received, advanced past
 
 The AAD is built by `Svc::Ccsds::Utils::SdlsTcAuthMask`, whose layout matches the ground segment's independent implementation of the same contract. The virtual channel comes from the frame context: `Svc::Ccsds::TcDeframer` reads it from the TC primary header and sets it on the context before stripping that header, so it is still available by decryption time.
 
+## Security Considerations
+
+What this component provides: confidentiality, integrity, and authentication of the frame body, bound to the SA index and the virtual channel. A frame modified in flight, built under a different key, or presented on a different virtual channel or SA fails the MAC check.
+
+What it does not provide, and which an operator must plan for:
+
+- **No anti-replay.** The IV is chosen by the sender and is not checked against anything, and no sequence number is tracked per SA. A previously valid TC frame captured off the link and re-injected later passes the MAC check and reaches the command path unchanged. SDLS anti-replay (CCSDS 355.0-B-2 §4.1.3) relies on an Anti-Replay Sequence Number in the security header, which this implementation does not carry. Missions exposed to a recording adversary need replay protection above this layer — a command counter, a time-bounded authorization window, or an idempotent command set.
+- **No key rotation.** The key is fetched per frame from the connected key source, so rotation is that component's responsibility. The in-tree `Svc.Ccsds.SdlsFileKeyManager` serves one static key for the life of the process.
+
 ## Requirements
 
 | Name | Description | Rationale | Validation |
@@ -47,7 +56,9 @@ The component emits no events: every outcome, including a failed authentication,
 
 Compile time: none.
 
-Runtime: none. The constructor builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `decryptIn` free of dynamic allocation, and the authenticated virtual channel arrives per frame on the frame context. See [`Svc/Ccsds/AesGcmEncryptor`](../../AesGcmEncryptor/docs/sdd.md) for measured allocation counts; the decrypt path behaves the same way.
+Runtime: none. The constructor builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `decryptIn` free of dynamic allocation, and the authenticated virtual channel arrives per frame on the frame context. The [`Svc/Ccsds/AesGcmEncryptor`](../../AesGcmEncryptor/docs/sdd.md) downlink path is built the same way.
+
+A key source must be connected to `keyGet` and made ready before the first frame arrives; the component requests a key per frame and reports `KEY_ERROR` if none is available. The in-tree `Svc.Ccsds.SdlsFileKeyManager` needs `configure(path, keySize)` during topology setup.
 
 ## Unit Testing
 

@@ -42,15 +42,28 @@ The component is passive with no commands, telemetry, or parameters, and allocat
 | output | encryptOut | Svc.Ccsds.CcsdsSdlsData | Sends the operation status and encrypted data downstream. |
 | sync input | encryptReturnIn | Svc.ComDataWithContext | Receives back ownership of buffers sent on `encryptOut`. |
 | output | bufferReturnOut | Svc.ComDataWithContext | Returns the incoming plaintext buffer for deallocation. |
-| output | keyGet | Svc.Ccsds.SdlsKey | Requests the AES-256 key bound to the frame's security association. |
+| output | keyGet | Svc.Ccsds.SdlsKey | Requests the AES-256 key for the frame's security association, passing the SA index with the request. |
 
 Events: `OutputBufferBusy` (WARNING_HI).
+
+The SA index is passed on every `keyGet` request, but whether it selects the key is up to the connected key source. Per `Svc.Ccsds.SdlsKeyInterface`, an implementation keyed per SA documents which indices it serves and returns `KEY_ERROR` for any other, while one that ignores the index says so. The in-tree `Svc.Ccsds.SdlsFileKeyManager` ignores it and returns its single file key for every SA — adequate where the deployment uses one key across its SAs by design, but note that SAs sharing a key also share its IV budget (see Security Considerations).
 
 ## Configuration
 
 Compile time: none of its own. The output store is sized directly from `ComCfg.TmFrameFixedSize`, the project-overridable TM frame size every deployment already sets; the component `static_assert`s that its own IV and MAC lengths agree with the `AesFrameOverhead` it derives from them.
 
 Runtime: none. The constructor builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `encryptIn` free of dynamic allocation, and the authenticated virtual channel arrives per frame on the frame context.
+
+## Security Considerations
+
+Each frame is encrypted under a freshly drawn 96-bit random IV. A repeated IV under one key forfeits both confidentiality and authenticity for GCM, so this is the property the design protects most carefully: the component returns `ENCRYPTION_FAILURE` rather than emit a frame if the CSPRNG cannot supply one.
+
+Random IVs of this width carry a bound. NIST SP 800-38D §8.3 limits a key to 2^32 invocations when IVs are constructed randomly, which keeps the collision probability below 2^-32. Nothing in this component counts invocations or forces a re-key, and the in-tree `Svc.Ccsds.SdlsFileKeyManager` serves one static key for the life of the process, so respecting the bound is a deployment responsibility. Two consequences follow:
+
+- **The budget is per key, not per SA.** Where several security associations are served by the same key material — which `SdlsFileKeyManager` does by construction — their frame counts add up against the same 2^32.
+- **A long-lived mission can reach it.** At one downlink frame every 100 ms across a single SA, 2^32 frames is roughly 13 years of continuous transmission; a higher frame rate, or several SAs sharing a key, scales that down proportionally.
+
+A mission that expects to approach the bound should either rotate keys through a key manager of its own, or move to the deterministic IV construction of §8.2.1 (a fixed field identifying the sender plus an invocation field that never repeats), which removes the birthday bound at the cost of requiring non-volatile invocation state.
 
 ## Unit Testing
 
