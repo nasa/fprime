@@ -79,6 +79,8 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testDepthZeroQueue();
 
+    void testAllQueuesDisabled();
+
     void testReadyFirst();
 
     void testContextData();

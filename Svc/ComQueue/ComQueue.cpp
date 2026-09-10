@@ -108,6 +108,8 @@ void ComQueue::configure(const QueueConfigurationTable& queueConfig,
             }
         }
     }
+    // At least one queue must be enabled; an all-zero table is the default-constructed (unconfigured) table
+    FW_ASSERT(totalAllocation > 0);
     // Allocate a single chunk of memory from the memory allocator. Memory recover is neither needed nor used.
     bool recoverable = false;
     FwSizeType actualAllocation = totalAllocation;

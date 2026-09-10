@@ -44,6 +44,11 @@ TEST(Nominal, DepthZeroQueue) {
     tester.testDepthZeroQueue();
 }
 
+TEST(OffNominal, AllQueuesDisabled) {
+    Svc::ComQueueTester tester;
+    tester.testAllQueuesDisabled();
+}
+
 TEST(Nominal, ReadyFirst) {
     Svc::ComQueueTester tester;
     tester.testReadyFirst();

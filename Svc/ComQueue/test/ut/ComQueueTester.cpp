@@ -387,6 +387,12 @@ void ComQueueTester::testDepthZeroQueue() {
     component.cleanup();
 }
 
+void ComQueueTester::testAllQueuesDisabled() {
+    // The default-constructed table has every depth set to 0, which configure() must reject
+    ComQueue::QueueConfigurationTable configurationTable;
+    ASSERT_DEATH_IF_SUPPORTED(component.configure(configurationTable, 0, mallocAllocator), "ComQueue.cpp");
+}
+
 void ComQueueTester::testInternalQueueOverflow() {
     // Internal queue is the message queue for async input ports
     U8 data[BUFFER_LENGTH] = BUFFER_DATA;

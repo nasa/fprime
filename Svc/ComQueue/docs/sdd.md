@@ -5,7 +5,7 @@
 `Svc::ComQueue` is an  F´ active component that functions as a priority queue of buffer types. Messages are dequeued and forwarded in order of priority when a `Fw::Success::SUCCESS` signal is received on the `comStatusIn` port. `Fw::Success::SUCCESS` is accepted in three contexts: (1) at start-up to initiate data flow, (2) in response to a previously sent message, and (3) after a previous `Fw::Success::FAILURE` to indicate recovery. Receiving a `Fw::Success::FAILURE` results in the queues being paused until a subsequent `Fw::Success::SUCCESS` is received.
 
 `Svc::ComQueue` is configured with a queue depth and queue priority for each incoming `Fw::Com` and `Fw::Buffer` port by passing in a configuration table at initialization. 
-A depth of 0 disables the queue for that port: no storage is allocated for it and any message received on that port is treated as an overflow.
+A depth of 0 disables the queue for that port: no storage is allocated for it and any message received on that port is treated as an overflow. At least one port must have a non-zero depth; an all-zero table (the default-constructed table) is rejected with an assertion at configuration.
 Queued messages from the highest priority source port are serviced first and a round-robin algorithm is used to balance between ports of shared priority.
 
 `Svc::ComQueue` is designed to act alongside instances of the [communication adapter interface](../../../docs/reference/communication-adapter-interface.md) and implements the communication queue [protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol).
@@ -103,6 +103,7 @@ and an allocator of `Fw::MemAllocator`. The `configure` method foes the followin
    initialized. 
    4. Ensures that there is enough memory for the com buffer and buffer data we want to process
    5. Skips storage setup for any entry with a depth of 0; such a queue is disabled and always overflows
+   6. Asserts that at least one entry has a non-zero depth
 
 ### 4.5 Port Handlers
 
@@ -182,7 +183,7 @@ the prioritized list.
 
 #### 4.9.4 enqueue
 
-Attempts to enqueue the buffer onto the queue index, logs a (throttled) warning if data is discarded, and immediately processes the queue if state is `READY`. A disabled (depth 0) queue never accepts data, so every message to it is discarded with the same warning.
+Attempts to enqueue the buffer onto the queue index, logs a (throttled) warning if data is discarded, and immediately processes the queue if state is `READY`. A disabled (depth 0) queue never accepts data, so every message to it is discarded; because a disabled queue never drains, its overflow warning is logged once and then stays throttled.
 
 #### 4.9.5 drainQueue
 
