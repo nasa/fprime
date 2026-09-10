@@ -52,7 +52,11 @@ void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buf
     // Read the packet type from the packet buffer
     FwPacketDescriptorType packetType = 0;
     Fw::SerializeStatus status = buffer.getDeserializer().deserializeTo(packetType);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_InvalidPacketReceived(Fw::ComPacketType::FW_PACKET_UNKNOWN);
+        this->bufferSendOut_out(0, buffer);
+        return;
+    }
 
     // If packet type is not a file packet, log + deallocate and return
     if (packetType != Fw::ComPacketType::FW_PACKET_FILE) {
@@ -84,7 +88,7 @@ void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buf
                 this->handleCancelPacket();
                 break;
             default:
-                FW_ASSERT(false);
+                this->log_WARNING_HI_InvalidPacketReceived(packetType);
                 break;
         }
     }
@@ -141,7 +145,10 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
         this->m_warnings.packetOutOfBounds(sequenceIndex, this->m_file.name);
         return;
     }
-    FW_ASSERT(dataPacket.getData() != nullptr);
+    if (dataPacket.getData() == nullptr) {
+        this->m_warnings.packetOutOfBounds(sequenceIndex, this->m_file.name);
+        return;
+    }
     const Os::File::Status status = this->m_file.write(dataPacket.getData(), byteOffset, dataSize);
     if (status != Os::File::OP_OK) {
         this->m_warnings.fileWrite(this->m_file.name);

@@ -41,7 +41,11 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     // Deserialize transmitted header into the header object
     auto deserializer = data.getDeserializer();
     Fw::SerializeStatus status = header.deserializeFrom(deserializer);
-    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
+    if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_InvalidBufferReceived();
+        this->dataReturnOut_out(0, data, context);
+        return;
+    }
     // Check that deserialized start_word token matches expected value (default start_word value in the FPP object)
     const FprimeProtocol::FrameHeader defaultValue;
     if (header.get_startWord() != defaultValue.get_startWord()) {
@@ -69,7 +73,11 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         // and let downstream components (e.g. custom router) handle it
         FwPacketDescriptorType packetDescriptor = 0;
         status = deserializer.deserializeTo(packetDescriptor);
-        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
+        if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+            this->log_WARNING_LO_PayloadTooShort();
+            this->dataReturnOut_out(0, data, context);
+            return;
+        }
         // If a valid descriptor is deserialized, set it in the context
         if (ComCfg::Apid::isValid(packetDescriptor)) {
             contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
@@ -81,9 +89,17 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     // ---------------- Validate Frame Trailer ----------------
     // Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)
     status = deserializer.moveDeserToOffset(FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField());
-    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
+    if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_InvalidBufferReceived();
+        this->dataReturnOut_out(0, data, context);
+        return;
+    }
     status = trailer.deserializeFrom(deserializer);
-    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
+    if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_InvalidBufferReceived();
+        this->dataReturnOut_out(0, data, context);
+        return;
+    }
     // Compute CRC over the transmitted data (header + body)
     Utils::Hash hash;
     Utils::HashBuffer computedCrc;
