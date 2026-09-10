@@ -49,6 +49,18 @@ class DpWriterTester : public DpWriterGTestBase {
                                         Fw::Buffer& fwBuffer  //!< The buffer
                                         ) final;
 
+    //! Handler implementation for dpWrittenOut
+    void from_dpWrittenOut_handler(FwIndexType portNum,             //!< The port number
+                                   const Fw::StringBase& fileName,  //!< The file name
+                                   FwDpPriorityType priority,       //!< The priority
+                                   FwSizeType fileSize              //!< The file size
+                                   ) final;
+
+    //! Handler implementation for deallocBufferSendOut
+    void from_deallocBufferSendOut_handler(FwIndexType portNum,  //!< The port number
+                                           Fw::Buffer& buffer    //!< The buffer
+                                           ) final;
+
   public:
     // ----------------------------------------------------------------------
     // Public member functions

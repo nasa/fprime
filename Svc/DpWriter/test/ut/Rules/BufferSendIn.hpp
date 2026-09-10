@@ -55,6 +55,9 @@ class Tester {
     //! File write error
     void FileWriteError();
 
+    //! Routing ports
+    void RoutingPorts();
+
   public:
     // ----------------------------------------------------------------------
     // Rules

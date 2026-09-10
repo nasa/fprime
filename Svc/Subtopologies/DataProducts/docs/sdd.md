@@ -29,9 +29,14 @@ The **DataProducts subtopology** packages the standard F´ data product services
 
 * `dpMgr.bufferGetOut -> dpBufferManager.bufferGetCallee` — product buffer allocation.
 * `dpMgr.productSendOut -> dpBufferAccumulator.bufferSendInFill` — filled products enter the accumulator.
-* `dpBufferAccumulator.bufferSendOutDrain -> dpWriter.bufferSendIn` — accumulated products drain to the writer.
-* `dpWriter.deallocBufferSendOut -> dpBufferAccumulator.bufferSendInReturn` and `dpBufferAccumulator.bufferSendOutReturn -> dpBufferManager.bufferSendIn` — written buffers return to the buffer manager.
-* `dpWriter.dpWrittenOut -> dpCat.addToCat` — written products are added to the catalog.
+* `dpBufferAccumulator.bufferSendOutDrain -> dpWriter.bufferSendIn[0]` — accumulated products drain to the writer.
+* `dpWriter.deallocBufferSendOut[0] -> dpBufferAccumulator.bufferSendInReturn` and `dpBufferAccumulator.bufferSendOutReturn -> dpBufferManager.bufferSendIn` — written buffers return to the buffer manager.
+* `dpWriter.dpWrittenOut[0] -> dpCat.addToCat` — written products are added to the catalog.
+
+The default internal wiring uses writer routing index `0`. Custom fused wiring must
+keep each input, buffer-return, and connected notification path on the same index.
+Every connected `bufferSendIn[N]` requires a connected `deallocBufferSendOut[N]`;
+`dpWrittenOut[N]` is optional.
 
 ### 2.3 Configuration Hooks inside the Subtopology
 
