@@ -35,6 +35,14 @@ module ComCcsdsConfig {
         constant file        = 1                   
     }
 
+    # Aggregator configuration constants
+    module Aggregator {
+        @ Controls whether to span packets across transfer frames (see Svc.ComAggregator).
+        @ Requires Svc.Ccsds.TmFramer as the transfer frame layer (sole consumer of FrameContext.firstHeaderPointer)
+        @ and a ground deframer that reassembles spanned packets using the First Header Pointer.
+        constant enablePacketSpanning = false
+    }
+
     # Buffer management constants
     module BuffMgr {
         constant frameAccumulatorSize  = 2048     
