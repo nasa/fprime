@@ -39,6 +39,16 @@ TEST(Nominal, InternalQueueOverflow) {
     tester.testInternalQueueOverflow();
 }
 
+TEST(Nominal, DepthZeroQueue) {
+    Svc::ComQueueTester tester;
+    tester.testDepthZeroQueue();
+}
+
+TEST(OffNominal, AllQueuesDisabled) {
+    Svc::ComQueueTester tester;
+    tester.testAllQueuesDisabled();
+}
+
 TEST(Nominal, ReadyFirst) {
     Svc::ComQueueTester tester;
     tester.testReadyFirst();

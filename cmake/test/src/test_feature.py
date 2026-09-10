@@ -45,6 +45,31 @@ FEATURE_BUILD_RESULT = cmake.get_build(
     ],
 )
 
+DUPLICATE_DIRECTIVE_BUILD_RESULT = cmake.get_build(
+    "DUPLICATE_DIRECTIVE_BUILD",
+    settings.DATA_DIR / "TestDeployment",
+    {
+        "FPRIME_FRAMEWORK_PATH": settings.FRAMEWORK_PATH,
+        "FPRIME_PROJECT_ROOT": settings.DATA_DIR,
+        "FPRIME_LIBRARY_LOCATIONS": ";".join(
+            [
+                str(settings.DATA_DIR / "test-fprime-library"),
+                str(settings.DATA_DIR / "test-fprime-library2"),
+            ]
+        ),
+        "CMAKE_TOOLCHAIN_FILE": str(
+            settings.DATA_DIR
+            / "test-fprime-library"
+            / "cmake"
+            / "toolchain"
+            / f"{TOOLCHAIN_NAME}.cmake"
+        ),
+        "FPRIME_PLATFORM": platform.system(),
+        "TEST_DUPLICATE_DIRECTIVE": "ON",
+    },
+    make_targets=[],
+)
+
 
 def test_feature_run(FEATURE_BUILD):
     """Basic run test for feature build"""
@@ -159,6 +184,15 @@ def test_feature_installation(FEATURE_BUILD):
         / deployment_name
     )
     assert output_path.exists(), "Failed to locate TestDeployment in build output"
+
+
+def test_duplicate_directive(DUPLICATE_DIRECTIVE_BUILD):
+    """A control directive repeated within one register_fprime_* call fails configuration"""
+    return_code, _, stderr = DUPLICATE_DIRECTIVE_BUILD["cmake"]
+    assert return_code != 0, "Duplicate directive did not fail configuration"
+    assert any(
+        "SOURCES supplied multiple times" in line for line in stderr
+    ), f"Duplicate directive not reported:\n{''.join(stderr)}"
 
 
 def test_sub_build(FEATURE_BUILD):

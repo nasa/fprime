@@ -30,7 +30,7 @@ suited for smaller processors.
 
 ### Adaptability
 
-F´is tailored to the level of complexity required for small missions. This makes it accessible and easy to use, while
+F´ is tailored to the level of complexity required for small missions. This makes it accessible and easy to use, while
 still supporting a wide variety of missions.
 
 ### Analyzability

@@ -7,6 +7,7 @@
 #ifndef Svc_Ccsds_SdlsSaRouter_HPP
 #define Svc_Ccsds_SdlsSaRouter_HPP
 
+#include <Os/Mutex.hpp>
 #include "Fw/DataStructures/ArrayMap.hpp"
 #include "SdlsSaRouterConfig/FppConstantsAc.hpp"
 #include "SdlsSaRouterConfig/SaMapArrayAc.hpp"
@@ -28,6 +29,13 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
 
     //! Destroy SdlsSaRouter object
     ~SdlsSaRouter();
+
+    //! Replace this instance's SA-to-port routing table, overriding the compile-time default
+    //!
+    //! Each direction needs its own table; see SdlsSaRouterCfg.fpp. Call during topology
+    //! setup, before any frame is routed.
+    void configure(const SdlsCfg::SaMap& saMap  //!< SA-to-port map for this instance
+    );
 
   private:
     // ----------------------------------------------------------------------
@@ -72,6 +80,9 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
 
     //! Map from SA index to downstream port index
     Fw::ArrayMap<U16, FwIndexType, SdlsCfg::SaRouterMapEntryCount> m_saMap;
+
+    //! Guards m_outstanding, which sync and guarded handlers reach from different threads
+    Os::Mutex m_outstandingLock;
 
     // ----------------------------------------------------------------------
     // Constants

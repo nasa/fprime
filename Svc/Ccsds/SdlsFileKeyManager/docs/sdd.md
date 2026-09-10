@@ -1,11 +1,11 @@
 # Svc::Ccsds::SdlsFileKeyManager
 
-The `Svc::Ccsds::SdlsFileKeyManager` component supplies SDLS keys read from a file via the `Svc.Ccsds.SdlsKeyInterface` interface. The key file path and the key length to read are set at runtime through a `configure()` call, since these vary across instances of the component. Each key request opens the file, reads exactly the configured number of bytes into the caller-provided `SdlsKeyBuffer`, closes the file, and returns `SdlsStatus.SUCCESS`. Any file error results in an `SdlsStatus.KEY_ERROR` return.
+The `Svc::Ccsds::SdlsFileKeyManager` component supplies SDLS keys read from a file via the `Svc.Ccsds.SdlsKeyInterface` interface. It holds a single key file, so it serves the same key for every security association; a deployment needing per-SA key material requires a key manager that selects on the requested SA index. The key file path and the key length to read are set at runtime through a `configure()` call, since these vary across instances of the component. Each key request opens the file, reads exactly the configured number of bytes into the caller-provided `SdlsKeyBuffer`, closes the file, and returns `SdlsStatus.SUCCESS`. Any file error results in an `SdlsStatus.KEY_ERROR` return.
 
 ## Functionality
 
 - `configure(path, keySize)` must be called during topology setup. It asserts that `keySize` is in `(0, MAX_SDLS_KEY_SIZE]`, where `MAX_SDLS_KEY_SIZE` is defined in the `SdlsKeyConfig` configuration module.
-- Key requests arrive on the guarded `keyGet` port carrying a reference to an on-stack `SdlsKeyBuffer` (`Fw::LinearBufferTemplate<MAX_SDLS_KEY_SIZE>`).
+- Key requests arrive on the guarded `keyGet` port carrying the requesting security association index and a reference to an on-stack `SdlsKeyBuffer` (`Fw::LinearBufferTemplate<MAX_SDLS_KEY_SIZE>`). The SA index does not select among keys here, since the component holds only one.
 - On each request the component opens the key file, reads exactly `keySize` bytes into the buffer, and returns `SUCCESS`. The file is opened and closed per request, so the key file may be replaced at runtime and no file handle is held open.
 - On any file error — open error, read error, or short read — the component zeroizes the key buffer contents, returns `KEY_ERROR` with the buffer length reset to zero, and emits the `KeyReadFailed` WARNING_HI event carrying the OS status and byte counts.
 - A key request before `configure()` has been called asserts (fail early).
@@ -14,7 +14,7 @@ The `Svc::Ccsds::SdlsFileKeyManager` component supplies SDLS keys read from a fi
 
 | Kind          | Name   | Port Type          | Description |
 |---------------|--------|--------------------|-------------|
-| guarded input | keyGet | Svc.Ccsds.SdlsKey  | Receives a key request: fills the provided `SdlsKeyBuffer` with the key and returns the operation status. |
+| guarded input | keyGet | Svc.Ccsds.SdlsKey  | Receives a key request for a security association: fills the provided `SdlsKeyBuffer` with the key and returns the operation status. |
 
 ## Events
 

@@ -2,7 +2,7 @@
 
 `SetOrMapImplEntry` is a final class template
 defined in [`Fw/DataStructures`](sdd.md).
-It represents an iterator for a set or a map implementation.
+It represents an entry in a set or a map implementation.
 
 ## 1. Template Parameters
 
@@ -64,10 +64,10 @@ SetOrMapImplEntry(const KE& keyOrElement, const VN& valueOrNil)
 ### 4.3. Copy Constructor
 
 ```c++
-SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& iterator)
+SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& entry)
 ```
 
-Set `*this = iterator`.
+Set `*this = entry`.
 
 ### 4.4. Destructor
 
@@ -82,24 +82,34 @@ Defined as `= default`.
 ### 5.1. operator=
 
 ```c++
-SetOrMapImplEntry& operator=(const SetOrMapImplEntry&<KE, VN> iterator)
+SetOrMapImplEntry<KE, VN>& operator=(const SetOrMapImplEntry<KE, VN>& entry)
 ```
 
-1. If `this != &iterator`
+1. If `this != &entry`
 
-    1. Set `m_keyOrElement = iterator.keyOrElement`.
+    1. Set `m_keyOrElement = entry.m_keyOrElement`.
 
-    1. Set `m_valueOrNil = iterator.valueOrNil`.
+    1. Set `m_valueOrNil = entry.m_valueOrNil`.
 
-### 5.3. getElement
+1. Return `*this`.
+
+### 5.2. getKeyOrElement
 
 ```c++
-const KE& getElement() const
+const KE& getKeyOrElement() const
 ```
 
 Return a reference to `m_keyOrElement`.
 
-### 5.2. getKey
+### 5.3. getValueOrNil
+
+```c++
+const VN& getValueOrNil() const
+```
+
+Return a reference to `m_valueOrNil`.
+
+### 5.4. getKey
 
 ```c++
 const KE& getKey() const override
@@ -107,7 +117,7 @@ const KE& getKey() const override
 
 Return a reference to `m_keyOrElement`.
 
-### 5.3. getValue
+### 5.5. getValue
 
 ```c++
 const VN& getValue() const override
@@ -118,7 +128,7 @@ Return a reference to `m_valueOrNil`.
 ### 5.6. setKeyOrElement
 
 ```c++
-void setKeyOrElement(const KE& keyOrElement) const
+void setKeyOrElement(const KE& keyOrElement)
 ```
 
 Set `m_keyOrElement = keyOrElement`.
@@ -126,7 +136,7 @@ Set `m_keyOrElement = keyOrElement`.
 ### 5.7. setValueOrNil
 
 ```c++
-void setValueOrNil(const VN& valueOrNil) const
+void setValueOrNil(const VN& valueOrNil)
 ```
 
 Set `m_valueOrNil = valueOrNil`.

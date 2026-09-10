@@ -30,6 +30,7 @@ How-To guides offer step-by-step instructions for specific development tasks in 
 <summary><strong>Integrate</strong> — Learn how to integrate F´ with external libraries and platforms.</summary>
 
 - [Implement a Framing Protocol](integrate/custom-framing.md)
+- [Add Custom Uplink and Downlink Data Types](develop/custom-uplink-downlink-data.md)
 - [Implement an OS Abstraction Layer](integrate/implement-osal.md)
 - [Integrate a Third-Party Library](integrate/integrate-external-libraries.md)
 - [Porting to new platforms](integrate/porting-guide.md)
@@ -52,4 +53,3 @@ How-To guides offer step-by-step instructions for specific development tasks in 
 - [Test-Driven Development in F Prime (F´)](test/test-driven-development.md)
 
 </details>
-

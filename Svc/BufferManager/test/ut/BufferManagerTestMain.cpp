@@ -24,6 +24,11 @@ TEST(Nominal, BufferSizeTrimmed) {
     tester.bufferSizeTrimmed();
 }
 
+TEST(OffNominal, SetupSizeOverflowAsserts) {
+    Svc::BufferManagerTester tester;
+    tester.setupSizeOverflowAsserts();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

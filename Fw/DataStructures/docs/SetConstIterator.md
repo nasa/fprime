@@ -33,7 +33,7 @@ Defined as `= default`.
 ### 3.2. operator==
 
 ```c++
-bool operator==(const SetConstIterator& it)
+bool operator==(const SetConstIterator& it) const
 ```
 
 Compare two `SetConstIterator` instances for equality.
@@ -45,16 +45,16 @@ Compare two `SetConstIterator` instances for equality.
 ### 3.3. operator !=
 
 ```c++
-bool operator!=(const SetConstIterator& it)
+bool operator!=(const SetConstIterator& it) const
 ```
 
-Return the negation of `operator=`.
+Return the negation of `operator==`.
 
 ### 3.4. operator++
 
 ```c++
 SetConstIterator& operator++()
-SetConstIterator& operator++(int)
+SetConstIterator operator++(int)
 ```
 
 Increment the iterator.

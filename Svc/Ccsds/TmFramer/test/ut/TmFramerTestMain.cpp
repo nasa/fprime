@@ -36,6 +36,21 @@ TEST(TmFramer, testBufferOwnershipState) {
     tester.testBufferOwnershipState();
 }
 
+TEST(TmFramer, testFirstHeaderPointerFromContext) {
+    Svc::Ccsds::TmFramerTester tester;
+    tester.testFirstHeaderPointerFromContext();
+}
+
+TEST(TmFramer, testResidualTooSmallForIdlePacket) {
+    Svc::Ccsds::TmFramerTester tester;
+    tester.testResidualTooSmallForIdlePacket();
+}
+
+TEST(TmFramer, testFullDataFieldNoIdleFill) {
+    Svc::Ccsds::TmFramerTester tester;
+    tester.testFullDataFieldNoIdleFill();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

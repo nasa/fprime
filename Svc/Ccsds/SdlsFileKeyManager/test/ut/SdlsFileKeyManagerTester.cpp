@@ -46,7 +46,7 @@ void SdlsFileKeyManagerTester ::testNominalRead() {
     this->component.configure(TEST_KEY_FILE, keySize);
 
     SdlsKeyBuffer key;
-    const SdlsStatus status = this->invoke_to_keyGet(0, key);
+    const SdlsStatus status = this->invoke_to_keyGet(0, TEST_SA_INDEX, key);
 
     ASSERT_EQ(status, SdlsStatus::SUCCESS);
     ASSERT_EQ(key.getSize(), keySize);
@@ -65,7 +65,7 @@ void SdlsFileKeyManagerTester ::testMissingFile() {
     ::memset(key.getBuffAddr(), 0xAB, static_cast<size_t>(key.getCapacity()));
     ASSERT_EQ(key.setBuffLen(keySize), Fw::FW_SERIALIZE_OK);
 
-    const SdlsStatus status = this->invoke_to_keyGet(0, key);
+    const SdlsStatus status = this->invoke_to_keyGet(0, TEST_SA_INDEX, key);
 
     ASSERT_EQ(status, SdlsStatus::KEY_ERROR);
     ASSERT_EQ(key.getSize(), 0);
@@ -86,7 +86,7 @@ void SdlsFileKeyManagerTester ::testShortFile() {
     this->component.configure(TEST_KEY_FILE, keySize);
 
     SdlsKeyBuffer key;
-    const SdlsStatus status = this->invoke_to_keyGet(0, key);
+    const SdlsStatus status = this->invoke_to_keyGet(0, TEST_SA_INDEX, key);
 
     ASSERT_EQ(status, SdlsStatus::KEY_ERROR);
     ASSERT_EQ(key.getSize(), 0);

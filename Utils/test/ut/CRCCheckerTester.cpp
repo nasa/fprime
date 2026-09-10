@@ -12,9 +12,11 @@
 #include <Fw/Types/FileNameString.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
+#include <Os/ValidateFile.hpp>
 #include <STest/STest/Pick/Pick.hpp>
 #include <Utils/CRCChecker.hpp>
 #include <Utils/Hash/Hash.hpp>
+#include <string>
 #include <vector>
 
 namespace {
@@ -112,6 +114,42 @@ TEST_F(CRCCheckerTest, GoldenValue) {
     ASSERT_STREQ(extended.toChar(), hashFileName(TEST_FILE).toChar());
 }
 
+TEST_F(CRCCheckerTest, ChecksumFileMatchesFrameworkFormat) {
+    // A .CRC32 file is not private to CRCChecker: Utils::Hash and Os::ValidateFile write and read
+    // the same sidecar for the same data files. Its contents must therefore be the serialized
+    // (big-endian) form of the CRC rather than a raw copy of the host's U32 bytes.
+    const U8 data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    writeFile(TEST_FILE, data, sizeof(data));
+    ASSERT_EQ(Utils::create_checksum_file(TEST_FILE), Utils::PASSED_FILE_CRC_WRITE);
+
+    // Bytes on disk match what Utils::Hash produces for the same data
+    Utils::HashBuffer expectedBuffer;
+    Utils::Hash::hash(data, sizeof(data), expectedBuffer);
+    U8 onDisk[sizeof(U32)] = {};
+    Os::File crcFile;
+    ASSERT_EQ(crcFile.open(hashFileName(TEST_FILE).toChar(), Os::File::OPEN_READ), Os::File::OP_OK);
+    FwSizeType readSize = sizeof(onDisk);
+    ASSERT_EQ(crcFile.read(onDisk, readSize), Os::File::OP_OK);
+    ASSERT_EQ(readSize, static_cast<FwSizeType>(sizeof(onDisk)));
+    crcFile.close();
+    ASSERT_EQ(memcmp(onDisk, expectedBuffer.getBuffAddr(), sizeof(onDisk)), 0);
+
+    // ...and the framework's standard validation entry point accepts the file
+    ASSERT_EQ(Os::ValidateFile::validate(TEST_FILE, hashFileName(TEST_FILE).toChar()), Os::ValidateFile::VALIDATION_OK);
+
+    // The reverse direction holds too: a checksum file written by Os::ValidateFile reads back
+    // through CRCChecker with the correct value
+    (void)Os::FileSystem::removeFile(hashFileName(TEST_FILE).toChar());
+    ASSERT_EQ(Os::ValidateFile::createValidation(TEST_FILE, hashFileName(TEST_FILE).toChar()),
+              Os::ValidateFile::VALIDATION_OK);
+    U32 fromFile = 0;
+    ASSERT_EQ(Utils::read_crc32_from_file(TEST_FILE, fromFile), Utils::PASSED_FILE_CRC_CHECK);
+    ASSERT_EQ(fromFile, 0xCBF43926u);
+    U32 expected = 0;
+    U32 actual = 0;
+    ASSERT_EQ(Utils::verify_checksum(TEST_FILE, expected, actual), Utils::PASSED_FILE_CRC_CHECK);
+}
+
 TEST_F(CRCCheckerTest, MissingDataFile) {
     ASSERT_EQ(Utils::create_checksum_file(TEST_FILE), Utils::FAILED_FILE_SIZE);
     U32 expected = 0;
@@ -186,3 +224,37 @@ TEST_F(CRCCheckerTest, RandomizedSoak) {
 }
 
 }  // namespace
+
+TEST_F(CRCCheckerTest, FileNameTooLong) {
+    // A filename that leaves no room for the hash extension in Fw::FileNameString must be reported
+    // as FAILED_FILE_NAME_TOO_LONG by every helper, never asserted on.
+    const FwSizeType ext = Utils::Hash::getFileExtensionLength();
+    const FwSizeType longestOk = FileNameStringSize - ext;  // Fw::FileNameString holds FileNameStringSize chars
+    const U8 data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+    for (FwSizeType len : {longestOk + 1, static_cast<FwSizeType>(FileNameStringSize)}) {
+        std::string name(static_cast<size_t>(len), 'x');
+        writeFile(name.c_str(), data, sizeof(data));
+
+        ASSERT_EQ(Utils::create_checksum_file(name.c_str()), Utils::FAILED_FILE_NAME_TOO_LONG) << "len " << len;
+        U32 fromFile = 0;
+        ASSERT_EQ(Utils::read_crc32_from_file(name.c_str(), fromFile), Utils::FAILED_FILE_NAME_TOO_LONG)
+            << "len " << len;
+        U32 expected = 0;
+        U32 actual = 0;
+        ASSERT_EQ(Utils::verify_checksum(name.c_str(), expected, actual), Utils::FAILED_FILE_NAME_TOO_LONG)
+            << "len " << len;
+
+        (void)Os::FileSystem::removeFile(name.c_str());
+    }
+
+    // The longest name that fits round-trips normally
+    std::string okName(static_cast<size_t>(longestOk), 'y');
+    writeFile(okName.c_str(), data, sizeof(data));
+    ASSERT_EQ(Utils::create_checksum_file(okName.c_str()), Utils::PASSED_FILE_CRC_WRITE);
+    U32 expected = 0;
+    U32 actual = 0;
+    ASSERT_EQ(Utils::verify_checksum(okName.c_str(), expected, actual), Utils::PASSED_FILE_CRC_CHECK);
+    ASSERT_EQ(expected, 0xCBF43926u);
+    removeTestFiles(okName.c_str());
+}

@@ -56,7 +56,10 @@ class FileWorkerTester final : public FileWorkerGTestBase {
     void testWritingOffset();
     void testWriteZeroLength();
     void testAppending();
+    void testWriteReadRoundTrip();
     void testTimeout();
+    //! Paths that leave no room for the hash extension are rejected as invalid input, not asserted
+    void testPathTooLong();
 
   private:
     // ----------------------------------------------------------------------

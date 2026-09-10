@@ -441,7 +441,7 @@ module M1 {
         "signed": false,
         "size": 32
       },
-    "annotation": "Alias of type A2"
+    "annotation": "Alias of type A1"
   }
 ]
 ```
@@ -649,7 +649,7 @@ JSON representation:
             "type": {
                 "name": "string",
                 "kind": "string",
-                "size": "80"
+                "size": 80
             },
             "ref": false
         }
@@ -830,7 +830,7 @@ module M {
         "signed": false,
         "size": 32
     },
-    "id": "260",
+    "id": 260,
     "annotation": "This is the annotation for Parameter 1",
     "default": 0
 }
@@ -1076,6 +1076,7 @@ Example FPP model with JSON representation:
 ```
 module M {
 
+  @ An array of 2 String values
   array StringArray = [2] string size 80 default [ "A", "B"]
 
   enum StatusEnum {
@@ -1265,7 +1266,7 @@ module M {
           "ref" : false
         }
       ],
-      "annotation" : "Parameter (struct)"
+      "annotation" : "This is the annotation for Parameter 1"
     },
     {
       "name" : "M.c1.Parameter1_PRM_SAVE",
@@ -1273,7 +1274,7 @@ module M {
       "opcode" : 260,
       "formalParams" : [
       ],
-      "annotation" : "Parameter (struct)"
+      "annotation" : "This is the annotation for Parameter 1"
     }
   ],
   "parameters" : [
@@ -1286,9 +1287,9 @@ module M {
       "id" : 258,
       "default" : {
         "x" : 1,
-        "y" : 1.15
+        "y" : [1.15, 1.15]
       },
-      "annotation" : "Parameter (struct)"
+      "annotation" : "This is the annotation for Parameter 1"
     }
   ],
   "events" : [
@@ -1324,14 +1325,14 @@ module M {
       "annotation" : "Telemetry channel 1 of type I32",
       "limit": {
         "low": {
-          "yellow": "-1",
-          "orange": "-2",
-          "red": "-3"
+          "yellow": -1,
+          "orange": -2,
+          "red": -3
         },
         "high": {
-          "yellow": "1",
-          "orange": "2",
-          "red": "3"
+          "yellow": 1,
+          "orange": 2,
+          "red": 3
         }
       }
     }

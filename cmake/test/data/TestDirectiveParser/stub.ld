@@ -1,0 +1,1 @@
+/* Stub linker script for directive parser tests */

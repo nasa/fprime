@@ -16,6 +16,7 @@
 #include <Fw/DataStructures/ArrayMap.hpp>
 #include <Fw/Types/String.hpp>
 #include <Os/Mutex.hpp>
+#include <Os/SandboxedFile.hpp>
 #include <Svc/PrmDb/PrmDbComponentAc.hpp>
 #include <Svc/PrmDb/PrmDb_PrmDbFileLoadStateEnumAc.hpp>
 #include <Svc/PrmDb/PrmDb_PrmDbTypeEnumAc.hpp>
@@ -57,13 +58,13 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param file file where parameters are stored.
     void configure(const char* file);
 
-    //!  \brief PrmDb load sandbox configure method
+    //!  \brief PrmDb sandbox configure method
     //!
-    //!  Restricts the directory from which PRM_LOAD_FILE may read parameter
-    //!  files. If never called, any path is allowed (legacy behavior).
+    //!  Restricts every file access (startup read, PRM_SAVE_FILE, PRM_LOAD_FILE) to a directory.
+    //!  Fail-closed: until called, every file open is rejected. Configure `/` to allow any path.
     //!
-    //!  \param directory directory that ground-commanded parameter file loads are restricted to.
-    void configureLoadSandbox(const char* directory);
+    //!  \param directory directory that all parameter file accesses are restricted to.
+    void configureSandbox(const char* directory);
 
     //!  \brief PrmDb file read function
     //!
@@ -93,7 +94,7 @@ class PrmDbImpl final : public PrmDbComponentBase {
   protected:
   private:
     Fw::String m_fileName;    //!< filename for parameter storage
-    Fw::String m_sandboxDir;  //!< directory restriction for commanded file loads (empty = unrestricted)
+    Fw::String m_sandboxDir;  //!< directory restriction for all file access (empty = all opens rejected)
 
     PrmDbFileLoadState m_state;  // Current file load state of the parameter database
 
@@ -126,13 +127,10 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \return status success (True) / failure(False)
     PrmLoadStatus readParamFileImpl(const Fw::StringBase& fileName, PrmDbType dbType);
 
-    //!  \brief Read parameter file contents through an open-capable file object
+    //!  \brief Apply the configured sandbox directory (if any) to a file object
     //!
-    //!  \param paramFile file object (Os::File or Os::SandboxedFile) to read through
-    //!  \param fileName file where parameters are stored
-    //!  \param dbType database to store the parameters in
-    template <typename FileType>
-    PrmLoadStatus readParamFileWork(FileType& paramFile, const Fw::StringBase& fileName, PrmDbType dbType);
+    //!  \param file sandboxed file to configure
+    void applySandbox(Os::SandboxedFile& file) const;
 
     //!  \brief PrmDb parameter get handler
     //!

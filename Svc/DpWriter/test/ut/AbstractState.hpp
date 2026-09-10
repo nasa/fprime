@@ -52,7 +52,9 @@ class AbstractState {
           m_NumSuccessfulWrites(0),
           m_NumErrors(0),
           m_procTypes(0),
-          m_procShrinkDataSizeOpt() {}
+          m_procShrinkDataSizeOpt(),
+          m_dpWrittenOutPortNumOpt(),
+          m_deallocBufferSendOutPortNumOpt() {}
 
   public:
     // ----------------------------------------------------------------------
@@ -136,6 +138,12 @@ class AbstractState {
     Fw::DpCfg::ProcType::SerialType m_procTypes;
 
     Fw::Optional<FwSizeType> m_procShrinkDataSizeOpt;
+
+    //! The last routing port used for DpWritten notification
+    Fw::Optional<FwIndexType> m_dpWrittenOutPortNumOpt;
+
+    //! The last routing port used to return a buffer
+    Fw::Optional<FwIndexType> m_deallocBufferSendOutPortNumOpt;
 };
 
 }  // namespace Svc

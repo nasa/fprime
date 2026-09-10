@@ -22,7 +22,7 @@ The following elements are private and are defined `= delete`:
 
 1. The copy constructor.
     ```c++
-    SetBase(const SetBase<T>& map)
+    SetBase(const SetBase<T>& set)
     ```
 
 1. The assignment operator.
@@ -61,7 +61,7 @@ Defined as `= default`.
 ### 6.1. begin
 
 ```c++
-virtual ConstIterator begin() const = 0.
+virtual ConstIterator begin() const = 0
 ```
 
 Return the begin value of the iterator for the implementation.
@@ -92,7 +92,7 @@ void copyDataFrom(const SetBase<T>& set)
 
     1. Let `size` be the minimum of `set.getSize()` and `getCapacity()`.
 
-    1. Set `it = map.begin()`.
+    1. Set `it = set.begin()`.
 
     1. For `i` in [0, `size`)
 
@@ -112,7 +112,7 @@ void f(SetBase<U32>& s1, SetBase<U32>& s2) {
     ASSERT_EQ(s1.getSize(), 1);
     s2.clear();
     ASSERT_EQ(s2.getSize(), 0);
-    s2.copyDataFrom(q1);
+    s2.copyDataFrom(s1);
     ASSERT_EQ(s2.getSize(), 1);
 }
 ```
@@ -137,7 +137,7 @@ void f(SetBase<U32>& set) {
     // Check that iter is not at the end
     ASSERT_NE(iter, set.end());
     // Increment iter
-    it++;
+    iter++;
     // Check that iter is at the end
     ASSERT_EQ(iter, set.end());
 }
@@ -146,7 +146,7 @@ void f(SetBase<U32>& set) {
 ### 6.4. find
 
 ```c++
-virtual Success find(const T& element) = 0
+virtual Success find(const T& element) const = 0
 ```
 
 1. If an entry `e` with element `element` exists in the set,
@@ -156,7 +156,7 @@ then return `SUCCESS`.
 
 _Example:_
 ```c++
-void f(const SetBase<U32>& set) {
+void f(SetBase<U32>& set) {
     set.clear();
     auto status = set.find(42);
     ASSERT_EQ(status, Success::FAILURE);
@@ -164,7 +164,6 @@ void f(const SetBase<U32>& set) {
     ASSERT_EQ(status, Success::SUCCESS);
     status = set.find(42);
     ASSERT_EQ(status, Success::SUCCESS);
-    ASSERT_EQ(value, 1);
 }
 ```
 
@@ -187,7 +186,7 @@ void f(SetBase<U32>& set) {
     set.clear();
     auto size = set.getSize();
     ASSERT_EQ(size, 0);
-    const auto status = set.insert(0, 1);
+    const auto status = set.insert(42);
     ASSERT_EQ(status, Success::SUCCESS);
     size = set.getSize();
     ASSERT_EQ(size, 1);

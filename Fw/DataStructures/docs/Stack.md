@@ -55,7 +55,7 @@ Stack<U32, 10> stack;
 ### 4.2. Copy Constructor
 
 ```c++
-Stack(const Stack<T, S>& stack)
+Stack(const Stack<T, C>& stack)
 ```
 
 Set `*this = stack`.
@@ -66,7 +66,7 @@ Stack<U32, 10> q1;
 auto status = q1.push(3);
 ASSERT_EQ(status, Success::SUCCESS);
 Stack<U32, 10> q2(q1);
-ASSERT_EQ(q2.size(), 1);
+ASSERT_EQ(q2.getSize(), 1);
 U32 value = 0;
 status = q2.pop(value);
 ASSERT_EQ(status, Success::SUCCESS);
@@ -86,10 +86,10 @@ Defined as `= default`.
 ### 5.1. operator=
 
 ```c++
-Stack<T>& operator=(const Stack<T>& stack)
+Stack<T, C>& operator=(const Stack<T, C>& stack)
 ```
 
-Call `m_extStack.copyDataFrom(stack)`.
+Call `m_extStack.copyDataFrom(stack)` and return `*this`.
 
 _Example:_
 ```c++
@@ -97,9 +97,9 @@ Stack<U32, 10> q1;
 auto status = q1.push(3);
 ASSERT_EQ(status, Success::SUCCESS);
 Stack<U32, 10> q2;
-ASSERT_EQ(q2.size(), 0);
+ASSERT_EQ(q2.getSize(), 0);
 q2 = q1;
-ASSERT_EQ(q2.size(), 1);
+ASSERT_EQ(q2.getSize(), 1);
 U32 value = 0;
 status = q2.pop(value);
 ASSERT_EQ(status, Success::SUCCESS);

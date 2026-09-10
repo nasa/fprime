@@ -7,6 +7,27 @@ It is a wrapper around the OSAL file, filesystem and directory APIs. The compone
 commands, calls the corresponding OSAL operation, and reports the result through events,
 telemetry, and command responses.
 
+## Security Considerations
+
+Every FileManager command takes filesystem paths from ground commands and operates on them
+with the process's full privileges. The component confines those paths with a sandbox
+directory set by `configure(sandboxDir)`:
+
+* The sandbox is **fail-closed**: until `configure` is called, every command is rejected
+  with a `PathOutsideSandbox` warning event and a `VALIDATION_ERROR` command response.
+* Each path argument is canonicalized (`Os::FilePathUtils::resolveFromCwd`: relative paths
+  resolve against the current working directory; `.` and `..` segments are collapsed
+  textually, without following symlinks) and must resolve inside the configured directory
+  (`Os::FilePathUtils::checkContainment`). The canonical path is what reaches the OS call;
+  rejected commands perform no filesystem operation. On rejection the component emits the
+  `PathOutsideSandbox` warning event (carrying the rejected path and the configured
+  directory), increments the `Errors` telemetry channel, and returns `VALIDATION_ERROR`.
+  For two-path commands (`MoveFile`, `AppendFile`) each argument is checked independently.
+* Configuring `"/"` permits any path, matching the component's historical behavior. The
+  `FileHandling` and `FileHandlingCfdp` subtopologies configure `"/"` by default for
+  backwards compatibility; deployments wishing restricted file management must call
+  `configure` again from topology setup code with a restricted directory.
+
 ## Functionality
 
 `Svc::FileManager` supports common filesystem operations. They are currently:
@@ -22,7 +43,53 @@ telemetry, and command responses.
 - GenerateDp
 
 For each command, the component returns success or failure and emits status
-information for operators.
+information for operators. Every path argument is validated against the configured
+sandbox directory before the operation runs (see Security Considerations and
+Configuration); events echo the path as commanded, while the filesystem operation
+acts on the canonical resolved path.
+
+### Configuration
+
+`configure(sandboxDir)` **must be called once during topology setup, before commanding.**
+It sets the directory that confines every command path argument; the component is
+fail-closed and rejects all commands until it is called. `sandboxDir` may be absolute or
+relative to the process working directory, and `"/"` permits any path.
+
+Deployments using the `FileHandling` or `FileHandlingCfdp` subtopology get this call in
+the autocoded `configComponents` phase (open, `"/"`, for backwards compatibility —
+re-configure from topology setup code to restrict). Deployments instantiating
+`Svc.FileManager` directly must add the call themselves:
+
+```cpp
+// e.g. in topology setup code
+fileManager.configure("/data/");   // restrict to /data
+```
+
+Compile-time configuration lives in `config/FileManagerConfig.hpp`
+(`FILES_PER_RATE_TICK`, `CHUNKS_PER_RATE_TICK`, `GENERATE_DP_MAX_CHUNK_SIZE`,
+`DEFAULT_DP_PRIORITY`).
+
+### Ports
+
+Name | Type | Kind | Purpose
+---- | ---- | ---- | ----
+`schedIn` | `Svc.Sched` | sync input | Rate group input used to pace long-running operations
+`pingIn` | `Svc.Ping` | async input | Ping input from health checker
+`pingOut` | `Svc.Ping` | output | Ping response to health checker
+`run` | n/a | internal (drop) | Internal port for delegating `schedIn` calls in a controlled fashion
+
+The component also has the standard command, event, telemetry, time, and data
+product ports.
+
+### ListDirectory and Pacing
+
+`ListDirectory` runs asynchronously: the command handler opens the directory
+and defers the command response. The `schedIn` handler enqueues at most one
+internal `run` call at a time (guarded by an atomic flag); the internal handler
+then processes up to `FileManagerConfig::FILES_PER_RATE_TICK` directory entries
+per rate tick to prevent event flooding, sending the command response when the
+listing completes. Paced (`PACED` mode) data product generation is metered the
+same way, processing `FileManagerConfig::CHUNKS_PER_RATE_TICK` chunks per tick.
 
 ### GenerateDp
 

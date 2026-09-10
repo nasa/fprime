@@ -14,12 +14,17 @@
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
+#include "Fw/Types/MemAllocator.hpp"
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
 // Instantiate a malloc allocator for cmdSeq buffer allocation
 Fw::MallocAllocator mallocator;
+
+namespace Ref {
+Fw::MemAllocator& memAllocator = mallocator;
+}
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers
@@ -54,11 +59,10 @@ void configureTopology() {
     // Command sequencer needs to allocate memory to hold contents of command sequences
     cmdSeq.allocateBuffer(0, mallocator, 5 * 1024);
 
-    // Restrict uplinked files to a sandbox directory to prevent path-traversal writes
-    FileHandling::fileUplink.configure("/tmp/uplink/");
-
-    // PrmDb file name must be supplied by the using topology
-    FileHandling::prmDb.configure("PrmDb.dat");
+    // Restrict file access to the working directory (where PrmDb.dat lives)
+    FileHandling::fileUplink.configure(".");
+    FileHandling::fileDownlink.configure(".");
+    FileHandling::prmDb.configureSandbox(".");
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -79,6 +83,8 @@ void setupTopology(const TopologyState& state) {
     configureTopology();
     // Autocoded command registration. Function provided by autocoder.
     regCommands();
+    // Autocoded parameter file read (prmDb). Function provided by autocoder.
+    readParameters();
     // Autocoded parameter loading. Function provided by autocoder.
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.

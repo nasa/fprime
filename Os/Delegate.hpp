@@ -102,6 +102,36 @@ inline Interface* makeDelegate(StorageType& aligned_new_memory, const Interface*
     FW_ASSERT(interface != nullptr);
     return interface;
 }
+
+//! \brief Make a delegate of type Interface using Implementation with copy-constructor and constructor-argument support
+//!
+//! As the copy-constructor overload, except a null `to_copy` constructs the Implementation from `argument`
+//! (e.g. `RawTimeInterface` selecting a `RawTimeSource`).
+//!
+//! \tparam Interface: interface the delegate supports (e.g. RawTimeInterface)
+//! \tparam Implementation: implementation class of the delegate (e.g. PosixRawTime)
+//! \tparam Argument: type of the constructor argument
+//! \param aligned_new_memory: memory to be filled via placement new call
+//! \param to_copy: pointer to Interface to be copied by copy constructor, or nullptr to construct from `argument`
+//! \param argument: constructor argument used when `to_copy` is nullptr
+//! \return pointer to implementation result of placement new
+template <class Interface, class Implementation, class StorageType, class Argument>
+inline Interface* makeDelegate(StorageType& aligned_new_memory, const Interface* to_copy, const Argument& argument) {
+    const Implementation* copy_me = static_cast<const Implementation*>(to_copy);
+    // Ensure prerequisites before performing placement new
+    static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
+    static_assert(sizeof(Implementation) <= sizeof(aligned_new_memory), "Handle size not large enough");
+    static_assert((FW_HANDLE_ALIGNMENT % alignof(Implementation)) == 0, "Handle alignment invalid");
+    // Placement new the object and ensure non-null result
+    Implementation* interface = nullptr;
+    if (to_copy == nullptr) {
+        interface = new (aligned_new_memory) Implementation(argument);
+    } else {
+        interface = new (aligned_new_memory) Implementation(*copy_me);
+    }
+    FW_ASSERT(interface != nullptr);
+    return interface;
+}
 }  // namespace Delegate
 }  // namespace Os
 #endif

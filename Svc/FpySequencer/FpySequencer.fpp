@@ -33,7 +33,7 @@ module Svc {
 
         @ Ping in port
         # TODO should ping have highest prio? or lowest?
-        async input port pingIn: Svc.Ping priority 10 assert
+        async input port pingIn: Svc.Ping priority 10 drop
 
         @ port to trigger a wakeup or timeout check. increase frequency
         @ to increase temporal resolution of sequencer
