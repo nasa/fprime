@@ -35,6 +35,20 @@ UT_CONTROLS = [
     "CHOOSES_IMPLEMENTATIONS",
     "TESTED_MODULE",
 ]
+# Base list-valued directives
+LIST_DIRECTIVES = [
+    "HEADERS",
+    "SOURCES",
+    "DEPENDS",
+    "AUTOCODER_INPUTS",
+    "REQUIRES_IMPLEMENTATIONS",
+    "LINK_DEPENDS",
+]
+
+
+def other_directive(directive):
+    """A populated list directive distinct from the one under test"""
+    return ["HEADERS", STUB_HPP] if directive != "HEADERS" else ["SOURCES", STUB_CPP]
 
 
 def run_parser(
@@ -210,16 +224,47 @@ def test_directive_transitions():
     )
 
 
-def test_trailing_empty_directive_is_undefined():
-    """A directive given no values is left undefined, indistinguishable from absent"""
-    assert_accepted(
-        base_outputs(SOURCES=[STUB_CPP]), args=["Foo", "SOURCES", STUB_CPP, "DEPENDS"]
+@pytest.mark.parametrize("directive", LIST_DIRECTIVES)
+def test_trailing_empty_directive_rejected(directive):
+    """A list directive given no values before the arguments end is an error"""
+    assert_rejected(
+        f"{directive} supplied without values",
+        args=["Foo"] + other_directive(directive) + [directive],
     )
 
 
-def test_bare_sources_is_accepted():
-    """SOURCES with no values is treated like an omitted SOURCES"""
-    assert_accepted(base_outputs(), args=["Foo", "SOURCES"])
+@pytest.mark.parametrize("directive", LIST_DIRECTIVES)
+def test_middle_empty_directive_rejected(directive):
+    """A list directive given no values before the next directive is an error"""
+    assert_rejected(
+        f"{directive} supplied without values",
+        args=["Foo", directive] + other_directive(directive),
+    )
+
+
+def test_bare_sources_rejected():
+    """SOURCES with no values is an error rather than an omitted SOURCES"""
+    assert_rejected("SOURCES supplied without values", args=["Foo", "SOURCES"])
+
+
+def test_empty_additional_directive_rejected():
+    """List directives declared by the calling API are subject to the same check"""
+    assert_rejected(
+        "CHOOSES_IMPLEMENTATIONS supplied without values",
+        args=["Foo", "SOURCES", STUB_CPP, "CHOOSES_IMPLEMENTATIONS"],
+        module_type="Unit Test",
+        additional=UT_CONTROLS,
+    )
+
+
+def test_empty_flag_before_end_is_true():
+    """Zero-argument flags are exempt from the empty-directive check"""
+    assert_accepted(
+        base_outputs(SOURCES=[STUB_CPP], UT_AUTO_HELPERS=["TRUE"]),
+        args=["Foo", "SOURCES", STUB_CPP, "UT_AUTO_HELPERS"],
+        module_type="Unit Test",
+        additional=UT_CONTROLS,
+    )
 
 
 def test_undeclared_directive_is_a_value():
@@ -381,9 +426,9 @@ def test_duplicate_sources_separated():
 
 
 def test_duplicate_first_occurrence_empty():
-    """An empty first occurrence still counts toward duplication"""
+    """An empty first occurrence is reported as empty before the duplicate is reached"""
     assert_rejected(
-        "SOURCES supplied multiple times",
+        "SOURCES supplied without values",
         args=["Foo", "SOURCES", "DEPENDS", "Fw_Types", "SOURCES", STUB_CPP],
     )
 
