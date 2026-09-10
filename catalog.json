@@ -2,8 +2,8 @@
   "schema": 6,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "b7dd5c4f8d268c5c70f0304a063d8ee27e026168",
-  "generated_at": "2026-09-09T22:13:10Z",
+  "commit": "c84a59630b810f4c38e2b3d6e324f25e238fd991",
+  "generated_at": "2026-09-10T21:09:23Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -7444,6 +7444,51 @@
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
+        "sdd": "bronze"
+      }
+    },
+    {
+      "path": "Svc/Ccsds/Utils",
+      "has_ut": false,
+      "has_coverage": false,
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/Utils/codeql/index.html"
+      },
+      "codeql_checks": {
+        "codeql": {
+          "findings": 0,
+          "by_severity": {
+            "error": 0,
+            "medium": 0,
+            "low": 0
+          },
+          "worst": null,
+          "tier": "platinum",
+          "dismissed": 0,
+          "label": "Static Analysis (Security) [CodeQL]",
+          "report": "Svc/Ccsds/Utils/codeql/index.html"
+        },
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "sdd": null,
+      "tiers": {
+        "overall": "bronze",
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum",
+        "checks": null,
         "sdd": "bronze"
       }
     },
