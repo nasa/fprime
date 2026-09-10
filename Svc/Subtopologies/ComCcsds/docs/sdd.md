@@ -206,7 +206,7 @@ topology Flight {
 * **Stack sizes** — Task stack allocations for active components (if any beyond `ComQueue`).
 * **Priorities** — RTOS priorities for active/queued components as applicable.
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
-* **Aggregator** — `Aggregator.enablePacketSpanning` controls whether the `aggregator` instance spans CCSDS TM packets across transfer frames (see `Svc.ComAggregator`); `false` by default. `ComCfg::AggregationSize` is the full TM data field, while non-spanning aggregates are limited to `ComCfg::AggregationSize - 7` so the framer can add an idle packet. Any layer inserted between `aggregator` and `framer` that adds bytes (e.g. `ComCcsdsSdls`, +2-byte SA index) requires the project to reduce `ComCfg::AggregationSize` by that overhead.
+* **Aggregator** — `Aggregator.aggregationSize` is the size of every aggregate the `aggregator` instance emits (idle-filled by the aggregator, see `Svc.ComAggregator`); it defaults to `Svc.Ccsds.TmDataFieldSize`, the TM Transfer Frame Data Field expected by `Svc.Ccsds.TmFramer`, and is passed to `aggregator.configure()` in the `configComponents` phase together with `Allocation.memAllocator`, which supplies the aggregate storage (released by `aggregator.cleanup()` in `tearDownComponents`). Any layer inserted between `aggregator` and `framer` that adds bytes (e.g. `ComCcsdsSdls`, +`Svc.Ccsds.SdlsSaIndexSize`) requires the project to reduce `Aggregator.aggregationSize` by that overhead. `Aggregator.enablePacketSpanning` controls whether the instance spans CCSDS TM packets across transfer frames; `false` by default.
 
 ### 4.2 Buffer Manager Bin Configuration
 

@@ -5,10 +5,8 @@
 // ======================================================================
 
 #include "TmFramerTester.hpp"
-#include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
-#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 
 namespace Svc {
 
@@ -42,15 +40,17 @@ void TmFramerTester ::testComStatusPassthrough() {
     ASSERT_from_comStatusOut(1, inputStatus);  // at index 1, received FAILURE
 }
 
+void TmFramerTester ::fillDataField(U8* bufferData) {
+    for (FwSizeType i = 0; i < TmFramer::TmPayloadCapacity; ++i) {
+        bufferData[i] = static_cast<U8>(i & 0xFF);
+    }
+}
+
 void TmFramerTester ::testNominalFraming() {
-    U8 bufferData[100];
+    U8 bufferData[TmFramer::TmPayloadCapacity];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext defaultContext;
-
-    // Fill the buffer with some data
-    for (U32 i = 0; i < sizeof(bufferData); ++i) {
-        bufferData[i] = static_cast<U8>(i);
-    }
+    this->fillDataField(bufferData);
 
     // Invoke the dataIn handler
     this->invoke_to_dataIn(0, buffer, defaultContext);
@@ -76,28 +76,18 @@ void TmFramerTester ::testNominalFraming() {
     ASSERT_EQ(this->component.m_masterFrameCount, outMcCount + 1);
     ASSERT_EQ(this->component.m_virtualFrameCount, outVcCount + 1);
 
-    // Idle data should be filled at the offset of header + payload + the Space Packet Idle Packet header
-    FwSizeType expectedIdleDataOffset =
-        TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
-
-    // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
-    const U8 idlePattern = Utils::IdlePacket::DATA_PATTERN;
-    const FwSizeType ideDataEndOffset = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
-    for (FwSizeType i = expectedIdleDataOffset; i < ideDataEndOffset; ++i) {
-        ASSERT_EQ(outBuffer.getData()[i], idlePattern)
-            << "Idle data at index " << i << " does not match expected idle pattern";
+    // The frame is header + the data field exactly as delivered + trailer
+    ASSERT_EQ(TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + TMTrailer::SERIALIZED_SIZE, expectedFrameSize);
+    for (FwSizeType i = 0; i < sizeof(bufferData); ++i) {
+        ASSERT_EQ(outBuffer.getData()[TMHeader::SERIALIZED_SIZE + i], bufferData[i]) << "Data mismatch at index " << i;
     }
 }
 
 void TmFramerTester ::testSeqCountWrapAround() {
-    U8 bufferData[100];
+    U8 bufferData[TmFramer::TmPayloadCapacity];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext defaultContext;
-
-    // Fill the buffer with some data
-    for (U32 i = 0; i < sizeof(bufferData); ++i) {
-        bufferData[i] = static_cast<U8>(i);
-    }
+    this->fillDataField(bufferData);
 
     // Intentionally set the sequence count to 250 and iterate 10 times
     // to test the wrap around of the sequence counts
@@ -142,7 +132,7 @@ void TmFramerTester ::testDataReturn() {
 }
 
 void TmFramerTester ::testBufferOwnershipState() {
-    U8 bufferData[10];
+    U8 bufferData[TmFramer::TmPayloadCapacity];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext context;
     // force state to be NOT_OWNED and test that assertion is triggered
@@ -154,7 +144,7 @@ void TmFramerTester ::testBufferOwnershipState() {
 }
 
 void TmFramerTester ::testFirstHeaderPointerFromContext() {
-    U8 bufferData[100];
+    U8 bufferData[TmFramer::TmPayloadCapacity];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext context;
 
@@ -184,52 +174,18 @@ void TmFramerTester ::testFirstHeaderPointerFromContext() {
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
 }
 
-void TmFramerTester ::testResidualTooSmallForIdlePacket() {
-    // Residual space that is neither zero nor large enough for a minimum idle packet is a caller error
+void TmFramerTester ::testPartialDataFieldAsserts() {
+    // The framer does not idle-fill: anything short of a full data field is a caller error
     const FwSizeType fullSize = TmFramer::TmPayloadCapacity;
     U8 bufferData[fullSize];
     ComCfg::FrameContext context;
-    for (FwSizeType residual = 1; residual < Utils::IdlePacket::MIN_SIZE; ++residual) {
-        Fw::Buffer buffer(bufferData, fullSize - residual);
+    const FwSizeType shortSizes[] = {0, 1, 100, fullSize - 7, fullSize - 1};
+    for (FwSizeType shortSize : shortSizes) {
+        Fw::Buffer buffer(bufferData, shortSize);
         this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
         ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
     }
-    // Exactly a minimum idle packet of residual space is accepted and filled
-    Fw::Buffer buffer(bufferData, fullSize - Utils::IdlePacket::MIN_SIZE);
-    this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
-    this->invoke_to_dataIn(0, buffer, context);
-    ASSERT_from_dataOut_SIZE(1);
-    const U8* frame = this->fromPortHistory_dataOut->at(0).data.getData();
-    const FwSizeType idleHeaderOffset = TMHeader::SERIALIZED_SIZE + buffer.getSize();
-    // Idle packet header: APID 0x7FF (version 0, no secondary header), unsegmented, length token 0
-    ASSERT_EQ(frame[idleHeaderOffset], 0x07);
-    ASSERT_EQ(frame[idleHeaderOffset + 1], 0xFF);
-    ASSERT_EQ(frame[idleHeaderOffset + 2], 0xC0);
-    ASSERT_EQ(frame[idleHeaderOffset + 3], 0x00);
-    ASSERT_EQ(frame[idleHeaderOffset + 4], 0x00);
-    ASSERT_EQ(frame[idleHeaderOffset + 5], 0x00);
-    const U8 idlePattern = Utils::IdlePacket::DATA_PATTERN;
-    ASSERT_EQ(frame[idleHeaderOffset + 6], idlePattern);
-}
-
-void TmFramerTester ::testFullDataFieldNoIdleFill() {
-    // A data field delivered at full capacity (e.g. by a spanning aggregator) requires no idle fill
-    const FwSizeType fullSize = TmFramer::TmPayloadCapacity;
-    U8 bufferData[fullSize];
-    for (FwSizeType i = 0; i < fullSize; ++i) {
-        bufferData[i] = static_cast<U8>(i & 0xFF);
-    }
-    Fw::Buffer buffer(bufferData, fullSize);
-    ComCfg::FrameContext context;
-
-    this->invoke_to_dataIn(0, buffer, context);
-    ASSERT_from_dataOut_SIZE(1);
-    Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
-    ASSERT_EQ(outBuffer.getSize(), static_cast<FwSizeType>(ComCfg::TmFrameFixedSize));
-    // Data field must be exactly the input data with no idle packet inserted
-    for (FwSizeType i = 0; i < fullSize; ++i) {
-        ASSERT_EQ(outBuffer.getData()[TMHeader::SERIALIZED_SIZE + i], bufferData[i]) << "Data mismatch at index " << i;
-    }
+    ASSERT_from_dataOut_SIZE(0);
 }
 
 // ----------------------------------------------------------------------

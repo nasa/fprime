@@ -6,7 +6,6 @@
 
 #include "Svc/Ccsds/TmFramer/TmFramer.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
-#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Svc {
@@ -27,10 +26,8 @@ TmFramer ::~TmFramer() {}
 // ----------------------------------------------------------------------
 
 void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    FW_ASSERT(data.getSize() <= TmPayloadCapacity, static_cast<FwAssertArgType>(data.getSize()));
-    // The data must either fill the data field exactly or leave room for a minimum idle packet (4.2.2.5)
-    const FwSizeType residual = TmPayloadCapacity - data.getSize();
-    FW_ASSERT(residual == 0 || residual >= Utils::IdlePacket::MIN_SIZE, static_cast<FwAssertArgType>(residual));
+    // The data must fill the data field exactly: idle filling (4.2.2.5) is done upstream by Svc::ComAggregator
+    FW_ASSERT(data.getSize() == TmPayloadCapacity, static_cast<FwAssertArgType>(data.getSize()));
     FW_ASSERT(context.get_firstHeaderPointer() <= TMSubfields::fhpMask,
               static_cast<FwAssertArgType>(context.get_firstHeaderPointer()));
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
@@ -74,12 +71,6 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     status = frameSerializer.serializeFrom(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet.
-    // A full data field (e.g. delivered by a spanning aggregator) requires no fill.
-    if (residual > 0) {
-        this->fill_with_idle_packet(frameSerializer);
-    }
-
     // -------------------------------------------------
     // Trailer (CRC)
     // -------------------------------------------------
@@ -113,19 +104,6 @@ void TmFramer ::dataReturnIn_handler(FwIndexType portNum,
     FW_ASSERT(frameBuffer.getData() >= &this->m_frameBuffer[0]);
     FW_ASSERT(frameBuffer.getData() < &this->m_frameBuffer[0] + sizeof(this->m_frameBuffer));
     this->m_bufferState = BufferOwnershipState::OWNED;
-}
-
-void TmFramer ::fill_with_idle_packet(Fw::SerialBufferBase& serializer) {
-    constexpr FwSizeType endIndex = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
-    const FwSizeType startIndex = serializer.getSize();
-    FW_ASSERT(startIndex <= endIndex, static_cast<FwAssertArgType>(startIndex));
-    const FwSizeType idlePacketSize = endIndex - startIndex;
-
-    FW_ASSERT(idlePacketSize >= Utils::IdlePacket::MIN_SIZE, static_cast<FwAssertArgType>(idlePacketSize));
-    FW_ASSERT(idlePacketSize <= ComCfg::TmFrameFixedSize, static_cast<FwAssertArgType>(idlePacketSize));
-
-    const Fw::SerializeStatus status = Utils::IdlePacket::serialize(serializer, idlePacketSize);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 }
 }  // namespace Ccsds
 }  // namespace Svc

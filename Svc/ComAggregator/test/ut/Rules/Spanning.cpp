@@ -13,18 +13,13 @@
 
 namespace Svc {
 
-namespace {
-constexpr FwSizeType CAPACITY = static_cast<FwSizeType>(ComCfg::AggregationSize);
-// Packets up to two aggregates plus change exercise start, middle, and end spans
-constexpr U32 MAX_PACKET_SIZE = static_cast<U32>(2 * CAPACITY + 64);
-}  // namespace
-
 // ----------------------------------------------------------------------
 // Scenario setup and teardown
 // ----------------------------------------------------------------------
 
 void ComAggregatorTester::spanning_rbt_start() {
-    this->component.configure(true);
+    // Precondition: constructed with spanning enabled
+    ASSERT_TRUE(this->component.m_spanning);
     this->test_initial();
 }
 
@@ -40,6 +35,8 @@ void ComAggregatorTester::spanning_rbt_finish() {
 // ----------------------------------------------------------------------
 
 void ComAggregatorTester::shadow_send_packet() {
+    // Packets up to two aggregates plus change exercise start, middle, and end spans
+    const U32 MAX_PACKET_SIZE = static_cast<U32>(2 * this->aggregation_size() + 64);
     const U32 size = STest::Pick::lowerUpper(1, MAX_PACKET_SIZE);
     Fw::Buffer packet = this->fill_buffer(size);
     this->m_unreturned.push_back(packet.getData());
@@ -49,6 +46,7 @@ void ComAggregatorTester::shadow_send_packet() {
 }
 
 void ComAggregatorTester::shadow_emit() {
+    const FwSizeType CAPACITY = this->aggregation_size();
     ASSERT_from_dataOut_SIZE(1);
     const Fw::Buffer& frame = this->fromPortHistory_dataOut->at(0).data;
     const ComCfg::FrameContext& context = this->fromPortHistory_dataOut->at(0).context;
@@ -96,6 +94,7 @@ bool ComAggregatorTester::Spanning__SendPacket__precondition() const {
 }
 
 void ComAggregatorTester::Spanning__SendPacket__action() {
+    const FwSizeType CAPACITY = this->aggregation_size();
     this->clearHistory();
     this->shadow_send_packet();
     if (this->m_stream.size() < CAPACITY) {
@@ -149,6 +148,7 @@ bool ComAggregatorTester::Spanning__Timeout__precondition() const {
 }
 
 void ComAggregatorTester::Spanning__Timeout__action() {
+    const FwSizeType CAPACITY = this->aggregation_size();
     this->clearHistory();
     this->invoke_to_timeout(0, 0);
     ASSERT_EQ(this->dispatchOne(this->component), Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);
@@ -199,6 +199,7 @@ bool ComAggregatorTester::Spanning__ReturnAndStatus__precondition() const {
 }
 
 void ComAggregatorTester::Spanning__ReturnAndStatus__action() {
+    const FwSizeType CAPACITY = this->aggregation_size();
     this->clearHistory();
     this->invoke_to_dataReturnIn(0, this->m_outFrame, this->m_outContext);
     Fw::Success good = Fw::Success::SUCCESS;

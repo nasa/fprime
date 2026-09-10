@@ -105,7 +105,14 @@ module ComCcsds {
         cpu ComCcsdsConfig.CpuAffinities.aggregator \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::enablePacketSpanning);
+        // Allocation identifier is 0 as the MallocAllocator discards it
+        ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::aggregationSize,
+                                       ComCcsdsConfig::Aggregator::enablePacketSpanning,
+                                       0,
+                                       ComCcsds::Allocation::memAllocator);
+        """
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        ComCcsds::aggregator.cleanup();
         """
     }
 

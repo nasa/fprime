@@ -9,11 +9,38 @@
 
 #include <deque>
 #include <vector>
+#include "Fw/Types/MallocAllocator.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/ComAggregator/ComAggregator.hpp"
 #include "Svc/ComAggregator/ComAggregatorGTestBase.hpp"
 #include "TestUtils/RuleBasedTesting.hpp"
 
 namespace Svc {
+
+//! Allocator delegating to malloc while recording calls, and optionally failing, for lifecycle tests
+class CountingAllocator final : public Fw::MemAllocator {
+  public:
+    void* allocate(const FwEnumStoreType identifier,
+                   FwSizeType& size,
+                   bool& recoverable,
+                   FwSizeType alignment = alignof(std::max_align_t)) override;
+
+    void deallocate(const FwEnumStoreType identifier, void* ptr) override;
+
+    Fw::MallocAllocator m_delegate;
+    //! Number of allocate() calls
+    U32 m_allocations = 0;
+    //! Number of deallocate() calls
+    U32 m_deallocations = 0;
+    //! Identifier seen on the last allocate()/deallocate() call
+    FwEnumStoreType m_lastId = -1;
+    //! Pointer handed out by the last allocate() call
+    void* m_lastPointer = nullptr;
+    //! When set, allocate() returns nullptr
+    bool m_failAllocation = false;
+    //! When non-zero, allocate() reports this many bytes fewer than requested
+    FwSizeType m_shortfall = 0;
+};
 
 class ComAggregatorTester final : public ComAggregatorGTestBase {
   public:
@@ -30,13 +57,19 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     // Queue depth supplied to the component instance under test
     static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 20;
 
+    // Aggregation size used unless a test supplies its own: the TM transfer frame data field
+    static constexpr FwSizeType DEFAULT_AGGREGATION_SIZE = static_cast<FwSizeType>(Ccsds::TmDataFieldSize);
+
+    // Allocation identifier supplied to the component instance under test
+    static constexpr FwEnumStoreType TEST_ALLOCATION_ID = 3;
+
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct object ComAggregatorTester
-    ComAggregatorTester();
+    //! Construct object ComAggregatorTester, configuring the component under test
+    ComAggregatorTester(FwSizeType aggregationSize = DEFAULT_AGGREGATION_SIZE, bool spanning = false);
 
     //! Destroy object ComAggregatorTester
     ~ComAggregatorTester();
@@ -91,6 +124,15 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Tests that configure() asserts once data has been aggregated
     void test_configure_after_fill_asserts();
 
+    //! Tests that configure() asserts on aggregation sizes outside the supported range
+    void test_configure_invalid_size_asserts();
+
+    //! Tests that configure() asserts when the allocator fails to provide the aggregation buffer
+    void test_configure_allocation_failure_asserts();
+
+    //! Tests that cleanup() releases the aggregation buffer exactly once and tolerates repeated calls
+    void test_cleanup();
+
     //! Tests that, without spanning, a held packet larger than an aggregate asserts
     void test_oversize_hold_asserts();
 
@@ -106,8 +148,17 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Shadow aggregate a buffer for validation
     void shadow_aggregate(const Fw::Buffer& buffer);
 
-    //! Validate against shadow aggregation
+    //! Validate against shadow aggregation: aggregated packets followed by idle fill to the aggregation size
     void validate_aggregation(const Fw::Buffer& buffer);
+
+    //! Validate an emitted aggregate against the shadow aggregation with a First Header Pointer of 0
+    void validate_emitted_aggregation(U32 index);
+
+    //! Configured aggregation size of the component under test
+    FwSizeType aggregation_size() const;
+
+    //! Configured packet capacity of the component under test
+    FwSizeType capacity() const;
 
     //! Helper to validate a buffer has been aggregated correctly
     void validate_buffer_aggregated(const Fw::Buffer& buffer, const ComCfg::FrameContext& context);
@@ -181,6 +232,8 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
 
     //! The component under test
     ComAggregator component;
+    //! Allocator supplying the aggregation buffer
+    CountingAllocator m_allocator;
     //! Shadow aggregation for validation
     std::vector<U8> m_aggregation;
 

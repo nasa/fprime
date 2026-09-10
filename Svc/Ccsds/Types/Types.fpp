@@ -140,6 +140,14 @@ module Ccsds {
     struct TMTrailer {
         fecf: U16             @< 16 bit Frame Error Control Field (CRC16)
     }
+    @ Serialized size of TMHeader in bytes
+    constant TmHeaderSize = 6
+    @ Serialized size of TMTrailer in bytes
+    constant TmTrailerSize = 2
+    @ Size in bytes of the TM Transfer Frame Data Field: the payload Svc.Ccsds.TmFramer expects on each frame
+    constant TmDataFieldSize = ComCfg.TmFrameFixedSize - TmHeaderSize - TmTrailerSize
+    @ Size in bytes of the security association index Svc.Ccsds.CcsdsSdlsFramer prepends to each frame
+    constant SdlsSaIndexSize = 2
     @ Offsets for serializing individual sub-fields in TM headers
     module TMSubfields {
         constant frameVersionOffset = 14
