@@ -38,8 +38,11 @@ void SdlsFileKeyManager ::configure(const char* path, FwSizeType keySize) {
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-Svc::Ccsds::SdlsStatus SdlsFileKeyManager ::keyGet_handler(FwIndexType portNum, Svc::Ccsds::SdlsKeyBuffer& key) {
+Svc::Ccsds::SdlsStatus SdlsFileKeyManager ::keyGet_handler(FwIndexType portNum,
+                                                           U16 securityAssociationIndex,
+                                                           Svc::Ccsds::SdlsKeyBuffer& key) {
     FW_ASSERT(this->m_configured);
+    // This manager holds one key file, so the SA does not select among keys
     Os::File file;
     const Os::File::Status openStatus = file.open(this->m_path.toChar(), Os::File::OPEN_READ);
     if (openStatus != Os::File::OP_OK) {

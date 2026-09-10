@@ -13,6 +13,8 @@
 - [F Prime CcsdsSdlsDeframer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/CcsdsSdlsDeframer/docs/sdd.md)
 - [F Prime SdlsSaRouter SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/SdlsSaRouter/docs/sdd.md)
 - [F Prime SdlsFileKeyManager SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/SdlsFileKeyManager/docs/sdd.md)
+- [F Prime AesGcmEncryptor SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AesGcmEncryptor/docs/sdd.md)
+- [F Prime AesGcmDecryptor SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AesGcmDecryptor/docs/sdd.md)
 - [CCSDS Space Packet Protocol (133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf)
 - [CCSDS TM Space Data Link Protocol (132.0-B-3)](https://ccsds.org/Pubs/132x0b3.pdf)
 - [CCSDS TC Space Data Link Protocol (232.0-B-4)](https://ccsds.org/Pubs/232x0b4e1c1.pdf)
@@ -55,7 +57,8 @@ An optional SDLS layer provides per-frame encryption and decryption keyed by a 1
 - **CcsdsSdlsDeframer** — Extracts the SA index from incoming frames and delegates decryption (uplink).
 - **SdlsSaRouter** — Routes encryption/decryption requests to downstream crypto components based on the SA index.
 - **SdlsFileKeyManager** — Supplies encryption keys read from a configured file.
-- **ClearTextEncryptor / ClearTextDecryptor** — Pass-through default crypto components (**no security**), for use until a real algorithm is integrated.
+- **ClearTextEncryptor / ClearTextDecryptor** — Pass-through default crypto components (**no security**); the defaults selected by the `Svc.ComCcsdsSdls` subtopology configuration.
+- **AesGcmEncryptor / AesGcmDecryptor** — AES-256-GCM authenticated encryption (OpenSSL 3.x), producing/consuming an `IV (12) | ciphertext | MAC (16)` security payload with the VC and SA index authenticated as additional data. The decryptor reports a failed MAC check as `MAC_VERIFICATION_FAILURE`, distinct from `DECRYPTION_FAILURE`. Each frame's 28-byte overhead must be subtracted from `ComCfg.AggregationSize` (see the `Svc.ComCcsdsSdls` SDD).
 
 ### Protocol Layering
 
