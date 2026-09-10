@@ -113,7 +113,6 @@ class AesGcmEncryptorTester final : public AesGcmEncryptorGTestBase {
     //! call, as CcsdsSdlsFramer does on a synchronous pipeline. Covers SVC-CCSDS-AES-ENCRYPTOR-009.
     void testSynchronousReturn();
 
-
   private:
     // ----------------------------------------------------------------------
     // Handler overrides
@@ -176,7 +175,6 @@ class AesGcmEncryptorTester final : public AesGcmEncryptorGTestBase {
 
     //! Whether to return the emitted buffer from inside from_encryptOut_handler
     bool m_returnSynchronously;
-
 };
 
 }  // namespace Ccsds
