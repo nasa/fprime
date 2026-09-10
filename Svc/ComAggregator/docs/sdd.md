@@ -38,8 +38,7 @@ Aggregates buffers in the downlink chain. This is for use with systems that have
 Calling `configure(true)` before startup enables CCSDS TM packet spanning. In this mode the aggregation capacity
 is `ComCfg::AggregationSize`, the full TM data field by default, and every emitted aggregate is exactly that size.
 With spanning disabled, the maximum aggregate size is `ComCfg::AggregationSize - 7` so the TmFramer can add a
-minimum idle packet. Before packet spanning, `AggregationSize` used the formula `TmFrameFixedSize - 6 - 6 - 1 - 2`;
-overrides using that formula still build but leave 7 unused bytes per frame:
+minimum idle packet:
 
 - A packet that does not fit in the remaining space is split: its leading bytes complete the current aggregate and
   the remainder is retained. Retention of the underlying buffer (and its return) follows normal buffer ownership;
