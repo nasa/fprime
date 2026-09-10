@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "c84a59630b810f4c38e2b3d6e324f25e238fd991",
-  "generated_at": "2026-09-10T21:09:23Z",
+  "generated_at": "2026-09-10T21:12:00Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -6079,8 +6079,8 @@
         }
       },
       "checks": {
-        "passed": 2,
-        "failed": 3,
+        "passed": 0,
+        "failed": 5,
         "skipped": 11,
         "tier": "bronze",
         "report": "Svc/Ccsds/AosDeframer/checks/index.html"
@@ -6170,10 +6170,10 @@
         }
       },
       "checks": {
-        "passed": 2,
-        "failed": 0,
+        "passed": 1,
+        "failed": 1,
         "skipped": 14,
-        "tier": "platinum",
+        "tier": "bronze",
         "report": "Svc/Ccsds/AosFramer/checks/index.html"
       },
       "sdd": {
@@ -6186,7 +6186,7 @@
         "ut": "platinum",
         "int": "bronze",
         "codeql": "bronze",
-        "checks": "platinum",
+        "checks": "bronze",
         "sdd": "silver"
       }
     },
@@ -7190,8 +7190,8 @@
         }
       },
       "checks": {
-        "passed": 2,
-        "failed": 2,
+        "passed": 0,
+        "failed": 4,
         "skipped": 12,
         "tier": "bronze",
         "report": "Svc/Ccsds/TcDeframer/checks/index.html"
@@ -7481,14 +7481,24 @@
         },
         "codeql-jpl": null
       },
-      "checks": null,
-      "sdd": null,
+      "checks": {
+        "passed": 0,
+        "failed": 1,
+        "skipped": 15,
+        "tier": "bronze",
+        "report": "Svc/Ccsds/Utils/checks/index.html"
+      },
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Svc/Ccsds/Utils/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
-        "checks": null,
+        "checks": "bronze",
         "sdd": "bronze"
       }
     },

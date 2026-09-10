@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-09T21:12:47Z",
+  "generated_at": "2026-09-10T21:11:54Z",
   "ref": "devel",
-  "commit": "b7dd5c4f8d268c5c70f0304a063d8ee27e026168",
+  "commit": "c84a59630b810f4c38e2b3d6e324f25e238fd991",
   "passed": 2,
   "failed": 9,
   "skipped": 5,
@@ -62,9 +62,10 @@
       "status": "fail",
       "failures": [
         "dependency 'Fw/DataStructures' (from #include \"Fw/DataStructures/FifoQueue.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_DataStructures)",
+        "dependency 'Fw/Prm' (from #include \"Fw/Prm/ParamValid.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Prm)",
         "dependency 'Fw/Types' (from #include \"Fw/Types/StringTemplate.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Types)"
       ],
-      "detail": "2 dependency module(s) checked"
+      "detail": "3 dependency module(s) checked"
     },
     {
       "id": "I3",

@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-09T21:12:47Z",
+  "generated_at": "2026-09-10T21:11:54Z",
   "ref": "devel",
-  "commit": "b7dd5c4f8d268c5c70f0304a063d8ee27e026168",
+  "commit": "c84a59630b810f4c38e2b3d6e324f25e238fd991",
   "passed": 1,
   "failed": 6,
   "skipped": 9,
@@ -66,9 +66,10 @@
       "failures": [
         "dependency 'Fw/Buffer' (from #include \"Fw/Buffer/Buffer.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Buffer)",
         "dependency 'Fw/Types' (from #include \"Fw/Types/Assert.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Types)",
+        "dependency 'Svc/Ccsds/Utils' (from #include \"Svc/Ccsds/Utils/CRC16.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Svc_Ccsds_Utils)",
         "dependency 'Utils/Hash' (from #include \"Utils/Hash/Hash.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Utils_Hash)"
       ],
-      "detail": "4 dependency module(s) checked"
+      "detail": "5 dependency module(s) checked"
     },
     {
       "id": "I3",
@@ -169,9 +170,10 @@
       "status": "fail",
       "failures": [
         "unit-test dependency 'Fw/Types' (from #include \"Fw/Types/MallocAllocator.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Svc/Ccsds/Utils' (from #include \"Svc/Ccsds/Utils/CRC16.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
         "unit-test dependency 'Utils/Hash' (from #include \"Utils/Hash/Hash.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
       ],
-      "detail": "4 dependency module(s) checked"
+      "detail": "5 dependency module(s) checked"
     }
   ]
 }

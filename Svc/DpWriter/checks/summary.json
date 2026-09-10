@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-09T21:12:47Z",
+  "generated_at": "2026-09-10T21:11:54Z",
   "ref": "devel",
-  "commit": "b7dd5c4f8d268c5c70f0304a063d8ee27e026168",
+  "commit": "c84a59630b810f4c38e2b3d6e324f25e238fd991",
   "passed": 3,
   "failed": 8,
   "skipped": 5,
@@ -56,9 +56,10 @@
         "requirement 'SVC-DPWRITER-004' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:35) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'SVC-DPWRITER-005' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:36) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'SVC-DPWRITER-006' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:37) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPWRITER-007' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:38) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+        "requirement 'SVC-DPWRITER-007' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:38) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPWRITER-008' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:39) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "7 requirement(s) checked"
+      "detail": "8 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -92,7 +93,7 @@
       "failures": [
         "command 'CLEAR_EVENT_THROTTLE' has no requirement referencing it (add a requirement mentioning 'CLEAR_EVENT_THROTTLE')"
       ],
-      "detail": "1 command(s) traced against 7 requirement(s)"
+      "detail": "1 command(s) traced against 8 requirement(s)"
     },
     {
       "id": "R2",
@@ -107,7 +108,7 @@
         "telemetry channel 'NumFailedWrites' has no requirement referencing it (add a requirement mentioning 'NumFailedWrites')",
         "telemetry channel 'NumErrors' has no requirement referencing it (add a requirement mentioning 'NumErrors')"
       ],
-      "detail": "5 telemetry channel(s) traced against 7 requirement(s)"
+      "detail": "5 telemetry channel(s) traced against 8 requirement(s)"
     },
     {
       "id": "R3",
@@ -125,7 +126,7 @@
         "event 'FileWriteError' has no requirement referencing it (add a requirement mentioning 'FileWriteError')",
         "event 'FileWritten' has no requirement referencing it (add a requirement mentioning 'FileWritten')"
       ],
-      "detail": "8 event(s) traced against 7 requirement(s)"
+      "detail": "8 event(s) traced against 8 requirement(s)"
     },
     {
       "id": "R4",
@@ -153,12 +154,10 @@
       "status": "fail",
       "failures": [
         "port 'schedIn' has no requirement referencing it (add a requirement mentioning 'schedIn')",
-        "port 'bufferSendIn' has no requirement referencing it (add a requirement mentioning 'bufferSendIn')",
         "port 'procBufferSendOut' has no requirement referencing it (add a requirement mentioning 'procBufferSendOut')",
-        "port 'dpWrittenOut' has no requirement referencing it (add a requirement mentioning 'dpWrittenOut')",
-        "port 'deallocBufferSendOut' has no requirement referencing it (add a requirement mentioning 'deallocBufferSendOut')"
+        "port 'dpWrittenOut' has no requirement referencing it (add a requirement mentioning 'dpWrittenOut')"
       ],
-      "detail": "5 port(s) traced against 7 requirement(s)"
+      "detail": "5 port(s) traced against 8 requirement(s)"
     },
     {
       "id": "R7",
@@ -173,9 +172,10 @@
         "requirement 'SVC-DPWRITER-004' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:35) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'SVC-DPWRITER-005' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:36) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'SVC-DPWRITER-006' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:37) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPWRITER-007' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:38) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'SVC-DPWRITER-007' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:38) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPWRITER-008' (/home/runner/work/fprime/fprime/Svc/DpWriter/docs/sdd.md:39) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "7 requirement(s) checked"
+      "detail": "8 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -184,7 +184,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/DpWriter",
       "status": "pass",
       "failures": [],
-      "detail": "7 requirement(s) checked"
+      "detail": "8 requirement(s) checked"
     },
     {
       "id": "U3",
