@@ -26,7 +26,7 @@ TmFramer ::~TmFramer() {}
 // ----------------------------------------------------------------------
 
 void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    // The data must fill the data field exactly: idle filling (4.2.2.5) is done upstream by Svc::ComAggregator
+    // The data must fill the data field exactly: idle filling (Standard 4.2.2.5) is done upstream by Svc::ComAggregator
     FW_ASSERT(data.getSize() == TmPayloadCapacity, static_cast<FwAssertArgType>(data.getSize()));
     FW_ASSERT(context.get_firstHeaderPointer() <= TMSubfields::fhpMask,
               static_cast<FwAssertArgType>(context.get_firstHeaderPointer()));

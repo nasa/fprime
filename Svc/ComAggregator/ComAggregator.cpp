@@ -45,7 +45,7 @@ void ComAggregator ::configure(FwSizeType aggregationSize,
                                Fw::MemAllocator& allocator) {
     // Storage is configured once, before any data is aggregated; cleanup() must run before reconfiguring
     FW_ASSERT(this->m_allocation == nullptr);
-    // Every aggregate carries at least a minimum idle packet worth of data
+    // An aggregate must have room for data beyond the minimum idle packet
     FW_ASSERT(aggregationSize > Ccsds::Utils::IdlePacket::MIN_SIZE, static_cast<FwAssertArgType>(aggregationSize));
     if (spanningEnabled) {
         // Every packet header offset in an aggregate must be representable as an 11-bit First Header Pointer
@@ -176,6 +176,7 @@ void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_Aggrega
         const Fw::Buffer::OwnershipState previousState =
             this->m_bufferState.exchange(Fw::Buffer::OwnershipState::NOT_OWNED);
         FW_ASSERT(previousState == Fw::Buffer::OwnershipState::OWNED, static_cast<FwAssertArgType>(previousState));
+        // Restore the size in case a downstream consumer shrank the buffer before returning it
         this->m_frameBuffer.setSize(this->m_frameSerializer.getSize());
         this->m_allow_timeout = false;  // Timeout messages should be discarded in WAIT_STATUS state
         this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);

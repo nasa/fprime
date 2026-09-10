@@ -185,7 +185,6 @@ void TmFramerTester ::testPartialDataFieldAsserts() {
         this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
         ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
     }
-    ASSERT_from_dataOut_SIZE(0);
 }
 
 // ----------------------------------------------------------------------

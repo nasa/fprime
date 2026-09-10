@@ -119,6 +119,20 @@ TEST(Lifecycle, Cleanup) {
     tester.test_cleanup();
 }
 
+TEST(Lifecycle, DataInAfterCleanup) {
+    Svc::ComAggregatorTester tester;
+    tester.test_datain_after_cleanup_asserts();
+}
+
+// Per-instance aggregation size: the smallest size non-spanning supports
+TEST(PerInstance, MinimumNonSpanningSize) {
+    Svc::ComAggregatorTester tester(Svc::ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE);
+    tester.test_initial();
+    tester.test_exactly_full();
+    tester.test_fill_multi();
+    tester.test_timeout();
+}
+
 // Per-instance aggregation size: a random size at or above the non-spanning minimum, below the default
 TEST(PerInstance, SmallAggregationSize) {
     const FwSizeType size =

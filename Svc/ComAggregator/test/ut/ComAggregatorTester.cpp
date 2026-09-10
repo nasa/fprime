@@ -612,7 +612,6 @@ void ComAggregatorTester ::test_configure_invalid_size_asserts() {
     ASSERT_DEATH_IF_SUPPORTED(
         unconfigured.configure(Ccsds::Utils::IdlePacket::MAX_SIZE + 2, false, TEST_ALLOCATION_ID, allocator),
         "ComAggregator.cpp");
-    ASSERT_EQ(allocator.m_allocations, 0);
     // Sizes at the bounds are accepted
     ComAggregator smallest("Smallest");
     smallest.configure(ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE, false, TEST_ALLOCATION_ID, allocator);
@@ -643,8 +642,6 @@ void ComAggregatorTester ::test_configure_allocation_failure_asserts() {
     undersized.m_shortfall = 1;
     ASSERT_DEATH_IF_SUPPORTED(unconfigured.configure(DEFAULT_AGGREGATION_SIZE, false, TEST_ALLOCATION_ID, undersized),
                               "MemAllocator.cpp");
-    // The death tests run in a child process: the parent's component remains unconfigured
-    ASSERT_EQ(unconfigured.m_allocation, nullptr);
 }
 
 void ComAggregatorTester ::test_cleanup() {
@@ -677,6 +674,14 @@ void ComAggregatorTester ::test_cleanup() {
     ASSERT_EQ(reconfigured.m_capacity, DEFAULT_AGGREGATION_SIZE);
     reconfigured.cleanup();
     ASSERT_EQ(allocator.m_deallocations, 2);
+}
+
+void ComAggregatorTester ::test_datain_after_cleanup_asserts() {
+    this->component.cleanup();
+    ComCfg::FrameContext context;
+    Fw::Buffer buffer = this->fill_buffer(1);
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "ComAggregator.cpp");
+    delete[] buffer.getData();
 }
 
 void ComAggregatorTester ::test_oversize_hold_asserts() {

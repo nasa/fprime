@@ -21,7 +21,7 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 | SVC-COMCCSDS-003 | Provide an F´ **router** to route deframed packets (e.g., commands/files) into the flight software.            | Inspection |
 | SVC-COMCCSDS-004 | Provide a **subtopology variant that supplies `Svc::ComStub`** designed to connect to a ByteStream driver.     | Inspection |
 | SVC-COMCCSDS-005 | Provide a **subtopology variant that expects an external `Svc::ComInterface`** supplied by the deployment.     | Inspection |
-| SVC-COMCCSDS-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities, packet spanning) via `ComCcsdsConfig`. | Inspection |
+| SVC-COMCCSDS-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities, aggregation size, packet spanning) via `ComCcsdsConfig`. | Inspection |
 | SVC-COMCCSDS-007 | Provide **composable layer topologies**: a Space Packet packet layer (`SpacePacketFraming`, `SpacePacket`) and a TM/TC transfer frame layer (`TmTcFraming`), from which the full stack is composed. | Inspection |
 
 ---
@@ -40,6 +40,7 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 | `tcDeframer`          | `Svc.Ccsds.tcFramer`            | Passive | Deframes **CCSDS Space Packets** from  **CCSDS TM Transfer Frames** (uplink step 1).            |
 | `frameAccumulator`    | `Svc.FrameAccumulator`          | Passive | Collects bytes from the link and emits complete frames/packets for deframing (uplink path).     |
 | `comStub`             | `Svc.ComStub`                   | Passive | (Variant A only) Implementation of `Svc.ComInterface`, adapting a `Drv::ByteStreamDriverModel`. |
+| `aggregator`          | `Svc.ComAggregator`             | Active  | Aggregates Space Packets into fixed-size, idle-filled aggregates (`Aggregator.aggregationSize`) for `framer`. |
 
 > **Two variants:**
 > **A. “With ComStub”:** Subtopology **includes** `Svc::ComStub` and exposes **ByteStream** ports to your driver.
@@ -57,6 +58,8 @@ alternative stacks (e.g., inserting an SDLS security layer between them) while r
 | `TmTcFraming`       | Transfer frame layer: `framer` (TM), `tcDeframer`, `frameAccumulator`. Open upstream/downstream boundaries. |
 | `FramingSubtopology` | `SpacePacketFraming` composed with `TmTcFraming` (variant B).                                      |
 | `Subtopology`        | `FramingSubtopology` plus `comStub` (variant A).                                                    |
+
+> **Warning:** `aggregator` idle-fills every aggregate to `Aggregator.aggregationSize` regardless of the topology it is composed in. In the frame-less `SpacePacket` topology this means each flush (including a timeout flush carrying a single small packet) emits a fixed-size, idle-padded aggregate; size `Aggregator.aggregationSize` for the link rate accordingly.
 
 Each layer topology exposes its open boundary as **topology ports** (e.g. `SpacePacketFraming.dataOut`,
 `TmTcFraming.framedDataIn`, `FramingSubtopology.comStatusIn`), so composing topologies and deployments wire

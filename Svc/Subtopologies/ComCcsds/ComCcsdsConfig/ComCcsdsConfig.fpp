@@ -38,6 +38,7 @@ module ComCcsdsConfig {
     # Aggregator configuration constants
     module Aggregator {
         @ Size in bytes of every aggregate emitted by the aggregator instance: the TM Transfer Frame Data Field.
+        @ Aggregates are always idle-filled to this size, including in the frame-less SpacePacket topology.
         @ Any layer inserted between the aggregator and Svc.Ccsds.TmFramer that adds bytes must be subtracted here
         @ (e.g. ComCcsdsSdls: Svc.Ccsds.TmDataFieldSize - Svc.Ccsds.SdlsSaIndexSize).
         @ With packet spanning enabled this must not exceed 2046 (0x7FE), the TM First Header Pointer range.

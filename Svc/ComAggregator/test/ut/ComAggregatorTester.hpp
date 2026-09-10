@@ -133,6 +133,9 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Tests that cleanup() releases the aggregation buffer exactly once and tolerates repeated calls
     void test_cleanup();
 
+    //! dataIn on a released instance asserts
+    void test_datain_after_cleanup_asserts();
+
     //! Tests that, without spanning, a held packet larger than an aggregate asserts
     void test_oversize_hold_asserts();
 

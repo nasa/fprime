@@ -34,6 +34,9 @@ module Ccsds {
     @ An on-stack buffer sized to hold an SDLS key
     type SdlsKeyBuffer
 
+    @ Size in bytes of the security association index Svc.Ccsds.CcsdsSdlsFramer prepends to each frame
+    constant SdlsSaIndexSize = 2
+
     @ A single security association index to port index mapping entry
     struct SaMapEntry {
         securityAssociationIndex: U16,  @< Security association index
@@ -146,8 +149,6 @@ module Ccsds {
     constant TmTrailerSize = 2
     @ Size in bytes of the TM Transfer Frame Data Field: the payload Svc.Ccsds.TmFramer expects on each frame
     constant TmDataFieldSize = ComCfg.TmFrameFixedSize - TmHeaderSize - TmTrailerSize
-    @ Size in bytes of the security association index Svc.Ccsds.CcsdsSdlsFramer prepends to each frame
-    constant SdlsSaIndexSize = 2
     @ Offsets for serializing individual sub-fields in TM headers
     module TMSubfields {
         constant frameVersionOffset = 14

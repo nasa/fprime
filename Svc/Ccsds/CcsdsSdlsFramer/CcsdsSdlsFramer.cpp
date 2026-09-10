@@ -13,7 +13,8 @@ namespace Svc {
 
 namespace Ccsds {
 
-static_assert(sizeof(U16) == SdlsSaIndexSize, "Svc.Ccsds.SdlsSaIndexSize must match the prepended SA index");
+static_assert(sizeof(decltype(ComCfg::FrameContext().get_saIndex())) == SdlsSaIndexSize,
+              "Svc.Ccsds.SdlsSaIndexSize must match the prepended SA index");
 
 // ----------------------------------------------------------------------
 // Component construction and destruction

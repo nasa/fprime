@@ -10,9 +10,11 @@ module ComCfg {
     @ Spacecraft ID (10 bits) for CCSDS Data Link layer
     dictionary constant SpacecraftId = 0x0044
 
-    @ Fixed size of CCSDS TM frames. The data field (Svc.Ccsds.TmDataFieldSize) is the aggregate size expected by
-    @ Svc.Ccsds.TmFramer; see ComCcsdsConfig.Aggregator.aggregationSize for the sizing constraints.
-    dictionary constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
+    @ Fixed size of CCSDS TM frames. The data field (Svc.Ccsds.TmDataFieldSize = TmFrameFixedSize - 8) is the
+    @ aggregate size expected by Svc.Ccsds.TmFramer; see ComCcsdsConfig.Aggregator.aggregationSize for the sizing
+    @ constraints. Without packet spanning the data field must hold a full com buffer or file buffer Space Packet
+    @ next to a minimum idle packet: at least max(FW_COM_BUFFER_MAX_SIZE, FW_FILE_BUFFER_MAX_SIZE) + 6 + 7 bytes.
+    dictionary constant TmFrameFixedSize = 1024
 
     @ Upper Bound on Fixed size of CCSDS AOS frames
     constant AosMaxFrameFixedSize = 1536

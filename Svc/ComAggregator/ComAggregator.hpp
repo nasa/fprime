@@ -7,6 +7,7 @@
 #ifndef Svc_ComAggregator_HPP
 #define Svc_ComAggregator_HPP
 
+#include <algorithm>
 #include <atomic>
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/Mutex.hpp"
@@ -54,9 +55,7 @@ class ComAggregator final : public ComAggregatorComponentBase {
 
     //! Smallest aggregate that holds a full com buffer and a full file buffer Space Packet without spanning
     static constexpr FwSizeType MIN_NON_SPANNING_AGGREGATION_SIZE =
-        ((static_cast<FwSizeType>(FW_COM_BUFFER_MAX_SIZE) > static_cast<FwSizeType>(FW_FILE_BUFFER_MAX_SIZE))
-             ? static_cast<FwSizeType>(FW_COM_BUFFER_MAX_SIZE)
-             : static_cast<FwSizeType>(FW_FILE_BUFFER_MAX_SIZE)) +
+        std::max(static_cast<FwSizeType>(FW_COM_BUFFER_MAX_SIZE), static_cast<FwSizeType>(FW_FILE_BUFFER_MAX_SIZE)) +
         static_cast<FwSizeType>(Ccsds::SpacePacketHeader::SERIALIZED_SIZE) + Ccsds::Utils::IdlePacket::MIN_SIZE;
 
   private:
@@ -224,8 +223,8 @@ class ComAggregator final : public ComAggregatorComponentBase {
     FwEnumStoreType m_allocationId;  //!< Identifier used with m_allocator
     void* m_allocation;              //!< Memory backing m_frameBuffer, nullptr until configured
     std::atomic<Fw::Buffer::OwnershipState> m_bufferState{
-        Fw::Buffer::OwnershipState::OWNED};  //!< whether m_frameBuffer is owned by TmFramer; shared with the sync
-                                             //!< dataReturnIn caller
+        Fw::Buffer::OwnershipState::OWNED};  //!< whether this component currently owns m_frameBuffer (NOT_OWNED while
+                                             //!< downstream holds it); shared with the sync dataReturnIn caller
     Fw::Buffer m_frameBuffer;
     Fw::ExternalSerializeBufferWithMemberCopy m_frameSerializer;  //!< Serializer for m_frameBuffer
     ComCfg::FrameContext m_lastContext;                           //!< Context for the current frame
