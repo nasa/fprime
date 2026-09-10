@@ -384,7 +384,7 @@ void FileWorkerTester ::testWriteReadRoundTrip() {
     const char* fnameChar = "testroundtrip.txt";
     const char* hashFileChar = "testroundtrip.txt.CRC32";
     const FwSizeType dataSize = 1024;
-    U8 data[dataSize];
+    U8 data[dataSize] = {};
 
     // Start from a clean slate: OPEN_WRITE does not truncate, so a longer file left behind by an
     // earlier run would survive underneath the bytes written here.
@@ -407,7 +407,7 @@ void FileWorkerTester ::testWriteReadRoundTrip() {
 
     // Read the same file back through the component
     this->clearHistory();
-    U8 readData[dataSize];
+    U8 readData[dataSize] = {};
     Fw::Buffer readBuffer(readData, dataSize);
     this->invoke_to_readIn(0, fname, readBuffer);
     this->component.doDispatch();
