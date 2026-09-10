@@ -4,7 +4,7 @@ Directory: ../..
 ------------------------------------------------------------------------------
 File                                       Lines    Exec  Cover   Missing
 ------------------------------------------------------------------------------
-Svc/WasmSequencer/WasmSequencer.cpp          307     299    97%   33,338-339,341,465-466,572-573
+Svc/WasmSequencer/WasmSequencer.cpp          304     296    97%   33,334-335,337,459-460,566-567
 Svc/WasmSequencer/WasmSequencer.hpp            7       7   100%
 Svc/WasmSequencer/WasmSequencerController.cpp
                                              223     217    97%   59,206-207,455,457-458
@@ -14,5 +14,5 @@ Svc/WasmSequencer/WasmSequencerHost.cpp      256     256   100%
 Svc/WasmSequencer/WasmSequencerInterpreter.cpp
                                              438     428    97%   57,82-84,194,196-197,613,632-633
 ------------------------------------------------------------------------------
-TOTAL                                       1469    1436    97%
+TOTAL                                       1466    1433    97%
 ------------------------------------------------------------------------------

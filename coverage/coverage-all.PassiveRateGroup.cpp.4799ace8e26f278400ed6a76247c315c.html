@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-09 21:13:28</td>
+      <td>2026-09-10 21:13:37</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>42</td>
-      <td>50</td>
-      <td class="coverage-medium">84.0%</td>
+      <td>41</td>
+      <td>48</td>
+      <td class="coverage-medium">85.4%</td>
     </tr>
   </table>
 </div>
@@ -75,7 +75,7 @@
     <tr><td><a href="#l22">Svc::PassiveRateGroup::PassiveRateGroup(char const*) (line 22)</a></td><td>called 6 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l36">Svc::PassiveRateGroup::configure(Fw::Array&lt;unsigned int, 10ul&gt; const&amp;, Os::RawTimeSource) (line 36)</a></td><td>called 6 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l49">Svc::PassiveRateGroup::configure(unsigned int const*, short) (line 49)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l32">Svc::PassiveRateGroup::createRawTime() const (line 32)</a></td><td>called 46 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l32">Svc::PassiveRateGroup::createRawTime() const (line 32)</a></td><td>called 46 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l30">Svc::PassiveRateGroup::~PassiveRateGroup() (line 30)</a></td><td>called 6 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -317,16 +317,9 @@
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/2</summary>
-          <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 46 times.</div>
-          </div>
-        </details>
       </td>
-      <td class="linecount partialCoveredLine">46</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_rawTimeSource</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">46</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_rawTimeSource</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
@@ -726,7 +719,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">150</td>
-      <td class="src coveredLine"><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">cycleTime</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">cycleTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
@@ -781,8 +774,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 75 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 75 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 74 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 76 times.</div>
           </div>
         </details>
       </td>
@@ -795,12 +788,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 75 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 74 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">150</td>
+      <td class="linecount partialCoveredLine">148</td>
       <td class="src partialCoveredLine"><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_portCycleTimeHWMUsec</span><span class="p">[</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">port</span><span class="p">)].</span><span class="n">compare_exchange_weak</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
@@ -814,7 +807,7 @@
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">75</td>
+      <td class="linecount coveredLine">74</td>
       <td class="src coveredLine"><span class="w">                        </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -898,21 +891,21 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">15</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">cycleTime</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">cycleTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Cast to void as the only possible error is overflow, which we can&#39;t handle other</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Cast to void: overflow is capped to U32 max by getDiffUsec, and a mismatched</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l103" href="#l103">103</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// than capping cycleTime to max value of U32 (which is done in getDiffUsec anyways)</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// RawTimeSource (see sdd.md) leaves cycleTime at zero</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
@@ -954,8 +947,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 8 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 7 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 7 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 8 times.</div>
           </div>
         </details>
       </td>
@@ -968,19 +961,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 8 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 7 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">16</td>
+      <td class="linecount partialCoveredLine">14</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_maxTime</span><span class="p">.</span><span class="n">compare_exchange_weak</span><span class="p">(</span><span class="n">currentMax</span><span class="p">,</span><span class="w"> </span><span class="n">cycleTime</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l110" href="#l110">110</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
