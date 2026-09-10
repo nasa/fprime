@@ -97,3 +97,10 @@ Calling component passes in a file path *path* to read and a buffer for client t
 ### cancelIn_handler
 
 1. Set abort flag to true
+
+### Checksum (`.CRC32`) file format
+
+`writeIn_handler` writes a `.CRC32` sidecar alongside each file, and `readIn_handler` / `verifyIn_handler` validate the file against it. The sidecar stores the file's CRC-32 (a `U32`) in F Prime's serialized, big-endian representation — the same layout produced and consumed by `Utils::Hash` and `Os::ValidateFile` — so its contents do not depend on the endianness of the target that wrote it. `Svc::FileWorker` writes the sidecar through `Utils::Hash` (`writeBufferHashToFile`) and validates it through `Utils::verify_checksum`, which reads the value back with `Utils::CRCChecker::read_crc32_from_file`; both sides serialize and deserialize the `U32` through `Fw::SerialBuffer`.
+
+**Compatibility note:** `.CRC32` sidecars written by builds that predate this serialized format on a little-endian target stored the raw host-order bytes and will not validate against the current code. Such sidecars must be regenerated before the current build reads or verifies their data files — ground-side, or on board via `Os::ValidateFile::createValidation`. Sidecars written by `Svc::FileWorker` itself (via `Utils::Hash`) are unaffected, as that path already used this layout.
+

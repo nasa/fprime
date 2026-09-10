@@ -20,6 +20,14 @@ namespace Svc {
 class DpWriter final : public DpWriterComponentBase {
     friend class DpWriterTester;
 
+    // Keep the generated routing arrays consistent with the forwarding contract.
+    static_assert(DpWriter::NUM_BUFFERSENDIN_INPUT_PORTS == static_cast<FwSizeType>(DpWriterNumPorts),
+                  "Number of buffer send in ports must equal DpWriterNumPorts");
+    static_assert(DpWriter::NUM_DPWRITTENOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpWriterNumPorts),
+                  "Number of dp written out ports must equal DpWriterNumPorts");
+    static_assert(DpWriter::NUM_DEALLOCBUFFERSENDOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpWriterNumPorts),
+                  "Number of dealloc buffer send out ports must equal DpWriterNumPorts");
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -90,9 +98,10 @@ class DpWriter final : public DpWriterComponentBase {
     );
 
     //! Send the DpWritten notification
-    void sendNotification(const Fw::DpContainer& container,    //!< The container
+    void sendNotification(FwIndexType portNum,                 //!< The routing port number
+                          const Fw::DpContainer& container,    //!< The container
                           const Fw::FileNameString& fileName,  //!< The file name
-                          FwSizeType packetSize                //!< The packet size
+                          FwSizeType fileSize                  //!< The file size
     );
 
   private:

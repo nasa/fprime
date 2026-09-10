@@ -262,6 +262,10 @@ class ComQueue final : public ComQueueComponentBase {
     //! Convert Queue Type & Index into single queueIndex
     FwIndexType getQueueNum(Svc::QueueType queueType, FwIndexType portNum);
 
+    //! Look up the configured depth of a queue; a depth of 0 means the queue is disabled
+    FwSizeType getQueueDepth(const FwIndexType queueNum  //!< Index of the queue in m_queues
+    ) const;
+
   private:
     // ----------------------------------------------------------------------
     // Member variables

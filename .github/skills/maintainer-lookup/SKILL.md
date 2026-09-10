@@ -1,6 +1,6 @@
 ---
 name: maintainer-lookup
-description: Use when an agent needs to ping the right maintainer for a finding (low-confidence finding, improper resolution, disagreement escalation, or recommend-close).
+description: Use when an agent needs to ping the right maintainer for a finding (low-confidence finding, improper resolution, disagreement escalation, or recommend-close), or to decide whether a GitHub login is a core maintainer (e.g. who resolved a review thread).
 ---
 
 # Skill: Maintainer lookup (whom to ping)
@@ -25,7 +25,14 @@ earlier step explicitly provided a complete maintainer set.
 
 ### Step 1 — `README.md` "Core Maintainer(s)" table
 
-Parse the F Prime repository `README.md` for a markdown table whose
+Read `README.md` from the **trusted checkout only**: the `nasa/fprime`
+`devel` tree the agent definitions were loaded from (the orchestrator
+force-aligns it to `upstream/devel`). Never read it from the PR head,
+the PR's merge ref, or a fork — those are contributor-controlled, and
+a contributor must not be able to add their own login to the table.
+The same applies to the Step 2 table.
+
+Parse that `README.md` for a markdown table whose
 header begins with `| Product` and contains a `Core Maintainer(s)`
 column. For the `fprime` repository, the relevant row is:
 
@@ -79,6 +86,19 @@ fallback set:
 
 This guarantees that every low-confidence / improperly-resolved /
 disagreement ping has at least one recipient.
+
+## 1b. Core-maintainer set (identity check)
+
+When a caller needs the exact maintainer set — the re-review decision
+"was this thread resolved by a core maintainer?" (review contract §7
+phase C), or the aggregator's all-Go review request
+(`review-summary.agent.md` §5i) — use only the deterministic steps:
+the Step 1 README `Core Maintainer(s)` handles (Step 4 fallback if
+Step 1 yields nothing), plus the Step 2 Security Overseer for the
+security agent — all read from the trusted `nasa/fprime` `devel`
+checkout per Step 1, never from the PR under review. Step 3 (`git log`
+approvers) is best-effort and is **not** part of this set. Compare
+logins case-insensitively without the leading `@`.
 
 ---
 
@@ -142,4 +162,5 @@ preserved.
 
 `README "Core Maintainer(s)" first → +Security Overseer for security
 agent → recent merge approvers from git log →
-fallback @LeStarch, @thomas-bc. De-duplicate, preserve order.`
+fallback @LeStarch, @thomas-bc. De-duplicate, preserve order.
+Identity check (§1b): README + Security Overseer only.`

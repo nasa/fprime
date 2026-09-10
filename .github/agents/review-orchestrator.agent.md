@@ -49,11 +49,16 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
    come first because they are the two CI-safety contributors
    (`contributes_to_ci_safety: true` in the registry); the remaining
    reviewers are merge-readiness contributors only and run after.
-2. Compute the run ordinal for each reviewer by counting prior
-   summary reviews on PR `#N` whose HTML marker matches that
-   reviewer's name. The orchestrator's count is independent per
-   reviewer — they may have different `Run:` ordinals if one was
-   added later than the other.
+2. Compute the run ordinal for each reviewer from its newest prior
+   metadata review on PR `#N` (the review whose HTML marker matches
+   that reviewer's name): ordinal = that review's `run` line + 1, or
+   `1` if none exists. Do not count reviews — metadata reviews are
+   updated in place on re-runs (contract §6), so the count does not
+   grow. Ordinals are independent per reviewer — they may differ if
+   one reviewer was added to the registry later than another. Also
+   record each reviewer's `reviewed_head` (fallback: the review's
+   `commit_id`); a trigger deciding whether a PR needs another pass
+   compares it against the current head.
 3. **Pre-run prompt-injection metadata scan.** Before invoking any
    reviewer, run the `.github/skills/prompt-injection-precheck/SKILL.md`
    skill against the PR's metadata surfaces (title, body, commit
@@ -518,12 +523,16 @@ No special-case logic. On the second-and-later run on the same PR:
 - Each reviewer is invoked with an incremented `run-ordinal` in its
   kickoff prompt.
 - Each reviewer handles re-review state internally per the contract
-  §7 (phases A–D) and `.github/skills/re-review-state/SKILL.md`.
-- The aggregator dismisses its prior review and submits a new one
-  (since the event APPROVE/REQUEST_CHANGES may change between runs).
+  §7 (phases A–D) and `.github/skills/re-review-state/SKILL.md`:
+  its metadata review is updated in place, new below-must-fix
+  findings are scoped to the diff since its `reviewed_head`, and a
+  quiet run posts nothing new.
+- The aggregator updates its prior review in place when the verdict
+  event is unchanged, and dismisses-and-resubmits only when the
+  event flips (`review-summary.agent.md` §5d).
 
 The orchestrator does not need to know whether this is run 1 or
-run N — it just counts prior summary reviews and increments.
+run N — it reads each prior `run` ordinal and increments.
 
 ---
 

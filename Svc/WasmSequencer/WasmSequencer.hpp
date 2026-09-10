@@ -934,6 +934,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Opaque handle to the spacewasm engine, or null (before the store is initialized).
     spacewasm_t* m_wasm;
 
+    //! Opaque handle to the spacewasm guest memory allocator, or null (before store/allocator is initialized)
+    spacewasm_allocator_t* m_guest_allocator;
+
     //! Pending command waiting for a response
     struct WaitingCmd {
         FwOpcodeType opCode;
