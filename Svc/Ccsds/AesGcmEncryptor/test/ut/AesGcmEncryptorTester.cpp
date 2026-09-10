@@ -6,7 +6,7 @@
 
 #include "AesGcmEncryptorTester.hpp"
 #include "STest/Pick/Pick.hpp"
-#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
+#include "Svc/Ccsds/Utils/SdlsAad.hpp"
 
 #include <openssl/evp.h>
 #include <cstring>
@@ -200,7 +200,7 @@ void AesGcmEncryptorTester ::testCiphertextAndMacMatch() {
         << "MAC differs from the reference implementation; the AAD is the usual cause";
 }
 
-void AesGcmEncryptorTester ::testAuthMaskLayout() {
+void AesGcmEncryptorTester ::testAadLayout() {
     // Spot-check the ends of the VCID field as well as an ordinary value: a shift or mask
     // error shows up at the boundaries first
     const U8 vcIds[] = {0, 1, TEST_VC_ID, 0x07};
@@ -209,7 +209,7 @@ void AesGcmEncryptorTester ::testAuthMaskLayout() {
         U8 expected[TM_AAD_LEN];
         buildTmAad(expected, vcIds[i], spi);
 
-        const Svc::Ccsds::Utils::SdlsTmAuthMask actual(vcIds[i], spi);
+        const Svc::Ccsds::Utils::SdlsTmAad actual(vcIds[i], spi);
 
         ASSERT_EQ(static_cast<FwSizeType>(sizeof actual.bytes), TM_AAD_LEN);
         ASSERT_EQ(::memcmp(actual.bytes, expected, TM_AAD_LEN), 0)

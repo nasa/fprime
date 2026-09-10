@@ -16,11 +16,11 @@ TEST(Nominal, KnownAnswer) {
     tester.testKnownAnswer();
 }
 
-TEST(Nominal, AuthMaskLayout) {
+TEST(Nominal, AadLayout) {
     REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-002");
     COMMENT("The TC auth mask matches the ground segment's layout byte for byte");
     Svc::Ccsds::AesGcmDecryptorTester tester;
-    tester.testAuthMaskLayout();
+    tester.testAadLayout();
 }
 
 TEST(Nominal, DecryptNominal) {

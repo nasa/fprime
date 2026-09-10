@@ -26,14 +26,15 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/AesGcmDecryptor.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/AesGcmDecryptor.cpp"
-   DEPENDS
-        OpenSSL::Crypto
+    DEPENDS
+        Svc_Ccsds_Utils
+        Svc_Ccsds_Utils_AesGcm
 )
 
 ### Unit Tests ###
 register_fprime_ut(
     AUTOCODER_INPUTS
-       "${CMAKE_CURRENT_LIST_DIR}/AesGcmDecryptor.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/AesGcmDecryptor.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/AesGcmDecryptorTestMain.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/AesGcmDecryptorTester.cpp"
