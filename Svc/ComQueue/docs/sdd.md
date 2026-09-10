@@ -5,6 +5,7 @@
 `Svc::ComQueue` is an  F´ active component that functions as a priority queue of buffer types. Messages are dequeued and forwarded in order of priority when a `Fw::Success::SUCCESS` signal is received on the `comStatusIn` port. `Fw::Success::SUCCESS` is accepted in three contexts: (1) at start-up to initiate data flow, (2) in response to a previously sent message, and (3) after a previous `Fw::Success::FAILURE` to indicate recovery. Receiving a `Fw::Success::FAILURE` results in the queues being paused until a subsequent `Fw::Success::SUCCESS` is received.
 
 `Svc::ComQueue` is configured with a queue depth and queue priority for each incoming `Fw::Com` and `Fw::Buffer` port by passing in a configuration table at initialization. 
+A depth of 0 disables the queue for that port: no storage is allocated for it and any message received on that port is treated as an overflow. At least one port must have a non-zero depth; an all-zero table (the default-constructed table) is rejected with an assertion at configuration.
 Queued messages from the highest priority source port are serviced first and a round-robin algorithm is used to balance between ports of shared priority.
 
 `Svc::ComQueue` is designed to act alongside instances of the [communication adapter interface](../../../docs/reference/communication-adapter-interface.md) and implements the communication queue [protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol).
@@ -35,6 +36,7 @@ Queued messages from the highest priority source port are serviced first and a r
 | SVC-COMQUEUE-009 | `Svc::ComQueue` shall keep track and throttle queue overflow events per port.                                                           | Prevents a flood of queue overflow events.                              | Unit test           | 
 | SVC-COMQUEUE-010 | `Svc::ComQueue` shall return ownership of incoming buffers once they have been enqueued.                                                | Memory management                                                       | Unit test           | 
 | SVC-COMQUEUE-011 | `Svc::ComQueue` shall provide a command to flush queued items.      | Queue management              | Unit test           | 
+| SVC-COMQUEUE-012 | `Svc::ComQueue` shall accept a configured depth of 0 for a port, allocating no storage for that queue and treating any message received on that port as an overflow. | Deployments may leave a port unused (e.g. no file downlink) without allocating memory or crashing. | Unit test | 
 
 
 ## 4. Design
@@ -100,6 +102,8 @@ and an allocator of `Fw::MemAllocator`. The `configure` method foes the followin
    3. Ensures that every entry in the queue containing the prioritized order of the com buffer and buffer data have been 
    initialized. 
    4. Ensures that there is enough memory for the com buffer and buffer data we want to process
+   5. Skips storage setup for any entry with a depth of 0; such a queue is disabled and always overflows
+   6. Asserts that at least one entry has a non-zero depth
 
 ### 4.5 Port Handlers
 
@@ -179,12 +183,16 @@ the prioritized list.
 
 #### 4.9.4 enqueue
 
-Attempts to enqueue the buffer onto the queue index, logs a (throttled) warning if data is discarded, and immediately processes the queue if state is `READY`.
+Attempts to enqueue the buffer onto the queue index, logs a (throttled) warning if data is discarded, and immediately processes the queue if state is `READY`. A disabled (depth 0) queue never accepts data, so every message to it is discarded; because a disabled queue never drains, its overflow warning is logged once and then stays throttled.
 
 #### 4.9.5 drainQueue
 
-Pops all messages out of the queue at queueIndex, `index`.
+Pops all messages out of the queue at queueIndex, `index`. A disabled (depth 0) queue has nothing to drain and is skipped.
 
 #### 4.9.6 getQueueNum
 
 Converts a `queueType` & `portNum` into an index into the `m_queues` array--translates between user facing index system & internal one.
+
+#### 4.9.7 getQueueDepth
+
+Looks up the configured depth of the queue at a given `m_queues` index from the prioritized metadata list; a depth of 0 identifies a disabled queue.

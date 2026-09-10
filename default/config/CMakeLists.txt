@@ -22,6 +22,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/PlatformCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerCfg.fpp"
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/MemoryAllocation.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/EventManagerCfg.hpp"
@@ -48,6 +49,8 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CRCCheckerConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileManagerConfig.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerConfig.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerSpacewasmConfig.h"
         "${CMAKE_CURRENT_LIST_DIR}/Os/RawTimeSource.hpp"
     BASE_CONFIG
     DEPENDS

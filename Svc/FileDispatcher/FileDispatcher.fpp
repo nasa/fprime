@@ -51,7 +51,7 @@ module Svc {
         async input port fileAnnounceRecv: Svc.FileAnnounce
 
         @ Ping in
-        async input port pingIn: Svc.Ping
+        async input port pingIn: Svc.Ping drop
 
         ###############################################################################
         # Output ports                                                                 #

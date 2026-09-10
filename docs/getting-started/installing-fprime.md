@@ -25,6 +25,7 @@ Requirements:
 2. git
 3. CLang or GNU C and C++ compilers (e.g. gcc and g++)
 4. [Python 3.10+](https://www.python.org/downloads/), virtual environments, and PIP
+5. *(Optional)* A [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`), required only to build components that depend on Rust. Components that require `cargo` are automatically skipped when it is not on the `PATH`, and the rest of the framework builds normally.
 
 > [!NOTE]
 > Latest versions of PIP are strongly recommended. See [Recommended PIP Versions](#recommended-pip-versions)
@@ -63,7 +64,7 @@ This command will ask for some input. Sample responses are below:
   [2/2] Project top-level namespace [MyFprimeProject]: MyProject
 ```
 
-1.  This commands perform the following actions:
+This command performs the following actions:
     - Create a new git repository with the standard F´ project structure
     - Create a new virtual environment within the project and install dependencies
 

@@ -332,17 +332,17 @@ It represents a node of the red-black tree.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`parent`|`Node::Index`|The index of the parent of this node|`Node::NONE`|
-|`left`|`Node::Index`|The index of the left child of this node|`Node::NONE`|
-|`right`|`Node::Index`|The index of the right child of this node|`Node::NONE`|
-|`color`|`Color`|The color of this node|`Color::BLACK`|
-|`entry`|`Entry`|The set or map entry stored in this node|C++ default initialization|
+|`m_parent`|`Node::Index`|The index of the parent of this node|`Node::NONE`|
+|`m_left`|`Node::Index`|The index of the left child of this node|`Node::NONE`|
+|`m_right`|`Node::Index`|The index of the right child of this node|`Node::NONE`|
+|`m_color`|`Color`|The color of this node|`Color::BLACK`|
+|`m_entry`|`Entry`|The set or map entry stored in this node|C++ default initialization|
 
 #### 3.1.4. Public Member Functions
 
 ##### 3.1.4.1. getChild
 
-```c+++
+```c++
 Node::Index getChild(Direction direction) const
 ```
 
@@ -368,8 +368,8 @@ Sets the child of `this` in direction `direction`.
 
 ##### 3.1.5.1. getOppositeDirection
 
-```c+++
-static Direction oppositeDirection(Direction direction)
+```c++
+static Direction getOppositeDirection(Direction direction)
 ```
 
 **Overview:**
@@ -598,7 +598,7 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
 1. If `findStatus == SUCCESS`
 
-    1. Call `m_nodes[node].setValue(valueOrNil)`.
+    1. Call `m_nodes[node].m_entry.setValueOrNil(valueOrNil)`.
 
     1. Set `status = SUCCESS`.
 
@@ -612,9 +612,9 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
        1. Set `m_nodes[node] = Node()`.
 
-       1. Call `m_nodes[node].entry.setKey(keyOrElement)`.
+       1. Call `m_nodes[node].m_entry.setKeyOrElement(keyOrElement)`.
 
-       1. Call `m_nodes[node].entry.setValue(valueOrNil)`.
+       1. Call `m_nodes[node].m_entry.setValueOrNil(valueOrNil)`.
 
        1. Call `insertNode(node, parent, direction)`.
 
@@ -674,7 +674,7 @@ contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
 1. Call `m_nodes.setStorage(data, capacity)`.
 
-1. Let `nodesSize = Nodes::getByteArraySize()`.
+1. Let `nodesSize = Nodes::getByteArraySize(capacity)`.
 
 1. Let `freeNodesOffset` be the smallest integer greater than or equal to `nodesSize`
 that is aligned for `FreeNodes::getByteArrayAlignment()`.
@@ -1544,7 +1544,7 @@ or an assertion failure will occur:
 
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-1. Let `newRoot = m_nodes[node].getChild(oppositeDirection))`.
+1. Let `newRoot = m_nodes[node].getChild(oppositeDirection)`.
 
 1. Let `newChild = m_nodes[newRoot].getChild(direction)`.
 

@@ -4,7 +4,7 @@ This guide will describe the types available in F´.  F´ defines both useful sh
 a set of autocoded complex types.  The types described here are available to both the flight software and the ground
 system unless otherwise noted. Included in this document:
 
-- [Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables](#data-types-and-data-structures-primitive-types-enums-arrays-and-serializables)
+- [Data Structures and Types](#data-structures-and-types)
   - [Primitive Types](#primitive-types)
   - [Polymorphic Type](#polymorphic-type)
     - [Setting Polymorphic Values](#setting-polymorphic-values)
@@ -42,7 +42,7 @@ following table and are available to both the ground system, events, channels, a
 > For a full description of numerical types available to F´ see: [Numerical Types](../../reference/numerical-types.md).
 
 > [!NOTE]
-> C/C++ types come from `stdint.h` and `stdbool.h`.  The last three types above are not of set size but are architecture-dependent. Should a project's architecture not support all these types, see: [Configuring F´: Architecture Supported Primitive Types](../framework/configuring-fprime.md)
+> C/C++ types come from `stdint.h` and `stdbool.h`.  The last three types above are not of set size but are architecture-dependent. Should a project's architecture not support all these types, see: [Configuring F´: Type Settings](../framework/configuring-fprime.md)
 
 ## Polymorphic Type
 

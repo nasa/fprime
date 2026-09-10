@@ -15,7 +15,7 @@ Requirement | Description | Verification Method
 AL-001 | The `Svc::EventManager` component shall receive events and compose them into downlink packets. | Inspection; Unit Test
 AL-002 | The `Svc::EventManager` component shall have commands to filter events based on event severity. | Unit Test
 AL-003 | The `Svc::EventManager` component shall have commands to filter events based on the event ID. | Unit Test 
-AL-004 | The `Svc::EventManager` component shall call fatalOut port when FATAL is received | Inspection; Unit Test
+AL-004 | The `Svc::EventManager` component shall call the `FatalAnnounce` port when a FATAL event is received | Inspection; Unit Test
 
 ## 3. Design
 
@@ -37,6 +37,8 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Fw::Com`](../../../Fw/Log/docs/sdd.md) | PktSend | Output | n/a | Send event packets to external user
 [`Svc::FatalEvent`](../../../Svc/Fatal/docs/sdd.md) | FatalAnnounce | Output | n/a | Send FATAL event (to health)
 [`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | run | Input | Async (drop) | Rate group driven telemetry updates
+[`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | pingIn | Input | Asynchronous | Ping input from health checker
+[`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | pingOut | Output | n/a | Ping response to health checker
 [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Tlm | Output | n/a | Send telemetry channels
 
 ### 3.2 Functional Description
@@ -65,19 +67,17 @@ These filters are modified at runtime by the `SET_ID_FILTER` command.
 FATAL events are never filtered, so they can be caught and broadcast to the system. Outgoing events are converted into
 the F´ ground format and sent out using the `PktSend` port.
 
-#### 3.2.3 Dropped Event Reporting
-
-The `EventManager` component reports the number of events dropped due to internal queue overflow via the
-`EventsDropped` telemetry channel. The channel is written from the `run` port handler, which should be connected to a
-rate group for periodic updates. The channel uses update-on-change semantics.
-
-
-
 #### 3.2.2 Fatal Announce
 
 When the `EventManager` component receives a FATAL event, it calls the FatalAnnounce port. Another component that
 handles the system response to FATALs (such as resetting the system) can connect to this port to be informed when a
 FATAL has occurred.
+
+#### 3.2.3 Dropped Event Reporting
+
+The `EventManager` component reports the number of events dropped due to internal queue overflow via the
+`EventsDropped` telemetry channel. The channel is written from the `run` port handler, which should be connected to a
+rate group for periodic updates. The channel uses update-on-change semantics.
 
 ### 3.3 Scenarios
 

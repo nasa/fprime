@@ -238,7 +238,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
     );
 
     //! Restrict SendFile / SendPartial reads to paths under the configured directory.
-    //! Fail-open: until called, the sandbox defaults to `/` (any readable path is allowed).
+    //! Fail-closed: until called, every read is rejected. Configure `/` to allow any readable path.
     void configure(const char* directory);
 
     //! Cleans up file queue before dispatching to underlying component

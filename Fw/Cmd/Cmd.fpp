@@ -22,6 +22,7 @@ module Fw {
     FORMAT_ERROR = 3 @< Command failed to deserialize
     EXECUTION_ERROR = 4 @< Command had execution error
     BUSY = 5 @< Component busy
+    CLEARED = 6 @< Command tracking was cleared before the command completed
   }
 
   @ Port for sending command responses

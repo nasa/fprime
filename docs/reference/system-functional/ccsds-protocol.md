@@ -33,11 +33,11 @@ The Space Packet layer provides application-level packet framing per CCSDS 133.0
 
 The APID Manager tracks per-APID sequence counts for both outgoing and incoming Space Packets. It provides incrementing sequence counts to the Space Packet Framer for each APID and validates received sequence counts in the Space Packet Deframer to detect packet loss.
 
-By default, APIDs are assigned based on the F Prime data descriptor type (commands, telemetry, events, files, packetized telemetry). Missions requiring custom APID assignments can replace the default APID Manager component with a project-specific implementation.
+By default, APIDs are assigned based on the F Prime data descriptor type (commands, telemetry, events, files, packetized telemetry). Missions requiring custom APID assignments can replace the default APID Manager component with a project-specific implementation. To add project-specific data types with their own APIDs, see the [Add Custom Uplink and Downlink Data Types](../../how-to/develop/custom-uplink-downlink-data.md) guide.
 
 ### TM Space Data Link Protocol
 
-The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.0-B-3) for downlink. It wraps payload data (such as Space Packets) into TM Transfer Frames for transmission over the space link. The current implementation supports a single Virtual Channel Identifier (VCID).
+The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.0-B-3) for downlink. It wraps payload data (such as Space Packets) into TM Transfer Frames for transmission over the space link. The current implementation supports a single Virtual Channel Identifier (VCID). `ComCfg::AggregationSize` is the full TM data field available to the upstream [ComAggregator](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md); with spanning disabled, its maximum aggregate is `ComCfg::AggregationSize - 7` so the framer can add an idle packet. When packet spanning is enabled in the upstream [ComAggregator](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md) (`ComCcsdsConfig.Aggregator.enablePacketSpanning`), Space Packets may span consecutive TM Transfer Frames and the First Header Pointer in each frame locates the first packet header, per 132.0-B-3 section 4.1.2.7.6; spanning is disabled by default. Enabling it requires a ground deframer that reassembles spanned packets using the First Header Pointer.
 
 ### TC Space Data Link Protocol
 

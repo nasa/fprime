@@ -95,7 +95,7 @@ void copyDataFrom(const StackBase<T>& stack)
 
     1. For `i` in [0, `size`)
 
-        1. Set `e = at(size - 1 - i)`.
+        1. Set `e = stack.at(size - 1 - i)`.
 
         1. Set `status = push(e)`.
 

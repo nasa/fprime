@@ -11,6 +11,11 @@ TEST(Nominal, DispatchTest) {
     tester.dispatchTest();
 }
 
+TEST(Nominal, DispatchMaxLengthNameTest) {
+    Svc::FileDispatcherTester tester;
+    tester.dispatchMaxLengthNameTest();
+}
+
 TEST(Nominal, DispatchAllDisabledTest) {
     Svc::FileDispatcherTester tester;
     tester.dispatchAllDisabledTest();

@@ -5,6 +5,11 @@
 // ======================================================================
 
 #include "FileWorkerTester.hpp"
+#include <string>
+
+#include "Os/File.hpp"
+#include "Os/FileSystem.hpp"
+#include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
 
@@ -372,6 +377,59 @@ void FileWorkerTester ::testAppending() {
     ASSERT_EVENTS_WriteTimeout_SIZE(0);
 }
 
+void FileWorkerTester ::testWriteReadRoundTrip() {
+    // Regression: the component must be able to read back a file it wrote itself. The write path
+    // stores the checksum through Utils::Hash, while readIn_handler checks it through
+    // Utils::verify_checksum, so both must agree on the on-disk layout of the .CRC32 file.
+    const char* fnameChar = "testroundtrip.txt";
+    const char* hashFileChar = "testroundtrip.txt.CRC32";
+    const FwSizeType dataSize = 1024;
+    U8 data[dataSize] = {};
+
+    // Start from a clean slate: OPEN_WRITE does not truncate, so a longer file left behind by an
+    // earlier run would survive underneath the bytes written here.
+    (void)::remove(fnameChar);
+    (void)::remove(hashFileChar);
+
+    for (FwSizeType i = 0; i < dataSize; i++) {
+        data[i] = static_cast<U8>(i % 256);
+    }
+    Fw::Buffer writeBuffer(data, dataSize);
+    Fw::String fname = fnameChar;
+
+    // Write the file and its checksum
+    this->invoke_to_writeIn(0, fname, writeBuffer, 0, false);
+    this->component.doDispatch();
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_DONE_WRITE, dataSize);
+    ASSERT_EVENTS_WriteFileError_SIZE(0);
+    ASSERT_EVENTS_WriteValidationError_SIZE(0);
+
+    // Read the same file back through the component
+    this->clearHistory();
+    U8 readData[dataSize] = {};
+    Fw::Buffer readBuffer(readData, dataSize);
+    this->invoke_to_readIn(0, fname, readBuffer);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_CrcFailed_SIZE(0);
+    ASSERT_from_readDoneOut_SIZE(1);
+    ASSERT_from_readDoneOut(0, FileWorkerStatus::FW_STATUS_DONE_READ, dataSize);
+    ASSERT_EQ(memcmp(readData, data, dataSize), 0);
+
+    // The checksum the component wrote must also satisfy the component's own verify path
+    this->clearHistory();
+    this->invoke_to_verifyIn(0, fname, 0xB70B4C26);  // CRC-32 of the byte ramp written above
+    this->component.doDispatch();
+    ASSERT_EVENTS_CrcFailed_SIZE(0);
+    ASSERT_EVENTS_CrcVerificationError_SIZE(0);
+    ASSERT_from_verifyDoneOut_SIZE(1);
+    ASSERT_from_verifyDoneOut(0, FileWorkerStatus::FW_STATUS_DONE, dataSize);
+
+    (void)::remove(fnameChar);
+    (void)::remove(hashFileChar);
+}
+
 void FileWorkerTester ::testTimeout() {
     Os::File f;
     Os::File::Status fsStat;
@@ -445,6 +503,82 @@ void FileWorkerTester ::testWriteZeroLength() {
     ASSERT_EQ(memcmp(readback, preserved, preservedSize), 0);
     check.close();
     (void)::remove(fnameChar);
+}
+
+void FileWorkerTester ::testPathTooLong() {
+    // Fw::FileNameString holds FileNameStringSize characters. Appending the hash extension to any
+    // path longer than (FileNameStringSize - extension) overflows it, which used to trip
+    // FW_ASSERT inside Utils::CRCChecker / writeBufferHashToFile. Such paths are valid port
+    // arguments (the port string is also FileNameStringSize), so they must be rejected as
+    // InvalidInput instead.
+    const FwSizeType ext = Utils::Hash::getFileExtensionLength();
+    const FwSizeType longestOk = FileNameStringSize - ext;  // 234 with defaults
+    const FwSizeType lengths[] = {longestOk + 1, FileNameStringSize};
+
+    U8 data[16];
+    for (FwSizeType i = 0; i < sizeof(data); i++) {
+        data[i] = static_cast<U8>(i);
+    }
+
+    for (FwSizeType len : lengths) {
+        std::string longName(static_cast<size_t>(len), 'p');
+        Fw::String fname(longName.c_str());
+        ASSERT_EQ(fname.length(), len);
+
+        // readIn
+        this->clearHistory();
+        Fw::Buffer readBuf(data, sizeof(data));
+        this->invoke_to_readIn(0, fname, readBuf);
+        this->component.doDispatch();
+        ASSERT_EVENTS_InvalidInput_SIZE(1);
+        ASSERT_EVENTS_InvalidInput(0, "readIn", "path too long");
+        ASSERT_from_readDoneOut_SIZE(1);
+        ASSERT_from_readDoneOut(0, FW_STATUS_INVALID_INPUT, 0);
+        ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+        // verifyIn
+        this->clearHistory();
+        this->invoke_to_verifyIn(0, fname, 0);
+        this->component.doDispatch();
+        ASSERT_EVENTS_InvalidInput_SIZE(1);
+        ASSERT_EVENTS_InvalidInput(0, "verifyIn", "path too long");
+        ASSERT_EVENTS_CrcFailed_SIZE(0);
+        ASSERT_from_verifyDoneOut_SIZE(1);
+        ASSERT_from_verifyDoneOut(0, FW_STATUS_INVALID_INPUT, 0);
+
+        // writeIn
+        this->clearHistory();
+        Fw::Buffer writeBuf(data, sizeof(data));
+        this->invoke_to_writeIn(0, fname, writeBuf, 0, false);
+        this->component.doDispatch();
+        ASSERT_EVENTS_InvalidInput_SIZE(1);
+        ASSERT_EVENTS_InvalidInput(0, "writeIn", "path too long");
+        ASSERT_from_writeDoneOut_SIZE(1);
+        ASSERT_from_writeDoneOut(0, FW_STATUS_INVALID_INPUT, 0);
+        ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+        ASSERT_FALSE(Os::FileSystem::exists(longName.c_str()));
+    }
+
+    // The longest path that still fits is valid input and reaches the file layer. No hash file
+    // exists for it, so verify reports a CRC failure rather than InvalidInput.
+    std::string okName(static_cast<size_t>(longestOk), 'q');
+    Fw::String okFname(okName.c_str());
+    Os::File f;
+    ASSERT_EQ(f.open(okName.c_str(), Os::File::OPEN_CREATE, Os::File::OVERWRITE), Os::File::OP_OK);
+    FwSizeType writeSize = sizeof(data);
+    ASSERT_EQ(f.write(data, writeSize), Os::File::OP_OK);
+    f.close();
+
+    this->clearHistory();
+    this->invoke_to_verifyIn(0, okFname, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(0);
+    ASSERT_EVENTS_CrcFailed_SIZE(1);
+    ASSERT_EVENTS_CrcFailed(0, static_cast<U32>(Utils::FAILED_FILE_CRC_OPEN));
+    ASSERT_from_verifyDoneOut_SIZE(1);
+    ASSERT_from_verifyDoneOut(0, FW_STATUS_FAILED_CRC, sizeof(data));
+
+    (void)Os::FileSystem::removeFile(okName.c_str());
 }
 
 }  // namespace Svc

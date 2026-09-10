@@ -78,7 +78,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
 
             if (Svc::PassiveRateGroupCfg::PortCycleTime) {
                 (void)portEnd.now();
-                U32 cycleTime;
+                U32 cycleTime = 0;
                 (void)portEnd.getDiffUsec(portStart, cycleTime);
                 portTimes[static_cast<FwSizeType>(port)] = cycleTime;
                 // Update high water mark if current cycle time exceeds it (lock-free atomic)
@@ -98,9 +98,9 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     (void)endTime.now();
 
     // get rate group execution time
-    U32 cycleTime;
-    // Cast to void as the only possible error is overflow, which we can't handle other
-    // than capping cycleTime to max value of U32 (which is done in getDiffUsec anyways)
+    U32 cycleTime = 0;
+    // Cast to void: overflow is capped to U32 max by getDiffUsec, and a mismatched
+    // RawTimeSource (see sdd.md) leaves cycleTime at zero
     (void)endTime.getDiffUsec(cycleStart, cycleTime);
 
     // Update max time atomically (lock-free, ISR-safe)

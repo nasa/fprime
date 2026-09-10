@@ -51,9 +51,19 @@ TEST(Nominal, testAppending) {
     tester.testAppending();
 }
 
+TEST(Nominal, testWriteReadRoundTrip) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteReadRoundTrip();
+}
+
 TEST(Nominal, testTimeout) {
     Svc::FileWorkerTester tester;
     tester.testTimeout();
+}
+
+TEST(Nominal, testPathTooLong) {
+    Svc::FileWorkerTester tester;
+    tester.testPathTooLong();
 }
 
 int main(int argc, char** argv) {

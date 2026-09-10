@@ -45,8 +45,8 @@ The Active Rate Group detects overruns (also called slips) — when a new cycle 
 - The division ratios for the Rate Group Driver are specified at construction.
 - Context values passed to member components are specified via a configuration table.
 - The Active Phaser's tick count and per-port timing windows are configured at setup time.
-- **PassiveRateGroup**: The `configure()` method accepts an optional `Os::RawTimeSource` parameter to select the timer source for cycle time measurements. This allows choosing between different platform timer implementations (e.g., monotonic clock, high-resolution timer). If not specified, defaults to `Os::RAWTIME_DEFAULT`.
-  - **Limitation**: Only the cycle *end* timestamp uses the configured source. The cycle *start* timestamp comes from the cycle driver (typically `RAWTIME_DEFAULT`). Non-default `RawTimeSource` values will subtract timestamps from different timer sources, producing incorrect cycle time measurements unless the cycle driver is also modified to use the same source.
+- **PassiveRateGroup**: The `configure()` method accepts an optional `Os::RawTimeSource` parameter to select the timer source for cycle time measurements. This allows choosing between different platform clocks (e.g., `RAWTIME_MONOTONIC`, `RAWTIME_BOOTTIME` on POSIX). If not specified, defaults to `Os::RAWTIME_DEFAULT`.
+  - **Limitation**: Only the cycle *end* timestamp uses the configured source. The cycle *start* timestamp comes from the cycle driver (typically `RAWTIME_DEFAULT`). When the sources differ, `Os::RawTime` rejects the interval and the cycle time is reported as zero. To change the clock for all rate groups and cycle drivers at once, override `config/Os/RawTimeSource.hpp` and set `RAWTIME_DEFAULT` (see [Configuring F´](../../user-manual/framework/configuring-fprime.md#osal-configuration)).
 
 ### Telemetry
 

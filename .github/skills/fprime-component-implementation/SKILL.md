@@ -82,6 +82,9 @@ Key rules to follow during implementation:
 - **`Fw::String` over `char*`** (CPP-24)
 - **Every command handler must call `cmdResponse_out`** — omitting
   it hangs the command in the dispatcher
+- **Events for each command** — add an event that describes what the
+  command did, including the command arguments. This is frequently
+  forgotten and is very useful for recreating what happened.
 - **Mark copy/move as deleted** for components (CPP-17)
 
 ### Step 3 — Build and Fix Errors
@@ -106,6 +109,7 @@ Before considering implementation complete, verify compliance with
 
 - Using `FW_ASSERT` on command arguments or hardware inputs
 - Forgetting `cmdResponse_out` (command will hang in dispatcher)
+- Command handlers that emit no event describing what the command did
 - Using `new`/`delete` in handler code
 - Using `std::string`, `std::vector`, or other STL containers
 - Leaving member variables uninitialized
