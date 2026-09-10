@@ -118,7 +118,7 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     // Carry the VC on in the context
     ComCfg::FrameContext contextCopy = context;
     contextCopy.set_vcId(vc_id);
-    
+
     this->dataOut_out(0, data, contextCopy);
 }
 

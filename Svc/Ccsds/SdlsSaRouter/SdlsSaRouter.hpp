@@ -81,7 +81,7 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
     //! Map from SA index to downstream port index
     Fw::ArrayMap<U16, FwIndexType, SdlsCfg::SaRouterMapEntryCount> m_saMap;
 
-    //! Mutex for protecting access to the router's internal state
+    //! Guards m_outstanding, which sync and guarded handlers reach from different threads
     Os::Mutex m_outstandingLock;
 
     // ----------------------------------------------------------------------

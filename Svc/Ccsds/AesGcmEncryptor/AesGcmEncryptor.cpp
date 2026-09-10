@@ -99,10 +99,7 @@ void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
 
     int len = 0;
     int cipherLen = 0;
-    // Authenticated but not encrypted. A null output pointer makes EVP_EncryptUpdate consume
-    // the input as AAD; it must precede any plaintext.
-    // The mask depends only on the VC and the SA, so it is rebuilt when either changes
-    // rather than per frame
+    // The AAD mask depends only on the VC and the SA, so it is rebuilt when either changes
     const U8 vcId = context.get_vcId();
     if ((vcId != this->m_aadVcId) || (securityAssociationIndex != this->m_aadSaIndex)) {
         this->m_aad = Svc::Ccsds::Utils::SdlsTmAuthMask(vcId, securityAssociationIndex);
@@ -112,6 +109,7 @@ void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
 
     // Re-keying the context the constructor built. Passing a null cipher here reuses the
     // algorithm and IV length already set, which is what keeps this path allocation-free.
+    // The first EVP_EncryptUpdate has a null output, so its input is absorbed as AAD; it must precede the plaintext
     bool encryptSucceeded =
         (EVP_EncryptInit_ex(this->m_ctx, nullptr, nullptr, key.getBuffAddr(), iv) == 1) &&
         (EVP_EncryptUpdate(this->m_ctx, nullptr, &len, this->m_aad.bytes,

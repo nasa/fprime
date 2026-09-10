@@ -8,7 +8,6 @@
 #include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
-#include "SdlsKeyConfig/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -25,7 +24,7 @@ static constexpr U32 GCM_TAG_LEN = 16;
 //! Length of an AES-256 key, in bytes
 static constexpr FwSizeType AES_256_KEY_LEN = 32;
 
-// Build the cipher state once so that decrypting a frame allocates nothing. 
+// Build the cipher state once so that decrypting a frame allocates nothing.
 // Only the key and the IV change and those are supplied per
 // frame by a single EVP_DecryptInit_ex.
 AesGcmDecryptor ::AesGcmDecryptor(const char* const compName)
@@ -55,9 +54,9 @@ AesGcmDecryptor ::~AesGcmDecryptor() {
 // ----------------------------------------------------------------------
 
 void AesGcmDecryptor ::decryptIn_handler(FwIndexType portNum,
-                                      U16 securityAssociationIndex,
-                                      Fw::Buffer& data,
-                                      const ComCfg::FrameContext& context) {
+                                         U16 securityAssociationIndex,
+                                         Fw::Buffer& data,
+                                         const ComCfg::FrameContext& context) {
     FW_ASSERT(this->m_ctx != nullptr);
 
     // Layout after CcsdsSdlsDeframer strips the SPI: IV (12) | ciphertext (N) | MAC (16).
@@ -95,18 +94,15 @@ void AesGcmDecryptor ::decryptIn_handler(FwIndexType portNum,
     int plainLen = 0;
 
     const bool rekeyed = EVP_DecryptInit_ex(this->m_ctx, nullptr, nullptr, key.getBuffAddr(), iv) == 1;
-    // The cipher context holds the key schedule now, so the stack copy is dead. 
-    // OPENSSL_cleanse wipes the stack copy to prevent it from being recovered by a memory dump or other attack. The key is not used again until the next frame, so it is safe to wipe it now.
+    // The cipher context holds the key schedule now, so the stack copy is dead.
+    // OPENSSL_cleanse wipes it so the key cannot be recovered from a memory dump.
     OPENSSL_cleanse(key.getBuffAddr(), key.getCapacity());
-    const bool aadAbsorbed =
-        rekeyed && (EVP_DecryptUpdate(this->m_ctx, nullptr, &len, this->m_aad.bytes,
-                                      static_cast<int>(sizeof(this->m_aad.bytes))) == 1);
+    const bool aadAbsorbed = rekeyed && (EVP_DecryptUpdate(this->m_ctx, nullptr, &len, this->m_aad.bytes,
+                                                           static_cast<int>(sizeof(this->m_aad.bytes))) == 1);
     const bool decrypted =
-        aadAbsorbed &&
-        (EVP_DecryptUpdate(this->m_ctx, ciphertext, &len, ciphertext, static_cast<int>(cipherLen)) == 1);
+        aadAbsorbed && (EVP_DecryptUpdate(this->m_ctx, ciphertext, &len, ciphertext, static_cast<int>(cipherLen)) == 1);
     const bool tagSet =
-        decrypted &&
-        (EVP_CIPHER_CTX_ctrl(this->m_ctx, EVP_CTRL_GCM_SET_TAG, static_cast<int>(GCM_TAG_LEN), tag) == 1);
+        decrypted && (EVP_CIPHER_CTX_ctrl(this->m_ctx, EVP_CTRL_GCM_SET_TAG, static_cast<int>(GCM_TAG_LEN), tag) == 1);
     if (!tagSet) {
         this->decryptOut_out(0, Svc::Ccsds::SdlsStatus::DECRYPTION_FAILURE, data, context);
         return;
@@ -127,8 +123,8 @@ void AesGcmDecryptor ::decryptIn_handler(FwIndexType portNum,
 }
 
 void AesGcmDecryptor ::decryptReturnIn_handler(FwIndexType portNum,
-                                            Fw::Buffer& data,
-                                            const ComCfg::FrameContext& context) {
+                                               Fw::Buffer& data,
+                                               const ComCfg::FrameContext& context) {
     this->bufferReturnOut_out(0, data, context);
 }
 
