@@ -13,6 +13,7 @@ namespace Svc {
 
 // Definition for ODR-use of static constexpr member (required until C++17)
 constexpr U16 ComAggregator::FHP_UNSET;
+constexpr FwSizeType ComAggregator::NON_SPANNING_CAPACITY;
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
