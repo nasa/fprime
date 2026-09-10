@@ -8,6 +8,7 @@
 #include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
+#include "Svc/Ccsds/Utils/SdlsIvSequence.hpp"
 
 namespace Svc {
 
@@ -24,6 +25,8 @@ static constexpr U32 GCM_TAG_LEN = 16;
 //! Length of an AES-256 key, in bytes
 static constexpr FwSizeType AES_256_KEY_LEN = 32;
 
+static_assert(GCM_IV_LEN == Svc::Ccsds::Utils::SdlsIvSequence::SIZE, "SdlsIv must be the width of a GCM IV");
+
 // Build the cipher state once so that decrypting a frame allocates nothing.
 // Only the key and the IV change and those are supplied per
 // frame by a single EVP_DecryptInit_ex.
@@ -33,7 +36,10 @@ AesGcmDecryptor ::AesGcmDecryptor(const char* const compName)
       m_ctx(nullptr),
       m_aad(0, 0),
       m_aadVcId(0),
-      m_aadSaIndex(0) {
+      m_aadSaIndex(0),
+      m_antiReplayEnabled(false),
+      m_antiReplayWindow(DEFAULT_ANTI_REPLAY_WINDOW),
+      m_lastAcceptedIv(static_cast<U8>(0xFF)) {
     this->m_cipher = EVP_CIPHER_fetch(nullptr, "AES-256-GCM", nullptr);
     FW_ASSERT(this->m_cipher != nullptr);
     this->m_ctx = EVP_CIPHER_CTX_new();
@@ -47,6 +53,20 @@ AesGcmDecryptor ::AesGcmDecryptor(const char* const compName)
 AesGcmDecryptor ::~AesGcmDecryptor() {
     EVP_CIPHER_CTX_free(this->m_ctx);
     EVP_CIPHER_free(this->m_cipher);
+}
+
+// ----------------------------------------------------------------------
+// Public methods
+// ----------------------------------------------------------------------
+
+void AesGcmDecryptor ::configureAntiReplay(bool enabled, U32 window) {
+    FW_ASSERT(window > 0);
+    this->m_antiReplayEnabled = enabled;
+    this->m_antiReplayWindow = window;
+}
+
+void AesGcmDecryptor ::setLastAcceptedIv(const SdlsIv& iv) {
+    this->m_lastAcceptedIv = iv;
 }
 
 // ----------------------------------------------------------------------
@@ -115,6 +135,17 @@ void AesGcmDecryptor ::decryptIn_handler(FwIndexType portNum,
         return;
     }
     FW_ASSERT(len == 0, static_cast<FwAssertArgType>(len));
+
+    // Only an authenticated IV may move the window, so a forged frame cannot desynchronize it
+    SdlsIv receivedIv;
+    Svc::Ccsds::Utils::SdlsIvSequence::fromBytes(receivedIv, iv);
+    if (this->m_antiReplayEnabled &&
+        !Svc::Ccsds::Utils::SdlsIvSequence::isInWindow(this->m_lastAcceptedIv, receivedIv, this->m_antiReplayWindow)) {
+        this->log_WARNING_HI_IvReplayed(securityAssociationIndex, receivedIv, this->m_lastAcceptedIv);
+        this->decryptOut_out(0, Svc::Ccsds::SdlsStatus::ANTI_REPLAY_FAILURE, data, context);
+        return;
+    }
+    this->m_lastAcceptedIv = receivedIv;
 
     // Move to the plaintext
     data.advance(static_cast<FwSignedSizeType>(GCM_IV_LEN));

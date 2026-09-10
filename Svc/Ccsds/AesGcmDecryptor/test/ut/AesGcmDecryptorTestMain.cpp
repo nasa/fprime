@@ -93,6 +93,56 @@ TEST(Nominal, RecoversAfterMacFailure) {
     tester.testRecoversAfterMacFailure();
 }
 
+TEST(AntiReplay, Disabled) {
+    REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-008");
+    COMMENT("With anti-replay off, a repeated IV is accepted and nothing is reported");
+    Svc::Ccsds::AesGcmDecryptorTester tester;
+    tester.testAntiReplayDisabled();
+}
+
+TEST(AntiReplay, AcceptsNext) {
+    REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-008");
+    COMMENT("Consecutive IVs counting up from zero are accepted");
+    Svc::Ccsds::AesGcmDecryptorTester tester;
+    tester.testAntiReplayAcceptsNext();
+}
+
+TEST(AntiReplay, Window) {
+    REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-008");
+    REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-009");
+    COMMENT("An IV within the window is accepted and becomes the new reference; beyond or behind is refused");
+    Svc::Ccsds::AesGcmDecryptorTester tester;
+    tester.testAntiReplayWindow();
+}
+
+TEST(AntiReplay, RejectsReuse) {
+    REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-009");
+    COMMENT("A replayed frame authenticates but is refused with ANTI_REPLAY_FAILURE and IvReplayed");
+    Svc::Ccsds::AesGcmDecryptorTester tester;
+    tester.testAntiReplayRejectsReuse();
+}
+
+TEST(AntiReplay, WrapsAround) {
+    REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-008");
+    COMMENT("The window carries across the 96-bit wrap");
+    Svc::Ccsds::AesGcmDecryptorTester tester;
+    tester.testAntiReplayWrapsAround();
+}
+
+TEST(AntiReplay, StateOnlyOnAccept) {
+    REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-010");
+    COMMENT("Forged, out-of-window, and unkeyed frames do not advance the sequence");
+    Svc::Ccsds::AesGcmDecryptorTester tester;
+    tester.testAntiReplayStateOnlyOnAccept();
+}
+
+TEST(AntiReplay, EventThrottle) {
+    REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-009");
+    COMMENT("IvReplayed is throttled while every replay is still refused");
+    Svc::Ccsds::AesGcmDecryptorTester tester;
+    tester.testAntiReplayEventThrottle();
+}
+
 TEST(OffNominal, ShortBuffer) {
     REQUIREMENT("SVC-CCSDS-AES-DECRYPTOR-004");
     COMMENT("A buffer too short to hold an IV and a MAC is rejected");

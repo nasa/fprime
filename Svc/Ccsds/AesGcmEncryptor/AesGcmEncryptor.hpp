@@ -9,6 +9,7 @@
 
 #include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptorComponentAc.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/SdlsIvArrayAc.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
@@ -46,6 +47,16 @@ class AesGcmEncryptor final : public AesGcmEncryptorComponentBase {
     AesGcmEncryptor& operator=(const AesGcmEncryptor&) = delete;
     AesGcmEncryptor(AesGcmEncryptor&&) = delete;
     AesGcmEncryptor& operator=(AesGcmEncryptor&&) = delete;
+
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
+    //! Set the IV the next frame is encrypted under; later frames count up from it, wrapping at
+    //! 2^96. Defaults to zero. A deployment that keeps one key across restarts must restore this
+    //! from persistent state so no IV is reused under that key.
+    void setNextIv(const SdlsIv& iv  //!< IV for the next frame
+    );
 
   private:
     // ----------------------------------------------------------------------
@@ -100,6 +111,9 @@ class AesGcmEncryptor final : public AesGcmEncryptorComponentBase {
 
     //! Security association index m_aad was built for
     U16 m_aadSaIndex;
+
+    //! IV the next frame is encrypted under, incremented per frame
+    SdlsIv m_nextIv;
 };
 
 }  // namespace Ccsds

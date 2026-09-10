@@ -8,6 +8,7 @@
 #define Svc_Ccsds_AesGcmDecryptor_HPP
 
 #include "Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptorComponentAc.hpp"
+#include "Svc/Ccsds/Types/SdlsIvArrayAc.hpp"
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 
 #include <openssl/evp.h>
@@ -18,6 +19,9 @@ namespace Ccsds {
 
 class AesGcmDecryptor final : public AesGcmDecryptorComponentBase {
   public:
+    //! Anti-replay window used until configureAntiReplay() is called; matches the ground segment's default
+    static constexpr U32 DEFAULT_ANTI_REPLAY_WINDOW = 10;
+
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
@@ -34,6 +38,22 @@ class AesGcmDecryptor final : public AesGcmDecryptorComponentBase {
     AesGcmDecryptor& operator=(const AesGcmDecryptor&) = delete;
     AesGcmDecryptor(AesGcmDecryptor&&) = delete;
     AesGcmDecryptor& operator=(AesGcmDecryptor&&) = delete;
+
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
+    //! Enable or disable anti-replay checking of the IV as a sequence number. When enabled, an
+    //! authenticated frame is accepted only if its IV is one of the next `window` values after the
+    //! last accepted IV (modulo 2^96). Anti-replay is disabled until this is called.
+    void configureAntiReplay(bool enabled,  //!< Whether to check the IV against the window
+                             U32 window     //!< Number of IVs past the last accepted one to accept; must be > 0
+    );
+
+    //! Set the last accepted IV, from which the anti-replay window is measured. The default is
+    //! all ones, so that a peer starting its sequence from zero is accepted.
+    void setLastAcceptedIv(const SdlsIv& iv  //!< IV to treat as the last one accepted
+    );
 
   private:
     // ----------------------------------------------------------------------
@@ -74,6 +94,15 @@ class AesGcmDecryptor final : public AesGcmDecryptorComponentBase {
 
     //! Security association index m_aad was built for
     U16 m_aadSaIndex;
+
+    //! Whether authenticated frames are also checked against the anti-replay window
+    bool m_antiReplayEnabled;
+
+    //! Number of IVs past m_lastAcceptedIv that are accepted
+    U32 m_antiReplayWindow;
+
+    //! IV of the last frame accepted, the reference point of the anti-replay window
+    SdlsIv m_lastAcceptedIv;
 };
 
 }  // namespace Ccsds
