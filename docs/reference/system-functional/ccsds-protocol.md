@@ -41,7 +41,7 @@ The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.
 
 ### TC Space Data Link Protocol
 
-The TC Deframer implements the CCSDS Telecommand (TC) Space Data Link Protocol (232.0-B-4) for uplink. It extracts payload data from received TC Transfer Frames.
+The TC Deframer implements the CCSDS Telecommand (TC) Space Data Link Protocol (232.0-B-4) for uplink. It extracts payload data from received TC Transfer Frames. The deframer can be configured to accept a single VCID or all VCIDs; the VCID of each received frame is written into the `vcId` field of the `FrameContext` emitted with the payload, so a downstream router can dispatch on it.
 
 ### AOS Space Data Link Protocol
 
@@ -65,7 +65,7 @@ The CCSDS components can be stacked to provide multiple protocol layers. A typic
 
 The current CCSDS implementation does not support:
 
-- Multiple Virtual Channel Identifiers (VCIDs) — only a single VCID is available per TM Framer or TC Deframer instance.
+- Multiple Virtual Channel Identifiers (VCIDs) on downlink — only a single VCID is available per TM Framer instance. The TC Deframer does not route on VCID itself but propagates it in the `FrameContext` for downstream dispatching.
 
 ### Off Nominal
 

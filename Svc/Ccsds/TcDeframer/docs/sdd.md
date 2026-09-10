@@ -20,6 +20,10 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 - `spacecraftId`: The spacecraft ID to accept.
 - `acceptAllVcid`: If `true`, the deframer accepts all VCIDs. If `false`, it only accepts the `vcId` specified.
 
+## Virtual Channel dispatching
+
+The TcDeframer does not route on the VCID itself. Instead, the VCID read from the TC frame header is written into the `vcId` field of the `ComCfg::FrameContext` emitted on `dataOut` alongside the deframed payload; all other context fields are passed through unchanged. Projects that need to direct frames received on different Virtual Channels to different uplink pipelines can accept all VCIDs and connect `dataOut` to a router that dispatches on `context.vcId`.
+
 ## Port Descriptions
 
 | Kind | Name | Port Type | Description |
@@ -53,3 +57,4 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 | SVC-CCSDS-TC-DEFRAMER-008 | The TcDeframer shall log an `InvalidCrc` event if a frame fails the CRC check. | Unit Test |
 | SVC-CCSDS-TC-DEFRAMER-009 | The TcDeframer shall provide an input port (`dataIn`) to receive framed data, and emit deframed data packets on its `dataOut` output port. | Unit Test |
 | SVC-CCSDS-TC-DEFRAMER-010 | The TcDeframer shall emit notifications on its `errorNotify` port when deframing errors occur. | Unit Test |
+| SVC-CCSDS-TC-DEFRAMER-011 | The TcDeframer shall set the `vcId` field of the `FrameContext` emitted on `dataOut` to the Virtual Channel ID of the received frame. | Unit Test |

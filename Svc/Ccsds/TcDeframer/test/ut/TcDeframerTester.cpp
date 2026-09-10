@@ -67,6 +67,10 @@ void TcDeframerTester::testNominalDeframing() {
     for (FwIndexType i = 0; i < payloadLength; i++) {
         ASSERT_EQ(outBuffer.getData()[i], payload[i]);
     }
+    // Output context carries the VCID from the frame header, other fields untouched
+    ComCfg::FrameContext expectedContext = nullContext;
+    expectedContext.set_vcId(vcId);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context, expectedContext);
 }
 
 void TcDeframerTester::testInvalidScId() {
