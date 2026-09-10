@@ -4249,6 +4249,31 @@ TEST_F(FpySequencerTester, tlmWrite) {
     ASSERT_TLM_SIZE(20);
 }
 
+// #5661: the debug telemetry path deserializes the next statement on every tlmWrite
+// while paused. On a statement that fails to deserialize it must report the failure
+// through Debug_NextStatementReadSuccess and never emit DirectiveDeserializeError,
+// however many ticks; dispatching that same statement must still emit the warning.
+TEST_F(FpySequencerTester, tlmWriteDebugSuppressesDeserializeWarningDispatchKeepsIt) {
+    // statement 0: WAIT_REL with junk appended so deserializeDirective fails
+    add_WAIT_REL();
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
+    tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(1);
+    tester_get_m_sequenceObj_ptr()->get_statements()[0] = seq.get_statements()[0];
+    tester_get_m_runtime_ptr()->nextStatementIndex = 0;
+    this->tester_setState(State::RUNNING_PAUSED);
+
+    invoke_to_tlmWrite(0, 0);
+    this->tester_doDispatch();
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
+    ASSERT_TLM_Debug_NextStatementReadSuccess_SIZE(1);
+    ASSERT_TLM_Debug_NextStatementReadSuccess(0, false);
+
+    // dispatching the same statement goes through the default path and warns once
+    Signal result = tester_dispatchStatement();
+    ASSERT_EQ(result, Signal::result_dispatchStatement_failure);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
 TEST_F(FpySequencerTester, seqRunIn) {
     allocMem();
     add_NO_OP();
