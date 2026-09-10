@@ -288,6 +288,15 @@ TEST_F(FpySequencerTester, pushPrm) {
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+
+    tester_get_m_runtime_ptr()->stack.size = 1;
+    clearHistory();
+
+    tester_disconnect_getParam();
+    result = tester_pushPrm_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::PRM_GET_NOT_CONNECTED);
+    this->component.set_getParam_OutputPort(0, this->get_from_getParam(0));
 }
 
 TEST_F(FpySequencerTester, cmd) {
