@@ -15,20 +15,12 @@ namespace Svc {
 
 namespace Ccsds {
 
-// Bytes AES-256-GCM adds to the plaintext: a 12-byte IV ahead of the ciphertext and a
-//16-byte MAC after it.
-static constexpr U32 AesFrameOverhead = 28;
 //! Length of the AES-GCM initialization vector, in bytes
 static constexpr U32 GCM_IV_LEN = 12;
 //! Length of the AES-GCM authentication tag (the SDLS MAC), in bytes
 static constexpr U32 GCM_TAG_LEN = 16;
 //! Length of an AES-256 key, in bytes
 static constexpr FwSizeType AES_256_KEY_LEN = 32;
-
-// The configuration constant a deployment sizes against must match what this component
-// actually adds, or a topology could size its fill target to overrun the output store
-static_assert(GCM_IV_LEN + GCM_TAG_LEN == AesFrameOverhead,
-              "AesFrameOverhead disagrees with this component's IV and MAC lengths");
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
@@ -67,9 +59,9 @@ AesGcmEncryptor ::~AesGcmEncryptor() {
 // ----------------------------------------------------------------------
 
 void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
-                                      U16 securityAssociationIndex,
-                                      Fw::Buffer& data,
-                                      const ComCfg::FrameContext& context) {
+                                         U16 securityAssociationIndex,
+                                         Fw::Buffer& data,
+                                         const ComCfg::FrameContext& context) {
     FW_ASSERT(this->m_ctx != nullptr);
 
     // The previous frame is still downstream and m_outBuf holds ciphertext that has not been
@@ -84,7 +76,7 @@ void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
 
     // m_outBuf layout: IV (12) | ciphertext (N) | MAC (16)
     const FwSizeType requiredSize = static_cast<FwSizeType>(data.getSize()) + GCM_IV_LEN + GCM_TAG_LEN;
-    if (requiredSize > ComCfg::TmFrameFixedSize) {
+    if (requiredSize > MAX_OUTPUT_SIZE) {
         this->failFrame(data, context, Svc::Ccsds::SdlsStatus::ENCRYPTION_FAILURE);
         return;
     }
@@ -147,7 +139,7 @@ void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
     const U32 outLen = GCM_IV_LEN + static_cast<U32>(cipherLen) + GCM_TAG_LEN;
     Fw::Buffer cipherBuf(this->m_outBuf, outLen);
 
-    // Marked in flight before it is emitted, 
+    // Marked in flight before it is emitted,
     // so that a subsequent frame arriving before the return of this one is dropped
     this->m_bufferState = BufferOwnershipState::NOT_OWNED;
 
@@ -157,8 +149,8 @@ void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
 }
 
 void AesGcmEncryptor ::encryptReturnIn_handler(FwIndexType portNum,
-                                            Fw::Buffer& data,
-                                            const ComCfg::FrameContext& context) {
+                                               Fw::Buffer& data,
+                                               const ComCfg::FrameContext& context) {
     // A failed frame reported its status with an empty buffer
     if (!data.isValid()) {
         return;
@@ -174,9 +166,7 @@ void AesGcmEncryptor ::encryptReturnIn_handler(FwIndexType portNum,
 // Helpers
 // ----------------------------------------------------------------------
 
-void AesGcmEncryptor ::failFrame(Fw::Buffer& data,
-                              const ComCfg::FrameContext& context,
-                              Svc::Ccsds::SdlsStatus status) {
+void AesGcmEncryptor ::failFrame(Fw::Buffer& data, const ComCfg::FrameContext& context, Svc::Ccsds::SdlsStatus status) {
     // Return the plaintext to its sender
     this->bufferReturnOut_out(0, data, context);
     // Svc::Ccsds::CcsdsSdlsFramer still needs a status on encryptIn to release the com status

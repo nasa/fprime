@@ -7,9 +7,11 @@
 #ifndef Svc_Ccsds_AesGcmEncryptor_HPP
 #define Svc_Ccsds_AesGcmEncryptor_HPP
 
-#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
-#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 #include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptorComponentAc.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
+#include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 
 #include <openssl/evp.h>
 
@@ -25,6 +27,10 @@ class AesGcmEncryptor final : public AesGcmEncryptorComponentBase {
     };
 
   public:
+    //! Largest output frame the downstream chain carries: the TM data field less the 2-byte SA index
+    static constexpr FwSizeType MAX_OUTPUT_SIZE =
+        ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE - sizeof(U16);
+
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
@@ -35,7 +41,6 @@ class AesGcmEncryptor final : public AesGcmEncryptorComponentBase {
 
     //! Destroy AesGcmEncryptor object
     ~AesGcmEncryptor();
-
 
     AesGcmEncryptor(const AesGcmEncryptor&) = delete;
     AesGcmEncryptor& operator=(const AesGcmEncryptor&) = delete;
