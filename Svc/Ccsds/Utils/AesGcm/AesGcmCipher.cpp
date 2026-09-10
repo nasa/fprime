@@ -13,6 +13,11 @@ namespace Svc {
 namespace Ccsds {
 namespace Utils {
 
+// Out-of-class definitions so the constants can be ODR-used under C++14
+constexpr FwSizeType AesGcmCipher::KEY_LEN;
+constexpr FwSizeType AesGcmCipher::IV_LEN;
+constexpr FwSizeType AesGcmCipher::TAG_LEN;
+
 // Build the cipher state once so that a frame operation allocates nothing. Only the key and
 // the IV change, and those are supplied per operation by a single EVP_CipherInit_ex.
 AesGcmCipher ::AesGcmCipher(Direction direction) : m_direction(direction), m_cipher(nullptr), m_ctx(nullptr) {

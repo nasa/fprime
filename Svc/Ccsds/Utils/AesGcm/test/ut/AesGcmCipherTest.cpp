@@ -68,19 +68,16 @@ bool keyIsWiped(const SdlsKeyBuffer& key) {
 // ----------------------------------------------------------------------
 
 TEST(AesGcmCipher, ConstantsMatchAes256Gcm) {
-    // Copies, since gtest binds its arguments by reference (C++14 ODR-use of static constexpr)
-    const FwSizeType keyLen = AesGcmCipher::KEY_LEN;
-    const FwSizeType ivLen = AesGcmCipher::IV_LEN;
-    const FwSizeType tagLen = AesGcmCipher::TAG_LEN;
+    // AES-256 keys are 256 bits; GCM uses a 96-bit IV and a 128-bit tag
+    EXPECT_EQ(AesGcmCipher::KEY_LEN, 32u);
+    EXPECT_EQ(AesGcmCipher::IV_LEN, 12u);
+    EXPECT_EQ(AesGcmCipher::TAG_LEN, 16u);
+    // The AAD utilities reserve exactly one IV field. Copies: the header-only AAD structs have no
+    // out-of-class definitions, and gtest binds by reference (C++14 ODR-use)
     const FwSizeType tcIvSize = SdlsTcAad::IV_SIZE;
     const FwSizeType tmIvSize = SdlsTmAad::IV_SIZE;
-    // AES-256 keys are 256 bits; GCM uses a 96-bit IV and a 128-bit tag
-    EXPECT_EQ(keyLen, 32u);
-    EXPECT_EQ(ivLen, 12u);
-    EXPECT_EQ(tagLen, 16u);
-    // The AAD utilities reserve exactly one IV field
-    EXPECT_EQ(tcIvSize, ivLen);
-    EXPECT_EQ(tmIvSize, ivLen);
+    EXPECT_EQ(tcIvSize, AesGcmCipher::IV_LEN);
+    EXPECT_EQ(tmIvSize, AesGcmCipher::IV_LEN);
 }
 
 // ----------------------------------------------------------------------
@@ -153,6 +150,30 @@ TEST(AesGcmCipher, DecryptKnownAnswer) {
     // Decrypted in place
     EXPECT_EQ(::memcmp(data, KAT_PLAINTEXT, sizeof(KAT_PLAINTEXT)), 0);
     EXPECT_TRUE(keyIsWiped(key));
+}
+
+TEST(AesGcmCipher, DecryptEmptyCiphertext) {
+    AesGcmCipher encryptor(AesGcmCipher::Direction::ENCRYPT);
+    AesGcmCipher decryptor(AesGcmCipher::Direction::DECRYPT);
+    const SdlsTmAad aad(KAT_VC_ID, KAT_SPI);
+    U8 tag[AesGcmCipher::TAG_LEN] = {};
+
+    SdlsKeyBuffer key = loadKey(KAT_KEY, AesGcmCipher::KEY_LEN);
+    ASSERT_TRUE(encryptor.encrypt(key, Fw::ConstByteArray(KAT_IV, AesGcmCipher::IV_LEN), aad.asByteArray(),
+                                  Fw::ConstByteArray(nullptr, 0), Fw::ByteArray(nullptr, 0),
+                                  Fw::ByteArray(tag, sizeof(tag))));
+
+    // A tag-only frame verifies with no payload update
+    key = loadKey(KAT_KEY, AesGcmCipher::KEY_LEN);
+    EXPECT_EQ(decryptor.decrypt(key, Fw::ConstByteArray(KAT_IV, AesGcmCipher::IV_LEN), aad.asByteArray(),
+                                Fw::ByteArray(nullptr, 0), Fw::ConstByteArray(tag, sizeof(tag))),
+              SdlsStatus::SUCCESS);
+    // And still fails when the AAD does not match
+    key = loadKey(KAT_KEY, AesGcmCipher::KEY_LEN);
+    const SdlsTmAad otherAad(static_cast<U8>(KAT_VC_ID + 1), KAT_SPI);
+    EXPECT_EQ(decryptor.decrypt(key, Fw::ConstByteArray(KAT_IV, AesGcmCipher::IV_LEN), otherAad.asByteArray(),
+                                Fw::ByteArray(nullptr, 0), Fw::ConstByteArray(tag, sizeof(tag))),
+              SdlsStatus::MAC_VERIFICATION_FAILURE);
 }
 
 TEST(AesGcmCipher, DecryptRejectsTamperedMac) {

@@ -28,7 +28,7 @@ class AesGcmDecryptor final : public AesGcmDecryptorComponentBase {
     //! Destroy AesGcmDecryptor object
     ~AesGcmDecryptor();
 
-    // The component owns an OpenSSL cipher context, it must not be copied or moved
+    // Owns cipher state, so it must not be copied or moved
     AesGcmDecryptor(const AesGcmDecryptor&) = delete;
     AesGcmDecryptor& operator=(const AesGcmDecryptor&) = delete;
     AesGcmDecryptor(AesGcmDecryptor&&) = delete;

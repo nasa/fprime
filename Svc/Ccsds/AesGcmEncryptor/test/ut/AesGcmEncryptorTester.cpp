@@ -213,7 +213,7 @@ void AesGcmEncryptorTester ::testAadLayout() {
 
         ASSERT_EQ(static_cast<FwSizeType>(sizeof actual.bytes), TM_AAD_LEN);
         ASSERT_EQ(::memcmp(actual.bytes, expected, TM_AAD_LEN), 0)
-            << "TM auth mask does not match the ground segment's layout for VC " << static_cast<U32>(vcIds[i]);
+            << "TM AAD does not match the ground segment's layout for VC " << static_cast<U32>(vcIds[i]);
     }
 }
 
