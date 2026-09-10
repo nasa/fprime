@@ -50,17 +50,40 @@ prior comment, retrieve:
 
 - `thread.id` (needed for `resolveReviewThread` /
   `unresolveReviewThread`).
-- `thread.isResolved` (drives the improperly-resolved case).
-- `thread.resolvedBy.login` (recorded for audit; not used in the
-  decision).
+- `thread.isResolved` (drives the maintainer-adjudicated and
+  improperly-resolved cases).
+- `thread.resolvedBy.login` (decides between those two cases: a login
+  in the core-maintainer set from `maintainer-lookup` §1b means
+  adjudicated; anyone else means improperly resolved).
 - The `thread.comments[]` list (drives disagreement detection: the
   agent looks for any comment authored by a user other than itself).
+
+### 1b-bis. Locate the agent's prior metadata review
+
+```http
+GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews?per_page=100
+```
+
+Paginate; keep the review whose body starts with
+`<!-- fprime-agent: <self> v1 -->` (there is exactly one per agent for
+the life of the PR; if several exist from before in-place updates,
+take the newest). Record its `id` (Phase D updates it in place), its
+`run` line, and `last_reviewed_head`:
+
+- the `reviewed_head` line of the body, if present;
+- otherwise the review's `commit_id` (metadata written before that
+  field existed).
+
+If no such review exists, this is run 1 for the agent: Phase B uses
+the full PR diff and Phase D posts a fresh metadata review.
 
 ### 1c. Index by finding-key and site-key
 
 Build a dictionary keyed by `finding-key` (own comments only) whose
 value is `{ comment_id, thread_id, path, line, is_resolved,
-has_contributor_replies, has_prior_disagreement_reply }`.
+resolved_by_maintainer, has_contributor_replies,
+has_prior_disagreement_reply }`. `resolved_by_maintainer` is true iff
+`is_resolved` and `resolvedBy.login` is in the core-maintainer set.
 `has_prior_disagreement_reply` is true iff a comment in the thread
 carries `reply-kind: disagreement` in its HTML footer.
 
@@ -127,6 +150,46 @@ The same finding (same symbol, same line content, same class) will
 produce the same `finding-key` across reformatting and line drift,
 which is the whole point.
 
+### 2a. Re-review scope for new below-must-fix findings
+
+Rule text: review contract §7 Phase B. Mechanics:
+
+1. Compute the incremental diff since the last pass. Preferred: in
+   the local clone of the review-target repo, after fetching the PR
+   head (`git fetch origin pull/{n}/head`),
+
+   ```bash
+   git diff --unified=0 <last_reviewed_head>...<head_sha>
+   ```
+
+   If `last_reviewed_head` is not in the local object store (the
+   author force-pushed and the old head was discarded), or no clone
+   is available, use
+   `GET /repos/{owner}/{repo}/compare/{last_reviewed_head}...{head_sha}`
+   instead — noting that its `files[]` list is capped at 300 entries
+   and is not paginated. Build `delta_hunks`: for each file, the set
+   of added / modified line ranges on the head side.
+2. Widen `delta_hunks` with **newly reached** code: symbols whose
+   callers were added or changed inside `delta_hunks`, per the
+   introduced/preexisting rules of `pr-diff-scoping` applied to this
+   incremental diff.
+3. For each `f` in `current_findings` with **no prior finding-key**
+   and `f.tag != must fix`: keep `f` only if `f.path/f.line` falls in
+   `delta_hunks` or its enclosing symbol is newly reached. Drop it
+   otherwise — it is outside this run's scope and is not counted in
+   any column. Must-fix candidates, incorrect-fix follow-ups (§3c),
+   and every finding with a prior key are never dropped.
+4. Fall back to **no scoping** (full PR diff, all tiers) when: there
+   is no prior metadata review; `last_reviewed_head == head_sha`;
+   neither `git diff` nor the compare call can resolve
+   `last_reviewed_head` (404 / unknown revision); or the compare
+   response has exactly 300 files (possible truncation). Always widen
+   on doubt; never narrow.
+
+Apply this filter *before* the site-key concurrence check in §3c so
+that out-of-scope observations do not generate concurrence replies
+either.
+
 ---
 
 ## 3. Phase C — Match and act
@@ -146,11 +209,21 @@ new          = current_keys − prior_keys
 
 For each `k` in `intersect`, decide which row of the table applies:
 
-| `thread.isResolved` | `has_contributor_replies` AND NOT `has_prior_disagreement_reply` | Action |
-|---|---|---|
-| `true` | — | **Improperly resolved.** Un-resolve + reply (see §3a-i). |
-| `false` | `true` | **Disagreement escalation.** Reply once + maintainer ping (see §3a-ii). |
-| `false` | `false` | **Do nothing.** Leave the comment as-is. **Never repost.** |
+| `thread.isResolved` | `resolved_by_maintainer` | `has_contributor_replies` AND NOT `has_prior_disagreement_reply` | Action |
+|---|---|---|---|
+| `true` | `true` | — | **Maintainer adjudicated.** Do nothing (see §3a-0). |
+| `true` | `false` | — | **Improperly resolved.** Un-resolve + reply (see §3a-i). |
+| `false` | — | `true` | **Disagreement escalation.** Reply once + maintainer ping (see §3a-ii). |
+| `false` | — | `false` | **Do nothing.** Leave the comment as-is. **Never repost.** |
+
+#### 3a-0. Maintainer-adjudicated action
+
+The maintainer has ruled the finding does not need fixing. Post
+nothing, do not un-resolve, do not repost. No counter bookkeeping
+here: the thread is `isResolved`, so the Phase D recomputation (§4)
+counts it in `R` — on this run, on every later run, and after the
+finding-key eventually disappears (§3b) — exactly once. Do not also
+report it under `still open`.
 
 #### 3a-i. Improper-resolution action
 
@@ -185,11 +258,12 @@ For each `k` in `resolved`:
 
 | `thread.isResolved` | Action |
 |---|---|
-| `false` | **Clean resolution.** Reply `[<review_label>] Fixed in <head-sha>.` + GraphQL `resolveReviewThread`. |
-| `true` | **Acknowledged.** Reply `[<review_label>] Fixed in <head-sha>.` only — no need to re-resolve. |
+| `false`, no own `Fixed in` reply | **Clean resolution.** Reply `[<review_label>] Fixed in <head-sha>.` + GraphQL `resolveReviewThread`. |
+| `false`, own `Fixed in` reply present | **Resolve failed earlier** (permissions). Retry `resolveReviewThread` once; do not reply again. |
+| `true` | **Already settled** (by the agent on an earlier run, a core maintainer, or the contributor after fixing). Do nothing — no reply, no re-resolve. |
 
-Increment `resolved` in Since-last-run. Decrement `outstanding` (do
-NOT decrement any tag column).
+No counter bookkeeping here either; `outstanding` and `resolved` come
+from the Phase D recomputation (§4). Never decrement any tag column.
 
 ### 3c. Current findings with no prior match (`new`)
 
@@ -241,17 +315,44 @@ For each `k` in `new`:
 
 ## 4. Phase D — Update the per-agent metadata review
 
-Dismiss the prior metadata review (located by the HTML marker) via
-`PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}/dismissals` with message
-`Superseded by re-review run N.` Then submit a new review with the
-updated metadata body.
+Rewrite the body of the prior metadata review located in §1b-bis
+**in place**:
+
+```http
+PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}
+{ "body": "<updated metadata block>" }
+```
+
+This edits only the review's summary body; inline comments attached
+to that review (run 1's findings) are untouched, and no new
+notification or timeline entry is produced. Never dismiss the
+metadata review (GitHub rejects dismissal of `COMMENTED` reviews
+with a 422) and never post a second one. Only if the `PUT` fails
+with `404`/`403` (e.g. the prior review was authored under a
+different token identity) fall back to submitting a fresh
+metadata-only review; later runs take the newest marker match.
+
+Any **new** inline comments from Phase C go in one separate review
+with `body: ""` (`post-inline-review` §4); if there are none, post
+no review at all — the body update above is the entire footprint of
+a quiet run.
 
 Update:
 
+- The `reviewed_head` line: set to the head SHA analyzed this run.
 - The four tag columns: increment for any newly-posted comments
   (incorrect-fix follow-ups and brand-new findings). Never decrement.
-- The `outstanding` column: recompute as
-  `(cumulative tag-column sum) − (cumulative resolved count)`.
+- The `outstanding` column: recompute from thread state, never by
+  adjusting the prior value. After the Phase C actions above, re-query
+  the threads the agent counts in its tag columns (its own comments
+  plus threads carrying its concurrence reply, §3c) and let `R` =
+  those with `isResolved == true`, plus unresolved ones carrying an
+  own `Fixed in` reply (resolve failed on permissions), minus any the
+  agent tried to un-resolve this run (§3a-i, even if that failed).
+  Then `outstanding = (cumulative tag-column sum) − R`. Adjudicated
+  (§3a-0), agent-resolved (§3b), and contributor-resolved-after-fixing
+  threads are all simply members of `R`; a thread is counted once
+  regardless of how many runs it has been resolved for.
 - The `Verdict:` line: `Go` iff outstanding must-fix == 0, else
   `No-Go`.
 - The `Run:` line: increment the run ordinal.
@@ -259,12 +360,14 @@ Update:
   (`resolved`, `still open`, `newly added`, `incorrect-fix
   follow-ups`, `improperly resolved`, `disagreements escalated`).
 
-`still open` = `|intersect|` (after subtracting improperly-resolved
-and disagreement-escalated entries, since those are accounted in
-their own counters but still represent the same finding-keys that
-"remain open"; in the simple accounting model `still open` is
-`|intersect|` and the other two counters are subsets reported
-separately).
+`resolved` = `max(0, R − R_prev)` where
+`R_prev = (prior cumulative tag-column sum) − (prior outstanding)`,
+both read from the prior metadata body. Threads that became resolved
+between runs are counted once, whoever resolved them.
+
+`still open` = `|intersect|` minus maintainer-adjudicated (§3a-0),
+improperly-resolved and disagreement-escalated entries; the latter
+two are reported in their own counters.
 
 The cumulative tag columns and outstanding-driven verdict are
 defined in the review contract §2.
@@ -277,9 +380,11 @@ defined in the review contract §2.
   comment from the same agent on this PR.
 - **Never resolve** a comment whose `finding-key` is still in
   `current_keys`.
-- **Never silently accept** a contributor's resolution of a thread
+- **Never silently accept** a non-maintainer's resolution of a thread
   whose `finding-key` is still present. Un-resolve and reply per the
   improperly-resolved flow.
+- **Never reopen, reply to, or repost** a thread resolved by a core
+  maintainer (§3a-0).
 - **Never argue.** On disagreement, the agent posts ONE escalation
   reply + maintainer ping. Subsequent runs leave the thread alone
   (the de-dup key is the `reply-kind: disagreement` HTML attribute).
@@ -332,6 +437,10 @@ improper-resolution shape, and increments `improperly resolved`. The
 escalation handles disagreement-via-resolve and disagreement-via-
 reply in one motion; no need to double-post.
 
+If the thread was instead resolved by a core maintainer, §3a-0 wins
+over both: the maintainer has adjudicated the disagreement, and the
+agent posts nothing.
+
 ### 6d. The aggregator FAILED and is not on the PR
 
 If the orchestrator reports the aggregator as FAILED, the reviewer
@@ -351,8 +460,12 @@ maintainer ping makes the un-acknowledged finding visible. Increment
 ## 7. One-line summary
 
 `A: index prior comments by finding-key plus thread state.
-B: re-run analysis, compute current finding-keys.
+B: re-run analysis, compute current finding-keys; scope new
+below-must-fix findings to the diff since last_reviewed_head.
 C: decide per row of the contract §7 table — do-nothing,
-resolve, reply-improper-resolution, reply-disagreement, post-new,
+resolve, accept-maintainer-adjudication, reply-improper-resolution,
+reply-disagreement, post-new,
 post-incorrect-fix-follow-up.
-D: dismiss prior metadata review, submit new one.`
+D: PUT the updated metadata body onto the existing review
+(reviewed_head, counts, run, since_last_run, verdict); post new
+inline comments, if any, in one empty-body review.`

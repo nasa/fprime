@@ -82,9 +82,6 @@ void ComQueue::configure(const QueueConfigurationTable& queueConfig,
             FW_ASSERT(queueConfig.entries[entryIndex].priority < TOTAL_PORT_COUNT,
                       static_cast<FwAssertArgType>(queueConfig.entries[entryIndex].priority),
                       static_cast<FwAssertArgType>(TOTAL_PORT_COUNT), static_cast<FwAssertArgType>(entryIndex));
-            // A zero depth is the default-constructed value and divides by zero in the overflow check below
-            FW_ASSERT(queueConfig.entries[entryIndex].depth > 0, static_cast<FwAssertArgType>(entryIndex));
-
             if (currentPriority == queueConfig.entries[entryIndex].priority) {
                 // Set up the queue metadata object in order to track priority, depth, index into the queue list of the
                 // backing queue object, and message size. Both index and message size are calculated where priority and
@@ -99,15 +96,20 @@ void ComQueue::configure(const QueueConfigurationTable& queueConfig,
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
                 entry.msgSize = (entryIndex < COM_PORT_COUNT) ? static_cast<FwSizeType>(Fw::ComBuffer::SERIALIZED_SIZE)
                                                               : static_cast<FwSizeType>(Fw::Buffer::SERIALIZED_SIZE);
-                // Overflow checks
-                FW_ASSERT((std::numeric_limits<FwSizeType>::max() / entry.depth) >= entry.msgSize,
-                          static_cast<FwAssertArgType>(entry.depth), static_cast<FwAssertArgType>(entry.msgSize));
-                FW_ASSERT(std::numeric_limits<FwSizeType>::max() - (entry.depth * entry.msgSize) >= totalAllocation);
-                totalAllocation += entry.depth * entry.msgSize;
+                // Overflow checks. A depth of 0 disables the queue and contributes no storage.
+                if (entry.depth > 0) {
+                    FW_ASSERT((std::numeric_limits<FwSizeType>::max() / entry.depth) >= entry.msgSize,
+                              static_cast<FwAssertArgType>(entry.depth), static_cast<FwAssertArgType>(entry.msgSize));
+                    FW_ASSERT(std::numeric_limits<FwSizeType>::max() - (entry.depth * entry.msgSize) >=
+                              totalAllocation);
+                    totalAllocation += entry.depth * entry.msgSize;
+                }
                 currentPriorityIndex++;
             }
         }
     }
+    // At least one queue must be enabled; an all-zero table is the default-constructed (unconfigured) table
+    FW_ASSERT(totalAllocation > 0);
     // Allocate a single chunk of memory from the memory allocator. Memory recover is neither needed nor used.
     bool recoverable = false;
     FwSizeType actualAllocation = totalAllocation;
@@ -128,8 +130,8 @@ void ComQueue::configure(const QueueConfigurationTable& queueConfig,
         FW_ASSERT((allocationSize + allocationOffset) <= totalAllocation, static_cast<FwAssertArgType>(allocationSize),
                   static_cast<FwAssertArgType>(allocationOffset), static_cast<FwAssertArgType>(totalAllocation));
 
-        // Setup queue's memory allocation, depth, and message size. Setup is skipped for a depth 0 queue
-        if (allocationSize > 0) {
+        // Setup queue's memory allocation, depth, and message size. Setup is skipped for a disabled (depth 0) queue
+        if (this->m_prioritizedList[i].depth > 0) {
             this->m_queues[this->m_prioritizedList[i].index].setup(
                 reinterpret_cast<U8*>(this->m_allocation) + allocationOffset, allocationSize,
                 this->m_prioritizedList[i].depth, this->m_prioritizedList[i].msgSize, this->m_prioritizedList[i].mode,
@@ -268,12 +270,16 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
 }
 
 void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
-    // Downlink the high-water marks for the Fw::ComBuffer array types
+    // Downlink the high-water marks for the Fw::ComBuffer array types. Disabled (depth 0) queues report 0.
     ComQueueDepth comQueueDepth;
     FW_ASSERT(comQueueDepth.SIZE <= COM_PORT_COUNT, static_cast<FwAssertArgType>(comQueueDepth.SIZE));
     for (U32 i = 0; i < comQueueDepth.SIZE; i++) {
-        comQueueDepth[i] = static_cast<U32>(this->m_queues[i].get_high_water_mark());
-        this->m_queues[i].clear_high_water_mark();
+        const FwIndexType queueNum = static_cast<FwIndexType>(i);
+        comQueueDepth[i] = 0;
+        if (this->getQueueDepth(queueNum) > 0) {
+            comQueueDepth[i] = static_cast<U32>(this->m_queues[queueNum].get_high_water_mark());
+            this->m_queues[queueNum].clear_high_water_mark();
+        }
     }
     this->tlmWrite_comQueueDepth(comQueueDepth);
 
@@ -282,8 +288,12 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
     FW_ASSERT((buffQueueDepth.SIZE + COM_PORT_COUNT) <= TOTAL_PORT_COUNT,
               static_cast<FwAssertArgType>(buffQueueDepth.SIZE));
     for (U32 i = 0; i < buffQueueDepth.SIZE; i++) {
-        buffQueueDepth[i] = static_cast<U32>(this->m_queues[i + COM_PORT_COUNT].get_high_water_mark());
-        this->m_queues[i + COM_PORT_COUNT].clear_high_water_mark();
+        const FwIndexType queueNum = static_cast<FwIndexType>(i + COM_PORT_COUNT);
+        buffQueueDepth[i] = 0;
+        if (this->getQueueDepth(queueNum) > 0) {
+            buffQueueDepth[i] = static_cast<U32>(this->m_queues[queueNum].get_high_water_mark());
+            this->m_queues[queueNum].clear_high_water_mark();
+        }
     }
     this->tlmWrite_buffQueueDepth(buffQueueDepth);
 }
@@ -324,8 +334,12 @@ void ComQueue::bufferQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuf
 
 bool ComQueue::enqueue(const FwIndexType queueNum, const Fw::ComBuffer& data) {
     // Enqueue the given message onto the matching queue. When no space is available then emit the queue overflow event,
-    // set the appropriate throttle, and move on. Will assert if passed a message for a depth 0 queue.
+    // set the appropriate throttle, and move on. A disabled (depth 0) queue has no space and always overflows.
     FW_ASSERT(queueNum >= 0 && queueNum < COM_PORT_COUNT, static_cast<FwAssertArgType>(queueNum));
+    if (this->getQueueDepth(queueNum) == 0) {
+        return this->handleEnqueueStatus(queueNum, QueueType::COM_QUEUE, queueNum, false,
+                                         Fw::FW_SERIALIZE_NO_ROOM_LEFT);
+    }
 
     const Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data);
     return this->handleEnqueueStatus(queueNum, QueueType::COM_QUEUE, queueNum, false, status);
@@ -333,9 +347,13 @@ bool ComQueue::enqueue(const FwIndexType queueNum, const Fw::ComBuffer& data) {
 
 bool ComQueue::enqueue(const FwIndexType queueNum, const Fw::Buffer& data) {
     // Enqueue the given message onto the matching queue. When no space is available then emit the queue overflow event,
-    // set the appropriate throttle, and move on. Will assert if passed a message for a depth 0 queue.
+    // set the appropriate throttle, and move on. A disabled (depth 0) queue has no space and always overflows.
     FW_ASSERT(queueNum >= COM_PORT_COUNT && queueNum < TOTAL_PORT_COUNT, static_cast<FwAssertArgType>(queueNum));
     const FwIndexType portNum = static_cast<FwIndexType>(queueNum - COM_PORT_COUNT);
+    if (this->getQueueDepth(queueNum) == 0) {
+        return this->handleEnqueueStatus(queueNum, QueueType::BUFFER_QUEUE, portNum, false,
+                                         Fw::FW_SERIALIZE_NO_ROOM_LEFT);
+    }
 
     // For buffer queues with DROP_OLDEST, check if the queue is full before enqueuing.
     // If full, dequeue the oldest entry first so we can return buffer ownership before
@@ -422,6 +440,10 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
 
 void ComQueue::drainQueue(FwIndexType index) {
     FW_ASSERT(index >= 0 && index < TOTAL_PORT_COUNT, static_cast<FwAssertArgType>(index));
+    // A disabled (depth 0) queue holds no messages and has no backing storage to drain
+    if (this->getQueueDepth(index) == 0) {
+        return;
+    }
     Types::Queue& queue = this->m_queues[index];
 
     // Read all messages from the queue and discard them
@@ -454,8 +476,8 @@ void ComQueue::processQueue() {
         QueueMetadata& entry = this->m_prioritizedList[priorityIndex];
         Types::Queue& queue = this->m_queues[entry.index];
 
-        // Continue onto next prioritized queue if there is no items in the current queue
-        if (queue.getQueueSize() == 0) {
+        // Continue onto next prioritized queue if the current queue is disabled (depth 0) or holds no items
+        if ((entry.depth == 0) || (queue.getQueueSize() == 0)) {
             continue;
         }
 
@@ -499,5 +521,17 @@ void ComQueue::processQueue() {
 FwIndexType ComQueue::getQueueNum(Svc::QueueType queueType, FwIndexType portNum) {
     // Acquire the queue that we need to drain
     return static_cast<FwIndexType>(portNum + ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
+}
+
+FwSizeType ComQueue::getQueueDepth(const FwIndexType queueNum) const {
+    FW_ASSERT(queueNum >= 0 && queueNum < TOTAL_PORT_COUNT, static_cast<FwAssertArgType>(queueNum));
+    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
+        if (this->m_prioritizedList[i].index == queueNum) {
+            return this->m_prioritizedList[i].depth;
+        }
+    }
+    // configure() places exactly one metadata entry per queue in the prioritized list
+    FW_ASSERT(false, static_cast<FwAssertArgType>(queueNum));
+    return 0;
 }
 }  // end namespace Svc

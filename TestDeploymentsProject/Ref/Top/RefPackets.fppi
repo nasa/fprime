@@ -14,6 +14,10 @@ telemetry packets RefPackets {
     cmdSeq.CS_CancelCommands
     cmdSeq.CS_CommandsExecuted
     cmdSeq.CS_SequencesCompleted
+    wasmSeq.ControllerState
+    wasmSeq.InterpreterState
+    wasmSeq.SequencesSucceeded
+    wasmSeq.CommandsDispatched
     ComCcsds.comQueue.comQueueDepth
     ComCcsds.comQueue.buffQueueDepth
     ComCcsds.commsBufferManager.TotalBuffs
@@ -37,6 +41,10 @@ telemetry packets RefPackets {
     FileHandling.fileManager.Errors
 
     cmdSeq.CS_Errors
+    wasmSeq.SequencesFailed
+    wasmSeq.SequencesCancelled
+    wasmSeq.CommandsFailed
+    wasmSeq.LastTrapReason
     ComCcsds.commsBufferManager.NoBuffs
     ComCcsds.commsBufferManager.EmptyBuffs
 
@@ -289,4 +297,5 @@ telemetry packets RefPackets {
 } omit {
   CdhCore.cmdDisp.CommandErrors
   cmdSeq.CS_CurrentSequence
+  wasmSeq.SeqName
 }

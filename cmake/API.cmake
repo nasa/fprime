@@ -105,7 +105,7 @@ endmacro()
 #
 # This directory is computed based off the closest path in `FPRIME_LOCATIONS` of the global interface.
 #
-# See: https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
+# See: https://cmake.org/cmake/help/latest/command/add_subdirectory.html
 #
 # **Note:** Replaces CMake `add_subdirectory` call in order to automate the [binary_dir] argument.
 #           fprime subdirectories have specific binary roots to avoid collisions, and provide for
@@ -114,7 +114,7 @@ endmacro()
 # **Arguments:**
 #  - **FP_SOURCE_DIR:** directory to add (same as add_directory)
 #  - **EXCLUDE_FROM_ALL:** (optional) exclude any targets from 'all'. See:
-#                          https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
+#                          https://cmake.org/cmake/help/latest/command/add_subdirectory.html
 ####
 function(add_fprime_subdirectory FP_SOURCE_DIR)
     get_module_name("${FP_SOURCE_DIR}")
@@ -421,6 +421,7 @@ endfunction()
 #     CONFIGURATION_OVERRIDES
 #         FpConfig.fpp
 #         FpConfig.hpp
+# )
 # ```
 ####
 function(register_fprime_config)

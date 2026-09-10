@@ -124,9 +124,10 @@ jobs:
         with:
           location: ${{ github.workspace }}
       - name: "Install clang-tidy"
+        timeout-minutes: 10
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-tidy-12
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y clang-tidy-12
       - name: "Generate with clang-tidy"
         shell: bash
         run: |

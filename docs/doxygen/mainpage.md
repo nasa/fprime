@@ -18,9 +18,9 @@ The Svc package provides standard components to support greater F´ applications
 command and data handling components used for more complete applications.
 
 
-The Drv package provides drivers to support various hardware functions for F´. These drivers 
-include a sample block driver component as well a various drivers that support Linux hardware
-functions.
+The Drv package provides drivers to support various hardware functions for F´. These drivers
+include byte stream adapters, IP/TCP/UDP drivers, and various drivers that support Linux
+hardware functions (GPIO, I2C, SPI, UART).
 
 
 The Utils package provides classes for general applications in F´ projects. These classes are for

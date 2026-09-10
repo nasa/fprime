@@ -135,7 +135,7 @@ _Example:_
 using Set = ArraySet<U32, 10>;
 Set set;
 // Insert an element in the set
-const auto status = map.insert(42);
+const auto status = set.insert(42);
 ASSERT_EQ(status, Fw::Success::SUCCESS);
 // Get a set const iterator object
 auto it = set.begin();
@@ -182,7 +182,7 @@ auto iter = set.begin();
 // Check that iter is not at the end
 ASSERT_NE(iter, set.end());
 // Increment iter
-it++;
+iter++;
 // Check that iter is at the end
 ASSERT_EQ(iter, set.end());
 ```

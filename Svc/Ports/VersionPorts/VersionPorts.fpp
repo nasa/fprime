@@ -16,6 +16,6 @@ module Svc{
     port Version(
              version_id: VersionCfg.VersionEnum @< The entry to access
              ref version_string: string @< The value to be passed
-             ref status: VersionStatus @< The command response argument
+             ref status: VersionStatus @< Status of the version get/set operation
     )
 }

@@ -7,7 +7,8 @@ It loads, validates, and runs AMPCS-compatible sequence files.
 ## 1 File Format
 
 A sequence file consists of a 32-bit sequence header followed by
-up to 32,768 bytes of record data.
+record data. The record data size is bounded by the buffer
+allocated to the sequence at initialization.
 
 The record data consists of zero or more records.
 Each record has the following format:
@@ -17,7 +18,7 @@ Record Field | Size in Bytes | Description
 Time Flag    | 1             | Either 0x0 denoting absolute time or 0xFF denoting relative time
 Time         | 4             | The time in seconds
 CMD Length   | 2             | The size in bytes of the Command field
-Command      | < 1017    | A serialized command in F Prime format, with a 16-bit opcode
+Command      | bounded by `FW_COM_BUFFER_MAX_SIZE` minus the translated prefix (packet descriptor and opcode zero-extension bytes) | A serialized command in F Prime format, with a 16-bit opcode
 
 ## 2 Implementation
 
@@ -36,12 +37,15 @@ of the command record data.
 
 4. Read the command record data into a serial buffer *B*. 
 
-5. Check that the format of the records is valid according to the binary format
+5. Compute the CRC value of the binary file and check it against the stored value.
+
+6. Validate the header time base and time context against the current
+system time (don't-care values always pass).
+
+7. Check that the format of the records is valid according to the binary format
 specified in [File Format](#File_Format).
 
-6. Compute the CRC value of the binary file and check it against the stored value.
-
-7. Fill in `m_header` as follows:
+8. Fill in `m_header` as follows:
 
     * `m_fileSize`: The size of the command record data, computed in item 2 above.
 

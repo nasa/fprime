@@ -26,6 +26,8 @@ void ClearTextEncryptor ::encryptIn_handler(FwIndexType portNum,
                                             U16 securityAssociationIndex,
                                             Fw::Buffer& data,
                                             const ComCfg::FrameContext& context) {
+    // Make the absence of security visible: a flight configuration must never route traffic here
+    this->log_WARNING_HI_NullCipherInUse(securityAssociationIndex);
     this->encryptOut_out(0, Svc::Ccsds::SdlsStatus::SUCCESS, data, context);
 }
 

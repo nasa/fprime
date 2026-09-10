@@ -8,7 +8,7 @@ module Ref {
     # ----------------------------------------------------------------------
 
     @ The ping input port
-    async input port PingIn: Svc.Ping
+    async input port PingIn: Svc.Ping drop
 
     @ The ping input port
     output port PingOut: Svc.Ping

@@ -16,7 +16,9 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include "Os/Directory.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Svc/FileManager/FileManager.hpp"
 #include "config/FileManagerConfig.hpp"
 
@@ -31,6 +33,8 @@ FileManager ::FileManager(const char* const compName  //!< The component name
     : FileManagerComponentBase(compName),
       commandCount(0),
       errorCount(0),
+      m_sandboxDir(""),
+      m_sandboxConfigured(false),
       m_listState(IDLE),
       m_totalEntries(0),
       m_currentOpCode(0),
@@ -49,6 +53,55 @@ FileManager ::FileManager(const char* const compName  //!< The component name
 
 FileManager ::~FileManager() {}
 
+void FileManager ::configure(const char* sandboxDir) {
+    FW_ASSERT(sandboxDir != nullptr);
+
+    // Resolve the sandbox directory (relative paths resolve against CWD)
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    const Os::FilePathUtils::Status resolveStatus =
+        Os::FilePathUtils::resolveFromCwd(sandboxDir, resolved, sizeof(resolved));
+    FW_ASSERT(resolveStatus == Os::FilePathUtils::VALID, static_cast<FwAssertArgType>(resolveStatus));
+
+    // Ensure trailing '/'
+    const FwSizeType resolvedLen = Fw::StringUtils::string_length(resolved, Os::FilePathUtils::MAX_PATH_LENGTH);
+    FW_ASSERT(resolvedLen > 0);
+    FW_ASSERT(resolvedLen < Os::FilePathUtils::MAX_PATH_LENGTH);
+    if (resolved[resolvedLen - 1] != '/') {
+        FW_ASSERT(resolvedLen + 2 <= Os::FilePathUtils::MAX_PATH_LENGTH);
+        resolved[resolvedLen] = '/';
+        resolved[resolvedLen + 1] = '\0';
+    }
+
+    this->m_sandboxDir = resolved;
+    this->m_sandboxConfigured = true;
+}
+
+bool FileManager ::resolveInSandbox(const Fw::CmdStringArg& path,
+                                    Fw::FileNameString& resolved,
+                                    const FwOpcodeType opCode,
+                                    const U32 cmdSeq) {
+    bool accepted = false;
+    if (this->m_sandboxConfigured) {
+        char resolvedBuffer[Os::FilePathUtils::MAX_PATH_LENGTH];
+        const Os::FilePathUtils::Status resolveStatus =
+            Os::FilePathUtils::resolveFromCwd(path.toChar(), resolvedBuffer, sizeof(resolvedBuffer));
+        if ((resolveStatus == Os::FilePathUtils::VALID) &&
+            (Os::FilePathUtils::checkContainment(resolvedBuffer, this->m_sandboxDir.toChar()) ==
+             Os::FilePathUtils::VALID)) {
+            resolved = resolvedBuffer;
+            accepted = true;
+        }
+    }
+    if (!accepted) {
+        this->log_WARNING_HI_PathOutsideSandbox(Fw::LogStringArg(path.toChar()),
+                                                Fw::LogStringArg(this->m_sandboxDir.toChar()));
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+    }
+    return accepted;
+}
+
 // ----------------------------------------------------------------------
 // Command handler implementations
 // ----------------------------------------------------------------------
@@ -56,10 +109,14 @@ FileManager ::~FileManager() {}
 void FileManager ::CreateDirectory_cmdHandler(const FwOpcodeType opCode,
                                               const U32 cmdSeq,
                                               const Fw::CmdStringArg& dirName) {
+    Fw::FileNameString resolvedDirName;
+    if (!this->resolveInSandbox(dirName, resolvedDirName, opCode, cmdSeq)) {
+        return;
+    }
     Fw::LogStringArg logStringDirName(dirName.toChar());
     this->log_ACTIVITY_HI_CreateDirectoryStarted(logStringDirName);
     bool errorIfDirExists = true;
-    const Os::FileSystem::Status status = Os::FileSystem::createDirectory(dirName.toChar(), errorIfDirExists);
+    const Os::FileSystem::Status status = Os::FileSystem::createDirectory(resolvedDirName.toChar(), errorIfDirExists);
     if (status != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_DirectoryCreateError(logStringDirName, status);
     } else {
@@ -73,9 +130,13 @@ void FileManager ::RemoveFile_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
                                          const bool ignoreErrors) {
+    Fw::FileNameString resolvedFileName;
+    if (!this->resolveInSandbox(fileName, resolvedFileName, opCode, cmdSeq)) {
+        return;
+    }
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_RemoveFileStarted(logStringFileName);
-    const Os::FileSystem::Status status = Os::FileSystem::removeFile(fileName.toChar());
+    const Os::FileSystem::Status status = Os::FileSystem::removeFile(resolvedFileName.toChar());
     if (status != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_FileRemoveError(logStringFileName, status);
         if (ignoreErrors == true) {
@@ -95,10 +156,16 @@ void FileManager ::MoveFile_cmdHandler(const FwOpcodeType opCode,
                                        const U32 cmdSeq,
                                        const Fw::CmdStringArg& sourceFileName,
                                        const Fw::CmdStringArg& destFileName) {
+    Fw::FileNameString resolvedSource;
+    Fw::FileNameString resolvedDest;
+    if (!this->resolveInSandbox(sourceFileName, resolvedSource, opCode, cmdSeq) ||
+        !this->resolveInSandbox(destFileName, resolvedDest, opCode, cmdSeq)) {
+        return;
+    }
     Fw::LogStringArg logStringSource(sourceFileName.toChar());
     Fw::LogStringArg logStringDest(destFileName.toChar());
     this->log_ACTIVITY_HI_MoveFileStarted(logStringSource, logStringDest);
-    const Os::FileSystem::Status status = Os::FileSystem::moveFile(sourceFileName.toChar(), destFileName.toChar());
+    const Os::FileSystem::Status status = Os::FileSystem::moveFile(resolvedSource.toChar(), resolvedDest.toChar());
     if (status != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_FileMoveError(logStringSource, logStringDest, status);
     } else {
@@ -111,9 +178,13 @@ void FileManager ::MoveFile_cmdHandler(const FwOpcodeType opCode,
 void FileManager ::RemoveDirectory_cmdHandler(const FwOpcodeType opCode,
                                               const U32 cmdSeq,
                                               const Fw::CmdStringArg& dirName) {
+    Fw::FileNameString resolvedDirName;
+    if (!this->resolveInSandbox(dirName, resolvedDirName, opCode, cmdSeq)) {
+        return;
+    }
     Fw::LogStringArg logStringDirName(dirName.toChar());
     this->log_ACTIVITY_HI_RemoveDirectoryStarted(logStringDirName);
-    const Os::FileSystem::Status status = Os::FileSystem::removeDirectory(dirName.toChar());
+    const Os::FileSystem::Status status = Os::FileSystem::removeDirectory(resolvedDirName.toChar());
     if (status != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_DirectoryRemoveError(logStringDirName, status);
     } else {
@@ -127,12 +198,18 @@ void FileManager ::AppendFile_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const Fw::CmdStringArg& source,
                                          const Fw::CmdStringArg& target) {
+    Fw::FileNameString resolvedSource;
+    Fw::FileNameString resolvedTarget;
+    if (!this->resolveInSandbox(source, resolvedSource, opCode, cmdSeq) ||
+        !this->resolveInSandbox(target, resolvedTarget, opCode, cmdSeq)) {
+        return;
+    }
     Fw::LogStringArg logStringSource(source.toChar());
     Fw::LogStringArg logStringTarget(target.toChar());
     this->log_ACTIVITY_HI_AppendFileStarted(logStringSource, logStringTarget);
 
     Os::FileSystem::Status status;
-    status = Os::FileSystem::appendFile(source.toChar(), target.toChar(), true);
+    status = Os::FileSystem::appendFile(resolvedSource.toChar(), resolvedTarget.toChar(), true);
     if (status != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_AppendFileFailed(logStringSource, logStringTarget, status);
     } else {
@@ -144,11 +221,15 @@ void FileManager ::AppendFile_cmdHandler(const FwOpcodeType opCode,
 }
 
 void FileManager ::FileSize_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const Fw::CmdStringArg& fileName) {
+    Fw::FileNameString resolvedFileName;
+    if (!this->resolveInSandbox(fileName, resolvedFileName, opCode, cmdSeq)) {
+        return;
+    }
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
 
     FwSizeType size_arg;
-    const Os::FileSystem::Status status = Os::FileSystem::getFileSize(fileName.toChar(), size_arg);
+    const Os::FileSystem::Status status = Os::FileSystem::getFileSize(resolvedFileName.toChar(), size_arg);
     if (status != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_FileSizeError(logStringFileName, status);
     } else {
@@ -169,10 +250,15 @@ void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode,
         return;
     }
 
+    Fw::FileNameString resolvedDirName;
+    if (!this->resolveInSandbox(dirName, resolvedDirName, opCode, cmdSeq)) {
+        return;
+    }
+
     this->log_ACTIVITY_HI_ListDirectoryStarted(dirName);
 
     // Open the directory for reading
-    Os::Directory::Status status = m_currentDir.open(dirName.toChar(), Os::Directory::OpenMode::READ);
+    Os::Directory::Status status = m_currentDir.open(resolvedDirName.toChar(), Os::Directory::OpenMode::READ);
 
     if (status != Os::Directory::OP_OK) {
         this->log_WARNING_HI_ListDirectoryError(dirName, static_cast<U32>(status));
@@ -197,9 +283,13 @@ void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode,
 void FileManager ::CalculateCrc_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& filename) {
     Os::File file;
     U32 crcValue = 0;
+    Fw::FileNameString resolvedFilename;
+    if (!this->resolveInSandbox(filename, resolvedFilename, opCode, cmdSeq)) {
+        return;
+    }
     this->log_ACTIVITY_HI_CalculateCrcStarted(filename);
 
-    Os::File::Status status = file.open(filename.toChar(), Os::File::OPEN_READ);
+    Os::File::Status status = file.open(resolvedFilename.toChar(), Os::File::OPEN_READ);
     if (status == Os::File::OP_OK) {
         status = file.calculateCrc(crcValue);
     }
@@ -244,7 +334,12 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
         effectiveChunkSize = FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE;
     }
 
-    Os::File::Status status = this->m_dpFile.open(fileName.toChar(), Os::File::OPEN_READ);
+    Fw::FileNameString resolvedFileName;
+    if (!this->resolveInSandbox(fileName, resolvedFileName, opCode, cmdSeq)) {
+        return;
+    }
+
+    Os::File::Status status = this->m_dpFile.open(resolvedFileName.toChar(), Os::File::OPEN_READ);
     if (status != Os::File::OP_OK) {
         this->log_WARNING_HI_GenerateDpFailed(logFileName, FileManager_GenerateDpStage::OPEN, static_cast<U32>(status));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

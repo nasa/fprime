@@ -318,6 +318,81 @@ void ComQueueTester::testExternalQueueOverflow() {
     component.cleanup();
 }
 
+void ComQueueTester::testDepthZeroQueue() {
+    // Disable the last com queue and the first buffer queue; leave the remaining queues enabled
+    const FwIndexType disabledComPort = ComQueue::COM_PORT_COUNT - 1;
+    const FwIndexType disabledBuffPort = 0;
+    ComQueue::QueueConfigurationTable configurationTable;
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+        configurationTable.entries[i].priority = i;
+        configurationTable.entries[i].depth = 2;
+    }
+    configurationTable.entries[disabledComPort].depth = 0;
+    configurationTable.entries[ComQueue::COM_PORT_COUNT + disabledBuffPort].depth = 0;
+    component.configure(configurationTable, 0, mallocAllocator);
+
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
+    Fw::ComBuffer comBuffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data));
+
+    // An enabled queue still queues and sends normally
+    invoke_to_comPacketQueueIn(0, comBuffer, 0);
+    emitOneAndCheck(0, comBuffer.getBuffAddr(), comBuffer.getSize());
+    clearFromPortHistory();
+
+    // Messages to a disabled com queue overflow with a single (throttled) event and are never sent
+    invoke_to_comPacketQueueIn(disabledComPort, comBuffer, 0);
+    invoke_to_comPacketQueueIn(disabledComPort, comBuffer, 0);
+    dispatchAll();
+    ASSERT_EVENTS_QueueOverflow_SIZE(1);
+    ASSERT_EVENTS_QueueOverflow(0, QueueType::COM_QUEUE, disabledComPort);
+    emitOne();
+    ASSERT_from_dataOut_SIZE(0);
+
+    // Messages to a disabled buffer queue overflow and the buffer is returned to the sender
+    invoke_to_bufferQueueIn(disabledBuffPort, buffer);
+    dispatchAll();
+    ASSERT_EVENTS_QueueOverflow_SIZE(2);
+    ASSERT_EVENTS_QueueOverflow(1, QueueType::BUFFER_QUEUE, disabledBuffPort);
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer);
+    ASSERT_from_dataOut_SIZE(0);
+
+    // Flushing disabled queues succeeds
+    this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::COM_QUEUE, disabledComPort);
+    this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::BUFFER_QUEUE, disabledBuffPort);
+    this->sendCmd_FLUSH_ALL_QUEUES(0, 0);
+    dispatchAll();
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_FLUSH_QUEUE, 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, ComQueue::OPCODE_FLUSH_QUEUE, 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(2, ComQueue::OPCODE_FLUSH_ALL_QUEUES, 0, Fw::CmdResponse::OK);
+
+    // High-water marks report 0 for disabled queues and the observed value for enabled queues
+    ComQueueDepth expectedComDepth;
+    BuffQueueDepth expectedBuffDepth;
+    for (FwIndexType i = 0; i < ComQueue::COM_PORT_COUNT; i++) {
+        expectedComDepth[i] = 0;
+    }
+    for (FwIndexType i = 0; i < ComQueue::BUFFER_PORT_COUNT; i++) {
+        expectedBuffDepth[i] = 0;
+    }
+    expectedComDepth[0] = 1;
+    invoke_to_run(0, 0);
+    dispatchAll();
+    ASSERT_TLM_comQueueDepth_SIZE(1);
+    ASSERT_TLM_buffQueueDepth_SIZE(1);
+    ASSERT_TLM_comQueueDepth(0, expectedComDepth);
+    ASSERT_TLM_buffQueueDepth(0, expectedBuffDepth);
+    component.cleanup();
+}
+
+void ComQueueTester::testAllQueuesDisabled() {
+    // The default-constructed table has every depth set to 0, which configure() must reject
+    ComQueue::QueueConfigurationTable configurationTable;
+    ASSERT_DEATH_IF_SUPPORTED(component.configure(configurationTable, 0, mallocAllocator), "ComQueue.cpp");
+}
+
 void ComQueueTester::testInternalQueueOverflow() {
     // Internal queue is the message queue for async input ports
     U8 data[BUFFER_LENGTH] = BUFFER_DATA;

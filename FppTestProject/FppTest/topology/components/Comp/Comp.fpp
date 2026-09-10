@@ -22,7 +22,7 @@ module FppTest {
     async input port syncIn: Svc.Sched
     output port syncOut: Svc.Sched
 
-    async input port PingIn: Svc.Ping
+    async input port PingIn: Svc.Ping drop
     output port PingOut: Svc.Ping
 
     async command Start(nRecords: U32)

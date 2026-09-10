@@ -6,6 +6,8 @@
 
 #include "FileDispatcherTester.hpp"
 
+#include <cstring>
+
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -59,6 +61,45 @@ void FileDispatcherTester ::dispatchTest() {
         ASSERT_from_fileDispatch_SIZE(1);
         ASSERT_from_fileDispatch(0, testFileName);
     }
+}
+
+void FileDispatcherTester ::dispatchMaxLengthNameTest() {
+    Svc::FileDispatcherTable table;
+    this->populateTable(table, true);
+
+    // Build a file name of exactly FileNameStringSize characters that ends in a mapped
+    // extension (".file0"). This verifies that a maximum-length file name round-trips
+    // through the FileAnnounce -> FileDispatch path without truncation, guarding the
+    // `string size FileNameStringSize` sizing of those ports (a smaller port would silently
+    // truncate the name here and the assertions below would fail).
+    const char ext[] = ".file0";
+    const FwSizeType extLen = sizeof(ext) - 1;
+    char nameBuf[FileNameStringSize + 1];
+    const FwSizeType fillLen = static_cast<FwSizeType>(FileNameStringSize) - extLen;
+    (void)::memset(nameBuf, 'a', fillLen);
+    (void)::memcpy(nameBuf + fillLen, ext, extLen);
+    nameBuf[FileNameStringSize] = '\0';
+
+    Fw::String testFileName(nameBuf);
+    ASSERT_EQ(testFileName.length(), static_cast<FwSizeType>(FileNameStringSize));
+
+    this->clearHistory();
+    this->invoke_to_fileAnnounceRecv(0, testFileName);
+    this->component.doDispatch();
+
+    // The full-length name must dispatch to port 0 with the name intact (no truncation).
+    // This is the invariant the FileAnnounce/FileDispatch `string size FileNameStringSize`
+    // sizing guarantees.
+    ASSERT_from_fileDispatch_SIZE(1);
+    ASSERT_from_fileDispatch(0, testFileName);
+
+    // Note: the FileDispatched *event* is intentionally not checked for the full name here.
+    // Although the event declares `file_name: string size FileNameStringSize` (240), F Prime
+    // event string arguments are carried as Fw::LogStringArg (= FW_LOG_STRING_MAX_SIZE, 200),
+    // so any event file name longer than 200 chars is truncated. That is a framework-wide
+    // event-string limit, independent of the FileAnnounce/FileDispatch port sizing this test
+    // exercises.
+    ASSERT_EVENTS_FileDispatched_SIZE(1);
 }
 
 void FileDispatcherTester ::dispatchAllDisabledTest() {

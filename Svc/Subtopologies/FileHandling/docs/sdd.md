@@ -32,22 +32,33 @@ The **FileHandling subtopology** packages the core file-transfer services common
 ### 2.3 Required Inputs for Operation
 
 * **Rate Groups**: Connect scheduler outputs to the **Run** (scheduling) ports of `fileDownlink`.
-* **PrmDb file name**: Call `FileHandling::prmDb.configure(<file name>)` from your topology setup code before parameters are loaded; the subtopology does not set a file name itself, and `PrmDb` asserts if parameters are read or saved without one.
 * **Communication/Framing Stack**: Wire file-packet ports between FileHandling and your COM/framing subtopology (e.g., `ComCcsds`, `ComFprime`, `FramingFprime`, `FramingCcsds`) to complete uplink/downlink paths.
 
 > [!WARNING]
-> **This subtopology is not configured to be secure by default.** For backwards compatibility, it
-> intentionally does **not** configure the file-access sandboxes of its components, leaving them
-> fail-open: `fileUplink` may write, `fileDownlink` may read, and `prmDb` (`PRM_LOAD_FILE`) may
-> load from **any absolute path accessible to the process** via ground command. Security-conscious
-> deployments **must** call the following from topology setup code:
+> **This subtopology is not configured to be secure by default.** For backwards compatibility, its
+> `configComponents` phase configures the file-access sandboxes of `fileUplink`, `fileDownlink`,
+> `fileManager`, and `prmDb` to `FileHandlingConfig::Paths::sandboxDir`, which defaults to `"/"`. With that
+> default, **any absolute path accessible to the process** may be written, read, or loaded via
+> ground command. (The underlying `Os::SandboxedFile` is fail-closed when left
+> unconfigured; this subtopology deliberately configures it open.)
+>
+> Deployments wishing restricted file security **must call `configure` again** from topology setup
+> code (after the autocoded `configComponents` phase runs) with a restricted directory:
 >
 > * `FileHandling::fileUplink.configure(<directory>)` — restrict uplinked file writes.
-> * `FileHandling::fileDownlink.configure(<directory>)` — restrict downlink reads (note: the
->   `configure(cooldown, cycleTime, fileQueueDepth)` overload called by this subtopology does
->   **not** set a sandbox).
-> * `FileHandling::prmDb.configureLoadSandbox(<directory>)` — restrict `PRM_LOAD_FILE` reads
->   (note: `prmDb.configure(<file name>)` sets the store-file name and is **not** a load sandbox).
+> * `FileHandling::fileManager.configure(<directory>)` — restrict file-management command paths
+>   (create/remove/move/append/list/size/CRC/data-product generation).
+> * `FileHandling::fileDownlink.configure(<directory>)` — restrict downlink reads (this is the
+>   `configure(directory)` overload; the `configure(cooldown, cycleTime, fileQueueDepth)`
+>   overload does **not** set a sandbox).
+> * `FileHandling::prmDb.configureSandbox(<directory>)` — restrict all `prmDb` file access
+>   (startup read, `PRM_SAVE_FILE`, `PRM_LOAD_FILE`); the directory must contain the store file
+>   set by `prmDb.configure(<file name>)`, which is **not** itself a sandbox.
+>
+> Alternatively, override `FileHandlingConfig::Paths::sandboxDir` to apply a single restricted
+> directory to all three components. Paths resolving outside a restricted sandbox — `../`
+> traversal sequences and absolute paths — are rejected before any file is opened. The `Ref`
+> deployment demonstrates the re-configure approach in `RefTopology.cpp`.
 
 ### 2.4 Limitations
 
@@ -77,6 +88,7 @@ topology Flight {
     ComCcsds.Subtopology.fileUplinkOut                    -> FileHandling.Subtopology.fileUplinkBufferSendIn
     FileHandling.Subtopology.fileUplinkBufferSendOut     -> ComCcsds.Subtopology.fileUplinkReturnIn
   }
+}
 ```
 
 ## 4. Configuration
@@ -91,6 +103,7 @@ topology Flight {
 * **Stack sizes** — Task stacks for active components (`fileUplink`, `fileDownlink`).
 * **Priorities** — RTOS priorities for the active/queued components as applicable.
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
+* **Paths** — File paths used by the subtopology; `Paths.prmDbFile` sets the `prmDb` parameter storage file (default `PrmDb.dat`); `Paths.sandboxDir` sets the file-access sandbox for `fileUplink`, `fileDownlink`, and `prmDb` (default `/`, unrestricted — see §2.3).
 
 > These knobs tailor runtime footprint and scheduling without modifying the subtopology wiring.
 

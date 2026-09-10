@@ -7,7 +7,13 @@ module FileHandling {
         queue size FileHandlingConfig.QueueSizes.fileUplink \
         stack size FileHandlingConfig.StackSizes.fileUplink \
         priority FileHandlingConfig.Priorities.fileUplink \
-        cpu FileHandlingConfig.CpuAffinities.fileUplink
+        cpu FileHandlingConfig.CpuAffinities.fileUplink \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        // Sandbox for uplinked file writes; "/" is unrestricted. Re-configure to restrict.
+        FileHandling::fileUplink.configure(FileHandlingConfig::Paths::sandboxDir);
+        """
+    }
 
     instance fileDownlink: Svc.FileDownlink base id FileHandlingConfig.BASE_ID + 0x01000 \
         queue size FileHandlingConfig.QueueSizes.fileDownlink \
@@ -21,6 +27,8 @@ module FileHandling {
             FileHandlingConfig::DownlinkConfig::cycleTime,
             FileHandlingConfig::DownlinkConfig::fileQueueDepth
         );
+        // Sandbox for downlinked file reads; "/" is unrestricted. Re-configure to restrict.
+        FileHandling::fileDownlink.configure(FileHandlingConfig::Paths::sandboxDir);
         """
     }
 
@@ -28,7 +36,13 @@ module FileHandling {
         queue size FileHandlingConfig.QueueSizes.fileManager \
         stack size FileHandlingConfig.StackSizes.fileManager \
         priority FileHandlingConfig.Priorities.fileManager \
-        cpu FileHandlingConfig.CpuAffinities.fileManager
+        cpu FileHandlingConfig.CpuAffinities.fileManager \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        // Sandbox for file-management command paths; "/" is unrestricted. Re-configure to restrict.
+        FileHandling::fileManager.configure(FileHandlingConfig::Paths::sandboxDir);
+        """
+    }
 
     instance prmDb: Svc.PrmDb base id FileHandlingConfig.BASE_ID + 0x03000 \
         queue size FileHandlingConfig.QueueSizes.prmDb \
@@ -36,6 +50,11 @@ module FileHandling {
         priority FileHandlingConfig.Priorities.prmDb \
         cpu FileHandlingConfig.CpuAffinities.prmDb \
     {
+        phase Fpp.ToCpp.Phases.configComponents """
+            FileHandling::prmDb.configure(FileHandlingConfig::Paths::prmDbFile);
+            // Sandbox for all PrmDb file access; "/" is unrestricted. Re-configure to restrict.
+            FileHandling::prmDb.configureSandbox(FileHandlingConfig::Paths::sandboxDir);
+        """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandling::prmDb.readParamFile();
         """

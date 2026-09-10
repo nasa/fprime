@@ -20,7 +20,7 @@ This guide assumes you have a basic understanding of the different component and
 - [Hybrid Patterns](#hybrid-patterns)
   - [Cyclic Notification Pattern](#cyclic-notification-pattern)
   - [Active Anchor Pattern](#active-anchor-pattern)
-  - [Passive Converter Pattern](#passive-converter-pattern)
+  - [Passive Adapter Pattern](#passive-adapter-pattern)
 - [Conclusion](#conclusion)
 
 ## Types of Work in F Prime Systems

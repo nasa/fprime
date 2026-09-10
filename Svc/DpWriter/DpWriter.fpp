@@ -14,17 +14,17 @@ module Svc {
     # Ports for handling data products
     # ----------------------------------------------------------------------
 
-    @ Port for receiving data products to write to disk
-    async input port bufferSendIn: Fw.BufferSend
+    @ Ports for receiving data products to write to disk
+    async input port bufferSendIn: [DpWriterNumPorts] Fw.BufferSend
 
     @ Port for processing data products
     output port procBufferSendOut: [DpWriterNumProcPorts] Fw.BufferSend
 
-    @ Port for sending DpWritten notifications
-    output port dpWrittenOut: DpWritten
+    @ Ports for sending DpWritten notifications
+    output port dpWrittenOut: [DpWriterNumPorts] DpWritten
 
-    @ Port for deallocating data product buffers
-    output port deallocBufferSendOut: Fw.BufferSend
+    @ Ports for deallocating data product buffers
+    output port deallocBufferSendOut: [DpWriterNumPorts] Fw.BufferSend
 
     # ----------------------------------------------------------------------
     # F' special ports
