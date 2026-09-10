@@ -1,51 +1,66 @@
 // ======================================================================
-// \title Os/Mutex.cpp
-// \brief common function implementation for Os::Mutex
+// \title Os/DelegateMutex.cpp
+// \brief implementation of Os::DelegateMutex, plus common Os::MutexInterface and Os::ScopeLock code
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
-#include <Os/Mutex.hpp>
+#include <Os/DelegateMutex.hpp>
 
 namespace Os {
 
-Mutex::Mutex() : m_handle_storage(), m_delegate(*MutexInterface::getDelegate(m_handle_storage)) {
+// ----------------------------------------------------------------------
+// DelegateMutex: link-time delegating implementation
+// ----------------------------------------------------------------------
+
+DelegateMutex::DelegateMutex() : m_delegate(*MutexInterface::getDelegate(m_handle_storage)) {
+    // Note: m_handle_storage is intentionally NOT value-initialized. getDelegate() placement-news
+    // the delegate into it; zeroing first is dead work (a byte-wise memset of the handle array on
+    // Vorago). Mirrors the RawTime fix in fprime PR #5240 (see #5297).
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
 }
 
-Mutex::~Mutex() {
+DelegateMutex::~DelegateMutex() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
     m_delegate.~MutexInterface();
 }
 
-MutexHandle* Mutex::getHandle() {
+MutexHandle* DelegateMutex::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
 }
 
-Mutex::Status Mutex::take() {
+DelegateMutex::Status DelegateMutex::take() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.take();
 }
 
-Mutex::Status Mutex::release() {
+DelegateMutex::Status DelegateMutex::release() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.release();
 }
 
-void Mutex::lock() {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
-    Mutex::Status status = this->take();
-    FW_ASSERT(status == Mutex::Status::OP_OK,
+// ----------------------------------------------------------------------
+// MutexInterface common implementations
+// Built on pure virtual take()/release(). Located here (not MutexInterface.cpp)
+// to keep Mutex implementation code in one translation unit.
+// ----------------------------------------------------------------------
+
+void MutexInterface::lock() {
+    MutexInterface::Status status = this->take();
+    FW_ASSERT(status == MutexInterface::Status::OP_OK,
               static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
 }
 
-void Mutex::unLock() {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
-    Mutex::Status status = this->release();
-    FW_ASSERT(status == Mutex::Status::OP_OK,
+void MutexInterface::unLock() {
+    MutexInterface::Status status = this->release();
+    FW_ASSERT(status == MutexInterface::Status::OP_OK,
               static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
 }
 
-ScopeLock::ScopeLock(Mutex& mutex) : m_mutex(mutex) {
+// ----------------------------------------------------------------------
+// ScopeLock
+// ----------------------------------------------------------------------
+
+ScopeLock::ScopeLock(MutexInterface& mutex) : m_mutex(mutex) {
     this->m_mutex.lock();
 }
 
