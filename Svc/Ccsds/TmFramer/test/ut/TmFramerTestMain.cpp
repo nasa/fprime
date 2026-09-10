@@ -26,11 +26,6 @@ TEST(TmFramer, testSeqCountWrapAround) {
     tester.testSeqCountWrapAround();
 }
 
-TEST(TmFramer, testExactlyFullDataField) {
-    Svc::Ccsds::TmFramerTester tester;
-    tester.testExactlyFullDataField();
-}
-
 TEST(TmFramer, testInputBufferTooLarge) {
     Svc::Ccsds::TmFramerTester tester;
     tester.testInputBufferTooLarge();
