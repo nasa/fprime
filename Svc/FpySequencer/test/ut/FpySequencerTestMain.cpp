@@ -292,7 +292,7 @@ TEST_F(FpySequencerTester, pushPrm) {
     tester_get_m_runtime_ptr()->stack.size = 1;
     clearHistory();
 
-    this->component.set_getParam_OutputPort(0, nullptr);
+    tester_disconnect_getParam();
     result = tester_pushPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::PRM_GET_NOT_CONNECTED);
