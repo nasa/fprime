@@ -10,14 +10,44 @@
 #
 ####
 
+set(FPRIME_SPACEWASM_DIR  "${CMAKE_CURRENT_LIST_DIR}/fprime_spacewasm")
+
+# Minimum supported Rust version (MSRV): edition 2024 needs >= 1.85 and the pinned
+# spacewasm crates need >= 1.87. Keep in sync with `rust-version` in
+# fprime_spacewasm/Cargo.toml.
+set(FPRIME_SPACEWASM_MSRV "1.87")
+
+# Check if we have Cargo/Rust and they meet out MSRV
+set(_wasm_seq_rust_unusable "")
 if (NOT CARGO)
+    set(_wasm_seq_rust_unusable "cargo not found")
+else()
+    execute_process(
+        COMMAND "${CARGO}" --version
+        OUTPUT_VARIABLE _cargo_version_output
+        RESULT_VARIABLE _cargo_version_rc
+        ERROR_VARIABLE  _cargo_version_error
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if (NOT _cargo_version_rc EQUAL 0)
+        set(_wasm_seq_rust_unusable "'${CARGO} --version' failed (${_cargo_version_rc}) ${_cargo_version_error}")
+    elseif (NOT _cargo_version_output MATCHES "cargo ([0-9]+(\\.[0-9]+)*)")
+        set(_wasm_seq_rust_unusable "could not parse a version out of '${_cargo_version_output}'")
+    elseif (CMAKE_MATCH_1 VERSION_LESS FPRIME_SPACEWASM_MSRV)
+        set(_wasm_seq_rust_unusable
+            "cargo ${CMAKE_MATCH_1} at ${CARGO} is older than the required ${FPRIME_SPACEWASM_MSRV} (Rust 2024 edition)")
+    else()
+        fprime_cmake_status("[rust] cargo ${CMAKE_MATCH_1} satisfies MSRV ${FPRIME_SPACEWASM_MSRV}")
+    endif()
+endif()
+
+if (_wasm_seq_rust_unusable)
     get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-    fprime_cmake_status("[rust] cargo not found which is required for ${MODULE_NAME}")
+    fprime_cmake_status("[rust] ${MODULE_NAME} disabled: ${_wasm_seq_rust_unusable}")
     append_list_property("${MODULE_NAME}" GLOBAL PROPERTY RESTRICTED_TARGETS)
     return()
 endif()
 
-set(FPRIME_SPACEWASM_DIR  "${CMAKE_CURRENT_LIST_DIR}/fprime_spacewasm")
 set(FPRIME_SPACEWASM_TDIR "${CMAKE_CURRENT_BINARY_DIR}/fprime_spacewasm_target")
 
 # Resolve the Rust target triple. A cross-compile toolchain may set
@@ -33,6 +63,14 @@ if (NOT RUST_TARGET_TRIPLE)
     if (_rustc_rc EQUAL 0 AND _rustc_version MATCHES "host: ([^ \n]+)")
         set(RUST_TARGET_TRIPLE "${CMAKE_MATCH_1}")
     endif()
+endif()
+
+if (NOT RUST_TARGET_TRIPLE)
+    get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+    fprime_cmake_status("[rust] ${MODULE_NAME} disabled: could not determine the Rust target triple. "
+                        "Set RUST_TARGET_TRIPLE in the toolchain file.")
+    append_list_property("${MODULE_NAME}" GLOBAL PROPERTY RESTRICTED_TARGETS)
+    return()
 endif()
 
 # Select the cargo profile from the CMake build type. The profile name is also
