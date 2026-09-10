@@ -78,15 +78,6 @@ TEST(BufferSendIn, OK) {
     tester.OK();
 }
 
-TEST(BufferSendIn, RoutingPorts) {
-    COMMENT("Verify fused DpWriter routing paths preserve the input port index.");
-    REQUIREMENT("SVC-DPWRITER-001");
-    REQUIREMENT("SVC-DPWRITER-005");
-    REQUIREMENT("SVC-DPWRITER-008");
-    BufferSendIn::Tester tester;
-    tester.RoutingPorts();
-}
-
 TEST(BufferSendIn, OKProcShrink) {
     COMMENT("Invoke bufferSendIn with nominal input. Shrink the buffer in processing");
     REQUIREMENT("SVC-DPMANAGER-002");
@@ -95,6 +86,15 @@ TEST(BufferSendIn, OKProcShrink) {
     REQUIREMENT("SVC-DPMANAGER-007");
     BufferSendIn::Tester tester;
     tester.OKProcShrink();
+}
+
+TEST(BufferSendIn, RoutingPorts) {
+    COMMENT("Verify fused DpWriter routing paths preserve the input port index.");
+    REQUIREMENT("SVC-DPWRITER-001");
+    REQUIREMENT("SVC-DPWRITER-005");
+    REQUIREMENT("SVC-DPWRITER-008");
+    BufferSendIn::Tester tester;
+    tester.RoutingPorts();
 }
 
 TEST(CLEAR_EVENT_THROTTLE, OK) {

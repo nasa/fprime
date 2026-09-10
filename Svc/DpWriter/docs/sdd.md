@@ -34,7 +34,7 @@ SVC-DPWRITER-002 | `Svc::DpWriter` shall provide an array of ports for sending `
 SVC-DPWRITER-003 | On receiving a data product container _C_, `Svc::DpWriter` shall use the processing type field of the header of _C_ to select zero or more processing ports to invoke, in port order. | The processing type field is a bit mask. A one in bit `2^n` in the bit mask selects port index `n`. | Unit Test
 SVC-DPWRITER-004 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall write _B_ to disk. | The purpose of `DpWriter` is to write data products to the disk. | Unit Test
 SVC-DPWRITER-005 | `Svc::DpWriter` shall provide an array of ports for notifying other components that data products have been written. A notification shall use the same routing port index as the corresponding input buffer. | The notification output allows `Svc::DpCatalog` or a similar component to update a data product catalog in real time. It is possible to notify a single instance of `Svc::DpCatalog` of all outputs, by connecting all the output ports of `Svc::DpWriter` to that component. It is also possible to notify different components via the different output ports. The array preserves symmetry across the port behaviors of this component (input, buffer return, and notification). | Unit Test
-SVC-DPWRITER-006 | `Svc::DpManager` shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors. | This requirement establishes the telemetry interface for the component. | Unit test
+SVC-DPWRITER-006 | `Svc::DpWriter` shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors. | This requirement establishes the telemetry interface for the component. | Unit test
 SVC-DPWRITER-007 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall re-parse the container header and shrink the size of the product. | Allows processing interfaces to compress data products and communicate that compressed state back to `Svc::DpWriter`. | Unit Test
 SVC-DPWRITER-008 | `Svc::DpWriter` shall return each valid received buffer on the `deallocBufferSendOut` port whose index matches the `bufferSendIn` port that received it. | Matching send and return paths allows a `DpWriter` instance to route buffers back toward the correct allocator. | Unit Test
 
@@ -68,9 +68,15 @@ The `bufferSendIn`, `dpWrittenOut`, and `deallocBufferSendOut` arrays form match
 
 `DpWriter` maintains the following state:
 
-1. `numDataProducts (U32)`: The number of data products written.
+| Member | Type | Description |
+| --- | --- | --- |
+| `m_numBuffersReceived` | `U32` | The number of buffers received |
+| `m_numBytesWritten` | `U64` | The number of bytes written |
+| `m_numSuccessfulWrites` | `U32` | The number of successful writes |
+| `m_numFailedWrites` | `U32` | The number of failed writes |
+| `m_numErrors` | `U32` | The number of errors |
 
-1. `numBytes (U64)`: The number of bytes written.
+The component also retains its configured file-name prefix in `m_dpFileNamePrefix`.
 
 ### 3.4. Compile-Time Setup
 
@@ -78,8 +84,11 @@ The `bufferSendIn`, `dpWrittenOut`, and `deallocBufferSendOut` arrays form match
    specifies the number of matched input, notification, and buffer-return routing paths.
    Its default value is five, matching the default `DpManagerNumPorts` configuration.
    Projects can override this value to fit their topology. All routing paths share one
-   message queue, so the instance `queue size` must be at least the sum over all connected
-   paths of the maximum buffers that can be in flight on each path; a full queue asserts.
+   message queue with `schedIn` and the asynchronous `CLEAR_EVENT_THROTTLE` command.
+   Size the queue for the sum of the maximum queued buffers across all connected paths,
+   plus the maximum pending scheduler ticks and commands. If at most one tick and one
+   command can be pending, reserve at least two additional slots; deployments permitting
+   larger bursts must reserve more. A full queue asserts.
 
 1. The configuration constant [`DpWriterNumProcPorts`](../../../default/config/AcConstants.fpp)
    specifies the number of ports for connecting components that perform
@@ -188,18 +197,25 @@ Typically it is a directory path prefix.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `NumDataProducts` | `U32` | The number of data products handled |
-| `NumBytes` | `U64` | The number of bytes handled |
+| `NumBuffersReceived` | `U32` | The number of buffers received |
+| `NumBytesWritten` | `U64` | The number of bytes written |
+| `NumSuccessfulWrites` | `U32` | The number of successful writes |
+| `NumFailedWrites` | `U32` | The number of failed writes |
+| `NumErrors` | `U32` | The number of errors |
 
 ### 5.3. Events
 
 | Name | Severity | Description |
 |------|----------|-------------|
-| `BufferInvalid` | `warning high` | Incoming buffer is invalid |
-| `BufferTooSmall` | `warning high` | Incoming buffer is too small to hold a data product container |
-| `InvalidPacketDescriptor` | `warning high` | Incoming buffer has an invalid packet descriptor |
+| `InvalidBuffer` | `warning high` | Incoming buffer is invalid |
+| `BufferTooSmallForPacket` | `warning high` | Incoming buffer is too small to hold a data product packet |
+| `InvalidHeaderHash` | `warning high` | Incoming buffer has an invalid header hash |
+| `InvalidHeader` | `warning high` | An error occurred while deserializing the packet header |
+| `BufferTooSmallForData` | `warning high` | Buffer is too small for the data size specified in the header |
+| `FileNameFormatError` | `warning high` | An error occurred when formatting a file name |
 | `FileOpenError` | `warning high` | An error occurred when opening a file |
 | `FileWriteError` | `warning high` | An error occurred when writing to a file |
+| `FileWritten` | `activity low` | A data product file was written |
 
 ## 6. Example Uses
 
