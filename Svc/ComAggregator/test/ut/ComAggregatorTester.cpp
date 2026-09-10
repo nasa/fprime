@@ -608,6 +608,10 @@ void ComAggregatorTester ::test_configure_invalid_size_asserts() {
         unconfigured.configure(static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY) + 1, true,
                                TEST_ALLOCATION_ID, allocator),
         "ComAggregator.cpp");
+    // Without spanning, the largest residual (aggregationSize - 1) must be expressible as an idle packet
+    ASSERT_DEATH_IF_SUPPORTED(
+        unconfigured.configure(Ccsds::Utils::IdlePacket::MAX_SIZE + 2, false, TEST_ALLOCATION_ID, allocator),
+        "ComAggregator.cpp");
     ASSERT_EQ(allocator.m_allocations, 0);
     // Sizes at the bounds are accepted
     ComAggregator smallest("Smallest");
@@ -620,8 +624,13 @@ void ComAggregatorTester ::test_configure_invalid_size_asserts() {
                       allocator);
     ASSERT_EQ(largest.m_capacity, static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY));
     largest.cleanup();
-    ASSERT_EQ(allocator.m_allocations, 2);
-    ASSERT_EQ(allocator.m_deallocations, 2);
+    ComAggregator largestNonSpanning("LargestNonSpanning");
+    largestNonSpanning.configure(Ccsds::Utils::IdlePacket::MAX_SIZE + 1, false, TEST_ALLOCATION_ID, allocator);
+    ASSERT_EQ(largestNonSpanning.m_capacity,
+              Ccsds::Utils::IdlePacket::MAX_SIZE + 1 - Ccsds::Utils::IdlePacket::MIN_SIZE);
+    largestNonSpanning.cleanup();
+    ASSERT_EQ(allocator.m_allocations, 3);
+    ASSERT_EQ(allocator.m_deallocations, 3);
 }
 
 void ComAggregatorTester ::test_configure_allocation_failure_asserts() {
@@ -648,8 +657,26 @@ void ComAggregatorTester ::test_cleanup() {
     this->component.cleanup();
     ASSERT_EQ(this->m_allocator.m_deallocations, 1);
     ASSERT_EQ(this->component.m_allocation, nullptr);
+    // The aggregate buffer no longer aliases the released storage
+    ASSERT_EQ(this->component.m_frameBuffer.getData(), nullptr);
+    ASSERT_EQ(this->component.m_frameBuffer.getSize(), 0);
+    ASSERT_EQ(this->component.m_frameSerializer.getCapacity(), 0);
+    ASSERT_EQ(this->component.m_aggregationSize, 0);
+    ASSERT_EQ(this->component.m_capacity, 0);
     this->component.cleanup();
     ASSERT_EQ(this->m_allocator.m_deallocations, 1);
+    // cleanup() followed by configure() re-acquires storage
+    ComAggregator reconfigured("Reconfigured");
+    CountingAllocator allocator;
+    reconfigured.configure(DEFAULT_AGGREGATION_SIZE, false, TEST_ALLOCATION_ID, allocator);
+    reconfigured.cleanup();
+    reconfigured.configure(DEFAULT_AGGREGATION_SIZE, true, TEST_ALLOCATION_ID, allocator);
+    ASSERT_EQ(allocator.m_allocations, 2);
+    ASSERT_EQ(allocator.m_deallocations, 1);
+    ASSERT_EQ(reconfigured.m_frameBuffer.getData(), static_cast<U8*>(allocator.m_lastPointer));
+    ASSERT_EQ(reconfigured.m_capacity, DEFAULT_AGGREGATION_SIZE);
+    reconfigured.cleanup();
+    ASSERT_EQ(allocator.m_deallocations, 2);
 }
 
 void ComAggregatorTester ::test_oversize_hold_asserts() {

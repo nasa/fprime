@@ -16,7 +16,7 @@ Aggregates buffers in the downlink chain. This is for use with systems that have
 | Svc-ComAggregator-005 | ComAggregator shall clear aggregation state when a `Fw::Success::SUCCESS` communication status is received back.                                                             | Unit-Test    |
 | Svc-ComAggregator-006 | ComAggregator shall preserve the order of received buffers when forming each aggregate and across aggregate sends.                                            | Unit-Test    |
 | Svc-ComAggregator-007 | ComAggregator shall interoperate with the [Communication Adapter Interface protocol](../../../docs/reference/communication-adapter-interface.md). Specifically, it shall pass through `Fw::Success::SUCCESS` and `Fw::Success::FAILURE` statuses per the [Framer Status Protocol](../../../docs/reference/communication-adapter-interface.md#framer-status-protocol), including the initial start-up SUCCESS and any recovery SUCCESS following a FAILURE.   | Unit-Test    |
-| Svc-ComAggregator-008 | ComAggregator shall provide a packet spanning configuration, disabled by default; with spanning disabled, behavior shall be unchanged.                        | Unit-Test    |
+| Svc-ComAggregator-008 | ComAggregator shall provide a packet spanning configuration, disabled by default; with spanning disabled, incoming buffers shall never be split.              | Unit-Test    |
 | Svc-ComAggregator-009 | With spanning enabled, when an incoming buffer does not fit in the remaining aggregate space, ComAggregator shall fill the remaining space with the buffer's leading bytes, send the full aggregate, and retain the remainder for subsequent aggregates. | Unit-Test    |
 | Svc-ComAggregator-010 | With spanning enabled, a retained remainder shall be able to span one or more complete subsequent aggregates, which are sent as continuation-only aggregates. | Unit-Test    |
 | Svc-ComAggregator-011 | With spanning enabled, ComAggregator shall report the CCSDS TM First Header Pointer for each aggregate via `ComCfg::FrameContext.firstHeaderPointer`: the offset of the first packet header starting in the aggregate, or `0x7FF` when no packet header starts in the aggregate (CCSDS 132.0-B-3 4.1.2.7.6). | Unit-Test    |
@@ -47,17 +47,20 @@ void cleanup();
 `cleanup()` at teardown). For CCSDS TM this is the TM Transfer Frame Data Field (`Svc.Ccsds.TmDataFieldSize`), minus
 the bytes of any layer inserted between the aggregator and the framer (e.g. `Svc.Ccsds.SdlsSaIndexSize`). In
 `Svc.Subtopologies.ComCcsds` it is set by `ComCcsdsConfig.Aggregator.aggregationSize`. `configure()` asserts when
-called twice or after data has been aggregated, when the allocator does not return `aggregationSize` bytes, and when
-`aggregationSize` violates the mode-specific limits below.
+called again without an intervening `cleanup()`, when the allocator does not return `aggregationSize` bytes, and when
+`aggregationSize` violates the mode-specific limits below. `cleanup()` releases the storage and detaches the
+aggregate buffer from it; it must only be called once the downstream framer has returned the aggregate and no
+further data or status can arrive (i.e. after the component's task has stopped).
 
 ### Idle Filling
 
 Every emitted aggregate is exactly `aggregationSize` bytes: residual space at send time is filled with an SPP idle
 packet (APID `0x7FF`, CCSDS 133.0-B-2 4.1.3.3.4), so the downstream framer receives a complete data field and no layer
 between the aggregator and the framer (e.g. SDLS encryption) has to handle padding. With spanning disabled, incoming
-buffers are never split and the accepted buffer size is `aggregationSize - 7`, which guarantees the residual is either
-zero or large enough for a minimum idle packet (header + 1 byte). `configure()` asserts unless a full-size
-`Fw::ComBuffer` or file buffer Space Packet fits within that limit.
+buffers are never split and the accepted buffer size is `aggregationSize - 7`, which guarantees the residual is always
+at least a minimum idle packet (header + 1 byte). `configure()` asserts unless a full-size `Fw::ComBuffer` or file
+buffer Space Packet fits within that limit, and unless the largest possible residual (`aggregationSize - 1`) is
+expressible in the idle packet's SPP length field (`aggregationSize <= 65544`).
 
 ### Packet Spanning
 
@@ -82,7 +85,8 @@ Spanning support makes the component depend on `Svc.Ccsds` (`Svc/Ccsds/Types` fo
 `Svc/Ccsds/Utils` for the SPP idle packet); this dependency is present regardless of whether spanning is enabled.
 
 With spanning disabled, incoming buffers are never split; a buffer larger than `aggregationSize - 7` (the
-non-spanning capacity) is rejected by assertion rather than truncated, and the First Header Pointer is always 0.
+non-spanning capacity) is rejected by assertion rather than truncated, and the First Header Pointer reported via
+`ComCfg::FrameContext.firstHeaderPointer` is always 0.
 
 If a downstream frame is reported as failed, the unsent aggregate is dropped. With spanning enabled, the remainder
 of a packet whose head was in the dropped aggregate is dropped too; its buffer is returned and SUCCESS is emitted, so

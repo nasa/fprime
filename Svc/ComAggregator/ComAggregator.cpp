@@ -43,9 +43,8 @@ void ComAggregator ::configure(FwSizeType aggregationSize,
                                bool spanningEnabled,
                                FwEnumStoreType allocationId,
                                Fw::MemAllocator& allocator) {
-    // Configuration happens exactly once, before any data is aggregated
+    // Storage is configured once, before any data is aggregated; cleanup() must run before reconfiguring
     FW_ASSERT(this->m_allocation == nullptr);
-    FW_ASSERT(this->m_frameSerializer.getSize() == 0, static_cast<FwAssertArgType>(this->m_frameSerializer.getSize()));
     // Every aggregate carries at least a minimum idle packet worth of data
     FW_ASSERT(aggregationSize > Ccsds::Utils::IdlePacket::MIN_SIZE, static_cast<FwAssertArgType>(aggregationSize));
     if (spanningEnabled) {
@@ -56,6 +55,9 @@ void ComAggregator ::configure(FwSizeType aggregationSize,
     } else {
         // Without spanning, a full com buffer or file buffer Space Packet must fit next to a minimum idle packet
         FW_ASSERT(aggregationSize >= MIN_NON_SPANNING_AGGREGATION_SIZE, static_cast<FwAssertArgType>(aggregationSize));
+        // The residual idle packet, up to aggregationSize - 1 bytes, must have a representable SPP length field
+        FW_ASSERT((aggregationSize - 1) <= Ccsds::Utils::IdlePacket::MAX_SIZE,
+                  static_cast<FwAssertArgType>(aggregationSize));
     }
     this->m_spanning = spanningEnabled;
     this->m_aggregationSize = aggregationSize;
@@ -71,6 +73,10 @@ void ComAggregator ::configure(FwSizeType aggregationSize,
 
 void ComAggregator ::cleanup() {
     if ((this->m_allocator != nullptr) && (this->m_allocation != nullptr)) {
+        this->m_frameSerializer.setExtBuffer(nullptr, 0);
+        this->m_frameBuffer.set(nullptr, 0);
+        this->m_aggregationSize = 0;
+        this->m_capacity = 0;
         this->m_allocator->deallocate(this->m_allocationId, this->m_allocation);
         this->m_allocation = nullptr;
     }
@@ -163,6 +169,9 @@ void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_Aggrega
         if (this->m_spanning) {
             this->m_lastContext.set_firstHeaderPointer(
                 (this->m_fhp == FHP_UNSET) ? static_cast<U16>(Ccsds::TMSubfields::FHP_NO_PACKET_START) : this->m_fhp);
+        } else {
+            // Packets are never split: the first packet header is always at the start of the aggregate
+            this->m_lastContext.set_firstHeaderPointer(0);
         }
         const Fw::Buffer::OwnershipState previousState =
             this->m_bufferState.exchange(Fw::Buffer::OwnershipState::NOT_OWNED);
