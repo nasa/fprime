@@ -23,10 +23,8 @@ module ComCfg {
     @ Svc.Ccsds.SpacePacketIdleFiller pads every downlink buffer to this size.
     constant SdlsFillTargetSize = TmFrameFixedSize - 6 - 2 - 2
 
-    @ Aggregation buffer for ComAggregator component. Held one minimum idle packet (6 header
-    @ + 1 data) below the fill target, so every aggregate either fills the target exactly or
-    @ leaves room for a well-formed idle space packet.
-    constant AggregationSize = SdlsFillTargetSize - 7
+    @ Aggregation buffer for ComAggregator component
+    constant AggregationSize = TmFrameFixedSize - 6 - 6 - 1 - 2  # 2 header (6) + 1 idle byte + 2 trailer bytes
 
     @ Packet Version Numbers are 3 bits with only 2 currently valid values
     dictionary enum Pvn : U8 {

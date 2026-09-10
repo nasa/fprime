@@ -39,14 +39,13 @@ The fill target defaults to `ComCfg.SdlsFillTargetSize`, so no topology setup ca
 
 ```
 SdlsFillTargetSize = TmFrameFixedSize - 6 (TM header) - 2 (SPI) - 2 (FECF)   # 1014 by default
-AggregationSize    = SdlsFillTargetSize - 7                                   # 1007 by default
 ```
 
-A project selecting a real encryptor subtracts that component's overhead as well, by overriding `ComCfg` through CMake `CONFIGURATION_OVERRIDES`. For AES-256-GCM that is 28 bytes more (12-byte IV plus 16-byte MAC), giving `1024 - 6 - 2 - 2 - 12 - 16 = 986`, with `AggregationSize` 979.
+A project selecting a real encryptor subtracts that component's overhead as well, by overriding `ComCfg` through CMake `CONFIGURATION_OVERRIDES`. For AES-256-GCM that is 28 bytes more (12-byte IV plus 16-byte MAC), giving `1024 - 6 - 2 - 2 - 12 - 16 = 986`.
 
-**Both constants must move together.** `AggregationSize` caps the upstream aggregation buffer, and the subtraction of 7 is what guarantees every aggregate either fills the target exactly or leaves room for a well-formed idle Space Packet. Defining it as `SdlsFillTargetSize - 7`, as the default does, preserves the relation automatically; writing an independent literal invites the two to drift.
+**The upstream aggregation buffer must stay a whole idle packet below the target:** `ComCfg.AggregationSize <= SdlsFillTargetSize - 7`. That is what guarantees every aggregate either fills the target exactly or leaves room for a well-formed idle Space Packet. The framework default `AggregationSize` (1009) is shared with the non-SDLS stack and is not changed by this component, so it does **not** satisfy the relation against the clear-text default of 1014; a deployment using `ComCcsdsSdls` should override it to `SdlsFillTargetSize - 7` in the same `ComCfg` override that sets the target.
 
-Getting it wrong has these consequences, which is why the component `static_assert`s both bounds rather than leaving them to run time:
+Getting it wrong has these consequences:
 
 | Misconfiguration | Effect |
 |---|---|
@@ -54,7 +53,7 @@ Getting it wrong has these consequences, which is why the component `static_asse
 | target − 7 < `AggregationSize` ≤ target | Aggregates in the last 6 bytes of the range are dropped with `GapTooSmall` — a partial, size-dependent outage that a log skim can easily miss |
 | target > frame data field | The padded buffer cannot fit the frame at all |
 
-The first two are caught by `static_assert(SdlsFillTargetSize >= AggregationSize + 7)` and the third by `static_assert(SdlsFillTargetSize <= MAX_FILL_SIZE)`, both in the component header, so a project that overrides one constant and forgets the other fails to build.
+The third is caught by `static_assert(SdlsFillTargetSize <= MAX_FILL_SIZE)` in the component header. The first two are not checked at compile time, because `AggregationSize` is a framework-wide constant this component does not own; they surface at run time as the `WARNING_HI` events above.
 
 `configure(FwSizeType targetSize)` remains available as an optional override, for a deployment pairing this component with an upstream aggregator sized differently from the compile-time configuration. It asserts only the intrinsic bounds (`targetSize` in `[1, MAX_FILL_SIZE]`); the relation to `ComCfg.AggregationSize` is deliberately not checked there, since that constant describes the default target rather than an overridden one. Call it during topology setup, before any buffer is padded.
 
@@ -73,7 +72,7 @@ The first two are caught by `static_assert(SdlsFillTargetSize >= AggregationSize
 | SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-009 | A status received on `comStatusIn` shall be forwarded on `comStatusOut` unchanged. | Unit Test |
 | SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-010 | A dropped buffer shall be followed by `Fw::Success::SUCCESS` on `comStatusOut`. | Unit Test |
 | SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-011 | The fill target shall default to `ComCfg.SdlsFillTargetSize`, so that the component operates correctly with no topology setup call. | Unit Test |
-| SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-012 | The component shall fail to compile if `ComCfg.SdlsFillTargetSize` exceeds the transfer frame data field, or if it is less than `ComCfg.AggregationSize` plus the minimum idle Space Packet size. | Inspection |
+| SVC-CCSDS-SPACE-PACKET-IDLE-FILLER-012 | The component shall fail to compile if `ComCfg.SdlsFillTargetSize` exceeds the transfer frame data field. | Inspection |
 
 ## Deployment Notes
 

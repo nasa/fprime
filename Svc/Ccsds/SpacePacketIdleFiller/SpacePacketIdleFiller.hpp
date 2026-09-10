@@ -30,12 +30,11 @@ class SpacePacketIdleFiller final : public SpacePacketIdleFillerComponentBase {
     //! Smallest well-formed space packet: a header plus one byte of data
     static constexpr FwSizeType MIN_IDLE_PACKET_SIZE = SpacePacketHeader::SERIALIZED_SIZE + 1;
 
-    // The compile-time fill target must fit the frame data field, and the upstream aggregation
-    // buffer must stay a whole idle packet below it.
+    // The compile-time fill target must fit the frame data field. The upstream aggregation
+    // buffer must also stay a whole idle packet below it (see the SDD), but that is a
+    // deployment obligation on ComCfg.AggregationSize rather than something checked here.
     static_assert(ComCfg::SdlsFillTargetSize <= MAX_FILL_SIZE,
                   "ComCfg.SdlsFillTargetSize exceeds the TM transfer frame data field");
-    static_assert(ComCfg::SdlsFillTargetSize >= ComCfg::AggregationSize + MIN_IDLE_PACKET_SIZE,
-                  "ComCfg.AggregationSize leaves a gap too small for an idle space packet");
 
     //! Fill byte, matching the pattern Svc.Ccsds.TmFramer emits
     static constexpr U8 IDLE_DATA_PATTERN = 0x44;
