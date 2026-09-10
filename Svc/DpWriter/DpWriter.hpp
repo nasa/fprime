@@ -93,7 +93,7 @@ class DpWriter final : public DpWriterComponentBase {
     void sendNotification(FwIndexType portNum,                 //!< The routing port number
                           const Fw::DpContainer& container,    //!< The container
                           const Fw::FileNameString& fileName,  //!< The file name
-                          FwSizeType packetSize                //!< The packet size
+                          FwSizeType fileSize                  //!< The file size
     );
 
   private:

@@ -481,6 +481,7 @@ void TestState::testRoutingPorts() {
 
         ASSERT_from_dpWrittenOut_SIZE(1);
         ASSERT_from_deallocBufferSendOut_SIZE(1);
+        ASSERT_from_deallocBufferSendOut(0, buffer);
         ASSERT_TRUE(this->abstractState.m_dpWrittenOutPortNumOpt.has_value());
         ASSERT_TRUE(this->abstractState.m_deallocBufferSendOutPortNumOpt.has_value());
         ASSERT_EQ(this->abstractState.m_dpWrittenOutPortNumOpt.value(), portNum);

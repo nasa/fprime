@@ -62,7 +62,7 @@ The diagram below shows the `DpWriter` component.
 | `event` | `eventOut` | `Fw.Log` | Event port |
 | `text event` | `textEventOut` | `Fw.LogText` | Text event port |
 
-The `bufferSendIn`, `dpWrittenOut`, and `deallocBufferSendOut` arrays form matching routing paths. A buffer received at index _N_ is notified and returned through index _N_.
+The `bufferSendIn`, `dpWrittenOut`, and `deallocBufferSendOut` arrays form matching routing paths. A buffer received at index _N_ is notified and returned through index _N_. Topologies must connect `deallocBufferSendOut[N]` for every connected `bufferSendIn[N]`; the buffer return is unconditional and invoking an unconnected return port asserts. `dpWrittenOut[N]` may be left unconnected.
 
 ### 3.3. State
 
@@ -77,7 +77,9 @@ The `bufferSendIn`, `dpWrittenOut`, and `deallocBufferSendOut` arrays form match
 1. The configuration constant [`DpWriterNumPorts`](../../../default/config/AcConstants.fpp)
    specifies the number of matched input, notification, and buffer-return routing paths.
    Its default value is five, matching the default `DpManagerNumPorts` configuration.
-   Projects can override this value to fit their topology.
+   Projects can override this value to fit their topology. All routing paths share one
+   message queue, so the instance `queue size` must be at least the sum over all connected
+   paths of the maximum buffers that can be in flight on each path; a full queue asserts.
 
 1. The configuration constant [`DpWriterNumProcPorts`](../../../default/config/AcConstants.fpp)
    specifies the number of ports for connecting components that perform
