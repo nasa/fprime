@@ -24,7 +24,7 @@ The output store is a single per-instance buffer; it must be returned on `encryp
 | SVC-CCSDS-AES-ENCRYPTOR-002 | The AesGcmEncryptor shall authenticate, as AES-GCM AAD, the masked TM primary header carrying the virtual channel ID together with the SA index. | CCSDS 355.0-B-2 binds a frame to its VC and SA. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-003 | The AesGcmEncryptor shall draw a fresh IV from the CSPRNG for every frame. | A repeated IV under one key forfeits GCM's confidentiality and authenticity. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-004 | The AesGcmEncryptor shall return `KEY_ERROR` when the key manager reports failure or supplies a key that is not AES-256 sized. | A wrong-sized key would otherwise encrypt under unintended material. | Unit Test |
-| SVC-CCSDS-AES-ENCRYPTOR-005 | The AesGcmEncryptor shall return `ENCRYPTION_FAILURE` when the plaintext plus IV and MAC would exceed `ComCfg.TmFrameFixedSize`. | That is the size of the output store. | Unit Test |
+| SVC-CCSDS-AES-ENCRYPTOR-005 | The AesGcmEncryptor shall return `ENCRYPTION_FAILURE` when the plaintext plus IV and MAC would exceed the TM data field less the 2-byte SA index (`ComCfg.TmFrameFixedSize` - 6 - 2 - 2). | A larger output would overrun the transfer frame data field in `Svc.Ccsds.TmFramer`. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-006 | The AesGcmEncryptor shall return the incoming plaintext buffer on `bufferReturnOut`, unmodified. | The plaintext belongs to its sender and is not encrypted in place. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-007 | The AesGcmEncryptor shall mark its output store available again when the emitted buffer arrives on `encryptReturnIn`. | The store is component memory, not allocator memory. | Unit Test |
 | SVC-CCSDS-AES-ENCRYPTOR-008 | The AesGcmEncryptor shall authenticate, in the AAD, the virtual channel ID carried on the frame context. | The TM primary header does not exist at encryption time; the context carries the VC that `Svc::Ccsds::TmFramer` will write into it. | Unit Test |
@@ -50,7 +50,7 @@ The SA index is passed on every `keyGet` request, but whether it selects the key
 
 ## Configuration
 
-Compile time: none of its own. The output store is sized directly from `ComCfg.TmFrameFixedSize`, the project-overridable TM frame size every deployment already sets; the component `static_assert`s that its own IV and MAC lengths agree with the `AesFrameOverhead` it derives from them.
+Compile time: none of its own. The output store is sized directly from `ComCfg.TmFrameFixedSize`, the project-overridable TM frame size every deployment already sets; the accepted output is bounded by the TM data field less the SA index that `Svc.Ccsds.CcsdsSdlsFramer` prepends.
 
 Runtime: none. The constructor builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `encryptIn` free of dynamic allocation, and the authenticated virtual channel arrives per frame on the frame context.
 

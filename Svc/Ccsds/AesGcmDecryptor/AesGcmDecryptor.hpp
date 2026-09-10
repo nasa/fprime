@@ -7,8 +7,8 @@
 #ifndef Svc_Ccsds_AesGcmDecryptor_HPP
 #define Svc_Ccsds_AesGcmDecryptor_HPP
 
-#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 #include "Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptorComponentAc.hpp"
+#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
 
 #include <openssl/evp.h>
 

@@ -27,9 +27,8 @@ const FwSizeType AesGcmEncryptorTester::TEST_BUFFER_SIZE;
 namespace {
 
 const U8 TEST_KEY[AesGcmEncryptorTester::AES_256_KEY_LEN] = {
-    0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
-    0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57,
-    0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F};
+    0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
+    0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F};
 
 // ----------------------------------------------------------------------
 // Independent reimplementations of what the component does
@@ -62,9 +61,9 @@ void gcmEncrypt(const U8* key,
     ASSERT_NE(ctx, nullptr);
     int len = 0;
     ASSERT_EQ(EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, nullptr, nullptr), 1);
-    ASSERT_EQ(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(AesGcmEncryptorTester::GCM_IV_LEN),
-                                  nullptr),
-              1);
+    ASSERT_EQ(
+        EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, static_cast<int>(AesGcmEncryptorTester::GCM_IV_LEN), nullptr),
+        1);
     ASSERT_EQ(EVP_EncryptInit_ex(ctx, nullptr, nullptr, key, iv), 1);
     ASSERT_EQ(EVP_EncryptUpdate(ctx, nullptr, &len, aad, static_cast<int>(aadLen)), 1);
     if (plainLen > 0) {
@@ -138,8 +137,8 @@ AesGcmEncryptorTester ::~AesGcmEncryptorTester() {}
 // ----------------------------------------------------------------------
 
 Svc::Ccsds::SdlsStatus AesGcmEncryptorTester ::from_keyGet_handler(FwIndexType portNum,
-                                                                U16 securityAssociationIndex,
-                                                                Svc::Ccsds::SdlsKeyBuffer& key) {
+                                                                   U16 securityAssociationIndex,
+                                                                   Svc::Ccsds::SdlsKeyBuffer& key) {
     this->pushFromPortEntry_keyGet(securityAssociationIndex, key);
     if (this->m_keyStatus != Svc::Ccsds::SdlsStatus::SUCCESS) {
         const Fw::SerializeStatus status = key.setBuffLen(0);
@@ -153,9 +152,9 @@ Svc::Ccsds::SdlsStatus AesGcmEncryptorTester ::from_keyGet_handler(FwIndexType p
 }
 
 void AesGcmEncryptorTester ::from_encryptOut_handler(FwIndexType portNum,
-                                                  const Svc::Ccsds::SdlsStatus& status,
-                                                  Fw::Buffer& data,
-                                                  const ComCfg::FrameContext& context) {
+                                                     const Svc::Ccsds::SdlsStatus& status,
+                                                     Fw::Buffer& data,
+                                                     const ComCfg::FrameContext& context) {
     this->pushFromPortEntry_encryptOut(status, data, context);
     if (this->m_returnSynchronously && data.isValid()) {
         // Svc::Ccsds::CcsdsSdlsFramer copies the ciphertext and returns the buffer before
@@ -269,7 +268,7 @@ void AesGcmEncryptorTester ::testEmptyPlaintext() {
 }
 
 void AesGcmEncryptorTester ::testOutputCapacityBoundary() {
-    const FwSizeType maxOutput = ComCfg::TmFrameFixedSize;
+    const FwSizeType maxOutput = AesGcmEncryptor::MAX_OUTPUT_SIZE;
     const FwSizeType largest = maxOutput - GCM_IV_LEN - GCM_TAG_LEN;
     ASSERT_LE(largest, TEST_BUFFER_SIZE) << "Test storage is too small to reach the boundary";
 

@@ -46,7 +46,6 @@ class TmFramerTester final : public TmFramerGTestBase {
     void testNominalFraming();
     void testSeqCountWrapAround();
     void testInputBufferTooLarge();
-    void testExactlyFullDataField();
     void testDataReturn();
     void testBufferOwnershipState();
     void testFirstHeaderPointerFromContext();

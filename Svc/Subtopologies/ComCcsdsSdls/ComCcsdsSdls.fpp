@@ -14,8 +14,6 @@ module ComCcsdsSdls {
 
     instance sdlsFramer: Svc.Ccsds.CcsdsSdlsFramer base id ComCcsdsSdlsConfig.BASE_ID + 0x03000
 
-    instance spacePacketIdleFiller: Svc.Ccsds.SpacePacketIdleFiller base id ComCcsdsSdlsConfig.BASE_ID + 0x07000
-
     instance encryptionSaRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x05000
 
     # NOTE: the 'decryptor' and 'encryptor' instances are defined in the ComCcsdsSdlsConfig
@@ -95,17 +93,11 @@ module ComCcsdsSdls {
         #     - ComCcsdsSdls.SdlsEncryption.bufferAllocate   -> [BufferManager].bufferGetCallee
         #     - ComCcsdsSdls.SdlsEncryption.bufferDeallocate -> [BufferManager].bufferSendIn
 
-        instance spacePacketIdleFiller
         instance sdlsFramer
         instance encryptionSaRouter
         instance encryptor
 
         connections Encryption {
-            # SpacePacketIdleFiller <-> CcsdsSdlsFramer
-            spacePacketIdleFiller.dataOut -> sdlsFramer.dataIn
-            sdlsFramer.dataReturnOut      -> spacePacketIdleFiller.dataReturnIn
-            sdlsFramer.comStatusOut       -> spacePacketIdleFiller.comStatusIn
-
             # CcsdsSdlsFramer <-> SdlsSaRouter (encryption requests and returns)
             sdlsFramer.encryptOut       -> encryptionSaRouter.dataIn
             encryptionSaRouter.dataOut  -> sdlsFramer.encryptIn
@@ -125,13 +117,13 @@ module ComCcsdsSdls {
 
         # Upstream boundary (packet layer)
         @ Input port receiving packet-layer data to frame into SDLS frames
-        port dataIn        = spacePacketIdleFiller.dataIn
+        port dataIn        = sdlsFramer.dataIn
 
         @ Output port returning ownership of downlinked buffers to the packet layer
-        port dataReturnOut = spacePacketIdleFiller.dataReturnOut
+        port dataReturnOut = sdlsFramer.dataReturnOut
 
         @ Output port forwarding com status to the packet layer
-        port comStatusOut  = spacePacketIdleFiller.comStatusOut
+        port comStatusOut  = sdlsFramer.comStatusOut
 
         # Downstream boundary (transfer frame layer)
         @ Output port sending SDLS frames to the transfer frame layer

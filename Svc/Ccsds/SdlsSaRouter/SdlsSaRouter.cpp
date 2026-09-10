@@ -69,7 +69,7 @@ void SdlsSaRouter ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, 
     FwIndexType outputPort = 0;
     this->m_outstandingLock.lock();
     const Fw::Success found = this->m_outstanding.find(data.getContext(), outputPort);
-    if (found == Fw::Success::SUCCESS){
+    if (found == Fw::Success::SUCCESS) {
         (void)this->m_outstanding.remove(data.getContext(), outputPort);
     }
     this->m_outstandingLock.unlock();

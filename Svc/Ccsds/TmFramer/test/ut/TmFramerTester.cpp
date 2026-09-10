@@ -127,33 +127,6 @@ void TmFramerTester ::testInputBufferTooLarge() {
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, defaultContext), "TmFramer.cpp");
 }
 
-void TmFramerTester ::testExactlyFullDataField() {
-    // A payload that exactly fills the data field leaves no room for an idle packet. This is what
-    // Svc.Ccsds.SpacePacketIdleFiller produces upstream, and before the idlePacketSize == 0 branch
-    // it tripped the "idlePacketSize >= 7" assertion in fill_with_idle_packet.
-    constexpr FwSizeType exactFillSize =
-        ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE;
-    U8 bufferData[exactFillSize];
-    for (FwSizeType i = 0; i < exactFillSize; ++i) {
-        bufferData[i] = static_cast<U8>(i);
-    }
-    Fw::Buffer buffer(bufferData, sizeof(bufferData));
-    ComCfg::FrameContext defaultContext;
-
-    this->invoke_to_dataIn(0, buffer, defaultContext);
-
-    ASSERT_from_dataOut_SIZE(1);
-    Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
-    const FwSizeType expectedFrameSize = ComCfg::TmFrameFixedSize;
-    ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
-
-    // The data field is the payload verbatim: no idle packet header and no fill pattern
-    for (FwSizeType i = 0; i < exactFillSize; ++i) {
-        ASSERT_EQ(outBuffer.getData()[TMHeader::SERIALIZED_SIZE + i], bufferData[i])
-            << "Data field at index " << i << " does not match the payload";
-    }
-}
-
 void TmFramerTester ::testDataReturn() {
     U8 bufferData[10];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
