@@ -271,8 +271,6 @@ void WasmSequencer ::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase&
 }
 
 void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
-    FW_ASSERT(this->m_wasm != nullptr);
-
     this->controller_sendSignal_cancel();
     this->interpreter_sendSignal_cancel();
 }
@@ -427,8 +425,6 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    FW_ASSERT(this->m_wasm != nullptr);
-
     this->controller_sendSignal_cancel();
     this->interpreter_sendSignal_cmdCancel(WasmSequencer_CommandRequest(opCode, cmdSeq));
 }
