@@ -73,6 +73,60 @@ void TcDeframerTester::testNominalDeframing() {
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context, expectedContext);
 }
 
+void TcDeframerTester::testVcIdPropagation() {
+    // Enumerated context fields must hold valid enumerators, so draw them from these sets
+    static const ComCfg::Apid::T APIDS[] = {ComCfg::Apid::FW_PACKET_COMMAND, ComCfg::Apid::FW_PACKET_TELEM,
+                                            ComCfg::Apid::FW_PACKET_FILE,    ComCfg::Apid::FW_PACKET_HAND,
+                                            ComCfg::Apid::FW_PACKET_UNKNOWN, ComCfg::Apid::SPP_IDLE_PACKET};
+    static const ComCfg::Pvn::T PVNS[] = {ComCfg::Pvn::SPACE_PACKET_PROTOCOL,
+                                          ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL,
+                                          ComCfg::Pvn::INVALID_UNINITIALIZED};
+    const U32 frameCount = STest::Random::lowerUpper(2, TcDeframerTester::MAX_HISTORY_SIZE);
+    this->setComponentState(0, 0, 0, true);  // accept all VCIDs
+
+    for (U32 frame = 0; frame < frameCount; frame++) {
+        U8 vcId = static_cast<U8>(STest::Random::lowerUpper(0, 0x3F));  // random 6 bit VCID
+        U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200));
+        U8 data[dataLength];
+        for (FwIndexType i = 0; i < dataLength; i++) {
+            data[i] = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF));
+        }
+
+        // Randomize every field of the input context so pass-through is checked against non-default values.
+        // The input vcId is forced to differ from the frame VCID to prove the deframer overwrote it.
+        ComCfg::FrameContext inContext;
+        inContext.set_comQueueIndex(static_cast<FwIndexType>(STest::Random::lowerUpper(0, 0x7F)));
+        inContext.set_apid(APIDS[STest::Random::lowerUpper(0, static_cast<U32>(FW_NUM_ARRAY_ELEMENTS(APIDS)) - 1)]);
+        inContext.set_hasSecHdr(STest::Random::lowerUpper(0, 1) == 1);
+        inContext.set_sequenceFlags(static_cast<U8>(STest::Random::lowerUpper(0, 0x3)));
+        inContext.set_sequenceCount(static_cast<U16>(STest::Random::lowerUpper(0, 0x3FFF)));
+        inContext.set_vcId(static_cast<U8>((vcId + STest::Random::lowerUpper(1, 0x3F)) & 0x3F));
+        inContext.set_pvn(PVNS[STest::Random::lowerUpper(0, static_cast<U32>(FW_NUM_ARRAY_ELEMENTS(PVNS)) - 1)]);
+        inContext.set_sendNow(STest::Random::lowerUpper(0, 1) == 1);
+        inContext.set_saIndex(static_cast<U16>(STest::Random::lowerUpper(0, 0xFFFF)));
+        ASSERT_NE(inContext.get_vcId(), vcId);
+
+        Fw::Buffer buffer = this->assembleFrameBuffer(data, dataLength, 0, vcId);
+        this->invoke_to_dataIn(0, buffer, inContext);
+
+        ASSERT_from_dataOut_SIZE(frame + 1);
+        ASSERT_from_dataReturnOut_SIZE(0);
+        ASSERT_from_errorNotify_SIZE(0);
+        ASSERT_EVENTS_SIZE(0);
+        const ComCfg::FrameContext& outContext = this->fromPortHistory_dataOut->at(frame).context;
+        ASSERT_EQ(outContext.get_vcId(), vcId);
+        // Every other field must be passed through unchanged
+        ComCfg::FrameContext expectedContext = inContext;
+        expectedContext.set_vcId(vcId);
+        ASSERT_EQ(outContext, expectedContext);
+        Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(frame).data;
+        ASSERT_EQ(outBuffer.getSize(), dataLength);
+        for (FwIndexType i = 0; i < dataLength; i++) {
+            ASSERT_EQ(outBuffer.getData()[i], data[i]);
+        }
+    }
+}
+
 void TcDeframerTester::testInvalidScId() {
     // Frame: 5 bytes (header) + 1 byte (data) + 2 bytes (trailer)
     U16 scId = static_cast<U16>(STest::Random::lowerUpper(1, 0x3FF));    // random 10 bit Spacecraft ID

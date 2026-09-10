@@ -16,6 +16,11 @@ TEST(TcDeframer, testNominalDeframing) {
     tester.testNominalDeframing();
 }
 
+TEST(TcDeframer, testVcIdPropagation) {
+    Svc::Ccsds::TcDeframerTester tester;
+    tester.testVcIdPropagation();
+}
+
 TEST(TcDeframer, testInvalidScId) {
     Svc::Ccsds::TcDeframerTester tester;
     tester.testInvalidScId();

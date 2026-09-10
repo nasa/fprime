@@ -44,6 +44,7 @@ class TcDeframerTester final : public TcDeframerGTestBase {
 
     void testDataReturn();
     void testNominalDeframing();
+    void testVcIdPropagation();
     void testInvalidScId();
     void testInvalidVcId();
     void testInvalidLengthToken();
