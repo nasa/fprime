@@ -378,6 +378,32 @@ Users are encouraged to look through the header for the component of interest as
 `false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum
 `FwOpcodeType` value before downlink.
 
+## OSAL Configuration
+
+The `Os/` subdirectory of the configuration directory holds settings for the OS abstraction layer.
+
+### RawTimeSource.hpp
+
+`Os/RawTimeSource.hpp` defines the `Os::RawTimeSource` enumeration selecting the clock read by `Os::RawTime::now()`.
+On POSIX platforms (Linux, Darwin) each enumerator holds the `clockid_t` value passed to `clock_gettime()`:
+
+| Enumerator          | Clock              | Notes                                                          |
+|---------------------|--------------------|----------------------------------------------------------------|
+| `RAWTIME_DEFAULT`   | `CLOCK_REALTIME`   | Used by every default-constructed `Os::RawTime`                |
+| `RAWTIME_REALTIME`  | `CLOCK_REALTIME`   | Wall-clock time; steps or slews when the system time is adjusted |
+| `RAWTIME_MONOTONIC` | `CLOCK_MONOTONIC`  | Never adjusted; recommended for measuring elapsed time         |
+| `RAWTIME_BOOTTIME`  | `CLOCK_BOOTTIME`   | Monotonic and advances during suspend (Linux only)             |
+
+To switch an entire deployment to a different clock, override this header in the project's configuration directory and
+set `RAWTIME_DEFAULT` to the desired clock, for example `RAWTIME_DEFAULT = CLOCK_MONOTONIC`. All framework components
+using `Os::RawTime` (rate groups, `Svc::LinuxTimer`, `Svc::OsTime`, etc.) then read that clock with no code changes.
+Individual instances may select another source via `Os::RawTime(Os::RawTimeSource)`.
+
+> [!NOTE]
+> `Os::RawTime` intervals are only defined between instances reading the same clock; on POSIX `getTimeInterval()` and
+> `getDiffUsec()` return `INVALID_PARAMS` when the sources differ. Enumerator values are platform-specific and are not
+> part of the serialized `Os::RawTime` form.
+
 ## Conclusion
 
 The user should now have a very detailed understanding of how to configure F´. Although there are some automatic checks
