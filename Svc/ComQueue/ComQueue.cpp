@@ -246,21 +246,13 @@ void ComQueue::bufferQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBu
 }
 
 void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condition) {
-    switch (this->m_state) {
-        // On success, the queue should be processed. On failure, the component should still wait.
-        case WAITING:
-            if (condition.e == Fw::Success::SUCCESS) {
-                this->m_state = READY;
-                this->processQueue_internalInterfaceInvoke();
-            } else {
-                this->m_state = WAITING;
-            }
-            break;
-        // Both READY and unknown states should not be possible at this point. To receive a status message we must be
-        // one of the WAITING or RETRY states.
-        default:
-            FW_ASSERT(false, static_cast<FwAssertArgType>(this->m_state));
-            break;
+    // Both READY and unknown states should not be possible at this point. To receive a status message we must be WAITING
+    FW_ASSERT(this->m_state == WAITING, static_cast<FwAssertArgType>(this->m_state));
+
+    // On success, the queue should be processed. On failure, the component should still wait.
+    if (condition.e == Fw::Success::SUCCESS) {
+        this->m_state = READY;
+        this->processQueue_internalInterfaceInvoke();
     }
 }
 
@@ -406,9 +398,10 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     context.set_comQueueIndex(queueIndex);
     const BufferState previousState = this->m_buffer_state.exchange(UNOWNED);
     FW_ASSERT(previousState == OWNED, static_cast<FwAssertArgType>(previousState));
-    this->dataOut_out(0, outBuffer, context);
-    // Set state to WAITING for the status to come back
+
+    // Set state to WAITING for the status to come back & send
     this->m_state = WAITING;
+    this->dataOut_out(0, outBuffer, context);
 }
 
 void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
@@ -424,9 +417,9 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     context.set_comQueueIndex(queueIndex);
     const BufferState previousState = this->m_buffer_state.exchange(UNOWNED);
     FW_ASSERT(previousState == OWNED, static_cast<FwAssertArgType>(previousState));
-    this->dataOut_out(0, buffer, context);
-    // Set state to WAITING for the status to come back
+    // Set state to WAITING for the status to come back & send
     this->m_state = WAITING;
+    this->dataOut_out(0, buffer, context);
 }
 
 void ComQueue::drainQueue(FwIndexType index) {

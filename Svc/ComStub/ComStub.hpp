@@ -7,6 +7,8 @@
 #ifndef Svc_ComStub_HPP
 #define Svc_ComStub_HPP
 
+#include <Os/Mutex.hpp>
+#include <atomic>
 #include "Drv/ByteStreamDriverModel/ByteStreamStatusEnumAc.hpp"
 #include "Svc/ComStub/ComStubComponentAc.hpp"
 
@@ -85,9 +87,12 @@ class ComStub final : public ComStubComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
   private:
-    bool m_reinitialize;                   //!< Stores if a ready signal is needed on connection
-    ComCfg::FrameContext m_storedContext;  //!< Keep context of the last message sent in the asynchronous case
-    FwIndexType m_retry_count;             //!< Keep track of retry count in the asynchronous case
+    std::atomic<bool> m_reinitialize;  //!< Stores if a ready signal is needed on connection
+    struct {
+        mutable Os::Mutex mutex;
+        ComCfg::FrameContext value;  //!< Keep context of the last message sent in the asynchronous case
+    } m_storedContext;
+    FwIndexType m_retry_count;  //!< Keep track of retry count in the asynchronous case
 };
 
 }  // end namespace Svc

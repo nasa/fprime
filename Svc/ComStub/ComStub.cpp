@@ -66,7 +66,12 @@ void ComStub::drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port 
         this->handleAsyncRetry(fwBuffer);
     } else {
         // Return buffer ownership and send status
-        this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
+        ComCfg::FrameContext storedContext;
+        {
+            Os::ScopeLock lock(this->m_storedContext.mutex);
+            storedContext = this->m_storedContext.value;
+        }
+        this->dataReturnOut_out(0, fwBuffer, storedContext);
         this->m_reinitialize = (sendStatus.e != Drv::ByteStreamStatus::OP_OK);
         this->m_retry_count = 0;  // Reset retry count
         // Send Com status
@@ -111,7 +116,11 @@ void ComStub::handleSynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameC
 }
 
 void ComStub::handleAsynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
-    this->m_storedContext = context;  // Store the context for async callback
+    {
+        Os::ScopeLock lock(this->m_storedContext.mutex);
+        // Store the context for async callback
+        this->m_storedContext.value = context;
+    }
     this->drvAsyncSendOut_out(0, sendBuffer);
 }
 
@@ -125,7 +134,12 @@ void ComStub::handleAsyncRetry(Fw::Buffer& fwBuffer) {
         // Exceeded retry limit - return buffer and notify failure
         // Retry exhaustion requires a driver reconnect to emit the recovery SUCCESS
         this->m_reinitialize = true;
-        this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
+        ComCfg::FrameContext storedContext;
+        {
+            Os::ScopeLock lock(this->m_storedContext.mutex);
+            storedContext = this->m_storedContext.value;
+        }
+        this->dataReturnOut_out(0, fwBuffer, storedContext);
         Fw::Success comStatus = Fw::Success::FAILURE;
         this->comStatusOut_out(0, comStatus);
         Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");

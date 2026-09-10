@@ -59,17 +59,21 @@ class EventManager final : public EventManagerComponentBase {
     );
 
     // Severity filter state (shared implementation)
-    EventSeverityFilter m_severityFilter;
+    struct {
+        mutable Os::Mutex mutex;
+        EventSeverityFilter filter;
+    } m_severityFilter;
 
     // Working members
     Fw::LogPacket m_logPacket;  //!< packet buffer for assembling log packets
     Fw::ComBuffer m_comBuffer;  //!< com buffer for sending event buffers
 
-    // Set of filtered event IDs.
-    Fw::ArraySet<FwEventIdType, TELEM_ID_FILTER_SIZE> m_filteredIDs;
-
-    // Guards m_filteredIDs: read on the sync LogRecv path, mutated on the command thread
-    Os::Mutex m_idFilterLock;
+    struct {
+        // Guards m_filteredIDs: read on the sync LogRecv path, mutated on the command thread
+        mutable Os::Mutex mutex;
+        // Set of filtered event IDs.
+        Fw::ArraySet<FwEventIdType, TELEM_ID_FILTER_SIZE> ids;
+    } m_filteredIDs;
 };
 
 }  // namespace Svc
