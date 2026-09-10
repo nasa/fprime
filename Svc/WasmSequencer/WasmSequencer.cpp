@@ -280,8 +280,6 @@ void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
 // ----------------------------------------------------------------------
 
 void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
-    FW_ASSERT(this->m_wasm != nullptr);
-
     FW_ASSERT(portNum < NUM_SERIALIN_INPUT_PORTS, portNum, NUM_SERIALIN_INPUT_PORTS);
     Os::ScopeLock scopeLock(this->m_serialInMutex);
     auto& queue = this->m_serialInQueue[portNum];
