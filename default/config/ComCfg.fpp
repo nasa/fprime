@@ -19,6 +19,7 @@ module ComCfg {
     @ Bytes of transfer-frame data field available to Svc.ComAggregator output (TM: frame minus 6-byte header and
     @ 2-byte trailer). Projects inserting a layer between the aggregator and Svc.Ccsds.TmFramer that adds bytes
     @ (e.g. the 2-byte SA index of Svc.Ccsds.CcsdsSdlsFramer) must subtract that overhead here.
+    @ With packet spanning enabled this must not exceed 2046 (0x7FE), the TM First Header Pointer range; Svc.ComAggregator.configure() asserts otherwise.
     constant AggregationSize = TmFrameFixedSize - 6 - 2  # TM primary header (6) + TM trailer/CRC (2)
 
     @ Packet Version Numbers are 3 bits with only 2 currently valid values

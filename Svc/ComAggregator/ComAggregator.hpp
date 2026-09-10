@@ -10,6 +10,7 @@
 #include <atomic>
 #include "Os/Mutex.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/IdlePacket.hpp"
 #include "Svc/ComAggregator/ComAggregatorComponentAc.hpp"
 
@@ -40,6 +41,13 @@ class ComAggregator final : public ComAggregatorComponentBase {
     );
 
     void preamble() override;
+
+    static constexpr FwSizeType NON_SPANNING_CAPACITY =
+        static_cast<FwSizeType>(ComCfg::AggregationSize) - Ccsds::Utils::IdlePacket::MIN_SIZE;
+    static_assert(NON_SPANNING_CAPACITY >= FW_COM_BUFFER_MAX_SIZE + Ccsds::SpacePacketHeader::SERIALIZED_SIZE,
+                  "ComCfg::AggregationSize must hold a full com buffer Space Packet without spanning");
+    static_assert(NON_SPANNING_CAPACITY >= FW_FILE_BUFFER_MAX_SIZE + Ccsds::SpacePacketHeader::SERIALIZED_SIZE,
+                  "ComCfg::AggregationSize must hold a full file buffer Space Packet without spanning");
 
   private:
     // ----------------------------------------------------------------------

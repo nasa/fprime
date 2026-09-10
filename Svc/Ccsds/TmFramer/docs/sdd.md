@@ -12,8 +12,8 @@ The TM protocol specifies a fixed frame size. This can be configured in the `con
 
 The `Svc::Ccsds::TmFramer` uses an internal (member) buffer to hold the fixed size frame. The buffer **must** be returned to the TmFramer via the `dataReturnIn` port once it has been used or consumed. When the buffer returns to the TmFramer it will reuse the buffer for the next frame. Should a component want to use the frame data past the time it is returned to the TmFramer, data should be copied before the original buffer is returned to the TmFramer via the `dataReturnIn` port. 
 
-The static sizing checks enforce that `ComCfg::AggregationSize` fits in the TM data field and that spanning output
-either fills the field exactly or leaves room for a minimum idle packet.
+The static sizing checks enforce that `ComCfg::AggregationSize` fits in the TM data field. The residual rule is
+enforced at runtime in `dataIn_handler`, deterministically on the first frame if the configuration is misconfigured.
 
 The data received on `dataIn` must either fill the frame data field exactly (e.g. when delivered by `Svc::ComAggregator` with packet spanning enabled) or leave at least 7 bytes (a Space Packet header plus one byte of idle data) so that the remainder can be filled with an Idle Packet as required by the protocol (4.2.2.5). Any other size is rejected by assertion. `ComCfg::AggregationSize` is the full TM data field available to `Svc::ComAggregator`; with spanning disabled, the maximum aggregate is `ComCfg::AggregationSize - 7`, while spanning-enabled aggregates fill the field exactly. Any intermediate layer that adds bytes (e.g. the 2-byte SA index of `Svc::Ccsds::CcsdsSdlsFramer`) must be subtracted from `ComCfg::AggregationSize` by the project.
 

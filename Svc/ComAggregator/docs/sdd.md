@@ -37,6 +37,8 @@ Aggregates buffers in the downlink chain. This is for use with systems that have
 
 Calling `configure(true)` before startup enables CCSDS TM packet spanning. In this mode the aggregation capacity
 is `ComCfg::AggregationSize`, the full TM data field by default, and every emitted aggregate is exactly that size.
+With packet spanning enabled, `ComCfg::AggregationSize` must not exceed 2046 (`0x7FE`), the TM First Header Pointer
+range; `configure()` asserts otherwise.
 With spanning disabled, the maximum aggregate size is `ComCfg::AggregationSize - 7` so the TmFramer can add a
 minimum idle packet:
 
@@ -58,7 +60,7 @@ Spanning support makes the component depend on `Svc.Ccsds` (`Svc/Ccsds/Types` fo
 `Svc/Ccsds/Utils` for the SPP idle packet); this dependency is present regardless of whether spanning is enabled.
 
 With spanning disabled (the default), incoming buffers are never split and behavior is unchanged; a buffer larger
-than `ComCfg::AggregationSize` is rejected by assertion rather than truncated. `configure()` must be called before
+than `ComCfg::AggregationSize - 7` (the non-spanning capacity) is rejected by assertion rather than truncated. `configure()` must be called before
 any data is aggregated and asserts otherwise.
 
 If a downstream frame is reported as failed, the unsent aggregate is dropped. With spanning enabled, the remainder

@@ -25,7 +25,7 @@ ComAggregator ::ComAggregator(const char* const compName)
       m_frameSerializer(m_frameBuffer.getSerializer()),
       m_allow_timeout(false),
       m_spanning(false),
-      m_capacity(static_cast<FwSizeType>(ComCfg::AggregationSize) - Ccsds::Utils::IdlePacket::MIN_SIZE),
+      m_capacity(NON_SPANNING_CAPACITY),
       m_heldOffset(0),
       m_fhp(FHP_UNSET),
       m_pendingIdleCount(0),
@@ -45,9 +45,7 @@ void ComAggregator ::configure(bool spanningEnabled) {
         FW_ASSERT(aggregationSize <= fhpRange, static_cast<FwAssertArgType>(aggregationSize));
     }
     this->m_spanning = spanningEnabled;
-    this->m_capacity = spanningEnabled
-                           ? static_cast<FwSizeType>(ComCfg::AggregationSize)
-                           : static_cast<FwSizeType>(ComCfg::AggregationSize) - Ccsds::Utils::IdlePacket::MIN_SIZE;
+    this->m_capacity = spanningEnabled ? static_cast<FwSizeType>(ComCfg::AggregationSize) : NON_SPANNING_CAPACITY;
 }
 
 void ComAggregator ::preamble() {
