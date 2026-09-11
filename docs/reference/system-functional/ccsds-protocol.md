@@ -58,7 +58,7 @@ An optional SDLS layer provides per-frame encryption and decryption keyed by a 1
 - **SdlsSaRouter** — Routes encryption/decryption requests to downstream crypto components based on the SA index.
 - **SdlsFileKeyManager** — Supplies encryption keys read from a configured file.
 - **ClearTextEncryptor / ClearTextDecryptor** — Pass-through default crypto components (**no security**); the defaults selected by the `Svc.ComCcsdsSdls` subtopology configuration.
-- **AesGcmEncryptor / AesGcmDecryptor** — AES-256-GCM authenticated encryption (OpenSSL 3.x), producing/consuming an `IV (12) | ciphertext | MAC (16)` security payload with the VC and SA index authenticated as additional data. The decryptor reports a failed MAC check as `MAC_VERIFICATION_FAILURE`, distinct from `DECRYPTION_FAILURE`. Each frame's 28-byte overhead must be subtracted from `ComCfg.AggregationSize` (see the `Svc.ComCcsdsSdls` SDD).
+- **AesGcmEncryptor / AesGcmDecryptor** — AES-256-GCM authenticated encryption (OpenSSL 3.x), producing/consuming an `IV (12) | ciphertext | MAC (16)` security payload with the VC and SA index authenticated as additional data. The decryptor reports a failed MAC check as `MAC_VERIFICATION_FAILURE`, distinct from `DECRYPTION_FAILURE`. Each frame's 28-byte overhead must be subtracted from `ComCcsdsConfig.Aggregator.aggregationSize` (see the `Svc.ComCcsdsSdls` SDD).
 
 ### Protocol Layering
 
