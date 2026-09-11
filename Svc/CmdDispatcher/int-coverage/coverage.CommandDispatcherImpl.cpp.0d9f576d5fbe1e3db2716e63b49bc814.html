@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-10 22:11:42</td>
+      <td>2026-09-11 22:12:10</td>
     </tr>
   </table>
 </div>
@@ -80,7 +80,7 @@
     <tr><td><a href="#l59">Svc::CommandDispatcherImpl::compCmdReg_handler(short, unsigned int) (line 59)</a></td><td>called 122 times</td><td>61.0%</td></tr>
     <tr><td><a href="#l73">Svc::CommandDispatcherImpl::compCmdStat_handler(short, unsigned int, unsigned int, Fw::CmdResponse const&amp;) (line 73)</a></td><td>called 150 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l211">Svc::CommandDispatcherImpl::pingIn_handler(short, unsigned int) (line 211)</a></td><td>called 61 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l160">Svc::CommandDispatcherImpl::run_handler(short, unsigned int) (line 160)</a></td><td>called 243 times</td><td>58.0%</td></tr>
+    <tr><td><a href="#l160">Svc::CommandDispatcherImpl::run_handler(short, unsigned int) (line 160)</a></td><td>called 242 times</td><td>58.0%</td></tr>
     <tr><td><a href="#l104">Svc::CommandDispatcherImpl::seqCmdBuff_handler(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 104)</a></td><td>called 150 times</td><td>41.0%</td></tr>
     <tr><td><a href="#l216">Svc::CommandDispatcherImpl::seqCmdBuff_overflowHook(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 216)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l30">Svc::CommandDispatcherImpl::~CommandDispatcherImpl() (line 30)</a></td><td>called 1 time</td><td>100.0%</td></tr>
@@ -1393,7 +1393,7 @@
       <td class="lineno"><a id="l160" href="#l160">160</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">243</td>
+      <td class="linecount coveredLine">242</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CommandDispatcherImpl</span><span class="w"> </span><span class="o">::</span><span class="n">run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1402,12 +1402,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 243 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 243 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 242 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 242 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">243</td>
+      <td class="linecount coveredLine">242</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_CommandsDropped</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numCmdsDropped</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1416,12 +1416,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 243 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 243 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 242 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 242 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">243</td>
+      <td class="linecount coveredLine">242</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_CommandErrors</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numCmdErrors</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1430,19 +1430,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 243 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 243 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 242 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 242 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">243</td>
+      <td class="linecount coveredLine">242</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_CommandsDispatched</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numCmdsDispatched</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l164" href="#l164">164</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">243</td>
+      <td class="linecount coveredLine">242</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

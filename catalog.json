@@ -2,8 +2,8 @@
   "schema": 6,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "5d6cd50ec2b827bc5a7538bd07920bd7947f5a47",
-  "generated_at": "2026-09-11T21:21:32Z",
+  "commit": "67086ae137830cc4f5b1439977e6864daeb34b81",
+  "generated_at": "2026-09-11T22:12:57Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -23,15 +23,15 @@
     "tier": "silver"
   },
   "overall_int": {
-    "line_pct": 30.29,
-    "line_covered": 9582,
-    "line_total": 31633,
-    "function_pct": 39.19,
+    "line_pct": 30.14,
+    "line_covered": 9585,
+    "line_total": 31800,
+    "function_pct": 39.06,
     "function_covered": 1656,
-    "function_total": 4226,
-    "branch_pct": 19.45,
-    "branch_covered": 3184,
-    "branch_total": 16374,
+    "function_total": 4240,
+    "branch_pct": 19.3,
+    "branch_covered": 3187,
+    "branch_total": 16510,
     "report": "int-coverage/coverage-all.html",
     "tier": "bronze"
   },
@@ -3324,8 +3324,8 @@
         "function_pct": 78.12,
         "function_covered": 25,
         "function_total": 32,
-        "branch_pct": 60.98,
-        "branch_covered": 25,
+        "branch_pct": 63.41,
+        "branch_covered": 26,
         "branch_total": 41,
         "report": "Fw/Comp/int-coverage/index.html",
         "tier": "bronze"
@@ -4642,14 +4642,14 @@
         "tier": "bronze"
       },
       "int": {
-        "line_pct": 34.68,
-        "line_covered": 514,
+        "line_pct": 34.75,
+        "line_covered": 515,
         "line_total": 1482,
         "function_pct": 33.56,
         "function_covered": 97,
         "function_total": 289,
-        "branch_pct": 29.45,
-        "branch_covered": 134,
+        "branch_pct": 29.23,
+        "branch_covered": 133,
         "branch_total": 455,
         "report": "Fw/Types/int-coverage/index.html",
         "tier": "bronze"
@@ -4800,15 +4800,15 @@
         "tier": "bronze"
       },
       "int": {
-        "line_pct": 38.47,
-        "line_covered": 1299,
-        "line_total": 3377,
-        "function_pct": 43.1,
+        "line_pct": 38.37,
+        "line_covered": 1301,
+        "line_total": 3391,
+        "function_pct": 43.03,
         "function_covered": 250,
-        "function_total": 580,
-        "branch_pct": 27.98,
-        "branch_covered": 406,
-        "branch_total": 1451,
+        "function_total": 581,
+        "branch_pct": 27.96,
+        "branch_covered": 409,
+        "branch_total": 1463,
         "report": "Os/int-coverage/index.html",
         "tier": "bronze"
       },
@@ -4964,8 +4964,8 @@
         "function_pct": 27.17,
         "function_covered": 25,
         "function_total": 92,
-        "branch_pct": 15.27,
-        "branch_covered": 73,
+        "branch_pct": 15.48,
+        "branch_covered": 74,
         "branch_total": 478,
         "report": "Os/Generic/int-coverage/index.html",
         "tier": "bronze"
@@ -5055,8 +5055,8 @@
         "function_pct": 44.44,
         "function_covered": 12,
         "function_total": 27,
-        "branch_pct": 20.43,
-        "branch_covered": 19,
+        "branch_pct": 21.51,
+        "branch_covered": 20,
         "branch_total": 93,
         "report": "Os/Generic/Types/int-coverage/index.html",
         "tier": "bronze"
@@ -5207,15 +5207,15 @@
         "tier": "bronze"
       },
       "int": {
-        "line_pct": 47.82,
-        "line_covered": 362,
-        "line_total": 757,
-        "function_pct": 64.21,
+        "line_pct": 47.08,
+        "line_covered": 363,
+        "line_total": 771,
+        "function_pct": 63.54,
         "function_covered": 61,
-        "function_total": 95,
-        "branch_pct": 30.86,
-        "branch_covered": 100,
-        "branch_total": 324,
+        "function_total": 96,
+        "branch_pct": 30.06,
+        "branch_covered": 101,
+        "branch_total": 336,
         "report": "Os/Posix/int-coverage/index.html",
         "tier": "bronze"
       },
@@ -6013,7 +6013,19 @@
       "has_ut": true,
       "has_coverage": false,
       "ut": null,
-      "int": null,
+      "int": {
+        "line_pct": 0.0,
+        "line_covered": 0,
+        "line_total": 61,
+        "function_pct": 0.0,
+        "function_covered": 0,
+        "function_total": 4,
+        "branch_pct": 0.0,
+        "branch_covered": 0,
+        "branch_total": 57,
+        "report": "Svc/Ccsds/AesGcmDecryptor/int-coverage/index.html",
+        "tier": "bronze"
+      },
       "codeql": {
         "findings": 2,
         "by_severity": {
@@ -6069,7 +6081,7 @@
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
-        "int": null,
+        "int": "bronze",
         "codeql": "bronze",
         "checks": "bronze",
         "sdd": "platinum"
@@ -6080,7 +6092,19 @@
       "has_ut": true,
       "has_coverage": false,
       "ut": null,
-      "int": null,
+      "int": {
+        "line_pct": 0.0,
+        "line_covered": 0,
+        "line_total": 80,
+        "function_pct": 0.0,
+        "function_covered": 0,
+        "function_total": 5,
+        "branch_pct": 0.0,
+        "branch_covered": 0,
+        "branch_total": 67,
+        "report": "Svc/Ccsds/AesGcmEncryptor/int-coverage/index.html",
+        "tier": "bronze"
+      },
       "codeql": {
         "findings": 3,
         "by_severity": {
@@ -6136,7 +6160,7 @@
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
-        "int": null,
+        "int": "bronze",
         "codeql": "bronze",
         "checks": "bronze",
         "sdd": "gold"
