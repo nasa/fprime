@@ -47,6 +47,7 @@ set(EXPECTED_FULL_DEPENDENCIES
     Os_Mutex
     Os_Mutex_Posix
     Os_Mutex_Posix_Implementation
+    Os_Posix_Models
     Os_Posix_Shared
     Os_Queue
     Os_RawTime
