@@ -57,6 +57,16 @@ class DpWriter final : public DpWriterComponentBase {
 
   private:
     // ----------------------------------------------------------------------
+    // Hook implementations for typed async input ports
+    // ----------------------------------------------------------------------
+
+    //! Overflow hook for bufferSendIn: return the buffer to its pool and drop the DP
+    void bufferSendIn_overflowHook(FwIndexType portNum,  //!< The port number
+                                   Fw::Buffer& fwBuffer  //!< The buffer
+                                   ) final;
+
+  private:
+    // ----------------------------------------------------------------------
     // Handler implementations for commands
     // ----------------------------------------------------------------------
 

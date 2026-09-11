@@ -466,6 +466,27 @@ void TestState ::action__BufferSendIn__FileWriteError() {
 // Non-rule tests
 // ----------------------------------------------------------------------
 
+void TestState ::testBufferSendInOverflowHook() {
+    this->clearHistory();
+    // Fill the message queue without dispatching so the next invoke overflows
+    for (FwSizeType i = 0; i < DpWriterTester::TEST_INSTANCE_QUEUE_DEPTH; i++) {
+        Fw::Buffer buffer = this->abstractState.getDpBuffer();
+        this->invoke_to_bufferSendIn(0, buffer);
+    }
+    // Queue full: this invoke triggers the overflow hook, which must not assert
+    Fw::Buffer overflowBuffer = this->abstractState.getDpBuffer();
+    this->invoke_to_bufferSendIn(0, overflowBuffer);
+    // The DP is dropped (nothing written or notified), a throttled event records it,
+    // and its buffer is returned to the pool
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_BufferDropped_SIZE(1);
+    ASSERT_EVENTS_BufferDropped(0, overflowBuffer.getSize());
+    ASSERT_from_dpWrittenOut_SIZE(0);
+    ASSERT_from_procBufferSendOut_SIZE(0);
+    ASSERT_from_deallocBufferSendOut_SIZE(1);
+    ASSERT_from_deallocBufferSendOut(0, overflowBuffer);
+}
+
 void TestState ::testFileNameFormatError() {
     // Configure a prefix that fills the file name string, forcing a format overflow
     Fw::FileNameString prefix;
@@ -506,6 +527,11 @@ void Tester::BufferTooSmallForPacket() {
 
 void Tester::FileNameFormatError() {
     this->testState.testFileNameFormatError();
+    this->testState.printEvents();
+}
+
+void Tester::OverflowHook() {
+    this->testState.testBufferSendInOverflowHook();
     this->testState.printEvents();
 }
 

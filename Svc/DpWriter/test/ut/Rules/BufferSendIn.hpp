@@ -49,6 +49,9 @@ class Tester {
     //! File name format error
     void FileNameFormatError();
 
+    //! Overflow hook: full queue drops the DP and returns its buffer
+    void OverflowHook();
+
     //! File open error
     void FileOpenError();
 

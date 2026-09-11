@@ -49,6 +49,9 @@ class TestState : public DpWriterTester {
 
     //! Test the FileNameFormatError event and its throttle
     void testFileNameFormatError();
+
+    //! Test that a full queue drops the DP and returns its buffer instead of asserting
+    void testBufferSendInOverflowHook();
 };
 
 }  // namespace Svc

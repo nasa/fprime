@@ -8,14 +8,14 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Schedule in port
-    async input port schedIn: Svc.Sched
+    async input port schedIn: Svc.Sched drop
 
     # ----------------------------------------------------------------------
     # Ports for handling data products
     # ----------------------------------------------------------------------
 
     @ Port for receiving data products to write to disk
-    async input port bufferSendIn: Fw.BufferSend
+    async input port bufferSendIn: Fw.BufferSend hook
 
     @ Port for processing data products
     output port procBufferSendOut: [DpWriterNumProcPorts] Fw.BufferSend
@@ -131,6 +131,14 @@ module Svc {
                         ) \
       severity warning high \
       format "Error {} while writing {} of {} bytes to {}" \
+      throttle 10
+
+    @ A data product was dropped because the input queue was full (overflow hook)
+    event BufferDropped(
+                         bufferSize: FwSizeType @< The dropped buffer size
+                       ) \
+      severity warning high \
+      format "Dropped a data product buffer of size {} on queue overflow" \
       throttle 10
 
     @ File written

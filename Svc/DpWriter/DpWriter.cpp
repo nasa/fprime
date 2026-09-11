@@ -128,6 +128,21 @@ void DpWriter::schedIn_handler(const FwIndexType portNum, U32 context) {
 }
 
 // ----------------------------------------------------------------------
+// Hook implementations for typed async input ports
+// ----------------------------------------------------------------------
+
+void DpWriter::bufferSendIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // Queue full: return the buffer to its pool instead of leaking, and drop the DP.
+    // Runs on the caller's thread; deallocBufferSendOut must reach a guarded/sync sink.
+    (void)portNum;
+    // Record the drop (throttle counter is atomic; safe from the caller's thread)
+    this->log_WARNING_HI_BufferDropped(fwBuffer.getSize());
+    if (fwBuffer.isValid()) {
+      this->deallocBufferSendOut_out(0, fwBuffer);
+    }
+}
+
+// ----------------------------------------------------------------------
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
@@ -136,6 +151,7 @@ void DpWriter::CLEAR_EVENT_THROTTLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) 
     (void)opCode;
     (void)cmdSeq;
     // Clear throttling
+    this->log_WARNING_HI_BufferDropped_ThrottleClear();
     this->log_WARNING_HI_BufferTooSmallForData_ThrottleClear();
     this->log_WARNING_HI_BufferTooSmallForPacket_ThrottleClear();
     this->log_WARNING_HI_FileOpenError_ThrottleClear();
