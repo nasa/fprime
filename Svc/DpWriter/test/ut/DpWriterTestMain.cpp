@@ -94,6 +94,12 @@ TEST(BufferSendIn, OverflowHook) {
     tester.OverflowHook();
 }
 
+TEST(BufferSendIn, OverflowHookUnknownId) {
+    COMMENT("Overflow with an unparseable buffer; verify the drop event uses the unknown-id sentinel, no assert.");
+    BufferSendIn::Tester tester;
+    tester.OverflowHookUnknownId();
+}
+
 TEST(CLEAR_EVENT_THROTTLE, OK) {
     COMMENT("Test the CLEAR_EVENT_THROTTLE command.");
     REQUIREMENT("SVC-DPMANAGER-006");
