@@ -7,10 +7,14 @@
 #include "Svc/Ccsds/CcsdsSdlsFramer/CcsdsSdlsFramer.hpp"
 
 #include <Fw/Prm/ParamValid.hpp>
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 
 namespace Svc {
 
 namespace Ccsds {
+
+static_assert(sizeof(decltype(ComCfg::FrameContext().get_saIndex())) == SdlsSaIndexSize,
+              "Svc.Ccsds.SdlsSaIndexSize must match the prepended SA index");
 
 // ----------------------------------------------------------------------
 // Component construction and destruction

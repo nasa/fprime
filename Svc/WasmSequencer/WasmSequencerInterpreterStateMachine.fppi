@@ -278,7 +278,14 @@ state machine InterpreterStateMachine {
             }
 
             on hostResume do { resume } enter PAUSE_CHECK
-            on hostResumeI32 do { resumeI32 } enter PAUSE_CHECK
+            on hostResumeI32 do { resumeI32 } enter RESUME_I32_PAUSE_CHECK
+
+            # Same check as PAUSE_CHECK. All transitions into a choice must carry the same type:
+            # PAUSE_CHECK is entered with FwIndexType (via DEQUEUE_CHECK), so the I32 resume needs its own.
+            choice RESUME_I32_PAUSE_CHECK {
+                if pendingPause enter PAUSED else enter SPINNING
+            }
+
             on hostResponseFailure do { setExitReason_HOST_FAILURE } enter IDLE
 
             on hostResponseTimeIncomparable do {

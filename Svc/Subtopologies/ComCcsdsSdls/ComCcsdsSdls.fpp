@@ -12,7 +12,19 @@ module ComCcsdsSdls {
     # SDLS encryption instances
     # ----------------------------------------------------------------------
 
-    instance sdlsFramer: Svc.Ccsds.CcsdsSdlsFramer base id ComCcsdsSdlsConfig.BASE_ID + 0x03000
+    instance sdlsFramer: Svc.Ccsds.CcsdsSdlsFramer base id ComCcsdsSdlsConfig.BASE_ID + 0x03000 \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        // The SA index prepended to every aggregate must be accounted for in the aggregate size. Any
+        // per-frame encryptor overhead (IV, MAC, ...) must be subtracted as well; the encrypted output
+        // plus SA index must fill the TM data field exactly, which Svc::Ccsds::TmFramer asserts at runtime.
+        static_assert(static_cast<FwSizeType>(ComCcsdsConfig::Aggregator::aggregationSize) +
+                              static_cast<FwSizeType>(Svc::Ccsds::SdlsSaIndexSize) <=
+                          static_cast<FwSizeType>(Svc::Ccsds::TmDataFieldSize),
+                      "ComCcsdsSdls requires ComCcsdsConfig.Aggregator.aggregationSize <= "
+                      "Svc.Ccsds.TmDataFieldSize - Svc.Ccsds.SdlsSaIndexSize");
+        """
+    }
 
     instance encryptionSaRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x05000
 

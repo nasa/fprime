@@ -7,7 +7,9 @@
 #ifndef Svc_ComAggregator_HPP
 #define Svc_ComAggregator_HPP
 
+#include <algorithm>
 #include <atomic>
+#include "Fw/Types/MemAllocator.hpp"
 #include "Os/Mutex.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
@@ -30,24 +32,36 @@ class ComAggregator final : public ComAggregatorComponentBase {
     //! Destroy ComAggregator object
     ~ComAggregator();
 
-    //! Configure the aggregator
+    //! Configure the aggregator and allocate the aggregation buffer
     //!
-    //! When spanning is enabled, packets that do not fit in the remaining aggregation space are split
-    //! across aggregates (CCSDS TM packet spanning): the leading bytes fill the current aggregate and
-    //! the remainder continues in subsequent aggregates. The First Header Pointer is reported through
-    //! the ComCfg::FrameContext for the downstream TM framer. Must be called before the component is
-    //! started and before any data is received.
-    void configure(bool spanningEnabled  //!< Enable CCSDS TM packet spanning across aggregates
+    //! Every emitted aggregate is exactly `aggregationSize` bytes: residual space is filled with an SPP idle
+    //! packet. With spanning disabled, incoming packets are never split: a packet is added to the current aggregate
+    //! only if it completes it exactly or leaves room for a minimum idle packet, and a single packet may be at most
+    //! `aggregationSize - Ccsds::Utils::IdlePacket::MIN_SIZE` bytes, which must hold a full com buffer and a full
+    //! file buffer Space Packet. When spanning is enabled, packets that do not fit in the remaining aggregation
+    //! space are split across aggregates (CCSDS TM packet spanning): the leading bytes fill the current aggregate
+    //! and the remainder continues in subsequent aggregates. The First Header Pointer is reported through the
+    //! ComCfg::FrameContext for the downstream TM framer, and `aggregationSize` must not exceed 2046 (0x7FE).
+    //! Must be called before the component is started and before any data is received; asserts otherwise.
+    void configure(FwSizeType aggregationSize,    //!< Size in bytes of every emitted aggregate
+                   bool spanningEnabled,          //!< Enable CCSDS TM packet spanning across aggregates
+                   FwEnumStoreType allocationId,  //!< Identifier used when dealing with the Fw::MemAllocator
+                   Fw::MemAllocator& allocator    //!< Fw::MemAllocator used to acquire the aggregation buffer
     );
+
+    //! Deallocate the aggregation buffer
+    //!
+    //! Must only be called once the downstream framer has returned the aggregate and no further data or status
+    //! can arrive (i.e. after the component's task has stopped); asserts if the aggregate is still held
+    //! downstream. configure() may be called again afterwards.
+    void cleanup();
 
     void preamble() override;
 
-    static constexpr FwSizeType NON_SPANNING_CAPACITY =
-        static_cast<FwSizeType>(ComCfg::AggregationSize) - Ccsds::Utils::IdlePacket::MIN_SIZE;
-    static_assert(NON_SPANNING_CAPACITY >= FW_COM_BUFFER_MAX_SIZE + Ccsds::SpacePacketHeader::SERIALIZED_SIZE,
-                  "ComCfg::AggregationSize must hold a full com buffer Space Packet without spanning");
-    static_assert(NON_SPANNING_CAPACITY >= FW_FILE_BUFFER_MAX_SIZE + Ccsds::SpacePacketHeader::SERIALIZED_SIZE,
-                  "ComCfg::AggregationSize must hold a full file buffer Space Packet without spanning");
+    //! Smallest aggregate that holds a full com buffer and a full file buffer Space Packet without spanning
+    static constexpr FwSizeType MIN_NON_SPANNING_AGGREGATION_SIZE =
+        std::max(static_cast<FwSizeType>(FW_COM_BUFFER_MAX_SIZE), static_cast<FwSizeType>(FW_FILE_BUFFER_MAX_SIZE)) +
+        static_cast<FwSizeType>(Ccsds::SpacePacketHeader::SERIALIZED_SIZE) + Ccsds::Utils::IdlePacket::MIN_SIZE;
 
   private:
     // ----------------------------------------------------------------------
@@ -189,6 +203,11 @@ class ComAggregator final : public ComAggregatorComponentBase {
     //! Get the remaining capacity of the aggregation buffer
     FwSizeType remainingCapacity() const;
 
+    //! Check whether a packet of the given size may be added to the current aggregate
+    //!
+    //! Without spanning the packet must complete the aggregate or leave room for a minimum idle packet.
+    bool accepts(FwSizeType size) const;
+
     //! Record the First Header Pointer at the current fill offset, if not already recorded
     void markFirstHeaderIfUnset();
 
@@ -196,7 +215,7 @@ class ComAggregator final : public ComAggregatorComponentBase {
     void fillFromHeld();
 
     //! Fill the residual aggregation space with an SPP idle packet, spanning it into the next
-    //! aggregate when the residual space is smaller than a minimum idle packet
+    //! aggregate when the residual space is smaller than a minimum idle packet (spanning only)
     void fillResidualWithIdle();
 
     //! Return a consumed buffer and signal readiness for another buffer
@@ -210,13 +229,12 @@ class ComAggregator final : public ComAggregatorComponentBase {
   private:
     static constexpr U16 FHP_UNSET = 0xFFFF;  //!< Sentinel: no packet header recorded in the current aggregate
 
-    static_assert(static_cast<FwSizeType>(ComCfg::AggregationSize) > Ccsds::Utils::IdlePacket::MIN_SIZE,
-                  "ComCfg::AggregationSize must exceed the minimum idle packet size");
-
-    U8 m_frameBufferStore[ComCfg::AggregationSize];  //!< Buffer to hold the frame data
+    Fw::MemAllocator* m_allocator;   //!< Allocator that provided m_allocation, nullptr until configured
+    FwEnumStoreType m_allocationId;  //!< Identifier used with m_allocator
+    void* m_allocation;              //!< Memory backing m_frameBuffer, nullptr until configured
     std::atomic<Fw::Buffer::OwnershipState> m_bufferState{
-        Fw::Buffer::OwnershipState::OWNED};  //!< whether m_frameBuffer is owned by TmFramer; shared with the sync
-                                             //!< dataReturnIn caller
+        Fw::Buffer::OwnershipState::OWNED};  //!< whether this component currently owns m_frameBuffer (NOT_OWNED while
+                                             //!< downstream holds it); shared with the sync dataReturnIn caller
     Fw::Buffer m_frameBuffer;
     Fw::ExternalSerializeBufferWithMemberCopy m_frameSerializer;  //!< Serializer for m_frameBuffer
     ComCfg::FrameContext m_lastContext;                           //!< Context for the current frame
@@ -224,10 +242,10 @@ class ComAggregator final : public ComAggregatorComponentBase {
     Svc::ComDataContextPair m_held;     //!< Held data while waiting for send
     std::atomic<bool> m_allow_timeout;  //!< Whether status has been received
 
-    bool m_spanning;          //!< Whether packet spanning is enabled
-    FwSizeType m_capacity;    //!< Active aggregation capacity in bytes
-    FwSizeType m_heldOffset;  //!< Bytes of the held buffer already consumed into previous aggregates
-    U16 m_fhp;                //!< First Header Pointer for the current aggregate (FHP_UNSET if none)
+    bool m_spanning;               //!< Whether packet spanning is enabled
+    FwSizeType m_aggregationSize;  //!< Size in bytes of every emitted aggregate (0 until configured)
+    FwSizeType m_heldOffset;       //!< Bytes of the held buffer already consumed into previous aggregates
+    U16 m_fhp;                     //!< First Header Pointer for the current aggregate (FHP_UNSET if none)
     U8 m_pendingIdle[Ccsds::Utils::IdlePacket::MIN_SIZE] = {};  //!< Idle packet bytes spanning into the next aggregate
     FwSizeType m_pendingIdleCount;                              //!< Number of valid bytes in m_pendingIdle
     FwSizeType m_leadingIdleCount;  //!< Number of carried idle bytes at the start of the current aggregate

@@ -4,7 +4,7 @@ The `Svc::Ccsds::TmFramer` is an implementation of the [FramerInterface](../../.
 
 It receives payload data (such as a Space Packet or a VCA_SDU) on input and produces a TM frame on its output port as a result. Please refer to the CCSDS [TM specification (CCSDS 132.0-B-3)](https://ccsds.org/Pubs/132x0b3.pdf) for details on the frame format and protocol.
 
-The `Svc::Ccsds::TmFramer` is designed to work in the common F Prime telemetry stack, receiving data from an upstream [`Svc::ComQueue`](../../../ComQueue/docs/sdd.md) and passing frames to a [Communications Adapter](../../../Interfaces/docs/sdd.md), such as a Radio manager component or [`Svc::ComStub`](../../../ComStub/docs/sdd.md), for transmission on the wire. It is commonly coupled with the [`Svc::Ccsds::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) to wrap CCSDS Space Packets into TM frames.
+The `Svc::Ccsds::TmFramer` is designed to work in the common F Prime telemetry stack, receiving complete, idle-filled data fields from an upstream [`Svc::ComAggregator`](../../../ComAggregator/docs/sdd.md) and passing frames to a [Communications Adapter](../../../Interfaces/docs/sdd.md), such as a Radio manager component or [`Svc::ComStub`](../../../ComStub/docs/sdd.md), for transmission on the wire. It is commonly coupled with the [`Svc::Ccsds::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) to wrap CCSDS Space Packets into TM frames.
 
 ## Internals
 
@@ -12,10 +12,7 @@ The TM protocol specifies a fixed frame size. This can be configured in the `con
 
 The `Svc::Ccsds::TmFramer` uses an internal (member) buffer to hold the fixed size frame. The buffer **must** be returned to the TmFramer via the `dataReturnIn` port once it has been used or consumed. When the buffer returns to the TmFramer it will reuse the buffer for the next frame. Should a component want to use the frame data past the time it is returned to the TmFramer, data should be copied before the original buffer is returned to the TmFramer via the `dataReturnIn` port. 
 
-The static sizing checks enforce that `ComCfg::AggregationSize` fits in the TM data field. The residual rule is
-enforced at runtime in `dataIn_handler`, deterministically on the first frame if the configuration is misconfigured.
-
-The data received on `dataIn` must either fill the frame data field exactly (e.g. when delivered by `Svc::ComAggregator` with packet spanning enabled) or leave at least 7 bytes (a Space Packet header plus one byte of idle data) so that the remainder can be filled with an Idle Packet as required by the protocol (4.2.2.5). Any other size is rejected by assertion. `ComCfg::AggregationSize` is the full TM data field available to `Svc::ComAggregator`; with spanning disabled, the maximum aggregate is `ComCfg::AggregationSize - 7`, while spanning-enabled aggregates fill the field exactly. Any intermediate layer that adds bytes (e.g. the 2-byte SA index of `Svc::Ccsds::CcsdsSdlsFramer`) must be subtracted from `ComCfg::AggregationSize` by the project.
+The `Svc::Ccsds::TmFramer` is a pure frame layer: the data received on `dataIn` must fill the frame data field exactly (`Svc.Ccsds.TmDataFieldSize`, i.e. `ComCfg.TmFrameFixedSize` minus the 6-byte primary header and 2-byte trailer) and is copied into the frame unchanged. Any other size is rejected by assertion, deterministically on the first frame when the upstream stack is misconfigured. Idle filling of the data field (protocol 4.2.2.5) is the responsibility of the upstream [`Svc::ComAggregator`](../../../ComAggregator/docs/sdd.md), which emits aggregates of exactly its configured size; this keeps idle data upstream of any layer inserted between the aggregator and the framer, such as `Svc::Ccsds::CcsdsSdlsFramer`, whose added bytes (`Svc.Ccsds.SdlsSaIndexSize`) the project subtracts from the aggregation size.
 
 ## Usage Examples
 
@@ -67,6 +64,6 @@ For each frame generated, the `Svc::Ccsds::TmFramer` will populate the CCSDS TM 
 | SVC-Ccsds-TM-FRAMER-010 | The TmFramer shall be configurable with a Spacecraft Identifier. | Inspection, Unit Test |
 | SVC-Ccsds-TM-FRAMER-011 | The TmFramer shall use the Virtual Channel Identifier passed in the `context` object on `dataIn`. | Unit Test |
 | SVC-Ccsds-TM-FRAMER-012 | The TmFramer shall manage Master Channel Frame Count and Virtual Channel Frame Count. | Unit Test |
-| SVC-Ccsds-TM-FRAMER-013 | The TmFramer shall fill the data field of the TM Transfer Frame with the payload data received on `dataIn`, and fill up the rest of the fixed-size frame with a single Idle Packet as defined by the protocol. When the payload data fills the data field exactly, no Idle Packet shall be inserted. | Unit Test |
-| SVC-Ccsds-TM-FRAMER-014 | The TmFramer shall assert that payload data received on `dataIn` either fills the data field exactly or leaves room for a minimum Idle Packet (header plus one byte). | Unit Test |
+| SVC-Ccsds-TM-FRAMER-013 | The TmFramer shall fill the data field of the TM Transfer Frame with the payload data received on `dataIn`, unchanged. | Unit Test |
+| SVC-Ccsds-TM-FRAMER-014 | The TmFramer shall assert that payload data received on `dataIn` fills the data field exactly. | Unit Test |
 | SVC-Ccsds-TM-FRAMER-015 | The TmFramer shall assert that the First Header Pointer received in the `dataIn` context fits within the 11-bit First Header Pointer field. | Unit Test |

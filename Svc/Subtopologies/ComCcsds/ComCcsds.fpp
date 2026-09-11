@@ -105,7 +105,16 @@ module ComCcsds {
         cpu ComCcsdsConfig.CpuAffinities.aggregator \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::enablePacketSpanning);
+        static_assert(static_cast<FwSizeType>(ComCcsdsConfig::Aggregator::aggregationSize) <=
+                          static_cast<FwSizeType>(Svc::Ccsds::TmDataFieldSize),
+                      "ComCcsdsConfig.Aggregator.aggregationSize must fit the TM Transfer Frame Data Field");
+        ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::aggregationSize,
+                                       ComCcsdsConfig::Aggregator::enablePacketSpanning,
+                                       2,
+                                       ComCcsds::Allocation::memAllocator);
+        """
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        ComCcsds::aggregator.cleanup();
         """
     }
 
