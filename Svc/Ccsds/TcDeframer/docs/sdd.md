@@ -65,12 +65,6 @@ A spanning packet is abandoned (`SpanningPacketAbandoned`) whenever a FIRST or U
 | Output | allocate | Fw.BufferGet | Port to allocate reassembly buffers for spanning packets (only used when segmentation is enabled) |
 | Output | deallocate | Fw.BufferSend | Port to deallocate reassembly buffers for spanning packets (only used when segmentation is enabled) |
 
-## Telemetry
-
-| Name | Type | Description |
-|---|---|---|
-| SpanningPacketsReassembled | U32 | Number of spanning packets successfully reassembled and delivered |
-
 ## Events
 
 | Name | Severity | Description |

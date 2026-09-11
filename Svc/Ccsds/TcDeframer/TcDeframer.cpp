@@ -258,8 +258,6 @@ void TcDeframer::completeSpanningPacket() {
             packet.setSize(this->m_spanningBytesReceived);
             this->m_spanningBuffer = Fw::Buffer();
             this->m_spanningBytesReceived = 0;
-            this->m_spanningPacketsReassembled++;
-            this->tlmWrite_SpanningPacketsReassembled(this->m_spanningPacketsReassembled);
             this->dataOut_out(0, packet, this->m_spanningContext);
             return;
         }

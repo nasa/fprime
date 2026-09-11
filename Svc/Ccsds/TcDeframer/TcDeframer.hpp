@@ -112,7 +112,6 @@ class TcDeframer : public TcDeframerComponentBase {
     Fw::Buffer m_spanningBuffer;             //!< Reassembly buffer, valid while a spanning packet is in progress
     FwSizeType m_spanningBytesReceived = 0;  //!< Bytes accumulated in the spanning packet in progress
     ComCfg::FrameContext m_spanningContext;  //!< Context of the first segment, forwarded with the reassembled packet
-    U32 m_spanningPacketsReassembled = 0;    //!< Count of reassembled packets delivered downstream
     //! Reassembled packets owned downstream, awaiting return on dataReturnIn for deallocation
     Fw::Buffer m_inFlight[TcDeframer_MaxSpanningPacketsInFlight];
 };

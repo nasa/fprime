@@ -232,8 +232,6 @@ void TcDeframerTester::testSegmentedTwoSegments() {
     this->assertDataOutEquals(expected, static_cast<FwSizeType>(firstLength + lastLength));
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getData(), this->m_allocPool[0]);
     ASSERT_EVENTS_SIZE(0);
-    ASSERT_TLM_SpanningPacketsReassembled_SIZE(1);
-    ASSERT_TLM_SpanningPacketsReassembled(0, 1);
 
     // The reassembled packet is owned by the deframer and is deallocated on return
     Fw::Buffer packet = this->fromPortHistory_dataOut->at(0).data;
@@ -282,7 +280,6 @@ void TcDeframerTester::testSegmentedManySegments() {
     ASSERT_from_dataReturnOut_SIZE(1);
     this->assertDataOutEquals(expected, total);
     ASSERT_EVENTS_SIZE(0);
-    ASSERT_TLM_SpanningPacketsReassembled(0, 1);
 }
 
 void TcDeframerTester::testSegmentedUnexpectedSegment() {

@@ -15,9 +15,6 @@ module Ccsds {
         @ Buffer allocation and deallocation for packets that span across multiple TC frames
         import Svc.BufferAllocation
 
-        @ Number of spanning packets successfully reassembled and delivered
-        telemetry SpanningPacketsReassembled: U32
-
         @ Invalid packet received that will be dropped
         event InvalidPacket() \
             severity warning low \
