@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-09-11T21:12:50Z",
+  "ref": "devel",
+  "commit": "67086ae137830cc4f5b1439977e6864daeb34b81",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 7,
+  "filled_sections": 5,
+  "prose_words": 688,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "events"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/devel/Svc/Ccsds/AesGcmEncryptor/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::Ccsds::AesGcmEncryptor",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_svc_1_1_ccsds_1_1_aes_gcm_encryptor.html"
+    }
+  ]
+}

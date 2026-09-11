@@ -6,7 +6,8 @@ The SA-to-port mapping is a compile-time FPP array of {`U16` SA, `FwIndexType` p
 
 ## Functionality
 
-- Loads the compile-time `SdlsCfg.SaMap` into an internal `Fw::ArrayMap` from SA index to port index at construction.
+- Loads the compile-time `SdlsCfg.SaMap` into an internal `Fw::ArrayMap` from SA index to port index at construction, so an instance is usable with no topology setup.
+- Accepts a replacement table via `configure(const SdlsCfg::SaMap&)`, called during topology setup before any frame is routed. This exists so the uplink and downlink instances can hold different tables: an SA is simplex (CCSDS 355.0-B-2 §2.3.1.1), and giving both directions the same table would let each accept the other's SPI.
 - Receives an SA index, iv/data buffer, and frame context on the guarded `dataIn` port.
 - Looks up the SA index in the map; if found, forwards the request out the mapped `saDataOut` port.
 - Passes an `UNKNOWN_SA` status forward on `dataOut` (with the untouched buffer) if the SA index has no map entry, or `UNKNOWN_PORT` if the mapped port index is out of range or unconnected; the buffer is not forwarded downstream in either case.
@@ -19,14 +20,16 @@ The SA-to-port mapping is a compile-time FPP array of {`U16` SA, `FwIndexType` p
 |---------------|--------------------|---------------------------------|-------------|
 | guarded input | dataIn          | Svc.Ccsds.CcsdsSdlsEncryption   | Receives the SA index and iv/data buffer to route. |
 | output        | dataOut         | Svc.Ccsds.CcsdsSdlsData         | Sends the operation status and processed data (possibly newly allocated) upstream. |
-| guarded input | dataReturnIn    | Svc.ComDataWithContext          | Receives back ownership of buffers sent on `dataOut`. |
+| sync input    | dataReturnIn    | Svc.ComDataWithContext          | Receives back ownership of buffers sent on `dataOut`. |
 | output        | bufferReturnOut    | Svc.ComDataWithContext          | Returns incoming iv/data buffers for deallocation. |
 | output        | saDataOut       | [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsEncryption | Sends the SA index and iv/data buffer to the mapped downstream crypto component. |
 | sync input    | saDataIn        | [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsData | Receives the operation status and processed data from downstream crypto components. |
 | output        | saDataReturnOut | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Returns ownership of processed data buffers to downstream crypto components. |
 | sync input    | saBufferReturnIn   | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Receives back iv/data buffers from downstream crypto components for deallocation. |
 
-The downstream-facing inputs (`saDataIn`, `saBufferReturnIn`) are `sync` rather than `guarded`: downstream crypto components call back synchronously on the caller's thread, which already holds the component guard (guarding them would re-enter the mutex and deadlock). This is a topology constraint, not a convention: connected crypto components must be passive with synchronous handlers (see SVC-CCSDS-SDLS-SA-ROUTER-008).
+Three inputs are `sync` rather than `guarded`, for the same reason on both sides of the component. Downstream, `saDataIn` and `saBufferReturnIn` are called back synchronously by the crypto component on the caller's thread, which already holds the component guard. Upstream, `dataReturnIn` is called from inside the client's own `dataOut` handler: `CcsdsSdlsFramer` and `CcsdsSdlsDeframer` return the buffer before the routed `dataIn` call has unwound, so the guard is still held there too. `Os::Mutex` is `PTHREAD_MUTEX_ERRORCHECK`, so a `guarded` kind on any of the three would assert on the re-lock rather than deadlock. This is a topology constraint, not a convention: connected crypto components and upstream clients must be passive with synchronous handlers (see SVC-CCSDS-SDLS-SA-ROUTER-008).
+
+Because those three handlers run unguarded, the outstanding-buffer tracking table they all touch is protected by its own `Os::Mutex`, held across each individual map operation rather than for the whole handler. The component guard alone would not cover them.
 
 ## Events
 
@@ -42,10 +45,14 @@ The downstream-facing inputs (`saDataIn`, `saBufferReturnIn`) are `sync` rather 
 | `SdlsCfg.SaRouterPortCount` | Dimension of the downstream port arrays. |
 | `SdlsCfg.SaRouterMapEntryCount` | Number of entries in the SA-to-port map (independent of port count). |
 | `SdlsCfg.SaRouterMaxOutstandingBuffers` | Capacity of the outstanding processed-buffer bookkeeping table. |
-| `SdlsCfg.SaRouterPorts` | Enumeration of the downstream crypto component ports (`PLAINTEXT = 0`, `UNCONNECTED = 1`). |
-| `SdlsCfg.SaMap` | Compile-time array of {SA index, port index} pairs. |
+| `SdlsCfg.SaRouterPorts` | Enumeration of the downstream crypto component ports (`UNCONNECTED = 0`, `PLAINTEXT = 1`). |
+| `SdlsCfg.SaMap` | Compile-time array of {SA index, port index} pairs. Default: `{ SA 1 -> PLAINTEXT, SA 0 -> UNCONNECTED }`. |
 
 All of the above are defined in the component-local configuration module `Svc/Ccsds/SdlsSaRouter/config/SdlsSaRouterConfig`.
+
+The default map routes SA 1 to the `PLAINTEXT` port, matching the `SA_INDEX` parameter default in `Svc.Ccsds.CcsdsSdlsFramer`. SA 0 is mapped to the unconnected port rather than omitted: CCSDS 355.0-B-2 reserves it for Extended Procedures PDUs, so routing it yields `UNKNOWN_PORT` rather than `UNKNOWN_SA`.
+
+A deployment overriding the configuration module changes the table for every instance at once. To give the uplink and downlink instances different tables — which the simplex-SA rule requires whenever the two directions do not route identically — call `configure()` on each instance instead.
 
 ## Requirements
 
@@ -59,6 +66,7 @@ All of the above are defined in the component-local configuration module `Svc/Cc
 | SVC-CCSDS-SDLS-SA-ROUTER-006 | Upon a map entry referencing an out-of-range or unconnected port index, the SdlsSaRouter shall pass an `UNKNOWN_PORT` status forward on `dataOut` with the untouched buffer, without forwarding it downstream. | Unit Test |
 | SVC-CCSDS-SDLS-SA-ROUTER-007 | The downstream port arrays shall share a single dimension set by a constant in the component configuration module; the SA-map array dimension shall be an independent config constant. | Inspection |
 | SVC-CCSDS-SDLS-SA-ROUTER-008 | Downstream crypto components connected to `saDataOut`/`saDataReturnOut` shall invoke `saDataIn`/`saBufferReturnIn` synchronously on the caller's thread (i.e. be passive with synchronous handlers). Asynchronous (queued or hardware-backed) crypto components must not be connected to these ports without adding external synchronization. | Unit Test / Inspection |
+| SVC-CCSDS-SDLS-SA-ROUTER-009 | The SdlsSaRouter shall accept a replacement SA-to-port map via `configure()`, applied before any frame is routed, so that the uplink and downlink instances may hold distinct tables as required for simplex security associations (CCSDS 355.0-B-2 §2.3.1.1). | Unit Test |
 
 ## See Also
 

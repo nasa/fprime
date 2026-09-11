@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-10T21:11:54Z",
+  "generated_at": "2026-09-11T21:12:46Z",
   "ref": "devel",
-  "commit": "c84a59630b810f4c38e2b3d6e324f25e238fd991",
+  "commit": "67086ae137830cc4f5b1439977e6864daeb34b81",
   "passed": 1,
   "failed": 1,
   "skipped": 14,
@@ -14,7 +14,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no typed input ports declared"
     },
     {
       "id": "D2",
@@ -23,7 +23,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no commands declared"
     },
     {
       "id": "D3",
@@ -32,7 +32,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no state machines declared"
     },
     {
       "id": "D4",
@@ -41,7 +41,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no data product containers declared"
     },
     {
       "id": "D5",
@@ -70,7 +70,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no data product containers declared"
     },
     {
       "id": "R1",
@@ -79,7 +79,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no commands declared in the FPP model"
     },
     {
       "id": "R2",
@@ -88,7 +88,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no telemetry channels declared in the FPP model"
     },
     {
       "id": "R3",
@@ -97,7 +97,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no events declared in the FPP model"
     },
     {
       "id": "R4",
@@ -106,7 +106,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no parameters declared in the FPP model"
     },
     {
       "id": "R5",
@@ -115,7 +115,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no data products declared in the FPP model"
     },
     {
       "id": "R6",
@@ -124,7 +124,7 @@
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
       "status": "skip",
       "failures": [],
-      "detail": "no FPP files found"
+      "detail": "no ports declared in the FPP model"
     },
     {
       "id": "R7",

@@ -2,8 +2,8 @@
   "schema": 6,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "bda4cc548358155d52cdee354a18af070756e558",
-  "generated_at": "2026-09-11T21:11:50Z",
+  "commit": "67086ae137830cc4f5b1439977e6864daeb34b81",
+  "generated_at": "2026-09-11T21:12:51Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -6042,15 +6042,25 @@
         },
         "codeql-jpl": null
       },
-      "checks": null,
-      "sdd": null,
+      "checks": {
+        "passed": 0,
+        "failed": 2,
+        "skipped": 14,
+        "tier": "bronze",
+        "report": "Svc/Ccsds/AesGcmDecryptor/checks/index.html"
+      },
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/AesGcmDecryptor/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
-        "checks": null,
-        "sdd": "bronze"
+        "checks": "bronze",
+        "sdd": "platinum"
       }
     },
     {
@@ -6087,15 +6097,25 @@
         },
         "codeql-jpl": null
       },
-      "checks": null,
-      "sdd": null,
+      "checks": {
+        "passed": 0,
+        "failed": 3,
+        "skipped": 13,
+        "tier": "bronze",
+        "report": "Svc/Ccsds/AesGcmEncryptor/checks/index.html"
+      },
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/AesGcmEncryptor/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
-        "checks": null,
-        "sdd": "bronze"
+        "checks": "bronze",
+        "sdd": "gold"
       }
     },
     {
@@ -6516,7 +6536,7 @@
         "report": "Svc/Ccsds/CcsdsSdlsFramer/checks/index.html"
       },
       "sdd": {
-        "tier": "silver",
+        "tier": "gold",
         "has_sdd": true,
         "report": "Svc/Ccsds/CcsdsSdlsFramer/sdd/index.html"
       },
@@ -6526,7 +6546,7 @@
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "silver"
+        "sdd": "gold"
       }
     },
     {
@@ -13533,14 +13553,24 @@
         },
         "codeql-jpl": null
       },
-      "checks": null,
-      "sdd": null,
+      "checks": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 15,
+        "tier": "platinum",
+        "report": "cmake/test/data/TestDeployment/TestDuplicateDirective/checks/index.html"
+      },
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "cmake/test/data/TestDeployment/TestDuplicateDirective/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
-        "checks": null,
+        "checks": "platinum",
         "sdd": "bronze"
       }
     },
