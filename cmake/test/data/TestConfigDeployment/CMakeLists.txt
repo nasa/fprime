@@ -42,3 +42,21 @@ register_fprime_library(
     DEPENDS
         project_config
 )
+# Consumes library_global_config (GLOBAL_IMPLICIT_DEPENDENCY) without naming it in DEPENDS
+register_fprime_library(
+        TestLibraryGlobalConfig
+    SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/TestLibraryGlobalConfig.cpp"
+    DEPENDS
+        Fw_Types
+)
+# Consumes project_config_deprecated_base (BASE_CONFIG) without naming it in DEPENDS
+if (_TEST_CONFIG_DEPRECATED_BASE_CONFIG)
+    register_fprime_library(
+            TestLibraryDeprecatedBaseConfig
+        SOURCES
+            "${CMAKE_CURRENT_SOURCE_DIR}/TestLibraryDeprecatedBaseConfig.cpp"
+        DEPENDS
+            Fw_Types
+    )
+endif()

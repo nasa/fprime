@@ -22,7 +22,7 @@ register_fprime_config(
       Os_Cpu_Darwin
       Os_Memory_Darwin
       Os_CountingSemaphore_Darwin
-   BASE_CONFIG
+   GLOBAL_IMPLICIT_DEPENDENCY
 )
 target_compile_definitions(PlatformDarwin INTERFACE -DTGT_OS_TYPE_DARWIN)
 target_link_options(PlatformDarwin INTERFACE -Wl,-no_warn_duplicate_libraries)

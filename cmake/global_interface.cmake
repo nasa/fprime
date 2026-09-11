@@ -11,8 +11,8 @@
 #         a. These include all FPRIME_SOURCE_LOCATIONS, FPRIME_BINARY_LOCATIONS, and configuration directories
 #     4. FPRIME_CHOSEN_IMPLEMENTATIONS: list of all chosen implementations for selectable build modules.
 #
-# The global interface target also links to all BASE_CONFIG configuration modules. This allows modules to depend on,
-# and receive include directories for all base configurations.
+# The global interface target also links to all GLOBAL_IMPLICIT_DEPENDENCY configuration modules. This allows modules
+# to depend on, and receive include directories for, all such configuration.
 #
 # The target's name is stored in the FPRIME_GLOBAL_INTERFACE_TARGET cache variable and is available to all projects.
 # Users must include this file to ensure that, should they be the first to need this target, it will be created.
