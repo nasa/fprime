@@ -970,6 +970,18 @@ void TlmPacketizerTester ::nonPacketizedChannelTest() {
     }
 }
 
+void TlmPacketizerTester ::runQueueOverflowTest() {
+    // Run is `drop`: overflowing the message queue must discard the extras,
+    // never FW_ASSERT (this aborted in flight during BG4L landing).
+    this->clearHistory();
+    for (U32 i = 0; i < QUEUE_DEPTH + 5; i++) {
+        this->invoke_to_Run(0, 0);
+    }
+    // Reaching here without SIGABRT means the overflow was dropped. Nothing
+    // was dispatched, so no packets were sent.
+    ASSERT_from_PktSend_SIZE(0);
+}
+
 void TlmPacketizerTester ::pingTest() {
     this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);

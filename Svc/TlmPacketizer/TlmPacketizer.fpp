@@ -34,7 +34,7 @@ module Svc {
     output port pingOut: Svc.Ping
 
     @ Run port for starting packet send cycle
-    async input port Run: Svc.Sched
+    async input port Run: Svc.Sched drop
 
     @ Input configuration port
     async input port configureSectionGroupRate: ConfigureGroupRate

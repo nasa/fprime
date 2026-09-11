@@ -98,6 +98,9 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Commanding test: verify SET_LEVEL invalid-level returns VALIDATION_ERROR
     void setLevelInvalidTest(void);
 
+//! Overflow the Run message queue and verify it drops instead of asserting
+void runQueueOverflowTest(void);
+
     //! Duplicate channel ID across packets with identical size is accepted
     void duplicateChannelIdMatchingSizeTest(void);
 
