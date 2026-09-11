@@ -40,8 +40,10 @@ void TmFramerTester ::testComStatusPassthrough() {
     ASSERT_from_comStatusOut(1, inputStatus);  // at index 1, received FAILURE
 }
 
-void TmFramerTester ::fillDataField(U8* bufferData) {
-    for (FwSizeType i = 0; i < TmFramer::TmPayloadCapacity; ++i) {
+void TmFramerTester ::fillDataField(Fw::Buffer& buffer) {
+    ASSERT_EQ(buffer.getSize(), static_cast<FwSizeType>(TmFramer::TmPayloadCapacity));
+    U8* const bufferData = buffer.getData();
+    for (FwSizeType i = 0; i < buffer.getSize(); ++i) {
         bufferData[i] = static_cast<U8>(i & 0xFF);
     }
 }
@@ -50,7 +52,7 @@ void TmFramerTester ::testNominalFraming() {
     U8 bufferData[TmFramer::TmPayloadCapacity];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext defaultContext;
-    this->fillDataField(bufferData);
+    this->fillDataField(buffer);
 
     // Invoke the dataIn handler
     this->invoke_to_dataIn(0, buffer, defaultContext);
@@ -76,8 +78,7 @@ void TmFramerTester ::testNominalFraming() {
     ASSERT_EQ(this->component.m_masterFrameCount, outMcCount + 1);
     ASSERT_EQ(this->component.m_virtualFrameCount, outVcCount + 1);
 
-    // The frame is header + the data field exactly as delivered + trailer
-    ASSERT_EQ(TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + TMTrailer::SERIALIZED_SIZE, expectedFrameSize);
+    // The data field is carried exactly as delivered
     for (FwSizeType i = 0; i < sizeof(bufferData); ++i) {
         ASSERT_EQ(outBuffer.getData()[TMHeader::SERIALIZED_SIZE + i], bufferData[i]) << "Data mismatch at index " << i;
     }
@@ -87,7 +88,7 @@ void TmFramerTester ::testSeqCountWrapAround() {
     U8 bufferData[TmFramer::TmPayloadCapacity];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext defaultContext;
-    this->fillDataField(bufferData);
+    this->fillDataField(buffer);
 
     // Intentionally set the sequence count to 250 and iterate 10 times
     // to test the wrap around of the sequence counts

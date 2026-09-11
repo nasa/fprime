@@ -124,8 +124,8 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Tests an idle packet spanning across aggregates when residual space is below the minimum
     void test_spanning_idle_span();
 
-    //! Tests that configure() asserts once data has been aggregated
-    void test_configure_after_fill_asserts();
+    //! Tests that configure() asserts when called again without an intervening cleanup()
+    void test_reconfigure_without_cleanup_asserts();
 
     //! Tests that configure() asserts on aggregation sizes outside the supported range
     void test_configure_invalid_size_asserts();
@@ -138,6 +138,9 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
 
     //! dataIn on a released instance asserts
     void test_datain_after_cleanup_asserts();
+
+    //! cleanup() asserts while the aggregate is held downstream
+    void test_cleanup_while_held_asserts();
 
     //! Tests that, without spanning, a held packet larger than an aggregate asserts
     void test_oversize_hold_asserts();

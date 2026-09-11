@@ -50,6 +50,10 @@ class ComAggregator final : public ComAggregatorComponentBase {
     );
 
     //! Deallocate the aggregation buffer
+    //!
+    //! Must only be called once the downstream framer has returned the aggregate and no further data or status
+    //! can arrive (i.e. after the component's task has stopped); asserts if the aggregate is still held
+    //! downstream. configure() may be called again afterwards.
     void cleanup();
 
     void preamble() override;

@@ -62,7 +62,7 @@ leaves at least a minimum idle packet (header + 1 byte, 7 bytes) of residual; ot
 (idle-filled) and the buffer starts the next one. A single buffer may therefore be at most `aggregationSize - 7`
 bytes. `configure()` asserts unless a full-size `Fw::ComBuffer` or file buffer Space Packet fits within that limit,
 and unless the largest possible residual (`aggregationSize - 1`) is expressible in the idle packet's SPP length field
-(`aggregationSize <= 65544`).
+(`aggregationSize <= 65543`).
 
 ### Packet Spanning
 

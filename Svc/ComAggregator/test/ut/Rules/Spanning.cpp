@@ -24,6 +24,11 @@ void ComAggregatorTester::spanning_rbt_start() {
 }
 
 void ComAggregatorTester::spanning_rbt_finish() {
+    // The downstream framer returns the aggregate before the instance is cleaned up
+    if (this->m_outstanding) {
+        this->invoke_to_dataReturnIn(0, this->m_outFrame, this->m_outContext);
+        this->m_outstanding = false;
+    }
     while (!this->m_unreturned.empty()) {
         delete[] this->m_unreturned.front();
         this->m_unreturned.pop_front();

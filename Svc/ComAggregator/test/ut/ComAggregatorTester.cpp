@@ -636,9 +636,7 @@ void ComAggregatorTester ::test_spanning_idle_span() {
 // Assertion tests
 // ----------------------------------------------------------------------
 
-void ComAggregatorTester ::test_configure_after_fill_asserts() {
-    this->test_initial();
-    (void)this->test_fill(false);
+void ComAggregatorTester ::test_reconfigure_without_cleanup_asserts() {
     ASSERT_DEATH_IF_SUPPORTED(
         this->component.configure(DEFAULT_AGGREGATION_SIZE, true, TEST_ALLOCATION_ID, this->m_allocator),
         "ComAggregator.cpp");
@@ -737,6 +735,22 @@ void ComAggregatorTester ::test_datain_after_cleanup_asserts() {
     delete[] buffer.getData();
 }
 
+void ComAggregatorTester ::test_cleanup_while_held_asserts() {
+    // Precondition: fill has run
+    this->invoke_to_timeout(0, 0);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->component.m_bufferState, Fw::Buffer::OwnershipState::NOT_OWNED);
+    ASSERT_DEATH_IF_SUPPORTED(this->component.cleanup(), "ComAggregator.cpp");
+    ASSERT_EQ(this->m_allocator.m_deallocations, 0);
+    // Const cast is safe as data is not altered
+    this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(0).data),
+                                 this->fromPortHistory_dataOut->at(0).context);
+    ASSERT_EQ(this->component.m_bufferState, Fw::Buffer::OwnershipState::OWNED);
+    this->clearHistory();
+}
+
 void ComAggregatorTester ::test_oversize_hold_asserts() {
     // Precondition: fill has run, spanning disabled
     ComCfg::FrameContext context;
@@ -750,6 +764,10 @@ void ComAggregatorTester ::test_oversize_hold_asserts() {
     ASSERT_DEATH_IF_SUPPORTED((this->invoke_to_dataIn(0, oversize, context), this->dispatchOne(this->component)),
                               "ComAggregator.cpp");
     delete[] oversize.getData();
+    // Return the outstanding aggregate so the instance can be cleaned up
+    // Const cast is safe as data is not altered
+    this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(0).data),
+                                 this->fromPortHistory_dataOut->at(0).context);
     this->clearHistory();
 }
 

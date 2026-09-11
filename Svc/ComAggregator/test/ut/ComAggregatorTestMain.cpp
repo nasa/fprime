@@ -107,9 +107,9 @@ TEST(Spanning, IdlePacketSpansFrames) {
     tester.test_spanning_idle_span();
 }
 
-TEST(Assertions, ConfigureAfterFill) {
+TEST(Assertions, ReconfigureWithoutCleanup) {
     Svc::ComAggregatorTester tester;
-    tester.test_configure_after_fill_asserts();
+    tester.test_reconfigure_without_cleanup_asserts();
 }
 
 TEST(Assertions, ConfigureInvalidSize) {
@@ -130,6 +130,13 @@ TEST(Lifecycle, Cleanup) {
 TEST(Lifecycle, DataInAfterCleanup) {
     Svc::ComAggregatorTester tester;
     tester.test_datain_after_cleanup_asserts();
+}
+
+TEST(Lifecycle, CleanupWhileHeld) {
+    Svc::ComAggregatorTester tester;
+    tester.test_initial();
+    tester.test_fill(false);
+    tester.test_cleanup_while_held_asserts();
 }
 
 // Per-instance aggregation size: the smallest size non-spanning supports

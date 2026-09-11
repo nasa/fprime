@@ -71,6 +71,9 @@ void ComAggregator ::configure(FwSizeType aggregationSize,
 
 void ComAggregator ::cleanup() {
     if ((this->m_allocator != nullptr) && (this->m_allocation != nullptr)) {
+        // The aggregate must not be held downstream when its storage is released
+        FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::OWNED,
+                  static_cast<FwAssertArgType>(this->m_bufferState.load()));
         this->m_frameSerializer.setExtBuffer(nullptr, 0);
         this->m_frameBuffer.set(nullptr, 0);
         this->m_aggregationSize = 0;
@@ -173,8 +176,6 @@ void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_Aggrega
         const Fw::Buffer::OwnershipState previousState =
             this->m_bufferState.exchange(Fw::Buffer::OwnershipState::NOT_OWNED);
         FW_ASSERT(previousState == Fw::Buffer::OwnershipState::OWNED, static_cast<FwAssertArgType>(previousState));
-        // Restore the size in case a downstream consumer shrank the buffer before returning it
-        this->m_frameBuffer.setSize(this->m_frameSerializer.getSize());
         this->m_allow_timeout = false;  // Timeout messages should be discarded in WAIT_STATUS state
         this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);
     }
@@ -298,9 +299,7 @@ void ComAggregator ::fillFromHeld() {
 }
 
 void ComAggregator ::fillResidualWithIdle() {
-    FW_ASSERT(this->m_frameSerializer.getSize() <= this->m_aggregationSize,
-              static_cast<FwAssertArgType>(this->m_frameSerializer.getSize()));
-    const FwSizeType residual = this->m_aggregationSize - this->m_frameSerializer.getSize();
+    const FwSizeType residual = this->remainingCapacity();
     if (residual == 0) {
         return;
     }

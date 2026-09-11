@@ -62,8 +62,8 @@ class TmFramerTester final : public TmFramerGTestBase {
     //! Initialize components
     void initComponents();
 
-    //! Fill a full data field (TmFramer::TmPayloadCapacity bytes) with a recognizable pattern
-    void fillDataField(U8* bufferData);
+    //! Fill a full data field (a TmFramer::TmPayloadCapacity-byte buffer) with a recognizable pattern
+    void fillDataField(Fw::Buffer& buffer);
 
     U16 getFrameScId(U8* frameData);    //!< Get the Spacecraft ID from the frame - no boundary check
     U8 getFrameVcId(U8* frameData);     //!< Get the Virtual Channel ID from the frame - no boundary check

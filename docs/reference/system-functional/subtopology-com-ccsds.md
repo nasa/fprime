@@ -56,6 +56,7 @@ Incoming data follows a two-stage deframing process:
 ### Configuration
 
 - Base IDs, queue sizes, stack sizes, priorities, and CPU affinities via ComCcsdsConfig.
+- Aggregate size and packet spanning via `ComCcsdsConfig.Aggregator` (`aggregationSize` defaults to `Svc.Ccsds.TmDataFieldSize` and must be reduced by any layer inserted before the TM framer, e.g. `Svc.ComCcsdsSdls`; see the `Svc.ComAggregator` SDD).
 - CCSDS-specific parameters (APIDs, virtual channels) are configured through the protocol components.
 
 ### Required Inputs

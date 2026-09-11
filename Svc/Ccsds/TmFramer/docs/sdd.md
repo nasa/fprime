@@ -4,7 +4,7 @@ The `Svc::Ccsds::TmFramer` is an implementation of the [FramerInterface](../../.
 
 It receives payload data (such as a Space Packet or a VCA_SDU) on input and produces a TM frame on its output port as a result. Please refer to the CCSDS [TM specification (CCSDS 132.0-B-3)](https://ccsds.org/Pubs/132x0b3.pdf) for details on the frame format and protocol.
 
-The `Svc::Ccsds::TmFramer` is designed to work in the common F Prime telemetry stack, receiving data from an upstream [`Svc::ComQueue`](../../../ComQueue/docs/sdd.md) and passing frames to a [Communications Adapter](../../../Interfaces/docs/sdd.md), such as a Radio manager component or [`Svc::ComStub`](../../../ComStub/docs/sdd.md), for transmission on the wire. It is commonly coupled with the [`Svc::Ccsds::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) to wrap CCSDS Space Packets into TM frames.
+The `Svc::Ccsds::TmFramer` is designed to work in the common F Prime telemetry stack, receiving complete, idle-filled data fields from an upstream [`Svc::ComAggregator`](../../../ComAggregator/docs/sdd.md) and passing frames to a [Communications Adapter](../../../Interfaces/docs/sdd.md), such as a Radio manager component or [`Svc::ComStub`](../../../ComStub/docs/sdd.md), for transmission on the wire. It is commonly coupled with the [`Svc::Ccsds::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) to wrap CCSDS Space Packets into TM frames.
 
 ## Internals
 

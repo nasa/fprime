@@ -62,7 +62,7 @@ An optional SDLS layer provides per-frame encryption and decryption keyed by a 1
 
 ### Protocol Layering
 
-The CCSDS components can be stacked to provide multiple protocol layers. A typical downlink path might be: data source → Space Packet Framer → TM Framer → byte stream driver. A typical uplink path: byte stream driver → Frame Accumulator → TC Deframer → Space Packet Deframer → Router. The optional SDLS layer sits between the Space Packet layer and the transfer frame layer in both directions (see the `Svc.ComCcsdsSdls` subtopology). The modular design allows missions to select the specific protocol layers they require.
+The CCSDS components can be stacked to provide multiple protocol layers. A typical downlink path might be: data source → Space Packet Framer → ComAggregator → TM Framer → byte stream driver (the TM Framer requires complete, idle-filled data fields from `Svc.ComAggregator`). A typical uplink path: byte stream driver → Frame Accumulator → TC Deframer → Space Packet Deframer → Router. The optional SDLS layer sits between the aggregator and the transfer frame layer on downlink, and between the transfer frame layer and the Space Packet layer on uplink (see the `Svc.ComCcsdsSdls` subtopology). The modular design allows missions to select the specific protocol layers they require.
 
 ### Unsupported Features
 
