@@ -44,6 +44,9 @@ jobs:
       run_unit_tests: false
       target_ref: ${{ needs.get-branch.outputs.target-branch }}
       fprime_location: ./lib/fprime
+      # Svc.Ccsds.AesGcmEncryptor/Decryptor (used by the reference's SDLS link) need OpenSSL >= 3.5;
+      # ubuntu-22.04 ships 3.0.x
+      openssl_version: "3.5.8"
 
   test:
     name: "Test"

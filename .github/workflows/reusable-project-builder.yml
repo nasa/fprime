@@ -44,6 +44,11 @@ on:
         required: false
         type: boolean
         default: false
+      openssl_version:
+        description: "OpenSSL version to build (static) and expose via OPENSSL_ROOT_DIR before generating, e.g. 3.5.8. Empty skips this."
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -73,6 +78,36 @@ jobs:
       - name: "Install requirements.txt"
         run: |
           pip3 install -r ${FPRIME_LOCATION}/requirements.txt
+        shell: bash
+      # OpenSSL is built as static libraries so the produced binaries carry no runtime
+      # dependency on a non-system libcrypto (artifacts are run on other jobs/runners)
+      - name: "Restore OpenSSL ${{ inputs.openssl_version }} from cache"
+        if: inputs.openssl_version != ''
+        id: openssl-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/openssl
+          key: openssl-${{ inputs.openssl_version }}-static-${{ inputs.runs_on }}
+      - name: "Build OpenSSL ${{ inputs.openssl_version }}"
+        if: inputs.openssl_version != '' && steps.openssl-cache.outputs.cache-hit != 'true'
+        env:
+          OPENSSL_VERSION: ${{ inputs.openssl_version }}
+        run: |
+          SRC_DIR="${RUNNER_TEMP}/openssl-src"
+          RELEASE_URL="https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}"
+          mkdir -p "${SRC_DIR}"
+          cd "${SRC_DIR}"
+          curl -fsSL -o openssl.tar.gz "${RELEASE_URL}/openssl-${OPENSSL_VERSION}.tar.gz"
+          curl -fsSL -o openssl.tar.gz.sha256 "${RELEASE_URL}/openssl-${OPENSSL_VERSION}.tar.gz.sha256"
+          echo "$(cut -d' ' -f1 openssl.tar.gz.sha256)  openssl.tar.gz" | sha256sum -c -
+          tar -xzf openssl.tar.gz --strip-components=1
+          ./Configure --prefix="${HOME}/openssl" --libdir=lib no-shared no-tests no-docs
+          make -j"$(nproc)" build_libs
+          make install_dev
+        shell: bash
+      - name: "Select OpenSSL ${{ inputs.openssl_version }}"
+        if: inputs.openssl_version != ''
+        run: echo "OPENSSL_ROOT_DIR=${HOME}/openssl" >> "${GITHUB_ENV}"
         shell: bash
       - name: "Generate build cache"
         working-directory: ${{ inputs.build_location }}
@@ -129,6 +164,34 @@ jobs:
       - name: "Install requirements.txt"
         run: |
           pip3 install -r ${FPRIME_LOCATION}/requirements.txt
+        shell: bash
+      - name: "Restore OpenSSL ${{ inputs.openssl_version }} from cache"
+        if: inputs.openssl_version != ''
+        id: openssl-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/openssl
+          key: openssl-${{ inputs.openssl_version }}-static-${{ inputs.runs_on }}
+      - name: "Build OpenSSL ${{ inputs.openssl_version }}"
+        if: inputs.openssl_version != '' && steps.openssl-cache.outputs.cache-hit != 'true'
+        env:
+          OPENSSL_VERSION: ${{ inputs.openssl_version }}
+        run: |
+          SRC_DIR="${RUNNER_TEMP}/openssl-src"
+          RELEASE_URL="https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}"
+          mkdir -p "${SRC_DIR}"
+          cd "${SRC_DIR}"
+          curl -fsSL -o openssl.tar.gz "${RELEASE_URL}/openssl-${OPENSSL_VERSION}.tar.gz"
+          curl -fsSL -o openssl.tar.gz.sha256 "${RELEASE_URL}/openssl-${OPENSSL_VERSION}.tar.gz.sha256"
+          echo "$(cut -d' ' -f1 openssl.tar.gz.sha256)  openssl.tar.gz" | sha256sum -c -
+          tar -xzf openssl.tar.gz --strip-components=1
+          ./Configure --prefix="${HOME}/openssl" --libdir=lib no-shared no-tests no-docs
+          make -j"$(nproc)" build_libs
+          make install_dev
+        shell: bash
+      - name: "Select OpenSSL ${{ inputs.openssl_version }}"
+        if: inputs.openssl_version != ''
+        run: echo "OPENSSL_ROOT_DIR=${HOME}/openssl" >> "${GITHUB_ENV}"
         shell: bash
 
       - name: "Generate UT build cache"
