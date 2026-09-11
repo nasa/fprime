@@ -135,10 +135,11 @@ module Svc {
 
     @ A data product was dropped because the input queue was full (overflow hook)
     event BufferDropped(
+                         $id: FwDpIdType @< The container ID
                          bufferSize: FwSizeType @< The dropped buffer size
                        ) \
       severity warning high \
-      format "Dropped a data product buffer of size {} on queue overflow" \
+      format "Dropped data product id {} of size {} on queue overflow" \
       throttle 10
 
     @ File written

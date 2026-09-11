@@ -4,6 +4,8 @@
 // \brief  cpp file for DpWriter component implementation class
 // ======================================================================
 
+#include <limits>
+
 #include "Svc/DpWriter/DpWriter.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
@@ -135,8 +137,17 @@ void DpWriter::bufferSendIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuff
     // Queue full: return the buffer to its pool instead of leaking, and drop the DP.
     // Runs on the caller's thread; deallocBufferSendOut must reach a guarded/sync sink.
     (void)portNum;
+    // id use max value id if we can't pull it
+    FwDpIdType id = std::numeric_limits<FwDpIdType>::max();
+    if (fwBuffer.isValid() && fwBuffer.getSize() >= Fw::DpContainer::MIN_PACKET_SIZE) {
+        Fw::DpContainer container;
+        container.setBuffer(fwBuffer);
+        if (container.deserializeHeader() == Fw::FW_SERIALIZE_OK) {
+            id = container.getId();
+        }
+    }
     // Record the drop (throttle counter is atomic; safe from the caller's thread)
-    this->log_WARNING_HI_BufferDropped(fwBuffer.getSize());
+    this->log_WARNING_HI_BufferDropped(id, fwBuffer.getSize());
     if (fwBuffer.isValid()) {
       this->deallocBufferSendOut_out(0, fwBuffer);
     }

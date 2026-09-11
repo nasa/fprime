@@ -478,9 +478,12 @@ void TestState ::testBufferSendInOverflowHook() {
     this->invoke_to_bufferSendIn(0, overflowBuffer);
     // The DP is dropped (nothing written or notified), a throttled event records it,
     // and its buffer is returned to the pool
+    Fw::DpContainer overflowContainer;
+    overflowContainer.setBuffer(overflowBuffer);
+    ASSERT_EQ(overflowContainer.deserializeHeader(), Fw::FW_SERIALIZE_OK);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_BufferDropped_SIZE(1);
-    ASSERT_EVENTS_BufferDropped(0, overflowBuffer.getSize());
+    ASSERT_EVENTS_BufferDropped(0, overflowContainer.getId(), overflowBuffer.getSize());
     ASSERT_from_dpWrittenOut_SIZE(0);
     ASSERT_from_procBufferSendOut_SIZE(0);
     ASSERT_from_deallocBufferSendOut_SIZE(1);
