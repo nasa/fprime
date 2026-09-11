@@ -241,6 +241,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES> m_dpCatalog;  //!< The sorted catalog of DPs
     DpStateEntry m_currentXmitEntry;                              //!< Entry currently being transmitted
     bool m_hasCurrentXmit = false;                                //!< Whether m_currentXmitEntry is valid
+    U32 m_currXmitContext = 0;  //!< FileDownlink context of the send in flight, echoed back in fileDone
 
     FwSizeType m_numDpSlots = 0;  //!< Stores the available number of record slots.
 

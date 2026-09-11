@@ -432,6 +432,16 @@ module Svc {
       format "Failed to format DP file name for {} with status {}" \
       throttle 10
 
+    @ fileDone that does not match the send in flight, or arrives with no send in flight
+    event StaleFileDone(
+                            context: U32 @< FileDownlink context carried by the fileDone
+                            status: Svc.SendFileStatus @< Downlink status
+                          ) \
+      severity warning high \
+      id 50 \
+      format "Stale fileDone context {} status {}, no matching transmit in flight" \
+      throttle 10
+
 
     # ----------------------------------------------------------------------
     # Telemetry
