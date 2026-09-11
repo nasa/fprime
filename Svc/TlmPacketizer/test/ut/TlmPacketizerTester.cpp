@@ -1870,6 +1870,10 @@ TlmPacketizerChannelEntry dupConflictPacketBList[] = {{10, 6}, {200, 2}};
 TlmPacketizerPacket dupConflictPacketA = {dupConflictPacketAList, 4, 1, FW_NUM_ARRAY_ELEMENTS(dupConflictPacketAList)};
 TlmPacketizerPacket dupConflictPacketB = {dupConflictPacketBList, 8, 1, FW_NUM_ARRAY_ELEMENTS(dupConflictPacketBList)};
 TlmPacketizerPacketList dupConflictPacketList = {{&dupConflictPacketA, &dupConflictPacketB}, 2};
+
+// A packet with no channels is autocoded by FPP with a nullptr channel list and zero entries.
+constexpr TlmPacketizerPacket emptyPacket = {nullptr, 20, 1, 0};
+TlmPacketizerPacketList emptyPacketList = {{&packet1, &emptyPacket}, 2};
 }  // namespace
 
 void TlmPacketizerTester::duplicateChannelIdMatchingSizeTest() {
@@ -1896,6 +1900,44 @@ void TlmPacketizerTester::duplicateChannelIdConflictingSizeTest() {
     // Conflicting size for the same channel ID must trip the configuration-time assert.
     ASSERT_DEATH_IF_SUPPORTED(this->component.setPacketList(dupConflictPacketList, IGNORE_OMIT_LIST, 1),
                               "TlmPacketizer.cpp");
+}
+
+void TlmPacketizerTester::emptyPacketTest() {
+    this->stockConfiguration();
+    // An empty packet specification must be accepted without asserting.
+    this->component.setPacketList(emptyPacketList, IGNORE_OMIT_LIST, 1);
+
+    Fw::Time ts;
+    Fw::TlmBuffer buff;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
+    this->invoke_to_TlmRecv(0, 10, ts, buff);
+
+    // Only the populated packet is emitted on Run; the empty packet is never marked updated by channel traffic.
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
+    this->clearHistory();
+
+    // The empty packet can be requested explicitly and is emitted as a header-only packet.
+    this->setTestTime(this->m_testTime);
+    this->sendCmd_SEND_PKT(0, 12, 20, static_cast<TelemetrySection::T>(0));
+    this->component.doDispatch();
+    ASSERT_EVENTS_PacketSent_SIZE(1);
+    ASSERT_EVENTS_PacketSent(0, 20);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_SEND_PKT, 12, Fw::CmdResponse::OK);
+
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
+
+    Fw::ComBuffer expected;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
+              expected.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, expected.serializeFrom(static_cast<FwTlmPacketizeIdType>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, expected.serializeFrom(this->m_testTime));
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_EQ(this->fromPortHistory_PktSend->at(static_cast<U32>(section)).data, expected);
+    }
 }
 
 void TlmPacketizerTester::oversizedChannelTest() {

@@ -107,6 +107,9 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Oversized channel value is rejected with a warning event
     void oversizedChannelTest(void);
 
+    //! Packet specification with no channels is accepted and can be sent header-only
+    void emptyPacketTest(void);
+
     //! Helper to set the component into a stock-configuration regardless of default config
     //!
     void stockConfiguration();

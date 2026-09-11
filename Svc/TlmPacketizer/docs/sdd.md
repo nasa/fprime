@@ -22,6 +22,7 @@ The requirements for `Svc::TlmPacketizer` are as follows:
 | TPK-004 | The `Svc::TlmPacketizer` component shall uniquely identify each packet | Unit Test |
 | TPK-005 | The `Svc::TlmPacketizer` component shall write packets upon fulfilling the rate send configurations for its group | Unit Test |
 | TPK-006 | The `Svc::TlmPacketizer` component shall determine output port index based on section and group | Unit Test |
+| TPK-007 | The `Svc::TlmPacketizer` component shall accept a packet specification containing no channels | Unit Test |
 
 
 ## 3. Design
@@ -63,6 +64,8 @@ The following example demonstrates the structure composition of packet set speci
 #### 3.2 Functional Description
 
 The `Svc::TlmPacketizer` component has an input port `TlmRecv` that receives channel updates from other components in the system. These calls from the other components are made by the component implementation classes, but the generated code in the base classes takes the type specific channel value and serializes it, then makes the call to the output port. The `Svc::TlmPacketizer` component can then store the channel value as generic data. The channel ID is used to look up offsets for the channel in each of the defined packets. A channel can be defined in more than one packet. The time tag is stripped from the incoming telemetry value. The time tag of the channel will become the time tag of the entire frame when it is sent.
+
+A packet may be specified with no channels (FPP autocodes such a packet with an empty channel list). It is accepted by `setPacketList`, is never marked updated by channel traffic, and is emitted as a header-only packet (descriptor, packet ID, time tag) when explicitly requested with `SEND_PKT`.
 
 When a call to the `Run()` interface is called, each packet is evaluated for output, one at a time. The packet is locked, determined to contain update data, and then unlocked. The packet's section and group are compared to the output criteria for each section/group pair. If a packet meets the criteria for output in any section/group, the packet is locked again, copied, unlocked, and then sent on each section requiring output. The actual output port is determined by a configurable map of section/group to output port index. 
 

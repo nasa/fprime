@@ -86,6 +86,12 @@ TEST(TestOffNominal, OversizedChannelTest) {
     tester.oversizedChannelTest();
 }
 
+TEST(TestNominal, EmptyPacketTest) {
+    TEST_CASE(100.1.14, "Packet specification with no channels is accepted");
+    Svc::TlmPacketizerTester tester;
+    tester.emptyPacketTest();
+}
+
 TEST(TestNominal, TlmGetTest) {
     TEST_CASE(100.1.8, "Get telemetry channel");
     Svc::TlmPacketizerTester tester;
