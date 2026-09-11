@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>CodeQL — Svc/Ccsds/AesGcmDecryptor</title><style>* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0; padding: 1.5rem; color: #1f2328; background: #ffffff;
+}
+h1 { margin: 0 0 0.25rem 0; font-size: 1.2rem; }
+.meta { color: #57606a; font-size: 0.9rem; margin-bottom: 1rem; }
+table { width: 100%; border-collapse: collapse; }
+table th, table td { padding: 0.35rem 0.6rem; text-align: left; vertical-align: top; }
+table th { font-weight: 500; color: #57606a; font-size: 0.85rem; border-bottom: 1px solid #eaeef2; }
+table tr { border-top: 1px solid #eaeef2; }
+table tr:hover { background: #f6f8fa; }
+table a { color: #0969da; text-decoration: none; }
+table a:hover { text-decoration: underline; }
+.sev-error  { color: #cf222e; font-weight: 600; }
+.sev-medium { color: #9a6700; font-weight: 600; }
+.sev-low    { color: #57606a; }
+.clean { padding: 0.75rem 1rem; background: #dafbe1; border: 1px solid #aceebb;
+         border-radius: 6px; color: #1a7f37; }
+h2 { margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem; }
+.dismissed td { color: #57606a; }
+</style></head><body><h1>CodeQL findings — <code>Svc/Ccsds/AesGcmDecryptor</code></h1><div class="meta"><code>devel</code> @ <code>67086ae13783</code> &middot; generated 2026-09-11T21:21:05Z</div><table><thead><tr><th>File</th><th>Line</th><th>Rule</th><th>Severity</th><th>Message</th></tr></thead><tbody><tr><td><a href="https://github.com/nasa/fprime/blob/67086ae137830cc4f5b1439977e6864daeb34b81/Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptor.cpp#L113">Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptor.cpp:113</a></td><td>113</td><td><code>cpp/fprime/jpl-c/no-boolean-side-effects</code></td><td class="sev-medium">medium</td><td>This Boolean expression is not side-effect free.</td></tr><tr><td><a href="https://github.com/nasa/fprime/blob/67086ae137830cc4f5b1439977e6864daeb34b81/Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptor.cpp#L56">Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptor.cpp:56</a></td><td>56</td><td><code>cpp/jpl-c/function-size-limits</code></td><td class="sev-low">low</td><td>decryptIn_handler has too many lines (68, while 60 are allowed).</td></tr></tbody></table></body></html>
