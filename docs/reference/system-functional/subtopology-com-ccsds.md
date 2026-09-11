@@ -57,6 +57,7 @@ Incoming data follows a two-stage deframing process:
 
 - Base IDs, queue sizes, stack sizes, priorities, and CPU affinities via ComCcsdsConfig.
 - CCSDS-specific parameters (APIDs, virtual channels) are configured through the protocol components.
+- Packet spanning across transfer frames, disabled by default, via ComCcsdsConfig: `Aggregator.enablePacketSpanning` for downlink (see [Svc.ComAggregator](../../../Svc/ComAggregator/docs/sdd.md)), and `TcDeframer.enablePacketSpanning`, `TcDeframer.mapId`, and `TcDeframer.maxSpanningPacketSize` for uplink reassembly of segmented TC frames (see [Svc.Ccsds.TcDeframer](../../../Svc/Ccsds/TcDeframer/docs/sdd.md)); the latter requires a ground framer that adds TC Segment Headers.
 
 ### Required Inputs
 

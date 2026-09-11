@@ -488,6 +488,28 @@ void TcDeframerTester::testSegmentedExactFill() {
     ASSERT_from_errorNotify(0, FrameError::TC_SEGMENT_OVERFLOW);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_SpanningPacketOverflow(0, maxSize, 1, maxSize);
+
+    // A FIRST segment larger than the maximum overflows on its own: fresh buffer released, nothing in progress
+    U8 oversized[maxSize + 1];
+    fillPattern(oversized, sizeof(oversized), 0xD1);
+    this->clearHistory();
+    frame =
+        this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::FIRST, this->m_mapId, oversized, sizeof(oversized));
+    this->invoke_to_dataIn(0, frame, nullContext);
+    ASSERT_FROM_PORT_HISTORY_SIZE(4);
+    ASSERT_from_allocate_SIZE(1);
+    ASSERT_from_deallocate_SIZE(1);
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_errorNotify(0, FrameError::TC_SEGMENT_OVERFLOW);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SpanningPacketOverflow(0, 0, sizeof(oversized), maxSize);
+    // Nothing is in progress: a LAST segment is now unexpected
+    this->clearHistory();
+    frame = this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::LAST, this->m_mapId, expected, 1);
+    this->invoke_to_dataIn(0, frame, nullContext);
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_EVENTS_UnexpectedSegment(0, TCSegmentSequenceFlags::LAST);
 }
 
 void TcDeframerTester::testSegmentedShortAllocation() {

@@ -261,8 +261,9 @@ void TcDeframer::completeSpanningPacket() {
     }
     Fw::Buffer packet = this->m_spanningBuffer;
     packet.setSize(this->m_spanningBytesReceived);
+    const ComCfg::FrameContext context = this->m_spanningContext;
     this->resetSpanningPacket();
-    this->dataOut_out(0, packet, this->m_spanningContext);
+    this->dataOut_out(0, packet, context);
 }
 
 bool TcDeframer::trackInFlight(const Fw::Buffer& allocated) {
