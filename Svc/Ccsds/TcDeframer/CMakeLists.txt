@@ -10,6 +10,8 @@
 #
 ####
 
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/TcDeframerConfig")
+
 register_fprime_library(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/TcDeframer.cpp"
@@ -17,6 +19,7 @@ register_fprime_library(
     "${CMAKE_CURRENT_LIST_DIR}/TcDeframer.fpp"
   DEPENDS
     Svc_Ccsds_Types
+    Svc_Ccsds_TcDeframer_config_TcDeframerConfig
 )
 
 register_fprime_ut(
@@ -27,6 +30,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/TcDeframer.fpp"
   DEPENDS
     Svc_Ccsds_Types
+    Svc_Ccsds_TcDeframer_config_TcDeframerConfig
     STest
   UT_AUTO_HELPERS
 )

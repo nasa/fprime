@@ -81,6 +81,16 @@ TEST(TcDeframer, testSegmentedOverflow) {
     tester.testSegmentedOverflow();
 }
 
+TEST(TcDeframer, testSegmentedExactFill) {
+    Svc::Ccsds::TcDeframerTester tester;
+    tester.testSegmentedExactFill();
+}
+
+TEST(TcDeframer, testSegmentedShortAllocation) {
+    Svc::Ccsds::TcDeframerTester tester;
+    tester.testSegmentedShortAllocation();
+}
+
 TEST(TcDeframer, testSegmentedInFlightLimit) {
     Svc::Ccsds::TcDeframerTester tester;
     tester.testSegmentedInFlightLimit();

@@ -33,8 +33,6 @@ void TcDeframer::configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid) {
 
 void TcDeframer::configureSegmentation(bool segmentHeaderPresent, U8 mapId, FwSizeType maxSpanningPacketSize) {
     if (segmentHeaderPresent) {
-        FW_ASSERT(this->isConnected_allocate_OutputPort(0));
-        FW_ASSERT(this->isConnected_deallocate_OutputPort(0));
         FW_ASSERT(maxSpanningPacketSize > 0);
         FW_ASSERT((mapId & TCSubfields::SegmentMapIdMask) == mapId, mapId);
     }
@@ -118,7 +116,7 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     U16 transmitted_crc = trailer.get_fecf();
     if (transmitted_crc != computed_crc) {
-        this->log_WARNING_HI_InvalidCrc(computed_crc, transmitted_crc);
+        this->log_WARNING_HI_InvalidCrc(transmitted_crc, computed_crc);
         this->errorNotifyHelper(Ccsds::FrameError::TC_INVALID_CRC);
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
@@ -186,15 +184,18 @@ void TcDeframer::handleSegment(Fw::Buffer& data,
     }
     data.advance(TCSegmentHeader::SERIALIZED_SIZE);
 
+    if (sequenceFlags == TCSegmentSequenceFlags::UNSEGMENTED) {
+        // Whole packet in one frame: forward zero-copy, downstream returns it via dataReturnIn
+        this->abandonSpanningPacket();
+        this->dataOut_out(0, data, dataContext);
+        return;
+    }
+    // Segmented: copy the segment data into the reassembly buffer, then return the frame upstream
     switch (sequenceFlags.e) {
-        case TCSegmentSequenceFlags::UNSEGMENTED:
-            // Whole packet in one frame: forward zero-copy, downstream returns it via dataReturnIn
-            this->abandonSpanningPacket();
-            this->dataOut_out(0, data, dataContext);
-            return;
         case TCSegmentSequenceFlags::FIRST:
             this->abandonSpanningPacket();
             if (this->startSpanningPacket(dataContext)) {
+                // An overflowing FIRST segment is reported and discarded by the callee; the frame is returned below
                 (void)this->appendToSpanningPacket(data);
             }
             break;
@@ -211,7 +212,6 @@ void TcDeframer::handleSegment(Fw::Buffer& data,
             FW_ASSERT(0, static_cast<FwAssertArgType>(sequenceFlags.e));
             break;
     }
-    // Segment data has been copied out (or dropped): the frame goes back upstream
     this->dataReturnOut_out(0, data, frameContext);
 }
 
@@ -236,7 +236,7 @@ bool TcDeframer::appendToSpanningPacket(const Fw::Buffer& data) {
               static_cast<FwAssertArgType>(this->m_maxSpanningPacketSize));
     // Compare against the remaining room rather than summing, so the check cannot wrap
     if (data.getSize() > (this->m_maxSpanningPacketSize - this->m_spanningBytesReceived)) {
-        this->log_WARNING_HI_SpanningPacketOverflow(this->m_spanningBytesReceived + data.getSize(),
+        this->log_WARNING_HI_SpanningPacketOverflow(this->m_spanningBytesReceived, data.getSize(),
                                                     this->m_maxSpanningPacketSize);
         this->errorNotifyHelper(Ccsds::FrameError::TC_SEGMENT_OVERFLOW);
         this->discardSpanningPacket();
@@ -254,39 +254,25 @@ void TcDeframer::completeSpanningPacket() {
     FW_ASSERT(this->isSpanningPacketInProgress());
     // Track the full allocation for deallocation; downstream sees only the packet bytes
     if (not this->trackInFlight(this->m_spanningBuffer)) {
-        this->log_WARNING_HI_SpanningPacketInFlightLimit(TcDeframer_MaxSpanningPacketsInFlight);
+        this->log_WARNING_HI_SpanningPacketInFlightLimit(TcDeframerCfg::MaxSpanningPacketsInFlight);
         this->errorNotifyHelper(Ccsds::FrameError::TC_SEGMENT_IN_FLIGHT_LIMIT);
         this->discardSpanningPacket();
         return;
     }
     Fw::Buffer packet = this->m_spanningBuffer;
     packet.setSize(this->m_spanningBytesReceived);
-    this->m_spanningBuffer = Fw::Buffer();
-    this->m_spanningBytesReceived = 0;
+    this->resetSpanningPacket();
     this->dataOut_out(0, packet, this->m_spanningContext);
 }
 
 bool TcDeframer::trackInFlight(const Fw::Buffer& allocated) {
     Os::ScopeLock lock(this->m_inFlightLock);
-    for (FwIndexType i = 0; i < static_cast<FwIndexType>(TcDeframer_MaxSpanningPacketsInFlight); i++) {
-        if (not this->m_inFlight[i].isValid()) {
-            this->m_inFlight[i] = allocated;
-            return true;
-        }
-    }
-    return false;
+    return this->m_inFlight.insert(allocated.getOriginalData(), allocated) == Fw::Success::SUCCESS;
 }
 
 bool TcDeframer::releaseInFlight(const Fw::Buffer& returned, Fw::Buffer& allocated) {
     Os::ScopeLock lock(this->m_inFlightLock);
-    for (FwIndexType i = 0; i < static_cast<FwIndexType>(TcDeframer_MaxSpanningPacketsInFlight); i++) {
-        if (this->m_inFlight[i].isValid() && (this->m_inFlight[i].getOriginalData() == returned.getOriginalData())) {
-            allocated = this->m_inFlight[i];
-            this->m_inFlight[i] = Fw::Buffer();
-            return true;
-        }
-    }
-    return false;
+    return this->m_inFlight.remove(returned.getOriginalData(), allocated) == Fw::Success::SUCCESS;
 }
 
 void TcDeframer::abandonSpanningPacket() {
@@ -300,6 +286,10 @@ void TcDeframer::discardSpanningPacket() {
     if (this->m_spanningBuffer.isValid()) {
         this->deallocate_out(0, this->m_spanningBuffer);
     }
+    this->resetSpanningPacket();
+}
+
+void TcDeframer::resetSpanningPacket() {
     this->m_spanningBuffer = Fw::Buffer();
     this->m_spanningBytesReceived = 0;
 }

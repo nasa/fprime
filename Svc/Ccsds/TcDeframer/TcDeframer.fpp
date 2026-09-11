@@ -4,9 +4,6 @@ module Ccsds {
     @ Optionally reassembles packets segmented across multiple TC frames (CCSDS 232.0-B-4 Section 4.1.3.3)
     passive component TcDeframer {
 
-        @ Maximum number of reassembled spanning packets simultaneously owned by downstream components
-        constant MaxSpanningPacketsInFlight = 8
-
         import Deframer
 
         @ Port to notify of a deframing error
@@ -61,9 +58,9 @@ module Ccsds {
             format "Spanning TC packet allocation of {} bytes failed; packet dropped"
 
         @ A spanning packet exceeded the configured maximum size; packet dropped
-        event SpanningPacketOverflow(bytesReceived: FwSizeType, maxSize: FwSizeType) \
+        event SpanningPacketOverflow(bytesReceived: FwSizeType, segmentSize: FwSizeType, maxSize: FwSizeType) \
             severity warning high \
-            format "Spanning TC packet of {} bytes exceeds maximum of {} bytes; packet dropped"
+            format "Spanning TC packet of {} bytes plus {} byte segment exceeds maximum of {} bytes; packet dropped"
 
         @ A reassembled spanning packet was dropped because too many are outstanding downstream
         event SpanningPacketInFlightLimit(maxInFlight: FwSizeType) \

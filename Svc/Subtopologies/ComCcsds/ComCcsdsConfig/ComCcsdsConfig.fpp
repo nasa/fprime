@@ -50,7 +50,9 @@ module ComCcsdsConfig {
         constant enablePacketSpanning = false
         @ Multiplexer Access Point (MAP) ID accepted when packet spanning is enabled (0..63)
         constant mapId = 0
-        @ Maximum size of a reassembled packet; also the buffer size requested from commsBufferManager per packet
+        @ Maximum size of a reassembled packet; also the buffer size requested from commsBufferManager per packet.
+        @ Must not exceed the largest commsBufferManager bin, and the bins must cover up to
+        @ TcDeframerCfg.MaxSpanningPacketsInFlight + 1 such buffers held by tcDeframer at once
         constant maxSpanningPacketSize = BuffMgr.commsBuffSize
     }
 

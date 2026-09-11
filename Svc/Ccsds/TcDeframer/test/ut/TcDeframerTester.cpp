@@ -172,6 +172,10 @@ void TcDeframerTester::testInvalidCrc() {
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1);  // exactly 1 event emitted
     ASSERT_EVENTS_InvalidCrc_SIZE(1);
+    const U16 computed = Ccsds::Utils::CRC16::compute(buffer.getData(), TCHeader::SERIALIZED_SIZE + dataLength);
+    const U16 transmitted = static_cast<U16>((buffer.getData()[TCHeader::SERIALIZED_SIZE + dataLength] << 8) |
+                                             buffer.getData()[TCHeader::SERIALIZED_SIZE + dataLength + 1]);
+    ASSERT_EVENTS_InvalidCrc(0, transmitted, computed);
 }
 
 // ----------------------------------------------------------------------
@@ -210,19 +214,25 @@ void TcDeframerTester::testSegmentedUnsegmentedPassthrough() {
 
 void TcDeframerTester::testSegmentedTwoSegments() {
     this->enableSegmentation();
+    U8 vcId = static_cast<U8>(STest::Random::lowerUpper(0, 0x3F));
     U8 firstLength = static_cast<U8>(STest::Random::lowerUpper(1, 200));
     U8 lastLength = static_cast<U8>(STest::Random::lowerUpper(1, 200));
     U8 expected[400];
     fillPattern(expected, static_cast<FwSizeType>(firstLength + lastLength), 0x22);
+    ComCfg::FrameContext nullContext;
 
-    this->sendConsumedSegment(TCSegmentSequenceFlags::FIRST, expected, firstLength);
+    Fw::Buffer firstFrame =
+        this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::FIRST, this->m_mapId, expected, firstLength, vcId);
+    this->invoke_to_dataIn(0, firstFrame, nullContext);
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getOriginalData(), firstFrame.getOriginalData());
     ASSERT_from_allocate_SIZE(1);
     ASSERT_EQ(this->fromPortHistory_allocate->at(0).size, ALLOC_BUF_SIZE);
 
     this->clearHistory();
     Fw::Buffer lastFrame = this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::LAST, this->m_mapId,
-                                                            &expected[firstLength], lastLength);
-    ComCfg::FrameContext nullContext;
+                                                            &expected[firstLength], lastLength, vcId);
     this->invoke_to_dataIn(0, lastFrame, nullContext);
 
     // Last segment completes the packet: reassembled packet downstream, frame back upstream
@@ -231,6 +241,8 @@ void TcDeframerTester::testSegmentedTwoSegments() {
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getOriginalData(), lastFrame.getOriginalData());
     this->assertDataOutEquals(expected, static_cast<FwSizeType>(firstLength + lastLength));
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getData(), this->m_allocPool[0]);
+    // The reassembled packet carries the frame context (VC ID) of the segments it was built from
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), vcId);
     ASSERT_EVENTS_SIZE(0);
 
     // The reassembled packet is owned by the deframer and is deallocated on return
@@ -411,7 +423,7 @@ void TcDeframerTester::testSegmentedAllocFailure() {
     frame = this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::LAST, this->m_mapId, payload, sizeof(payload));
     this->invoke_to_dataIn(0, frame, nullContext);
     ASSERT_from_dataOut_SIZE(0);
-    ASSERT_EVENTS_UnexpectedSegment_SIZE(1);
+    ASSERT_EVENTS_UnexpectedSegment(0, TCSegmentSequenceFlags::LAST);
 }
 
 void TcDeframerTester::testSegmentedOverflow() {
@@ -436,14 +448,79 @@ void TcDeframerTester::testSegmentedOverflow() {
     ASSERT_from_errorNotify(0, FrameError::TC_SEGMENT_OVERFLOW);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_SpanningPacketOverflow_SIZE(1);
-    ASSERT_EVENTS_SpanningPacketOverflow(0, 2 * sizeof(payload), maxSize);
+    ASSERT_EVENTS_SpanningPacketOverflow(0, sizeof(payload), sizeof(payload), maxSize);
 
     // No packet is in progress afterwards
     this->clearHistory();
     frame = this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::LAST, this->m_mapId, payload, sizeof(payload));
     this->invoke_to_dataIn(0, frame, nullContext);
     ASSERT_from_dataOut_SIZE(0);
-    ASSERT_EVENTS_UnexpectedSegment_SIZE(1);
+    ASSERT_EVENTS_UnexpectedSegment(0, TCSegmentSequenceFlags::LAST);
+}
+
+void TcDeframerTester::testSegmentedExactFill() {
+    const FwSizeType maxSize = 100;
+    this->enableSegmentation(0, maxSize);
+    U8 expected[maxSize];
+    fillPattern(expected, sizeof(expected), 0xD0);
+    ComCfg::FrameContext nullContext;
+
+    // Segments summing exactly to the maximum are accepted and delivered
+    this->sendConsumedSegment(TCSegmentSequenceFlags::FIRST, expected, 60);
+    this->clearHistory();
+    Fw::Buffer frame = this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::LAST, this->m_mapId, &expected[60], 40);
+    this->invoke_to_dataIn(0, frame, nullContext);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    this->assertDataOutEquals(expected, maxSize);
+    ASSERT_EVENTS_SIZE(0);
+
+    // One byte past an exactly-full packet overflows
+    this->sendConsumedSegment(TCSegmentSequenceFlags::FIRST, expected, 60);
+    this->sendConsumedSegment(TCSegmentSequenceFlags::CONTINUING, &expected[60], 40);
+    this->clearHistory();
+    frame = this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::LAST, this->m_mapId, expected, 1);
+    this->invoke_to_dataIn(0, frame, nullContext);
+    ASSERT_FROM_PORT_HISTORY_SIZE(3);
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_deallocate_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_errorNotify(0, FrameError::TC_SEGMENT_OVERFLOW);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SpanningPacketOverflow(0, maxSize, 1, maxSize);
+}
+
+void TcDeframerTester::testSegmentedShortAllocation() {
+    this->enableSegmentation();
+    U8 payload[10];
+    fillPattern(payload, sizeof(payload), 0xCD);
+    ComCfg::FrameContext nullContext;
+
+    // A valid buffer smaller than requested cannot hold a maximum-size packet: treated as an allocation failure
+    const FwSizeType shortSize = ALLOC_BUF_SIZE - 1;
+    this->m_shortNextAlloc = shortSize;
+    Fw::Buffer frame =
+        this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::FIRST, this->m_mapId, payload, sizeof(payload));
+    this->invoke_to_dataIn(0, frame, nullContext);
+
+    // The short buffer is handed back to the allocator, segment dropped, frame returned
+    ASSERT_FROM_PORT_HISTORY_SIZE(4);
+    ASSERT_from_allocate_SIZE(1);
+    ASSERT_from_deallocate_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), this->m_allocPool[0]);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(), shortSize);
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_errorNotify(0, FrameError::TC_SEGMENT_ALLOC_FAILED);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SpanningPacketAllocFailed(0, ALLOC_BUF_SIZE);
+
+    // No packet is in progress afterwards
+    this->clearHistory();
+    frame = this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::LAST, this->m_mapId, payload, sizeof(payload));
+    this->invoke_to_dataIn(0, frame, nullContext);
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_EVENTS_UnexpectedSegment(0, TCSegmentSequenceFlags::LAST);
 }
 
 void TcDeframerTester::testSegmentedInFlightLimit() {
@@ -454,7 +531,7 @@ void TcDeframerTester::testSegmentedInFlightLimit() {
     Fw::Buffer frame;
 
     // Fill the in-flight table without returning any packet
-    for (FwSizeType i = 0; i < TcDeframer_MaxSpanningPacketsInFlight; i++) {
+    for (FwSizeType i = 0; i < TcDeframerCfg::MaxSpanningPacketsInFlight; i++) {
         this->sendConsumedSegment(TCSegmentSequenceFlags::FIRST, payload, sizeof(payload));
         this->clearHistory();
         frame = this->assembleSegmentFrameBuffer(TCSegmentSequenceFlags::LAST, this->m_mapId, payload, sizeof(payload));
@@ -472,11 +549,11 @@ void TcDeframerTester::testSegmentedInFlightLimit() {
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_deallocate_SIZE(1);
     ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(),
-              this->m_allocPool[TcDeframer_MaxSpanningPacketsInFlight]);
+              this->m_allocPool[TcDeframerCfg::MaxSpanningPacketsInFlight]);
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_from_errorNotify(0, FrameError::TC_SEGMENT_IN_FLIGHT_LIMIT);
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_SpanningPacketInFlightLimit(0, TcDeframer_MaxSpanningPacketsInFlight);
+    ASSERT_EVENTS_SpanningPacketInFlightLimit(0, TcDeframerCfg::MaxSpanningPacketsInFlight);
 
     // Returning one tracked packet frees a slot; a new packet is then delivered again
     this->clearHistory();
@@ -522,6 +599,10 @@ Fw::Buffer TcDeframerTester::from_allocate_handler(FwIndexType portNum, FwSizeTy
     }
     if (size > ALLOC_BUF_SIZE) {
         return Fw::Buffer();
+    }
+    if (this->m_shortNextAlloc != 0) {
+        size = this->m_shortNextAlloc;
+        this->m_shortNextAlloc = 0;
     }
     Fw::Buffer allocated(this->m_allocPool[this->m_nextAlloc], size);
     this->m_nextAlloc = (this->m_nextAlloc + 1) % ALLOC_POOL_COUNT;

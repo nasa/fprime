@@ -26,8 +26,9 @@ class TcDeframerTester final : public TcDeframerGTestBase {
     // Size of each buffer handed out by the test allocate port
     static const FwSizeType ALLOC_BUF_SIZE = 512;
 
-    // Number of buffers the test allocate port can hand out before wrapping around
-    static const FwSizeType ALLOC_POOL_COUNT = TcDeframer_MaxSpanningPacketsInFlight + 2;
+    // Number of buffers the test allocate port can hand out before wrapping around: enough to fill the in-flight
+    // table, plus one for the packet dropped at the limit and one for the packet delivered after a slot is freed
+    static const FwSizeType ALLOC_POOL_COUNT = TcDeframerCfg::MaxSpanningPacketsInFlight + 2;
 
     // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
@@ -64,6 +65,8 @@ class TcDeframerTester final : public TcDeframerGTestBase {
     void testSegmentedInvalidMapId();
     void testSegmentedAllocFailure();
     void testSegmentedOverflow();
+    void testSegmentedExactFill();
+    void testSegmentedShortAllocation();
     void testSegmentedInFlightLimit();
     void testSegmentedEmptySegment();
 
@@ -114,17 +117,19 @@ class TcDeframerTester final : public TcDeframerGTestBase {
     //! The component under test
     TcDeframer component;
 
-    U8 m_frameData[300];  // data buffer used to produce test frames
+    U8 m_frameData[300] = {};  // data buffer used to produce test frames
 
-    U8 m_segmentData[256];  // scratch buffer holding [segment header | data] while building a frame
+    U8 m_segmentData[256] = {};  // scratch buffer holding [segment header | data] while building a frame
 
-    U8 m_allocPool[ALLOC_POOL_COUNT][ALLOC_BUF_SIZE];  // backing storage returned by the allocate port
+    U8 m_allocPool[ALLOC_POOL_COUNT][ALLOC_BUF_SIZE] = {};  // backing storage returned by the allocate port
 
     FwSizeType m_nextAlloc = 0;  // index of the next pool buffer to hand out
 
     U8 m_mapId = 0;  // MAP ID the component was configured with by enableSegmentation
 
     bool m_failNextAlloc = false;  // when true, the next allocate call returns an invalid buffer
+
+    FwSizeType m_shortNextAlloc = 0;  // when non-zero, the next allocate call returns a buffer of this smaller size
 };
 
 }  // namespace Ccsds

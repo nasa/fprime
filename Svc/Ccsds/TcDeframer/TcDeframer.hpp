@@ -7,9 +7,10 @@
 #ifndef Svc_Ccsds_TcDeframer_HPP
 #define Svc_Ccsds_TcDeframer_HPP
 
+#include "Fw/DataStructures/ArrayMap.hpp"
 #include "Os/Mutex.hpp"
-#include "Svc/Ccsds/TcDeframer/FppConstantsAc.hpp"
 #include "Svc/Ccsds/TcDeframer/TcDeframerComponentAc.hpp"
+#include "TcDeframerConfig/FppConstantsAc.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -42,12 +43,14 @@ class TcDeframer : public TcDeframerComponentBase {
 
     //! \brief Configure reassembly of packets segmented across multiple TC frames (CCSDS 232.0-B-4 Section 4.1.3.3)
     //!
-    //! Disabled by default. When enabled, each frame data field starts with a Segment Header and allocate/deallocate
-    //! must be connected; see docs/sdd.md for the reassembly rules.
+    //! Disabled by default. When enabled, each frame data field starts with a Segment Header, and allocate/deallocate
+    //! must be connected before the first frame is received; see docs/sdd.md for the reassembly rules. Call once,
+    //! before frames are processed (typically from the topology's configComponents).
     //!
     //! \param segmentHeaderPresent Whether TC frame data fields carry a Segment Header
-    //! \param mapId The MAP ID to accept (0..63); segments carrying another MAP ID are dropped
-    //! \param maxSpanningPacketSize Maximum size of a reassembled packet, also the size requested from the allocator
+    //! \param mapId The MAP ID to accept (0..63, asserted); segments carrying another MAP ID are dropped
+    //! \param maxSpanningPacketSize Maximum size of a reassembled packet (> 0, asserted), also the size requested
+    //!        from the allocator; an allocation smaller than this is treated as an allocation failure
     //!
     void configureSegmentation(bool segmentHeaderPresent, U8 mapId, FwSizeType maxSpanningPacketSize);
 
@@ -109,11 +112,14 @@ class TcDeframer : public TcDeframerComponentBase {
     //! Deallocate the reassembly buffer and reset the spanning packet state
     void discardSpanningPacket();
 
+    //! Reset the spanning packet state without touching the reassembly buffer's allocation
+    void resetSpanningPacket();
+
     //! \return true if a spanning packet is in progress
     bool isSpanningPacketInProgress() const;
 
   private:
-    U16 m_vcId;                   //!< The virtual channel ID this deframer is configured to handle
+    U16 m_vcId = 0;               //!< The virtual channel ID this deframer is configured to handle
     U16 m_spacecraftId;           //!< The spacecraft ID this deframer is configured to handle
     bool m_acceptAllVcid = true;  //!< Flag to accept all VCIDs
 
@@ -123,10 +129,10 @@ class TcDeframer : public TcDeframerComponentBase {
     Fw::Buffer m_spanningBuffer;             //!< Reassembly buffer, valid while a spanning packet is in progress
     FwSizeType m_spanningBytesReceived = 0;  //!< Bytes accumulated in the spanning packet in progress
     ComCfg::FrameContext m_spanningContext;  //!< Context of the first segment, forwarded with the reassembled packet
-    //! Reassembled packets owned downstream, awaiting return on dataReturnIn for deallocation.
-    //! dataReturnIn is a sync port that may run on a downstream thread while dataIn holds the component guard,
-    //! so the table has its own lock.
-    Fw::Buffer m_inFlight[TcDeframer_MaxSpanningPacketsInFlight];
+    //! Reassembled packets owned downstream, keyed by allocation address, awaiting return on dataReturnIn for
+    //! deallocation. dataReturnIn is a sync port that may run on a downstream thread while dataIn holds the
+    //! component guard, so the table has its own lock.
+    Fw::ArrayMap<U8*, Fw::Buffer, TcDeframerCfg::MaxSpanningPacketsInFlight> m_inFlight;
     Os::Mutex m_inFlightLock;  //!< Guards m_inFlight
 };
 }  // namespace Ccsds
