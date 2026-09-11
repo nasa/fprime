@@ -197,6 +197,8 @@ module ComCcsdsSdls {
             # TmTcFraming buffer allocations
             ComCcsds.TmTcFraming.bufferDeallocate -> ComCcsds.SpacePacketFraming.bufferSendIn
             ComCcsds.TmTcFraming.bufferAllocate   -> ComCcsds.SpacePacketFraming.bufferGetCallee
+            ComCcsds.TmTcFraming.spanningBufferDeallocate -> ComCcsds.SpacePacketFraming.bufferSendIn
+            ComCcsds.TmTcFraming.spanningBufferAllocate   -> ComCcsds.SpacePacketFraming.bufferGetCallee
 
             # TmTcFraming <-> SdlsDecryption (SDLS decryption step)
             ComCcsds.TmTcFraming.dataOut -> SdlsDecryption.dataIn

@@ -18,6 +18,11 @@ module Ccsds {
         AOS_INVALID_EPP = 11      @< CCSDS 133.1-B-3: Encapsulation Packet Protocol error
         AOS_VC_FRAME_COUNT_GAP = 12 @< CCSDS 732.0-B-5: AOS VC frame count discontinuity detected
         SDLS_DECRYPTION_FAILURE = 13 @< SDLS decryption failed
+        TC_INVALID_MAP_ID = 14      @< CCSDS 232.0-B-4: Segment header MAP ID does not match configuration (4.1.3.3.3)
+        TC_SEGMENT_UNEXPECTED = 15  @< CCSDS 232.0-B-4: Continuation/last segment received with no packet in progress
+        TC_SEGMENT_ALLOC_FAILED = 16 @< Reassembly buffer allocation failed for a segmented TC packet
+        TC_SEGMENT_OVERFLOW = 17    @< Segmented TC packet exceeds the configured maximum reassembled size
+        TC_SEGMENT_IN_FLIGHT_LIMIT = 18 @< Reassembled TC packet dropped: too many reassembled packets outstanding downstream
     }
 
     @ Status of an SDLS (Space Data Link Security) encryption/decryption request
@@ -111,6 +116,17 @@ module Ccsds {
     struct TCTrailer {
         fecf: U16             @< 16 bit Frame Error Control Field (CRC16)
     }
+    @ Describes the optional Segment Header of a TC Transfer Frame Data Field (CCSDS 232.0-B-4 Section 4.1.3.3)
+    struct TCSegmentHeader {
+        flagsAndMapId: U8      @< 2 bits Sequence Flags | 6 bits Multiplexer Access Point (MAP) ID
+    }
+    @ Sequence Flags of the TC Segment Header (CCSDS 232.0-B-4 Section 4.1.3.3.2)
+    enum TCSegmentSequenceFlags: U8 {
+        CONTINUING  = 0x00  @< 0b00 - Continuing portion of a segmented packet
+        FIRST       = 0x01  @< 0b01 - First portion of a segmented packet
+        LAST        = 0x02  @< 0b10 - Last portion of a segmented packet
+        UNSEGMENTED = 0x03  @< 0b11 - No segmentation: the data field holds one whole packet
+    }
     @ Masks and Offsets for deserializing individual sub-fields in TC headers
     module TCSubfields {
         # flagsAndScId sub-fields
@@ -124,6 +140,10 @@ module Ccsds {
         constant VcIdMask         = 0xFC00  @< 0b1111110000000000
         constant FrameLengthMask  = 0x03FF  @< 0b0000001111111111
         constant VcIdOffset       = 10
+        # Segment Header sub-fields
+        constant SegmentSequenceFlagsMask   = 0xC0  @< 0b11000000
+        constant SegmentMapIdMask           = 0x3F  @< 0b00111111
+        constant SegmentSequenceFlagsOffset = 6
     }
 
     # ------------------------------------------------

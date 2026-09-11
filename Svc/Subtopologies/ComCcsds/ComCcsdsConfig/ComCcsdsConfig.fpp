@@ -43,6 +43,17 @@ module ComCcsdsConfig {
         constant enablePacketSpanning = false
     }
 
+    # TC deframer configuration constants
+    module TcDeframer {
+        @ Controls whether uplinked TC frames carry a Segment Header so that a packet may span multiple TC frames
+        @ (see Svc.Ccsds.TcDeframer, CCSDS 232.0-B-4 Section 4.1.3.3). Requires a ground framer that segments packets.
+        constant enablePacketSpanning = false
+        @ Multiplexer Access Point (MAP) ID accepted when packet spanning is enabled (0..63)
+        constant mapId = 0
+        @ Maximum size of a reassembled packet; also the buffer size requested from commsBufferManager per packet
+        constant maxSpanningPacketSize = BuffMgr.commsBuffSize
+    }
+
     # Buffer management constants
     module BuffMgr {
         constant frameAccumulatorSize  = 2048     

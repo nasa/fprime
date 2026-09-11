@@ -43,7 +43,7 @@ The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.
 
 ### TC Space Data Link Protocol
 
-The TC Deframer implements the CCSDS Telecommand (TC) Space Data Link Protocol (232.0-B-4) for uplink. It extracts payload data from received TC Transfer Frames.
+The TC Deframer implements the CCSDS Telecommand (TC) Space Data Link Protocol (232.0-B-4) for uplink. It extracts payload data from received TC Transfer Frames. A TC frame data field carries at most 1017 bytes; when packet spanning is enabled (`ComCcsdsConfig.TcDeframer.enablePacketSpanning`), each frame data field starts with the one-byte TC Segment Header of 232.0-B-4 section 4.1.3.3 and a packet may be split across consecutive TC frames, which the [TcDeframer](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/TcDeframer/docs/sdd.md) reassembles in a buffer obtained from the communications buffer manager before passing it on. Spanning is disabled by default; enabling it requires a ground framer that prepends the Segment Header to every frame and segments oversize packets.
 
 ### AOS Space Data Link Protocol
 

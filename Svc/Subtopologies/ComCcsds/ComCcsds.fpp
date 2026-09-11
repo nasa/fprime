@@ -94,7 +94,16 @@ module ComCcsds {
     # NOTE: the 'fprimeRouter' instance is defined in ComCcsdsConfig/ComCcsdsRouterConfig.fpp so that
     # projects may swap the router implementation via configuration overrides
 
-    instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x04000
+    instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x04000 \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        ComCcsds::tcDeframer.configureSegmentation(
+            ComCcsdsConfig::TcDeframer::enablePacketSpanning,
+            ComCcsdsConfig::TcDeframer::mapId,
+            ComCcsdsConfig::TcDeframer::maxSpanningPacketSize
+        );
+        """
+    }
 
     instance spacePacketDeframer: Svc.Ccsds.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x05000
 
@@ -298,6 +307,8 @@ module ComCcsds {
         # 3) Buffer management (e.g. a Svc.BufferManager):
         #     - ComCcsds.TmTcFraming.bufferAllocate   -> [BufferManager].bufferGetCallee
         #     - ComCcsds.TmTcFraming.bufferDeallocate -> [BufferManager].bufferSendIn
+        #     - ComCcsds.TmTcFraming.spanningBufferAllocate   -> [BufferManager].bufferGetCallee
+        #     - ComCcsds.TmTcFraming.spanningBufferDeallocate -> [BufferManager].bufferSendIn
 
         instance framer
         instance tcDeframer
@@ -351,6 +362,12 @@ module ComCcsds {
 
         @ Output port for deallocating accumulation buffers
         port bufferDeallocate = frameAccumulator.bufferDeallocate
+
+        @ Output port for allocating reassembly buffers for packets spanning multiple TC frames
+        port spanningBufferAllocate   = tcDeframer.allocate
+
+        @ Output port for deallocating reassembly buffers for packets spanning multiple TC frames
+        port spanningBufferDeallocate = tcDeframer.deallocate
     } # end TmTcFraming
 
     # This subtopology composes the SpacePacketFraming packet layer with the TmTcFraming
@@ -390,6 +407,8 @@ module ComCcsds {
             # TmTcFraming buffer allocations
             TmTcFraming.bufferDeallocate -> SpacePacketFraming.bufferSendIn
             TmTcFraming.bufferAllocate   -> SpacePacketFraming.bufferGetCallee
+            TmTcFraming.spanningBufferDeallocate -> SpacePacketFraming.bufferSendIn
+            TmTcFraming.spanningBufferAllocate   -> SpacePacketFraming.bufferGetCallee
             # TmTcFraming <-> SpacePacketFraming
             TmTcFraming.dataOut               -> SpacePacketFraming.dataIn
             SpacePacketFraming.dataReturnOut  -> TmTcFraming.dataReturnIn

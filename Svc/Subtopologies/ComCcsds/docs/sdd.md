@@ -207,6 +207,7 @@ topology Flight {
 * **Priorities** — RTOS priorities for active/queued components as applicable.
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
 * **Aggregator** — `Aggregator.enablePacketSpanning` controls whether the `aggregator` instance spans CCSDS TM packets across transfer frames (see `Svc.ComAggregator`); `false` by default. `ComCfg::AggregationSize` is the full TM data field, while non-spanning aggregates are limited to `ComCfg::AggregationSize - 7` so the framer can add an idle packet. Any layer inserted between `aggregator` and `framer` that adds bytes (e.g. `ComCcsdsSdls`, +2-byte SA index) requires the project to reduce `ComCfg::AggregationSize` by that overhead.
+* **TcDeframer** — `TcDeframer.enablePacketSpanning` controls whether the `tcDeframer` instance expects a CCSDS TC Segment Header in every uplinked frame and reassembles packets spanning multiple TC frames (see `Svc.Ccsds.TcDeframer`); `false` by default. `TcDeframer.mapId` is the accepted MAP ID and `TcDeframer.maxSpanningPacketSize` bounds the reassembled packet; it defaults to `BuffMgr.commsBuffSize`, since reassembly buffers are drawn from `commsBufferManager` through the `TmTcFraming.spanningBufferAllocate`/`spanningBufferDeallocate` ports. Enabling it requires a ground framer that produces the Segment Header and segments oversize packets.
 
 ### 4.2 Buffer Manager Bin Configuration
 

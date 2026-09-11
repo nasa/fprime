@@ -1,13 +1,22 @@
 module Svc {
 module Ccsds {
     @ Deframer for the TC Space Data Link Protocol (CCSDS Standard)
+    @ Optionally reassembles packets segmented across multiple TC frames (CCSDS 232.0-B-4 Section 4.1.3.3)
     passive component TcDeframer {
+
+        @ Maximum number of reassembled spanning packets simultaneously owned by downstream components
+        constant MaxSpanningPacketsInFlight = 8
 
         import Deframer
 
         @ Port to notify of a deframing error
         output port errorNotify: Ccsds.ErrorNotify
 
+        @ Buffer allocation and deallocation for packets that span across multiple TC frames
+        import Svc.BufferAllocation
+
+        @ Number of spanning packets successfully reassembled and delivered
+        telemetry SpanningPacketsReassembled: U32
 
         @ Invalid packet received that will be dropped
         event InvalidPacket() \
@@ -33,6 +42,36 @@ module Ccsds {
         event InvalidCrc(transmitted: U16, computed: U16) \
             severity warning high \
             format "Invalid checksum received. Trailer specified: {} | Computed on board: {}"
+
+        @ Segment header MAP ID does not match the configured MAP ID; segment dropped
+        event InvalidMapId(transmitted: U8, configured: U8) \
+            severity warning low \
+            format "Invalid MAP ID received. Received: {} | Deframer configured with: {}"
+
+        @ A continuing or last segment was received with no spanning packet in progress; segment dropped
+        event UnexpectedSegment(sequenceFlags: TCSegmentSequenceFlags) \
+            severity warning high \
+            format "Unexpected TC segment ({}) received with no spanning packet in progress"
+
+        @ A spanning packet was abandoned before its last segment was received
+        event SpanningPacketAbandoned(bytesReceived: FwSizeType) \
+            severity warning high \
+            format "Spanning TC packet abandoned after receiving {} bytes"
+
+        @ Spanning packet buffer allocation failed; packet dropped
+        event SpanningPacketAllocFailed(requestedSize: FwSizeType) \
+            severity warning high \
+            format "Spanning TC packet allocation of {} bytes failed; packet dropped"
+
+        @ A spanning packet exceeded the configured maximum size; packet dropped
+        event SpanningPacketOverflow(bytesReceived: FwSizeType, maxSize: FwSizeType) \
+            severity warning high \
+            format "Spanning TC packet of {} bytes exceeds maximum of {} bytes; packet dropped"
+
+        @ A reassembled spanning packet was dropped because too many are outstanding downstream
+        event SpanningPacketInFlightLimit(maxInFlight: FwSizeType) \
+            severity warning high \
+            format "Spanning TC packet dropped: {} reassembled packets already outstanding downstream"
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

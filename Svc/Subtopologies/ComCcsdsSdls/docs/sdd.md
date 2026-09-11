@@ -178,6 +178,8 @@ In the default clear-text configuration no SDLS instance requires a `configure()
 
 `Svc.Ccsds.CcsdsSdlsFramer` prepends a 2-byte SA index to each aggregate, so projects must set `ComCfg.AggregationSize = TmFrameFixedSize - 6 - 2 - 2` (TM header, trailer, and SA index) for the spanning-enabled aggregator output to fit the TM data field. With spanning disabled, the maximum aggregate is `ComCfg.AggregationSize - 7`; the First Header Pointer is relative to the data following the SA index (the SDLS security header is not part of the TM data field per CCSDS 355.0-B). With this value, spanning aggregates plus the SA index fill the TM data field exactly. Any other value that leaves 1–6 bytes of residual asserts in `TmFramer::dataIn_handler` on the first frame. A real encryptor adds its own overhead to every frame and must be subtracted as well: the AES-256-GCM pair adds 28 bytes (12-byte IV plus 16-byte MAC), so `ComCfg.AggregationSize = TmFrameFixedSize - 6 - 2 - 2 - 28` (986 for the default 1024-byte frame).
 
+On the uplink path, `ComCcsdsConfig.TcDeframer.enablePacketSpanning` (see the `ComCcsds` SDD) makes `tcDeframer` reassemble packets segmented across several TC frames before they reach `SdlsDecryption`. The reassembled packet is therefore the unit the `CcsdsSdlsDeframer` sees: the ground must apply SDLS (SA index and encryption) to the whole packet first and segment the resulting security payload afterwards.
+
 ## 4. See Also
 
 - [ComCcsds subtopology](../../ComCcsds/docs/sdd.md)

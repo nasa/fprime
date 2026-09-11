@@ -23,6 +23,7 @@ telemetry packets RefPackets {
     ComCcsds.commsBufferManager.TotalBuffs
     ComCcsds.commsBufferManager.CurrBuffs
     ComCcsds.commsBufferManager.HiBuffs
+    ComCcsds.tcDeframer.SpanningPacketsReassembled
     #CdhCore.tlmSend.GroupConfigs
     #CdhCore.tlmSend.SectionEnabled
 
