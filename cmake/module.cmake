@@ -54,6 +54,22 @@ function(fprime__internal_add_build_target BUILD_TARGET_TYPE_STRING EXTRA_CONTRO
 endfunction()
 
 ####
+# Macro `fprime__internal_close_control_set`:
+#
+# Finalizes the active control word (CURRENT_LIST_NAME) once its arguments have ended. Zero-argument flags that
+# received no value become TRUE; list directives that received no values are an error.
+####
+macro(fprime__internal_close_control_set)
+    if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
+        if (CURRENT_LIST_NAME IN_LIST FPRIME_FLAG_CONTROL_SETS)
+            set("LIST_${CURRENT_LIST_NAME}" TRUE)
+        else()
+            fprime_cmake_fatal_error("${CURRENT_LIST_NAME} supplied without values in call to register_fprime_*")
+        endif()
+    endif()
+endmacro()
+
+####
 # Function `fprime__process_module_setup`:
 #
 # This function is used to process the module setup. It takes a list of arguments and sorts them into
@@ -153,10 +169,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
         # between this and other control words.
         elseif(ARGUMENT IN_LIST CONTROL_SETS)
             list(APPEND SEEN_CONTROL_SETS "${ARGUMENT}")
-            # Check for control words that are zero-argument (flags) and set them to true
-            if (DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FPRIME_FLAG_CONTROL_SETS AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
-                set("LIST_${CURRENT_LIST_NAME}" TRUE)
-            endif()
+            fprime__internal_close_control_set()
             set(CURRENT_LIST_NAME "${ARGUMENT}")
             set("LIST_${CURRENT_LIST_NAME}")
         # Check that file types' files exist
@@ -171,10 +184,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             fprime_cmake_fatal_error("One of ${CONTROL_SETS_STRING} must be specified before list elements: ${ARGUMENT}")
         endif()
     endforeach()
-    # Check for control words that are zero-argument (flags) and set them to true
-    if (DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FPRIME_FLAG_CONTROL_SETS AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
-        set("LIST_${CURRENT_LIST_NAME}" TRUE)
-    endif()
+    fprime__internal_close_control_set()
     # Update caller scope with the new variables
     set(INTERNAL_CMAKE_ADD_OPTIONS)
     set(INTERNAL_MODULE_NAME "${MODULE_NAME}" PARENT_SCOPE)
