@@ -8,9 +8,8 @@
 #define Svc_Ccsds_AesGcmDecryptor_HPP
 
 #include "Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptorComponentAc.hpp"
-#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
-
-#include <openssl/evp.h>
+#include "Svc/Ccsds/Utils/AesGcm/AesGcmCipher.hpp"
+#include "Svc/Ccsds/Utils/SdlsAad.hpp"
 
 namespace Svc {
 
@@ -29,7 +28,7 @@ class AesGcmDecryptor final : public AesGcmDecryptorComponentBase {
     //! Destroy AesGcmDecryptor object
     ~AesGcmDecryptor();
 
-    // The component owns an OpenSSL cipher context and a fetched algorithm, it must not be copied or moved
+    // Owns cipher state, so it must not be copied or moved
     AesGcmDecryptor(const AesGcmDecryptor&) = delete;
     AesGcmDecryptor& operator=(const AesGcmDecryptor&) = delete;
     AesGcmDecryptor(AesGcmDecryptor&&) = delete;
@@ -60,20 +59,11 @@ class AesGcmDecryptor final : public AesGcmDecryptorComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
 
-    //! AES-256-GCM implementation, fetched once at construction rather than per frame
-    EVP_CIPHER* m_cipher;
+    //! AES-256-GCM cipher, built once at construction and re-keyed per frame
+    Svc::Ccsds::Utils::AesGcmCipher m_cipher;
 
-    //! Cipher context, created once at construction and re-keyed per frame
-    EVP_CIPHER_CTX* m_ctx;
-
-    //! AAD for the VC and SA in m_aadVcId and m_aadSaIndex.
-    Svc::Ccsds::Utils::SdlsTcAuthMask m_aad;
-
-    //! Virtual channel m_aad was built for
-    U8 m_aadVcId;
-
-    //! Security association index m_aad was built for
-    U16 m_aadSaIndex;
+    //! AAD for the most recent VC and SA
+    Svc::Ccsds::Utils::SdlsAadCache<Svc::Ccsds::Utils::SdlsTcAad> m_aad;
 };
 
 }  // namespace Ccsds

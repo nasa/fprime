@@ -12,7 +12,7 @@ Encrypting a frame proceeds as follows:
 4. Emit `IV (12) | ciphertext | MAC (16)` on `encryptOut` with status `SUCCESS`.
 5. Return the plaintext buffer via `bufferReturnOut` on every path — it is copied, not encrypted in place.
 
-The AAD is built by `Svc::Ccsds::Utils::SdlsTmAuthMask`, whose layout matches the ground segment's independent implementation of the same contract. The TM primary header does not yet exist at encryption time, so the virtual channel comes from the frame context — the same field `Svc::Ccsds::TmFramer` reads when it builds that header downstream, so the AAD always authenticates the VC actually transmitted.
+The AAD is built by `Svc::Ccsds::Utils::SdlsTmAad`, whose layout matches the ground segment's independent implementation of the same contract. The TM primary header does not yet exist at encryption time, so the virtual channel comes from the frame context — the same field `Svc::Ccsds::TmFramer` reads when it builds that header downstream, so the AAD always authenticates the VC actually transmitted.
 
 The output store is a single per-instance buffer; it must be returned on `encryptReturnIn` before the next frame, and a frame arriving while it is still in flight is dropped with `ENCRYPTION_FAILURE` and the `OutputBufferBusy` event rather than overwriting unsent ciphertext.
 
@@ -52,7 +52,7 @@ The SA index is passed on every `keyGet` request, but whether it selects the key
 
 Compile time: none of its own. The output store is sized directly from `ComCfg.TmFrameFixedSize`, the project-overridable TM frame size every deployment already sets; the accepted output is bounded by the TM data field less the SA index that `Svc.Ccsds.CcsdsSdlsFramer` prepends.
 
-Runtime: none. The constructor builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `encryptIn` free of dynamic allocation, and the authenticated virtual channel arrives per frame on the frame context.
+Runtime: none. The cipher operation, the OpenSSL context it runs on, and the AES-256-GCM sizes (`KEY_LEN`, `IV_LEN`, `TAG_LEN`) are shared with the decryptor through `Svc::Ccsds::Utils::AesGcmCipher`, which builds the `EVP_CIPHER_CTX` once at construction so `encryptIn` is free of dynamic allocation. The AAD for the current (VC, SA) pair is held in a `Svc::Ccsds::Utils::SdlsAadCache<SdlsTmAad>` and rebuilt only when either changes; the authenticated virtual channel arrives per frame on the frame context.
 
 ## Security Considerations
 
