@@ -23,6 +23,8 @@ On receiving a data packet, the `Svc::FprimeFramer` performs the following actio
 5. Emits the _`outBuffer`_ on the `dataOut` output port. Ownership of _`outBuffer`_ is handed to the receiver
 6. Transfer ownership of input _`dataPacket`_ to the `dataReturnOut` port. This usually should be connected to the same component that sent the original packet to `dataIn`.
 
+If the allocation in step 1 fails (the allocator returns an invalid buffer or one smaller than requested), the frame is dropped: the `NoBufferAvailable` event is emitted, any valid-but-undersized buffer is deallocated, the input _`dataPacket`_ is returned on `dataReturnOut`, and a single `Fw::Success::SUCCESS` is emitted on `comStatusOut`. Per the [Framer Status Protocol](../../../docs/reference/communication-adapter-interface.md#framer-status-protocol), a message that produces zero frames must still be acknowledged with `SUCCESS`, otherwise the upstream `Svc::ComQueue` would wait forever for a status that the communication adapter never produces.
+
 ## Port Descriptions
 
 | Kind            | Name            | Port Type                | Usage                                                                    |
@@ -42,4 +44,5 @@ On receiving a data packet, the `Svc::FprimeFramer` performs the following actio
 | SVC-FPRIME_FRAMER-002 | `Svc::FprimeFramer` shall emit one F Prime frame on its `dataOut` output port for each packet received on `dataIn` input port | Unit Test |
 | SVC-FPRIME_FRAMER-003 | `Svc::FprimeFramer` shall emit F Prime frames that conforms to the [F´ frame specification](../../FprimeProtocol/docs/sdd.md) | Unit Test |
 | SVC-FPRIME_FRAMER-004 | `Svc::FprimeFramer` shall pass through all `Fw.SuccessCondition` received on `comStatusIn` to `comStatusOut`, including the initial start-up `Fw::Success::SUCCESS`, per-message statuses, and any recovery `Fw::Success::SUCCESS` after a `Fw::Success::FAILURE`, per the [Framer Status Protocol](../../../docs/reference/communication-adapter-interface.md#framer-status-protocol) | Unit Test |
+| SVC-FPRIME_FRAMER-005 | `Svc::FprimeFramer` shall emit exactly one `Fw::Success::SUCCESS` on `comStatusOut` when a packet received on `dataIn` produces no frame because a frame buffer could not be allocated, per the [Framer Status Protocol](../../../docs/reference/communication-adapter-interface.md#framer-status-protocol) | Unit Test |
 
