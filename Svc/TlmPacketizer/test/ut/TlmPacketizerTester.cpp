@@ -1874,6 +1874,9 @@ TlmPacketizerPacketList dupConflictPacketList = {{&dupConflictPacketA, &dupConfl
 // A packet with no channels is autocoded by FPP with a nullptr channel list and zero entries.
 constexpr TlmPacketizerPacket emptyPacket = {nullptr, 20, 1, 0};
 TlmPacketizerPacketList emptyPacketList = {{&packet1, &emptyPacket}, 2};
+// A nullptr channel list with a non-zero entry count is still a configuration error.
+constexpr TlmPacketizerPacket nullListPacket = {nullptr, 21, 1, 1};
+TlmPacketizerPacketList nullListPacketList = {{&packet1, &nullListPacket}, 2};
 }  // namespace
 
 void TlmPacketizerTester::duplicateChannelIdMatchingSizeTest() {
@@ -1938,6 +1941,12 @@ void TlmPacketizerTester::emptyPacketTest() {
     for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
         ASSERT_EQ(this->fromPortHistory_PktSend->at(static_cast<U32>(section)).data, expected);
     }
+}
+
+void TlmPacketizerTester::nullChannelListTest() {
+    this->stockConfiguration();
+    ASSERT_DEATH_IF_SUPPORTED(this->component.setPacketList(nullListPacketList, IGNORE_OMIT_LIST, 1),
+                              "TlmPacketizer.cpp");
 }
 
 void TlmPacketizerTester::oversizedChannelTest() {

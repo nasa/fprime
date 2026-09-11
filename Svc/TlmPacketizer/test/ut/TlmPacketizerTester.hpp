@@ -110,6 +110,9 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Packet specification with no channels is accepted and can be sent header-only
     void emptyPacketTest(void);
 
+    //! Non-empty packet with a nullptr channel list is still rejected by the configuration assert
+    void nullChannelListTest(void);
+
     //! Helper to set the component into a stock-configuration regardless of default config
     //!
     void stockConfiguration();

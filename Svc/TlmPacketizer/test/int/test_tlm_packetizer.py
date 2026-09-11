@@ -1,8 +1,9 @@
 """test_tlm_packetizer.py:
 
-Integration tests for Svc.TlmPacketizer. Requires the deployment configuration to map
-"Svc.TlmPacketizer" to the packetizer instance and the deployment's packet set to define a
-packet with no channels named "Empty" (see TestDeploymentsProject/Ref/Top/RefPackets.fppi).
+Integration tests for Svc.TlmPacketizer. Run against a deployment that instantiates
+Svc.TlmPacketizer (the stock Ref deployment uses Svc.TlmChan) with a --deployment-config
+mapping "Svc.TlmPacketizer" to that instance, and whose packet set defines a packet with no
+channels (see the "Empty" packet in TestDeploymentsProject/Ref/Top/RefPackets.fppi).
 """
 
 # Packet ID of the channel-less "Empty" packet in the deployment's packet specification
