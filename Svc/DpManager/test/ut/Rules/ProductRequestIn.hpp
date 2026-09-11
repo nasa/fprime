@@ -31,6 +31,9 @@ class Tester {
     //! BufferInvalid
     void BufferInvalid();
 
+    //! OverflowHook
+    void OverflowHook();
+
   public:
     // ----------------------------------------------------------------------
     // Rules

@@ -76,6 +76,24 @@ class DpManager final : public DpManagerComponentBase {
 
   private:
     // ----------------------------------------------------------------------
+    // Hook implementations for typed async input ports
+    // ----------------------------------------------------------------------
+
+    //! Overflow hook for productSendIn: return the buffer to its pool and drop the DP
+    void productSendIn_overflowHook(FwIndexType portNum,     //!< The port number
+                                    FwDpIdType id,           //!< The container ID
+                                    const Fw::Buffer& buffer //!< The buffer
+                                    ) final;
+
+    //! Overflow hook for productRequestIn: honor the request/response contract by
+    //! responding with an invalid buffer + FAILURE so the client never hangs
+    void productRequestIn_overflowHook(FwIndexType portNum,  //!< The port number
+                                       FwDpIdType id,        //!< The container ID
+                                       FwSizeType size       //!< The requested size
+                                       ) final;
+
+  private:
+    // ----------------------------------------------------------------------
     // Handler implementations for commands
     // ----------------------------------------------------------------------
 

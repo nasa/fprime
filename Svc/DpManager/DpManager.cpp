@@ -66,7 +66,32 @@ void DpManager::schedIn_handler(const FwIndexType portNum, U32 context) {
 
 void DpManager ::CLEAR_EVENT_THROTTLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->log_WARNING_HI_BufferAllocationFailed_ThrottleClear();
+    this->log_WARNING_HI_BufferDropped_ThrottleClear();
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+// ----------------------------------------------------------------------
+// Hook implementations for typed async input ports
+// ----------------------------------------------------------------------
+
+void DpManager::productSendIn_overflowHook(FwIndexType portNum, FwDpIdType id, const Fw::Buffer& buffer) {
+    // Queue full: drop the DP, record it, and return the buffer to its pool so it never leaks.
+    // Runs on the caller's thread; bufferReturnOut targets the guarded BufferManager.
+    (void)portNum;
+    this->log_WARNING_HI_BufferDropped(id, buffer.getSize());
+    if (buffer.isValid()) {
+        Fw::Buffer returnBuffer = buffer;
+        this->bufferReturnOut_out(0, returnBuffer);
+    }
+}
+
+void DpManager::productRequestIn_overflowHook(FwIndexType portNum, FwDpIdType id, FwSizeType size) {
+    // Queue full: no buffer was allocated (would happen in the handler), so nothing leaks.
+    // Honor the request/response contract with an invalid buffer + FAILURE so the client
+    // treats it as an allocation failure and moves on instead of waiting forever.
+    (void)size;
+    Fw::Buffer invalidBuffer;
+    this->productResponseOut_out(portNum, id, invalidBuffer, Fw::Success::FAILURE);
 }
 
 // ----------------------------------------------------------------------

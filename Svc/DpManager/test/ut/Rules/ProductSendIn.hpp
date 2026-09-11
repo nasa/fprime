@@ -28,6 +28,9 @@ class Tester {
     //! OK
     void OK();
 
+    //! Overflow hook: full queue drops the DP, records it, and returns its buffer
+    void OverflowHook();
+
   public:
     // ----------------------------------------------------------------------
     // Rules

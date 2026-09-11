@@ -93,11 +93,40 @@ void TestState ::action__ProductRequestIn__BufferInvalid() {
     ASSERT_EQ(this->abstractState.productResponseOutPortNumOpt.value(), portNum);
 }
 
+// ----------------------------------------------------------------------
+// Non-rule tests
+// ----------------------------------------------------------------------
+
+void TestState ::testProductRequestInOverflowHook() {
+    this->clearHistory();
+    const FwSizeType size = this->abstractState.getBufferSize();
+    // Fill the message queue without dispatching so the next request overflows
+    for (FwSizeType i = 0; i < DpManagerTester::TEST_INSTANCE_QUEUE_DEPTH; i++) {
+        this->invoke_to_productRequestIn(0, 0, size);
+    }
+    // Queue full: the overflow hook must not assert, must not allocate, and must still respond
+    const FwDpIdType overflowId = 42;
+    this->invoke_to_productRequestIn(0, overflowId, size);
+    // Contract honored: invalid buffer + FAILURE so the client treats it as an allocation failure
+    // and never waits forever. No buffer allocated (nothing leaks), no event.
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_from_bufferGetOut_SIZE(0);
+    ASSERT_from_productResponseOut_SIZE(1);
+    const Fw::Buffer invalidBuffer;
+    ASSERT_from_productResponseOut(0, overflowId, invalidBuffer, Fw::Success::FAILURE);
+    ASSERT_EQ(this->abstractState.productResponseOutPortNumOpt.value(), 0);
+}
+
 namespace ProductRequestIn {
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
+
+void Tester ::OverflowHook() {
+    this->testState.abstractState.setBufferSize(Svc::AbstractState::MAX_BUFFER_SIZE);
+    this->testState.testProductRequestInOverflowHook();
+}
 
 void Tester ::BufferValid() {
     this->testState.abstractState.setBufferSize(Svc::AbstractState::MIN_BUFFER_SIZE);

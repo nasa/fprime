@@ -55,12 +55,24 @@ TEST(ProductRequestIn, BufferValid) {
     tester.BufferValid();
 }
 
+TEST(ProductRequestIn, OverflowHook) {
+    COMMENT("Overflow the queue and verify the request is answered with invalid+FAILURE (never hangs), no leak, no assert.");
+    ProductRequestIn::Tester tester;
+    tester.OverflowHook();
+}
+
 TEST(ProductSendIn, OK) {
     COMMENT("Invoke productSendIn with nominal input.");
     REQUIREMENT("SVC-DPMANAGER-003");
     REQUIREMENT("SVC-DPMANAGER-004");
     ProductSendIn::Tester tester;
     tester.OK();
+}
+
+TEST(ProductSendIn, OverflowHook) {
+    COMMENT("Overflow the queue and verify the DP is dropped, recorded, and its buffer returned, with no assert.");
+    ProductSendIn::Tester tester;
+    tester.OverflowHook();
 }
 
 TEST(SchedIn, OK) {

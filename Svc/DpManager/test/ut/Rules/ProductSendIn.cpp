@@ -48,6 +48,31 @@ void TestState ::action__ProductSendIn__OK() {
     ASSERT_EQ(this->abstractState.productSendOutPortNumOpt.value(), portNum);
 }
 
+// ----------------------------------------------------------------------
+// Non-rule tests
+// ----------------------------------------------------------------------
+
+void TestState ::testProductSendInOverflowHook() {
+    this->clearHistory();
+    this->abstractState.setBufferSize(Svc::AbstractState::MAX_BUFFER_SIZE);
+    const FwSizeType size = this->abstractState.getBufferSize();
+    const Fw::Buffer buffer(this->abstractState.bufferData, static_cast<Fw::Buffer::SizeType>(size));
+    // Fill the message queue without dispatching so the next invoke overflows
+    for (FwSizeType i = 0; i < DpManagerTester::TEST_INSTANCE_QUEUE_DEPTH; i++) {
+        this->invoke_to_productSendIn(0, 0, buffer);
+    }
+    // Queue full: this invoke triggers the overflow hook, which must not assert
+    const FwDpIdType overflowId = 42;
+    this->invoke_to_productSendIn(0, overflowId, buffer);
+    // The DP is dropped, a throttled event records it, and its buffer is returned to the pool
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_BufferDropped_SIZE(1);
+    ASSERT_EVENTS_BufferDropped(0, overflowId, size);
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer);
+    ASSERT_from_productSendOut_SIZE(0);
+}
+
 namespace ProductSendIn {
 
 // ----------------------------------------------------------------------
@@ -61,6 +86,10 @@ void Tester ::OK() {
     this->testState.abstractState.setBufferSize(Svc::AbstractState::MAX_BUFFER_SIZE);
     this->ruleOK.apply(this->testState);
     Testers::schedIn.ruleOK.apply(this->testState);
+}
+
+void Tester ::OverflowHook() {
+    this->testState.testProductSendInOverflowHook();
 }
 
 }  // namespace ProductSendIn

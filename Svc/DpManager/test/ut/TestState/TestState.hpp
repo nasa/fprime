@@ -35,6 +35,17 @@ class TestState : public DpManagerTester {
     TEST_STATE_DEF_RULE(ProductRequestIn, BufferValid)
     TEST_STATE_DEF_RULE(ProductSendIn, OK)
     TEST_STATE_DEF_RULE(SchedIn, OK)
+
+  public:
+    // ----------------------------------------------------------------------
+    // Non-rule tests
+    // ----------------------------------------------------------------------
+
+    //! Test that a full queue drops the DP, records it, and returns its buffer (no assert)
+    void testProductSendInOverflowHook();
+
+    //! Overflow hook for productRequestIn: responds with an invalid buffer + FAILURE, never hangs
+    void testProductRequestInOverflowHook();
 };
 
 }  // namespace Svc

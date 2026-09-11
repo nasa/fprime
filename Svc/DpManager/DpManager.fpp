@@ -8,7 +8,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Schedule in port
-    async input port schedIn: Svc.Sched
+    async input port schedIn: Svc.Sched drop
 
     # ----------------------------------------------------------------------
     # Ports for handling buffer requests
@@ -18,7 +18,7 @@ module Svc {
     sync input port productGetIn: [DpManagerNumPorts] Fw.DpGet
 
     @ Ports for receiving data product buffer requests from a client component
-    async input port productRequestIn: [DpManagerNumPorts] Fw.DpRequest
+    async input port productRequestIn: [DpManagerNumPorts] Fw.DpRequest hook
 
     @ Ports for sending requested data product buffers to a client component
     output port productResponseOut: [DpManagerNumPorts] Fw.DpResponse
@@ -31,10 +31,13 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Ports for receiving filled data product buffers from a client component
-    async input port productSendIn: [DpManagerNumPorts] Fw.DpSend
+    async input port productSendIn: [DpManagerNumPorts] Fw.DpSend hook
 
     @ Ports for sending filled data product buffers to a downstream component
     output port productSendOut: [DpManagerNumPorts] Fw.BufferSend
+
+    @ Port for returning a dropped buffer to its pool (overflow hook, avoids leaks)
+    output port bufferReturnOut: Fw.BufferSend
 
     # ----------------------------------------------------------------------
     # F' special ports
@@ -78,6 +81,15 @@ module Svc {
                                 ) \
       severity warning high \
       format "Buffer allocation failed for container id {}" \
+      throttle 10
+
+    @ A filled data product was dropped because the input queue was full (overflow hook)
+    event BufferDropped(
+                         $id: FwDpIdType @< The container ID
+                         $size: FwSizeType @< The dropped buffer size
+                       ) \
+      severity warning high \
+      format "Dropped filled data product for container id {} of size {} on queue overflow" \
       throttle 10
 
     # ----------------------------------------------------------------------
