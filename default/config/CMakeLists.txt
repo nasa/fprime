@@ -52,7 +52,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerSpacewasmConfig.h"
         "${CMAKE_CURRENT_LIST_DIR}/Os/RawTimeSource.hpp"
-    BASE_CONFIG
+    GLOBAL_IMPLICIT_DEPENDENCY
     DEPENDS
         "${FPRIME_GLOBAL_INTERFACE_TARGET}"
 )
