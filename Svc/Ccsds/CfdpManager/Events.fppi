@@ -182,6 +182,17 @@ event RxFileCreateFailed(
     severity warning low \
     format "RX class {} transaction {}:{} failed to create file {}, error={}"
 
+@ Destination path in a received Metadata PDU was rejected by the channel's rx_dir sandbox
+event RxDestPathRejected(
+    channelId: U8 @< CFDP channel number
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< Destination path that was rejected
+    rxDir: string size MaxFilePathSize @< Configured receive sandbox directory
+) \
+    severity warning high \
+    format "RX transaction {}:{}:{} rejected destination path {} outside receive directory {}"
+
 event RxCrcMismatch(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID

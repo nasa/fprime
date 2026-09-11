@@ -1074,8 +1074,15 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
             return;
         }
 
-        // PDU validation already done during deserialization
-        this->m_engine->recvMd(this, md);
+        // Structural PDU validation already done during deserialization; recvMd validates the
+        // destination path against the channel rx_dir sandbox.
+        if (!this->m_engine->recvMd(this, md)) {
+            // Destination rejected: keep writing/cleaning up against the temp file only and fail the
+            // transaction with a filestore rejection so the sender is told.
+            this->m_history->fnames.dst_filename = fname;
+            this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
+            return;
+        }
 
         /* successfully obtained md PDU */
         if (this->m_flags.rx.eof_recv) {

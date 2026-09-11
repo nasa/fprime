@@ -37,6 +37,8 @@
 // ======================================================================
 
 #include <string.h>
+#include <Fw/Types/StringUtils.hpp>
+#include <Os/FilePathUtils.hpp>
 #include <new>
 
 #include <Fw/Types/StringUtils.hpp>
@@ -397,16 +399,64 @@ Status::T Engine::sendFinAckStateless(Channel& chan,
     return this->serializeAndSendPduOnChannel(chan, ack);
 }
 
-void Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
+bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path) {
+    Fw::String rxDir = this->m_manager->getRxDirParam(chan_num);
+    if (rxDir.length() == 0) {
+        // Sandbox not configured for this channel: accept path as-is (documented fail-open behavior)
+        return true;
+    }
+
+    // Canonicalize the sandbox root (relative rx_dir resolves against CWD) and ensure trailing '/'
+    char root[Os::FilePathUtils::MAX_PATH_LENGTH];
+    if (Os::FilePathUtils::resolveFromCwd(rxDir.toChar(), root, sizeof(root)) != Os::FilePathUtils::VALID) {
+        return false;
+    }
+    const FwSizeType rootLen = Fw::StringUtils::string_length(root, sizeof(root));
+    if ((rootLen == 0) || (rootLen + 2 > sizeof(root))) {
+        return false;
+    }
+    if (root[rootLen - 1] != '/') {
+        root[rootLen] = '/';
+        root[rootLen + 1] = '\0';
+    }
+
+    // Resolve the received path: relative paths land inside the sandbox, `..` segments are collapsed
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    if (Os::FilePathUtils::resolvePath(path.toChar(), root, resolved, sizeof(resolved)) != Os::FilePathUtils::VALID) {
+        return false;
+    }
+    if (Os::FilePathUtils::checkContainment(resolved, root) != Os::FilePathUtils::VALID) {
+        return false;
+    }
+
+    path = resolved;
+    return true;
+}
+
+bool Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
     /* store the expected file size in transaction */
     txn->m_fsize = md.getFileSize();
 
-    /* store the filenames in transaction - validation already done during deserialization */
+    /* structural validation (length, non-empty) already done during deserialization */
     txn->m_history->fnames.src_filename = md.getSourceFilename();
-    txn->m_history->fnames.dst_filename = md.getDestFilename();
+
+    /* the destination path comes from the remote entity: canonicalize it and confirm it lies within
+     * the configured receive directory before any file operation (open/move/remove) consumes it */
+    Fw::String dst = md.getDestFilename();
+    if (!this->validateRxDestPath(txn->m_chan_num, dst)) {
+        this->m_manager->log_WARNING_HI_RxDestPathRejected(txn->m_chan_num, txn->m_history->src_eid,
+                                                           txn->m_history->seq_num, dst,
+                                                           this->m_manager->getRxDirParam(txn->m_chan_num));
+        this->m_manager->incrementFaultFileOpen(txn->m_chan_num);
+        // Never leave a rejected path where a later file operation could consume it
+        txn->m_history->fnames.dst_filename = "";
+        return false;
+    }
+    txn->m_history->fnames.dst_filename = dst;
 
     this->m_manager->log_ACTIVITY_LO_MetadataReceived(txn->m_history->fnames.src_filename,
                                                       txn->m_history->fnames.dst_filename, txn->m_history->seq_num);
+    return true;
 }
 
 Status::T Engine::recvFd(Transaction* txn, const FileDataPdu& fd) {
@@ -566,13 +616,18 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
 
                 Fw::SerializeStatus deserStatus = md.deserializeFrom(sb2);
                 if (deserStatus == Fw::FW_SERIALIZE_OK) {
-                    this->recvMd(txn, md);
-
-                    // NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path
-                    txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? TxnState::TXN_STATE_R1 : TxnState::TXN_STATE_R2;
-                    txn->m_txn_class = txmMode;
-                    txn->m_flags.rx.md_recv = true;
-                    txn->rInit();  // initialize R
+                    if (this->recvMd(txn, md)) {
+                        // NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup
+                        // path
+                        txn->m_state =
+                            txmMode == Cfdp::Class::CLASS_1 ? TxnState::TXN_STATE_R1 : TxnState::TXN_STATE_R2;
+                        txn->m_txn_class = txmMode;
+                        txn->m_flags.rx.md_recv = true;
+                        txn->rInit();  // initialize R
+                    }
+                    // else: destination path rejected. State stays INIT so the transaction is finished
+                    // below (parked in HOLD until the inactivity timer recycles it) without any file
+                    // ever being opened.
                 } else {
                     m_manager->log_WARNING_LO_FailMetadataPduDeserialization(txn->getChannelId(),
                                                                              static_cast<I32>(deserStatus));

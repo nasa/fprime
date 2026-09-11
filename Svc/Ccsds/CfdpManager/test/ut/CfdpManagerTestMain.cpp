@@ -603,6 +603,21 @@ TEST(Event, RxFileReopenFailed) {
     tester.testRxFileReopenFailedEvent();
 }
 
+TEST(Event, RxDestPathRejected) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDestPathRejectedEvent();
+}
+
+TEST(Event, RxDestPathContained) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDestPathContained();
+}
+
+TEST(Event, RxDestPathRejectedLateMetadata) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDestPathRejectedLateMetadata();
+}
+
 TEST(Miscellaneous, Ping) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testPing();

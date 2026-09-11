@@ -78,6 +78,7 @@ module Cfdp {
         max_outgoing_pdus_per_cycle: U32 @< Maximum number of PDUs to send per cycle per channel for throttling
         tmp_dir: string size MaxFilePathSize @< Temporary directory for uplink file reception
         fail_dir: string size MaxFilePathSize @< Directory for failed poll files
+        rx_dir: string size MaxFilePathSize @< If non-empty, received file destinations must resolve inside this directory
     }
 
     @< Structure for the configured array of CFDP channels
