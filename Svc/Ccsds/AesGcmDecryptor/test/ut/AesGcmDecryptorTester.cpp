@@ -304,6 +304,153 @@ void AesGcmDecryptorTester ::testRecoversAfterMacFailure() {
     this->assertPlaintext(plaintext, sizeof plaintext);
 }
 
+void AesGcmDecryptorTester ::testAntiReplayDisabled() {
+    // Default configuration: the IV is authenticated but never compared against a sequence
+    const SdlsIv iv = ivFrom(5);
+    this->sendIv(iv);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+    this->sendIv(iv);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+    this->sendIv(ivFrom(2));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+    ASSERT_EVENTS_IvReplayed_SIZE(0);
+}
+
+void AesGcmDecryptorTester ::testAntiReplayAcceptsNext() {
+    this->component.configureAntiReplay(true, 10);
+
+    // The initial tracked IV is all ones, so the sequence starts at zero
+    for (U64 i = 0; i < 4; i++) {
+        U8 plaintext[24];
+        (void)::memset(plaintext, static_cast<int>(i), sizeof plaintext);
+        Fw::Buffer frame = this->buildFrameWithIv(plaintext, sizeof plaintext, ivFrom(i));
+        this->sendDecrypt(frame, TEST_SPI);
+        this->assertPlaintext(plaintext, sizeof plaintext);
+    }
+    ASSERT_EVENTS_IvReplayed_SIZE(0);
+}
+
+void AesGcmDecryptorTester ::testAntiReplayWindow() {
+    this->component.configureAntiReplay(true, 10);
+    this->component.setLastAcceptedIv(ivFrom(100));
+
+    // The far edge of the window is accepted, and the sequence jumps to it
+    this->sendIv(ivFrom(110));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+
+    // One past the new window is rejected, and the sequence does not move
+    this->sendIv(ivFrom(121));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::ANTI_REPLAY_FAILURE);
+    ASSERT_EVENTS_IvReplayed_SIZE(1);
+    ASSERT_EVENTS_IvReplayed(0, TEST_SPI, ivFrom(121), ivFrom(110));
+
+    // Anything at or behind the tracked IV is a replay, even inside the old window
+    this->sendIv(ivFrom(105));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::ANTI_REPLAY_FAILURE);
+
+    this->sendIv(ivFrom(120));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+}
+
+void AesGcmDecryptorTester ::testAntiReplayRejectsReuse() {
+    this->component.configureAntiReplay(true, AesGcmDecryptor::DEFAULT_ANTI_REPLAY_WINDOW);
+    const SdlsIv iv = ivFrom(42);
+
+    // Same frame twice: the replay authenticates, so only the sequence check can catch it
+    U8 plaintext[16];
+    (void)::memset(plaintext, 0x42, sizeof plaintext);
+    this->component.setLastAcceptedIv(ivFrom(41));
+    Fw::Buffer frame = this->buildFrameWithIv(plaintext, sizeof plaintext, iv);
+    U8 copy[GCM_IV_LEN + 16 + GCM_TAG_LEN];
+    (void)::memcpy(copy, this->m_storage, sizeof copy);
+    this->sendDecrypt(frame, TEST_SPI);
+    this->assertPlaintext(plaintext, sizeof plaintext);
+
+    (void)::memcpy(this->m_storage, copy, sizeof copy);
+    Fw::Buffer replay(this->m_storage, sizeof copy);
+    this->sendDecrypt(replay, TEST_SPI);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::ANTI_REPLAY_FAILURE);
+    ASSERT_EVENTS_IvReplayed_SIZE(1);
+    ASSERT_EVENTS_IvReplayed(0, TEST_SPI, iv, iv);
+    // The rejected frame is handed back whole, not advanced past the IV
+    ASSERT_EQ(this->fromPortHistory_decryptOut->at(0).data.getData(), this->m_storage);
+    ASSERT_EQ(this->fromPortHistory_decryptOut->at(0).data.getSize(), sizeof copy);
+}
+
+void AesGcmDecryptorTester ::testAntiReplayWrapsAround() {
+    this->component.configureAntiReplay(true, 10);
+
+    // ...FFFFFFFFFFFE + 7 wraps to ...000000000005
+    SdlsIv last(static_cast<U8>(0xFF));
+    last[GCM_IV_LEN - 1] = 0xFE;
+    this->component.setLastAcceptedIv(last);
+    this->sendIv(ivFrom(5));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+
+    // Behind the wrap now reads as a huge forward distance, so it is rejected
+    this->sendIv(last);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::ANTI_REPLAY_FAILURE);
+    ASSERT_EVENTS_IvReplayed(0, TEST_SPI, last, ivFrom(5));
+
+    // Exactly one past the window across the wrap: ...FFFE + 11 = ...0009
+    this->component.setLastAcceptedIv(last);
+    this->sendIv(ivFrom(9));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::ANTI_REPLAY_FAILURE);
+
+    // A carry into the middle of the IV: ...00FFFFFFFF + 1 = ...0100000000
+    this->component.setLastAcceptedIv(ivFrom(0xFFFFFFFFULL));
+    this->sendIv(ivFrom(0x100000000ULL));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+
+    // A distance that only differs above the low 32 bits is outside any window
+    this->component.setLastAcceptedIv(ivFrom(1));
+    this->sendIv(ivFrom(0x100000001ULL));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::ANTI_REPLAY_FAILURE);
+}
+
+void AesGcmDecryptorTester ::testAntiReplayStateOnlyOnAccept() {
+    this->component.configureAntiReplay(true, 10);
+    this->component.setLastAcceptedIv(ivFrom(10));
+    U8 plaintext[32];
+    (void)::memset(plaintext, 0x5A, sizeof plaintext);
+
+    // A forged frame carrying the next IV fails its MAC and must not move the sequence
+    Fw::Buffer forged = this->buildFrameWithIv(plaintext, sizeof plaintext, ivFrom(11));
+    this->m_storage[GCM_IV_LEN] ^= 0x01;
+    this->sendDecrypt(forged, TEST_SPI);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::MAC_VERIFICATION_FAILURE);
+    ASSERT_EVENTS_IvReplayed_SIZE(0);
+
+    // Nor does an authentic frame outside the window
+    this->sendIv(ivFrom(50));
+    this->assertStatus(Svc::Ccsds::SdlsStatus::ANTI_REPLAY_FAILURE);
+
+    // Nor a frame the key manager refused
+    Fw::Buffer unkeyed = this->buildFrameWithIv(plaintext, sizeof plaintext, ivFrom(11));
+    this->setKey(nullptr, 0, Svc::Ccsds::SdlsStatus::KEY_ERROR);
+    this->sendDecrypt(unkeyed, TEST_SPI);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::KEY_ERROR);
+    this->setKey(KAT_KEY, AES_256_KEY_LEN, Svc::Ccsds::SdlsStatus::SUCCESS);
+
+    // The genuine next frame is still accepted
+    Fw::Buffer genuine = this->buildFrameWithIv(plaintext, sizeof plaintext, ivFrom(11));
+    this->sendDecrypt(genuine, TEST_SPI);
+    this->assertPlaintext(plaintext, sizeof plaintext);
+}
+
+void AesGcmDecryptorTester ::testAntiReplayEventThrottle() {
+    this->component.configureAntiReplay(true, 10);
+    this->component.setLastAcceptedIv(ivFrom(7));
+
+    // Every replay is rejected, but only the first five are reported
+    const SdlsIv iv = ivFrom(7);
+    for (U32 i = 0; i < 8; i++) {
+        this->sendIv(iv);
+        this->assertStatus(Svc::Ccsds::SdlsStatus::ANTI_REPLAY_FAILURE);
+        ASSERT_EVENTS_IvReplayed_SIZE((i < 5) ? 1 : 0);
+    }
+}
+
 void AesGcmDecryptorTester ::testShortBuffer() {
     // One byte below the smallest well-formed frame
     Fw::Buffer frame(this->m_storage, GCM_IV_LEN + GCM_TAG_LEN - 1);
@@ -367,17 +514,44 @@ void AesGcmDecryptorTester ::setKey(const U8* key, FwSizeType keyLen, Svc::Ccsds
 }
 
 Fw::Buffer AesGcmDecryptorTester ::buildFrame(const U8* plaintext, FwSizeType plainLen, U8 vcId, U16 spi) {
+    SdlsIv iv;
+    for (FwSizeType i = 0; i < GCM_IV_LEN; i++) {
+        iv[i] = static_cast<U8>(STest::Pick::lowerUpper(0, 0xFF));
+    }
+    return this->buildFrameWithIv(plaintext, plainLen, iv, vcId, spi);
+}
+
+Fw::Buffer AesGcmDecryptorTester ::buildFrameWithIv(const U8* plaintext,
+                                                    FwSizeType plainLen,
+                                                    const SdlsIv& iv,
+                                                    U8 vcId,
+                                                    U16 spi) {
     const FwSizeType frameLen = GCM_IV_LEN + plainLen + GCM_TAG_LEN;
     FW_ASSERT(frameLen <= TEST_BUFFER_SIZE, static_cast<FwAssertArgType>(frameLen));
 
     for (FwSizeType i = 0; i < GCM_IV_LEN; i++) {
-        this->m_storage[i] = static_cast<U8>(STest::Pick::lowerUpper(0, 0xFF));
+        this->m_storage[i] = iv[i];
     }
     U8 aad[TC_AAD_LEN];
     buildTcAad(aad, vcId, spi);
     gcmEncrypt(this->m_key, this->m_storage, aad, TC_AAD_LEN, plaintext, plainLen, this->m_storage + GCM_IV_LEN,
                this->m_storage + GCM_IV_LEN + plainLen);
     return Fw::Buffer(this->m_storage, frameLen);
+}
+
+void AesGcmDecryptorTester ::sendIv(const SdlsIv& iv) {
+    U8 plaintext[8];
+    (void)::memset(plaintext, 0x1F, sizeof plaintext);
+    Fw::Buffer frame = this->buildFrameWithIv(plaintext, sizeof plaintext, iv);
+    this->sendDecrypt(frame, TEST_SPI);
+}
+
+SdlsIv AesGcmDecryptorTester ::ivFrom(U64 low) {
+    SdlsIv iv(static_cast<U8>(0));
+    for (FwSizeType i = 0; i < sizeof(U64); i++) {
+        iv[GCM_IV_LEN - 1 - i] = static_cast<U8>(low >> (8 * i));
+    }
+    return iv;
 }
 
 void AesGcmDecryptorTester ::sendDecrypt(Fw::Buffer& data, U16 spi, U8 vcId) {

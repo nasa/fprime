@@ -38,11 +38,26 @@ TEST(Nominal, ContextVcIdIsAuthenticated) {
     tester.testContextVcIdIsAuthenticated();
 }
 
-TEST(Nominal, IvIsFreshPerFrame) {
+TEST(Nominal, IvIsSequential) {
     REQUIREMENT("SVC-CCSDS-AES-ENCRYPTOR-003");
-    COMMENT("Identical plaintext gets a different IV and different ciphertext each time");
+    COMMENT("Frames carry consecutive IVs from zero, so identical plaintext gets different ciphertext");
     Svc::Ccsds::AesGcmEncryptorTester tester;
-    tester.testIvIsFreshPerFrame();
+    tester.testIvIsSequential();
+}
+
+TEST(Nominal, IvWrapsAround) {
+    REQUIREMENT("SVC-CCSDS-AES-ENCRYPTOR-003");
+    REQUIREMENT("SVC-CCSDS-AES-ENCRYPTOR-011");
+    COMMENT("setNextIv() seeds the sequence, and the all-ones IV wraps to zero");
+    Svc::Ccsds::AesGcmEncryptorTester tester;
+    tester.testIvWrapsAround();
+}
+
+TEST(Nominal, IvNotSpentByRefusedFrame) {
+    REQUIREMENT("SVC-CCSDS-AES-ENCRYPTOR-003");
+    COMMENT("A frame refused before encryption leaves the IV sequence where it was");
+    Svc::Ccsds::AesGcmEncryptorTester tester;
+    tester.testIvNotSpentByRefusedFrame();
 }
 
 TEST(Nominal, EmptyPlaintext) {

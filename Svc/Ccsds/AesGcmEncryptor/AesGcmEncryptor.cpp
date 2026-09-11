@@ -6,10 +6,10 @@
 
 #include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptor.hpp"
 #include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
+#include "Svc/Ccsds/Utils/SdlsIvSequence.hpp"
 
 #include <openssl/crypto.h>
 #include <openssl/evp.h>
-#include <openssl/rand.h>
 
 namespace Svc {
 
@@ -21,6 +21,8 @@ static constexpr U32 GCM_IV_LEN = 12;
 static constexpr U32 GCM_TAG_LEN = 16;
 //! Length of an AES-256 key, in bytes
 static constexpr FwSizeType AES_256_KEY_LEN = 32;
+
+static_assert(GCM_IV_LEN == Svc::Ccsds::Utils::SdlsIvSequence::SIZE, "SdlsIv must be the width of a GCM IV");
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
@@ -37,7 +39,8 @@ AesGcmEncryptor ::AesGcmEncryptor(const char* const compName)
       m_ctx(nullptr),
       m_aad(0, 0),
       m_aadVcId(0),
-      m_aadSaIndex(0) {
+      m_aadSaIndex(0),
+      m_nextIv(static_cast<U8>(0)) {
     this->m_cipher = EVP_CIPHER_fetch(nullptr, "AES-256-GCM", nullptr);
     FW_ASSERT(this->m_cipher != nullptr);
     this->m_ctx = EVP_CIPHER_CTX_new();
@@ -52,6 +55,14 @@ AesGcmEncryptor ::AesGcmEncryptor(const char* const compName)
 AesGcmEncryptor ::~AesGcmEncryptor() {
     EVP_CIPHER_CTX_free(this->m_ctx);
     EVP_CIPHER_free(this->m_cipher);
+}
+
+// ----------------------------------------------------------------------
+// Public methods
+// ----------------------------------------------------------------------
+
+void AesGcmEncryptor ::setNextIv(const SdlsIv& iv) {
+    this->m_nextIv = iv;
 }
 
 // ----------------------------------------------------------------------
@@ -91,11 +102,10 @@ void AesGcmEncryptor ::encryptIn_handler(FwIndexType portNum,
     U8* const iv = this->m_outBuf;
     U8* const ciphertext = this->m_outBuf + GCM_IV_LEN;
 
-    // A repeated IV under one key breaks GCM, so this generates a new one per frame
-    if (RAND_bytes(iv, static_cast<int>(GCM_IV_LEN)) != 1) {
-        this->failFrame(data, context, Svc::Ccsds::SdlsStatus::ENCRYPTION_FAILURE);
-        return;
-    }
+    // A repeated IV under one key breaks GCM: once drawn, a sequence number is never handed out
+    // again, even if the cipher then fails
+    Svc::Ccsds::Utils::SdlsIvSequence::toBytes(this->m_nextIv, iv);
+    Svc::Ccsds::Utils::SdlsIvSequence::increment(this->m_nextIv);
 
     int len = 0;
     int cipherLen = 0;
