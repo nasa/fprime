@@ -51,7 +51,7 @@ Off-nominal segments are dropped and reported via events and `errorNotify`:
 - Reassembly buffer allocation failure (`SpanningPacketAllocFailed`, `TC_SEGMENT_ALLOC_FAILED`).
 - Frame data field holding only a Segment Header (`InvalidPacket`, `TC_INVALID_LENGTH`).
 
-A spanning packet is abandoned (`SpanningPacketAbandoned`) whenever a FIRST or UNSEGMENTED segment arrives while one is in progress: a lost LAST segment therefore only costs the packet it belonged to. Note that the ground framer must produce the Segment Header in every frame when this mode is enabled; in the `Svc.ComCcsdsSdls` stack the reassembled unit is what the SDLS deframer receives, so the ground must encrypt each packet before segmenting it.
+A spanning packet is abandoned (`SpanningPacketAbandoned`) whenever a FIRST or UNSEGMENTED segment arrives while one is in progress: a lost LAST segment therefore only costs the packet it belonged to. Note that the ground framer must produce the Segment Header in every frame when this mode is enabled: a frame without one is rejected, typically as `InvalidMapId` since the first Space Packet header byte is read as a Segment Header. The stock `fprime-gds` TC framer does not emit Segment Headers; YAMCS (`UdpTcFrameLink`) emits one when `mapId` is set on the virtual channel, but only with UNSEGMENTED flags (it rejects packets larger than a frame rather than segmenting them). In the `Svc.ComCcsdsSdls` stack the reassembled unit is what the SDLS deframer receives, so the ground must encrypt each packet before segmenting it.
 
 ## Port Descriptions
 
