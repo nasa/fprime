@@ -14,10 +14,10 @@
 # root when not specifically overridden by the developer, i.e. the module defined by
 # `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
 # AesGcmEncryptor requires OpenSSL - only add if available
-find_package(OpenSSL 3.5)
+find_package(OpenSSL 3.0)
 
 if (NOT OPENSSL_FOUND)
-    message(STATUS "Unable to add Svc_Ccsds_AesGcmEncryptor. OpenSSL 3.5 not found")
+    message(STATUS "Unable to add Svc_Ccsds_AesGcmEncryptor. OpenSSL 3.0 not found")
     return()
 endif()
 
