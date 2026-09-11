@@ -10,8 +10,6 @@
 - [F Prime CfdpManager SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/CfdpManager/docs/sdd.md)
 - [F Prime FileDispatcher SDD](https://github.com/nasa/fprime/blob/devel/Svc/FileDispatcher/docs/sdd.md)
 - [F Prime FileWorker SDD](https://github.com/nasa/fprime/blob/devel/Svc/FileWorker/docs/sdd.md)
-- [FileHandling Subtopology SDD](https://github.com/nasa/fprime/blob/devel/Svc/Subtopologies/FileHandling/docs/sdd.md)
-- [FileHandlingCfdp Subtopology SDD](https://github.com/nasa/fprime/blob/devel/Svc/Subtopologies/FileHandlingCfdp/docs/sdd.md)
 - [CCSDS 727.0-B-5, CCSDS File Delivery Protocol (CFDP)](https://ccsds.org/Pubs/727x0b5e1.pdf)
 
 ## Overview
@@ -39,8 +37,6 @@ File transfer moves whole files between the ground and the flight software: upli
 - **F Prime file protocol**, provided by the `FileUplink` and `FileDownlink` components. A lightweight, F Prime-specific protocol that is supported natively by the F Prime GDS.
 - **CCSDS File Delivery Protocol (CFDP)**, provided by the `CfdpManager` component. A standards-based protocol with optional reliable delivery, intended for lossy or intermittent links and for interoperability with CFDP-capable ground systems.
 
-Both present the same interfaces to the rest of the flight software and to the communication stack, so a deployment can swap one for the other without changing the components that produce or consume files.
-
 #### F Prime File Protocol (FileUplink / FileDownlink)
 
 Files are carried as a series of F Prime file packets: a START packet announcing the file name and size, DATA packets carrying offset-tagged chunks of the file, an END packet carrying a checksum, and a CANCEL packet to abort a transfer. The checksum is the 32-bit CFDP checksum, so integrity checking is shared with the CFDP mechanism.
@@ -51,7 +47,7 @@ Files are carried as a series of F Prime file packets: a START packet announcing
 
 **Delivery guarantees.** The protocol has no retransmission. Lost or out-of-order packets are reported by events and telemetry counters, and recovery is an operator action: re-send the file, or re-send the missing range using a partial downlink. This is appropriate for links where the framing layer already provides reliability or where loss is rare and operator-driven recovery is acceptable.
 
-**Sandboxing.** Both components confine file access to a directory chosen at initialization; paths that resolve outside it are rejected. The sandbox is fail-closed: a deployment must configure it or no file can be read or written. The stock `FileHandling` subtopology configures it to the file system root for backward compatibility, which deployments should restrict.
+**Sandboxing.** Both components confine file access to a directory chosen at initialization; paths that resolve outside it are rejected. The sandbox is fail-closed: a deployment must configure it or no file can be read or written. The default configuration shipped with F Prime is the file system root, which deployments should restrict.
 
 #### CCSDS File Delivery Protocol (CfdpManager)
 
@@ -67,27 +63,19 @@ Files are carried as a series of F Prime file packets: a START packet announcing
 
 **Current limitations.** Partial-file transfers (non-zero offset or length) are not supported, files are limited to 4 GiB, received files are not announced to the File Dispatcher, and CFDP transfers are not confined by a file-system sandbox — the destination path in an incoming metadata PDU is honored as received. CFDP assumes authentication is provided by lower layers; deployments should pair it with link-layer security such as SDLS. See the CfdpManager SDD for the full list of assumptions and security considerations.
 
-#### Interchangeability
+#### Interchangeability and Support
 
-The two mechanisms are designed as drop-in alternatives at three levels:
-
-1. **Component interface.** Components that produce files for downlink (for example, the data product catalog) request a transfer through the `SendFileRequest` port and are notified through the `SendFileComplete` port. `FileDownlink` and `CfdpManager` both implement these ports, so file producers do not depend on which mechanism is deployed.
-2. **Communication stack interface.** Both mechanisms exchange file traffic with the communication stack as F Prime file-type packets, so they connect to the same file uplink and file downlink ports exposed by the `ComFprime`, `ComCcsds`, and `ComCcsdsSdls` communication subtopologies. `CfdpManager` wraps each PDU in the file packet type so that the router delivers incoming PDUs to it and the framer transmits outgoing PDUs, exactly as it does for `FileUplink` and `FileDownlink`.
-3. **Subtopology.** F Prime provides two pre-wired subtopologies that differ only in the transfer mechanism. `FileHandling` bundles `FileUplink`, `FileDownlink`, the File Manager, and the Parameter Database; `FileHandlingCfdp` bundles `CfdpManager`, the File Manager, and the Parameter Database. A deployment selects one of the two and connects it to a communication subtopology and a rate group.
-
-Choosing a mechanism therefore comes down to the delivery guarantees needed and the ground system in use, not to on-board architecture.
-
-#### Where Each Mechanism Is Supported
+The two mechanisms are drop-in interchangeable: both expose the same ports to on-board file producers and to the communication stack, so a deployment selects one or the other without changing the rest of the flight software. The choice comes down to the delivery guarantees needed and the ground system in use.
 
 | | F Prime file protocol (`FileUplink` / `FileDownlink`) | CFDP (`CfdpManager`) |
 |---|---|---|
 | F Prime GDS (`fprime-gds`) | Supported: uplink and downlink from the GDS user interface, the `fprime-cli file-uplink` command, and the integration test API. | Not supported. The GDS does not implement CFDP. |
 | YAMCS | Supported through the `fprime-yamcs` plugin; exercised by the `fprime-yamcs-reference` project. | Requires the YAMCS CFDP service; the flight side transports PDUs as CCSDS space packets. No F Prime reference project demonstrates this configuration yet. |
-| Communication subtopologies | `ComFprime`, `ComCcsds`, `ComCcsdsSdls`. | `ComCcsds`, `ComCcsdsSdls`. Wiring to `ComFprime` is possible, but no F Prime-protocol ground system speaks CFDP. |
+| Communication stack | F Prime framing or CCSDS space packets (with or without SDLS). | CCSDS space packets (with or without SDLS). F Prime framing is possible, but no F Prime-protocol ground system speaks CFDP. |
 | Reliable delivery | No; operator-driven recovery. | Class 2 provides acknowledged delivery with retransmission; Class 1 does not. |
 | Concurrent transfers | One file at a time in each direction. | Multiple transactions per channel, multiple channels. |
 | Partial-file transfer | Downlink by offset and length. | Not supported. |
-| Reference deployment | `Ref` (`TestDeploymentsProject/Ref`) and `fprime-yamcs-reference`. | `FileHandlingCfdp` subtopology; no shipped deployment instantiates it. |
+| Reference deployment | `Ref` (`TestDeploymentsProject/Ref`) and `fprime-yamcs-reference`. | None yet. |
 
 Use the F Prime file protocol when operating with the F Prime GDS or when the link is reliable and simplicity matters. Use CFDP when the mission requires standards-based, interoperable, or autonomously reliable file delivery and a CFDP-capable ground system is available.
 
