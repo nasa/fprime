@@ -41,7 +41,7 @@ When enabled, the `allocate` and `deallocate` ports must be connected to a buffe
 | `0b00` CONTINUING | Middle segment | Segment data is appended to the spanning packet in progress. |
 | `0b10` LAST | Last segment | Segment data is appended and the reassembled packet is emitted on `dataOut`. |
 
-For FIRST, CONTINUING and LAST segments the source frame buffer is returned upstream on `dataReturnOut` immediately after the segment data has been copied. Reassembled packets are owned by the `TcDeframer`: when one comes back on `dataReturnIn` it is returned to the provider through `deallocate`, whereas any other buffer is forwarded to `dataReturnOut`. At most `MaxSpanningPacketsInFlight` (8) reassembled packets may be outstanding downstream at once; a completed packet is dropped if the table is full.
+For FIRST, CONTINUING and LAST segments the source frame buffer is returned upstream on `dataReturnOut` immediately after the segment data has been copied. Reassembled packets are owned by the `TcDeframer`: when one comes back on `dataReturnIn` it is returned to the provider through `deallocate`, whereas any other buffer is forwarded to `dataReturnOut`. At most `MaxSpanningPacketsInFlight` (8) reassembled packets may be outstanding downstream at once; a completed packet is dropped if the table is full. `dataReturnIn` is a `sync` port and may be invoked from a downstream thread (e.g. a file uplink task returning a buffer) while `dataIn` runs under the component guard, so the in-flight table is protected by its own mutex.
 
 Off-nominal segments are dropped and reported via events and `errorNotify`:
 

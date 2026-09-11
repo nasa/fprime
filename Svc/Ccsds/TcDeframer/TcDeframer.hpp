@@ -7,6 +7,7 @@
 #ifndef Svc_Ccsds_TcDeframer_HPP
 #define Svc_Ccsds_TcDeframer_HPP
 
+#include "Os/Mutex.hpp"
 #include "Svc/Ccsds/TcDeframer/FppConstantsAc.hpp"
 #include "Svc/Ccsds/TcDeframer/TcDeframerComponentAc.hpp"
 
@@ -92,6 +93,16 @@ class TcDeframer : public TcDeframerComponentBase {
     //! Forward the completed spanning packet downstream, or drop it if the in-flight table is full
     void completeSpanningPacket();
 
+    //! Record a reassembled packet as owned downstream
+    //! \return true if a table slot was available, false if the in-flight table is full
+    bool trackInFlight(const Fw::Buffer& allocated);
+
+    //! Remove the tracked allocation backing a returned buffer, if the buffer is one of ours
+    //! \param returned The buffer received on dataReturnIn
+    //! \param allocated Set to the full allocation to deallocate when this returns true
+    //! \return true if the returned buffer was a reassembled packet allocated by this component
+    bool releaseInFlight(const Fw::Buffer& returned, Fw::Buffer& allocated);
+
     //! Emit an event and discard the spanning packet in progress, if any
     void abandonSpanningPacket();
 
@@ -112,8 +123,11 @@ class TcDeframer : public TcDeframerComponentBase {
     Fw::Buffer m_spanningBuffer;             //!< Reassembly buffer, valid while a spanning packet is in progress
     FwSizeType m_spanningBytesReceived = 0;  //!< Bytes accumulated in the spanning packet in progress
     ComCfg::FrameContext m_spanningContext;  //!< Context of the first segment, forwarded with the reassembled packet
-    //! Reassembled packets owned downstream, awaiting return on dataReturnIn for deallocation
+    //! Reassembled packets owned downstream, awaiting return on dataReturnIn for deallocation.
+    //! dataReturnIn is a sync port that may run on a downstream thread while dataIn holds the component guard,
+    //! so the table has its own lock.
     Fw::Buffer m_inFlight[TcDeframer_MaxSpanningPacketsInFlight];
+    Os::Mutex m_inFlightLock;  //!< Guards m_inFlight
 };
 }  // namespace Ccsds
 }  // namespace Svc
