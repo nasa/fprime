@@ -2,8 +2,8 @@
   "schema": 6,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "1cff33fe73aee2fcee855bf2be130b3f851f990b",
-  "generated_at": "2026-09-10T22:12:21Z",
+  "commit": "bda4cc548358155d52cdee354a18af070756e558",
+  "generated_at": "2026-09-11T21:11:50Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -6014,9 +6014,32 @@
       "has_coverage": false,
       "ut": null,
       "int": null,
-      "codeql": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/AesGcmDecryptor/codeql/index.html"
+      },
       "codeql_checks": {
-        "codeql": null,
+        "codeql": {
+          "findings": 0,
+          "by_severity": {
+            "error": 0,
+            "medium": 0,
+            "low": 0
+          },
+          "worst": null,
+          "tier": "platinum",
+          "dismissed": 0,
+          "label": "Static Analysis (Security) [CodeQL]",
+          "report": "Svc/Ccsds/AesGcmDecryptor/codeql/index.html"
+        },
         "codeql-jpl": null
       },
       "checks": null,
@@ -6025,7 +6048,7 @@
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
-        "codeql": null,
+        "codeql": "platinum",
         "checks": null,
         "sdd": "bronze"
       }
@@ -6036,9 +6059,32 @@
       "has_coverage": false,
       "ut": null,
       "int": null,
-      "codeql": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/AesGcmEncryptor/codeql/index.html"
+      },
       "codeql_checks": {
-        "codeql": null,
+        "codeql": {
+          "findings": 0,
+          "by_severity": {
+            "error": 0,
+            "medium": 0,
+            "low": 0
+          },
+          "worst": null,
+          "tier": "platinum",
+          "dismissed": 0,
+          "label": "Static Analysis (Security) [CodeQL]",
+          "report": "Svc/Ccsds/AesGcmEncryptor/codeql/index.html"
+        },
         "codeql-jpl": null
       },
       "checks": null,
@@ -6047,7 +6093,7 @@
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
-        "codeql": null,
+        "codeql": "platinum",
         "checks": null,
         "sdd": "bronze"
       }
@@ -13450,6 +13496,51 @@
         "int": null,
         "codeql": "platinum",
         "checks": "platinum",
+        "sdd": "bronze"
+      }
+    },
+    {
+      "path": "cmake/test/data/TestDeployment/TestDuplicateDirective",
+      "has_ut": false,
+      "has_coverage": false,
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/TestDeployment/TestDuplicateDirective/codeql/index.html"
+      },
+      "codeql_checks": {
+        "codeql": {
+          "findings": 0,
+          "by_severity": {
+            "error": 0,
+            "medium": 0,
+            "low": 0
+          },
+          "worst": null,
+          "tier": "platinum",
+          "dismissed": 0,
+          "label": "Static Analysis (Security) [CodeQL]",
+          "report": "cmake/test/data/TestDeployment/TestDuplicateDirective/codeql/index.html"
+        },
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "sdd": null,
+      "tiers": {
+        "overall": "bronze",
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum",
+        "checks": null,
         "sdd": "bronze"
       }
     },
