@@ -55,7 +55,6 @@ ComAggregatorTester ::ComAggregatorTester(FwSizeType aggregationSize, bool spann
     EXPECT_EQ(this->m_allocator.m_lastId, TEST_ALLOCATION_ID);
     EXPECT_EQ(this->component.m_frameBuffer.getData(), static_cast<U8*>(this->m_allocator.m_lastPointer));
     EXPECT_EQ(this->aggregation_size(), aggregationSize);
-    EXPECT_EQ(this->capacity(), spanning ? aggregationSize : aggregationSize - Ccsds::Utils::IdlePacket::MIN_SIZE);
 }
 
 ComAggregatorTester ::~ComAggregatorTester() {
@@ -69,8 +68,8 @@ FwSizeType ComAggregatorTester ::aggregation_size() const {
     return this->component.m_aggregationSize;
 }
 
-FwSizeType ComAggregatorTester ::capacity() const {
-    return this->component.m_capacity;
+FwSizeType ComAggregatorTester ::max_packet_size() const {
+    return this->aggregation_size() - Ccsds::Utils::IdlePacket::MIN_SIZE;
 }
 
 // ----------------------------------------------------------------------
@@ -96,10 +95,12 @@ void ComAggregatorTester ::shadow_aggregate(const Fw::Buffer& buffer) {
 
 //! Validate against shadow aggregation
 void ComAggregatorTester ::validate_aggregation(const Fw::Buffer& buffer) {
-    // Without spanning the packet capacity leaves room for at least a minimum idle packet
+    // Without spanning the packets either fill the aggregate exactly or leave room for a whole idle packet
     std::vector<U8> expected = this->m_aggregation;
-    ASSERT_LE(expected.size(), this->capacity());
-    append_idle_packet(expected, this->aggregation_size() - expected.size());
+    ASSERT_LE(expected.size(), this->aggregation_size());
+    if (expected.size() < this->aggregation_size()) {
+        append_idle_packet(expected, this->aggregation_size() - expected.size());
+    }
     ASSERT_EQ(buffer.getSize(), this->aggregation_size());
     ASSERT_EQ(buffer.getSize(), expected.size());
     for (FwSizeType i = 0; i < expected.size(); i++) {
@@ -139,18 +140,32 @@ void ComAggregatorTester ::test_initial() {
     ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), 0);
 }
 
+void ComAggregatorTester ::fill_with(U32 size) {
+    const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
+    Fw::Buffer buffer = fill_buffer(size);
+    ComCfg::FrameContext context;
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), 0);
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_EQ(ORIGINAL_LENGTH + size, this->component.m_frameSerializer.getSize());
+    this->validate_buffer_aggregated(buffer, context);
+    this->clearHistory();
+}
+
 //! Tests fill operation
 Fw::Buffer ComAggregatorTester ::test_fill(bool expect_hold) {
     // Precondition: initial has run
     const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
-    // Maximum size we can fill: a held packet is filled into an empty aggregate once the outstanding one returns
+    // Maximum size we can fill while leaving room for a minimum idle packet: a held packet is filled into an empty
+    // aggregate once the outstanding one returns
     const FwSizeType FILLED = expect_hold ? 0 : ORIGINAL_LENGTH;
-    const FwSizeType MAX_FILL = this->capacity() - FILLED - ((FILLED == this->capacity()) ? 0 : 1);
+    EXPECT_LE(FILLED, this->max_packet_size());
+    const FwSizeType MAX_FILL = this->max_packet_size() - FILLED;
     if (MAX_FILL == 0) {
         // Nothing to fill
         return Fw::Buffer();
     }
-    // Allow a full buffer only in the case where we expect to hold
     const U32 BUFFER_LENGTH = STest::Pick::lowerUpper(1, static_cast<U32>(MAX_FILL));
     Fw::Buffer buffer = fill_buffer(BUFFER_LENGTH);
     ComCfg::FrameContext context;
@@ -180,10 +195,18 @@ void ComAggregatorTester ::test_fill_multi() {
 //! Tests full operation
 void ComAggregatorTester ::test_full() {
     // Precondition: fill has run
-    // Chose a buffer that will be too large to fit but still will fit after being aggregated
+    // Chose a buffer the current aggregate rejects (too large, or leaving less than a minimum idle packet of
+    // residual) but that fits in an empty aggregate
     const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
-    const U32 BUFFER_LENGTH = STest::Pick::lowerUpper(static_cast<U32>(this->capacity() - ORIGINAL_LENGTH + 1),
-                                                      static_cast<U32>(this->capacity()));
+    const FwSizeType REMAINING = this->aggregation_size() - ORIGINAL_LENGTH;
+    const FwSizeType LOWER = (REMAINING > Ccsds::Utils::IdlePacket::MIN_SIZE - 1)
+                                 ? (REMAINING - (Ccsds::Utils::IdlePacket::MIN_SIZE - 1))
+                                 : 1;
+    U32 BUFFER_LENGTH = STest::Pick::lowerUpper(static_cast<U32>(LOWER), static_cast<U32>(this->max_packet_size()));
+    if (BUFFER_LENGTH == REMAINING) {
+        // An exact fill is accepted: step off it in either direction, both of which are rejected
+        BUFFER_LENGTH = (BUFFER_LENGTH == this->max_packet_size()) ? (BUFFER_LENGTH - 1) : (BUFFER_LENGTH + 1);
+    }
     Fw::Buffer buffer = fill_buffer(BUFFER_LENGTH);
     ComCfg::FrameContext context;
 
@@ -220,9 +243,14 @@ void ComAggregatorTester ::test_full() {
 //! Tests exactly full operation
 void ComAggregatorTester ::test_exactly_full() {
     // Precondition: fill has run
-    // Chose a buffer that will be too large to fit but still will fit after being aggregated
+    // Chose a buffer that exactly completes the aggregate: no idle packet is appended. The completing packet
+    // must itself be acceptable, so top the aggregate up first when the remaining space exceeds the largest packet.
+    if (this->aggregation_size() - this->component.m_frameSerializer.getSize() > this->max_packet_size()) {
+        this->fill_with(static_cast<U32>(this->aggregation_size() - this->component.m_frameSerializer.getSize() -
+                                         this->max_packet_size()));
+    }
     const FwSizeType ORIGINAL_LENGTH = this->component.m_frameSerializer.getSize();
-    const U32 BUFFER_LENGTH = static_cast<U32>(this->capacity() - ORIGINAL_LENGTH);
+    const U32 BUFFER_LENGTH = static_cast<U32>(this->aggregation_size() - ORIGINAL_LENGTH);
     Fw::Buffer buffer = fill_buffer(BUFFER_LENGTH);
     ComCfg::FrameContext context;
 
@@ -255,6 +283,34 @@ void ComAggregatorTester ::test_exactly_full() {
               Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
     // Validate that there is no data aggregated
     ASSERT_EQ(this->component.m_frameSerializer.getSize(), 0);
+    this->clearHistory();
+}
+
+void ComAggregatorTester ::test_small_residual_holds() {
+    // Precondition: initial has run
+    const FwSizeType FIRST_SIZE = 100;
+    this->fill_with(static_cast<U32>(FIRST_SIZE));
+    // Leave a residual too small for an idle packet: the packet is held and the aggregate goes out idle-filled
+    const FwSizeType RESIDUAL = STest::Pick::lowerUpper(1, static_cast<U32>(Ccsds::Utils::IdlePacket::MIN_SIZE - 1));
+    Fw::Buffer buffer = fill_buffer(static_cast<U32>(this->aggregation_size() - FIRST_SIZE - RESIDUAL));
+    ComCfg::FrameContext context;
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(0);  // The held packet is not returned
+    this->validate_emitted_aggregation(0);
+    // Once the aggregate returns, the held packet starts the next one
+    this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(0).data),
+                                 this->fromPortHistory_dataOut->at(0).context);
+    Fw::Success good = Fw::Success::SUCCESS;
+    this->invoke_to_comStatusIn(0, good);
+    this->m_aggregation.clear();
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_EQ(this->component.m_frameSerializer.getSize(), buffer.getSize());
+    ASSERT_from_dataReturnOut_SIZE(1);  // The held packet is returned once aggregated
+    this->validate_buffer_aggregated(buffer, context);
     this->clearHistory();
 }
 
@@ -615,18 +671,16 @@ void ComAggregatorTester ::test_configure_invalid_size_asserts() {
     // Sizes at the bounds are accepted
     ComAggregator smallest("Smallest");
     smallest.configure(ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE, false, TEST_ALLOCATION_ID, allocator);
-    ASSERT_EQ(smallest.m_capacity,
-              ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE - Ccsds::Utils::IdlePacket::MIN_SIZE);
+    ASSERT_EQ(smallest.m_aggregationSize, ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE);
     smallest.cleanup();
     ComAggregator largest("Largest");
     largest.configure(static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY), true, TEST_ALLOCATION_ID,
                       allocator);
-    ASSERT_EQ(largest.m_capacity, static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY));
+    ASSERT_EQ(largest.m_aggregationSize, static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY));
     largest.cleanup();
     ComAggregator largestNonSpanning("LargestNonSpanning");
     largestNonSpanning.configure(Ccsds::Utils::IdlePacket::MAX_SIZE + 1, false, TEST_ALLOCATION_ID, allocator);
-    ASSERT_EQ(largestNonSpanning.m_capacity,
-              Ccsds::Utils::IdlePacket::MAX_SIZE + 1 - Ccsds::Utils::IdlePacket::MIN_SIZE);
+    ASSERT_EQ(largestNonSpanning.m_aggregationSize, Ccsds::Utils::IdlePacket::MAX_SIZE + 1);
     largestNonSpanning.cleanup();
     ASSERT_EQ(allocator.m_allocations, 3);
     ASSERT_EQ(allocator.m_deallocations, 3);
@@ -659,7 +713,6 @@ void ComAggregatorTester ::test_cleanup() {
     ASSERT_EQ(this->component.m_frameBuffer.getSize(), 0);
     ASSERT_EQ(this->component.m_frameSerializer.getCapacity(), 0);
     ASSERT_EQ(this->component.m_aggregationSize, 0);
-    ASSERT_EQ(this->component.m_capacity, 0);
     this->component.cleanup();
     ASSERT_EQ(this->m_allocator.m_deallocations, 1);
     // cleanup() followed by configure() re-acquires storage
@@ -671,7 +724,7 @@ void ComAggregatorTester ::test_cleanup() {
     ASSERT_EQ(allocator.m_allocations, 2);
     ASSERT_EQ(allocator.m_deallocations, 1);
     ASSERT_EQ(reconfigured.m_frameBuffer.getData(), static_cast<U8*>(allocator.m_lastPointer));
-    ASSERT_EQ(reconfigured.m_capacity, DEFAULT_AGGREGATION_SIZE);
+    ASSERT_EQ(reconfigured.m_aggregationSize, DEFAULT_AGGREGATION_SIZE);
     reconfigured.cleanup();
     ASSERT_EQ(allocator.m_deallocations, 2);
 }
@@ -692,8 +745,8 @@ void ComAggregatorTester ::test_oversize_hold_asserts() {
               Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
     ASSERT_from_dataOut_SIZE(1);
 
-    // Hold a packet that can never fit in a single aggregate
-    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(this->capacity()) + 1);
+    // Hold a packet that can never fit in a single aggregate next to an idle packet
+    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(this->max_packet_size()) + 1);
     ASSERT_DEATH_IF_SUPPORTED((this->invoke_to_dataIn(0, oversize, context), this->dispatchOne(this->component)),
                               "ComAggregator.cpp");
     delete[] oversize.getData();
@@ -703,7 +756,7 @@ void ComAggregatorTester ::test_oversize_hold_asserts() {
 void ComAggregatorTester ::test_oversize_fill_asserts() {
     this->test_initial();
     ComCfg::FrameContext context;
-    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(this->capacity()) + 1);
+    Fw::Buffer oversize = this->fill_buffer(static_cast<U32>(this->max_packet_size()) + 1);
     ASSERT_DEATH_IF_SUPPORTED((this->invoke_to_dataIn(0, oversize, context), this->dispatchOne(this->component)),
                               "ComAggregator.cpp");
     delete[] oversize.getData();

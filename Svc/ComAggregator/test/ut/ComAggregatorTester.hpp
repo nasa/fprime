@@ -94,6 +94,9 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Tests exactly full operation
     void test_exactly_full();
 
+    //! Tests that a packet leaving less than a minimum idle packet of residual is held for the next aggregate
+    void test_small_residual_holds();
+
     //! Tests timeout operation
     void test_timeout();
 
@@ -160,8 +163,11 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Configured aggregation size of the component under test
     FwSizeType aggregation_size() const;
 
-    //! Configured packet capacity of the component under test
-    FwSizeType capacity() const;
+    //! Largest packet accepted without spanning: leaves room for a minimum idle packet in an empty aggregate
+    FwSizeType max_packet_size() const;
+
+    //! Send a buffer that must be aggregated (not held) and validate it against the shadow aggregation
+    void fill_with(U32 size);
 
     //! Helper to validate a buffer has been aggregated correctly
     void validate_buffer_aggregated(const Fw::Buffer& buffer, const ComCfg::FrameContext& context);

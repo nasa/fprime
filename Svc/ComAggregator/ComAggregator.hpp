@@ -35,7 +35,8 @@ class ComAggregator final : public ComAggregatorComponentBase {
     //! Configure the aggregator and allocate the aggregation buffer
     //!
     //! Every emitted aggregate is exactly `aggregationSize` bytes: residual space is filled with an SPP idle
-    //! packet. With spanning disabled, incoming packets are never split and must fit in
+    //! packet. With spanning disabled, incoming packets are never split: a packet is added to the current aggregate
+    //! only if it completes it exactly or leaves room for a minimum idle packet, and a single packet may be at most
     //! `aggregationSize - Ccsds::Utils::IdlePacket::MIN_SIZE` bytes, which must hold a full com buffer and a full
     //! file buffer Space Packet. When spanning is enabled, packets that do not fit in the remaining aggregation
     //! space are split across aggregates (CCSDS TM packet spanning): the leading bytes fill the current aggregate
@@ -198,6 +199,11 @@ class ComAggregator final : public ComAggregatorComponentBase {
     //! Get the remaining capacity of the aggregation buffer
     FwSizeType remainingCapacity() const;
 
+    //! Check whether a packet of the given size may be added to the current aggregate
+    //!
+    //! Without spanning the packet must complete the aggregate or leave room for a minimum idle packet.
+    bool accepts(FwSizeType size) const;
+
     //! Record the First Header Pointer at the current fill offset, if not already recorded
     void markFirstHeaderIfUnset();
 
@@ -234,7 +240,6 @@ class ComAggregator final : public ComAggregatorComponentBase {
 
     bool m_spanning;               //!< Whether packet spanning is enabled
     FwSizeType m_aggregationSize;  //!< Size in bytes of every emitted aggregate (0 until configured)
-    FwSizeType m_capacity;         //!< Bytes of packet data accepted per aggregate (0 until configured)
     FwSizeType m_heldOffset;       //!< Bytes of the held buffer already consumed into previous aggregates
     U16 m_fhp;                     //!< First Header Pointer for the current aggregate (FHP_UNSET if none)
     U8 m_pendingIdle[Ccsds::Utils::IdlePacket::MIN_SIZE] = {};  //!< Idle packet bytes spanning into the next aggregate

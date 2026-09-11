@@ -57,15 +57,17 @@ further data or status can arrive (i.e. after the component's task has stopped).
 Every emitted aggregate is exactly `aggregationSize` bytes: residual space at send time is filled with an SPP idle
 packet (APID `0x7FF`, CCSDS 133.0-B-2 4.1.3.3.4), so the downstream framer receives a complete data field and no layer
 between the aggregator and the framer (e.g. SDLS encryption) has to handle padding. With spanning disabled, incoming
-buffers are never split and the accepted buffer size is `aggregationSize - 7`, which guarantees the residual is always
-at least a minimum idle packet (header + 1 byte). `configure()` asserts unless a full-size `Fw::ComBuffer` or file
-buffer Space Packet fits within that limit, and unless the largest possible residual (`aggregationSize - 1`) is
-expressible in the idle packet's SPP length field (`aggregationSize <= 65544`).
+buffers are never split, so a buffer is only added to the current aggregate when it either completes it exactly or
+leaves at least a minimum idle packet (header + 1 byte, 7 bytes) of residual; otherwise the aggregate is sent as is
+(idle-filled) and the buffer starts the next one. A single buffer may therefore be at most `aggregationSize - 7`
+bytes. `configure()` asserts unless a full-size `Fw::ComBuffer` or file buffer Space Packet fits within that limit,
+and unless the largest possible residual (`aggregationSize - 1`) is expressible in the idle packet's SPP length field
+(`aggregationSize <= 65544`).
 
 ### Packet Spanning
 
-Configuring with `spanningEnabled` set enables CCSDS TM packet spanning. In this mode the accepted buffer size is the
-full `aggregationSize`, which must not exceed 2046 (`0x7FE`), the TM First Header Pointer range:
+Configuring with `spanningEnabled` set enables CCSDS TM packet spanning. In this mode a buffer of any size is accepted
+and `aggregationSize` must not exceed 2046 (`0x7FE`), the TM First Header Pointer range:
 
 - A packet that does not fit in the remaining space is split: its leading bytes complete the current aggregate and
   the remainder is retained. Retention of the underlying buffer (and its return) follows normal buffer ownership;
@@ -84,9 +86,9 @@ full `aggregationSize`, which must not exceed 2046 (`0x7FE`), the TM First Heade
 Spanning support makes the component depend on `Svc.Ccsds` (`Svc/Ccsds/Types` for the First Header Pointer limits and
 `Svc/Ccsds/Utils` for the SPP idle packet); this dependency is present regardless of whether spanning is enabled.
 
-With spanning disabled, incoming buffers are never split; a buffer larger than `aggregationSize - 7` (the
-non-spanning capacity) is rejected by assertion rather than truncated, and the First Header Pointer reported via
-`ComCfg::FrameContext.firstHeaderPointer` is always 0.
+With spanning disabled, incoming buffers are never split; a buffer larger than `aggregationSize - 7` (the largest
+buffer that leaves room for an idle packet) is rejected by assertion rather than truncated, and the First Header
+Pointer reported via `ComCfg::FrameContext.firstHeaderPointer` is always 0.
 
 If a downstream frame is reported as failed, the unsent aggregate is dropped. With spanning enabled, the remainder
 of a packet whose head was in the dropped aggregate is dropped too; its buffer is returned and SUCCESS is emitted, so
