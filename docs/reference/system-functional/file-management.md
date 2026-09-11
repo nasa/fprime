@@ -13,6 +13,8 @@
 
 File management provides the capability to manipulate files on the spacecraft file system, transfer files between the ground and the spacecraft in both directions, route delivered files to appropriate handlers, and perform large file I/O operations without blocking time-critical components. These capabilities are delivered by a set of collaborating components that together support the full lifecycle of file operations.
 
+The file uplink and downlink summaries below describe the F Prime file protocol. F Prime also provides a CFDP-based alternative; see [File Transfer](file-transfer.md) for a comparison of the two mechanisms and where each is supported.
+
 ### File System Operations
 
 The File Manager provides ground commands for common file and directory operations:

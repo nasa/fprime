@@ -22,7 +22,8 @@ The system functional documentation provides a functional or capability descript
 - __[Event Management](event-management.md)__ - Event collection, distribution, text logging, and fatal handling
 - __[Rate Group Scheduling](rate-group-scheduling.md)__ - Periodic execution of components at configurable rates
 - __[Health Monitoring](health-monitoring.md)__ - Component liveness verification and watchdog stroking
-- __[File Management](file-management.md)__ - File transfer (uplink/downlink), file operations, and file dispatch
+- __[File Transfer](file-transfer.md)__ - File uplink/downlink via the F Prime file protocol or CFDP, and where each is supported
+- __[File Management](file-management.md)__ - On-board file operations, file dispatch, and off-thread file I/O
 - __[Communication Stack](communication.md)__ - Data path between flight software and external systems
 - __[CCSDS Protocol](ccsds-protocol.md)__ - CCSDS-standard space communication protocols
 - __[Data Products](data-products.md)__ - Structured data collection, storage, and priority-driven downlink
