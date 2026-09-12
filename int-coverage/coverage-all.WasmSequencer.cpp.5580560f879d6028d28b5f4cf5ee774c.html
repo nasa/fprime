@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-11 22:11:16</td>
+      <td>2026-09-12 22:10:47</td>
     </tr>
   </table>
 </div>
@@ -83,7 +83,7 @@
     <tr><td><a href="#l361">Svc::WasmSequencer::RUN_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::BlockState const&amp;, Svc::SeqArgs const&amp;) (line 361)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l377">Svc::WasmSequencer::WAIT_cmdHandler(unsigned int, unsigned int) (line 377)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l50">Svc::WasmSequencer::WasmSequencer(char const*) (line 50)</a></td><td>called 1 time</td><td>48.0%</td></tr>
-    <tr><td><a href="#l190">Svc::WasmSequencer::checkTimers_handler(short, unsigned int) (line 190)</a></td><td>called 121 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l190">Svc::WasmSequencer::checkTimers_handler(short, unsigned int) (line 190)</a></td><td>called 122 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l195">Svc::WasmSequencer::cmdResponseIn_handler(short, unsigned int, unsigned int, Fw::CmdResponse const&amp;) (line 195)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l69">Svc::WasmSequencer::configure(Svc::WasmSequencer::Config const&amp;, Fw::MemAllocator&amp;) (line 69)</a></td><td>called 1 time</td><td>61.0%</td></tr>
     <tr><td><a href="#l138">Svc::WasmSequencer::deinit() (line 138)</a></td><td>called 1 time</td><td>86.0%</td></tr>
@@ -92,7 +92,7 @@
     <tr><td><a href="#l273">Svc::WasmSequencer::seqCancelIn_handler(short) (line 273)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l260">Svc::WasmSequencer::seqRunIn_handler(short, Fw::StringBase const&amp;, Svc::SeqArgs const&amp;) (line 260)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l282">Svc::WasmSequencer::serialIn_handler(short, Fw::LinearBufferBase&amp;) (line 282)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l244">Svc::WasmSequencer::writeTelemetry_handler(short, unsigned int) (line 244)</a></td><td>called 121 times</td><td>50.0%</td></tr>
+    <tr><td><a href="#l244">Svc::WasmSequencer::writeTelemetry_handler(short, unsigned int) (line 244)</a></td><td>called 122 times</td><td>50.0%</td></tr>
   </table>
 </details>
 
@@ -1577,7 +1577,7 @@
       <td class="lineno"><a id="l190" href="#l190">190</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">WasmSequencer</span><span class="w"> </span><span class="o">::</span><span class="n">checkTimers_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1591,14 +1591,14 @@
       <td class="lineno"><a id="l192" href="#l192">192</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">interpreter_sendSignal_checkTimers</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1955,14 +1955,14 @@
       <td class="lineno"><a id="l244" href="#l244">244</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">WasmSequencer</span><span class="w"> </span><span class="o">::</span><span class="n">writeTelemetry_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l245" href="#l245">245</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_wasm</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1978,11 +1978,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getTime</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1998,13 +1998,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_ControllerState</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">controller_getState</span><span class="p">(),</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2013,13 +2013,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_InterpreterState</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">interpreter_getState</span><span class="p">(),</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2028,12 +2028,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_SequencesSucceeded</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlm</span><span class="p">.</span><span class="n">sequencesSucceeded</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2042,12 +2042,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_SequencesFailed</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlm</span><span class="p">.</span><span class="n">sequencesFailed</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2056,12 +2056,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_SequencesCancelled</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlm</span><span class="p">.</span><span class="n">sequencesCancelled</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2070,12 +2070,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_CommandsDispatched</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlm</span><span class="p">.</span><span class="n">commandsDispatched</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2084,12 +2084,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_CommandsFailed</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlm</span><span class="p">.</span><span class="n">commandsFailed</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2098,12 +2098,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_LastTrapReason</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_exit</span><span class="p">.</span><span class="n">lastTrapReason</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2112,19 +2112,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 121 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 121 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 122 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 122 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_SeqName</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_tlm</span><span class="p">.</span><span class="n">sequenceName</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l258" href="#l258">258</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">122</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
