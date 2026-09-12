@@ -14,6 +14,7 @@ PRMDB-001 | The `Svc::PrmDb` component shall load parameter values from a file |
 PRMDB-002 | The `Svc::PrmDb` component shall provide an interface to read parameter values | Inspection, Unit Test
 PRMDB-003 | The `Svc::PrmDb` component shall provide an interface to update parameter values | Inspection, Unit Test
 PRMDB-004 | The `Svc::PrmDb` component shall provide a command to save the current parameter values | Inspection, Unit Test
+PRMDB-005 | The `Svc::PrmDb` component shall reject a `PRM_LOAD_FILE` command with an empty file name with a `VALIDATION_ERROR` response and a `PrmDbFileLoadFailed` event, without asserting or altering the staging database | Unit Test, Integration Test
 
 ## 3. Design
 
@@ -42,7 +43,7 @@ When a new parameter value is written to the `setPrm` port, the table in memory 
 
 When the component receives the `PRM_SAVE_FILE` command, it saves the entire table to the file, overwriting the old values. Unless the file is written, any parameter updates will be lost when the software is restarted.
 
-The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied path into the staging database. Paths rejected by the sandbox emit a `PrmFileReadError` event with an `OPEN` stage.
+The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied path into the staging database. Paths rejected by the sandbox emit a `PrmFileReadError` event with an `OPEN` stage. An empty file name is rejected before the load begins: the command emits `PrmDbFileLoadFailed`, returns `VALIDATION_ERROR`, and leaves the staging database and load state unchanged.
 
 > [!WARNING]
 > All `PrmDb` file access — the startup `readParamFile` read, `PRM_SAVE_FILE` writes, and
