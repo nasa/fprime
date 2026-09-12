@@ -15,7 +15,7 @@ Drv/ByteStreamBufferAdapter/ByteStreamBufferAdapter.cpp
                                               24      24   100%
 Drv/Ip/IpSocket.cpp                          104      91    87%   86,114,151,163,167,171,178,221-222,227-228,245,249
 Drv/Ip/IpSocket.hpp                            1       1   100%
-Drv/Ip/SocketComponentHelper.cpp             223     204    91%   62,81-82,121,139-141,148,199,241-242,296,318-320,360,375-376,379
+Drv/Ip/SocketComponentHelper.cpp             223     205    91%   62,81-82,121,139-141,148,241-242,296,318-320,360,375-376,379
 Drv/Ip/TcpClientSocket.cpp                    30      23    76%   55,70-71,75-76,81-82
 Drv/Ip/TcpServerSocket.cpp                    57      42    73%   53,66-67,71-72,77-78,84-85,90-91,113,119,123-124
 Drv/Ip/UdpSocket.cpp                         122      93    76%   49,57-58,85,92-93,106,112,123,138,146-147,164-166,170-171,183-184,192,218-219,260,262-263,266-268,270
@@ -31,7 +31,7 @@ Drv/Ports/DataTypes/DataBuffer.cpp            18       0     0%   6-9,11,13,17-2
 Drv/PosixUartDriver/PosixUartDriver.cpp      237       0     0%   30,32-37,39,44-47,49,57,59-64,67,69-76,93-94,96-103,106-107,109-116,119,121-128,131-150,152-154,157-159,162-164,167-169,172-174,177-179,182-184,187-189,192-194,197-199,201-203,206,208-215,232,234-246,250-265,268,271,273,276,279-286,289-293,295,298-300,302,308-311,313-316,318-320,322,324-329,332-333,335-337,339-342,344-345,348-352,354-356,358,362,364-365,367,372-379,381,384-386,388,391-395,397-399,401-402
 Drv/TcpClient/TcpClientComponentImpl.cpp      41      33    80%   56,77-79,83-85,88
 Drv/TcpServer/TcpServerComponentImpl.cpp      74      64    86%   104-106,129-131,135-137,140
-Drv/Udp/UdpComponentImpl.cpp                  48      35    72%   41-42,66,85-90,94-96,99
+Drv/Udp/UdpComponentImpl.cpp                  48      36    75%   41-42,85-90,94-96,99
 Fw/Buffer/Buffer.cpp                         150     131    87%   180,184,188,192,206,212,216,220,224,234,236-238,242-247
 Fw/Cmd/CmdPacket.cpp                          24      21    87%   21,23-24
 Fw/Com/ComPacket.cpp                          10      10   100%
@@ -42,7 +42,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
+Fw/DataStructures/CircularIndex.hpp           38      38   100%
 Fw/DataStructures/ExternalArray.hpp           57      57   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -152,7 +152,7 @@ Os/Cpu.cpp                                    23      20    87%   35-37
 Os/Cpu.hpp                                     2       2   100%
 Os/Delegate.hpp                               20      20   100%
 Os/DelegateRawTime.cpp                        66      64    97%   102-103
-Os/Directory.cpp                              92      77    83%   26-28,86,90,103,109,118,122,135,141,147,150-152
+Os/Directory.cpp                              92      76    82%   26-28,86,90,103,109,118,122,133,135,141,147,150-152
 Os/Directory.hpp                               2       2   100%
 Os/File.cpp                                  211     182    86%   59-60,88-90,115,137,169-173,175-176,290-291,293-294,299-301,312-314,318-319,337-339
 Os/File.hpp                                    1       1   100%
@@ -203,9 +203,9 @@ Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
-Os/Posix/RawTime.cpp                          44      39    88%   49-50,64,76,80
+Os/Posix/RawTime.cpp                          44      41    93%   64,76,80
 Os/Posix/RawTime.hpp                           1       1   100%
-Os/Posix/Task.cpp                            156     105    67%   45-47,51,55-58,60-61,63-64,68-69,71-72,75-77,87-89,93-95,135-136,141,143-146,149-150,155,184,196,243,251,265-267,269-271,290-292,296-297,299
+Os/Posix/Task.cpp                            156     106    67%   45-47,51,55-58,60-61,63-64,68-69,71-72,75-77,87-89,93-95,135-136,141,143-146,149-150,155,184,196,243,251,265-267,269-271,291-292,296-297,299
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      71    92%   84,121,139-142
 Os/Queue.hpp                                   4       4   100%
@@ -266,6 +266,10 @@ Svc/BufferLogger/BufferLoggerFile.cpp        118     109    92%   60,117-118,148
 Svc/BufferManager/BufferManagerComponentImpl.cpp
                                              111     110    99%   42
 Svc/BufferRepeater/BufferRepeater.cpp         39      35    89%   51-53,79
+Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptor.cpp
+                                              61      59    96%   107-108
+Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptor.cpp
+                                              80      76    95%   96-97,133-134
 Svc/Ccsds/AosDeframer/AosDeframer.cpp        284     280    98%   498,500-501,591
 Svc/Ccsds/AosFramer/AosFramer.cpp            190     190   100%
 Svc/Ccsds/ApidManager/ApidManager.cpp         20      20   100%
@@ -328,6 +332,7 @@ Svc/Ccsds/TestUtils/TestUtils.cpp             15      15   100%
 Svc/Ccsds/TmFramer/TmFramer.cpp               58      58   100%
 Svc/Ccsds/Utils/CRC16.hpp                     10      10   100%
 Svc/Ccsds/Utils/IdlePacket.cpp                13      13   100%
+Svc/Ccsds/Utils/SdlsAuthMask.hpp              12      12   100%
 Svc/ChronoTime/ChronoTime.cpp                  8       8   100%
 Svc/CmdDispatcher/CommandDispatcherImpl.cpp
                                              135     132    97%   211,213-214
@@ -370,7 +375,7 @@ Svc/FileUplink/FileUplink.cpp                135     122    90%   47-49,59-61,70
 Svc/FileUplink/FileUplink.hpp                 21      21   100%
 Svc/FileUplink/Warnings.cpp                   29      29   100%
 Svc/FileWorker/FileWorker.cpp                342     306    89%   85-88,191-194,289,291-294,296-298,300,303-304,306-308,359,370,464,483-484,516,535-538,587-590
-Svc/FprimeDeframer/FprimeDeframer.cpp         54      53    98%   77
+Svc/FprimeDeframer/FprimeDeframer.cpp         54      54   100%
 Svc/FprimeFramer/FprimeFramer.cpp             37      32    86%   41-43,45-46
 Svc/FprimeRouter/FprimeRouter.cpp             57      55    96%   48,68
 Svc/FpySequencer/FpySequencer.cpp            250     201    80%   267-269,339-342,442,444-450,453,455-457,459-466,469,471-477,480-487,497-500,513-514
@@ -437,5 +442,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      25462   21580    84%
+TOTAL                                      25615   21733    84%
 ------------------------------------------------------------------------------
