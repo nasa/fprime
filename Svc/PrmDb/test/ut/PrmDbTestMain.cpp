@@ -283,6 +283,23 @@ TEST(ParameterDbTest, PrmFileLoadIllegalActions) {
     tester.runPrmFileLoadIllegal();
 }
 
+TEST(ParameterDbTest, PrmFileLoadEmptyFileName) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmFileLoadEmptyFileName();
+}
+
 TEST(ParameterDbTest, PrmFileLoadSandboxViolation) {
     Svc::PrmDbImpl impl("PrmDbImpl");
 

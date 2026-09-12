@@ -336,6 +336,13 @@ void PrmDbImpl::PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode,
         return;
     }
 
+    // Reject an empty file name before touching the staging database
+    if (fileName.length() == 0) {
+        this->log_WARNING_HI_PrmDbFileLoadFailed();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
     // Set state to loading
     m_state = PrmDbFileLoadState::LOADING_FILE_UPDATES;
 
