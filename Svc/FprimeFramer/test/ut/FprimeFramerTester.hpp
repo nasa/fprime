@@ -52,6 +52,12 @@ class FprimeFramerTester final : public FprimeFramerGTestBase {
     //! Test oversized buffer allocation (trimming) of data
     void testOversizedAllocatorBufferIsTrimmed();
 
+    //! Test that an invalid allocation drops the frame and emits SUCCESS on comStatusOut
+    void testInvalidAllocationEmitsComStatus();
+
+    //! Test that an undersized allocation drops the frame and emits SUCCESS on comStatusOut
+    void testUndersizedAllocationEmitsComStatus();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -80,8 +86,10 @@ class FprimeFramerTester final : public FprimeFramerGTestBase {
     U8 m_buffer_slot[2048];
     Fw::Buffer m_buffer;  // buffer to be returned by mocked allocate call
 
-    // Flag read by from_bufferAllocate_handler to choose which path to take
+    // Flags read by from_bufferAllocate_handler to choose which path to take
     bool m_useOversizedAlloc = false;
+    bool m_useInvalidAlloc = false;
+    bool m_useUndersizedAlloc = false;
 };
 
 }  // namespace Svc
