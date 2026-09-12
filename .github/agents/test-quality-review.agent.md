@@ -56,7 +56,7 @@ complements this agent by catching the same issues pre-submit.
 
 ## Scope — ten categories
 
-The "introduced by this PR" test (`_shared/skills/pr-diff-scoping.skill.md`)
+The "introduced by this PR" test (`.github/skills/pr-diff-scoping/SKILL.md`)
 applies to all ten categories; preexisting test weaknesses become
 `**future work**`.
 
@@ -121,7 +121,7 @@ or whose failure mode is meaningless. Examples:
 - `ASSERT_NE(nullptr, &<stack_var>)` — the address of a stack
   variable is never null.
 - `EXPECT_NO_THROW(<call>)` on F Prime code (which builds with
-  `-fno-exceptions`; see `fprime-cpp-design.skill.md` CPP-25).
+  `-fno-exceptions`; see `fprime-cpp-design` CPP-25).
 
 **Finding-class:** `test-tautological-assertion`.
 
@@ -285,7 +285,7 @@ the current `<C>` pattern when locating the Tester.
   doc-comments are part of the doc reviewer's scope (`stale-
   documentation-review.agent.md`).
 - C++ design rules inside test bodies. The CPP design rules
-  (`fprime-cpp-design.skill.md`) apply to test code too, but
+  (`fprime-cpp-design`) apply to test code too, but
   flagging them is `fprime-code-review.agent.md`'s job, not this
   agent's.
 - Coverage *metrics* (line / branch coverage from `gcov` etc.). The
@@ -313,7 +313,7 @@ Treat a finding as low-confidence when ANY of these hold:
 
 Low confidence does not downgrade the tag (review contract §4).
 Append a maintainer ping per
-`_shared/skills/maintainer-lookup.skill.md`.
+`.github/skills/maintainer-lookup/SKILL.md`.
 
 ---
 

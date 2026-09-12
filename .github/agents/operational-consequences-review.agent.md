@@ -195,7 +195,7 @@ Treat a finding as low-confidence when ANY of these hold:
 
 Low confidence does not downgrade the tag (review contract §4).
 Append a maintainer ping per
-`_shared/skills/maintainer-lookup.skill.md`. Additionally label
+`.github/skills/maintainer-lookup/SKILL.md`. Additionally label
 judgment-call findings as such in the comment body (one clause,
 e.g. "operational judgment call:") so maintainers can weigh them
 separately from defects.

@@ -90,13 +90,13 @@ plugins:
           import_url: https://github.com/fprime-community/fprime-workshop-led-blinker?branch=devel
           imports: [
             docs/led-blinker.md,
-            docs/hardware.md
+            docs/hardware.md,
             docs/img
           ]
         - name: tutorials-math-component
           import_url: https://github.com/fprime-community/fprime-tutorial-math-component?branch=devel
           imports: [
-            docs/math-component.md
+            docs/math-component.md,
             docs/img
           ]
         - name: tutorials-arduino-led-blinker

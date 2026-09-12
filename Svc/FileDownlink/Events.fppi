@@ -33,7 +33,7 @@ event DownlinkCanceled(
   id 0x03 \
   format "Canceled downlink of file {} to file {}"
 
-@ The File Downlink component has detected a timeout. Downlink has been canceled.
+@ A partial downlink request exceeded the source file size; length was clamped
 event DownlinkPartialWarning(
                               startOffset: U32 @< Starting file offset in bytes
                               length: U32 @< Number of bytes to downlink
@@ -45,7 +45,7 @@ event DownlinkPartialWarning(
   id 0x05 \
   format "Offset {} plus length {} is greater than source size {} for partial downlink of file {} to file {}. "
 
-@ The File Downlink component has detected a timeout. Downlink has been canceled.
+@ A partial downlink request started beyond the source file size and failed
 event DownlinkPartialFail(
                            sourceFileName: string size 100 @< The source filename
                            destFileName: string size 100 @< The destination file name

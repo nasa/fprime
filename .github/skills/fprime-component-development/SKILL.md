@@ -1,6 +1,13 @@
 ---
 name: fprime-component-development
-description: Top-level flight development process for F Prime components. Orchestrates the full lifecycle from requirements through integration testing. Trigger on any task involving creating a new F Prime component or adding significant functionality to an existing one. Keywords: F Prime, component, development, lifecycle, flight software, requirements, design, implementation, unit test, integration test.
+description: >-
+  Top-level flight development process for F Prime components.
+  Orchestrates the full lifecycle from requirements through
+  integration testing. Trigger on any task involving creating a new F
+  Prime component or adding significant functionality to an existing
+  one. Keywords: F Prime, component, development, lifecycle, flight
+  software, requirements, design, implementation, unit test,
+  integration test.
 ---
 
 # Skill: F Prime Component Development Process
@@ -25,11 +32,11 @@ Each phase has a dedicated skill with detailed guidance:
 
 | Phase | Skill | Key Output |
 |---|---|---|
-| 1. Requirements | `fprime-component-requirements.skill.md` | Written requirements list |
-| 2. Design | `fprime-component-design-fpp.skill.md` | `.fpp` model file |
-| 3. Implementation | `fprime-component-implementation.skill.md` | `.cpp` / `.hpp` files |
-| 4. Unit Test | `fprime-component-unit-test.skill.md` | `test/ut/` test suite |
-| 5. Integration Test | `fprime-component-integration-test.skill.md` | `test/int/` pytest suite |
+| 1. Requirements | `fprime-component-requirements` | Written requirements list |
+| 2. Design | `fprime-component-design-fpp` | `.fpp` model file |
+| 3. Implementation | `fprime-component-implementation` | `.cpp` / `.hpp` files |
+| 4. Unit Test | `fprime-component-unit-test` | `test/ut/` test suite |
+| 5. Integration Test | `fprime-component-integration-test` | `test/int/` pytest suite |
 
 ---
 
@@ -51,7 +58,7 @@ Each phase has a dedicated skill with detailed guidance:
    (see `docs/how-to/test-driven-development.md`).
 
 3. **Reference the C++ design skill.** All implementation must comply
-   with `fprime-cpp-design.skill.md` (CPP-1 through CPP-34). Consult
+   with `fprime-cpp-design` (CPP-1 through CPP-34). Consult
    it before writing any C++ code.
 
 4. **Follow Test-Driven Development when possible.** The recommended

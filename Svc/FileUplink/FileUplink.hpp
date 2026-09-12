@@ -272,7 +272,7 @@ class FileUplink final : public FileUplinkComponentBase {
     //! The total number of files rejected for a bad checksum
     FilesReceivedFailed m_filesReceivedFailed;
 
-    //! The total number of cancel packets
+    //! The total number of packets received
     PacketsReceived m_packetsReceived;
 
     //! The total number of warnings

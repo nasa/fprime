@@ -60,7 +60,7 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
    `commit_id`); a trigger deciding whether a PR needs another pass
    compares it against the current head.
 3. **Pre-run prompt-injection metadata scan.** Before invoking any
-   reviewer, run the `_shared/skills/prompt-injection-precheck.skill.md`
+   reviewer, run the `.github/skills/prompt-injection-precheck/SKILL.md`
    skill against the PR's metadata surfaces (title, body, commit
    messages, branch name, file paths, labels, diff content). Record the result
    as `precheck_verdict: clean` or `precheck_verdict: flagged`
@@ -197,7 +197,7 @@ in <owner>/<repo> at head <sha>. This is run
 
 Apply the review contract in `_shared/review-contract.md`. Apply
 your scope and finding classes from `fprime-code-review.agent.md`
-and the rule set in `_shared/skills/fprime-cpp-design.skill.md`.
+and the rule set in `.github/skills/fprime-cpp-design/SKILL.md`.
 Post inline review comments per the contract. Your review body
 contains only the hidden metadata block (§2); no visible summary
 table.
@@ -523,9 +523,13 @@ No special-case logic. On the second-and-later run on the same PR:
 - Each reviewer is invoked with an incremented `run-ordinal` in its
   kickoff prompt.
 - Each reviewer handles re-review state internally per the contract
-  §7 (phases A–D) and `_shared/skills/re-review-state.skill.md`.
-- The aggregator dismisses its prior review and submits a new one
-  (since the event APPROVE/REQUEST_CHANGES may change between runs).
+  §7 (phases A–D) and `.github/skills/re-review-state/SKILL.md`:
+  its metadata review is updated in place, new below-must-fix
+  findings are scoped to the diff since its `reviewed_head`, and a
+  quiet run posts nothing new.
+- The aggregator updates its prior review in place when the verdict
+  event is unchanged, and dismisses-and-resubmits only when the
+  event flips (`review-summary.agent.md` §5d).
 
 The orchestrator does not need to know whether this is run 1 or
 run N — it reads each prior `run` ordinal and increments.

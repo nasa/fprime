@@ -26,14 +26,14 @@ hidden metadata.
 ## Scope — eight categories
 
 You flag findings that fit one of these eight categories. The
-"introduced by this PR" test (`_shared/skills/pr-diff-scoping.skill.md`)
+"introduced by this PR" test (`.github/skills/pr-diff-scoping/SKILL.md`)
 applies to all eight; preexisting instances become `**future work**`.
 
 ### 1. Ground-reachable asserts (DoS)
 
 `FW_ASSERT` (or equivalent) on a predicate whose operand traces to a
 ground-input source class per
-`_shared/skills/fprime-ground-input-tracing.skill.md`. A malicious or
+`.github/skills/fprime-ground-input-tracing/SKILL.md`. A malicious or
 mistaken ground operator can force the spacecraft to assert.
 
 **Finding-class:** `ground-reachable-assert`.
@@ -62,7 +62,7 @@ uplinked content) without validating it before use. Includes:
 ### 4. Hardware-reachable asserts (DoS)
 
 Same as category 1 but the operand traces to a hardware-input source
-class per `_shared/skills/fprime-hardware-input-tracing.skill.md`.
+class per `.github/skills/fprime-hardware-input-tracing/SKILL.md`.
 
 **Finding-class:** `hardware-reachable-assert`.
 
@@ -114,7 +114,7 @@ actions / scripts) that:
 - Manipulates GHA cache / persistence / workflow output channels.
 - Combines multiple suspicious primitives in one PR.
 
-Mechanics in `_shared/skills/ci-test-runtime-policy.skill.md`.
+Mechanics in `.github/skills/ci-test-runtime-policy/SKILL.md`.
 
 **Finding-class:** `ci-test-runtime-policy-violation`.
 
@@ -139,11 +139,11 @@ For each touched file in the PR diff:
    transfer** for general memory safety. Category 7.
 5. **Walk every new line touching the test / fixture / GHA path**
    per the recipes and policy in
-   `_shared/skills/ci-test-runtime-policy.skill.md`. Category 8.
+   `.github/skills/ci-test-runtime-policy/SKILL.md`. Category 8.
 
 For each finding, classify the offending behavior as introduced or
-preexisting per `_shared/skills/pr-diff-scoping.skill.md`, then
-triage per `_shared/skills/triage-classifier.skill.md`, then format
+preexisting per `.github/skills/pr-diff-scoping/SKILL.md`, then
+triage per `.github/skills/triage-classifier/SKILL.md`, then format
 the comment per the review contract §9.
 
 ---
@@ -182,7 +182,7 @@ Treat a finding as low-confidence when ANY of these hold:
   whether the code actually runs in the CI test execution path.
 
 Low confidence does not downgrade the tag (review contract §4).
-Append a maintainer ping per `_shared/skills/maintainer-lookup.skill.md`.
+Append a maintainer ping per `.github/skills/maintainer-lookup/SKILL.md`.
 For security findings, the security-overseer (`@bitWarrior`) is
 added to the ping per the skill's step 2.
 

@@ -11,7 +11,6 @@ register_fprime_module(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/LogPacket.cpp"
   HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/AmpcsEvrLogPacket.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogBuffer.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogPacket.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogString.hpp"

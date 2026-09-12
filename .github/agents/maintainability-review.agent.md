@@ -32,7 +32,7 @@ decades; code that is correct but unreadable is a long-term defect.
 ## Scope — eleven categories
 
 The "introduced by this PR" test
-(`_shared/skills/pr-diff-scoping.skill.md`) applies to all eleven
+(`.github/skills/pr-diff-scoping/SKILL.md`) applies to all eleven
 categories; preexisting maintainability debt the PR merely touches
 becomes `**future work**`.
 
@@ -316,7 +316,7 @@ Treat a finding as low-confidence when ANY of these hold:
 
 Low confidence does not downgrade the tag (review contract §4).
 Append a maintainer ping per
-`_shared/skills/maintainer-lookup.skill.md`.
+`.github/skills/maintainer-lookup/SKILL.md`.
 
 ---
 

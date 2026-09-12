@@ -91,6 +91,12 @@ TEST(Transaction, Class2RxFileDataOffsetOverflow) {
     tester.testClass2RxFileDataOffsetOverflow();
 }
 
+// Regression test for GHSA-mh5x-2m6h-8267: a zero-length FileData segment must not assert/FATAL
+TEST(Transaction, Class2RxZeroLengthFileData) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxZeroLengthFileData();
+}
+
 TEST(Transaction, MultipleTransactionsInSeries) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testMultipleTransactionsInSeries();

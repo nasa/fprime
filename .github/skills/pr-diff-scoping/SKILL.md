@@ -9,7 +9,7 @@ Every reviewer agent must classify each finding as either:
 
 - **Introduced by this PR** (line added or modified, OR a new caller
   added by the PR widens reachability) → eligible for `**must fix**` /
-  `**suggestion**` / `**could fix**` per `triage-classifier.skill.md`.
+  `**suggestion**` / `**could fix**` per `triage-classifier`.
 - **Preexisting** (the PR did not introduce or widen the offending
   behavior) → must be tagged `**future work**`, never blocking.
 
@@ -62,7 +62,7 @@ Reaching the offending line transitively through multiple
 intermediate callers counts. The transitive reach is bounded by what
 the agent can statically determine; if it is unclear, the agent
 treats this as **introduced** and additionally appends a
-maintainer-ping per `maintainer-lookup.skill.md`.
+maintainer-ping per `maintainer-lookup`.
 
 When in doubt, prefer **introduced**. The cost of a false positive
 (flagging a preexisting issue as introduced) is small — the

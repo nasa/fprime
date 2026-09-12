@@ -96,6 +96,11 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
 
     // load commands
     if (not this->loadFile(fileName)) {
+        // Clear the recorded command state so a later port-driven run cannot
+        // emit a duplicate response for this already-answered command
+        this->m_blockState = Svc::BlockState::NO_BLOCK;
+        this->m_opCode = 0;
+        this->m_cmdSeq = 0;
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -374,6 +379,12 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
 void CmdSequencerComponentImpl ::CS_STEP_cmdHandler(FwOpcodeType opcode, U32 cmdSeq) {
     FW_ASSERT(this->m_sequence != nullptr);
     if (this->requireRunMode(RUNNING)) {
+        if (MANUAL != this->m_stepMode) {
+            // CS_STEP is valid only in MANUAL step mode
+            this->log_WARNING_HI_CS_InvalidMode();
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
         if (not this->m_sequence->hasMoreRecords()) {
             // A sequence with no end-of-sequence record leaves nothing to step; stepping anyway
             // asserts in the sequence reader

@@ -21,7 +21,7 @@ predicate in an assert or arithmetic operation back to its
   controls.
 - `hardware-input` — derived from a driver input or hardware
   register. Tracing for this class lives in
-  `fprime-hardware-input-tracing.skill.md`.
+  `fprime-hardware-input-tracing`.
 
 This skill is the trace procedure for the ground-input class.
 
@@ -89,7 +89,7 @@ LIMIT)`):
 
 When in doubt, the agent classifies as the more dangerous class
 (`ground-input` if there is any plausible ground-reachable path)
-and appends a maintainer ping per `maintainer-lookup.skill.md`.
+and appends a maintainer ping per `maintainer-lookup`.
 
 ---
 
@@ -108,7 +108,7 @@ in the topology:
    it pass? Apply §2 within that component.
 4. Continue until reaching a §1 entry point (→ `ground-input`), a
    §3 primitive (→ classify), or a hardware-input port (→ hand off
-   to `fprime-hardware-input-tracing.skill.md`).
+   to `fprime-hardware-input-tracing`).
 
 The topology files relevant to the trace live in:
 
@@ -132,7 +132,7 @@ wired to a `Drv::ByteStreamDriverModel`-derived component, the agent
 must read the topology to determine whether that driver is the
 uplink-side (ground) or a hardware-side (radio, serial, network)
 byte stream. Same code, different upstream — the trace continues in
-this skill or hands off to `fprime-hardware-input-tracing.skill.md`
+this skill or hands off to `fprime-hardware-input-tracing`
 accordingly. If the topology is ambiguous (e.g., the same
 ByteStream driver is shared between ground and hardware paths), the
 agent classifies as `ground-input` (the more dangerous class) and
@@ -222,7 +222,7 @@ The agent reports `low confidence` when:
   option).
 
 Low confidence → tag at the right severity + maintainer ping per
-`maintainer-lookup.skill.md`.
+`maintainer-lookup`.
 
 ---
 

@@ -10,6 +10,8 @@
 namespace Ref {
 
 RecvBuffImpl::RecvBuffImpl(const char* compName) : RecvBuffComponentBase(compName) {
+    this->m_buffsReceived = 0;
+    this->m_errBuffs = 0;
     this->m_firstBuffReceived = 0;
     this->m_sensor1 = 1000.0;
     this->m_sensor2 = 10.0;

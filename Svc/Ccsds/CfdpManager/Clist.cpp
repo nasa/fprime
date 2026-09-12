@@ -166,7 +166,7 @@ void CfdpCListTraverse(CListNode* start, CListFunc fn, void* context) {
             }
             node = node_next;
         }
-        FW_ASSERT(last, static_cast<FwAssertArgType>(i));
+        FW_ASSERT(last || (i < maxIterations), static_cast<FwAssertArgType>(i));
     }
 }
 
@@ -205,7 +205,7 @@ void CfdpCListTraverseR(CListNode* end, CListFunc fn, void* context) {
                 }
                 node = node_next;
             }
-            FW_ASSERT(last, static_cast<FwAssertArgType>(i));
+            FW_ASSERT(last || (i < maxIterations), static_cast<FwAssertArgType>(i));
         }
     }
 }

@@ -5,7 +5,7 @@ description: Use when tracing a value in F Prime code back to determine whether 
 
 # Skill: Trace a value back to determine if it is hardware-controlled
 
-Counterpart to `fprime-ground-input-tracing.skill.md`. The security
+Counterpart to `fprime-ground-input-tracing`. The security
 agent uses this skill to determine whether a predicate, an
 arithmetic operand, or an arbitrary value originates from a hardware
 input — i.e., from data crossing a `Drv` driver interface, a
@@ -39,7 +39,7 @@ Each handler parameter at one of these entry points is
 
 ## 2. Forward trace within a component
 
-Same procedure as `fprime-ground-input-tracing.skill.md` §2. The
+Same procedure as `fprime-ground-input-tracing` §2. The
 only difference is the classification result and the entry-point
 table in §1 above.
 
@@ -171,7 +171,7 @@ The agent reports `low confidence` when:
   cannot fully follow generated dispatch.
 
 Low confidence → tag at the right severity + maintainer ping per
-`maintainer-lookup.skill.md`.
+`maintainer-lookup`.
 
 ---
 

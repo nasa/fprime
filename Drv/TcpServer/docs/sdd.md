@@ -10,11 +10,11 @@ For more information on the ByteStreamModelDriver see: [Drv::ByteStreamDriverMod
 
 ## Design
 
-The TcpClient component implements the design specified by the [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
+The TcpServer component implements the design specified by the [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
 
 ## Usage
 
-The Drv::TcpClientComponentImpl must be configured with the address of the remote connection using the `configure` method.
+The Drv::TcpServer must be configured with the address of the remote connection using the `configure` method.
 The `configure` method will also start the TCP server listening for remote connections. However, clients will not be accepted
 until the connection is opened. Sockets are opened using `open`. When the component is set to automatically open,
 `open` is called done via the first send or receive. Users declining to use automatic opening or who wish to control when

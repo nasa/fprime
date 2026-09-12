@@ -849,6 +849,42 @@ void DpCatalogTester::test_NonCanonicalDpRejected() {
     this->component.shutdown();
 }
 
+void DpCatalogTester::test_NonDpFilesDoNotConsumeSlots() {
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_NonDpFiles");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+
+    // fill the directory with as many non-DP files as there are catalog slots
+    for (FwIndexType junk = 0; junk < DP_MAX_FILES; junk++) {
+        Fw::String junkName;
+        junkName.format("%s/junk_%03" PRI_FwIndexType ".txt", dir.toChar(), junk);
+        Os::File junkFile;
+        ASSERT_EQ(junkFile.open(junkName.toChar(), Os::File::Mode::OPEN_CREATE), Os::File::Status::OP_OK);
+        junkFile.close();
+    }
+
+    // generate enough DP files to fill every catalog slot
+    Fw::Time time(1000, 100);
+    for (FwIndexType dp = 0; dp < DP_MAX_FILES; dp++) {
+        Fw::String dpFile =
+            this->genDP(static_cast<FwDpIdType>(dp), 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(dpFile.toChar(), "");
+    }
+
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+
+    // every DP file must be cataloged despite the non-DP files
+    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
+    ASSERT_EVENTS_CatalogFull_SIZE(1);
+
+    this->component.shutdown();
+}
+
 void DpCatalogTester::test_BadHeaderHashRejected() {
     Fw::MallocAllocator alloc;
     Fw::FileNameString dir("./DpTest_BadHeaderHashRejected");

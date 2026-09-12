@@ -11,7 +11,7 @@ APIDOCS="${FPRIME}/docs/reference/api"
 DOXY_OUTPUT="${APIDOCS}/cpp"
 CMAKE_OUTPUT="${APIDOCS}/cmake"
 
-DOXYGEN="${2:-$(which doxygen)}"
+DOXYGEN="${1:-$(which doxygen)}"
 if [ ! -x "${DOXYGEN}" ]
 then
     echo "[ERROR] Could not find doxygen, please supply it as first argument"
@@ -76,3 +76,5 @@ do
     cp "${image}" "${IMG_DIR}"
 done
 
+# Automatic index generation
+python3 "${FPRIME}/docs/scripts/gen_indexes.py"

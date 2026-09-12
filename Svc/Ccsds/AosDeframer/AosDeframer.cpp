@@ -345,7 +345,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
             // Seek past the failed packet (header bytes already consumed + remaining body)
             const FwSizeType remainingLength = seekForward + remainingBody;
-            if (remainingLength > size) {
+            if (remainingBody > size) {
                 return 0;
             } else {
                 return remainingLength;

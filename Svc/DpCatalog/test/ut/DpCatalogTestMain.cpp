@@ -320,6 +320,11 @@ TEST(OffNominal, BadHeaderHashRejected) {
     tester.test_BadHeaderHashRejected();
 }
 
+TEST(NominalManual, NonDpFilesDoNotConsumeSlots) {
+    Svc::DpCatalogTester tester;
+    tester.test_NonDpFilesDoNotConsumeSlots();
+}
+
 TEST(OffNominal, MalformedFile) {
     Svc::DpCatalogTester tester;
     tester.test_MalformedFile();

@@ -7,14 +7,14 @@ Generates docs/<section>/index.md from the filesystem structure.
 
 from pathlib import Path
 
-# Get the directory where this script is located
-SCRIPT_DIR = Path(__file__).parent.parent
+# Repository root (this script lives in <root>/scripts/)
+REPO_ROOT = Path(__file__).parent.parent
 
 # Source of truth: filesystem walk of docs/<section>/
 SOURCE_DIRS = [
-    SCRIPT_DIR / "docs" / "user-manual",
-    SCRIPT_DIR / "docs" / "how-to",
-    SCRIPT_DIR / "docs" / "reference",
+    REPO_ROOT / "docs" / "user-manual",
+    REPO_ROOT / "docs" / "how-to",
+    REPO_ROOT / "docs" / "reference",
 ]
 
 # Section blurbs shown next to each top-level entry. Keys are section directory names.
@@ -200,7 +200,7 @@ def generate_index_for_section(source_dir: Path):
     # Write to output file
     output_file = source_dir / "index.md"
     output_file.write_text("".join(content), encoding="utf-8")
-    print(f"Generated {output_file.relative_to(SCRIPT_DIR)}")
+    print(f"Generated {output_file.relative_to(REPO_ROOT)}")
 
 
 def main():

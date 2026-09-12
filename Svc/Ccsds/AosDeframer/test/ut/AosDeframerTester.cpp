@@ -1041,10 +1041,7 @@ void AosDeframerTester::testEppSizeOverflowRejected() {
     //
     // On a 64-bit host (FwSizeType = U64, where CI tests run):
     //   No arithmetic overflow occurs; the computed size is ~4 GB.
-    //   That size exceeds AosDeframer.MaxPacketSize, so the mission-defined cap in
-    //   appendToSpanningPacket rejects the packet before the allocator is ever called
-    //   and OversizedPacket fires. (The allocator-rejection fallback that previously
-    //   raised SpanningPacketAllocFailed is now unreachable for this oversized claim.)
+    //   The allocator rejects the ~4 GB request and SpanningPacketAllocFailed fires.
     //
     // In both cases the invariant is: zero packets emitted, no crash.
 
@@ -1085,7 +1082,7 @@ void AosDeframerTester::testEppSizeOverflowHeaderSpansFrame() {
     // Frame 1 (FHP_NO_PACKET_START) delivers the remaining 4 bytes (the length
     // field 0xFFFFFFFC). Now headerBuf holds all 8 bytes and sizeEppPacket fires:
     //   32-bit: overflow guard → return 0, silent drop
-    //   64-bit: ~4 GB exceeds MaxPacketSize → OversizedPacket before the allocator
+    //   64-bit: allocator rejects the ~4 GB request → SpanningPacketAllocFailed
 
     this->configureDefault();
 

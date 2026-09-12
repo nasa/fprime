@@ -83,9 +83,13 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
     SocketIpStatus startup();
 
     /**
-     * \brief terminate the server socket
+     * \brief stop the read task and terminate the server socket
      *
-     * Close the server socket. Should be done after all clients are shutdown and closed.
+     * Stops the read task, then shuts down and closes the server socket so that a task
+     * blocked in `accept` can exit.
+     *
+     * \note This stops the component permanently. It cannot be used to stop accepting new clients
+     * while continuing to service an already-connected one.
      */
     void terminate();
 
@@ -174,7 +178,7 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
 
     Drv::TcpServerSocket m_socket;  //!< Socket implementation
 
-    FwSizeType m_allocation_size;  //!< Member variable to store the buffer size
+    FwSizeType m_allocation_size = 0;  //!< Member variable to store the buffer size
 };
 
 }  // end namespace Drv

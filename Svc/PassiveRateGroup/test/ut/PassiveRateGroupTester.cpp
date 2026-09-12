@@ -24,7 +24,7 @@
 namespace Svc {
 
 PassiveRateGroupTester::PassiveRateGroupTester(Svc::PassiveRateGroup& inst)
-    : PassiveRateGroupGTestBase("testerbase", 100), m_impl(inst), m_callOrder(0) {
+    : PassiveRateGroupGTestBase("testerbase", 1000), m_impl(inst), m_callOrder(0) {
     this->clearPortCalls();
 }
 

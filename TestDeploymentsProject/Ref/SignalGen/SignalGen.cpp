@@ -41,6 +41,7 @@ SignalGen ::SignalGen(const char* name)
       m_dpInProgress(false),
       m_numDps(0),
       m_currDp(0),
+      m_dpBytes(0),
       m_dpPriority(0) {}
 
 SignalGen ::~SignalGen() {}

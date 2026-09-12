@@ -130,7 +130,7 @@ the category if one fits, because it makes the finding easier to
 triage; reach for category 13 rather than forcing a poor fit.
 
 The "introduced by this PR" test
-(`_shared/skills/pr-diff-scoping.skill.md`) applies to all thirteen
+(`.github/skills/pr-diff-scoping/SKILL.md`) applies to all thirteen
 categories; preexisting defects outside the diff become
 `**future work**` — but report them, because a correctness defect
 does not become acceptable by being old.
@@ -364,7 +364,7 @@ Treat a finding as low-confidence when ANY of these hold:
 
 Low confidence does not downgrade the tag (review contract §4).
 Append a maintainer ping per
-`_shared/skills/maintainer-lookup.skill.md`.
+`.github/skills/maintainer-lookup/SKILL.md`.
 
 ---
 

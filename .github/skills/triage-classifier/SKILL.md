@@ -21,8 +21,8 @@ finding is in-scope; this skill picks the tag.
 ```
                 ┌─────────────────────────────────────────────┐
                 │  Is the offending behavior introduced or    │
-                │  widened by this PR?  (see                   │
-                │  skills/pr-diff-scoping.skill.md §1)         │
+                │  widened by this PR?                        │
+                │  (see the `pr-diff-scoping` skill §1)       │
                 └─────────────────────┬───────────────────────┘
                           │ no                  │ yes
                           ▼                     ▼
@@ -101,7 +101,7 @@ Pick this tag iff:
 - The finding is in-scope for the agent.
 - The PR did NOT introduce or widen the offending behavior. The
   offending line is unchanged AND no new caller added by the PR
-  widens its reach (see `pr-diff-scoping.skill.md`).
+  widens its reach (see `pr-diff-scoping`).
 - The agent considered the finding worth recording for future work.
 
 `**future work**` never blocks merge. It is the agent's mechanism for
@@ -117,7 +117,7 @@ The agent does **not** downgrade severity to avoid blocking a PR.
   for is still `**must fix**` — not `**could fix**`.
 - A finding the agent is unsure about is still tagged at the right
   severity, with a maintainer ping appended (see review contract §4
-  and `maintainer-lookup.skill.md`).
+  and `maintainer-lookup`).
 
 The three agent priorities (review contract §8) apply:
 
@@ -142,8 +142,7 @@ low:
    ```
    cc @<maintainer1> @<maintainer2> — low-confidence finding, please confirm.
    ```
-3. The maintainer-lookup procedure lives in
-   `maintainer-lookup.skill.md`.
+3. The lookup procedure lives in the `maintainer-lookup` skill.
 
 This applies per-finding (not per-comment) — multiple low-confidence
 findings on the same PR each get their own maintainer ping at the
@@ -157,7 +156,7 @@ bottom of their respective comments.
 
 A new command handler calls `FW_ASSERT(arg < MAX_LIMIT)` on a
 ground-controlled command argument. The agent traces `arg` to a
-ground input via `fprime-ground-input-tracing.skill.md`.
+ground input via `fprime-ground-input-tracing`.
 
 - Introduced by this PR (new handler).
 - In-scope for the security agent.

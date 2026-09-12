@@ -40,10 +40,10 @@ class FileDispatcher final : public FileDispatcherComponentBase {
 
   private:
     // ----------------------------------------------------------------------
-    // Handler implementations for commands
+    // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for fileRecv
+    //! Handler implementation for fileAnnounceRecv
     //!
     //! Port for receiving files to dispatch
     void fileAnnounceRecv_handler(FwIndexType portNum,       //!< The port number
@@ -55,7 +55,7 @@ class FileDispatcher final : public FileDispatcherComponentBase {
     // Handler implementations for commands
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for command DISABLE_DISPATCH
+    //! Handler implementation for command ENABLE_DISPATCH
     void ENABLE_DISPATCH_cmdHandler(
         FwOpcodeType opCode,                                        //!< The opcode
         U32 cmdSeq,                                                 //!< The command sequence number

@@ -36,8 +36,8 @@ void SendBuffImpl::SchedIn_handler(FwIndexType portNum, U32 context) {
 
     if (this->m_sendPackets) {
         // check to see if first
-        if (this->m_firstPacketSent) {
-            this->m_firstPacketSent = false;
+        if (!this->m_firstPacketSent) {
+            this->m_firstPacketSent = true;
             this->log_ACTIVITY_HI_FirstPacketSent(this->m_currPacketId);
             this->tlmWrite_NumErrorsInjected(this->m_errorsInjected);
         }

@@ -33,7 +33,13 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
                                    Fw::Time& timeTag,
                                    const Fw::LogSeverity& severity,
                                    Fw::LogBuffer& args) {
-    FW_ASSERT(severity.isValid(), static_cast<FwAssertArgType>(severity.e));
+    // Severity may arrive from external sources (e.g. a hub bridging another
+    // address space), so drop invalid values rather than asserting
+    if (!severity.isValid()) {
+        Fw::Logger::log("[ERROR] EventManager: dropping event 0x%x (invalid severity %d)\n", static_cast<U32>(id),
+                        static_cast<I32>(severity.e));
+        return;
+    }
 
     // Check severity filter (FATAL always passes through)
     if (this->m_severityFilter.isFiltered(severity)) {

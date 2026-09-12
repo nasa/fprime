@@ -33,7 +33,7 @@ TEST_F(PduTest, HeaderBufferSize) {
                       789);
 
     // Minimum header size with 1-byte EIDs and TSN
-    // flags(1) + length(2) + eidTsnLengths(1) + sourceEid(2) + tsn(2) + destEid(2) = 10
+    // flags(1) + length(2) + eidTsnLengths(1) + sourceEid(1) + tsn(1) + destEid(1) = 7
     ASSERT_GE(header.getBufferSize(), 7U);
 }
 

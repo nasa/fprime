@@ -369,8 +369,7 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
     for (FwSizeType dir = 0; dir < this->m_numDirectories && dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES); dir++) {
         // read in each directory and keep track of total
         this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
-        FwSizeType filesRead = 0;
-        U32 filesProcessed = 0;
+        FwSizeType filesProcessed = 0;
 
         Os::Directory dpDir;
         Os::Directory::Status status = dpDir.open(this->m_directories[dir].toChar(), Os::Directory::OpenMode::READ);
@@ -378,37 +377,48 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
-        Fw::ExternalArray<Fw::String> fileList(this->m_fileList, this->m_numDpSlots - totalFiles);
-        status = dpDir.readDirectory(fileList, filesRead);
 
+        // bound the read loop by the number of entries in the directory
+        FwSizeType fileCount = 0;
+        status = dpDir.getFileCount(fileCount);
         if (status != Os::Directory::OP_OK) {
             this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
-        // Assert number of files isn't more than asked
-        FW_ASSERT(filesRead <= this->m_numDpSlots - totalFiles, static_cast<FwAssertArgType>(filesRead),
-                  static_cast<FwAssertArgType>(this->m_numDpSlots - totalFiles));
+        // read entries one at a time so non-DP files do not consume catalog slots
+        Fw::String fileName;
+        for (FwSizeType entry = 0; entry < fileCount; entry++) {
+            status = dpDir.read(fileName);
+            if (status == Os::Directory::NO_MORE_FILES) {
+                break;
+            }
+            if (status != Os::Directory::OP_OK) {
+                this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
+                return Fw::CmdResponse::EXECUTION_ERROR;
+            }
 
-        // extract metadata for each file
-        for (FwSizeType file = 0; file < filesRead; file++) {
             // only consider files with the DP extension
-
-            const FwSizeType fileNameLength = this->m_fileList[file].length();
+            const FwSizeType fileNameLength = fileName.length();
             const FwSizeType dpExtLength = Fw::StringUtils::string_length(DP_EXT, sizeof(DP_EXT));
-            const FwSignedSizeType loc = Fw::StringUtils::substring_find_last(this->m_fileList[file].toChar(),
-                                                                              fileNameLength, DP_EXT, dpExtLength);
+            const FwSignedSizeType loc =
+                Fw::StringUtils::substring_find_last(fileName.toChar(), fileNameLength, DP_EXT, dpExtLength);
 
             // Only accept files whose final suffix is the data product extension
             if ((-1 == loc) || (static_cast<FwSizeType>(loc) + dpExtLength != fileNameLength)) {
                 continue;
             }
 
+            // stop if there is no free catalog slot for this DP file
+            if ((totalFiles + filesProcessed) == this->m_numDpSlots) {
+                break;
+            }
+
             Fw::String fullFile;
             Fw::FormatStatus formatStatus =
-                fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
+                fullFile.format("%s/%s", this->m_directories[dir].toChar(), fileName.toChar());
             if (formatStatus != Fw::FormatStatus::SUCCESS) {
-                this->log_WARNING_HI_FileNameFormatError(this->m_fileList[file],
+                this->log_WARNING_HI_FileNameFormatError(fileName,
                                                          static_cast<Fw::StringFormatStatus::T>(formatStatus));
                 continue;
             }

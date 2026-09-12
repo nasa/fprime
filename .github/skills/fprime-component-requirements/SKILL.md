@@ -1,6 +1,12 @@
 ---
 name: fprime-component-requirements
-description: Requirements phase of F Prime component development. Guides the agent through eliciting, documenting, and confirming component requirements before any design or code is written. Trigger when starting a new component or when the user says to define requirements. Keywords: F Prime, requirements, SDD, behavior, interface, specification.
+description: >-
+  Requirements phase of F Prime component development. Guides the
+  agent through eliciting, documenting, and confirming component
+  requirements before any design or code is written. Trigger when
+  starting a new component or when the user says to define
+  requirements. Keywords: F Prime, requirements, SDD, behavior,
+  interface, specification.
 ---
 
 # Skill: F Prime Component Requirements

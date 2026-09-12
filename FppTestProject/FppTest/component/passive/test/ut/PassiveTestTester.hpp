@@ -202,7 +202,7 @@ class PassiveTestTester : public PassiveTestGTestBase {
     // ----------------------------------------------------------------------
 
     //! Delegate to serialize/deserialize an externally stored parameter
-    PassiveTestComponentBaseParamExternalDelegate paramPassiveTestTesterDelegate;
+    PassiveTestComponentBaseParamExternalDelegate paramTesterDelegate;
 };
 
 #endif
