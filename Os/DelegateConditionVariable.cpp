@@ -37,7 +37,7 @@ void DelegateConditionVariable::notifyAll() {
 }
 
 ConditionVariableHandle* DelegateConditionVariable::getHandle() {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<const ConditionVariableInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<ConditionVariableInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
 }
 

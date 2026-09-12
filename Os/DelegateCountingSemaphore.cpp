@@ -34,7 +34,7 @@ DelegateCountingSemaphore::Status DelegateCountingSemaphore::post() {
 }
 
 CountingSemaphoreHandle* DelegateCountingSemaphore::getHandle() {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<const CountingSemaphoreInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<CountingSemaphoreInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
 }
 

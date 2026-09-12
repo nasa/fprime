@@ -29,13 +29,13 @@ DelegateConsole& DelegateConsole::operator=(const DelegateConsole& other) {
 }
 
 void DelegateConsole::writeMessage(const CHAR* message, const FwSizeType size) {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<ConsoleInterface*>(&this->m_handle_storage));
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<ConsoleInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(message != nullptr || size == 0);
     this->m_delegate.writeMessage(message, size);
 }
 
 ConsoleHandle* DelegateConsole::getHandle() {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<ConsoleInterface*>(&this->m_handle_storage));
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<ConsoleInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
 }
 

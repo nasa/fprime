@@ -191,7 +191,8 @@ fprime_target_dependencies(Os PUBLIC "Os_File")
 
 add_named_os_module(Task ${CMAKE_THREAD_LIBS_INIT})
 
-# Mutex/Condition: Condition.hpp is a thin public alias header; the interface
+# Mutex/Condition: Mutex.hpp is self-contained (no alias/delegate split; Os::Mutex
+# is not configurable). Condition.hpp is a thin public alias header; the interface
 # and link-time delegate for the condition variable live in
 # ConditionVariableInterface.hpp and DelegateConditionVariable.{hpp,cpp}.
 # Registered explicitly because add_named_os_module assumes a matching
