@@ -13,11 +13,22 @@
 # Module names are derived from the path from the nearest project/library/framework
 # root when not specifically overridden by the developer, i.e. the module defined by
 # `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
-# AesGcmEncryptor requires OpenSSL - only add if available
+# AesGcmEncryptor requires OpenSSL - only add if available and usable by the active toolchain
 find_package(OpenSSL 3.0)
 
-if (NOT OPENSSL_FOUND)
-    message(STATUS "Unable to add Svc_Ccsds_AesGcmEncryptor. OpenSSL 3.0 not found")
+if (OPENSSL_FOUND)
+    include(CheckCXXSourceCompiles)
+    set(CMAKE_REQUIRED_LIBRARIES OpenSSL::Crypto)
+    check_cxx_source_compiles("
+        #include <openssl/evp.h>
+        int main() { EVP_CIPHER_CTX_free(EVP_CIPHER_CTX_new()); return 0; }"
+        FPRIME_OPENSSL_CRYPTO_USABLE
+    )
+    unset(CMAKE_REQUIRED_LIBRARIES)
+endif()
+
+if (NOT OPENSSL_FOUND OR NOT FPRIME_OPENSSL_CRYPTO_USABLE)
+    message(STATUS "Unable to add Svc_Ccsds_AesGcmEncryptor. OpenSSL 3.0 not found for the target toolchain")
     return()
 endif()
 
