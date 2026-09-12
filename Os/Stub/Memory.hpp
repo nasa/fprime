@@ -35,6 +35,13 @@ class StubMemory : public MemoryInterface {
     //!
     ~StubMemory() override = default;
 
+    //! \brief initialize singleton
+    static void init() {}
+
+    //! \brief get a reference to singleton
+    //! \return reference to singleton
+    static StubMemory& getSingleton();
+
     // ------------------------------------
     // Functions overrides
     // ------------------------------------

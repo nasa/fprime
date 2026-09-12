@@ -18,7 +18,7 @@ constant FW_MUTEX_HANDLE_MAX_SIZE = 72
 constant FW_QUEUE_HANDLE_MAX_SIZE = 368
 
 @ Maximum size of a handle for Os::Directory
-constant FW_DIRECTORY_HANDLE_MAX_SIZE = 16
+constant FW_DIRECTORY_HANDLE_MAX_SIZE = 32
 
 @ Maximum size of a handle for Os::FileSystem
 constant FW_FILESYSTEM_HANDLE_MAX_SIZE = 16

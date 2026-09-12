@@ -135,9 +135,7 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    // Unlisted statuses (e.g. NOT_SUPPORTED, INVALID_ARGUMENT) can
-                    // legitimately come from the OS layer; report rather than assert
-                    return ValidateFile::OTHER_ERROR;
+                    FW_ASSERT(false, status);
             }
             break;
         case HashFileType:
@@ -157,9 +155,7 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    // Unlisted statuses (e.g. NOT_SUPPORTED, INVALID_ARGUMENT) can
-                    // legitimately come from the OS layer; report rather than assert
-                    return ValidateFile::OTHER_ERROR;
+                    FW_ASSERT(false, status);
             }
             break;
         default:

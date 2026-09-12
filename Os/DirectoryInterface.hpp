@@ -1,0 +1,169 @@
+// ======================================================================
+// \title Os/DirectoryInterface.hpp
+// \brief Os::DirectoryHandle and Os::DirectoryInterface definitions
+// ======================================================================
+
+#ifndef OS_DIRECTORYINTERFACE_HPP_
+#define OS_DIRECTORYINTERFACE_HPP_
+
+#include <Fw/DataStructures/ExternalArray.hpp>
+#include <Fw/Deprecate.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/String.hpp>
+#include <Os/Os.hpp>
+#include "config/OsDelegateDirectory.hpp"
+
+namespace Os {
+
+struct DirectoryHandle {};
+
+class DirectoryInterface {
+  public:
+    enum Status {
+        OP_OK,           //!<  Operation was successful
+        DOESNT_EXIST,    //!<  Directory doesn't exist
+        NO_PERMISSION,   //!<  No permission to read directory
+        NOT_OPENED,      //!<  Directory hasn't been opened yet
+        NOT_DIR,         //!<  Path is not a directory
+        NO_MORE_FILES,   //!<  Directory stream has no more files
+        FILE_LIMIT,      //!<  Directory has more files than can be read
+        BAD_DESCRIPTOR,  //!<  Directory stream descriptor is invalid
+        ALREADY_EXISTS,  //!<  Directory already exists
+        NOT_SUPPORTED,   //!<  Operation is not supported by the current implementation
+        OTHER_ERROR,     //!<  A catch-all for other errors. Have to look in implementation-specific code
+    };
+
+    enum OpenMode {
+        READ,               //!<  Error if directory doesn't exist
+        CREATE_IF_MISSING,  //!<  Create directory if it doesn't exist
+        CREATE_EXCLUSIVE,   //!<  Create directory and error if it already exists
+        MAX_OPEN_MODE       //!<  Maximum value of OpenMode
+    };
+
+    //! \brief default constructor
+    DirectoryInterface() = default;
+
+    //! \brief default virtual destructor
+    virtual ~DirectoryInterface() = default;
+
+    //! \brief copy constructor is forbidden
+    DirectoryInterface(const DirectoryInterface& other) = delete;
+
+    //! \brief assignment operator is forbidden
+    DirectoryInterface& operator=(const DirectoryInterface& other) = delete;
+
+    //! \brief Check if Directory is open or not
+    //! \return true if Directory is open, false otherwise
+    bool isOpen() const;
+
+    //! \brief return the underlying Directory handle (implementation specific)
+    //! \return internal Directory handle representation
+    virtual DirectoryHandle* getHandle() = 0;
+
+    //! \brief provide a pointer to a Directory delegate object
+    static DirectoryInterface* getDelegate(DirectoryHandleStorage& aligned_new_memory);
+
+    // -----------------------------------------------------------------
+    // Directory operations to be implemented by an OSAL implementation
+    // -----------------------------------------------------------------
+    // These functions are to be overridden in each OS implementation
+    // See an example in in Os/Posix/Directory.hpp
+
+    //! \brief Open or create a directory
+    //!
+    //! Using the path provided, this function will open or create a directory.
+    //! Use OpenMode::READ to open an existing directory and error if the directory is not found
+    //! Use OpenMode::CREATE_IF_MISSING to open a directory, creating the directory if it doesn't exist
+    //! Use OpenMode::CREATE_EXCLUSIVE to open a directory, creating the directory and erroring if it already exists
+    //!
+    //! It is invalid to pass `nullptr` as the path.
+    //! It is invalid to supply `mode` as a non-enumerated value.
+    //!
+    //! \param path: path of directory to open
+    //! \param mode: enum (READ, CREATE_IF_MISSING, CREATE_EXCLUSIVE). See notes above for more information
+    //! \return status of the operation
+    virtual Status open(const char* path, OpenMode mode) = 0;
+
+    //! \brief Rewind directory stream
+    //!
+    //! Each read operation moves the seek position forward. This function resets the seek position to the beginning.
+    //!
+    //! \return status of the operation
+    virtual Status rewind() = 0;
+
+    //! \brief Get next filename from directory stream
+    //!
+    //! Write at most buffSize characters of the file name to fileNameBuffer and guarantee null-termination.
+    //! This function skips the current directory (.) and parent directory (..) entries.
+    //! Returns NO_MORE_FILES if there are no more files to read from the buffer.
+    //!
+    //! It is invalid to pass `nullptr` as fileNameBuffer.
+    //!
+    //! \param fileNameBuffer: buffer to store filename
+    //! \param buffSize: size of fileNameBuffer
+    //! \return status of the operation
+    virtual Status read(char* fileNameBuffer, FwSizeType buffSize) = 0;
+
+    //! \brief Close directory
+    virtual void close() = 0;
+
+    // ------------------------------------------------------------------
+    // Common functions built on top of OS-specific functions
+    // ------------------------------------------------------------------
+
+    //! \brief Get next filename from directory stream and write it to a Fw::StringBase object
+    //!
+    //! \param filename: Fw::StringBase (or derived) object to store filename in
+    //! \return status of the operation
+    Status read(Fw::StringBase& filename);
+
+    //! \brief Read the contents of the directory and store filenames in the supplied array.
+    //!
+    //! Reads at most filenameArray.getSize() filenames.
+    //! The function first rewinds the directory stream to ensure reading starts from the beginning.
+    //! After reading, it rewinds the directory stream again, resetting seek position to beginning.
+    //!
+    //! \param filenameArray: array to store filenames
+    //! \param filenameCount: number of filenames written to filenameArray (output)
+    //! \return status of the operation
+    Status readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount);
+
+    //! \brief Read the contents of the directory and store filenames in filenameArray of size arraySize.
+    //!
+    //! The function first rewinds the directory stream to ensure reading starts from the beginning.
+    //! After reading, it rewinds the directory stream again, resetting seek position to beginning.
+    //!
+    //! \param filenameArray: array to store filenames
+    //! \param arraySize: size of filenameArray
+    //! \param filenameCount: number of filenames written to filenameArray (output)
+    //! \return status of the operation
+    DEPRECATED(Status readDirectory(Fw::String filenameArray[], const FwSizeType arraySize, FwSizeType& filenameCount),
+               "Use readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount) instead");
+
+    //! \brief Get the number of files in the directory.
+    //!
+    //! Counts the number of files in the directory by reading each file entry and writing the count to fileCount.
+    //!
+    //! The function first rewinds the directory stream to ensure counting starts from the beginning.
+    //! After counting, it rewinds the directory stream again, resetting seek position to beginning.
+    //!
+    //! \param fileCount Reference to a variable where the file count will be stored.
+    //! \return Status indicating the result of the operation.
+    Status getFileCount(FwSizeType& fileCount);
+
+  protected:
+    //! \brief set whether the directory is currently tracked as open
+    //!
+    //! Provided for subclasses (e.g. link-time delegates) whose `open`/`close` overrides must update the open
+    //! state tracked by this base class.
+    //!
+    //! \param is_open: new open state to track
+    //!
+    void setOpen(bool is_open);
+
+  private:
+    bool m_is_open = false;  //!< Flag indicating if the directory has been open
+};
+}  // namespace Os
+
+#endif  // OS_DIRECTORYINTERFACE_HPP_
