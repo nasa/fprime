@@ -210,28 +210,15 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(F3
 }
 
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(bool val, Endianness mode) {
-    if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(U8)) - 1 >= this->m_capacity) {
-        return FW_SERIALIZE_NO_ROOM_LEFT;
-    }
-
-    U8* buffAddr = this->m_buffAddr;
-    FW_ASSERT(buffAddr != nullptr);
-    if (val) {
-        buffAddr[this->m_serLoc + 0] = FW_SERIALIZE_TRUE_VALUE;
-    } else {
-        buffAddr[this->m_serLoc + 0] = FW_SERIALIZE_FALSE_VALUE;
-    }
-
-    this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(U8));
-    this->m_deserLoc = 0;
-    return FW_SERIALIZE_OK;
+    // booleans are encoded as a single byte
+    const U8 byteVal = val ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE) : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE);
+    return this->serializeFrom(byteVal, mode);
 }
 
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(const void* val, Endianness mode) {
-    if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(void*)) - 1 >= this->m_capacity) {
-        return FW_SERIALIZE_NO_ROOM_LEFT;
-    }
-
+    // pointers are serialized as their integer representation
+    static_assert(sizeof(PlatformPointerCastType) == sizeof(void*),
+                  "PlatformPointerCastType must be the same size as pointers");
     return this->serializeFrom(reinterpret_cast<PlatformPointerCastType>(val), mode);
 }
 
