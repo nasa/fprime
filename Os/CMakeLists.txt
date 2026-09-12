@@ -191,8 +191,9 @@ fprime_target_dependencies(Os PUBLIC "Os_File")
 
 add_named_os_module(Task ${CMAKE_THREAD_LIBS_INIT})
 
-# Mutex: Mutex.hpp is a thin public alias header; the interface and link-time
-# delegate live in MutexInterface.hpp and DelegateMutex.{hpp,cpp}.
+# Mutex/Condition: Condition.hpp is a thin public alias header; the interface
+# and link-time delegate for the condition variable live in
+# ConditionVariableInterface.hpp and DelegateConditionVariable.{hpp,cpp}.
 # Registered explicitly because add_named_os_module assumes a matching
 # <name>.cpp per header.
 register_fprime_module(
@@ -200,13 +201,10 @@ register_fprime_module(
     REQUIRES_IMPLEMENTATIONS
       "Os_Mutex"
     SOURCES
-      "${CMAKE_CURRENT_LIST_DIR}/DelegateMutex.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/DelegateConditionVariable.cpp"
     HEADERS
       "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"
-      "${CMAKE_CURRENT_LIST_DIR}/MutexInterface.hpp"
-      "${CMAKE_CURRENT_LIST_DIR}/DelegateMutex.hpp"
       "${CMAKE_CURRENT_LIST_DIR}/Condition.hpp"
       "${CMAKE_CURRENT_LIST_DIR}/DelegateConditionVariable.hpp"
       "${CMAKE_CURRENT_LIST_DIR}/ConditionVariableInterface.hpp"

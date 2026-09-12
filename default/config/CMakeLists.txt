@@ -48,7 +48,6 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/OsDelegateFileSystem.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/OsDelegateMemory.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/OsDelegateConsole.hpp"
-        "${CMAKE_CURRENT_LIST_DIR}/OsDelegateMutex.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/OsDelegateRawTime.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/LocklessQueueCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PassiveTextLoggerCfg.hpp"
