@@ -35,6 +35,7 @@ def test_PrmDb_load_file_empty_filename(fprime_test_api):
     usable: a subsequent PRM_SAVE_FILE completes normally.
     """
     prm_db = fprime_test_api.get_mnemonic("Svc.PrmDb")
+    cmd_disp = fprime_test_api.get_mnemonic("Svc.CommandDispatcher")
     load_cmd = prm_db + ".PRM_LOAD_FILE"
     load_opcode = fprime_test_api.translate_command_name(load_cmd)
 
@@ -44,7 +45,7 @@ def test_PrmDb_load_file_empty_filename(fprime_test_api):
         [
             fprime_test_api.get_event_pred(prm_db + ".PrmDbFileLoadFailed"),
             fprime_test_api.get_event_pred(
-                "cmdDisp.OpCodeError", [load_opcode, "VALIDATION_ERROR"]
+                cmd_disp + ".OpCodeError", [load_opcode, "VALIDATION_ERROR"]
             ),
         ],
     )
