@@ -109,29 +109,29 @@ FileSystemInterface::Status copyFileData(File& source, File& destination, FwSize
 // ------------------------------------------------------------
 
 FileSystemInterface::Status FileSystemInterface::removeDirectory(const char* path) {
-    return Os::FileSystem()._removeDirectory(path);
+    return Os::FileSystem::getSingleton()._removeDirectory(path);
 }
 
 FileSystemInterface::Status FileSystemInterface::removeFile(const char* path) {
-    return Os::FileSystem()._removeFile(path);
+    return Os::FileSystem::getSingleton()._removeFile(path);
 }
 
 FileSystemInterface::Status FileSystemInterface::rename(const char* sourcePath, const char* destPath) {
-    return Os::FileSystem()._rename(sourcePath, destPath);
+    return Os::FileSystem::getSingleton()._rename(sourcePath, destPath);
 }
 
 FileSystemInterface::Status FileSystemInterface::getWorkingDirectory(char* path, FwSizeType bufferSize) {
-    return Os::FileSystem()._getWorkingDirectory(path, bufferSize);
+    return Os::FileSystem::getSingleton()._getWorkingDirectory(path, bufferSize);
 }
 
 FileSystemInterface::Status FileSystemInterface::changeWorkingDirectory(const char* path) {
-    return Os::FileSystem()._changeWorkingDirectory(path);
+    return Os::FileSystem::getSingleton()._changeWorkingDirectory(path);
 }
 
 FileSystemInterface::Status FileSystemInterface::getFreeSpace(const char* path,
                                                               FwSizeType& totalBytes,
                                                               FwSizeType& freeBytes) {
-    return Os::FileSystem()._getFreeSpace(path, totalBytes, freeBytes);
+    return Os::FileSystem::getSingleton()._getFreeSpace(path, totalBytes, freeBytes);
 }
 
 // ------------------------------------------------------------
@@ -168,7 +168,7 @@ FileSystemInterface::Status FileSystemInterface::touch(const char* path) {
 FileSystemInterface::PathType FileSystemInterface::getPathType(const char* path) {
     FW_ASSERT(path != nullptr);
     PathType pathType;
-    Status status = Os::FileSystem()._getPathType(path, pathType);
+    Status status = Os::FileSystem::getSingleton()._getPathType(path, pathType);
     if (status != Status::OP_OK) {
         return PathType::NOT_EXIST;
     }

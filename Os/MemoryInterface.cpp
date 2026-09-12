@@ -7,7 +7,7 @@
 namespace Os {
 
 MemoryInterface::Status MemoryInterface::getUsage(Usage& memory) {
-    return Os::Memory()._getUsage(memory);
+    return Os::Memory::getSingleton()._getUsage(memory);
 }
 
 }  // namespace Os
