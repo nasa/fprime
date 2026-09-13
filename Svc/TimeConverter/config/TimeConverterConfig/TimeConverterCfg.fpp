@@ -8,7 +8,7 @@ module Svc {
 
     @ Maximum number of time base offset entries stored by TimeConverter. Each entry
     @ serves conversions in both directions between a pair of time bases
-    constant MAX_OFFSET_ENTRIES = 10;
+    constant MAX_OFFSET_ENTRIES = 6;
 
   }
 

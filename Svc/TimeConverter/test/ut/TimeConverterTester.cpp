@@ -17,12 +17,26 @@ constexpr I64 US_PER_SECOND = 1000000;
 //! Largest time representable by an Fw::Time, in microseconds
 constexpr I64 MAX_TIME_US = static_cast<I64>(std::numeric_limits<U32>::max()) * US_PER_SECOND + (US_PER_SECOND - 1);
 
-//! Every time base of the default configuration, in ascending numeric order
-const TimeBase ALL_TIME_BASES[] = {TimeBase::TB_NONE, TimeBase::TB_PROC_TIME, TimeBase::TB_WORKSTATION_TIME,
-                                   TimeBase::TB_SC_TIME, TimeBase::TB_DONT_CARE};
+//! A pair of distinct time bases
+struct TimeBasePair {
+    TimeBase::T lower;  //!< time base with the lesser numeric value
+    TimeBase::T upper;  //!< time base with the greater numeric value
+};
 
-//! Number of distinct pairs that can be formed from the default time bases
-constexpr FwSizeType ALL_PAIR_COUNT = 10;
+//! Distinct pairs of the default time bases, more numerous than the configured capacity
+const TimeBasePair PAIRS[] = {{TimeBase::TB_NONE, TimeBase::TB_PROC_TIME},
+                              {TimeBase::TB_NONE, TimeBase::TB_WORKSTATION_TIME},
+                              {TimeBase::TB_NONE, TimeBase::TB_SC_TIME},
+                              {TimeBase::TB_NONE, TimeBase::TB_DONT_CARE},
+                              {TimeBase::TB_PROC_TIME, TimeBase::TB_SC_TIME},
+                              {TimeBase::TB_PROC_TIME, TimeBase::TB_DONT_CARE},
+                              {TimeBase::TB_WORKSTATION_TIME, TimeBase::TB_SC_TIME}};
+
+//! Capacity of the offset table under the configuration the tests build against
+constexpr FwSizeType CAPACITY = Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES;
+
+//! NoConversionAvailable throttle count, as declared in the component model
+constexpr FwSizeType NO_CONVERSION_THROTTLE = 5;
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -59,6 +73,13 @@ Fw::Time TimeConverterTester ::convert(const Fw::Time& in_time, const TimeBase& 
     const Svc::ConvertTimeStatus actual = this->invoke_to_convertTime(0, in_time, out_time);
     EXPECT_EQ(actual, status);
     return out_time;
+}
+
+void TimeConverterTester ::fillToCapacity() {
+    ASSERT_LT(CAPACITY, FW_NUM_ARRAY_ELEMENTS(PAIRS));
+    for (FwSizeType i = 0; i < CAPACITY; i++) {
+        this->setOffset(PAIRS[i].lower, PAIRS[i].upper, static_cast<I64>(i + 1) * US_PER_SECOND);
+    }
 }
 
 void TimeConverterTester ::assertGetOffset(const TimeBase& from, const TimeBase& to, I64 offset_us) {
@@ -284,29 +305,114 @@ void TimeConverterTester ::dumpOffsetsTest() {
 }
 
 void TimeConverterTester ::fillTableTest() {
-    ASSERT_LE(ALL_PAIR_COUNT, Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES);
-
-    // Store an offset for every distinct pair of the configured time bases
-    I64 offset_us = US_PER_SECOND;
-    for (FwSizeType i = 0; i < FW_NUM_ARRAY_ELEMENTS(ALL_TIME_BASES); i++) {
-        for (FwSizeType j = i + 1; j < FW_NUM_ARRAY_ELEMENTS(ALL_TIME_BASES); j++) {
-            this->setOffset(ALL_TIME_BASES[i], ALL_TIME_BASES[j], offset_us);
-            offset_us += US_PER_SECOND;
-        }
-    }
+    this->fillToCapacity();
 
     // Every pair is retrievable, including the entry at the end of the table
-    offset_us = US_PER_SECOND;
-    for (FwSizeType i = 0; i < FW_NUM_ARRAY_ELEMENTS(ALL_TIME_BASES); i++) {
-        for (FwSizeType j = i + 1; j < FW_NUM_ARRAY_ELEMENTS(ALL_TIME_BASES); j++) {
-            this->assertGetOffset(ALL_TIME_BASES[i], ALL_TIME_BASES[j], offset_us);
-            offset_us += US_PER_SECOND;
-        }
+    for (FwSizeType i = 0; i < CAPACITY; i++) {
+        this->assertGetOffset(PAIRS[i].lower, PAIRS[i].upper, static_cast<I64>(i + 1) * US_PER_SECOND);
     }
 
     this->clearHistory();
     this->sendCmd_DUMP_OFFSETS(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++);
-    ASSERT_EVENTS_OffsetReport_SIZE(ALL_PAIR_COUNT);
+    ASSERT_EVENTS_OffsetReport_SIZE(CAPACITY);
+}
+
+void TimeConverterTester ::tableFullTest() {
+    this->fillToCapacity();
+
+    // A pair beyond the capacity is rejected, and the command reports a state rather than a bad argument
+    this->clearHistory();
+    U32 cmdSeq = this->m_cmdSeq++;
+    const TimeBasePair& extra = PAIRS[CAPACITY];
+    this->sendCmd_SET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, cmdSeq, extra.lower, extra.upper, US_PER_SECOND);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_OffsetTableFull_SIZE(1);
+    ASSERT_EVENTS_OffsetTableFull(0, extra.lower, extra.upper, static_cast<U32>(CAPACITY));
+    ASSERT_CMD_RESPONSE(0, TimeConverter::OPCODE_SET_OFFSET, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // The rejected pair was not stored
+    this->clearHistory();
+    cmdSeq = this->m_cmdSeq++;
+    this->sendCmd_GET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, cmdSeq, extra.lower, extra.upper);
+    ASSERT_EVENTS_NoOffsetStored_SIZE(1);
+
+    // A pair already stored is still replaceable with the table full
+    this->setOffset(PAIRS[0].lower, PAIRS[0].upper, 42 * US_PER_SECOND);
+    this->assertGetOffset(PAIRS[0].lower, PAIRS[0].upper, 42 * US_PER_SECOND);
+
+    // Clearing the table makes room again
+    this->clearHistory();
+    this->sendCmd_CLEAR_OFFSETS(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++);
+    ASSERT_EVENTS_OffsetsCleared(0, static_cast<U32>(CAPACITY));
+    this->setOffset(extra.lower, extra.upper, US_PER_SECOND);
+}
+
+void TimeConverterTester ::offsetBoundariesTest() {
+    // An offset of zero is a valid correlation
+    this->setOffset(TimeBase::TB_SC_TIME, TimeBase::TB_WORKSTATION_TIME, 0);
+    const Fw::Time sc_time(TimeBase::TB_SC_TIME, 10, 20);
+    ASSERT_EQ(this->convert(sc_time, TimeBase::TB_WORKSTATION_TIME, Svc::ConvertTimeStatus::OK),
+              Fw::Time(TimeBase::TB_WORKSTATION_TIME, 10, 20));
+
+    // The largest shift a time can undergo in either direction is accepted
+    this->setOffset(TimeBase::TB_SC_TIME, TimeBase::TB_WORKSTATION_TIME, MAX_TIME_US);
+    this->assertGetOffset(TimeBase::TB_SC_TIME, TimeBase::TB_WORKSTATION_TIME, MAX_TIME_US);
+    this->setOffset(TimeBase::TB_SC_TIME, TimeBase::TB_WORKSTATION_TIME, -MAX_TIME_US);
+    this->assertGetOffset(TimeBase::TB_SC_TIME, TimeBase::TB_WORKSTATION_TIME, -MAX_TIME_US);
+
+    // One microsecond beyond that range is rejected in the negative direction as well
+    this->clearHistory();
+    const U32 cmdSeq = this->m_cmdSeq++;
+    const I64 offset_us = -MAX_TIME_US - 1;
+    this->sendCmd_SET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, cmdSeq, TimeBase::TB_SC_TIME,
+                             TimeBase::TB_WORKSTATION_TIME, offset_us);
+    ASSERT_EVENTS_OffsetOutOfRange_SIZE(1);
+    ASSERT_EVENTS_OffsetOutOfRange(0, TimeBase::TB_SC_TIME, TimeBase::TB_WORKSTATION_TIME, offset_us);
+    ASSERT_CMD_RESPONSE(0, TimeConverter::OPCODE_SET_OFFSET, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+
+    // The rejection left the previously stored offset in place
+    this->assertGetOffset(TimeBase::TB_SC_TIME, TimeBase::TB_WORKSTATION_TIME, -MAX_TIME_US);
+}
+
+void TimeConverterTester ::portUpdateRejectedTest() {
+    // A single time base supplied as both ends of a pair is rejected
+    this->clearHistory();
+    Svc::TimeOffset offset(TimeBase::TB_SC_TIME, TimeBase::TB_SC_TIME, US_PER_SECOND);
+    this->invoke_to_offsetUpdate(0, offset);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_IdenticalTimeBases_SIZE(1);
+    ASSERT_EVENTS_IdenticalTimeBases(0, TimeBase::TB_SC_TIME);
+
+    // An offset beyond the representable range is rejected and not stored
+    this->clearHistory();
+    offset.set_to(TimeBase::TB_WORKSTATION_TIME);
+    offset.set_offset_us(MAX_TIME_US + 1);
+    this->invoke_to_offsetUpdate(0, offset);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_OffsetOutOfRange_SIZE(1);
+
+    this->clearHistory();
+    const Fw::Time sc_time(TimeBase::TB_SC_TIME, 10, 0);
+    (void)this->convert(sc_time, TimeBase::TB_WORKSTATION_TIME, Svc::ConvertTimeStatus::UNKNOWN_TIMEBASE);
+    ASSERT_EVENTS_NoConversionAvailable_SIZE(1);
+}
+
+void TimeConverterTester ::throttleResetTest() {
+    const Fw::Time sc_time(TimeBase::TB_SC_TIME, 10, 0);
+
+    // The warning is emitted until the throttle count is reached, then suppressed
+    this->clearHistory();
+    for (FwSizeType i = 0; i < NO_CONVERSION_THROTTLE + 2; i++) {
+        (void)this->convert(sc_time, TimeBase::TB_WORKSTATION_TIME, Svc::ConvertTimeStatus::UNKNOWN_TIMEBASE);
+    }
+    ASSERT_EVENTS_NoConversionAvailable_SIZE(NO_CONVERSION_THROTTLE);
+
+    // Clearing the offsets re-arms the warning
+    this->clearHistory();
+    this->sendCmd_CLEAR_OFFSETS(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++);
+    this->clearHistory();
+    (void)this->convert(sc_time, TimeBase::TB_WORKSTATION_TIME, Svc::ConvertTimeStatus::UNKNOWN_TIMEBASE);
+    ASSERT_EVENTS_NoConversionAvailable_SIZE(1);
 }
 
 }  // namespace Svc

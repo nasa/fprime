@@ -79,6 +79,18 @@ class TimeConverterTester : public TimeConverterGTestBase {
     //! An offset is stored for every distinct pair the table holds
     void fillTableTest();
 
+    //! An offset beyond the table capacity is rejected
+    void tableFullTest();
+
+    //! Offsets at the limits of the representable range are accepted
+    void offsetBoundariesTest();
+
+    //! Offsets rejected on the port are not stored and report no status
+    void portUpdateRejectedTest();
+
+    //! A throttled warning resumes after the offsets are cleared
+    void throttleResetTest();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -89,6 +101,9 @@ class TimeConverterTester : public TimeConverterGTestBase {
 
     //! Convert a time into a time base and assert the returned status
     Fw::Time convert(const Fw::Time& in_time, const TimeBase& out_tb, Svc::ConvertTimeStatus status);
+
+    //! Store an offset for as many distinct pairs as the table holds
+    void fillToCapacity();
 
     //! Request an offset by command and assert the reported offset
     void assertGetOffset(const TimeBase& from, const TimeBase& to, I64 offset_us);

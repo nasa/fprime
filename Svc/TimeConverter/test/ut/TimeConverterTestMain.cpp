@@ -70,6 +70,34 @@ TEST(Nominal, FillTable) {
     tester.fillTableTest();
 }
 
+TEST(Nominal, OffsetBoundaries) {
+    COMMENT("Offsets at the limits of the representable range are accepted");
+    REQUIREMENT("REQ-TIMECONVERTER-009");
+    Svc::TimeConverterTester tester;
+    tester.offsetBoundariesTest();
+}
+
+TEST(OffNominal, TableFull) {
+    COMMENT("An offset beyond the table capacity is rejected");
+    REQUIREMENT("REQ-TIMECONVERTER-004");
+    Svc::TimeConverterTester tester;
+    tester.tableFullTest();
+}
+
+TEST(OffNominal, PortUpdateRejected) {
+    COMMENT("Offsets rejected on the port are reported by event and not stored");
+    REQUIREMENT("REQ-TIMECONVERTER-010");
+    Svc::TimeConverterTester tester;
+    tester.portUpdateRejectedTest();
+}
+
+TEST(OffNominal, ThrottleReset) {
+    COMMENT("A throttled warning resumes after the offsets are cleared");
+    REQUIREMENT("REQ-TIMECONVERTER-008");
+    Svc::TimeConverterTester tester;
+    tester.throttleResetTest();
+}
+
 TEST(OffNominal, UnknownTimeBase) {
     COMMENT("Conversion of an unknown pair leaves the output unchanged");
     REQUIREMENT("REQ-TIMECONVERTER-008");

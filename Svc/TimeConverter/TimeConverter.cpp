@@ -21,13 +21,18 @@ constexpr I64 MAX_TIME_US = static_cast<I64>(std::numeric_limits<U32>::max()) * 
 FwTimeBaseStoreType timeBaseValue(const TimeBase& timeBase) {
     return static_cast<FwTimeBaseStoreType>(timeBase.e);
 }
+
+//! Table key holding a pair of time bases, lesser value first
+U64 pairKey(const TimeBase& lower, const TimeBase& upper) {
+    return (static_cast<U64>(timeBaseValue(lower)) << 32) | static_cast<U64>(timeBaseValue(upper));
+}
 }  // namespace
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-TimeConverter ::TimeConverter(const char* const compName) : TimeConverterComponentBase(compName), m_offsetCount(0) {}
+TimeConverter ::TimeConverter(const char* const compName) : TimeConverterComponentBase(compName) {}
 
 TimeConverter ::~TimeConverter() {}
 
@@ -36,6 +41,7 @@ TimeConverter ::~TimeConverter() {}
 // ----------------------------------------------------------------------
 
 void TimeConverter ::offsetUpdate_handler(FwIndexType portNum, const Svc::TimeOffset& offset) {
+    // storeOffset reports every failure by event, and the port carries no status back
     (void)this->storeOffset(offset.get_from(), offset.get_to(), offset.get_offset_us());
 }
 
@@ -79,16 +85,31 @@ void TimeConverter ::SET_OFFSET_cmdHandler(FwOpcodeType opCode,
                                            const TimeBase& from,
                                            const TimeBase& to,
                                            I64 offset_us) {
-    const bool stored = this->storeOffset(from, to, offset_us);
-    if (stored) {
-        this->log_ACTIVITY_HI_OffsetSet(from, to, offset_us);
+    Fw::CmdResponse response = Fw::CmdResponse::OK;
+    switch (this->storeOffset(from, to, offset_us)) {
+        case StoreStatus::OK:
+            this->log_ACTIVITY_HI_OffsetSet(from, to, offset_us);
+            break;
+        // A full table is a state the operator clears, not a bad argument
+        case StoreStatus::TABLE_FULL:
+            response = Fw::CmdResponse::EXECUTION_ERROR;
+            break;
+        default:
+            response = Fw::CmdResponse::VALIDATION_ERROR;
+            break;
     }
-    this->cmdResponse_out(opCode, cmdSeq, stored ? Fw::CmdResponse::OK : Fw::CmdResponse::VALIDATION_ERROR);
+    this->cmdResponse_out(opCode, cmdSeq, response);
 }
 
 void TimeConverter ::CLEAR_OFFSETS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    const FwSizeType cleared = this->m_offsetCount;
-    this->m_offsetCount = 0;
+    const FwSizeType cleared = this->m_offsets.getSize();
+    this->m_offsets.clear();
+    // Clearing the table is the operator's recovery action, so re-arm the throttled warnings
+    this->log_WARNING_LO_NoConversionAvailable_ThrottleClear();
+    this->log_WARNING_LO_InvalidTime_ThrottleClear();
+    this->log_WARNING_LO_IdenticalTimeBases_ThrottleClear();
+    this->log_WARNING_HI_OffsetOutOfRange_ThrottleClear();
+    this->log_WARNING_HI_OffsetTableFull_ThrottleClear();
     this->log_ACTIVITY_HI_OffsetsCleared(static_cast<U32>(cleared));
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -112,11 +133,11 @@ void TimeConverter ::GET_OFFSET_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, cons
 }
 
 void TimeConverter ::DUMP_OFFSETS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    if (this->m_offsetCount == 0) {
+    if (this->m_offsets.getSize() == 0) {
         this->log_ACTIVITY_HI_OffsetTableEmpty();
     }
-    for (FwSizeType i = 0; i < this->m_offsetCount; i++) {
-        const OffsetEntry& entry = this->m_offsets[i];
+    for (auto it = this->m_offsets.begin(); it != this->m_offsets.end(); ++it) {
+        const OffsetEntry& entry = it->getValue();
         this->log_ACTIVITY_HI_OffsetReport(entry.lower, entry.upper, entry.offset_us);
     }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -127,60 +148,39 @@ void TimeConverter ::DUMP_OFFSETS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 // ----------------------------------------------------------------------
 
 bool TimeConverter ::lookupOffset(const TimeBase& from, const TimeBase& to, I64& offset_us) const {
-    FwSizeType index = 0;
-    if (!this->findEntry(from, to, index)) {
+    const bool ascending = timeBaseValue(from) < timeBaseValue(to);
+    OffsetEntry entry;
+    if (this->m_offsets.find(pairKey(ascending ? from : to, ascending ? to : from), entry) != Fw::Success::SUCCESS) {
         return false;
     }
-    const OffsetEntry& entry = this->m_offsets[index];
     // Entries hold the offset in canonical order; the reverse conversion negates it
-    offset_us = (timeBaseValue(from) == timeBaseValue(entry.lower)) ? entry.offset_us : -entry.offset_us;
+    offset_us = ascending ? entry.offset_us : -entry.offset_us;
     return true;
 }
 
-bool TimeConverter ::storeOffset(const TimeBase& from, const TimeBase& to, I64 offset_us) {
+TimeConverter::StoreStatus TimeConverter ::storeOffset(const TimeBase& from, const TimeBase& to, I64 offset_us) {
     if (timeBaseValue(from) == timeBaseValue(to)) {
         this->log_WARNING_LO_IdenticalTimeBases(from);
-        return false;
+        return StoreStatus::INVALID;
     }
     // Bound stored offsets so that applying or negating one cannot overflow
     if ((offset_us > MAX_TIME_US) || (offset_us < -MAX_TIME_US)) {
         this->log_WARNING_HI_OffsetOutOfRange(from, to, offset_us);
-        return false;
+        return StoreStatus::INVALID;
     }
 
     const bool ascending = timeBaseValue(from) < timeBaseValue(to);
-    const TimeBase lower = ascending ? from : to;
-    const TimeBase upper = ascending ? to : from;
-    const I64 canonical_offset_us = ascending ? offset_us : -offset_us;
+    OffsetEntry entry;
+    entry.lower = ascending ? from : to;
+    entry.upper = ascending ? to : from;
+    entry.offset_us = ascending ? offset_us : -offset_us;
 
-    FwSizeType index = 0;
-    if (!this->findEntry(from, to, index)) {
-        if (this->m_offsetCount >= Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES) {
-            this->log_WARNING_HI_OffsetTableFull(from, to, static_cast<U32>(Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES));
-            return false;
-        }
-        index = this->m_offsetCount;
-        this->m_offsetCount++;
+    // An insert replaces the entry for a pair already stored, and fails only when the table is full
+    if (this->m_offsets.insert(pairKey(entry.lower, entry.upper), entry) != Fw::Success::SUCCESS) {
+        this->log_WARNING_HI_OffsetTableFull(from, to, static_cast<U32>(Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES));
+        return StoreStatus::TABLE_FULL;
     }
-
-    this->m_offsets[index].lower = lower;
-    this->m_offsets[index].upper = upper;
-    this->m_offsets[index].offset_us = canonical_offset_us;
-    return true;
-}
-
-bool TimeConverter ::findEntry(const TimeBase& from, const TimeBase& to, FwSizeType& index) const {
-    const bool ascending = timeBaseValue(from) < timeBaseValue(to);
-    const FwTimeBaseStoreType lower = timeBaseValue(ascending ? from : to);
-    const FwTimeBaseStoreType upper = timeBaseValue(ascending ? to : from);
-
-    for (FwSizeType i = 0; i < this->m_offsetCount; i++) {
-        if ((timeBaseValue(this->m_offsets[i].lower) == lower) && (timeBaseValue(this->m_offsets[i].upper) == upper)) {
-            index = i;
-            return true;
-        }
-    }
-    return false;
+    return StoreStatus::OK;
 }
 
 }  // namespace Svc

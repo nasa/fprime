@@ -7,12 +7,22 @@
 #ifndef Svc_TimeConverter_HPP
 #define Svc_TimeConverter_HPP
 
+#include "Fw/DataStructures/ArrayMap.hpp"
 #include "Svc/TimeConverter/TimeConverterComponentAc.hpp"
+#include "TimeConverterConfig/FppConstantsAc.hpp"
 
 namespace Svc {
 
 class TimeConverter final : public TimeConverterComponentBase {
   public:
+    //! An offset between a pair of time bases, stored in canonical order
+    struct OffsetEntry {
+        OffsetEntry() : offset_us(0) {}
+        TimeBase lower;  //!< time base with the lesser numeric value
+        TimeBase upper;  //!< time base with the greater numeric value
+        I64 offset_us;   //!< microseconds added to a "lower" time to produce an "upper" time
+    };
+
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
@@ -25,11 +35,11 @@ class TimeConverter final : public TimeConverterComponentBase {
     ~TimeConverter();
 
   private:
-    //! An offset between a pair of time bases, stored in canonical order
-    struct OffsetEntry {
-        TimeBase lower;  //!< time base with the lesser numeric value
-        TimeBase upper;  //!< time base with the greater numeric value
-        I64 offset_us;   //!< microseconds added to a "lower" time to produce an "upper" time
+    //! Outcome of storing an offset
+    enum class StoreStatus {
+        OK,         //!< the offset was stored
+        INVALID,    //!< the pair or the offset itself was rejected
+        TABLE_FULL  //!< no entry was available for a new pair
     };
 
     // ----------------------------------------------------------------------
@@ -44,7 +54,8 @@ class TimeConverter final : public TimeConverterComponentBase {
     //! Handler implementation for convertTime
     Svc::ConvertTimeStatus convertTime_handler(FwIndexType portNum,      //!< The port number
                                                const Fw::Time& in_time,  //!< The time to convert
-                                               Fw::Time& out_time        //!< The converted time
+                                               Fw::Time& out_time        //!< Carries the requested time base in,
+                                                                         //!< and receives the converted time
                                                ) override;
 
     // ----------------------------------------------------------------------
@@ -77,18 +88,11 @@ class TimeConverter final : public TimeConverterComponentBase {
     bool lookupOffset(const TimeBase& from, const TimeBase& to, I64& offset_us) const;
 
     //! Store an offset, replacing an existing entry for the same pair
-    //! \return true when the offset was stored
-    bool storeOffset(const TimeBase& from, const TimeBase& to, I64 offset_us);
+    //! \return the outcome, reported by event on failure
+    StoreStatus storeOffset(const TimeBase& from, const TimeBase& to, I64 offset_us);
 
-    //! Find the entry holding the pair
-    //! \return true when the pair is stored, setting index to its entry
-    bool findEntry(const TimeBase& from, const TimeBase& to, FwSizeType& index) const;
-
-    //! Offset table, holding one entry per pair of time bases
-    OffsetEntry m_offsets[Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES];
-
-    //! Number of entries in use at the front of the offset table
-    FwSizeType m_offsetCount;
+    //! Offset table, holding one entry per pair of time bases keyed on the canonical pair
+    Fw::ArrayMap<U64, OffsetEntry, Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES> m_offsets;
 };
 
 }  // namespace Svc
