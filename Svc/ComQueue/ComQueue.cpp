@@ -519,7 +519,11 @@ void ComQueue::processQueue() {
 }
 
 FwIndexType ComQueue::getQueueNum(Svc::QueueType queueType, FwIndexType portNum) {
-    // Acquire the queue that we need to drain
+    // Validate against the per-type port count before folding so an invalid index cannot alias another queue type
+    const FwIndexType portCount = (queueType == QueueType::COM_QUEUE) ? COM_PORT_COUNT : BUFFER_PORT_COUNT;
+    if (portNum < 0 || portNum >= portCount) {
+        return -1;
+    }
     return static_cast<FwIndexType>(portNum + ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
 }
 

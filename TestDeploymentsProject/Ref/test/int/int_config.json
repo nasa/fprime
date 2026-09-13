@@ -11,5 +11,6 @@
     "Svc.DpCatalog": "DataProducts.dpCat",
     "Svc.DpManager": "DataProducts.dpMgr",
     "Svc.DpWriter": "DataProducts.dpWriter",
-    "Svc.Health": "CdhCore.health"
+    "Svc.Health": "CdhCore.health",
+    "Svc.ComQueue": "ComCcsds.comQueue"
 }
