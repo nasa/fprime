@@ -21,6 +21,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/OsCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/PlatformCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/TimeConverterCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerCfg.fpp"
     HEADERS
