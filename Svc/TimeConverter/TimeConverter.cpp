@@ -24,6 +24,11 @@ FwTimeBaseStoreType timeBaseValue(const TimeBase& timeBase) {
     return static_cast<FwTimeBaseStoreType>(timeBase.e);
 }
 
+//! A time base denotes a clock, rather than the absence of one or a wildcard
+bool usableTimeBase(const TimeBase& timeBase) {
+    return (timeBase.e != TimeBase::TB_NONE) && (timeBase.e != TimeBase::TB_DONT_CARE);
+}
+
 //! Table key holding a pair of time bases, lesser value first
 U64 pairKey(const TimeBase& lower, const TimeBase& upper) {
     return (static_cast<U64>(timeBaseValue(lower)) << TIME_BASE_BITS) | static_cast<U64>(timeBaseValue(upper));
@@ -52,6 +57,10 @@ Svc::ConvertTimeStatus TimeConverter ::convertTime_handler(FwIndexType portNum,
                                                            Fw::Time& out_time) {
     const TimeBase in_tb = in_time.getTimeBase();
     const TimeBase out_tb = out_time.getTimeBase();
+
+    if (!this->checkTimeBases(in_tb, out_tb)) {
+        return Svc::ConvertTimeStatus::UNKNOWN_TIMEBASE;
+    }
 
     // A time is already in the requested base: no offset is needed
     if (timeBaseValue(in_tb) == timeBaseValue(out_tb)) {
@@ -112,11 +121,17 @@ void TimeConverter ::CLEAR_OFFSETS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->log_WARNING_LO_IdenticalTimeBases_ThrottleClear();
     this->log_WARNING_HI_OffsetOutOfRange_ThrottleClear();
     this->log_WARNING_HI_OffsetTableFull_ThrottleClear();
+    this->log_WARNING_HI_UnusableTimeBase_ThrottleClear();
     this->log_ACTIVITY_HI_OffsetsCleared(static_cast<U32>(cleared));
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 void TimeConverter ::GET_OFFSET_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const TimeBase& from, const TimeBase& to) {
+    if (!this->checkTimeBases(from, to)) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
     if (timeBaseValue(from) == timeBaseValue(to)) {
         this->log_WARNING_LO_IdenticalTimeBases(from);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
@@ -161,6 +176,9 @@ bool TimeConverter ::lookupOffset(const TimeBase& from, const TimeBase& to, I64&
 }
 
 TimeConverter::StoreStatus TimeConverter ::storeOffset(const TimeBase& from, const TimeBase& to, I64 offset_us) {
+    if (!this->checkTimeBases(from, to)) {
+        return StoreStatus::INVALID;
+    }
     if (timeBaseValue(from) == timeBaseValue(to)) {
         this->log_WARNING_LO_IdenticalTimeBases(from);
         return StoreStatus::INVALID;
@@ -183,6 +201,20 @@ TimeConverter::StoreStatus TimeConverter ::storeOffset(const TimeBase& from, con
         return StoreStatus::TABLE_FULL;
     }
     return StoreStatus::OK;
+}
+
+bool TimeConverter ::checkTimeBases(const TimeBase& from, const TimeBase& to) {
+    // TB_NONE and TB_DONT_CARE name no clock, so no offset relates them to one
+    bool usable = true;
+    if (!usableTimeBase(from)) {
+        this->log_WARNING_HI_UnusableTimeBase(from);
+        usable = false;
+    }
+    if (!usableTimeBase(to)) {
+        this->log_WARNING_HI_UnusableTimeBase(to);
+        usable = false;
+    }
+    return usable;
 }
 
 }  // namespace Svc

@@ -100,6 +100,10 @@ class TimeConverter final : public TimeConverterComponentBase {
     //! \return the outcome, reported by event on failure
     StoreStatus storeOffset(const TimeBase& from, const TimeBase& to, I64 offset_us);
 
+    //! Check that both ends of a pair denote a clock, reporting those that do not
+    //! \return true when both time bases are usable
+    bool checkTimeBases(const TimeBase& from, const TimeBase& to);
+
     //! Offset table, holding one entry per pair of time bases keyed on the canonical pair
     Fw::ArrayMap<U64, OffsetEntry, Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES> m_offsets;
 };

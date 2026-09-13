@@ -160,5 +160,14 @@ module Svc {
         format "Offset {} us from {} to {} exceeds the representable time range" \
         throttle 5
 
+        @ A time base that denotes no clock was supplied as an end of a pair
+        event UnusableTimeBase(
+            tb: TimeBase        @< time base supplied
+        ) \
+        severity warning high \
+        id 0x0A \
+        format "Time base {} denotes no clock and cannot be converted" \
+        throttle 5
+
     }
 }

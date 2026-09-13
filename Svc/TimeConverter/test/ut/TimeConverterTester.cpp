@@ -20,17 +20,10 @@ struct TimeBasePair {
     TimeBase::T upper;  //!< time base with the greater numeric value
 };
 
-//! Every distinct pair of the default time bases, in canonical order
-const TimeBasePair PAIRS[] = {{TimeBase::TB_NONE, TimeBase::TB_PROC_TIME},
-                              {TimeBase::TB_NONE, TimeBase::TB_WORKSTATION_TIME},
-                              {TimeBase::TB_NONE, TimeBase::TB_SC_TIME},
-                              {TimeBase::TB_NONE, TimeBase::TB_DONT_CARE},
-                              {TimeBase::TB_PROC_TIME, TimeBase::TB_WORKSTATION_TIME},
+//! Every pair of the default time bases that denote a clock, in canonical order
+const TimeBasePair PAIRS[] = {{TimeBase::TB_PROC_TIME, TimeBase::TB_WORKSTATION_TIME},
                               {TimeBase::TB_PROC_TIME, TimeBase::TB_SC_TIME},
-                              {TimeBase::TB_PROC_TIME, TimeBase::TB_DONT_CARE},
-                              {TimeBase::TB_WORKSTATION_TIME, TimeBase::TB_SC_TIME},
-                              {TimeBase::TB_WORKSTATION_TIME, TimeBase::TB_DONT_CARE},
-                              {TimeBase::TB_SC_TIME, TimeBase::TB_DONT_CARE}};
+                              {TimeBase::TB_WORKSTATION_TIME, TimeBase::TB_SC_TIME}};
 
 //! Capacity of the offset table under the configuration the tests build against
 constexpr FwSizeType CAPACITY = Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES;
@@ -442,6 +435,13 @@ void TimeConverterTester ::throttleResetTest() {
     }
     ASSERT_EVENTS_OffsetTableFull_SIZE(this->getOffsetTableFullThrottle());
 
+    this->clearHistory();
+    for (FwSizeType i = 0; i < this->getUnusableTimeBaseThrottle() + 2; i++) {
+        this->sendCmd_SET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++, TimeBase::TB_NONE,
+                                 TimeBase::TB_SC_TIME, US_PER_SECOND);
+    }
+    ASSERT_EVENTS_UnusableTimeBase_SIZE(this->getUnusableTimeBaseThrottle());
+
     // A conversion outside the representable range is warned about under the same scheme
     this->clearOffsets();
     this->setOffset(TimeBase::TB_SC_TIME, TimeBase::TB_WORKSTATION_TIME, -10 * US_PER_SECOND);
@@ -477,6 +477,46 @@ void TimeConverterTester ::throttleResetTest() {
     this->sendCmd_SET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++, extra.lower, extra.upper,
                              US_PER_SECOND);
     ASSERT_EVENTS_OffsetTableFull_SIZE(1);
+
+    this->clearOffsets();
+    this->sendCmd_SET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++, TimeBase::TB_NONE,
+                             TimeBase::TB_SC_TIME, US_PER_SECOND);
+    ASSERT_EVENTS_UnusableTimeBase_SIZE(1);
+}
+
+void TimeConverterTester ::unusableTimeBaseTest() {
+    // A time base naming no clock is rejected at either end of a pair
+    this->assertSetOffsetRejected(TimeBase::TB_NONE, TimeBase::TB_SC_TIME, US_PER_SECOND,
+                                  Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_UnusableTimeBase_SIZE(1);
+    ASSERT_EVENTS_UnusableTimeBase(0, TimeBase::TB_NONE);
+
+    this->assertSetOffsetRejected(TimeBase::TB_SC_TIME, TimeBase::TB_DONT_CARE, US_PER_SECOND,
+                                  Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_UnusableTimeBase_SIZE(1);
+    ASSERT_EVENTS_UnusableTimeBase(0, TimeBase::TB_DONT_CARE);
+
+    // Both ends are reported when neither denotes a clock
+    this->clearHistory();
+    const Svc::TimeOffset offset(TimeBase::TB_NONE, TimeBase::TB_DONT_CARE, US_PER_SECOND);
+    this->invoke_to_offsetUpdate(0, offset);
+    ASSERT_EVENTS_UnusableTimeBase_SIZE(2);
+
+    // A conversion involving one is refused before any offset is consulted
+    this->clearHistory();
+    const Fw::Time in_time(TimeBase::TB_NONE, 10, 0);
+    (void)this->convert(in_time, TimeBase::TB_SC_TIME, Svc::ConvertTimeStatus::UNKNOWN_TIMEBASE);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_UnusableTimeBase(0, TimeBase::TB_NONE);
+    ASSERT_EVENTS_NoConversionAvailable_SIZE(0);
+
+    // So is a request to report an offset for one, once the warning has been re-armed
+    this->clearOffsets();
+    const U32 cmdSeq = this->m_cmdSeq++;
+    this->sendCmd_GET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, cmdSeq, TimeBase::TB_DONT_CARE,
+                             TimeBase::TB_SC_TIME);
+    ASSERT_EVENTS_UnusableTimeBase_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TimeConverter::OPCODE_GET_OFFSET, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
 }
 
 void TimeConverterTester ::conversionRangeEndsTest() {

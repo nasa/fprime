@@ -64,7 +64,7 @@ TEST(Nominal, DumpOffsets) {
 }
 
 TEST(Nominal, FillTable) {
-    COMMENT("The table holds an offset for every distinct pair of time bases");
+    COMMENT("The table holds an offset for every pair up to its configured capacity");
     REQUIREMENT("REQ-TIMECONVERTER-003");
     Svc::TimeConverterTester tester;
     tester.fillTableTest();
@@ -131,6 +131,13 @@ TEST(OffNominal, SetOffsetIdentical) {
     REQUIREMENT("REQ-TIMECONVERTER-010");
     Svc::TimeConverterTester tester;
     tester.setOffsetIdenticalTest();
+}
+
+TEST(OffNominal, UnusableTimeBase) {
+    COMMENT("A time base denoting no clock is rejected wherever it is supplied");
+    REQUIREMENT("REQ-TIMECONVERTER-015");
+    Svc::TimeConverterTester tester;
+    tester.unusableTimeBaseTest();
 }
 
 TEST(OffNominal, SetOffsetOutOfRange) {

@@ -91,6 +91,9 @@ class TimeConverterTester : public TimeConverterGTestBase {
     //! Every throttled warning resumes after the offsets are cleared
     void throttleResetTest();
 
+    //! A time base naming no clock rejected at every entry point
+    void unusableTimeBaseTest();
+
     //! A conversion landing on either end of the representable range
     void conversionRangeEndsTest();
 
@@ -117,6 +120,9 @@ class TimeConverterTester : public TimeConverterGTestBase {
     }
     static constexpr U32 getOffsetTableFullThrottle() {
         return static_cast<U32>(TimeConverterComponentBase::EVENTID_OFFSETTABLEFULL_THROTTLE);
+    }
+    static constexpr U32 getUnusableTimeBaseThrottle() {
+        return static_cast<U32>(TimeConverterComponentBase::EVENTID_UNUSABLETIMEBASE_THROTTLE);
     }
 
   private:

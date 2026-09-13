@@ -27,6 +27,7 @@ the component applies it.
 | REQ-TIMECONVERTER-012 | `Svc::TimeConverter` shall accept a command that reports the offset stored for a single pair of time bases as an event, and shall reject the command with a warning event when no offset is stored for that pair or when both ends of the pair are the same time base. | Unit Test |
 | REQ-TIMECONVERTER-013 | `Svc::TimeConverter` shall accept a command that reports every stored offset as events, and shall emit an event reporting an empty table when no offsets are stored. | Unit Test |
 | REQ-TIMECONVERTER-014 | `Svc::TimeConverter` shall perform conversions and offset updates without dynamic memory allocation and in bounded time. | Inspection |
+| REQ-TIMECONVERTER-015 | `Svc::TimeConverter` shall reject a time base that denotes no clock, `TB_NONE` or `TB_DONT_CARE`, wherever it is supplied as an end of a pair, and shall emit a throttled high-severity warning event naming it. | Unit Test |
 
 ## 3. Design
 
@@ -70,6 +71,7 @@ are reachable through an intermediate base.
 
 | Condition | Status | Output |
 |---|---|---|
+| Either base denotes no clock | `UNKNOWN_TIMEBASE` | unmodified |
 | Source and requested bases are identical | `OK` | input time copied unchanged |
 | Offset stored for the pair, result representable | `OK` | converted time |
 | No offset stored for the pair | `UNKNOWN_TIMEBASE` | unmodified |
@@ -77,6 +79,15 @@ are reachable through an intermediate base.
 
 Offsets are range-checked when stored, bounded to the largest time an `Fw::Time` can
 represent, so applying or negating a stored offset cannot overflow.
+
+### 3.2.1 Time bases that denote no clock
+
+`TB_NONE` records that no time base has been established and `TB_DONT_CARE` is a
+sequencer wildcard; neither names a clock an offset could relate to another. The
+component rejects both wherever they appear as an end of a pair — conversion, offset
+updates over the port, `SET_OFFSET`, and `GET_OFFSET` — emitting `UnusableTimeBase` for
+each end supplied that way. A project that replaces the `TimeBase` enumeration keeps
+this behavior, as both values are required members of it.
 
 ### 3.3 Ports
 
@@ -93,15 +104,15 @@ reported.
 
 | Command | Description | Failure |
 |---|---|---|
-| `SET_OFFSET` | Stores the offset for a pair of time bases and reports it with `OffsetSet` | `VALIDATION_ERROR` with `IdenticalTimeBases` or `OffsetOutOfRange` for a rejected argument; `EXECUTION_ERROR` with `OffsetTableFull` when the table is full |
+| `SET_OFFSET` | Stores the offset for a pair of time bases and reports it with `OffsetSet` | `VALIDATION_ERROR` with `UnusableTimeBase`, `IdenticalTimeBases`, or `OffsetOutOfRange` for a rejected argument; `EXECUTION_ERROR` with `OffsetTableFull` when the table is full |
 | `CLEAR_OFFSETS` | Discards every stored offset and reports the number discarded | none |
-| `GET_OFFSET` | Reports the offset stored for one pair with `OffsetReport` | `VALIDATION_ERROR` with `IdenticalTimeBases`; `EXECUTION_ERROR` with `NoOffsetStored` when the pair is not stored |
+| `GET_OFFSET` | Reports the offset stored for one pair with `OffsetReport` | `VALIDATION_ERROR` with `UnusableTimeBase` or `IdenticalTimeBases`; `EXECUTION_ERROR` with `NoOffsetStored` when the pair is not stored |
 | `DUMP_OFFSETS` | Reports every stored offset with `OffsetReport`, one event per entry with the lesser time base first, in the order the pairs were first stored, or `OffsetTableEmpty` | none |
 
 A full table is an operator-clearable state rather than a bad argument, which is why
 `SET_OFFSET` distinguishes it with `EXECUTION_ERROR`.
 
-`CLEAR_OFFSETS` also resets the throttle counters of the five throttled events, so those
+`CLEAR_OFFSETS` also resets the throttle counters of the six throttled events, so those
 warnings resume after the operator has acted on them.
 
 ### 3.5 Events
@@ -118,14 +129,15 @@ warnings resume after the operator has acted on them.
 | `OffsetTableEmpty` | activity high | none | The table holds no entries |
 | `IdenticalTimeBases` | warning low | 5 | A single time base was supplied as both ends of a pair |
 | `OffsetOutOfRange` | warning high | 5 | An offset exceeds the representable time range |
+| `UnusableTimeBase` | warning high | 5 | A time base denoting no clock was supplied as an end of a pair |
 
 ## 4. Configuration
 
 `Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES` in
 `Svc/TimeConverter/config/TimeConverterConfig/TimeConverterCfg.fpp` sets the table
-capacity; projects override it. The default of 6 suits a deployment correlating a few
-clocks; a project should raise it to the number of pairs it correlates, keeping it small
-enough that a `DUMP_OFFSETS` remains a short operation.
+capacity; projects override it. The default of 2 suits the three convertible time bases
+of the default configuration; a project should raise it to the number of pairs it
+correlates, keeping it small enough that a `DUMP_OFFSETS` remains a short operation.
 
 The constant lives in a component-local configuration module rather than
 `default/config`, so a project overrides it by listing its own `TimeConverterCfg.fpp`
