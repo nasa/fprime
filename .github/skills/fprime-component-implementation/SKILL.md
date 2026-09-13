@@ -37,7 +37,7 @@ for naming and code style.
 
 The FPP model must be confirmed (see
 `fprime-component-design-fpp`) and C++ design rules
-(`fprime-cpp-design`, CPP-1 through CPP-34) are mandatory.
+(`fprime-cpp-design`, CPP-1 through CPP-35) are mandatory.
 The confirmed requirements and FPP model should provide all the
 information needed for implementation.
 
@@ -101,7 +101,7 @@ Iterate until compilation succeeds. Common issues:
 ### Step 4 — Review Against C++ Design Rules
 
 Before considering implementation complete, verify compliance with
-`fprime-cpp-design` (CPP-1 through CPP-34).
+`fprime-cpp-design` (CPP-1 through CPP-35).
 
 ---
 
