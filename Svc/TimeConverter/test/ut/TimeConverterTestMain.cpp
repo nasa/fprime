@@ -77,6 +77,13 @@ TEST(Nominal, OffsetBoundaries) {
     tester.offsetBoundariesTest();
 }
 
+TEST(Nominal, ConversionRangeEnds) {
+    COMMENT("A conversion landing on either end of the representable range succeeds");
+    REQUIREMENT("REQ-TIMECONVERTER-009");
+    Svc::TimeConverterTester tester;
+    tester.conversionRangeEndsTest();
+}
+
 TEST(OffNominal, TableFull) {
     COMMENT("An offset beyond the table capacity is rejected");
     REQUIREMENT("REQ-TIMECONVERTER-004");
@@ -91,8 +98,15 @@ TEST(OffNominal, PortUpdateRejected) {
     tester.portUpdateRejectedTest();
 }
 
+TEST(OffNominal, PortUpdateTableFull) {
+    COMMENT("An offset supplied on the port beyond the table capacity is rejected");
+    REQUIREMENT("REQ-TIMECONVERTER-004");
+    Svc::TimeConverterTester tester;
+    tester.portUpdateTableFullTest();
+}
+
 TEST(OffNominal, ThrottleReset) {
-    COMMENT("A throttled warning resumes after the offsets are cleared");
+    COMMENT("Every throttled warning resumes after the offsets are cleared");
     REQUIREMENT("REQ-TIMECONVERTER-008");
     Svc::TimeConverterTester tester;
     tester.throttleResetTest();

@@ -86,7 +86,7 @@ module Svc {
         format "Conversion from {} to {} (offset {} us) of time {} us is out of range" \
         throttle 5
 
-        @ An offset was stored for a pair of time bases
+        @ An offset was stored for a pair of time bases by command
         event OffsetSet(
             from: TimeBase      @< time base the offset converts from
             to: TimeBase        @< time base the offset converts to

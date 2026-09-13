@@ -6,16 +6,18 @@
 
 #include "Svc/TimeConverter/TimeConverter.hpp"
 
-#include <limits>
-
 namespace Svc {
 
-namespace {
-//! Microseconds in one second
-constexpr I64 US_PER_SECOND = 1000000;
+constexpr I64 TimeConverter::US_PER_SECOND;
+constexpr I64 TimeConverter::MAX_TIME_US;
 
-//! Largest time representable by an Fw::Time, in microseconds
-constexpr I64 MAX_TIME_US = static_cast<I64>(std::numeric_limits<U32>::max()) * US_PER_SECOND + (US_PER_SECOND - 1);
+namespace {
+constexpr I64 US_PER_SECOND = TimeConverter::US_PER_SECOND;
+constexpr I64 MAX_TIME_US = TimeConverter::MAX_TIME_US;
+
+//! Bits holding one time base in a table key
+constexpr U8 TIME_BASE_BITS = sizeof(FwTimeBaseStoreType) * 8;
+static_assert(2 * TIME_BASE_BITS <= 64, "a pair of time bases must fit in a table key");
 
 //! Numeric value of a time base, used to order a pair canonically
 FwTimeBaseStoreType timeBaseValue(const TimeBase& timeBase) {
@@ -24,7 +26,7 @@ FwTimeBaseStoreType timeBaseValue(const TimeBase& timeBase) {
 
 //! Table key holding a pair of time bases, lesser value first
 U64 pairKey(const TimeBase& lower, const TimeBase& upper) {
-    return (static_cast<U64>(timeBaseValue(lower)) << 32) | static_cast<U64>(timeBaseValue(upper));
+    return (static_cast<U64>(timeBaseValue(lower)) << TIME_BASE_BITS) | static_cast<U64>(timeBaseValue(upper));
 }
 }  // namespace
 
@@ -94,7 +96,7 @@ void TimeConverter ::SET_OFFSET_cmdHandler(FwOpcodeType opCode,
         case StoreStatus::TABLE_FULL:
             response = Fw::CmdResponse::EXECUTION_ERROR;
             break;
-        default:
+        case StoreStatus::INVALID:
             response = Fw::CmdResponse::VALIDATION_ERROR;
             break;
     }

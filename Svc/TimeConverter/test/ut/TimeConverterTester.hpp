@@ -88,8 +88,36 @@ class TimeConverterTester : public TimeConverterGTestBase {
     //! Offsets rejected on the port are not stored and report no status
     void portUpdateRejectedTest();
 
-    //! A throttled warning resumes after the offsets are cleared
+    //! Every throttled warning resumes after the offsets are cleared
     void throttleResetTest();
+
+    //! A conversion landing on either end of the representable range
+    void conversionRangeEndsTest();
+
+    //! An offset beyond the table capacity supplied over the port
+    void portUpdateTableFullTest();
+
+  public:
+    // ----------------------------------------------------------------------
+    // Accessor methods for protected members
+    // ----------------------------------------------------------------------
+
+    //! Get the throttle count of a warning event
+    static constexpr U32 getNoConversionAvailableThrottle() {
+        return static_cast<U32>(TimeConverterComponentBase::EVENTID_NOCONVERSIONAVAILABLE_THROTTLE);
+    }
+    static constexpr U32 getInvalidTimeThrottle() {
+        return static_cast<U32>(TimeConverterComponentBase::EVENTID_INVALIDTIME_THROTTLE);
+    }
+    static constexpr U32 getIdenticalTimeBasesThrottle() {
+        return static_cast<U32>(TimeConverterComponentBase::EVENTID_IDENTICALTIMEBASES_THROTTLE);
+    }
+    static constexpr U32 getOffsetOutOfRangeThrottle() {
+        return static_cast<U32>(TimeConverterComponentBase::EVENTID_OFFSETOUTOFRANGE_THROTTLE);
+    }
+    static constexpr U32 getOffsetTableFullThrottle() {
+        return static_cast<U32>(TimeConverterComponentBase::EVENTID_OFFSETTABLEFULL_THROTTLE);
+    }
 
   private:
     // ----------------------------------------------------------------------
@@ -107,6 +135,12 @@ class TimeConverterTester : public TimeConverterGTestBase {
 
     //! Request an offset by command and assert the reported offset
     void assertGetOffset(const TimeBase& from, const TimeBase& to, I64 offset_us);
+
+    //! Send a SET_OFFSET expected to be rejected and assert the command response
+    void assertSetOffsetRejected(const TimeBase& from, const TimeBase& to, I64 offset_us, Fw::CmdResponse response);
+
+    //! Clear the offsets by command, discarding the resulting events
+    void clearOffsets();
 
     //! Connect ports
     void connectPorts();

@@ -7,6 +7,8 @@
 #ifndef Svc_TimeConverter_HPP
 #define Svc_TimeConverter_HPP
 
+#include <limits>
+
 #include "Fw/DataStructures/ArrayMap.hpp"
 #include "Svc/TimeConverter/TimeConverterComponentAc.hpp"
 #include "TimeConverterConfig/FppConstantsAc.hpp"
@@ -15,6 +17,13 @@ namespace Svc {
 
 class TimeConverter final : public TimeConverterComponentBase {
   public:
+    //! Microseconds in one second
+    static constexpr I64 US_PER_SECOND = 1000000;
+
+    //! Largest time representable by an Fw::Time, in microseconds
+    static constexpr I64 MAX_TIME_US =
+        static_cast<I64>(std::numeric_limits<U32>::max()) * US_PER_SECOND + (US_PER_SECOND - 1);
+
     //! An offset between a pair of time bases, stored in canonical order
     struct OffsetEntry {
         OffsetEntry() : offset_us(0) {}
@@ -28,7 +37,7 @@ class TimeConverter final : public TimeConverterComponentBase {
     // ----------------------------------------------------------------------
 
     //! Construct TimeConverter object
-    TimeConverter(const char* const compName  //!< The component name
+    explicit TimeConverter(const char* const compName  //!< The component name
     );
 
     //! Destroy TimeConverter object
