@@ -146,7 +146,7 @@ FwSizeType m_capacity;
 CPP-3 and CPP-28 apply only to **numerical** fields. Non-numerical F
 Prime types (`Fw::Time`, `Fw::CmdResponse`, `Fw::Buffer`,
 `Fw::String`) are governed by their own rules in this section
-(CPP-2, CPP-21, CPP-23, CPP-24).
+(CPP-2, CPP-21, CPP-23, CPP-24, CPP-35).
 
 #### CPP-21 — No C-style arrays in interfaces; pair array + length
 
@@ -169,6 +169,24 @@ ground operator sees — are declared in `.fpp` files and autocoded
 into strongly-typed C++ bindings. Use those autocoded types
 directly; do not hand-roll C structs and serialize them yourself.
 The FPP modeled types are the ground-system contract.
+
+#### CPP-35 — Report operation outcomes as FPP enumerations, not `bool`
+
+A status that answers "did it work, and if not, why" — a helper's
+return value, an event or telemetry argument, a rejection reason —
+is an FPP `enum` with one enumerator per outcome (e.g. `NOT_FOUND`,
+`TOO_LARGE`), never `bool` or a free-form string. Map the enum to
+`Fw::CmdResponse` at the command boundary. `bool` remains correct
+for genuine binary facts (a pin level, a key pressed, a latch).
+
+```cpp
+// Avoid: operator sees "rejected" with no cause
+bool validate(const Fw::Buffer& b);
+
+// Prefer: cause reaches the ground in the event
+ValidateStatus validate(const Fw::Buffer& b);
+log_WARNING_HI_Rejected(status);
+```
 
 #### CPP-24 — Prefer `Fw::String` over `char*`
 
@@ -492,6 +510,7 @@ linked in §4 is authoritative. F Prime adopts it where applicable.
 | CPP-32 | `cpp-ignored-return-value` | `**must fix**` for I/O/serialization; `**could fix**` for display. |
 | CPP-33 | `cpp-inlined-utility` | `**suggestion**` for one-liners; `**could fix**` for multi-line. |
 | CPP-34 | `cpp-while-loop-for-counted-iteration` / `cpp-unbounded-loop` | Two sub-classes. |
+| CPP-35 | `cpp-bool-status-where-enum-fits` | Outcome/status values only; not binary facts. |
 
 Finding-class names are stable strings: they appear in the inline
 comment HTML footer (`finding-key` hash inputs). Renaming a class
@@ -512,10 +531,12 @@ is authoritative; this section narrows the decision per cluster.
   Never `**could fix**`.
 - **Asserts on untrusted inputs (CPP-4):** always `**must fix**`.
   Mirrors `security-review`'s framing.
-- **F Prime type idioms (CPP-3, 21, 22, 23, 24, 28):** default
+- **F Prime type idioms (CPP-3, 21, 22, 23, 24, 28, 35):** default
   `**suggestion**` with a fenced suggestion block. Upgrade to
   `**must fix**` when the violation is on a ground-facing interface
-  (CPP-23) — the autocoded FPP type is the ground-system contract.
+  (CPP-23) — the autocoded FPP type is the ground-system contract —
+  or when a `bool` status reaches an event or telemetry channel
+  (CPP-35).
 - **Language subset (CPP-5–16, 18, 25):** default `**suggestion**`
   or `**could fix**`. Upgrade to `**must fix**` when:
   - CPP-25 introduces an exception or RTTI dependency.
