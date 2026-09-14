@@ -16,7 +16,7 @@
 
 File management provides the capability to manipulate files on the spacecraft file system, transfer files between the ground and the spacecraft in both directions, route delivered files to appropriate handlers, and perform large file I/O operations without blocking time-critical components. These capabilities are delivered by a set of collaborating components that together support the full lifecycle of file operations.
 
-File transfer is available in two interchangeable implementations: the F Prime file protocol (`FileUplink` and `FileDownlink`) and the CCSDS File Delivery Protocol (`CfdpManager`). Both are described under [File Transfer](#file-transfer) below, along with where each is supported. This page is an overview; the SDDs linked above are the authoritative descriptions of ports, commands, events, telemetry, and configuration.
+File transfer is available in two implementations that share the same on-board interfaces: the F Prime file protocol (`FileUplink` and `FileDownlink`) and the CCSDS File Delivery Protocol (`CfdpManager`). Both are described under [File Transfer](#file-transfer) below, along with where each is supported. This page is an overview; the SDDs linked above are the authoritative descriptions of ports, commands, events, telemetry, and configuration.
 
 ### File System Operations
 
@@ -47,7 +47,7 @@ Files are carried as a series of F Prime file packets: a START packet announcing
 
 **Delivery guarantees.** The protocol has no retransmission. Lost or out-of-order packets are reported by events and telemetry counters, and recovery is an operator action: re-send the file, or re-send the missing range using a partial downlink. This is appropriate for links where the framing layer already provides reliability or where loss is rare and operator-driven recovery is acceptable.
 
-**Sandboxing.** Both components confine file access to a directory chosen at initialization; paths that resolve outside it are rejected. The sandbox is fail-closed: a deployment must configure it or no file can be read or written. The default configuration shipped with F Prime is the file system root, which deployments should restrict.
+**Sandboxing.** Both components confine file access to a directory chosen at initialization; requested paths outside it are rejected. Validation is textual and does not resolve symbolic links, so containment assumes untrusted actors cannot create symlinks inside the sandbox directory. The sandbox is fail-closed: a deployment must configure it or no file can be read or written. The default configuration shipped with F Prime is the file system root, which deployments should restrict.
 
 #### CCSDS File Delivery Protocol (CfdpManager)
 
@@ -59,18 +59,18 @@ Files are carried as a series of F Prime file packets: a START packet announcing
 
 **Operations.** Operators can send a single file, play back every file in a directory, or poll a directory on a fixed interval so that new files are sent automatically. Individual transactions can be suspended, resumed, cancelled with protocol close-out, or abandoned, and a channel's transmission can be frozen and resumed. On-board components can request a transfer through a port and are notified on completion, using the same port interface as `FileDownlink`.
 
-**Timing.** Protocol timers and transaction processing are driven by a scheduler port that must be invoked at 1 Hz.
+**Timing.** Protocol timers and transaction processing are driven by a scheduler port that must be invoked at 1 Hz. Timer parameters (acknowledgment and inactivity timeouts, poll intervals) are counted in scheduler invocations, so driving the port at any other rate scales every CFDP timeout by the same factor.
 
-**Current limitations.** Partial-file transfers (non-zero offset or length) are not supported, files are limited to 4 GiB, received files are not announced to the File Dispatcher, and CFDP transfers are not confined by a file-system sandbox — the destination path in an incoming metadata PDU is honored as received. CFDP assumes authentication is provided by lower layers; deployments should pair it with link-layer security such as SDLS. See the CfdpManager SDD for the full list of assumptions and security considerations.
+**Current limitations.** Partial-file transfers (non-zero offset or length) are not supported, file sizes and offsets are 32-bit in the current implementation, received files are not announced to the File Dispatcher, and CFDP transfers are not confined by a file-system sandbox — the destination path in an incoming metadata PDU is honored as received. CFDP assumes authentication is provided by lower layers; deployments should pair it with link-layer security such as SDLS. See the CfdpManager SDD for the full list of assumptions and security considerations.
 
 #### Interchangeability and Support
 
-The two mechanisms are drop-in interchangeable: both expose the same ports to on-board file producers and to the communication stack, so a deployment selects one or the other without changing the rest of the flight software. The choice comes down to the delivery guarantees needed and the ground system in use.
+The two mechanisms are interchangeable for on-board file producers and for the communication stack: both implement the `SendFileRequest`/`SendFileComplete` ports and exchange file-type packets with the same communication-stack ports, so a deployment selects one or the other without changing those components. Consumers of uplinked files are affected: `CfdpManager` does not announce received files to the File Dispatcher, and it rejects partial-file requests (see *Current limitations* above). The choice comes down to the delivery guarantees needed and the ground system in use.
 
 | | F Prime file protocol (`FileUplink` / `FileDownlink`) | CFDP (`CfdpManager`) |
 |---|---|---|
 | F Prime GDS (`fprime-gds`) | Supported: uplink and downlink from the GDS user interface, the `fprime-cli file-uplink` command, and the integration test API. | Not supported. The GDS does not implement CFDP. |
-| YAMCS | Supported through the `fprime-yamcs` plugin; exercised by the `fprime-yamcs-reference` project. | Requires the YAMCS CFDP service; the flight side transports PDUs as CCSDS space packets. No F Prime reference project demonstrates this configuration yet. |
+| YAMCS | Supported through the `fprime-yamcs` plugin; exercised by the `fprime-yamcs-reference` project. | Not supported by the `fprime-yamcs` plugin. YAMCS has a native CFDP service, but F Prime emits PDUs wrapped in an F Prime file packet inside the space packet, so an adapter is needed; no F Prime project demonstrates this yet. |
 | Communication stack | F Prime framing or CCSDS space packets (with or without SDLS). | CCSDS space packets (with or without SDLS). F Prime framing is possible, but no F Prime-protocol ground system speaks CFDP. |
 | Reliable delivery | No; operator-driven recovery. | Class 2 provides acknowledged delivery with retransmission; Class 1 does not. |
 | Concurrent transfers | One file at a time in each direction. | Multiple transactions per channel, multiple channels. |
@@ -90,8 +90,8 @@ The File Worker provides an off-thread file I/O service for components that need
 ### Off Nominal
 
 - File system operations report errors via events when operations fail (e.g., file not found, permission denied, disk full).
-- **F Prime file protocol.** Packet loss, out-of-order packets, checksum mismatches, and file-system errors are reported by events and counted in telemetry; the affected transfer fails and must be re-commanded. A downlink of a zero-length or unreadable file, or a path outside the sandbox, is rejected with an event.
+- **F Prime file protocol.** Packet loss, checksum mismatches, and file-system errors are reported by events and counted in telemetry; out-of-order packets raise a warning but are written at their offset, so a file still completes if every packet arrives. A failed uplink is not announced to the File Dispatcher, but the partially written file remains at its destination path until removed or overwritten; recovery is to re-send the file. A downlink of a zero-length or unreadable file, or a path outside the sandbox, is rejected with an event.
 - **CFDP Class 1.** Behaves like the F Prime file protocol: the receiver detects a missing or corrupt file at end-of-file and reports it, but no retransmission occurs.
 - **CFDP Class 2.** Missing segments are requested by negative acknowledgment and retransmitted until either the file is complete or the configured retry limits or inactivity timers expire, at which point the transaction is faulted and reported. Operators can cancel or abandon stuck transactions by command.
-- **Malformed input.** `CfdpManager` treats received PDUs as untrusted and discards malformed PDUs rather than asserting, so a hostile or corrupt link cannot take the deployment out of service through the file transfer path.
+- **Malformed input.** `CfdpManager` treats received PDUs as untrusted and discards malformed PDUs rather than asserting, so a corrupt link cannot crash the deployment through the file transfer path. This does not protect against well-formed traffic from an unauthenticated sender, which can write any path the process can reach; see the authentication note under *Current limitations* above.
 - File dispatch logs a warning if a file extension does not match any entry in the routing table.
