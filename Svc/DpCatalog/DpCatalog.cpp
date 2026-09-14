@@ -596,6 +596,12 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
     // check the state file to see if there is transmit state
     this->getFileState(entry);
 
+    // skip a file the state file records as already transmitted
+    if (entry.record.get_state() == Fw::DpState::TRANSMITTED) {
+        this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
+        return ProcessFileStatus::FAILED;
+    }
+
     // a duplicate insert updates the tree in place; skip it so pending counters are not double-counted
     if (this->m_dpCatalog.find(entry) == Fw::Success::SUCCESS) {
         this->log_ACTIVITY_HI_DpFileSkipped(fullFile);

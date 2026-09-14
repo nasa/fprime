@@ -70,6 +70,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
                  FwSizeType stopAfter = 0,
                  Fw::Wait wait = Fw::Wait::NO_WAIT);
 
+    //! Verify transmitted state is preserved across catalog rebuilds
+    void stateFileSkipsTransmitted();
+
     //! Generate some data product files
     Fw::String genDP(FwDpIdType id,
                      FwDpPriorityType prio,
