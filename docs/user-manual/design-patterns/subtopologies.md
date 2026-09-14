@@ -114,7 +114,7 @@ module CdhCoreConfig {
 ```
 
 #### Step 3: Register the Configuration Module
-In your config module `CMakeLists.txt`, register a config module with `register_fprime_config()` as shown below. The config name, passed as first argument, must be unique and different from `config`.
+In your configuration module `CMakeLists.txt`, register a configuration module with `register_fprime_config()` as shown below. The config name, passed as first argument, must be unique and different from `config`.
 ```cmake
 # File: MyDeployment/MyCdhCoreConfig/CMakeLists.txt
 register_fprime_config(
@@ -133,7 +133,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MyCdhCoreConfig/")
 ```
 
 #### Step 4: Add as Dependency
-Include the config module as a dependency of your deployment's topology module registration:
+Include the configuration module as a dependency of your deployment's topology module registration:
 ```cmake
 # File: MyDeployment/Top/CMakeLists.txt
 register_fprime_module(

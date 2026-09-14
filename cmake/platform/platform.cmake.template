@@ -72,9 +72,9 @@ if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
 endif()
 
 # STEP 5: Register the platform configuration. A platform supplies "PlatformTypes.fpp" and
-#         "PlatformTypes.h" from a configuration module, chooses an implementation for every Os
-#         package, and marks the module GLOBAL_IMPLICIT_DEPENDENCY so every module sees the
-#         platform types.
+#         "PlatformTypes.h" from a configuration module and chooses an implementation for every Os
+#         package. Each module is marked GLOBAL_IMPLICIT_DEPENDENCY so that every module in the build
+#         receives the platform types and, for the module below, the OS type compile definition.
 #         Note: Typically, the unix platform directory is a good default, as it grabs standard
 #         types from <cstdint> and chooses the POSIX implementations. Additional platform-specific
 #         choices and definitions are then registered in a second, INTERFACE-only configuration

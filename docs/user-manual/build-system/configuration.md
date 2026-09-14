@@ -297,11 +297,16 @@ subtopology with the same steps:
    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MyDeployment/")
    ```
 
-5. **Add `DEPENDS` when an FPP override uses types from a library.** An override of `MyLibraryCfg.fpp` that
-   refers to types defined in `MyLibrary_Types` needs `DEPENDS MyLibrary_Types` so the FPP model resolves.
+5. **FPP overrides that use types from a library** resolve as long as the defining module (e.g. `MyLibrary_Types`)
+   is part of the build: the override is autocoded by the module it replaces, and the FPP dependency analysis
+   picks up its imports automatically. `DEPENDS MyLibrary_Types` on the override module is optional and only
+   documents the relationship.
 6. **Override implementation choices in the same module** with `CHOOSES_IMPLEMENTATIONS`, e.g. to select
    `Os_File_Stub` instead of the platform's file implementation. A choice made here takes precedence over the
-   platform's. Unit tests and deployments may also choose implementations in their own registration; see
+   platform's, unless the platform itself listed that implementation earlier and then superseded it: chosen
+   implementations are de-duplicated in registration order, so on Linux re-choosing `Os_Cpu_Stub` (listed by
+   `unix/Platform`, superseded by `Linux.cmake`) has no effect. Choose such an implementation in the
+   deployment's `register_fprime_deployment()` or the unit test's `register_fprime_ut()` instead; see
    [CMake Implementations](./cmake-implementations.md).
 
 Since the project directory is added last, its overrides win over every earlier provider. Nothing needs to
@@ -316,9 +321,11 @@ A worked example is the `ExampleCdhCoreConfig` module of
 overrides `CdhCoreTlmConfig.fpp`.
 
 > [!NOTE]
-> An override-only module contains no buildable files and should be declared `INTERFACE`. `INTERFACE` is also
-> correct when the module's `AUTOCODER_INPUTS` contain only type aliases and integer constants, which autocode to
-> headers (as the platform and `CdhCoreConfig` examples above do). A module that supplies `SOURCES`, or whose FPP
+> A module with only `HEADERS` and/or `CONFIGURATION_OVERRIDES` has nothing to compile and must be declared
+> `INTERFACE`; without it CMake fails at generate time with `No SOURCES given to target`. `INTERFACE` is also
+> correct when the module's `AUTOCODER_INPUTS` contain only type aliases and integer constants, whose autocoded
+> output has nothing to compile (the generated `FppConstantsAc.cpp` holds no definitions), as the platform and
+> `CdhCoreConfig` examples above do. A module that supplies `SOURCES`, or whose FPP
 > defines string, floating-point, or boolean constants, or `enum`, `struct`, or `array` types (these autocode
 > `.cpp` files that must be compiled), must not be `INTERFACE`; declare it `STATIC` (modules with
 > `AUTOCODER_INPUTS` default to `STATIC`, as `default/config` and
@@ -333,9 +340,9 @@ overrides `CdhCoreTlmConfig.fpp`.
 |---|---|
 | `SOURCES`, `HEADERS`, `AUTOCODER_INPUTS` | New configuration files, copied into the build cache. A file name already supplied by an earlier module is an error; use `CONFIGURATION_OVERRIDES` instead. |
 | `CONFIGURATION_OVERRIDES` | Replacements for files supplied by an earlier module, matched by file name. A name no earlier module supplied is an error. |
-| `INTERFACE` | Module with nothing to compile: override-only, headers, or FPP type aliases and integer constants. Not for `SOURCES`, string/float/bool constants, or FPP `enum`/`struct`/`array` definitions (these autocode `.cpp` files). |
+| `INTERFACE` | Module with nothing to compile: override-only, headers-only, or FPP that autocodes nothing compilable. Required for the first two; see the note under [Overriding Configuration in a Project](#overriding-configuration-in-a-project) for which FPP constructs require `STATIC`. |
 | `GLOBAL_IMPLICIT_DEPENDENCY` | Linked into the global interface target: visible to every module without `DEPENDS`. Used by framework defaults and platform packages; available to library defaults. Replaces the deprecated `BASE_CONFIG`, which still works as a synonym and emits a warning. |
-| `DEPENDS` | Modules this configuration needs, typically `Fw_Types` or a library's `_Types` module for FPP overrides. |
+| `DEPENDS` | Modules this configuration needs to compile, typically `Fw_Types`. Not required for FPP imports, which the FPP dependency analysis discovers. |
 | `CHOOSES_IMPLEMENTATIONS` | Implementation selections (see [CMake Implementations](./cmake-implementations.md)). Platform packages must choose every required implementation; projects may override. |
 | `EXCLUDE_FROM_ALL` | Build only when depended upon. Used by subtopology configuration. |
 
@@ -345,6 +352,7 @@ overrides `CdhCoreTlmConfig.fpp`.
 |---|---|---|
 | `<file> is CONFIGURATION_OVERRIDE but overrides nonexistent file` | No earlier module supplied a file of that name: typo, wrong file name, or the providing library/subtopology is not in the build. | Check the name; if the file is genuinely new, list it under `SOURCES`/`HEADERS`/`AUTOCODER_INPUTS`. |
 | `<file> is SOURCE/HEADER but overrides existing file` | A new file has the same name as an existing configuration file. | Move it to `CONFIGURATION_OVERRIDES` if it is meant to replace that file, or rename it. |
+| `No SOURCES given to target: <module>` (at generate time) | A module with only `HEADERS`/`CONFIGURATION_OVERRIDES` was registered without `INTERFACE`. | Add `INTERFACE` to the `register_fprime_config()` call. |
 | `Configuration file '...' of module '...' is available as '...' via include root '...'` | The configuration directory is directly under a source include root (project, framework, or library root), so the source-tree file shadows the build-cache copy. | Move the directory one level down (e.g. `default-config/config-<name>/`), or register the files from a `CMakeLists.txt` in a different directory, so that the source-tree path no longer equals `<module directory>/<file name>`. |
 
 The override, fatal-error, `HEADERS` include-root, `GLOBAL_IMPLICIT_DEPENDENCY`/`BASE_CONFIG`, and re-configure

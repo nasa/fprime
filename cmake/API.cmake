@@ -393,12 +393,12 @@ endfunction()
 # HEADERS, DEPENDS, INTERFACE, EXCLUDE_FROM_ALL) and additionally supports the following directives:
 #
 # - **CONFIGURATION_OVERRIDES**: files replacing configuration files supplied by a previously registered configuration
-#   module (fprime default configuration, platform, or library configuration). An override is matched to the file it
+#   module (framework defaults, platform, library, or subtopology configuration). An override is matched to the file it
 #   replaces by file name only and is copied into the original module's location in the build cache. Listing a file
 #   that no earlier module supplied is an error.
 # - **GLOBAL_IMPLICIT_DEPENDENCY**: links the configuration module into the global interface target. Every module that
 #   transitively depends on `Fw_Types` (i.e. all F Prime modules) then receives the configuration's include root and
-#   link dependency without listing the module in DEPENDS. Used by the fprime default configuration and by platform
+#   link dependency without listing the module in DEPENDS. Used by the framework defaults and by platform
 #   configuration; library authors may use it to make their default configuration implicitly available to everything
 #   in the build. Configuration not marked this way must be listed in DEPENDS by the modules that use it.
 # - **CHOOSES_IMPLEMENTATIONS**: implementations (e.g. `Os_File_Posix`) selected by this configuration. See
@@ -418,18 +418,16 @@ endfunction()
 #
 #    platform -> framework defaults (default/config) -> libraries -> project.
 #
-# Modules supplying SOURCES or AUTOCODER_INPUTS must be STATIC libraries (or INTERFACE when nothing compiles):
-# modules with AUTOCODER_INPUTS default to STATIC, modules with only SOURCES should declare STATIC explicitly.
-# Modules supplying only HEADERS and/or CONFIGURATION_OVERRIDES should be declared INTERFACE.
+# Modules supplying SOURCES or AUTOCODER_INPUTS must be STATIC libraries (or INTERFACE when nothing compiles), so that
+# they can depend on Fw_Types regardless of the Fw_Types library type (e.g. BUILD_SHARED_LIBS=ON): modules with
+# AUTOCODER_INPUTS default to STATIC, modules with only SOURCES should declare STATIC explicitly. Modules supplying
+# only HEADERS and/or CONFIGURATION_OVERRIDES must be declared INTERFACE (CMake otherwise fails at generate time with
+# "No SOURCES given to target").
 #
 # See the user manual for the full description: docs/user-manual/build-system/configuration.md
 #
 # > [!WARNING]
 # > Headers must be listed under HEADERS to be treated as configuration.
-#
-# > [!NOTE]
-# > Configuration is built as a series of STATIC libraries in order to allow for interdependencies between config and
-# > Fw_Types regardless of the Fw_Types library type.
 #
 # Example:
 # ```

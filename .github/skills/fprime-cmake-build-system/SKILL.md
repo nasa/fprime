@@ -56,7 +56,7 @@ Change the *narrowest* layer that solves the problem: a module's own
 | Deployment producing an F Prime binary | `register_fprime_deployment` |
 | Non-deployment executable / tool | `register_fprime_executable` |
 | Unit test | `register_fprime_ut` (see `fprime-unit-testing`) |
-| Configuration or platform config module | `register_fprime_config` |
+| Configuration module (framework, platform, library, or project overrides) | `register_fprime_config` |
 | Implementation of a swappable package (e.g. `Os_File`) | `register_fprime_module` + `IMPLEMENTS`; `register_os_implementation` for OSAL packages |
 | Custom build target (`<target>` + `<MODULE>_<target>`) | `register_fprime_target` / `register_fprime_ut_target` |
 
