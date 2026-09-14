@@ -22,8 +22,8 @@ File transfer is available in two implementations that share the same on-board i
 
 The File Manager provides ground commands for common file and directory operations:
 
-- Create, remove, and rename files and directories
-- Move and copy files
+- Create and remove directories; remove files
+- Move (rename) files
 - Concatenate files
 - Query file sizes
 - List directory contents
@@ -41,21 +41,21 @@ File transfer moves whole files between the ground and the flight software: upli
 
 Files are carried as a series of F Prime file packets: a START packet announcing the file name and size, DATA packets carrying offset-tagged chunks of the file, an END packet carrying a checksum, and a CANCEL packet to abort a transfer. The checksum is the 32-bit CFDP checksum, so integrity checking is shared with the CFDP mechanism.
 
-**Downlink.** `FileDownlink` maintains a queue of files to send. Operators enqueue files by command (whole files, or a partial file given an offset and length) and on-board components enqueue files through a port; a completion port notifies the requesting component when its file has been sent. Files are sent one at a time, and a configurable cooldown between files keeps sustained file traffic from starving other downlink data. In-progress downlinks can be cancelled by command. File size is limited to 4 GiB.
+**Downlink.** `FileDownlink` maintains a queue of files to send. Operators enqueue files by command (whole files, or a partial file given an offset and length) and on-board components enqueue files through a port; a completion port broadcasts a notification, carrying the request's context, when a port-requested file has been sent. Files are sent one at a time, and a configurable cooldown between files keeps sustained file traffic from starving other downlink data. In-progress downlinks can be cancelled by command. File size is limited to 4 GiB.
 
-**Uplink.** `FileUplink` receives file packets from the communication stack, reassembles them in order, verifies the checksum, and writes the file to non-volatile storage. Successfully received files are announced on a port so that they can be routed to a consumer by the [File Dispatcher](#file-dispatch). Files are received one at a time, and packets within a file are expected in order.
+**Uplink.** `FileUplink` receives file packets from the communication stack, writes each data chunk at its byte offset, verifies the checksum on the END packet, and leaves the completed file in non-volatile storage. Successfully received files are announced on a port so that they can be routed to a consumer by the [File Dispatcher](#file-dispatch). Files are received one at a time, and packets within a file are expected in order.
 
-**Delivery guarantees.** The protocol has no retransmission. Lost or out-of-order packets are reported by events and telemetry counters, and recovery is an operator action: re-send the file, or re-send the missing range using a partial downlink. This is appropriate for links where the framing layer already provides reliability or where loss is rare and operator-driven recovery is acceptable.
+**Delivery guarantees.** The protocol has no retransmission. Lost or out-of-order uplink packets are reported by `FileUplink` events and telemetry counters; loss on downlink is visible only to the ground system. Recovery is an operator action: re-send the file, or re-send the missing range using a partial downlink. This is appropriate for links where the framing layer already provides reliability or where loss is rare and operator-driven recovery is acceptable.
 
-**Sandboxing.** Both components confine file access to a directory chosen at initialization; requested paths outside it are rejected. Validation is textual and does not resolve symbolic links, so containment assumes untrusted actors cannot create symlinks inside the sandbox directory. The sandbox is fail-closed: a deployment must configure it or no file can be read or written. The default configuration shipped with F Prime is the file system root, which deployments should restrict.
+**Sandboxing.** Both components (and the File Manager) confine file access to a directory chosen at initialization; requested paths outside it are rejected. Validation is textual and does not resolve symbolic links, so containment assumes untrusted actors cannot create symlinks inside the sandbox directory. The sandbox is fail-closed: a deployment must configure it or no file can be read or written. The default configuration shipped with F Prime is the file system root, which deployments should restrict.
 
 #### CCSDS File Delivery Protocol (CfdpManager)
 
-`CfdpManager` is a single component that handles both uplink and downlink using CFDP protocol data units (PDUs). It is a port of the flight-proven cFS CF application, adapted to F Prime ports, commands, events, telemetry, and parameters.
+`CfdpManager` is a single component that handles both uplink and downlink using CFDP protocol data units (PDUs). It is a port of the cFS CF application, adapted to F Prime ports, commands, events, telemetry, and parameters.
 
 **Transfer classes.** Class 1 (unacknowledged) sends a file with no feedback from the receiver, comparable to the F Prime file protocol. Class 2 (acknowledged) adds end-of-file and finished acknowledgments, gap detection, negative acknowledgments, and retransmission, providing complete and verified delivery over lossy or intermittent links without operator intervention.
 
-**Channels and transactions.** Transfers are organized into independently configured channels, each with its own pool of concurrent transactions, entity identifiers, timers, retry limits, and outgoing-PDU throttle. Multiple files can be in flight at once within the configured limits.
+**Channels and transactions.** Transfers are organized into independently configured channels, each with its own pool of concurrent transactions, timers, retry limits, and outgoing-PDU throttle. The local entity identifier is a single component parameter; the destination entity identifier is given per transaction. Multiple files can be in flight at once within the configured limits.
 
 **Operations.** Operators can send a single file, play back every file in a directory, or poll a directory on a fixed interval so that new files are sent automatically. Individual transactions can be suspended, resumed, cancelled with protocol close-out, or abandoned, and a channel's transmission can be frozen and resumed. On-board components can request a transfer through a port and are notified on completion, using the same port interface as `FileDownlink`.
 
@@ -70,7 +70,7 @@ The two mechanisms are interchangeable for on-board file producers and for the c
 | | F Prime file protocol (`FileUplink` / `FileDownlink`) | CFDP (`CfdpManager`) |
 |---|---|---|
 | F Prime GDS (`fprime-gds`) | Supported: uplink and downlink from the GDS user interface, the `fprime-cli file-uplink` command, and the integration test API. | Not supported. The GDS does not implement CFDP. |
-| YAMCS | Supported through the `fprime-yamcs` plugin; exercised by the `fprime-yamcs-reference` project. | Not supported by the `fprime-yamcs` plugin. YAMCS has a native CFDP service, but F Prime emits PDUs wrapped in an F Prime file packet inside the space packet, so an adapter is needed; no F Prime project demonstrates this yet. |
+| YAMCS | Supported through the `fprime-yamcs` plugin; exercised by the `fprime-yamcs-reference` project. | Not supported by the `fprime-yamcs` plugin. YAMCS has a native CFDP service, but F Prime emits each PDU behind the 2-byte F Prime file packet-type descriptor inside the space packet data field, so an adapter that strips that descriptor is needed; no F Prime project demonstrates this yet. |
 | Communication stack | F Prime framing or CCSDS space packets (with or without SDLS). | CCSDS space packets (with or without SDLS). F Prime framing is possible, but no F Prime-protocol ground system speaks CFDP. |
 | Reliable delivery | No; operator-driven recovery. | Class 2 provides acknowledged delivery with retransmission; Class 1 does not. |
 | Concurrent transfers | One file at a time in each direction. | Multiple transactions per channel, multiple channels. |
@@ -93,5 +93,5 @@ The File Worker provides an off-thread file I/O service for components that need
 - **F Prime file protocol.** Packet loss, checksum mismatches, and file-system errors are reported by events and counted in telemetry; out-of-order packets raise a warning but are written at their offset, so a file still completes if every packet arrives. A failed uplink is not announced to the File Dispatcher, but the partially written file remains at its destination path until removed or overwritten; recovery is to re-send the file. A downlink of a zero-length or unreadable file, or a path outside the sandbox, is rejected with an event.
 - **CFDP Class 1.** Behaves like the F Prime file protocol: the receiver detects a missing or corrupt file at end-of-file and reports it, but no retransmission occurs.
 - **CFDP Class 2.** Missing segments are requested by negative acknowledgment and retransmitted until either the file is complete or the configured retry limits or inactivity timers expire, at which point the transaction is faulted and reported. Operators can cancel or abandon stuck transactions by command.
-- **Malformed input.** `CfdpManager` treats received PDUs as untrusted and discards malformed PDUs rather than asserting, so a corrupt link cannot crash the deployment through the file transfer path. This does not protect against well-formed traffic from an unauthenticated sender, which can write any path the process can reach; see the authentication note under *Current limitations* above.
-- File dispatch logs a warning if a file extension does not match any entry in the routing table.
+- **Malformed input.** `CfdpManager` treats received PDUs as untrusted input and rejects or ignores malformed PDUs rather than asserting on them, so that a corrupt link does not take the deployment out of service through the file transfer path; this is an availability-hardening measure, not a substitute for authenticated lower layers. This does not protect against well-formed traffic from an unauthenticated sender, which can write any path the process can reach; see the authentication note under *Current limitations* above.
+- File dispatch emits no event when a file extension matches no entry in the routing table; the file is left in place and not routed. A matched entry whose output port is not connected is reported with a warning.
