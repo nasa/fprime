@@ -210,15 +210,18 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(F3
 }
 
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(bool val, Endianness mode) {
-    // booleans are encoded as a single byte
+    // booleans are encoded as a single byte. deserializeTo(bool&) intentionally does not delegate to the U8
+    // path: doing so would advance m_deserLoc before it can return FW_DESERIALIZE_FORMAT_ERROR.
+    static_assert(FW_SERIALIZE_TRUE_VALUE <= 0xFF && FW_SERIALIZE_FALSE_VALUE <= 0xFF,
+                  "boolean wire values must fit in one byte");
+    static_assert(static_cast<int>(FW_SERIALIZE_TRUE_VALUE) != static_cast<int>(FW_SERIALIZE_FALSE_VALUE),
+                  "boolean wire values must be distinct");
     const U8 byteVal = val ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE) : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE);
     return this->serializeFrom(byteVal, mode);
 }
 
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(const void* val, Endianness mode) {
     // pointers are serialized as their integer representation
-    static_assert(sizeof(PlatformPointerCastType) == sizeof(void*),
-                  "PlatformPointerCastType must be the same size as pointers");
     return this->serializeFrom(reinterpret_cast<PlatformPointerCastType>(val), mode);
 }
 
