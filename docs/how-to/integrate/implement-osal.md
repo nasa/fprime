@@ -212,6 +212,7 @@ register_fprime_config(
     CONFIGURATION_OVERRIDES
         "${CMAKE_CURRENT_LIST_DIR}/OsDelegateRawTime.hpp"
         # ... other project override config headers
+    INTERFACE
 )
 ```
 

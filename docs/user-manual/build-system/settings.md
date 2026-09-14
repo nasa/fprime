@@ -46,6 +46,13 @@ These settings include:
 - `environment_file`: An ini file that can be used to set environmental variables during the build
   process.
 
+> [!NOTE]
+> `config_directory` is no longer used by the build system: `fprime-util` still accepts it but CMake ignores the
+> value. Projects that copied `default/config` to `<project>/config/` under the old recipe should move the files
+> they still change into a `CONFIGURATION_OVERRIDES` module (see
+> [Configuration Modules](./configuration.md#overriding-configuration-in-a-project)) and delete the rest: a
+> `config/` directory left at the project root shadows the framework defaults silently.
+
 ### Platform Sections
 
 Some settings may be overridden for specific platforms using specific platform sections. These sections

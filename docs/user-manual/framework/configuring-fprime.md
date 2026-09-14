@@ -14,7 +14,6 @@ This guide includes:
     - [Asserts](#asserts)
     - [Port Tracing](#port-tracing)
     - [Port Serialization](#port-serialization)
-    - [Serialization Type ID](#serializable-type-id)
     - [Buffer Sizes](#buffer-sizes)
     - [Text Logging](#text-logging)
     - [Misc Configuration Settings](#misc-configuration-settings)

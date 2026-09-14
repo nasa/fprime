@@ -412,13 +412,15 @@ endfunction()
 # included via the parent of the module's build directory, i.e. a header registered from `default/config/FpConfig.h`
 # is included as `config/FpConfig.h`. The source directory must therefore not sit directly under a source include
 # root (project root, framework root, or library root), otherwise the source-tree file shadows the build cache copy;
-# this is detected and reported as an error. Configuration files are processed in order of detection within the
-# CMakeLists.txt tree, and the last registration of a given file name wins:
+# this is detected for SOURCES and HEADERS (not AUTOCODER_INPUTS or CONFIGURATION_OVERRIDES) and reported as an
+# error. Configuration files are processed in order of detection within the CMakeLists.txt tree, and the last
+# registration of a given file name wins:
 #
-#    platform -> fprime config -> library -> project.
+#    platform -> framework defaults (default/config) -> libraries -> project.
 #
-# Modules supplying SOURCES or AUTOCODER_INPUTS are built as STATIC libraries unless INTERFACE is given. Modules
-# supplying only HEADERS and/or CONFIGURATION_OVERRIDES should be declared INTERFACE.
+# Modules supplying SOURCES or AUTOCODER_INPUTS must be STATIC libraries (or INTERFACE when nothing compiles):
+# modules with AUTOCODER_INPUTS default to STATIC, modules with only SOURCES should declare STATIC explicitly.
+# Modules supplying only HEADERS and/or CONFIGURATION_OVERRIDES should be declared INTERFACE.
 #
 # See the user manual for the full description: docs/user-manual/build-system/configuration.md
 #
@@ -445,10 +447,11 @@ endfunction()
 # )
 # ```
 #
-# Example library default configuration, implicitly available to all modules:
+# Example library default configuration (my-library/default-config/config-my-library/CMakeLists.txt), implicitly
+# available to all modules:
 # ```
 # register_fprime_config(
-#         MyLibraryConfig
+#         config-my-library
 #     HEADERS
 #         MyLibraryCfg.hpp
 #     AUTOCODER_INPUTS
