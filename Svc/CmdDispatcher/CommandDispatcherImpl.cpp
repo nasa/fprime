@@ -224,7 +224,7 @@ void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::Com
     }
 
     this->log_WARNING_HI_CommandDroppedQueueOverflow(CmdDispatcherCfg::getEventOpcode(opcode), context);
-    // Increment CommandsDroppedBufOverflow counter (lock-free; this hook runs on the caller's thread)
+    // This hook runs on the caller's thread; the counter is atomic so no lock is needed
     this->m_numCmdsDropped.fetch_add(1, std::memory_order_relaxed);
 }
 
