@@ -27,6 +27,16 @@ TEST(SpacePacketFramer, OversizedAllocatorBufferIsTrimmed) {
     tester.testOversizedAllocatorBufferIsTrimmed();
 }
 
+TEST(SpacePacketFramer, InvalidAllocationEmitsComStatus) {
+    Svc::Ccsds::SpacePacketFramerTester tester;
+    tester.testInvalidAllocationEmitsComStatus();
+}
+
+TEST(SpacePacketFramer, UndersizedAllocationEmitsComStatus) {
+    Svc::Ccsds::SpacePacketFramerTester tester;
+    tester.testUndersizedAllocationEmitsComStatus();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
