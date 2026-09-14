@@ -12,9 +12,6 @@ constexpr I64 TimeConverter::US_PER_SECOND;
 constexpr I64 TimeConverter::MAX_TIME_US;
 
 namespace {
-constexpr I64 US_PER_SECOND = TimeConverter::US_PER_SECOND;
-constexpr I64 MAX_TIME_US = TimeConverter::MAX_TIME_US;
-
 //! Numeric value of a time base, used to order a pair canonically
 FwTimeBaseStoreType timeBaseValue(const TimeBase& timeBase) {
     return static_cast<FwTimeBaseStoreType>(timeBase.e);
