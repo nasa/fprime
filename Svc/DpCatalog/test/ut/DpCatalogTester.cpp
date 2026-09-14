@@ -250,7 +250,9 @@ void DpCatalogTester::stateFileSkipsTransmitted() {
     this->makeDpDir(dir.toChar());
     (void)Os::FileSystem::removeFile(stateFile.toChar());
     this->delDp(id, time, dir.toChar());
-    ASSERT_STRNE(this->genDP(id, 10, time, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar()).toChar(), "");
+    Fw::String dpFile = this->genDP(id, 10, time, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    ASSERT_EQ(Os::FileSystem::getFileSize(dpFile.toChar(), fileSize), Os::FileSystem::Status::OP_OK);
 
     Fw::MallocAllocator alloc;
     this->clearHistory();
@@ -260,19 +262,20 @@ void DpCatalogTester::stateFileSkipsTransmitted() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, dpFile.toChar());
 
     this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
     while (this->component.m_queue.getMessagesAvailable() > 0) {
         this->component.doDispatch();
     }
     ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, dpFile, dpFile, 0, 0);
     ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted(0, fileSize);
     ASSERT_CMD_RESPONSE_SIZE(2);
     ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
     this->component.shutdown();
 
-    Fw::String dpFile;
-    dpFile.format(DP_FILENAME_FORMAT, dir.toChar(), id, time.getSeconds(), time.getUSeconds());
     ASSERT_EQ(Os::FileSystem::getFileSize(dpFile.toChar(), fileSize), Os::FileSystem::Status::OP_OK);
 
     this->clearHistory();
@@ -282,6 +285,7 @@ void DpCatalogTester::stateFileSkipsTransmitted() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 20, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     EXPECT_EQ(this->component.m_pendingFiles, 0);
     EXPECT_EQ(this->component.m_pendingDpBytes, 0);
@@ -290,6 +294,7 @@ void DpCatalogTester::stateFileSkipsTransmitted() {
     this->component.doDispatch();
     ASSERT_from_fileOut_SIZE(0);
     ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted(0, 0);
     ASSERT_CMD_RESPONSE_SIZE(2);
     ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 21, Fw::CmdResponse::OK);
     this->component.shutdown();
@@ -301,6 +306,7 @@ void DpCatalogTester::stateFileSkipsTransmitted() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 30, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     EXPECT_EQ(this->component.m_pendingFiles, 0);
     EXPECT_EQ(this->component.m_pendingDpBytes, 0);
