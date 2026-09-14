@@ -15,10 +15,6 @@ namespace {
 constexpr I64 US_PER_SECOND = TimeConverter::US_PER_SECOND;
 constexpr I64 MAX_TIME_US = TimeConverter::MAX_TIME_US;
 
-//! Bits holding one time base in a table key
-constexpr U8 TIME_BASE_BITS = sizeof(FwTimeBaseStoreType) * 8;
-static_assert(2 * TIME_BASE_BITS <= 64, "a pair of time bases must fit in a table key");
-
 //! Numeric value of a time base, used to order a pair canonically
 FwTimeBaseStoreType timeBaseValue(const TimeBase& timeBase) {
     return static_cast<FwTimeBaseStoreType>(timeBase.e);
@@ -29,9 +25,10 @@ bool usableTimeBase(const TimeBase& timeBase) {
     return (timeBase.e != TimeBase::TB_NONE) && (timeBase.e != TimeBase::TB_DONT_CARE);
 }
 
-//! Table key holding a pair of time bases, lesser value first
-U64 pairKey(const TimeBase& lower, const TimeBase& upper) {
-    return (static_cast<U64>(timeBaseValue(lower)) << TIME_BASE_BITS) | static_cast<U64>(timeBaseValue(upper));
+//! A pair of time bases in canonical order, lesser numeric value first
+Svc::TimeBasePair canonicalPair(const TimeBase& from, const TimeBase& to) {
+    const bool ascending = timeBaseValue(from) < timeBaseValue(to);
+    return Svc::TimeBasePair(ascending ? from : to, ascending ? to : from);
 }
 }  // namespace
 
@@ -58,7 +55,7 @@ Svc::ConvertTimeStatus TimeConverter ::convertTime_handler(FwIndexType portNum,
     const TimeBase in_tb = in_time.getTimeBase();
     const TimeBase out_tb = out_time.getTimeBase();
 
-    if (!this->checkTimeBases(in_tb, out_tb)) {
+    if (this->checkTimeBases(in_tb, out_tb) != Fw::Success::SUCCESS) {
         return Svc::ConvertTimeStatus::UNKNOWN_TIMEBASE;
     }
 
@@ -69,7 +66,7 @@ Svc::ConvertTimeStatus TimeConverter ::convertTime_handler(FwIndexType portNum,
     }
 
     I64 offset_us = 0;
-    if (!this->lookupOffset(in_tb, out_tb, offset_us)) {
+    if (this->lookupOffset(in_tb, out_tb, offset_us) != Fw::Success::SUCCESS) {
         this->log_WARNING_LO_NoConversionAvailable(in_tb, out_tb);
         return Svc::ConvertTimeStatus::UNKNOWN_TIMEBASE;
     }
@@ -127,7 +124,7 @@ void TimeConverter ::CLEAR_OFFSETS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 }
 
 void TimeConverter ::GET_OFFSET_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const TimeBase& from, const TimeBase& to) {
-    if (!this->checkTimeBases(from, to)) {
+    if (this->checkTimeBases(from, to) != Fw::Success::SUCCESS) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
@@ -139,7 +136,7 @@ void TimeConverter ::GET_OFFSET_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, cons
     }
 
     I64 offset_us = 0;
-    if (!this->lookupOffset(from, to, offset_us)) {
+    if (this->lookupOffset(from, to, offset_us) != Fw::Success::SUCCESS) {
         this->log_WARNING_LO_NoOffsetStored(from, to);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -154,8 +151,8 @@ void TimeConverter ::DUMP_OFFSETS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         this->log_ACTIVITY_HI_OffsetTableEmpty();
     }
     for (auto it = this->m_offsets.begin(); it != this->m_offsets.end(); ++it) {
-        const OffsetEntry& entry = it->getValue();
-        this->log_ACTIVITY_HI_OffsetReport(entry.lower, entry.upper, entry.offset_us);
+        const Svc::TimeBasePair& pair = it->getKey();
+        this->log_ACTIVITY_HI_OffsetReport(pair.get_lower(), pair.get_upper(), it->getValue());
     }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -164,19 +161,18 @@ void TimeConverter ::DUMP_OFFSETS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 // Helper functions
 // ----------------------------------------------------------------------
 
-bool TimeConverter ::lookupOffset(const TimeBase& from, const TimeBase& to, I64& offset_us) const {
-    const bool ascending = timeBaseValue(from) < timeBaseValue(to);
-    OffsetEntry entry;
-    if (this->m_offsets.find(pairKey(ascending ? from : to, ascending ? to : from), entry) != Fw::Success::SUCCESS) {
-        return false;
+Fw::Success TimeConverter ::lookupOffset(const TimeBase& from, const TimeBase& to, I64& offset_us) const {
+    I64 stored_us = 0;
+    const Fw::Success status = this->m_offsets.find(canonicalPair(from, to), stored_us);
+    if (status == Fw::Success::SUCCESS) {
+        // Offsets are stored in canonical order; the reverse conversion negates them
+        offset_us = (timeBaseValue(from) < timeBaseValue(to)) ? stored_us : -stored_us;
     }
-    // Entries hold the offset in canonical order; the reverse conversion negates it
-    offset_us = ascending ? entry.offset_us : -entry.offset_us;
-    return true;
+    return status;
 }
 
 TimeConverter::StoreStatus TimeConverter ::storeOffset(const TimeBase& from, const TimeBase& to, I64 offset_us) {
-    if (!this->checkTimeBases(from, to)) {
+    if (this->checkTimeBases(from, to) != Fw::Success::SUCCESS) {
         return StoreStatus::INVALID;
     }
     if (timeBaseValue(from) == timeBaseValue(to)) {
@@ -190,31 +186,28 @@ TimeConverter::StoreStatus TimeConverter ::storeOffset(const TimeBase& from, con
     }
 
     const bool ascending = timeBaseValue(from) < timeBaseValue(to);
-    OffsetEntry entry;
-    entry.lower = ascending ? from : to;
-    entry.upper = ascending ? to : from;
-    entry.offset_us = ascending ? offset_us : -offset_us;
+    const I64 stored_us = ascending ? offset_us : -offset_us;
 
     // An insert replaces the entry for a pair already stored, and fails only when the table is full
-    if (this->m_offsets.insert(pairKey(entry.lower, entry.upper), entry) != Fw::Success::SUCCESS) {
+    if (this->m_offsets.insert(canonicalPair(from, to), stored_us) != Fw::Success::SUCCESS) {
         this->log_WARNING_HI_OffsetTableFull(from, to, static_cast<U32>(Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES));
         return StoreStatus::TABLE_FULL;
     }
     return StoreStatus::OK;
 }
 
-bool TimeConverter ::checkTimeBases(const TimeBase& from, const TimeBase& to) {
+Fw::Success TimeConverter ::checkTimeBases(const TimeBase& from, const TimeBase& to) {
     // TB_NONE and TB_DONT_CARE name no clock, so no offset relates them to one
-    bool usable = true;
+    Fw::Success status = Fw::Success::SUCCESS;
     if (!usableTimeBase(from)) {
         this->log_WARNING_HI_UnusableTimeBase(from);
-        usable = false;
+        status = Fw::Success::FAILURE;
     }
     if (!usableTimeBase(to)) {
         this->log_WARNING_HI_UnusableTimeBase(to);
-        usable = false;
+        status = Fw::Success::FAILURE;
     }
-    return usable;
+    return status;
 }
 
 }  // namespace Svc

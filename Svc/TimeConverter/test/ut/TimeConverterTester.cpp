@@ -14,16 +14,10 @@ namespace {
 constexpr I64 US_PER_SECOND = TimeConverter::US_PER_SECOND;
 constexpr I64 MAX_TIME_US = TimeConverter::MAX_TIME_US;
 
-//! A pair of distinct time bases
-struct TimeBasePair {
-    TimeBase::T lower;  //!< time base with the lesser numeric value
-    TimeBase::T upper;  //!< time base with the greater numeric value
-};
-
 //! Every pair of the default time bases that denote a clock, in canonical order
-const TimeBasePair PAIRS[] = {{TimeBase::TB_PROC_TIME, TimeBase::TB_WORKSTATION_TIME},
-                              {TimeBase::TB_PROC_TIME, TimeBase::TB_SC_TIME},
-                              {TimeBase::TB_WORKSTATION_TIME, TimeBase::TB_SC_TIME}};
+const Svc::TimeBasePair PAIRS[] = {{TimeBase::TB_PROC_TIME, TimeBase::TB_WORKSTATION_TIME},
+                                   {TimeBase::TB_PROC_TIME, TimeBase::TB_SC_TIME},
+                                   {TimeBase::TB_WORKSTATION_TIME, TimeBase::TB_SC_TIME}};
 
 //! Capacity of the offset table under the configuration the tests build against
 constexpr FwSizeType CAPACITY = Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES;
@@ -68,7 +62,7 @@ Fw::Time TimeConverterTester ::convert(const Fw::Time& in_time, const TimeBase& 
 void TimeConverterTester ::fillToCapacity() {
     ASSERT_LT(CAPACITY, FW_NUM_ARRAY_ELEMENTS(PAIRS));
     for (FwSizeType i = 0; i < CAPACITY; i++) {
-        this->setOffset(PAIRS[i].lower, PAIRS[i].upper, static_cast<I64>(i + 1) * US_PER_SECOND);
+        this->setOffset(PAIRS[i].get_lower(), PAIRS[i].get_upper(), static_cast<I64>(i + 1) * US_PER_SECOND);
     }
 }
 
@@ -311,7 +305,7 @@ void TimeConverterTester ::fillTableTest() {
 
     // Every pair is retrievable, including the entry at the end of the table
     for (FwSizeType i = 0; i < CAPACITY; i++) {
-        this->assertGetOffset(PAIRS[i].lower, PAIRS[i].upper, static_cast<I64>(i + 1) * US_PER_SECOND);
+        this->assertGetOffset(PAIRS[i].get_lower(), PAIRS[i].get_upper(), static_cast<I64>(i + 1) * US_PER_SECOND);
     }
 
     // The dump reports every entry, in the order the pairs were first stored
@@ -320,7 +314,7 @@ void TimeConverterTester ::fillTableTest() {
     this->sendCmd_DUMP_OFFSETS(TimeConverterTester::TEST_INSTANCE_ID, cmdSeq);
     ASSERT_EVENTS_OffsetReport_SIZE(CAPACITY);
     for (FwSizeType i = 0; i < CAPACITY; i++) {
-        ASSERT_EVENTS_OffsetReport(static_cast<U32>(i), PAIRS[i].lower, PAIRS[i].upper,
+        ASSERT_EVENTS_OffsetReport(static_cast<U32>(i), PAIRS[i].get_lower(), PAIRS[i].get_upper(),
                                    static_cast<I64>(i + 1) * US_PER_SECOND);
     }
     ASSERT_CMD_RESPONSE(0, TimeConverter::OPCODE_DUMP_OFFSETS, cmdSeq, Fw::CmdResponse::OK);
@@ -330,28 +324,29 @@ void TimeConverterTester ::tableFullTest() {
     this->fillToCapacity();
 
     // A pair beyond the capacity is rejected, and the command reports a state rather than a bad argument
-    const TimeBasePair& extra = PAIRS[CAPACITY];
-    this->assertSetOffsetRejected(extra.lower, extra.upper, US_PER_SECOND, Fw::CmdResponse::EXECUTION_ERROR);
+    const Svc::TimeBasePair& extra = PAIRS[CAPACITY];
+    this->assertSetOffsetRejected(extra.get_lower(), extra.get_upper(), US_PER_SECOND,
+                                  Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_OffsetTableFull_SIZE(1);
-    ASSERT_EVENTS_OffsetTableFull(0, extra.lower, extra.upper, static_cast<U32>(CAPACITY));
+    ASSERT_EVENTS_OffsetTableFull(0, extra.get_lower(), extra.get_upper(), static_cast<U32>(CAPACITY));
 
     // The rejected pair was not stored
     this->clearHistory();
     const U32 cmdSeq = this->m_cmdSeq++;
-    this->sendCmd_GET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, cmdSeq, extra.lower, extra.upper);
+    this->sendCmd_GET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, cmdSeq, extra.get_lower(), extra.get_upper());
     ASSERT_EVENTS_NoOffsetStored_SIZE(1);
-    ASSERT_EVENTS_NoOffsetStored(0, extra.lower, extra.upper);
+    ASSERT_EVENTS_NoOffsetStored(0, extra.get_lower(), extra.get_upper());
     ASSERT_CMD_RESPONSE(0, TimeConverter::OPCODE_GET_OFFSET, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
 
     // A pair already stored is still replaceable with the table full
-    this->setOffset(PAIRS[0].lower, PAIRS[0].upper, 42 * US_PER_SECOND);
-    this->assertGetOffset(PAIRS[0].lower, PAIRS[0].upper, 42 * US_PER_SECOND);
+    this->setOffset(PAIRS[0].get_lower(), PAIRS[0].get_upper(), 42 * US_PER_SECOND);
+    this->assertGetOffset(PAIRS[0].get_lower(), PAIRS[0].get_upper(), 42 * US_PER_SECOND);
 
     // Clearing the table makes room again
     this->clearHistory();
     this->sendCmd_CLEAR_OFFSETS(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++);
     ASSERT_EVENTS_OffsetsCleared(0, static_cast<U32>(CAPACITY));
-    this->setOffset(extra.lower, extra.upper, US_PER_SECOND);
+    this->setOffset(extra.get_lower(), extra.get_upper(), US_PER_SECOND);
 }
 
 void TimeConverterTester ::offsetBoundariesTest() {
@@ -404,7 +399,7 @@ void TimeConverterTester ::portUpdateRejectedTest() {
 void TimeConverterTester ::throttleResetTest() {
     const Fw::Time sc_time(TimeBase::TB_SC_TIME, 10, 0);
     const Fw::Time early_time(TimeBase::TB_SC_TIME, 1, 0);
-    const TimeBasePair& extra = PAIRS[CAPACITY];
+    const Svc::TimeBasePair& extra = PAIRS[CAPACITY];
 
     // Each warning is emitted until its throttle count is reached, then suppressed
     this->clearHistory();
@@ -430,8 +425,8 @@ void TimeConverterTester ::throttleResetTest() {
     this->fillToCapacity();
     this->clearHistory();
     for (FwSizeType i = 0; i < this->getOffsetTableFullThrottle() + 2; i++) {
-        this->sendCmd_SET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++, extra.lower, extra.upper,
-                                 US_PER_SECOND);
+        this->sendCmd_SET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++, extra.get_lower(),
+                                 extra.get_upper(), US_PER_SECOND);
     }
     ASSERT_EVENTS_OffsetTableFull_SIZE(this->getOffsetTableFullThrottle());
 
@@ -474,8 +469,8 @@ void TimeConverterTester ::throttleResetTest() {
     this->clearOffsets();
     this->fillToCapacity();
     this->clearHistory();
-    this->sendCmd_SET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++, extra.lower, extra.upper,
-                             US_PER_SECOND);
+    this->sendCmd_SET_OFFSET(TimeConverterTester::TEST_INSTANCE_ID, this->m_cmdSeq++, extra.get_lower(),
+                             extra.get_upper(), US_PER_SECOND);
     ASSERT_EVENTS_OffsetTableFull_SIZE(1);
 
     this->clearOffsets();
@@ -537,12 +532,12 @@ void TimeConverterTester ::portUpdateTableFullTest() {
 
     // A correlation component pushing a new pair into a full table learns of it only by event
     this->clearHistory();
-    const TimeBasePair& extra = PAIRS[CAPACITY];
-    const Svc::TimeOffset offset(extra.lower, extra.upper, US_PER_SECOND);
+    const Svc::TimeBasePair& extra = PAIRS[CAPACITY];
+    const Svc::TimeOffset offset(extra.get_lower(), extra.get_upper(), US_PER_SECOND);
     this->invoke_to_offsetUpdate(0, offset);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OffsetTableFull_SIZE(1);
-    ASSERT_EVENTS_OffsetTableFull(0, extra.lower, extra.upper, static_cast<U32>(CAPACITY));
+    ASSERT_EVENTS_OffsetTableFull(0, extra.get_lower(), extra.get_upper(), static_cast<U32>(CAPACITY));
 }
 
 }  // namespace Svc

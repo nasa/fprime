@@ -15,6 +15,13 @@ module Svc {
         offset_us: I64      @< microseconds added to a "from" time to produce a "to" time
     }
 
+    @ An unordered pair of time bases, held in canonical order so that a pair
+    @ and its reverse produce the same value
+    struct TimeBasePair {
+        lower: TimeBase     @< time base with the lesser numeric value
+        upper: TimeBase     @< time base with the greater numeric value
+    }
+
     @ Result of a time base conversion
     enum ConvertTimeStatus {
         OK                  @< conversion succeeded

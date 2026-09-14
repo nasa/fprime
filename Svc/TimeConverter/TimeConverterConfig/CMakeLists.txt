@@ -1,5 +1,5 @@
 ####
-# Svc/TimeConverter/config/TimeConverterConfig/CMakeLists.txt:
+# Svc/TimeConverter/TimeConverterConfig/CMakeLists.txt:
 #
 # Compile-time configuration for the TimeConverter component.
 ####

@@ -37,12 +37,13 @@ commands, so all of them are guarded.
 
 ### 3.1 Offset table
 
-An entry holds a pair of time bases and the offset, in microseconds, between them. Each
-unordered pair occupies exactly one entry, stored in a canonical order — the time base
-with the lesser numeric value first — and the stored offset is the value added to a time
-in the lesser base to obtain a time in the greater base. A conversion running in the
-opposite direction negates the stored offset. Supplying the same pair again replaces the
-existing entry regardless of the order the pair is supplied in.
+An entry maps a pair of time bases, held as an `Svc.TimeBasePair`, to the offset in
+microseconds between them. Each unordered pair occupies exactly one entry, keyed in a
+canonical order — the time base with the lesser numeric value first — and the stored
+offset is the value added to a time in the lesser base to obtain a time in the greater
+base. A conversion running in the opposite direction negates the stored offset. Supplying
+the same pair again replaces the existing entry regardless of the order the pair is
+supplied in.
 
 The table holds `Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES` entries in a fixed-capacity
 `Fw::ArrayMap`, so no memory is allocated after construction and every operation is
@@ -134,7 +135,7 @@ warnings resume after the operator has acted on them.
 ## 4. Configuration
 
 `Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES` in
-`Svc/TimeConverter/config/TimeConverterConfig/TimeConverterCfg.fpp` sets the table
+`Svc/TimeConverter/TimeConverterConfig/TimeConverterCfg.fpp` sets the table
 capacity; projects override it. The default of 2 suits the three convertible time bases
 of the default configuration; a project should raise it to the number of pairs it
 correlates, keeping it small enough that a `DUMP_OFFSETS` remains a short operation.

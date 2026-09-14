@@ -10,7 +10,7 @@
 #
 ####
 
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/TimeConverterConfig")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TimeConverterConfig")
 
 register_fprime_module(
   AUTOCODER_INPUTS
@@ -19,7 +19,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/TimeConverter.cpp"
   DEPENDS
     Svc_Ports_TimeConverterPorts
-    Svc_TimeConverter_config_TimeConverterConfig
+    Svc_TimeConverter_TimeConverterConfig
 )
 
 register_fprime_ut(
@@ -30,6 +30,6 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeConverterTestMain.cpp"
   DEPENDS
     Svc_Ports_TimeConverterPorts
-    Svc_TimeConverter_config_TimeConverterConfig
+    Svc_TimeConverter_TimeConverterConfig
   UT_AUTO_HELPERS
 )

@@ -10,6 +10,7 @@
 #include <limits>
 
 #include "Fw/DataStructures/ArrayMap.hpp"
+#include "Svc/Ports/TimeConverterPorts/TimeBasePairSerializableAc.hpp"
 #include "Svc/TimeConverter/TimeConverterComponentAc.hpp"
 #include "TimeConverterConfig/FppConstantsAc.hpp"
 
@@ -23,14 +24,6 @@ class TimeConverter final : public TimeConverterComponentBase {
     //! Largest time representable by an Fw::Time, in microseconds
     static constexpr I64 MAX_TIME_US =
         static_cast<I64>(std::numeric_limits<U32>::max()) * US_PER_SECOND + (US_PER_SECOND - 1);
-
-    //! An offset between a pair of time bases, stored in canonical order
-    struct OffsetEntry {
-        OffsetEntry() : offset_us(0) {}
-        TimeBase lower;  //!< time base with the lesser numeric value
-        TimeBase upper;  //!< time base with the greater numeric value
-        I64 offset_us;   //!< microseconds added to a "lower" time to produce an "upper" time
-    };
 
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -93,19 +86,19 @@ class TimeConverter final : public TimeConverterComponentBase {
     // ----------------------------------------------------------------------
 
     //! Look up the offset converting a time from one base into another
-    //! \return true when an offset is stored for the pair
-    bool lookupOffset(const TimeBase& from, const TimeBase& to, I64& offset_us) const;
+    //! \return SUCCESS when an offset is stored for the pair
+    Fw::Success lookupOffset(const TimeBase& from, const TimeBase& to, I64& offset_us) const;
 
     //! Store an offset, replacing an existing entry for the same pair
     //! \return the outcome, reported by event on failure
     StoreStatus storeOffset(const TimeBase& from, const TimeBase& to, I64 offset_us);
 
     //! Check that both ends of a pair denote a clock, reporting those that do not
-    //! \return true when both time bases are usable
-    bool checkTimeBases(const TimeBase& from, const TimeBase& to);
+    //! \return SUCCESS when both time bases are usable
+    Fw::Success checkTimeBases(const TimeBase& from, const TimeBase& to);
 
-    //! Offset table, holding one entry per pair of time bases keyed on the canonical pair
-    Fw::ArrayMap<U64, OffsetEntry, Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES> m_offsets;
+    //! Offsets in microseconds added to a "lower" time to produce an "upper" time, one per pair
+    Fw::ArrayMap<Svc::TimeBasePair, I64, Svc::TimeConverterCfg::MAX_OFFSET_ENTRIES> m_offsets;
 };
 
 }  // namespace Svc
