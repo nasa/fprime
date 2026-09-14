@@ -16,7 +16,7 @@ module ComCfg {
     @ next to a minimum idle packet: at least max(FW_COM_BUFFER_MAX_SIZE, FW_FILE_BUFFER_MAX_SIZE) + 6 + 7 bytes.
     @ Without spanning, whole packets only: with the defaults (512-byte file buffers, 1016-byte data field) a single
     @ 518-byte file packet fits per frame, the rest carrying telemetry/events or idle. Enable packet spanning or size
-    @ the data field for N file packets (N * (FW_FILE_BUFFER_MAX_SIZE + 6), exactly or plus at least 7) if file
+    @ the data field for N file packets (N * (FW_FILE_BUFFER_MAX_SIZE + 6), exactly (N >= 2) or plus at least 7) if file
     @ downlink throughput matters.
     dictionary constant TmFrameFixedSize = 1024
 

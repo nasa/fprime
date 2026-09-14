@@ -110,7 +110,7 @@ module ComCcsds {
                       "ComCcsdsConfig.Aggregator.aggregationSize must fit the TM Transfer Frame Data Field");
         ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::aggregationSize,
                                        ComCcsdsConfig::Aggregator::enablePacketSpanning,
-                                       2,
+                                       2,  // Allocation id: 0 = comQueue/commsBufferManager, 1 = frameAccumulator
                                        ComCcsds::Allocation::memAllocator);
         """
         phase Fpp.ToCpp.Phases.tearDownComponents """
