@@ -591,6 +591,18 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.deserializeTo(boolt2));
     ASSERT_FALSE(boolt2);
 
+    // a malformed boolean byte is reported and left unconsumed
+    buff.resetSer();
+    const U8 badBool = 0x5A;
+    ASSERT_NE(static_cast<U8>(FW_SERIALIZE_TRUE_VALUE), badBool);
+    ASSERT_NE(static_cast<U8>(FW_SERIALIZE_FALSE_VALUE), badBool);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(badBool));
+    ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, buff.deserializeTo(boolt2));
+    ASSERT_EQ(1, buff.getDeserializeSizeLeft());
+    U8 rawBool = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.deserializeTo(rawBool));
+    ASSERT_EQ(badBool, rawBool);
+
 #if DEBUG_VERBOSE
     printf("Val: in: %s out: %s stat1: %d stat2: %d\n", boolt1 ? "TRUE" : "FALSE", boolt2 ? "TRUE" : "FALSE", stat1,
            stat2);
