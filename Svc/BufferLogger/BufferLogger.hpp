@@ -27,6 +27,7 @@ namespace Logging {
 class CloseFileTester;
 class SendBuffersTester;
 class OnOffTester;
+class TruncateTester;
 }  // namespace Logging
 namespace Errors {
 class BufferLoggerTester;
@@ -37,6 +38,7 @@ class BufferLogger final : public BufferLoggerComponentBase {
     friend class Svc::Logging::CloseFileTester;
     friend class Svc::Logging::SendBuffersTester;
     friend class Svc::Logging::OnOffTester;
+    friend class Svc::Logging::TruncateTester;
     friend class Svc::Errors::BufferLoggerTester;
 
   private:
@@ -50,6 +52,7 @@ class BufferLogger final : public BufferLoggerComponentBase {
         friend class Svc::Logging::CloseFileTester;
         friend class Svc::Logging::SendBuffersTester;
         friend class Svc::Logging::OnOffTester;
+        friend class Svc::Logging::TruncateTester;
         friend class Svc::Errors::BufferLoggerTester;
 
       public:

@@ -36,6 +36,9 @@ class BufferLoggerTester : public Svc::BufferLoggerTester {
 
     //! Test logging on/off capability
     void OnOff();
+
+    //! Test truncating a pre-existing log file
+    void Truncate();
 };
 
 }  // namespace Logging

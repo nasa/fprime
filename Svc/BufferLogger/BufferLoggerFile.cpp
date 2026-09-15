@@ -118,7 +118,8 @@ void BufferLogger::File ::open() {
         return;
     }
 
-    const Os::File::Status status = this->m_osFile.open(this->m_name.toChar(), Os::File::OPEN_WRITE);
+    const Os::File::Status status =
+        this->m_osFile.open(this->m_name.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE);
     if (status == Os::File::OP_OK) {
         this->m_fileCounter++;
         // Reset bytes written
