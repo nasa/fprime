@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-14 22:13:03</td>
+      <td>2026-09-15 22:13:19</td>
     </tr>
   </table>
 </div>
@@ -53,7 +53,7 @@
     <tr>
       <th scope="row">Branches:</th>
       <td>23</td>
-      <td>425</td>
+      <td>424</td>
       <td class="coverage-low">5.4%</td>
     </tr>
   </table>
@@ -4232,126 +4232,126 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// skip adding an already transmitted file</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// add entry to catalog.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l581" href="#l581">581</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">container</span><span class="p">.</span><span class="n">getState</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">DpState</span><span class="o">::</span><span class="n">TRANSMITTED</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">DpStateEntry</span><span class="w"> </span><span class="n">entry</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l582" href="#l582">582</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_DpFileSkipped</span><span class="p">(</span><span class="n">fullFile</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dir</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l583" href="#l583">583</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ProcessFileStatus</span><span class="o">::</span><span class="n">FAILED</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l584" href="#l584">584</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l585" href="#l585">585</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l586" href="#l586">586</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// add entry to catalog.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l587" href="#l587">587</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">DpStateEntry</span><span class="w"> </span><span class="n">entry</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l588" href="#l588">588</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dir</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l589" href="#l589">589</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">set_id</span><span class="p">(</span><span class="n">container</span><span class="p">.</span><span class="n">getId</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l590" href="#l590">590</a></td>
+      <td class="lineno"><a id="l584" href="#l584">584</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">set_priority</span><span class="p">(</span><span class="n">container</span><span class="p">.</span><span class="n">getPriority</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l591" href="#l591">591</a></td>
+      <td class="lineno"><a id="l585" href="#l585">585</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">container</span><span class="p">.</span><span class="n">getState</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l592" href="#l592">592</a></td>
+      <td class="lineno"><a id="l586" href="#l586">586</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">set_tSec</span><span class="p">(</span><span class="n">container</span><span class="p">.</span><span class="n">getTimeTag</span><span class="p">().</span><span class="n">getSeconds</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l593" href="#l593">593</a></td>
+      <td class="lineno"><a id="l587" href="#l587">587</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">set_tSub</span><span class="p">(</span><span class="n">container</span><span class="p">.</span><span class="n">getTimeTag</span><span class="p">().</span><span class="n">getUSeconds</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l594" href="#l594">594</a></td>
+      <td class="lineno"><a id="l588" href="#l588">588</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">set_size</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U64</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fileSize</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l595" href="#l595">595</a></td>
+      <td class="lineno"><a id="l589" href="#l589">589</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l596" href="#l596">596</a></td>
+      <td class="lineno"><a id="l590" href="#l590">590</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// check the state file to see if there is transmit state</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l597" href="#l597">597</a></td>
+      <td class="lineno"><a id="l591" href="#l591">591</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getFileState</span><span class="p">(</span><span class="n">entry</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l592" href="#l592">592</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l593" href="#l593">593</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// skip a file the state file records as already transmitted</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l594" href="#l594">594</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">get_state</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">DpState</span><span class="o">::</span><span class="n">TRANSMITTED</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l595" href="#l595">595</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_DpFileSkipped</span><span class="p">(</span><span class="n">fullFile</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l596" href="#l596">596</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ProcessFileStatus</span><span class="o">::</span><span class="n">FAILED</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l597" href="#l597">597</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l598" href="#l598">598</a></td>
