@@ -142,6 +142,7 @@ void SpacePacketFramerTester ::testOversizedAllocatorBufferIsTrimmed() {
     // If setSize() is missing from SpacePacketFramer, getSize() returns the
     // oversized allocation (2 * expectedFrameSize) and this assertion fails.
     ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
+    ASSERT_from_comStatusOut_SIZE(0);  // Frame produced: status is reported by the downstream component
 }
 
 void SpacePacketFramerTester ::testInvalidAllocationEmitsComStatus() {
