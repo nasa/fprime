@@ -14,6 +14,7 @@
 #undef ASSERT_RELATIVE_PATH
 #endif
 
+#include <Fw/Types/CAssert.h>
 #include <Fw/Types/Assert.hpp>
 
 // Define an Assert handler
@@ -85,4 +86,26 @@ TEST(AssertTypesTest, FileDefaultTest) {
     // to the full path
     ASSERT_EQ(__FILE__, hook.getFile());
 #endif
+    hook.deregisterHook();
+}
+
+TEST(AssertTypesTest, CAssertFileDefaultTest) {
+    TestAssertHook hook;
+    hook.registerHook();
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+    FW_CASSERT(0);
+#pragma GCC diagnostic pop
+    ASSERT_TRUE(hook.asserted());
+
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+    // ASSERT_FILE_ID was undefined above, it should have defaulted to 0
+    ASSERT_EQ(0, hook.getFile());
+#elif FW_ASSERT_LEVEL == FW_RELATIVE_PATH_ASSERT
+    // ASSERT_RELATIVE_PATH was undefined above, it should have defaulted
+    // to the full path
+    ASSERT_EQ(__FILE__, hook.getFile());
+#endif
+    hook.deregisterHook();
 }
