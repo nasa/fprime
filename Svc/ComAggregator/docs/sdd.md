@@ -93,5 +93,6 @@ Pointer reported via `ComCfg::FrameContext.firstHeaderPointer` is always 0.
 If a downstream frame is reported as failed, the unsent aggregate is dropped. With spanning enabled, the remainder
 of a packet whose head was in the dropped aggregate is dropped too; its buffer is returned and SUCCESS is emitted, so
 no orphan continuation data is downlinked. This relies on the dropping layer reporting FAILURE; a layer that drops
-the frame but reports SUCCESS, such as `Svc::Ccsds::CcsdsSdlsFramer` on encryption or allocation failure, lets the
+the frame but reports SUCCESS, such as `Svc::Ccsds::CcsdsSdlsFramer` on encryption or allocation failure or
+`Svc::FprimeFramer` on allocation failure, lets the
 remainder go out as continuation bytes that the ground discards.

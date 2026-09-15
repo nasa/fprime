@@ -20,6 +20,7 @@ namespace Posix {
 namespace Task {
 std::atomic<bool> PosixTask::s_permissions_reported(false);
 static const int SCHED_POLICY = SCHED_RR;
+static const int SCHED_POLICY_NON_REALTIME = SCHED_OTHER;
 
 typedef void* (*pthread_func_ptr)(void*);
 
@@ -111,6 +112,26 @@ int set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& a
     return status;
 }
 
+int set_non_realtime_params(pthread_attr_t& attributes) {
+    // Lowest priority of the non-realtime policy (0 on Linux). Set explicitly: otherwise the creating thread's
+    // (possibly realtime) priority is inherited and rejected by pthread_create when combined with SCHED_OTHER.
+    const int priority = sched_get_priority_min(SCHED_POLICY_NON_REALTIME);
+    int status = (priority >= 0) ? PosixTaskHandle::SUCCESS : errno;
+    if (status == PosixTaskHandle::SUCCESS) {
+        status = pthread_attr_setschedpolicy(&attributes, SCHED_POLICY_NON_REALTIME);
+    }
+    if (status == PosixTaskHandle::SUCCESS) {
+        status = pthread_attr_setinheritsched(&attributes, PTHREAD_EXPLICIT_SCHED);
+    }
+    if (status == PosixTaskHandle::SUCCESS) {
+        sched_param schedParam;
+        (void)memset(&schedParam, 0, sizeof(sched_param));
+        schedParam.sched_priority = priority;
+        status = pthread_attr_setschedparam(&attributes, &schedParam);
+    }
+    return status;
+}
+
 int set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
     int status = 0;
 // pthread_attr_setaffinity_np is a non-POSIX function. Notably, it is not available on musl.
@@ -162,8 +183,12 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_stack_size(attributes, arguments);
     }
-    if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) && (expect_permission) &&
+    // Non-realtime scheduling requires no special permission; realtime priorities do
+    if ((arguments.m_priority == PosixTask::TASK_PRIORITY_NON_REALTIME) &&
         (pthread_status == PosixTaskHandle::SUCCESS)) {
+        pthread_status = set_non_realtime_params(attributes);
+    } else if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) && (expect_permission) &&
+               (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_priority_params(attributes, arguments);
     }
     if ((arguments.m_cpuAffinity != Os::Task::TASK_DEFAULT) && (expect_permission) &&
