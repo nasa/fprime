@@ -177,7 +177,7 @@ void SpacePacketFramerTester ::testUndersizedAllocationEmitsComStatus() {
     ASSERT_from_bufferDeallocate_SIZE(1);  // Undersized but valid buffer is returned to the allocator
     ASSERT_from_bufferDeallocate(
         0, Fw::Buffer(this->m_internalDataBuffer, sizeof(payload) + SpacePacketHeader::SERIALIZED_SIZE - 1));
-    ASSERT_from_dataReturnOut_SIZE(1);     // Input buffer returned to sender
+    ASSERT_from_dataReturnOut_SIZE(1);  // Input buffer returned to sender
     ASSERT_from_dataReturnOut(0, data, context);
     ASSERT_EVENTS_NoBufferAvailable_SIZE(1);
     ASSERT_from_comStatusOut_SIZE(1);
