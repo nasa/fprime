@@ -87,8 +87,9 @@ Guides: [customization / custom targets](../../../docs/user-manual/build-system/
 - **Unresolved implementation**: every platform must `CHOOSES_IMPLEMENTATIONS`
   for every package a module `REQUIRES_IMPLEMENTATIONS`; a missing
   choice surfaces as a link error, not a CMake error. Use the `_Stub`
-  implementation when a platform lacks the capability; override per
-  deployment, executable, or UT only.
+  implementation when a platform lacks the capability; override in the
+  project's configuration module (`CHOOSES_IMPLEMENTATIONS`) or per
+  deployment, executable, or UT.
 - **Sub-build assumptions**: code that must not run during the
   `fpp_locs`/`fpp_depend` sub-builds needs `skip_on_sub_build()`;
   platform-specific modules need `restrict_platforms(...)`.

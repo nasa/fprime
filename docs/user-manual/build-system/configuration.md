@@ -277,7 +277,9 @@ subtopology with the same steps:
 1. **Locate the default.** Framework files are in `default/config`; platform files are next to the platform
    CMake file (for example `cmake/platform/unix/Platform`); library files are in the library's configuration
    directory (`default-config/config-<library name>` by convention); subtopology files are in
-   `Svc/Subtopologies/<Subtopology>/<Subtopology>Config` or the equivalent library path.
+   `Svc/Subtopologies/<Subtopology>/<Subtopology>Config` or the equivalent library path. A few components ship
+   their own configuration module under `<Component>/config/<Component>Config` (for example
+   `Svc/TlmPacketizer/config/TlmPacketizerConfig`); those files are overridden the same way.
 2. **Copy the file into the project, keeping its name.** Overrides are matched by file name, so the name must be
    identical. Copy only the files you change; the rest keep their defaults. A single `config-overrides/`
    directory at the project root is the recommended place; overrides may also be split into several modules

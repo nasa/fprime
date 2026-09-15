@@ -9,6 +9,7 @@ This guide will walk you through the structure and best practices in developing 
 3. [Optional: Toolchain Folder and Toolchain Files](#optional-toolchain-folder-and-toolchain-files)
 4. [Optional: Platform Folder and Platform Files](#optional-platform-folder-and-platform-files)
 5. [Optional: F´ Module Directories](#optional-f-module-directories)
+6. [Optional: Default Configuration Folder](#optional-default-configuration-folder)
 
 ## F´ Library Structure
 

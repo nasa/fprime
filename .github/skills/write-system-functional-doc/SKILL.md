@@ -55,7 +55,7 @@ For every component identified in the scope:
 1. Read the FPP model file(s) (`*.fpp`) to understand ports, commands, events, telemetry, and parameters.
 2. Read the SDD (`docs/sdd.md`) within the component directory for requirements, design, and functional description.
 3. Read the implementation source (`.cpp` and `.hpp` files) to understand behavior, error handling, and off-nominal cases.
-4. Read any configuration headers referenced by the component (e.g. files in `config/` or subtopology config modules).
+4. Read any configuration headers referenced by the component (e.g. files in `config/` or subtopology configuration modules).
 5. Note how this component interacts with the other components in the subsystem — what does it send, what does it receive, what triggers it.
 
 ## Write the Document
