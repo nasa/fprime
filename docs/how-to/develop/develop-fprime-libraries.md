@@ -94,10 +94,9 @@ register them from that directory with `register_fprime_config(config-<library n
 include them as `#include <config-<library name>/File.hpp>` and list `config-<library name>` in `DEPENDS` (or the
 module is registered with `GLOBAL_IMPLICIT_DEPENDENCY` to make it available to every module without `DEPENDS`).
 
-The configuration directory must not be placed directly at the library root: the root is an include root, so a
-directory there would shadow the build cache copy and could never be overridden. See
-[Configuration Modules](../../user-manual/build-system/configuration.md#library-defaults) for the full explanation and
-example.
+The configuration directory must not be placed directly at the library root (it would shadow every project override);
+see [Library Defaults](../../user-manual/build-system/configuration.md#library-defaults) for why, and for the full
+layout, include-path, and dependency rules with an example.
 
 ## Conclusion
 

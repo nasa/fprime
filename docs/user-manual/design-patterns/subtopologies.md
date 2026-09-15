@@ -114,7 +114,7 @@ module CdhCoreConfig {
 ```
 
 #### Step 3: Register the Configuration Module
-In your configuration module `CMakeLists.txt`, register a configuration module with `register_fprime_config()` as shown below. The config name, passed as first argument, must be unique and different from `config`.
+In your configuration module `CMakeLists.txt`, register a configuration module with `register_fprime_config()` as shown below. The module name, passed as first argument, must be unique; do not name the directory `config/` (see [Configuration Modules](../build-system/configuration.md#overriding-configuration-in-a-project)).
 ```cmake
 # File: MyDeployment/MyCdhCoreConfig/CMakeLists.txt
 register_fprime_config(

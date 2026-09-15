@@ -80,7 +80,9 @@ endif()
 #         choices and definitions are then registered in a second, INTERFACE-only configuration
 #         module as done below (see Linux.cmake). Otherwise, write a directory equivalent to
 #         cmake/platform/unix/Platform/ for the platform. The configuration directory must not sit
-#         directly under an include root (project, framework, or library root).
+#         directly under an include root (project, framework, or library root). Remove the
+#         CHOOSES_IMPLEMENTATIONS directive below if this platform adds no choices beyond
+#         unix/Platform: a directive with an empty list is a generate-time error.
 add_fprime_subdirectory("${FPRIME_FRAMEWORK_PATH}/cmake/platform/unix/Platform/")
 register_fprime_config(
         Platform<PLATFORM-NAME>

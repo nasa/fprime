@@ -400,7 +400,10 @@ endfunction()
 #   transitively depends on `Fw_Types` (i.e. all F Prime modules) then receives the configuration's include root and
 #   link dependency without listing the module in DEPENDS. Used by the framework defaults and by platform
 #   configuration; library authors may use it to make their default configuration implicitly available to everything
-#   in the build. Configuration not marked this way must be listed in DEPENDS by the modules that use it.
+#   in the build. Configuration not marked this way must be listed in DEPENDS by the modules that use it. A module
+#   marked this way must not list Fw_Types in DEPENDS (Fw_Types depends on the global interface target, so the
+#   dependency would be circular and is rejected under BUILD_SHARED_LIBS=ON); depend on
+#   `${FPRIME_GLOBAL_INTERFACE_TARGET}` instead, as `default/config` does.
 # - **CHOOSES_IMPLEMENTATIONS**: implementations (e.g. `Os_File_Posix`) selected by this configuration. See
 #   `register_fprime_implementation`.
 #
@@ -419,8 +422,9 @@ endfunction()
 #    platform -> framework defaults (default/config) -> libraries -> project.
 #
 # Modules supplying SOURCES or AUTOCODER_INPUTS must be STATIC libraries (or INTERFACE when nothing compiles), so that
-# they can depend on Fw_Types regardless of the Fw_Types library type (e.g. BUILD_SHARED_LIBS=ON): modules with
-# AUTOCODER_INPUTS default to STATIC, modules with only SOURCES should declare STATIC explicitly. Modules supplying
+# they can depend on Fw_Types regardless of the Fw_Types library type (e.g. BUILD_SHARED_LIBS=ON). Declare STATIC
+# explicitly whenever the module supplies SOURCES: the automatic STATIC default currently applies only to modules
+# with AUTOCODER_INPUTS (see https://github.com/nasa/fprime/issues/5970). Modules supplying
 # only HEADERS and/or CONFIGURATION_OVERRIDES must be declared INTERFACE (CMake otherwise fails at generate time with
 # "No SOURCES given to target").
 #

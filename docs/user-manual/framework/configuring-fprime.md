@@ -408,10 +408,9 @@ Individual instances may select another source via `Os::RawTime(Os::RawTimeSourc
 ## Library Default Configuration
 
 Libraries may ship default configuration of their own, registered with `register_fprime_config` from a
-`default-config/config-<library name>/` directory. Consumers list the configuration module in `DEPENDS`, or the
-library marks it `GLOBAL_IMPLICIT_DEPENDENCY` (the flag the framework uses for `default/config` and for platform
-configuration) so that every module in the build receives it implicitly. Projects override library files exactly as
-they override framework files, with `CONFIGURATION_OVERRIDES`. See
+`default-config/config-<library name>/` directory, which consumers list in `DEPENDS` (or which the library marks
+`GLOBAL_IMPLICIT_DEPENDENCY` to reach every module). Projects override library files exactly as they override
+framework files, with `CONFIGURATION_OVERRIDES`. See
 [Library Defaults](../build-system/configuration.md#library-defaults) for the layout, include path, and dependency
 rules.
 

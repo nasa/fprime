@@ -41,7 +41,11 @@ replace a file that an earlier module supplied.
 
 1. **New files are copied into the build cache.** Each file under `SOURCES`, `HEADERS`, or `AUTOCODER_INPUTS`
    is copied to `<build cache>/<module path>/<file name>` (subdirectories in the source tree are not preserved;
-   the file is copied by name), and the module is built from that copy.
+   the file is copied by name), and the module is built from that copy. File names are therefore a single flat
+   namespace across the whole build: two files with the same name in different subdirectories of one module
+   collide in the build cache (the later one wins, silently), and two providers supplying the same new file
+   name stop the build (see [Errors](#errors)), which only the providing library can resolve. Libraries should
+   choose file names that cannot collide with other providers' (`MyLibraryCfg.fpp`, not `Config.fpp`).
 2. **The directory name is the include prefix.** The module's include root is the *parent* of its directory in
    the build cache, so a header registered from `default/config/FpConfig.h` is included as
    `#include <config/FpConfig.h>`, and a header registered from `default-config/config-mylib/MyLibCfg.hpp` is
@@ -191,8 +195,10 @@ Three rules follow from [how configuration is assembled](#how-configuration-is-a
    path from the library root: `#include <config-my-library/MyDriverCfg.hpp>`. The path-from-root form
    (`<default-config/config-my-library/MyDriverCfg.hpp>`) also compiles, because the library root is an include
    root, but it resolves to the source-tree file and bypasses every project override; the build does not detect it.
-3. **Dependency.** Every module that includes one of the library's configuration headers or uses one of its FPP
-   constants must list the configuration module in `DEPENDS`:
+3. **Dependency.** Every module that includes one of the library's configuration headers must list the
+   configuration module in `DEPENDS` (a module that only references its FPP constants receives the dependency
+   from the FPP dependency analysis; listing it explicitly is still recommended, as the in-tree subtopologies
+   do):
 
    ```cmake
    # my-library/MyDriver/CMakeLists.txt
@@ -210,11 +216,19 @@ Three rules follow from [how configuration is assembled](#how-configuration-is-a
    defaults and platform packages do. The configuration is then linked into the global interface target and
    reaches every module in the build without a `DEPENDS` entry. This suits configuration that all of a library's
    modules (or code outside the library) need; explicit `DEPENDS` keeps the dependency visible and is preferred
-   when only a few modules consume the configuration. Projects override the files the same way in both cases.
+   when only a few modules consume the configuration. A module marked `GLOBAL_IMPLICIT_DEPENDENCY` must not list
+   `Fw_Types` (or anything depending on it) in `DEPENDS`: `Fw_Types` itself depends on the global interface target,
+   so the dependency would be circular, which CMake tolerates among static libraries but rejects at generate time
+   with `BUILD_SHARED_LIBS=ON`. Depend on `${FPRIME_GLOBAL_INTERFACE_TARGET}` instead, as `default/config` does; it
+   supplies every include root. Projects override the files the same way in both cases.
 
 A library may also override framework defaults on behalf of the projects using it, by adding a
-`CONFIGURATION_OVERRIDES` module exactly as a project would (see below). Libraries are processed after the
-framework defaults and before the project, so the project can still override the library's choice.
+`CONFIGURATION_OVERRIDES` module exactly as a project would (see below), in a library-specific directory such as
+`default-config/overrides-<library name>/`. Do not reuse the project's `config-overrides/` name: library roots and
+the project root map to the same build-cache root, so two directories with the same root-relative path collide
+and CMake stops with `The binary directory ... is already used to build a source directory`. Libraries are
+processed after the framework defaults and before the project, so the project can still override the library's
+choice.
 
 ### Subtopology Configuration
 
@@ -327,10 +341,11 @@ overrides `CdhCoreTlmConfig.fpp`.
 > output has nothing to compile (the generated `FppConstantsAc.cpp` holds no definitions), as the platform and
 > `CdhCoreConfig` examples above do. A module that supplies `SOURCES`, or whose FPP
 > defines string, floating-point, or boolean constants, or `enum`, `struct`, or `array` types (these autocode
-> `.cpp` files that must be compiled), must not be `INTERFACE`; declare it `STATIC` (modules with
-> `AUTOCODER_INPUTS` default to `STATIC`, as `default/config` and
-> `Svc/Subtopologies/FileHandling/FileHandlingConfig` are), so that it stays static even when the project builds
-> with `BUILD_SHARED_LIBS=ON`. The build does not check this: an `INTERFACE` module whose FPP needs a `.cpp` fails
+> `.cpp` files that must be compiled), must not be `INTERFACE`; declare it `STATIC` (the automatic `STATIC` default
+> currently applies only to modules with `AUTOCODER_INPUTS`, such as `default/config` and
+> `Svc/Subtopologies/FileHandling/FileHandlingConfig`; see
+> [nasa/fprime#5970](https://github.com/nasa/fprime/issues/5970)), so that it stays static even when the project
+> builds with `BUILD_SHARED_LIBS=ON`. The build does not check this: an `INTERFACE` module whose FPP needs a `.cpp` fails
 > at link time with undefined references. An override is autocoded and built by the module it replaces, so an
 > override of an `INTERFACE` module's `.fpp` must likewise keep to type aliases and integer constants.
 
@@ -342,7 +357,7 @@ overrides `CdhCoreTlmConfig.fpp`.
 | `CONFIGURATION_OVERRIDES` | Replacements for files supplied by an earlier module, matched by file name. A name no earlier module supplied is an error. |
 | `INTERFACE` | Module with nothing to compile: override-only, headers-only, or FPP that autocodes nothing compilable. Required for the first two; see the note under [Overriding Configuration in a Project](#overriding-configuration-in-a-project) for which FPP constructs require `STATIC`. |
 | `GLOBAL_IMPLICIT_DEPENDENCY` | Linked into the global interface target: visible to every module without `DEPENDS`. Used by framework defaults and platform packages; available to library defaults. Replaces the deprecated `BASE_CONFIG`, which still works as a synonym and emits a warning. |
-| `DEPENDS` | Modules this configuration needs to compile, typically `Fw_Types`. Not required for FPP imports, which the FPP dependency analysis discovers. |
+| `DEPENDS` | Modules this configuration needs to compile, typically `Fw_Types` (or `${FPRIME_GLOBAL_INTERFACE_TARGET}` when the module is `GLOBAL_IMPLICIT_DEPENDENCY`; see [Library Defaults](#library-defaults)). Not required for FPP imports, which the FPP dependency analysis discovers. |
 | `CHOOSES_IMPLEMENTATIONS` | Implementation selections (see [CMake Implementations](./cmake-implementations.md)). Platform packages must choose every required implementation; projects may override. |
 | `EXCLUDE_FROM_ALL` | Build only when depended upon. Used by subtopology configuration. |
 
@@ -350,9 +365,10 @@ overrides `CdhCoreTlmConfig.fpp`.
 
 | Message | Cause | Fix |
 |---|---|---|
-| `<file> is CONFIGURATION_OVERRIDE but overrides nonexistent file` | No earlier module supplied a file of that name: typo, wrong file name, or the providing library/subtopology is not in the build. | Check the name; if the file is genuinely new, list it under `SOURCES`/`HEADERS`/`AUTOCODER_INPUTS`. |
+| `<file> is CONFIGURATION_OVERRIDE but overrides nonexistent file` | No earlier module supplied a file of that name: typo, wrong file name, the providing library/subtopology is not in the build, or the override module was added before `fprime_setup_included_code()` (no configuration module is registered yet). | Check the name; move the `add_fprime_subdirectory()` call after `fprime_setup_included_code()`; if the file is genuinely new, list it under `SOURCES`/`HEADERS`/`AUTOCODER_INPUTS`. |
 | `<file> is SOURCE/HEADER but overrides existing file` | A new file has the same name as an existing configuration file. | Move it to `CONFIGURATION_OVERRIDES` if it is meant to replace that file, or rename it. |
 | `No SOURCES given to target: <module>` (at generate time) | A module with only `HEADERS`/`CONFIGURATION_OVERRIDES` was registered without `INTERFACE`. | Add `INTERFACE` to the `register_fprime_config()` call. |
+| `The binary directory <dir> is already used to build a source directory` | Two configuration directories (typically a library's and the project's) have the same path relative to their roots, which share a build-cache root. | Rename the library's directory to include the library name, e.g. `default-config/overrides-<library name>/`. |
 | `Configuration file '...' of module '...' is available as '...' via include root '...'` | The configuration directory is directly under a source include root (project, framework, or library root), so the source-tree file shadows the build-cache copy. | Move the directory one level down (e.g. `default-config/config-<name>/`), or register the files from a `CMakeLists.txt` in a different directory, so that the source-tree path no longer equals `<module directory>/<file name>`. |
 
 The override, fatal-error, `HEADERS` include-root, `GLOBAL_IMPLICIT_DEPENDENCY`/`BASE_CONFIG`, and re-configure
