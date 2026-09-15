@@ -67,6 +67,8 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testQueueFlush();
 
+    void testQueueFlushInvalidIndex();
+
     void testQueueFlushAll();
 
     void testQueuePause();
@@ -104,6 +106,8 @@ class ComQueueTester : public ComQueueGTestBase {
     void testSetQueuePriorityCommand();
 
     void testSetQueuePriorityInvalidIndex();
+
+    void testSetQueuePriorityInvalidBufferIndex();
 
     void testSetQueuePriorityNegativeIndex();
 
