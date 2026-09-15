@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-14T21:12:11Z",
+  "generated_at": "2026-09-15T21:12:55Z",
   "ref": "devel",
-  "commit": "a41532adec1cabdb6eb720f3ae5270c95498fdd3",
+  "commit": "198092c8f2f58a89e2922404bddf4b68eaaa3dbb",
   "passed": 3,
   "failed": 7,
   "skipped": 6,
@@ -53,9 +53,10 @@
         "requirement 'PRMDB-001' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:13) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'PRMDB-002' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:14) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'PRMDB-003' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:15) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'PRMDB-004' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+        "requirement 'PRMDB-004' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'PRMDB-005' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:17) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "4 requirement(s) checked"
+      "detail": "5 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -88,10 +89,9 @@
       "status": "fail",
       "failures": [
         "command 'PRM_SAVE_FILE' has no requirement referencing it (add a requirement mentioning 'PRM_SAVE_FILE')",
-        "command 'PRM_LOAD_FILE' has no requirement referencing it (add a requirement mentioning 'PRM_LOAD_FILE')",
         "command 'PRM_COMMIT_STAGED' has no requirement referencing it (add a requirement mentioning 'PRM_COMMIT_STAGED')"
       ],
-      "detail": "3 command(s) traced against 4 requirement(s)"
+      "detail": "3 command(s) traced against 5 requirement(s)"
     },
     {
       "id": "R2",
@@ -119,11 +119,10 @@
         "event 'PrmFileLoadComplete' has no requirement referencing it (add a requirement mentioning 'PrmFileLoadComplete')",
         "event 'PrmDbCommitComplete' has no requirement referencing it (add a requirement mentioning 'PrmDbCommitComplete')",
         "event 'PrmDbCopyAllComplete' has no requirement referencing it (add a requirement mentioning 'PrmDbCopyAllComplete')",
-        "event 'PrmDbFileLoadFailed' has no requirement referencing it (add a requirement mentioning 'PrmDbFileLoadFailed')",
         "event 'PrmDbFileLoadInvalidAction' has no requirement referencing it (add a requirement mentioning 'PrmDbFileLoadInvalidAction')",
         "event 'PrmFileBadCrc' has no requirement referencing it (add a requirement mentioning 'PrmFileBadCrc')"
       ],
-      "detail": "13 event(s) traced against 4 requirement(s)"
+      "detail": "13 event(s) traced against 5 requirement(s)"
     },
     {
       "id": "R4",
@@ -155,7 +154,7 @@
         "port 'pingIn' has no requirement referencing it (add a requirement mentioning 'pingIn')",
         "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')"
       ],
-      "detail": "4 port(s) traced against 4 requirement(s)"
+      "detail": "4 port(s) traced against 5 requirement(s)"
     },
     {
       "id": "R7",
@@ -167,9 +166,10 @@
         "requirement 'PRMDB-001' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:13) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'PRMDB-002' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:14) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'PRMDB-003' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:15) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'PRMDB-004' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'PRMDB-004' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'PRMDB-005' (/home/runner/work/fprime/fprime/Svc/PrmDb/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "4 requirement(s) checked"
+      "detail": "5 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -178,7 +178,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/PrmDb",
       "status": "pass",
       "failures": [],
-      "detail": "4 requirement(s) checked"
+      "detail": "5 requirement(s) checked"
     },
     {
       "id": "U3",

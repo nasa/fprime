@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-14T21:12:11Z",
+  "generated_at": "2026-09-15T21:12:55Z",
   "ref": "devel",
-  "commit": "a41532adec1cabdb6eb720f3ae5270c95498fdd3",
+  "commit": "198092c8f2f58a89e2922404bddf4b68eaaa3dbb",
   "passed": 3,
   "failed": 8,
   "skipped": 5,
@@ -56,7 +56,7 @@
         "requirement 'CD-004' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'CD-005' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:17) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "5 requirement(s) checked"
+      "detail": "6 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -93,7 +93,7 @@
         "command 'CMD_TEST_CMD_1' has no requirement referencing it (add a requirement mentioning 'CMD_TEST_CMD_1')",
         "command 'CMD_CLEAR_TRACKING' has no requirement referencing it (add a requirement mentioning 'CMD_CLEAR_TRACKING')"
       ],
-      "detail": "4 command(s) traced against 5 requirement(s)"
+      "detail": "4 command(s) traced against 6 requirement(s)"
     },
     {
       "id": "R2",
@@ -103,10 +103,9 @@
       "status": "fail",
       "failures": [
         "telemetry channel 'CommandsDispatched' has no requirement referencing it (add a requirement mentioning 'CommandsDispatched')",
-        "telemetry channel 'CommandErrors' has no requirement referencing it (add a requirement mentioning 'CommandErrors')",
-        "telemetry channel 'CommandsDropped' has no requirement referencing it (add a requirement mentioning 'CommandsDropped')"
+        "telemetry channel 'CommandErrors' has no requirement referencing it (add a requirement mentioning 'CommandErrors')"
       ],
-      "detail": "3 telemetry channel(s) traced against 5 requirement(s)"
+      "detail": "3 telemetry channel(s) traced against 6 requirement(s)"
     },
     {
       "id": "R3",
@@ -127,7 +126,7 @@
         "event 'OpCodeReregistered' has no requirement referencing it (add a requirement mentioning 'OpCodeReregistered')",
         "event 'CommandDroppedQueueOverflow' has no requirement referencing it (add a requirement mentioning 'CommandDroppedQueueOverflow')"
       ],
-      "detail": "11 event(s) traced against 5 requirement(s)"
+      "detail": "11 event(s) traced against 6 requirement(s)"
     },
     {
       "id": "R4",
@@ -163,7 +162,7 @@
         "port 'seqCmdStatus' has no requirement referencing it (add a requirement mentioning 'seqCmdStatus')",
         "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')"
       ],
-      "detail": "8 port(s) traced against 5 requirement(s)"
+      "detail": "8 port(s) traced against 6 requirement(s)"
     },
     {
       "id": "R7",
@@ -176,9 +175,10 @@
         "requirement 'CD-002' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:14) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'CD-003' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:15) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'CD-004' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CD-005' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'CD-005' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CD-006' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:18) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "5 requirement(s) checked"
+      "detail": "6 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -187,7 +187,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
       "status": "pass",
       "failures": [],
-      "detail": "5 requirement(s) checked"
+      "detail": "6 requirement(s) checked"
     },
     {
       "id": "U3",
