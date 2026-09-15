@@ -43,9 +43,6 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
     }
     FW_ASSERT(sizeof userData == sizeof container.m_userData);
     (void)::memcpy(container.m_userData, userData, sizeof container.m_userData);
-    // Set the DP state
-    const DpState dpState(static_cast<DpState::T>(STest::Pick::startLength(0, DpState::NUM_CONSTANTS)));
-    container.setDpState(dpState);
     // Set the data size
     container.setDataSize(DATA_SIZE);
     // Test serialization: Serialize the header
@@ -56,7 +53,7 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
     // Deserialize the header and check the hashes
     header.deserialize(__FILE__, __LINE__, buffer);
     // Check the deserialized header fields
-    header.check(__FILE__, __LINE__, buffer, id, priority, timeTag, procTypes, userData, dpState, DATA_SIZE);
+    header.check(__FILE__, __LINE__, buffer, id, priority, timeTag, procTypes, userData, DATA_SIZE);
     // Test deserialization: Deserialize the header into a new container
     DpContainer deserContainer;
     deserContainer.setBuffer(container.getBuffer());
@@ -69,7 +66,7 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
     deserContainer.serializeHeader();
     // Deserialize and check the header
     header.deserialize(__FILE__, __LINE__, buffer);
-    header.check(__FILE__, __LINE__, buffer, id, priority, timeTag, procTypes, userData, dpState, DATA_SIZE);
+    header.check(__FILE__, __LINE__, buffer, id, priority, timeTag, procTypes, userData, DATA_SIZE);
     // Test the flight code that checks the hashes
     Utils::HashBuffer storedHash;
     Utils::HashBuffer computedHash;

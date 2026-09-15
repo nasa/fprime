@@ -21,7 +21,8 @@ The following types and constants are configurable via the file
 
 This build module defines the following FPP types:
 
-1. `DpState`: An enumeration describing the state of a data product.
+1. `DpState`: An enumeration describing the transmission state of a data product.
+   This state is tracked by `Svc/DpCatalog`; it is not part of the serialized container header.
 
 ## 4. FPP Ports
 
@@ -70,7 +71,6 @@ The data product header has the following format.
 |`TimeTag`|`Fw::Time`|`Fw::Time::SERIALIZED_SIZE`|The time tag associated with the container|
 |`ProcTypes`|`Fw::DpCfg::ProcType::SerialType`|`sizeof(Fw::DpCfg::ProcType::SerialType)`|The processing types, represented as a bit mask|
 |`UserData`|`Header::UserData`|`DpCfg::CONTAINER_USER_DATA_SIZE`|User-configurable data|
-|`DpState`|`DpState`|`DpState::SERIALIZED_SIZE`|The data product state
 |`DataSize`|`FwSizeType`|`sizeof(FwSizeStoreType)`|The size of the data payload in bytes|
 
 `Header::UserData` is an array of `U8` of size `Fw::DpCfg::CONTAINER_USER_DATA_SIZE`.

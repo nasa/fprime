@@ -577,18 +577,12 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
         return ProcessFileStatus::FAILED;
     }
 
-    // skip adding an already transmitted file
-    if (container.getState() == Fw::DpState::TRANSMITTED) {
-        this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
-        return ProcessFileStatus::FAILED;
-    }
-
     // add entry to catalog.
     DpStateEntry entry;
     entry.dir = static_cast<FwIndexType>(dir);
     entry.record.set_id(container.getId());
     entry.record.set_priority(container.getPriority());
-    entry.record.set_state(container.getState());
+    entry.record.set_state(Fw::DpState::UNTRANSMITTED);
     entry.record.set_tSec(container.getTimeTag().getSeconds());
     entry.record.set_tSub(container.getTimeTag().getUSeconds());
     entry.record.set_size(static_cast<U64>(fileSize));

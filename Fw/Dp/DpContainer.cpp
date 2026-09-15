@@ -17,7 +17,7 @@ namespace Fw {
 // ----------------------------------------------------------------------
 
 DpContainer::DpContainer(FwDpIdType id, const Fw::Buffer& buffer)
-    : m_id(id), m_priority(0), m_timeTag(), m_procTypes(0), m_dpState(), m_dataSize(0), m_buffer(), m_dataBuffer() {
+    : m_id(id), m_priority(0), m_timeTag(), m_procTypes(0), m_dataSize(0), m_buffer(), m_dataBuffer() {
     // Initialize the user data field
     this->initUserDataField();
     // Set the packet buffer
@@ -75,10 +75,6 @@ Fw::SerializeStatus DpContainer::deserializeHeader() {
             status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
         }
     }
-    // Deserialize the data product state
-    if (status == Fw::FW_SERIALIZE_OK) {
-        status = deserializer.deserializeTo(this->m_dpState);
-    }
     // Deserialize the data size
     if (status == Fw::FW_SERIALIZE_OK) {
         status = deserializer.deserializeSize(this->m_dataSize);
@@ -108,9 +104,6 @@ void DpContainer::serializeHeader() {
     // Serialize the user data
     status = serializer.serializeFrom(this->m_userData, static_cast<FwSizeType>(sizeof this->m_userData),
                                       Fw::Serialization::OMIT_LENGTH);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    // Serialize the data product state
-    status = serializer.serializeFrom(this->m_dpState);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the data size
     status = serializer.serializeSize(this->m_dataSize);

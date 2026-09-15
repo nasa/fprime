@@ -425,7 +425,7 @@ void DpTestTester::productRecvIn_InvokeAndCheckHeader(FwDpIdType id,
     const auto eltSize = sizeof(FwDpIdType) + dataEltSize;
     expectedNumElts = dataCapacity / eltSize;
     const auto expectedDataSize = expectedNumElts * eltSize;
-    // DP state should be the default value
+    // DP state is not part of the header; the generated macro still takes it
     Fw::DpState dpState;
     // Set up the expected user data
     Fw::DpContainer::Header::UserData userData;

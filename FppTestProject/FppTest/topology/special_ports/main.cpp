@@ -234,8 +234,8 @@ TEST_F(FrameworkTester, CmdDp) {
     });
 
     check_dp_request({
-        {0, comp1.getIdBase(), 121},
-        {1, comp2.getIdBase(), 121},
+        {0, comp1.getIdBase(), 120},
+        {1, comp2.getIdBase(), 120},
     });
 
     Fw::TlmBuffer buf1;
@@ -251,12 +251,10 @@ TEST_F(FrameworkTester, CmdDp) {
     // Serialize the user data
     U8 userData[Fw::DpCfg::CONTAINER_USER_DATA_SIZE]{};
     buf1.serializeFrom(userData, static_cast<FwSizeType>(sizeof userData), Fw::Serialization::OMIT_LENGTH);
-    // Serialize the data product state
-    buf1.serializeFrom(Fw::DpState(Fw::DpState::UNTRANSMITTED));
     // Serialize the data size
     buf1.serializeSize(47);
     // Serialize the header CRC
-    buf1.serializeFrom(static_cast<U32>(0x06B77648));
+    buf1.serializeFrom(static_cast<U32>(0xA5781A15));
 
     // Serialize the first record
     buf1.serializeFrom(static_cast<FwDpIdType>(comp1.getIdBase() + 0));
@@ -282,12 +280,10 @@ TEST_F(FrameworkTester, CmdDp) {
     buf2.serializeFrom(static_cast<Fw::DpCfg::ProcType::SerialType>(0));
     // Serialize the user data
     buf2.serializeFrom(userData, static_cast<FwSizeType>(sizeof userData), Fw::Serialization::OMIT_LENGTH);
-    // Serialize the data product state
-    buf2.serializeFrom(Fw::DpState(Fw::DpState::UNTRANSMITTED));
     // Serialize the data size
     buf2.serializeSize(0);
     // Serialize the CRC
-    buf2.serializeFrom(static_cast<U32>(0xC0082b9f));
+    buf2.serializeFrom(static_cast<U32>(0xBD2D4259));
     // Empty data hash
     buf2.serializeFrom(static_cast<U32>(0));
 

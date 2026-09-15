@@ -75,12 +75,6 @@
         0
       ]
     },
-    "DpState": {
-      "format": "{}",
-      "description": "Data product state",
-      "value": "UNTRANSMITTED",
-      "type": "Fw.DpState"
-    },
     "DataSize": {
       "format": "{}",
       "description": "Size of data payload in bytes",

@@ -11,6 +11,7 @@
 
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Dp/DpContainer.hpp"
+#include "Fw/Dp/DpStateEnumAc.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 #define DP_CONTAINER_HEADER_ASSERT_MSG(actual, expected) \
@@ -27,7 +28,7 @@ namespace TestUtil {
 
 //! A container packet header for testing
 struct DpContainerHeader {
-    DpContainerHeader() : m_id(0), m_priority(0), m_timeTag(), m_procTypes(0), m_dpState(), m_dataSize(0) {}
+    DpContainerHeader() : m_id(0), m_priority(0), m_timeTag(), m_procTypes(0), m_dataSize(0) {}
 
     //! Move the buffer deserialization to the specified offset
     static void moveDeserToOffset(const char* const file,                               //!< The call site file name
@@ -77,10 +78,6 @@ struct DpContainerHeader {
         status = deserializer.deserializeTo(this->m_userData, size, Fw::Serialization::OMIT_LENGTH);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         DP_CONTAINER_HEADER_ASSERT_EQ(size, sizeof this->m_userData);
-        // Deserialize the data product state
-        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::DP_STATE_OFFSET);
-        status = deserializer.deserializeTo(this->m_dpState);
-        DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the data size
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::DATA_SIZE_OFFSET);
         status = deserializer.deserializeSize(this->m_dataSize);
@@ -131,7 +128,6 @@ struct DpContainerHeader {
                const Fw::Time& timeTag,                        //!< The expected time tag
                DpCfg::ProcType::SerialType procTypes,          //!< The expected processing types
                const DpContainer::Header::UserData& userData,  //!< The expected user data
-               DpState dpState,                                //!< The expected dp state
                FwSizeType dataSize                             //!< The expected data size
     ) const {
         // Check the buffer size
@@ -150,10 +146,26 @@ struct DpContainerHeader {
         for (FwSizeType i = 0; i < DpCfg::CONTAINER_USER_DATA_SIZE; ++i) {
             DP_CONTAINER_HEADER_ASSERT_EQ(this->m_userData[i], userData[i]);
         }
-        // Check the deserialized data product state
-        DP_CONTAINER_HEADER_ASSERT_EQ(this->m_dpState, dpState);
         // Check the data size
         DP_CONTAINER_HEADER_ASSERT_EQ(this->m_dataSize, dataSize);
+    }
+
+    //! Check a packet header against a buffer
+    //! Compatibility overload for FPP-generated assertProductSend; the header
+    //! carries no data product state, so dpState is ignored
+    void check(const char* const file,                         //!< The call site file name
+               const U32 line,                                 //!< The call site line number
+               const Fw::Buffer& buffer,                       //!< The buffer
+               FwDpIdType id,                                  //!< The expected id
+               FwDpPriorityType priority,                      //!< The expected priority
+               const Fw::Time& timeTag,                        //!< The expected time tag
+               DpCfg::ProcType::SerialType procTypes,          //!< The expected processing types
+               const DpContainer::Header::UserData& userData,  //!< The expected user data
+               DpState dpState,                                //!< Ignored
+               FwSizeType dataSize                             //!< The expected data size
+    ) const {
+        (void)dpState;
+        this->check(file, line, buffer, id, priority, timeTag, procTypes, userData, dataSize);
     }
 
     //! Check that the serialize repr is at the specified deserialization offset
@@ -179,9 +191,6 @@ struct DpContainerHeader {
 
     //! The user data
     U8 m_userData[DpCfg::CONTAINER_USER_DATA_SIZE];
-
-    //! The data product state
-    DpState m_dpState;
 
     //! The data size
     FwSizeType m_dataSize;

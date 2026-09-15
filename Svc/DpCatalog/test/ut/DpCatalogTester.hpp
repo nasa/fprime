@@ -55,7 +55,6 @@ class DpCatalogTester : public DpCatalogGTestBase {
         FwDpPriorityType prio;
         Fw::Time time;
         FwSizeType dataSize;
-        Fw::DpState state;
         const char* dir;
     };
 
@@ -78,7 +77,6 @@ class DpCatalogTester : public DpCatalogGTestBase {
                      FwDpPriorityType prio,
                      const Fw::Time& time,
                      FwSizeType dataSize,
-                     Fw::DpState dpState,
                      bool hdrHashError,
                      const char* dir);
 
