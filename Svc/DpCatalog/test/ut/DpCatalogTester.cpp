@@ -135,7 +135,8 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
 
         // Only make non runtime added Dps at this point
         if (dp + numRuntime < numDps) {
-            this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize, false, dpSet[dp].dir);
+            this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize, dpSet[dp].state, false,
+                        dpSet[dp].dir);
         }
     }
 
@@ -167,8 +168,8 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
 
         // Create a runtime added Dp if we've exhausted all startup Dps
         if (dp + numRuntime >= numDps) {
-            Fw::String dpPath =
-                this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize, false, dpSet[dp].dir);
+            Fw::String dpPath = this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize,
+                                            dpSet[dp].state, false, dpSet[dp].dir);
             ASSERT_STRNE(dpPath.toChar(), "");
 
             // Add the runtime Dp to the catalog
@@ -249,7 +250,7 @@ void DpCatalogTester::stateFileSkipsTransmitted() {
     this->makeDpDir(dir.toChar());
     (void)Os::FileSystem::removeFile(stateFile.toChar());
     this->delDp(id, time, dir.toChar());
-    Fw::String dpFile = this->genDP(id, 10, time, 100, false, dir.toChar());
+    Fw::String dpFile = this->genDP(id, 10, time, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
     ASSERT_STRNE(dpFile.toChar(), "");
     ASSERT_EQ(Os::FileSystem::getFileSize(dpFile.toChar(), fileSize), Os::FileSystem::Status::OP_OK);
 
@@ -319,6 +320,7 @@ Fw::String DpCatalogTester::genDP(FwDpIdType id,
                                   FwDpPriorityType prio,
                                   const Fw::Time& time,
                                   FwSizeType dataSize,
+                                  Fw::DpState dpState,
                                   bool hdrHashError,
                                   const char* dir) {
     // Fill DP container
@@ -328,6 +330,7 @@ Fw::String DpCatalogTester::genDP(FwDpIdType id,
     Fw::DpContainer cont(id, packetBuffer);
     cont.setPriority(prio);
     cont.setTimeTag(time);
+    cont.setDpState(dpState);
     cont.setDataSize(dataSize);
 
     // fill data with ramp
@@ -693,6 +696,15 @@ void DpCatalogTester ::test_RandomDp() {
 
             dpSet[entry].dataSize = STest::Pick::startLength(0, MAX_SIZE);
             dpSet[entry].dir = dirs[STest::Pick::startLength(0, NUM_DIRS)].toChar();
+
+            // randomly set if it is untransmitted or partial
+            // Transmitted Dps are skipped in processFile
+            U32 randVal = STest::Pick::lowerUpper(0, 1);
+            if (randVal == 0) {
+                dpSet[entry].state = Fw::DpState::UNTRANSMITTED;
+            } else if (randVal == 1) {
+                dpSet[entry].state = Fw::DpState::PARTIAL;
+            }
         }
 
         Fw::Wait wait = static_cast<Fw::Wait::T>(STest::Pick::lowerUpper(0, 1));
@@ -751,7 +763,7 @@ void DpCatalogTester ::test_BadFileDone() {
     dirs[0] = "./DpTest_BadFileDone";
     this->makeDpDir(dirs[0].toChar());
     Fw::Time time(1000, 100);
-    Fw::String dpFile = this->genDP(0x111, 10, time, 16, false, dirs[0].toChar());
+    Fw::String dpFile = this->genDP(0x111, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
     ASSERT_STRNE(dpFile.toChar(), "");
     this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
 
@@ -848,6 +860,7 @@ void DpCatalogTester::test_TruncatedDpRejected() {
     Fw::DpContainer container(id, packetBuffer);
     container.setPriority(priority);
     container.setTimeTag(time);
+    container.setDpState(Fw::DpState::UNTRANSMITTED);
     container.setDataSize(0);
     container.serializeHeader();
     container.updateDataHash();
@@ -888,7 +901,7 @@ void DpCatalogTester::test_NonCanonicalDpRejected() {
     this->makeDpDir(dir.toChar());
 
     Fw::Time time(1000, 100);
-    Fw::String canonicalFile = this->genDP(0x123, 10, time, 16, false, dir.toChar());
+    Fw::String canonicalFile = this->genDP(0x123, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
     ASSERT_STRNE(canonicalFile.toChar(), "");
 
     Fw::String rogueFile;
@@ -930,7 +943,8 @@ void DpCatalogTester::test_NonDpFilesDoNotConsumeSlots() {
     // generate enough DP files to fill every catalog slot
     Fw::Time time(1000, 100);
     for (FwIndexType dp = 0; dp < DP_MAX_FILES; dp++) {
-        Fw::String dpFile = this->genDP(static_cast<FwDpIdType>(dp), 10, time, 16, false, dir.toChar());
+        Fw::String dpFile =
+            this->genDP(static_cast<FwDpIdType>(dp), 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
         ASSERT_STRNE(dpFile.toChar(), "");
     }
 
@@ -954,7 +968,7 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     this->makeDpDir(dir.toChar());
 
     Fw::Time time(1000, 100);
-    Fw::String fileName = this->genDP(0x123, 10, time, 16, true, dir.toChar());
+    Fw::String fileName = this->genDP(0x123, 10, time, 16, Fw::DpState::UNTRANSMITTED, true, dir.toChar());
     ASSERT_STRNE(fileName.toChar(), "");
 
     this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
@@ -964,7 +978,7 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     ASSERT_EVENTS_FileHdrError_SIZE(1);
-    ASSERT_EVENTS_FileHdrError(0, fileName.toChar(), DpHdrField::CRC, 2600422368, 2617199584);
+    ASSERT_EVENTS_FileHdrError(0, fileName.toChar(), DpHdrField::CRC, 635957387, 652734603);
 
     this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
     this->component.doDispatch();

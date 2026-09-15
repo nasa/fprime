@@ -4,7 +4,6 @@ module Fw {
   # Types
   # ----------------------------------------------------------------------
 
-  @ The transmission state of a data product, tracked by Svc.DpCatalog
   enum DpState: U8 {
     @ The untransmitted state
     UNTRANSMITTED
