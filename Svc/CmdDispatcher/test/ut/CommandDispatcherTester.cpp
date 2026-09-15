@@ -8,6 +8,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Com/ComPacket.hpp>
 #include <Os/IntervalTimer.hpp>
+#include <Os/Task.hpp>
 #include <Svc/CmdDispatcher/test/ut/CommandDispatcherTester.hpp>
 #include <config/CommandDispatcherImplCfg.hpp>
 
@@ -740,6 +741,50 @@ void CommandDispatcherTester::runClearCommandTracking() {
     this->invoke_to_compCmdStat(0, testOpCode, this->m_cmdSendCmdSeq, Fw::CmdResponse::OK);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     ASSERT_FALSE(this->m_seqStatusRcvd);
+}
+
+void CommandDispatcherTester::overflowHookTask(void* ptr) {
+    CommandDispatcherImpl* impl = static_cast<CommandDispatcherImpl*>(ptr);
+    Fw::ComBuffer buff;
+    for (U32 i = 0; i < CONCURRENT_OVERFLOW_DROPS_PER_TASK; i++) {
+        impl->seqCmdBuff_overflowHook(0, buff, 0);
+    }
+}
+
+void CommandDispatcherTester::runConcurrentQueueOverflow() {
+    this->clearEvents();
+    this->clearTlm();
+    ASSERT_EQ(0u, this->m_impl.m_numCmdsDropped.load());
+
+    // Saturate the CommandDroppedQueueOverflow throttle on this thread so the concurrent
+    // hook invocations below exercise only the dropped-command counter
+    const U32 throttleDrops = 5;
+    Fw::ComBuffer buff;
+    for (U32 i = 0; i < throttleDrops; i++) {
+        this->m_impl.seqCmdBuff_overflowHook(0, buff, 0);
+    }
+    ASSERT_EVENTS_CommandDroppedQueueOverflow_SIZE(throttleDrops);
+
+    // Drive the overflow hook from several caller threads at once
+    Os::Task tasks[CONCURRENT_OVERFLOW_TASKS];
+    for (U32 i = 0; i < CONCURRENT_OVERFLOW_TASKS; i++) {
+        Os::Task::Arguments arguments(Fw::String("CmdDispOverflow"), CommandDispatcherTester::overflowHookTask,
+                                      &this->m_impl);
+        ASSERT_EQ(Os::Task::Status::OP_OK, tasks[i].start(arguments));
+    }
+    for (U32 i = 0; i < CONCURRENT_OVERFLOW_TASKS; i++) {
+        ASSERT_EQ(Os::Task::Status::OP_OK, tasks[i].join());
+    }
+
+    // Every drop must be counted: no lost increments across threads
+    const U32 expectedDrops = throttleDrops + CONCURRENT_OVERFLOW_TASKS * CONCURRENT_OVERFLOW_DROPS_PER_TASK;
+    ASSERT_EQ(expectedDrops, this->m_impl.m_numCmdsDropped.load());
+
+    // The dispatcher thread reports the same value in telemetry
+    this->invoke_to_run(0, 0);
+    this->dispatchCurrentMessages(this->m_impl);
+    ASSERT_TLM_CommandsDropped_SIZE(1);
+    ASSERT_TLM_CommandsDropped(0, expectedDrops);
 }
 
 void CommandDispatcherTester::runCommandQueueOverflow() {
