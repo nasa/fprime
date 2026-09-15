@@ -284,7 +284,7 @@ void VersionTester ::test_setVerRewrite() {
     Svc::VersionStatus status = Svc::VersionStatus::OK;
     Fw::String set_ver;
     for (U32 i = 0; i < 300; i++) {
-        set_ver.format("rw_%u", i);
+        set_ver.format("rw_%" PRIu32, i);
         this->invoke_to_setVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, set_ver, status);
         // Each write is reported on its own, so the table is still recognized as populated
         ASSERT_EVENTS_CustomVersions_SIZE(1);

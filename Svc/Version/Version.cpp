@@ -66,9 +66,8 @@ void Version ::setVersion_handler(FwIndexType portNum,
               version_id.e);
     auto ver_slot = VersionSlot(version_id.e);
     // Count each slot once: rewrites of a populated slot must not grow the count
-    if (this->verId_db[ver_slot].get_version_value() == "no_ver") {
-        FW_ASSERT(this->m_num_custom_elements < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS,
-                  this->m_num_custom_elements);
+    if ((this->verId_db[ver_slot].get_version_value() == "no_ver") &&
+        (this->m_num_custom_elements < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS)) {
         this->m_num_custom_elements++;
     }
     this->verId_db[ver_slot].set_version_enum(version_id);
