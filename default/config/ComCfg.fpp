@@ -59,7 +59,6 @@ module ComCfg {
         apid: Apid                  @< 11 bits APID in CCSDS
         pktType: SppPacketType      @< 1 bit packet type in space packet primary header
         hasSecHdr: bool             @< Secondary header flag for SpacePacketFramer
-        msgId: U16                  @< 16 bit Helix Message ID for MPAC secondary header
         sequenceFlags: U8           @< 2 bit Sequence flags (0b00=continuation, 0b01=first, 0b10=last, 0b11=unsegmented)
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
         vcId: U8                    @< 6 bit Virtual Channel ID - used for AOS, TC, and TM Protocols
@@ -71,7 +70,6 @@ module ComCfg {
         apid = Apid.FW_PACKET_UNKNOWN
         pktType = SppPacketType.SPP_TELEMETRY
         hasSecHdr = false
-        msgId = 0xFFFF
         sequenceFlags = 0x3
         sequenceCount = 0
         vcId = 1
