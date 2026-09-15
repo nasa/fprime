@@ -15,7 +15,9 @@ import os
 import re
 import sys
 
-REPORT_DIR = os.environ.get("AI_SESSION_REPORT_DIR", os.path.expanduser("~/ai-session-reports"))
+REPORT_DIR = os.environ.get(
+    "AI_SESSION_REPORT_DIR", os.path.expanduser("~/ai-session-reports")
+)
 
 
 def context_slug(context):
@@ -54,20 +56,37 @@ def read_text(args):
 def parse_when(value):
     if not value:
         return dt.datetime.now(dt.timezone.utc)
-    return dt.datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(dt.timezone.utc)
+    return dt.datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(
+        dt.timezone.utc
+    )
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("command", choices=["path", "append"])
-    parser.add_argument("--context", required=True, help="Session id or URL identifying the context")
-    parser.add_argument("--role", choices=["prompt", "response", "note"], help="Required for append")
-    parser.add_argument("--author", default="", help="Who produced the text (prompts: the user)")
+    parser.add_argument(
+        "--context", required=True, help="Session id or URL identifying the context"
+    )
+    parser.add_argument(
+        "--role", choices=["prompt", "response", "note"], help="Required for append"
+    )
+    parser.add_argument(
+        "--author", default="", help="Who produced the text (prompts: the user)"
+    )
     parser.add_argument("--text")
     parser.add_argument("--file")
-    parser.add_argument("--meta", action="append", default=[], metavar="KEY=VALUE",
-                        help="Front-matter field written when the report is first created")
-    parser.add_argument("--date", help="Session date used in the file name (default: entry date)")
+    parser.add_argument(
+        "--meta",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
+        help="Front-matter field written when the report is first created",
+    )
+    parser.add_argument(
+        "--date", help="Session date used in the file name (default: entry date)"
+    )
     parser.add_argument("--timestamp", help="Entry time, ISO 8601 (default: now, UTC)")
     args = parser.parse_args()
 
