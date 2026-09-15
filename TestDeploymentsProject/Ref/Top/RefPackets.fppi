@@ -285,6 +285,10 @@ telemetry packets RefPackets {
     CdhCore.version.CustomVersion10
   }
 
+  # Empty packet: exercises a packet specification with no channels
+  packet Empty id 39 group 3 {
+  }
+
   # Uncomment to enable DpCompression subtopology
   #packet DpCompression id 38 group 3 {
     #DpCompression.dpZLibCompressorBufferManager.TotalBuffs
