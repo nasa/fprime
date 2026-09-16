@@ -97,7 +97,7 @@ void CmdSplitterTester ::test_error_routing() {
     REQUIREMENT("SVC-CMD-SPLITTER-004");
     Fw::ComBuffer testBuffer;  // Intentionally left empty
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, CmdSplitterPorts - 1));
+    this->active_command_source = static_cast<FwIndexType>(STest::Pick::startLength(0, CmdSplitterPorts));
     this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_RemoteCmd_SIZE(0);
     ASSERT_from_LocalCmd_SIZE(1);
