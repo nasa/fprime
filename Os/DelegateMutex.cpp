@@ -12,9 +12,7 @@ namespace Os {
 // ----------------------------------------------------------------------
 
 DelegateMutex::DelegateMutex() : m_delegate(*MutexInterface::getDelegate(m_handle_storage)) {
-    // Note: m_handle_storage is intentionally NOT value-initialized. getDelegate() placement-news
-    // the delegate into it; zeroing first is dead work (a byte-wise memset of the handle array on
-    // Vorago). Mirrors the RawTime fix in fprime PR #5240 (see #5297).
+    // m_handle_storage is placement-new storage populated by getDelegate(); do not value-initialize it (#5297)
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
 }
 
