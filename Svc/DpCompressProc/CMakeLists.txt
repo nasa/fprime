@@ -18,6 +18,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ports")
 
 register_fprime_library(
+    EXCLUDE_FROM_ALL
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/DpCompressProc.fpp"
     SOURCES
