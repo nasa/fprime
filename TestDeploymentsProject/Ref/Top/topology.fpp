@@ -20,6 +20,7 @@ module Ref {
     instance ComCcsds.Subtopology
     instance FileHandling.Subtopology
     instance DataProducts.Subtopology
+    instance RecordedCom.Subtopology
     #instance DpCompression.Subtopology
 
     # ----------------------------------------------------------------------
@@ -46,6 +47,8 @@ module Ref {
     instance linuxTimer
     instance comDriver
     instance cmdSeq
+    instance eventSplitter
+    instance tlmSplitter
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -100,6 +103,11 @@ module Ref {
       rateGroup2Comp.RateGroupMemberOut[4] -> dpDemo.run
       #connection to FileManager listing feature command for sequencing
       rateGroup2Comp.RateGroupMemberOut[5] -> FileHandling.Subtopology.fileManagerSchedIn
+      # RecordedCom scheduling
+      rateGroup2Comp.RateGroupMemberOut[6] -> RecordedCom.Subtopology.comLoggerSchedIn
+      rateGroup2Comp.RateGroupMemberOut[7] -> RecordedCom.Subtopology.dpMgrSchedIn
+      rateGroup2Comp.RateGroupMemberOut[8] -> RecordedCom.Subtopology.dpWriterSchedIn
+      rateGroup2Comp.RateGroupMemberOut[9] -> RecordedCom.Subtopology.dpBufferManagerSchedIn
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
@@ -150,9 +158,16 @@ module Ref {
     }
 
     connections ComCcsds_CdhCore {
-      # Events and telemetry to comQueue
-      CdhCore.Subtopology.eventsPktSend  -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
-      CdhCore.Subtopology.tlmSendPktSend -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
+      # Events and telemetry - both split for recording
+      # Events split: downlink + recording
+      CdhCore.Subtopology.eventsPktSend -> eventSplitter.comIn
+      eventSplitter.comOut[0] -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
+      eventSplitter.comOut[1] -> RecordedCom.Subtopology.comIn
+
+      # Telemetry split: downlink + recording
+      CdhCore.Subtopology.tlmSendPktSend -> tlmSplitter.comIn
+      tlmSplitter.comOut[0] -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
+      tlmSplitter.comOut[1] -> RecordedCom.Subtopology.comIn
 
       # Router <-> CmdDispatcher
       ComCcsds.Subtopology.commandOut        -> CdhCore.Subtopology.seqCmdBuff

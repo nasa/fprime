@@ -207,6 +207,29 @@ telemetry packets RefPackets {
     DataProducts.dpBufferManager.EmptyBuffs
   }
 
+  packet RecordedCom id 38 group 3 {
+    RecordedCom.comLogger.LoggingEnabled
+    RecordedCom.comLogger.NumBuffersLogged
+    RecordedCom.comLogger.NumBuffersDropped
+
+    RecordedCom.dpMgr.NumSuccessfulAllocations
+    RecordedCom.dpMgr.NumFailedAllocations
+    RecordedCom.dpMgr.NumDataProducts
+    RecordedCom.dpMgr.NumBytes
+
+    RecordedCom.dpWriter.NumBuffersReceived
+    RecordedCom.dpWriter.NumBytesWritten
+    RecordedCom.dpWriter.NumSuccessfulWrites
+    RecordedCom.dpWriter.NumFailedWrites
+    RecordedCom.dpWriter.NumErrors
+
+    RecordedCom.dpBufferManager.TotalBuffs
+    RecordedCom.dpBufferManager.CurrBuffs
+    RecordedCom.dpBufferManager.HiBuffs
+    RecordedCom.dpBufferManager.NoBuffs
+    RecordedCom.dpBufferManager.EmptyBuffs
+  }
+
   packet Version1 id 22 group 2 {
     CdhCore.version.FrameworkVersion
     CdhCore.version.ProjectVersion

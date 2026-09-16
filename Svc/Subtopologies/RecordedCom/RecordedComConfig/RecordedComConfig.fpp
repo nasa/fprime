@@ -46,6 +46,6 @@ module RecordedComConfig {
 
     # File paths
     module Paths {
-        constant dpDir = "./RecordedCom"
+        constant dpDir = "./DpCat"
     }
 }
