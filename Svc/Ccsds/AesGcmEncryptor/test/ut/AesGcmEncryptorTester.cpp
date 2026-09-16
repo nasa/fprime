@@ -236,27 +236,96 @@ void AesGcmEncryptorTester ::testContextVcIdIsAuthenticated() {
         << "The frame authenticated under a virtual channel other than the one on its context";
 }
 
-void AesGcmEncryptorTester ::testIvIsFreshPerFrame() {
+void AesGcmEncryptorTester ::testIvIsSequential() {
     const FwSizeType plainLen = 32;
+    SdlsIv expected(static_cast<U8>(0));
+
     (void)this->sendEncrypt(plainLen, TEST_SPI);
     this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
-    U8 firstFrame[GCM_IV_LEN + 32 + GCM_TAG_LEN];
+    this->assertIv(expected);
     const Fw::Buffer first = this->fromPortHistory_encryptOut->at(0).data;
+    U8 firstFrame[GCM_IV_LEN + 32 + GCM_TAG_LEN];
     (void)::memcpy(firstFrame, first.getData(), static_cast<size_t>(first.getSize()));
 
     // Hand the buffer back so the component may reuse its storage, then send the same
-    // plaintext again
+    // plaintext (still sitting untouched in m_storage) again
     ComCfg::FrameContext context;
     Fw::Buffer returned = first;
     this->invoke_to_encryptReturnIn(0, returned, context);
-    (void)this->sendEncrypt(plainLen, TEST_SPI);
+    this->clearHistory();
+    Fw::Buffer plaintext(this->m_storage, plainLen);
+    context.set_vcId(TEST_VC_ID);
+    this->invoke_to_encryptIn(0, TEST_SPI, plaintext, context);
     this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+    expected[GCM_IV_LEN - 1] = 1;
+    this->assertIv(expected);
     const Fw::Buffer second = this->fromPortHistory_encryptOut->at(0).data;
 
-    ASSERT_NE(::memcmp(firstFrame, second.getData(), static_cast<size_t>(GCM_IV_LEN)), 0)
-        << "The IV repeated across frames";
     ASSERT_NE(::memcmp(firstFrame + GCM_IV_LEN, second.getData() + GCM_IV_LEN, static_cast<size_t>(plainLen)), 0)
         << "Identical plaintext produced identical ciphertext";
+    returned = second;
+    this->invoke_to_encryptReturnIn(0, returned, context);
+
+    for (U8 i = 2; i < 6; i++) {
+        this->sendAndReturn(plainLen);
+        expected[GCM_IV_LEN - 1] = i;
+        this->assertIv(expected);
+    }
+}
+
+void AesGcmEncryptorTester ::testIvWrapsAround() {
+    SdlsIv iv(static_cast<U8>(0xFF));
+    this->component.setNextIv(iv);
+
+    this->sendAndReturn(16);
+    this->assertIv(iv);
+
+    this->sendAndReturn(16);
+    this->assertIv(SdlsIv(static_cast<U8>(0)));
+
+    // A carry that stops partway through: ...00FFFFFF -> ...01000000
+    iv = SdlsIv(static_cast<U8>(0));
+    iv[GCM_IV_LEN - 1] = 0xFF;
+    iv[GCM_IV_LEN - 2] = 0xFF;
+    iv[GCM_IV_LEN - 3] = 0xFF;
+    this->component.setNextIv(iv);
+    this->sendAndReturn(16);
+    this->assertIv(iv);
+    this->sendAndReturn(16);
+    SdlsIv carried(static_cast<U8>(0));
+    carried[GCM_IV_LEN - 4] = 0x01;
+    this->assertIv(carried);
+}
+
+void AesGcmEncryptorTester ::testIvNotSpentByRefusedFrame() {
+    SdlsIv iv(static_cast<U8>(0));
+    iv[GCM_IV_LEN - 1] = 7;
+    this->component.setNextIv(iv);
+
+    // Refused on its key, before any IV is drawn
+    this->setKey(nullptr, 0, Svc::Ccsds::SdlsStatus::KEY_ERROR);
+    (void)this->sendEncrypt(16, TEST_SPI);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::KEY_ERROR);
+    this->setKey(TEST_KEY, AES_256_KEY_LEN, Svc::Ccsds::SdlsStatus::SUCCESS);
+
+    // Refused on its size, likewise
+    (void)this->sendEncrypt(AesGcmEncryptor::MAX_OUTPUT_SIZE - GCM_IV_LEN - GCM_TAG_LEN + 1, TEST_SPI);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::ENCRYPTION_FAILURE);
+
+    // Refused because the store is busy
+    (void)this->sendEncrypt(16, TEST_SPI);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+    this->assertIv(iv);
+    Fw::Buffer inFlight = this->fromPortHistory_encryptOut->at(0).data;
+    (void)this->sendEncrypt(16, TEST_SPI);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::ENCRYPTION_FAILURE);
+    ComCfg::FrameContext context;
+    this->invoke_to_encryptReturnIn(0, inFlight, context);
+
+    // Only the frame that was actually encrypted moved the sequence
+    this->sendAndReturn(16);
+    iv[GCM_IV_LEN - 1] = 8;
+    this->assertIv(iv);
 }
 
 void AesGcmEncryptorTester ::testEmptyPlaintext() {
@@ -412,6 +481,22 @@ void AesGcmEncryptorTester ::assertStatus(Svc::Ccsds::SdlsStatus status) {
     // Every path through encryptIn ends in exactly one encryptOut
     ASSERT_from_encryptOut_SIZE(1);
     ASSERT_EQ(this->fromPortHistory_encryptOut->at(0).status, status);
+}
+
+void AesGcmEncryptorTester ::assertIv(const SdlsIv& expected) {
+    const Fw::Buffer out = this->fromPortHistory_encryptOut->at(0).data;
+    ASSERT_GE(out.getSize(), GCM_IV_LEN);
+    for (FwSizeType i = 0; i < GCM_IV_LEN; i++) {
+        ASSERT_EQ(out.getData()[i], expected[i]) << "IV byte " << i << " differs";
+    }
+}
+
+void AesGcmEncryptorTester ::sendAndReturn(FwSizeType plainLen) {
+    (void)this->sendEncrypt(plainLen, TEST_SPI);
+    this->assertStatus(Svc::Ccsds::SdlsStatus::SUCCESS);
+    Fw::Buffer returned = this->fromPortHistory_encryptOut->at(0).data;
+    ComCfg::FrameContext context;
+    this->invoke_to_encryptReturnIn(0, returned, context);
 }
 
 void AesGcmEncryptorTester ::assertFrameDecryptsTo(const U8* expected, FwSizeType expectedLen, U8 vcId, U16 spi) {
