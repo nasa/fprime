@@ -7,6 +7,7 @@
 #include "TmFramerTester.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 
 namespace Svc {
 
@@ -176,13 +177,13 @@ void TmFramerTester ::testFirstHeaderPointerFromContext() {
 }
 
 void TmFramerTester ::testPartialDataFieldAsserts() {
-    // The framer does not idle-fill: anything short of a full data field is a caller error
+    // The framer does not idle-fill: anything but exactly a full data field is a caller error
     const FwSizeType fullSize = TmFramer::TmPayloadCapacity;
-    U8 bufferData[fullSize];
+    U8 bufferData[fullSize + 1];
     ComCfg::FrameContext context;
-    const FwSizeType shortSizes[] = {0, 1, 100, fullSize - 7, fullSize - 1};
-    for (FwSizeType shortSize : shortSizes) {
-        Fw::Buffer buffer(bufferData, shortSize);
+    const FwSizeType wrongSizes[] = {0, 1, 100, fullSize - Utils::IdlePacket::MIN_SIZE, fullSize - 1, fullSize + 1};
+    for (FwSizeType wrongSize : wrongSizes) {
+        Fw::Buffer buffer(bufferData, wrongSize);
         this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
         ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
     }

@@ -22,15 +22,13 @@ class TmFramer final : public TmFramerComponentBase {
     static_assert(ComCfg::TmFrameFixedSize > TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE,
                   "TM Frame Fixed Size must be at least large enough to hold header, trailer and data");
 
-    //! Size of the frame data field: every dataIn payload must be exactly this size (Svc.Ccsds.TmDataFieldSize)
-    static constexpr FwSizeType TmPayloadCapacity =
-        ComCfg::TmFrameFixedSize - (TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE);
     static_assert(static_cast<FwSizeType>(TMHeader::SERIALIZED_SIZE) == static_cast<FwSizeType>(TmHeaderSize),
                   "Svc.Ccsds.TmHeaderSize must match TMHeader");
     static_assert(static_cast<FwSizeType>(TMTrailer::SERIALIZED_SIZE) == static_cast<FwSizeType>(TmTrailerSize),
                   "Svc.Ccsds.TmTrailerSize must match TMTrailer");
-    static_assert(TmPayloadCapacity == static_cast<FwSizeType>(TmDataFieldSize),
-                  "Svc.Ccsds.TmDataFieldSize must match the TM data field");
+
+    //! Size of the frame data field: every dataIn payload must be exactly this size
+    static constexpr FwSizeType TmPayloadCapacity = static_cast<FwSizeType>(TmDataFieldSize);
 
     enum class BufferOwnershipState {
         NOT_OWNED,  //!< The buffer is currently not owned by the TmFramer
@@ -64,9 +62,9 @@ class TmFramer final : public TmFramerComponentBase {
 
     //! Handler implementation for dataIn
     //!
-    //! Port to receive data to frame, in a Fw::Buffer with optional context.
-    //! This is essentially the CCSDS TM VCP.request Service Primitive, with
-    //! Packet=data and GVCID implicitly passed in context (TM Protocol 3.3.3.2)
+    //! Port to receive a complete frame data field to frame, in a Fw::Buffer with optional context.
+    //! The buffer must be exactly TmPayloadCapacity bytes (idle-filled upstream, e.g. by Svc::ComAggregator);
+    //! any other size asserts. GVCID and the First Header Pointer are passed in the context.
     //!
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,

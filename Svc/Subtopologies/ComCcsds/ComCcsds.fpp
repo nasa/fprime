@@ -110,7 +110,7 @@ module ComCcsds {
                       "ComCcsdsConfig.Aggregator.aggregationSize must fit the TM Transfer Frame Data Field");
         ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::aggregationSize,
                                        ComCcsdsConfig::Aggregator::enablePacketSpanning,
-                                       2,  // Allocation id: 0 = comQueue/commsBufferManager, 1 = frameAccumulator
+                                       2,  // Allocation id, distinct from the other ComCcsds instances
                                        ComCcsds::Allocation::memAllocator);
         """
         phase Fpp.ToCpp.Phases.tearDownComponents """
@@ -323,7 +323,7 @@ module ComCcsds {
         # ----------------------------------------------------------------------
 
         # Upstream boundary (packet layer)
-        @ Input port receiving space packets from the packet layer for TM framing
+        @ Input port receiving complete (idle-filled) frame data fields from the packet layer for TM framing
         port dataIn        = framer.dataIn
 
         @ Output port returning ownership of downlinked buffers to the packet layer

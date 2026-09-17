@@ -10,14 +10,13 @@ module ComCfg {
     @ Spacecraft ID (10 bits) for CCSDS Data Link layer
     dictionary constant SpacecraftId = 0x0044
 
-    @ Fixed size of CCSDS TM frames. The data field (Svc.Ccsds.TmDataFieldSize = TmFrameFixedSize - 8) is the
-    @ aggregate size expected by Svc.Ccsds.TmFramer; see ComCcsdsConfig.Aggregator.aggregationSize for the sizing
-    @ constraints. Without packet spanning the data field must hold a full com buffer or file buffer Space Packet
-    @ next to a minimum idle packet: at least max(FW_COM_BUFFER_MAX_SIZE, FW_FILE_BUFFER_MAX_SIZE) + 6 + 7 bytes.
-    @ Without spanning, whole packets only: with the defaults (512-byte file buffers, 1016-byte data field) a single
-    @ 518-byte file packet fits per frame, the rest carrying telemetry/events or idle. Enable packet spanning or size
-    @ the data field for N file packets (N * (FW_FILE_BUFFER_MAX_SIZE + 6), exactly (N >= 2) or plus at least 7) if file
-    @ downlink throughput matters.
+    @ Fixed size of CCSDS TM frames. The data field (Svc.Ccsds.TmDataFieldSize: this minus the TM header and
+    @ trailer) is the aggregate size Svc.Ccsds.TmFramer expects; see ComCcsdsConfig.Aggregator.aggregationSize for
+    @ the sizing constraints. Without packet spanning, whole packets only: the data field must hold a full com
+    @ buffer or file buffer Space Packet next to a minimum idle packet
+    @ (Svc.ComAggregator.MIN_NON_SPANNING_AGGREGATION_SIZE, asserted by configure()); with the defaults a single
+    @ file packet fits per frame. Enable packet spanning, or size the data field for N file packets (exactly, or
+    @ with at least a minimum idle packet to spare), if file downlink throughput matters.
     dictionary constant TmFrameFixedSize = 1024
 
     @ Upper Bound on Fixed size of CCSDS AOS frames

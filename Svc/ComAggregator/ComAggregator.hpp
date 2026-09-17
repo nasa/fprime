@@ -53,7 +53,8 @@ class ComAggregator final : public ComAggregatorComponentBase {
     //!
     //! Must only be called once the downstream framer has returned the aggregate and no further data or status
     //! can arrive (i.e. after the component's task has stopped); asserts if the aggregate is still held
-    //! downstream. configure() may be called again afterwards.
+    //! downstream. Any packet held for the next aggregate is returned through dataReturnOut and the
+    //! per-aggregate state is dropped, so configure() may be called again afterwards.
     void cleanup();
 
     void preamble() override;

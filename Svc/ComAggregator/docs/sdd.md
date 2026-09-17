@@ -50,7 +50,9 @@ the bytes of any layer inserted between the aggregator and the framer (e.g. `Svc
 called again without an intervening `cleanup()`, when the allocator does not return `aggregationSize` bytes, and when
 `aggregationSize` violates the mode-specific limits below. `cleanup()` releases the storage and detaches the
 aggregate buffer from it; it must only be called once the downstream framer has returned the aggregate and no
-further data or status can arrive (i.e. after the component's task has stopped).
+further data or status can arrive (i.e. after the component's task has stopped). A packet held for the next
+aggregate is returned through `dataReturnOut` and the per-aggregate state is dropped, so a subsequent
+`configure()` starts with an empty aggregate.
 
 ### Idle Filling
 

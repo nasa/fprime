@@ -646,26 +646,29 @@ void ComAggregatorTester ::test_reconfigure_without_cleanup_asserts() {
 void ComAggregatorTester ::test_configure_invalid_size_asserts() {
     ComAggregator unconfigured("Unconfigured");
     CountingAllocator allocator;
-    // Spanning or not, an aggregate must hold more than a minimum idle packet
-    ASSERT_DEATH_IF_SUPPORTED(
-        unconfigured.configure(Ccsds::Utils::IdlePacket::MIN_SIZE, true, TEST_ALLOCATION_ID, allocator),
-        "ComAggregator.cpp");
-    ASSERT_DEATH_IF_SUPPORTED(
-        unconfigured.configure(Ccsds::Utils::IdlePacket::MIN_SIZE, false, TEST_ALLOCATION_ID, allocator),
-        "ComAggregator.cpp");
-    // Without spanning, a maximum-size Space Packet must fit next to a minimum idle packet
-    ASSERT_DEATH_IF_SUPPORTED(unconfigured.configure(ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE - 1, false,
-                                                     TEST_ALLOCATION_ID, allocator),
-                              "ComAggregator.cpp");
-    // With spanning, every header offset must be representable as a First Header Pointer
-    ASSERT_DEATH_IF_SUPPORTED(
-        unconfigured.configure(static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY) + 1, true,
-                               TEST_ALLOCATION_ID, allocator),
-        "ComAggregator.cpp");
-    // Without spanning, the largest residual (aggregationSize - 1) must be expressible as an idle packet
-    ASSERT_DEATH_IF_SUPPORTED(
-        unconfigured.configure(Ccsds::Utils::IdlePacket::MAX_SIZE + 2, false, TEST_ALLOCATION_ID, allocator),
-        "ComAggregator.cpp");
+    struct InvalidSize {
+        FwSizeType aggregationSize;
+        bool spanning;
+    };
+    const InvalidSize invalidSizes[] = {
+        // Spanning or not, an aggregate must hold more than a minimum idle packet
+        {Ccsds::Utils::IdlePacket::MIN_SIZE, true},
+        {Ccsds::Utils::IdlePacket::MIN_SIZE, false},
+        // Without spanning, a maximum-size Space Packet must fit next to a minimum idle packet
+        {ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE - 1, false},
+        // With spanning, every header offset must be representable as a First Header Pointer
+        {static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY) + 1, true},
+        // Without spanning, the largest residual (aggregationSize - 1) must be expressible as an idle packet
+        {Ccsds::Utils::IdlePacket::MAX_SIZE + 2, false},
+    };
+    for (const InvalidSize& invalid : invalidSizes) {
+        ASSERT_DEATH_IF_SUPPORTED(
+            unconfigured.configure(invalid.aggregationSize, invalid.spanning, TEST_ALLOCATION_ID, allocator),
+            "ComAggregator.cpp")
+            << "aggregationSize " << invalid.aggregationSize << " spanning " << invalid.spanning;
+        ASSERT_EQ(unconfigured.m_allocation, nullptr);
+    }
+    ASSERT_EQ(allocator.m_allocations, 0);
     // Sizes at the bounds are accepted
     ComAggregator smallest("Smallest");
     smallest.configure(ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE, false, TEST_ALLOCATION_ID, allocator);
@@ -729,6 +732,7 @@ void ComAggregatorTester ::test_cleanup() {
 
 void ComAggregatorTester ::test_datain_after_cleanup_asserts() {
     this->component.cleanup();
+    ASSERT_EQ(this->component.m_allocation, nullptr);
     ComCfg::FrameContext context;
     Fw::Buffer buffer = this->fill_buffer(1);
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "ComAggregator.cpp");
@@ -748,6 +752,40 @@ void ComAggregatorTester ::test_cleanup_while_held_asserts() {
     this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(0).data),
                                  this->fromPortHistory_dataOut->at(0).context);
     ASSERT_EQ(this->component.m_bufferState, Fw::Buffer::OwnershipState::OWNED);
+    this->clearHistory();
+}
+
+void ComAggregatorTester ::test_cleanup_returns_held_packet() {
+    // Precondition: initial has run
+    const FwSizeType FIRST_SIZE = 100;
+    this->fill_with(static_cast<U32>(FIRST_SIZE));
+    // Leave a residual too small for an idle packet so the second packet is held for the next aggregate
+    Fw::Buffer buffer = fill_buffer(static_cast<U32>(this->aggregation_size() - FIRST_SIZE - 1));
+    ComCfg::FrameContext context;
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_EQ(this->dispatchOne(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);  // Dispatch the state machine
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(0);
+    ASSERT_TRUE(this->component.m_held.get_data().isValid());
+    this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(0).data),
+                                 this->fromPortHistory_dataOut->at(0).context);
+    // cleanup() returns the held packet and drops the per-aggregate state
+    this->component.cleanup();
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
+    ASSERT_FALSE(this->component.m_held.get_data().isValid());
+    ASSERT_EQ(this->component.m_heldOffset, 0);
+    ASSERT_EQ(this->component.m_pendingIdleCount, 0);
+    ASSERT_EQ(this->component.m_leadingIdleCount, 0);
+    ASSERT_EQ(this->component.m_fhp, static_cast<U16>(ComAggregator::FHP_UNSET));
+    ASSERT_FALSE(this->component.m_lastFrameLost);
+    ASSERT_EQ(this->component.m_allocation, nullptr);
+    ASSERT_EQ(this->component.m_allocator, nullptr);
+    // A repeated cleanup() returns nothing further
+    this->component.cleanup();
+    ASSERT_from_dataReturnOut_SIZE(1);
+    delete[] buffer.getData();
     this->clearHistory();
 }
 

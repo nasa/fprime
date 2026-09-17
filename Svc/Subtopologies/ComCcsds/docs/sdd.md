@@ -35,7 +35,7 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 | `fprimeRouter`        | `Svc.FprimeRouter` (default; configurable via `ComCcsdsRouterConfig.fpp`) | Passive | Routes deframed packets (e.g., commands/files) into the flight software.                        |
 | `comQueue`            | `Svc.ComQueue`                  | Active  | Queues categorized COM data for framing (telemetry, events, file, etc.); exposes `run`.         |
 | `spacePacketFramer`   | `Svc.Ccsds.SpacePacketFramer`   | Passive | Builds **CCSDS Space Packets** from COM buffers (downlink step 1).                              |
-| `framer`              | `Svc.Ccsds.TmFramer`            | Passive | Builds **CCSDS TM Transfer Frames** from space packets and sends to the link (downlink step 2). |
+| `framer`              | `Svc.Ccsds.TmFramer`            | Passive | Builds **CCSDS TM Transfer Frames** from the idle-filled aggregates emitted by `aggregator` and sends to the link (downlink step 3). |
 | `spacePacketDeframer` | `Svc.Ccsds.SpacePacketDeframer` | Passive | Deframes F Prime data from **CCSDS Space Packets** (uplink step 2).                             |
 | `tcDeframer`          | `Svc.Ccsds.tcFramer`            | Passive | Deframes **CCSDS Space Packets** from  **CCSDS TM Transfer Frames** (uplink step 1).            |
 | `frameAccumulator`    | `Svc.FrameAccumulator`          | Passive | Collects bytes from the link and emits complete frames/packets for deframing (uplink path).     |
@@ -210,6 +210,10 @@ topology Flight {
 * **Priorities** — RTOS priorities for active/queued components as applicable.
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
 * **Aggregator** — `Aggregator.aggregationSize` is the size of every aggregate the `aggregator` instance emits (idle-filled by the aggregator, see `Svc.ComAggregator`); it defaults to `Svc.Ccsds.TmDataFieldSize`, the TM Transfer Frame Data Field expected by `Svc.Ccsds.TmFramer`, and is passed to `aggregator.configure()` in the `configComponents` phase together with `Allocation.memAllocator`, which supplies the aggregate storage (released by `aggregator.cleanup()` in `tearDownComponents`). Any layer inserted between `aggregator` and `framer` that adds bytes (e.g. `ComCcsdsSdls`, +`Svc.Ccsds.SdlsSaIndexSize`) requires the project to reduce `Aggregator.aggregationSize` by that overhead; the phase `static_assert`s that the value does not exceed `Svc.Ccsds.TmDataFieldSize`. `Aggregator.enablePacketSpanning` controls whether the instance spans CCSDS TM packets across transfer frames; `false` by default.
+
+  Projects supplying a pool-based `Allocation.memAllocator` must serve these allocation identifiers: `0` (`comQueue` and `commsBufferManager` bins), `1` (`frameAccumulator`, `BuffMgr.frameAccumulatorSize` bytes) and `2` (`aggregator`, `Aggregator.aggregationSize` bytes).
+
+  > **Upgrading:** `Aggregator.aggregationSize` replaces the former global `ComCfg.AggregationSize`. Projects that override `ComCcsdsConfig.fpp` must add the `Aggregator.aggregationSize` constant (and move any SDLS/encryptor size adjustment there). Topologies that connect a Space Packet source directly to `Svc.Ccsds.TmFramer` must route through `Svc.ComAggregator`: the framer no longer idle-fills and asserts unless it receives exactly `Svc.Ccsds.TmDataFieldSize` bytes.
 
 ### 4.2 Buffer Manager Bin Configuration
 

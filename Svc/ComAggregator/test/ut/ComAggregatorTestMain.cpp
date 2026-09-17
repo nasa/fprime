@@ -139,11 +139,18 @@ TEST(Lifecycle, CleanupWhileHeld) {
     tester.test_cleanup_while_held_asserts();
 }
 
+TEST(Lifecycle, CleanupReturnsHeldPacket) {
+    Svc::ComAggregatorTester tester;
+    tester.test_initial();
+    tester.test_cleanup_returns_held_packet();
+}
+
 // Per-instance aggregation size: the smallest size non-spanning supports
 TEST(PerInstance, MinimumNonSpanningSize) {
     Svc::ComAggregatorTester tester(Svc::ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE);
     tester.test_initial();
     tester.test_exactly_full();
+    tester.test_small_residual_holds();
     tester.test_fill_multi();
     tester.test_timeout();
 }
@@ -159,6 +166,7 @@ TEST(PerInstance, SmallAggregationSize) {
     tester.test_full();
     tester.test_fill_multi();
     tester.test_timeout();
+    tester.test_small_residual_holds();
     tester.test_fill_multi();
     tester.test_exactly_full();
 }

@@ -69,7 +69,7 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     // ----------------------------------------------------------------------
 
     //! Construct object ComAggregatorTester, configuring the component under test
-    ComAggregatorTester(FwSizeType aggregationSize = DEFAULT_AGGREGATION_SIZE, bool spanning = false);
+    explicit ComAggregatorTester(FwSizeType aggregationSize = DEFAULT_AGGREGATION_SIZE, bool spanning = false);
 
     //! Destroy object ComAggregatorTester
     ~ComAggregatorTester();
@@ -141,6 +141,9 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
 
     //! cleanup() asserts while the aggregate is held downstream
     void test_cleanup_while_held_asserts();
+
+    //! cleanup() returns a packet held for the next aggregate and drops the per-aggregate state
+    void test_cleanup_returns_held_packet();
 
     //! Tests that, without spanning, a held packet larger than an aggregate asserts
     void test_oversize_hold_asserts();

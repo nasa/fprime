@@ -74,11 +74,22 @@ void ComAggregator ::cleanup() {
         // The aggregate must not be held downstream when its storage is released
         FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::OWNED,
                   static_cast<FwAssertArgType>(this->m_bufferState.load()));
+        // Return a held packet to its owner and drop the per-aggregate state so a later configure() starts clean
+        if (this->m_held.get_data().isValid()) {
+            this->dataReturnOut_out(0, const_cast<Fw::Buffer&>(this->m_held.get_data()), this->m_held.get_context());
+        }
+        this->m_held = Svc::ComDataContextPair();
+        this->m_heldOffset = 0;
+        this->m_fhp = FHP_UNSET;
+        this->m_pendingIdleCount = 0;
+        this->m_leadingIdleCount = 0;
+        this->m_lastFrameLost = false;
         this->m_frameSerializer.setExtBuffer(nullptr, 0);
         this->m_frameBuffer.set(nullptr, 0);
         this->m_aggregationSize = 0;
         this->m_allocator->deallocate(this->m_allocationId, this->m_allocation);
         this->m_allocation = nullptr;
+        this->m_allocator = nullptr;
     }
 }
 
