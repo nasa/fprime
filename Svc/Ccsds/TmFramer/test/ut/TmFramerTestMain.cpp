@@ -41,14 +41,9 @@ TEST(TmFramer, testFirstHeaderPointerFromContext) {
     tester.testFirstHeaderPointerFromContext();
 }
 
-TEST(TmFramer, testResidualTooSmallForIdlePacket) {
+TEST(TmFramer, testPartialDataFieldAsserts) {
     Svc::Ccsds::TmFramerTester tester;
-    tester.testResidualTooSmallForIdlePacket();
-}
-
-TEST(TmFramer, testFullDataFieldNoIdleFill) {
-    Svc::Ccsds::TmFramerTester tester;
-    tester.testFullDataFieldNoIdleFill();
+    tester.testPartialDataFieldAsserts();
 }
 
 int main(int argc, char** argv) {
