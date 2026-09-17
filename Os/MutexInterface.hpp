@@ -7,7 +7,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Os.hpp>
-#include "config/OsDelegateMutex.hpp"
+#include "config/OsDelegateMutex.hpp"  // defines Os::Mutex alias and OS_MUTEX_HEADER consumed by Os/Mutex.hpp; keep first
 
 namespace Os {
 
