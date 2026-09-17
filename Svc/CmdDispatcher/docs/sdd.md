@@ -15,6 +15,7 @@ CD-002 | The `Svc::CmdDispatcher` component shall dispatch commands to component
 CD-003 | The `Svc::CmdDispatcher` component shall provide an interface to register commands | Inspection
 CD-004 | The `Svc::CmdDispatcher` component shall process command status from components and report the results to the command buffer sender. | Unit Test
 CD-005 | The `Svc::CmdDispatcher` component shall drop incoming commands to avert a queue overflow (DOS attack). | Unit Test
+CD-006 | The `Svc::CmdDispatcher` component shall count every dropped command, including drops occurring concurrently on multiple caller threads, and report the count in the `CommandsDropped` telemetry channel. | Unit Test
 
 ## 3. Design
 
@@ -102,6 +103,8 @@ sequenceDiagram
 
 `Svc::CmdDispatcher` has no state machines.
 
+The dropped-command counter backing the `CommandsDropped` channel is incremented by the `seqCmdBuff` overflow hook, which runs on the thread of each caller when the queue is full. The counter is therefore an atomic (`std::atomic<U32>`) so concurrent drops are never lost and the value read by `run` is never torn.
+
 ### 3.5 Algorithms
 
 `Svc::CmdDispatcher` has no significant algorithms.
@@ -130,6 +133,7 @@ Date | Description
 5/05/2025 | Added a note about Fw::CmdResponse::cmdSeq usage in seqCmdStatus
 9/03/2026 | CMD_CLEAR_TRACKING reports Fw::CmdResponse::CLEARED to callers of pending commands
 9/03/2026 | Added a note about sequence number allocation after wraparound
+9/14/2026 | Dropped-command counter made atomic; added CD-006
 
 
 

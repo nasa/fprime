@@ -26,6 +26,10 @@ class SdlsFileKeyManagerTester : public SdlsFileKeyManagerGTestBase {
     //! Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
+    //! Security association index used in key requests; this manager serves one key
+    //! regardless of the SA, so the value only has to be well-formed
+    static const U16 TEST_SA_INDEX = 1;
+
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction

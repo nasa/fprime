@@ -6,17 +6,19 @@ module ComCcsdsSdlsConfig {
 }
 
 module ComCcsdsSdls {
-    @ Default decryptor handling the base security association (SdlsSaRouter port 0).
-    @ Defined in the configuration module so projects may override the configuration
-    @ to select a different decryptor implementation.
+    @ Default decryptor, connected to the SdlsSaRouter's SdlsCfg.SaRouterPorts.PLAINTEXT
+    @ port, which the default SA map reaches with SA 1. Defined in the configuration
+    @ module so projects may override the configuration to select a different decryptor
+    @ implementation.
     @
     @ WARNING: the default Svc.Ccsds.ClearTextDecryptor provides NO security: no
     @ confidentiality, no integrity, and no authentication.
     instance decryptor: Svc.Ccsds.ClearTextDecryptor base id ComCcsdsSdlsConfig.BASE_ID + 0x02000
 
-    @ Default encryptor used by the SDLS framer on the downlink path. Defined in the
-    @ configuration module so projects may override the configuration to select a
-    @ different encryptor implementation.
+    @ Default encryptor used by the SDLS framer on the downlink path, connected to the
+    @ SdlsSaRouter's SdlsCfg.SaRouterPorts.PLAINTEXT port, which the default SA map
+    @ reaches with SA 1. Defined in the configuration module so projects may override
+    @ the configuration to select a different encryptor implementation.
     @
     @ WARNING: the default Svc.Ccsds.ClearTextEncryptor provides NO security: no
     @ confidentiality, no integrity, and no authentication.

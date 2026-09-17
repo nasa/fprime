@@ -238,6 +238,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_LoadRequest& value) {
     FW_ASSERT(this->m_wasm != nullptr);
+    FW_ASSERT(this->m_guest_allocator != nullptr);
 
     this->m_args = value.get_args();
 
@@ -263,29 +264,15 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
 
     this->takeAllocatorLock();
 
-    // A per-load guest linear-memory allocator. Backed by m_guestPool; released
-    // immediately after load (the module retains its own reference).
-    spacewasm_allocator_t* alloc =
-        spacewasm_allocator_new(&WasmSequencer::guestAllocCallback, &WasmSequencer::guestReallocCallback,
-                                &WasmSequencer::guestDeallocCallback, /* userdata */ this);
-    if (alloc == nullptr) {
-        // We could not create the guest memory allocator
-        this->log_WARNING_HI_ModuleLoadFailed(WasmSequencer_Status(SPACEWASM_ERR_ALLOC_FAILED));
-        this->releaseAllocatorLock();
-        file.close();
-        this->controller_sendSignal_loadFailed(value.get_context());
-        return;
-    }
-
     U32 moduleIndex = 0;
     Svc::WasmSequencer_RequestContext next = value.get_context();
 
     WasmFileReader reader(file);
 
-    auto status = spacewasm_load_module(this->m_wasm, value.get_moduleName().toChar(),
-                                        &WasmFileReader::readChunkCallback, &reader, alloc, &moduleIndex);
+    auto status =
+        spacewasm_load_module(this->m_wasm, value.get_moduleName().toChar(), &WasmFileReader::readChunkCallback,
+                              &reader, this->m_guest_allocator, &moduleIndex);
 
-    spacewasm_allocator_destroy(alloc);
     next.set_moduleIdx(static_cast<WasmSequencer_ModuleIdx>(moduleIndex));
 
     this->releaseAllocatorLock();

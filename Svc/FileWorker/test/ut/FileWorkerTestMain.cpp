@@ -51,6 +51,16 @@ TEST(Nominal, testAppending) {
     tester.testAppending();
 }
 
+TEST(Nominal, testWriteReadRoundTrip) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteReadRoundTrip();
+}
+
+TEST(Nominal, testWriteTruncatesExisting) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteTruncatesExisting();
+}
+
 TEST(Nominal, testTimeout) {
     Svc::FileWorkerTester tester;
     tester.testTimeout();

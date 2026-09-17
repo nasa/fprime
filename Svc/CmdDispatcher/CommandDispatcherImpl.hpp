@@ -13,6 +13,8 @@
 #ifndef COMMANDDISPATCHERIMPL_HPP_
 #define COMMANDDISPATCHERIMPL_HPP_
 
+#include <atomic>
+
 #include <Fw/DataStructures/ArrayMap.hpp>
 #include <Fw/DataStructures/RedBlackTreeMap.hpp>
 #include <Os/Mutex.hpp>
@@ -181,7 +183,8 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
 
     U32 m_numCmdsDispatched;  //!< number of commands dispatched
     U32 m_numCmdErrors;       //!< number of commands with an error
-    U32 m_numCmdsDropped;     //!< number of commands dropped due to buffer overflow
+    std::atomic<U32>
+        m_numCmdsDropped;  //!< number of commands dropped due to queue overflow (incremented on caller threads)
 };
 }  // namespace Svc
 

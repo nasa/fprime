@@ -23,7 +23,7 @@ hidden metadata.
 
 The C/C++ design rules this agent enforces live in
 `.github/skills/fprime-cpp-design/SKILL.md`. That skill is the
-single source of truth for the rule set (CPP-1 through CPP-34) and
+single source of truth for the rule set (CPP-1 through CPP-37) and
 the finding-class vocabulary; this agent file specifies how the
 multi-agent flow applies it on a PR.
 
@@ -32,7 +32,7 @@ multi-agent flow applies it on a PR.
 ## Scope
 
 You flag findings on touched C/C++ source where the offending
-construct violates one of the rules CPP-1 through CPP-34 in
+construct violates one of the rules CPP-1 through CPP-37 in
 `.github/skills/fprime-cpp-design/SKILL.md`. The "introduced by this
 PR" test (`.github/skills/pr-diff-scoping/SKILL.md`) applies; pre-
 existing rule violations become `**future work**`.
@@ -97,6 +97,9 @@ reference (the skill is authoritative):
 - `cpp-inlined-utility` (CPP-33)
 - `cpp-while-loop-for-counted-iteration` /
   `cpp-unbounded-loop` (CPP-34)
+- `cpp-bool-status-where-enum-fits` (CPP-35)
+- `cpp-event-not-uniquely-traceable` (CPP-36)
+- `cpp-command-without-event` (CPP-37)
 
 The agent's per-finding inline comment cites the CPP-N rule number
 in the body so reviewers can map back to the skill.
@@ -131,13 +134,18 @@ For each touched file in the PR diff, scan in this order:
    `std::vector`, `std::map`, `std::string`, `dynamic_cast`,
    `typeid`), then verify each hit in context.
 4. **`+` lines for F Prime type idioms (CPP-3, CPP-21, CPP-22,
-   CPP-23, CPP-24, CPP-28)**. Scan signatures and member
-   declarations for bare C/C++ numerical types where a fixed-size
-   or configurable `Fw*` type belongs (CPP-3, CPP-28); for C-style
+   CPP-23, CPP-24, CPP-28, CPP-35, CPP-36, CPP-37)**. Scan signatures
+   and member declarations for bare C/C++ numerical types where a
+   fixed-size or configurable `Fw*` type belongs (CPP-3, CPP-28); for C-style
    array interfaces (CPP-21); for bare containers where
    `Fw/DataStructures` fits (CPP-22); and for `char*` strings where
-   `Fw::String` fits (CPP-24). Particularly check public APIs and
-   ground-facing interfaces (CPP-23).
+   `Fw::String` fits (CPP-24); and for `bool` returns or event /
+   telemetry arguments that encode an outcome or rejection reason
+   where an FPP enum belongs (CPP-35); and for the same `log_*`
+   event emitted from more than one site with an indistinguishable
+   argument set (CPP-36); and for `*_cmdHandler` bodies that emit no
+   event describing the action taken (CPP-37). Particularly check
+   public APIs and ground-facing interfaces (CPP-23).
 5. **External-reference rules (CPP-26, CPP-27)**. Apply where the
    touched lines pattern-match a wiki / JPL clause; cite the
    specific section.
@@ -241,9 +249,13 @@ guide. Summarized here for fast reference:
 - **Memory & lifetime (CPP-1, 2, 17, 19, 20)**: default `**must
   fix**`. Memory-safety guarantees do not have a non-blocking tier.
 - **Asserts on untrusted inputs (CPP-4)**: always `**must fix**`.
-- **F Prime type idioms (CPP-3, 21, 22, 23, 24, 28)**: default
+- **F Prime type idioms (CPP-3, 21, 22, 23, 24, 28, 35, 36, 37)**: default
   `**suggestion**` with a fenced suggestion block; upgrade to
-  `**must fix**` on ground-facing surfaces (CPP-23).
+  `**must fix**` on ground-facing surfaces (CPP-23) or when a
+  `bool` status reaches an event / telemetry channel (CPP-35);
+  CPP-36 (untraceable event emission) always `**must fix**`;
+  CPP-37 (command without event) `**must fix**` for new or changed
+  handlers.
 - **Language subset (CPP-5–16, 18, 25)**: default `**suggestion**`
   or `**could fix**`; upgrade to `**must fix**` when the change
   introduces exceptions / RTTI / STL build-time dependencies

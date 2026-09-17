@@ -16,19 +16,23 @@ module SdlsCfg {
 
     @ Enumeration of the downstream crypto component ports on the SdlsSaRouter
     enum SaRouterPorts : FwIndexType {
-        PLAINTEXT = 0
-        UNCONNECTED = 1
+        UNCONNECTED = 0
+        PLAINTEXT = 1
     }
 
-    @ Compile-time map from security association index to downstream port index. Projects
-    @ may define sparse or non-linear SA ranges that map down to a compact, linear port
-    @ array. Port indices must be in [0, SaRouterPortCount).
+    @ Compile-time default map from security association index to downstream port index. SA
+    @ ranges may be sparse or non-linear; port indices must be in [0, SaRouterPortCount).
     @
-    @ This default configuration maps SA 0 to the plain-text (no security) port; the second
-    @ entry maps SA 1 to a port that standard topologies may leave unconnected.
+    @ CCSDS 355.0-B-2 reserves SPI 0 and 65535 for Extended Procedures; an SA is simplex
+    @ (sect. 2.3.1.1), so each direction needs its own SPI and routing table.
+    @
+    @ Maps the uplink SPI to the plain-text port and Extended Procedures to a port standard
+    @ topologies leave unconnected. A deployment with one router per direction -- as ComCcsdsSdls
+    @ has -- must give each its own table via SdlsSaRouter::configure(); sharing one lets each
+    @ direction accept the other's SPI, defeating SA verification (sect. 4.2.4.3).
     array SaMap = [SaRouterMapEntryCount] Svc.Ccsds.SaMapEntry default [
-        { securityAssociationIndex = 0, portIndex = SaRouterPorts.PLAINTEXT },
-        { securityAssociationIndex = 1, portIndex = SaRouterPorts.UNCONNECTED }
+        { securityAssociationIndex = 1, portIndex = SaRouterPorts.PLAINTEXT },
+        { securityAssociationIndex = 0, portIndex = SaRouterPorts.UNCONNECTED }
     ]
 
 }

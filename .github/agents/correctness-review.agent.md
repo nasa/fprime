@@ -420,7 +420,7 @@ Append a maintainer ping per
   one clause and leave the security assessment to that agent.
 - **Supply-chain and CI runner safety** — handled by
   `supply-chain-review.agent.md`.
-- **C/C++ idiom, style, and the CPP-1..CPP-34 rule set** — handled by
+- **C/C++ idiom, style, and the CPP-1..CPP-37 rule set** — handled by
   `fprime-code-review.agent.md`. A rule violation that is *also* a
   wrong result is in scope for you; a rule violation that merely
   departs from house style is not.

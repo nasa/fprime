@@ -16,6 +16,7 @@
 #include "STest/Pick/Pick.hpp"
 #include "Svc/DpWriter/test/ut/Rules/BufferSendIn.hpp"
 #include "Svc/DpWriter/test/ut/Rules/Testers.hpp"
+#include "config/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -488,6 +489,28 @@ void TestState ::testFileNameFormatError() {
     }
 }
 
+void TestState::testRoutingPorts() {
+    auto& fileData = Os::Stub::File::Test::StaticData::data;
+    for (FwIndexType portNum = 0; portNum < DpWriterNumPorts; ++portNum) {
+        this->clearHistory();
+        this->abstractState.m_dpWrittenOutPortNumOpt.reset();
+        this->abstractState.m_deallocBufferSendOutPortNumOpt.reset();
+        fileData.pointer = 0;
+
+        Fw::Buffer buffer = this->abstractState.getDpBuffer();
+        this->invoke_to_bufferSendIn(portNum, buffer);
+        this->doDispatch();
+
+        ASSERT_from_dpWrittenOut_SIZE(1);
+        ASSERT_from_deallocBufferSendOut_SIZE(1);
+        ASSERT_from_deallocBufferSendOut(0, buffer);
+        ASSERT_TRUE(this->abstractState.m_dpWrittenOutPortNumOpt.has_value());
+        ASSERT_TRUE(this->abstractState.m_deallocBufferSendOutPortNumOpt.has_value());
+        ASSERT_EQ(this->abstractState.m_dpWrittenOutPortNumOpt.value(), portNum);
+        ASSERT_EQ(this->abstractState.m_deallocBufferSendOutPortNumOpt.value(), portNum);
+    }
+}
+
 namespace BufferSendIn {
 
 // ----------------------------------------------------------------------
@@ -543,6 +566,11 @@ void Tester::OK() {
 
 void Tester::OKProcShrink() {
     this->ruleOKProcShrink.apply(this->testState);
+    this->testState.printEvents();
+}
+
+void Tester::RoutingPorts() {
+    this->testState.testRoutingPorts();
     this->testState.printEvents();
 }
 

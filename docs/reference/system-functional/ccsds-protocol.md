@@ -13,6 +13,8 @@
 - [F Prime CcsdsSdlsDeframer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/CcsdsSdlsDeframer/docs/sdd.md)
 - [F Prime SdlsSaRouter SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/SdlsSaRouter/docs/sdd.md)
 - [F Prime SdlsFileKeyManager SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/SdlsFileKeyManager/docs/sdd.md)
+- [F Prime AesGcmEncryptor SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AesGcmEncryptor/docs/sdd.md)
+- [F Prime AesGcmDecryptor SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AesGcmDecryptor/docs/sdd.md)
 - [CCSDS Space Packet Protocol (133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf)
 - [CCSDS TM Space Data Link Protocol (132.0-B-3)](https://ccsds.org/Pubs/132x0b3.pdf)
 - [CCSDS TC Space Data Link Protocol (232.0-B-4)](https://ccsds.org/Pubs/232x0b4e1c1.pdf)
@@ -37,7 +39,7 @@ By default, APIDs are assigned based on the F Prime data descriptor type (comman
 
 ### TM Space Data Link Protocol
 
-The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.0-B-3) for downlink. It wraps payload data (such as Space Packets) into TM Transfer Frames for transmission over the space link. The current implementation supports a single Virtual Channel Identifier (VCID).
+The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.0-B-3) for downlink. It wraps payload data (such as Space Packets) into TM Transfer Frames for transmission over the space link. The current implementation supports a single Virtual Channel Identifier (VCID). `ComCfg::AggregationSize` is the full TM data field available to the upstream [ComAggregator](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md); with spanning disabled, its maximum aggregate is `ComCfg::AggregationSize - 7` so the framer can add an idle packet. When packet spanning is enabled in the upstream [ComAggregator](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md) (`ComCcsdsConfig.Aggregator.enablePacketSpanning`), Space Packets may span consecutive TM Transfer Frames and the First Header Pointer in each frame locates the first packet header, per 132.0-B-3 section 4.1.2.7.6; spanning is disabled by default. Enabling it requires a ground deframer that reassembles spanned packets using the First Header Pointer.
 
 ### TC Space Data Link Protocol
 
@@ -55,7 +57,8 @@ An optional SDLS layer provides per-frame encryption and decryption keyed by a 1
 - **CcsdsSdlsDeframer** — Extracts the SA index from incoming frames and delegates decryption (uplink).
 - **SdlsSaRouter** — Routes encryption/decryption requests to downstream crypto components based on the SA index.
 - **SdlsFileKeyManager** — Supplies encryption keys read from a configured file.
-- **ClearTextEncryptor / ClearTextDecryptor** — Pass-through default crypto components (**no security**), for use until a real algorithm is integrated.
+- **ClearTextEncryptor / ClearTextDecryptor** — Pass-through default crypto components (**no security**); the defaults selected by the `Svc.ComCcsdsSdls` subtopology configuration.
+- **AesGcmEncryptor / AesGcmDecryptor** — AES-256-GCM authenticated encryption (OpenSSL 3.x), producing/consuming an `IV (12) | ciphertext | MAC (16)` security payload with the VC and SA index authenticated as additional data. The decryptor reports a failed MAC check as `MAC_VERIFICATION_FAILURE`, distinct from `DECRYPTION_FAILURE`. Each frame's 28-byte overhead must be subtracted from `ComCfg.AggregationSize` (see the `Svc.ComCcsdsSdls` SDD).
 
 ### Protocol Layering
 

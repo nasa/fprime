@@ -39,8 +39,10 @@ class SdlsFileKeyManager final : public SdlsFileKeyManagerComponentBase {
 
     //! Handler implementation for keyGet
     //!
-    //! Port to receive a key request: fills the provided buffer with the key
+    //! Port to receive a key request: fills the provided buffer with the key. This manager
+    //! holds a single key file, so it serves the same key for every security association.
     Svc::Ccsds::SdlsStatus keyGet_handler(FwIndexType portNum,  //!< The port number
+                                          U16 securityAssociationIndex,
                                           Svc::Ccsds::SdlsKeyBuffer& key) override;
 
     // ----------------------------------------------------------------------

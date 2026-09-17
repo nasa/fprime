@@ -40,6 +40,7 @@ Logging is controlled by a volatile state (`LogState`): `LOGGING_ON` (default at
 * File names have the form `<prefix><baseName><suffix>` for the first file after `BL_OpenFile`, and `<prefix><baseName><counter><suffix>` for subsequent files, where the counter increments each time a file fills up.
 * Each logged buffer is written as a size field (of `sizeOfSize` bytes, configured via `initLog`) followed by the buffer data.
 * When a write would exceed the configured maximum file size, the current file is closed and a new one is opened.
+* New log files truncate any existing file at the same path.
 * On close, a companion hash file is written for ground-side validation (see `Utils::Hash`); failures produce `BL_LogFileValidationError`.
 * Logging before any `BL_OpenFile` command has set a base name produces `BL_NoLogFileOpenInitError`.
 

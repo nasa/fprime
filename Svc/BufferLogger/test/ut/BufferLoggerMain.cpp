@@ -55,6 +55,11 @@ TEST(TestLogging, OnOff) {
     tester.OnOff();
 }
 
+TEST(TestLogging, Truncate) {
+    Svc::Logging::BufferLoggerTester tester;
+    tester.Truncate();
+}
+
 // ----------------------------------------------------------------------
 // Test Health
 // ----------------------------------------------------------------------

@@ -3220,6 +3220,37 @@ TEST_F(WasmSequencerTester, LoadWhileReadyReloads) {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
+TEST_F(WasmSequencerTester, LoadMemorylessModuleSucceeds) {
+    REQUIREMENT("WASM-SEQ-001");
+    // The memory-less fixture is a valid module and a single LOAD of it works.
+    StagedAsset nomem_asset(*this, "nomem.wasm");
+    this->sendCmd_LOAD(0, 180, nomem_asset.file(), Fw::CmdStringArg("lib"));
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 180, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_ModuleLoadFailed_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, LoadAfterMemorylessModuleSucceeds) {
+    REQUIREMENT("WASM-SEQ-001");
+    // LOAD a memory-less module, then LOAD another module from READY.
+    StagedAsset nomem_asset(*this, "nomem.wasm");
+    StagedAsset empty_asset(*this, "empty.wasm");
+    this->sendCmd_LOAD(0, 181, nomem_asset.file(), Fw::CmdStringArg("lib"));
+    this->dispatchUntilControllerState(ControllerState::READY);
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+
+    this->sendCmd_LOAD(0, 182, empty_asset.file(), Fw::CmdStringArg("app"));
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 181, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_LOAD, 182, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_ModuleLoadFailed_SIZE(0);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
 TEST_F(WasmSequencerTester, PauseWhileAwaitingResponseIsPending) {
     REQUIREMENT("WASM-SEQ-009");
     // PAUSE from RUNNING_AWAITING_RESPONSE records a pending pause (cmd_PAUSE

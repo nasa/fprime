@@ -25,7 +25,7 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 | Kind | Name | Port Type | Description |
 |---|---|---|---|
 | Input (guarded) | dataIn | Svc.ComDataWithContext | Port to receive framed data |
-| Output | dataOut | Svc.ComDataWithContext | Port to output deframed data |
+| Output | dataOut | Svc.ComDataWithContext | Port to output deframed data. The emitted `ComCfg.FrameContext` carries the frame's Virtual Channel ID in its `vcId` field. |
 | Output | dataReturnOut | Svc.ComDataWithContext | Port for returning ownership of received buffers to deframe |
 | Input (sync) | dataReturnIn | Svc.ComDataWithContext | Port receiving back ownership of sent buffers |
 | Output | errorNotify | Ccsds.ErrorNotify | Port to send notification of deframing errors |
@@ -53,3 +53,4 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 | SVC-CCSDS-TC-DEFRAMER-008 | The TcDeframer shall log an `InvalidCrc` event if a frame fails the CRC check. | Unit Test |
 | SVC-CCSDS-TC-DEFRAMER-009 | The TcDeframer shall provide an input port (`dataIn`) to receive framed data, and emit deframed data packets on its `dataOut` output port. | Unit Test |
 | SVC-CCSDS-TC-DEFRAMER-010 | The TcDeframer shall emit notifications on its `errorNotify` port when deframing errors occur. | Unit Test |
+| SVC-CCSDS-TC-DEFRAMER-011 | The TcDeframer shall record the received frame's Virtual Channel ID in the `vcId` field of the `ComCfg.FrameContext` emitted on `dataOut`. | Unit Test |
