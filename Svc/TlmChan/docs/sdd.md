@@ -48,7 +48,9 @@ Port Data Type | Name | Direction | Kind | Usage
 
 #### 3.2 Functional Description
 
-The `Svc::TlmChan` component has an input port `TlmRecv` that receives channel updates from other components in the system. These calls from the other components are made by the component implementation classes, but the generated code in the base classes takes the type specific channel value and serializes it, then makes the call to the output port. The `Svc::TlmChan` component can then store the channel value as generic data. The channel values are stored in an internal double-buffered table, and a flag is set when a new value is written to the channel entry.
+The `Svc::TlmChan` component has an input port `TlmRecv` that receives channel updates from other components in the system. These calls from the other components are made by the component implementation classes, but the generated code in the base classes takes the type specific channel value and serializes it, then makes the call to the output port. The `Svc::TlmChan` component can then store the channel value as generic data. The channel values are stored in an internal double-buffered table, and a flag is set when a new value is written to the channel entry. Each buffer also keeps a set of the bucket indices whose flag is set (an `Fw::RedBlackTreeSet` sized to the bucket count). `TlmRecv` inserts the bucket index when it sets the flag; inserting an index that is already present is a no-op, so repeated updates of one channel within a cycle do not grow the set.
+
+The `Run` handler swaps the active buffer under the component mutex, then clears the flags of only the buckets recorded in the newly active buffer's set and empties that set. It then walks the inactive buffer's set, in ascending bucket order, to serialize and send the updated channels. Both steps therefore cost time proportional to the number of channels updated in a cycle rather than to `TLMCHAN_HASH_BUCKETS`, and the mutex is held for the shorter of the two.
 
 When a request is made for a nonexistent channel, the call will return with an empty buffer in the Fw::TlmBuffer value argument. This is to cover the case where a channel is defined in the system, but has not been written yet. If the channel has not ever been defined, there is no way to programmatically determine that from the TlmGet port call.
 
@@ -136,6 +138,7 @@ Date | Description
 7/22/2015 | Design review actions
 9/28/2015 | Unit Test Review additions
 2026 | Added seeded Murmur3/Wang hash algorithm (replaces linear modulo); added `TLMCHAN_MAX_ENTRIES_PER_RUN` processing cap; added `TlmChanEpochProcessingCapReached` WARNING_HI event; added `timeCaller`, `eventOut`, `eventOutText`, `pingIn`, `pingOut` ports
+2026-09-16 | Added a per-buffer set of updated bucket indices so `Run` clears flags and sends channels in time proportional to the number of updated channels instead of scanning every bucket twice
 
 
 
