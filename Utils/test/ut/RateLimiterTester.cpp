@@ -127,6 +127,35 @@ void RateLimiterTester ::testCounterAndTimeTriggering() {
     }
 }
 
+void RateLimiterTester ::testTimeBase() {
+    const U32 timeCycle = 3;
+    const TimeBase base = TimeBase::TB_WORKSTATION_TIME;
+    const FwTimeContextStoreType context = 7;
+
+    // Times in a real time base trigger on the same schedule as TB_NONE times
+    RateLimiter limiter(0, timeCycle);
+    ASSERT_TRUE(limiter.trigger(Fw::Time(base, context, 100, 0)));
+    ASSERT_FALSE(limiter.trigger(Fw::Time(base, context, 100 + timeCycle - 1, 999999)));
+    ASSERT_TRUE(limiter.trigger(Fw::Time(base, context, 100 + timeCycle, 0)));
+    ASSERT_FALSE(limiter.trigger(Fw::Time(base, context, 100 + timeCycle, 1)));
+    ASSERT_TRUE(limiter.trigger(Fw::Time(base, context, 100 + 2 * timeCycle, 0)));
+
+    // setTime with a real time base is honored as the reference point
+    limiter.reset();
+    limiter.setTime(Fw::Time(base, context, 10, 0));
+    ASSERT_FALSE(limiter.trigger(Fw::Time(base, context, 10 + timeCycle - 1, 0)));
+    ASSERT_TRUE(limiter.trigger(Fw::Time(base, context, 10 + timeCycle, 0)));
+
+    // Combined counter and time criteria with a real time base
+    RateLimiter combined(4, timeCycle);
+    ASSERT_TRUE(combined.trigger(Fw::Time(base, context, 0, 0)));
+    ASSERT_FALSE(combined.trigger(Fw::Time(base, context, 0, 500000)));
+    ASSERT_FALSE(combined.trigger(Fw::Time(base, context, 1, 0)));
+    ASSERT_FALSE(combined.trigger(Fw::Time(base, context, 1, 500000)));
+    ASSERT_TRUE(combined.trigger(Fw::Time(base, context, 2, 0)));              // counter cycle
+    ASSERT_TRUE(combined.trigger(Fw::Time(base, context, 2 + timeCycle, 0)));  // time cycle
+}
+
 void RateLimiterTester ::testDefaultConstructorAndSetters() {
     // A default-constructed limiter has no counter or time cycle: always triggers
     RateLimiter limiter;

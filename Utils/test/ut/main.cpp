@@ -20,6 +20,11 @@ TEST(RateLimiterTest, TestCounterAndTimeTriggering) {
     tester.testCounterAndTimeTriggering();
 }
 
+TEST(RateLimiterTest, TestTimeBase) {
+    Utils::RateLimiterTester tester;
+    tester.testTimeBase();
+}
+
 TEST(RateLimiterTest, TestDefaultConstructorAndSetters) {
     Utils::RateLimiterTester tester;
     tester.testDefaultConstructorAndSetters();
@@ -38,6 +43,11 @@ TEST(TokenBucketTest, TestReconfiguring) {
 TEST(TokenBucketTest, TestInitialSettings) {
     Utils::TokenBucketTester tester;
     tester.testInitialSettings();
+}
+
+TEST(TokenBucketTest, TestTimeBase) {
+    Utils::TokenBucketTester tester;
+    tester.testTimeBase();
 }
 
 TEST(TokenBucketTest, TestReplenishAndEdgeCases) {
