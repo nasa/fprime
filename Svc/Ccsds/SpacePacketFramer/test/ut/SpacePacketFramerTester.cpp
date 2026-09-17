@@ -66,6 +66,9 @@ void SpacePacketFramerTester::testNominalFraming() {
         GTEST_SKIP() << "Could not find a valid APID\n";
     }
     const auto apid = apidOption.value();
+    // Choose a random SPP packet type
+    ComCfg::SppPacketType::T pktType =
+        static_cast<ComCfg::SppPacketType::T>(STest::Random::lowerUpper(0, 1));
     // Choose a random 14-bit sequence count
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));
     // Choose a random secondary header flag
@@ -74,6 +77,7 @@ void SpacePacketFramerTester::testNominalFraming() {
     U8 seqFlags = static_cast<U8>(STest::Random::lowerUpper(0, 3));
     ComCfg::FrameContext context;
     context.set_apid(apid);
+    context.set_pktType(pktType);
     context.set_hasSecHdr(hasSecHdr);
     context.set_sequenceFlags(seqFlags);
     this->m_nextSeqCount = seqCount;  // seqCount to be returned by getApidSeqCount output port
@@ -92,6 +96,12 @@ void SpacePacketFramerTester::testNominalFraming() {
     // Verify APID in packetIdentification
     U16 extractedApid = header.get_packetIdentification() & SpacePacketSubfields::ApidMask;
     ASSERT_EQ(extractedApid, apid);
+
+    // Verify SPP packet type in packetIdentification
+    U16 extractedPktType = static_cast<U16>(
+        (header.get_packetIdentification() & SpacePacketSubfields::PktTypeMask) >>
+        SpacePacketSubfields::PktTypeOffset);
+    ASSERT_EQ(extractedPktType, static_cast<U16>(pktType));
 
     // Verify secondary header flag in packetIdentification
     U16 extractedSecHdr = static_cast<U16>((header.get_packetIdentification() & SpacePacketSubfields::SecHdrMask) >>
