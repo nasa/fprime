@@ -13,6 +13,7 @@
 #ifndef TELEMCHANIMPL_HPP_
 #define TELEMCHANIMPL_HPP_
 
+#include <Fw/DataStructures/RedBlackTreeSet.hpp>
 #include <Fw/Tlm/TlmPacket.hpp>
 #include <Svc/TlmChan/TlmChanComponentAc.hpp>
 #include <config/TlmChanImplCfg.hpp>
@@ -47,13 +48,20 @@ class TlmChan final : public TlmChanComponentBase {
         Fw::TlmBuffer buffer;   //!< buffer to store serialized telemetry
         TlmEntry* next;         //!< pointer to next bucket in table
         bool used;              //!< if entry has been used
-        FwChanIdType bucketNo;  //!< for testing
+        FwChanIdType bucketNo;  //!< index of this entry in the bucket array; key into the updated set
     };
+
+    //! The set of bucket indices whose entries carry updated == true.
+    //! Sized to the bucket count so insertion of a bucket index can never fail.
+    //! Run_handler iterates this set instead of scanning every bucket, so the
+    //! per-cycle cost scales with the number of channels updated in the cycle.
+    using UpdatedSet = Fw::RedBlackTreeSet<FwChanIdType, TLMCHAN_HASH_BUCKETS>;
 
     struct TlmSet {
         TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];  //!< set of hash slots in hash table
         TlmEntry buckets[TLMCHAN_HASH_BUCKETS];       //!< set of buckets used in hash table
         FwChanIdType free;                            //!< next free bucket
+        UpdatedSet updated;                           //!< bucket indices with updated == true
     } m_tlmEntries[2];
 
     U32 m_hashSeed;  // !< per-boot random seed for telemetry hash
