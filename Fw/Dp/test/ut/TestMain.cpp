@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include <limits>
+#include <vector>
 
 #include "gtest/gtest.h"
 
@@ -178,6 +179,61 @@ TEST(Header, BadPacketDescriptor) {
     const Fw::SerializeStatus serialStatus = container.deserializeHeader();
     // Check the error
     ASSERT_EQ(serialStatus, Fw::FW_SERIALIZE_FORMAT_ERROR);
+}
+
+TEST(DataSize, CapacityBoundedByHeader) {
+    COMMENT("Test that the data capacity is bounded by what the header can represent");
+    // Keep the test buffer to a reasonable size when FwSizeStoreType is wide
+    constexpr FwSizeType MAX_TEST_DATA_SIZE = 1024 * 1024;
+    if (DpContainer::MAX_DATA_SIZE > MAX_TEST_DATA_SIZE) {
+        GTEST_SKIP() << "FwSizeStoreType is too wide to exercise the data size bound";
+    }
+    // Create a buffer with room for one byte more than the header can represent
+    const FwSizeType bufferSize = DpContainer::getPacketSizeForDataSize(DpContainer::MAX_DATA_SIZE + 1);
+    std::vector<U8> bigBufferData(bufferSize, 0);
+    Fw::Buffer buffer(bigBufferData.data(), static_cast<Fw::Buffer::SizeType>(bufferSize));
+    DpContainer container;
+    container.setBuffer(buffer);
+    // The data capacity must be clamped to the maximum data size
+    ASSERT_TRUE(Fw::DpContainerTester::verifyDataBufferCapacity(container, DpContainer::MAX_DATA_SIZE));
+    // Filling the data buffer to the maximum data size succeeds
+    Fw::ExternalSerializeBuffer& dataBuffer = Fw::DpContainerTester::getDataBuffer(container);
+    std::vector<U8> data(DpContainer::MAX_DATA_SIZE, 0xA5);
+    Fw::SerializeStatus status =
+        dataBuffer.serializeFrom(data.data(), DpContainer::MAX_DATA_SIZE, Fw::Serialization::OMIT_LENGTH);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    // One more byte reports no room left rather than exceeding the bound
+    const U8 extraByte = 0;
+    status = dataBuffer.serializeFrom(extraByte);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_NO_ROOM_LEFT);
+    // A data size at the bound serializes into the header and round trips
+    container.setDataSize(DpContainer::MAX_DATA_SIZE);
+    container.serializeHeader();
+    container.updateDataHash();
+    DpContainer deserContainer;
+    deserContainer.setBuffer(container.getBuffer());
+    status = deserContainer.deserializeHeader();
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(deserContainer.getDataSize(), DpContainer::MAX_DATA_SIZE);
+    ASSERT_EQ(deserContainer.getPacketSize(), DpContainer::getPacketSizeForDataSize(DpContainer::MAX_DATA_SIZE));
+    Utils::HashBuffer storedHash;
+    Utils::HashBuffer computedHash;
+    ASSERT_EQ(deserContainer.checkDataHash(storedHash, computedHash), Fw::Success::SUCCESS);
+}
+
+TEST(DataSize, SetTooLarge) {
+    COMMENT("Test that setting a data size larger than the header can represent asserts");
+    if (DpContainer::MAX_DATA_SIZE >= std::numeric_limits<FwSizeType>::max()) {
+        GTEST_SKIP() << "FwSizeStoreType is as wide as FwSizeType; the bound cannot be exceeded";
+    }
+    Fw::Buffer buffer(bufferData, sizeof bufferData);
+    DpContainer container;
+    container.setBuffer(buffer);
+    // The bound itself is accepted
+    container.setDataSize(DpContainer::MAX_DATA_SIZE);
+    ASSERT_EQ(container.getDataSize(), DpContainer::MAX_DATA_SIZE);
+    // One past the bound is rejected
+    ASSERT_DEATH(container.setDataSize(DpContainer::MAX_DATA_SIZE + 1), "Assert");
 }
 
 int main(int argc, char** argv) {
