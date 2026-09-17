@@ -716,9 +716,7 @@ void DpCatalog::sendNextEntry() {
                                                  static_cast<Fw::StringFormatStatus::T>(formatStatus));
         // No send is in flight, so no fileDone will arrive: abort the transmit
         // rather than leaving it wedged in progress
-        this->m_hasCurrentXmit = false;
-        this->m_xmitInProgress = false;
-        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        this->abortXmit(Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
     this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName, static_cast<U32>(entry.record.get_size()),
@@ -728,9 +726,7 @@ void DpCatalog::sendNextEntry() {
         this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName, resp.get_status());
         // A rejected send produces no fileDone callback: abort the transmit
         // rather than leaving it wedged in progress
-        this->m_hasCurrentXmit = false;
-        this->m_xmitInProgress = false;
-        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        this->abortXmit(Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
     // FileDownlink echoes this context in fileDone; it identifies this send (#5777)
@@ -787,22 +783,14 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     // Accept only the fileDone for the send in flight (matching FileDownlink context); anything
     // else is a late callback from an abandoned send (#5777) and must not touch the current transmit
     if (!this->m_hasCurrentXmit || resp.get_context() != this->m_currXmitContext) {
-        this->log_WARNING_HI_StaleFileDone(resp.get_context(), resp.get_status());
-        if (!this->m_hasCurrentXmit && this->m_xmitInProgress) {
-            // CLEAR_CATALOG dropped the send in flight but left the session open: close it so a
-            // waited START_XMIT_CATALOG is answered and the next one is not refused as in progress
-            this->m_xmitInProgress = false;
-            this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
-        }
+        this->log_WARNING_LO_StaleFileDone(resp.get_context(), resp.get_status());
         return;
     }
 
     // check file status
     if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
         this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());
-        this->m_hasCurrentXmit = false;
-        this->m_xmitInProgress = false;
-        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        this->abortXmit(Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
@@ -960,10 +948,9 @@ void DpCatalog ::STOP_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
         this->log_ACTIVITY_HI_CatalogXmitStopped(this->m_xmitBytes);
-        // Disarm both flags: xmitInProgress stops sendNextEntry iteration,
-        // hasCurrentXmit causes any late fileDone to be caught as stale
+        // Disarm xmitInProgress so sendNextEntry stops; keep hasCurrentXmit so the
+        // in-flight file's fileDone is still recorded (the context check rejects any other)
         this->m_xmitInProgress = false;
-        this->m_hasCurrentXmit = false;
         // Respond to original cmd to start xmit
         // (if we haven't already)
         this->dispatchWaitedResponse(Fw::CmdResponse::OK);
@@ -974,6 +961,12 @@ void DpCatalog ::STOP_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 }
 
 void DpCatalog ::CLEAR_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    // Dropping the send in flight closes the transmit session here, as STOP does, so a waited
+    // START_XMIT_CATALOG is answered now and the next BUILD/START is not refused as in progress
+    if (this->m_xmitInProgress) {
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+    }
     this->resetCatalog();
     this->resetStateFileData();
 
@@ -989,6 +982,12 @@ void DpCatalog ::dispatchWaitedResponse(Fw::CmdResponse response) {
         this->m_xmitOpCode = 0;
         this->m_xmitCmdSeq = 0;
     }
+}
+
+void DpCatalog ::abortXmit(Fw::CmdResponse response) {
+    this->m_hasCurrentXmit = false;
+    this->m_xmitInProgress = false;
+    this->dispatchWaitedResponse(response);
 }
 
 }  // namespace Svc

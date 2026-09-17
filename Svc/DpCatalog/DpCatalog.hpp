@@ -233,6 +233,10 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param response the command response for pass/fail
     void dispatchWaitedResponse(Fw::CmdResponse response);
 
+    /// @brief abandon the transmit: clear both transmit flags and answer a waited START_XMIT_CATALOG
+    /// @param response the command response for the waited command
+    void abortXmit(Fw::CmdResponse response);
+
     // ----------------------------------
     // Private data
     // ----------------------------------

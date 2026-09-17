@@ -315,6 +315,11 @@ TEST(NominalManual, LateFileDoneNotAppliedToNewSend) {
     tester.test_LateFileDoneNotAppliedToNewSend();
 }
 
+TEST(NominalManual, StopRecordsInFlightCompletion) {
+    Svc::DpCatalogTester tester;
+    tester.test_StopRecordsInFlightCompletion();
+}
+
 TEST(OffNominal, ProcessFileInvalidDir) {
     Svc::DpCatalogTester tester;
     tester.test_ProcessFileInvalidDir();

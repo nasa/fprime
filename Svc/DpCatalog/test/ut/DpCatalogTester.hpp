@@ -160,6 +160,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_StaleFileDoneAfterStopBuild();
     void test_StaleFileDoneAfterClear();
     void test_LateFileDoneNotAppliedToNewSend();
+    void test_StopRecordsInFlightCompletion();
     void test_ProcessFileInvalidDir();
     void test_MalformedFile();
     void test_TruncatedDpRejected();
