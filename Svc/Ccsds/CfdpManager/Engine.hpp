@@ -432,22 +432,29 @@ class Engine {
      * This should only be invoked for buffers that have been identified
      * as a metadata PDU. Structural PDU validation is done in
      * MetadataPdu::fromSerialBuffer; this function additionally validates the
-     * destination filename against the channel's `rx_dir` sandbox (if configured)
-     * and stores the canonical, contained path in the transaction history.
+     * destination filename against the channel's `rx_dir` receive directory
+     * (if configured) before committing anything to the transaction, and then
+     * stores the file size, source name, and canonical contained destination
+     * path in the transaction history.
      *
      * @param txn  Pointer to the transaction state
      * @param pdu  The metadata PDU
-     * @return true if the metadata was accepted; false if the destination path
-     *         was rejected (event logged, fault counted, dst_filename left empty)
+     * @return SUCCESS if the metadata was accepted and stored;
+     *         PDU_METADATA_ERROR if the destination path was rejected. In that
+     *         case the RxDestPathRejected event is logged, faultFileOpen is
+     *         incremented, the transaction status is set to
+     *         FILESTORE_REJECTION, and no transaction field is modified.
      */
-    bool recvMd(Transaction* txn, const MetadataPdu& pdu);
+    Status::T recvMd(Transaction* txn, const MetadataPdu& pdu);
 
     /**
      * @brief Validate and canonicalize a received destination path against the channel rx_dir
      *
      * If the channel's `rx_dir` parameter is empty the path is accepted unchanged.
      * Otherwise the path is resolved (relative paths are resolved against rx_dir,
-     * `.`/`..` segments are collapsed) and must remain inside rx_dir.
+     * `.`/`..` segments are collapsed textually; symlinks are not followed), must
+     * remain inside rx_dir, and the canonical result must fit in MaxFilePathSize
+     * so it can be stored and reported without truncation.
      *
      * @param chan_num  Channel number whose rx_dir applies
      * @param path      In: path from the Metadata PDU. Out: canonical absolute path on success

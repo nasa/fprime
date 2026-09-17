@@ -37,11 +37,10 @@
 // ======================================================================
 
 #include <string.h>
-#include <Fw/Types/StringUtils.hpp>
-#include <Os/FilePathUtils.hpp>
 #include <new>
 
 #include <Fw/Types/StringUtils.hpp>
+#include <Os/FilePathUtils.hpp>
 #include <Os/FileSystem.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
@@ -406,21 +405,15 @@ bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path) {
         return true;
     }
 
-    // Canonicalize the sandbox root (relative rx_dir resolves against CWD) and ensure trailing '/'
+    // Canonicalize the receive directory (relative rx_dir resolves against CWD) into the
+    // trailing-'/' form that checkContainment requires; shared with Os::SandboxedFile
     char root[Os::FilePathUtils::MAX_PATH_LENGTH];
-    if (Os::FilePathUtils::resolveFromCwd(rxDir.toChar(), root, sizeof(root)) != Os::FilePathUtils::VALID) {
+    if (Os::FilePathUtils::resolveDirectoryFromCwd(rxDir.toChar(), root, sizeof(root)) != Os::FilePathUtils::VALID) {
         return false;
-    }
-    const FwSizeType rootLen = Fw::StringUtils::string_length(root, sizeof(root));
-    if ((rootLen == 0) || (rootLen + 2 > sizeof(root))) {
-        return false;
-    }
-    if (root[rootLen - 1] != '/') {
-        root[rootLen] = '/';
-        root[rootLen + 1] = '\0';
     }
 
-    // Resolve the received path: relative paths land inside the sandbox, `..` segments are collapsed
+    // Resolve the received path: relative paths land inside the receive directory, `..` segments
+    // are collapsed textually (symlinks are not followed; see Os::SandboxedFile threat model)
     char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
     if (Os::FilePathUtils::resolvePath(path.toChar(), root, resolved, sizeof(resolved)) != Os::FilePathUtils::VALID) {
         return false;
@@ -428,35 +421,42 @@ bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path) {
     if (Os::FilePathUtils::checkContainment(resolved, root) != Os::FilePathUtils::VALID) {
         return false;
     }
+    // The canonical path is stored in the transaction and reported in events sized to
+    // MaxFilePathSize; reject rather than silently truncate a longer result
+    if (Fw::StringUtils::string_length(resolved, sizeof(resolved)) > Cfdp::MaxFilePathSize) {
+        return false;
+    }
 
     path = resolved;
     return true;
 }
 
-bool Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
-    /* store the expected file size in transaction */
-    txn->m_fsize = md.getFileSize();
-
-    /* structural validation (length, non-empty) already done during deserialization */
-    txn->m_history->fnames.src_filename = md.getSourceFilename();
-
+Status::T Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
     /* the destination path comes from the remote entity: canonicalize it and confirm it lies within
-     * the configured receive directory before any file operation (open/move/remove) consumes it */
+     * the configured receive directory BEFORE anything from this PDU is committed to the transaction,
+     * so a rejection leaves the transaction exactly as it was */
     Fw::String dst = md.getDestFilename();
     if (!this->validateRxDestPath(txn->m_chan_num, dst)) {
         this->m_manager->log_WARNING_HI_RxDestPathRejected(txn->m_chan_num, txn->m_history->src_eid,
                                                            txn->m_history->seq_num, dst,
                                                            this->m_manager->getRxDirParam(txn->m_chan_num));
         this->m_manager->incrementFaultFileOpen(txn->m_chan_num);
-        // Never leave a rejected path where a later file operation could consume it
-        txn->m_history->fnames.dst_filename = "";
-        return false;
+        // A refused destination is a filestore rejection, not a completed reception: this makes
+        // finishTransaction report the failure and, for Class 2, tells the sender in the FIN
+        this->setTxnStatus(txn, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
+        return Status::PDU_METADATA_ERROR;
     }
+
+    /* store the expected file size in transaction */
+    txn->m_fsize = md.getFileSize();
+
+    /* structural validation (length, non-empty) already done during deserialization */
+    txn->m_history->fnames.src_filename = md.getSourceFilename();
     txn->m_history->fnames.dst_filename = dst;
 
     this->m_manager->log_ACTIVITY_LO_MetadataReceived(txn->m_history->fnames.src_filename,
                                                       txn->m_history->fnames.dst_filename, txn->m_history->seq_num);
-    return true;
+    return Status::SUCCESS;
 }
 
 Status::T Engine::recvFd(Transaction* txn, const FileDataPdu& fd) {
@@ -616,7 +616,7 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
 
                 Fw::SerializeStatus deserStatus = md.deserializeFrom(sb2);
                 if (deserStatus == Fw::FW_SERIALIZE_OK) {
-                    if (this->recvMd(txn, md)) {
+                    if (this->recvMd(txn, md) == Status::SUCCESS) {
                         // NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup
                         // path
                         txn->m_state =
@@ -625,8 +625,9 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
                         txn->m_flags.rx.md_recv = true;
                         txn->rInit();  // initialize R
                     }
-                    // else: destination path rejected. State stays INIT so the transaction is finished
-                    // below (parked in HOLD until the inactivity timer recycles it) without any file
+                    // else: destination path rejected and the transaction marked FILESTORE_REJECTION.
+                    // State stays INIT so the transaction is finished below as a failed reception
+                    // (parked in HOLD until the inactivity timer recycles it) without any file
                     // ever being opened.
                 } else {
                     m_manager->log_WARNING_LO_FailMetadataPduDeserialization(txn->getChannelId(),

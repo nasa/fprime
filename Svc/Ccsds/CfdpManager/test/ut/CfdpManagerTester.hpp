@@ -547,6 +547,10 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testRxDestPathContained();
     //! Late Metadata (Class 2, temp file already open) with a destination outside rx_dir fails the transaction
     void testRxDestPathRejectedLateMetadata();
+    //! rx_dir applies per channel: the same path is refused on a confined channel and accepted on an unrestricted one
+    void testRxDirPerChannel();
+    //! Run one 1 Hz cycle and return the channel's latest faultFileOpen telemetry value
+    U32 latestFaultFileOpen(U8 channelId);
 
     // PDU Deserialization Failure Events
     void testFailPduHeaderDeserializationEvent();

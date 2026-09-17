@@ -618,6 +618,11 @@ TEST(Event, RxDestPathRejectedLateMetadata) {
     tester.testRxDestPathRejectedLateMetadata();
 }
 
+TEST(Event, RxDirPerChannel) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDirPerChannel();
+}
+
 TEST(Miscellaneous, Ping) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testPing();
