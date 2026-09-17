@@ -124,3 +124,8 @@ temp_dir/
 *.exe
 *.out
 *.app
+
+# Claude files
+.mylocalauthcache
+.claude
+.auth_key

@@ -9,6 +9,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/AsyncI2cCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/ComCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/ComLoggerDpCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileDispatcherCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FpConfig.fpp"
