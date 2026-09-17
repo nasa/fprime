@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "3d9c014b0bc23d2c8ba0aaa981e172d311b284c2",
-  "generated_at": "2026-09-17T21:12:35Z",
+  "generated_at": "2026-09-17T21:13:55Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -12119,15 +12119,25 @@
         },
         "codeql-jpl": null
       },
-      "checks": null,
-      "sdd": null,
+      "checks": {
+        "passed": 4,
+        "failed": 6,
+        "skipped": 6,
+        "tier": "bronze",
+        "report": "Svc/TimeConverter/checks/index.html"
+      },
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/TimeConverter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
-        "checks": null,
-        "sdd": "bronze"
+        "checks": "bronze",
+        "sdd": "platinum"
       }
     },
     {

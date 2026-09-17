@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-09-17T21:13:55Z",
+  "ref": "devel",
+  "commit": "3d9c014b0bc23d2c8ba0aaa981e172d311b284c2",
+  "tier": "platinum",
+  "has_sdd": true,
+  "sections": 11,
+  "filled_sections": 8,
+  "prose_words": 650,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "commands",
+    "events",
+    "ports"
+  ],
+  "declared_kinds": [
+    "commands",
+    "events",
+    "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/devel/Svc/TimeConverter/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::TimeConverter",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_svc_1_1_time_converter.html"
+    }
+  ]
+}

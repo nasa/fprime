@@ -1,0 +1,209 @@
+{
+  "schema": 1,
+  "generated_at": "2026-09-17T21:13:51Z",
+  "ref": "devel",
+  "commit": "3d9c014b0bc23d2c8ba0aaa981e172d311b284c2",
+  "passed": 4,
+  "failed": 6,
+  "skipped": 6,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "pass",
+      "failures": [],
+      "detail": "2 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "pass",
+      "failures": [],
+      "detail": "4 command(s) checked"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "fail",
+      "failures": [
+        "requirement 'REQ-TIMECONVERTER-001' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-002' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:17) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-003' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:18) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-004' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:19) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-005' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:20) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-006' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:21) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-007' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:22) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-008' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:23) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-009' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:24) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-010' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:25) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-011' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:26) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-012' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:27) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-013' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:28) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-014' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:29) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'REQ-TIMECONVERTER-015' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:30) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+      ],
+      "detail": "15 requirement(s) checked"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/DataStructures' (from #include \"Fw/DataStructures/ArrayMap.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_DataStructures)"
+      ],
+      "detail": "1 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "fail",
+      "failures": [
+        "command 'SET_OFFSET' has no requirement referencing it (add a requirement mentioning 'SET_OFFSET')",
+        "command 'CLEAR_OFFSETS' has no requirement referencing it (add a requirement mentioning 'CLEAR_OFFSETS')",
+        "command 'GET_OFFSET' has no requirement referencing it (add a requirement mentioning 'GET_OFFSET')",
+        "command 'DUMP_OFFSETS' has no requirement referencing it (add a requirement mentioning 'DUMP_OFFSETS')"
+      ],
+      "detail": "4 command(s) traced against 15 requirement(s)"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "skip",
+      "failures": [],
+      "detail": "no telemetry channels declared in the FPP model"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "fail",
+      "failures": [
+        "event 'NoConversionAvailable' has no requirement referencing it (add a requirement mentioning 'NoConversionAvailable')",
+        "event 'InvalidTime' has no requirement referencing it (add a requirement mentioning 'InvalidTime')",
+        "event 'OffsetSet' has no requirement referencing it (add a requirement mentioning 'OffsetSet')",
+        "event 'OffsetTableFull' has no requirement referencing it (add a requirement mentioning 'OffsetTableFull')",
+        "event 'OffsetsCleared' has no requirement referencing it (add a requirement mentioning 'OffsetsCleared')",
+        "event 'OffsetReport' has no requirement referencing it (add a requirement mentioning 'OffsetReport')",
+        "event 'NoOffsetStored' has no requirement referencing it (add a requirement mentioning 'NoOffsetStored')",
+        "event 'OffsetTableEmpty' has no requirement referencing it (add a requirement mentioning 'OffsetTableEmpty')",
+        "event 'IdenticalTimeBases' has no requirement referencing it (add a requirement mentioning 'IdenticalTimeBases')",
+        "event 'OffsetOutOfRange' has no requirement referencing it (add a requirement mentioning 'OffsetOutOfRange')",
+        "event 'UnusableTimeBase' has no requirement referencing it (add a requirement mentioning 'UnusableTimeBase')"
+      ],
+      "detail": "11 event(s) traced against 15 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "skip",
+      "failures": [],
+      "detail": "no parameters declared in the FPP model"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "fail",
+      "failures": [
+        "port 'offsetUpdate' has no requirement referencing it (add a requirement mentioning 'offsetUpdate')",
+        "port 'convertTime' has no requirement referencing it (add a requirement mentioning 'convertTime')"
+      ],
+      "detail": "2 port(s) traced against 15 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "fail",
+      "failures": [
+        "requirement 'REQ-TIMECONVERTER-001' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-002' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-003' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:18) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-004' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:19) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-005' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:20) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-006' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:21) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-007' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:22) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-008' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:23) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-009' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:24) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-010' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:25) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-011' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:26) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-012' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:27) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-013' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:28) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-014' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:29) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'REQ-TIMECONVERTER-015' (/home/runner/work/fprime/fprime/Svc/TimeConverter/docs/sdd.md:30) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "15 requirement(s) checked"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "pass",
+      "failures": [],
+      "detail": "15 requirement(s) checked"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/TimeConverter",
+      "status": "pass",
+      "failures": [],
+      "detail": "0 dependency module(s) checked"
+    }
+  ]
+}
