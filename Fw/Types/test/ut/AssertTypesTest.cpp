@@ -86,7 +86,6 @@ TEST(AssertTypesTest, FileDefaultTest) {
     // to the full path
     ASSERT_EQ(__FILE__, hook.getFile());
 #endif
-    hook.deregisterHook();
 }
 
 TEST(AssertTypesTest, CAssertFileDefaultTest) {
