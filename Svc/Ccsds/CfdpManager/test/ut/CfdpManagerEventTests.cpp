@@ -15,6 +15,7 @@
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Os/FileSystem.hpp"
 
 namespace Svc {
@@ -207,6 +208,228 @@ void CfdpManagerTester::testMetadataReceivedEvent() {
                                    dstFile,        // destFile from metadata
                                    transactionSeq  // transaction sequence number
     );
+}
+
+// ----------------------------------------------------------------------
+// Receive directory (rx_dir)
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester::setChannel0RxDir(const char* rxDir) {
+    // Channel 0 gets rxDir; every other channel gets the same sane values with rx_dir empty
+    // (unrestricted), so tests can show the confinement is per channel.
+    Cfdp::ChannelArrayParams channelConfig;
+    for (FwSizeType chan = 0; chan < Cfdp::NumChannels; chan++) {
+        Cfdp::ChannelParams& params = channelConfig[chan];
+        params.set_ack_limit(2);
+        params.set_nack_limit(3);
+        params.set_ack_timer(5);
+        params.set_inactivity_timer(30);
+        params.set_dequeue_enabled(Fw::Enabled::ENABLED);
+        params.set_move_dir(Fw::String(""));
+        params.set_max_outgoing_pdus_per_cycle(10);
+        params.set_tmp_dir(Fw::String("test/ut/output"));
+        params.set_fail_dir(Fw::String("test/ut/output"));
+        params.set_rx_dir(Fw::String((chan == 0) ? rxDir : ""));
+    }
+    this->paramSet_ChannelConfig(channelConfig, Fw::ParamValid::VALID);
+    this->paramSend_ChannelConfig(0, 0);
+}
+
+U32 CfdpManagerTester::latestFaultFileOpen(U8 channelId) {
+    // Telemetry is emitted from the 1 Hz cycle; the last emission carries cumulative counts
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    EXPECT_GE(this->tlmHistory_ChannelTelemetry->size(), 1u);
+    const U32 tlmIndex = static_cast<U32>(this->tlmHistory_ChannelTelemetry->size() - 1);
+    Cfdp::ChannelTelemetryArray tlm = this->tlmHistory_ChannelTelemetry->at(tlmIndex).arg;
+    return tlm[channelId].get_faultFileOpen();
+}
+
+void CfdpManagerTester::testRxDestPathRejectedEvent() {
+    // A Metadata PDU whose destination resolves outside rx_dir must be rejected before any
+    // file operation touches it.
+    const U8 channelId = 0;
+    const Cfdp::TransactionSeq transactionSeq = 7001;
+    const char* rxDir = "test/ut/output/rxbox";
+    const char* srcFile = "/ground/outside.bin";
+    // Relative paths resolve against rx_dir, so a leading '..' resolves outside it
+    const char* dstFile = "../../../outside_rx_dir.bin";
+    const char* outsidePath = "test/outside_rx_dir.bin";
+
+    (void)Os::FileSystem::createDirectory(rxDir);
+    (void)Os::FileSystem::removeFile(outsidePath);
+    this->setChannel0RxDir(rxDir);
+    this->clearHistory();
+
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100, srcFile,
+                          dstFile, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+
+    // Rejection event carries every argument (channel, source EID, sequence, path, directory);
+    // no MetadataReceived, and the refused transfer is reported as failed, never as completed
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    ASSERT_EVENTS_RxDestPathRejected(0, channelId, TEST_GROUND_EID, transactionSeq, dstFile, rxDir);
+    ASSERT_EVENTS_MetadataReceived_SIZE(0);
+    ASSERT_EVENTS_RxFileCreateFailed_SIZE(0);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
+
+    // The transaction never entered R1/R2: it was finished straight from INIT into HOLD (the
+    // inactivity timer recycles it) with no file ever opened; nothing exists outside rx_dir.
+    // Nothing from the rejected PDU was committed: no destination, no source name, no file size.
+    Transaction* txn = this->findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, txn->m_state);
+    EXPECT_EQ(TxnStatus::TXN_STATUS_FILESTORE_REJECTION, txn->m_history->txn_stat);
+    EXPECT_FALSE(txn->m_flags.rx.md_recv);
+    EXPECT_FALSE(txn->m_fd.isOpen());
+    EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar()) << "rejected path must not be retained";
+    EXPECT_STREQ("", txn->m_history->fnames.src_filename.toChar()) << "rejected PDU must not be committed";
+    EXPECT_EQ(0u, txn->m_fsize) << "rejected PDU must not be committed";
+    ASSERT_FALSE(Os::FileSystem::exists(outsidePath)) << "file must not be created outside rx_dir";
+
+    // The rejection is visible in telemetry as a file-open fault
+    EXPECT_EQ(1u, this->latestFaultFileOpen(channelId));
+
+    // An absolute path outside rx_dir is rejected too
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq + 1, 100,
+                          srcFile, "/other/dir/outside.bin", Cfdp::Class::CLASS_2, 1);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    ASSERT_STREQ("/other/dir/outside.bin", this->eventHistory_RxDestPathRejected->at(0).filename.toChar());
+    txn = this->findTransaction(channelId, transactionSeq + 1);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, txn->m_state);
+    EXPECT_FALSE(txn->m_fd.isOpen());
+    EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar());
+
+    // A destination at the PDU length limit is rejected by the length bound (rx_dir plus the
+    // name cannot fit in MaxFilePathSize), not by containment; same event, same counter
+    char longDst[Cfdp::MaxFilePathSize + 1];
+    (void)memset(longDst, 'a', sizeof(longDst) - 1);
+    longDst[sizeof(longDst) - 1] = '\0';
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq + 2, 100,
+                          srcFile, longDst, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    ASSERT_EVENTS_MetadataReceived_SIZE(0);
+    txn = this->findTransaction(channelId, transactionSeq + 2);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_FALSE(txn->m_fd.isOpen());
+    EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar());
+    EXPECT_EQ(3u, this->latestFaultFileOpen(channelId));
+}
+
+void CfdpManagerTester::testRxDirPerChannel() {
+    // rx_dir is a per-channel parameter: the same destination is refused on the confined channel
+    // and accepted unchanged on a channel whose rx_dir is empty (the unrestricted default).
+    const Cfdp::TransactionSeq transactionSeq = 7004;
+    const char* rxDir = "test/ut/output/rxbox";
+    // A relative destination would be resolved against rx_dir and land inside it, so use an
+    // absolute path under the test output directory: outside rx_dir, harmless when accepted
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::getWorkingDirectory(cwd, sizeof(cwd)));
+    Fw::String dstPath;
+    dstPath.format("%s/test/ut/output/unrestricted_channel.bin", cwd);
+    const char* dstFile = dstPath.toChar();
+
+    (void)Os::FileSystem::createDirectory(rxDir);
+    (void)Os::FileSystem::removeFile(dstFile);
+    this->setChannel0RxDir(rxDir);
+    this->clearHistory();
+
+    // Channel 0 (confined): the path is outside rx_dir, so it is rejected
+    this->sendMetadataPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100,
+                          "/ground/per_channel.bin", dstFile, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    ASSERT_EVENTS_RxDestPathRejected(0, TEST_CHANNEL_ID_0, TEST_GROUND_EID, transactionSeq, dstFile, rxDir);
+    ASSERT_EVENTS_MetadataReceived_SIZE(0);
+    ASSERT_FALSE(Os::FileSystem::exists(dstFile));
+
+    // Channel 1 (unrestricted): the same path is accepted as-is and the file is opened
+    this->clearEvents();
+    this->sendMetadataPdu(TEST_CHANNEL_ID_1, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100,
+                          "/ground/per_channel.bin", dstFile, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(0);
+    ASSERT_EVENTS_MetadataReceived_SIZE(1);
+    Transaction* txn = this->findTransaction(TEST_CHANNEL_ID_1, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_EQ(TxnState::TXN_STATE_R1, txn->m_state);
+    EXPECT_STREQ(dstFile, txn->m_history->fnames.dst_filename.toChar()) << "unrestricted channel stores the path as-is";
+    EXPECT_TRUE(txn->m_fd.isOpen());
+    (void)Os::FileSystem::removeFile(dstFile);
+}
+
+void CfdpManagerTester::testRxDestPathContained() {
+    // With rx_dir set, a relative destination is resolved inside rx_dir and the transfer proceeds.
+    const U8 channelId = 0;
+    const Cfdp::TransactionSeq transactionSeq = 7002;
+    const char* rxDir = "test/ut/output/rxbox";
+    const char* dstFile = "sub/../inside.bin";  // '..' that stays inside is fine
+
+    (void)Os::FileSystem::createDirectory(rxDir);
+    this->setChannel0RxDir(rxDir);
+    this->clearHistory();
+
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100,
+                          "/ground/inside.bin", dstFile, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(0);
+    ASSERT_EVENTS_MetadataReceived_SIZE(1);
+    Transaction* txn = this->findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_EQ(TxnState::TXN_STATE_R1, txn->m_state);
+
+    // Stored destination is canonical, absolute, and inside the resolved rx_dir
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::getWorkingDirectory(cwd, sizeof(cwd)));
+    Fw::String expected;
+    expected.format("%s/%s/inside.bin", cwd, rxDir);
+    EXPECT_STREQ(expected.toChar(), txn->m_history->fnames.dst_filename.toChar());
+    EXPECT_STREQ(expected.toChar(), this->eventHistory_MetadataReceived->at(0).destFile.toChar());
+    EXPECT_TRUE(txn->m_fd.isOpen()) << "file inside rx_dir should have been created";
+}
+
+void CfdpManagerTester::testRxDestPathRejectedLateMetadata() {
+    // Class 2: File Data arrives first (temp file opened under tmp_dir), then Metadata with an
+    // destination outside rx_dir. The temp file must not be renamed onto the rejected path.
+    const U8 channelId = 0;
+    const Cfdp::TransactionSeq transactionSeq = 7003;
+    const char* rxDir = "test/ut/output/rxbox";
+    const char* outsidePath = "test/outside_rx_dir_late.bin";
+    const char* dstFile = "../../../outside_rx_dir_late.bin";
+
+    (void)Os::FileSystem::createDirectory(rxDir);
+    (void)Os::FileSystem::removeFile(outsidePath);
+    this->setChannel0RxDir(rxDir);
+    this->clearHistory();
+
+    U8 data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+    this->sendFileDataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 0,
+                          static_cast<U16>(sizeof(data)), data, Cfdp::Class::CLASS_2);
+    this->component.doDispatch();
+    Transaction* txn = this->findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    ASSERT_EVENTS_RxTempFileCreated_SIZE(1);
+    Fw::String tempPath = txn->m_history->fnames.dst_filename;
+
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, sizeof(data),
+                          "/ground/late.bin", dstFile, Cfdp::Class::CLASS_2, 1);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    ASSERT_EVENTS_RxFileRenameFailed_SIZE(0);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    EXPECT_STREQ(tempPath.toChar(), txn->m_history->fnames.dst_filename.toChar())
+        << "destination must stay the temp path: nothing from the rejected PDU is committed";
+    EXPECT_EQ(TxnStatus::TXN_STATUS_FILESTORE_REJECTION, txn->m_history->txn_stat);
+    ASSERT_FALSE(Os::FileSystem::exists(outsidePath)) << "file must not be created outside rx_dir";
 }
 
 // ----------------------------------------------------------------------
