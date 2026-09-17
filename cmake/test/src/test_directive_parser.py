@@ -35,6 +35,14 @@ UT_CONTROLS = [
     "CHOOSES_IMPLEMENTATIONS",
     "TESTED_MODULE",
 ]
+CONFIG_CONTROLS = [
+    "CONFIGURATION_OVERRIDES",
+    "STATIC",
+    "INTERFACE",
+    "CHOOSES_IMPLEMENTATIONS",
+    "GLOBAL_IMPLICIT_DEPENDENCY",
+    "BASE_CONFIG",
+]
 # Base list-valued directives
 LIST_DIRECTIVES = [
     "HEADERS",
@@ -392,6 +400,21 @@ def test_non_cmake_flags_become_true():
         ],
         module_type="Unit Test",
         additional=UT_CONTROLS,
+    )
+
+
+@pytest.mark.parametrize("flag", ["GLOBAL_IMPLICIT_DEPENDENCY", "BASE_CONFIG"])
+def test_config_global_flags(flag):
+    """The register_fprime_config global-interface flags are zero-argument flags exporting TRUE"""
+    assert_accepted(
+        {
+            "MODULE_NAME": ["Foo"],
+            "HEADERS": [STUB_HPP],
+            flag: ["TRUE"],
+            "CMAKE_ADD_OPTIONS": [],
+        },
+        args=["Foo", "HEADERS", STUB_HPP, flag],
+        additional=CONFIG_CONTROLS,
     )
 
 

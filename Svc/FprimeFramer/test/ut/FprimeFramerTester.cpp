@@ -84,9 +84,17 @@ void FprimeFramerTester ::testNominalFraming() {
 
 Fw::Buffer FprimeFramerTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_bufferAllocate(size);
+    if (this->m_useInvalidAlloc) {
+        // Simulate an exhausted pool: return an invalid (empty) buffer
+        this->m_buffer.set(nullptr, 0);
+        return this->m_buffer;
+    }
     // When m_useOversizedAlloc is set, simulate a pool allocator returning
     // a larger block than requested — the component must trim it before sending
     FwSizeType allocatedSize = this->m_useOversizedAlloc ? sizeof(this->m_buffer_slot) : size;
+    if (this->m_useUndersizedAlloc) {
+        allocatedSize = size - 1;
+    }
     this->m_buffer.set(this->m_buffer_slot, allocatedSize);
     ::memset(this->m_buffer.getData(), 0, allocatedSize);
     return this->m_buffer;
@@ -116,6 +124,48 @@ void FprimeFramerTester::testOversizedAllocatorBufferIsTrimmed() {
     FwSizeType expectedSize = sizeof(bufferData) + FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
                               FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     ASSERT_EQ(outputBuffer.getSize(), expectedSize);
+}
+
+// ----------------------------------------------------------------------
+// Test Harness: Allocation failure paths
+// ----------------------------------------------------------------------
+
+void FprimeFramerTester::testInvalidAllocationEmitsComStatus() {
+    U8 bufferData[100];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext context;
+
+    this->m_useInvalidAlloc = true;
+    this->invoke_to_dataIn(0, buffer, context);
+    this->m_useInvalidAlloc = false;
+
+    ASSERT_from_dataOut_SIZE(0);           // No frame produced
+    ASSERT_from_bufferDeallocate_SIZE(0);  // Nothing to deallocate for an invalid buffer
+    ASSERT_from_dataReturnOut_SIZE(1);     // Input buffer returned to sender
+    ASSERT_from_dataReturnOut(0, buffer, context);
+    ASSERT_EVENTS_NoBufferAvailable_SIZE(1);
+    // Zero frames produced: exactly one SUCCESS so ComQueue keeps sending
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success(Fw::Success::SUCCESS));
+}
+
+void FprimeFramerTester::testUndersizedAllocationEmitsComStatus() {
+    U8 bufferData[100];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext context;
+
+    this->m_useUndersizedAlloc = true;
+    this->invoke_to_dataIn(0, buffer, context);
+    this->m_useUndersizedAlloc = false;
+
+    ASSERT_from_dataOut_SIZE(0);           // No frame produced
+    ASSERT_from_bufferDeallocate_SIZE(1);  // Undersized but valid buffer is returned to the allocator
+    ASSERT_from_bufferDeallocate(0, this->m_buffer);
+    ASSERT_from_dataReturnOut_SIZE(1);  // Input buffer returned to sender
+    ASSERT_from_dataReturnOut(0, buffer, context);
+    ASSERT_EVENTS_NoBufferAvailable_SIZE(1);
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success(Fw::Success::SUCCESS));
 }
 
 }  // namespace Svc

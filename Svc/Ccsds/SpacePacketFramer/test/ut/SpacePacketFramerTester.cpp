@@ -142,6 +142,46 @@ void SpacePacketFramerTester ::testOversizedAllocatorBufferIsTrimmed() {
     // If setSize() is missing from SpacePacketFramer, getSize() returns the
     // oversized allocation (2 * expectedFrameSize) and this assertion fails.
     ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
+    ASSERT_from_comStatusOut_SIZE(0);  // Frame produced: status is reported by the downstream component
+}
+
+void SpacePacketFramerTester ::testInvalidAllocationEmitsComStatus() {
+    U8 payload[16] = {0};
+    Fw::Buffer data(payload, sizeof(payload));
+    ComCfg::FrameContext context;
+
+    this->m_useInvalidAlloc = true;
+    this->invoke_to_dataIn(0, data, context);
+    this->m_useInvalidAlloc = false;
+
+    ASSERT_from_dataOut_SIZE(0);           // No frame produced
+    ASSERT_from_bufferDeallocate_SIZE(0);  // Nothing to deallocate for an invalid buffer
+    ASSERT_from_dataReturnOut_SIZE(1);     // Input buffer returned to sender
+    ASSERT_from_dataReturnOut(0, data, context);
+    ASSERT_EVENTS_NoBufferAvailable_SIZE(1);
+    // Zero frames produced: exactly one SUCCESS so ComQueue keeps sending
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success(Fw::Success::SUCCESS));
+}
+
+void SpacePacketFramerTester ::testUndersizedAllocationEmitsComStatus() {
+    U8 payload[16] = {0};
+    Fw::Buffer data(payload, sizeof(payload));
+    ComCfg::FrameContext context;
+
+    this->m_useUndersizedAlloc = true;
+    this->invoke_to_dataIn(0, data, context);
+    this->m_useUndersizedAlloc = false;
+
+    ASSERT_from_dataOut_SIZE(0);           // No frame produced
+    ASSERT_from_bufferDeallocate_SIZE(1);  // Undersized but valid buffer is returned to the allocator
+    ASSERT_from_bufferDeallocate(
+        0, Fw::Buffer(this->m_internalDataBuffer, sizeof(payload) + SpacePacketHeader::SERIALIZED_SIZE - 1));
+    ASSERT_from_dataReturnOut_SIZE(1);  // Input buffer returned to sender
+    ASSERT_from_dataReturnOut(0, data, context);
+    ASSERT_EVENTS_NoBufferAvailable_SIZE(1);
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success(Fw::Success::SUCCESS));
 }
 
 // ----------------------------------------------------------------------
@@ -155,7 +195,14 @@ U16 SpacePacketFramerTester ::from_getApidSeqCount_handler(FwIndexType portNum,
 }
 
 Fw::Buffer SpacePacketFramerTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
+    if (this->m_useInvalidAlloc) {
+        // Simulate an exhausted pool: return an invalid (empty) buffer
+        return Fw::Buffer();
+    }
     FwSizeType allocation = (this->m_useOversizedAlloc) ? sizeof(this->m_internalDataBuffer) : size;
+    if (this->m_useUndersizedAlloc) {
+        allocation = size - 1;
+    }
     return Fw::Buffer(this->m_internalDataBuffer, allocation);
 }
 

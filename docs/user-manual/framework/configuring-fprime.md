@@ -19,6 +19,8 @@ This guide includes:
     - [Text Logging](#text-logging)
     - [Misc Configuration Settings](#misc-configuration-settings)
 - [Component Configuration](#component-configuration)
+- [OSAL Configuration](#osal-configuration)
+- [Library Default Configuration](#library-default-configuration)
 - [Conclusion](#conclusion)
 
 
@@ -403,6 +405,33 @@ Individual instances may select another source via `Os::RawTime(Os::RawTimeSourc
 > `Os::RawTime` intervals are only defined between instances reading the same clock; on POSIX `getTimeInterval()` and
 > `getDiffUsec()` return `INVALID_PARAMS` when the sources differ. Enumerator values are platform-specific and are not
 > part of the serialized `Os::RawTime` form.
+
+## Library Default Configuration
+
+Libraries may ship default configuration of their own. Registering that configuration module with the
+`GLOBAL_IMPLICIT_DEPENDENCY` flag links it into the build system's global interface target, so every module that
+transitively depends on `Fw_Types` (i.e. every F´ module) may include its headers and reference its FPP constants
+without naming the configuration module in `DEPENDS`. This is the same mechanism the framework uses for
+`default/config` and for the platform configuration.
+
+```cmake
+# File: MyLibrary/config/CMakeLists.txt
+register_fprime_config(
+        MyLibraryConfig
+    HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/MyLibraryCfg.hpp"
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/MyLibraryCfg.fpp"
+    GLOBAL_IMPLICIT_DEPENDENCY
+)
+```
+
+Projects override these files exactly as they override framework configuration: register a configuration module of
+their own listing the files under `CONFIGURATION_OVERRIDES`. Since the override is copied into the library's
+configuration module, it reaches every consumer through the same implicit dependency.
+
+> [!NOTE]
+> `GLOBAL_IMPLICIT_DEPENDENCY` replaces the `BASE_CONFIG` flag, which is deprecated and emits a warning when used.
 
 ## Conclusion
 

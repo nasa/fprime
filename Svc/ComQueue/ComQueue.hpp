@@ -259,7 +259,7 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     void processQueue();
 
-    //! Convert Queue Type & Index into single queueIndex
+    //! Convert Queue Type & Index into single queueIndex; returns -1 when portNum is out of range for queueType
     FwIndexType getQueueNum(Svc::QueueType queueType, FwIndexType portNum);
 
     //! Look up the configured depth of a queue; a depth of 0 means the queue is disabled

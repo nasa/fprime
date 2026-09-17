@@ -65,6 +65,11 @@ TEST(NominalManual, OneDp) {
     tester.readDps(&dir, 1, stateFile, &dpSet, 1);
 }
 
+TEST(NominalManual, StateFileSkipsTransmitted) {
+    Svc::DpCatalogTester tester;
+    tester.stateFileSkipsTransmitted();
+}
+
 TEST(NominalManual, FiveDp) {
     Svc::DpCatalogTester tester;
     Fw::FileNameString dirs[2];

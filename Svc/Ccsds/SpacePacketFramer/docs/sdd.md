@@ -17,6 +17,10 @@ The component also supports configurable Sequence Flags (`sequenceFlags`) via th
 - `0x2` (0b10) - Last segment of a segmented packet
 - `0x3` (0b11) - Unsegmented (complete user data in single packet)
 
+## Buffer Allocation Failure
+
+If the frame buffer cannot be allocated (the allocator returns an invalid buffer or one smaller than requested), the packet is dropped: the `NoBufferAvailable` event is emitted, any valid-but-undersized buffer is deallocated, the input data is returned on `dataReturnOut`, and a single `Fw::Success::SUCCESS` is emitted on `comStatusOut`. Per the [Framer Status Protocol](../../../../docs/reference/communication-adapter-interface.md#framer-status-protocol), a message that produces zero frames must still be acknowledged with `SUCCESS`, otherwise the upstream `Svc::ComQueue` would wait forever for a status that the downstream components never produce. Because each `SUCCESS` immediately re-arms `Svc::ComQueue`, a sustained allocation failure drains and drops the whole ComQueue backlog at the ComQueue thread's rate instead of stalling it. `NoBufferAvailable` is throttled after 5 emissions and is never cleared by this component, so the allocator's own counters (e.g. `Svc::BufferManager` `NoBuffs`) are the durable indicator of how many packets were dropped.
+
 ## CCSDS Header Fields
 
 For each Space Packet generated, the `Svc::Ccsds::SpacePacketFramer` will populate the CCSDS Space Packet Primary Header fields as follows:
@@ -55,3 +59,4 @@ For each Space Packet generated, the `Svc::Ccsds::SpacePacketFramer` will popula
 | SPF-008 | The SpacePacketFramer shall correctly populate all mandatory fields of the Space Packet Primary Header, including Version Number, Packet Type, Secondary Header Flag, APID, Sequence Flags, Packet Sequence Count, and Packet Data Length. | Unit Test |
 | SPF-009 | The SpacePacketFramer shall be configurable with an Application Process Identifier (APID) to be used in the Space Packet Header. | Inspection, Unit Test |
 | SPF-010 | The SpacePacketFramer shall accurately calculate and set the Packet Data Length field in the Space Packet header based on the length of the user data. | Unit Test |
+| SPF-011 | The SpacePacketFramer shall emit exactly one `Fw::Success::SUCCESS` on `comStatusOut` when a packet received on `dataIn` produces no Space Packet because a buffer could not be allocated, per the [Framer Status Protocol](../../../../docs/reference/communication-adapter-interface.md#framer-status-protocol). | Unit Test |
