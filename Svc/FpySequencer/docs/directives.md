@@ -1155,6 +1155,9 @@ Pops `size` bytes of serialized data from the stack and sends them to an externa
 - If `port_index >= MAX_SERIAL_PORTS`: `SERIAL_PORT_INVALID_INDEX`
 - If `serialOut[port_index]` is not connected: `SERIAL_PORT_NOT_CONNECTED`
 - If `len(stack) < size`: `STACK_UNDERFLOW`
+- If `serialOut[port_index]` is connected to a typed input port and the popped bytes fail to
+  deserialize into that port's arguments (e.g. `size` too small for the connected type):
+  `SERIAL_PORT_WRITE_FAILURE`
 
 | Arg Name     | Arg Type       | Source     | Description |
 |--------------|----------------|------------|-------------|
