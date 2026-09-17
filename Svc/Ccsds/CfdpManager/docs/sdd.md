@@ -97,7 +97,7 @@ The following diagram shows typical CfdpManager port connections with other F' c
 This example demonstrates:
 - **Uplink data flow**: FprimeRouter deframes incoming CFDP PDUs and sends them to CfdpManager via `dataIn`
 - **Downlink data flow**: CfdpManager sends outgoing CFDP PDUs to ComQueue via `dataOut` for transmission
-- **Port-based file transfers**: DpCatalog initiates file transfers via CfdpManager's `fileIn` port and receives completion notifications via `fileDoneOut`
+- **Port-based file transfers**: a `SendFile` client initiates file transfers via CfdpManager's `fileIn` port and receives completion notifications via `fileDoneOut`. Note that `fileIn` returns the port number as `context` and `fileDoneOut` echoes a constant, so a client that relies on a per-send unique context to discriminate late completions (`Svc/DpCatalog`, see its SDD §3.6.6) is not supported behind CfdpManager; `Svc/FileDownlink` assigns a distinct context per send.
 
 ## Component Design
 
