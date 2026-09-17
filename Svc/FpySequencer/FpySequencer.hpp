@@ -801,6 +801,13 @@ class FpySequencer : public FpySequencerComponentBase {
     // dispatches the next statement
     Signal dispatchStatement();
 
+    //! Report a directive deserialization failure, unless the caller suppressed warnings
+    //! (the debug telemetry path does, see #5661)
+    void reportDeserializeError(bool emitWarnings,
+                                const Fpy::Statement& stmt,
+                                Fw::SerializeStatus status,
+                                const Fw::ExternalSerializeBuffer& argBuf);
+
     // deserializes a directive from bytes into the Fpy type
     // returns success if able to deserialize, and returns the Fpy type object
     // as a reference, in a union of all the possible directive type objects.
