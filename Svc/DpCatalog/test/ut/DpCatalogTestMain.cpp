@@ -320,6 +320,16 @@ TEST(NominalManual, StopRecordsInFlightCompletion) {
     tester.test_StopRecordsInFlightCompletion();
 }
 
+TEST(NominalManual, StartAfterStopResumesInFlight) {
+    Svc::DpCatalogTester tester;
+    tester.test_StartAfterStopResumesInFlight();
+}
+
+TEST(NominalManual, StopThenErrorCompletion) {
+    Svc::DpCatalogTester tester;
+    tester.test_StopThenErrorCompletion();
+}
+
 TEST(OffNominal, ProcessFileInvalidDir) {
     Svc::DpCatalogTester tester;
     tester.test_ProcessFileInvalidDir();

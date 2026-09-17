@@ -191,6 +191,15 @@ module Svc {
       id 14 \
       format "Product {} complete. Pending products: {} Pending bytes: {}"
 
+    @ Catalog cleared by CLEAR_CATALOG; any transmit in progress was aborted
+    event CatalogCleared (
+                            pending: U32 @< pending data products dropped from the catalog
+                            pending_bytes: U64 @< pending data product volume dropped
+                          ) \
+      severity activity high \
+      id 15 \
+      format "Catalog cleared. Dropped pending products: {} Pending bytes: {}"
+
     @ Component not initialized error
     event ComponentNotInitialized \
       severity warning high \

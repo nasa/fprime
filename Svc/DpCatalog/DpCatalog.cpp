@@ -692,6 +692,11 @@ void DpCatalog::sendNextEntry() {
     if (this->m_xmitInProgress != true) {
         return;
     }
+    // A send is still in flight (START_XMIT_CATALOG after a STOP, before the file completed): its
+    // fileDone resumes the walk, so do not re-send the entry that is still in the catalog (#5777)
+    if (this->m_hasCurrentXmit) {
+        return;
+    }
 
     // Look for the next entry to send
     DpStateEntry entry;
@@ -933,8 +938,11 @@ Fw::CmdResponse DpCatalog::doCatalogXmit() {
         return Fw::CmdResponse::EXECUTION_ERROR;
     }
 
-    // start transmission
-    this->m_xmitBytes = 0;
+    // start transmission; a START that resumes a send left in flight by STOP keeps the
+    // session's byte tally, so CatalogXmitCompleted reports the whole session
+    if (!this->m_hasCurrentXmit) {
+        this->m_xmitBytes = 0;
+    }
     this->m_xmitInProgress = true;
     // Step 3b - search for and send first entry
     this->sendNextEntry();
@@ -964,9 +972,9 @@ void DpCatalog ::CLEAR_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Dropping the send in flight closes the transmit session here, as STOP does, so a waited
     // START_XMIT_CATALOG is answered now and the next BUILD/START is not refused as in progress
     if (this->m_xmitInProgress) {
-        this->m_xmitInProgress = false;
-        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        this->abortXmit(Fw::CmdResponse::EXECUTION_ERROR);
     }
+    this->log_ACTIVITY_HI_CatalogCleared(this->m_pendingFiles, this->m_pendingDpBytes);
     this->resetCatalog();
     this->resetStateFileData();
 
