@@ -30,6 +30,8 @@ class DpContainerTester {
         return container.m_dataBuffer.getCapacity() == expectedCapacity;
     }
 
+    static Fw::ExternalSerializeBuffer& getDataBuffer(Fw::DpContainer& container) { return container.m_dataBuffer; }
+
     static bool isDataBufferEmpty(const Fw::DpContainer& container) {
         const Fw::LinearBufferBase& buffer = container.m_dataBuffer;
         const FwSizeType buffLength = buffer.getSize();

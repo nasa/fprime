@@ -7,9 +7,12 @@
 #ifndef Fw_DpContainer_HPP
 #define Fw_DpContainer_HPP
 
+#include <limits>
+
 #include "Fw/Buffer/Buffer.hpp"
 #include "Fw/Dp/DpStateEnumAc.hpp"
 #include "Fw/Time/Time.hpp"
+#include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Utils/Hash/Hash.hpp"
 #include "config/FppConstantsAc.hpp"
@@ -63,6 +66,10 @@ class DpContainer {
     //! Reserve space for the header, the header hash, and the data hash
     //! This is also the number of non-data bytes in the packet
     static constexpr FwSizeType MIN_PACKET_SIZE = Header::SIZE + 2 * HASH_DIGEST_LENGTH;
+    //! The maximum data size
+    //! The data size is stored in the header as an FwSizeStoreType, so the
+    //! data payload can never be larger than that type can represent
+    static constexpr FwSizeType MAX_DATA_SIZE = std::numeric_limits<FwSizeStoreType>::max();
 
   public:
     // ----------------------------------------------------------------------
@@ -171,8 +178,12 @@ class DpContainer {
     }
 
     //! Set the data size
+    //! The data size must not exceed MAX_DATA_SIZE, because the header stores
+    //! it as an FwSizeStoreType
     void setDataSize(FwSizeType dataSize  //!< The data size
     ) {
+        FW_ASSERT(dataSize <= MAX_DATA_SIZE, static_cast<FwAssertArgType>(dataSize),
+                  static_cast<FwAssertArgType>(MAX_DATA_SIZE));
         this->m_dataSize = dataSize;
     }
 

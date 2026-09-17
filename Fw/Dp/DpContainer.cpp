@@ -13,6 +13,13 @@
 namespace Fw {
 
 // ----------------------------------------------------------------------
+// Static constant definitions
+// ----------------------------------------------------------------------
+
+// Out-of-line definition required in C++14 when the constant is ODR-used
+constexpr FwSizeType DpContainer::MAX_DATA_SIZE;
+
+// ----------------------------------------------------------------------
 // Constructor
 // ----------------------------------------------------------------------
 
@@ -129,7 +136,11 @@ void DpContainer::setBuffer(const Buffer& buffer) {
               static_cast<FwAssertArgType>(MIN_PACKET_SIZE));
     // Initialize the data buffer
     U8* const buffAddr = buffer.getData();
-    const FwSizeType dataCapacity = buffer.getSize() - MIN_PACKET_SIZE;
+    // Bound the data capacity by what the header can represent, so that
+    // serializing records reports FW_SERIALIZE_NO_ROOM_LEFT instead of
+    // growing the data size past what serializeHeader can encode
+    const FwSizeType availableCapacity = bufferSize - MIN_PACKET_SIZE;
+    const FwSizeType dataCapacity = (availableCapacity < MAX_DATA_SIZE) ? availableCapacity : MAX_DATA_SIZE;
     // Check that data buffer is in bounds for packet buffer
     const FwSizeType minBufferSize = DATA_OFFSET + dataCapacity;
     FW_ASSERT(bufferSize >= minBufferSize, static_cast<FwAssertArgType>(bufferSize),
