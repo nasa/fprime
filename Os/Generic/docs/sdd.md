@@ -28,7 +28,7 @@ Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
 PQ-001 | The PriorityQueue shall implement the Os::QueueInterface for compatibility with F´ components | Inspection, Unit Test
 PQ-002 | The PriorityQueue shall support message prioritization with higher priority messages dequeued before lower priority messages | Unit Test
-PQ-003 | The PriorityQueue shall allocate memory during create and deallocate it during destruction using the registered `Fw::MemAllocator` | Inspection
+PQ-003 | The PriorityQueue shall allocate memory dynamically using new/delete during create and destruction | Inspection
 PQ-004 | The PriorityQueue shall use a single shared memory pool for all message priorities | Inspection
 PQ-005 | The PriorityQueue shall support blocking and non-blocking send operations | Unit Test
 PQ-006 | The PriorityQueue shall support blocking and non-blocking receive operations | Unit Test

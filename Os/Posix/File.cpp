@@ -54,7 +54,7 @@ static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<size
               "Maximum value of FwSizeType less than the maximum value of size_t. Configure a larger type.");
 
 //!\brief default copy constructor
-PosixFile::PosixFile(const PosixFile& other) {
+PosixFile::PosixFile(const PosixFile& other) : FileInterface(other) {
     // Must properly duplicate the file handle
     this->m_handle.m_file_descriptor = fcntl(other.m_handle.m_file_descriptor, F_DUPFD, 0);
 }
@@ -134,7 +134,7 @@ PosixFile::Status PosixFile::open(const char* filepath,
 }
 
 void PosixFile::close() {
-    // Only close file handles that are open
+    // Only close file handles that are not open
     if (PosixFileHandle::INVALID_FILE_DESCRIPTOR != this->m_handle.m_file_descriptor) {
         (void)::close(this->m_handle.m_file_descriptor);
         this->m_handle.m_file_descriptor = PosixFileHandle::INVALID_FILE_DESCRIPTOR;

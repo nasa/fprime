@@ -28,6 +28,10 @@ class StubDirectory : public DirectoryInterface {
     //! \return internal Directory handle representation
     DirectoryHandle* getHandle() override;
 
+    // Bring the base class's read(Fw::StringBase&) overload back into scope; it would
+    // otherwise be hidden by the read(char*, FwSizeType) override declared below.
+    using DirectoryInterface::read;
+
     // ------------------------------------------------------------
     // Implementation-specific Directory member functions
     // ------------------------------------------------------------

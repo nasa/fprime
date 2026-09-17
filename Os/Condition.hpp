@@ -1,150 +1,42 @@
 // ======================================================================
 // \title Os/Condition.hpp
-// \brief common function definitions for Os::ConditionVariables
+// \brief public Os::ConditionVariable interface and alias
+//
+// This header aggregates all definitions needed to use Os::ConditionVariable:
+// the interface, the configured alias, and the concrete delegate type.
+//
+// WARNING — include order is load-bearing. Do not reorder.
+//
+// The dependency constraints are:
+//
+//   1. config/OsDelegateConditionVariable.hpp (CFG) defines the Os::ConditionVariable type alias by
+//      forward-declaring a link-time delegate (e.g. DelegateConditionVariable) or directly
+//      aliasing a concrete implementation (e.g. Va416x0Os::SomeConditionVariable).
+//      Must not include Os OSAL headers (they aren't yet defined).
+//      Should only be included in Os/ConditionVariableInterface.hpp.
+//
+//   2. Os/ConditionVariableInterface.hpp (IF) needs the Os::ConditionVariable alias in its
+//      method signatures, so it includes CFG first. It then defines
+//      ConditionVariableHandle and ConditionVariableInterface.
+//
+//   3. OS_CONDITION_VARIABLE_HEADER (IMPL) is defined by CFG and points to the concrete
+//      implementation header. If using delegation, this points to
+//      Os/DelegateConditionVariable.hpp. If using compile-time selection, it points
+//      directly to a platform-specific implementation.
+//
+// ConditionVariableInterface.hpp must precede OS_CONDITION_VARIABLE_HEADER here,
+// and CFG must never include either of them (that would form a cycle).
 // ======================================================================
-#include "Os/Mutex.hpp"
-#include "Os/Os.hpp"
-
 #ifndef OS_CONDITION_HPP_
 #define OS_CONDITION_HPP_
 
-namespace Os {
+#include "Os/ConditionVariableInterface.hpp"
 
-//! \brief Condition variable handle parent
-class ConditionVariableHandle {};
+// Validate that OS_CONDITION_VARIABLE_HEADER was defined by config/OsDelegateConditionVariable.hpp
+#ifndef OS_CONDITION_VARIABLE_HEADER
+#error "OS_CONDITION_VARIABLE_HEADER must be defined in config/OsDelegateConditionVariable.hpp"
+#endif
 
-//! \brief interface for condition variables
-//!
-//! Condition variables allow a program to block on a condition while atomically releasing an Os::Mutex and atomically
-//! reacquiring the mutex once the condition has been notified.
-class ConditionVariableInterface {
-  public:
-    enum Status {
-        OP_OK,                  //!<  Operation was successful
-        ERROR_MUTEX_NOT_HELD,   //!< When trying to wait but we don't hold the mutex
-        ERROR_DIFFERENT_MUTEX,  //!< When trying to use a different mutex than expected mutex
-        ERROR_NOT_IMPLEMENTED,  //!< When trying to use a feature that isn't implemented
-        NOT_SUPPORTED,          //!< ConditionVariable does not support operation
-        ERROR_OTHER             //!< All other errors
-    };
+#include OS_CONDITION_VARIABLE_HEADER
 
-    //! Default constructor
-    ConditionVariableInterface() = default;
-    //! Default destructor
-    virtual ~ConditionVariableInterface() = default;
-
-    //! \brief copy constructor is forbidden
-    ConditionVariableInterface(const ConditionVariableInterface& other) = delete;
-
-    //! \brief assignment operator is forbidden
-    virtual ConditionVariableInterface& operator=(const ConditionVariableInterface& other) = delete;
-
-    //! \brief wait on a condition variable
-    //!
-    //! Wait on a condition variable. This function will atomically unlock the provided mutex and block on the condition
-    //! in one step. Blocking will occur until a future `notify` or `notifyAll` call is made to this variable on another
-    //! thread of execution.
-    //!
-    //! \param mutex: mutex to unlock as part of this operation
-    //! \return status of the conditional wait
-    virtual Status pend(Os::Mutex& mutex) = 0;
-
-    //! \brief notify a single waiter on this condition variable
-    //!
-    //! Notify a single waiter on this condition variable. It is not necessary to hold the mutex supplied by the waiters
-    //! and it is advantageous not to hold the lock to prevent immediate re-blocking.
-    virtual void notify() = 0;
-
-    //! \brief notify all waiters on this condition variable
-    //!
-    //! Notify all waiters on this condition variable. It is not necessary to hold the mutex supplied by the waiters
-    //! and it is advantageous not to hold the lock to prevent immediate re-blocking.
-    virtual void notifyAll() = 0;
-
-    //! \brief return the underlying condition variable handle (implementation specific).
-    //! \return internal task handle representation
-    virtual ConditionVariableHandle* getHandle() = 0;
-
-    //! \brief provide a pointer to a Mutex delegate object
-    static ConditionVariableInterface* getDelegate(ConditionVariableHandleStorage& aligned_new_memory);
-};
-
-//! \brief condition variable implementation
-//!
-//! Condition variables allow a program to block on a condition while atomically releasing an Os::Mutex and atomically
-//! reacquiring the mutex once the condition has been notified.
-class ConditionVariable final : public ConditionVariableInterface {
-  public:
-    //! \brief default constructor
-    ConditionVariable();
-
-    //! \brief default virtual destructor
-    ~ConditionVariable() final;
-
-    //! \brief copy constructor is forbidden
-    ConditionVariable(const ConditionVariableInterface& other) = delete;
-
-    //! \brief copy constructor is forbidden
-    ConditionVariable(const ConditionVariableInterface* other) = delete;
-
-    //! \brief assignment operator is forbidden
-    ConditionVariableInterface& operator=(const ConditionVariableInterface& other) override = delete;
-
-    //! \brief wait on a condition variable
-    //!
-    //! Wait on a condition variable. This function will atomically unlock the provided mutex and block on the condition
-    //! in one step. Blocking will occur until a future `notify` or `notifyAll` call is made to this variable on another
-    //! thread of execution. This function delegates to the underlying implementation.
-    //!
-    //! \warning it is invalid to supply a mutex different from those supplied by others
-    //! \warning conditions *must* be rechecked after the condition variable unlocks
-    //! \warning the mutex must be locked by the calling task
-    //!
-    //! \param mutex: mutex to unlock as part of this operation
-    //! \return status of the conditional wait
-    Status pend(Os::Mutex& mutex) override;
-
-    //! \brief wait on a condition variable
-    //!
-    //! Wait on a condition variable. This function will atomically unlock the provided mutex and block on the condition
-    //! in one step. Blocking will occur until a future `notify` or `notifyAll` call is made to this variable on another
-    //! thread of execution. This function delegates to the underlying implementation.
-    //!
-    //! \warning it is invalid to supply a mutex different from those supplied by others
-    //! \warning conditions *must* be rechecked after the condition variable unlocks
-    //! \warning the mutex must be locked by the calling task
-    //!
-    //! \param mutex: mutex to unlock as part of this operation
-    void wait(Os::Mutex& mutex);
-
-    //! \brief notify a single waiter on this condition variable
-    //!
-    //! Notify a single waiter on this condition variable. It is not necessary to hold the mutex supplied by the waiters
-    //! and it is advantageous not to hold the lock to prevent immediate re-blocking. This function delegates to the
-    //! underlying implementation.
-    void notify() override;
-
-    //! \brief notify all waiters on this condition variable
-    //!
-    //! Notify all waiters on this condition variable. It is not necessary to hold the mutex supplied by the waiters
-    //! and it is advantageous not to hold the lock to prevent immediate re-blocking. This function delegates to the
-    //! underlying implementation.
-    void notifyAll() override;
-
-    //! \brief return the underlying condition variable handle (implementation specific). Delegates to implementation.
-    //! \return internal task handle representation
-    ConditionVariableHandle* getHandle() override;
-
-  private:
-    //! Pointer to mutex object previously used
-    Os::Mutex* m_lock = nullptr;
-
-    // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
-    // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
-    // the byte-array here and set `handle` to that address for storage.
-    alignas(FW_HANDLE_ALIGNMENT)
-        ConditionVariableHandleStorage m_handle_storage;  //!< Storage for aligned FileHandle data
-    ConditionVariableInterface& m_delegate;               //!< Delegate for the real implementation
-};
-}  // namespace Os
 #endif  // OS_CONDITION_HPP_

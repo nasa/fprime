@@ -15,7 +15,8 @@ struct StubFileSystemHandle : public FileSystemHandle {};
 
 //! \brief stub implementation of Os::FileSystem
 //!
-//! Stub implementation of `FileSystemInterface` for use as a delegate class handling error-only fileSystem operations.
+//! Stub implementation of `FileSystemInterface` for use as a delegate class or direct compile-time alias handling
+//! error-only fileSystem operations.
 //!
 class StubFileSystem : public FileSystemInterface {
   public:
@@ -24,6 +25,13 @@ class StubFileSystem : public FileSystemInterface {
 
     //! \brief destructor
     ~StubFileSystem() override = default;
+
+    //! \brief initialize singleton
+    static void init() {}
+
+    //! \brief get a reference to singleton
+    //! \return reference to singleton
+    static StubFileSystem& getSingleton();
 
     // ------------------------------------------------------------
     // Implementation-specific FileSystem member functions
