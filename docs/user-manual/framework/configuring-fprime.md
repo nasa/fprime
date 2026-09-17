@@ -14,7 +14,6 @@ This guide includes:
     - [Asserts](#asserts)
     - [Port Tracing](#port-tracing)
     - [Port Serialization](#port-serialization)
-    - [Serialization Type ID](#serializable-type-id)
     - [Buffer Sizes](#buffer-sizes)
     - [Text Logging](#text-logging)
     - [Misc Configuration Settings](#misc-configuration-settings)
@@ -29,11 +28,12 @@ This guide includes:
 All configurable files (top-level and component-specific) for F´ are available in the
 `default/config` directory. By default, all deployments use the F´ provided default configuration options.
 
-Projects can also take ownership of the configuration to provide their own HPP/FPP configuration to
-override the framework defaults. To do so, copy the `default/config` directory into your project and use the
-[`register_fprime_config()`](../../reference/api/cmake/API.md) CMake API to let the build system know 
-to use your configuration overrides. This is demonstrated in various F´ reference projects, such as the 
-[FprimeZephyrReference](https://github.com/fprime-community/fprime-zephyr-reference/tree/devel/FprimeZephyrReference).
+A project overrides a framework setting by copying only the file that holds it (keeping the file name), editing the
+copy, and registering it with the `CONFIGURATION_OVERRIDES` directive of
+[`register_fprime_config()`](../../reference/api/cmake/API.md). Files that are not overridden keep their defaults.
+The mechanism, the same steps for platform, library, and subtopology configuration, and the way libraries ship
+their own defaults are described in [Configuration Modules](../build-system/configuration.md); this page
+describes the individual settings.
 
 The `FpConfig.h` file is a C header allowing the user to define global settings. Other configuration options
 can be found in `FpConfig.fpp` and `FpConstants.fpp`
@@ -364,10 +364,9 @@ Table 47 describes other user settings.
 
 ## Component Configuration
 
-Component configurations are also provided as part of the project's config directory. If the directory is not provided,
-then the default from the framework is used. **Remember:** if the project overrides any configuration, that new
-directory must contain all the component headers as well as the `FpConfig.hpp` as C++ prevents including individual
-headers.
+Component configuration headers live in `default/config` next to `FpConfig.h` and are overridden the same way, one
+file at a time (see [Configuration Modules](../build-system/configuration.md)). Headers that are not overridden keep
+the framework defaults.
 
 These component headers follow the form `<Component>Cfg.hpp` and allows a project to set the configuration for each
 component's C++ implementation. This is typically to set maximum sizes for tables, and other static memory allocations.
@@ -396,7 +395,7 @@ On POSIX platforms (Linux, Darwin) each enumerator holds the `clockid_t` value p
 | `RAWTIME_MONOTONIC` | `CLOCK_MONOTONIC`  | Never adjusted; recommended for measuring elapsed time         |
 | `RAWTIME_BOOTTIME`  | `CLOCK_BOOTTIME`   | Monotonic and advances during suspend (Linux only)             |
 
-To switch an entire deployment to a different clock, override this header in the project's configuration directory and
+To switch an entire deployment to a different clock, override this header in the project's configuration module and
 set `RAWTIME_DEFAULT` to the desired clock, for example `RAWTIME_DEFAULT = CLOCK_MONOTONIC`. All framework components
 using `Os::RawTime` (rate groups, `Svc::LinuxTimer`, `Svc::OsTime`, etc.) then read that clock with no code changes.
 Individual instances may select another source via `Os::RawTime(Os::RawTimeSource)`.
@@ -408,27 +407,12 @@ Individual instances may select another source via `Os::RawTime(Os::RawTimeSourc
 
 ## Library Default Configuration
 
-Libraries may ship default configuration of their own. Registering that configuration module with the
-`GLOBAL_IMPLICIT_DEPENDENCY` flag links it into the build system's global interface target, so every module that
-transitively depends on `Fw_Types` (i.e. every F´ module) may include its headers and reference its FPP constants
-without naming the configuration module in `DEPENDS`. This is the same mechanism the framework uses for
-`default/config` and for the platform configuration.
-
-```cmake
-# File: MyLibrary/config/CMakeLists.txt
-register_fprime_config(
-        MyLibraryConfig
-    HEADERS
-        "${CMAKE_CURRENT_LIST_DIR}/MyLibraryCfg.hpp"
-    AUTOCODER_INPUTS
-        "${CMAKE_CURRENT_LIST_DIR}/MyLibraryCfg.fpp"
-    GLOBAL_IMPLICIT_DEPENDENCY
-)
-```
-
-Projects override these files exactly as they override framework configuration: register a configuration module of
-their own listing the files under `CONFIGURATION_OVERRIDES`. Since the override is copied into the library's
-configuration module, it reaches every consumer through the same implicit dependency.
+Libraries may ship default configuration of their own, registered with `register_fprime_config` from a
+`default-config/config-<library name>/` directory, which consumers list in `DEPENDS` (or which the library marks
+`GLOBAL_IMPLICIT_DEPENDENCY` to reach every module). Projects override library files exactly as they override
+framework files, with `CONFIGURATION_OVERRIDES`. See
+[Library Defaults](../build-system/configuration.md#library-defaults) for the layout, include path, and dependency
+rules.
 
 > [!NOTE]
 > `GLOBAL_IMPLICIT_DEPENDENCY` replaces the `BASE_CONFIG` flag, which is deprecated and emits a warning when used.

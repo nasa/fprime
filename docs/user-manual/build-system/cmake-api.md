@@ -9,6 +9,7 @@ takes. Users wanting to alter the build should look here.
 
 - [API](../../reference/api/cmake/API.md): Module API function documentation
 - [Options](../../reference/api/cmake/options.md): Runtime build options
+- [Configuration Modules](./configuration.md): How `register_fprime_config` assembles framework, platform, library, and project configuration
 
 This documentation is generated from [the source code](https://github.com/nasa/fprime/tree/devel/cmake). Below is a description of some of the main API functionalities.
 

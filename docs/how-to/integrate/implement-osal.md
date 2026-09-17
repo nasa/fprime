@@ -176,10 +176,10 @@ This optimization is most valuable for bare-metal systems with high-frequency op
 
 Projects override compile-time selection by providing their own configuration header that replaces F´'s default. For `RawTime`, create a project-specific override of `config/OsDelegateRawTime.hpp`:
 
-**Step 1:** In your project's config directory, create `config/OsDelegateRawTime.hpp`:
+**Step 1:** In your project's `config-overrides/` directory, create `OsDelegateRawTime.hpp` (same file name as the framework default):
 
 ```c++
-// my-project/config/OsDelegateRawTime.hpp
+// my-project/config-overrides/OsDelegateRawTime.hpp
 #ifndef CONFIG_OS_DELEGATERAWTIME_HPP
 #define CONFIG_OS_DELEGATERAWTIME_HPP
 
@@ -204,7 +204,7 @@ namespace Os {
 #endif  // CONFIG_OS_DELEGATERAWTIME_HPP
 ```
 
-**Step 2:** Register the config header in your project's `config/CMakeLists.txt`:
+**Step 2:** Register the config header in your project's `config-overrides/CMakeLists.txt` (see [Configuration Modules](../../user-manual/build-system/configuration.md#overriding-configuration-in-a-project)):
 
 ```cmake
 register_fprime_config(
@@ -212,6 +212,7 @@ register_fprime_config(
     CONFIGURATION_OVERRIDES
         "${CMAKE_CURRENT_LIST_DIR}/OsDelegateRawTime.hpp"
         # ... other project override config headers
+    INTERFACE
 )
 ```
 

@@ -68,6 +68,7 @@ The User Manual provides comprehensive documentation for understanding and using
 - [Common Port Design Patterns](design-patterns/common-port-patterns.md)
 - [Health Checking Pattern](design-patterns/health-checking.md)
 - [A Quick Look at the Hub Pattern](design-patterns/hub-pattern.md)
+- [ISR Device Driver Pattern](design-patterns/isr-driver.md)
 - [The Manager/Worker Pattern](design-patterns/manager-worker.md)
 - [Rate Groups and Timeliness](design-patterns/rate-group.md)
 - [Subtopologies](design-patterns/subtopologies.md)
@@ -85,6 +86,7 @@ The User Manual provides comprehensive documentation for understanding and using
 - [Targets](build-system/cmake-targets.md)
 - [CMake Toolchain Files](build-system/cmake-toolchains.md)
 - [CMake Build System Unit Tests](build-system/cmake-uts.md)
+- [Configuration Modules](build-system/configuration.md)
 - [`settings.ini`: Build Settings Configuration](build-system/settings.md)
 
 </details>
