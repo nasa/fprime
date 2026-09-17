@@ -109,7 +109,7 @@ void ComAggregator ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condi
 void ComAggregator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     FW_ASSERT(this->m_allocation != nullptr);
     // Without spanning, any packet must fit in an empty aggregate next to a minimum idle packet
-    FW_ASSERT(this->m_spanning || (data.getSize() + Ccsds::Utils::IdlePacket::MIN_SIZE) <= this->m_aggregationSize,
+    FW_ASSERT(this->m_spanning || data.getSize() <= (this->m_aggregationSize - Ccsds::Utils::IdlePacket::MIN_SIZE),
               static_cast<FwAssertArgType>(data.getSize()));
     Svc::ComDataContextPair pair(data, context);
     this->aggregationMachine_sendSignal_fill(pair);
