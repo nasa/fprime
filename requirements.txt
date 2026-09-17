@@ -50,7 +50,7 @@ openpyxl==3.1.5
 packaging==24.1
 pexpect==4.9.0
 pluggy==1.5.0
-protobuf==3.20.3
+protobuf==5.29.6
 ptyprocess==0.7.0
 pydantic==2.12.5
 pydantic_core==2.41.5
