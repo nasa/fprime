@@ -223,7 +223,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Os/Cpu.hpp
                                                2       2   100%
 /home/runner/work/fprime/fprime/Os/Delegate.hpp
-                                              20      19    95%   100
+                                              20      18    90%   100,130
 /home/runner/work/fprime/fprime/Os/DelegateRawTime.cpp
                                               66      34    51%   15-18,27-31,33-36,38,51-53,71-73,76-77,90,97-98,102-103,110-112,116-117
 /home/runner/work/fprime/fprime/Os/Directory.cpp
@@ -720,5 +720,5 @@ Ref/TypeDemo/TypeDemo.hpp                      1       1   100%
 /home/runner/work/fprime/fprime/Utils/Types/Queue.cpp
                                              104      35    33%   36-38,40-41,44,46-48,52-54,57,61,72-74,78-80,83,90-91,98-100,102,105,107-109,111,114-116,118-121,123,136,141-143,145-148,150,154-155,162-165,167-169,171,175-176,178-180,182,185-186,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      31664    9569    30%
+TOTAL                                      31664    9568    30%
 ------------------------------------------------------------------------------
