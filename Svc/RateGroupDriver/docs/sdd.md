@@ -69,7 +69,7 @@ For instance,
 
 #### 3.3.1 System Tick Port Call
 
-As described in the Functional Description section, the RateGroupDriver component accepts calls to the SchedIn and divides them down to the SchedOut ports:
+As described in the Functional Description section, the RateGroupDriver component accepts calls to `CycleIn` and divides them down to the `CycleOut` ports:
 
 ![System Tick Port Call](img/RateGroupDriverPortCallSequence.jpg) 
 
