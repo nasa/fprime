@@ -70,7 +70,7 @@ void SpacePacketFramerTester::testNominalFraming() {
     ComCfg::SppPacketType::T pktType =
         static_cast<ComCfg::SppPacketType::T>(STest::Random::lowerUpper(0, 1));
     // Choose a random 14-bit sequence count
-    U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));
+    U16 seqCount = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FFF));
     // Choose a random secondary header flag
     bool hasSecHdr = static_cast<bool>(STest::Random::lowerUpper(0, 1));
     // Choose random 2-bit sequence flags
