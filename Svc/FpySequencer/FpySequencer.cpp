@@ -454,7 +454,9 @@ void FpySequencer::updateDebugTelemetryStruct() {
                   static_cast<FwAssertArgType>(this->m_runtime.nextStatementIndex));
         const Fpy::Statement& nextStmt = this->m_sequenceObj.get_statements()[this->m_runtime.nextStatementIndex];
         DirectiveUnion directiveUnion;
-        Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);
+        // no warning event here: this runs on every telemetry tick while paused, and the
+        // deserialization result is reported through Debug_NextStatementReadSuccess (#5661)
+        Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion, false);
 
         if (status != Fw::Success::SUCCESS) {
             this->m_debug.reachedEndOfFile = false;
