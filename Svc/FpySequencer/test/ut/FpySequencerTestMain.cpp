@@ -18,8 +18,8 @@ using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 using DirectiveError = Fpy::DirectiveErrorCode;
 
 namespace {
-// Only invoked if deserialization succeeds; the mismatch test below is constructed so it never is
-void unusedTimePortCallback(Fw::PassiveComponentBase* callComp, FwIndexType portNum, Fw::Time& time) {
+// Registered below; deserialization is expected to fail before this can run
+void failIfInvokedTimePortCallback(Fw::PassiveComponentBase* callComp, FwIndexType portNum, Fw::Time& time) {
     FAIL() << "Time port callback should not run when the payload is too small to deserialize";
 }
 }  // namespace
@@ -5615,14 +5615,12 @@ TEST_F(FpySequencerTester, popSerializable_stackUnderflow) {
 }
 
 TEST_F(FpySequencerTester, popSerializable_typedPortDeserializeMismatch) {
-    // Port 2 is otherwise unused by these tests. Connect it to a genuine typed input port instead
-    // of the harness's generic serial capture, so an undersized payload triggers a real deserialize
-    // mismatch the way a typed serialOut connection does in a real deployment (nasa/fprime#5859),
-    // rather than the FW_ASSERT this used to hit.
+    // Port 2 is unused by other tests. Connect it to a real typed input port (not the harness's
+    // serial capture) so an undersized payload produces a genuine deserialize mismatch (#5859).
     Fw::InputTimePort typedPort;
     typedPort.init();
-    typedPort.addCallComp(&this->cmp, &unusedTimePortCallback);
-    this->component.set_serialOut_OutputPort(2, &typedPort);
+    typedPort.addCallComp(&this->cmp, &failIfInvokedTimePortCallback);
+    this->cmp.set_serialOut_OutputPort(2, &typedPort);
 
     // Fw::Time's serialized size is well over 1 byte, so 1 byte fails to deserialize into it
     tester_push<U8>(0xAB);
@@ -5632,7 +5630,7 @@ TEST_F(FpySequencerTester, popSerializable_typedPortDeserializeMismatch) {
     Signal result = tester_popSerializable_directiveHandler(directive, err);
 
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::SERIAL_PORT_WRITE_FAILURE);
+    ASSERT_EQ(err, DirectiveError::SERIAL_PORT_DESERIALIZE_FAILURE);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);  // Stack unchanged; nothing was popped
 }
 
