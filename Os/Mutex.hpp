@@ -5,9 +5,9 @@
 // This header aggregates all definitions needed to use Os::Mutex:
 // the interface, the configured alias, and the concrete delegate type.
 //
-// WARNING — include order is load-bearing. Do not reorder.
-//
-// The dependency constraints are:
+// The includes below must appear in the order given: each depends on names
+// defined by the one before it, so reordering them will fail to compile.
+// The ordering constraints are:
 //
 //   1. config/OsDelegateMutex.hpp (CFG) defines the Os::Mutex type alias by
 //      forward-declaring a link-time delegate (e.g. DelegateMutex) or directly
