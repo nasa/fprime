@@ -6,6 +6,7 @@
 #define OS_MUTEXINTERFACE_HPP_
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/Assert.hpp>
 #include <Os/Os.hpp>
 #include "config/OsDelegateMutex.hpp"  // defines Os::Mutex alias and OS_MUTEX_HEADER consumed by Os/Mutex.hpp; do not remove
 
@@ -54,14 +55,28 @@ class MutexInterface {
 
     // ------------------------------------------------------------------
     // Common (non-virtual) functions built on top of take()/release().
-    // Located on the interface (per fprime#5249) so they are available
-    // regardless of which implementation Os::Mutex is configured to be.
-    // Implemented in DelegateMutex.cpp to keep Mutex code in one TU.
+    // Defined inline on the interface (per fprime#5249) so they are available
+    // regardless of which implementation Os::Mutex is configured to be, and so
+    // that under compile-time selection the call site can devirtualize take()/
+    // release() and inline the whole acquisition without relying on LTO.
     // ------------------------------------------------------------------
 
-    void lock();                       //!<  lock the mutex and assert success
-    void unLock();                     //!<  unlock the mutex and assert success
-    void unlock() { this->unLock(); }  //!<  alias for unLock to meet BasicLockable requirements
+    //! \brief lock the mutex and assert success
+    void lock() {
+        const Status status = this->take();
+        FW_ASSERT(status == Status::OP_OK,
+                  static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
+    }
+
+    //! \brief unlock the mutex and assert success
+    void unLock() {
+        const Status status = this->release();
+        FW_ASSERT(status == Status::OP_OK,
+                  static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
+    }
+
+    //! \brief alias for unLock to meet BasicLockable requirements
+    void unlock() { this->unLock(); }
 };
 
 //! \brief locks a mutex within the current scope
@@ -76,10 +91,10 @@ class ScopeLock {
     //!
     //! Will lock the supplied mutex and will unlock the mutex when this object goes out of scope.
     //! \param mutex
-    explicit ScopeLock(MutexInterface& mutex);
+    explicit ScopeLock(MutexInterface& mutex) : m_mutex(mutex) { this->m_mutex.lock(); }
 
     //!\brief unlock the scoped mutex
-    ~ScopeLock();
+    ~ScopeLock() { this->m_mutex.unLock(); }
 
     //! \brief copy constructor is forbidden
     ScopeLock(const ScopeLock& other) = delete;

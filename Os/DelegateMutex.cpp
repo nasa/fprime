@@ -36,34 +36,8 @@ DelegateMutex::Status DelegateMutex::release() {
     return this->m_delegate.release();
 }
 
-// ----------------------------------------------------------------------
-// MutexInterface common implementations
-// Built on pure virtual take()/release(). Located here (not MutexInterface.cpp)
-// to keep Mutex implementation code in one translation unit.
-// ----------------------------------------------------------------------
-
-void MutexInterface::lock() {
-    MutexInterface::Status status = this->take();
-    FW_ASSERT(status == MutexInterface::Status::OP_OK,
-              static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
-}
-
-void MutexInterface::unLock() {
-    MutexInterface::Status status = this->release();
-    FW_ASSERT(status == MutexInterface::Status::OP_OK,
-              static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
-}
-
-// ----------------------------------------------------------------------
-// ScopeLock
-// ----------------------------------------------------------------------
-
-ScopeLock::ScopeLock(MutexInterface& mutex) : m_mutex(mutex) {
-    this->m_mutex.lock();
-}
-
-ScopeLock::~ScopeLock() {
-    this->m_mutex.unLock();
-}
-
 }  // namespace Os
+
+// Note: MutexInterface::lock()/unLock() and ScopeLock are defined inline in Os/MutexInterface.hpp
+// so they are available regardless of the configured implementation and can devirtualize under
+// compile-time selection without pulling this delegate TU into the link.
