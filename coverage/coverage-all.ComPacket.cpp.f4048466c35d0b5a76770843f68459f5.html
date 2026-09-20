@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-19 21:06:04</td>
+      <td>2026-09-20 21:14:02</td>
     </tr>
   </table>
 </div>
@@ -70,10 +70,10 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l12">Fw::ComPacket::ComPacket() (line 12)</a></td><td>called 77393 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l20">Fw::ComPacket::deserializeBase(Fw::SerialBufferBase&amp;) (line 20)</a></td><td>called 71213 times</td><td>94.0%</td></tr>
+    <tr><td><a href="#l12">Fw::ComPacket::ComPacket() (line 12)</a></td><td>called 77490 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l20">Fw::ComPacket::deserializeBase(Fw::SerialBufferBase&amp;) (line 20)</a></td><td>called 77770 times</td><td>94.0%</td></tr>
     <tr><td><a href="#l16">Fw::ComPacket::serializeBase(Fw::SerialBufferBase&amp;) const (line 16)</a></td><td>called 31 times</td><td>93.0%</td></tr>
-    <tr><td><a href="#l14">Fw::ComPacket::~ComPacket() (line 14)</a></td><td>called 73041 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l14">Fw::ComPacket::~ComPacket() (line 14)</a></td><td>called 68764 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -168,7 +168,7 @@
       <td class="lineno"><a id="l12" href="#l12">12</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">77393</td>
+      <td class="linecount coveredLine">77490</td>
       <td class="src coveredLine"><span class="n">ComPacket</span><span class="o">::</span><span class="n">ComPacket</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_type</span><span class="p">(</span><span class="n">ComPacketType</span><span class="o">::</span><span class="n">FW_PACKET_UNKNOWN</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -182,7 +182,7 @@
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">146082</td>
+      <td class="linecount coveredLine">137528</td>
       <td class="src coveredLine"><span class="n">ComPacket</span><span class="o">::~</span><span class="n">ComPacket</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -231,14 +231,14 @@
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">71213</td>
+      <td class="linecount coveredLine">77770</td>
       <td class="src coveredLine"><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">ComPacket</span><span class="o">::</span><span class="n">deserializeBase</span><span class="p">(</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">71213</td>
+      <td class="linecount coveredLine">77770</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwPacketDescriptorType</span><span class="w"> </span><span class="n">serVal</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -247,11 +247,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 7 taken 76552 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 71866 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">78918</td>
+      <td class="linecount coveredLine">78108</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">deserializeTo</span><span class="p">(</span><span class="n">serVal</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -261,11 +261,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 73 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 76479 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 71793 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">76552</td>
+      <td class="linecount coveredLine">71866</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">FW_SERIALIZE_OK</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">stat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -286,7 +286,7 @@
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">76552</td>
+      <td class="linecount coveredLine">71866</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">stat</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
