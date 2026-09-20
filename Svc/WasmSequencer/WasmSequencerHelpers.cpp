@@ -279,6 +279,15 @@ void WasmSequencer ::reportSeqDone(const Svc::WasmSequencer_RequestContext& valu
     }
 }
 
+void WasmSequencer ::reportSeqAborted(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response) {
+    // Respond to port invokers that the sequence exited
+    if (value.get_source() == Svc::WasmSequencer_SignalSource::PORT_RUN) {
+        if (this->isConnected_seqDoneOut_OutputPort(0)) {
+            this->seqDoneOut_out(0, 0, 0, response);
+        }
+    }
+}
+
 spacewasm_status_t WasmSequencer ::setGlobal(const Fw::StringBase& moduleName,
                                              const Fw::StringBase& name,
                                              spacewasm_value_t value) {
