@@ -1161,14 +1161,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Report that a RUN ended before it ever started running on seqDoneOut (if
     //! connected) with the given response: rejected as BUSY, failed to load, failed to
     //! resolve an entrypoint, or cancelled while loading.
-    //!
-    //! Unlike reportSeqDone this only emits for PORT_RUN, because no seqStartOut was
-    //! emitted (reportModuleStarted was never reached). A caller that drove seqRunIn
-    //! (Svc::SeqDispatcher) reserved a sequencer slot the instant it made the call and
-    //! only releases it on seqDoneOut, so it needs the done report even though it never
-    //! saw a start. A COMMAND_RUN has no such reservation to unwind -- its requester is
-    //! answered on cmdResponse -- and an unpaired seqDoneOut would only draw an
-    //! UnknownSequenceFinished warning from the dispatcher, so it is left alone.
     void reportSeqAborted(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response);
 
     //! Set a global to a value given the name of the module, global export name and value
