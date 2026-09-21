@@ -90,6 +90,14 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
+      # Expose the bootstrapped project's venv so the shared setup installs into it
+      - name: "Add project venv to PATH"
+        run: echo "${PWD}/my-project/fprime-venv/bin" >> "${GITHUB_PATH}"
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ./my-project/lib/fprime
+
       - name: "Update dependencies and install fprime-tools"
         run: |
              cd my-project

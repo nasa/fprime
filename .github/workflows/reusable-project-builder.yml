@@ -54,7 +54,6 @@ jobs:
     runs-on: ${{ inputs.runs_on }}
     name: "Build"
     env:
-      FPRIME_LOCATION: ${{ inputs.fprime_location }}
       TARGET_PLATFORM: ${{ inputs.target_platform }}
     steps:
       - name: "Setup output-cleaner"
@@ -70,10 +69,10 @@ jobs:
         with:
           submodules: true
           path: ${{ inputs.fprime_location }}
-      - name: "Install requirements.txt"
-        run: |
-          pip3 install -r ${FPRIME_LOCATION}/requirements.txt
-        shell: bash
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ inputs.fprime_location }}
       - name: "Generate build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
@@ -110,7 +109,6 @@ jobs:
     runs-on: ${{ inputs.runs_on }}
     name: "Unit Tests"
     env:
-      FPRIME_LOCATION: ${{ inputs.fprime_location }}
       TARGET_PLATFORM: ${{ inputs.target_platform }}
     steps:
       - name: "Setup output-cleaner"
@@ -126,10 +124,10 @@ jobs:
         with:
           submodules: true
           path: ${{ inputs.fprime_location }}
-      - name: "Install requirements.txt"
-        run: |
-          pip3 install -r ${FPRIME_LOCATION}/requirements.txt
-        shell: bash
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ inputs.fprime_location }}
 
       - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}
