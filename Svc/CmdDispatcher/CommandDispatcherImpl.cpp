@@ -104,7 +104,7 @@ void CommandDispatcherImpl::compCmdStat_handler(FwIndexType portNum,
 void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     Fw::CmdPacket cmdPkt;
     Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
-    bool portIsConnected = this->isConnected_seqCmdStatus_OutputPort(portNum);
+    const bool portIsConnected = this->isConnected_seqCmdStatus_OutputPort(portNum);
 
     if (stat != Fw::FW_SERIALIZE_OK) {
         Fw::DeserialStatus serErr(static_cast<Fw::DeserialStatus::t>(stat));
