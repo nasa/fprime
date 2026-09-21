@@ -132,7 +132,8 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
             pendingInsertStatus = this->m_sequenceTracker.insert(sequenceNumber, pendingCmd);
 
             // if we couldn't find a slot to track the command, quit
-            if (not CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull && pendingInsertStatus != Fw::Success::SUCCESS) {
+            if (not CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull &&
+                pendingInsertStatus != Fw::Success::SUCCESS) {
                 this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
                 this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::EXECUTION_ERROR);
                 return;
@@ -146,7 +147,8 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         // increment command count
         this->m_numCmdsDispatched++;
 
-        if (CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull && pendingInsertStatus != Fw::Success::SUCCESS) {
+        if (CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull &&
+            pendingInsertStatus != Fw::Success::SUCCESS) {
             this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
             this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::DISPATCHED_UNTRACKED);
             return;
