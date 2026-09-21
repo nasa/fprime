@@ -177,7 +177,9 @@ TEST(CmdDispTestOffNominal, InvalidCommand) {
 
 TEST(CmdDispTestOffNominal, CommandOverflow) {
     TEST_CASE(102.2.4, "Off-nominal Command Overflow");
-    COMMENT("Verify error case where there are too many outstanding commands.");
+    COMMENT(
+        "Verify error case where there are too many outstanding commands, for both settings of "
+        "CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull.");
 
     Svc::CommandDispatcherImpl impl("CmdDispImpl");
 
