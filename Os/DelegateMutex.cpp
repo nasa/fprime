@@ -37,7 +37,3 @@ DelegateMutex::Status DelegateMutex::release() {
 }
 
 }  // namespace Os
-
-// Note: MutexInterface::lock()/unLock() and ScopeLock are defined inline in Os/MutexInterface.hpp
-// so they are available regardless of the configured implementation and can devirtualize under
-// compile-time selection without pulling this delegate TU into the link.
