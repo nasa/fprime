@@ -42,7 +42,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      38   100%
+Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
 Fw/DataStructures/ExternalArray.hpp           57      57   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -133,7 +133,7 @@ googletest/googletest/include/gtest/gtest-param-test.h
 googletest/googletest/include/gtest/gtest-printers.h
                                               84      24    28%   133-142,145,148-149,152-153,155-156,182-184,189,191,213,216-217,332-333,341-342,358-359,412,414,450,454-455,458-460,501-506,554-556,593,606,623-625,627-629,631,639-641
 googletest/googletest/include/gtest/gtest.h
-                                              43      22    51%   244,252,257-258,339,1338,1343,1362,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
+                                              43      23    53%   244,252,257-258,339,1338,1343,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
 googletest/googletest/include/gtest/internal/gtest-death-test-internal.h
                                                4       2    50%   95-96
 googletest/googletest/include/gtest/internal/gtest-internal.h
@@ -198,14 +198,14 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      89    50%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,134-136,140-142,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
 Os/Posix/RawTime.cpp                          44      41    93%   64,76,80
 Os/Posix/RawTime.hpp                           1       1   100%
-Os/Posix/Task.cpp                            156     105    67%   45-47,51,55-58,60-61,63-64,68-69,71-72,75-77,87-89,93-95,135-136,141,143-146,149-150,155,184,196,243,251,265-267,269-271,290-292,296-297,299
+Os/Posix/Task.cpp                            156     106    67%   45-47,51,55-58,60-61,63-64,68-69,71-72,75-77,87-89,93-95,135-136,141,143-146,149-150,155,184,196,243,251,265-267,269-271,291-292,296-297,299
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      71    92%   84,121,139-142
 Os/Queue.hpp                                   4       4   100%
@@ -443,5 +443,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      25735   21902    85%
+TOTAL                                      25735   21906    85%
 ------------------------------------------------------------------------------
