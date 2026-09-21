@@ -67,8 +67,7 @@ void SpacePacketFramerTester::testNominalFraming() {
     }
     const auto apid = apidOption.value();
     // Choose a random SPP packet type
-    ComCfg::SppPacketType::T pktType =
-        static_cast<ComCfg::SppPacketType::T>(STest::Random::lowerUpper(0, 1));
+    ComCfg::SppPacketType::T pktType = static_cast<ComCfg::SppPacketType::T>(STest::Random::lowerUpper(0, 1));
     // Choose a random 14-bit sequence count
     U16 seqCount = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FFF));
     // Choose a random secondary header flag
@@ -98,9 +97,8 @@ void SpacePacketFramerTester::testNominalFraming() {
     ASSERT_EQ(extractedApid, apid);
 
     // Verify SPP packet type in packetIdentification
-    U16 extractedPktType = static_cast<U16>(
-        (header.get_packetIdentification() & SpacePacketSubfields::PktTypeMask) >>
-        SpacePacketSubfields::PktTypeOffset);
+    U16 extractedPktType = static_cast<U16>((header.get_packetIdentification() & SpacePacketSubfields::PktTypeMask) >>
+                                            SpacePacketSubfields::PktTypeOffset);
     ASSERT_EQ(extractedPktType, static_cast<U16>(pktType));
 
     // Verify secondary header flag in packetIdentification
