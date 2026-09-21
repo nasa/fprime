@@ -30,7 +30,10 @@ constexpr FwOpcodeType getEventOpcode(const FwOpcodeType opcode) {
 
 //! When true, execute sequence command even if the sequence tracker table is full.
 //! When false, do not execute the sequence command if the sequence tracker table is full.
-constexpr bool ExecuteCommandWhenSequenceTrackerTableIsFull = false;
+#ifndef CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL
+#define CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL false
+#endif
+constexpr bool ExecuteCommandWhenSequenceTrackerTableIsFull = CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL;
 
 }  // namespace CmdDispatcherCfg
 }  // namespace Svc
