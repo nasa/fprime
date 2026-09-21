@@ -90,13 +90,11 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
-      # Expose the bootstrapped project's venv so the shared setup installs into it
-      - name: "Add project venv to PATH"
-        run: echo "${PWD}/my-project/fprime-venv/bin" >> "${GITHUB_PATH}"
-      - name: "Setup F' Tools"
-        uses: nasa/fprime-actions/setup@devel
-        with:
-          location: ./my-project/lib/fprime
+      # Runner images pre-set JAVA_HOME to a system JDK; clear it so fpp resolves
+      # the fprime-jre java from the bootstrapped venv. No other setup is done here
+      # on purpose: this job validates an unassisted fprime-bootstrap.
+      - name: "Clear JAVA_HOME"
+        run: echo "JAVA_HOME=" >> "${GITHUB_ENV}"
 
       - name: "Update dependencies and install fprime-tools"
         run: |
