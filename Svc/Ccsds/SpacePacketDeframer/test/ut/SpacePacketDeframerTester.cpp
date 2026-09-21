@@ -252,6 +252,10 @@ void SpacePacketDeframerTester ::testControlFieldAccepted(U16 pvn,
     ASSERT_from_dataReturnOut_SIZE(0);
     ASSERT_FROM_PORT_HISTORY_SIZE(2);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), expectedApid);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pktType(),
+              static_cast<ComCfg::SppPacketType::T>(packetType));
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_hasSecHdr(), static_cast<bool>(secondaryHeaderFlag));
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_sequenceFlags(), static_cast<U8>(sequenceFlags));
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_sequenceCount(), seqCount);
     ASSERT_EVENTS_SIZE(0);
 }

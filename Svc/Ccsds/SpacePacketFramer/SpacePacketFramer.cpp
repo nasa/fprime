@@ -64,8 +64,7 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // PVN is always 0 per Standard
     // 11 bit APID, 1 bit SecHdr flag, 1 bit packet type
     const U16 packetIdentification = static_cast<U16>(
-        (static_cast<U16>(apid) & SpacePacketSubfields::ApidMask) |
-        (secHdrFlag << SpacePacketSubfields::SecHdrOffset) |
+        (static_cast<U16>(apid) & SpacePacketSubfields::ApidMask) | (secHdrFlag << SpacePacketSubfields::SecHdrOffset) |
         ((pktType << SpacePacketSubfields::PktTypeOffset) & SpacePacketSubfields::PktTypeMask));
 
     U16 sequenceCount = this->getApidSeqCount_out(0, apid, 0);  // retrieve the sequence count for this APID
