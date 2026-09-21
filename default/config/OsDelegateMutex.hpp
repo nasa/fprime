@@ -15,7 +15,16 @@
 // 2. Compile-time selection (performance optimization): Platforms may override
 //    this header to alias Os::Mutex directly to a concrete implementation
 //    (e.g., Va416x0Os::AtomicMutex::AtomicMutex). This eliminates the wrapper and
-//    virtual dispatch, enabling inlining and aggressive LTO optimization.
+//    virtual dispatch, enabling inlining (lock()/unLock()/ScopeLock are defined
+//    inline on MutexInterface, so acquisitions devirtualize without requiring LTO).
+//
+//    WARNING: the aliased type MUST derive from Os::MutexInterface (lock()/unLock()/
+//    ScopeLock are defined there). In addition, if the build links an Os_Mutex
+//    implementation module that also provides Os::ConditionVariable, that
+//    ConditionVariable must understand the aliased type's MutexHandle — e.g.
+//    Os/Posix/ConditionVariable.cpp reinterpret_casts the handle to PosixMutexHandle.
+//    Mixing a compile-time Mutex with a mismatched ConditionVariable implementation
+//    is undefined behavior with no build-time error.
 //
 // Example compile-time selection override:
 //
