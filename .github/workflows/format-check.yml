@@ -33,7 +33,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.12
-      - uses: ./.github/actions/setup
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+          ccache: "false"
       - name: "Check C++ Formatting"
         env:
           # Svc is currently listing all but Svc/FpySequencer
