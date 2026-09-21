@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/DelegateMutex.cpp
-// \brief implementation of Os::DelegateMutex, plus common Os::MutexInterface and Os::ScopeLock code
+// \brief implementation of Os::DelegateMutex (link-time delegating Os::Mutex)
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Os/DelegateMutex.hpp>
