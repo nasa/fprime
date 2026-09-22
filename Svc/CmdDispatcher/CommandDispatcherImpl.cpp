@@ -23,11 +23,16 @@ CommandDispatcherImpl::CommandDispatcherImpl(const char* name)
     : CommandDispatcherComponentBase(name),
       m_seq(0),
       m_seqWrapped(false),
+      m_executeWhenSequenceTableFull(CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT),
       m_numCmdsDispatched(0),
       m_numCmdErrors(0),
       m_numCmdsDropped(0) {}
 
 CommandDispatcherImpl::~CommandDispatcherImpl() {}
+
+void CommandDispatcherImpl::configure(bool executeWhenSequenceTableFull) {
+    this->m_executeWhenSequenceTableFull = executeWhenSequenceTableFull;
+}
 
 void CommandDispatcherImpl::advanceSequenceNumber() {
     if (this->m_seq == std::numeric_limits<U32>::max()) {
@@ -132,8 +137,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
             pendingInsertStatus = this->m_sequenceTracker.insert(sequenceNumber, pendingCmd);
 
             // if sequence table is full, reject here unless configured to dispatch untracked
-            if (not CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull and
-                pendingInsertStatus != Fw::Success::SUCCESS) {
+            if (not this->m_executeWhenSequenceTableFull and pendingInsertStatus != Fw::Success::SUCCESS) {
                 this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
                 this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::EXECUTION_ERROR);
                 return;
@@ -148,8 +152,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         this->m_numCmdsDispatched++;
 
         // pendingInsertStatus is only non-SUCCESS for a connected caller whose insert failed (see check above)
-        if (CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull and
-            pendingInsertStatus != Fw::Success::SUCCESS) {
+        if (this->m_executeWhenSequenceTableFull and pendingInsertStatus != Fw::Success::SUCCESS) {
             this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
             this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::DISPATCHED_UNTRACKED);
         }

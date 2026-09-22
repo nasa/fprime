@@ -567,7 +567,10 @@ void CommandDispatcherTester::runInvalidCommand() {
     ASSERT_EVENTS_MalformedCommand(0, Fw::DeserialStatus::TYPE_MISMATCH);
 }
 
-void CommandDispatcherTester::runOverflowCommands() {
+void CommandDispatcherTester::runOverflowCommands(bool executeWhenSequenceTableFull) {
+    this->m_impl.configure(executeWhenSequenceTableFull);
+    ASSERT_EQ(this->m_impl.m_executeWhenSequenceTableFull, executeWhenSequenceTableFull);
+
     // verify sequence tracker table is empty
     ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
@@ -634,9 +637,8 @@ void CommandDispatcherTester::runOverflowCommands() {
             ASSERT_EQ(this->m_cmdSendArgs.deserializeTo(checkVal), Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(checkVal, testCmdArg);
         } else {
-            // the sequence tracker table is full; the behavior is selected at compile time by
-            // CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull
-            if (CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull) {
+            // the sequence tracker table is full; the behavior is selected by configure()
+            if (executeWhenSequenceTableFull) {
                 // verify the command was dispatched anyway, and that the overflow was still reported
                 ASSERT_EVENTS_SIZE(2);
                 ASSERT_EVENTS_OpCodeDispatched_SIZE(1);

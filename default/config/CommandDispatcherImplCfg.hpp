@@ -28,13 +28,9 @@ constexpr FwOpcodeType getEventOpcode(const FwOpcodeType opcode) {
     return IncludeCommandOpcodesInEvents ? opcode : std::numeric_limits<FwOpcodeType>::max();
 }
 
-//! When true, execute sequence command even if the sequence tracker table is full.
-//! When false, do not execute the sequence command if the sequence tracker table is full.
-//! The 'CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL' macro exists only so the unit tests can build both conditions. It is not a supported deployment knob.
-#ifndef CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL
-#define CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL false
-#endif
-constexpr bool ExecuteCommandWhenSequenceTrackerTableIsFull = CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL;
+//! Default for whether a sequence command is dispatched when the sequence tracker table is full.
+//! Per-instance override: CommandDispatcherImpl::configure(bool).
+constexpr bool EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT = false;
 
 }  // namespace CmdDispatcherCfg
 }  // namespace Svc
