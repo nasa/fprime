@@ -371,6 +371,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 RX rejection of a FileData PDU whose offset and length overflow the offset space
     void testClass2RxFileDataOffsetOverflow();
 
+    //! Test Class 2 RX handling of a truncated FileData PDU followed by a scheduler tick
+    void testClass2RxTruncatedFileDataCrcSpin();
+
+    //! Test Class 2 RX CRC verification of a file shorter than the declared size
+    void testClass2RxCrcShortFile();
+
     //! Test Class 2 RX handling of a zero-length FileData segment (GHSA-mh5x-2m6h-8267)
     void testClass2RxZeroLengthFileData();
 

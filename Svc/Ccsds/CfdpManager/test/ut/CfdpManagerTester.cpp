@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "CfdpManagerTester.hpp"
+#include <Fw/Com/ComPacket.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <Svc/Ccsds/CfdpManager/Clist.hpp>
@@ -1181,6 +1182,82 @@ void CfdpManagerTester::testClass2RxFileDataOffsetOverflow() {
     EXPECT_EQ(0u, tlm[channelId].get_recvFileDataBytes()) << "Rejected FileData must not be written";
 
     cleanupTestFile(txn->m_history->fnames.dst_filename.toChar());
+}
+
+void CfdpManagerTester::testClass2RxTruncatedFileDataCrcSpin() {
+    const char* groundSrcFile = "/ground/test_class2_rx_crcspin_source.bin";
+    const char* dstFile = "test/ut/output/test_class2_rx_crcspin_received.bin";
+    const U8 channelId = 0;
+    const U32 transactionSeq = 503;
+    const U32 declaredFileSize = 0x10000000;
+
+    // Metadata declares a large file and creates a zero-length destination.
+    TransactionSetup setup;
+    setupRxTransaction(groundSrcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, declaredFileSize,
+                       transactionSeq, TxnState::TXN_STATE_R2, setup);
+
+    // A FileData PDU whose header declares more payload than the PDU carries fails deserialization.
+    // Build a well-formed PDU, then truncate the buffer so the declared length overruns it.
+    U8 data[8];
+    memset(data, 0xA5, sizeof(data));
+    Cfdp::FileDataPdu fileDataPdu;
+    fileDataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, TEST_GROUND_EID,
+                           transactionSeq, component.getLocalEidParam(), 0, sizeof(data), data);
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    U8* bufferData = m_internalDataBuffer;
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    bufferData[1] = static_cast<U8>(descriptor & 0xFF);
+    Fw::SerialBuffer sb(bufferData + descriptorSize, fileDataPdu.getBufferSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, fileDataPdu.serializeTo(sb));
+    Fw::Buffer truncated(bufferData, descriptorSize + sb.getSize() - 4);
+    this->invoke_to_dataIn(channelId, truncated);
+    this->component.doDispatch();
+
+    // The malformed PDU must fault the transaction, not leave it in a no-error state that later
+    // invites CRC processing of a file shorter than the declared size.
+    ASSERT_EVENTS_FailFileDataPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
+
+    // One tick. Before the fix this never returned: r2CalcCrcChunk looped on end-of-file short
+    // reads that advanced neither rx_crc_calc_bytes nor count_bytes.
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    cleanupTestFile(dstFile);
+}
+
+void CfdpManagerTester::testClass2RxCrcShortFile() {
+    const char* groundSrcFile = "/ground/test_class2_rx_crcshort_source.bin";
+    const char* dstFile = "test/ut/output/test_class2_rx_crcshort_received.bin";
+    const U8 channelId = 0;
+    const U32 transactionSeq = 504;
+    const U16 dataSize = 16;
+    U8 data[dataSize];
+    memset(data, 0x5A, sizeof(data));
+
+    TransactionSetup setup;
+    setupRxTransaction(groundSrcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, dataSize,
+                       transactionSeq, TxnState::TXN_STATE_R2, setup);
+
+    sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, 0, dataSize, data,
+                    Cfdp::Class::CLASS_2);
+    component.doDispatch();
+
+    // Drive the transaction into CRC verification with a declared size larger than the bytes on
+    // disk. r2CalcCrcChunk must treat the resulting end-of-file short read as a file size error
+    // rather than as progress.
+    setup.txn->m_fsize = 4 * dataSize;
+    setup.txn->m_flags.rx.send_fin = true;
+
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxReadCrcFailed_SIZE(1);
+    EXPECT_EQ(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR, setup.txn->m_history->txn_stat);
+    EXPECT_FALSE(setup.txn->m_flags.com.crc_calc);
+
+    cleanupTestFile(dstFile);
 }
 
 void CfdpManagerTester::testClass2RxZeroLengthFileData() {
