@@ -28,6 +28,50 @@ python decode_comlogger_dp.py --input-file corrupted.bin \
 # JSON output
 python decode_comlogger_dp.py --input-file corrupted.bin \
   --reconstruct --format json
+
+# With output file
+python decode_comlogger_dp.py --input-file corrupted.bin \
+  --reconstruct --output-file recovered.json --format json
+```
+
+## Command Line Arguments
+
+### Required Arguments
+
+```bash
+--input-file PATH       # Corrupted or partial data product file
+--reconstruct           # Enable reconstruction mode
+```
+
+### Optional Arguments
+
+```bash
+--dict-path PATH        # Dictionary path (auto-detected if omitted)
+-d PATH                 # Short form
+
+--output-file PATH      # Output file path (extension added based on format)
+                        # Default: <input_file_basename>.json/.txt
+
+--format FORMAT         # Output format: json, text, or both (default: both)
+-f FORMAT               # Short form
+
+--sentry VALUE          # Override sentry value (e.g., 0xDEADBEEF)
+                        # Must match the sentry in your corrupted file
+
+--no-sentry             # Skip sentry validation during decode
+                        # Still searches for sentinels for extraction
+```
+
+### Not Applicable in Reconstruction Mode
+
+These arguments don't work with `--reconstruct`:
+
+```bash
+--input-dir PATH        # Reconstruction is single-file only
+--dp-id ID              # Not needed (no container ID validation)
+--output-dir PATH       # Use --output-file instead
+--no-crc                # CRC validation not performed in reconstruction
+--collect               # Collection mode is directory-based
 ```
 
 ## How It Works

@@ -116,6 +116,51 @@ python decode_comlogger_dp.py --input-file corrupted.bin --reconstruct
 - Reports success/failure for each record
 - Continues processing even with errors
 
+## Command Line Arguments
+
+### Input (Required - Choose One)
+
+```bash
+--input-file PATH       # Single data product file
+--input-dir PATH        # Directory with data products (requires --dp-id)
+```
+
+### Essential Arguments
+
+```bash
+--dp-id ID              # Container ID (required with --input-dir)
+--dict-path PATH        # Dictionary directory (auto-detected if omitted)
+```
+
+### Output Location
+
+```bash
+--output-file PATH      # Output for single file (extension added)
+--output-dir PATH       # Output for batch mode (default: input dir)
+--collect-dir PATH      # Output for collection mode (default: current dir)
+```
+
+### Output Format
+
+```bash
+--format FORMAT         # json, text, or both (default: both)
+```
+
+### Modes
+
+```bash
+--reconstruct           # Recovery mode (single file only)
+--collect               # Collection mode (directory only)
+```
+
+### Validation
+
+```bash
+--sentry VALUE          # Override sentry (e.g., 0xDEADBEEF)
+--no-crc                # Skip CRC validation
+--no-sentry             # Skip sentry validation
+```
+
 ## Output Formats
 
 ### JSON Output

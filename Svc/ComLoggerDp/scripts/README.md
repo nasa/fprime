@@ -159,6 +159,59 @@ python decode_comlogger_dp.py --input-file corrupted.bin --reconstruct \
 - Files with missing headers or trailers
 - Data recovered from damaged storage
 
+### Command Line Arguments
+
+#### Input Arguments (Required - Choose One)
+
+```bash
+--input-file PATH       # Decode a single data product file
+--input-dir PATH        # Decode all matching files in a directory
+```
+
+#### Dictionary Arguments (Optional)
+
+```bash
+--dict-path PATH        # Path to F Prime dictionary directory
+-d PATH                 # Short form (auto-detected if omitted)
+```
+
+#### Container ID (Required with --input-dir)
+
+```bash
+--dp-id ID              # Container ID filter (decimal or hex)
+                        # Examples: --dp-id 134217728 or --dp-id 0x08000000
+```
+
+#### Output Location Arguments (Optional)
+
+```bash
+--output-file PATH      # Output file for single file mode (extension added)
+--output-dir PATH       # Output directory for batch mode (default: input dir)
+--collect-dir PATH      # Base directory for collection mode (default: current dir)
+```
+
+#### Output Format Arguments (Optional)
+
+```bash
+--format FORMAT         # Output format: json, text, or both (default: both)
+-f FORMAT               # Short form
+```
+
+#### Validation Arguments (Optional)
+
+```bash
+--sentry VALUE          # Override sentry value (e.g., 0xDEADBEEF)
+--no-crc                # Skip CRC validation
+--no-sentry             # Skip sentry validation
+```
+
+#### Mode Arguments (Optional)
+
+```bash
+--reconstruct           # Reconstruction mode (single file only)
+--collect               # Collection mode (directory only)
+```
+
 #### Finding Container ID
 
 The container ID can be found in several ways:

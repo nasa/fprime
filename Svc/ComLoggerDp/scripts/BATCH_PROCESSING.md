@@ -36,6 +36,42 @@ python decode_comlogger_dp.py --input-dir /path/to/dps \
   --output-dir /path/to/output
 ```
 
+## Command Line Arguments for Batch Mode
+
+### Required Arguments
+
+```bash
+--input-dir PATH        # Directory containing data product files
+--dp-id ID              # Container ID to filter (decimal or hex)
+                        # Examples: 134217728 or 0x08000000
+```
+
+### Optional Arguments
+
+```bash
+--dict-path PATH        # Dictionary path (auto-detected if omitted)
+-d PATH                 # Short form
+
+--output-dir PATH       # Output directory (default: same as input-dir)
+                        # Creates subdirectory structure if needed
+
+--format FORMAT         # Output format: json, text, or both (default: both)
+-f FORMAT               # Short form
+
+--sentry VALUE          # Override sentry value (e.g., 0xDEADBEEF)
+--no-crc                # Skip CRC validation
+--no-sentry             # Skip sentry validation
+```
+
+### Not Applicable in Batch Mode
+
+These arguments don't work with `--input-dir`:
+
+```bash
+--output-file PATH      # Only for --input-file (single file mode)
+--reconstruct           # Only for --input-file (reconstruction mode)
+```
+
 ## Container ID (DP ID)
 
 ### What is the Container ID?
