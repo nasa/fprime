@@ -14,7 +14,7 @@
 #include <Svc/ComLoggerDp/ComLoggerDp.hpp>
 #include <Svc/DpManager/DpManager.hpp>
 #include <Svc/DpWriter/DpWriter.hpp>
-#include <Svc/Subtopologies/RecordedCom/RecordedComConfig/RecordedComSubtopologyConfig.hpp>
 #include <Svc/Subtopologies/RecordedCom/RecordedComConfig/FppConstantsAc.hpp>
+#include <Svc/Subtopologies/RecordedCom/RecordedComConfig/RecordedComSubtopologyConfig.hpp>
 
 #endif

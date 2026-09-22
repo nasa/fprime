@@ -12,5 +12,5 @@ namespace RecordedCom {
 namespace Allocation {
 Fw::MallocAllocator mallocatorInstance;
 Fw::MemAllocator& memAllocator = mallocatorInstance;
-}
-}
+}  // namespace Allocation
+}  // namespace RecordedCom

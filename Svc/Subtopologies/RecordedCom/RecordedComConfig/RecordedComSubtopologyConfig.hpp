@@ -14,6 +14,6 @@ namespace RecordedCom {
 namespace Allocation {
 extern Fw::MemAllocator& memAllocator;
 }
-}
+}  // namespace RecordedCom
 
 #endif
