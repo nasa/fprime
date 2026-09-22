@@ -43,6 +43,11 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
             this->bufferDeallocate_out(0, frameBuffer);
         }
         this->dataReturnOut_out(0, data, context);
+        // No frame produced: report SUCCESS so the upstream ComQueue keeps sending (Framer Status Protocol)
+        if (this->isConnected_comStatusOut_OutputPort(0)) {
+            Fw::Success comStatus = Fw::Success::SUCCESS;
+            this->comStatusOut_out(0, comStatus);
+        }
         return;
     }
     auto frameSerializer = frameBuffer.getSerializer();

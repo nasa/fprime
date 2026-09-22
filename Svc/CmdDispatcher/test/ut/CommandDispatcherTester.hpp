@@ -27,6 +27,7 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
     void runNopCommands();
     void runClearCommandTracking();
     void runCommandQueueOverflow();
+    void runConcurrentQueueOverflow();
     void runNonZeroPortDispatch();
 
     void registerBuiltinCommands();
@@ -45,6 +46,12 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
     }
 
   private:
+    static const U32 CONCURRENT_OVERFLOW_TASKS = 4;
+    static const U32 CONCURRENT_OVERFLOW_DROPS_PER_TASK = 20000;
+
+    //! Task routine that invokes the seqCmdBuff overflow hook repeatedly on its own thread
+    static void overflowHookTask(void* ptr);
+
     Svc::CommandDispatcherImpl& m_impl;
 
     void from_compCmdSend_handler(FwIndexType portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdArgBuffer& args);

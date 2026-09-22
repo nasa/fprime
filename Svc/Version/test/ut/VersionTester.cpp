@@ -68,8 +68,7 @@ void VersionTester ::test_startup() {
     ASSERT_EVENTS_FrameworkVersion(0, Project::Version::FRAMEWORK_VERSION);
     ASSERT_EVENTS_ProjectVersion_SIZE(1);
     ASSERT_EVENTS_ProjectVersion(0, Project::Version::PROJECT_VERSION);
-    // Library versions currently set to a null pointer
-    // TODO: Need to figure out how to put in artificial sets to test them
+    // Library versions come from the test-local version.cpp table
     ASSERT_EVENTS_LibraryVersions_SIZE(12);
     ASSERT_EVENTS_LibraryVersions(0, "blah0 @ blah0");
 }
@@ -135,7 +134,6 @@ void VersionTester ::test_versions() {
     this->clear_all();
     this->sendCmd_VERSION(0, cmd_seq, Svc::VersionType::LIBRARY);
     ASSERT_CMD_RESPONSE(0, 1, 9, Fw::CmdResponse::OK);
-    // printf ("\nfirst lib element : %s\n\n", Project::Version::LIBRARY_VERSIONS[0]);
     ASSERT_EVENTS_LibraryVersions_SIZE(12);
 
     ASSERT_TLM_LibraryVersion01_SIZE(1);
@@ -233,6 +231,79 @@ void VersionTester ::test_commands() {
     this->test_versions();
 }
 
+void VersionTester ::test_customEventsDisabled() {
+    U32 cmd_seq = 9;
+    this->clear_all();
+    this->sendCmd_ENABLE(0, cmd_seq, VersionEnabled::DISABLED);
+    ASSERT_CMD_RESPONSE(0, 0, cmd_seq, Fw::CmdResponse::OK);
+
+    Svc::VersionStatus status = Svc::VersionStatus::OK;
+    Fw::String set_ver = "ver_a";
+    this->invoke_to_setVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, set_ver, status);
+    set_ver = "ver_b";
+    this->invoke_to_setVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, set_ver, status);
+    this->clear_all();
+
+    // VERSION CUSTOM: events for every populated slot, no custom telemetry
+    this->sendCmd_VERSION(0, cmd_seq, Svc::VersionType::CUSTOM);
+    ASSERT_CMD_RESPONSE(0, 1, cmd_seq, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_CustomVersions_SIZE(2);
+    ASSERT_EVENTS_CustomVersions(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, "ver_a");
+    ASSERT_EVENTS_CustomVersions(1, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, "ver_b");
+    ASSERT_TLM_CustomVersion01_SIZE(0);
+    ASSERT_TLM_CustomVersion06_SIZE(0);
+    this->clear_all();
+
+    // VERSION ALL: same custom behavior
+    this->sendCmd_VERSION(0, cmd_seq, Svc::VersionType::ALL);
+    ASSERT_CMD_RESPONSE(0, 1, cmd_seq, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_CustomVersions_SIZE(2);
+    ASSERT_EVENTS_CustomVersions(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, "ver_a");
+    ASSERT_EVENTS_CustomVersions(1, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, "ver_b");
+    ASSERT_TLM_CustomVersion01_SIZE(0);
+    ASSERT_TLM_CustomVersion06_SIZE(0);
+
+    // Re-enabling restores telemetry
+    this->clear_all();
+    this->sendCmd_ENABLE(0, cmd_seq, VersionEnabled::ENABLED);
+    this->sendCmd_VERSION(0, cmd_seq, Svc::VersionType::CUSTOM);
+    ASSERT_EVENTS_CustomVersions_SIZE(2);
+    ASSERT_TLM_CustomVersion01_SIZE(1);
+    ASSERT_TLM_CustomVersion06_SIZE(1);
+}
+
+void VersionTester ::test_setVerRewrite() {
+    U32 cmd_seq = 9;
+    this->clear_all();
+    this->sendCmd_ENABLE(0, cmd_seq, VersionEnabled::ENABLED);
+    ASSERT_CMD_RESPONSE(0, 0, cmd_seq, Fw::CmdResponse::OK);
+
+    // Rewrite a single slot more times than a U8 counter can hold
+    Svc::VersionStatus status = Svc::VersionStatus::OK;
+    Fw::String set_ver;
+    for (U32 i = 0; i < 300; i++) {
+        set_ver.format("rw_%" PRIu32, i);
+        this->invoke_to_setVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, set_ver, status);
+        // Each write is reported on its own, so the table is still recognized as populated
+        ASSERT_EVENTS_CustomVersions_SIZE(1);
+        ASSERT_EVENTS_CustomVersions(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, set_ver.toChar());
+        ASSERT_TLM_CustomVersion04_SIZE(1);
+        this->clear_all();
+    }
+
+    // The table must still report the (single) populated slot
+    this->sendCmd_VERSION(0, cmd_seq, Svc::VersionType::CUSTOM);
+    ASSERT_CMD_RESPONSE(0, 1, cmd_seq, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_CustomVersions_SIZE(1);
+    ASSERT_EVENTS_CustomVersions(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, "rw_299");
+    ASSERT_TLM_CustomVersion04_SIZE(1);
+
+    Fw::String get_ver;
+    this->invoke_to_getVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, get_ver, status);
+    ASSERT_EQ(get_ver, Fw::String("rw_299"));
+    ASSERT_EQ(status, Svc::VersionStatus::OK);
+}
+
 // ----------------------------------------------------------------------
 // Test User Ports
 // ----------------------------------------------------------------------
@@ -243,12 +314,10 @@ void VersionTester ::test_setVer(bool is_enabled) {
 
     // Create a db to compare against set values
     Svc::CustomVersionDb custom_data_struct;
-    // printf("\nTesting the very first port invocation\n");
 
     // Start Clean
     this->clear_all();
 
-    // this->sendCmd_ENABLE(0,9,VersionEnabled::ENABLED);
     set_ver = "ver_0";
     this->invoke_to_setVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, set_ver, status);
     if (is_enabled == true) {

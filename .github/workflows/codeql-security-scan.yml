@@ -42,6 +42,13 @@ jobs:
       uses: nasa/fprime-actions/output-cleaner@devel
     - name: Checkout repository
       uses: actions/checkout@v4
+    # ccache is disabled so CodeQL's tracer observes every compiler invocation.
+    - if: ${{ matrix.language == 'cpp' }}
+      name: "Setup F' Tools"
+      uses: nasa/fprime-actions/setup@devel
+      with:
+        location: ${{ github.workspace }}
+        ccache: "false"
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
@@ -53,10 +60,6 @@ jobs:
     - if: ${{ matrix.language == 'cpp' }}
       name: Build
       run: |
-          python3 -m venv ./fprime-venv
-          . ./fprime-venv/bin/activate
-          pip install -U setuptools setuptools_scm wheel pip
-          pip install -r ./requirements.txt
           fprime-util generate 2>&1 | output-cleaner
           fprime-util build --all 2>&1 | output-cleaner
       shell: bash

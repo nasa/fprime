@@ -158,7 +158,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 }
 
 void CommandDispatcherImpl ::run_handler(FwIndexType portNum, U32 context) {
-    this->tlmWrite_CommandsDropped(this->m_numCmdsDropped);
+    this->tlmWrite_CommandsDropped(this->m_numCmdsDropped.load(std::memory_order_relaxed));
     this->tlmWrite_CommandErrors(this->m_numCmdErrors);
     this->tlmWrite_CommandsDispatched(this->m_numCmdsDispatched);
 }
@@ -224,8 +224,8 @@ void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::Com
     }
 
     this->log_WARNING_HI_CommandDroppedQueueOverflow(CmdDispatcherCfg::getEventOpcode(opcode), context);
-    // Increment CommandsDroppedBufOverflow counter
-    this->m_numCmdsDropped++;
+    // This hook runs on the caller's thread; the counter is atomic so no lock is needed
+    this->m_numCmdsDropped.fetch_add(1, std::memory_order_relaxed);
 }
 
 }  // namespace Svc

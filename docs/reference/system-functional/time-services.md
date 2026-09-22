@@ -7,6 +7,7 @@
 - [F Prime OsTime SDD](https://github.com/nasa/fprime/blob/devel/Svc/OsTime/docs/sdd.md)
 - [F Prime PosixTime SDD](https://github.com/nasa/fprime/blob/devel/Svc/PosixTime/docs/sdd.md)
 - [F Prime LinuxTimer](https://github.com/nasa/fprime/blob/devel/Svc/LinuxTimer/LinuxTimer.fpp)
+- [F Prime TimeConverter SDD](https://github.com/nasa/fprime/blob/devel/Svc/TimeConverter/docs/sdd.md)
 - [Fw::Time SDD](https://github.com/nasa/fprime/blob/devel/Fw/Time/docs/sdd.md)
 
 ## Overview
@@ -32,6 +33,10 @@ Multiple time source components are available:
 - **OsTime** — Uses the OSAL RawTime interface to provide time. Available on any system that implements the OSAL, providing the broadest platform support.
 
 A deployment selects one time source component and connects it to all components that require timestamps.
+
+### Converting Between Time Bases
+
+A deployment that handles times in more than one time base — a spacecraft clock and a workstation clock, for example — can include **TimeConverter**. It holds offsets between pairs of time bases, supplied at runtime by a project-specific correlation component or by ground command, and converts an `Fw::Time` from one base into another on request.
 
 ### Cycle Source
 

@@ -61,3 +61,4 @@ TokenBucket bucket(replenishIntervalMicroSecs, maxTokens, replenishRate, startTo
 
 - Replenish rate is the number of tokens to increment by per interval. By default, this is 1.
 - Start tokens is the number of tokens to start with. Note that the first trigger will nonetheless attempt to replenish tokens from the start time until the given time, so it is best used with the start time parameter. By default, start tokens is max tokens, and start time is 0.
+- The start time should be in the same time base as the times later passed to `trigger`. If a trigger time arrives in a different time base than the stored time (e.g. the default start time, which has time base `TB_NONE`), elapsed time cannot be determined: no tokens are replenished on that call and replenishment timing restarts from that trigger time.

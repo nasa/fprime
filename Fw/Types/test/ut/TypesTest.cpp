@@ -581,6 +581,28 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(boolt1, boolt2);
 
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(true));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(false));
+    ASSERT_EQ(static_cast<U8>(FW_SERIALIZE_TRUE_VALUE), buff.getBuffAddr()[0]);
+    ASSERT_EQ(static_cast<U8>(FW_SERIALIZE_FALSE_VALUE), buff.getBuffAddr()[1]);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.deserializeTo(boolt2));
+    ASSERT_TRUE(boolt2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.deserializeTo(boolt2));
+    ASSERT_FALSE(boolt2);
+
+    // a malformed boolean byte is reported and left unconsumed
+    buff.resetSer();
+    const U8 badBool = 0x5A;
+    ASSERT_NE(static_cast<U8>(FW_SERIALIZE_TRUE_VALUE), badBool);
+    ASSERT_NE(static_cast<U8>(FW_SERIALIZE_FALSE_VALUE), badBool);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(badBool));
+    ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, buff.deserializeTo(boolt2));
+    ASSERT_EQ(1, buff.getDeserializeSizeLeft());
+    U8 rawBool = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.deserializeTo(rawBool));
+    ASSERT_EQ(badBool, rawBool);
+
 #if DEBUG_VERBOSE
     printf("Val: in: %s out: %s stat1: %d stat2: %d\n", boolt1 ? "TRUE" : "FALSE", boolt2 ? "TRUE" : "FALSE", stat1,
            stat2);
@@ -597,6 +619,13 @@ TEST(SerializationTest, Serialization1) {
     stat2 = buff.deserializeTo(ptrt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(ptrt1, ptrt2);
+
+    U8 small[sizeof(void*) - 1] = {};
+    Fw::ExternalSerializeBuffer tight(small, sizeof(small));
+    ASSERT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT, tight.serializeFrom(ptrt1));
+    ASSERT_EQ(0, tight.getSize());
+    tight.setExtBuffer(small, 0);
+    ASSERT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT, tight.serializeFrom(true));
 
 #if DEBUG_VERBOSE
     printf("Val: in: %s out: %s stat1: %d stat2: %d\n", boolt1 ? "TRUE" : "FALSE", boolt2 ? "TRUE" : "FALSE", stat1,

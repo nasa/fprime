@@ -65,10 +65,14 @@ void Version ::setVersion_handler(FwIndexType portNum,
                   Svc::VersionCfg::VersionEnum::NUM_CONSTANTS,
               version_id.e);
     auto ver_slot = VersionSlot(version_id.e);
+    // Count each slot once: rewrites of a populated slot must not grow the count
+    if ((this->verId_db[ver_slot].get_version_value() == "no_ver") &&
+        (this->m_num_custom_elements < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS)) {
+        this->m_num_custom_elements++;
+    }
     this->verId_db[ver_slot].set_version_enum(version_id);
     this->verId_db[ver_slot].set_version_value(version_string);
     this->verId_db[ver_slot].set_version_status(status);
-    this->m_num_custom_elements++;
     this->customVersion_tlm(ver_slot);
 }
 
@@ -142,7 +146,7 @@ void Version ::libraryVersion_tlm() {
         FW_ASSERT(Project::Version::LIBRARY_VERSIONS[i] != nullptr, static_cast<FwAssertArgType>(i));
         // Emit Event/TLM on library versions
         this->log_ACTIVITY_LO_LibraryVersions(Fw::LogStringArg(Project::Version::LIBRARY_VERSIONS[i]));
-        // Write to Events
+        // Write to the telemetry channel for this library slot
         switch (i) {
             case VER_SLOT_00:
                 this->tlmWrite_LibraryVersion01(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
@@ -184,8 +188,7 @@ void Version ::libraryVersion_tlm() {
 
 // Send all events and tlm (if verbosity is enabled) for custom versions
 void Version ::customVersion_tlm_all() {
-    for (U8 i = 0;
-         (m_enable == true) && (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS); i++) {
+    for (U8 i = 0; (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS); i++) {
         Version::customVersion_tlm(VersionSlot(i));
     }
 }

@@ -144,6 +144,7 @@ When data products are downlinked, entries are retrieved in priority order by ca
 #### 3.6.5 State File
 
 When a data product is downlinked, it is marked in the node as completed, but the state is also written to a file so that downlinked state is preserved across restarts of the software. When the catalog is built, the state file is first read into a data structure in memory.
+Entries whose state-file record is `TRANSMITTED` are skipped during catalog build, emit a `DpFileSkipped` event, and are not counted as pending.
 
 ## 4 Unit Testing
 

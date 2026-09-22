@@ -68,7 +68,9 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         // Initial size is packetized telemetry descriptor + size of time tag + sizeof packet ID
         FwSizeType packetLen =
             sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
-        FW_ASSERT(packetList.list[pktEntry]->list != nullptr, static_cast<FwAssertArgType>(pktEntry));
+        // A packet with no channels is autocoded with a nullptr list and is permitted
+        FW_ASSERT(packetList.list[pktEntry]->list != nullptr || packetList.list[pktEntry]->numEntries == 0,
+                  static_cast<FwAssertArgType>(pktEntry));
         // add up entries for each defined packet
         for (FwChanIdType tlmEntry = 0; tlmEntry < packetList.list[pktEntry]->numEntries; tlmEntry++) {
             FwChanIdType id = packetList.list[pktEntry]->list[tlmEntry].id;
