@@ -62,9 +62,10 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Move assignment operator (deleted)
     ComLoggerDp& operator=(ComLoggerDp&&) = delete;
 
-    //! \param enabled: whether data product logging is initially enabled
-    //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true)
-    //! \param priority: data product priority
+    //! Configure initial logging state; must be called once after init()
+    //! If enabled is true and packetsPerContainer == 0, logging stays disabled (no event is emitted)    //! \param enabled: whether data product logging is initially enabled
+    //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true, ignored if false)
+    //! \param priority: data product priority (ignored if false)
     void configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority);
 
   private:
@@ -202,7 +203,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
 
     //! Buffer for building records with sentry + ComBuffer data
     //! Size: sentry (4 bytes) + max ComBuffer size
-    U8 m_recordBuffer[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)];
+    U8 m_recordBuffer[FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry)];
 };
 
 }  // namespace Svc

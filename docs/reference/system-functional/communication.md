@@ -14,6 +14,7 @@
 - [F Prime ComSplitter](https://github.com/nasa/fprime/blob/devel/Svc/ComSplitter/ComSplitter.fpp)
 - [F Prime ComAggregator SDD](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md)
 - [F Prime ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md)
+- [F Prime ComLoggerDp](https://github.com/nasa/fprime/blob/devel/Svc/ComLoggerDp/docs/sdd.md)
 - [F Prime CmdSplitter SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdSplitter/docs/sdd.md)
 - [F Prime PassThroughRouter SDD](https://github.com/nasa/fprime/blob/devel/Svc/PassThroughRouter/docs/sdd.md)
 - [Communication Adapter Interface](https://github.com/nasa/fprime/blob/devel/docs/reference/communication-adapter-interface.md)
@@ -65,7 +66,12 @@ This protocol is designed for simplicity and is commonly used for development an
 
 ### Communication Logging
 
-[ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md) records all outgoing data to files on the file system, providing a record of transmitted data for debugging and analysis. Log files are rotated based on a configurable size or byte limit.
+There are two alternatives for logging downlink packets. This allows offline storage of telemetry and events when there are no active downlink sessions.
+
+[ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md) records all outgoing data to named files on the file system, providing a record of transmitted data for debugging and analysis. Log files are rotated based on a configurable size or byte limit.
+
+[ComLoggerDp](https://github.com/nasa/fprime/blob/devel/Svc/ComLoggerDp/docs/sdd.md) records all outgoing data to files on the file system as [data products](https://github.com/nasa/fprime/blob/devel/docs/reference/system-functional/data-products.md), providing a record of transmitted data for debugging and analysis. Log files are downlinked by [DpCatalog](https://github.com/nasa/fprime/blob/devel/Svc/DpCatalog/docs/sdd.md) based on priority specified in `ComLogger` configuration and commands.
+
 
 ### Splitting and Aggregation
 

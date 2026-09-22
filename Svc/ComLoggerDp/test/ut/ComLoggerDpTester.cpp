@@ -124,6 +124,16 @@ void ComLoggerDpTester::testUpdatePriority() {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PriorityUpdated_SIZE(1);
     ASSERT_EVENTS_PriorityUpdated(0, 15);  // Verify priority value
+
+    // Fill the container (3 packets) and verify the sent header carries the updated priority
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_SEND_SIZE(1);
+    Fw::DpContainer sent(0, this->productSendHistory->at(0).buffer);
+    ASSERT_EQ(sent.deserializeHeader(), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(sent.getPriority(), 15);    
 }
 
 void ComLoggerDpTester::testPing() {
@@ -283,6 +293,8 @@ void ComLoggerDpTester::testTelemetry() {
     // Stop logging
     this->sendCmd_StopComDp(0, 1);
     this->component.doDispatch();
+    ASSERT_EVENTS_ComDpStopped_SIZE(1);
+    ASSERT_EVENTS_ComDpStopped(0, 0);  // no partial container to send    
     this->clearHistory();
 
     // Call schedIn again
@@ -321,6 +333,11 @@ void ComLoggerDpTester::testPriorityPreserved() {
     this->invoke_to_comIn(0, comBuf, 0);
     this->component.doDispatch();
     ASSERT_PRODUCT_SEND_SIZE(1);
+
+    // Priority 15 must have been applied to the container header (default would be 5)
+    Fw::DpContainer sent(0, this->productSendHistory->at(0).buffer);
+    ASSERT_EQ(sent.deserializeHeader(), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(sent.getPriority(), 15);    
 
     // Test passes if we get here - the priority was successfully preserved and applied
     // when the container was allocated, even though logging was not enabled initially.
@@ -546,8 +563,16 @@ void ComLoggerDpTester::testUpdatePriorityNoContainer() {
 
     // Verify container was allocated with updated priority
     ASSERT_PRODUCT_GET_SIZE(1);
-    // Priority verification would require inspecting the product priority,
-    // which is implementation-dependent
+
+    // Fill the container (3 packets) and verify the header carries the updated priority (15, not 5)
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_SEND_SIZE(1);
+    Fw::DpContainer sent(0, this->productSendHistory->at(0).buffer);
+    ASSERT_EQ(sent.deserializeHeader(), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(sent.getPriority(), 15);    
 }
 
 // ----------------------------------------------------------------------

@@ -67,7 +67,7 @@ module Svc {
     ) \
     opcode 0x00
 
-    @ Updates currently generating data products. If off, no effect
+    @ Updates the priority of the active container (if any) and of all future containers
     async command UpdatePriority (
         $priority: FwDpPriorityType
     ) \
@@ -77,7 +77,7 @@ module Svc {
     async command StopComDp \
     opcode 0x02
 
-    @ Clears NumBuffersLogged counter and DpBufferError event throttle
+    @ Clears NumBuffersLogged and NumBuffersDropped counters and DpBufferError event throttle
     async command CLEAR_COUNTERS \
     opcode 0x03
 

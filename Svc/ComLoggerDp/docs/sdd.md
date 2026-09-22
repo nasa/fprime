@@ -12,8 +12,7 @@ The ComLoggerDp component logs `Fw::ComBuffer` buffers (e.g., framed telemetry, 
 | SVC-COMLOGGER-002 | The ComLoggerDp component shall have a command to start recording packets, specifying the number of packets per container|
 | SVC-COMLOGGER-003 | The ComLoggerDp component shall have a command to stop recording packets|
 | SVC-COMLOGGER-004 | The ComLoggerDp component shall have a command to modify the priority of existing data products|
-| SVC-COMLOGGER-005 | If the provided container buffer is not large enough to fit the requested number of records per container, emit a WARNING_LO event and adjust to the smaller size. The event should have a throttle value defined in an FPP configuration file with adefault of 1. Increment a DpBufferOverflow counter|
-| SVC-COMLOGGER-006 | A public `configure` function will specify whether data product logging is initially enabled, and if enabled, the initial packets per container and priority|
+| SVC-COMLOGGER-005 | A public `configure` function will specify whether data product logging is initially enabled, and if enabled, the initial packets per container and priority|
 
 
 ## 3. Design
@@ -113,7 +112,7 @@ The component requires calling `configure(bool enabled, U32 packetsPerContainer,
 |---|---|---|---|
 | `LoggingEnabled` | 0x00 | `bool` | Whether data product logging is currently active |
 | `NumBuffersLogged` | 0x01 | `U32` | Total number of Com buffers logged since initialization |
-| `NumBuffersDropped` | 0x02 | `U32` | Number of Com buffers dropped due to container allocation failure |
+| `NumBuffersDropped` | 0x02 | `U32` | Number of Com buffers dropped due to container allocation failure or because the record could not fit in an empty container |
 
 Telemetry is written periodically when the `schedIn` port is invoked (typically connected to a rate group).
 
@@ -343,7 +342,7 @@ A common deployment pattern:
    StopComDp()
    ```
 5. Data products are downlinked via the data product manager
-6. Ground can reconstruct the full telemetry stream from the data products
+6. Ground can reconstruct the full telemetry stream from the data products using [`decode_comlogger_dp.py](../scripts/decode_comlogger_dp.py) in the [scripts](../scripts/) directory.
 
 ## 6. Change Log
 
@@ -352,3 +351,4 @@ A common deployment pattern:
 | 2026-09-04 | Initial implementation with commands, ports, events, telemetry, and comprehensive unit tests |
 | 2026-09-04 | Added sentry value to ComBuffer records for corruption detection; refactored serialization logic into helper functions (`allocateAndSetupContainer`, `serializePacketWithRetry`, `finalizeFullContainer`); changed priority parameter type from U32 to FwDpPriorityType; updated `startRecordingIn` port to accept separate parameters instead of encoded U32; added `StartRecordingFailed` event; improved reconfiguration behavior to send partial containers before applying new settings; added explicit handling of validation failures on port invocation; enhanced unit tests with validation failure, throttling, and edge case coverage |
 | 2026-09-05 | Updated `configure()` method to accept `packetsPerContainer` and `priority` parameters; when enabled, the method now internally calls `startRecordingInternal()` to validate and configure logging state; updated all unit tests and SDD documentation |
+| 2026-09-04 | Updates from F Prime code review agents; clarifications to requirements
