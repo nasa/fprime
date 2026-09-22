@@ -14,6 +14,10 @@ telemetry packets RefPackets {
     cmdSeq.CS_CancelCommands
     cmdSeq.CS_CommandsExecuted
     cmdSeq.CS_SequencesCompleted
+    wasmSeq.ControllerState
+    wasmSeq.InterpreterState
+    wasmSeq.SequencesSucceeded
+    wasmSeq.CommandsDispatched
     ComCcsds.comQueue.comQueueDepth
     ComCcsds.comQueue.buffQueueDepth
     ComCcsds.commsBufferManager.TotalBuffs
@@ -37,6 +41,10 @@ telemetry packets RefPackets {
     FileHandling.fileManager.Errors
 
     cmdSeq.CS_Errors
+    wasmSeq.SequencesFailed
+    wasmSeq.SequencesCancelled
+    wasmSeq.CommandsFailed
+    wasmSeq.LastTrapReason
     ComCcsds.commsBufferManager.NoBuffs
     ComCcsds.commsBufferManager.EmptyBuffs
 
@@ -277,6 +285,10 @@ telemetry packets RefPackets {
     CdhCore.version.CustomVersion10
   }
 
+  # Empty packet: exercises a packet specification with no channels
+  packet Empty id 39 group 3 {
+  }
+
   # Uncomment to enable DpCompression subtopology
   #packet DpCompression id 38 group 3 {
     #DpCompression.dpZLibCompressorBufferManager.TotalBuffs
@@ -289,4 +301,5 @@ telemetry packets RefPackets {
 } omit {
   CdhCore.cmdDisp.CommandErrors
   cmdSeq.CS_CurrentSequence
+  wasmSeq.SeqName
 }

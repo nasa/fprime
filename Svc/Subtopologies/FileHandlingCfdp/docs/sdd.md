@@ -42,7 +42,9 @@ The **FileHandlingCfdp subtopology** packages CFDP-based file-transfer services 
 > wishing restricted file security **must call `configureSandbox` again** from topology setup
 > code (after the autocoded `configComponents` phase runs):
 > `FileHandlingCfdp::prmDb.configureSandbox(<directory>)`, where the directory contains the store
-> file set by `prmDb.configure(<file name>)` (which is **not** itself a sandbox). Additionally,
+> file set by `prmDb.configure(<file name>)` (which is **not** itself a sandbox). The
+> `fileManager` command-path sandbox is likewise configured to `"/"`; restrict it with
+> `FileHandlingCfdp::fileManager.configure(<directory>)`. Additionally,
 > CFDP file transfers via `cfdpManager` are not sandboxed: ground-commanded transactions may read
 > or write any path accessible to the process.
 

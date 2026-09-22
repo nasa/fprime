@@ -12,8 +12,12 @@ namespace Os {
 namespace Posix {
 namespace RawTime {
 
+PosixRawTime::PosixRawTime(RawTimeSource source) {
+    this->m_handle.m_clock_id = static_cast<clockid_t>(source);
+}
+
 PosixRawTime::Status PosixRawTime::now() {
-    int status = clock_gettime(CLOCK_REALTIME, &this->m_handle.m_timespec);
+    int status = clock_gettime(this->m_handle.m_clock_id, &this->m_handle.m_timespec);
     if (status != 0) {
         return errno_to_rawtime_status(errno);
     }
@@ -21,12 +25,20 @@ PosixRawTime::Status PosixRawTime::now() {
 }
 
 PosixRawTime::Status PosixRawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const {
+    // const_cast: RawTimeInterface::getHandle() is non-const; the handle is only read here
+    const PosixRawTimeHandle* other_handle =
+        static_cast<const PosixRawTimeHandle*>(const_cast<Os::RawTime&>(other).getHandle());
+    FW_ASSERT(other_handle != nullptr);
+    // Times read from different clocks share no epoch, so their difference is meaningless
+    if (this->m_handle.m_clock_id != other_handle->m_clock_id) {
+        return Status::INVALID_PARAMS;
+    }
     timespec t1 = this->m_handle.m_timespec;
-    timespec t2 = static_cast<PosixRawTimeHandle*>(const_cast<Os::RawTime&>(other).getHandle())->m_timespec;
+    timespec t2 = other_handle->m_timespec;
 
     // Guarantee t1 is the later time to make the calculation below easier
     if ((t1.tv_sec < t2.tv_sec) or (t1.tv_sec == t2.tv_sec and t1.tv_nsec < t2.tv_nsec)) {
-        t1 = static_cast<PosixRawTimeHandle*>(const_cast<Os::RawTime&>(other).getHandle())->m_timespec;
+        t1 = other_handle->m_timespec;
         t2 = this->m_handle.m_timespec;
     }
 

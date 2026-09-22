@@ -21,7 +21,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: ./.github/actions/setup
+    - name: "Setup F' Tools"
+      uses: nasa/fprime-actions/setup@devel
+      with:
+        location: ${{ github.workspace }}
+        ccache: "false"
 
     - name: 'Generate Doxygen and CMake docs'
       timeout-minutes: 20

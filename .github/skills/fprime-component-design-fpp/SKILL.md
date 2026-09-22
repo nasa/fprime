@@ -118,7 +118,10 @@ for naming conventions:
 For each construct, derive names, types, and semantics from the
 confirmed requirements. Define an event for each command that
 describes what the command did, including the command arguments, so
-the implementation can emit it. Ask the user if:
+the implementation can emit it (CPP-37). Every event emission must be
+traceable to a single call site (CPP-36): give each site its own
+event, or an argument (typically an enum) whose value differs at
+every site. Ask the user if:
 - The command kind (sync/async/guarded) is ambiguous
 - The event severity level is unclear
 - Parameter defaults or valid ranges are unspecified
@@ -159,6 +162,8 @@ If a requirement needs a port type that doesn't exist:
 - Guessing port types — always check existing ports first and ask
 - Using `async` ports for cyclic/deadline work
 - Omitting time get port when telemetry or events are defined
+- One event emitted from several sites with indistinguishable
+  arguments (CPP-36)
 - Hardcoding opcodes/IDs without checking for conflicts (let the
   build system assign them, or ask the user for the base ID)
 - Using bare primitive types (`int`, `unsigned`) — use `U32`,

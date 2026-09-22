@@ -1130,6 +1130,54 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
     EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 0);
 }
 
+void PrmDbTester::runPrmFileLoadEmptyFileName() {
+    Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
+    Fw::ParamBuffer pBuff;
+    U32 stagedVal = 0x5678;
+    FwPrmIdType stagedId = 0x21;
+
+    // Pre-populate the staging database so we can verify it is left untouched
+    Fw::SerializeStatus stat = pBuff.serializeFrom(stagedVal);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+    this->m_impl.updateAddPrmImpl(stagedId, pBuff, PrmDbType::DB_STAGING);
+    EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 1);
+    EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
+
+    const PrmDb_Merge merges[] = {PrmDb_Merge::MERGE, PrmDb_Merge::RESET};
+    for (const PrmDb_Merge& merge : merges) {
+        this->clearEvents();
+        this->clearHistory();
+        this->sendCmd_PRM_LOAD_FILE(0, 10, Fw::String(""), merge);
+        dispatchStatus = this->m_impl.doDispatch();
+        EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 10, Fw::CmdResponse::VALIDATION_ERROR);
+        ASSERT_EVENTS_SIZE(1);
+        ASSERT_EVENTS_PrmDbFileLoadFailed_SIZE(1);
+        ASSERT_EVENTS_PrmFileReadError_SIZE(0);
+
+        // Component stays idle and the staging database is untouched
+        EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
+        EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 1);
+    }
+
+    // A subsequent load with a valid path is still accepted (reaches file I/O)
+    this->clearEvents();
+    this->clearHistory();
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::DOESNT_EXIST);
+    this->sendCmd_PRM_LOAD_FILE(0, 11, Fw::String("/prm/good.prm"), PrmDb_Merge::RESET);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::DOESNT_EXIST);
+    EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+}
+
 void PrmDbTester::runPrmFileLoadSandboxViolation() {
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
 

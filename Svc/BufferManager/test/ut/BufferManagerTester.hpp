@@ -51,6 +51,9 @@ class BufferManagerTester : public BufferManagerGTestBase {
     //! Requested buffer size is preserved when allocating from a larger bin
     void bufferSizeTrimmed();
 
+    //! Bin sizes whose byte count would wrap are refused by setup before any allocation
+    void setupSizeOverflowAsserts();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods

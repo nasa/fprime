@@ -33,8 +33,6 @@ void DpWriter::configure(const Fw::ConstStringBase& dpFileNamePrefix) {
 
 void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
     Fw::Success::T status = Fw::Success::SUCCESS;
-    // portNum is unused
-    (void)portNum;
     // Update num buffers received
     ++this->m_numBuffersReceived;
     // Check that the buffer is valid
@@ -101,13 +99,13 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
     if (status == Fw::Success::SUCCESS) {
         status = this->writeFile(container, fileName, fileSize);
     }
-    // Send the DpWritten notification
+    // Send the DpWritten notification on the path matching the input port
     if (status == Fw::Success::SUCCESS) {
-        this->sendNotification(container, fileName, fileSize);
+        this->sendNotification(portNum, container, fileName, fileSize);
     }
-    // Deallocate the buffer
+    // Return the buffer on the path matching the input port
     if (buffer.isValid()) {
-        this->deallocBufferSendOut_out(0, buffer);
+        this->deallocBufferSendOut_out(portNum, buffer);
     }
     // Update the error count
     if (status != Fw::Success::SUCCESS) {
@@ -244,13 +242,14 @@ Fw::Success::T DpWriter::writeFile(const Fw::DpContainer& container,
     return status;
 }
 
-void DpWriter::sendNotification(const Fw::DpContainer& container,
+void DpWriter::sendNotification(FwIndexType portNum,
+                                const Fw::DpContainer& container,
                                 const Fw::FileNameString& fileName,
                                 FwSizeType fileSize) {
-    if (isConnected_dpWrittenOut_OutputPort(0)) {
+    if (isConnected_dpWrittenOut_OutputPort(portNum)) {
         // Get the priority
         const FwDpPriorityType priority = container.getPriority();
-        this->dpWrittenOut_out(0, fileName, priority, fileSize);
+        this->dpWrittenOut_out(portNum, fileName, priority, fileSize);
     }
 }
 

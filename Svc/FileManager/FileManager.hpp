@@ -14,6 +14,7 @@
 #define Svc_FileManager_HPP
 
 #include <atomic>
+#include "Fw/Types/FileNameString.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
 #include "Svc/FileManager/FileManagerComponentAc.hpp"
@@ -37,6 +38,17 @@ class FileManager final : public FileManagerComponentBase {
     //! Destroy object FileManager
     //!
     ~FileManager();
+
+    //! Configure the sandbox directory that confines all command path arguments
+    //!
+    //! Restricts every FileManager command to paths inside the given directory.
+    //! Fail-closed: until called, every command is rejected with a PathOutsideSandbox
+    //! event. Configure `/` to allow any path (the FileHandling subtopologies do this
+    //! by default via their configuration modules).
+    //!
+    //! \param sandboxDir: path of the allowed directory (absolute, or relative to CWD)
+    //!
+    void configure(const char* sandboxDir);
 
   private:
     // ----------------------------------------------------------------------
@@ -147,6 +159,21 @@ class FileManager final : public FileManagerComponentBase {
                              const Os::FileSystem::Status status  //!< The status
     );
 
+    //! Resolve a command path argument and check it against the sandbox directory
+    //!
+    //! Resolves the path (relative paths resolve against the current working directory,
+    //! `.` and `..` segments are collapsed) and checks containment in the configured
+    //! sandbox. On rejection, emits PathOutsideSandbox, counts an error, and sends a
+    //! VALIDATION_ERROR command response.
+    //!
+    //! \return true if the path was accepted; resolved holds the canonical path
+    //!
+    bool resolveInSandbox(const Fw::CmdStringArg& path,  //!< The path argument to validate
+                          Fw::FileNameString& resolved,  //!< Output: canonical absolute path
+                          const FwOpcodeType opCode,     //!< Opcode for the rejection response
+                          const U32 cmdSeq               //!< Sequence for the rejection response
+    );
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined internal interfaces
@@ -169,6 +196,14 @@ class FileManager final : public FileManagerComponentBase {
     //! The total number of errors
     //!
     U32 errorCount;
+
+    //! The sandbox directory confining all command path arguments (absolute, trailing '/')
+    //!
+    Fw::FileNameString m_sandboxDir;
+
+    //! Whether configure() has been called
+    //!
+    bool m_sandboxConfigured;
 
     // ----------------------------------------------------------------------
     // Directory listing state machine variables

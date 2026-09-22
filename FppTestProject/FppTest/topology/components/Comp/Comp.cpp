@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "FppTest/topology/components/Comp/Comp.hpp"
+#include "Fw/Prm/ParamValid.hpp"
 
 namespace FppTest {
 
@@ -32,7 +33,7 @@ void Comp ::emitTelemetry(U32 a) {
 U32 Comp ::getParameter() {
     Fw::ParamValid valid;
     U32 out = paramGet_Param(valid);
-    FW_ASSERT(valid == Fw::ParamValid::VALID);
+    FW_ASSERT(FW_PARAM_OK(valid), static_cast<FwAssertArgType>(valid.e));
     return out;
 }
 

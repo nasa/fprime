@@ -13,6 +13,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Mutex.hpp>
+#include <Os/Posix/Models/FppConstantsAc.hpp>
 #include <Os/TaskString.hpp>
 
 namespace Os {
@@ -42,6 +43,12 @@ class PosixTask : public TaskInterface {
         EXPECT_PERMISSION,    //!< Expect that you hold necessary permissions
         EXPECT_NO_PERMISSION  //!< Expect that you do not hold necessary permissions
     };
+
+    //! Sentinel priority: run the task under SCHED_OTHER (non-realtime) rather than SCHED_RR
+    static constexpr FwTaskPriorityType TASK_PRIORITY_NON_REALTIME =
+        static_cast<FwTaskPriorityType>(Os::Posix::TASK_PRIORITY_NON_REALTIME);
+    static_assert(TASK_PRIORITY_NON_REALTIME != Os::Task::TASK_PRIORITY_DEFAULT,
+                  "TASK_PRIORITY_NON_REALTIME must not alias TASK_PRIORITY_DEFAULT");
 
     //! \brief default constructor
     PosixTask() = default;

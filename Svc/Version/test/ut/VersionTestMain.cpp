@@ -16,6 +16,16 @@ TEST(Nominal, test_cmds) {
     tester.test_commands();
 }
 
+TEST(Nominal, test_custom_events_disabled) {
+    Svc::VersionTester tester;
+    tester.test_customEventsDisabled();
+}
+
+TEST(Nominal, test_set_version_rewrite) {
+    Svc::VersionTester tester;
+    tester.test_setVerRewrite();
+}
+
 TEST(Nominal, test_ports) {
     Svc::VersionTester tester;
     tester.test_ports();

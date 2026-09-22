@@ -5,6 +5,11 @@ module Ccsds {
     @ request opens the file, reads exactly the configured number of bytes into the
     @ caller-provided key buffer, and returns SUCCESS. Any file error (open, read, or
     @ short read) returns KEY_ERROR. A key request before configuration asserts.
+    @
+    @ This implementation ignores the requested security association index and serves the
+    @ same file key for every SA, as SdlsKeyInterface requires such implementations to state.
+    @ Security associations served this way share one key, and so share its IV budget; a
+    @ deployment needing per-SA key material requires a key manager that selects on the index.
     passive component SdlsFileKeyManager {
 
         @ Event raised when the key file cannot be read

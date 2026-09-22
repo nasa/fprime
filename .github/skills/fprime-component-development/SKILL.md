@@ -58,7 +58,7 @@ Each phase has a dedicated skill with detailed guidance:
    (see `docs/how-to/test-driven-development.md`).
 
 3. **Reference the C++ design skill.** All implementation must comply
-   with `fprime-cpp-design` (CPP-1 through CPP-34). Consult
+   with `fprime-cpp-design` (CPP-1 through CPP-37). Consult
    it before writing any C++ code.
 
 4. **Follow Test-Driven Development when possible.** The recommended

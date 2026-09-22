@@ -54,6 +54,22 @@ function(fprime__internal_add_build_target BUILD_TARGET_TYPE_STRING EXTRA_CONTRO
 endfunction()
 
 ####
+# Macro `fprime__internal_close_control_set`:
+#
+# Finalizes the active control word (CURRENT_LIST_NAME) once its arguments have ended. Zero-argument flags that
+# received no value become TRUE; list directives that received no values are an error.
+####
+macro(fprime__internal_close_control_set)
+    if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
+        if (CURRENT_LIST_NAME IN_LIST FPRIME_FLAG_CONTROL_SETS)
+            set("LIST_${CURRENT_LIST_NAME}" TRUE)
+        else()
+            fprime_cmake_fatal_error("${CURRENT_LIST_NAME} supplied without values in call to register_fprime_*")
+        endif()
+    endif()
+endmacro()
+
+####
 # Function `fprime__process_module_setup`:
 #
 # This function is used to process the module setup. It takes a list of arguments and sorts them into
@@ -79,7 +95,8 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
     set(FILE_CONTROL_SETS "HEADERS" "SOURCES" "AUTOCODER_INPUTS" "LINK_DEPENDS")
     set(FPRIME_CMAKE_ADD_OPTIONS "WIN32" "MACOSX_BUNDLE" "OBJECT" "INTERFACE" "IMPORTED" "ALIAS" "GLOBAL"
         "STATIC" "SHARED" "MODULE" "EXCLUDE_FROM_ALL")
-    set(FPRIME_FLAG_CONTROL_SETS ${FPRIME_CMAKE_ADD_OPTIONS} "BASE_CONFIG" "UT_AUTO_HELPERS" "INCLUDE_GTEST")
+    set(FPRIME_FLAG_CONTROL_SETS ${FPRIME_CMAKE_ADD_OPTIONS} "GLOBAL_IMPLICIT_DEPENDENCY" "BASE_CONFIG" "UT_AUTO_HELPERS"
+        "INCLUDE_GTEST")
     # Set module name as passed in, then defaulting to FPRIME_CURRENT_MODULE
     if (${INPUT_COUNT} GREATER 0 AND NOT FIRST_ARGUMENT IN_LIST CONTROL_SETS)
         list(POP_FRONT INPUT_ARGUMENTS MODULE_NAME)
@@ -136,30 +153,24 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
         fprime_cmake_fatal_error("Cannot both set UT_MOD_DEPS and supply a dependency list to register_fprime_ut")
     elseif (DEFINED UT_AUTO_HELPERS)
         fprime_cmake_fatal_error("Cannot both set UT_AUTO_HELPERS and supply use new-style register_fprime_ut")
-    else()
-        # Unset all the control lists so the module can track what controls were passed in along with their arguments
-        # allowing signal control sets that do not take arguments.
-        foreach(CONTROL_SET IN LISTS CONTROL_SETS)
-            unset("${CONTROL_SET}")
-        endforeach()
     endif()
     unset(CURRENT_LIST_NAME)
+    # Control words already seen in this call, used to detect a directive supplied twice
+    set(SEEN_CONTROL_SETS "")
     # Process all arguments and fill in the module sources
     foreach (ARGUMENT IN LISTS INPUT_ARGUMENTS)
         # EXISTS only defined for resolved absolute paths
         set(RESOLVED_ARGUMENT "${ARGUMENT}")
         resolve_path_variables(RESOLVED_ARGUMENT)
-        # If the argument is one of our control tokens, and the list is already defined, this means the user has specified
+        # If the argument is one of our control tokens, and it was already seen, this means the user has specified
         # the argument twice. This is likely an error.
-        if (ARGUMENT IN_LIST CONTROL_SETS AND DEFINED "${ARGUMENT}")
-            fprime_cmake_fatal_error("${ARGUMENT} supplied multiple times in call to register_fprime_module")
+        if (ARGUMENT IN_LIST CONTROL_SETS AND ARGUMENT IN_LIST SEEN_CONTROL_SETS)
+            fprime_cmake_fatal_error("${ARGUMENT} supplied multiple times in call to register_fprime_*")
         # Now update the current list and define the backing store for it. This will allow us to capture arguments
         # between this and other control words.
         elseif(ARGUMENT IN_LIST CONTROL_SETS)
-            # Check for control words that are zero-argument (flags) and set them to true
-            if (DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FPRIME_FLAG_CONTROL_SETS AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
-                set("LIST_${CURRENT_LIST_NAME}" TRUE)
-            endif()
+            list(APPEND SEEN_CONTROL_SETS "${ARGUMENT}")
+            fprime__internal_close_control_set()
             set(CURRENT_LIST_NAME "${ARGUMENT}")
             set("LIST_${CURRENT_LIST_NAME}")
         # Check that file types' files exist
@@ -174,10 +185,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             fprime_cmake_fatal_error("One of ${CONTROL_SETS_STRING} must be specified before list elements: ${ARGUMENT}")
         endif()
     endforeach()
-    # Check for control words that are zero-argument (flags) and set them to true
-    if (DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FPRIME_FLAG_CONTROL_SETS AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
-        set("LIST_${CURRENT_LIST_NAME}" TRUE)
-    endif()
+    fprime__internal_close_control_set()
     # Update caller scope with the new variables
     set(INTERNAL_CMAKE_ADD_OPTIONS)
     set(INTERNAL_MODULE_NAME "${MODULE_NAME}" PARENT_SCOPE)

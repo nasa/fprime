@@ -29,6 +29,10 @@ add_fprime_subdirectory(./TestTargetAutocoder)
 add_fprime_subdirectory(./TestChainedAutocoder)
 add_fprime_subdirectory(./TestRelative)
 add_fprime_subdirectory(./TestLinkDepends)
+# Opt-in module that must fail configuration (repeated control directive)
+if (TEST_DUPLICATE_DIRECTIVE)
+    add_fprime_subdirectory(./TestDuplicateDirective)
+endif()
 
 register_fprime_deployment(
   SOURCES

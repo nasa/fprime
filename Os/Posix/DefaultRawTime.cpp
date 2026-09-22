@@ -11,14 +11,13 @@ namespace Os {
 //! \brief get a delegate for RawTimeInterface that intercepts calls for Posix
 //! \param aligned_new_memory: aligned memory to fill
 //! \param to_copy: pointer to copy-constructor input
-//! \param source: timer source selection (unused in Posix - only RAWTIME_DEFAULT supported)
+//! \param source: clock source selection, used when to_copy is nullptr
 //! \return: pointer to delegate
 RawTimeInterface* RawTimeInterface::getDelegate(RawTimeHandleStorage& aligned_new_memory,
                                                 const RawTimeInterface* to_copy,
                                                 RawTimeSource source) {
-    (void)source;  // Posix implementation only supports default timer source
     return Os::Delegate::makeDelegate<RawTimeInterface, Os::Posix::RawTime::PosixRawTime, RawTimeHandleStorage>(
-        aligned_new_memory, to_copy);
+        aligned_new_memory, to_copy, source);
 }
 
 }  // namespace Os

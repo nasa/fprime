@@ -69,13 +69,21 @@ U32 TokenBucket ::getTokens() const {
 bool TokenBucket ::trigger(const Fw::Time time) {
     // attempt replenishing
     if (this->m_replenishRate > 0) {
-        Fw::Time replenishInterval = Fw::Time(this->m_replenishInterval / 1000000, this->m_replenishInterval % 1000000);
-        Fw::Time nextTime = Fw::Time::add(this->m_time, replenishInterval);
+        // A stored time in another base (e.g. TB_NONE from the short constructor) is incomparable
+        // with the caller's time, so elapsed time is unknown: restart replenishment from this time
+        if (this->m_time.getTimeBase() != time.getTimeBase()) {
+            this->m_time = time;
+        }
+        const U32 intervalSeconds = this->m_replenishInterval / 1000000;
+        const U32 intervalUSeconds = this->m_replenishInterval % 1000000;
+        // Member add keeps the time base/context of m_time so nextTime stays comparable with time
+        Fw::Time nextTime = this->m_time;
+        nextTime.add(intervalSeconds, intervalUSeconds);
         while (this->m_tokens < this->m_maxTokens && nextTime <= time) {
             // replenish by replenish rate, or up to maxTokens
             this->m_tokens += std::min(this->m_replenishRate, this->m_maxTokens - this->m_tokens);
             this->m_time = nextTime;
-            nextTime = Fw::Time::add(this->m_time, replenishInterval);
+            nextTime.add(intervalSeconds, intervalUSeconds);
         }
         if (this->m_tokens >= this->m_maxTokens && this->m_time < time) {
             this->m_time = time;

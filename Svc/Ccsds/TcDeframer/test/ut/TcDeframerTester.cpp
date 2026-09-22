@@ -67,6 +67,9 @@ void TcDeframerTester::testNominalDeframing() {
     for (FwIndexType i = 0; i < payloadLength; i++) {
         ASSERT_EQ(outBuffer.getData()[i], payload[i]);
     }
+    // The frame's VCID is carried on the emitted context: Svc.Ccsds.AesGcmDecryptor builds its
+    // AAD from this field, so a frame on VC != 0 fails its MAC check if it is not set here
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), vcId);
 }
 
 void TcDeframerTester::testInvalidScId() {

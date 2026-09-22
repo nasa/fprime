@@ -14,6 +14,11 @@ TEST(Nominal, Flush) {
     tester.testQueueFlush();
 }
 
+TEST(OffNominal, FlushInvalidIndex) {
+    Svc::ComQueueTester tester;
+    tester.testQueueFlushInvalidIndex();
+}
+
 TEST(Nominal, FlushAll) {
     Svc::ComQueueTester tester;
     tester.testQueueFlushAll();
@@ -37,6 +42,16 @@ TEST(Nominal, ExternalQueueOverflow) {
 TEST(Nominal, InternalQueueOverflow) {
     Svc::ComQueueTester tester;
     tester.testInternalQueueOverflow();
+}
+
+TEST(Nominal, DepthZeroQueue) {
+    Svc::ComQueueTester tester;
+    tester.testDepthZeroQueue();
+}
+
+TEST(OffNominal, AllQueuesDisabled) {
+    Svc::ComQueueTester tester;
+    tester.testAllQueuesDisabled();
 }
 
 TEST(Nominal, ReadyFirst) {
@@ -97,6 +112,11 @@ TEST(Commands, SetQueuePriority) {
 TEST(Commands, SetQueuePriorityInvalidIndex) {
     Svc::ComQueueTester tester;
     tester.testSetQueuePriorityInvalidIndex();
+}
+
+TEST(Commands, SetQueuePriorityInvalidBufferIndex) {
+    Svc::ComQueueTester tester;
+    tester.testSetQueuePriorityInvalidBufferIndex();
 }
 
 TEST(Commands, SetQueuePriorityNegativeIndex) {
