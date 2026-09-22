@@ -4,17 +4,8 @@
 Test the command version with basic integration tests.
 """
 
-from enum import Enum
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.utils.event_severity import EventSeverity
-
-"""
-This enum is includes the values of EventSeverity that can be filtered by the ActiveLogger Component
-"""
-FilterSeverity = Enum(
-    "FilterSeverity",
-    "WARNING_HI WARNING_LO COMMAND ACTIVITY_HI ACTIVITY_LO DIAGNOSTIC",
-)
 
 
 def test_send_version_command(fprime_test_api):
@@ -28,28 +19,49 @@ def test_send_version_command(fprime_test_api):
     # Enable all telemetry packet groups so ProjectVersion/FrameworkVersion are emitted
     fprime_test_api.set_tlm_packet_level(3)
 
+    version = fprime_test_api.get_mnemonic("Svc.Version")
+    version_events = fprime_test_api.get_event_pred(
+        event=predicates.is_a_member_of(
+            [
+                fprime_test_api.translate_event_name(version + "." + name)
+                for name in [
+                    "ProjectVersion",
+                    "FrameworkVersion",
+                    "LibraryVersions",
+                    "CustomVersions",
+                ]
+            ]
+        ),
+        severity=EventSeverity.ACTIVITY_LO,
+    )
+    # Library/custom counts are deployment specific; ALL must report the sum of the parts
+    emitted = {}
+
     for count, value in enumerate(
         ["PROJECT", "FRAMEWORK", "LIBRARY", "CUSTOM", "ALL"], 1
     ):
-
-        pred = predicates.greater_than(0)
-
-        ActLo_events = fprime_test_api.get_event_pred(
-            severity=EventSeverity.ACTIVITY_LO
-        )
+        if value in ["PROJECT", "FRAMEWORK"]:
+            pred = predicates.equal_to(1)
+        elif value == "ALL":
+            pred = predicates.equal_to(2 + emitted["LIBRARY"] + emitted["CUSTOM"])
+        else:
+            pred = predicates.greater_than_or_equal_to(0)
 
         start_tlm = fprime_test_api.get_telemetry_test_history().size()
+        start_evr = fprime_test_api.get_event_test_history().size()
 
         fprime_test_api.send_and_assert_command(
-            fprime_test_api.get_mnemonic("Svc.Version") + "." + "VERSION",
+            version + "." + "VERSION",
             [
                 value,
             ],
             max_delay=5,
-            #            events=events,
         )
 
-        event_cnt = fprime_test_api.assert_event_count(pred, ActLo_events)
+        event_cnt = fprime_test_api.assert_event_count(
+            pred, version_events, start=start_evr, timeout=5
+        )
+        emitted[value] = len(event_cnt)
         # EVR or report MSG_EVR:  2025-07-28T17:36:43.474151: CdhCore.version.ProjectVersion EventSeverity.ACTIVITY_LO : Project Version: [v4.0.0a1-122-g7b6e9a2e1]
 
         for result in event_cnt:
