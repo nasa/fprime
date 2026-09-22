@@ -56,8 +56,8 @@ class Version final : public VersionComponentBase {
     //! \struct verId_db
     //! \brief Custom Version database structure
     //!
-    //! This structure stores the latest values of the measurements.
-    //! The statuses are all initialized to MeasurementStatus::STALE by the constructor.
+    //! Stores the latest custom version values set through the setVersion port.
+    //! The constructor initializes every entry to "no_ver" with status VersionStatus::FAILURE.
     //!
     CustomVersionDb verId_db[Svc::VersionCfg::VersionEnum::NUM_CONSTANTS];
 

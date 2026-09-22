@@ -146,7 +146,7 @@ void Version ::libraryVersion_tlm() {
         FW_ASSERT(Project::Version::LIBRARY_VERSIONS[i] != nullptr, static_cast<FwAssertArgType>(i));
         // Emit Event/TLM on library versions
         this->log_ACTIVITY_LO_LibraryVersions(Fw::LogStringArg(Project::Version::LIBRARY_VERSIONS[i]));
-        // Write to Events
+        // Write to the telemetry channel for this library slot
         switch (i) {
             case VER_SLOT_00:
                 this->tlmWrite_LibraryVersion01(Fw::TlmString(Project::Version::LIBRARY_VERSIONS[i]));
