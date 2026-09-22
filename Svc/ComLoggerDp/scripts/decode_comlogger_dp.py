@@ -207,7 +207,9 @@ def validate_mode(args) -> Tuple[Path, bool, str]:
     return input_path, is_directory, mode_description
 
 
-def find_input_files(input_path: Path, is_directory: bool, dp_id: Optional[int]) -> Tuple[List[Path], Optional[Path]]:
+def find_input_files(
+    input_path: Path, is_directory: bool, dp_id: Optional[int]
+) -> Tuple[List[Path], Optional[Path]]:
     """Discover input files to process.
 
     Args:
@@ -301,13 +303,9 @@ def load_dictionaries(dict_path: Optional[str], input_path: Path):
     # Load dictionaries
     if dict_json_path:
         print(f"Loading dictionary from: {dict_json_path}")
-        dictionaries = Dictionaries.load_dictionaries_into_config(
-            str(dict_json_path)
-        )
+        dictionaries = Dictionaries.load_dictionaries_into_config(str(dict_json_path))
     else:
-        print(
-            "Warning: Could not find dictionary JSON file. Some decoding may fail."
-        )
+        print("Warning: Could not find dictionary JSON file. Some decoding may fail.")
         print("Specify dictionary with --dict-path /path/to/dictionary.json")
         dictionaries = Dictionaries()
 
@@ -419,13 +417,9 @@ def run_collection_mode(args, files_to_process: List[Path], dictionaries):
             )
             channel_name = channel.get("channel_name", "UNKNOWN")
             channel_id = channel.get("channel_id", 0)
-            value = ComLoggerDpDecoder.format_value_gds(
-                channel.get("value", "")
-            )
+            value = ComLoggerDpDecoder.format_value_gds(channel.get("value", ""))
 
-            f.write(
-                f"{iso_time},{fprime_time},{channel_name},{channel_id},{value}\n"
-            )
+            f.write(f"{iso_time},{fprime_time},{channel_name},{channel_id},{value}\n")
 
     print(f"\n=== OUTPUT ===")
     print(f"Events log:   {event_log_path}")
@@ -435,8 +429,13 @@ def run_collection_mode(args, files_to_process: List[Path], dictionaries):
     sys.exit(0)
 
 
-def run_decode_mode(args, files_to_process: List[Path], output_dir: Optional[Path],
-                    is_directory: bool, dictionaries):
+def run_decode_mode(
+    args,
+    files_to_process: List[Path],
+    output_dir: Optional[Path],
+    is_directory: bool,
+    dictionaries,
+):
     """Run decode mode: process files and output JSON/text.
 
     Args:
