@@ -189,9 +189,10 @@ event RxDestPathRejected(
     seqNum: U32 @< Transaction sequence number
     filename: string size MaxFilePathSize @< Destination path that was rejected
     rxDir: string size MaxFilePathSize @< Configured receive sandbox directory
+    reason: Cfdp.RxDestPathRejectReason @< Why the path was rejected
 ) \
     severity warning high \
-    format "RX transaction {}:{}:{} rejected destination path {} outside receive directory {}"
+    format "RX transaction {}:{}:{} rejected destination path {} for receive directory {}: {}"
 
 event RxCrcMismatch(
     cfdpClass: Cfdp.Class @< CFDP class

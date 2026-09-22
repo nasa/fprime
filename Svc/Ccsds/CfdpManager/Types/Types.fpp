@@ -31,6 +31,14 @@ module Cfdp {
         FROZEN @< CFDP channel operations are frozen
     }
 
+    @ Why a received Metadata PDU destination path was rejected by the channel rx_dir check
+    enum RxDestPathRejectReason: U8 {
+        RX_DIR_UNRESOLVABLE = 0 @< The configured rx_dir could not be resolved (for example, CWD unavailable) or is too long
+        PATH_UNRESOLVABLE = 1 @< The received path could not be resolved against rx_dir, or the joined path is too long to resolve
+        OUTSIDE_RX_DIR = 2 @< The resolved path lies outside rx_dir
+        TOO_LONG = 3 @< The resolved path exceeds MaxFilePathSize
+    }
+
     @ Values for CFDP file transfer class
     @
     @ The CFDP specification prescribes two classes/modes of file

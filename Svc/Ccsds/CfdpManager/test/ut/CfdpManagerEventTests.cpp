@@ -268,11 +268,15 @@ void CfdpManagerTester::testRxDestPathRejectedEvent() {
     // Rejection event carries every argument (channel, source EID, sequence, path, directory);
     // no MetadataReceived, and the refused transfer is reported as failed, never as completed
     ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
-    ASSERT_EVENTS_RxDestPathRejected(0, channelId, TEST_GROUND_EID, transactionSeq, dstFile, rxDir);
+    ASSERT_EVENTS_RxDestPathRejected(0, channelId, TEST_GROUND_EID, transactionSeq, dstFile, rxDir,
+                                     Cfdp::RxDestPathRejectReason::OUTSIDE_RX_DIR);
     ASSERT_EVENTS_MetadataReceived_SIZE(0);
     ASSERT_EVENTS_RxFileCreateFailed_SIZE(0);
     ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
     ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
+    EXPECT_EQ(static_cast<U8>(TxnStatus::TXN_STATUS_FILESTORE_REJECTION),
+              this->eventHistory_RxFileTransferFailed->at(0).conditionCode)
+        << "the failure must be reported to the ground as a filestore rejection";
 
     // The transaction never entered R1/R2: it was finished straight from INIT into HOLD (the
     // inactivity timer recycles it) with no file ever opened; nothing exists outside rx_dir.
@@ -298,14 +302,15 @@ void CfdpManagerTester::testRxDestPathRejectedEvent() {
     this->component.doDispatch();
     ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
     ASSERT_STREQ("/other/dir/outside.bin", this->eventHistory_RxDestPathRejected->at(0).filename.toChar());
+    EXPECT_EQ(Cfdp::RxDestPathRejectReason::OUTSIDE_RX_DIR, this->eventHistory_RxDestPathRejected->at(0).reason.e);
     txn = this->findTransaction(channelId, transactionSeq + 1);
     ASSERT_NE(nullptr, txn);
     EXPECT_EQ(TxnState::TXN_STATE_HOLD, txn->m_state);
     EXPECT_FALSE(txn->m_fd.isOpen());
     EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar());
 
-    // A destination at the PDU length limit is rejected by the length bound (rx_dir plus the
-    // name cannot fit in MaxFilePathSize), not by containment; same event, same counter
+    // A destination at the PDU length limit cannot even be resolved against rx_dir (the joined
+    // path exceeds the resolver's buffer): rejected as PATH_UNRESOLVABLE, same counter
     char longDst[Cfdp::MaxFilePathSize + 1];
     (void)memset(longDst, 'a', sizeof(longDst) - 1);
     longDst[sizeof(longDst) - 1] = '\0';
@@ -314,12 +319,40 @@ void CfdpManagerTester::testRxDestPathRejectedEvent() {
                           srcFile, longDst, Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
     ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    EXPECT_EQ(Cfdp::RxDestPathRejectReason::PATH_UNRESOLVABLE, this->eventHistory_RxDestPathRejected->at(0).reason.e);
     ASSERT_EVENTS_MetadataReceived_SIZE(0);
     txn = this->findTransaction(channelId, transactionSeq + 2);
     ASSERT_NE(nullptr, txn);
     EXPECT_FALSE(txn->m_fd.isOpen());
     EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar());
     EXPECT_EQ(3u, this->latestFaultFileOpen(channelId));
+
+    // A name sized so that the canonical path resolves and is contained but comes out exactly one
+    // byte over MaxFilePathSize is rejected by the length bound itself: TOO_LONG
+    char root[Os::FilePathUtils::MAX_PATH_LENGTH];
+    ASSERT_EQ(Os::FilePathUtils::VALID, Os::FilePathUtils::resolveDirectoryFromCwd(rxDir, root, sizeof(root)));
+    const FwSizeType rootLen = Fw::StringUtils::string_length(root, sizeof(root));
+    if (rootLen + 1 > Cfdp::MaxFilePathSize) {
+        printf("SKIP: resolved rx_dir (%u chars) leaves no room for a TOO_LONG name under MaxFilePathSize\n",
+               static_cast<unsigned>(rootLen));
+        return;
+    }
+    const FwSizeType overLen = Cfdp::MaxFilePathSize + 1 - rootLen;
+    char overDst[Cfdp::MaxFilePathSize + 1];
+    (void)memset(overDst, 'b', overLen);
+    overDst[overLen] = '\0';
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq + 3, 100,
+                          srcFile, overDst, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    EXPECT_EQ(Cfdp::RxDestPathRejectReason::TOO_LONG, this->eventHistory_RxDestPathRejected->at(0).reason.e);
+    ASSERT_EVENTS_MetadataReceived_SIZE(0);
+    txn = this->findTransaction(channelId, transactionSeq + 3);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_FALSE(txn->m_fd.isOpen());
+    EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar());
+    EXPECT_EQ(4u, this->latestFaultFileOpen(channelId));
 }
 
 void CfdpManagerTester::testRxDirPerChannel() {
@@ -345,7 +378,8 @@ void CfdpManagerTester::testRxDirPerChannel() {
                           "/ground/per_channel.bin", dstFile, Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
     ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
-    ASSERT_EVENTS_RxDestPathRejected(0, TEST_CHANNEL_ID_0, TEST_GROUND_EID, transactionSeq, dstFile, rxDir);
+    ASSERT_EVENTS_RxDestPathRejected(0, TEST_CHANNEL_ID_0, TEST_GROUND_EID, transactionSeq, dstFile, rxDir,
+                                     Cfdp::RxDestPathRejectReason::OUTSIDE_RX_DIR);
     ASSERT_EVENTS_MetadataReceived_SIZE(0);
     ASSERT_FALSE(Os::FileSystem::exists(dstFile));
 
@@ -424,6 +458,7 @@ void CfdpManagerTester::testRxDestPathRejectedLateMetadata() {
     this->component.doDispatch();
 
     ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    EXPECT_EQ(Cfdp::RxDestPathRejectReason::OUTSIDE_RX_DIR, this->eventHistory_RxDestPathRejected->at(0).reason.e);
     ASSERT_EVENTS_RxFileRenameFailed_SIZE(0);
     ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
     EXPECT_STREQ(tempPath.toChar(), txn->m_history->fnames.dst_filename.toChar())

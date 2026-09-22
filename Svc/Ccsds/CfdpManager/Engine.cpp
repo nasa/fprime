@@ -398,7 +398,7 @@ Status::T Engine::sendFinAckStateless(Channel& chan,
     return this->serializeAndSendPduOnChannel(chan, ack);
 }
 
-bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path) {
+bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path, RxDestPathRejectReason& reason) {
     Fw::String rxDir = this->m_manager->getRxDirParam(chan_num);
     if (rxDir.length() == 0) {
         // Sandbox not configured for this channel: accept path as-is (documented fail-open behavior)
@@ -409,6 +409,7 @@ bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path) {
     // trailing-'/' form that checkContainment requires; shared with Os::SandboxedFile
     char root[Os::FilePathUtils::MAX_PATH_LENGTH];
     if (Os::FilePathUtils::resolveDirectoryFromCwd(rxDir.toChar(), root, sizeof(root)) != Os::FilePathUtils::VALID) {
+        reason = RxDestPathRejectReason::RX_DIR_UNRESOLVABLE;
         return false;
     }
 
@@ -416,14 +417,17 @@ bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path) {
     // are collapsed textually (symlinks are not followed; see Os::SandboxedFile threat model)
     char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
     if (Os::FilePathUtils::resolvePath(path.toChar(), root, resolved, sizeof(resolved)) != Os::FilePathUtils::VALID) {
+        reason = RxDestPathRejectReason::PATH_UNRESOLVABLE;
         return false;
     }
     if (Os::FilePathUtils::checkContainment(resolved, root) != Os::FilePathUtils::VALID) {
+        reason = RxDestPathRejectReason::OUTSIDE_RX_DIR;
         return false;
     }
     // The canonical path is stored in the transaction and reported in events sized to
     // MaxFilePathSize; reject rather than silently truncate a longer result
     if (Fw::StringUtils::string_length(resolved, sizeof(resolved)) > Cfdp::MaxFilePathSize) {
+        reason = RxDestPathRejectReason::TOO_LONG;
         return false;
     }
 
@@ -433,16 +437,20 @@ bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path) {
 
 Status::T Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
     /* the destination path comes from the remote entity: canonicalize it and confirm it lies within
-     * the configured receive directory BEFORE anything from this PDU is committed to the transaction,
-     * so a rejection leaves the transaction exactly as it was */
+     * the configured receive directory BEFORE anything from this PDU is committed to the transaction.
+     * On rejection nothing from the PDU (file size, source name, destination) is stored; the only
+     * change to the transaction is its status, set below. */
     Fw::String dst = md.getDestFilename();
-    if (!this->validateRxDestPath(txn->m_chan_num, dst)) {
+    RxDestPathRejectReason reason;
+    if (!this->validateRxDestPath(txn->m_chan_num, dst, reason)) {
         this->m_manager->log_WARNING_HI_RxDestPathRejected(txn->m_chan_num, txn->m_history->src_eid,
                                                            txn->m_history->seq_num, dst,
-                                                           this->m_manager->getRxDirParam(txn->m_chan_num));
+                                                           this->m_manager->getRxDirParam(txn->m_chan_num), reason);
         this->m_manager->incrementFaultFileOpen(txn->m_chan_num);
         // A refused destination is a filestore rejection, not a completed reception: this makes
-        // finishTransaction report the failure and, for Class 2, tells the sender in the FIN
+        // finishTransaction report the failure. Whether the sender is told depends on the caller:
+        // the late-metadata path (r2RecvMd) carries it in the FIN; the metadata-first path
+        // (recvInit) finishes from INIT without a FIN, so a Class 2 sender only times out.
         this->setTxnStatus(txn, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
         return Status::PDU_METADATA_ERROR;
     }
