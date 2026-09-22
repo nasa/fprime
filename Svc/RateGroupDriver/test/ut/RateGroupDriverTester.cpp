@@ -21,11 +21,6 @@ void connectPorts(Svc::RateGroupDriver& impl, Svc::RateGroupDriverImplTester& te
     }
 
     tester.connect_to_CycleIn(0, impl.get_CycleIn_InputPort(0));
-#if FW_PORT_TRACING
-    // Fw::PortBase::setTrace(true);
-#endif
-
-    // simpleReg.dump();
 }
 
 TEST(RateGroupDriverTest, NominalSchedule) {

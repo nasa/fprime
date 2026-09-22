@@ -35,10 +35,10 @@ jobs:
           fetch-depth: 0
           filter: blob:none
           submodules: true
-      - name: "Install requirements.txt"
-        run: |
-          pip3 install -r ./requirements.txt
-        shell: bash
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
       - name: "Generate UT build cache"
         working-directory: ./FppTestProject
         run: |
@@ -74,10 +74,10 @@ jobs:
           fetch-depth: 0
           filter: blob:none
           submodules: true
-      - name: "Install requirements.txt"
-        run: |
-          pip3 install -r ./requirements.txt
-        shell: bash
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
       - name: "Generate UT build cache"
         working-directory: ./FppTestProject
         run: |
