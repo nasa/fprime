@@ -355,8 +355,14 @@ void TlmChanTester::runUpdatedSetTracking() {
     ASSERT_EQ(numUnique, set0.updated.getSize());
     ASSERT_EQ(0u, set1.updated.getSize());
 
-    // A second run with nothing new swaps back to buffer 0: its set is emptied
-    // and no flag remains set in either buffer; nothing is sent from buffer 1
+    // Mimic an entry deferred by the per-run cap: its flag stays set while its
+    // bucket is still in the set.  The swap-time drain must clear it.
+    set0.buckets[*set0.updated.begin()].updated = true;
+    ASSERT_EQ(1u, this->countUpdatedFlags(0));
+
+    // A second run with nothing new swaps back to buffer 0: its set is drained
+    // (deferred flag included) and no flag remains set in either buffer;
+    // nothing is sent from buffer 1
     this->clearBuffs();
     const bool sent = this->doRun(false);
     ASSERT_FALSE(sent);

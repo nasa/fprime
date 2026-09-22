@@ -49,7 +49,9 @@ enum {
                                       // Should be set to a little below the ID gaps to spread the entries around
 
     TLMCHAN_HASH_BUCKETS = 500,  // !< Buckets assignable to a hash slot.
-                                 // Buckets must be >= number of telemetry channels in system
+                                 // Buckets must be >= number of telemetry channels in system.
+                                 // Each bucket also reserves a node in each of the two per-buffer
+                                 // updated sets (about 112 bytes per bucket on 64-bit targets).
 
     // Maximum number of updated telemetry entries Run_handler will serialize
     // per invocation. The default of TLMCHAN_HASH_BUCKETS makes the cap a
