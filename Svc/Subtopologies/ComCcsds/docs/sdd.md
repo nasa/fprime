@@ -121,7 +121,11 @@ transfer frame layers, see the [ComCcsdsSdls subtopology](../../ComCcsdsSdls/doc
 
 ### 2.4 Required Inputs for Operation
 
-* **Rate Groups:** Connect a rate group to **`comQueue.run`**. This is not required for the subtopology to function, but defines the rate at which ComQueue will send telemetry.
+* **Rate Groups:** The subtopology exports three scheduling ports; the Ref topology wires all of them.
+
+  * **`comQueueRun`** (`comQueue.run`): defines the rate at which ComQueue sends queued telemetry. Not required for the subtopology to function.
+  * **`aggregatorTimeout`** (`aggregator.timeout`): **required** for timely downlink. ComAggregator otherwise sends an aggregate only when it fills, so a partially filled aggregate would be held indefinitely.
+  * **`bufferManagerSchedIn`** (`commsBufferManager.schedIn`): drives the comms buffer manager's telemetry output. Optional.
 * **Transport Endpoint:**
 
   * **Variant A:** Wire **ByteStream send/recv** between your **`Drv::ByteStreamDriverModel`** and the subtopology’s **`ComStub`**.
