@@ -131,7 +131,7 @@ systems. These GDS types have defaults based on configurable platform independen
 
 | GDS Type               | Logical Usage              | Default               | Format Specifier           |
 |------------------------|----------------------------|-----------------------|----------------------------|
-| FwBuffSizeType         | `Fw::Buffer` sizes         | U16                   | PRI_FwBuffSizeType         |
+| FwSizeStoreType        | Serialized sizes and string lengths | FwSizeType   | PRI_FwSizeStoreType        |
 | FwEnumStoreType        | Enumeration values         | I32                   | PRI_FwEnumStoreType        |
 | FwTimeBaseStoreType    | Time base                  | U16                   | PRI_FwTimeBaseStoreType    |
 | FwTimeContextStoreType | Time context               | U8                    | PRI_FwTimeContextStoreType |
@@ -144,6 +144,11 @@ systems. These GDS types have defaults based on configurable platform independen
 
 > [!NOTE]
 > the F´ GDS expects the above types to use their default setting. Users intending to use the F´ GDS should not stray from the above definitions.
+
+> [!NOTE]
+> `FwSizeStoreType` defaults to `FwSizeType` so that any in-memory size can be serialized without truncation. Projects
+> may narrow it (e.g. to `U16`) to reduce serialized size, but sizes exceeding its range then fail to serialize.
+> `FwBuffSizeType` is retained as a backwards-compatible alias of `FwSizeStoreType`.
 
 All defaults can be overridden via project specific configuration supplying a custom `FpConfig.h`. A complete
 definition of a framework/GDS type in `FpConfig.h` would look like:

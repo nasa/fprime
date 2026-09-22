@@ -72,11 +72,11 @@ static_assert(FW_SERIALIZABLE_TO_STRING != 0, "FW_SERIALIZABLE_TO_STRING must be
 
 static_assert(std::numeric_limits<FwBuffSizeType>::max() == std::numeric_limits<FwSizeStoreType>::max() &&
                   std::numeric_limits<FwBuffSizeType>::min() == std::numeric_limits<FwSizeStoreType>::min(),
-              "FwBuffSizeType must be equivalent to FwExternalSizeType");
+              "FwBuffSizeType must be equivalent to FwSizeStoreType");
 
 static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<FwSizeStoreType>::max() &&
                   std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<FwSizeStoreType>::min(),
-              "FwSizeType cannot entirely store values of type FwExternalSizeType");
+              "FwSizeType cannot entirely store values of type FwSizeStoreType");
 
 // Check platform defined types for required invariants
 static_assert(sizeof(PlatformPointerCastType) == sizeof(void*),
