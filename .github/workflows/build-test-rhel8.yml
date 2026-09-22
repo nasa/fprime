@@ -36,7 +36,7 @@ jobs:
       uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel rust cargo
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -44,7 +44,11 @@ jobs:
         fetch-depth: 0
         filter: blob:none
         submodules: true
-    - uses: ./.github/actions/setup
+    - name: "Setup F' Tools"
+      uses: nasa/fprime-actions/setup@devel
+      with:
+        location: ${{ github.workspace }}
+        ccache: "false"
     - name: Build Framework
       run: |
         fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
@@ -60,7 +64,7 @@ jobs:
       uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel rust cargo
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -68,7 +72,11 @@ jobs:
         fetch-depth: 0
         filter: blob:none
         submodules: true
-    - uses: ./.github/actions/setup
+    - name: "Setup F' Tools"
+      uses: nasa/fprime-actions/setup@devel
+      with:
+        location: ${{ github.workspace }}
+        ccache: "false"
     - name: Build Ref
       run: |
         cd TestDeploymentsProject
@@ -85,7 +93,7 @@ jobs:
       uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel rust cargo
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
@@ -93,7 +101,11 @@ jobs:
         fetch-depth: 0
         filter: blob:none
         submodules: true
-    - uses: ./.github/actions/setup
+    - name: "Setup F' Tools"
+      uses: nasa/fprime-actions/setup@devel
+      with:
+        location: ${{ github.workspace }}
+        ccache: "false"
     # Some UTs require a non-root user to run properly due to using file permissions in tests
     # This issue shows up on RHEL8 containers
     - name: Setup test environment for permission tests

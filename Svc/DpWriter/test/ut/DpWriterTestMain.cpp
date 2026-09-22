@@ -88,6 +88,15 @@ TEST(BufferSendIn, OKProcShrink) {
     tester.OKProcShrink();
 }
 
+TEST(BufferSendIn, RoutingPorts) {
+    COMMENT("Verify fused DpWriter routing paths preserve the input port index.");
+    REQUIREMENT("SVC-DPWRITER-001");
+    REQUIREMENT("SVC-DPWRITER-005");
+    REQUIREMENT("SVC-DPWRITER-008");
+    BufferSendIn::Tester tester;
+    tester.RoutingPorts();
+}
+
 TEST(CLEAR_EVENT_THROTTLE, OK) {
     COMMENT("Test the CLEAR_EVENT_THROTTLE command.");
     REQUIREMENT("SVC-DPMANAGER-006");

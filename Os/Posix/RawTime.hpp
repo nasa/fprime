@@ -14,16 +14,22 @@ namespace RawTime {
 
 struct PosixRawTimeHandle : public RawTimeHandle {
     timespec m_timespec = {0, 0};
+    clockid_t m_clock_id = static_cast<clockid_t>(RAWTIME_DEFAULT);  //!< Clock read by now()
 };
 
 //! \brief Posix implementation of Os::RawTime
 //!
-//! Posix implementation of `RawTimeInterface` for use as a delegate class handling error-only file operations.
+//! Posix implementation of `RawTimeInterface` reading the `clock_gettime()` clock selected by `RawTimeSource`.
+//! Intervals may only be computed between instances using the same clock.
 //!
 class PosixRawTime : public RawTimeInterface {
   public:
-    //! \brief constructor
+    //! \brief constructor using RAWTIME_DEFAULT as the clock source
     PosixRawTime() = default;
+
+    //! \brief constructor selecting the clock source
+    //! \param source: clock source, whose value is the `clockid_t` passed to `clock_gettime()`
+    explicit PosixRawTime(RawTimeSource source);
 
     //! \brief destructor
     ~PosixRawTime() override = default;
@@ -50,7 +56,7 @@ class PosixRawTime : public RawTimeInterface {
     //!
     //! \param other The other RawTimeHandle to compare against.
     //! \param interval Output parameter to store the calculated time interval.
-    //! \return Status indicating the result of the operation.
+    //! \return Status indicating the result of the operation; INVALID_PARAMS if the clock sources differ.
     Status getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const override;
 
     //! \brief Serialize the contents of the RawTimeInterface object into a buffer.

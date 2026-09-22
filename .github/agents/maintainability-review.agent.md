@@ -270,7 +270,7 @@ have written it differently" is not a finding.
 
 ## Out of scope
 
-- C/C++ design-rule conformance (CPP-1 through CPP-34, including
+- C/C++ design-rule conformance (CPP-1 through CPP-37, including
   magic numbers CPP-30, inlined utilities CPP-33, style-guide
   CPP-26) — handled by `fprime-code-review.agent.md`.
 - Security, asserts, overflow, validation — handled by

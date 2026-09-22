@@ -9,6 +9,7 @@
 
 #include "Svc/Ccsds/SdlsSaRouter/SdlsSaRouter.hpp"
 #include "Svc/Ccsds/SdlsSaRouter/SdlsSaRouterGTestBase.hpp"
+#include "Svc/Ccsds/SdlsSaRouter/config/SdlsSaRouterConfig/SaRouterPortsEnumAc.hpp"
 #include "Svc/Ccsds/SdlsSaRouter/test/ut/TestState/TestState.hpp"
 #include "TestUtils/RuleBasedTesting.hpp"
 
@@ -32,7 +33,7 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
     static const FwSizeType TEST_BUFFER_SIZE = 64;
 
     //! Downstream port left unconnected to exercise the UNKNOWN_PORT status
-    static const FwIndexType UNCONNECTED_PORT = SdlsCfg::SaRouterPortCount - 1;
+    static const FwIndexType UNCONNECTED_PORT = SdlsCfg::SaRouterPorts::UNCONNECTED;
 
     //! Shadow sentinel marking buffers forwarded by the router itself on routing errors
     static const FwIndexType ROUTER_ERROR_PORT = -1;

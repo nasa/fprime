@@ -4,7 +4,7 @@ description: >-
   C++ implementation phase of F Prime component development. Guides
   the agent through implementing handler functions generated from the
   FPP model. Must follow fprime-cpp-design rules (CPP-1 through
-  CPP-34). Trigger when the FPP model is confirmed and the next step
+  CPP-37). Trigger when the FPP model is confirmed and the next step
   is to write the C++ implementation. Keywords: F Prime, C++,
   implementation, handler, component, flight software, autocoded.
 ---
@@ -37,7 +37,7 @@ for naming and code style.
 
 The FPP model must be confirmed (see
 `fprime-component-design-fpp`) and C++ design rules
-(`fprime-cpp-design`, CPP-1 through CPP-34) are mandatory.
+(`fprime-cpp-design`, CPP-1 through CPP-37) are mandatory.
 The confirmed requirements and FPP model should provide all the
 information needed for implementation.
 
@@ -82,9 +82,12 @@ Key rules to follow during implementation:
 - **`Fw::String` over `char*`** (CPP-24)
 - **Every command handler must call `cmdResponse_out`** — omitting
   it hangs the command in the dispatcher
-- **Events for each command** — add an event that describes what the
-  command did, including the command arguments. This is frequently
-  forgotten and is very useful for recreating what happened.
+- **Events for each command** (CPP-37) — add an event that describes
+  what the command did, including the command arguments. This is
+  frequently forgotten and is very useful for recreating what happened.
+- **One event emission per call site** (CPP-36) — never emit the
+  same event with the same argument set from two places; use a
+  distinct event or a site-identifying argument.
 - **Mark copy/move as deleted** for components (CPP-17)
 
 ### Step 3 — Build and Fix Errors
@@ -101,7 +104,7 @@ Iterate until compilation succeeds. Common issues:
 ### Step 4 — Review Against C++ Design Rules
 
 Before considering implementation complete, verify compliance with
-`fprime-cpp-design` (CPP-1 through CPP-34).
+`fprime-cpp-design` (CPP-1 through CPP-37).
 
 ---
 
@@ -110,6 +113,9 @@ Before considering implementation complete, verify compliance with
 - Using `FW_ASSERT` on command arguments or hardware inputs
 - Forgetting `cmdResponse_out` (command will hang in dispatcher)
 - Command handlers that emit no event describing what the command did
+  (CPP-37)
+- The same event emitted from several sites with indistinguishable
+  arguments (CPP-36)
 - Using `new`/`delete` in handler code
 - Using `std::string`, `std::vector`, or other STL containers
 - Leaving member variables uninitialized

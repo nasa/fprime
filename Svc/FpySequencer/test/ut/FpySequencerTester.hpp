@@ -259,6 +259,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     DirectiveError tester_op_iabs();
     DirectiveError tester_op_fabs();
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
+    //! Reset getParam to unconnected (framework has no disconnect; reconstruct port in place)
+    void tester_disconnect_getParam();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
     void tester_set_m_sequencesStarted(U64 val);
     void tester_set_m_statementsDispatched(U64 val);

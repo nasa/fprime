@@ -46,6 +46,19 @@ void DpWriterTester::from_procBufferSendOut_handler(FwIndexType portNum, Fw::Buf
     }
 }
 
+void DpWriterTester::from_dpWrittenOut_handler(FwIndexType portNum,
+                                               const Fw::StringBase& fileName,
+                                               FwDpPriorityType priority,
+                                               FwSizeType fileSize) {
+    this->abstractState.m_dpWrittenOutPortNumOpt = Fw::Optional<FwIndexType>(portNum);
+    this->pushFromPortEntry_dpWrittenOut(fileName, priority, fileSize);
+}
+
+void DpWriterTester::from_deallocBufferSendOut_handler(FwIndexType portNum, Fw::Buffer& buffer) {
+    this->abstractState.m_deallocBufferSendOutPortNumOpt = Fw::Optional<FwIndexType>(portNum);
+    this->pushFromPortEntry_deallocBufferSendOut(buffer);
+}
+
 // ----------------------------------------------------------------------
 // Public member functions
 // ----------------------------------------------------------------------

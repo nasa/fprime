@@ -49,6 +49,7 @@ module Ref {
     instance cmdSeq
     instance eventSplitter
     instance tlmSplitter
+    instance wasmSeq
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -108,6 +109,8 @@ module Ref {
       rateGroup2Comp.RateGroupMemberOut[7] -> RecordedCom.Subtopology.dpMgrSchedIn
       rateGroup2Comp.RateGroupMemberOut[8] -> RecordedCom.Subtopology.dpWriterSchedIn
       rateGroup2Comp.RateGroupMemberOut[9] -> RecordedCom.Subtopology.dpBufferManagerSchedIn
+      rateGroup2Comp.RateGroupMemberOut[10] -> wasmSeq.checkTimers
+      rateGroup2Comp.RateGroupMemberOut[11] -> wasmSeq.writeTelemetry
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
@@ -155,6 +158,9 @@ module Ref {
       # Asynchronous request
       dpDemo.productRequestOut -> DataProducts.Subtopology.productRequestIn
       DataProducts.Subtopology.productResponseOut -> dpDemo.productRecvIn
+
+      wasmSeq.getTlmChan -> CdhCore.tlmSend.TlmGet
+      wasmSeq.getParam ->   FileHandling.prmDb.getPrm
     }
 
     connections ComCcsds_CdhCore {
@@ -174,6 +180,8 @@ module Ref {
       CdhCore.Subtopology.seqCmdStatus       -> ComCcsds.Subtopology.cmdResponseIn
       cmdSeq.comCmdOut                       -> CdhCore.Subtopology.seqCmdBuff
       CdhCore.Subtopology.seqCmdStatus       -> cmdSeq.cmdResponseIn
+      wasmSeq.cmdOut                         -> CdhCore.Subtopology.seqCmdBuff
+      CdhCore.Subtopology.seqCmdStatus       -> wasmSeq.cmdResponseIn
     }
 
     connections ComCcsds_FileHandling {

@@ -350,6 +350,13 @@ switches the active array to non-active and starts copying the
 non-active array to the packet output port. If incoming telemetry calls
 happen during the copy operation, they are placed in the active array.
 
+### WasmSequencer
+
+This directory contains a component that executes command sequences implemented
+as WebAssembly modules. It loads a Wasm module, invokes exported functions in a
+sandboxed interpreter, and dispatches the resulting commands, providing a
+scriptable alternative to the file-based CmdSequencer.
+
 ## Os
 
 This directory contains classes that abstract operating system features.

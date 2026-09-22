@@ -156,12 +156,20 @@ TEST_F(FpySequencerTester, pushTlmVal) {
     err = DirectiveError::NO_ERROR;
     directive.set_chanId(456);
 
-    // try overflow
+    // try overflow: one byte short of tlmValue.getSize()
     tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - 1;
     result = tester_pushTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
     err = DirectiveError::NO_ERROR;
+
+    // exact fit: exactly tlmValue.getSize() bytes free, must succeed
+    tester_get_m_runtime_ptr()->stack.size =
+        Fpy::MAX_STACK_SIZE - static_cast<Fpy::StackSizeType>(nextTlmValue.getSize());
+    result = tester_pushTlmVal_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
 }
 
 TEST_F(FpySequencerTester, pushTlmValAndTime) {
@@ -195,12 +203,49 @@ TEST_F(FpySequencerTester, pushTlmValAndTime) {
     directive.set_chanId(456);
 
     // try overflow stack
-    // should be one byte over
+    // should be one byte over (free space = Time::SERIALIZED_SIZE, but need tlmValue.getSize() + Time::SERIALIZED_SIZE)
+    // Old double-subtraction form (MAX - tlmValue.getSize() - timeEsb.getSize() < stack.size) would
+    // underflow to a large U32 when tlmValue.getSize() + timeEsb.getSize() > MAX_STACK_SIZE, silently
+    // bypassing this check. The new remaining-capacity form avoids that underflow.
     tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - Fw::Time::SERIALIZED_SIZE;
     result = tester_pushTlmValAndTime_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+
+    // exact fit: exactly (tlmValue.getSize() + Time::SERIALIZED_SIZE) bytes free, must succeed
     err = DirectiveError::NO_ERROR;
+    tester_get_m_runtime_ptr()->stack.size =
+        Fpy::MAX_STACK_SIZE - static_cast<Fpy::StackSizeType>(nextTlmValue.getSize()) - Fw::Time::SERIALIZED_SIZE;
+    result = tester_pushTlmValAndTime_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+}
+
+// Largest possible request: a full telemetry buffer plus a time. FpySequencer.hpp only requires
+// MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE, so a configuration with MAX_STACK_SIZE == FW_TLM_BUFFER_MAX_SIZE
+// is allowed and there the request does not fit. The subtraction form
+// (MAX - tlmValue.getSize() - timeEsb.getSize() < stack.size) underflows in that configuration, accepts
+// the push, and the stack then asserts. The remaining-capacity form reports STACK_OVERFLOW.
+// In the default configuration (65535) the request fits and the test checks the exact resulting size.
+TEST_F(FpySequencerTester, pushTlmValAndTimeFullBuffer) {
+    FpySequencer_PushTlmValAndTimeDirective directive(456);
+    nextTlmId = 456;
+    nextTlmValue.setBuffLen(FW_TLM_BUFFER_MAX_SIZE);
+    nextTlmTime.set(888, 777);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    const FwSizeType needed = static_cast<FwSizeType>(FW_TLM_BUFFER_MAX_SIZE) + Fw::Time::SERIALIZED_SIZE;
+    Signal result = tester_pushTlmValAndTime_directiveHandler(directive, err);
+    if (needed > static_cast<FwSizeType>(Fpy::MAX_STACK_SIZE)) {
+        ASSERT_EQ(result, Signal::stmtResponse_failure);
+        ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+        ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
+    } else {
+        ASSERT_EQ(result, Signal::stmtResponse_success);
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, needed);
+    }
 }
 
 TEST_F(FpySequencerTester, pushPrm) {
@@ -229,12 +274,29 @@ TEST_F(FpySequencerTester, pushPrm) {
     err = DirectiveError::NO_ERROR;
     directive.set_prmId(456);
 
-    // try stack overflow
+    // try stack overflow: one byte short of prmValue.getSize()
     tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - 1;
     result = tester_pushPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
     err = DirectiveError::NO_ERROR;
+
+    // exact fit: exactly prmValue.getSize() bytes free, must succeed
+    tester_get_m_runtime_ptr()->stack.size =
+        Fpy::MAX_STACK_SIZE - static_cast<Fpy::StackSizeType>(nextPrmValue.getSize());
+    result = tester_pushPrm_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+
+    tester_get_m_runtime_ptr()->stack.size = 1;
+    clearHistory();
+
+    tester_disconnect_getParam();
+    result = tester_pushPrm_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::PRM_GET_NOT_CONNECTED);
+    this->component.set_getParam_OutputPort(0, this->get_from_getParam(0));
 }
 
 TEST_F(FpySequencerTester, cmd) {
@@ -1635,6 +1697,34 @@ TEST_F(FpySequencerTester, stackCmd) {
     result = tester_stackCmd_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
+}
+
+TEST_F(FpySequencerTester, stackCmdPushOverflow) {
+    // Post-pop overflow check in stackCmd_directiveHandler: after the opcode and args are
+    // popped there must be room to push the cmd response code when the command completes.
+    // Old form: (Fpy::MAX_STACK_SIZE - sizeof(Fw::CmdResponse::SerialType) < stack.size)
+    // New form: (sizeof(Fw::CmdResponse::SerialType) > Fpy::MAX_STACK_SIZE - stack.size)
+    // With the default types (FwOpcodeType is U32, CmdResponse is U8) popping the opcode frees
+    // more room than the response needs, so this check cannot fire and both forms agree on
+    // every reachable stack size. The fullest reachable state is a stack that is completely
+    // full before the pop: this pins that the handler still dispatches there, and spells out
+    // the outcome for a configuration whose response type is wider than its opcode type.
+    FpySequencer_StackCmdDirective directive(0);  // argsSize = 0
+    DirectiveError err = DirectiveError::NO_ERROR;
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(FwOpcodeType);
+    tester_push<FwOpcodeType>(42);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    Signal result = tester_stackCmd_directiveHandler(directive, err);
+    if (sizeof(Fw::CmdResponse::SerialType) <= sizeof(FwOpcodeType)) {
+        ASSERT_EQ(err, DirectiveError::NO_ERROR);
+        ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
+        ASSERT_from_cmdOut_SIZE(1);
+        ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE - sizeof(FwOpcodeType));
+    } else {
+        ASSERT_EQ(result, Signal::stmtResponse_failure);
+        ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+        ASSERT_from_cmdOut_SIZE(0);
+    }
 }
 
 TEST_F(FpySequencerTester, memCmp) {

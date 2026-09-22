@@ -4,3 +4,5 @@ testwrite.txt
 testwrite.txt.CRC32
 testwriteoffset.txt
 testwriteoffset.txt.CRC32
+testroundtrip.txt
+testroundtrip.txt.CRC32

@@ -48,6 +48,10 @@ class VersionTester : public VersionGTestBase {
 
     //! test version command
     void test_versions();
+    //! test VERSION CUSTOM/ALL emit events while verbosity is disabled
+    void test_customEventsDisabled();
+    //! test rewriting a populated slot does not grow the custom element count
+    void test_setVerRewrite();
     //! test all commands
     void test_commands();
 

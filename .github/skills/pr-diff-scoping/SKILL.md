@@ -87,6 +87,29 @@ agents do not).
 
 ---
 
+## 3a. Re-review: the incremental diff
+
+On run ordinal ≥ 2 the same three rules are applied a second time
+with the diff `<last_reviewed_head>...<head>` in place of the PR
+diff, to decide whether a **new** below-must-fix finding is *in
+scope for this run* (`re-review-state` §2a, review contract §7
+Phase B). Terms map as:
+
+| Full-PR question | Incremental question |
+|---|---|
+| introduced by the PR | touched since the last reviewed head |
+| preexisting → `future work` | untouched since the last run → not reported this run |
+
+This second pass never changes the introduced/preexisting tag of a
+finding (that is always decided against the PR's base). It only
+decides whether to post a new `suggestion` / `could fix` /
+`future work` at all; must-fix candidates, findings with a prior
+finding-key, and incorrect-fix follow-ups are always in scope.
+When the incremental diff cannot be computed, scope is the full PR
+diff. When in doubt, prefer **in scope**.
+
+---
+
 ## 4. Worked examples
 
 ### Example A — line added, must fix candidate
@@ -163,4 +186,6 @@ grep.
 
 `added/modified line ⇒ introduced; new caller in diff that widens
 reach to the offending line ⇒ introduced; otherwise preexisting →
-future work. When in doubt, prefer introduced and ping a maintainer.`
+future work. When in doubt, prefer introduced and ping a maintainer.
+On re-review, rerun the same test against last_reviewed_head...head
+to scope new below-must-fix findings; when in doubt, keep them.`

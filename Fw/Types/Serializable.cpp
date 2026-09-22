@@ -210,28 +210,17 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(F3
 }
 
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(bool val, Endianness mode) {
-    if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(U8)) - 1 >= this->m_capacity) {
-        return FW_SERIALIZE_NO_ROOM_LEFT;
-    }
-
-    U8* buffAddr = this->m_buffAddr;
-    FW_ASSERT(buffAddr != nullptr);
-    if (val) {
-        buffAddr[this->m_serLoc + 0] = FW_SERIALIZE_TRUE_VALUE;
-    } else {
-        buffAddr[this->m_serLoc + 0] = FW_SERIALIZE_FALSE_VALUE;
-    }
-
-    this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(U8));
-    this->m_deserLoc = 0;
-    return FW_SERIALIZE_OK;
+    // booleans are encoded as a single byte
+    static_assert(FW_SERIALIZE_TRUE_VALUE <= 0xFF && FW_SERIALIZE_FALSE_VALUE <= 0xFF,
+                  "boolean wire values must fit in one byte");
+    static_assert(static_cast<int>(FW_SERIALIZE_TRUE_VALUE) != static_cast<int>(FW_SERIALIZE_FALSE_VALUE),
+                  "boolean wire values must be distinct");
+    const U8 byteVal = val ? static_cast<U8>(FW_SERIALIZE_TRUE_VALUE) : static_cast<U8>(FW_SERIALIZE_FALSE_VALUE);
+    return this->serializeFrom(byteVal, mode);
 }
 
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(const void* val, Endianness mode) {
-    if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(void*)) - 1 >= this->m_capacity) {
-        return FW_SERIALIZE_NO_ROOM_LEFT;
-    }
-
+    // pointers are serialized as their integer representation
     return this->serializeFrom(reinterpret_cast<PlatformPointerCastType>(val), mode);
 }
 
@@ -500,26 +489,20 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(F6
 }
 
 FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(bool& val, Endianness mode) {
-    // check for room
-    const Serializable::SizeType size = this->m_serLoc;
-    if (size == this->m_deserLoc) {
-        return FW_DESERIALIZE_BUFFER_EMPTY;
-    } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(U8))) {
-        return FW_DESERIALIZE_SIZE_MISMATCH;
+    U8 byteVal = 0;
+    const SerializeStatus stat = this->deserializeTo(byteVal, mode);
+    if (stat != FW_SERIALIZE_OK) {
+        return stat;
     }
-    // read from current location
-    U8* buffAddr = this->m_buffAddr;
-    FW_ASSERT(buffAddr != nullptr);
-    const U8 byteVal = buffAddr[this->m_deserLoc + 0];
     if (FW_SERIALIZE_TRUE_VALUE == byteVal) {
         val = true;
     } else if (FW_SERIALIZE_FALSE_VALUE == byteVal) {
         val = false;
     } else {
+        // leave the malformed byte unconsumed
+        this->m_deserLoc -= static_cast<Serializable::SizeType>(sizeof(byteVal));
         return FW_DESERIALIZE_FORMAT_ERROR;
     }
-
-    this->m_deserLoc += static_cast<Serializable::SizeType>(sizeof(U8));
     return FW_SERIALIZE_OK;
 }
 

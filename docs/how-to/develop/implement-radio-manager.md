@@ -159,7 +159,7 @@ First, we define the instances:
 ```python
 # in instances.fpp
 instance radioManager: MyProject.RadioManager base id <INSERT_BASE_ID>
-instance uartDriver: Drv.LinuxUartDriver base id <INSERT_BASE_ID>
+instance uartDriver: Drv.PosixUartDriver base id <INSERT_BASE_ID>
 ```
 
 Next, we use them in our main topology and connect the ports. There are two sets of ports to connect:
@@ -204,9 +204,9 @@ Configure the underlying driver in your topology initialization code.
 void configureTopology() {
     // [ ... other code ...]
         bool open_success = uartDriver.open("/dev/ttyACM0", 
-                           Drv::LinuxUartDriver::BAUD_115K, 
-                           Drv::LinuxUartDriver::NO_FLOW,
-                           Drv::LinuxUartDriver::PARITY_NONE, 
+                           Drv::PosixUartDriver::BAUD_115K,
+                           Drv::PosixUartDriver::NO_FLOW,
+                           Drv::PosixUartDriver::PARITY_NONE,
                            1024);
         if (open_success) {
             uartDriver.start(); // configure priority and stack size here if needed

@@ -26,7 +26,24 @@ _1 = cmake.get_build(
         "TestFPrimeLibraryOverride",
         "library_config",
         "TestLibraryNewConfig",
+        "TestLibraryGlobalConfig",
     ],
+)
+
+_1b = cmake.get_build(
+    "CONFIG_DEPRECATED_BASE_CONFIG_BUILD",
+    settings.DATA_DIR / "TestConfigDeployment",
+    {
+        "FPRIME_FRAMEWORK_PATH": settings.FRAMEWORK_PATH,
+        "FPRIME_PROJECT_ROOT": settings.DATA_DIR,
+        "FPRIME_LIBRARY_LOCATIONS": ";".join(
+            [
+                str(settings.DATA_DIR / "test-config-library"),
+            ]
+        ),
+        "_TEST_CONFIG_DEPRECATED_BASE_CONFIG": "ON",
+    },
+    make_targets=["TestLibraryDeprecatedBaseConfig"],
 )
 
 _2 = cmake.get_build(
@@ -96,6 +113,25 @@ def test_library_override(CONFIG_BUILD):
 def test_library_new_config(CONFIG_BUILD):
     """Test that the new config (of library) works"""
     cmake.assert_process_success(CONFIG_BUILD, targets=["TestLibraryNewConfig"])
+
+
+def test_library_global_implicit_config(CONFIG_BUILD):
+    """Test that a GLOBAL_IMPLICIT_DEPENDENCY library config is consumed without an explicit DEPENDS"""
+    cmake.assert_process_success(CONFIG_BUILD, targets=["TestLibraryGlobalConfig"])
+
+
+def test_base_config_deprecated(CONFIG_DEPRECATED_BASE_CONFIG_BUILD):
+    """Test that BASE_CONFIG still configures but warns that it is deprecated"""
+    return_code, _, stderr = CONFIG_DEPRECATED_BASE_CONFIG_BUILD["cmake"]
+    assert return_code == 0, "BASE_CONFIG configuration failed"
+    assert any(
+        "BASE_CONFIG is deprecated" in line for line in stderr
+    ), f"Deprecation of BASE_CONFIG not reported:\n{''.join(stderr)}"
+    cmake.assert_process_success(
+        CONFIG_DEPRECATED_BASE_CONFIG_BUILD,
+        warnings_ok=True,
+        targets=["TestLibraryDeprecatedBaseConfig"],
+    )
 
 
 def test_override_survives_reconfigure(CONFIG_BUILD):

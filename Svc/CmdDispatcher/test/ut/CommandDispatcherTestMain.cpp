@@ -229,6 +229,24 @@ TEST(CmdDispTestOffNominal, CommandQueueOverflow) {
     tester.runCommandQueueOverflow();
 }
 
+TEST(CmdDispTestOffNominal, ConcurrentQueueOverflow) {
+    TEST_CASE(102.2.9, "Off-nominal Concurrent Command QueueOverflow");
+    COMMENT("Verify the dropped-command counter loses no increments when the overflow hook runs on multiple threads.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runConcurrentQueueOverflow();
+}
+
 TEST(CmdDispTestOffNominal, SequenceNumberWrapSkipsTrackedIds) {
     TEST_CASE(102.2.6, "Sequence Number Wraparound");
     COMMENT("Verify sequence number allocation skips IDs that are still tracked across U32 wraparound.");

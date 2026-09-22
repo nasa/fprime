@@ -792,6 +792,13 @@ FpySequencer::Runtime* FpySequencerTester::tester_get_m_runtime_ptr() {
     return &(this->cmp.m_runtime);
 }
 
+void FpySequencerTester::tester_disconnect_getParam() {
+    Fw::OutputPrmGetPort& port = this->cmp.m_getParam_OutputPort[0];
+    port.~OutputPrmGetPort();
+    new (&port) Fw::OutputPrmGetPort();
+    port.init();
+}
+
 Fpy::Sequence* FpySequencerTester::tester_get_m_sequenceObj_ptr() {
     return &(this->cmp.m_sequenceObj);
 }

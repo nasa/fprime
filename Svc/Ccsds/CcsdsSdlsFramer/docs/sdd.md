@@ -48,11 +48,13 @@ The component is passive with no commands or telemetry. It composes two interfac
 
 Events: `EncryptionFailed` (WARNING_HI, carries the `SdlsStatus`) and `BufferAllocationFailed` (WARNING_HI, carries the requested size as `FwSizeType`).
 
-Parameters: `SA_INDEX` (U16, default 0) — the SA index used when the incoming frame context does not specify one (context `saIndex` equal to its default value of 0xFFFF is treated as unset).
+Parameters: `SA_INDEX` (U16, default 1) — the SA index used when the incoming frame context does not specify one (context `saIndex` equal to its default value of 0xFFFF is treated as unset).
 
 ## Configuration
 
-The `SA_INDEX` parameter selects the default security association for downlink frames.
+The `SA_INDEX` parameter selects the default security association for downlink frames. Its default of 1 matches the `SdlsCfg.SaMap` default in `Svc.Ccsds.SdlsSaRouter`, which routes SA 1 to the `PLAINTEXT` port, so the shipped `ComCcsdsSdls` subtopology downlinks through the default encryptor with no deployment configuration. Changing this parameter without a matching router entry yields `UNKNOWN_SA` and a dropped frame.
+
+Note that `Svc.Ccsds.SpacePacketFramer` does not set `saIndex` on the frame context, so on the standard downlink path this parameter supplies the SA index for every frame.
 
 ## Unit Testing
 

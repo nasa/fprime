@@ -75,11 +75,11 @@ function(add_fprime_supplied_os_module NAMES SUFFIX)
     set(OS_MODULE_NAME "Os_${FIRST_ITEM}_${SUFFIX}")
     # Clear variables
     set(SOURCE_INPUTS)
-    set(HEADERS_INPUTS)
+    set(HEADER_INPUTS)
     # Add files for each name supplied
     foreach (NAME IN LISTS NAMES)
         list(APPEND SOURCE_INPUTS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
-        list(APPEND HEADERS_INPUTS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
+        list(APPEND HEADER_INPUTS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
     endforeach ()
     # Set up module
     register_fprime_module(

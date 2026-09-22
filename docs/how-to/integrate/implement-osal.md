@@ -278,7 +278,7 @@ MutexInterface* MutexInterface::getDelegate(MutexHandleStorage& aligned_new_memo
 > [!NOTE]
 > Some interfaces require additional parameters in their `getDelegate` signature:
 > - `FileInterface` takes an optional `const FileInterface* to_copy` parameter for copy construction
-> - `RawTimeInterface` takes optional `const RawTimeInterface* to_copy` and `RawTimeSource source` parameters to support both copy construction and selectable timer sources
+> - `RawTimeInterface` takes optional `const RawTimeInterface* to_copy` and `RawTimeSource source` parameters to support both copy construction and selectable timer sources. Pass `source` to the implementation's constructor via the three-argument `makeDelegate(aligned_new_memory, to_copy, source)` overload; the implementation should store the selected source in its handle so copies preserve it, honor it in `now()`, and return `INVALID_PARAMS` from `getTimeInterval()` when the two instances use different sources. See `Os/Posix/RawTime.cpp` and `config/RawTimeSource.hpp`, whose enumerators carry the platform clock id.
 > 
 > The `makeDelegate` helper supports all these signatures. Check each interface header for the exact `getDelegate` signature required.
 

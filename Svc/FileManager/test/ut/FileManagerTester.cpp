@@ -30,6 +30,9 @@ namespace Svc {
 FileManagerTester ::FileManagerTester() : FileManagerGTestBase("Tester", MAX_HISTORY_SIZE), component("FileManager") {
     this->connectPorts();
     this->initComponents();
+    // The sandbox is fail-closed until configured; open it fully, as the subtopologies do by
+    // default, so the nominal tests exercise unrestricted behavior. Sandbox tests re-configure.
+    this->component.configure("/");
 }
 
 FileManagerTester ::~FileManagerTester() {
@@ -940,6 +943,172 @@ void FileManagerTester ::assertFailure(const FwOpcodeType opcode) const {
     ASSERT_TLM_Errors_SIZE(1);
     ASSERT_TLM_Errors(0, 1);
 }
+void FileManagerTester ::assertSandboxRejection(const FwOpcodeType opcode, const char* const path) {
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, opcode, CMD_SEQ, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(1);
+    ASSERT_STREQ(path, this->eventHistory_PathOutsideSandbox->at(0).path.toChar());
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_Errors_SIZE(1);
+}
+
+void FileManagerTester ::sandboxRejectsOutsidePaths() {
+    // Confine the component to a test directory; anything resolving outside must be rejected
+    // before any filesystem operation happens.
+    this->system("rm -rf sandbox_ut && mkdir -p sandbox_ut/inner");
+    this->component.configure("sandbox_ut");
+
+    // Absolute path outside the sandbox
+    this->clearHistory();
+    this->removeFile("/tmp/fprime_sandbox_ut_target.txt", false);
+    this->assertSandboxRejection(FileManager::OPCODE_REMOVEFILE, "/tmp/fprime_sandbox_ut_target.txt");
+
+    // Relative path escaping via '..'
+    this->clearHistory();
+    this->createDirectory("sandbox_ut/../escaped_dir");
+    this->assertSandboxRejection(FileManager::OPCODE_CREATEDIRECTORY, "sandbox_ut/../escaped_dir");
+    int ret = ::system("test -e escaped_dir");
+    ASSERT_NE(ret, 0) << "directory must not be created outside the sandbox";
+
+    // MoveFile: contained source, escaping destination — nothing may happen
+    this->system("echo data > sandbox_ut/contained.txt");
+    this->clearHistory();
+    this->moveFile("sandbox_ut/contained.txt", "../moved_out.txt");
+    this->assertSandboxRejection(FileManager::OPCODE_MOVEFILE, "../moved_out.txt");
+    ret = ::system("test -f sandbox_ut/contained.txt");
+    ASSERT_EQ(ret, 0) << "source must be untouched when the destination is rejected";
+
+    // AppendFile: escaping source
+    this->clearHistory();
+    this->appendFile("/etc/hostname", "sandbox_ut/contained.txt");
+    this->assertSandboxRejection(FileManager::OPCODE_APPENDFILE, "/etc/hostname");
+
+    // FileSize outside
+    this->clearHistory();
+    Fw::CmdStringArg sizeArg("/etc/hostname");
+    this->sendCmd_FileSize(INSTANCE, CMD_SEQ, sizeArg);
+    this->component.doDispatch();
+    this->assertSandboxRejection(FileManager::OPCODE_FILESIZE, "/etc/hostname");
+
+    // ListDirectory outside
+    this->clearHistory();
+    Fw::CmdStringArg listArg("/etc");
+    this->sendCmd_ListDirectory(INSTANCE, CMD_SEQ, listArg);
+    this->component.doDispatch();
+    this->assertSandboxRejection(FileManager::OPCODE_LISTDIRECTORY, "/etc");
+
+    // CalculateCrc outside
+    this->clearHistory();
+    Fw::CmdStringArg crcArg("/etc/hostname");
+    this->sendCmd_CalculateCrc(INSTANCE, CMD_SEQ, crcArg);
+    this->component.doDispatch();
+    this->assertSandboxRejection(FileManager::OPCODE_CALCULATECRC, "/etc/hostname");
+
+    // RemoveDirectory outside
+    this->clearHistory();
+    this->removeDirectory("/tmp");
+    this->assertSandboxRejection(FileManager::OPCODE_REMOVEDIRECTORY, "/tmp");
+
+    // GenerateDp outside
+    this->clearHistory();
+    Fw::CmdStringArg dpArg("/etc/hostname");
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, dpArg, 0, 0, 0, 0, FileManager_GenerateDpMode::IMMEDIATE);
+    this->component.doDispatch();
+    this->assertSandboxRejection(FileManager::OPCODE_GENERATEDP, "/etc/hostname");
+
+    // A contained command still works
+    this->clearHistory();
+    this->createDirectory("sandbox_ut/new_dir");
+    this->assertSuccess(FileManager::OPCODE_CREATEDIRECTORY);
+    ret = ::system("test -d sandbox_ut/new_dir");
+    ASSERT_EQ(ret, 0);
+
+    this->system("rm -rf sandbox_ut escaped_dir");
+}
+
+void FileManagerTester ::sandboxFailClosed() {
+    // Until configure() is called, every command must be rejected. The tester constructor
+    // configures the component, so reset the flag (friend access) to exercise the
+    // unconfigured state, then restore.
+    ASSERT_TRUE(this->component.m_sandboxConfigured) << "tester component is configured in the constructor";
+    this->component.m_sandboxConfigured = false;
+    this->clearHistory();
+    this->removeFile("any_file.txt", false);
+    this->assertSandboxRejection(FileManager::OPCODE_REMOVEFILE, "any_file.txt");
+    this->component.configure("/");
+}
+
+void FileManagerTester ::sandboxResolvesPaths() {
+    // With the sandbox open ("/", set in the constructor), '..' segments that stay inside
+    // still resolve, and operations act on the canonical path.
+    this->system("rm -rf sandbox_res && mkdir -p sandbox_res/a");
+    this->component.configure("sandbox_res");
+
+    // 'a/../inside.txt' resolves to '<sandbox>/inside.txt': contained, so it is accepted
+    this->clearHistory();
+    this->system("echo hello > sandbox_res/inside.txt");
+    Fw::CmdStringArg sizeArg("sandbox_res/a/../inside.txt");
+    this->sendCmd_FileSize(INSTANCE, CMD_SEQ, sizeArg);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_FILESIZE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(0);
+    ASSERT_EVENTS_FileSizeSucceeded_SIZE(1);
+
+    this->system("rm -rf sandbox_res");
+    this->component.configure("/");
+}
+
+void FileManagerTester ::sandboxOpenRootIsUnrestricted() {
+    // The FileHandling subtopologies configure the sandbox to "/" by default for backwards
+    // compatibility. This test mirrors the operations from the report that motivated the
+    // sandbox (arbitrary absolute paths under /tmp) and verifies they still succeed with the
+    // open configuration, pinning the compatibility guarantee.
+    this->component.configure("/");
+    this->system("rm -rf /tmp/fprime_sandbox_ut_open");
+
+    // CreateDirectory at an arbitrary absolute path
+    this->clearHistory();
+    this->createDirectory("/tmp/fprime_sandbox_ut_open");
+    this->assertSuccess(FileManager::OPCODE_CREATEDIRECTORY);
+    int ret = ::system("test -d /tmp/fprime_sandbox_ut_open");
+    ASSERT_EQ(ret, 0);
+
+    // FileSize at an arbitrary absolute path
+    this->system("echo -n '0123456789AB' > /tmp/fprime_sandbox_ut_open/file.txt");
+    this->clearHistory();
+    Fw::CmdStringArg sizeArg("/tmp/fprime_sandbox_ut_open/file.txt");
+    this->sendCmd_FileSize(INSTANCE, CMD_SEQ, sizeArg);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_FILESIZE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(0);
+    ASSERT_EVENTS_FileSizeSucceeded_SIZE(1);
+    ASSERT_EVENTS_FileSizeSucceeded(0, "/tmp/fprime_sandbox_ut_open/file.txt", 12);
+
+    // MoveFile between arbitrary absolute paths (assert response directly: assertSuccess
+    // expects CommandsExecuted == 1, which does not hold on this shared tester instance)
+    this->clearHistory();
+    this->moveFile("/tmp/fprime_sandbox_ut_open/file.txt", "/tmp/fprime_sandbox_ut_open/moved.txt");
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_MOVEFILE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(0);
+    ret = ::system("test -f /tmp/fprime_sandbox_ut_open/moved.txt");
+    ASSERT_EQ(ret, 0);
+
+    // RemoveFile at an arbitrary absolute path
+    this->clearHistory();
+    this->removeFile("/tmp/fprime_sandbox_ut_open/moved.txt", false);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_REMOVEFILE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(0);
+    ret = ::system("test -f /tmp/fprime_sandbox_ut_open/moved.txt");
+    ASSERT_NE(ret, 0);
+
+    this->system("rm -rf /tmp/fprime_sandbox_ut_open");
+}
+
 void FileManagerTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
 }

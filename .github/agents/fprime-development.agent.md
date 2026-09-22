@@ -80,7 +80,7 @@ enter the loop on your own initiative.
 
 ## 6. Standing rules for every phase
 
-- All C++ complies with `fprime-cpp-design` (CPP-1 through CPP-34);
+- All C++ complies with `fprime-cpp-design` (CPP-1 through CPP-37);
   consult it before writing code. Design-level expectations are in
   `jpl-design-principles`.
 - **Ask, don't guess.** Uncertainty about a requirement, interface,

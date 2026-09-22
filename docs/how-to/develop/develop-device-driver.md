@@ -17,7 +17,7 @@ Before starting, you should have:
 
 ## Application-Manager-Driver Pattern
 
-A "device driver" traditionally refers to the entire stack of software that manages a hardware device. In F´, the driver-manager pattern splits this in two components: the device manager component and the bus driver component. The bus driver handles the platform-specific implementation of communications on a specific bus (e.g., LinuxI2cDriver, LinuxUartDriver). The device manager handles the operations and logic for a specific device. This enhances modularity and reusability: for example the same device manager can be ported to different platforms by switching the bus driver component.
+A "device driver" traditionally refers to the entire stack of software that manages a hardware device. In F´, the driver-manager pattern splits this in two components: the device manager component and the bus driver component. The bus driver handles the platform-specific implementation of communications on a specific bus (e.g., LinuxI2cDriver, PosixUartDriver). The device manager handles the operations and logic for a specific device. This enhances modularity and reusability: for example the same device manager can be ported to different platforms by switching the bus driver component.
 
 Please refer to the [Application Manager Driver pattern documentation](../../user-manual/design-patterns/app-man-drv.md) for more details on the design pattern used in F Prime for device drivers.
 
@@ -53,7 +53,7 @@ graph LR
 
 ## How-To Develop a Device Manager
 
-This section focuses on the device manager component. The bus driver component is assumed to already exist, and its implementation is covered in a [separate section](#how-to-develop-a-bus-driver) of this guide. Linux implementations are available in core F´ with for example `Drv.LinuxUartDriver`, `Drv.LinuxI2cDriver` and `LinuxSpiDriver`.
+This section focuses on the device manager component. The bus driver component is assumed to already exist, and its implementation is covered in a [separate section](#how-to-develop-a-bus-driver) of this guide. Implementations are available in core F´ with for example `Drv.PosixUartDriver`, `Drv.LinuxI2cDriver` and `LinuxSpiDriver`.
 
 ### Step 1 - Understand the Hardware
 
@@ -410,4 +410,3 @@ void configureTopology() {
 - [fprime-sensors-reference Repository](https://github.com/fprime-community/fprime-sensors-reference) - Reference project that uses sensors defined in fprime-sensors
 - [F´ core Linux Bus Drivers](../../../Drv)
 - [fprime-zephyr package](https://github.com/fprime-community/fprime-zephyr) - F Prime support for Zephyr RTOS, including common bus drivers for Zephyr
-

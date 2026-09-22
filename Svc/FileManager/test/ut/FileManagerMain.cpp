@@ -144,6 +144,26 @@ TEST(Test, generateDpCustomPriority) {
     tester.generateDpCustomPriority();
 }
 
+TEST(Sandbox, rejectsOutsidePaths) {
+    Svc::FileManagerTester tester;
+    tester.sandboxRejectsOutsidePaths();
+}
+
+TEST(Sandbox, failClosed) {
+    Svc::FileManagerTester tester;
+    tester.sandboxFailClosed();
+}
+
+TEST(Sandbox, resolvesPaths) {
+    Svc::FileManagerTester tester;
+    tester.sandboxResolvesPaths();
+}
+
+TEST(Sandbox, openRootIsUnrestricted) {
+    Svc::FileManagerTester tester;
+    tester.sandboxOpenRootIsUnrestricted();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
