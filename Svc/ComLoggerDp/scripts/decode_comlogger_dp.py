@@ -28,13 +28,20 @@ from datetime import datetime
 
 # F Prime GDS imports
 try:
-    from fprime_gds.common.dp.common import get_dp_header_type, calculate_crc32, ChecksumConfig
+    from fprime_gds.common.dp.common import (
+        get_dp_header_type,
+        calculate_crc32,
+        ChecksumConfig,
+    )
     from fprime_gds.common.utils.config_manager import ConfigManager
     from fprime_gds.common.models.dictionaries import Dictionaries
     from fprime_gds.common.models.serialize.type_base import ValueType
     from fprime_gds.common.models.serialize.time_type import TimeType
 except ImportError as e:
-    print(f"Error: fprime-gds package not found. Please install it first.", file=sys.stderr)
+    print(
+        f"Error: fprime-gds package not found. Please install it first.",
+        file=sys.stderr,
+    )
     print(f"  pip install fprime-gds", file=sys.stderr)
     sys.exit(1)
 
@@ -43,13 +50,16 @@ except ImportError as e:
 # Exceptions
 # ==============================================================================
 
+
 class ComLoggerDpError(Exception):
     """Base exception for ComLoggerDp decoding errors."""
+
     pass
 
 
 class CRCError(ComLoggerDpError):
     """CRC validation failure."""
+
     def __init__(self, section: str, expected: int, calculated: int):
         self.section = section
         self.expected = expected
@@ -61,6 +71,7 @@ class CRCError(ComLoggerDpError):
 
 class SentryError(ComLoggerDpError):
     """Sentry validation failure."""
+
     def __init__(self, expected: int, actual: int, record_index: int):
         self.expected = expected
         self.actual = actual
@@ -74,6 +85,7 @@ class SentryError(ComLoggerDpError):
 # ComLoggerDp Decoder
 # ==============================================================================
 
+
 class ComLoggerDpDecoder:
     """Decoder for ComLoggerDp data product binary files.
 
@@ -84,12 +96,14 @@ class ComLoggerDpDecoder:
     4. Outputs decoded data in JSON or human-readable format
     """
 
-    def __init__(self,
-                 dp_binary_path: str,
-                 dictionaries: Dictionaries,
-                 sentry_value: Optional[int] = None,
-                 validate_crc: bool = True,
-                 validate_sentry: bool = True):
+    def __init__(
+        self,
+        dp_binary_path: str,
+        dictionaries: Dictionaries,
+        sentry_value: Optional[int] = None,
+        validate_crc: bool = True,
+        validate_sentry: bool = True,
+    ):
         """Initialize the decoder.
 
         Args:
@@ -118,7 +132,9 @@ class ComLoggerDpDecoder:
             except:
                 # Default sentry if not found in config
                 self.sentry_value = 0xDEADBEEF
-                print(f"Warning: ComLoggerDpSentry not found in config, using default: {self.sentry_value:#010x}")
+                print(
+                    f"Warning: ComLoggerDpSentry not found in config, using default: {self.sentry_value:#010x}"
+                )
 
         # Packet type enumeration from ComCfg
         self.PACKET_TYPES = {
@@ -152,21 +168,27 @@ class ComLoggerDpDecoder:
         header_bin_data = file_handle.read(header_size)
 
         if len(header_bin_data) < header_size:
-            raise ComLoggerDpError(f"Incomplete header: expected {header_size} bytes, got {len(header_bin_data)}")
+            raise ComLoggerDpError(
+                f"Incomplete header: expected {header_size} bytes, got {len(header_bin_data)}"
+            )
 
         header.deserialize(header_bin_data, 0)
         header_json = header.to_jsonable()
 
         # Validate CRC if enabled
         if self.validate_crc:
-            computed_hash = calculate_crc32(header_bin_data[:header_size - ChecksumConfig.CHECKSUM_LEN])
+            computed_hash = calculate_crc32(
+                header_bin_data[: header_size - ChecksumConfig.CHECKSUM_LEN]
+            )
             stored_hash = header_json["Checksum"]["value"]
             if stored_hash != computed_hash:
                 raise CRCError("Header", stored_hash, computed_hash)
 
         return header_json
 
-    def extract_combuffer_records(self, file_handle, data_size: int) -> List[Dict[str, Any]]:
+    def extract_combuffer_records(
+        self, file_handle, data_size: int
+    ) -> List[Dict[str, Any]]:
         """Extract all ComBuffer records from the data section.
 
         Args:
@@ -211,7 +233,9 @@ class ComLoggerDpDecoder:
             # Read array size (total bytes including sentry + ComBuffer data)
             array_size_bin = file_handle.read(size_type_size)
             if len(array_size_bin) < size_type_size:
-                raise ComLoggerDpError(f"Incomplete array size at record {record_index}")
+                raise ComLoggerDpError(
+                    f"Incomplete array size at record {record_index}"
+                )
 
             array_size_obj = self.config_mgr.get_type("FwSizeStoreType")()
             array_size_obj.deserialize(array_size_bin, 0)
@@ -220,7 +244,9 @@ class ComLoggerDpDecoder:
             # Read the record data (sentry + ComBuffer)
             record_data = file_handle.read(array_size)
             if len(record_data) < array_size:
-                raise ComLoggerDpError(f"Incomplete record data at record {record_index}: expected {array_size}, got {len(record_data)}")
+                raise ComLoggerDpError(
+                    f"Incomplete record data at record {record_index}: expected {array_size}, got {len(record_data)}"
+                )
 
             # Extract sentry value (first 4 bytes, U32 big-endian)
             sentry_bytes = record_data[:sentry_size]
@@ -233,13 +259,15 @@ class ComLoggerDpDecoder:
             # Extract ComBuffer data (remaining bytes)
             combuffer_data = record_data[sentry_size:]
 
-            records.append({
-                'record_index': record_index,
-                'record_id': record_id,
-                'sentry': sentry,
-                'combuffer_size': len(combuffer_data),
-                'combuffer_data': combuffer_data
-            })
+            records.append(
+                {
+                    "record_index": record_index,
+                    "record_id": record_id,
+                    "sentry": sentry,
+                    "combuffer_size": len(combuffer_data),
+                    "combuffer_data": combuffer_data,
+                }
+            )
 
             record_index += 1
 
@@ -259,7 +287,9 @@ class ComLoggerDpDecoder:
 
         # First 2 bytes are FwPacketDescriptorType (U16, big-endian)
         packet_type = struct.unpack(">H", combuffer_data[:2])[0]
-        packet_type_name = self.PACKET_TYPES.get(packet_type, f"UNKNOWN_{packet_type:#06x}")
+        packet_type_name = self.PACKET_TYPES.get(
+            packet_type, f"UNKNOWN_{packet_type:#06x}"
+        )
         packet_data = combuffer_data[2:]
 
         return packet_type, packet_type_name, packet_data
@@ -293,11 +323,11 @@ class ComLoggerDpDecoder:
 
             if channel_template is None:
                 return {
-                    'channel_id': channel_id,
-                    'channel_name': f"UNKNOWN_CHANNEL_{channel_id}",
-                    'time': time_dict,
-                    'value': f"<raw: {buffer.read().hex()}>",
-                    'error': 'Channel not found in dictionary'
+                    "channel_id": channel_id,
+                    "channel_name": f"UNKNOWN_CHANNEL_{channel_id}",
+                    "time": time_dict,
+                    "value": f"<raw: {buffer.read().hex()}>",
+                    "error": "Channel not found in dictionary",
                 }
 
             # Deserialize channel value
@@ -307,17 +337,17 @@ class ComLoggerDpDecoder:
             channel_type.deserialize(value_bytes, 0)
 
             return {
-                'channel_id': channel_id,
-                'channel_name': channel_template.get_full_name(),
-                'channel_comp': channel_template.get_comp_name(),
-                'time': time_dict,
-                'value': channel_type.to_jsonable()
+                "channel_id": channel_id,
+                "channel_name": channel_template.get_full_name(),
+                "channel_comp": channel_template.get_comp_name(),
+                "time": time_dict,
+                "value": channel_type.to_jsonable(),
             }
 
         except Exception as e:
             return {
-                'error': f"Failed to decode telemetry packet: {str(e)}",
-                'raw_data': packet_data.hex()
+                "error": f"Failed to decode telemetry packet: {str(e)}",
+                "raw_data": packet_data.hex(),
             }
 
     def decode_event_packet(self, packet_data: bytes) -> Dict[str, Any]:
@@ -349,13 +379,13 @@ class ComLoggerDpDecoder:
 
             if event_template is None:
                 return {
-                    'event_id': event_id,
-                    'event_name': f"UNKNOWN_EVENT_{event_id}",
-                    'severity': 'UNKNOWN',
-                    'time': time_dict,
-                    'args': [],
-                    'message': f"<raw: {buffer.read().hex()}>",
-                    'error': 'Event not found in dictionary'
+                    "event_id": event_id,
+                    "event_name": f"UNKNOWN_EVENT_{event_id}",
+                    "severity": "UNKNOWN",
+                    "time": time_dict,
+                    "args": [],
+                    "message": f"<raw: {buffer.read().hex()}>",
+                    "error": "Event not found in dictionary",
                 }
 
             # Deserialize event arguments
@@ -368,34 +398,38 @@ class ComLoggerDpDecoder:
                 arg_type = arg_type_class()
                 arg_bytes = buffer.read(arg_type.getMaxSize())
                 arg_type.deserialize(arg_bytes, 0)
-                args.append({
-                    'name': arg_name,
-                    'value': arg_type.to_jsonable()
-                })
+                args.append({"name": arg_name, "value": arg_type.to_jsonable()})
 
             # Format the message
             try:
                 format_str = event_template.get_format_str()
-                arg_values = [arg['value']['value'] if isinstance(arg['value'], dict) and 'value' in arg['value'] else arg['value'] for arg in args]
+                arg_values = [
+                    (
+                        arg["value"]["value"]
+                        if isinstance(arg["value"], dict) and "value" in arg["value"]
+                        else arg["value"]
+                    )
+                    for arg in args
+                ]
                 message = format_str.format(*arg_values) if arg_values else format_str
             except:
                 message = format_str
 
             return {
-                'event_id': event_id,
-                'event_name': event_template.get_full_name(),
-                'event_comp': event_template.get_comp_name(),
-                'severity': event_template.get_severity(),
-                'time': time_dict,
-                'args': args,
-                'message': message,
-                'format_string': event_template.get_format_str()
+                "event_id": event_id,
+                "event_name": event_template.get_full_name(),
+                "event_comp": event_template.get_comp_name(),
+                "severity": event_template.get_severity(),
+                "time": time_dict,
+                "args": args,
+                "message": message,
+                "format_string": event_template.get_format_str(),
             }
 
         except Exception as e:
             return {
-                'error': f"Failed to decode event packet: {str(e)}",
-                'raw_data': packet_data.hex()
+                "error": f"Failed to decode event packet: {str(e)}",
+                "raw_data": packet_data.hex(),
             }
 
     @staticmethod
@@ -408,14 +442,14 @@ class ComLoggerDpDecoder:
         Returns:
             Tuple of (ISO timestamp, F Prime time tag)
         """
-        seconds = time_dict.get('seconds', 0)
-        microseconds = time_dict.get('microseconds', 0)
-        context = time_dict.get('context', 0)
-        base = time_dict.get('base', 2)
+        seconds = time_dict.get("seconds", 0)
+        microseconds = time_dict.get("microseconds", 0)
+        context = time_dict.get("context", 0)
+        base = time_dict.get("base", 2)
 
         # Convert to datetime
         dt = datetime.utcfromtimestamp(seconds + microseconds / 1000000.0)
-        iso_time = dt.strftime('%Y-%m-%dT%H:%M:%S.%f')
+        iso_time = dt.strftime("%Y-%m-%dT%H:%M:%S.%f")
 
         # F Prime time tag format: (base(context)-seconds:microseconds)
         fprime_time = f"({base}({context})-{seconds}:{microseconds})"
@@ -433,10 +467,13 @@ class ComLoggerDpDecoder:
             Formatted string value
         """
         if isinstance(value, dict):
-            if 'value' in value:
-                val = value['value']
+            if "value" in value:
+                val = value["value"]
                 # Handle enums
-                if isinstance(val, str) and not val.replace('.', '').replace('_', '').isalnum():
+                if (
+                    isinstance(val, str)
+                    and not val.replace(".", "").replace("_", "").isalnum()
+                ):
                     return val
                 # Handle numeric values
                 if isinstance(val, (int, float)):
@@ -445,12 +482,14 @@ class ComLoggerDpDecoder:
                     return str(val)
                 return str(val)
             # Handle complex types like arrays
-            if 'values' in value:
-                return str(value['values'])
+            if "values" in value:
+                return str(value["values"])
             return str(value)
         return str(value)
 
-    def decode_packet(self, packet_type: int, packet_type_name: str, packet_data: bytes) -> Dict[str, Any]:
+    def decode_packet(
+        self, packet_type: int, packet_type_name: str, packet_data: bytes
+    ) -> Dict[str, Any]:
         """Decode a packet based on its type.
 
         Args:
@@ -469,8 +508,12 @@ class ComLoggerDpDecoder:
             return self.decode_telemetry_packet(packet_data)
         else:
             return {
-                'warning': f"Unsupported packet type: {packet_type_name}",
-                'raw_data': packet_data.hex()[:100] + "..." if len(packet_data) > 50 else packet_data.hex()
+                "warning": f"Unsupported packet type: {packet_type_name}",
+                "raw_data": (
+                    packet_data.hex()[:100] + "..."
+                    if len(packet_data) > 50
+                    else packet_data.hex()
+                ),
             }
 
     def reconstruct_from_sentinels(self) -> Dict[str, Any]:
@@ -487,23 +530,20 @@ class ComLoggerDpDecoder:
             FileNotFoundError: If binary file doesn't exist
         """
         results = {
-            'file_info': {
-                'path': self.dp_binary_path,
-                'size': 0
+            "file_info": {"path": self.dp_binary_path, "size": 0},
+            "reconstruction": {
+                "sentinels_found": 0,
+                "records_extracted": 0,
+                "records_decoded": 0,
+                "bytes_scanned": 0,
             },
-            'reconstruction': {
-                'sentinels_found': 0,
-                'records_extracted': 0,
-                'records_decoded': 0,
-                'bytes_scanned': 0
+            "records": [],
+            "statistics": {
+                "packet_types": {},
+                "events": 0,
+                "telemetry": 0,
+                "errors": 0,
             },
-            'records': [],
-            'statistics': {
-                'packet_types': {},
-                'events': 0,
-                'telemetry': 0,
-                'errors': 0
-            }
         }
 
         print(f"Starting reconstruction mode on {self.dp_binary_path}")
@@ -513,12 +553,12 @@ class ComLoggerDpDecoder:
         sentry_bytes = struct.pack(">I", self.sentry_value)
         sentry_size = 4
 
-        with open(self.dp_binary_path, 'rb') as f:
+        with open(self.dp_binary_path, "rb") as f:
             # Read entire file
             file_data = f.read()
             file_size = len(file_data)
-            results['file_info']['size'] = file_size
-            results['reconstruction']['bytes_scanned'] = file_size
+            results["file_info"]["size"] = file_size
+            results["reconstruction"]["bytes_scanned"] = file_size
 
             print(f"File size: {file_size} bytes")
 
@@ -532,7 +572,7 @@ class ComLoggerDpDecoder:
                 sentry_positions.append(pos)
                 pos += 1  # Move past this sentry to find next
 
-            results['reconstruction']['sentinels_found'] = len(sentry_positions)
+            results["reconstruction"]["sentinels_found"] = len(sentry_positions)
             print(f"Found {len(sentry_positions)} sentinel(s)")
 
             if len(sentry_positions) == 0:
@@ -549,74 +589,92 @@ class ComLoggerDpDecoder:
                 if idx + 1 < len(sentry_positions):
                     # Next sentinel marks the end of this record
                     next_sentry = sentry_positions[idx + 1]
-                    record_data = file_data[sentry_pos + sentry_size:next_sentry]
+                    record_data = file_data[sentry_pos + sentry_size : next_sentry]
                 else:
                     # Last sentinel - take rest of file (or reasonable chunk)
                     # Use a max chunk size to avoid reading garbage
                     max_record_size = 4096  # Maximum reasonable ComBuffer size
-                    end_pos = min(sentry_pos + sentry_size + max_record_size, len(file_data))
-                    record_data = file_data[sentry_pos + sentry_size:end_pos]
+                    end_pos = min(
+                        sentry_pos + sentry_size + max_record_size, len(file_data)
+                    )
+                    record_data = file_data[sentry_pos + sentry_size : end_pos]
 
                 if len(record_data) == 0:
                     continue
 
-                results['reconstruction']['records_extracted'] += 1
+                results["reconstruction"]["records_extracted"] += 1
 
-                print(f"[Sentinel {idx}] Position: {sentry_pos}, Data size: {len(record_data)} bytes")
+                print(
+                    f"[Sentinel {idx}] Position: {sentry_pos}, Data size: {len(record_data)} bytes"
+                )
 
                 try:
                     # Try to decode the ComBuffer
-                    packet_type, packet_type_name, packet_data = self.decode_combuffer(record_data)
+                    packet_type, packet_type_name, packet_data = self.decode_combuffer(
+                        record_data
+                    )
 
                     # Track packet type statistics
-                    results['statistics']['packet_types'][packet_type_name] = \
-                        results['statistics']['packet_types'].get(packet_type_name, 0) + 1
+                    results["statistics"]["packet_types"][packet_type_name] = (
+                        results["statistics"]["packet_types"].get(packet_type_name, 0)
+                        + 1
+                    )
 
                     # Decode packet based on type
-                    decoded_packet = self.decode_packet(packet_type, packet_type_name, packet_data)
+                    decoded_packet = self.decode_packet(
+                        packet_type, packet_type_name, packet_data
+                    )
 
                     # Track statistics
                     if packet_type == 0x0002:  # Events
-                        results['statistics']['events'] += 1
+                        results["statistics"]["events"] += 1
                     elif packet_type in [0x0001, 0x0004]:  # Telemetry
-                        results['statistics']['telemetry'] += 1
+                        results["statistics"]["telemetry"] += 1
 
-                    if 'error' in decoded_packet:
-                        results['statistics']['errors'] += 1
+                    if "error" in decoded_packet:
+                        results["statistics"]["errors"] += 1
                         print(f"  └─ Decoded: {packet_type_name} (decode error)")
                     else:
-                        results['reconstruction']['records_decoded'] += 1
+                        results["reconstruction"]["records_decoded"] += 1
                         if packet_type == 0x0002:  # Event
-                            event_name = decoded_packet.get('event_name', 'UNKNOWN')
+                            event_name = decoded_packet.get("event_name", "UNKNOWN")
                             print(f"  └─ Decoded: {packet_type_name} - {event_name}")
                         elif packet_type in [0x0001, 0x0004]:  # Telemetry
-                            channel_name = decoded_packet.get('channel_name', 'UNKNOWN')
+                            channel_name = decoded_packet.get("channel_name", "UNKNOWN")
                             print(f"  └─ Decoded: {packet_type_name} - {channel_name}")
                         else:
                             print(f"  └─ Decoded: {packet_type_name}")
 
                     # Add to results
-                    results['records'].append({
-                        'sentinel_index': idx,
-                        'file_position': sentry_pos,
-                        'sentry': f"{self.sentry_value:#010x}",
-                        'data_size': len(record_data),
-                        'packet_type': packet_type_name,
-                        'packet_type_value': packet_type,
-                        'decoded': decoded_packet
-                    })
+                    results["records"].append(
+                        {
+                            "sentinel_index": idx,
+                            "file_position": sentry_pos,
+                            "sentry": f"{self.sentry_value:#010x}",
+                            "data_size": len(record_data),
+                            "packet_type": packet_type_name,
+                            "packet_type_value": packet_type,
+                            "decoded": decoded_packet,
+                        }
+                    )
 
                 except Exception as e:
-                    results['statistics']['errors'] += 1
+                    results["statistics"]["errors"] += 1
                     print(f"  └─ Error: {str(e)}")
-                    results['records'].append({
-                        'sentinel_index': idx,
-                        'file_position': sentry_pos,
-                        'sentry': f"{self.sentry_value:#010x}",
-                        'data_size': len(record_data),
-                        'error': f"Failed to decode: {str(e)}",
-                        'raw_data': record_data[:100].hex() + "..." if len(record_data) > 50 else record_data.hex()
-                    })
+                    results["records"].append(
+                        {
+                            "sentinel_index": idx,
+                            "file_position": sentry_pos,
+                            "sentry": f"{self.sentry_value:#010x}",
+                            "data_size": len(record_data),
+                            "error": f"Failed to decode: {str(e)}",
+                            "raw_data": (
+                                record_data[:100].hex() + "..."
+                                if len(record_data) > 50
+                                else record_data.hex()
+                            ),
+                        }
+                    )
 
         return results
 
@@ -632,29 +690,29 @@ class ComLoggerDpDecoder:
             ComLoggerDpError: For other decoding errors
         """
         results = {
-            'header': None,
-            'records': [],
-            'statistics': {
-                'total_records': 0,
-                'packet_types': {},
-                'events': 0,
-                'telemetry': 0,
-                'errors': 0
-            }
+            "header": None,
+            "records": [],
+            "statistics": {
+                "total_records": 0,
+                "packet_types": {},
+                "events": 0,
+                "telemetry": 0,
+                "errors": 0,
+            },
         }
 
-        with open(self.dp_binary_path, 'rb') as f:
+        with open(self.dp_binary_path, "rb") as f:
             # Decode header
             print("Decoding DP header...")
             header_json = self.decode_header(f)
-            results['header'] = header_json
+            results["header"] = header_json
 
             # Extract ComBuffer records
             print("Extracting ComBuffer records...")
-            data_size = header_json['DataSize']['value']
+            data_size = header_json["DataSize"]["value"]
             position_at_start = f.tell()
             combuffer_records = self.extract_combuffer_records(f, data_size)
-            results['statistics']['total_records'] = len(combuffer_records)
+            results["statistics"]["total_records"] = len(combuffer_records)
             print(f"Found {len(combuffer_records)} ComBuffer records")
 
             # Validate data CRC
@@ -678,41 +736,51 @@ class ComLoggerDpDecoder:
             for record in combuffer_records:
                 try:
                     # Decode ComBuffer to get packet type and data
-                    packet_type, packet_type_name, packet_data = self.decode_combuffer(record['combuffer_data'])
+                    packet_type, packet_type_name, packet_data = self.decode_combuffer(
+                        record["combuffer_data"]
+                    )
 
                     # Track packet type statistics
-                    results['statistics']['packet_types'][packet_type_name] = \
-                        results['statistics']['packet_types'].get(packet_type_name, 0) + 1
+                    results["statistics"]["packet_types"][packet_type_name] = (
+                        results["statistics"]["packet_types"].get(packet_type_name, 0)
+                        + 1
+                    )
 
                     # Decode packet based on type
-                    decoded_packet = self.decode_packet(packet_type, packet_type_name, packet_data)
+                    decoded_packet = self.decode_packet(
+                        packet_type, packet_type_name, packet_data
+                    )
 
                     # Track statistics
                     if packet_type == 0x0002:  # Events
-                        results['statistics']['events'] += 1
+                        results["statistics"]["events"] += 1
                     elif packet_type in [0x0001, 0x0004]:  # Telemetry
-                        results['statistics']['telemetry'] += 1
+                        results["statistics"]["telemetry"] += 1
 
-                    if 'error' in decoded_packet:
-                        results['statistics']['errors'] += 1
+                    if "error" in decoded_packet:
+                        results["statistics"]["errors"] += 1
 
                     # Add to results
-                    results['records'].append({
-                        'record_index': record['record_index'],
-                        'record_id': record['record_id'],
-                        'sentry': f"{record['sentry']:#010x}",
-                        'packet_type': packet_type_name,
-                        'packet_type_value': packet_type,
-                        'decoded': decoded_packet
-                    })
+                    results["records"].append(
+                        {
+                            "record_index": record["record_index"],
+                            "record_id": record["record_id"],
+                            "sentry": f"{record['sentry']:#010x}",
+                            "packet_type": packet_type_name,
+                            "packet_type_value": packet_type,
+                            "decoded": decoded_packet,
+                        }
+                    )
 
                 except Exception as e:
-                    results['statistics']['errors'] += 1
-                    results['records'].append({
-                        'record_index': record['record_index'],
-                        'error': f"Failed to decode ComBuffer: {str(e)}",
-                        'raw_data': record['combuffer_data'].hex()[:100]
-                    })
+                    results["statistics"]["errors"] += 1
+                    results["records"].append(
+                        {
+                            "record_index": record["record_index"],
+                            "error": f"Failed to decode ComBuffer: {str(e)}",
+                            "raw_data": record["combuffer_data"].hex()[:100],
+                        }
+                    )
 
         return results
 
@@ -726,13 +794,13 @@ class ComLoggerDpDecoder:
             Path to output JSON file
         """
         if output_path is None:
-            output_path = str(Path(self.dp_binary_path).with_suffix('.json'))
+            output_path = str(Path(self.dp_binary_path).with_suffix(".json"))
 
         print(f"\nDecoding {self.dp_binary_path}...")
         data = self.decode()
 
         print(f"\nWriting results to {output_path}...")
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(data, f, indent=2, default=str)
 
         print("\n=== Decoding Summary ===")
@@ -741,7 +809,7 @@ class ComLoggerDpDecoder:
         print(f"Telemetry: {data['statistics']['telemetry']}")
         print(f"Errors: {data['statistics']['errors']}")
         print(f"\nPacket type breakdown:")
-        for ptype, count in data['statistics']['packet_types'].items():
+        for ptype, count in data["statistics"]["packet_types"].items():
             print(f"  {ptype}: {count}")
 
         return output_path
@@ -756,13 +824,13 @@ class ComLoggerDpDecoder:
             Path to output text file
         """
         if output_path is None:
-            output_path = str(Path(self.dp_binary_path).with_suffix('.txt'))
+            output_path = str(Path(self.dp_binary_path).with_suffix(".txt"))
 
         print(f"\nDecoding {self.dp_binary_path}...")
         data = self.decode()
 
         print(f"\nWriting results to {output_path}...")
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write("=" * 80 + "\n")
             f.write("ComLoggerDp Data Product Decoder Output\n")
             f.write("=" * 80 + "\n\n")
@@ -770,22 +838,26 @@ class ComLoggerDpDecoder:
             # Header information
             f.write("HEADER:\n")
             f.write("-" * 80 + "\n")
-            header = data['header']
+            header = data["header"]
 
             # Helper to extract value from header field
             def get_value(field):
                 if isinstance(field, dict):
-                    if 'value' in field:
-                        return field['value']
-                    elif 'seconds' in field and 'microseconds' in field:
+                    if "value" in field:
+                        return field["value"]
+                    elif "seconds" in field and "microseconds" in field:
                         # Time field
                         return f"{field['seconds']}.{field['microseconds']:06d}"
-                    elif 'values' in field:
+                    elif "values" in field:
                         # Array field - show first few values
-                        vals = field['values']
+                        vals = field["values"]
                         if all(v == 0 for v in vals):
                             return "[all zeros]"
-                        return f"[{', '.join(map(str, vals[:8]))}...]" if len(vals) > 8 else f"[{', '.join(map(str, vals))}]"
+                        return (
+                            f"[{', '.join(map(str, vals[:8]))}...]"
+                            if len(vals) > 8
+                            else f"[{', '.join(map(str, vals))}]"
+                        )
                 return str(field)
 
             f.write(f"Container ID: {get_value(header.get('Id', 'N/A'))}\n")
@@ -798,33 +870,36 @@ class ComLoggerDpDecoder:
             f.write("DECODED PACKETS:\n")
             f.write("-" * 80 + "\n\n")
 
-            for record in data['records']:
+            for record in data["records"]:
                 f.write(f"[Record {record['record_index']}] ")
 
-                if 'error' in record:
+                if "error" in record:
                     f.write(f"ERROR: {record['error']}\n\n")
                     continue
 
                 f.write(f"{record['packet_type']}\n")
-                decoded = record['decoded']
+                decoded = record["decoded"]
 
-                if 'error' in decoded:
+                if "error" in decoded:
                     f.write(f"  ERROR: {decoded['error']}\n\n")
                     continue
 
                 # Format based on packet type
-                if record['packet_type'] == 'FW_PACKET_LOG':
+                if record["packet_type"] == "FW_PACKET_LOG":
                     # Event
                     f.write(f"  Event: {decoded.get('event_name', 'UNKNOWN')}\n")
                     f.write(f"  Severity: {decoded.get('severity', 'UNKNOWN')}\n")
                     f.write(f"  Time: {decoded.get('time', 'N/A')}\n")
                     f.write(f"  Message: {decoded.get('message', '')}\n")
-                    if decoded.get('args'):
+                    if decoded.get("args"):
                         f.write(f"  Args:\n")
-                        for arg in decoded['args']:
+                        for arg in decoded["args"]:
                             f.write(f"    {arg['name']}: {arg['value']}\n")
 
-                elif record['packet_type'] in ['FW_PACKET_TELEM', 'FW_PACKET_PACKETIZED_TLM']:
+                elif record["packet_type"] in [
+                    "FW_PACKET_TELEM",
+                    "FW_PACKET_PACKETIZED_TLM",
+                ]:
                     # Telemetry
                     f.write(f"  Channel: {decoded.get('channel_name', 'UNKNOWN')}\n")
                     f.write(f"  Time: {decoded.get('time', 'N/A')}\n")
@@ -839,13 +914,13 @@ class ComLoggerDpDecoder:
             f.write("=" * 80 + "\n")
             f.write("STATISTICS:\n")
             f.write("-" * 80 + "\n")
-            stats = data['statistics']
+            stats = data["statistics"]
             f.write(f"Total records: {stats['total_records']}\n")
             f.write(f"Events: {stats['events']}\n")
             f.write(f"Telemetry: {stats['telemetry']}\n")
             f.write(f"Errors: {stats['errors']}\n\n")
             f.write("Packet type breakdown:\n")
-            for ptype, count in stats['packet_types'].items():
+            for ptype, count in stats["packet_types"].items():
                 f.write(f"  {ptype}: {count}\n")
 
         return output_path
@@ -861,14 +936,16 @@ class ComLoggerDpDecoder:
         """
         if output_path is None:
             input_file = Path(self.dp_binary_path)
-            output_path = str(input_file.parent / f"{input_file.stem}_reconstructed.json")
+            output_path = str(
+                input_file.parent / f"{input_file.stem}_reconstructed.json"
+            )
 
         print(f"\n{'='*80}")
         data = self.reconstruct_from_sentinels()
 
         print(f"\n{'='*80}")
         print(f"Writing results to {output_path}...")
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(data, f, indent=2, default=str)
 
         print("\n=== Reconstruction Summary ===")
@@ -880,7 +957,7 @@ class ComLoggerDpDecoder:
         print(f"Telemetry: {data['statistics']['telemetry']}")
         print(f"Errors: {data['statistics']['errors']}")
         print(f"\nPacket type breakdown:")
-        for ptype, count in data['statistics']['packet_types'].items():
+        for ptype, count in data["statistics"]["packet_types"].items():
             print(f"  {ptype}: {count}")
 
         return output_path
@@ -896,14 +973,16 @@ class ComLoggerDpDecoder:
         """
         if output_path is None:
             input_file = Path(self.dp_binary_path)
-            output_path = str(input_file.parent / f"{input_file.stem}_reconstructed.txt")
+            output_path = str(
+                input_file.parent / f"{input_file.stem}_reconstructed.txt"
+            )
 
         print(f"\n{'='*80}")
         data = self.reconstruct_from_sentinels()
 
         print(f"\n{'='*80}")
         print(f"Writing results to {output_path}...")
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write("=" * 80 + "\n")
             f.write("ComLoggerDp Reconstruction Mode Output\n")
             f.write("=" * 80 + "\n\n")
@@ -918,7 +997,9 @@ class ComLoggerDpDecoder:
             f.write("RECONSTRUCTION:\n")
             f.write("-" * 80 + "\n")
             f.write(f"Sentinels found: {data['reconstruction']['sentinels_found']}\n")
-            f.write(f"Records extracted: {data['reconstruction']['records_extracted']}\n")
+            f.write(
+                f"Records extracted: {data['reconstruction']['records_extracted']}\n"
+            )
             f.write(f"Records decoded: {data['reconstruction']['records_decoded']}\n")
             f.write(f"Bytes scanned: {data['reconstruction']['bytes_scanned']}\n\n")
 
@@ -926,34 +1007,39 @@ class ComLoggerDpDecoder:
             f.write("RECOVERED RECORDS:\n")
             f.write("-" * 80 + "\n\n")
 
-            for record in data['records']:
-                f.write(f"[Sentinel {record['sentinel_index']}] Position: {record['file_position']}, ")
+            for record in data["records"]:
+                f.write(
+                    f"[Sentinel {record['sentinel_index']}] Position: {record['file_position']}, "
+                )
                 f.write(f"Size: {record.get('data_size', 0)} bytes\n")
 
-                if 'error' in record:
+                if "error" in record:
                     f.write(f"  ERROR: {record['error']}\n\n")
                     continue
 
                 f.write(f"  Type: {record.get('packet_type', 'UNKNOWN')}\n")
-                decoded = record['decoded']
+                decoded = record["decoded"]
 
-                if 'error' in decoded:
+                if "error" in decoded:
                     f.write(f"  ERROR: {decoded['error']}\n\n")
                     continue
 
                 # Format based on packet type
-                if record.get('packet_type') == 'FW_PACKET_LOG':
+                if record.get("packet_type") == "FW_PACKET_LOG":
                     # Event
                     f.write(f"  Event: {decoded.get('event_name', 'UNKNOWN')}\n")
                     f.write(f"  Severity: {decoded.get('severity', 'UNKNOWN')}\n")
                     f.write(f"  Time: {decoded.get('time', 'N/A')}\n")
                     f.write(f"  Message: {decoded.get('message', '')}\n")
-                    if decoded.get('args'):
+                    if decoded.get("args"):
                         f.write(f"  Args:\n")
-                        for arg in decoded['args']:
+                        for arg in decoded["args"]:
                             f.write(f"    {arg['name']}: {arg['value']}\n")
 
-                elif record.get('packet_type') in ['FW_PACKET_TELEM', 'FW_PACKET_PACKETIZED_TLM']:
+                elif record.get("packet_type") in [
+                    "FW_PACKET_TELEM",
+                    "FW_PACKET_PACKETIZED_TLM",
+                ]:
                     # Telemetry
                     f.write(f"  Channel: {decoded.get('channel_name', 'UNKNOWN')}\n")
                     f.write(f"  Time: {decoded.get('time', 'N/A')}\n")
@@ -968,12 +1054,12 @@ class ComLoggerDpDecoder:
             f.write("=" * 80 + "\n")
             f.write("STATISTICS:\n")
             f.write("-" * 80 + "\n")
-            stats = data['statistics']
+            stats = data["statistics"]
             f.write(f"Events: {stats['events']}\n")
             f.write(f"Telemetry: {stats['telemetry']}\n")
             f.write(f"Errors: {stats['errors']}\n\n")
             f.write("Packet type breakdown:\n")
-            for ptype, count in stats['packet_types'].items():
+            for ptype, count in stats["packet_types"].items():
                 f.write(f"  {ptype}: {count}\n")
 
         return output_path
@@ -983,9 +1069,10 @@ class ComLoggerDpDecoder:
 # Main Entry Point
 # ==============================================================================
 
+
 def main():
     parser = argparse.ArgumentParser(
-        description='Decode ComLoggerDp data product binary files',
+        description="Decode ComLoggerDp data product binary files",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -1013,55 +1100,76 @@ Examples:
 
   # Skip validation checks
   python decode_comlogger_dp.py --input-file data_product.fdp --no-crc --no-sentry
-        """
+        """,
     )
 
     # Input options
     input_group = parser.add_mutually_exclusive_group(required=True)
-    input_group.add_argument('--input-file',
-                            help='Path to a single ComLoggerDp data product binary file')
-    input_group.add_argument('--input-dir',
-                            help='Path to directory containing ComLoggerDp data product files')
+    input_group.add_argument(
+        "--input-file", help="Path to a single ComLoggerDp data product binary file"
+    )
+    input_group.add_argument(
+        "--input-dir",
+        help="Path to directory containing ComLoggerDp data product files",
+    )
 
     # Configuration options
-    parser.add_argument('--dict-path', '-d',
-                        help='Path to F Prime dictionary directory (auto-detected if not specified)')
-    parser.add_argument('--dp-id',
-                        type=lambda x: int(x, 0),  # Allows 0x prefix
-                        help='Container ID to filter (e.g., 134217728 or 0x08000000). Required when using --input-dir.')
+    parser.add_argument(
+        "--dict-path",
+        "-d",
+        help="Path to F Prime dictionary directory (auto-detected if not specified)",
+    )
+    parser.add_argument(
+        "--dp-id",
+        type=lambda x: int(x, 0),  # Allows 0x prefix
+        help="Container ID to filter (e.g., 134217728 or 0x08000000). Required when using --input-dir.",
+    )
 
     # Output options
-    parser.add_argument('--output-file',
-                        help='Output file path for single file processing (extension added based on format)')
-    parser.add_argument('--output-dir',
-                        help='Output directory for batch processing (default: same as input directory)')
-    parser.add_argument('--format', '-f',
-                        choices=['json', 'text', 'both'],
-                        default='both',
-                        help='Output format (default: both)')
+    parser.add_argument(
+        "--output-file",
+        help="Output file path for single file processing (extension added based on format)",
+    )
+    parser.add_argument(
+        "--output-dir",
+        help="Output directory for batch processing (default: same as input directory)",
+    )
+    parser.add_argument(
+        "--format",
+        "-f",
+        choices=["json", "text", "both"],
+        default="both",
+        help="Output format (default: both)",
+    )
 
     # Validation options
-    parser.add_argument('--sentry',
-                        type=lambda x: int(x, 0),  # Allows 0x prefix
-                        help='Override sentry value (e.g., 0xDEADBEEF)')
-    parser.add_argument('--no-crc',
-                        action='store_true',
-                        help='Skip CRC validation')
-    parser.add_argument('--no-sentry',
-                        action='store_true',
-                        help='Skip sentry validation')
+    parser.add_argument(
+        "--sentry",
+        type=lambda x: int(x, 0),  # Allows 0x prefix
+        help="Override sentry value (e.g., 0xDEADBEEF)",
+    )
+    parser.add_argument("--no-crc", action="store_true", help="Skip CRC validation")
+    parser.add_argument(
+        "--no-sentry", action="store_true", help="Skip sentry validation"
+    )
 
     # Recovery mode
-    parser.add_argument('--reconstruct',
-                        action='store_true',
-                        help='Reconstruction mode: scan for sentinels and extract partial records from corrupted files. Only valid with --input-file.')
+    parser.add_argument(
+        "--reconstruct",
+        action="store_true",
+        help="Reconstruction mode: scan for sentinels and extract partial records from corrupted files. Only valid with --input-file.",
+    )
 
     # Collection mode
-    parser.add_argument('--collect',
-                        action='store_true',
-                        help='Collection mode: aggregate all data products into GDS-style event.log and channel.log files. Only valid with --input-dir.')
-    parser.add_argument('--collect-dir',
-                        help='Base directory for collected logs (default: current directory). Timestamped subdirectory will be created.')
+    parser.add_argument(
+        "--collect",
+        action="store_true",
+        help="Collection mode: aggregate all data products into GDS-style event.log and channel.log files. Only valid with --input-dir.",
+    )
+    parser.add_argument(
+        "--collect-dir",
+        help="Base directory for collected logs (default: current directory). Timestamped subdirectory will be created.",
+    )
 
     args = parser.parse_args()
 
@@ -1087,25 +1195,44 @@ Examples:
             print(f"Error: --dp-id is required when using --input-dir", file=sys.stderr)
             sys.exit(1)
         if args.output_file:
-            print(f"Error: --output-file cannot be used with --input-dir. Use --output-dir instead.", file=sys.stderr)
+            print(
+                f"Error: --output-file cannot be used with --input-dir. Use --output-dir instead.",
+                file=sys.stderr,
+            )
             sys.exit(1)
         if args.reconstruct:
-            print(f"Error: --reconstruct can only be used with --input-file (single file mode)", file=sys.stderr)
+            print(
+                f"Error: --reconstruct can only be used with --input-file (single file mode)",
+                file=sys.stderr,
+            )
             sys.exit(1)
         if args.collect:
             # Collect mode ignores --format and --output-dir
-            if args.format != 'both':
-                print(f"Warning: --format is ignored in --collect mode", file=sys.stderr)
+            if args.format != "both":
+                print(
+                    f"Warning: --format is ignored in --collect mode", file=sys.stderr
+                )
             if args.output_dir:
-                print(f"Warning: --output-dir is ignored in --collect mode. Use --collect-dir instead.", file=sys.stderr)
+                print(
+                    f"Warning: --output-dir is ignored in --collect mode. Use --collect-dir instead.",
+                    file=sys.stderr,
+                )
     else:
         # Single file mode validations
         if args.dp_id:
-            print(f"Warning: --dp-id is ignored when using --input-file", file=sys.stderr)
+            print(
+                f"Warning: --dp-id is ignored when using --input-file", file=sys.stderr
+            )
         if args.output_dir:
-            print(f"Warning: --output-dir is ignored when using --input-file. Use --output-file instead.", file=sys.stderr)
+            print(
+                f"Warning: --output-dir is ignored when using --input-file. Use --output-file instead.",
+                file=sys.stderr,
+            )
         if args.collect:
-            print(f"Error: --collect can only be used with --input-dir (directory mode)", file=sys.stderr)
+            print(
+                f"Error: --collect can only be used with --input-dir (directory mode)",
+                file=sys.stderr,
+            )
             sys.exit(1)
 
     # Get list of files to process
@@ -1120,13 +1247,18 @@ Examples:
         files_to_process.extend(list(input_path.glob(pattern_bin)))
 
         if not files_to_process:
-            print(f"Error: No data product files found matching container ID {args.dp_id} in {input_path}", file=sys.stderr)
+            print(
+                f"Error: No data product files found matching container ID {args.dp_id} in {input_path}",
+                file=sys.stderr,
+            )
             print(f"  Searched for: {pattern} and {pattern_bin}", file=sys.stderr)
             sys.exit(1)
 
         # Sort files by name
         files_to_process.sort()
-        print(f"Found {len(files_to_process)} data product file(s) with container ID {args.dp_id}")
+        print(
+            f"Found {len(files_to_process)} data product file(s) with container ID {args.dp_id}"
+        )
 
         # Determine output directory
         output_dir = Path(args.output_dir) if args.output_dir else input_path
@@ -1144,11 +1276,11 @@ Examples:
         dict_json_path = None
         if args.dict_path:
             dict_path = Path(args.dict_path)
-            if dict_path.is_file() and dict_path.suffix == '.json':
+            if dict_path.is_file() and dict_path.suffix == ".json":
                 dict_json_path = dict_path
             elif dict_path.is_dir():
                 # Look for JSON dictionary in directory
-                json_files = list(dict_path.glob('*Dictionary.json'))
+                json_files = list(dict_path.glob("*Dictionary.json"))
                 if json_files:
                     dict_json_path = json_files[0]
                     print(f"Found dictionary: {dict_json_path.name}")
@@ -1157,13 +1289,13 @@ Examples:
         else:
             # Try to auto-detect dictionary path
             possible_dirs = [
-                input_path.parent / 'dict',
-                input_path.parent.parent / 'dict',
-                Path.cwd() / 'dict',
+                input_path.parent / "dict",
+                input_path.parent.parent / "dict",
+                Path.cwd() / "dict",
             ]
             for dir_path in possible_dirs:
                 if dir_path.exists() and dir_path.is_dir():
-                    json_files = list(dir_path.glob('*Dictionary.json'))
+                    json_files = list(dir_path.glob("*Dictionary.json"))
                     if json_files:
                         dict_json_path = json_files[0]
                         print(f"Auto-detected dictionary: {dict_json_path}")
@@ -1172,9 +1304,13 @@ Examples:
         # Load dictionaries
         if dict_json_path:
             print(f"Loading dictionary from: {dict_json_path}")
-            dictionaries = Dictionaries.load_dictionaries_into_config(str(dict_json_path))
+            dictionaries = Dictionaries.load_dictionaries_into_config(
+                str(dict_json_path)
+            )
         else:
-            print("Warning: Could not find dictionary JSON file. Some decoding may fail.")
+            print(
+                "Warning: Could not find dictionary JSON file. Some decoding may fail."
+            )
             print("Specify dictionary with --dict-path /path/to/dictionary.json")
             dictionaries = Dictionaries()
 
@@ -1186,7 +1322,7 @@ Examples:
 
             # Create timestamped output directory
             now = datetime.now()
-            timestamp = now.strftime('%Y_%m_%d-%H_%M_%S')
+            timestamp = now.strftime("%Y_%m_%d-%H_%M_%S")
             collect_base = Path(args.collect_dir) if args.collect_dir else Path.cwd()
             collect_dir = collect_base / f"comlogger-dp-{timestamp}"
             collect_dir.mkdir(parents=True, exist_ok=True)
@@ -1206,22 +1342,25 @@ Examples:
                         dictionaries,
                         sentry_value=args.sentry,
                         validate_crc=not args.no_crc,
-                        validate_sentry=not args.no_sentry
+                        validate_sentry=not args.no_sentry,
                     )
 
                     # Decode the file
                     data = decoder.decode()
 
                     # Extract events and channels
-                    for record in data['records']:
-                        if 'decoded' in record and 'error' not in record['decoded']:
-                            decoded = record['decoded']
-                            packet_type = record.get('packet_type')
+                    for record in data["records"]:
+                        if "decoded" in record and "error" not in record["decoded"]:
+                            decoded = record["decoded"]
+                            packet_type = record.get("packet_type")
 
-                            if packet_type == 'FW_PACKET_LOG':
+                            if packet_type == "FW_PACKET_LOG":
                                 # Event
                                 all_events.append(decoded)
-                            elif packet_type in ['FW_PACKET_TELEM', 'FW_PACKET_PACKETIZED_TLM']:
+                            elif packet_type in [
+                                "FW_PACKET_TELEM",
+                                "FW_PACKET_PACKETIZED_TLM",
+                            ]:
                                 # Channel
                                 all_channels.append(decoded)
 
@@ -1235,9 +1374,9 @@ Examples:
 
             # Sort by timestamp
             def get_time_key(item):
-                time_dict = item.get('time', {})
-                seconds = time_dict.get('seconds', 0)
-                microseconds = time_dict.get('microseconds', 0)
+                time_dict = item.get("time", {})
+                seconds = time_dict.get("seconds", 0)
+                microseconds = time_dict.get("microseconds", 0)
                 return (seconds, microseconds)
 
             all_events.sort(key=get_time_key)
@@ -1245,26 +1384,36 @@ Examples:
 
             # Write event.log
             event_log_path = collect_dir / "events-dp.log"
-            with open(event_log_path, 'w') as f:
+            with open(event_log_path, "w") as f:
                 for event in all_events:
-                    iso_time, fprime_time = ComLoggerDpDecoder.format_time_gds(event.get('time', {}))
-                    event_name = event.get('event_name', 'UNKNOWN')
-                    event_id = event.get('event_id', 0)
-                    severity = event.get('severity', 'UNKNOWN')
-                    message = event.get('message', '')
+                    iso_time, fprime_time = ComLoggerDpDecoder.format_time_gds(
+                        event.get("time", {})
+                    )
+                    event_name = event.get("event_name", "UNKNOWN")
+                    event_id = event.get("event_id", 0)
+                    severity = event.get("severity", "UNKNOWN")
+                    message = event.get("message", "")
 
-                    f.write(f"{iso_time},{fprime_time},{event_name},{event_id},{severity},{message}\n")
+                    f.write(
+                        f"{iso_time},{fprime_time},{event_name},{event_id},{severity},{message}\n"
+                    )
 
             # Write channel.log
             channel_log_path = collect_dir / "channels-dp.log"
-            with open(channel_log_path, 'w') as f:
+            with open(channel_log_path, "w") as f:
                 for channel in all_channels:
-                    iso_time, fprime_time = ComLoggerDpDecoder.format_time_gds(channel.get('time', {}))
-                    channel_name = channel.get('channel_name', 'UNKNOWN')
-                    channel_id = channel.get('channel_id', 0)
-                    value = ComLoggerDpDecoder.format_value_gds(channel.get('value', ''))
+                    iso_time, fprime_time = ComLoggerDpDecoder.format_time_gds(
+                        channel.get("time", {})
+                    )
+                    channel_name = channel.get("channel_name", "UNKNOWN")
+                    channel_id = channel.get("channel_id", 0)
+                    value = ComLoggerDpDecoder.format_value_gds(
+                        channel.get("value", "")
+                    )
 
-                    f.write(f"{iso_time},{fprime_time},{channel_name},{channel_id},{value}\n")
+                    f.write(
+                        f"{iso_time},{fprime_time},{channel_name},{channel_id},{value}\n"
+                    )
 
             print(f"\n=== OUTPUT ===")
             print(f"Events log:   {event_log_path}")
@@ -1282,7 +1431,7 @@ Examples:
             if total_files > 1:
                 print(f"\n{'='*80}")
                 print(f"Processing file {idx}/{total_files}: {file_path.name}")
-                print('='*80)
+                print("=" * 80)
 
             try:
                 # Create decoder for this file
@@ -1291,40 +1440,56 @@ Examples:
                     dictionaries,
                     sentry_value=args.sentry,
                     validate_crc=not args.no_crc,
-                    validate_sentry=not args.no_sentry
+                    validate_sentry=not args.no_sentry,
                 )
 
                 # Determine output paths
                 if is_directory:
                     # For directory processing, put outputs in output_dir
                     base_name = file_path.stem  # filename without extension
-                    output_json = str(output_dir / f"{base_name}.json") if args.format in ['json', 'both'] else None
-                    output_text = str(output_dir / f"{base_name}.txt") if args.format in ['text', 'both'] else None
+                    output_json = (
+                        str(output_dir / f"{base_name}.json")
+                        if args.format in ["json", "both"]
+                        else None
+                    )
+                    output_text = (
+                        str(output_dir / f"{base_name}.txt")
+                        if args.format in ["text", "both"]
+                        else None
+                    )
                 else:
                     # For single file, use --output-file if specified
-                    output_json = args.output_file if args.output_file and args.format == 'json' else None
-                    output_text = args.output_file if args.output_file and args.format == 'text' else None
+                    output_json = (
+                        args.output_file
+                        if args.output_file and args.format == "json"
+                        else None
+                    )
+                    output_text = (
+                        args.output_file
+                        if args.output_file and args.format == "text"
+                        else None
+                    )
 
                 # Process based on mode
                 if args.reconstruct:
                     # Reconstruction mode
-                    if args.format in ['json', 'both']:
+                    if args.format in ["json", "both"]:
                         json_path = decoder.process_reconstruction_to_json(output_json)
                         if total_files == 1:
                             print(f"\nJSON output written to: {json_path}")
 
-                    if args.format in ['text', 'both']:
+                    if args.format in ["text", "both"]:
                         text_path = decoder.process_reconstruction_to_text(output_text)
                         if total_files == 1:
                             print(f"Text output written to: {text_path}")
                 else:
                     # Normal mode
-                    if args.format in ['json', 'both']:
+                    if args.format in ["json", "both"]:
                         json_path = decoder.process_to_json(output_json)
                         if total_files == 1:
                             print(f"\nJSON output written to: {json_path}")
 
-                    if args.format in ['text', 'both']:
+                    if args.format in ["text", "both"]:
                         text_path = decoder.process_to_text(output_text)
                         if total_files == 1:
                             print(f"Text output written to: {text_path}")
@@ -1342,7 +1507,7 @@ Examples:
         if total_files > 1:
             print(f"\n{'='*80}")
             print("BATCH PROCESSING SUMMARY")
-            print('='*80)
+            print("=" * 80)
             print(f"Total files: {total_files}")
             print(f"Successful: {successful}")
             print(f"Failed: {failed}")
@@ -1358,9 +1523,10 @@ Examples:
     except Exception as e:
         print(f"\nUnexpected error: {e}", file=sys.stderr)
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
