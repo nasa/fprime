@@ -74,10 +74,7 @@ void ComAggregator ::cleanup() {
         // The aggregate must not be held downstream when its storage is released
         FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::OWNED,
                   static_cast<FwAssertArgType>(this->m_bufferState.load()));
-        // Return a held packet to its owner and drop the per-aggregate state so a later configure() starts clean
-        if (this->m_held.get_data().isValid()) {
-            this->dataReturnOut_out(0, const_cast<Fw::Buffer&>(this->m_held.get_data()), this->m_held.get_context());
-        }
+        // Drop the per-aggregate state so a later configure() starts clean
         this->m_held = Svc::ComDataContextPair();
         this->m_heldOffset = 0;
         this->m_fhp = FHP_UNSET;

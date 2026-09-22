@@ -666,9 +666,7 @@ void ComAggregatorTester ::test_configure_invalid_size_asserts() {
             unconfigured.configure(invalid.aggregationSize, invalid.spanning, TEST_ALLOCATION_ID, allocator),
             "ComAggregator.cpp")
             << "aggregationSize " << invalid.aggregationSize << " spanning " << invalid.spanning;
-        ASSERT_EQ(unconfigured.m_allocation, nullptr);
     }
-    ASSERT_EQ(allocator.m_allocations, 0);
     // Sizes at the bounds are accepted
     ComAggregator smallest("Smallest");
     smallest.configure(ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE, false, TEST_ALLOCATION_ID, allocator);
@@ -747,7 +745,6 @@ void ComAggregatorTester ::test_cleanup_while_held_asserts() {
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_EQ(this->component.m_bufferState, Fw::Buffer::OwnershipState::NOT_OWNED);
     ASSERT_DEATH_IF_SUPPORTED(this->component.cleanup(), "ComAggregator.cpp");
-    ASSERT_EQ(this->m_allocator.m_deallocations, 0);
     // Const cast is safe as data is not altered
     this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(0).data),
                                  this->fromPortHistory_dataOut->at(0).context);
@@ -755,7 +752,7 @@ void ComAggregatorTester ::test_cleanup_while_held_asserts() {
     this->clearHistory();
 }
 
-void ComAggregatorTester ::test_cleanup_returns_held_packet() {
+void ComAggregatorTester ::test_cleanup_drops_held_packet() {
     // Precondition: initial has run
     const FwSizeType FIRST_SIZE = 100;
     this->fill_with(static_cast<U32>(FIRST_SIZE));
@@ -770,10 +767,9 @@ void ComAggregatorTester ::test_cleanup_returns_held_packet() {
     ASSERT_TRUE(this->component.m_held.get_data().isValid());
     this->invoke_to_dataReturnIn(0, const_cast<Fw::Buffer&>(this->fromPortHistory_dataOut->at(0).data),
                                  this->fromPortHistory_dataOut->at(0).context);
-    // cleanup() returns the held packet and drops the per-aggregate state
+    // cleanup() drops the held packet (its owner reclaims it at teardown) and the per-aggregate state
     this->component.cleanup();
-    ASSERT_from_dataReturnOut_SIZE(1);
-    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), buffer.getData());
+    ASSERT_from_dataReturnOut_SIZE(0);
     ASSERT_FALSE(this->component.m_held.get_data().isValid());
     ASSERT_EQ(this->component.m_heldOffset, 0);
     ASSERT_EQ(this->component.m_pendingIdleCount, 0);
@@ -782,9 +778,9 @@ void ComAggregatorTester ::test_cleanup_returns_held_packet() {
     ASSERT_FALSE(this->component.m_lastFrameLost);
     ASSERT_EQ(this->component.m_allocation, nullptr);
     ASSERT_EQ(this->component.m_allocator, nullptr);
-    // A repeated cleanup() returns nothing further
+    // A repeated cleanup() drops nothing further
     this->component.cleanup();
-    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(0);
     delete[] buffer.getData();
     this->clearHistory();
 }

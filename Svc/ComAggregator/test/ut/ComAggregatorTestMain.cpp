@@ -139,10 +139,10 @@ TEST(Lifecycle, CleanupWhileHeld) {
     tester.test_cleanup_while_held_asserts();
 }
 
-TEST(Lifecycle, CleanupReturnsHeldPacket) {
+TEST(Lifecycle, CleanupDropsHeldPacket) {
     Svc::ComAggregatorTester tester;
     tester.test_initial();
-    tester.test_cleanup_returns_held_packet();
+    tester.test_cleanup_drops_held_packet();
 }
 
 // Per-instance aggregation size: the smallest size non-spanning supports
