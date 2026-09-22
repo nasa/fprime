@@ -146,9 +146,13 @@ systems. These GDS types have defaults based on configurable platform independen
 > the F´ GDS expects the above types to use their default setting. Users intending to use the F´ GDS should not stray from the above definitions.
 
 > [!NOTE]
-> `FwSizeStoreType` defaults to `FwSizeType` so that any in-memory size can be serialized without truncation. Projects
-> may narrow it (e.g. to `U16`) to reduce serialized size, but sizes exceeding its range then fail to serialize.
-> `FwBuffSizeType` is retained as a backwards-compatible alias of `FwSizeStoreType`.
+> `FwSizeStoreType` defaults to `FwSizeType` so that any in-memory size can be serialized without truncation. Its
+> width therefore follows the platform (e.g. 8 bytes on 64-bit hosts), and it prefixes every serialized string,
+> `Fw::Buffer`, and data product size field. The GDS reads the configured type from the dictionary, so projects may
+> narrow it (e.g. to `U16`) to reduce serialized size, but sizes exceeding its range then fail to serialize.
+> Changing it changes the serialized format: data products, parameter databases, and binary sequences produced under
+> a different setting must be regenerated. `FwBuffSizeType` is retained as a backwards-compatible alias of
+> `FwSizeStoreType`.
 
 All defaults can be overridden via project specific configuration supplying a custom `FpConfig.h`. A complete
 definition of a framework/GDS type in `FpConfig.h` would look like:
