@@ -30,6 +30,7 @@ constexpr FwOpcodeType getEventOpcode(const FwOpcodeType opcode) {
 
 //! When true, execute sequence command even if the sequence tracker table is full.
 //! When false, do not execute the sequence command if the sequence tracker table is full.
+//! The 'CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL' macro exists only so the unit tests can build both conditions. It is not a supported deployment knob.
 #ifndef CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL
 #define CMD_DISPATCHER_EXECUTE_WHEN_TRACKER_FULL false
 #endif

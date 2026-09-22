@@ -118,7 +118,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
     // look up opcode in dispatch map
     FwIndexType entryPort;
     Fw::Success findStatus = this->m_entryTable.find(cmdPkt.getOpCode(), entryPort);
-    if (findStatus == Fw::Success::SUCCESS && this->isConnected_compCmdSend_OutputPort(entryPort)) {
+    if (findStatus == Fw::Success::SUCCESS and this->isConnected_compCmdSend_OutputPort(entryPort)) {
         Fw::Success pendingInsertStatus = Fw::Success::SUCCESS;
         const U32 sequenceNumber = this->allocateSequenceNumber();
 
