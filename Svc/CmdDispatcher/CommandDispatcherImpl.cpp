@@ -122,12 +122,6 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         Fw::Success pendingInsertStatus = Fw::Success::SUCCESS;
         const U32 sequenceNumber = this->allocateSequenceNumber();
 
-        // report that the sequence tracker table is full, with the given response to the caller
-        auto reportTrackerFull = [&](Fw::CmdResponse response) {
-            this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
-            this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, response);
-        };
-
         // register command in command tracker only if response port is connect
         if (portIsConnected) {
             SequenceTrackerEntry pendingCmd;
@@ -140,7 +134,8 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
             // if sequence table is full, reject here unless configured to dispatch untracked
             if (not CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull and
                 pendingInsertStatus != Fw::Success::SUCCESS) {
-                reportTrackerFull(Fw::CmdResponse::EXECUTION_ERROR);
+                this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
+                this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::EXECUTION_ERROR);
                 return;
             }
         }  // end if status port connected
@@ -155,7 +150,8 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         // pendingInsertStatus is only non-SUCCESS for a connected caller whose insert failed (see check above)
         if (CmdDispatcherCfg::ExecuteCommandWhenSequenceTrackerTableIsFull and
             pendingInsertStatus != Fw::Success::SUCCESS) {
-            reportTrackerFull(Fw::CmdResponse::DISPATCHED_UNTRACKED);
+            this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
+            this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::DISPATCHED_UNTRACKED);
         }
     } else {
         this->log_WARNING_HI_InvalidCommand(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
