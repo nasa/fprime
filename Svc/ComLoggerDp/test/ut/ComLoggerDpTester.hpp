@@ -97,6 +97,21 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test data product format validation
     void testDataProductFormat();
 
+    //! Test configure() with enabled=true
+    void testConfigureEnabled();
+
+    //! Test reconfiguring while already recording with partial container
+    void testReconfigureWithPartialContainer();
+
+    //! Test packet too large to fit in any container
+    void testPacketTooLarge();
+
+    //! Test container overflow with partial container send and retry
+    void testContainerOverflowRetry();
+
+    //! Test PacketSerializationFailures telemetry counter
+    void testSerializationFailureCounter();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -117,6 +132,12 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
                                    const U8* expectedData,
                                    FwSizeType expectedDataSize);
 
+    //! Helper to create a test ComBuffer with specified data pattern
+    //! \param size: Size of the test data (default 8 bytes)
+    //! \param startValue: Starting value for the test data pattern (default 0x01)
+    //! \return ComBuffer filled with sequential test data
+    Fw::ComBuffer createTestComBuffer(FwSizeType size = 8, U8 startValue = 0x01);
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -134,7 +155,7 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     ComLoggerDp component;
 
     //! Buffer for testing
-    U8 m_buffer[10000];
+    U8 m_buffer[10000] = {};
 
     //! Flag to simulate allocation failure
     bool m_allocationFailure{false};

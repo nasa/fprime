@@ -9,7 +9,7 @@
 
 #include "Fw/Dp/DpContainer.hpp"
 #include "Svc/ComLoggerDp/ComLoggerDpComponentAc.hpp"
-#include "default/config/ComLoggerDpCfg.hpp"
+#include "config/ComLoggerDpCfg.hpp"
 
 namespace Svc {
 
@@ -63,7 +63,8 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     ComLoggerDp& operator=(ComLoggerDp&&) = delete;
 
     //! Configure initial logging state; must be called once after init()
-    //! If enabled is true and packetsPerContainer == 0, logging stays disabled (no event is emitted)    //! \param enabled: whether data product logging is initially enabled
+    //! If enabled is true and packetsPerContainer == 0, logging stays disabled (no event is emitted)    //! \param
+    //! enabled: whether data product logging is initially enabled
     //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true, ignored if false)
     //! \param priority: data product priority (ignored if false)
     void configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority);
@@ -197,6 +198,9 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
 
     //! Number of buffers dropped due to allocation failure
     U32 m_numBuffersDropped{0};
+
+    //! Number of times packet serialization failed and required retry
+    U32 m_numSerializationFailures{0};
 
     //! Priority for data products
     FwDpPriorityType m_priority{5};  // Default priority from FPP

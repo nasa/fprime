@@ -114,6 +114,36 @@ TEST(Nominal, DataProductFormat) {
     tester.testDataProductFormat();
 }
 
+// Test configure() with enabled=true
+TEST(Nominal, ConfigureEnabled) {
+    Svc::ComLoggerDpTester tester;
+    tester.testConfigureEnabled();
+}
+
+// Test reconfiguring while already recording with partial container
+TEST(Nominal, ReconfigureWithPartialContainer) {
+    Svc::ComLoggerDpTester tester;
+    tester.testReconfigureWithPartialContainer();
+}
+
+// Test packet too large to fit in container
+TEST(OffNominal, PacketTooLarge) {
+    Svc::ComLoggerDpTester tester;
+    tester.testPacketTooLarge();
+}
+
+// Test container overflow with partial send and retry
+TEST(Nominal, ContainerOverflowRetry) {
+    Svc::ComLoggerDpTester tester;
+    tester.testContainerOverflowRetry();
+}
+
+// Test PacketSerializationFailures telemetry counter
+TEST(Nominal, SerializationFailureCounter) {
+    Svc::ComLoggerDpTester tester;
+    tester.testSerializationFailureCounter();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

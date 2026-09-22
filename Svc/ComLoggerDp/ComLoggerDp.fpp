@@ -7,8 +7,8 @@ module Svc {
     # General ports
     # ----------------------------------------------------------------------
 
-    @ Com input port
-    async input port comIn: Fw.Com
+    @ Com input port - drop to avoid an assert in a flood situation
+    async input port comIn: Fw.Com drop
 
     @ Ping input port
     async input port pingIn: Svc.Ping
@@ -138,6 +138,9 @@ module Svc {
 
     @ Number of Com buffers dropped due to allocation failure
     telemetry NumBuffersDropped: U32 id 0x02
+
+    @ Number of times packet serialization failed and required retry with new container
+    telemetry PacketSerializationFailures: U32 id 0x03
 
     # ----------------------------------------------------------------------
     # Products

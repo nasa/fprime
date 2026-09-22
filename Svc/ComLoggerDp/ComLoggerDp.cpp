@@ -87,6 +87,7 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
     this->tlmWrite_LoggingEnabled(this->m_enabled);
     this->tlmWrite_NumBuffersLogged(this->m_numBuffersLogged);
     this->tlmWrite_NumBuffersDropped(this->m_numBuffersDropped);
+    this->tlmWrite_PacketSerializationFailures(this->m_numSerializationFailures);
 }
 
 void ComLoggerDp ::startRecordingIn_handler(FwIndexType portNum, U32 packetsPerContainer, FwDpPriorityType priority) {
@@ -115,9 +116,13 @@ void ComLoggerDp ::stopRecordingIn_handler(FwIndexType portNum) {
 // ----------------------------------------------------------------------
 
 bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority) {
-    // Validate packetsPerContainer is non-zero
-    if (packetsPerContainer == 0) {
-        // Disable logging on validation failure
+    // Validate packetsPerContainer is non-zero and doesn't exceed the max size that
+    // DP creation allows
+    if ((packetsPerContainer == 0) ||
+        (packetsPerContainer >
+         (std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) /
+             SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE +
+                                            sizeof(ComLoggerDpSentry)))) {  // Disable logging on validation failure
         this->m_enabled = false;
         return false;
     }
@@ -214,11 +219,12 @@ bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSi
     }
 
     // Serialization failed - container is likely full
-    // Send the current partial container if it has any packets
-    if (this->m_currentPacketCount > 0) {
-        this->dpSend(this->m_container);
-        // Note: dpSend() invalidates the container; must allocate new one for next use
-    }
+    // Increment serialization failure counter
+    ++this->m_numSerializationFailures;
+
+    // Send the current partial container
+    this->dpSend(this->m_container);
+    // clear counter
     this->m_currentPacketCount = 0;
 
     // Try to allocate a new container for retry
@@ -297,6 +303,9 @@ void ComLoggerDp ::CLEAR_COUNTERS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     // Clear the NumBuffersDropped counter
     this->m_numBuffersDropped = 0;
+
+    // Clear the PacketSerializationFailures counter
+    this->m_numSerializationFailures = 0;
 
     // Clear the DpBufferError event throttle
     this->log_WARNING_HI_DpBufferError_ThrottleClear();
