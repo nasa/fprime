@@ -98,15 +98,17 @@ TEST(CountingSemaphore, InitialCountNonZero) {
     ASSERT_EQ(status, Os::CountingSemaphore::Status::ERROR_TIMEOUT);
 }
 
-TEST(CountingSemaphore, ExceedMaxCount) {
+TEST(CountingSemaphore, PostAccumulatesCount) {
+    // Each post increments the count by one; there is no upper bound on the count
     Os::CountingSemaphore sem(0U);
     ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
     ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
-    // Third post exceeds maxCount=2, verify behavior
-    Os::CountingSemaphore::Status status = sem.post();
-    // Verify it either succeeds (saturating) or fails gracefully
-    // (Implementations differ whether exceeding max count is allowed or not)
-    ASSERT_TRUE(status == Os::CountingSemaphore::Status::OP_OK || status == Os::CountingSemaphore::Status::ERROR_OTHER);
+    ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
+    // Exactly three tokens are available
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::ERROR_TIMEOUT);
 }
 
 TEST(CountingSemaphore, TimeoutSuccess) {
@@ -129,22 +131,23 @@ TEST(CountingSemaphore, TimeoutSuccess) {
     ASSERT_EQ(tester.waiters, 0U) << "Waiter should have completed via post, not timeout";
 }
 
-TEST(CountingSemaphore, InvalidParameters) {
-    // Test invalid maxCount=0
-    Os::CountingSemaphore sem1(0U);
-    // Should handle gracefully - attempt operations
-    Os::CountingSemaphore::Status status1 = sem1.post();
-    // Either succeeds or fails gracefully
-    ASSERT_TRUE(status1 == Os::CountingSemaphore::Status::OP_OK ||
-                status1 == Os::CountingSemaphore::Status::ERROR_INVALID ||
-                status1 == Os::CountingSemaphore::Status::ERROR_OTHER);
+TEST(CountingSemaphore, ZeroInitialCount) {
+    // A semaphore created with count zero has no tokens until posted
+    Os::CountingSemaphore sem(0U);
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::ERROR_TIMEOUT);
+    ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(sem.wait(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::ERROR_TIMEOUT);
+}
 
-    // Test initialCount > maxCount
-    Os::CountingSemaphore sem2(10U);
-    // Should handle gracefully - verify can at least wait
-    Os::CountingSemaphore::Status status2 = sem2.wait();
-    ASSERT_TRUE(status2 == Os::CountingSemaphore::Status::OP_OK ||
-                status2 == Os::CountingSemaphore::Status::ERROR_INVALID);
+TEST(CountingSemaphore, LargeInitialCount) {
+    // The initial count is honored exactly: N waits succeed, the next does not
+    const U32 initial = 10U;
+    Os::CountingSemaphore sem(initial);
+    for (U32 i = 0; i < initial; i++) {
+        ASSERT_EQ(sem.wait(), Os::CountingSemaphore::Status::OP_OK) << "wait " << i;
+    }
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::ERROR_TIMEOUT);
 }
 
 TEST(CountingSemaphore, FairnessVerification) {
