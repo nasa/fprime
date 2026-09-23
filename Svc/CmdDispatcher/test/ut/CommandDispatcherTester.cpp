@@ -8,6 +8,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Com/ComPacket.hpp>
 #include <Os/IntervalTimer.hpp>
+#include <Os/Task.hpp>
 #include <Svc/CmdDispatcher/test/ut/CommandDispatcherTester.hpp>
 #include <config/CommandDispatcherImplCfg.hpp>
 
@@ -566,7 +567,10 @@ void CommandDispatcherTester::runInvalidCommand() {
     ASSERT_EVENTS_MalformedCommand(0, Fw::DeserialStatus::TYPE_MISMATCH);
 }
 
-void CommandDispatcherTester::runOverflowCommands() {
+void CommandDispatcherTester::runOverflowCommands(bool executeWhenSequenceTableFull) {
+    this->m_impl.configure(executeWhenSequenceTableFull);
+    ASSERT_EQ(this->m_impl.m_executeWhenSequenceTableFull, executeWhenSequenceTableFull);
+
     // verify sequence tracker table is empty
     ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
@@ -605,6 +609,9 @@ void CommandDispatcherTester::runOverflowCommands() {
         ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 
+        this->m_cmdSendRcvd = false;
+        this->m_seqStatusRcvd = false;
+
         this->invoke_to_seqCmdBuff(0, buff, testContext);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
@@ -630,9 +637,43 @@ void CommandDispatcherTester::runOverflowCommands() {
             ASSERT_EQ(this->m_cmdSendArgs.deserializeTo(checkVal), Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(checkVal, testCmdArg);
         } else {
-            // verify failed to find slot
-            ASSERT_EVENTS_SIZE(1);
-            ASSERT_EVENTS_TooManyCommands_SIZE(1);
+            // the sequence tracker table is full; the behavior is selected by configure()
+            if (executeWhenSequenceTableFull) {
+                // verify the command was dispatched anyway, and that the overflow was still reported
+                ASSERT_EVENTS_SIZE(2);
+                ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
+                ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+                ASSERT_EVENTS_TooManyCommands_SIZE(1);
+                ASSERT_EVENTS_TooManyCommands(0, getExpectedEventOpcode(testOpCode));
+
+                // verify the command reached the component
+                ASSERT_TRUE(this->m_cmdSendRcvd);
+                ASSERT_EQ(this->m_cmdSendOpCode, testOpCode);
+
+                // verify the caller was told the command is running but cannot be tracked
+                ASSERT_TRUE(this->m_seqStatusRcvd);
+                ASSERT_EQ(this->m_seqStatusOpCode, testOpCode);
+                ASSERT_EQ(this->m_seqStatusCmdSeq, testContext);
+                ASSERT_EQ(this->m_seqStatusCmdResponse, Fw::CmdResponse::DISPATCHED_UNTRACKED);
+            } else {
+                // verify failed to find slot, and that the command was not dispatched
+                ASSERT_EVENTS_SIZE(1);
+                ASSERT_EVENTS_TooManyCommands_SIZE(1);
+                ASSERT_EVENTS_TooManyCommands(0, getExpectedEventOpcode(testOpCode));
+                ASSERT_EVENTS_OpCodeDispatched_SIZE(0);
+
+                // verify the command never reached the component
+                ASSERT_FALSE(this->m_cmdSendRcvd);
+
+                // verify the caller was told the command failed
+                ASSERT_TRUE(this->m_seqStatusRcvd);
+                ASSERT_EQ(this->m_seqStatusOpCode, testOpCode);
+                ASSERT_EQ(this->m_seqStatusCmdSeq, testContext);
+                ASSERT_EQ(this->m_seqStatusCmdResponse, Fw::CmdResponse::EXECUTION_ERROR);
+            }
+
+            // in either case, the full table gained no new entry
+            ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), CMD_DISPATCHER_SEQUENCER_TABLE_SIZE);
         }
     }
 }
@@ -740,6 +781,50 @@ void CommandDispatcherTester::runClearCommandTracking() {
     this->invoke_to_compCmdStat(0, testOpCode, this->m_cmdSendCmdSeq, Fw::CmdResponse::OK);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     ASSERT_FALSE(this->m_seqStatusRcvd);
+}
+
+void CommandDispatcherTester::overflowHookTask(void* ptr) {
+    CommandDispatcherImpl* impl = static_cast<CommandDispatcherImpl*>(ptr);
+    Fw::ComBuffer buff;
+    for (U32 i = 0; i < CONCURRENT_OVERFLOW_DROPS_PER_TASK; i++) {
+        impl->seqCmdBuff_overflowHook(0, buff, 0);
+    }
+}
+
+void CommandDispatcherTester::runConcurrentQueueOverflow() {
+    this->clearEvents();
+    this->clearTlm();
+    ASSERT_EQ(0u, this->m_impl.m_numCmdsDropped.load());
+
+    // Saturate the CommandDroppedQueueOverflow throttle on this thread so the concurrent
+    // hook invocations below exercise only the dropped-command counter
+    const U32 throttleDrops = 5;
+    Fw::ComBuffer buff;
+    for (U32 i = 0; i < throttleDrops; i++) {
+        this->m_impl.seqCmdBuff_overflowHook(0, buff, 0);
+    }
+    ASSERT_EVENTS_CommandDroppedQueueOverflow_SIZE(throttleDrops);
+
+    // Drive the overflow hook from several caller threads at once
+    Os::Task tasks[CONCURRENT_OVERFLOW_TASKS];
+    for (U32 i = 0; i < CONCURRENT_OVERFLOW_TASKS; i++) {
+        Os::Task::Arguments arguments(Fw::String("CmdDispOverflow"), CommandDispatcherTester::overflowHookTask,
+                                      &this->m_impl);
+        ASSERT_EQ(Os::Task::Status::OP_OK, tasks[i].start(arguments));
+    }
+    for (U32 i = 0; i < CONCURRENT_OVERFLOW_TASKS; i++) {
+        ASSERT_EQ(Os::Task::Status::OP_OK, tasks[i].join());
+    }
+
+    // Every drop must be counted: no lost increments across threads
+    const U32 expectedDrops = throttleDrops + CONCURRENT_OVERFLOW_TASKS * CONCURRENT_OVERFLOW_DROPS_PER_TASK;
+    ASSERT_EQ(expectedDrops, this->m_impl.m_numCmdsDropped.load());
+
+    // The dispatcher thread reports the same value in telemetry
+    this->invoke_to_run(0, 0);
+    this->dispatchCurrentMessages(this->m_impl);
+    ASSERT_TLM_CommandsDropped_SIZE(1);
+    ASSERT_TLM_CommandsDropped(0, expectedDrops);
 }
 
 void CommandDispatcherTester::runCommandQueueOverflow() {

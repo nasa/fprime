@@ -160,6 +160,9 @@ class FileManagerTester : public FileManagerGTestBase {
     //!
     static void system(const char* const cmd);
 
+    //! Write a string to a file with Os::File, creating or truncating it
+    static void writeFile(const char* const fileName, const char* const content);
+
     //! Create a directory
     void createDirectory(const char* const dirName);
 

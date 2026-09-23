@@ -146,6 +146,42 @@ void BufferLoggerTester ::BufferSendIn() {
     tester.test(3, Fw::CmdStringArg("BufferSendIn"));
 }
 
+class TruncateTester : public Logging::BufferLoggerTester {
+  public:
+    void test() {
+        const Fw::CmdStringArg baseName("Truncate");
+        Fw::String fileName;
+        fileName.format("%s%s%s", this->component.m_file.m_prefix.toChar(), baseName.toChar(),
+                        this->component.m_file.m_suffix.toChar());
+
+        U8 staleData[MAX_BYTES_PER_FILE + 100];
+        for (FwSizeType i = 0; i < sizeof(staleData); i++) {
+            staleData[i] = 0xAA;
+        }
+        Os::File seed;
+        ASSERT_EQ(seed.open(fileName.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE), Os::File::OP_OK);
+        FwSizeType staleSize = sizeof(staleData);
+        ASSERT_EQ(seed.write(staleData, staleSize), Os::File::OP_OK);
+        ASSERT_EQ(staleSize, sizeof(staleData));
+        seed.close();
+
+        this->sendCmd_BL_OpenFile(0, 0, baseName);
+        this->dispatchOne();
+        this->sendComBuffers(MAX_ENTRIES_PER_FILE - 1);
+        this->sendCmd_BL_CloseFile(0, 0);
+        this->dispatchOne();
+
+        const U32 expectedBytes = (MAX_ENTRIES_PER_FILE - 1) * (COM_BUFFER_LENGTH + sizeof(SIZE_TYPE));
+        this->checkLogFileIntegrity(fileName.toChar(), expectedBytes, MAX_ENTRIES_PER_FILE - 1);
+        this->checkFileValidation(fileName.toChar());
+    }
+};
+
+void BufferLoggerTester ::Truncate() {
+    TruncateTester tester;
+    tester.test();
+}
+
 class OnOffTester : Logging::BufferLoggerTester {
   private:
     //! Send data

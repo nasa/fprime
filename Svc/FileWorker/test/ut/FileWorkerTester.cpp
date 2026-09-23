@@ -386,8 +386,7 @@ void FileWorkerTester ::testWriteReadRoundTrip() {
     const FwSizeType dataSize = 1024;
     U8 data[dataSize] = {};
 
-    // Start from a clean slate: OPEN_WRITE does not truncate, so a longer file left behind by an
-    // earlier run would survive underneath the bytes written here.
+    // Start from a clean slate so an earlier run cannot affect this test.
     (void)::remove(fnameChar);
     (void)::remove(hashFileChar);
 
@@ -420,6 +419,66 @@ void FileWorkerTester ::testWriteReadRoundTrip() {
     // The checksum the component wrote must also satisfy the component's own verify path
     this->clearHistory();
     this->invoke_to_verifyIn(0, fname, 0xB70B4C26);  // CRC-32 of the byte ramp written above
+    this->component.doDispatch();
+    ASSERT_EVENTS_CrcFailed_SIZE(0);
+    ASSERT_EVENTS_CrcVerificationError_SIZE(0);
+    ASSERT_from_verifyDoneOut_SIZE(1);
+    ASSERT_from_verifyDoneOut(0, FileWorkerStatus::FW_STATUS_DONE, dataSize);
+
+    (void)::remove(fnameChar);
+    (void)::remove(hashFileChar);
+}
+
+void FileWorkerTester ::testWriteTruncatesExisting() {
+    const char* fnameChar = "testtruncate.txt";
+    const char* hashFileChar = "testtruncate.txt.CRC32";
+    const FwSizeType staleSize = 1024;
+    const FwSizeType dataSize = 256;
+    U8 staleData[staleSize];
+    U8 data[dataSize];
+
+    (void)::remove(fnameChar);
+    (void)::remove(hashFileChar);
+
+    for (FwSizeType i = 0; i < staleSize; i++) {
+        staleData[i] = 0xAA;
+    }
+    Os::File seed;
+    ASSERT_EQ(seed.open(fnameChar, Os::File::Mode::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
+    FwSizeType writtenSize = staleSize;
+    ASSERT_EQ(seed.write(staleData, writtenSize), Os::File::OP_OK);
+    ASSERT_EQ(writtenSize, staleSize);
+    seed.close();
+
+    for (FwSizeType i = 0; i < dataSize; i++) {
+        data[i] = static_cast<U8>(i % 256);
+    }
+    Fw::Buffer buffer(data, dataSize);
+    Fw::String fname = fnameChar;
+
+    this->invoke_to_writeIn(0, fname, buffer, 0, false);
+    this->component.doDispatch();
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_DONE_WRITE, dataSize);
+    ASSERT_EVENTS_WriteValidationError_SIZE(0);
+
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(fnameChar, fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, dataSize);
+
+    Os::File file;
+    ASSERT_EQ(file.open(fnameChar, Os::File::OPEN_READ), Os::File::OP_OK);
+    U8 readData[dataSize] = {};
+    FwSizeType readSize = dataSize;
+    ASSERT_EQ(file.read(readData, readSize), Os::File::OP_OK);
+    ASSERT_EQ(readSize, dataSize);
+    ASSERT_EQ(memcmp(readData, data, dataSize), 0);
+    file.close();
+
+    Utils::HashBuffer hashBuffer;
+    Utils::Hash::hash(data, dataSize, hashBuffer);
+    this->clearHistory();
+    this->invoke_to_verifyIn(0, fname, hashBuffer.asBigEndianU32());
     this->component.doDispatch();
     ASSERT_EVENTS_CrcFailed_SIZE(0);
     ASSERT_EVENTS_CrcVerificationError_SIZE(0);
@@ -491,9 +550,7 @@ void FileWorkerTester ::testWriteZeroLength() {
     ASSERT_from_writeDoneOut(0, FW_STATUS_DONE_WRITE, 0);
     ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
 
-    // The existing file's contents must be intact. Note this alone does not prove the file was
-    // never opened: OPEN_WRITE does not set O_TRUNC, so a stray open would leave a file this
-    // short unchanged. The regression it does catch is the pre-fix FW_ASSERT abort above.
+    // The existing file's contents must be intact.
     Os::File check;
     ASSERT_EQ(check.open(fnameChar, Os::File::OPEN_READ), Os::File::OP_OK);
     U8 readback[preservedSize];

@@ -15,6 +15,8 @@ CD-002 | The `Svc::CmdDispatcher` component shall dispatch commands to component
 CD-003 | The `Svc::CmdDispatcher` component shall provide an interface to register commands | Inspection
 CD-004 | The `Svc::CmdDispatcher` component shall process command status from components and report the results to the command buffer sender. | Unit Test
 CD-005 | The `Svc::CmdDispatcher` component shall drop incoming commands to avert a queue overflow (DOS attack). | Unit Test
+CD-006 | The `Svc::CmdDispatcher` component shall count every dropped command, including drops occurring concurrently on multiple caller threads, and report the count in the `CommandsDropped` telemetry channel. | Unit Test
+CD-007 | The `Svc::CmdDispatcher` component shall not dispatch a command that it cannot track in the pending command table, unless configured to do so, in which case it shall dispatch the command and report that the command is untracked. | Unit Test
 
 ## 3. Design
 
@@ -56,6 +58,7 @@ Note #1: this requires that the component sending the command buffer have connec
 Note #2: the `seqCmdStatus` port utilize the same type as the `compCmdStat`, the `Fw::CmdResponse`. This has been done to avoid creation of similar types for status ports. However, the `Fw::CmdResponse::cmdSeq` argument of the `seqCmdStatus` doesn't have any meaning for the calling sequencer. Therefore, as it has been mentioned before, instead of forwarding a command sequence number, the context value is transferred.
 Note #3: the `CMD_CLEAR_TRACKING` command empties the pending command table. Before doing so, every pending command (other than `CMD_CLEAR_TRACKING` itself) is reported to its source via `seqCmdStatus` with the `Fw::CmdResponse::CLEARED` status, so callers do not wait indefinitely for a completion that will never be delivered. `CMD_CLEAR_TRACKING` then completes with `Fw::CmdResponse::OK`.
 Note #4: sequence numbers are assigned from a monotonically increasing `U32` counter. Once the counter has wrapped around, the dispatcher checks the pending command table before assigning a sequence number and skips any value still associated with an outstanding command, so a wrapped counter cannot overwrite a pending entry. No such check is performed before the first wraparound, since a monotonic counter cannot collide with a pending entry.
+Note #5: the pending sequence command table is a fixed-size table (`CMD_DISPATCHER_SEQUENCER_TABLE_SIZE`), and it is only consulted when the `seqCmdStatus` output port for the calling port is connected. When a command arrives, that port is connected, and the table is full, the dispatcher's behavior is selected by `CommandDispatcherImpl::configure(bool)`, which defaults to `Svc::CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT`. When `false` (the default), the command is not dispatched: a `TooManyCommands` warning is emitted and the caller receives `Fw::CmdResponse::EXECUTION_ERROR`. When `true`, the command is dispatched, a `TooManyCommands` warning is emitted, and the caller receives `Fw::CmdResponse::DISPATCHED_UNTRACKED`, indicating that the command is executing but that its completion status cannot be matched back to the caller and will never be reported. Note that the stock sequencers do not treat `DISPATCHED_UNTRACKED` as success: `Svc::CmdSequencer` fails and cancels the sequence on any non-`OK` response, `Svc::WasmSequencer` counts it as a failed command, and `Svc::FpySequencer` pushes the raw response value for the sequence to branch on.
 
 ### 3.3 Scenarios
 
@@ -102,9 +105,22 @@ sequenceDiagram
 
 `Svc::CmdDispatcher` has no state machines.
 
+The dropped-command counter backing the `CommandsDropped` channel is incremented by the `seqCmdBuff` overflow hook, which runs on the thread of each caller when the queue is full. The counter is therefore an atomic (`std::atomic<U32>`) so concurrent drops are never lost and the value read by `run` is never torn.
+
 ### 3.5 Algorithms
 
 `Svc::CmdDispatcher` has no significant algorithms.
+
+### 3.6 Configuration
+
+`CommandDispatcherImplCfg.hpp` provides the following compile-time settings:
+
+Constant | Description
+-------- | -----------
+`CMD_DISPATCHER_DISPATCH_TABLE_SIZE` | The size of the table holding opcodes to dispatch.
+`CMD_DISPATCHER_SEQUENCER_TABLE_SIZE` | The size of the pending command table holding commands in progress.
+`Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents` | When `false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum `FwOpcodeType` value. Default: `true`.
+`Svc::CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT` | Default behavior when a command cannot be tracked because the pending sequence command table is full; overridden per instance by `CommandDispatcherImpl::configure(bool)`. See Note #5 in section 3.2.2. Default: `false`.
 
 ## 4. Module Checklists
 
@@ -130,6 +146,8 @@ Date | Description
 5/05/2025 | Added a note about Fw::CmdResponse::cmdSeq usage in seqCmdStatus
 9/03/2026 | CMD_CLEAR_TRACKING reports Fw::CmdResponse::CLEARED to callers of pending commands
 9/03/2026 | Added a note about sequence number allocation after wraparound
+9/14/2026 | Dropped-command counter made atomic; added CD-006
+9/20/2026 | Added `EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT`, `configure()`, and `Fw::CmdResponse::DISPATCHED_UNTRACKED`; added CD-007 and section 3.6
 
 
 

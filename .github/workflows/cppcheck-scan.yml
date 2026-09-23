@@ -38,7 +38,10 @@ jobs:
           fetch-depth: 0
           filter: blob:none
           submodules: true
-      - uses: ./.github/actions/setup
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
 
       - name: Install cppcheck
         timeout-minutes: 10
@@ -60,6 +63,8 @@ jobs:
           # Add EXCLUDE_FROM_ALL targets as we need to explicitly build them
           fprime-util build --target Svc_Subtopologies --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
           fprime-util build --target Svc_GenericHub --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
+          fprime-util build --target Svc_DpCompressProc --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
+          fprime-util build --target Svc_DpZLibCompressor --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
           echo CPPCHECK_OPTS=--project="$GITHUB_WORKSPACE/build-fprime-automatic-native/compile_commands.json" >> $GITHUB_ENV
         shell: bash
 

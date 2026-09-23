@@ -240,6 +240,82 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
     }
 }
 
+void DpCatalogTester::stateFileSkipsTransmitted() {
+    Fw::FileNameString dir("./DpTest_StateFile");
+    Fw::FileNameString stateFile("./DpTest_StateFile/dpState.dat");
+    const FwDpIdType id = 0x321;
+    const Fw::Time time(2000, 200);
+    FwSizeType fileSize = 0;
+
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->delDp(id, time, dir.toChar());
+    Fw::String dpFile = this->genDP(id, 10, time, 100, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    ASSERT_EQ(Os::FileSystem::getFileSize(dpFile.toChar(), fileSize), Os::FileSystem::Status::OP_OK);
+
+    Fw::MallocAllocator alloc;
+    this->clearHistory();
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, dpFile.toChar());
+
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, dpFile, dpFile, 0, 0);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted(0, fileSize);
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
+    this->component.shutdown();
+
+    ASSERT_EQ(Os::FileSystem::getFileSize(dpFile.toChar(), fileSize), Os::FileSystem::Status::OP_OK);
+
+    this->clearHistory();
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 20);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 20, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    EXPECT_EQ(this->component.m_pendingFiles, 0);
+    EXPECT_EQ(this->component.m_pendingDpBytes, 0);
+
+    this->sendCmd_START_XMIT_CATALOG(0, 21, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(0);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted(0, 0);
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 21, Fw::CmdResponse::OK);
+    this->component.shutdown();
+
+    this->clearHistory();
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 30);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 30, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    EXPECT_EQ(this->component.m_pendingFiles, 0);
+    EXPECT_EQ(this->component.m_pendingDpBytes, 0);
+    this->component.shutdown();
+
+    this->delDp(id, time, dir.toChar());
+    ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+}
+
 Fw::String DpCatalogTester::genDP(FwDpIdType id,
                                   FwDpPriorityType prio,
                                   const Fw::Time& time,
@@ -895,6 +971,20 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     Fw::String fileName = this->genDP(0x123, 10, time, 16, Fw::DpState::UNTRANSMITTED, true, dir.toChar());
     ASSERT_STRNE(fileName.toChar(), "");
 
+    // Rebuild the same header to derive the expected (computed) and corrupted (stored) header hashes
+    const FwSizeType packetSize = Fw::DpContainer::getPacketSizeForDataSize(16);
+    std::vector<U8> packetData(packetSize);
+    Fw::Buffer packetBuffer(packetData.data(), packetSize);
+    Fw::DpContainer cont(0x123, packetBuffer);
+    cont.setPriority(10);
+    cont.setTimeTag(time);
+    cont.setDpState(Fw::DpState::UNTRANSMITTED);
+    cont.setDataSize(16);
+    cont.serializeHeader();
+    const U32 computedHash = cont.getHeaderHash().asBigEndianU32();
+    packetData[Fw::DpContainer::HEADER_HASH_OFFSET]++;
+    const U32 storedHash = cont.getHeaderHash().asBigEndianU32();
+
     this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
@@ -902,7 +992,7 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     ASSERT_EVENTS_FileHdrError_SIZE(1);
-    ASSERT_EVENTS_FileHdrError(0, fileName.toChar(), DpHdrField::CRC, 635957387, 652734603);
+    ASSERT_EVENTS_FileHdrError(0, fileName.toChar(), DpHdrField::CRC, computedHash, storedHash);
 
     this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
     this->component.doDispatch();

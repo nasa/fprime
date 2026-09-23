@@ -71,7 +71,7 @@ Calling component passes in a buffer for writing to file, the file location is *
 1. Validate inputs. If the path is empty, the buffer is invalid, the write offset is past the end of the buffer, or the path plus the hash-file extension exceeds `FileNameStringSize`, emit an `InvalidInput` event and return `INVALID_INPUT`
 2. If not in IDLE state, return NOT_IDLE
 3. Set state to WRITING
-4. Open a file at the provided path and write contents of client-provided buffer to it
+4. Open a file at the provided path and write contents of client-provided buffer to it. Non-append writes truncate any existing file at the path.
 5. After file is finished being written to, also write a validation CRC file
 6. Return to client with write size and set state to IDLE
 
@@ -103,4 +103,3 @@ Calling component passes in a file path *path* to read and a buffer for client t
 `writeIn_handler` writes a `.CRC32` sidecar alongside each file, and `readIn_handler` / `verifyIn_handler` validate the file against it. The sidecar stores the file's CRC-32 (a `U32`) in F Prime's serialized, big-endian representation — the same layout produced and consumed by `Utils::Hash` and `Os::ValidateFile` — so its contents do not depend on the endianness of the target that wrote it. `Svc::FileWorker` writes the sidecar through `Utils::Hash` (`writeBufferHashToFile`) and validates it through `Utils::verify_checksum`, which reads the value back with `Utils::CRCChecker::read_crc32_from_file`; both sides serialize and deserialize the `U32` through `Fw::SerialBuffer`.
 
 **Compatibility note:** `.CRC32` sidecars written by builds that predate this serialized format on a little-endian target stored the raw host-order bytes and will not validate against the current code. Such sidecars must be regenerated before the current build reads or verifies their data files — ground-side, or on board via `Os::ValidateFile::createValidation`. Sidecars written by `Svc::FileWorker` itself (via `Utils::Hash`) are unaffected, as that path already used this layout.
-

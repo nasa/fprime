@@ -191,7 +191,7 @@ Pops all messages out of the queue at queueIndex, `index`. A disabled (depth 0) 
 
 #### 4.9.6 getQueueNum
 
-Converts a `queueType` & `portNum` into an index into the `m_queues` array--translates between user facing index system & internal one.
+Converts a `queueType` & `portNum` into an index into the `m_queues` array--translates between user facing index system & internal one. `portNum` is validated against the port count of `queueType` (`COM_PORT_COUNT` or `BUFFER_PORT_COUNT`) before folding; an out-of-range `portNum` yields `-1`, which `FLUSH_QUEUE` and `SET_QUEUE_PRIORITY` reject with `VALIDATION_ERROR` so a `COM_QUEUE` index can never address a buffer queue (or vice versa).
 
 #### 4.9.7 getQueueDepth
 

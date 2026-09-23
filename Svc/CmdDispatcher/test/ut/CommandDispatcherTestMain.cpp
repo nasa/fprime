@@ -177,7 +177,7 @@ TEST(CmdDispTestOffNominal, InvalidCommand) {
 
 TEST(CmdDispTestOffNominal, CommandOverflow) {
     TEST_CASE(102.2.4, "Off-nominal Command Overflow");
-    COMMENT("Verify error case where there are too many outstanding commands.");
+    COMMENT("Verify error case where there are too many outstanding commands (default: reject, EXECUTION_ERROR).");
 
     Svc::CommandDispatcherImpl impl("CmdDispImpl");
 
@@ -190,7 +190,25 @@ TEST(CmdDispTestOffNominal, CommandOverflow) {
     // connect ports
     connectPorts(impl, tester);
 
-    tester.runOverflowCommands();
+    tester.runOverflowCommands(false);
+}
+
+TEST(CmdDispTestOffNominal, CommandOverflowExecuteUntracked) {
+    TEST_CASE(102.2.5, "Off-nominal Command Overflow, Execute Untracked");
+    COMMENT("Verify too many outstanding commands with configure(true): dispatch, DISPATCHED_UNTRACKED.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runOverflowCommands(true);
 }
 
 TEST(CmdDispTestOffNominal, ClearSequenceTracker) {
@@ -227,6 +245,24 @@ TEST(CmdDispTestOffNominal, CommandQueueOverflow) {
     connectPorts(impl, tester);
 
     tester.runCommandQueueOverflow();
+}
+
+TEST(CmdDispTestOffNominal, ConcurrentQueueOverflow) {
+    TEST_CASE(102.2.9, "Off-nominal Concurrent Command QueueOverflow");
+    COMMENT("Verify the dropped-command counter loses no increments when the overflow hook runs on multiple threads.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runConcurrentQueueOverflow();
 }
 
 TEST(CmdDispTestOffNominal, SequenceNumberWrapSkipsTrackedIds) {

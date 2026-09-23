@@ -943,21 +943,92 @@ void ComQueueTester::testSetQueuePriorityCommand() {
     component.cleanup();
 }
 
+void ComQueueTester ::testQueueFlushInvalidIndex() {
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
+    Fw::Buffer buffer(&data[0], sizeof(data));
+    configure();
+
+    // Occupy buffer queue 0 so an aliased flush would be observable via bufferReturnOut
+    invoke_to_bufferQueueIn(0, buffer);
+
+    // COM_QUEUE indices at/after COM_PORT_COUNT fold onto buffer queues and must be rejected before folding
+    const FwIndexType invalidComIndices[] = {ComQueue::COM_PORT_COUNT, ComQueue::TOTAL_PORT_COUNT, -1};
+    for (FwIndexType invalidIndex : invalidComIndices) {
+        this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::COM_QUEUE, invalidIndex);
+        this->dispatchAll();
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_FLUSH_QUEUE, 0, Fw::CmdResponse::VALIDATION_ERROR);
+        ASSERT_from_bufferReturnOut_SIZE(0);
+        this->clearHistory();
+    }
+
+    // BUFFER_QUEUE indices at/after BUFFER_PORT_COUNT must also be rejected
+    const FwIndexType invalidBufferIndices[] = {ComQueue::BUFFER_PORT_COUNT, ComQueue::TOTAL_PORT_COUNT, -1};
+    for (FwIndexType invalidIndex : invalidBufferIndices) {
+        this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::BUFFER_QUEUE, invalidIndex);
+        this->dispatchAll();
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_FLUSH_QUEUE, 0, Fw::CmdResponse::VALIDATION_ERROR);
+        ASSERT_from_bufferReturnOut_SIZE(0);
+        this->clearHistory();
+    }
+
+    // Buffer queue 0 is still intact: a valid flush returns exactly the buffer queued above
+    this->sendCmd_FLUSH_QUEUE(0, 0, QueueType::BUFFER_QUEUE, 0);
+    this->dispatchAll();
+    ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_FLUSH_QUEUE, 0, Fw::CmdResponse::OK);
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer);
+    clearFromPortHistory();
+    component.cleanup();
+}
+
 void ComQueueTester::testSetQueuePriorityInvalidIndex() {
     // Configure the component
     configure();
 
-    // Send command with invalid queue index (beyond TOTAL_PORT_COUNT)
-    const FwIndexType invalidIndex = ComQueue::TOTAL_PORT_COUNT + 1;
-    this->sendCmd_SET_QUEUE_PRIORITY(0, 0, Svc::QueueType::COM_QUEUE, invalidIndex, 1);
-    this->component.doDispatch();
+    // COM_QUEUE indices at/after COM_PORT_COUNT would alias a buffer queue if folded before validation
+    const FwIndexType invalidIndices[] = {ComQueue::COM_PORT_COUNT, ComQueue::TOTAL_PORT_COUNT + 1};
+    for (FwIndexType invalidIndex : invalidIndices) {
+        this->sendCmd_SET_QUEUE_PRIORITY(0, 0, Svc::QueueType::COM_QUEUE, invalidIndex, 1);
+        this->component.doDispatch();
 
-    // Verify command response was VALIDATION_ERROR
-    ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_SET_QUEUE_PRIORITY, 0, Fw::CmdResponse::VALIDATION_ERROR);
+        // Verify command response was VALIDATION_ERROR
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_SET_QUEUE_PRIORITY, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
-    // Verify no priority changed event was emitted
-    ASSERT_EVENTS_QueuePriorityChanged_SIZE(0);
+        // Verify no priority changed event was emitted
+        ASSERT_EVENTS_QueuePriorityChanged_SIZE(0);
+        this->clearHistory();
+    }
+
+    // Verify the prioritized list is untouched
+    for (FwIndexType queueIndex = 0; queueIndex < ComQueue::TOTAL_PORT_COUNT; queueIndex++) {
+        ASSERT_EQ(queueIndex, this->component.m_prioritizedList[queueIndex].index);
+        ASSERT_EQ(queueIndex, this->component.m_prioritizedList[queueIndex].priority);
+    }
+
+    component.cleanup();
+}
+
+void ComQueueTester::testSetQueuePriorityInvalidBufferIndex() {
+    // Configure the component
+    configure();
+
+    // BUFFER_QUEUE indices at/after BUFFER_PORT_COUNT must be rejected
+    const FwIndexType invalidIndices[] = {ComQueue::BUFFER_PORT_COUNT, ComQueue::TOTAL_PORT_COUNT + 1, -1};
+    for (FwIndexType invalidIndex : invalidIndices) {
+        this->sendCmd_SET_QUEUE_PRIORITY(0, 0, Svc::QueueType::BUFFER_QUEUE, invalidIndex, 1);
+        this->component.doDispatch();
+
+        // Verify command response was VALIDATION_ERROR
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(0, ComQueue::OPCODE_SET_QUEUE_PRIORITY, 0, Fw::CmdResponse::VALIDATION_ERROR);
+
+        // Verify no priority changed event was emitted
+        ASSERT_EVENTS_QueuePriorityChanged_SIZE(0);
+        this->clearHistory();
+    }
 
     component.cleanup();
 }
