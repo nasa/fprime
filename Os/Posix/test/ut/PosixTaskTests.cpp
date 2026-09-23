@@ -75,9 +75,13 @@ TEST_F(PosixTaskScheduling, NonRealtimeTaskUsesSchedOther) {
     ASSERT_EQ(observed.policy.load(), SCHED_OTHER);
 }
 
-// Under a SCHED_RR caller the sentinel must still yield SCHED_OTHER. Skipped when realtime is not permitted (common
-// CI) or when the platform does not inherit the caller's policy by default (Darwin), as the check is then vacuous.
+// When this thread can itself run under SCHED_RR, an inheriting task would also be SCHED_RR; the sentinel must
+// still yield SCHED_OTHER. Skipped when realtime scheduling is not permitted (the common CI case).
 TEST_F(PosixTaskScheduling, NonRealtimeTaskUsesSchedOtherFromRealtimeCaller) {
+#ifdef __APPLE__
+    // Darwin threads do not inherit the caller's SCHED_RR policy, so the inherited-vs-sentinel contrast cannot be shown
+    GTEST_SKIP() << "Default-priority tasks do not inherit the caller's SCHED_RR policy on Darwin";
+#endif
     int original_policy = -1;
     sched_param original_param;
     original_param.sched_priority = -1;
@@ -96,10 +100,8 @@ TEST_F(PosixTaskScheduling, NonRealtimeTaskUsesSchedOtherFromRealtimeCaller) {
     // Restore before asserting so a failure does not leave the test thread realtime
     EXPECT_EQ(pthread_setschedparam(pthread_self(), original_policy, &original_param), 0);
 
+    ASSERT_EQ(inherited.policy.load(), SCHED_RR);
     ASSERT_EQ(observed.policy.load(), SCHED_OTHER);
-    if (inherited.policy.load() != SCHED_RR) {
-        GTEST_SKIP() << "Default-priority tasks do not inherit the caller's SCHED_RR policy on this platform";
-    }
 }
 
 // A task started with TASK_PRIORITY_DEFAULT inherits the (non-realtime) scheduling of this test process
