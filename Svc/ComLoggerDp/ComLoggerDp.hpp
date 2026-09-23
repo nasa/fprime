@@ -205,6 +205,9 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Number of times packet serialization failed and required retry
     U32 m_numSerializationFailures{0};
 
+    //! Counter for schedIn calls since last packet received
+    U32 m_schedCallsSinceLastPacket{0};
+
     //! Priority for data products
     FwDpPriorityType m_priority{5};  // Default priority from FPP
 

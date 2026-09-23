@@ -46,6 +46,9 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
         return;
     }
 
+    // Reset inactivity counter - we received a packet
+    this->m_schedCallsSinceLastPacket = 0;
+
     // Allocate container if needed
     if (this->m_currentPacketCount == 0) {
         if (!this->allocateAndSetupContainer()) {
@@ -82,11 +85,23 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
     (void)portNum;
     (void)context;
 
+    // Check for auto-flush condition
+    if (this->m_enabled && this->m_currentPacketCount > 0) {
+        ++this->m_schedCallsSinceLastPacket;
+
+        if (this->m_schedCallsSinceLastPacket >= ComLoggerFlushTimeout) {
+            // Flush the partial container
+            this->finalizeFullContainer();
+            this->m_schedCallsSinceLastPacket = 0;
+        }
+    }
+
     // Write telemetry
     this->tlmWrite_LoggingEnabled(this->m_enabled);
     this->tlmWrite_NumBuffersLogged(this->m_numBuffersLogged);
     this->tlmWrite_NumBuffersDropped(this->m_numBuffersDropped);
     this->tlmWrite_PacketSerializationFailures(this->m_numSerializationFailures);
+    this->tlmWrite_NumQueueDrops(static_cast<U32>(this->getNumMsgsDropped()));
 }
 
 void ComLoggerDp ::startRecordingIn_handler(FwIndexType portNum, U32 packetsPerContainer, FwDpPriorityType priority) {
@@ -137,6 +152,9 @@ bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityT
     this->m_currentPacketCount = 0;
     this->m_priority = priority;
 
+    // Reset inactivity counter
+    this->m_schedCallsSinceLastPacket = 0;
+
     // Enable logging
     this->m_enabled = true;
 
@@ -160,6 +178,9 @@ U32 ComLoggerDp ::stopRecordingInternal() {
 
     // Disable logging
     this->m_enabled = false;
+
+    // Reset inactivity counter
+    this->m_schedCallsSinceLastPacket = 0;
 
     // Log event
     this->log_ACTIVITY_HI_ComDpStopped(numSent);

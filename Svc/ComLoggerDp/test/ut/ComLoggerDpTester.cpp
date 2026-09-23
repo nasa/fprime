@@ -199,7 +199,7 @@ void ComLoggerDpTester::testAllocationFailure() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 1);  // 1 buffer dropped
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
@@ -247,7 +247,7 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify telemetry was written
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, true);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
@@ -270,7 +270,7 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify buffer count updated
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, true);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
@@ -292,7 +292,7 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify logging disabled
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, false);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
@@ -398,7 +398,7 @@ void ComLoggerDpTester::testClearCounters() {
     // Check telemetry before clearing
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);  // 2 buffers logged
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -419,7 +419,7 @@ void ComLoggerDpTester::testClearCounters() {
     // Check telemetry after clearing
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 0);  // Counter reset to 0
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -456,7 +456,7 @@ void ComLoggerDpTester::testBufferOverflow() {
     // Check that buffer was logged (not dropped)
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 1);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -823,13 +823,14 @@ void ComLoggerDpTester::testPacketTooLarge() {
     // Should have generated DpBufferError event for the dropped buffer
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpBufferError_SIZE(1);
-    ASSERT_EVENTS_DpBufferError(0, ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry)));
+    ASSERT_EVENTS_DpBufferError(
+        0, ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry)));
 
     // Buffer should be counted as dropped
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 1);
 }
@@ -873,7 +874,7 @@ void ComLoggerDpTester::testContainerOverflowRetry() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);  // Both buffers logged
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -905,7 +906,7 @@ void ComLoggerDpTester::testSerializationFailureCounter() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_PacketSerializationFailures_SIZE(1);
     ASSERT_TLM_PacketSerializationFailures(0, 0);  // No failures in normal operation
 
@@ -921,7 +922,7 @@ void ComLoggerDpTester::testSerializationFailureCounter() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_SIZE(5);
     ASSERT_TLM_PacketSerializationFailures_SIZE(1);
     ASSERT_TLM_PacketSerializationFailures(0, 0);
 }

@@ -142,6 +142,9 @@ module Svc {
     @ Number of times packet serialization failed and required retry with new container
     telemetry PacketSerializationFailures: U32 id 0x03
 
+    @ Number of messages dropped from the message queue
+    telemetry NumQueueDrops: U32 id 0x04
+
     # ----------------------------------------------------------------------
     # Products
     # ----------------------------------------------------------------------
