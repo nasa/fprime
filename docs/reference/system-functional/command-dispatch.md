@@ -71,6 +71,6 @@ The Command Dispatcher includes several built-in commands for system verificatio
 
 - **Malformed Command** — If the command buffer cannot be deserialized, the command is rejected with a validation error and an event is logged.
 - **Invalid Opcode** — If the opcode is not found in the dispatch table, the command is rejected and an error event is logged.
-- **Too Many Pending Commands** — If the pending command tracker is full, the command cannot be tracked and is rejected with an execution error event.
+- **Too Many Pending Commands** — If the pending command tracker is full, a `TooManyCommands` warning event is logged. By default (`Svc::CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT = false`) the command is rejected with `EXECUTION_ERROR`. When the dispatcher instance is configured with `CommandDispatcherImpl::configure(true)`, the command is dispatched anyway and the source receives `DISPATCHED_UNTRACKED`, meaning its completion status will never be reported.
 - **Queue Overflow** — If the Command Dispatcher's input queue is full, the command is dropped and an overflow event is logged. This event is throttled to prevent log flooding.
 - **Missing Status Response** — If a component fails to report command completion, the entry remains in the pending command tracker indefinitely. The CLEAR_TRACKING command can be used to manually recover from this state.

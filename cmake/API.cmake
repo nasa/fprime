@@ -472,8 +472,8 @@ endfunction()
 ####
 function(fprime_add_config_build_target)
     set(ARGN_PASS ${ARGN})
-    # Ensure library is STATIC when supplying SOURCE or AUTOCODER_INPUTS
-    if (SOURCE IN_LIST ARGN_PASS OR AUTOCODER_INPUTS IN_LIST ARGN_PASS)
+    # Ensure library is STATIC when supplying SOURCES or AUTOCODER_INPUTS
+    if (SOURCES IN_LIST ARGN_PASS OR AUTOCODER_INPUTS IN_LIST ARGN_PASS)
         if (NOT "STATIC" IN_LIST ARGN_PASS AND NOT INTERFACE IN_LIST ARGN_PASS)
             list(APPEND ARGN_PASS STATIC)
         endif()

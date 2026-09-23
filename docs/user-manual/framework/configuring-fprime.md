@@ -380,6 +380,13 @@ Users are encouraged to look through the header for the component of interest as
 `false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum
 `FwOpcodeType` value before downlink.
 
+The same header provides `Svc::CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT`, the default for what
+happens when a command arrives and the dispatcher's pending command table is full. Each dispatcher instance may
+override it at runtime by calling `Svc::CommandDispatcherImpl::configure(bool)` during topology setup. When the
+setting is `false` (the default), the command is rejected with `Fw::CmdResponse::EXECUTION_ERROR` and is never
+dispatched. When `true`, the command is dispatched and the caller receives `Fw::CmdResponse::DISPATCHED_UNTRACKED`,
+indicating that the command is running but that its completion status cannot be tracked and will never be reported.
+
 ## OSAL Configuration
 
 The `Os/` subdirectory of the configuration directory holds settings for the OS abstraction layer.
