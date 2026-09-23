@@ -197,8 +197,7 @@ print_message!(EventSeverity::WarningHi, "battery at {voltage} V");
 | One integer *and* one float in the same message  | 3904 B |
 | Four separate formatted messages                 | 3759 B |
 
-The first `{}` pays for the machinery; each formatted message after it adds about 80 B.
-So it is one decision per sequence, not one per message.
+Subsequent uses of format strings will not require an additional 3.4 KB.
 
 Cheaper alternatives, best first:
 
@@ -221,6 +220,9 @@ Cheaper alternatives, best first:
    ```rust
    Ref.power.REPORT_MARGIN(voltage);
    ```
+
+3. Split off string formatting into a separate module. Wasm modules can call each other as long as they are `LOAD`-ed in order.
+   Certain pre-uplinked modules may include large expensive abstractions which other sequences can utilize.
 
 > [!NOTE]
 > A guest event message is truncated to `Wasm.GUEST_EVENT_MESSAGE_SIZE` (128 B by default), so a long formatted
