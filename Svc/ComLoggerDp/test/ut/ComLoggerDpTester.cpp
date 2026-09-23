@@ -823,6 +823,7 @@ void ComLoggerDpTester::testPacketTooLarge() {
     // Should have generated DpBufferError event for the dropped buffer
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpBufferError_SIZE(1);
+    ASSERT_EVENTS_DpBufferError(0, ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry)));
 
     // Buffer should be counted as dropped
     this->clearHistory();
