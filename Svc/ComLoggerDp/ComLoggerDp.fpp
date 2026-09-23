@@ -77,7 +77,7 @@ module Svc {
     async command StopComDp \
     opcode 0x02
 
-    @ Clears NumBuffersLogged and NumBuffersDropped counters and DpBufferError event throttle
+    @ Clears NumBuffersLogged, NumBuffersDropped and PacketSerializationFailures counters and DpBufferError event throttle
     async command CLEAR_COUNTERS \
     opcode 0x03
 
