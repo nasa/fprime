@@ -40,8 +40,8 @@ copied into the build cache and the module is built from the copies. This is wha
 replace a file that an earlier module supplied.
 
 1. **New files are copied into the build cache.** Each file under `SOURCES`, `HEADERS`, or `AUTOCODER_INPUTS`
-   is copied to `<build cache>/<module path>/<file name>` (subdirectories in the source tree are not preserved;
-   the file is copied by name), and the module is built from that copy. File names are therefore a single flat
+   is copied to `<build-cache-path>/config/<filename>` (subdirectories in the source tree are not preserved;
+   the file is copied directly into the `<build-cache-path>/config` directory), and the module is built from that copy. File names are therefore a single flat
    namespace across the whole build: two files with the same name in different subdirectories of one module
    collide in the build cache (the later one wins, silently), and two providers supplying the same new file
    name stop the build (see [Errors](#errors)), which only the providing library can resolve. Libraries should
