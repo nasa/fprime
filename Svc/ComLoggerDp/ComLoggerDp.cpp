@@ -6,7 +6,6 @@
 
 #include "Svc/ComLoggerDp/ComLoggerDp.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
-#include "default/config/ComLoggerDpCfg.hpp"
 
 namespace Svc {
 
