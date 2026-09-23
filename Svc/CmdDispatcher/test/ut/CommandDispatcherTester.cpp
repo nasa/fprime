@@ -567,7 +567,10 @@ void CommandDispatcherTester::runInvalidCommand() {
     ASSERT_EVENTS_MalformedCommand(0, Fw::DeserialStatus::TYPE_MISMATCH);
 }
 
-void CommandDispatcherTester::runOverflowCommands() {
+void CommandDispatcherTester::runOverflowCommands(bool executeWhenSequenceTableFull) {
+    this->m_impl.configure(executeWhenSequenceTableFull);
+    ASSERT_EQ(this->m_impl.m_executeWhenSequenceTableFull, executeWhenSequenceTableFull);
+
     // verify sequence tracker table is empty
     ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
     this->registerBuiltinCommands();
@@ -606,6 +609,9 @@ void CommandDispatcherTester::runOverflowCommands() {
         ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 
+        this->m_cmdSendRcvd = false;
+        this->m_seqStatusRcvd = false;
+
         this->invoke_to_seqCmdBuff(0, buff, testContext);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
@@ -631,9 +637,43 @@ void CommandDispatcherTester::runOverflowCommands() {
             ASSERT_EQ(this->m_cmdSendArgs.deserializeTo(checkVal), Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(checkVal, testCmdArg);
         } else {
-            // verify failed to find slot
-            ASSERT_EVENTS_SIZE(1);
-            ASSERT_EVENTS_TooManyCommands_SIZE(1);
+            // the sequence tracker table is full; the behavior is selected by configure()
+            if (executeWhenSequenceTableFull) {
+                // verify the command was dispatched anyway, and that the overflow was still reported
+                ASSERT_EVENTS_SIZE(2);
+                ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
+                ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+                ASSERT_EVENTS_TooManyCommands_SIZE(1);
+                ASSERT_EVENTS_TooManyCommands(0, getExpectedEventOpcode(testOpCode));
+
+                // verify the command reached the component
+                ASSERT_TRUE(this->m_cmdSendRcvd);
+                ASSERT_EQ(this->m_cmdSendOpCode, testOpCode);
+
+                // verify the caller was told the command is running but cannot be tracked
+                ASSERT_TRUE(this->m_seqStatusRcvd);
+                ASSERT_EQ(this->m_seqStatusOpCode, testOpCode);
+                ASSERT_EQ(this->m_seqStatusCmdSeq, testContext);
+                ASSERT_EQ(this->m_seqStatusCmdResponse, Fw::CmdResponse::DISPATCHED_UNTRACKED);
+            } else {
+                // verify failed to find slot, and that the command was not dispatched
+                ASSERT_EVENTS_SIZE(1);
+                ASSERT_EVENTS_TooManyCommands_SIZE(1);
+                ASSERT_EVENTS_TooManyCommands(0, getExpectedEventOpcode(testOpCode));
+                ASSERT_EVENTS_OpCodeDispatched_SIZE(0);
+
+                // verify the command never reached the component
+                ASSERT_FALSE(this->m_cmdSendRcvd);
+
+                // verify the caller was told the command failed
+                ASSERT_TRUE(this->m_seqStatusRcvd);
+                ASSERT_EQ(this->m_seqStatusOpCode, testOpCode);
+                ASSERT_EQ(this->m_seqStatusCmdSeq, testContext);
+                ASSERT_EQ(this->m_seqStatusCmdResponse, Fw::CmdResponse::EXECUTION_ERROR);
+            }
+
+            // in either case, the full table gained no new entry
+            ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), CMD_DISPATCHER_SEQUENCER_TABLE_SIZE);
         }
     }
 }
