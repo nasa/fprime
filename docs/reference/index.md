@@ -37,6 +37,7 @@ Reference documentation for F Prime APIs and components.
 <details markdown="1">
 <summary><strong>System Functional Documentation</strong></summary>
 
+- [Advanced Sequencing Functionality](system-functional/advanced-sequencing.md)
 - [Buffer Management Functionality](system-functional/buffer-management.md)
 - [CCSDS Protocol Functionality](system-functional/ccsds-protocol.md)
 - [Command Dispatch Functionality](system-functional/command-dispatch.md)
