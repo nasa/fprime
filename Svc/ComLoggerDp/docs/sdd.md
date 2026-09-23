@@ -113,6 +113,7 @@ The component requires calling `configure(bool enabled, U32 packetsPerContainer,
 | `LoggingEnabled` | 0x00 | `bool` | Whether data product logging is currently active |
 | `NumBuffersLogged` | 0x01 | `U32` | Total number of Com buffers logged since initialization |
 | `NumBuffersDropped` | 0x02 | `U32` | Number of Com buffers dropped due to container allocation failure or because the record could not fit in an empty container |
+| `PacketSerializationFailures` | 0x03 | `U32` | Number of times a record did not fit in the current container, forcing that container to be sent early and the record retried in a new container |
 
 Telemetry is written periodically when the `schedIn` port is invoked (typically connected to a rate group).
 
