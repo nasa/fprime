@@ -64,12 +64,10 @@ jobs:
         with:
           submodules: true
           path: ./FlightExamples/lib/fprime
-      - name: "Setup environment"
-        run: |
-          python -m venv venv
-          . venv/bin/activate
-          pip install -r ./FlightExamples/lib/fprime/requirements.txt
-          echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ./FlightExamples/lib/fprime
       # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
       - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
         if: github.event_name == 'pull_request'
@@ -84,12 +82,10 @@ jobs:
           sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y zlib1g-dev
       - name: "Install decaf framing GDS plugin"
         run: |
-          . venv/bin/activate
           pip install -e ./GdsExamples/gds-plugins
       - name: "Build native x86_64 binary for integration tests"
         working-directory: FlightExamples/ExamplesDeployment
         run: |
-          . ../../venv/bin/activate
           fprime-util purge --force
           fprime-util generate 2>&1 | output-cleaner
           fprime-util build -j8 2>&1 | output-cleaner
@@ -98,7 +94,6 @@ jobs:
         continue-on-error: false
         run: |
           DEPLOYMENT=ExamplesDeployment
-          . venv/bin/activate
 
           chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
           mkdir -p ci-logs

@@ -23,11 +23,16 @@ CommandDispatcherImpl::CommandDispatcherImpl(const char* name)
     : CommandDispatcherComponentBase(name),
       m_seq(0),
       m_seqWrapped(false),
+      m_executeWhenSequenceTableFull(CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT),
       m_numCmdsDispatched(0),
       m_numCmdErrors(0),
       m_numCmdsDropped(0) {}
 
 CommandDispatcherImpl::~CommandDispatcherImpl() {}
+
+void CommandDispatcherImpl::configure(bool executeWhenSequenceTableFull) {
+    this->m_executeWhenSequenceTableFull = executeWhenSequenceTableFull;
+}
 
 void CommandDispatcherImpl::advanceSequenceNumber() {
     if (this->m_seq == std::numeric_limits<U32>::max()) {
@@ -104,11 +109,12 @@ void CommandDispatcherImpl::compCmdStat_handler(FwIndexType portNum,
 void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     Fw::CmdPacket cmdPkt;
     Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
+    const bool portIsConnected = this->isConnected_seqCmdStatus_OutputPort(portNum);
 
     if (stat != Fw::FW_SERIALIZE_OK) {
         Fw::DeserialStatus serErr(static_cast<Fw::DeserialStatus::t>(stat));
         this->log_WARNING_HI_MalformedCommand(serErr);
-        if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
+        if (portIsConnected) {
             this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::VALIDATION_ERROR);
         }
         return;
@@ -118,23 +124,22 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
     FwIndexType entryPort;
     Fw::Success findStatus = this->m_entryTable.find(cmdPkt.getOpCode(), entryPort);
     if (findStatus == Fw::Success::SUCCESS and this->isConnected_compCmdSend_OutputPort(entryPort)) {
+        Fw::Success pendingInsertStatus = Fw::Success::SUCCESS;
         const U32 sequenceNumber = this->allocateSequenceNumber();
 
         // register command in command tracker only if response port is connect
-        if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
+        if (portIsConnected) {
             SequenceTrackerEntry pendingCmd;
             pendingCmd.opCode = cmdPkt.getOpCode();
             pendingCmd.context = context;
             pendingCmd.callerPort = portNum;
 
-            const Fw::Success pendingInsertStatus = this->m_sequenceTracker.insert(sequenceNumber, pendingCmd);
+            pendingInsertStatus = this->m_sequenceTracker.insert(sequenceNumber, pendingCmd);
 
-            // if we couldn't find a slot to track the command, quit
-            if (pendingInsertStatus != Fw::Success::SUCCESS) {
+            // if sequence table is full, reject here unless configured to dispatch untracked
+            if (not this->m_executeWhenSequenceTableFull and pendingInsertStatus != Fw::Success::SUCCESS) {
                 this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
-                if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
-                    this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::EXECUTION_ERROR);
-                }
+                this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::EXECUTION_ERROR);
                 return;
             }
         }  // end if status port connected
@@ -145,11 +150,17 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 
         // increment command count
         this->m_numCmdsDispatched++;
+
+        // pendingInsertStatus is only non-SUCCESS for a connected caller whose insert failed (see check above)
+        if (this->m_executeWhenSequenceTableFull and pendingInsertStatus != Fw::Success::SUCCESS) {
+            this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
+            this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::DISPATCHED_UNTRACKED);
+        }
     } else {
         this->log_WARNING_HI_InvalidCommand(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
         this->m_numCmdErrors++;
         // Fail command back to port, if connected
-        if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
+        if (portIsConnected) {
             this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::INVALID_OPCODE);
         }
         // Preserve the existing behavior of consuming a sequence number for an invalid opcode.

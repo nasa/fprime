@@ -35,7 +35,11 @@ jobs:
           fetch-depth: 0
           filter: blob:none
           submodules: true
-      - uses: ./.github/actions/setup
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+          ccache: "false"
       - name: "Generate Ref Deployment"
         working-directory: ./TestDeploymentsProject
         run: |

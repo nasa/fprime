@@ -110,6 +110,8 @@ enum FprimeCmdResponse {
     FPRIME_CMD_BUSY = 5,
     /// Command tracking was cleared before the command completed
     FPRIME_CMD_CLEARED = 6,
+    /// Command was dispatched but the response tracking failed, indicating unknown state
+    FPRIME_CMD_DISPATCHED_UNTRACKED = 7,
 };
 
 /// @brief Dispatch a command, blocking call.
