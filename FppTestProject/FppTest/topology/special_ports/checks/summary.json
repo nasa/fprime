@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-22T21:14:58Z",
+  "generated_at": "2026-09-23T21:14:47Z",
   "ref": "devel",
-  "commit": "b8c9f1d607906aa3c191eedd5590783afc8db39b",
+  "commit": "79819c5815de307bcdb45797c83ffeb12a489d79",
   "passed": 0,
   "failed": 1,
   "skipped": 15,
@@ -60,9 +60,11 @@
       "status": "fail",
       "failures": [
         "dependency 'Fw/Com' (from #include \"Fw/Com/ComPacket.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Com)",
-        "dependency 'Os' (from #include \"Os/Os.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Os)"
+        "dependency 'Fw/Dp' (from #include \"Fw/Dp/DpContainer.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Dp)",
+        "dependency 'Os' (from #include \"Os/Os.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Os)",
+        "dependency 'Utils/Hash' (from #include \"Utils/Hash/Hash.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Utils_Hash)"
       ],
-      "detail": "2 dependency module(s) checked"
+      "detail": "4 dependency module(s) checked"
     },
     {
       "id": "I3",

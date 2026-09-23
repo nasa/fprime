@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-22T21:14:58Z",
+  "generated_at": "2026-09-23T21:14:47Z",
   "ref": "devel",
-  "commit": "b8c9f1d607906aa3c191eedd5590783afc8db39b",
+  "commit": "79819c5815de307bcdb45797c83ffeb12a489d79",
   "passed": 3,
   "failed": 8,
   "skipped": 5,
@@ -56,7 +56,7 @@
         "requirement 'CD-004' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'CD-005' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:17) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "6 requirement(s) checked"
+      "detail": "7 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -93,7 +93,7 @@
         "command 'CMD_TEST_CMD_1' has no requirement referencing it (add a requirement mentioning 'CMD_TEST_CMD_1')",
         "command 'CMD_CLEAR_TRACKING' has no requirement referencing it (add a requirement mentioning 'CMD_CLEAR_TRACKING')"
       ],
-      "detail": "4 command(s) traced against 6 requirement(s)"
+      "detail": "4 command(s) traced against 7 requirement(s)"
     },
     {
       "id": "R2",
@@ -105,7 +105,7 @@
         "telemetry channel 'CommandsDispatched' has no requirement referencing it (add a requirement mentioning 'CommandsDispatched')",
         "telemetry channel 'CommandErrors' has no requirement referencing it (add a requirement mentioning 'CommandErrors')"
       ],
-      "detail": "3 telemetry channel(s) traced against 6 requirement(s)"
+      "detail": "3 telemetry channel(s) traced against 7 requirement(s)"
     },
     {
       "id": "R3",
@@ -126,7 +126,7 @@
         "event 'OpCodeReregistered' has no requirement referencing it (add a requirement mentioning 'OpCodeReregistered')",
         "event 'CommandDroppedQueueOverflow' has no requirement referencing it (add a requirement mentioning 'CommandDroppedQueueOverflow')"
       ],
-      "detail": "11 event(s) traced against 6 requirement(s)"
+      "detail": "11 event(s) traced against 7 requirement(s)"
     },
     {
       "id": "R4",
@@ -162,7 +162,7 @@
         "port 'seqCmdStatus' has no requirement referencing it (add a requirement mentioning 'seqCmdStatus')",
         "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')"
       ],
-      "detail": "8 port(s) traced against 6 requirement(s)"
+      "detail": "8 port(s) traced against 7 requirement(s)"
     },
     {
       "id": "R7",
@@ -176,9 +176,10 @@
         "requirement 'CD-003' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:15) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'CD-004' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'CD-005' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CD-006' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:18) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'CD-006' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:18) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CD-007' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:19) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "6 requirement(s) checked"
+      "detail": "7 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -187,7 +188,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
       "status": "pass",
       "failures": [],
-      "detail": "6 requirement(s) checked"
+      "detail": "7 requirement(s) checked"
     },
     {
       "id": "U3",
