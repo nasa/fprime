@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-22 21:11:54</td>
+      <td>2026-09-23 21:11:01</td>
     </tr>
   </table>
 </div>
@@ -70,18 +70,18 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l214">CAssert0 (line 214)</a></td><td>called 1 time</td><td>79.0%</td></tr>
+    <tr><td><a href="#l214">CAssert0 (line 214)</a></td><td>called 2 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l229">CAssert1 (line 229)</a></td><td>called 1 time</td><td>79.0%</td></tr>
     <tr><td><a href="#l244">CAssert2 (line 244)</a></td><td>called 1 time</td><td>79.0%</td></tr>
     <tr><td><a href="#l259">CAssert3 (line 259)</a></td><td>called 1 time</td><td>79.0%</td></tr>
     <tr><td><a href="#l274">CAssert4 (line 274)</a></td><td>called 1 time</td><td>79.0%</td></tr>
     <tr><td><a href="#l294">CAssert5 (line 294)</a></td><td>called 1 time</td><td>79.0%</td></tr>
     <tr><td><a href="#l315">CAssert6 (line 315)</a></td><td>called 1 time</td><td>79.0%</td></tr>
-    <tr><td><a href="#l104">Fw::AssertHook::deregisterHook() (line 104)</a></td><td>called 4 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l104">Fw::AssertHook::deregisterHook() (line 104)</a></td><td>called 5 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l93">Fw::AssertHook::doAssert() (line 93)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l108">Fw::AssertHook::getRegisteredHook() (line 108)</a></td><td>called 23 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l108">Fw::AssertHook::getRegisteredHook() (line 108)</a></td><td>called 24 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l73">Fw::AssertHook::printAssert(char const*) (line 73)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l99">Fw::AssertHook::registerHook() (line 99)</a></td><td>called 8 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l99">Fw::AssertHook::registerHook() (line 99)</a></td><td>called 9 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l77">Fw::AssertHook::reportAssert(char const*, unsigned long, unsigned long, int, int, int, int, int, int) (line 77)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l173">Fw::SwAssert(char const*, int, int, int, int, int, int, unsigned long) (line 173)</a></td><td>called 2 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l163">Fw::SwAssert(char const*, int, int, int, int, int, unsigned long) (line 163)</a></td><td>called 2 times</td><td>100.0%</td></tr>
@@ -809,28 +809,28 @@
       <td class="lineno"><a id="l99" href="#l99">99</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8</td>
+      <td class="linecount coveredLine">9</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">AssertHook::registerHook</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l100" href="#l100">100</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8</td>
+      <td class="linecount coveredLine">9</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">previousHook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s_assertHook</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l101" href="#l101">101</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8</td>
+      <td class="linecount coveredLine">9</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">s_assertHook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8</td>
+      <td class="linecount coveredLine">9</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -844,21 +844,21 @@
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">AssertHook::deregisterHook</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">s_assertHook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">previousHook</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l106" href="#l106">106</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -872,14 +872,14 @@
       <td class="lineno"><a id="l108" href="#l108">108</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="n">AssertHook</span><span class="o">*</span><span class="w"> </span><span class="nf">AssertHook::getRegisteredHook</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s_assertHook</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1621,14 +1621,14 @@
       <td class="lineno"><a id="l214" href="#l214">214</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
+      <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="n">I8</span><span class="w"> </span><span class="n">CAssert0</span><span class="p">(</span><span class="n">FILE_NAME_ARG</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">lineNo</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l215" href="#l215">215</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
+      <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">AssertHook</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">registeredHook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">AssertHook</span><span class="o">::</span><span class="n">getRegisteredHook</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1638,11 +1638,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1</td>
+      <td class="linecount partialCoveredLine">2</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">nullptr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">registeredHook</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1691,14 +1691,14 @@
       <td class="lineno"><a id="l223" href="#l223">223</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
+      <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">registeredHook</span><span class="o">-&gt;</span><span class="n">reportAssert</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">lineNo</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l224" href="#l224">224</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
+      <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">registeredHook</span><span class="o">-&gt;</span><span class="n">doAssert</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1712,7 +1712,7 @@
       <td class="lineno"><a id="l226" href="#l226">226</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
+      <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
