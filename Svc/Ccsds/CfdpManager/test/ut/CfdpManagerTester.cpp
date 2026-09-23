@@ -5,7 +5,6 @@
 // ======================================================================
 
 #include "CfdpManagerTester.hpp"
-#include <Fw/Com/ComPacket.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <Svc/Ccsds/CfdpManager/Clist.hpp>
@@ -1188,7 +1187,7 @@ void CfdpManagerTester::testClass2RxTruncatedFileDataCrcSpin() {
     const char* groundSrcFile = "/ground/test_class2_rx_crcspin_source.bin";
     const char* dstFile = "test/ut/output/test_class2_rx_crcspin_received.bin";
     const U8 channelId = 0;
-    const U32 transactionSeq = 503;
+    const U32 transactionSeq = 7;
     const U32 declaredFileSize = 0x10000000;
 
     // Metadata declares a large file and creates a zero-length destination.
@@ -1196,22 +1195,12 @@ void CfdpManagerTester::testClass2RxTruncatedFileDataCrcSpin() {
     setupRxTransaction(groundSrcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, declaredFileSize,
                        transactionSeq, TxnState::TXN_STATE_R2, setup);
 
-    // A FileData PDU whose header declares more payload than the PDU carries fails deserialization.
-    // Build a well-formed PDU, then truncate the buffer so the declared length overruns it.
-    U8 data[8];
-    memset(data, 0xA5, sizeof(data));
-    Cfdp::FileDataPdu fileDataPdu;
-    fileDataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, TEST_GROUND_EID,
-                           transactionSeq, component.getLocalEidParam(), 0, sizeof(data), data);
-    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
-    U8* bufferData = m_internalDataBuffer;
-    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
-    bufferData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
-    bufferData[1] = static_cast<U8>(descriptor & 0xFF);
-    Fw::SerialBuffer sb(bufferData + descriptorSize, fileDataPdu.getBufferSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, fileDataPdu.serializeTo(sb));
-    Fw::Buffer truncated(bufferData, descriptorSize + sb.getSize() - 4);
-    this->invoke_to_dataIn(channelId, truncated);
+    // A FileData PDU declaring 196 payload bytes but carrying 2 fails deserialization.
+    U8 pdu[] = {0x00, 0x03, 0x34, 0x00, 0xC8, 0x00, 0x64, 0x07, 0x2A, 0x00, 0x00, 0x00, 0x00, 0xAA, 0xBB};
+    pdu[6] = static_cast<U8>(TEST_GROUND_EID);
+    pdu[8] = static_cast<U8>(component.getLocalEidParam());
+    Fw::Buffer fileDataBuffer(pdu, sizeof(pdu));
+    this->invoke_to_dataIn(channelId, fileDataBuffer);
     this->component.doDispatch();
 
     // The malformed PDU must fault the transaction, not leave it in a no-error state that later
