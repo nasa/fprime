@@ -70,7 +70,7 @@ There are two alternatives for logging downlink packets. This allows offline sto
 
 [ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md) records all outgoing data to named files on the file system, providing a record of transmitted data for debugging and analysis. Log files are rotated based on a configurable size or byte limit.
 
-[ComLoggerDp](https://github.com/nasa/fprime/blob/devel/Svc/ComLoggerDp/docs/sdd.md) records all outgoing data to files on the file system as [data products](https://github.com/nasa/fprime/blob/devel/docs/reference/system-functional/data-products.md), providing a record of transmitted data for debugging and analysis. Log files are downlinked by [DpCatalog](https://github.com/nasa/fprime/blob/devel/Svc/DpCatalog/docs/sdd.md) based on priority specified in `ComLogger` configuration and commands.
+[ComLoggerDp](https://github.com/nasa/fprime/blob/devel/Svc/ComLoggerDp/docs/sdd.md) records all outgoing data as [data products](https://github.com/nasa/fprime/blob/devel/docs/reference/system-functional/data-products.md), providing a record of transmitted data for debugging and analysis. The resulting data product files are downlinked by [DpCatalog](https://github.com/nasa/fprime/blob/devel/Svc/DpCatalog/docs/sdd.md) based on the priority set through `ComLoggerDp` configuration and commands.
 
 
 ### Splitting and Aggregation
