@@ -244,12 +244,12 @@ void ComLoggerDpTester::testTelemetry() {
 
     // Call schedIn to write telemetry
     this->invoke_to_schedIn(0, 0);
-    ASSERT_TLM_SIZE(5);
-    ASSERT_TLM_NumQueueDrops_SIZE(1);
-    ASSERT_TLM_NumQueueDrops(0, 0);
+    this->component.doDispatch();
 
     // Verify telemetry was written
     ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_NumQueueDrops_SIZE(1);
+    ASSERT_TLM_NumQueueDrops(0, 0);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, true);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
@@ -506,7 +506,7 @@ void ComLoggerDpTester::testDpBufferErrorThrottling() {
 
 void ComLoggerDpTester::testUpdatePriorityNotRecording() {
     // Don't start recording - logging disabled (configure with disabled state)
-    this->component.configure(false, 0, 0);
+    this->component.configure(false, 0, 0, 0);
 
     // Try to update priority when not recording
     this->sendCmd_UpdatePriority(0, 0, 15);
@@ -731,7 +731,7 @@ void ComLoggerDpTester::testDataProductFormat() {
 void ComLoggerDpTester::testConfigureEnabled() {
     // Test configure() with enabled=true to exercise line 29
     // This should enable logging and validate parameters
-    this->component.configure(true, 3, 10);
+    this->component.configure(true, 3, 10, 10);
 
     // Verify logging is enabled by sending a Com buffer
     Fw::ComBuffer comBuf = this->createTestComBuffer(8);
@@ -927,6 +927,109 @@ void ComLoggerDpTester::testSerializationFailureCounter() {
     ASSERT_TLM_SIZE(5);
     ASSERT_TLM_PacketSerializationFailures_SIZE(1);
     ASSERT_TLM_PacketSerializationFailures(0, 0);
+}
+
+void ComLoggerDpTester::testAutoFlush() {
+    // Configure with auto-flush timeout of 10
+    this->component.configure(true, 5, 10, 10);
+    this->clearHistory();
+
+    // Send one packet to create partial container
+    Fw::ComBuffer comBuf = this->createTestComBuffer(8);
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // Verify container was allocated but not sent yet
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    this->clearHistory();
+
+    // Call schedIn 9 times (just below threshold of 10)
+    for (int i = 0; i < 9; i++) {
+        this->invoke_to_schedIn(0, 0);
+        this->component.doDispatch();
+    }
+
+    // Should not have flushed yet
+    ASSERT_PRODUCT_SEND_SIZE(0);
+
+    // Call schedIn one more time (10th call, reaching threshold)
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+
+    // Should have auto-flushed the partial container
+    ASSERT_PRODUCT_SEND_SIZE(1);
+}
+
+void ComLoggerDpTester::testAutoFlushResetOnPacket() {
+    // Configure with auto-flush timeout of 10
+    this->component.configure(true, 5, 10, 10);
+    this->clearHistory();
+
+    // Send one packet
+    Fw::ComBuffer comBuf = this->createTestComBuffer(8);
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Call schedIn 8 times
+    for (int i = 0; i < 8; i++) {
+        this->invoke_to_schedIn(0, 0);
+        this->component.doDispatch();
+    }
+
+    // Send another packet - this should reset the counter
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Call schedIn 9 more times (would have been 17 total without reset)
+    for (int i = 0; i < 9; i++) {
+        this->invoke_to_schedIn(0, 0);
+        this->component.doDispatch();
+    }
+
+    // Should not have flushed yet because counter was reset
+    ASSERT_PRODUCT_SEND_SIZE(0);
+
+    // One more schedIn call to reach threshold (10 since last packet)
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+
+    // Should now flush
+    ASSERT_PRODUCT_SEND_SIZE(1);
+}
+
+void ComLoggerDpTester::testAutoFlushDisabled() {
+    // Configure with auto-flush disabled (timeout = 0)
+    this->component.configure(true, 5, 10, 0);
+    this->clearHistory();
+
+    // Send one packet to create partial container
+    Fw::ComBuffer comBuf = this->createTestComBuffer(8);
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // Verify container was allocated but not sent yet
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    this->clearHistory();
+
+    // Call schedIn many times (way more than would trigger auto-flush if enabled)
+    // With flushTimeout=0, auto-flush should be completely disabled
+    for (int i = 0; i < 5; i++) {
+        this->invoke_to_schedIn(0, 0);
+        this->component.doDispatch();
+        this->clearHistory();
+    }
+
+    // Should still not have flushed (auto-flush is disabled with timeout=0)
+    ASSERT_PRODUCT_SEND_SIZE(0);
+
+    // Now stop recording - this should send the partial container
+    this->sendCmd_StopComDp(0, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_SEND_SIZE(1);  // Partial container sent on stop
 }
 
 }  // namespace Svc

@@ -144,6 +144,24 @@ TEST(Nominal, SerializationFailureCounter) {
     tester.testSerializationFailureCounter();
 }
 
+// Test auto-flush after timeout with no new packets
+TEST(Nominal, AutoFlush) {
+    Svc::ComLoggerDpTester tester;
+    tester.testAutoFlush();
+}
+
+// Test auto-flush counter resets on packet arrival
+TEST(Nominal, AutoFlushResetOnPacket) {
+    Svc::ComLoggerDpTester tester;
+    tester.testAutoFlushResetOnPacket();
+}
+
+// Test auto-flush does not occur when disabled
+TEST(Nominal, AutoFlushDisabled) {
+    Svc::ComLoggerDpTester tester;
+    tester.testAutoFlushDisabled();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

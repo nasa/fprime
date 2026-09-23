@@ -21,7 +21,10 @@ ComLoggerDp ::~ComLoggerDp() {}
 // Public interface
 // ----------------------------------------------------------------------
 
-void ComLoggerDp ::configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority) {
+void ComLoggerDp ::configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority, U32 flushTimeout) {
+    // Store flush timeout setting
+    this->m_flushTimeout = flushTimeout;
+
     // If enabling, use the internal start function which validates parameters
     if (enabled) {
         // This will validate packetsPerContainer and set m_enabled
@@ -86,10 +89,12 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
     (void)context;
 
     // Check for auto-flush condition
-    if (this->m_enabled && this->m_currentPacketCount > 0) {
+    // Note: m_flushTimeout > 0 check ensures auto-flush is disabled when timeout is 0
+    // Without this check, flushTimeout=0 would cause immediate flush (0 >= 0 is true)
+    if (this->m_enabled && this->m_currentPacketCount > 0 && this->m_flushTimeout > 0) {
         ++this->m_schedCallsSinceLastPacket;
 
-        if (this->m_schedCallsSinceLastPacket >= ComLoggerFlushTimeout) {
+        if (this->m_schedCallsSinceLastPacket >= this->m_flushTimeout) {
             // Flush the partial container
             this->finalizeFullContainer();
             this->m_schedCallsSinceLastPacket = 0;

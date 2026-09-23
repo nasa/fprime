@@ -112,6 +112,15 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test PacketSerializationFailures telemetry counter
     void testSerializationFailureCounter();
 
+    //! Test auto-flush after timeout with no new packets
+    void testAutoFlush();
+
+    //! Test auto-flush counter resets on packet arrival
+    void testAutoFlushResetOnPacket();
+
+    //! Test auto-flush does not occur when disabled
+    void testAutoFlushDisabled();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

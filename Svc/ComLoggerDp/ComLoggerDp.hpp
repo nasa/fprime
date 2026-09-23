@@ -70,7 +70,8 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! \param enabled: whether data product logging is initially enabled
     //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true, ignored otherwise)
     //! \param priority: data product priority (ignored if enabled is false)
-    void configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority);
+    //! \param flushTimeout: number of schedIn calls without packets before auto-flush (0 = disable auto-flush)
+    void configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority, U32 flushTimeout);
 
   private:
     // ----------------------------------------------------------------------
@@ -207,6 +208,9 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
 
     //! Counter for schedIn calls since last packet received
     U32 m_schedCallsSinceLastPacket{0};
+
+    //! Number of schedIn calls without packets before auto-flush (0 = disabled)
+    U32 m_flushTimeout{0};
 
     //! Priority for data products
     FwDpPriorityType m_priority{5};  // Default priority from FPP
