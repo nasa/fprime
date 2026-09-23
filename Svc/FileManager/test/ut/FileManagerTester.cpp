@@ -10,6 +10,7 @@
 //
 // ======================================================================
 
+#include <cstring>
 #include <fstream>
 
 #include "FileManagerTester.hpp"
@@ -844,6 +845,16 @@ void FileManagerTester ::listDirectoryFail() {
 // Helper methods
 // ----------------------------------------------------------------------
 
+void FileManagerTester ::writeFile(const char* const fileName, const char* const content) {
+    Os::File file;
+    ASSERT_EQ(Os::File::OP_OK, file.open(fileName, Os::File::OPEN_CREATE, Os::File::OVERWRITE));
+    const FwSizeType expectedSize = static_cast<FwSizeType>(::strlen(content));
+    FwSizeType size = expectedSize;
+    ASSERT_EQ(Os::File::OP_OK, file.write(reinterpret_cast<const U8*>(content), size, Os::File::WAIT));
+    ASSERT_EQ(expectedSize, size);
+    file.close();
+}
+
 void FileManagerTester ::system(const char* const cmd) {
     const int status = ::system(cmd);
     ASSERT_EQ(static_cast<int>(0), status);
@@ -1076,7 +1087,7 @@ void FileManagerTester ::sandboxOpenRootIsUnrestricted() {
     ASSERT_EQ(ret, 0);
 
     // FileSize at an arbitrary absolute path
-    this->system("echo -n '0123456789AB' > /tmp/fprime_sandbox_ut_open/file.txt");
+    this->writeFile("/tmp/fprime_sandbox_ut_open/file.txt", "0123456789AB");
     this->clearHistory();
     Fw::CmdStringArg sizeArg("/tmp/fprime_sandbox_ut_open/file.txt");
     this->sendCmd_FileSize(INSTANCE, CMD_SEQ, sizeArg);
