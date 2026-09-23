@@ -201,7 +201,7 @@ The component includes comprehensive unit tests covering all functionality:
 | `UpdatePriority` | Tests `UpdatePriority` command and verifies priority is updated on active container with `PriorityUpdated` event | SVC-COMLOGGER-004 |
 | `Ping` | Tests ping functionality via `pingIn` port | - |
 | `ContainerFill` | Tests that containers are sent at the correct boundary and partial containers are not sent prematurely | SVC-COMLOGGERDP-001 |
-| `AllocationFailure` | Tests error handling when container allocation fails, verifies `DpBufferError` event with correct size (including sentry overhead) | SVC-COMLOGGER-005 |
+| `AllocationFailure` | Tests error handling when container allocation fails, verifies `DpBufferError` event with correct size (including sentry overhead) | - |
 | `PortValidationFailure` | Tests validation failure via `startRecordingIn` port with invalid parameters, verifies `StartRecordingFailed` event is logged | SVC-COMLOGGER-002 |
 | `Telemetry` | Tests that `LoggingEnabled` and `NumBuffersLogged` telemetry is written correctly via `schedIn` | - |
 | `PriorityPreserved` | Tests that priority from `StartComDp` is preserved and applied even when starting from disabled state | SVC-COMLOGGER-002, SVC-COMLOGGER-004 |
