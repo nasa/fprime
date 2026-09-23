@@ -71,12 +71,12 @@ The component uses a stateful design that:
 
 ### 3.4 Configuration
 
-The component uses FPP constants defined in `ComLoggerDpCfg.fpp` for configuration:
+The component uses constants defined in `default/config/ComLoggerDpCfg.fpp` and `default/config/ComLoggerDpCfg.hpp` for configuration:
 
-| Constant | Type | Default | Description |
-|---|---|---|---|
-| `DpBufferErrorThrottle` | `U32` | `1` | Throttle value for `DpBufferError` event - limits the number of times the event can be emitted consecutively |
-| `ComLoggerDpSentry` | `U32` | Deployment-specific | Sentry value prepended to each ComBuffer record for corruption detection during deserialization |
+| Constant | Defined in | Type | Default | Description |
+|---|---|---|---|---|
+| `DpBufferErrorThrottle` | `ComLoggerDpCfg.fpp` | `U32` | `1` | Throttle value for `DpBufferError` event - limits the number of times the event can be emitted consecutively |
+| `ComLoggerDpSentry` | `ComLoggerDpCfg.hpp` | `U32` | `0xDEADBEEF` | Sentry value prepended to each ComBuffer record for corruption detection during deserialization; must match the `--sentry` value given to `scripts/decode_comlogger_dp.py` |
 
 These constants can be overridden in deployment-specific configuration files to tune behavior without modifying the component source.
 
