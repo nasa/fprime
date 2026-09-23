@@ -94,6 +94,7 @@ enum FprimeParamValid {
 WASM_IMPORT(WASM_MODULE_NAME, "prm")
 extern FprimeParamValid fprime_wasm_read_parameter(I64 id, U32 value_ptr, U32 value_size);
 
+/// Command response. Fw::CmdResponse in Fw/Cmd/Cmd.fpp.
 enum FprimeCmdResponse {
     /// Command successfully executed
     FPRIME_CMD_OK = 0,
@@ -108,7 +109,9 @@ enum FprimeCmdResponse {
     /// Component busy
     FPRIME_CMD_BUSY = 5,
     /// Command tracking was cleared before the command completed
-    FPRIME_CMD_CLEARED = 5,
+    FPRIME_CMD_CLEARED = 6,
+    /// Command was dispatched but the response tracking failed, indicating unknown state
+    FPRIME_CMD_DISPATCHED_UNTRACKED = 7,
 };
 
 /// @brief Dispatch a command, blocking call.

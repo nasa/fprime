@@ -273,8 +273,9 @@ void DpCompressProcTester::test_oversized_buffer() {
     paramSet_ENABLE(Fw::Enabled::ENABLED, Fw::ParamValid::VALID);
     this->component.loadParameters();
 
+    // Only the header is touched before rejection, so back the oversized buffer with header-sized memory
     const FwSizeType backing_size = static_cast<FwSizeType>(std::numeric_limits<FwSizeStoreType>::max());
-    U8* mem = new U8[backing_size]();
+    U8* mem = new U8[Fw::DpContainer::MIN_PACKET_SIZE]();
 
     Fw::Buffer container_buf(mem, backing_size);
     Fw::DpContainer container(0, container_buf);
