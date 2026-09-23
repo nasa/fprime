@@ -244,7 +244,9 @@ void ComLoggerDpTester::testTelemetry() {
 
     // Call schedIn to write telemetry
     this->invoke_to_schedIn(0, 0);
-    this->component.doDispatch();
+    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_NumQueueDrops_SIZE(1);
+    ASSERT_TLM_NumQueueDrops(0, 0);
 
     // Verify telemetry was written
     ASSERT_TLM_SIZE(5);
