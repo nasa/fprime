@@ -117,11 +117,10 @@ void ComLoggerDp ::stopRecordingIn_handler(FwIndexType portNum) {
 bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority) {
     // Validate packetsPerContainer is non-zero and doesn't exceed the max size that
     // DP creation allows
-    if ((packetsPerContainer == 0) ||
-        (packetsPerContainer >
-         (std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) /
-             SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE +
-                                            sizeof(ComLoggerDpSentry)))) {  // Disable logging on validation failure
+    constexpr U32 MAX_PACKETS_PER_CONTAINER = static_cast<U32>(
+        (std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) / RECORD_SIZE);
+    if ((packetsPerContainer == 0) || (packetsPerContainer > MAX_PACKETS_PER_CONTAINER)) {
+        // Disable logging on validation failure
         this->m_enabled = false;
         return false;
     }
