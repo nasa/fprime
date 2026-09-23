@@ -34,9 +34,12 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //!
     //! \param packetsPerContainer: Number of packets that will fit in the container
     //! \return Total buffer size in bytes needed for the complete container
+    //! Serialized size of one ComBufferRecord holding a sentry plus a maximum-size ComBuffer
+    static constexpr FwSizeType RECORD_SIZE =
+        SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry));
+
     static constexpr FwSizeType ComLoggerDpBuffSize(U32 packetsPerContainer) {
-        return DpContainer::MIN_PACKET_SIZE +
-               packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry));
+        return DpContainer::MIN_PACKET_SIZE + packetsPerContainer * RECORD_SIZE;
     }
 
     // ----------------------------------------------------------------------
