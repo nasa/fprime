@@ -196,9 +196,7 @@ bool ComLoggerDp ::allocateAndSetupContainer() {
     // Calculate data size needed for the requested number of packets
     // Each record holds a sentry plus up to FW_COM_BUFFER_MAX_SIZE bytes
     // Note: DpManager adds the container header overhead, so we only request the data size
-    const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
-    const FwSizeType containerSize =
-        this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
+    const FwSizeType containerSize = this->m_packetsPerContainer * RECORD_SIZE;
 
     // Get a container buffer
     const Fw::Success status = this->dpGet_ComBuffContainer(containerSize, this->m_container);
