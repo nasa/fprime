@@ -53,11 +53,6 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_nob
         // Respond to this request!
         this->respondToRequest(value, Fw::CmdResponse::OK);
     }
-
-    // Clear any pending waits that locked during load
-    if (value.get_source() == Svc::WasmSequencer_SignalSource::COMMAND_LOAD) {
-        this->respondToWaiting(Fw::CmdResponse::OK);
-    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_ERROR(
@@ -68,6 +63,9 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_ERR
 
     // Respond to all wait requests
     this->respondToWaiting(Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Respond to port requests
+    this->reportSeqAborted(value, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_incrementSequenceFailure(
@@ -95,6 +93,9 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_cancelPendi
     this->m_tlm.sequencesCancelled++;
     this->respondToRequest(value, Fw::CmdResponse::EXECUTION_ERROR);
     this->respondToWaiting(Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Respond to port requests
+    this->reportSeqAborted(value, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respondInvoke_BUSY(
@@ -119,6 +120,9 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respondLoad
     const Svc::WasmSequencer_LoadRequest& value) {
     this->log_WARNING_LO_ControllerBusy(value.get_context().get_source(), this->controller_getState());
     this->respondToRequest(value.get_context(), Fw::CmdResponse::BUSY);
+
+    // Respond to port requests
+    this->reportSeqAborted(value.get_context(), Fw::CmdResponse::BUSY);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_block_OK(

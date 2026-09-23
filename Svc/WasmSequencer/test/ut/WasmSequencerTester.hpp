@@ -155,6 +155,14 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     void disconnectGetParam(FwIndexType portNum);
     void disconnectCmdOut(FwIndexType portNum);
 
+    //! Reset the run-reporting output ports to an unconnected state (same placement-new
+    //! idiom). seqStartOut / seqDoneOut are plain (not-required) ports, so a deployment
+    //! that wires no dispatcher leaves them unconnected; these exercise the isConnected
+    //! guards in reportModuleStarted / reportSeqDone / reportSeqAborted, without which
+    //! the generated invoker would FW_ASSERT on every run.
+    void disconnectSeqStartOut(FwIndexType portNum);
+    void disconnectSeqDoneOut(FwIndexType portNum);
+
     // ----------------------------------------------------------------------
     // Dispatch / state helpers
     // ----------------------------------------------------------------------
