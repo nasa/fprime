@@ -971,6 +971,20 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     Fw::String fileName = this->genDP(0x123, 10, time, 16, Fw::DpState::UNTRANSMITTED, true, dir.toChar());
     ASSERT_STRNE(fileName.toChar(), "");
 
+    // Rebuild the same header to derive the expected (computed) and corrupted (stored) header hashes
+    const FwSizeType packetSize = Fw::DpContainer::getPacketSizeForDataSize(16);
+    std::vector<U8> packetData(packetSize);
+    Fw::Buffer packetBuffer(packetData.data(), packetSize);
+    Fw::DpContainer cont(0x123, packetBuffer);
+    cont.setPriority(10);
+    cont.setTimeTag(time);
+    cont.setDpState(Fw::DpState::UNTRANSMITTED);
+    cont.setDataSize(16);
+    cont.serializeHeader();
+    const U32 computedHash = cont.getHeaderHash().asBigEndianU32();
+    packetData[Fw::DpContainer::HEADER_HASH_OFFSET]++;
+    const U32 storedHash = cont.getHeaderHash().asBigEndianU32();
+
     this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
@@ -978,7 +992,7 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     ASSERT_EVENTS_FileHdrError_SIZE(1);
-    ASSERT_EVENTS_FileHdrError(0, fileName.toChar(), DpHdrField::CRC, 635957387, 652734603);
+    ASSERT_EVENTS_FileHdrError(0, fileName.toChar(), DpHdrField::CRC, computedHash, storedHash);
 
     this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
     this->component.doDispatch();

@@ -6,6 +6,10 @@
 
 #include <limits>
 
+#include "Fw/Cmd/CmdResponseEnumAc.hpp"
+#include "Fw/Log/LogSeverityEnumAc.hpp"
+#include "Fw/Prm/ParamValidEnumAc.hpp"
+#include "Fw/Tlm/TlmValidEnumAc.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
@@ -15,7 +19,58 @@
 #include "config/FwChanIdTypeAliasAc.h"
 #include "config/FwPacketDescriptorTypeAliasAc.h"
 #include "config/FwPrmIdTypeAliasAc.h"
+#include "fprime.h"
 #include "spacewasm.h"
+
+// Guest ABI cross-checks
+namespace {
+//! True when a guest ABI ordinal equals its framework enum counterpart. The two are
+//! unrelated enumeration types, so compare their widened values rather than the
+//! enumerators (which -Wenum-compare rejects).
+template <typename GuestEnum, typename FrameworkEnum>
+constexpr bool sameOrdinal(GuestEnum guest, FrameworkEnum framework) {
+    return static_cast<I32>(guest) == static_cast<I32>(framework);
+}
+}  // namespace
+
+static_assert(sameOrdinal(FPRIME_TLM_VALID, Fw::TlmValid::VALID), "guest FPRIME_TLM_* must match Fw::TlmValid");
+static_assert(sameOrdinal(FPRIME_TLM_INVALID, Fw::TlmValid::INVALID), "guest FPRIME_TLM_* must match Fw::TlmValid");
+
+static_assert(sameOrdinal(FPRIME_PARAM_UNINIT, Fw::ParamValid::UNINIT),
+              "guest FPRIME_PARAM_* must match Fw::ParamValid");
+static_assert(sameOrdinal(FPRIME_PARAM_VALID, Fw::ParamValid::VALID), "guest FPRIME_PARAM_* must match Fw::ParamValid");
+static_assert(sameOrdinal(FPRIME_PARAM_INVALID, Fw::ParamValid::INVALID),
+              "guest FPRIME_PARAM_* must match Fw::ParamValid");
+static_assert(sameOrdinal(FPRIME_PARAM_DEFAULT, Fw::ParamValid::DEFAULT),
+              "guest FPRIME_PARAM_* must match Fw::ParamValid");
+
+static_assert(sameOrdinal(FPRIME_CMD_OK, Fw::CmdResponse::OK), "guest FPRIME_CMD_* must match Fw::CmdResponse");
+static_assert(sameOrdinal(FPRIME_CMD_INVALID_OPCODE, Fw::CmdResponse::INVALID_OPCODE),
+              "guest FPRIME_CMD_* must match Fw::CmdResponse");
+static_assert(sameOrdinal(FPRIME_CMD_VALIDATION_ERROR, Fw::CmdResponse::VALIDATION_ERROR),
+              "guest FPRIME_CMD_* must match Fw::CmdResponse");
+static_assert(sameOrdinal(FPRIME_CMD_FORMAT_ERROR, Fw::CmdResponse::FORMAT_ERROR),
+              "guest FPRIME_CMD_* must match Fw::CmdResponse");
+static_assert(sameOrdinal(FPRIME_CMD_EXECUTION_ERROR, Fw::CmdResponse::EXECUTION_ERROR),
+              "guest FPRIME_CMD_* must match Fw::CmdResponse");
+static_assert(sameOrdinal(FPRIME_CMD_BUSY, Fw::CmdResponse::BUSY), "guest FPRIME_CMD_* must match Fw::CmdResponse");
+static_assert(sameOrdinal(FPRIME_CMD_CLEARED, Fw::CmdResponse::CLEARED),
+              "guest FPRIME_CMD_* must match Fw::CmdResponse");
+
+static_assert(sameOrdinal(FPRIME_EVENT_FATAL, Fw::LogSeverity::FATAL),
+              "guest FPRIME_EVENT_* must match Fw::LogSeverity");
+static_assert(sameOrdinal(FPRIME_EVENT_WARNING_HI, Fw::LogSeverity::WARNING_HI),
+              "guest FPRIME_EVENT_* must match Fw::LogSeverity");
+static_assert(sameOrdinal(FPRIME_EVENT_WARNING_LO, Fw::LogSeverity::WARNING_LO),
+              "guest FPRIME_EVENT_* must match Fw::LogSeverity");
+static_assert(sameOrdinal(FPRIME_EVENT_COMMAND, Fw::LogSeverity::COMMAND),
+              "guest FPRIME_EVENT_* must match Fw::LogSeverity");
+static_assert(sameOrdinal(FPRIME_EVENT_ACTIVITY_HI, Fw::LogSeverity::ACTIVITY_HI),
+              "guest FPRIME_EVENT_* must match Fw::LogSeverity");
+static_assert(sameOrdinal(FPRIME_EVENT_ACTIVITY_LO, Fw::LogSeverity::ACTIVITY_LO),
+              "guest FPRIME_EVENT_* must match Fw::LogSeverity");
+static_assert(sameOrdinal(FPRIME_EVENT_DIAGNOSTIC, Fw::LogSeverity::DIAGNOSTIC),
+              "guest FPRIME_EVENT_* must match Fw::LogSeverity");
 
 namespace Svc {
 
