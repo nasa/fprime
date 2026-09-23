@@ -47,7 +47,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     // ----------------------------------------------------------------------
 
     //! Construct ComLoggerDp object
-    ComLoggerDp(const char* const compName  //!< The component name
+    explicit ComLoggerDp(const char* const compName  //!< The component name
     );
 
     //! Destroy ComLoggerDp object
