@@ -22,9 +22,11 @@
 //    ScopeLock are defined there). In addition, if the build links an Os_Mutex
 //    implementation module that also provides Os::ConditionVariable, that
 //    ConditionVariable must understand the aliased type's MutexHandle — e.g.
-//    Os/Posix/ConditionVariable.cpp reinterpret_casts the handle to PosixMutexHandle.
-//    Mixing a compile-time Mutex with a mismatched ConditionVariable implementation
-//    is undefined behavior with no build-time error.
+//    Os/Posix/ConditionVariable.cpp reinterpret_casts the handle to PosixMutexHandle
+//    and static_asserts that Os::Mutex is PosixMutex or DelegateMutex. Mixing a
+//    compile-time Mutex with a mismatched ConditionVariable implementation is
+//    undefined behavior; implementations that do not check the alias will not
+//    report a build-time error.
 //
 // Example compile-time selection override:
 //

@@ -3,7 +3,9 @@
 // \brief Posix implementations for Os::ConditionVariable
 // ======================================================================
 #include "Os/Posix/ConditionVariable.hpp"
+#include <type_traits>
 #include "Fw/Types/Assert.hpp"
+#include "Os/DelegateMutex.hpp"
 #include "Os/Posix/Mutex.hpp"
 #include "Os/Posix/error.hpp"
 
@@ -20,6 +22,9 @@ PosixConditionVariable::~PosixConditionVariable() {
 }
 
 PosixConditionVariable::Status PosixConditionVariable::pend(Os::Mutex& mutex) {
+    // The handle is only a PosixMutexHandle when Os::Mutex is PosixMutex or the link-time delegate backed by it
+    static_assert(std::is_same<Os::Mutex, Os::DelegateMutex>::value || std::is_same<Os::Mutex, PosixMutex>::value,
+                  "Os::Mutex alias is not compatible with the Posix ConditionVariable implementation");
     PosixMutexHandle* mutex_handle = reinterpret_cast<PosixMutexHandle*>(mutex.getHandle());
     FW_ASSERT(mutex_handle != nullptr);
     int status = pthread_cond_wait(&this->m_handle.m_condition, &mutex_handle->m_mutex_descriptor);
