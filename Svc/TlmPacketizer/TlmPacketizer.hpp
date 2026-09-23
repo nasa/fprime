@@ -163,6 +163,18 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         FwChanIdType id;       //!< channel id
         FwChanIdType level;    //!< channel level
         bool updated;          //!< if packet had any updates during last cycle
+        Os::Mutex lock;        //!< used to lock access to this particular packet buffer
+
+        // Re-Implement the copy the sans lock version got for free
+        BufferEntry& operator=(const BufferEntry& other) {
+            this->buffer = other.buffer;
+            this->latestTime = other.latestTime;
+            this->id = other.id;
+            this->level = other.level;
+            this->updated = other.updated;
+
+            return *this;
+        }
     };
 
     // buffers for filling with telemetry
@@ -179,8 +191,6 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         bool ignored;            //!< ignored channel id
         bool hasValue;           //!< if the entry has received a value at least once
     };
-
-    Os::Mutex m_lock;  //!< used to lock access to packet buffers
 
     bool m_configured;  //!< indicates a table has been passed and packets configured
 
