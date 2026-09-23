@@ -114,6 +114,54 @@ TEST(Nominal, DataProductFormat) {
     tester.testDataProductFormat();
 }
 
+// Test configure() with enabled=true
+TEST(Nominal, ConfigureEnabled) {
+    Svc::ComLoggerDpTester tester;
+    tester.testConfigureEnabled();
+}
+
+// Test reconfiguring while already recording with partial container
+TEST(Nominal, ReconfigureWithPartialContainer) {
+    Svc::ComLoggerDpTester tester;
+    tester.testReconfigureWithPartialContainer();
+}
+
+// Test packet too large to fit in container
+TEST(OffNominal, PacketTooLarge) {
+    Svc::ComLoggerDpTester tester;
+    tester.testPacketTooLarge();
+}
+
+// Test container overflow with partial send and retry
+TEST(Nominal, ContainerOverflowRetry) {
+    Svc::ComLoggerDpTester tester;
+    tester.testContainerOverflowRetry();
+}
+
+// Test PacketSerializationFailures telemetry counter
+TEST(Nominal, SerializationFailureCounter) {
+    Svc::ComLoggerDpTester tester;
+    tester.testSerializationFailureCounter();
+}
+
+// Test auto-flush after timeout with no new packets
+TEST(Nominal, AutoFlush) {
+    Svc::ComLoggerDpTester tester;
+    tester.testAutoFlush();
+}
+
+// Test auto-flush counter resets on packet arrival
+TEST(Nominal, AutoFlushResetOnPacket) {
+    Svc::ComLoggerDpTester tester;
+    tester.testAutoFlushResetOnPacket();
+}
+
+// Test auto-flush does not occur when disabled
+TEST(Nominal, AutoFlushDisabled) {
+    Svc::ComLoggerDpTester tester;
+    tester.testAutoFlushDisabled();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

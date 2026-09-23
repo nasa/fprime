@@ -6,7 +6,6 @@
 
 #include "Svc/ComLoggerDp/ComLoggerDp.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
-#include "default/config/ComLoggerDpCfg.hpp"
 
 namespace Svc {
 
@@ -22,7 +21,10 @@ ComLoggerDp ::~ComLoggerDp() {}
 // Public interface
 // ----------------------------------------------------------------------
 
-void ComLoggerDp ::configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority) {
+void ComLoggerDp ::configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority, U32 flushTimeout) {
+    // Store flush timeout setting
+    this->m_flushTimeout = flushTimeout;
+
     // If enabling, use the internal start function which validates parameters
     if (enabled) {
         // This will validate packetsPerContainer and set m_enabled
@@ -46,6 +48,9 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
     if (!this->m_enabled) {
         return;
     }
+
+    // Reset inactivity counter - we received a packet
+    this->m_schedCallsSinceLastPacket = 0;
 
     // Allocate container if needed
     if (this->m_currentPacketCount == 0) {
@@ -83,10 +88,25 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
     (void)portNum;
     (void)context;
 
+    // Check for auto-flush condition
+    // Note: m_flushTimeout > 0 check ensures auto-flush is disabled when timeout is 0
+    // Without this check, flushTimeout=0 would cause immediate flush (0 >= 0 is true)
+    if (this->m_enabled && this->m_currentPacketCount > 0 && this->m_flushTimeout > 0) {
+        ++this->m_schedCallsSinceLastPacket;
+
+        if (this->m_schedCallsSinceLastPacket >= this->m_flushTimeout) {
+            // Flush the partial container
+            this->finalizeFullContainer();
+            this->m_schedCallsSinceLastPacket = 0;
+        }
+    }
+
     // Write telemetry
     this->tlmWrite_LoggingEnabled(this->m_enabled);
     this->tlmWrite_NumBuffersLogged(this->m_numBuffersLogged);
     this->tlmWrite_NumBuffersDropped(this->m_numBuffersDropped);
+    this->tlmWrite_PacketSerializationFailures(this->m_numSerializationFailures);
+    this->tlmWrite_NumQueueDrops(static_cast<U32>(this->getNumMsgsDropped()));
 }
 
 void ComLoggerDp ::startRecordingIn_handler(FwIndexType portNum, U32 packetsPerContainer, FwDpPriorityType priority) {
@@ -115,8 +135,11 @@ void ComLoggerDp ::stopRecordingIn_handler(FwIndexType portNum) {
 // ----------------------------------------------------------------------
 
 bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority) {
-    // Validate packetsPerContainer is non-zero
-    if (packetsPerContainer == 0) {
+    // Validate packetsPerContainer is non-zero and doesn't exceed the max size that
+    // DP creation allows
+    constexpr U32 MAX_PACKETS_PER_CONTAINER =
+        static_cast<U32>((std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) / RECORD_SIZE);
+    if ((packetsPerContainer == 0) || (packetsPerContainer > MAX_PACKETS_PER_CONTAINER)) {
         // Disable logging on validation failure
         this->m_enabled = false;
         return false;
@@ -132,6 +155,9 @@ bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityT
     this->m_packetsPerContainer = packetsPerContainer;
     this->m_currentPacketCount = 0;
     this->m_priority = priority;
+
+    // Reset inactivity counter
+    this->m_schedCallsSinceLastPacket = 0;
 
     // Enable logging
     this->m_enabled = true;
@@ -157,6 +183,9 @@ U32 ComLoggerDp ::stopRecordingInternal() {
     // Disable logging
     this->m_enabled = false;
 
+    // Reset inactivity counter
+    this->m_schedCallsSinceLastPacket = 0;
+
     // Log event
     this->log_ACTIVITY_HI_ComDpStopped(numSent);
 
@@ -172,9 +201,7 @@ bool ComLoggerDp ::allocateAndSetupContainer() {
     // Calculate data size needed for the requested number of packets
     // Each record holds a sentry plus up to FW_COM_BUFFER_MAX_SIZE bytes
     // Note: DpManager adds the container header overhead, so we only request the data size
-    const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
-    const FwSizeType containerSize =
-        this->m_packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
+    const FwSizeType containerSize = this->m_packetsPerContainer * RECORD_SIZE;
 
     // Get a container buffer
     const Fw::Success status = this->dpGet_ComBuffContainer(containerSize, this->m_container);
@@ -214,11 +241,12 @@ bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSi
     }
 
     // Serialization failed - container is likely full
-    // Send the current partial container if it has any packets
-    if (this->m_currentPacketCount > 0) {
-        this->dpSend(this->m_container);
-        // Note: dpSend() invalidates the container; must allocate new one for next use
-    }
+    // Increment serialization failure counter
+    ++this->m_numSerializationFailures;
+
+    // Send the current partial container
+    this->dpSend(this->m_container);
+    // clear counter
     this->m_currentPacketCount = 0;
 
     // Try to allocate a new container for retry
@@ -297,6 +325,9 @@ void ComLoggerDp ::CLEAR_COUNTERS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     // Clear the NumBuffersDropped counter
     this->m_numBuffersDropped = 0;
+
+    // Clear the PacketSerializationFailures counter
+    this->m_numSerializationFailures = 0;
 
     // Clear the DpBufferError event throttle
     this->log_WARNING_HI_DpBufferError_ThrottleClear();

@@ -9,7 +9,7 @@
 
 #include "Fw/Dp/DpContainer.hpp"
 #include "Svc/ComLoggerDp/ComLoggerDpComponentAc.hpp"
-#include "default/config/ComLoggerDpCfg.hpp"
+#include "config/ComLoggerDpCfg.hpp"
 
 namespace Svc {
 
@@ -18,6 +18,10 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     // ----------------------------------------------------------------------
     // Public interface
     // ----------------------------------------------------------------------
+
+    //! Serialized size of one ComBufferRecord holding a sentry plus a maximum-size ComBuffer
+    static constexpr FwSizeType RECORD_SIZE =
+        SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry));
 
     //! Calculate total buffer size needed for a data product container
     //! This is the TOTAL size including:
@@ -35,8 +39,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! \param packetsPerContainer: Number of packets that will fit in the container
     //! \return Total buffer size in bytes needed for the complete container
     static constexpr FwSizeType ComLoggerDpBuffSize(U32 packetsPerContainer) {
-        return DpContainer::MIN_PACKET_SIZE +
-               packetsPerContainer * SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry));
+        return DpContainer::MIN_PACKET_SIZE + packetsPerContainer * RECORD_SIZE;
     }
 
     // ----------------------------------------------------------------------
@@ -44,7 +47,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     // ----------------------------------------------------------------------
 
     //! Construct ComLoggerDp object
-    ComLoggerDp(const char* const compName  //!< The component name
+    explicit ComLoggerDp(const char* const compName  //!< The component name
     );
 
     //! Destroy ComLoggerDp object
@@ -62,10 +65,13 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Move assignment operator (deleted)
     ComLoggerDp& operator=(ComLoggerDp&&) = delete;
 
+    //! Configure initial logging state; must be called once after init()
+    //! If enabled is true and packetsPerContainer == 0, logging stays disabled (no event is emitted)
     //! \param enabled: whether data product logging is initially enabled
-    //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true)
-    //! \param priority: data product priority
-    void configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority);
+    //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true, ignored otherwise)
+    //! \param priority: data product priority (ignored if enabled is false)
+    //! \param flushTimeout: number of schedIn calls without packets before auto-flush (0 = disable auto-flush)
+    void configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority, U32 flushTimeout);
 
   private:
     // ----------------------------------------------------------------------
@@ -197,12 +203,21 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Number of buffers dropped due to allocation failure
     U32 m_numBuffersDropped{0};
 
+    //! Number of times packet serialization failed and required retry
+    U32 m_numSerializationFailures{0};
+
+    //! Counter for schedIn calls since last packet received
+    U32 m_schedCallsSinceLastPacket{0};
+
+    //! Number of schedIn calls without packets before auto-flush (0 = disabled)
+    U32 m_flushTimeout{0};
+
     //! Priority for data products
     FwDpPriorityType m_priority{5};  // Default priority from FPP
 
     //! Buffer for building records with sentry + ComBuffer data
     //! Size: sentry (4 bytes) + max ComBuffer size
-    U8 m_recordBuffer[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)];
+    U8 m_recordBuffer[FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry)];
 };
 
 }  // namespace Svc

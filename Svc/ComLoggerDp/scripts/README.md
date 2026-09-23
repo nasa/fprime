@@ -1,12 +1,50 @@
-# ComLoggerDp Scripts
-
-This directory contains utility scripts for working with ComLoggerDp data products.
-
-## decode_comlogger_dp.py
+# ComLoggerDp Decoder Script
 
 A Python script that decodes ComLoggerDp data product binary files directly into human-readable events and telemetry channels, **without** requiring intermediate JSON dictionary generation.
 
-### Features
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage Modes](#usage-modes)
+  - [Single File Processing](#single-file-processing)
+  - [Batch Directory Processing](#batch-directory-processing)
+  - [Collection Mode](#collection-mode-gds-style-log-aggregation)
+  - [Reconstruction Mode](#reconstruction-mode-data-recovery)
+- [Command Line Reference](#command-line-reference)
+- [How It Works](#how-it-works)
+- [Output Formats](#output-formats)
+- [Examples](#examples)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## Quick Start
+
+### Installation
+
+```bash
+# Ensure fprime-gds is installed
+pip install fprime-gds
+```
+
+### Basic Usage
+
+```bash
+# Decode a single file
+python decode_comlogger_dp.py --input-file data_product.fdp
+
+# Decode all files in a directory
+python decode_comlogger_dp.py --input-dir /path/to/dps --dp-id 134217728
+
+# Aggregate into GDS-style logs
+python decode_comlogger_dp.py --input-dir /path/to/dps --dp-id 134217728 --collect
+```
+
+---
+
+## Features
 
 - **Direct binary decoding** - Processes `.bin`/`.fdp` files directly
 - **Full packet reconstruction** - Extracts and decodes ComBuffer packets
@@ -19,19 +57,39 @@ A Python script that decodes ComLoggerDp data product binary files directly into
 - **Reconstruction mode** - Recover data from corrupted or partial files
 - **Error handling** - Graceful handling of corrupted or unknown packets
 
-### Requirements
+### What Gets Decoded
+
+✅ **Events** - Full event messages with severity, timestamp, and arguments  
+✅ **Telemetry Channels** - Channel values with timestamps  
+✅ **Packet Metadata** - Packet types, sentry values, record indices  
+✅ **Container Metadata** - Priority, container ID, timestamps
+
+---
+
+## Installation
 
 ```bash
-# F Prime GDS must be installed
+# Install F Prime GDS
 pip install fprime-gds
 ```
 
-### Usage
+The script is located in the ComLoggerDp component scripts directory:
+```bash
+cd /path/to/fprime/Svc/ComLoggerDp/scripts
+```
 
-#### Single File Processing
+---
+
+## Usage Modes
+
+### Single File Processing
+
+Decode a single data product file into JSON and/or text format.
+
+#### Basic Usage
 
 ```bash
-# Decode a single file with auto-detected dictionaries
+# Decode with auto-detected dictionaries
 python decode_comlogger_dp.py --input-file data_product.fdp
 
 # Specify dictionary path
@@ -39,59 +97,111 @@ python decode_comlogger_dp.py --input-file data_product.fdp --dict-path /path/to
 
 # Specify output file
 python decode_comlogger_dp.py --input-file data_product.fdp --output-file decoded.json
+```
 
+#### Output Format Options
+
+```bash
 # JSON output only
 python decode_comlogger_dp.py --input-file data_product.fdp --format json
 
 # Text output only
 python decode_comlogger_dp.py --input-file data_product.fdp --format text
+
+# Both (default)
+python decode_comlogger_dp.py --input-file data_product.fdp --format both
 ```
 
-#### Batch Directory Processing
+**Result**: Creates `data_product.json` and/or `data_product.txt` in the same directory.
+
+---
+
+### Batch Directory Processing
+
+Process entire directories containing data product files.
+
+#### Basic Usage
 
 ```bash
-# Decode all files with specific container ID in a directory
+# Decode all files with specific container ID
 python decode_comlogger_dp.py --input-dir /path/to/dps --dp-id 134217728
 
 # Use hex notation for container ID
 python decode_comlogger_dp.py --input-dir /path/to/dps --dp-id 0x08000000
 
-# Specify output directory for batch processing
+# Specify output directory
 python decode_comlogger_dp.py --input-dir /path/to/dps --dp-id 134217728 \
   --output-dir /path/to/output
 
-# Specify dictionary path
+# With dictionary path
 python decode_comlogger_dp.py --input-dir /path/to/dps --dp-id 134217728 \
   --dict-path /path/to/dict
-
-# Process directory with JSON output only
-python decode_comlogger_dp.py --input-dir /path/to/dps --dp-id 134217728 --format json
 ```
 
-#### Advanced Options
+#### Finding Your Container ID
 
+The container ID uniquely identifies which data product container the files belong to.
+
+**Method 1: From Filename**
+
+Data product filenames follow the pattern: `Dp_<container_id>_<timestamp>_<sequence>.fdp`
+
+Example: `Dp_134217728_1789761500_00043237.fdp`
+- Container ID: **134217728** (decimal) or **0x08000000** (hex)
+
+**Method 2: From FPP Topology**
+
+Check your topology FPP file for the ComLoggerDp instance:
+```fpp
+instance comLogger: Svc.ComLoggerDp base id 0x8000
+```
+
+The container ID is the base ID shifted left by 20 bits:
+- Base ID: `0x8000`
+- Container ID: `0x08000000` (134217728 decimal)
+
+**Method 3: From Existing JSON**
+
+If you have decoded JSON files:
 ```bash
-# Override sentry value (if different from default)
-python decode_comlogger_dp.py --input-file data_product.fdp --sentry 0x12345678
-
-# Skip CRC validation (for corrupted files)
-python decode_comlogger_dp.py --input-file data_product.fdp --no-crc
-
-# Skip sentry validation (for testing)
-python decode_comlogger_dp.py --input-file data_product.fdp --no-sentry
-
-# Specify custom output file (single file only)
-python decode_comlogger_dp.py --input-file data_product.fdp \
-  --output-file my_output.json --format json
-
-# Batch process with custom output directory
-python decode_comlogger_dp.py --input-dir /path/to/dps --dp-id 0x08000000 \
-  --output-dir /custom/output --dict-path /path/to/dict
+python -c "import json; print(json.load(open('file.json'))['header']['Id']['value'])"
 ```
 
-#### Collection Mode (GDS-Style Log Aggregation)
+#### Batch Processing Features
 
-Aggregate all data products from a directory into GDS-compatible log files:
+- **Automatic File Discovery**: Finds all files matching `Dp_<container_id>_*.fdp` or `Dp_<container_id>_*.bin`
+- **Progress Indication**: Shows processing status for each file
+- **Error Handling**: Continues processing even if individual files fail
+- **Summary Report**: Provides statistics on successful/failed processing
+
+#### Output Files
+
+For each input file, the decoder creates output based on the format:
+
+**Input**: `Dp_134217728_1789761500_00043237.fdp`
+
+**Output (format: both)**:
+- `Dp_134217728_1789761500_00043237.json` - Complete structured data
+- `Dp_134217728_1789761500_00043237.txt` - Human-readable text
+
+---
+
+### Collection Mode (GDS-Style Log Aggregation)
+
+Aggregate all data products from a directory into GDS-compatible log files. This creates a unified timeline of events and telemetry that matches the format produced by the F Prime Ground Data System (GDS).
+
+#### When to Use Collection Mode
+
+Use `--collect` when you want to:
+
+- **Post-mission analysis** - Analyze recorded data after a test or mission
+- **Timeline reconstruction** - Create a chronological view of all events and telemetry
+- **GDS log comparison** - Compare recorded data with real-time GDS logs
+- **Trending analysis** - Analyze telemetry trends over time
+- **Event correlation** - Find relationships between events across multiple data products
+- **Report generation** - Generate summaries from data product archives
+
+#### Basic Usage
 
 ```bash
 # Collect all DPs into GDS-style logs
@@ -106,32 +216,85 @@ python decode_comlogger_dp.py --input-dir /path/to/dps --dp-id 134217728 \
   --collect --dict-path /path/to/dict
 ```
 
-**Collection Mode Features:**
+#### Output Structure
 
-- Aggregates all events into single `events-dp.log` file
-- Aggregates all telemetry into single `channels-dp.log` file
-- Output format matches F Prime GDS log format exactly
-- Creates timestamped directory: `comlogger-dp-YYYY_MM_DD-HH_MM_SS/`
-- All entries sorted chronologically
-- Includes README with statistics and viewing instructions
+Collection mode creates a timestamped directory:
 
-**Output Format:**
-
-```text
-Events: <ISO_timestamp>,(<fprime_time>),<event_name>,<id>,<severity>,<message>
-Channels: <ISO_timestamp>,(<fprime_time>),<channel_name>,<id>,<value>
+```
+comlogger-dp-YYYY_MM_DD-HH_MM_SS/
+├── events-dp.log      # All events, sorted chronologically
+├── channels-dp.log    # All telemetry, sorted chronologically
+└── README.txt         # Statistics and viewing instructions
 ```
 
-**Use Cases:**
+#### Log Format
 
-- Post-mission analysis of recorded data
-- Generating reports from data product archives
-- Comparing recorded data with real-time GDS logs
-- Batch analysis of events and telemetry trends
+**Events Log Format** (`events-dp.log`):
+```text
+<ISO_timestamp>,(<fprime_time>),<event_name>,<event_id>,<severity>,<message>
+```
 
-#### Reconstruction Mode (Data Recovery)
+Example:
+```text
+2026-09-18T19:58:15.779517,(2(0)-1789761495:779517),RecordedCom.comLogger.ComDpStarted,134217729,EventSeverity.ACTIVITY_HI,Started Com DP logging: 10 packets per container
+```
 
-For corrupted or partial data product files, use `--reconstruct` to scan for sentinels and extract records:
+**Channels Log Format** (`channels-dp.log`):
+```text
+<ISO_timestamp>,(<fprime_time>),<channel_name>,<channel_id>,<value>
+```
+
+Example:
+```text
+2026-09-18T19:58:16.043416,(2(0)-1789761496:43416),RecordedCom.comLogger.LoggingEnabled,134217728,True
+```
+
+#### Collection Mode Features
+
+- **GDS Format Compatibility**: Output matches F Prime GDS logs exactly
+- **Chronological Sorting**: All entries sorted by timestamp across all data products
+- **Timestamped Directories**: Each collection creates a new directory to avoid overwriting
+- **Progress Reporting**: Shows real-time processing status
+- **Statistics**: Reports files processed, events collected, channels collected
+
+#### Viewing Collected Logs
+
+```bash
+# View all events
+cat events-dp.log
+
+# Search for specific event
+grep "ComDpStarted" events-dp.log
+
+# Search for component events
+grep "RecordedCom\." events-dp.log
+
+# Search for channel
+grep "systemResources.CPU" channels-dp.log
+
+# Count events by severity
+grep "EventSeverity.COMMAND" events-dp.log | wc -l
+
+# Extract channel values
+awk -F',' '{print $3, $5}' channels-dp.log
+```
+
+---
+
+### Reconstruction Mode (Data Recovery)
+
+For corrupted or partial data product files, use `--reconstruct` to scan for sentinels and extract records.
+
+#### When to Use Reconstruction Mode
+
+Use `--reconstruct` for:
+
+- **Partial file downloads** - Incomplete data product files
+- **Corrupted files** - Files with damaged headers or trailers
+- **Missing headers** - Data without proper DP structure
+- **Storage damage** - Data recovered from damaged storage
+
+#### Basic Usage
 
 ```bash
 # Reconstruct records from corrupted file
@@ -145,47 +308,87 @@ python decode_comlogger_dp.py --input-file corrupted.bin --reconstruct \
   --format json --output-file recovered.json
 ```
 
-**Reconstruction Mode Features:**
-- Scans entire file for sentry values
-- Ignores garbage/corrupted data before first sentinel
-- Extracts data between sentinels as ComBuffer records
-- Makes best-effort decode of each extracted record
-- Continues processing even if individual records fail
-- Reports detailed statistics on recovery success
+#### Reconstruction Mode Features
 
-**Use Cases:**
-- Partial file downloads
-- Corrupted data product files
-- Files with missing headers or trailers
-- Data recovered from damaged storage
+- **Sentry scanning** - Scans entire file for sentry values (default: 0xDEADBEEF)
+- **Garbage tolerance** - Ignores garbage/corrupted data before first sentinel
+- **Best-effort decode** - Extracts data between sentinels as ComBuffer records
+- **Error resilience** - Continues processing even if individual records fail
+- **Detailed statistics** - Reports recovery success rate
 
-#### Finding Container ID
+#### How It Works
 
-The container ID can be found in several ways:
+1. Scans entire file for 4-byte sentry values
+2. Extracts data between consecutive sentries as ComBuffer records
+3. Attempts to decode each extracted record
+4. Reports statistics on recovery success
 
-1. **From the filename**: Data product files are typically named `Dp_<container_id>_<timestamp>_<sequence>.fdp`
-   - Example: `Dp_134217728_1789761500_00043237.fdp` has container ID 134217728 (0x08000000)
+---
 
-2. **From the FPP definition**: Check your project's ComLoggerDp instance in the topology FPP file
-   ```fpp
-   instance comLogger: Svc.ComLoggerDp base id 0x8000
-   ```
-   The container ID will be `0x08000000` (base ID shifted left by 20 bits)
+## Command Line Reference
 
-3. **From existing JSON**: If you have decoded JSON files, check the `Id` field in the header:
-   ```bash
-   python -c "import json; print(json.load(open('file.json'))['header']['Id']['value'])"
-   ```
+### Input Arguments (Required - Choose One)
 
-### How It Works
+```bash
+--input-file PATH       # Decode a single data product file
+--input-dir PATH        # Decode all matching files in a directory
+```
+
+### Container ID (Required with --input-dir)
+
+```bash
+--dp-id ID              # Container ID filter (decimal or hex)
+                        # Examples: --dp-id 134217728 or --dp-id 0x08000000
+```
+
+### Dictionary Arguments (Optional)
+
+```bash
+--dict-path PATH        # Path to F Prime dictionary directory
+-d PATH                 # Short form (auto-detected if omitted)
+```
+
+### Output Location Arguments (Optional)
+
+```bash
+--output-file PATH      # Output file for single file mode (extension added)
+--output-dir PATH       # Output directory for batch mode (default: input dir)
+--collect-dir PATH      # Base directory for collection mode (default: current dir)
+```
+
+### Output Format Arguments (Optional)
+
+```bash
+--format FORMAT         # Output format: json, text, or both (default: both)
+-f FORMAT               # Short form
+```
+
+### Validation Arguments (Optional)
+
+```bash
+--sentry VALUE          # Override sentry value (e.g., 0xDEADBEEF)
+--no-crc                # Skip CRC validation
+--no-sentry             # Skip sentry validation
+```
+
+### Mode Arguments (Optional)
+
+```bash
+--reconstruct           # Reconstruction mode (single file only)
+--collect               # Collection mode (directory only)
+```
+
+---
+
+## How It Works
 
 The decoder processes ComLoggerDp data products in four phases:
 
-#### Phase 1: Parse Data Product Structure
+### Phase 1: Parse Data Product Structure
 - Reads the standard F Prime DP header (Container ID, Time, Priority, DataSize)
 - Validates header CRC32 checksum
 
-#### Phase 2: Extract ComBuffer Records
+### Phase 2: Extract ComBuffer Records
 - Iterates through all records in the data section
 - For each record:
   - Reads record ID (should be 0 for ComBufferRecord)
@@ -194,12 +397,12 @@ The decoder processes ComLoggerDp data products in four phases:
   - Extracts raw ComBuffer data
 - Validates data section CRC32 checksum
 
-#### Phase 3: Decode ComBuffers
+### Phase 3: Decode ComBuffers
 - For each ComBuffer:
   - Extracts packet type (FwPacketDescriptorType - 2 bytes)
   - Identifies packet as Event, Telemetry, or other type
-  
-#### Phase 4: Decode Packets
+
+### Phase 4: Decode Packets
 - **Events (FW_PACKET_LOG)**:
   - Extracts event ID, timestamp, and arguments
   - Looks up event definition in dictionary
@@ -212,10 +415,14 @@ The decoder processes ComLoggerDp data products in four phases:
   - Deserializes value based on channel type
   - Outputs component name, channel name, and value
 
-### Output Formats
+---
 
-#### JSON Output
+## Output Formats
+
+### JSON Output
+
 Complete structured output with all fields:
+
 ```json
 {
   "header": {
@@ -255,8 +462,10 @@ Complete structured output with all fields:
 }
 ```
 
-#### Text Output
+### Text Output
+
 Human-readable format suitable for logs:
+
 ```
 ================================================================================
 ComLoggerDp Data Product Decoder Output
@@ -298,9 +507,149 @@ Packet type breakdown:
   FW_PACKET_TELEM: 1
 ```
 
-### Binary Structure Reference
+---
 
-#### Data Product File Structure
+## Examples
+
+### Example 1: Single File Decode
+
+```bash
+# Decode with both JSON and text output
+python decode_comlogger_dp.py --input-file data_product.fdp
+
+# View results
+cat data_product.txt
+jq . data_product.json
+```
+
+### Example 2: Batch Processing
+
+```bash
+# Process all files with container ID 134217728
+python decode_comlogger_dp.py --input-dir /data/dps --dp-id 134217728
+
+# Result: All matching files decoded in /data/dps/
+```
+
+### Example 3: Collection for Analysis
+
+```bash
+# Collect all events and telemetry
+python decode_comlogger_dp.py --input-dir /data/dps --dp-id 134217728 --collect
+
+# Analyze results
+cd comlogger-dp-*/
+
+# Count events
+wc -l events-dp.log
+
+# Search for specific events
+grep "ComDpStarted" events-dp.log
+
+# Extract CPU telemetry trend
+grep "CPU_00" channels-dp.log | awk -F',' '{print $1, $5}' > cpu_trend.csv
+```
+
+### Example 4: Recover Corrupted File
+
+```bash
+# Scan for sentinels and extract data
+python decode_comlogger_dp.py --input-file corrupted.bin --reconstruct
+
+# View recovered data
+cat corrupted.txt
+```
+
+### Example 5: Custom Output Location
+
+```bash
+# Save decoded files to different location
+python decode_comlogger_dp.py --input-dir /data/raw_dps \
+  --dp-id 134217728 \
+  --output-dir /data/decoded_dps \
+  --dict-path /path/to/dict
+```
+
+### Example 6: Skip Validation
+
+```bash
+# Process files even if checksums fail
+python decode_comlogger_dp.py --input-dir /data/dps \
+  --dp-id 134217728 \
+  --no-crc \
+  --no-sentry
+```
+
+---
+
+## Troubleshooting
+
+### "ComLoggerDpSentry not found in config"
+
+The script will use a default sentry value (0xDEADBEEF). If your deployment uses a different sentry value, specify it:
+
+```bash
+python decode_comlogger_dp.py data_product.bin --sentry 0x12345678
+```
+
+### "Channel/Event not found in dictionary"
+
+Make sure the dictionary path is correct and matches the build that generated the data product:
+
+```bash
+python decode_comlogger_dp.py data_product.bin --dict-path /path/to/correct/dict
+```
+
+### CRC validation errors
+
+If the file is corrupted or was generated with checksums disabled:
+
+```bash
+python decode_comlogger_dp.py data_product.bin --no-crc
+```
+
+### Sentry validation errors
+
+If records have the wrong sentry value, you can either:
+1. Specify the correct sentry: `--sentry 0xVALUE`
+2. Skip sentry validation: `--no-sentry`
+
+### No files found in batch mode
+
+```
+Error: No data product files found matching container ID 134217728
+```
+
+**Solutions**:
+- Verify the container ID is correct
+- Check if files use `.bin` extension instead of `.fdp`
+- List directory contents to confirm filename pattern
+
+### "fprime-gds not found"
+
+Install the fprime-gds package:
+
+```bash
+pip install fprime-gds
+```
+
+### Permission errors
+
+```
+Error: Permission denied: /path/to/output
+```
+
+**Solutions**:
+- Ensure write permissions for output directory
+- Try a different output directory
+- Use `sudo` if appropriate
+
+---
+
+## Binary Structure Reference
+
+### Data Product File Structure
+
 ```
 ┌─────────────────────────────────────────┐
 │ DP Header (variable size)               │
@@ -332,7 +681,8 @@ Packet type breakdown:
 └─────────────────────────────────────────┘
 ```
 
-#### ComBuffer Structure
+### ComBuffer Structure
+
 ```
 ┌─────────────────────────────────────────┐
 │ Packet Type (FwPacketDescriptorType)    │
@@ -353,32 +703,9 @@ Packet type breakdown:
 └─────────────────────────────────────────┘
 ```
 
-### Troubleshooting
+---
 
-#### "ComLoggerDpSentry not found in config"
-The script will use a default sentry value (0xDEADBEEF). If your deployment uses a different sentry value, specify it with `--sentry`:
-```bash
-python decode_comlogger_dp.py data_product.bin --sentry 0x12345678
-```
-
-#### "Channel/Event not found in dictionary"
-Make sure the dictionary path is correct and matches the build that generated the data product:
-```bash
-python decode_comlogger_dp.py data_product.bin --dict-path /path/to/correct/dict
-```
-
-#### CRC validation errors
-If the file is corrupted or was generated with checksums disabled, you can skip validation:
-```bash
-python decode_comlogger_dp.py data_product.bin --no-crc
-```
-
-#### Sentry validation errors
-If records have the wrong sentry value, you can either:
-1. Specify the correct sentry: `--sentry 0xVALUE`
-2. Skip sentry validation: `--no-sentry`
-
-### Integration with F Prime Workflows
+## Integration with F Prime Workflows
 
 This script complements the standard F Prime data product tools:
 
@@ -392,14 +719,9 @@ python decode_comlogger_dp.py data_product.bin
 
 The ComLoggerDp decoder is specifically optimized for ComLogger data products and provides deeper insight into the original Com packets.
 
-## Additional Documentation
+---
 
-- **[QUICK_START.md](QUICK_START.md)** - Quick reference guide with common commands
-- **[BATCH_PROCESSING.md](BATCH_PROCESSING.md)** - Detailed guide for processing multiple files
-- **[COLLECTION_MODE.md](COLLECTION_MODE.md)** - GDS-style log aggregation guide
-- **[RECONSTRUCTION_MODE.md](RECONSTRUCTION_MODE.md)** - Data recovery from corrupted files
-
-### See Also
+## See Also
 
 - [ComLoggerDp Component Documentation](../docs/sdd.md)
 - [F Prime Data Products User Guide](https://nasa.github.io/fprime/)
