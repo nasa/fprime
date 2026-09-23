@@ -50,9 +50,9 @@ scaffolding and an entry point that does nothing. Everything else on this page r
 One command with constant arguments, nothing else, for each argument shape the dictionary offers. The Wasm column is
 split into the module's code and data sections, because which one grows is the whole story:
 
-| Argument shape                          | Example command            | Standard (`.bin`) | Wasm (`.wasm`) | Code | Data |
+| Arguments                               | Example command            | Standard (`.bin`) | Wasm (`.wasm`) | Code | Data |
 | --------------------------------------- | -------------------------- | ----------------: | -------------: | ---: | ---: |
-| None — opcode only                      | `CMD_NO_OP`                |              34 B |          122 B | 19 B |  8 B |
+| None (opcode only)                      | `CMD_NO_OP`                |              34 B |          122 B | 19 B |  8 B |
 | One `bool`                              | `SEND_BOOL`                |              35 B |          126 B | 19 B | 12 B |
 | One enum                                | `CHOICE`                   |              38 B |          129 B | 19 B | 15 B |
 | One aliased scalar                      | `SEND_ALIAS`               |              38 B |          129 B | 19 B | 15 B |
@@ -95,18 +95,18 @@ that the code can point to.
 2. **Code cost does not vary.** Every row above costs the same 19 bytes of code, from a bare opcode to a
    struct of ten scalars. Only the data section grows with the serialized bytes.
 
-This is the property to design around: **argument shape is nearly free as long as the arguments are constants.** What
-costs code is computing them at run time — see [Runtime arguments](#runtime-arguments).
+This is the property to design around: **constant arguments are nearly free.** What
+costs code is computing them at run time. See [Runtime arguments](#runtime-arguments).
 
 ## Incremental sizing
 
 The marginal cost of one more command:
 
-| Added command                                          | Standard (`.bin`) | Wasm (`.wasm`) |
-| ------------------------------------------------------ | ----------------: | -------------: |
-| A repeat of a command already in the sequence          |   +19 B ... +28 B |         ~ +3 B |
-| A distinct `Dp` — enum, `U32`, enum (9 B of arguments) |             +28 B |        ~ +22 B |
-| A distinct string command (~11-character string)       |             +32 B |        ~ +25 B |
+| Added command                                    | Standard (`.bin`) | Wasm (`.wasm`) |
+| ------------------------------------------------ | ----------------: | -------------: |
+| A repeat of a command already in the sequence    |   +19 B ... +28 B |         ~ +3 B |
+| A distinct `Dp` (enum), `U32` (9 B of arguments) |             +28 B |        ~ +22 B |
+| A distinct string command (~11-character string) |             +32 B |        ~ +25 B |
 
 A standard sequence has no notion of a repeat: the tenth identical command costs another full record. A Wasm sequence
 merges identical constant buffers to one address, so a repeat costs only the instructions to call it again.
@@ -126,13 +126,17 @@ Because the Wasm marginal cost per command is *lower* than the standard one, the
 - Around **16 commands** if every command is distinct.
 
 Past that point the Wasm module is the smaller artifact, and it stays smaller as the sequence grows. For a handful of
-one-shot commands, a standard sequence is smaller — and that is the case where it is also the simpler tool.
+one-shot commands, a standard sequence is smaller.
 
 For the size of every benchmark sequence, see the [size comment][size-comment] CI posts on every `fprime-wasm` pull
 request. It carries the whole table, each row linked to the sequence's source, measured the same way as the
 figures on this page.
 
 ## Runtime arguments
+
+> [!NOTE]
+> The rest of this document does not compare standard with advanced sequencing as these
+> features are only supported in advanced sequencing.
 
 An argument that is *not* a compile-time constant cannot be encoded ahead of time. The module links the runtime
 serializer for that argument's type instead, and pays for it in code:
@@ -146,9 +150,8 @@ serializer for that argument's type instead, and pays for it in code:
 | [`fallback_struct_string`][fallback_struct_string] | 1094 B |  975 B | a structure with a string member     |
 | [`fallback_nested_string`][fallback_nested_string] | 1294 B | 1163 B | an array of strings                  |
 
-Two things to take from this table. A scalar or a whole structure computed at run time costs a hundred bytes or two —
-usually worth it, and often unavoidable. A **string inside an aggregate costs a kilobyte**, and that is the cliff to
-watch for.
+Two things to take from this table. A scalar or a whole structure computed at run time costs a hundred bytes or two.
+A **string inside a struct costs a kilobyte**.
 
 ## Strings
 
@@ -168,9 +171,8 @@ What is not free is a string the compiler cannot see:
 | [`serial_string`][serial_string]                   | 1614 B | a string serialized out a serial port                  |
 
 A string nested in a structure or array is a fixed-capacity buffer rather than a `&str`, so that shape can *never* be
-constant-encoded — it always pays for the runtime accessor, even when every character is a literal. If a command or a
-serial message with a string member is on a sequence's hot path for size, consider whether the string can be an
-argument in its own right instead of a struct member, or whether the value can be an enum.
+constant-encoded. If a command or a serial message with a string member is on a sequence's hot path for size,
+consider whether the string can be an argument in its own right instead of a struct member, or whether the value can be an enum.
 
 ## String formatting
 
@@ -227,7 +229,7 @@ Cheaper alternatives, best first:
 ## Rules of thumb
 
 - Keep command arguments compile-time constants where the logic allows.
-- Repeat commands freely — repeats deduplicate.
+- Repeat commands freely. Duplicate commands are reused.
 - Prefer literal event messages. Treat the first `{}` as a 3.4 KB decision.
 - Keep strings out of structures and arrays.
 - A handful of unconditional commands suits a standard sequence. Reach for an advanced sequence for logic, or past

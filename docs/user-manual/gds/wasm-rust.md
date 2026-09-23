@@ -102,8 +102,7 @@ fn powers_off_when_the_battery_is_low(t: Test) {
 fprime-wasm test
 ```
 
-The steps must happen in the order listed, but the list need not be exhaustive — a sequence may do other things in
-between, and commands the test says nothing about succeed.
+The steps must happen in the order listed. A sequence may do other things in between, and commands the test says nothing about succeed.
 
 ## Compiling A Sequence
 
@@ -128,7 +127,7 @@ fprime-wasm verify
 > ground may fail to load on board. A deployment with more than one sequencer instance wants one file per instance.
 
 > [!TIP]
-> For what a sequence costs on the wire and on board — and the two ways a small-looking sequence gets expensive — see
+> For what a sequence costs for uplink and on board see
 > [Advanced Sequence Size In F´](./wasm-size.md).
 
 ## Running The Sequence
