@@ -203,7 +203,7 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
         // check if current packet has this channel
         if (entry.packetOffset[pkt] != NOT_IN_PACKET) {
             // get destination address
-            this->m_lock.lock();
+            Os::ScopeLock lock(this->m_lock);
             this->m_fillBuffers[pkt].updated = true;
             this->m_fillBuffers[pkt].latestTime = timeTag;
             U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entry.packetOffset[pkt]];
@@ -211,7 +211,6 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
             (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getSize()));
             // set under the lock, after the copy, so TlmGet cannot see a value-less VALID entry
             entry.hasValue = true;
-            this->m_lock.unLock();
         }
     }
 }
@@ -268,7 +267,7 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
         // check if current packet has this channel
         if (entry.packetOffset[pkt] != NOT_IN_PACKET) {
             // okay, it has the channel. copy chan val into the tlm buf
-            this->m_lock.lock();
+            Os::ScopeLock lock(this->m_lock);
             timeTag = this->m_fillBuffers[pkt].latestTime;
             U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entry.packetOffset[pkt]];
             (void)memcpy(val.getBuffAddr(), ptr, static_cast<size_t>(entry.channelSize));
@@ -276,7 +275,6 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
             // so we may actually be filling val with some junk after the value of the channel.
             const Fw::SerializeStatus setStatus = val.setBuffLen(entry.channelSize);
             FW_ASSERT(setStatus == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(setStatus));
-            this->m_lock.unLock();
             return Fw::TlmValid::VALID;
         }
     }
@@ -296,13 +294,17 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
         // Local flags to track which sections require a packet dispatch
         bool sectionNeedsSend[TelemetrySection::NUM_SECTIONS] = {false};
         bool anySectionNeedsSend = false;
+        // Initialized w/in the ScopeLock
+        bool isNewData;
+        FwChanIdType entryGroup;
 
         // Lock only to capture the update status and reset the fill buffer flag.
-        this->m_lock.lock();
-        bool isNewData = this->m_fillBuffers[pkt].updated;
-        FwChanIdType entryGroup = this->m_fillBuffers[pkt].level;
-        this->m_fillBuffers[pkt].updated = false;
-        this->m_lock.unLock();
+        {
+          Os::ScopeLock lock(this->m_lock);
+          isNewData = this->m_fillBuffers[pkt].updated;
+          entryGroup = this->m_fillBuffers[pkt].level;
+          this->m_fillBuffers[pkt].updated = false;
+        }
 
         for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
             PktSendCounters& pktEntryFlags = this->m_packetFlags[static_cast<FwSizeType>(section)][pkt];
@@ -373,11 +375,15 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             }
         }
 
+        // Initialized w/in the ScopeLock
+        BufferEntry sendBuffer;
+
         // Only perform the buffer copy if at least one section needs to send.
         if (anySectionNeedsSend) {
-            this->m_lock.lock();
-            BufferEntry sendBuffer = this->m_fillBuffers[pkt];
-            this->m_lock.unLock();
+            {
+              Os::ScopeLock lock(this->m_lock);
+              sendBuffer = this->m_fillBuffers[pkt];
+            }
 
             // serialize time into time offset in packet
             Fw::ExternalSerializeBuffer buff(
@@ -450,10 +456,11 @@ void TlmPacketizer ::SEND_PKT_cmdHandler(const FwOpcodeType opCode,
     FwChanIdType pkt = 0;
     for (pkt = 0; pkt < this->m_numPackets; pkt++) {
         if (this->m_fillBuffers[pkt].id == id) {
-            this->m_lock.lock();
-            this->m_fillBuffers[pkt].updated = true;
-            this->m_fillBuffers[pkt].latestTime = this->getTime();
-            this->m_lock.unLock();
+            {
+                Os::ScopeLock lock(this->m_lock);
+                this->m_fillBuffers[pkt].updated = true;
+                this->m_fillBuffers[pkt].latestTime = this->getTime();
+            }
 
             this->m_packetFlags[section][pkt].updateFlag = UpdateFlag::REQUESTED;
 
