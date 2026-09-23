@@ -603,6 +603,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | LocalEid | Local CFDP entity ID used in PDU headers to identify this node in the CFDP network |
 | OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission |
 | RxCrcCalcBytesPerCycle | Maximum number of received file bytes to process for CRC calculation in a single scheduler cycle. Prevents blocking during large file verification |
+| PostInactivitySendRetries | Extra scheduler cycles a pending terminal send (EOF or FIN-ACK) is retried after the inactivity timer fires before the transaction is recycled regardless |
 | FileInDefaultChannel | CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
 | FileInDefaultDestEntityId | Destination entity ID used for file transfers initiated via the `fileIn` port interface |
 | FileInDefaultClass | CFDP class (CLASS_1 or CLASS_2) for file transfers initiated via the `fileIn` port interface |
@@ -684,6 +685,30 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 |---|---|---|
 | playbackCounter | U8 | Number of active directory playback operations |
 | pollCounter | U8 | Number of active directory poll operations |
+
+#### Parameter Telemetry
+
+In addition to `ChannelTelemetry`, `CfdpManager` mirrors every parameter to a
+telemetry channel so ground operators can verify the active configuration
+without relying on parameter-set confirmations alone. `parametersLoaded()`
+emits an initial sample for every channel by driving each parameter through
+`parameterUpdated()`; thereafter `parameterUpdated()` re-emits only the channel
+for the parameter that changed. Channel names follow the parameter-mimic
+convention (UPPER_SNAKE_CASE); descriptions and units are documented once at the
+parameter definitions in the [Parameters](#parameters) section above.
+
+| Channel | Type | Mirrors Parameter |
+|---|---|---|
+| LOCAL_EID | `EntityId` | LocalEid |
+| OUTGOING_FILE_CHUNK_SIZE | U32 | OutgoingFileChunkSize |
+| RX_CRC_CALC_BYTES_PER_CYCLE | U32 | RxCrcCalcBytesPerCycle |
+| POST_INACTIVITY_SEND_RETRIES | U8 | PostInactivitySendRetries |
+| FILE_IN_DEFAULT_CHANNEL | U8 | FileInDefaultChannel |
+| FILE_IN_DEFAULT_DEST_ENTITY_ID | `EntityId` | FileInDefaultDestEntityId |
+| FILE_IN_DEFAULT_CLASS | `Class` | FileInDefaultClass |
+| FILE_IN_DEFAULT_KEEP | `Keep` | FileInDefaultKeep |
+| FILE_IN_DEFAULT_PRIORITY | U8 | FileInDefaultPriority |
+| CHANNEL_CONFIG | `ChannelArrayParams` | ChannelConfig |
 
 ## Requirements
 

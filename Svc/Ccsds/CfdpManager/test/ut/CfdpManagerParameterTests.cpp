@@ -179,6 +179,178 @@ void CfdpManagerTester::testParamFileInDefaultPrioritySetGet() {
     ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
 }
 
+// ----------------------------------------------------------------------
+// Parameter Telemetry Tests
+// ----------------------------------------------------------------------
+//
+// Each parameter is mirrored to a telemetry channel from parameterUpdated().
+// parametersLoaded() drives every parameter through parameterUpdated() on load;
+// thereafter parameterUpdated() re-emits only the channel for the parameter
+// that changed.
+//
+// Each test verifies both halves of that contract:
+//   * On load: loadParameters() runs in the tester constructor, so the channel
+//              already holds exactly one sample equal to the FPP-declared
+//              default before the test body executes.
+//   * On update: after clearHistory(), staging + sending a new value drives
+//                parameterUpdated() for that parameter, re-emitting its channel
+//                with the updated value. Since parameterUpdated() writes only
+//                the changed channel, that channel holds exactly one sample.
+
+// ---- LOCAL_EID ----
+
+void CfdpManagerTester::testTlmLocalEid() {
+    ASSERT_TLM_LOCAL_EID_SIZE(1);
+    ASSERT_TLM_LOCAL_EID(0, 42u);
+
+    this->clearHistory();
+    const EntityId newValue = 77;
+    this->paramSet_LocalEid(newValue, Fw::ParamValid::VALID);
+    this->paramSend_LocalEid(0, 0);
+
+    ASSERT_TLM_LOCAL_EID_SIZE(1);
+    ASSERT_TLM_LOCAL_EID(0, newValue);
+}
+
+// ---- OUTGOING_FILE_CHUNK_SIZE ----
+
+void CfdpManagerTester::testTlmOutgoingFileChunkSize() {
+    ASSERT_TLM_OUTGOING_FILE_CHUNK_SIZE_SIZE(1);
+    ASSERT_TLM_OUTGOING_FILE_CHUNK_SIZE(0, 992u);
+
+    this->clearHistory();
+    const U32 newValue = 512;
+    this->paramSet_OutgoingFileChunkSize(newValue, Fw::ParamValid::VALID);
+    this->paramSend_OutgoingFileChunkSize(0, 0);
+
+    ASSERT_TLM_OUTGOING_FILE_CHUNK_SIZE_SIZE(1);
+    ASSERT_TLM_OUTGOING_FILE_CHUNK_SIZE(0, newValue);
+}
+
+// ---- RX_CRC_CALC_BYTES_PER_CYCLE ----
+
+void CfdpManagerTester::testTlmRxCrcCalcBytesPerCycle() {
+    ASSERT_TLM_RX_CRC_CALC_BYTES_PER_CYCLE_SIZE(1);
+    ASSERT_TLM_RX_CRC_CALC_BYTES_PER_CYCLE(0, 65536u);
+
+    this->clearHistory();
+    const U32 newValue = 32768;
+    this->paramSet_RxCrcCalcBytesPerCycle(newValue, Fw::ParamValid::VALID);
+    this->paramSend_RxCrcCalcBytesPerCycle(0, 0);
+
+    ASSERT_TLM_RX_CRC_CALC_BYTES_PER_CYCLE_SIZE(1);
+    ASSERT_TLM_RX_CRC_CALC_BYTES_PER_CYCLE(0, newValue);
+}
+
+// ---- POST_INACTIVITY_SEND_RETRIES ----
+
+void CfdpManagerTester::testTlmPostInactivitySendRetries() {
+    ASSERT_TLM_POST_INACTIVITY_SEND_RETRIES_SIZE(1);
+    ASSERT_TLM_POST_INACTIVITY_SEND_RETRIES(0, 3u);
+
+    this->clearHistory();
+    const U8 newValue = 7;
+    this->paramSet_PostInactivitySendRetries(newValue, Fw::ParamValid::VALID);
+    this->paramSend_PostInactivitySendRetries(0, 0);
+
+    ASSERT_TLM_POST_INACTIVITY_SEND_RETRIES_SIZE(1);
+    ASSERT_TLM_POST_INACTIVITY_SEND_RETRIES(0, newValue);
+}
+
+// ---- FILE_IN_DEFAULT_CHANNEL ----
+
+void CfdpManagerTester::testTlmFileInDefaultChannel() {
+    ASSERT_TLM_FILE_IN_DEFAULT_CHANNEL_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_CHANNEL(0, 0u);
+
+    this->clearHistory();
+    const U8 newValue = 1;
+    this->paramSet_FileInDefaultChannel(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultChannel(0, 0);
+
+    ASSERT_TLM_FILE_IN_DEFAULT_CHANNEL_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_CHANNEL(0, newValue);
+}
+
+// ---- FILE_IN_DEFAULT_DEST_ENTITY_ID ----
+
+void CfdpManagerTester::testTlmFileInDefaultDestEntityId() {
+    ASSERT_TLM_FILE_IN_DEFAULT_DEST_ENTITY_ID_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_DEST_ENTITY_ID(0, 100u);
+
+    this->clearHistory();
+    const EntityId newValue = 200;
+    this->paramSet_FileInDefaultDestEntityId(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultDestEntityId(0, 0);
+
+    ASSERT_TLM_FILE_IN_DEFAULT_DEST_ENTITY_ID_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_DEST_ENTITY_ID(0, newValue);
+}
+
+// ---- FILE_IN_DEFAULT_CLASS ----
+
+void CfdpManagerTester::testTlmFileInDefaultClass() {
+    ASSERT_TLM_FILE_IN_DEFAULT_CLASS_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_CLASS(0, Cfdp::Class::CLASS_2);
+
+    this->clearHistory();
+    const Cfdp::Class newValue = Cfdp::Class::CLASS_1;
+    this->paramSet_FileInDefaultClass(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultClass(0, 0);
+
+    ASSERT_TLM_FILE_IN_DEFAULT_CLASS_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_CLASS(0, Cfdp::Class::CLASS_1);
+}
+
+// ---- FILE_IN_DEFAULT_KEEP ----
+
+void CfdpManagerTester::testTlmFileInDefaultKeep() {
+    ASSERT_TLM_FILE_IN_DEFAULT_KEEP_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_KEEP(0, Cfdp::Keep::DELETE);
+
+    this->clearHistory();
+    const Cfdp::Keep newValue = Cfdp::Keep::KEEP;
+    this->paramSet_FileInDefaultKeep(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultKeep(0, 0);
+
+    ASSERT_TLM_FILE_IN_DEFAULT_KEEP_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_KEEP(0, Cfdp::Keep::KEEP);
+}
+
+// ---- FILE_IN_DEFAULT_PRIORITY ----
+
+void CfdpManagerTester::testTlmFileInDefaultPriority() {
+    ASSERT_TLM_FILE_IN_DEFAULT_PRIORITY_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_PRIORITY(0, 0u);
+
+    this->clearHistory();
+    const U8 newValue = 5;
+    this->paramSet_FileInDefaultPriority(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultPriority(0, 0);
+
+    ASSERT_TLM_FILE_IN_DEFAULT_PRIORITY_SIZE(1);
+    ASSERT_TLM_FILE_IN_DEFAULT_PRIORITY(0, newValue);
+}
+
+// ---- CHANNEL_CONFIG ----
+
+void CfdpManagerTester::testTlmChannelConfig() {
+    Fw::ParamValid valid;
+    const ChannelArrayParams loaded = this->component.paramGet_ChannelConfig(valid);
+
+    ASSERT_TLM_CHANNEL_CONFIG_SIZE(1);
+    ASSERT_TLM_CHANNEL_CONFIG(0, loaded);
+
+    this->clearHistory();
+    ChannelArrayParams updated = loaded;
+    updated[0].set_ack_limit(static_cast<U8>(loaded[0].get_ack_limit() + 1));
+    this->paramSet_ChannelConfig(updated, Fw::ParamValid::VALID);
+    this->paramSend_ChannelConfig(0, 0);
+
+    ASSERT_TLM_CHANNEL_CONFIG_SIZE(1);
+    ASSERT_TLM_CHANNEL_CONFIG(0, updated);
+}
+
 }  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
