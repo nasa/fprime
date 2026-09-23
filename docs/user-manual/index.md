@@ -59,6 +59,7 @@ The User Manual provides comprehensive documentation for understanding and using
 - [Reusable Integration Tests](gds/reusable-integration-tests.md)
 - [Sequencing In F´](gds/seqgen.md)
 - [Advanced Sequencing In F´ with Rust](gds/wasm-rust.md)
+- [Advanced Sequence Sizes](gds/wasm-size.md)
 
 </details>
 

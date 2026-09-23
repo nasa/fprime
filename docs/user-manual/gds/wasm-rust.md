@@ -2,8 +2,10 @@
 
 F´ supports writing sequences that are programs rather than lists of commands. An advanced sequence can dispatch
 commands, read telemetry channels and parameters, emit events, sleep, and exchange messages with the rest of the
-flight software — and can branch, loop, and react to what it reads. Sequences are written in
-[Rust](https://www.rust-lang.org/), compiled to a [WebAssembly](https://webassembly.org/) module, uploaded, and run
+flight software.
+
+Sequences are written in [Rust](https://www.rust-lang.org/),
+compiled to a [WebAssembly](https://webassembly.org/) module, uploaded, and run
 on board by the command sequencer.
 
 For more information on the underlying F´ component, reference the [Svc::WasmSequencer](../../../Svc/WasmSequencer/docs/sdd.md) SDD documentation. For the system-level description of this capability, see [Advanced Sequencing Functionality](../../reference/system-functional/advanced-sequencing.md).
@@ -125,6 +127,10 @@ fprime-wasm verify
 > sequences. Keep it matched to the deployment's `instances.fpp` configuration, or a sequence that verifies on the
 > ground may fail to load on board. A deployment with more than one sequencer instance wants one file per instance.
 
+> [!TIP]
+> For what a sequence costs on the wire and on board — and the two ways a small-looking sequence gets expensive — see
+> [Advanced Sequence Size In F´](./wasm-size.md).
+
 ## Running The Sequence
 
 Once uploaded, the sequence is run with the `.RUN` command of any `Svc.WasmSequencer` instance. Here we run the
@@ -141,15 +147,15 @@ With `BLOCK`, the `RUN` command itself carries the sequence's verdict: it comple
 
 Other commands control the sequence while it runs, or stage sequences ahead of time:
 
-| Command | Description |
-|---|---|
-| `RUN` | Load and run a sequence in one step. Waits for completion when `$block` is `BLOCK`. |
-| `LOAD` | Load and validate a sequence under a name, without running it. |
-| `INVOKE` | Run a previously loaded sequence by name. |
-| `WAIT` | Wait for the running sequence to finish and return its result. |
-| `PAUSE` / `CONTINUE` | Pause the running sequence at its next boundary / resume it. |
-| `CANCEL` | Cancel the running sequence and discard all loaded sequences. |
-| `GLOBAL_GET` / `GLOBAL_SET_*` | Read or write a value a loaded sequence exposes. |
+| Command                       | Description                                                                         |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| `RUN`                         | Load and run a sequence in one step. Waits for completion when `$block` is `BLOCK`. |
+| `LOAD`                        | Load and validate a sequence under a name, without running it.                      |
+| `INVOKE`                      | Run a previously loaded sequence by name.                                           |
+| `WAIT`                        | Wait for the running sequence to finish and return its result.                      |
+| `PAUSE` / `CONTINUE`          | Pause the running sequence at its next boundary / resume it.                        |
+| `CANCEL`                      | Cancel the running sequence and discard all loaded sequences.                       |
+| `GLOBAL_GET` / `GLOBAL_SET_*` | Read or write a value a loaded sequence exposes.                                    |
 
 `LOAD` and `INVOKE` let a sequence be staged and validated ahead of time and then run repeatedly without re-reading
 the file, and let one sequence call into another that was loaded first. See the
