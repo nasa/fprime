@@ -66,10 +66,10 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     ComLoggerDp& operator=(ComLoggerDp&&) = delete;
 
     //! Configure initial logging state; must be called once after init()
-    //! If enabled is true and packetsPerContainer == 0, logging stays disabled (no event is emitted)    //! \param
-    //! enabled: whether data product logging is initially enabled
-    //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true, ignored if false)
-    //! \param priority: data product priority (ignored if false)
+    //! If enabled is true and packetsPerContainer == 0, logging stays disabled (no event is emitted)
+    //! \param enabled: whether data product logging is initially enabled
+    //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true, ignored otherwise)
+    //! \param priority: data product priority (ignored if enabled is false)
     void configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority);
 
   private:
