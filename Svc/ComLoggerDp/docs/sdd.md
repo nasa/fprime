@@ -171,7 +171,7 @@ This design allows both command-based and port-based control to use the same imp
    - Try to serialize the record into the container
    - If serialization succeeds, return true
    - If serialization fails (container is full):
-     - Send current partial container if it has packets
+     - Increment `m_numSerializationFailures` (`PacketSerializationFailures` telemetry) and send the current container
      - Reset `m_currentPacketCount` to 0
      - Call `allocateAndSetupContainer()` to get a new container
      - If allocation fails, `handleBufferDrop()` is called and return false
