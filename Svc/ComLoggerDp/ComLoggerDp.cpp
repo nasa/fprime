@@ -244,7 +244,7 @@ void ComLoggerDp ::sendContainerIfNonEmpty() {
 }
 
 void ComLoggerDp ::finalizeContainer() {
-    // Send the full container
+    // Send the container (full or partial) and reset the packet count
     this->sendContainerIfNonEmpty();
 }
 
