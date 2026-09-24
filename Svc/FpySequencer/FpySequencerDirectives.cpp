@@ -1402,8 +1402,6 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
         // if we've already got the response back this should be harmless
         return Signal::stmtResponse_keepWaiting;
     }
-
-    return Signal::stmtResponse_success;
 }
 
 Signal FpySequencer::pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error) {
@@ -1446,9 +1444,12 @@ Signal FpySequencer::pushRand_directiveHandler(const FpySequencer_PushRandDirect
 
     if (!this->m_runtime.rngSeeded) {
         Fw::Time currentTime = this->getTime();
-        std::seed_seq seedSeq{static_cast<U32>(currentTime.getTimeBase()), static_cast<U32>(currentTime.getContext()),
-                              currentTime.getSeconds(), currentTime.getUSeconds()};
-        this->m_runtime.rng.seed(seedSeq);
+        // Seed std::mt19937 with a single 32-bit integer derived from current time.
+        // Avoid std::seed_seq which performs dynamic heap allocations on the flight path (CPP-1, CPP-25).
+        const U32 seed = currentTime.getSeconds() ^ currentTime.getUSeconds() ^
+                         static_cast<U32>(currentTime.getTimeBase()) ^
+                         static_cast<U32>(currentTime.getContext());
+        this->m_runtime.rng.seed(seed);
         this->m_runtime.rngSeeded = true;
     }
 
