@@ -144,6 +144,7 @@ register_fprime_module(
     REQUIRES_IMPLEMENTATIONS
       "Os_Console"
     SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/ConsoleInterface.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/DelegateConsole.cpp"
     HEADERS
       "${CMAKE_CURRENT_LIST_DIR}/Console.hpp"
@@ -203,6 +204,7 @@ register_fprime_module(
       "Os_Mutex"
     SOURCES
       "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/ConditionVariableInterface.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/DelegateConditionVariable.cpp"
     HEADERS
       "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"

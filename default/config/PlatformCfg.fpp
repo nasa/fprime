@@ -18,6 +18,13 @@ constant FW_MUTEX_HANDLE_MAX_SIZE = 72
 constant FW_QUEUE_HANDLE_MAX_SIZE = 368
 
 @ Maximum size of a handle for Os::Directory
+@
+@ Driven by Os::Posix::Directory::PosixDirectory, whose placement-new footprint is
+@ vtable pointer (8) + DirectoryInterface::m_is_open (1, padded) + PosixDirectoryHandle::
+@ m_dir_descriptor (DIR*, 8) = 24 bytes on a 64-bit platform. The open-state flag moved
+@ from the Os::Directory wrapper onto DirectoryInterface so that it is available to
+@ compile-time-selected implementations, which pushed the delegate past the previous
+@ 16-byte budget. Rounded up to 32 to keep alignment margin.
 constant FW_DIRECTORY_HANDLE_MAX_SIZE = 32
 
 @ Maximum size of a handle for Os::FileSystem

@@ -63,12 +63,4 @@ DelegateConsole& DelegateConsole::getSingleton() {
     }
     return s_singleton;
 }
-
-// ------------------------------------------------------------------
-// Common virtual functions built on top of OS-specific functions
-// ------------------------------------------------------------------
-
-void ConsoleInterface::writeMessage(const Fw::ConstStringBase& message) {
-    this->writeMessage(message.toChar(), message.length());
-}
 }  // namespace Os

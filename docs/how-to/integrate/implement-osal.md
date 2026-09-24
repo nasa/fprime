@@ -98,7 +98,7 @@ class MyOsMutex : public MutexInterface {
 ```
 
 > [!TIP]
-> Look at each interface header in `Os/` (e.g., `Os/Mutex.hpp`, `Os/File.hpp`, `Os/Task.hpp`) to see the exact set of pure virtual methods that need to be implemented for each. Each interface also defines a `Status` enum — your implementation must return the appropriate [status values](../../../Os/docs/sdd.md#24-error-handling).
+> Look at each interface header in `Os/` (e.g., `Os/Mutex.hpp`, `Os/FileInterface.hpp`, `Os/Task.hpp`) to see the exact set of pure virtual methods that need to be implemented for each. Each interface also defines a `Status` enum — your implementation must return the appropriate [status values](../../../Os/docs/sdd.md#24-error-handling).
 
 ### 2.2 — Implement the Methods
 
@@ -353,7 +353,20 @@ The full set of [OSAL modules](../../../Os/docs/sdd.md#2-core-services) that can
 | **Cpu** | `CpuInterface` | `getCount()`, `getTicks()` |
 | **Memory** | `MemoryInterface` | `getUsage()` |
 
-Refer to each interface header in `Os/` for the full method signatures and status enums.
+Refer to each `Os/<Service>Interface.hpp` header for the full method signatures and status enums.
+For the services that have been split into an alias header plus an interface header (`File`,
+`FileSystem`, `Directory`, `ConditionVariable`, `Console`, `CountingSemaphore`, `Cpu`, `Memory`,
+`RawTime`), `Os/<Service>.hpp` is a thin aggregator and the pure-virtual contract is in
+`Os/<Service>Interface.hpp`.
+
+> [!NOTE]
+> The steps above cover *link-time* selection, where your class is reached through the generated
+> `getDelegate()` factory. If instead you alias `Os::<Service>` directly to your class
+> (*compile-time* selection, see [`Os/docs/sdd.md` §5.2.2](../../../Os/docs/sdd.md#522-compile-time-selection-performance-optimization)),
+> inheriting from the interface is not sufficient: singleton services (`Console`, `FileSystem`,
+> `Cpu`, `Memory`) must also supply `static void init()` and `static <Impl>& getSingleton()`, and
+> `Os::File`/`Os::Directory` must maintain the base class's mode/open state and, for `File`,
+> override the CRC methods. See the "Additional requirements" notes in `Os/docs/sdd.md` §5.2.2.
 
 ---
 

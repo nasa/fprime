@@ -46,7 +46,7 @@ Os::Generic::PriorityMemQueue::QueueConfig queueConfig = {
 
 Os::Generic::PriorityMemQueue::QueueConfig configs[] = {queueConfig};
 
-// Test helper to access private members of PriorityMemQueue
+// Test helper wrapping the public PriorityMemQueue::resetConfig() API
 class PriorityMemQueueTestHelper {
   public:
     // Reset the configuration state for testing
@@ -2023,7 +2023,7 @@ TEST_F(PriorityMemQueueTestFixture, DisableDuringBlockingReceive) {
     // Disable priority 2 while receiver is blocked
     queue.m_handle.disablePriority(2);
 
-    // Send to disabled priority 2 - should be rejected or fall back to priority 0
+    // Send to disabled priority 2 - succeeds (disable affects receive only); message stays queued
     U8 sendBuf2[MESSAGE_SIZE];
     sendBuf2[0] = 0xBB;
     (void)queue.send(sendBuf2, 1, 2, Os::QueueInterface::BlockingType::NONBLOCKING);

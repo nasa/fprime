@@ -23,7 +23,9 @@ ConditionVariableInterface::Status DelegateConditionVariable::pend(Os::Mutex& mu
 
 void DelegateConditionVariable::wait(Os::Mutex& mutex) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<ConditionVariableInterface*>(&this->m_handle_storage[0]));
-    this->m_delegate.wait(mutex);
+    // Dispatch through this object's checked pend() rather than the delegate's wait(), so the
+    // mutex-consistency check in DelegateConditionVariable::pend() is not bypassed.
+    ConditionVariableInterface::wait(mutex);
 }
 
 void DelegateConditionVariable::notify() {
@@ -39,12 +41,6 @@ void DelegateConditionVariable::notifyAll() {
 ConditionVariableHandle* DelegateConditionVariable::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<ConditionVariableInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
-}
-
-// ConditionVariableInterface helper implementation
-void ConditionVariableInterface::wait(Os::Mutex& mutex) {
-    Status status = this->pend(mutex);
-    FW_ASSERT(status == Status::OP_OK, static_cast<FwAssertArgType>(status));
 }
 
 }  // namespace Os

@@ -171,13 +171,7 @@ class DelegateFile final : public FileInterface {
     //
     // The CRC scratch state (`m_hash` accumulator + `m_crc_buffer` read
     // buffer) and the working algorithm live here on the wrapper rather than
-    // on `FileInterface`, because concrete `FileInterface` implementations are
-    // placement-new'd into a fixed-size (`FW_FILE_HANDLE_MAX_SIZE`) slot and
-    // could not afford the ~`FW_FILE_CHUNK_SIZE`-byte buffer. `DelegateFile`'s
-    // own storage is not handle-size-constrained, so it can carry the buffer
-    // once and drive the CRC through the (virtual) `read()`, transparently
-    // reaching the selected delegate. See Os/FileInterface.hpp for the full
-    // design note.
+    // on `FileInterface`. See the design note in Os/FileInterface.hpp.
     // ------------------------------------
 
     //! \brief calculate the CRC32 of the entire file. See FileInterface::calculateCrc.

@@ -13,10 +13,6 @@ StubFile::Status StubFile::open(const char* filepath, StubFile::Mode open_mode, 
     return status;
 }
 
-bool StubFile::isOpen() const {
-    return false;
-}
-
 void StubFile::close() {}
 
 StubFile::Status StubFile::size(FwSizeType& size_result) {

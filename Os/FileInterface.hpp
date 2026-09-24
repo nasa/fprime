@@ -371,7 +371,7 @@ class FileInterface {
     // ----------------------------------------------------------------------
     // CRC interface
     //
-    // Design note (see Os/DelegateFile.hpp for the full rationale):
+    // Design note (authoritative; other CRC comments refer back to this one):
     // The CRC computation needs cross-call scratch state -- an incremental
     // `Utils::Hash` accumulator and a `FW_FILE_CHUNK_SIZE`-byte read buffer.
     // That state deliberately does *not* live here on `FileInterface`.

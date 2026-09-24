@@ -52,14 +52,6 @@ class StubFile : public FileInterface {
     using FileInterface::read;
     using FileInterface::write;
 
-    //! \brief determine if the file is open
-    //!
-    //! This implementation never actually opens a file, so this always returns false.
-    //!
-    //! \return false
-    //!
-    bool isOpen() const;
-
     //! \brief close the file, if not opened then do nothing
     //!
     //! This implementation does nothing.

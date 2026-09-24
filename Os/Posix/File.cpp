@@ -130,15 +130,19 @@ PosixFile::Status PosixFile::open(const char* filepath,
         status = Os::Posix::errno_to_file_status(errno_store);
     }
     this->m_handle.m_file_descriptor = descriptor;
+    // Maintain the mode state tracked by FileInterface so that this class behaves correctly when it
+    // is used directly as the Os::File alias (compile-time selection)
+    this->setMode((status == OP_OK) ? requested_mode : Mode::OPEN_NO_MODE);
     return status;
 }
 
 void PosixFile::close() {
-    // Only close file handles that are not open
+    // Only close file handles that are open
     if (PosixFileHandle::INVALID_FILE_DESCRIPTOR != this->m_handle.m_file_descriptor) {
         (void)::close(this->m_handle.m_file_descriptor);
         this->m_handle.m_file_descriptor = PosixFileHandle::INVALID_FILE_DESCRIPTOR;
     }
+    this->setMode(Mode::OPEN_NO_MODE);
 }
 
 PosixFile::Status PosixFile::size(FwSizeType& size_result) {

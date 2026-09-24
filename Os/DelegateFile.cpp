@@ -3,6 +3,7 @@
 // \brief link-time delegate implementation for Os::DelegateFile
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <Os/DelegateFile.hpp>
 #include <config/FppConstantsAc.hpp>
 #include <limits>
@@ -52,6 +53,13 @@ DelegateFile::Status DelegateFile::open(const char* filepath,
                                         DelegateFile::OverwriteType overwrite) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(nullptr != filepath);
+    // The 3-argument open is the implementation hook, so callers invoking it directly bypass the
+    // bounds check in FileInterface::open(path, length, mode, overwrite). Re-apply it here against
+    // the default path bound so that those callers keep the over-long/unterminated path guard.
+    const FwSizeType path_bound = static_cast<FwSizeType>(FileNameStringSize) + 1;
+    const FwSizeType path_length = static_cast<FwSizeType>(Fw::StringUtils::string_length(filepath, path_bound));
+    FW_ASSERT(path_length < path_bound, static_cast<FwAssertArgType>(path_length),
+              static_cast<FwAssertArgType>(path_bound));
     FW_ASSERT(DelegateFile::Mode::OPEN_NO_MODE < requested_mode && DelegateFile::Mode::MAX_OPEN_MODE > requested_mode);
     FW_ASSERT((0 <= overwrite) && (overwrite < OverwriteType::MAX_OVERWRITE_TYPE));
     // Check for already opened file
@@ -158,12 +166,8 @@ FileHandle* DelegateFile::getHandle() {
 }
 
 // ----------------------------------------------------------------------
-// CRC implementation
-//
-// Relocated from FileInterface so the scratch buffer is charged to this
-// wrapper's (unconstrained) storage rather than the fixed-size delegate
-// handle. The algorithm is unchanged; it drives I/O through the virtual
-// `this->read()`, which dispatches to the selected delegate.
+// CRC implementation -- the scratch state lives here, not on FileInterface;
+// see the design note in Os/FileInterface.hpp.
 // ----------------------------------------------------------------------
 
 DelegateFile::Status DelegateFile::calculateCrc(U32& crc) {
