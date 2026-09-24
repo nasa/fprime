@@ -94,7 +94,7 @@ The component requires calling `configure(bool enabled, U32 packetsPerContainer,
 - `priority`: Data product priority
 - `flushTimeout`: Number of schedIn calls without packets before auto-flushing partial container (0 = disabled)
 
-If `enabled` is `true`, the function internally validates that `packetsPerContainer > 0` and enables logging with the specified configuration. If `enabled` is `false`, the `packetsPerContainer` and `priority` parameters are ignored but `flushTimeout` is still stored. Typically `enabled` is set to `false`, and logging is started later via command or port.
+If `enabled` is `true`, the function validates `packetsPerContainer` exactly as `StartComDp` does (`> 0` and the resulting container size fits in a `U32`) and enables logging with the specified configuration; an invalid value is a programming error and triggers `FW_ASSERT` (no `StartRecordingFailed` event is emitted). If `enabled` is `false`, the `packetsPerContainer` and `priority` parameters are ignored but `flushTimeout` is still stored. Typically `enabled` is set to `false`, and logging is started later via command or port.
 
 ### 3.5 Commands
 
