@@ -60,6 +60,11 @@ jobs:
             build_cmd: check
 
     steps:
+      # nasa/fprime-actions/ccache fails on RHEL-based containers
+      # By installing this directly, we can skip the failing step.
+      - name: "Install ccache"
+        run: dnf install -y ccache
+
       - name: "Set up target repository"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
