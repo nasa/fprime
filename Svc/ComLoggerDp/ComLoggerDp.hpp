@@ -173,6 +173,10 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! \return true if serialization succeeded, false if it failed
     bool serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize);
 
+    //! Send container if it has packets and reset counter
+    //! Handles both full and partial containers
+    void sendContainerIfNonEmpty();
+
     //! Internal function to finalize a full container (send and reset)
     void finalizeContainer();
 
