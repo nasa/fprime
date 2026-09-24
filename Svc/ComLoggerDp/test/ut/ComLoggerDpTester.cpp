@@ -199,7 +199,7 @@ void ComLoggerDpTester::testAllocationFailure() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 1);  // 1 buffer dropped
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
@@ -247,7 +247,7 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify telemetry was written
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumQueueDrops_SIZE(1);
     ASSERT_TLM_NumQueueDrops(0, 0);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
@@ -256,8 +256,6 @@ void ComLoggerDpTester::testTelemetry() {
     ASSERT_TLM_NumBuffersLogged(0, 0);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 0);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);
 
     // Log some buffers
     Fw::ComBuffer comBuf = this->createTestComBuffer(8);
@@ -272,15 +270,13 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify buffer count updated
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, true);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 0);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);
 
     // Stop logging
     this->sendCmd_StopComDp(0, 1);
@@ -294,15 +290,13 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify logging disabled
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, false);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 0);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);
 }
 
 void ComLoggerDpTester::testPriorityPreserved() {
@@ -400,7 +394,7 @@ void ComLoggerDpTester::testClearCounters() {
     // Check telemetry before clearing
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);  // 2 buffers logged
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -421,7 +415,7 @@ void ComLoggerDpTester::testClearCounters() {
     // Check telemetry after clearing
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 0);  // Counter reset to 0
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -458,7 +452,7 @@ void ComLoggerDpTester::testBufferOverflow() {
     // Check that buffer was logged (not dropped)
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 1);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -656,14 +650,17 @@ void ComLoggerDpTester::validateDataProductFormat(const Fw::Buffer& buffer,
     const U8 sentryBytes[4] = {0xDE, 0xAD, 0xBE, 0xEF};
 
     // Search through the buffer for the expected pattern:
-    // Each record contains: sentry (4 bytes) + ComBuffer size (2 bytes big-endian) + ComBuffer data
+    // Each record contains: sentry (4 bytes) + ComBuffer (U64 size 8 bytes + data N bytes)
+    // The ComBuffer is serialized with F Prime's standard format which uses U64 for sizes
     // This validates that:
     // 1. The sentry value (0xDEADBEEF) is correctly inserted before each ComBuffer
     // 2. The ComBuffer data is correctly serialized after the sentry
     // 3. The ground software can use the sentry to identify buffer boundaries
     U32 foundCount = 0;
+    const FwSizeType sizeFieldSize = sizeof(FwSizeStoreType);  // U64 = 8 bytes
 
-    for (FwSizeType offset = 0; offset <= bufSize - (sizeof(sentryBytes) + 2 + expectedDataSize); offset++) {
+    for (FwSizeType offset = 0; offset <= bufSize - (sizeof(sentryBytes) + sizeFieldSize + expectedDataSize);
+         offset++) {
         // Check if we found a sentry at this position
         bool sentryMatch = true;
         for (FwSizeType i = 0; i < sizeof(sentryBytes); i++) {
@@ -674,15 +671,18 @@ void ComLoggerDpTester::validateDataProductFormat(const Fw::Buffer& buffer,
         }
 
         if (sentryMatch) {
-            // Check for ComBuffer size field (2 bytes big-endian) after sentry
-            // Expected size is 0x0010 (16 bytes) = 00 10 in big-endian
-            U16 comBufSize = (static_cast<U16>(bufPtr[offset + 4]) << 8) | bufPtr[offset + 5];
+            // Check for ComBuffer size field (U64, 8 bytes big-endian) after sentry
+            // Extract the U64 size value
+            U64 comBufSize = 0;
+            for (FwSizeType i = 0; i < sizeFieldSize; i++) {
+                comBufSize = (comBufSize << 8) | bufPtr[offset + 4 + i];
+            }
 
             if (comBufSize == expectedDataSize) {
-                // Validate the ComBuffer data after sentry + size
+                // Validate the ComBuffer data after sentry + size field
                 bool dataMatch = true;
                 for (FwSizeType j = 0; j < expectedDataSize; j++) {
-                    if (bufPtr[offset + 6 + j] != expectedData[j]) {
+                    if (bufPtr[offset + 4 + sizeFieldSize + j] != expectedData[j]) {
                         dataMatch = false;
                         break;
                     }
@@ -691,7 +691,7 @@ void ComLoggerDpTester::validateDataProductFormat(const Fw::Buffer& buffer,
                 if (dataMatch) {
                     foundCount++;
                     // Skip past this match to find the next one
-                    offset += sizeof(sentryBytes) + 2 + expectedDataSize - 1;
+                    offset += sizeof(sentryBytes) + sizeFieldSize + expectedDataSize - 1;
                 }
             }
         }
@@ -783,14 +783,10 @@ void ComLoggerDpTester::testReconfigureWithPartialContainer() {
 }
 
 void ComLoggerDpTester::testPacketTooLarge() {
-    // Test a packet that's too large to fit even in an empty container
-    // This exercises lines 233-236 in serializePacketWithRetry
+    // Test allocation failure when trying to get a new container
+    // This tests the error path when dpGet fails
 
-    // Start logging with 1 packet per container but use small buffer
-    // We need to create a scenario where even after retry with a new container,
-    // the packet still doesn't fit
-
-    // First, let's start with a reasonable configuration
+    // Start logging with 1 packet per container
     this->startLoggingAndClearHistory(1, 10);
 
     // Create a packet and send it successfully first to allocate a container
@@ -804,18 +800,13 @@ void ComLoggerDpTester::testPacketTooLarge() {
     ASSERT_PRODUCT_SEND_SIZE(1);
     this->clearHistory();
 
-    // Now we need to simulate a scenario where serialization fails even after retry
-    // This is difficult to test without modifying the container behavior
-    // However, we can test the handleBufferDrop path by causing allocation failure
-    // during the retry, which will trigger the drop path (line 226)
-
-    // Set allocation failure to trigger during retry
+    // Set allocation failure to trigger when trying to get new container
     this->m_allocationFailure = true;
 
     // Send another packet - this should:
-    // 1. Try to serialize (will need new container since previous was sent)
-    // 2. Fail to allocate new container during retry
-    // 3. Call handleBufferDrop (lines 234-235)
+    // 1. Try to allocate new container (previous was sent)
+    // 2. Fail to allocate (due to m_allocationFailure)
+    // 3. Return early without processing the packet
     this->invoke_to_comIn(0, smallBuf, 0);
     this->component.doDispatch();
 
@@ -832,21 +823,14 @@ void ComLoggerDpTester::testPacketTooLarge() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 1);
 }
 
 void ComLoggerDpTester::testContainerOverflowRetry() {
     // Test normal operation with large packets
-    // Note: The serializePacketWithRetry retry path (lines 218-236) is defensive code
-    // that's very difficult to trigger in unit tests because:
-    // 1. Containers are sized to hold exactly packetsPerContainer max-sized packets
-    // 2. The serialization either succeeds or we hit the packet count limit
-    // 3. The intermediate "container full but count not reached" case requires
-    //    internal DpContainer fragmentation or overhead variations
-    //
-    // This test verifies normal large packet handling to ensure the common paths work.
+    // This verifies that containers correctly hold the configured number of packets
 
     // Start with 2 packets per container
     this->startLoggingAndClearHistory(2, 10);
@@ -876,7 +860,7 @@ void ComLoggerDpTester::testContainerOverflowRetry() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);  // Both buffers logged
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -884,15 +868,8 @@ void ComLoggerDpTester::testContainerOverflowRetry() {
 }
 
 void ComLoggerDpTester::testSerializationFailureCounter() {
-    // Test the PacketSerializationFailures telemetry counter
-    // This counter increments when packet serialization fails and requires retry
-
-    // Note: The serialization failure path (line 217) is triggered when the container
-    // is full before reaching packetsPerContainer limit. This is a defensive edge case
-    // that's difficult to trigger without mocking DpContainer internals.
-    //
-    // However, we can verify the counter exists and starts at 0, and that it's
-    // cleared by the CLEAR_COUNTERS command.
+    // Test CLEAR_COUNTERS command functionality
+    // Verify that the command properly clears NumBuffersLogged and NumBuffersDropped counters
 
     // Start logging
     this->startLoggingAndClearHistory(2, 10);
@@ -908,9 +885,7 @@ void ComLoggerDpTester::testSerializationFailureCounter() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);  // No failures in normal operation
+    ASSERT_TLM_SIZE(4);
 
     // Test that CLEAR_COUNTERS command clears this counter
     // (even though it's 0, this verifies the command handles it)
@@ -924,9 +899,7 @@ void ComLoggerDpTester::testSerializationFailureCounter() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);
+    ASSERT_TLM_SIZE(4);
 }
 
 void ComLoggerDpTester::testAutoFlush() {
@@ -959,6 +932,17 @@ void ComLoggerDpTester::testAutoFlush() {
 
     // Should have auto-flushed the partial container
     ASSERT_PRODUCT_SEND_SIZE(1);
+    Fw::DpContainer sent(0, this->productSendHistory->at(0).buffer);
+    ASSERT_EQ(sent.deserializeHeader(), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(sent.getPriority(), 10);
+    ASSERT_GT(sent.getDataSize(), 0U);
+
+    // Next packet must allocate a fresh container after the flush
+    this->clearHistory();
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_SEND_SIZE(0);
 }
 
 void ComLoggerDpTester::testAutoFlushResetOnPacket() {
@@ -1015,7 +999,7 @@ void ComLoggerDpTester::testAutoFlushDisabled() {
     ASSERT_PRODUCT_SEND_SIZE(0);
     this->clearHistory();
 
-    // Call schedIn many times (way more than would trigger auto-flush if enabled)
+    // Call schedIn five times with auto-flush disabled
     // With flushTimeout=0, auto-flush should be completely disabled
     for (int i = 0; i < 5; i++) {
         this->invoke_to_schedIn(0, 0);
@@ -1030,6 +1014,60 @@ void ComLoggerDpTester::testAutoFlushDisabled() {
     this->sendCmd_StopComDp(0, 0);
     this->component.doDispatch();
     ASSERT_PRODUCT_SEND_SIZE(1);  // Partial container sent on stop
+}
+
+void ComLoggerDpTester::testPacketsPerContainerTooLarge() {
+    // Calculate max packets per container (same formula as in ComLoggerDp.cpp)
+    constexpr U32 MAX_PACKETS = static_cast<U32>((std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) /
+                                                 ComLoggerDp::RECORD_SIZE);
+    // Try to start with one more than max - should fail validation
+    this->sendCmd_StartComDp(0, 0, MAX_PACKETS + 1, 10);
+    this->component.doDispatch();
+
+    // Should reject with VALIDATION_ERROR
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STARTCOMDP, 0, Fw::CmdResponse::VALIDATION_ERROR);
+
+    // Should emit StartRecordingFailed event
+    ASSERT_EVENTS_StartRecordingFailed_SIZE(1);
+    ASSERT_EVENTS_StartRecordingFailed(0, MAX_PACKETS + 1);
+
+    // Component should remain disabled
+    ASSERT_TLM_SIZE(0);
+}
+
+void ComLoggerDpTester::testStopWhenAlreadyStopped() {
+    // Component starts disabled by default
+    // Try to stop when already stopped - should be idempotent
+    this->sendCmd_StopComDp(0, 0);
+    this->component.doDispatch();
+
+    // Should succeed (stopping when already stopped is valid)
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STOPCOMDP, 0, Fw::CmdResponse::OK);
+
+    // Event should show 0 partial containers sent
+    ASSERT_EVENTS_ComDpStopped_SIZE(1);
+    ASSERT_EVENTS_ComDpStopped(0, 0);
+}
+
+void ComLoggerDpTester::testComBufferWhenDisabled() {
+    // Configure with logging disabled
+    this->component.configure(false, 0, 0, 0);
+    this->clearHistory();
+
+    // Send a ComBuffer when logging is disabled
+    Fw::ComBuffer comBuf = this->createTestComBuffer(8);
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // Should not allocate any containers or send any data products
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+
+    // Should not emit any events or telemetry
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_TLM_SIZE(0);
 }
 
 }  // namespace Svc

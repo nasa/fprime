@@ -28,6 +28,7 @@ The component uses a stateful design that:
 2. Serializes incoming Com buffers as records into the container
 3. Sends the container when it reaches the configured packet count
 4. Flushes any partial container when recording is stopped
+5. Flushes any partial container after `flushTimeout` consecutive `schedIn` calls with no packet received (`flushTimeout` is the last argument of `configure()`, 0 disables auto-flush; with the 1 Hz rate group of §5.3, `flushTimeout = 10` is a 10 s inactivity flush). A continuous stream never idles, so its containers close only at `packetsPerContainer`; a sparse stream with gaps longer than the timeout produces one data product per burst regardless of `packetsPerContainer`, each occupying a full `ComLoggerDpBuffSize(packetsPerContainer)` buffer and one `DpCatalog` file slot.
 
 ### 3.2 Port Description
 
@@ -35,7 +36,7 @@ The component uses a stateful design that:
 
 | Port | Type | Description |
 |---|---|---|
-| `comIn` | `Fw.Com` | Async port receiving Com buffers to be logged. Queue-full policy is `drop`: when the component queue is full, incoming buffers are discarded without an event or telemetry update |
+| `comIn` | `Fw.Com` | Async port receiving Com buffers to be logged. Queue-full policy is `drop`: when the component queue is full, incoming buffers are discarded with no event; the cumulative count is reported in `NumQueueDrops` on the next `schedIn` cycle and is not reset by `CLEAR_COUNTERS`. Size the instance queue depth for the largest expected com burst between component task executions |
 | `pingIn` | `Svc.Ping` | Async port for health ping requests |
 | `schedIn` | `Svc.Sched` | Async port for periodic telemetry updates |
 | `startRecordingIn` | `Svc.ComLoggerStart` | Async port to start recording via port interface. Parameters: `packetsPerContainer` (U32), `priority` (FwDpPriorityType). Logs `StartRecordingFailed` event on validation failure. |
@@ -70,7 +71,6 @@ The component uses a stateful design that:
 | `m_recordBuffer` | `U8[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)]` | - | Buffer for building records with sentry value followed by ComBuffer data |
 | `m_schedCallsSinceLastPacket` | `U32` | `0` | Counter for schedIn calls since last packet received (used for auto-flush) |
 | `m_flushTimeout` | `U32` | `0` | Number of schedIn calls without packets before auto-flush (0 = disabled) |
-| `m_numSerializationFailures` | `U32` | `0` | Number of times packet serialization failed and required retry with new container |
 
 ### 3.4 Configuration
 
@@ -80,8 +80,6 @@ The component uses constants defined in `default/config/ComLoggerDpCfg.fpp` and 
 |---|---|---|---|---|
 | `DpBufferErrorThrottle` | `ComLoggerDpCfg.fpp` | `U32` | `1` | Throttle value for `DpBufferError` event - limits the number of times the event can be emitted consecutively |
 | `ComLoggerDpSentry` | `ComLoggerDpCfg.hpp` | `U32` | `0xDEADBEEF` | Sentry value prepended to each ComBuffer record for corruption detection during deserialization; must match the `--sentry` value given to `scripts/decode_comlogger_dp.py` |
-
-**Note**: The auto-flush timeout is no longer a configuration constant but is passed as a parameter to the `configure()` function, allowing different component instances to have different timeout values.
 
 These constants can be overridden in deployment-specific configuration files to tune behavior without modifying the component source.
 
@@ -96,7 +94,7 @@ The component requires calling `configure(bool enabled, U32 packetsPerContainer,
 - `priority`: Data product priority
 - `flushTimeout`: Number of schedIn calls without packets before auto-flushing partial container (0 = disabled)
 
-If `enabled` is `true`, the function internally validates that `packetsPerContainer > 0` and enables logging with the specified configuration. If `enabled` is `false`, the `packetsPerContainer` and `priority` parameters are ignored but `flushTimeout` is still stored. Typically `enabled` is set to `false`, and logging is started later via command or port.
+If `enabled` is `true`, the function validates `packetsPerContainer` exactly as `StartComDp` does (`> 0` and the resulting container size fits in a `U32`) and enables logging with the specified configuration; an invalid value is a programming error and triggers `FW_ASSERT` (no `StartRecordingFailed` event is emitted). If `enabled` is `false`, the `packetsPerContainer` and `priority` parameters are ignored but `flushTimeout` is still stored. Typically `enabled` is set to `false`, and logging is started later via command or port.
 
 ### 3.5 Commands
 
@@ -116,7 +114,7 @@ If `enabled` is `true`, the function internally validates that `packetsPerContai
 | `ComDpStopped` | 0x02 | ACTIVITY_HI | `numSent: U32` | None | Recording stopped, partial container sent if any |
 | `PriorityUpdated` | 0x03 | ACTIVITY_LO | `priority: U32` | None | Data product priority updated |
 | `CountersCleared` | 0x04 | ACTIVITY_LO | None | None | Counters and throttles cleared |
-| `StartRecordingFailed` | 0x05 | WARNING_LO | `packetsPerContainer: U32` | None | Failed to start recording due to invalid configuration (packetsPerContainer must be > 0) |
+| `StartRecordingFailed` | 0x05 | WARNING_LO | `packetsPerContainer: U32` | None | Failed to start recording due to invalid configuration (`packetsPerContainer` is 0 or exceeds the container-size limit given for `StartComDp`) |
 
 ### 3.7 Telemetry
 
@@ -124,8 +122,7 @@ If `enabled` is `true`, the function internally validates that `packetsPerContai
 |---|---|---|---|
 | `LoggingEnabled` | 0x00 | `bool` | Whether data product logging is currently active |
 | `NumBuffersLogged` | 0x01 | `U32` | Total number of Com buffers logged since initialization |
-| `NumBuffersDropped` | 0x02 | `U32` | Number of Com buffers dropped due to container allocation failure or because the record could not fit in an empty container |
-| `PacketSerializationFailures` | 0x03 | `U32` | Number of times a record did not fit in the current container, forcing that container to be sent early and the record retried in a new container |
+| `NumBuffersDropped` | 0x02 | `U32` | Number of Com buffers dropped due to container allocation failure |
 | `NumQueueDrops` | 0x04 | `U32` | Number of messages dropped from the component's queue due to queue full condition |
 
 Telemetry is written periodically when the `schedIn` port is invoked (typically connected to a rate group).
@@ -152,10 +149,11 @@ The component uses private helper functions to share logic between command handl
 
 - `startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority)`: Validates parameters, stores configuration, enables logging, and logs event. If recording is already active with a partial container, sends the partial container before reconfiguring. On validation failure, disables logging and returns `false`. Returns `true` on success.
 - `stopRecordingInternal()`: Sends any partial container, disables logging, logs event, and returns the number of partial containers sent (0 or 1).
-- `handleBufferDrop(U32 size)`: Logs `DpBufferError` event (with throttling) and increments `m_numBuffersDropped` counter. Called when a buffer must be dropped due to allocation or serialization failure.
+- `handleBufferDrop(U32 size)`: Logs `DpBufferError` event (with throttling) and increments `m_numBuffersDropped` counter. Called when a buffer must be dropped due to allocation failure.
 - `allocateAndSetupContainer()`: Allocates a new data product container with size calculated to hold `m_packetsPerContainer` records (each with sentry + ComBuffer data), sets the priority to `m_priority`, and returns `true` on success. On allocation failure, calls `handleBufferDrop()` and returns `false`.
-- `serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize)`: Builds a record with sentry value followed by ComBuffer data in `m_recordBuffer`, then serializes it into the current container. If the container is full, sends the partial container, allocates a new one, and retries serialization. Returns `true` on success, `false` if the packet cannot be serialized (allocation failure or packet too large).
-- `finalizeFullContainer()`: Sends the current full container via `productSendOut` and resets `m_currentPacketCount` to 0. Note that `dpSend()` invalidates the container; a new one will be allocated when the next packet arrives.
+- `serializePacket(const U8* dataPtr, FwSizeType dataSize)`: Builds a record with sentry value followed by ComBuffer data in `m_recordBuffer`, then serializes it into the current container. Uses assertions to ensure serialization succeeds (containers are pre-sized correctly).
+- `sendContainerIfNonEmpty()`: Sends the current container if logging is enabled and it has any packets via `productSendOut` and resets `m_currentPacketCount` to 0. Handles both full and partial containers. Note that `dpSend()` invalidates the container; a new one will be allocated when the next packet arrives.
+- `finalizeContainer()`: Delegates to `sendContainerIfNonEmpty()` to send the current container.
 
 This design allows both command-based and port-based control to use the same implementation, provides consistent error handling across different failure modes, and encapsulates the complexity of sentry value handling and container management.
 
@@ -182,20 +180,13 @@ This design allows both command-based and port-based control to use the same imp
    - Allocates a new container with size for `m_packetsPerContainer` records (including sentry overhead)
    - Sets container priority to `m_priority`
    - If allocation fails, `handleBufferDrop()` is called and handler returns
-5. Call `serializePacketWithRetry()` to serialize the packet with sentry:
+5. Call `serializePacket()` to serialize the packet with sentry:
    - Build record in `m_recordBuffer`: serialize sentry value (handles endianness), then append ComBuffer data
-   - Try to serialize the record into the container
-   - If serialization succeeds, return true
-   - If serialization fails (container is full):
-     - Increment `m_numSerializationFailures` (`PacketSerializationFailures` telemetry) and send the current container
-     - Reset `m_currentPacketCount` to 0
-     - Call `allocateAndSetupContainer()` to get a new container
-     - If allocation fails, `handleBufferDrop()` is called and return false
-     - Retry serialization with the new container
-     - If retry still fails (packet too large), call `handleBufferDrop()` and return false
+   - Serialize the record into the container
+   - Assertions ensure serialization succeeds (containers are pre-sized correctly)
 6. Increment `m_currentPacketCount` and `m_numBuffersLogged`
 7. If container is full (`m_currentPacketCount >= m_packetsPerContainer`):
-   - Call `finalizeFullContainer()` to send container and reset count
+   - Call `finalizeContainer()` to send container and reset count
 
 #### 3.10.3 Auto-Flush on Inactivity
 
@@ -208,7 +199,7 @@ If `flushTimeout` is configured > 0 during `configure()`:
    - Timeout must be configured (`m_flushTimeout > 0`)
 3. If all conditions met, increment `m_schedCallsSinceLastPacket`
 4. If `m_schedCallsSinceLastPacket >= m_flushTimeout`:
-   - Call `finalizeFullContainer()` to send the partial container
+   - Call `finalizeContainer()` to send the partial container
    - Reset `m_schedCallsSinceLastPacket = 0`
 5. Write telemetry channels
 
@@ -260,9 +251,9 @@ The component includes comprehensive unit tests covering all functionality:
 | `DataProductFormat` | Tests that data products contain correct sentry values and ComBuffer structure | - |
 | `ConfigureEnabled` | Tests `configure()` with enabled=true, verifies logging starts and parameters are validated | SVC-COMLOGGER-005 |
 | `ReconfigureWithPartialContainer` | Tests reconfiguring while recording with partial container, verifies partial container is sent before applying new configuration | - |
-| `PacketTooLarge` | Tests handling of packets too large to fit in any container | - |
-| `ContainerOverflowRetry` | Tests container overflow with automatic retry in new container | - |
-| `SerializationFailureCounter` | Tests `PacketSerializationFailures` telemetry counter increments correctly | - |
+| `PacketTooLarge` | Tests allocation failure when trying to get a new container | - |
+| `ContainerOverflowRetry` | Tests normal operation with large packets and container management | - |
+| `SerializationFailureCounter` | Tests CLEAR_COUNTERS command functionality (legacy test name retained for continuity) | - |
 | `AutoFlush` | Tests that partial container is auto-flushed after configured timeout with no new packets | - |
 | `AutoFlushResetOnPacket` | Tests that auto-flush counter resets when a packet arrives, restarting the timeout period | - |
 | `AutoFlushDisabled` | Tests that auto-flush does not occur when flushTimeout=0 (disabled), verifying `m_flushTimeout > 0` guard works correctly | - |
@@ -391,7 +382,7 @@ Monitor the following telemetry channels:
 
 A common deployment pattern:
 
-1. System boots with `comLogger.configure(false, 0, 0)` - logging disabled
+1. System boots with `comLogger.configure(false, 0, 0, 10)` - logging disabled, auto-flush after 10 idle `schedIn` calls
 2. Ground sends command to start high-rate telemetry recording when radio link is lost:
    ```
    StartComDp(packetsPerContainer: 200, priority: 10)
@@ -408,7 +399,4 @@ A common deployment pattern:
 
 | Date | Description |
 |---|---|
-| 2026-09-04 | Initial implementation with commands, ports, events, telemetry, and comprehensive unit tests |
-| 2026-09-04 | Added sentry value to ComBuffer records for corruption detection; refactored serialization logic into helper functions (`allocateAndSetupContainer`, `serializePacketWithRetry`, `finalizeFullContainer`); changed priority parameter type from U32 to FwDpPriorityType; updated `startRecordingIn` port to accept separate parameters instead of encoded U32; added `StartRecordingFailed` event; improved reconfiguration behavior to send partial containers before applying new settings; added explicit handling of validation failures on port invocation; enhanced unit tests with validation failure, throttling, and edge case coverage |
-| 2026-09-05 | Updated `configure()` method to accept `packetsPerContainer` and `priority` parameters; when enabled, the method now internally calls `startRecordingInternal()` to validate and configure logging state; updated all unit tests and SDD documentation |
-| 2026-09-23 | Updates from F Prime code review and implementation: removed the former SVC-COMLOGGER-005 (the `configure` requirement is now 005); added `PacketSerializationFailures` and `NumQueueDrops` telemetry channels; `comIn` drops buffers when queue is full; enforced `packetsPerContainer` upper bound; added auto-flush feature with configurable timeout parameter in `configure()` (partial containers automatically flush after N idle schedIn calls; `flushTimeout=0` disables); added `m_schedCallsSinceLastPacket` and `m_flushTimeout` state variables with counter resets on packet arrival, recording start/stop, and auto-flush; added 3 unit tests for auto-flush functionality; refactored decoder script maintainability by extracting 6 helper functions from 460-line main() (parse_args, validate_mode, find_input_files, load_dictionaries, run_collection_mode, run_decode_mode); consolidated 5 documentation files into single comprehensive README.md in scripts directory; restored full ComLoggerDpDecoder implementation (~1055 lines) that was accidentally replaced with placeholder skeleton |
+| 2026-09-23 | Initial implementation with commands, ports, events, telemetry, and comprehensive unit tests |

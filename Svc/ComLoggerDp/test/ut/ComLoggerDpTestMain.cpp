@@ -138,7 +138,7 @@ TEST(Nominal, ContainerOverflowRetry) {
     tester.testContainerOverflowRetry();
 }
 
-// Test PacketSerializationFailures telemetry counter
+// Test CLEAR_COUNTERS command functionality
 TEST(Nominal, SerializationFailureCounter) {
     Svc::ComLoggerDpTester tester;
     tester.testSerializationFailureCounter();
@@ -160,6 +160,24 @@ TEST(Nominal, AutoFlushResetOnPacket) {
 TEST(Nominal, AutoFlushDisabled) {
     Svc::ComLoggerDpTester tester;
     tester.testAutoFlushDisabled();
+}
+
+// Test packetsPerContainer validation rejects excessive values
+TEST(OffNominal, PacketsPerContainerTooLarge) {
+    Svc::ComLoggerDpTester tester;
+    tester.testPacketsPerContainerTooLarge();
+}
+
+// Test stopping when already stopped is idempotent
+TEST(EdgeCases, StopWhenAlreadyStopped) {
+    Svc::ComLoggerDpTester tester;
+    tester.testStopWhenAlreadyStopped();
+}
+
+// Test sending ComBuffer when logging is disabled
+TEST(EdgeCases, ComBufferWhenDisabled) {
+    Svc::ComLoggerDpTester tester;
+    tester.testComBufferWhenDisabled();
 }
 
 int main(int argc, char** argv) {

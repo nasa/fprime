@@ -28,7 +28,8 @@ void ComLoggerDp ::configure(bool enabled, U32 packetsPerContainer, FwDpPriority
     // If enabling, use the internal start function which validates parameters
     if (enabled) {
         // This will validate packetsPerContainer and set m_enabled
-        this->startRecordingInternal(packetsPerContainer, priority);
+        const bool started = this->startRecordingInternal(packetsPerContainer, priority);
+        FW_ASSERT(started, static_cast<FwAssertArgType>(packetsPerContainer));
     } else {
         // Just disable if not enabling
         this->m_enabled = false;
@@ -63,10 +64,8 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
     const FwSizeType dataSize = data.getSize();
     const U8* dataPtr = data.getBuffAddr();
 
-    // Serialize the packet with automatic retry on container full
-    if (!this->serializePacketWithRetry(dataPtr, dataSize)) {
-        return;
-    }
+    // Serialize the packet
+    this->serializePacket(dataPtr, dataSize);
 
     // Increment counters
     ++this->m_currentPacketCount;
@@ -74,7 +73,7 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
 
     // Check if container has reached the limit
     if (this->m_currentPacketCount >= this->m_packetsPerContainer) {
-        this->finalizeFullContainer();
+        this->finalizeContainer();
     }
 }
 
@@ -96,7 +95,7 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
 
         if (this->m_schedCallsSinceLastPacket >= this->m_flushTimeout) {
             // Flush the partial container
-            this->finalizeFullContainer();
+            this->finalizeContainer();
             this->m_schedCallsSinceLastPacket = 0;
         }
     }
@@ -105,7 +104,6 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
     this->tlmWrite_LoggingEnabled(this->m_enabled);
     this->tlmWrite_NumBuffersLogged(this->m_numBuffersLogged);
     this->tlmWrite_NumBuffersDropped(this->m_numBuffersDropped);
-    this->tlmWrite_PacketSerializationFailures(this->m_numSerializationFailures);
     this->tlmWrite_NumQueueDrops(static_cast<U32>(this->getNumMsgsDropped()));
 }
 
@@ -140,20 +138,17 @@ bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityT
     constexpr U32 MAX_PACKETS_PER_CONTAINER =
         static_cast<U32>((std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) / RECORD_SIZE);
     if ((packetsPerContainer == 0) || (packetsPerContainer > MAX_PACKETS_PER_CONTAINER)) {
-        // Disable logging on validation failure
+        // Disable logging on validation failure, flushing any partial container first
+        this->sendContainerIfNonEmpty();
         this->m_enabled = false;
         return false;
     }
 
     // If recording is already active and there's a partial container, send it before reconfiguring
-    if (this->m_enabled && (this->m_currentPacketCount > 0)) {
-        this->dpSend(this->m_container);
-        // Note: dpSend() invalidates the container; new one will be allocated on next packet
-    }
+    this->sendContainerIfNonEmpty();
 
     // Store configuration
     this->m_packetsPerContainer = packetsPerContainer;
-    this->m_currentPacketCount = 0;
     this->m_priority = priority;
 
     // Reset inactivity counter
@@ -169,16 +164,11 @@ bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityT
 }
 
 U32 ComLoggerDp ::stopRecordingInternal() {
-    // Track whether a partial container was sent (0 or 1)
-    U32 numSent = 0;
+    // 1 if a partial container is about to be sent, 0 otherwise (event arg and return value)
+    const U32 numSent = (this->m_currentPacketCount > 0) ? 1 : 0;
 
     // If there's a partial container, send it before stopping
-    if (this->m_enabled && (this->m_currentPacketCount > 0)) {
-        this->dpSend(this->m_container);
-        // Note: dpSend() invalidates the container; no need to clear as recording is stopping
-        numSent = 1;
-        this->m_currentPacketCount = 0;
-    }
+    this->sendContainerIfNonEmpty();
 
     // Disable logging
     this->m_enabled = false;
@@ -217,7 +207,7 @@ bool ComLoggerDp ::allocateAndSetupContainer() {
     return true;
 }
 
-bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize) {
+void ComLoggerDp ::serializePacket(const U8* dataPtr, FwSizeType dataSize) {
     // Create buffer with sentry followed by ComBuffer data
     // Use sizeof to get sentry size (supports user changing the constant type)
     const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
@@ -232,47 +222,24 @@ bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSi
     serStatus = serBuf.serializeFrom(dataPtr, dataSize, Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
 
-    // Try to serialize the complete record into the container
+    // Serialize the complete record into the container
     serStatus = this->m_container.serializeRecord_ComBufferRecord(this->m_recordBuffer, totalSize);
-
-    // If serialization succeeded, we're done
-    if (serStatus == Fw::FW_SERIALIZE_OK) {
-        return true;
-    }
-
-    // Serialization failed - container is likely full
-    // Increment serialization failure counter
-    ++this->m_numSerializationFailures;
-
-    // Send the current partial container
-    this->dpSend(this->m_container);
-    // clear counter
-    this->m_currentPacketCount = 0;
-
-    // Try to allocate a new container for retry
-    if (!this->allocateAndSetupContainer()) {
-        return false;  // can't get one, have to drop buffer
-    }
-
-    // Retry serialization with the new container
-    serStatus = this->m_container.serializeRecord_ComBufferRecord(this->m_recordBuffer, totalSize);
-
-    // If serialization still fails, the packet is too large for any container
-    if (serStatus != Fw::FW_SERIALIZE_OK) {
-        this->handleBufferDrop(static_cast<U32>(dataSize));
-        return false;
-    }
-
-    return true;
+    FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
 }
 
-void ComLoggerDp ::finalizeFullContainer() {
-    // Send the full container
-    this->dpSend(this->m_container);
-    // Note: dpSend() invalidates the container; will allocate new one on next packet
+void ComLoggerDp ::sendContainerIfNonEmpty() {
+    // Send container if logging is enabled and it has any packets
+    // Handles both full and partial containers
+    if (this->m_enabled && this->m_currentPacketCount > 0) {
+        this->dpSend(this->m_container);
+        // Note: dpSend() invalidates the container; will allocate new one on next packet
+        this->m_currentPacketCount = 0;
+    }
+}
 
-    // Reset counter for next container
-    this->m_currentPacketCount = 0;
+void ComLoggerDp ::finalizeContainer() {
+    // Send the container (full or partial) and reset the packet count
+    this->sendContainerIfNonEmpty();
 }
 
 // ----------------------------------------------------------------------
@@ -325,9 +292,6 @@ void ComLoggerDp ::CLEAR_COUNTERS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     // Clear the NumBuffersDropped counter
     this->m_numBuffersDropped = 0;
-
-    // Clear the PacketSerializationFailures counter
-    this->m_numSerializationFailures = 0;
 
     // Clear the DpBufferError event throttle
     this->log_WARNING_HI_DpBufferError_ThrottleClear();

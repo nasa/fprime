@@ -109,7 +109,7 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test container overflow with partial container send and retry
     void testContainerOverflowRetry();
 
-    //! Test PacketSerializationFailures telemetry counter
+    //! Test CLEAR_COUNTERS command functionality
     void testSerializationFailureCounter();
 
     //! Test auto-flush after timeout with no new packets
@@ -120,6 +120,15 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
 
     //! Test auto-flush does not occur when disabled
     void testAutoFlushDisabled();
+
+    //! Test that packetsPerContainer exceeding MAX_PACKETS_PER_CONTAINER is rejected
+    void testPacketsPerContainerTooLarge();
+
+    //! Test stopping recording when already stopped
+    void testStopWhenAlreadyStopped();
+
+    //! Test sending ComBuffer when logging is disabled
+    void testComBufferWhenDisabled();
 
   private:
     // ----------------------------------------------------------------------

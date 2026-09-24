@@ -13,7 +13,13 @@
 
 namespace Svc {
 
+// Forward declaration for testing
+class ComLoggerDpTester;
+
 class ComLoggerDp final : public ComLoggerDpComponentBase {
+    // Grant test access to private methods for unit testing
+    friend class ComLoggerDpTester;
+
   public:
     // ----------------------------------------------------------------------
     // Public interface
@@ -66,7 +72,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     ComLoggerDp& operator=(ComLoggerDp&&) = delete;
 
     //! Configure initial logging state; must be called once after init()
-    //! If enabled is true and packetsPerContainer == 0, logging stays disabled (no event is emitted)
+    //! If enabled is true, an invalid packetsPerContainer (0 or above the container-size limit) triggers FW_ASSERT
     //! \param enabled: whether data product logging is initially enabled
     //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true, ignored otherwise)
     //! \param priority: data product priority (ignored if enabled is false)
@@ -167,14 +173,17 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! \return true if allocation succeeded, false if it failed
     bool allocateAndSetupContainer();
 
-    //! Internal function to serialize packet with automatic retry on container full
+    //! Internal function to serialize packet into container
     //! \param dataPtr: Pointer to the packet data
     //! \param dataSize: Size of the packet data
-    //! \return true if serialization succeeded, false if it failed
-    bool serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize);
+    void serializePacket(const U8* dataPtr, FwSizeType dataSize);
 
-    //! Internal function to finalize a full container (send and reset)
-    void finalizeFullContainer();
+    //! Send container if logging is enabled and it has packets, then reset counter
+    //! Handles both full and partial containers
+    void sendContainerIfNonEmpty();
+
+    //! Send the current container (full or partial) and reset the packet count
+    void finalizeContainer();
 
     //! Internal function to handle buffer drop (log event and increment counter)
     //! \param size: Size of the buffer being dropped
@@ -203,9 +212,6 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Number of buffers dropped due to allocation failure
     U32 m_numBuffersDropped{0};
 
-    //! Number of times packet serialization failed and required retry
-    U32 m_numSerializationFailures{0};
-
     //! Counter for schedIn calls since last packet received
     U32 m_schedCallsSinceLastPacket{0};
 
@@ -213,7 +219,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     U32 m_flushTimeout{0};
 
     //! Priority for data products
-    FwDpPriorityType m_priority{5};  // Default priority from FPP
+    FwDpPriorityType m_priority{ContainerPriority::ComBuffContainer};  // Default priority from FPP
 
     //! Buffer for building records with sentry + ComBuffer data
     //! Size: sentry (4 bytes) + max ComBuffer size
