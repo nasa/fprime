@@ -155,6 +155,7 @@ For performance-critical services, the OSAL supports **compile-time selection** 
 **Currently Supported Services:**
 - **RawTime** (`config/OsDelegateRawTime.hpp`, `OS_RAW_TIME_HEADER`)
 - **Mutex** (`config/OsDelegateMutex.hpp`, `OS_MUTEX_HEADER`)
+- **ConditionVariable** (`config/OsDelegateMutex.hpp`, `OS_CONDITION_VARIABLE_HEADER`) — configured in the same header as Mutex; the two must be overridden as a pair from the same implementation, since a condition variable operates on the handle of the configured `Os::Mutex`
 
 The configuration header mechanism allows projects to opt into compile-time selection while maintaining link-time selection as the default for backward compatibility.
 
