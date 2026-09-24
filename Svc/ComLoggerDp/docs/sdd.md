@@ -28,7 +28,7 @@ The component uses a stateful design that:
 2. Serializes incoming Com buffers as records into the container
 3. Sends the container when it reaches the configured packet count
 4. Flushes any partial container when recording is stopped
-5. Flushes any partial container after `ComLoggerFlushTimeout` consecutive `schedIn` calls with no packet received (default 10; with the 1 Hz rate group of §5.3 this is a 10 s inactivity flush). A continuous stream never idles, so its containers close only at `packetsPerContainer`; a sparse stream with gaps longer than the timeout produces one data product per burst regardless of `packetsPerContainer`, each occupying a full `ComLoggerDpBuffSize(packetsPerContainer)` buffer and one `DpCatalog` file slot.
+5. Flushes any partial container after `flushTimeout` consecutive `schedIn` calls with no packet received (`flushTimeout` is the last argument of `configure()`, 0 disables auto-flush; with the 1 Hz rate group of §5.3, `flushTimeout = 10` is a 10 s inactivity flush). A continuous stream never idles, so its containers close only at `packetsPerContainer`; a sparse stream with gaps longer than the timeout produces one data product per burst regardless of `packetsPerContainer`, each occupying a full `ComLoggerDpBuffSize(packetsPerContainer)` buffer and one `DpCatalog` file slot.
 
 ### 3.2 Port Description
 
