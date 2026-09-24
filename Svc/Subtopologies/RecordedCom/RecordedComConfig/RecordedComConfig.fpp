@@ -42,6 +42,7 @@ module RecordedComConfig {
         constant packetsPerContainer = 10
         constant enabled = false
         constant defaultPriority = 5
+        constant flushTimeout = 10 
     }
 
     # File paths

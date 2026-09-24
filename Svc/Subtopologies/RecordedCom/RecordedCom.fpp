@@ -12,7 +12,8 @@ module RecordedCom {
         RecordedCom::comLogger.configure(
             RecordedComConfig::ComLogger::enabled,
             RecordedComConfig::ComLogger::packetsPerContainer,
-            RecordedComConfig::ComLogger::defaultPriority
+            RecordedComConfig::ComLogger::defaultPriority,
+            RecordedComConfig::ComLogger::flushTimeout
         );
         """
     }

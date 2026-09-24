@@ -219,6 +219,8 @@ telemetry packets RefPackets {
     RecordedCom.comLogger.LoggingEnabled
     RecordedCom.comLogger.NumBuffersLogged
     RecordedCom.comLogger.NumBuffersDropped
+    RecordedCom.comLogger.NumQueueDrops
+    RecordedCom.comLogger.PacketSerializationFailures
 
     RecordedCom.dpMgr.NumSuccessfulAllocations
     RecordedCom.dpMgr.NumFailedAllocations
