@@ -56,6 +56,19 @@ class RateGroupDriver final : public RateGroupDriverComponentBase {
         Divider dividers[Svc::RateGroupDriver::DIVIDER_SIZE];
     };
 
+    //! \brief Calculate the greatest common divisor of two numbers
+    //! \param a first number
+    //! \param b second number
+    //! \return greatest common divisor of a and b
+    static FwSizeType gcd(FwSizeType a, FwSizeType b);
+
+    //! \brief Calculate the least common multiple of two numbers
+    //! Asserts that a != 0, b != 0, and that the calculated LCM does not overflow FwSizeType
+    //! \param a first number
+    //! \param b second number
+    //! \return least common multiple of a and b
+    static FwSizeType lcm(FwSizeType a, FwSizeType b);
+
     //!  \brief RateGroupDriver constructor
     //!
     //!  The constructor takes the divider array and stores it
