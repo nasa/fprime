@@ -213,7 +213,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     U32 m_flushTimeout{0};
 
     //! Priority for data products
-    FwDpPriorityType m_priority{5};  // Default priority from FPP
+    FwDpPriorityType m_priority{ContainerPriority::ComBuffContainer};  // Default priority from FPP
 
     //! Buffer for building records with sentry + ComBuffer data
     //! Size: sentry (4 bytes) + max ComBuffer size

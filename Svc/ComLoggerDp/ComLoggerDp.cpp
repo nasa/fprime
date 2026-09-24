@@ -28,7 +28,8 @@ void ComLoggerDp ::configure(bool enabled, U32 packetsPerContainer, FwDpPriority
     // If enabling, use the internal start function which validates parameters
     if (enabled) {
         // This will validate packetsPerContainer and set m_enabled
-        this->startRecordingInternal(packetsPerContainer, priority);
+        const bool started = this->startRecordingInternal(packetsPerContainer, priority);
+        FW_ASSERT(started, static_cast<FwAssertArgType>(packetsPerContainer));
     } else {
         // Just disable if not enabling
         this->m_enabled = false;
@@ -140,7 +141,11 @@ bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityT
     constexpr U32 MAX_PACKETS_PER_CONTAINER =
         static_cast<U32>((std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) / RECORD_SIZE);
     if ((packetsPerContainer == 0) || (packetsPerContainer > MAX_PACKETS_PER_CONTAINER)) {
-        // Disable logging on validation failure
+        // Disable logging on validation failure, flushing any partial container first
+        if (this->m_enabled && (this->m_currentPacketCount > 0)) {
+            this->dpSend(this->m_container);
+        }
+        this->m_currentPacketCount = 0;
         this->m_enabled = false;
         return false;
     }
