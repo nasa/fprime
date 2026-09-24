@@ -2,10 +2,10 @@
 // \title Os/Posix/ConditionVariable.cpp
 // \brief Posix implementations for Os::ConditionVariable
 // ======================================================================
-#include "Os/Posix/ConditionVariable.hpp"
 #include <type_traits>
 #include "Fw/Types/Assert.hpp"
 #include "Os/DelegateMutex.hpp"
+#include "Os/Posix/ConditionVariable.hpp"
 #include "Os/Posix/Mutex.hpp"
 #include "Os/Posix/error.hpp"
 
