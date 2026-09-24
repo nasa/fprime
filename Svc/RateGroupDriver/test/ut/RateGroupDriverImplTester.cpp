@@ -25,6 +25,10 @@ void RateGroupDriverImplTester::clearPortCalls() {
 
 RateGroupDriverImplTester::~RateGroupDriverImplTester() {}
 
+FwSizeType RateGroupDriverImplTester::getRollover() const {
+    return this->m_impl.m_rollover;
+}
+
 void RateGroupDriverImplTester::from_CycleOut_handler(FwIndexType portNum, Os::RawTime& cycleStart) {
     this->m_portCalls[portNum] = true;
 }
@@ -38,7 +42,9 @@ void RateGroupDriverImplTester::runSchedNominal(Svc::RateGroupDriver::DividerSet
     FwSizeType expected_rollover = 1;
 
     for (FwIndexType div = 0; div < numDividers; div++) {
-        expected_rollover *= dividersSet.dividers[div].divisor;
+        if (dividersSet.dividers[div].divisor != 0) {
+            expected_rollover = Svc::RateGroupDriver::lcm(expected_rollover, dividersSet.dividers[div].divisor);
+        }
     }
 
     ASSERT_EQ(expected_rollover, this->m_impl.m_rollover);
