@@ -81,8 +81,6 @@ The component uses constants defined in `default/config/ComLoggerDpCfg.fpp` and 
 | `DpBufferErrorThrottle` | `ComLoggerDpCfg.fpp` | `U32` | `1` | Throttle value for `DpBufferError` event - limits the number of times the event can be emitted consecutively |
 | `ComLoggerDpSentry` | `ComLoggerDpCfg.hpp` | `U32` | `0xDEADBEEF` | Sentry value prepended to each ComBuffer record for corruption detection during deserialization; must match the `--sentry` value given to `scripts/decode_comlogger_dp.py` |
 
-**Note**: The auto-flush timeout is no longer a configuration constant but is passed as a parameter to the `configure()` function, allowing different component instances to have different timeout values.
-
 These constants can be overridden in deployment-specific configuration files to tune behavior without modifying the component source.
 
 **Note on Sentry Values**: Each ComBuffer record now includes a 4-byte sentry value prepended to the data. This sentry serves as a corruption detection mechanism that allows downstream deserialization code to validate record integrity. The sentry is serialized using F Prime's serialization to handle endianness correctly across platforms.
