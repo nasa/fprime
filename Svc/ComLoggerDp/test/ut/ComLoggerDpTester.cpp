@@ -965,6 +965,17 @@ void ComLoggerDpTester::testAutoFlush() {
 
     // Should have auto-flushed the partial container
     ASSERT_PRODUCT_SEND_SIZE(1);
+    Fw::DpContainer sent(0, this->productSendHistory->at(0).buffer);
+    ASSERT_EQ(sent.deserializeHeader(), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(sent.getPriority(), 10);
+    ASSERT_GT(sent.getDataSize(), 0U);
+
+    // Next packet must allocate a fresh container after the flush
+    this->clearHistory();
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_SEND_SIZE(0);
 }
 
 void ComLoggerDpTester::testAutoFlushResetOnPacket() {
