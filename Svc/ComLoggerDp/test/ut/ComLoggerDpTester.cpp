@@ -665,7 +665,8 @@ void ComLoggerDpTester::validateDataProductFormat(const Fw::Buffer& buffer,
     U32 foundCount = 0;
     const FwSizeType sizeFieldSize = sizeof(FwSizeStoreType);  // U64 = 8 bytes
 
-    for (FwSizeType offset = 0; offset <= bufSize - (sizeof(sentryBytes) + sizeFieldSize + expectedDataSize); offset++) {
+    for (FwSizeType offset = 0; offset <= bufSize - (sizeof(sentryBytes) + sizeFieldSize + expectedDataSize);
+         offset++) {
         // Check if we found a sentry at this position
         bool sentryMatch = true;
         for (FwSizeType i = 0; i < sizeof(sentryBytes); i++) {
