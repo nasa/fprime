@@ -391,7 +391,7 @@ Monitor the following telemetry channels:
 
 A common deployment pattern:
 
-1. System boots with `comLogger.configure(false, 0, 0)` - logging disabled
+1. System boots with `comLogger.configure(false, 0, 0, 10)` - logging disabled, auto-flush after 10 idle `schedIn` calls
 2. Ground sends command to start high-rate telemetry recording when radio link is lost:
    ```
    StartComDp(packetsPerContainer: 200, priority: 10)
