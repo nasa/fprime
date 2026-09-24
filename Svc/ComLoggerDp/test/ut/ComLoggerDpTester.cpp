@@ -1030,6 +1030,7 @@ void ComLoggerDpTester::testPacketsPerContainerTooLarge() {
 
     // Should emit StartRecordingFailed event
     ASSERT_EVENTS_StartRecordingFailed_SIZE(1);
+    ASSERT_EVENTS_StartRecordingFailed(0, MAX_PACKETS + 1);
 
     // Component should remain disabled
     ASSERT_TLM_SIZE(0);
