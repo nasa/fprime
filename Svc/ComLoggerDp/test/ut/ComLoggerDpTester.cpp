@@ -1027,4 +1027,58 @@ void ComLoggerDpTester::testAutoFlushDisabled() {
     ASSERT_PRODUCT_SEND_SIZE(1);  // Partial container sent on stop
 }
 
+void ComLoggerDpTester::testPacketsPerContainerTooLarge() {
+    // Calculate max packets per container (same formula as in ComLoggerDp.cpp)
+    constexpr U32 MAX_PACKETS =
+        static_cast<U32>((std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) / ComLoggerDp::RECORD_SIZE);
+
+    // Try to start with one more than max - should fail validation
+    this->sendCmd_StartComDp(0, 0, MAX_PACKETS + 1, 10);
+    this->component.doDispatch();
+
+    // Should reject with VALIDATION_ERROR
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STARTCOMDP, 0, Fw::CmdResponse::VALIDATION_ERROR);
+
+    // Should emit StartRecordingFailed event
+    ASSERT_EVENTS_StartRecordingFailed_SIZE(1);
+
+    // Component should remain disabled
+    ASSERT_TLM_SIZE(0);
+}
+
+void ComLoggerDpTester::testStopWhenAlreadyStopped() {
+    // Component starts disabled by default
+    // Try to stop when already stopped - should be idempotent
+    this->sendCmd_StopComDp(0, 0);
+    this->component.doDispatch();
+
+    // Should succeed (stopping when already stopped is valid)
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STOPCOMDP, 0, Fw::CmdResponse::OK);
+
+    // Event should show 0 partial containers sent
+    ASSERT_EVENTS_ComDpStopped_SIZE(1);
+    ASSERT_EVENTS_ComDpStopped(0, 0);
+}
+
+void ComLoggerDpTester::testComBufferWhenDisabled() {
+    // Configure with logging disabled
+    this->component.configure(false, 0, 0, 0);
+    this->clearHistory();
+
+    // Send a ComBuffer when logging is disabled
+    Fw::ComBuffer comBuf = this->createTestComBuffer(8);
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+
+    // Should not allocate any containers or send any data products
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+
+    // Should not emit any events or telemetry
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_TLM_SIZE(0);
+}
+
 }  // namespace Svc

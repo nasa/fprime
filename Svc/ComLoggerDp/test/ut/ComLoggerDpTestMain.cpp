@@ -162,6 +162,24 @@ TEST(Nominal, AutoFlushDisabled) {
     tester.testAutoFlushDisabled();
 }
 
+// Test packetsPerContainer validation rejects excessive values
+TEST(OffNominal, PacketsPerContainerTooLarge) {
+    Svc::ComLoggerDpTester tester;
+    tester.testPacketsPerContainerTooLarge();
+}
+
+// Test stopping when already stopped is idempotent
+TEST(EdgeCases, StopWhenAlreadyStopped) {
+    Svc::ComLoggerDpTester tester;
+    tester.testStopWhenAlreadyStopped();
+}
+
+// Test sending ComBuffer when logging is disabled
+TEST(EdgeCases, ComBufferWhenDisabled) {
+    Svc::ComLoggerDpTester tester;
+    tester.testComBufferWhenDisabled();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

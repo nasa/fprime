@@ -121,6 +121,15 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test auto-flush does not occur when disabled
     void testAutoFlushDisabled();
 
+    //! Test that packetsPerContainer exceeding MAX_PACKETS_PER_CONTAINER is rejected
+    void testPacketsPerContainerTooLarge();
+
+    //! Test stopping recording when already stopped
+    void testStopWhenAlreadyStopped();
+
+    //! Test sending ComBuffer when logging is disabled
+    void testComBufferWhenDisabled();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
