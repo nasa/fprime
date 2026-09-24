@@ -182,7 +182,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Handles both full and partial containers
     void sendContainerIfNonEmpty();
 
-    //! Internal function to finalize a full container (send and reset)
+    //! Send the current container (full or partial) and reset the packet count
     void finalizeContainer();
 
     //! Internal function to handle buffer drop (log event and increment counter)
