@@ -109,7 +109,7 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     //! Test container overflow with partial container send and retry
     void testContainerOverflowRetry();
 
-    //! Test PacketSerializationFailures telemetry counter
+    //! Test CLEAR_COUNTERS command functionality
     void testSerializationFailureCounter();
 
     //! Test auto-flush after timeout with no new packets

@@ -212,9 +212,6 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Number of buffers dropped due to allocation failure
     U32 m_numBuffersDropped{0};
 
-    //! Number of times packet serialization failed and required retry
-    U32 m_numSerializationFailures{0};
-
     //! Counter for schedIn calls since last packet received
     U32 m_schedCallsSinceLastPacket{0};
 

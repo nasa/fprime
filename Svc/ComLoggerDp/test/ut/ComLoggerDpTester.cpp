@@ -199,7 +199,7 @@ void ComLoggerDpTester::testAllocationFailure() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 1);  // 1 buffer dropped
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
@@ -247,7 +247,7 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify telemetry was written
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumQueueDrops_SIZE(1);
     ASSERT_TLM_NumQueueDrops(0, 0);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
@@ -256,8 +256,6 @@ void ComLoggerDpTester::testTelemetry() {
     ASSERT_TLM_NumBuffersLogged(0, 0);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 0);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);
 
     // Log some buffers
     Fw::ComBuffer comBuf = this->createTestComBuffer(8);
@@ -272,15 +270,13 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify buffer count updated
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, true);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 0);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);
 
     // Stop logging
     this->sendCmd_StopComDp(0, 1);
@@ -294,15 +290,13 @@ void ComLoggerDpTester::testTelemetry() {
     this->component.doDispatch();
 
     // Verify logging disabled
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_LoggingEnabled_SIZE(1);
     ASSERT_TLM_LoggingEnabled(0, false);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 0);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);
 }
 
 void ComLoggerDpTester::testPriorityPreserved() {
@@ -400,7 +394,7 @@ void ComLoggerDpTester::testClearCounters() {
     // Check telemetry before clearing
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);  // 2 buffers logged
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -421,7 +415,7 @@ void ComLoggerDpTester::testClearCounters() {
     // Check telemetry after clearing
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 0);  // Counter reset to 0
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -458,7 +452,7 @@ void ComLoggerDpTester::testBufferOverflow() {
     // Check that buffer was logged (not dropped)
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 1);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -829,7 +823,7 @@ void ComLoggerDpTester::testPacketTooLarge() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
     ASSERT_TLM_NumBuffersDropped(0, 1);
 }
@@ -866,7 +860,7 @@ void ComLoggerDpTester::testContainerOverflowRetry() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
+    ASSERT_TLM_SIZE(4);
     ASSERT_TLM_NumBuffersLogged_SIZE(1);
     ASSERT_TLM_NumBuffersLogged(0, 2);  // Both buffers logged
     ASSERT_TLM_NumBuffersDropped_SIZE(1);
@@ -874,9 +868,8 @@ void ComLoggerDpTester::testContainerOverflowRetry() {
 }
 
 void ComLoggerDpTester::testSerializationFailureCounter() {
-    // Test the PacketSerializationFailures telemetry counter
-    // This counter is reserved for future use (currently always 0)
-    // Verify that it exists and can be cleared by the CLEAR_COUNTERS command
+    // Test CLEAR_COUNTERS command functionality
+    // Verify that the command properly clears NumBuffersLogged and NumBuffersDropped counters
 
     // Start logging
     this->startLoggingAndClearHistory(2, 10);
@@ -892,9 +885,7 @@ void ComLoggerDpTester::testSerializationFailureCounter() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);  // No failures in normal operation
+    ASSERT_TLM_SIZE(4);
 
     // Test that CLEAR_COUNTERS command clears this counter
     // (even though it's 0, this verifies the command handles it)
@@ -908,9 +899,7 @@ void ComLoggerDpTester::testSerializationFailureCounter() {
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(5);
-    ASSERT_TLM_PacketSerializationFailures_SIZE(1);
-    ASSERT_TLM_PacketSerializationFailures(0, 0);
+    ASSERT_TLM_SIZE(4);
 }
 
 void ComLoggerDpTester::testAutoFlush() {

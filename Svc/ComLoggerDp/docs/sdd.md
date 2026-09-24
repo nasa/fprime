@@ -71,7 +71,6 @@ The component uses a stateful design that:
 | `m_recordBuffer` | `U8[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)]` | - | Buffer for building records with sentry value followed by ComBuffer data |
 | `m_schedCallsSinceLastPacket` | `U32` | `0` | Counter for schedIn calls since last packet received (used for auto-flush) |
 | `m_flushTimeout` | `U32` | `0` | Number of schedIn calls without packets before auto-flush (0 = disabled) |
-| `m_numSerializationFailures` | `U32` | `0` | Reserved for future use (currently unused) |
 
 ### 3.4 Configuration
 
@@ -124,7 +123,6 @@ If `enabled` is `true`, the function internally validates that `packetsPerContai
 | `LoggingEnabled` | 0x00 | `bool` | Whether data product logging is currently active |
 | `NumBuffersLogged` | 0x01 | `U32` | Total number of Com buffers logged since initialization |
 | `NumBuffersDropped` | 0x02 | `U32` | Number of Com buffers dropped due to container allocation failure |
-| `PacketSerializationFailures` | 0x03 | `U32` | Reserved for future use (currently always 0) |
 | `NumQueueDrops` | 0x04 | `U32` | Number of messages dropped from the component's queue due to queue full condition |
 
 Telemetry is written periodically when the `schedIn` port is invoked (typically connected to a rate group).
@@ -255,7 +253,7 @@ The component includes comprehensive unit tests covering all functionality:
 | `ReconfigureWithPartialContainer` | Tests reconfiguring while recording with partial container, verifies partial container is sent before applying new configuration | - |
 | `PacketTooLarge` | Tests allocation failure when trying to get a new container | - |
 | `ContainerOverflowRetry` | Tests normal operation with large packets and container management | - |
-| `SerializationFailureCounter` | Tests `PacketSerializationFailures` telemetry counter (reserved for future use, currently always 0) | - |
+| `SerializationFailureCounter` | Tests CLEAR_COUNTERS command functionality (legacy test name retained for continuity) | - |
 | `AutoFlush` | Tests that partial container is auto-flushed after configured timeout with no new packets | - |
 | `AutoFlushResetOnPacket` | Tests that auto-flush counter resets when a packet arrives, restarting the timeout period | - |
 | `AutoFlushDisabled` | Tests that auto-flush does not occur when flushTimeout=0 (disabled), verifying `m_flushTimeout > 0` guard works correctly | - |

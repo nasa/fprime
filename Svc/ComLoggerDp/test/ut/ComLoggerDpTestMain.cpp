@@ -138,7 +138,7 @@ TEST(Nominal, ContainerOverflowRetry) {
     tester.testContainerOverflowRetry();
 }
 
-// Test PacketSerializationFailures telemetry counter
+// Test CLEAR_COUNTERS command functionality
 TEST(Nominal, SerializationFailureCounter) {
     Svc::ComLoggerDpTester tester;
     tester.testSerializationFailureCounter();

@@ -104,7 +104,6 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
     this->tlmWrite_LoggingEnabled(this->m_enabled);
     this->tlmWrite_NumBuffersLogged(this->m_numBuffersLogged);
     this->tlmWrite_NumBuffersDropped(this->m_numBuffersDropped);
-    this->tlmWrite_PacketSerializationFailures(this->m_numSerializationFailures);
     this->tlmWrite_NumQueueDrops(static_cast<U32>(this->getNumMsgsDropped()));
 }
 
@@ -299,9 +298,6 @@ void ComLoggerDp ::CLEAR_COUNTERS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     // Clear the NumBuffersDropped counter
     this->m_numBuffersDropped = 0;
-
-    // Clear the PacketSerializationFailures counter
-    this->m_numSerializationFailures = 0;
 
     // Clear the DpBufferError event throttle
     this->log_WARNING_HI_DpBufferError_ThrottleClear();

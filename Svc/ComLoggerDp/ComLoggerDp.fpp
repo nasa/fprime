@@ -77,7 +77,7 @@ module Svc {
     async command StopComDp \
     opcode 0x02
 
-    @ Clears NumBuffersLogged, NumBuffersDropped and PacketSerializationFailures counters and DpBufferError event throttle
+    @ Clears NumBuffersLogged and NumBuffersDropped counters and DpBufferError event throttle
     async command CLEAR_COUNTERS \
     opcode 0x03
 
@@ -138,9 +138,6 @@ module Svc {
 
     @ Number of Com buffers dropped due to allocation failure
     telemetry NumBuffersDropped: U32 id 0x02
-
-    @ Number of times packet serialization failed and required retry with new container
-    telemetry PacketSerializationFailures: U32 id 0x03
 
     @ Number of messages dropped from the message queue
     telemetry NumQueueDrops: U32 id 0x04
