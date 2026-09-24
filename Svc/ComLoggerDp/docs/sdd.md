@@ -70,7 +70,7 @@ The component uses a stateful design that:
 | `m_recordBuffer` | `U8[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)]` | - | Buffer for building records with sentry value followed by ComBuffer data |
 | `m_schedCallsSinceLastPacket` | `U32` | `0` | Counter for schedIn calls since last packet received (used for auto-flush) |
 | `m_flushTimeout` | `U32` | `0` | Number of schedIn calls without packets before auto-flush (0 = disabled) |
-| `m_numSerializationFailures` | `U32` | `0` | Number of times packet serialization failed and required retry with new container |
+| `m_numSerializationFailures` | `U32` | `0` | Reserved for future use (currently unused) |
 
 ### 3.4 Configuration
 
@@ -122,8 +122,8 @@ If `enabled` is `true`, the function internally validates that `packetsPerContai
 |---|---|---|---|
 | `LoggingEnabled` | 0x00 | `bool` | Whether data product logging is currently active |
 | `NumBuffersLogged` | 0x01 | `U32` | Total number of Com buffers logged since initialization |
-| `NumBuffersDropped` | 0x02 | `U32` | Number of Com buffers dropped due to container allocation failure or because the record could not fit in an empty container |
-| `PacketSerializationFailures` | 0x03 | `U32` | Number of times a record did not fit in the current container, forcing that container to be sent early and the record retried in a new container |
+| `NumBuffersDropped` | 0x02 | `U32` | Number of Com buffers dropped due to container allocation failure |
+| `PacketSerializationFailures` | 0x03 | `U32` | Reserved for future use (currently always 0) |
 | `NumQueueDrops` | 0x04 | `U32` | Number of messages dropped from the component's queue due to queue full condition |
 
 Telemetry is written periodically when the `schedIn` port is invoked (typically connected to a rate group).
@@ -150,10 +150,11 @@ The component uses private helper functions to share logic between command handl
 
 - `startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority)`: Validates parameters, stores configuration, enables logging, and logs event. If recording is already active with a partial container, sends the partial container before reconfiguring. On validation failure, disables logging and returns `false`. Returns `true` on success.
 - `stopRecordingInternal()`: Sends any partial container, disables logging, logs event, and returns the number of partial containers sent (0 or 1).
-- `handleBufferDrop(U32 size)`: Logs `DpBufferError` event (with throttling) and increments `m_numBuffersDropped` counter. Called when a buffer must be dropped due to allocation or serialization failure.
+- `handleBufferDrop(U32 size)`: Logs `DpBufferError` event (with throttling) and increments `m_numBuffersDropped` counter. Called when a buffer must be dropped due to allocation failure.
 - `allocateAndSetupContainer()`: Allocates a new data product container with size calculated to hold `m_packetsPerContainer` records (each with sentry + ComBuffer data), sets the priority to `m_priority`, and returns `true` on success. On allocation failure, calls `handleBufferDrop()` and returns `false`.
-- `serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize)`: Builds a record with sentry value followed by ComBuffer data in `m_recordBuffer`, then serializes it into the current container. If the container is full, sends the partial container, allocates a new one, and retries serialization. Returns `true` on success, `false` if the packet cannot be serialized (allocation failure or packet too large).
-- `finalizeFullContainer()`: Sends the current full container via `productSendOut` and resets `m_currentPacketCount` to 0. Note that `dpSend()` invalidates the container; a new one will be allocated when the next packet arrives.
+- `serializePacket(const U8* dataPtr, FwSizeType dataSize)`: Builds a record with sentry value followed by ComBuffer data in `m_recordBuffer`, then serializes it into the current container. Uses assertions to ensure serialization succeeds (containers are pre-sized correctly).
+- `sendContainerIfNonEmpty()`: Sends the current container if it has any packets via `productSendOut` and resets `m_currentPacketCount` to 0. Handles both full and partial containers. Note that `dpSend()` invalidates the container; a new one will be allocated when the next packet arrives.
+- `finalizeContainer()`: Delegates to `sendContainerIfNonEmpty()` to send the current container.
 
 This design allows both command-based and port-based control to use the same implementation, provides consistent error handling across different failure modes, and encapsulates the complexity of sentry value handling and container management.
 
@@ -180,20 +181,13 @@ This design allows both command-based and port-based control to use the same imp
    - Allocates a new container with size for `m_packetsPerContainer` records (including sentry overhead)
    - Sets container priority to `m_priority`
    - If allocation fails, `handleBufferDrop()` is called and handler returns
-5. Call `serializePacketWithRetry()` to serialize the packet with sentry:
+5. Call `serializePacket()` to serialize the packet with sentry:
    - Build record in `m_recordBuffer`: serialize sentry value (handles endianness), then append ComBuffer data
-   - Try to serialize the record into the container
-   - If serialization succeeds, return true
-   - If serialization fails (container is full):
-     - Increment `m_numSerializationFailures` (`PacketSerializationFailures` telemetry) and send the current container
-     - Reset `m_currentPacketCount` to 0
-     - Call `allocateAndSetupContainer()` to get a new container
-     - If allocation fails, `handleBufferDrop()` is called and return false
-     - Retry serialization with the new container
-     - If retry still fails (packet too large), call `handleBufferDrop()` and return false
+   - Serialize the record into the container
+   - Assertions ensure serialization succeeds (containers are pre-sized correctly)
 6. Increment `m_currentPacketCount` and `m_numBuffersLogged`
 7. If container is full (`m_currentPacketCount >= m_packetsPerContainer`):
-   - Call `finalizeFullContainer()` to send container and reset count
+   - Call `finalizeContainer()` to send container and reset count
 
 #### 3.10.3 Auto-Flush on Inactivity
 
@@ -206,7 +200,7 @@ If `flushTimeout` is configured > 0 during `configure()`:
    - Timeout must be configured (`m_flushTimeout > 0`)
 3. If all conditions met, increment `m_schedCallsSinceLastPacket`
 4. If `m_schedCallsSinceLastPacket >= m_flushTimeout`:
-   - Call `finalizeFullContainer()` to send the partial container
+   - Call `finalizeContainer()` to send the partial container
    - Reset `m_schedCallsSinceLastPacket = 0`
 5. Write telemetry channels
 
@@ -258,9 +252,9 @@ The component includes comprehensive unit tests covering all functionality:
 | `DataProductFormat` | Tests that data products contain correct sentry values and ComBuffer structure | - |
 | `ConfigureEnabled` | Tests `configure()` with enabled=true, verifies logging starts and parameters are validated | SVC-COMLOGGER-005 |
 | `ReconfigureWithPartialContainer` | Tests reconfiguring while recording with partial container, verifies partial container is sent before applying new configuration | - |
-| `PacketTooLarge` | Tests handling of packets too large to fit in any container | - |
-| `ContainerOverflowRetry` | Tests container overflow with automatic retry in new container | - |
-| `SerializationFailureCounter` | Tests `PacketSerializationFailures` telemetry counter increments correctly | - |
+| `PacketTooLarge` | Tests allocation failure when trying to get a new container | - |
+| `ContainerOverflowRetry` | Tests normal operation with large packets and container management | - |
+| `SerializationFailureCounter` | Tests `PacketSerializationFailures` telemetry counter (reserved for future use, currently always 0) | - |
 | `AutoFlush` | Tests that partial container is auto-flushed after configured timeout with no new packets | - |
 | `AutoFlushResetOnPacket` | Tests that auto-flush counter resets when a packet arrives, restarting the timeout period | - |
 | `AutoFlushDisabled` | Tests that auto-flush does not occur when flushTimeout=0 (disabled), verifying `m_flushTimeout > 0` guard works correctly | - |

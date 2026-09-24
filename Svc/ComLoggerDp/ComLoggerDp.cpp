@@ -64,10 +64,8 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
     const FwSizeType dataSize = data.getSize();
     const U8* dataPtr = data.getBuffAddr();
 
-    // Serialize the packet with automatic retry on container full
-    if (!this->serializePacketWithRetry(dataPtr, dataSize)) {
-        return;
-    }
+    // Serialize the packet
+    this->serializePacket(dataPtr, dataSize);
 
     // Increment counters
     ++this->m_currentPacketCount;
@@ -216,7 +214,7 @@ bool ComLoggerDp ::allocateAndSetupContainer() {
     return true;
 }
 
-bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize) {
+void ComLoggerDp ::serializePacket(const U8* dataPtr, FwSizeType dataSize) {
     // Create buffer with sentry followed by ComBuffer data
     // Use sizeof to get sentry size (supports user changing the constant type)
     const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
@@ -231,36 +229,10 @@ bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSi
     serStatus = serBuf.serializeFrom(dataPtr, dataSize, Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
 
-    // Try to serialize the complete record into the container
+    // Serialize the complete record into the container
     serStatus = this->m_container.serializeRecord_ComBufferRecord(this->m_recordBuffer, totalSize);
+    FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
 
-    // If serialization succeeded, we're done
-    if (serStatus == Fw::FW_SERIALIZE_OK) {
-        return true;
-    }
-
-    // Serialization failed - container is likely full
-    // Increment serialization failure counter
-    ++this->m_numSerializationFailures;
-
-    // Send the current partial container
-    this->sendContainerIfNonEmpty();
-
-    // Try to allocate a new container for retry
-    if (!this->allocateAndSetupContainer()) {
-        return false;  // can't get one, have to drop buffer
-    }
-
-    // Retry serialization with the new container
-    serStatus = this->m_container.serializeRecord_ComBufferRecord(this->m_recordBuffer, totalSize);
-
-    // If serialization still fails, the packet is too large for any container
-    if (serStatus != Fw::FW_SERIALIZE_OK) {
-        this->handleBufferDrop(static_cast<U32>(dataSize));
-        return false;
-    }
-
-    return true;
 }
 
 void ComLoggerDp ::sendContainerIfNonEmpty() {

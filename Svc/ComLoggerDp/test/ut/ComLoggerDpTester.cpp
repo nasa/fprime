@@ -789,14 +789,10 @@ void ComLoggerDpTester::testReconfigureWithPartialContainer() {
 }
 
 void ComLoggerDpTester::testPacketTooLarge() {
-    // Test a packet that's too large to fit even in an empty container
-    // This exercises lines 233-236 in serializePacketWithRetry
+    // Test allocation failure when trying to get a new container
+    // This tests the error path when dpGet fails
 
-    // Start logging with 1 packet per container but use small buffer
-    // We need to create a scenario where even after retry with a new container,
-    // the packet still doesn't fit
-
-    // First, let's start with a reasonable configuration
+    // Start logging with 1 packet per container
     this->startLoggingAndClearHistory(1, 10);
 
     // Create a packet and send it successfully first to allocate a container
@@ -810,18 +806,13 @@ void ComLoggerDpTester::testPacketTooLarge() {
     ASSERT_PRODUCT_SEND_SIZE(1);
     this->clearHistory();
 
-    // Now we need to simulate a scenario where serialization fails even after retry
-    // This is difficult to test without modifying the container behavior
-    // However, we can test the handleBufferDrop path by causing allocation failure
-    // during the retry, which will trigger the drop path (line 226)
-
-    // Set allocation failure to trigger during retry
+    // Set allocation failure to trigger when trying to get new container
     this->m_allocationFailure = true;
 
     // Send another packet - this should:
-    // 1. Try to serialize (will need new container since previous was sent)
-    // 2. Fail to allocate new container during retry
-    // 3. Call handleBufferDrop (lines 234-235)
+    // 1. Try to allocate new container (previous was sent)
+    // 2. Fail to allocate (due to m_allocationFailure)
+    // 3. Return early without processing the packet
     this->invoke_to_comIn(0, smallBuf, 0);
     this->component.doDispatch();
 
@@ -845,14 +836,7 @@ void ComLoggerDpTester::testPacketTooLarge() {
 
 void ComLoggerDpTester::testContainerOverflowRetry() {
     // Test normal operation with large packets
-    // Note: The serializePacketWithRetry retry path (lines 218-236) is defensive code
-    // that's very difficult to trigger in unit tests because:
-    // 1. Containers are sized to hold exactly packetsPerContainer max-sized packets
-    // 2. The serialization either succeeds or we hit the packet count limit
-    // 3. The intermediate "container full but count not reached" case requires
-    //    internal DpContainer fragmentation or overhead variations
-    //
-    // This test verifies normal large packet handling to ensure the common paths work.
+    // This verifies that containers correctly hold the configured number of packets
 
     // Start with 2 packets per container
     this->startLoggingAndClearHistory(2, 10);
@@ -891,14 +875,8 @@ void ComLoggerDpTester::testContainerOverflowRetry() {
 
 void ComLoggerDpTester::testSerializationFailureCounter() {
     // Test the PacketSerializationFailures telemetry counter
-    // This counter increments when packet serialization fails and requires retry
-
-    // Note: The serialization failure path (line 217) is triggered when the container
-    // is full before reaching packetsPerContainer limit. This is a defensive edge case
-    // that's difficult to trigger without mocking DpContainer internals.
-    //
-    // However, we can verify the counter exists and starts at 0, and that it's
-    // cleared by the CLEAR_COUNTERS command.
+    // This counter is reserved for future use (currently always 0)
+    // Verify that it exists and can be cleared by the CLEAR_COUNTERS command
 
     // Start logging
     this->startLoggingAndClearHistory(2, 10);

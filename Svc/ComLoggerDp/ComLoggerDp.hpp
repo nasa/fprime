@@ -13,7 +13,13 @@
 
 namespace Svc {
 
+// Forward declaration for testing
+class ComLoggerDpTester;
+
 class ComLoggerDp final : public ComLoggerDpComponentBase {
+    // Grant test access to private methods for unit testing
+    friend class ComLoggerDpTester;
+
   public:
     // ----------------------------------------------------------------------
     // Public interface
@@ -167,11 +173,10 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! \return true if allocation succeeded, false if it failed
     bool allocateAndSetupContainer();
 
-    //! Internal function to serialize packet with automatic retry on container full
+    //! Internal function to serialize packet into container
     //! \param dataPtr: Pointer to the packet data
     //! \param dataSize: Size of the packet data
-    //! \return true if serialization succeeded, false if it failed
-    bool serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize);
+    void serializePacket(const U8* dataPtr, FwSizeType dataSize);
 
     //! Send container if it has packets and reset counter
     //! Handles both full and partial containers
