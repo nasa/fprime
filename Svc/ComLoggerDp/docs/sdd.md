@@ -36,7 +36,7 @@ The component uses a stateful design that:
 
 | Port | Type | Description |
 |---|---|---|
-| `comIn` | `Fw.Com` | Async port receiving Com buffers to be logged. Queue-full policy is `drop`: when the component queue is full, incoming buffers are discarded without an event or telemetry update |
+| `comIn` | `Fw.Com` | Async port receiving Com buffers to be logged. Queue-full policy is `drop`: when the component queue is full, incoming buffers are discarded with no event; the cumulative count is reported in `NumQueueDrops` on the next `schedIn` cycle and is not reset by `CLEAR_COUNTERS`. Size the instance queue depth for the largest expected com burst between component task executions |
 | `pingIn` | `Svc.Ping` | Async port for health ping requests |
 | `schedIn` | `Svc.Sched` | Async port for periodic telemetry updates |
 | `startRecordingIn` | `Svc.ComLoggerStart` | Async port to start recording via port interface. Parameters: `packetsPerContainer` (U32), `priority` (FwDpPriorityType). Logs `StartRecordingFailed` event on validation failure. |
