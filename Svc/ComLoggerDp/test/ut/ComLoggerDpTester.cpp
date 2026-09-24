@@ -656,14 +656,16 @@ void ComLoggerDpTester::validateDataProductFormat(const Fw::Buffer& buffer,
     const U8 sentryBytes[4] = {0xDE, 0xAD, 0xBE, 0xEF};
 
     // Search through the buffer for the expected pattern:
-    // Each record contains: sentry (4 bytes) + ComBuffer size (2 bytes big-endian) + ComBuffer data
+    // Each record contains: sentry (4 bytes) + ComBuffer (U64 size 8 bytes + data N bytes)
+    // The ComBuffer is serialized with F Prime's standard format which uses U64 for sizes
     // This validates that:
     // 1. The sentry value (0xDEADBEEF) is correctly inserted before each ComBuffer
     // 2. The ComBuffer data is correctly serialized after the sentry
     // 3. The ground software can use the sentry to identify buffer boundaries
     U32 foundCount = 0;
+    const FwSizeType sizeFieldSize = sizeof(FwSizeStoreType);  // U64 = 8 bytes
 
-    for (FwSizeType offset = 0; offset <= bufSize - (sizeof(sentryBytes) + 2 + expectedDataSize); offset++) {
+    for (FwSizeType offset = 0; offset <= bufSize - (sizeof(sentryBytes) + sizeFieldSize + expectedDataSize); offset++) {
         // Check if we found a sentry at this position
         bool sentryMatch = true;
         for (FwSizeType i = 0; i < sizeof(sentryBytes); i++) {
@@ -674,15 +676,18 @@ void ComLoggerDpTester::validateDataProductFormat(const Fw::Buffer& buffer,
         }
 
         if (sentryMatch) {
-            // Check for ComBuffer size field (2 bytes big-endian) after sentry
-            // Expected size is 0x0010 (16 bytes) = 00 10 in big-endian
-            U16 comBufSize = (static_cast<U16>(bufPtr[offset + 4]) << 8) | bufPtr[offset + 5];
+            // Check for ComBuffer size field (U64, 8 bytes big-endian) after sentry
+            // Extract the U64 size value
+            U64 comBufSize = 0;
+            for (FwSizeType i = 0; i < sizeFieldSize; i++) {
+                comBufSize = (comBufSize << 8) | bufPtr[offset + 4 + i];
+            }
 
             if (comBufSize == expectedDataSize) {
-                // Validate the ComBuffer data after sentry + size
+                // Validate the ComBuffer data after sentry + size field
                 bool dataMatch = true;
                 for (FwSizeType j = 0; j < expectedDataSize; j++) {
-                    if (bufPtr[offset + 6 + j] != expectedData[j]) {
+                    if (bufPtr[offset + 4 + sizeFieldSize + j] != expectedData[j]) {
                         dataMatch = false;
                         break;
                     }
@@ -691,7 +696,7 @@ void ComLoggerDpTester::validateDataProductFormat(const Fw::Buffer& buffer,
                 if (dataMatch) {
                     foundCount++;
                     // Skip past this match to find the next one
-                    offset += sizeof(sentryBytes) + 2 + expectedDataSize - 1;
+                    offset += sizeof(sentryBytes) + sizeFieldSize + expectedDataSize - 1;
                 }
             }
         }
