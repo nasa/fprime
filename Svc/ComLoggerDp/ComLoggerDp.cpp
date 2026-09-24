@@ -232,7 +232,6 @@ void ComLoggerDp ::serializePacket(const U8* dataPtr, FwSizeType dataSize) {
     // Serialize the complete record into the container
     serStatus = this->m_container.serializeRecord_ComBufferRecord(this->m_recordBuffer, totalSize);
     FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
 }
 
 void ComLoggerDp ::sendContainerIfNonEmpty() {
