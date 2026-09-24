@@ -43,6 +43,7 @@ jobs:
       # environment variable to be set; container jobs don't set one by
       # default. Now it matches the same workaround the manual docker exec flow uses.
       USER: docker
+
     strategy:
       fail-fast: false
       matrix:
