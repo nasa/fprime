@@ -1018,8 +1018,7 @@ void ComLoggerDpTester::testAutoFlushDisabled() {
 
 void ComLoggerDpTester::testPacketsPerContainerTooLarge() {
     // Calculate max packets per container (same formula as in ComLoggerDp.cpp)
-    constexpr U32 MAX_PACKETS = static_cast<U32>((std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) /
-                                                 ComLoggerDp::RECORD_SIZE);
+    constexpr U32 MAX_PACKETS = ComLoggerDp::MAX_PACKETS_PER_CONTAINER;
 
     // Try to start with one more than max - should fail validation
     this->sendCmd_StartComDp(0, 0, MAX_PACKETS + 1, 10);
