@@ -168,8 +168,8 @@ bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityT
 }
 
 U32 ComLoggerDp ::stopRecordingInternal() {
-    // Track number of packets in partial container before sending (for return value)
-    U32 numSent = this->m_currentPacketCount > 0 ? 1 : 0;
+    // 1 if a partial container is about to be sent, 0 otherwise (event arg and return value)
+    const U32 numSent = (this->m_currentPacketCount > 0) ? 1 : 0;
 
     // If there's a partial container, send it before stopping
     if (this->m_enabled) {
