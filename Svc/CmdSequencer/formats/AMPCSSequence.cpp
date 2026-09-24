@@ -119,6 +119,10 @@ bool AMPCSSequence ::validateRecords() {
             return false;
         }
     }
+    if (numRecords == 0) {
+        this->m_events.noRecords();
+        return false;
+    }
     // Set the number of records
     this->m_header.m_numRecords = numRecords;
     // Reset deserialization

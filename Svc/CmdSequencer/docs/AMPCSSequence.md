@@ -10,7 +10,7 @@ A sequence file consists of a 32-bit sequence header followed by
 record data. The record data size is bounded by the buffer
 allocated to the sequence at initialization.
 
-The record data consists of zero or more records.
+The record data consists of one or more records.
 Each record has the following format:
 
 Record Field | Size in Bytes | Description

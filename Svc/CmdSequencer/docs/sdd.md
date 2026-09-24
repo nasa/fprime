@@ -347,3 +347,4 @@ Date | Change Description
 2/26/2017|Version for Design/Code Review
 4/6/2017|Version for Unit test
 10/30/2017|Revise design to make sequence format configurable
+09/24/2026|Reject invalid time-tag microseconds and zero-record AMPCS files during validation (#5891)
