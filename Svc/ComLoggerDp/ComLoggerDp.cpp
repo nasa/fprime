@@ -139,17 +139,13 @@ bool ComLoggerDp ::startRecordingInternal(U32 packetsPerContainer, FwDpPriorityT
         static_cast<U32>((std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) / RECORD_SIZE);
     if ((packetsPerContainer == 0) || (packetsPerContainer > MAX_PACKETS_PER_CONTAINER)) {
         // Disable logging on validation failure, flushing any partial container first
-        if (this->m_enabled) {
-            this->sendContainerIfNonEmpty();
-        }
+        this->sendContainerIfNonEmpty();
         this->m_enabled = false;
         return false;
     }
 
     // If recording is already active and there's a partial container, send it before reconfiguring
-    if (this->m_enabled) {
-        this->sendContainerIfNonEmpty();
-    }
+    this->sendContainerIfNonEmpty();
 
     // Store configuration
     this->m_packetsPerContainer = packetsPerContainer;
@@ -172,9 +168,7 @@ U32 ComLoggerDp ::stopRecordingInternal() {
     const U32 numSent = (this->m_currentPacketCount > 0) ? 1 : 0;
 
     // If there's a partial container, send it before stopping
-    if (this->m_enabled) {
-        this->sendContainerIfNonEmpty();
-    }
+    this->sendContainerIfNonEmpty();
 
     // Disable logging
     this->m_enabled = false;
@@ -234,9 +228,9 @@ void ComLoggerDp ::serializePacket(const U8* dataPtr, FwSizeType dataSize) {
 }
 
 void ComLoggerDp ::sendContainerIfNonEmpty() {
-    // Send container if it has any packets
+    // Send container if logging is enabled and it has any packets
     // Handles both full and partial containers
-    if (this->m_currentPacketCount > 0) {
+    if (this->m_enabled && this->m_currentPacketCount > 0) {
         this->dpSend(this->m_container);
         // Note: dpSend() invalidates the container; will allocate new one on next packet
         this->m_currentPacketCount = 0;

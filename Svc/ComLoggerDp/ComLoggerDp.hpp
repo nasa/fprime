@@ -178,7 +178,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! \param dataSize: Size of the packet data
     void serializePacket(const U8* dataPtr, FwSizeType dataSize);
 
-    //! Send container if it has packets and reset counter
+    //! Send container if logging is enabled and it has packets, then reset counter
     //! Handles both full and partial containers
     void sendContainerIfNonEmpty();
 
