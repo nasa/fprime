@@ -41,7 +41,7 @@ type FwQueuePriorityType = PlatformQueuePriorityType
 @ The id type.
 type FwIdType = U32
 
-@ The type of task priorities used.
+@ The type of task identifiers used.
 type FwTaskIdType = PlatformTaskIdType
 
 ####
@@ -67,8 +67,9 @@ dictionary type FwOpcodeType = FwIdType
 @ The type of a parameter identifier
 type FwPrmIdType = FwIdType
 
-@ The type used to serialize a size value
-dictionary type FwSizeStoreType = U16
+@ The type used to serialize a size value. WARNING: must be kept in sync with FwSizeType;
+@ framework components assume any in-memory size can be serialized without truncation.
+dictionary type FwSizeStoreType = FwSizeType
 
 @ The type used to serialize a time context value
 dictionary type FwTimeContextStoreType = U8
