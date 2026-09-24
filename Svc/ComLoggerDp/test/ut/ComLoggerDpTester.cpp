@@ -1021,7 +1021,7 @@ void ComLoggerDpTester::testAutoFlushDisabled() {
     ASSERT_PRODUCT_SEND_SIZE(0);
     this->clearHistory();
 
-    // Call schedIn many times (way more than would trigger auto-flush if enabled)
+    // Call schedIn five times with auto-flush disabled
     // With flushTimeout=0, auto-flush should be completely disabled
     for (int i = 0; i < 5; i++) {
         this->invoke_to_schedIn(0, 0);
