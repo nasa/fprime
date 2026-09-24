@@ -114,7 +114,7 @@ If `enabled` is `true`, the function internally validates that `packetsPerContai
 | `ComDpStopped` | 0x02 | ACTIVITY_HI | `numSent: U32` | None | Recording stopped, partial container sent if any |
 | `PriorityUpdated` | 0x03 | ACTIVITY_LO | `priority: U32` | None | Data product priority updated |
 | `CountersCleared` | 0x04 | ACTIVITY_LO | None | None | Counters and throttles cleared |
-| `StartRecordingFailed` | 0x05 | WARNING_LO | `packetsPerContainer: U32` | None | Failed to start recording due to invalid configuration (packetsPerContainer must be > 0) |
+| `StartRecordingFailed` | 0x05 | WARNING_LO | `packetsPerContainer: U32` | None | Failed to start recording due to invalid configuration (`packetsPerContainer` is 0 or exceeds the container-size limit given for `StartComDp`) |
 
 ### 3.7 Telemetry
 
