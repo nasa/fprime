@@ -174,7 +174,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     bool serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSize);
 
     //! Internal function to finalize a full container (send and reset)
-    void finalizeFullContainer();
+    void finalizeContainer();
 
     //! Internal function to handle buffer drop (log event and increment counter)
     //! \param size: Size of the buffer being dropped

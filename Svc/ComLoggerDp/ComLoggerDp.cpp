@@ -75,7 +75,7 @@ void ComLoggerDp ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 c
 
     // Check if container has reached the limit
     if (this->m_currentPacketCount >= this->m_packetsPerContainer) {
-        this->finalizeFullContainer();
+        this->finalizeContainer();
     }
 }
 
@@ -97,7 +97,7 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
 
         if (this->m_schedCallsSinceLastPacket >= this->m_flushTimeout) {
             // Flush the partial container
-            this->finalizeFullContainer();
+            this->finalizeContainer();
             this->m_schedCallsSinceLastPacket = 0;
         }
     }
@@ -271,7 +271,7 @@ bool ComLoggerDp ::serializePacketWithRetry(const U8* dataPtr, FwSizeType dataSi
     return true;
 }
 
-void ComLoggerDp ::finalizeFullContainer() {
+void ComLoggerDp ::finalizeContainer() {
     // Send the full container
     this->dpSend(this->m_container);
     // Note: dpSend() invalidates the container; will allocate new one on next packet
