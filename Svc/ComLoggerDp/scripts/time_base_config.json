@@ -1,0 +1,25 @@
+{
+  "time_bases": {
+    "0": {
+      "name": "TB_NONE",
+      "description": "No time base has been established",
+      "converter": "time_converters/TB_NONE_convert.py"
+    },
+    "1": {
+      "name": "TB_PROC_TIME",
+      "description": "Processor cycle time (not tied to external time)",
+      "converter": "time_converters/TB_PROC_TIME_convert.py"
+    },
+    "2": {
+      "name": "TB_WORKSTATION_TIME",
+      "description": "Workstation time (Unix epoch UTC)",
+      "converter": "time_converters/TB_WORKSTATION_TIME_convert.py"
+    },
+    "3": {
+      "name": "TB_SC_TIME",
+      "description": "Spacecraft clock time (J2000 epoch)",
+      "converter": "time_converters/TB_SC_TIME_convert.py"
+    }
+  },
+  "default_base": 2
+}

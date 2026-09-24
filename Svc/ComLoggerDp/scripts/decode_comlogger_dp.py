@@ -20,6 +20,8 @@ Date: 2026-09-21
 import argparse
 import json
 import sys
+import subprocess
+import os
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
 from io import BytesIO
@@ -44,6 +46,38 @@ except ImportError as e:
     )
     print(f"  pip install fprime-gds", file=sys.stderr)
     sys.exit(1)
+
+
+# ==============================================================================
+# Time Base Configuration
+# ==============================================================================
+
+# Default time base configuration matching F Prime TimeBaseEnumAc.hpp
+DEFAULT_TIME_BASE_CONFIG = {
+    "time_bases": {
+        "0": {
+            "name": "TB_NONE",
+            "description": "No time base has been established",
+            "converter": "time_converters/TB_NONE_convert.py"
+        },
+        "1": {
+            "name": "TB_PROC_TIME",
+            "description": "Processor cycle time (not tied to external time)",
+            "converter": "time_converters/TB_PROC_TIME_convert.py"
+        },
+        "2": {
+            "name": "TB_WORKSTATION_TIME",
+            "description": "Workstation time (Unix epoch UTC)",
+            "converter": "time_converters/TB_WORKSTATION_TIME_convert.py"
+        },
+        "3": {
+            "name": "TB_SC_TIME",
+            "description": "Spacecraft clock time (J2000 epoch)",
+            "converter": "time_converters/TB_SC_TIME_convert.py"
+        }
+    },
+    "default_base": 2
+}
 
 
 # ==============================================================================
@@ -103,6 +137,8 @@ class ComLoggerDpDecoder:
         sentry_value: Optional[int] = None,
         validate_crc: bool = True,
         validate_sentry: bool = True,
+        time_base_config: Optional[Dict] = None,
+        timezone: str = "UTC",
     ):
         """Initialize the decoder.
 
@@ -112,11 +148,20 @@ class ComLoggerDpDecoder:
             sentry_value: Expected sentry value (if None, will try to load from config)
             validate_crc: Whether to validate CRC checksums
             validate_sentry: Whether to validate sentry values
+            time_base_config: Time base configuration dict (if None, uses default)
+            timezone: Target timezone for converted timestamps (default: UTC)
         """
         self.dp_binary_path = dp_binary_path
         self.dictionaries = dictionaries
         self.validate_crc = validate_crc
         self.validate_sentry = validate_sentry
+        self.timezone = timezone
+
+        # Load time base configuration
+        self.time_base_config = time_base_config if time_base_config is not None else DEFAULT_TIME_BASE_CONFIG
+
+        # Get script directory for resolving converter paths
+        self.script_dir = Path(__file__).parent
 
         # Get type information from ConfigManager
         self.config_mgr = ConfigManager()
@@ -432,12 +477,11 @@ class ComLoggerDpDecoder:
                 "raw_data": packet_data.hex(),
             }
 
-    @staticmethod
-    def format_time_gds(time_dict: Dict[str, Any]) -> Tuple[str, str]:
-        """Format time in GDS log format.
+    def format_time_gds(self, time_dict: Dict[str, Any]) -> Tuple[str, str]:
+        """Format time in GDS log format using time base converters.
 
         Args:
-            time_dict: Time dictionary with seconds and microseconds
+            time_dict: Time dictionary with seconds, microseconds, context, and base
 
         Returns:
             Tuple of (ISO timestamp, F Prime time tag)
@@ -447,14 +491,67 @@ class ComLoggerDpDecoder:
         context = time_dict.get("context", 0)
         base = time_dict.get("base", 2)
 
-        # Convert to datetime
-        dt = datetime.utcfromtimestamp(seconds + microseconds / 1000000.0)
-        iso_time = dt.strftime("%Y-%m-%dT%H:%M:%S.%f")
-
         # F Prime time tag format: (base(context)-seconds:microseconds)
         fprime_time = f"({base}({context})-{seconds}:{microseconds})"
 
-        return iso_time, fprime_time
+        # Look up time base converter
+        base_str = str(base)
+        time_bases = self.time_base_config.get("time_bases", {})
+
+        if base_str not in time_bases:
+            # Unknown time base - use default or fall back to raw value
+            print(f"Warning: Unknown time base {base}, using raw value", file=sys.stderr)
+            iso_time = f"{seconds}.{microseconds:06d} (ctx={context})"
+            return iso_time, fprime_time
+
+        base_info = time_bases[base_str]
+        converter_path = base_info.get("converter")
+
+        if not converter_path:
+            print(f"Warning: No converter specified for time base {base} ({base_info.get('name', 'unknown')})", file=sys.stderr)
+            iso_time = f"{seconds}.{microseconds:06d} (ctx={context})"
+            return iso_time, fprime_time
+
+        # Resolve converter path relative to script directory
+        converter_abs = self.script_dir / converter_path
+
+        if not converter_abs.exists():
+            print(f"Warning: Converter script not found: {converter_abs}", file=sys.stderr)
+            print(f"         Falling back to raw value for time base {base}", file=sys.stderr)
+            iso_time = f"{seconds}.{microseconds:06d} (ctx={context})"
+            return iso_time, fprime_time
+
+        # Execute converter script
+        try:
+            result = subprocess.run(
+                [sys.executable, str(converter_abs), str(seconds), str(microseconds), str(context), self.timezone],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+
+            if result.returncode != 0:
+                print(f"Warning: Converter script failed for time base {base}: {result.stderr.strip()}", file=sys.stderr)
+                iso_time = f"{seconds}.{microseconds:06d} (ctx={context})"
+                return iso_time, fprime_time
+
+            iso_time = result.stdout.strip()
+
+            # Validate output format (warning only)
+            if not iso_time:
+                print(f"Warning: Converter script returned empty output for time base {base}", file=sys.stderr)
+                iso_time = f"{seconds}.{microseconds:06d} (ctx={context})"
+
+            return iso_time, fprime_time
+
+        except subprocess.TimeoutExpired:
+            print(f"Warning: Converter script timed out for time base {base}", file=sys.stderr)
+            iso_time = f"{seconds}.{microseconds:06d} (ctx={context})"
+            return iso_time, fprime_time
+        except Exception as e:
+            print(f"Warning: Error executing converter for time base {base}: {e}", file=sys.stderr)
+            iso_time = f"{seconds}.{microseconds:06d} (ctx={context})"
+            return iso_time, fprime_time
 
     @staticmethod
     def format_value_gds(value: Any) -> str:
@@ -1181,6 +1278,17 @@ Examples:
         help="Base directory for collected logs (default: current directory). Timestamped subdirectory will be created.",
     )
 
+    # Time base configuration
+    parser.add_argument(
+        "--time-base-config",
+        help="Path to time base configuration JSON file (uses built-in default if not specified)",
+    )
+    parser.add_argument(
+        "--timezone",
+        default="UTC",
+        help="Target timezone for output timestamps (default: UTC). Examples: UTC, America/Los_Angeles, Europe/London",
+    )
+
     return parser.parse_args()
 
 
@@ -1366,13 +1474,45 @@ def load_dictionaries(dict_path: Optional[str], input_path: Path):
     return dictionaries
 
 
-def run_collection_mode(args, files_to_process: List[Path], dictionaries):
+def load_time_base_config(config_path: Optional[str]) -> Dict:
+    """Load time base configuration from JSON file or use default.
+
+    Args:
+        config_path: Optional path to time base config JSON file
+
+    Returns:
+        Time base configuration dictionary
+    """
+    if config_path:
+        config_file = Path(config_path)
+        if not config_file.exists():
+            print(f"Warning: Time base config file not found: {config_path}", file=sys.stderr)
+            print(f"         Using default configuration", file=sys.stderr)
+            return DEFAULT_TIME_BASE_CONFIG
+
+        try:
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+            print(f"Loaded time base config from: {config_path}")
+            return config
+        except Exception as e:
+            print(f"Warning: Failed to load time base config: {e}", file=sys.stderr)
+            print(f"         Using default configuration", file=sys.stderr)
+            return DEFAULT_TIME_BASE_CONFIG
+    else:
+        # Use embedded default configuration
+        return DEFAULT_TIME_BASE_CONFIG
+
+
+def run_collection_mode(args, files_to_process: List[Path], dictionaries, time_base_config: Dict, timezone: str):
     """Run collection mode: aggregate all DPs into GDS-style logs.
 
     Args:
         args: Parsed command-line arguments
         files_to_process: List of DP files to process
         dictionaries: F Prime dictionaries
+        time_base_config: Time base configuration dictionary
+        timezone: Target timezone for timestamps
 
     Note:
         Exits the program after completing collection mode
@@ -1385,8 +1525,15 @@ def run_collection_mode(args, files_to_process: List[Path], dictionaries):
     # Create timestamped output directory
     now = datetime.now()
     timestamp = now.strftime("%Y_%m_%d-%H_%M_%S")
-    collect_base = Path(args.collect_dir) if args.collect_dir else Path.cwd()
-    collect_dir = collect_base / f"comlogger-dp-{timestamp}"
+
+    # Default to input directory if --collect-dir not specified
+    if args.collect_dir:
+        collect_base = Path(args.collect_dir)
+    else:
+        # Use the directory containing the data product files
+        collect_base = files_to_process[0].parent if files_to_process else Path.cwd()
+
+    collect_dir = collect_base / f"dp-comlogger-{timestamp}"
     collect_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Output directory: {collect_dir}")
@@ -1406,6 +1553,8 @@ def run_collection_mode(args, files_to_process: List[Path], dictionaries):
                 sentry_value=args.sentry,
                 validate_crc=not args.no_crc,
                 validate_sentry=not args.no_sentry,
+                time_base_config=time_base_config,
+                timezone=timezone,
             )
 
             # Decode the file
@@ -1445,11 +1594,20 @@ def run_collection_mode(args, files_to_process: List[Path], dictionaries):
     all_events.sort(key=get_time_key)
     all_channels.sort(key=get_time_key)
 
+    # Create a temporary decoder instance for time formatting
+    # We just need it for format_time_gds method
+    temp_decoder = ComLoggerDpDecoder(
+        "",  # Empty path - not needed for formatting
+        dictionaries,
+        time_base_config=time_base_config,
+        timezone=timezone,
+    )
+
     # Write event.log
     event_log_path = collect_dir / "events-dp.log"
     with open(event_log_path, "w") as f:
         for event in all_events:
-            iso_time, fprime_time = ComLoggerDpDecoder.format_time_gds(
+            iso_time, fprime_time = temp_decoder.format_time_gds(
                 event.get("time", {})
             )
             event_name = event.get("event_name", "UNKNOWN")
@@ -1465,7 +1623,7 @@ def run_collection_mode(args, files_to_process: List[Path], dictionaries):
     channel_log_path = collect_dir / "channels-dp.log"
     with open(channel_log_path, "w") as f:
         for channel in all_channels:
-            iso_time, fprime_time = ComLoggerDpDecoder.format_time_gds(
+            iso_time, fprime_time = temp_decoder.format_time_gds(
                 channel.get("time", {})
             )
             channel_name = channel.get("channel_name", "UNKNOWN")
@@ -1488,6 +1646,8 @@ def run_decode_mode(
     output_dir: Optional[Path],
     is_directory: bool,
     dictionaries,
+    time_base_config: Dict,
+    timezone: str,
 ):
     """Run decode mode: process files and output JSON/text.
 
@@ -1497,6 +1657,8 @@ def run_decode_mode(
         output_dir: Output directory for batch processing
         is_directory: Whether processing directory or single file
         dictionaries: F Prime dictionaries
+        time_base_config: Time base configuration dictionary
+        timezone: Target timezone for timestamps
 
     Returns:
         Tuple of (successful_count, failed_count)
@@ -1530,6 +1692,8 @@ def run_decode_mode(
                 sentry_value=args.sentry,
                 validate_crc=not args.no_crc,
                 validate_sentry=not args.no_sentry,
+                time_base_config=time_base_config,
+                timezone=timezone,
             )
 
             # Determine output paths
@@ -1626,13 +1790,16 @@ def main():
         # 4. Load dictionaries
         dictionaries = load_dictionaries(args.dict_path, input_path)
 
-        # 5. Run collection mode if requested (exits after completion)
-        if is_directory and args.collect:
-            run_collection_mode(args, files_to_process, dictionaries)
+        # 5. Load time base configuration
+        time_base_config = load_time_base_config(args.time_base_config)
 
-        # 6. Run decode mode (normal or reconstruction)
+        # 6. Run collection mode if requested (exits after completion)
+        if is_directory and args.collect:
+            run_collection_mode(args, files_to_process, dictionaries, time_base_config, args.timezone)
+
+        # 7. Run decode mode (normal or reconstruction)
         successful, failed = run_decode_mode(
-            args, files_to_process, output_dir, is_directory, dictionaries
+            args, files_to_process, output_dir, is_directory, dictionaries, time_base_config, args.timezone
         )
 
         # Exit with appropriate status
