@@ -1,4 +1,4 @@
-# Builds and runs integration tests on https://github.com/yvijay99/fprime-yamcs-reference
+# Builds https://github.com/fprime-community/fprime-mlpack-reference (compile check only, no tests)
 
 name: "External Repo: mlpack Reference"
 
@@ -16,11 +16,12 @@ on:
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/agents/**'
+  workflow_dispatch:
 
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') && !contains(github.ref, 'YAMCSCI') }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
 
 permissions:
   contents: read
