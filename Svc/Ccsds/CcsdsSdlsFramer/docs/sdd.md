@@ -21,11 +21,12 @@ Buffer ownership follows the standard F Prime data-with-context return pattern: 
 | SVC-CCSDS-SDLS-FRAMER-001 | The CcsdsSdlsFramer shall accept data with frame context via the `Svc.Framer` interface (`dataIn`). | Standard framing pipeline entry point. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-002 | The CcsdsSdlsFramer shall determine the security association (SA) index from the frame context when set, otherwise from the `SA_INDEX` parameter, record it in the frame context, and pass the data, SA index, and context to the encryption helper via `encryptOut`. | The SA index selects the encryption path; upstream components may override the configured default. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-003 | Upon receiving encrypted data on `encryptIn`, the CcsdsSdlsFramer shall allocate a frame buffer via `bufferAllocate`, prepend the 16-bit SA index to the encrypted data, return ownership of the encrypted buffer via `encryptReturnOut`, and pass the resulting SDLS frame downstream via `dataOut`. | The SA index must lead the frame so the receiving deframer can extract it; prepending requires a new allocation. | Unit test |
-| SVC-CCSDS-SDLS-FRAMER-004 | Upon a non-SUCCESS status passed forward on `encryptIn`, the CcsdsSdlsFramer shall emit the `EncryptionFailed` WARNING_HI event and return ownership of the accompanying buffer to the encryption subsystem via `encryptReturnOut`, and emit a ready-for-more com status on `comStatusOut`. | Encryption failures must be visible to the system, the buffer must not leak, and a ComQueue-driven downlink must not stall. | Unit test |
+| SVC-CCSDS-SDLS-FRAMER-004 | Upon a non-SUCCESS status passed forward on `encryptIn`, the CcsdsSdlsFramer shall emit the `EncryptionFailed` WARNING_HI event subject to its throttle and return ownership of the accompanying buffer to the encryption subsystem via `encryptReturnOut`, and emit a ready-for-more com status on `comStatusOut`. | Encryption failures must be visible to the system, the buffer must not leak, and a ComQueue-driven downlink must not stall. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-005 | The CcsdsSdlsFramer shall deallocate frame buffers received back on `dataReturnIn` via `bufferDeallocate`. | The framer allocated the frame buffer and must release it. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-006 | The CcsdsSdlsFramer shall return original data buffers received back from the encryption helper (`bufferReturnIn`) upstream via `dataReturnOut`. | Original data buffers must return to their upstream allocator. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-007 | The CcsdsSdlsFramer shall pass com status received on `comStatusIn` through to `comStatusOut` unmodified. | Ready signals must traverse the framing pipeline. | Unit test |
-| SVC-CCSDS-SDLS-FRAMER-008 | Upon an invalid or undersized buffer allocation, the CcsdsSdlsFramer shall emit the `BufferAllocationFailed` WARNING_HI event, deallocate the undersized buffer when valid, return the encrypted buffer via `encryptReturnOut`, and emit a ready-for-more com status on `comStatusOut`. | Allocation failures must be reported, no buffer may leak, and a ComQueue-driven downlink must not stall; invalid buffers need not be deallocated. | Unit test |
+| SVC-CCSDS-SDLS-FRAMER-008 | Upon an invalid or undersized buffer allocation, the CcsdsSdlsFramer shall emit the `BufferAllocationFailed` WARNING_HI event subject to its throttle, deallocate the undersized buffer when valid, return the encrypted buffer via `encryptReturnOut`, and emit a ready-for-more com status on `comStatusOut`. | Allocation failures must be reported, no buffer may leak, and a ComQueue-driven downlink must not stall; invalid buffers need not be deallocated. | Unit test |
+| SVC-CCSDS-SDLS-FRAMER-009 | Each failure event shall be limited to five emissions per component instance until its throttle is explicitly cleared or the component is reconstructed. Buffer returns and ready-for-more status shall continue after the quota is exhausted. | Persistent failures must not flood the event stream or stall ownership returns. | Unit test |
 
 ## Design
 
@@ -46,7 +47,7 @@ The component is passive with no commands or telemetry. It composes two interfac
 | output | bufferAllocate | Fw.BufferGet | Allocates the frame buffer for the SA prepend. |
 | output | bufferDeallocate | Fw.BufferSend | Deallocates frame buffers. |
 
-Events: `EncryptionFailed` (WARNING_HI, carries the `SdlsStatus`) and `BufferAllocationFailed` (WARNING_HI, carries the requested size as `FwSizeType`).
+Events: `EncryptionFailed` (WARNING_HI, carries the `SdlsStatus`) and `BufferAllocationFailed` (WARNING_HI, carries the requested size as `FwSizeType`). Each event has an independent throttle of five emissions. This is an emission quota, not a rate per second. Successful frames do not reset either quota. The generated protected `log_WARNING_HI_<event>_ThrottleClear()` methods can reset the quotas from component implementation code. This component exposes no reset command and does not reset them automatically.
 
 Parameters: `SA_INDEX` (U16, default 1) — the SA index used when the incoming frame context does not specify one (context `saIndex` equal to its default value of 0xFFFF is treated as unset).
 
@@ -58,7 +59,7 @@ Note that `Svc.Ccsds.SpacePacketFramer` does not set `saIndex` on the frame cont
 
 ## Unit Testing
 
-Rule-based testing (STest) with rules covering both SA selection paths, both error paths, the encrypted-data framing path, the ownership return paths, and the comStatus pass-through; a 10000-step randomized scenario interleaves all rules. Requirements are traced with `REQUIREMENT()` macros in the test main.
+Rule-based testing (STest) with rules covering both SA selection paths, both error paths, the encrypted-data framing path, the ownership return paths, and the comStatus pass-through; a 10000-step randomized scenario interleaves all rules. The error rules retain shadow counts across history clearing and verify buffer/status handling even when events are suppressed. Deterministic tests check independent quotas, interleaved successful frames, and separate component instances. Requirements are traced with `REQUIREMENT()` macros in the test main.
 
 ## See Also
 

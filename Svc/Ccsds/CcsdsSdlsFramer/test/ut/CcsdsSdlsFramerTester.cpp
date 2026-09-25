@@ -11,6 +11,7 @@ namespace Svc {
 namespace Ccsds {
 
 const U16 CcsdsSdlsFramerTester::TEST_PARAM_SA_INDEX;
+const U32 CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT;
 
 // ----------------------------------------------------------------------
 // Construction and destruction

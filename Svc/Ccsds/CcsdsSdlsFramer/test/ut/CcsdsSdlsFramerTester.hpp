@@ -24,6 +24,9 @@ class CcsdsSdlsFramerTester : public CcsdsSdlsFramerGTestBase {
     //! Maximum size of histories storing events, telemetry, and port outputs
     static const FwSizeType MAX_HISTORY_SIZE = 10;
 
+    //! Expected per-event quota, independent of the generated throttle implementation
+    static const U32 FAILURE_EVENT_LIMIT = 5;
+
     //! Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
@@ -85,6 +88,10 @@ class CcsdsSdlsFramerTester : public CcsdsSdlsFramerGTestBase {
 
     //! Whether the allocation stub returns an invalid buffer
     bool m_allocateInvalid = false;
+
+    //! Saturating shadow counts for the independently throttled failure events
+    U32 m_encryptionFailureEvents = 0;
+    U32 m_allocationFailureEvents = 0;
 
     //! Storage backing the allocation stub
     U8 m_allocationStorage[TEST_ALLOCATION_SIZE] = {};

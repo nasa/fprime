@@ -13,10 +13,10 @@ module Ccsds {
         param SA_INDEX: U16 default 1
 
         @ Event raised when the encryption helper fails
-        event EncryptionFailed(status: Svc.Ccsds.SdlsStatus) severity warning high format "Failed to encrypt frame: {}"
+        event EncryptionFailed(status: Svc.Ccsds.SdlsStatus) severity warning high format "Failed to encrypt frame: {}" throttle 5
 
         @ Event raised when the allocated frame buffer is too small for the security association index and encrypted data
-        event BufferAllocationFailed(allocationSize: FwSizeType) severity warning high format "Failed to allocate frame buffer of size {}"
+        event BufferAllocationFailed(allocationSize: FwSizeType) severity warning high format "Failed to allocate frame buffer of size {}" throttle 5
 
         @ Port to allocate a buffer for the SDLS frame
         output port bufferAllocate: Fw.BufferGet

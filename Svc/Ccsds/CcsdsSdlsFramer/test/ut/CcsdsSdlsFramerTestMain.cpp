@@ -111,6 +111,57 @@ TEST(CcsdsSdlsFramer, RandomizedTesting) {
     ASSERT_EQ(numSteps, numRulesToApply);
 }
 
+// Each failure event has its own quota; exhausting one must not suppress the other.
+TEST(CcsdsSdlsFramer, IndependentFailureEventLimits) {
+    COMMENT("Bound each failure event independently while preserving buffer returns and ready status.");
+    REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-009");
+    CcsdsSdlsFramerTester tester;
+    CcsdsSdlsFramerTester::Frame__EncryptFailure encryption;
+    CcsdsSdlsFramerTester::DataFlow__AllocationFailure allocation;
+    for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT + 2; ++i) {
+        encryption.apply(tester);
+    }
+    ASSERT_EQ(tester.m_encryptionFailureEvents, CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT);
+    ASSERT_EQ(tester.m_allocationFailureEvents, 0U);
+    for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT + 2; ++i) {
+        allocation.apply(tester);
+    }
+    ASSERT_EQ(tester.m_allocationFailureEvents, CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT);
+}
+
+TEST(CcsdsSdlsFramer, SuccessfulFramesDoNotResetFailureLimits) {
+    COMMENT("Interleave successful frames and both failures without resetting their independent quotas.");
+    REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-009");
+    CcsdsSdlsFramerTester tester;
+    CcsdsSdlsFramerTester::Frame__EncryptFailure encryption;
+    CcsdsSdlsFramerTester::DataFlow__AllocationFailure allocation;
+    CcsdsSdlsFramerTester::DataFlow__EncryptedData success;
+    for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT + 2; ++i) {
+        encryption.apply(tester);
+        success.apply(tester);
+        allocation.apply(tester);
+        success.apply(tester);
+    }
+    ASSERT_EQ(tester.m_encryptionFailureEvents, CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT);
+    ASSERT_EQ(tester.m_allocationFailureEvents, CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT);
+}
+
+TEST(CcsdsSdlsFramer, FailureEventLimitsArePerInstance) {
+    COMMENT("A newly initialized component has independent, fresh failure-event quotas.");
+    REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-009");
+    for (U32 instance = 0; instance < 2; ++instance) {
+        CcsdsSdlsFramerTester tester;
+        CcsdsSdlsFramerTester::Frame__EncryptFailure encryption;
+        CcsdsSdlsFramerTester::DataFlow__AllocationFailure allocation;
+        for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT + 1; ++i) {
+            encryption.apply(tester);
+            allocation.apply(tester);
+        }
+        ASSERT_EQ(tester.m_encryptionFailureEvents, CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT);
+        ASSERT_EQ(tester.m_allocationFailureEvents, CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT);
+    }
+}
+
 int main(int argc, char** argv) {
     STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
