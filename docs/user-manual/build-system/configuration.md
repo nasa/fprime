@@ -52,13 +52,13 @@ sequenceDiagram
     participant C as Build cache
 
     Note over P,J: register_fprime_config() calls, in CMake traversal order (overrides match by file name)
-    P->>C: HEADERS PlatformTypes.h → new file Platform/PlatformTypes.h
-    F->>C: HEADERS FpConfig.h → new file config/FpConfig.h
-    F->>C: AUTOCODER_INPUTS AcConstants.fpp → new file config/AcConstants.fpp
-    L->>C: HEADERS MyDriverCfg.hpp → new file config-my-library/MyDriverCfg.hpp
-    J-->>C: CONFIGURATION_OVERRIDES FpConfig.h → replaces config/FpConfig.h
-    J-->>C: CONFIGURATION_OVERRIDES MyDriverCfg.hpp → replaces config-my-library/MyDriverCfg.hpp
-    Note over J,C: Final contents of the build cache:<br>Platform/PlatformTypes.h — platform's copy<br>config/AcConstants.fpp — framework's copy<br>config/FpConfig.h — project's copy<br>config-my-library/MyDriverCfg.hpp — project's copy
+    P->>C: HEADERS PlatformTypes.h → new file #lt;build cache#gt;/Platform/PlatformTypes.h
+    F->>C: HEADERS FpConfig.h → new file #lt;build cache#gt;/config/FpConfig.h
+    F->>C: AUTOCODER_INPUTS AcConstants.fpp → new file #lt;build cache#gt;/config/AcConstants.fpp
+    L->>C: HEADERS MyDriverCfg.hpp → new file #lt;build cache#gt;/config-my-library/MyDriverCfg.hpp
+    J-->>C: CONFIGURATION_OVERRIDES FpConfig.h → replaces #lt;build cache#gt;/config/FpConfig.h
+    J-->>C: CONFIGURATION_OVERRIDES MyDriverCfg.hpp → replaces #lt;build cache#gt;/config-my-library/MyDriverCfg.hpp
+    Note over J,C: Final contents:<br>#lt;build cache#gt;/Platform/PlatformTypes.h — platform's copy<br>#lt;build cache#gt;/config/AcConstants.fpp — framework's copy<br>#lt;build cache#gt;/config/FpConfig.h — project's copy<br>#lt;build cache#gt;/config-my-library/MyDriverCfg.hpp — project's copy
 ```
 
 Solid arrows are new files (`SOURCES`, `HEADERS`, `AUTOCODER_INPUTS`), copied to a path derived from the
