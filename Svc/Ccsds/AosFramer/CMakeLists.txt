@@ -23,6 +23,7 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosFramerTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosFramerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/IdlePadding.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/AosFramer.fpp"
   DEPENDS
