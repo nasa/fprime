@@ -31,7 +31,7 @@ jobs:
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
       target_repository: fprime-community/fprime-mlpack-reference
-      default_target_ref: main
+      default_target_ref: master
 
   run:
     needs: get-branch
