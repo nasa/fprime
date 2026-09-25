@@ -141,21 +141,24 @@ add_named_os_module(Task ${CMAKE_THREAD_LIBS_INIT})
 # Mutex: Mutex.hpp is a thin public alias header (no Mutex.cpp); the interface and
 # link-time delegate live in MutexInterface.hpp / DelegateMutex.{hpp,cpp}. Registered
 # explicitly (rather than via add_named_os_module) because that helper assumes a
-# matching <name>.cpp per header. Condition.{cpp,hpp} stays bundled into Os_Mutex as
-# before, preserving the module name that the Stub impl and REQUIRES_IMPLEMENTATIONS
-# references depend on.
+# matching <name>.cpp per header. ConditionVariable (Condition.hpp alias header,
+# ConditionVariableInterface.hpp, DelegateConditionVariable.{hpp,cpp}) stays bundled
+# into Os_Mutex as before, preserving the module name that the Stub impl and
+# REQUIRES_IMPLEMENTATIONS references depend on.
 register_fprime_module(
       "Os_Mutex"
     REQUIRES_IMPLEMENTATIONS
       "Os_Mutex"
     SOURCES
       "${CMAKE_CURRENT_LIST_DIR}/DelegateMutex.cpp"
-      "${CMAKE_CURRENT_LIST_DIR}/Condition.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateConditionVariable.cpp"
     HEADERS
       "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"
       "${CMAKE_CURRENT_LIST_DIR}/MutexInterface.hpp"
       "${CMAKE_CURRENT_LIST_DIR}/DelegateMutex.hpp"
       "${CMAKE_CURRENT_LIST_DIR}/Condition.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/ConditionVariableInterface.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateConditionVariable.hpp"
     DEPENDS
       Fw_Time
       Fw_Types
