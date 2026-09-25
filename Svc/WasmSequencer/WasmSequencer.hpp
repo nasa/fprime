@@ -208,7 +208,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        const Svc::BlockState& block       //!< @ Block until sequence has finished running
+                        const Svc::BlockState& block       //!< Block until sequence has finished running
                         ) override;
 
     //! Handler implementation for command LOAD

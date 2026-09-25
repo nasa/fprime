@@ -358,8 +358,10 @@ A running sequence reaches the host through a single Wasm import module, `fprime
 | `serial_send`       | Send bytes out a serial port. (See [serial ports](#serial-ports)).                                              |
 | `serial_recv`       | Read bytes from a serial input port (blocking or non-blocking). (See [serial ports](#serial-ports)).            |
 
+Guest arguments are validated on every call; invalid input (bad pointers, oversized/undersized buffers, out-of-range or unconnected ports, reserved event severities) fails or traps the sequence and emits a warning event rather than faulting the host (WASM-SEQ-019).
+
 > [!WARNING]
-> An `args` function also exists for 
+> An `args` function also exists backwards compatibility but will always return 0 bytes.
 
 ## Timeouts
 

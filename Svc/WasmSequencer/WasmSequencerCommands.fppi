@@ -11,7 +11,7 @@
 @ If $block == Svc.BlockState.BLOCK this command will wait for completion.
 async command RUN(
     fileName: string size FileNameStringSize  @< The name of the sequence file
-    $block: Svc.BlockState                    @< @ Block until sequence has finished running
+    $block: Svc.BlockState                    @< Block until sequence has finished running
 ) \
     opcode 0
 

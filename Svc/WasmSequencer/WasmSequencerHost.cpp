@@ -188,10 +188,10 @@ spacewasm_hostcall_result_t WasmSequencer::wasmArgs(spacewasm_caller_t* caller,
 
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
     FW_ASSERT(params[1].tag == spacewasm_valtype_t::SPACEWASM_I32, params[1].tag);
+    FW_ASSERT(ret != nullptr);
 
-    // Always return 0.
-    // This is a deprecated. Instead, call exported functions directly through the Wasm ABI
-    ret->tag = SPACEWASM_I32;
+    // Deprecated: this sequencer does not pass arguments to a sequence
+    ret->tag = spacewasm_valtype_t::SPACEWASM_I32;
     ret->u.i32_ = 0;
 
     return SPACEWASM_CONTINUE_SOME;

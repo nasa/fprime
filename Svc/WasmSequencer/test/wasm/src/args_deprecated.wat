@@ -1,7 +1,8 @@
-;; Reads sequence arguments when none were supplied (SeqArgs.get_size() == 0).
-;; args(value_ptr, value_size) -> i32(bytes_written). With empty args the host writes
-;; nothing and returns 0. The guest poisons value_ptr, asserts the return is 0, and
-;; asserts the poison byte is untouched (no write happened at all).
+;; Calls the deprecated `args` import, which is a no-op: the sequencer does not pass
+;; arguments to a sequence.
+;; args(value_ptr, value_size) -> i32(bytes_written). The host writes nothing and always
+;; returns 0. The guest poisons value_ptr, asserts the return is 0, and asserts the poison
+;; byte is untouched (no write happened at all).
 (module
   (import "fprime_v1" "args"
     (func $args (param i32 i32) (result i32)))

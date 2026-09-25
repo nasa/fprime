@@ -181,18 +181,6 @@ void WasmSequencerTester ::disconnectSeqDoneOut(FwIndexType portNum) {
     port.init();
 }
 
-Svc::SeqArgs WasmSequencerTester ::makeSeqArgs(const U8* bytes, FwSizeType size) {
-    Svc::SeqArgs args;
-    Svc::SeqArgs::Type_of_buffer buffer = {};
-    FW_ASSERT(size <= sizeof buffer, static_cast<FwAssertArgType>(size));
-    for (FwSizeType i = 0; i < size; i++) {
-        buffer[i] = bytes[i];
-    }
-    args.set_size(size);
-    args.set_buffer(buffer);
-    return args;
-}
-
 // ----------------------------------------------------------------------
 // Dispatch / state helpers
 // ----------------------------------------------------------------------

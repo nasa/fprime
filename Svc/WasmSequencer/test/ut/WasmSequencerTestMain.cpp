@@ -392,7 +392,7 @@ TEST_F(WasmSequencerTester, RunEmptyNoBlock) {
 
     // NO_BLOCK responds OK once the module loads; the program then runs to
     // completion and lands in READY.
-    this->sendCmd_RUN(0, 20, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 20, file, NO_BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -407,7 +407,7 @@ TEST_F(WasmSequencerTester, RunEmptyBlock) {
     const Fw::String& file = file_asset.file();
 
     // BLOCK holds the command response until the interpreter finishes.
-    this->sendCmd_RUN(0, 21, file, BLOCK, {});
+    this->sendCmd_RUN(0, 21, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -422,7 +422,7 @@ TEST_F(WasmSequencerTester, RunStartModule) {
     StagedAsset file_asset(*this, "start.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 22, file, BLOCK, {});
+    this->sendCmd_RUN(0, 22, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -437,7 +437,7 @@ TEST_F(WasmSequencerTester, RunNoMainFailsInvoke) {
     StagedAsset file_asset(*this, "no_main.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 23, file, BLOCK, {});
+    this->sendCmd_RUN(0, 23, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -459,7 +459,7 @@ TEST_F(WasmSequencerTester, RunMainInvokeFails) {
     StagedAsset file_asset(*this, "main_overflow.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 40, file, BLOCK, {});
+    this->sendCmd_RUN(0, 40, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -479,7 +479,7 @@ TEST_F(WasmSequencerTester, RunMainReturningNonZeroFails) {
     StagedAsset file_asset(*this, "main_i32.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 42, file, BLOCK, {});
+    this->sendCmd_RUN(0, 42, file, BLOCK);
     // The run starts and ends in IDLE, so dispatchUntilControllerState(IDLE) would
     // be a no-op (already there); drain the queue instead.
     this->dispatchAll();
@@ -498,7 +498,7 @@ TEST_F(WasmSequencerTester, RunUnreachableTraps) {
     StagedAsset file_asset(*this, "unreachable.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 24, file, BLOCK, {});
+    this->sendCmd_RUN(0, 24, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -513,7 +513,7 @@ TEST_F(WasmSequencerTester, RunDivZeroTraps) {
     StagedAsset file_asset(*this, "divzero.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 25, file, BLOCK, {});
+    this->sendCmd_RUN(0, 25, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -530,7 +530,7 @@ TEST_F(WasmSequencerTester, RunExitNonZeroFails) {
     StagedAsset file_asset(*this, "exit.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 26, file, BLOCK, {});
+    this->sendCmd_RUN(0, 26, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -553,7 +553,7 @@ TEST_F(WasmSequencerTester, RunPanicFails) {
     StagedAsset file_asset(*this, "panic.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 27, file, BLOCK, {});
+    this->sendCmd_RUN(0, 27, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -570,7 +570,7 @@ TEST_F(WasmSequencerTester, RunExitZeroSucceeds) {
     StagedAsset file_asset(*this, "exit0.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 29, file, BLOCK, {});
+    this->sendCmd_RUN(0, 29, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -590,7 +590,7 @@ TEST_F(WasmSequencerTester, RunStartTrapsToIdle) {
     StagedAsset file_asset(*this, "start_trap.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 28, file, BLOCK, {});
+    this->sendCmd_RUN(0, 28, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -618,7 +618,7 @@ TEST_F(WasmSequencerTester, RunStartOverflowTrapsToIdle) {
     StagedAsset file_asset(*this, "start_overflow.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 29, file, BLOCK, {});
+    this->sendCmd_RUN(0, 29, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -657,7 +657,7 @@ TEST_F(WasmSequencerTester, InvokeAfterLoad) {
 
     // Already READY, so pump the queue to completion rather than waiting on a
     // state change (INVOKE of a trivial main returns straight back to READY).
-    this->sendCmd_INVOKE(0, 31, Fw::CmdStringArg(""), BLOCK, {});
+    this->sendCmd_INVOKE(0, 31, Fw::CmdStringArg(""), BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -681,7 +681,7 @@ TEST_F(WasmSequencerTester, InvokeTrapAfterExitZeroIsNotMisreported) {
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
 
     // First invoke: exit(0) -> clean success -> back to READY (store not reset).
-    this->sendCmd_INVOKE(0, 38, Fw::CmdStringArg(""), BLOCK, {});
+    this->sendCmd_INVOKE(0, 38, Fw::CmdStringArg(""), BLOCK);
     this->dispatchAll();
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
@@ -689,7 +689,7 @@ TEST_F(WasmSequencerTester, InvokeTrapAfterExitZeroIsNotMisreported) {
 
     // Second invoke on the same store: unreachable -> genuine trap. Without the
     // per-invoke reset this would surface as another SequenceSucceeded + OK.
-    this->sendCmd_INVOKE(0, 39, Fw::CmdStringArg(""), BLOCK, {});
+    this->sendCmd_INVOKE(0, 39, Fw::CmdStringArg(""), BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -712,7 +712,7 @@ TEST_F(WasmSequencerTester, InvokeNoBlockRespondsImmediately) {
 
     // NO_BLOCK INVOKE responds OK as soon as the module resolves, before the
     // function actually runs (INVOKE_cmdHandler NO_BLOCK path).
-    this->sendCmd_INVOKE(0, 36, Fw::CmdStringArg(""), NO_BLOCK, {});
+    this->sendCmd_INVOKE(0, 36, Fw::CmdStringArg(""), NO_BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -730,7 +730,7 @@ TEST_F(WasmSequencerTester, InvokeUnknownModule) {
     this->dispatchUntilControllerState(ControllerState::READY);
 
     // A module name that was never loaded resolves to not-found.
-    this->sendCmd_INVOKE(0, 33, Fw::CmdStringArg("nope"), NO_BLOCK, {});
+    this->sendCmd_INVOKE(0, 33, Fw::CmdStringArg("nope"), NO_BLOCK);
     this->dispatchAll();
 
     ASSERT_EVENTS_ModuleNotFound_SIZE(1);
@@ -745,7 +745,7 @@ TEST_F(WasmSequencerTester, InvokeFromIdleInvalid) {
     REQUIREMENT("WASM-SEQ-006");
     // INVOKE is only valid from READY. From IDLE the controller rejects it as BUSY
     // (ControllerBusy for the COMMAND_INVOKE signal in the IDLE state).
-    this->sendCmd_INVOKE(0, 34, Fw::CmdStringArg(""), NO_BLOCK, {});
+    this->sendCmd_INVOKE(0, 34, Fw::CmdStringArg(""), NO_BLOCK);
     this->dispatchAll();
 
     ASSERT_EVENTS_ControllerCannotInvoke_SIZE(1);
@@ -871,7 +871,7 @@ TEST_F(WasmSequencerTester, EventActivityHi) {
     StagedAsset file_asset(*this, "event.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 60, file, BLOCK, {});
+    this->sendCmd_RUN(0, 60, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -887,7 +887,7 @@ TEST_F(WasmSequencerTester, EventAllSeverities) {
     StagedAsset file_asset(*this, "event_all_sev.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 61, file, BLOCK, {});
+    this->sendCmd_RUN(0, 61, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -922,7 +922,7 @@ TEST_F(WasmSequencerTester, EventMessageTruncatedToMax) {
     StagedAsset file_asset(*this, "event_toobig.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 63, file, BLOCK, {});
+    this->sendCmd_RUN(0, 63, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -943,7 +943,7 @@ TEST_F(WasmSequencerTester, EventBadSeverityReported) {
     StagedAsset file_asset(*this, "event_bad_sev.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 62, file, BLOCK, {});
+    this->sendCmd_RUN(0, 62, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     // The guest requested severity id 99, which is not a valid Fw::LogSeverity.
@@ -970,7 +970,7 @@ TEST_F(WasmSequencerTester, TelemetryRead) {
 
     StagedAsset file_asset(*this, "tlm.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 70, file, BLOCK, {});
+    this->sendCmd_RUN(0, 70, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -990,7 +990,7 @@ TEST_F(WasmSequencerTester, TelemetryReadPortNotConnectedTraps) {
 
     StagedAsset file_asset(*this, "tlm.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 74, file, BLOCK, {});
+    this->sendCmd_RUN(0, 74, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1008,7 +1008,7 @@ TEST_F(WasmSequencerTester, ParameterReadPortNotConnectedTraps) {
 
     StagedAsset file_asset(*this, "prm.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 75, file, BLOCK, {});
+    this->sendCmd_RUN(0, 75, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1024,7 +1024,7 @@ TEST_F(WasmSequencerTester, TelemetryReadIdNegativeTraps) {
     // with HostFunctionInvalidId instead of truncating/aliasing another channel.
     StagedAsset file_asset(*this, "tlm_badid_negative.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 77, file, BLOCK, {});
+    this->sendCmd_RUN(0, 77, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1041,7 +1041,7 @@ TEST_F(WasmSequencerTester, TelemetryReadIdTooLargeTraps) {
     // HostFunctionInvalidId rather than silently wrapping to alias id 0.
     StagedAsset file_asset(*this, "tlm_badid_toolarge.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 78, file, BLOCK, {});
+    this->sendCmd_RUN(0, 78, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1057,7 +1057,7 @@ TEST_F(WasmSequencerTester, ParameterReadIdNegativeTraps) {
     // with HostFunctionInvalidId instead of truncating/aliasing another parameter.
     StagedAsset file_asset(*this, "prm_badid_negative.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 79, file, BLOCK, {});
+    this->sendCmd_RUN(0, 79, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1073,7 +1073,7 @@ TEST_F(WasmSequencerTester, ParameterReadIdTooLargeTraps) {
     // HostFunctionInvalidId rather than silently wrapping to alias id 0.
     StagedAsset file_asset(*this, "prm_badid_toolarge.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 80, file, BLOCK, {});
+    this->sendCmd_RUN(0, 80, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1090,7 +1090,7 @@ TEST_F(WasmSequencerTester, CommandPortNotConnectedTraps) {
 
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 76, file, BLOCK, {});
+    this->sendCmd_RUN(0, 76, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1109,7 +1109,7 @@ TEST_F(WasmSequencerTester, TelemetryReadValueMismatchTraps) {
 
     StagedAsset file_asset(*this, "tlm.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 73, file, BLOCK, {});
+    this->sendCmd_RUN(0, 73, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1125,7 +1125,7 @@ TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTraps) {
     REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "tlm_badtime.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 71, file, BLOCK, {});
+    this->sendCmd_RUN(0, 71, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1142,7 +1142,7 @@ TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTooLargeTraps) {
     REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "tlm_bigtime.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 74, file, BLOCK, {});
+    this->sendCmd_RUN(0, 74, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1165,7 +1165,7 @@ TEST_F(WasmSequencerTester, TelemetryOversizedRequestWritesOnlyValueBytes) {
 
     StagedAsset file_asset(*this, "tlm_largebuf.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 72, file, BLOCK, {});
+    this->sendCmd_RUN(0, 72, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -1188,7 +1188,7 @@ TEST_F(WasmSequencerTester, TelemetryUndersizedRequestFails) {
 
     StagedAsset file_asset(*this, "tlm_toosmall.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 74, file, BLOCK, {});
+    this->sendCmd_RUN(0, 74, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1213,7 +1213,7 @@ TEST_F(WasmSequencerTester, ParameterRead) {
 
     StagedAsset file_asset(*this, "prm.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 80, file, BLOCK, {});
+    this->sendCmd_RUN(0, 80, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -1232,7 +1232,7 @@ TEST_F(WasmSequencerTester, ParameterReadValueMismatchTraps) {
 
     StagedAsset file_asset(*this, "prm.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 82, file, BLOCK, {});
+    this->sendCmd_RUN(0, 82, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1256,7 +1256,7 @@ TEST_F(WasmSequencerTester, ParameterOversizedRequestWritesOnlyValueBytes) {
 
     StagedAsset file_asset(*this, "prm_largebuf.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 81, file, BLOCK, {});
+    this->sendCmd_RUN(0, 81, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -1278,7 +1278,7 @@ TEST_F(WasmSequencerTester, ParameterUndersizedRequestFails) {
 
     StagedAsset file_asset(*this, "prm_toosmall.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 83, file, BLOCK, {});
+    this->sendCmd_RUN(0, 83, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1291,166 +1291,25 @@ TEST_F(WasmSequencerTester, ParameterUndersizedRequestFails) {
 }
 
 // ----------------------------------------------------------------------
-// Host functions: ARGS (sequence arguments host->guest round trip)
+// Host functions: ARGS (deprecated no-op)
 // ----------------------------------------------------------------------
 
-TEST_F(WasmSequencerTester, ArgsRoundTrip) {
+TEST_F(WasmSequencerTester, ArgsAlwaysReportsZeroBytes) {
     REQUIREMENT("WASM-SEQ-005");
-    // The RUN command carries the sequence arguments; the guest args() host call reads
-    // them back into linear memory. args.wasm requests a 64-byte buffer, verifies the
-    // returned count is 4, that the injected pattern round-trips verbatim, and that the
-    // byte past the args is untouched (no host stack leak). A clean SequenceSucceeded is
-    // a genuine host->guest argument round trip.
-    const U8 argBytes[4] = {0xCA, 0xFE, 0xBA, 0xBE};
-    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
-
-    StagedAsset file_asset(*this, "args.wasm");
+    // The sequencer does not pass arguments to a sequence. The `args` import is retained
+    // only so guests built against the old header keep linking, and it must behave as a
+    // strict no-op: args_deprecated.wasm poisons the destination byte, calls args() with an
+    // ample 64-byte buffer, and traps (UNREACHABLE) unless the returned count is 0 AND the
+    // poison byte is untouched. A clean SequenceSucceeded therefore proves the host neither
+    // reported bytes nor wrote any into guest memory.
+    StagedAsset file_asset(*this, "args_deprecated.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 200, file, BLOCK, args);
+    this->sendCmd_RUN(0, 202, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     this->assertSequenceFailureCount(0);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-}
-
-TEST_F(WasmSequencerTester, ArgsRoundTripMismatchTraps) {
-    REQUIREMENT("WASM-SEQ-005");
-    // Negative control: inject a different pattern than args.wasm hard-codes. The guest
-    // reads the args back, sees the mismatch, and traps (UNREACHABLE). This proves the
-    // round-trip check in ArgsRoundTrip is real: if the host dropped the args, this test
-    // would (wrongly) succeed too.
-    const U8 argBytes[4] = {0xDE, 0xAD, 0xBE, 0xEF};
-    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
-
-    StagedAsset file_asset(*this, "args.wasm");
-    const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 201, file, BLOCK, args);
-    this->dispatchAll();
-
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    this->assertSequenceFailureCount(1);
-    ASSERT_EVENTS_SequenceTrapped(0, 0, WasmSequencer_SequencePhase::MAIN, WasmSequencer_TrapReason::UNREACHABLE);
-    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-}
-
-TEST_F(WasmSequencerTester, ArgsEmpty) {
-    REQUIREMENT("WASM-SEQ-005");
-    // No arguments supplied (default-constructed SeqArgs, size 0). args_empty.wasm
-    // asserts the returned count is 0 and that nothing was written to guest memory.
-    StagedAsset file_asset(*this, "args_empty.wasm");
-    const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 202, file, BLOCK, {});
-    this->dispatchUntilControllerState(ControllerState::READY);
-
-    ASSERT_EQ(this->controllerState(), ControllerState::READY);
-    this->assertSequenceFailureCount(0);
-    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-}
-
-TEST_F(WasmSequencerTester, ArgsUndersizedBufferFails) {
-    REQUIREMENT("WASM-SEQ-019");
-    // The guest declares a 2-byte buffer but 4 arg bytes are present. Writing them would
-    // overrun the guest's intent, so the host rejects it at dispatch with
-    // BufferTooSmall(ARGS, 2, 4) -> SequenceTrapped, writing nothing to guest memory.
-    const U8 argBytes[4] = {0xCA, 0xFE, 0xBA, 0xBE};
-    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
-
-    StagedAsset file_asset(*this, "args_toosmall.wasm");
-    const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 203, file, BLOCK, args);
-    this->dispatchAll();
-
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_BufferTooSmall_SIZE(1);
-    ASSERT_EVENTS_BufferTooSmall(0, WasmSequencer_HostFunction::ARGS, 2, static_cast<U32>(sizeof argBytes));
-    this->assertSequenceFailureCount(1);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-}
-
-TEST_F(WasmSequencerTester, ArgsBadPointerFails) {
-    REQUIREMENT("WASM-SEQ-019");
-    // The guest declares an ample buffer (passes the too-small guard) but points args()
-    // at an out-of-bounds address. The mem_write fails ->
-    // HostFunctionInvalidPointer(ARGS) -> SequenceTrapped.
-    const U8 argBytes[4] = {0xCA, 0xFE, 0xBA, 0xBE};
-    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
-
-    StagedAsset file_asset(*this, "args_badptr.wasm");
-    const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 204, file, BLOCK, args);
-    this->dispatchAll();
-
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
-    ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::ARGS,
-                                             WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
-    this->assertSequenceFailureCount(1);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-}
-
-TEST_F(WasmSequencerTester, ArgsMixedStructRoundTrip) {
-    REQUIREMENT("WASM-SEQ-005");
-    // Fill the argument buffer to its maximum (SequenceArgumentsMaxSize) with a mixed,
-    // packed little-endian struct and validate every field round-trips. This exercises
-    // the host->guest arg copy at the full buffer size across differently-sized fields:
-    //   U32 0x11223344, U16 0x5566, U8 0x77, U8 0x88, U32 0x99AABBCC  (12 bytes total).
-    // args_mixed.wasm reads it back, checks the returned count is 12, verifies each field
-    // at its offset, and confirms the byte just past the payload was not written.
-    const U8 argBytes[] = {
-        0x44, 0x33, 0x22, 0x11,  // U32 a = 0x11223344 (LE)
-        0x66, 0x55,              // U16 b = 0x5566 (LE)
-        0x77,                    // U8  c
-        0x88,                    // U8  d
-        0xCC, 0xBB, 0xAA, 0x99,  // U32 e = 0x99AABBCC (LE)
-    };
-    static_assert(sizeof argBytes == SequenceArgumentsMaxSize,
-                  "ArgsMixedStructRoundTrip is meant to fill the argument buffer exactly; "
-                  "update the payload if SequenceArgumentsMaxSize changes");
-    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
-
-    StagedAsset file_asset(*this, "args_mixed.wasm");
-    const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 205, file, BLOCK, args);
-    this->dispatchUntilControllerState(ControllerState::READY);
-
-    ASSERT_EQ(this->controllerState(), ControllerState::READY);
-    this->assertSequenceFailureCount(0);
-    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-}
-
-TEST_F(WasmSequencerTester, ArgsOversizedSizeRejected) {
-    REQUIREMENT("WASM-SEQ-019");
-    // Regression for a host-memory out-of-bounds read (CWE-125). SeqArgs carries a
-    // ground-controlled $size next to a fixed SequenceArgumentsMaxSize (12) byte buffer, and
-    // $size is deserialized without clamping. A crafted RUN whose $size exceeds the buffer
-    // capacity must be rejected at dispatch: the host must never copy more than the buffer
-    // holds, or it leaks adjacent host memory into guest linear memory. args.wasm declares a
-    // 64-byte guest buffer, so a claimed size of 32 (>12 capacity, <=64 guest len) slips past
-    // the destination-too-small guard and, absent the source-capacity guard, over-reads.
-    U8 argBytes[SequenceArgumentsMaxSize];
-    for (FwSizeType i = 0; i < sizeof argBytes; i++) {
-        argBytes[i] = static_cast<U8>(0xA0 + i);
-    }
-    Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
-    args.set_size(32);  // claim 32 arg bytes though only 12 physically exist
-
-    StagedAsset file_asset(*this, "args.wasm");
-    const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 206, file, BLOCK, args);
-    this->dispatchAll();
-
-    // Rejected before any guest write: BufferTooLarge(ARGS, requested=32, capacity=12), the
-    // sequence fails, and the guest never resumes (nothing leaked, no SequenceSucceeded).
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_BufferTooLarge_SIZE(1);
-    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::ARGS, 32, static_cast<U32>(SequenceArgumentsMaxSize));
-    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
-    this->assertSequenceFailureCount(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
@@ -1467,7 +1326,7 @@ TEST_F(WasmSequencerTester, TimeRead) {
 
     StagedAsset file_asset(*this, "time.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 210, file, BLOCK, {});
+    this->sendCmd_RUN(0, 210, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -1483,7 +1342,7 @@ TEST_F(WasmSequencerTester, TimeBadPointerFails) {
     // HostFunctionInvalidPointer(TIME) -> SequenceTrapped.
     StagedAsset file_asset(*this, "time_badptr.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 211, file, BLOCK, {});
+    this->sendCmd_RUN(0, 211, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1501,7 +1360,7 @@ TEST_F(WasmSequencerTester, TimeBadSizeTraps) {
     // BufferTooSmall(TIME, 8, 11) -> TRAP (HOST trap reason); nothing is written.
     StagedAsset file_asset(*this, "time_toosmall.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 212, file, BLOCK, {});
+    this->sendCmd_RUN(0, 212, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1519,7 +1378,7 @@ TEST_F(WasmSequencerTester, TimeBadSizeTooLargeTraps) {
     // BufferTooLarge(TIME, 16, 11) -> TRAP (HOST trap reason); nothing is written.
     StagedAsset file_asset(*this, "time_toobig.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 213, file, BLOCK, {});
+    this->sendCmd_RUN(0, 213, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1572,7 +1431,7 @@ TEST_F(WasmSequencerTester, TelemetryInterpreterStateReflectsEngine) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 310, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 310, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->flushTelemetry();
@@ -1591,7 +1450,7 @@ TEST_F(WasmSequencerTester, TelemetrySuccessCountAndName) {
     // records the sequence name as the filename stem (empty.wasm -> "empty").
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 300, file, BLOCK, {});
+    this->sendCmd_RUN(0, 300, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     this->flushTelemetry();
@@ -1614,13 +1473,13 @@ TEST_F(WasmSequencerTester, TelemetrySuccessCountAccumulates) {
     // Counters are cumulative across sequences: two successful runs -> 2.
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 301, file, BLOCK, {});
+    this->sendCmd_RUN(0, 301, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 
     // The second RUN starts from READY, so drain the queue rather than waiting for a
     // state change that has effectively already happened.
-    this->sendCmd_RUN(0, 302, file, BLOCK, {});
+    this->sendCmd_RUN(0, 302, file, BLOCK);
     this->dispatchAll();
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(2);
@@ -1649,7 +1508,7 @@ TEST_F(WasmSequencerTester, TelemetryFailedCount) {
     // A no-main module fails to invoke -> SequencesFailed increments, others stay 0.
     StagedAsset file_asset(*this, "no_main.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 304, file, BLOCK, {});
+    this->sendCmd_RUN(0, 304, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     this->flushTelemetry();
@@ -1665,7 +1524,7 @@ TEST_F(WasmSequencerTester, TelemetryTrapRecordsReasonAndFails) {
     // A trap records LastTrapReason and counts as a failed sequence.
     StagedAsset file_asset(*this, "unreachable.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 305, file, BLOCK, {});
+    this->sendCmd_RUN(0, 305, file, BLOCK);
     this->dispatchAll();
 
     this->flushTelemetry();
@@ -1682,14 +1541,14 @@ TEST_F(WasmSequencerTester, LastTrapReasonClearedAcrossSequences) {
     // a subsequent clean run must reset it to NONE (clearExitStatus at RUNNING entry),
     // so stale trap telemetry never leaks from a prior sequence into a later one.
     StagedAsset trap_asset(*this, "unreachable.wasm");
-    this->sendCmd_RUN(0, 600, trap_asset.file(), BLOCK, {});
+    this->sendCmd_RUN(0, 600, trap_asset.file(), BLOCK);
     this->dispatchAll();
     this->flushTelemetry();
     ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::UNREACHABLE);
 
     // A later successful run clears the recorded trap reason.
     StagedAsset ok_asset(*this, "empty.wasm");
-    this->sendCmd_RUN(0, 601, ok_asset.file(), BLOCK, {});
+    this->sendCmd_RUN(0, 601, ok_asset.file(), BLOCK);
     this->dispatchAll();
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     this->flushTelemetry();
@@ -1705,7 +1564,7 @@ TEST_F(WasmSequencerTester, LastHostFunctionClearedAcrossSequences) {
     // COMMAND. clearExitStatus resets lastHostFunction at RUNNING entry.
     {
         StagedAsset bad(*this, "cmd_badptr.wasm");
-        this->sendCmd_RUN(0, 610, bad.file(), BLOCK, {});
+        this->sendCmd_RUN(0, 610, bad.file(), BLOCK);
         this->dispatchAll();
         ASSERT_EVENTS_SequenceHostFailure(0, 0, WasmSequencer_SequencePhase::MAIN,
                                           WasmSequencer_ExitReason::HOST_FAILURE, WasmSequencer_HostFunction::COMMAND);
@@ -1714,7 +1573,7 @@ TEST_F(WasmSequencerTester, LastHostFunctionClearedAcrossSequences) {
 
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
     StagedAsset loopmod(*this, "loop.wasm");
-    this->sendCmd_RUN(0, 611, loopmod.file(), NO_BLOCK, {});
+    this->sendCmd_RUN(0, 611, loopmod.file(), NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
     this->invoke_to_cmdResponseIn(0, 0, this->currentCmdUid(), Fw::CmdResponse::OK);
     this->dispatchUntilControllerState(ControllerState::IDLE);
@@ -1729,7 +1588,7 @@ TEST_F(WasmSequencerTester, TelemetryCancelledCount) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 306, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 306, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
     this->sendCmd_CANCEL(0, 307);
     this->dispatchUntilControllerState(ControllerState::IDLE);
@@ -1748,7 +1607,7 @@ TEST_F(WasmSequencerTester, TelemetryCommandsDispatchedAndFailed) {
     // CommandsFailed while CommandsDispatched counts the dispatch.
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 308, file, BLOCK, {});
+    this->sendCmd_RUN(0, 308, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::EXECUTION_ERROR);
@@ -1768,7 +1627,7 @@ TEST_F(WasmSequencerTester, TelemetryCommandOkDoesNotCountFailed) {
     // An OK command response dispatches but does not increment CommandsFailed.
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 309, file, BLOCK, {});
+    this->sendCmd_RUN(0, 309, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
@@ -1791,7 +1650,7 @@ TEST_F(WasmSequencerTester, CommandByteFidelityAndResume) {
 
     // RUN pauses when the guest calls cmd, dispatches the command out cmdOut,
     // and parks in AWAITING_RESPONSE until we feed a cmdResponseIn.
-    this->sendCmd_RUN(0, 90, file, BLOCK, {});
+    this->sendCmd_RUN(0, 90, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::COMMAND);
@@ -1827,7 +1686,7 @@ TEST_F(WasmSequencerTester, CommandTooBigTraps) {
     REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "cmd_toobig.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 91, file, BLOCK, {});
+    this->sendCmd_RUN(0, 91, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1861,7 +1720,7 @@ TEST_F(WasmSequencerTester, CommandBadPointerFails) {
     // HostFunctionInvalidPointer(COMMAND) -> stmtFailure -> IDLE.
     StagedAsset file_asset(*this, "cmd_badptr.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 92, file, BLOCK, {});
+    this->sendCmd_RUN(0, 92, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1884,7 +1743,7 @@ TEST_F(WasmSequencerTester, EventBadPointerFails) {
     REQUIREMENT("WASM-SEQ-019");
     StagedAsset file_asset(*this, "event_badptr.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 93, file, BLOCK, {});
+    this->sendCmd_RUN(0, 93, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1903,7 +1762,7 @@ TEST_F(WasmSequencerTester, ParameterBadPointerFails) {
 
     StagedAsset file_asset(*this, "prm_badptr.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 94, file, BLOCK, {});
+    this->sendCmd_RUN(0, 94, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1927,7 +1786,7 @@ TEST_F(WasmSequencerTester, TelemetryBadTimePointerFails) {
 
     StagedAsset file_asset(*this, "tlm_badtimeptr.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 95, file, BLOCK, {});
+    this->sendCmd_RUN(0, 95, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1953,7 +1812,7 @@ TEST_F(WasmSequencerTester, TelemetryBadValuePointerFails) {
 
     StagedAsset file_asset(*this, "tlm_badvalptr.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 96, file, BLOCK, {});
+    this->sendCmd_RUN(0, 96, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1978,7 +1837,7 @@ TEST_F(WasmSequencerTester, RelativeSleepWakes) {
 
     // Start at t=0. rsleep asks for a 1s relative timer.
     this->setTestTime(Fw::Time(0, 0));
-    this->sendCmd_RUN(0, 100, file, BLOCK, {});
+    this->sendCmd_RUN(0, 100, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
 
     ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
@@ -2010,7 +1869,7 @@ TEST_F(WasmSequencerTester, RelativeSleepDeadlineOverflowDoesNotWakeEarly) {
 
     // Non-zero epoch so now + U32_MAX overflows the U32 seconds field.
     this->setTestTime(Fw::Time(10, 0));
-    this->sendCmd_RUN(0, 104, file, BLOCK, {});
+    this->sendCmd_RUN(0, 104, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
     ASSERT_EQ(this->interpreterState(), InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
     ASSERT_TRUE(this->hasPendingTimer());
@@ -2033,7 +1892,7 @@ TEST_F(WasmSequencerTester, AbsoluteSleepWakes) {
     const Fw::String& file = file_asset.file();
 
     this->setTestTime(Fw::Time(0, 0));
-    this->sendCmd_RUN(0, 101, file, BLOCK, {});
+    this->sendCmd_RUN(0, 101, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
     ASSERT_TRUE(this->hasPendingTimer());
 
@@ -2052,7 +1911,7 @@ TEST_F(WasmSequencerTester, SleepTimeBaseMismatchFails) {
 
     // Set the timer using a specific time base.
     this->setTestTime(Fw::Time(TimeBase::TB_WORKSTATION_TIME, 0, 0, 0));
-    this->sendCmd_RUN(0, 102, file, BLOCK, {});
+    this->sendCmd_RUN(0, 102, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
     ASSERT_TRUE(this->hasPendingTimer());
 
@@ -2074,7 +1933,7 @@ TEST_F(WasmSequencerTester, SleepDurationOverflowFails) {
     // truncating the timer. The sequence fails to IDLE.
     StagedAsset file_asset(*this, "sleep_overflow.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 103, file, BLOCK, {});
+    this->sendCmd_RUN(0, 103, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -2093,7 +1952,7 @@ TEST_F(WasmSequencerTester, AbsoluteSleepDurationOverflowFails) {
     // sequence fails to IDLE. (Exercises the ASLEEP guard distinct from the RSLEEP one.)
     StagedAsset file_asset(*this, "asleep_overflow.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 104, file, BLOCK, {});
+    this->sendCmd_RUN(0, 104, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -2116,7 +1975,7 @@ TEST_F(WasmSequencerTester, PauseThenContinueCompletes) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 110, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 110, file, NO_BLOCK);
     // Advance into the running loop.
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
@@ -2144,7 +2003,7 @@ TEST_F(WasmSequencerTester, CancelWhileSpinning) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 120, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 120, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // CANCEL is synchronous (responds OK immediately) and returns to IDLE.
@@ -2163,7 +2022,7 @@ TEST_F(WasmSequencerTester, CancelWhilePaused) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 122, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 122, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_PAUSE(0, 123);
@@ -2180,7 +2039,7 @@ TEST_F(WasmSequencerTester, CancelWhileAwaitingResponse) {
     REQUIREMENT("WASM-SEQ-010");
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 125, file, BLOCK, {});
+    this->sendCmd_RUN(0, 125, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // CANCEL from AWAITING_RESPONSE clears the pending host function and returns
@@ -2246,7 +2105,7 @@ TEST_F(WasmSequencerTester, CancelCommandWhileRunningRespondsOk) {
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 401, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 401, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_CANCEL(0, 402);
@@ -2283,7 +2142,7 @@ TEST_F(WasmSequencerTester, RunCancelledDuringLoadDiverts) {
     // Dispatch the RUN command first so the `run` signal is queued and the controller
     // begins loading; the CANCEL then latches while the controller is LOADING_TO_RUN,
     // ahead of the queued loadSucceeded, so the post-load cancel-check diverts.
-    this->sendCmd_RUN(0, 140, file, BLOCK, {});
+    this->sendCmd_RUN(0, 140, file, BLOCK);
     this->dispatchOne();
     this->sendCmd_CANCEL(0, 141);
     this->dispatchAll();
@@ -2334,7 +2193,7 @@ TEST_F(WasmSequencerTester, InvokeCancelledDuringInvokingDiverts) {
 
     // INVOKE then CANCEL back-to-back: the cancel is latched in INVOKING and honored
     // at the post-resolve cancel-check, before main runs.
-    this->sendCmd_INVOKE(0, 145, Fw::CmdStringArg(""), BLOCK, {});
+    this->sendCmd_INVOKE(0, 145, Fw::CmdStringArg(""), BLOCK);
     this->dispatchOne();  // dispatch async INVOKE so the invoke signal is queued before sync CANCEL
     this->sendCmd_CANCEL(0, 146);
     this->dispatchUntilControllerState(ControllerState::IDLE);
@@ -2360,7 +2219,7 @@ TEST_F(WasmSequencerTester, RunWithStartCancelledInStartMainGapDiverts) {
     StagedAsset file_asset(*this, "start.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 147, file, BLOCK, {});
+    this->sendCmd_RUN(0, 147, file, BLOCK);
     // Controller waits in RUNNING_START_PENDING_MAIN; drive the interpreter to spin the
     // start (entry `entered` still queued), then run that spin so the (empty) start
     // finishes -- interpreterFinished is now queued and the interpreter is about to
@@ -2397,7 +2256,7 @@ TEST_F(WasmSequencerTester, CancelAfterEngineRunningCountsOnce) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 149, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 149, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_CANCEL(0, 150);
@@ -2419,7 +2278,7 @@ TEST_F(WasmSequencerTester, CancelLatchDoesNotLeak) {
     const Fw::String& file = file_asset.file();
 
     // First: divert a RUN during load.
-    this->sendCmd_RUN(0, 151, file, BLOCK, {});
+    this->sendCmd_RUN(0, 151, file, BLOCK);
     this->dispatchOne();  // dispatch async RUN before the sync CANCEL so the cancel latches while loading
     this->sendCmd_CANCEL(0, 152);
     this->dispatchAll();
@@ -2428,7 +2287,7 @@ TEST_F(WasmSequencerTester, CancelLatchDoesNotLeak) {
     ASSERT_CMD_RESPONSE(1, OPCODE_RUN, 151, Fw::CmdResponse::EXECUTION_ERROR);
 
     // Second: a fresh RUN with no cancel must run to completion.
-    this->sendCmd_RUN(0, 153, file, BLOCK, {});
+    this->sendCmd_RUN(0, 153, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_CMD_RESPONSE(2, OPCODE_RUN, 153, Fw::CmdResponse::OK);
@@ -2485,7 +2344,7 @@ TEST_F(WasmSequencerTester, CancelDuringFailedInvokeDoesNotLeakToNextInvoke) {
 
     // INVOKE an unknown module (async) then CANCEL (sync) latched during INVOKING; the
     // invoke fails to resolve -> READY, so only READY's entry clears the latch.
-    this->sendCmd_INVOKE(0, 155, Fw::CmdStringArg("nope"), BLOCK, {});
+    this->sendCmd_INVOKE(0, 155, Fw::CmdStringArg("nope"), BLOCK);
     this->dispatchOne();
     this->sendCmd_CANCEL(0, 156);
     this->dispatchAll();
@@ -2493,7 +2352,7 @@ TEST_F(WasmSequencerTester, CancelDuringFailedInvokeDoesNotLeakToNextInvoke) {
     ASSERT_EVENTS_ModuleNotFound_SIZE(1);
 
     // A fresh, uncancelled INVOKE of the loaded module must run to success (not diverted).
-    this->sendCmd_INVOKE(0, 157, Fw::CmdStringArg(""), BLOCK, {});
+    this->sendCmd_INVOKE(0, 157, Fw::CmdStringArg(""), BLOCK);
     this->dispatchAll();
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
@@ -2514,7 +2373,7 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhilePausedFails) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 133, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 133, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_PAUSE(0, 134);
@@ -2536,25 +2395,21 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhilePausedFails) {
 // ----------------------------------------------------------------------
 
 TEST_F(WasmSequencerTester, SeqStartDoneEmittedOnRunCommandSuccess) {
-    REQUIREMENT("WASM-SEQ-005");
     REQUIREMENT("WASM-SEQ-018");
-    // A RUN command that runs to completion reports a start (echoing the file and
-    // args) and then a done with OK to internal callers.
-    const U8 argBytes[] = {0xDE, 0xAD, 0xBE, 0xEF};
-    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
-
+    // A RUN command that runs to completion reports a start (echoing the file) and then
+    // a done with OK to internal callers.
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 200, file, NO_BLOCK, args);
+    this->sendCmd_RUN(0, 200, file, NO_BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 200, Fw::CmdResponse::OK);
 
-    // Exactly one start (with the run's file + args) and one done with OK.
+    // Exactly one start (with the run's file) and one done with OK. This sequencer does
+    // not pass arguments to a sequence, so the reported args are always empty.
     ASSERT_EQ(this->seqStartOutCount, 1u);
     ASSERT_EQ(this->lastSeqStartFilename, file);
-    ASSERT_EQ(this->lastSeqStartArgs, args);
     ASSERT_EQ(this->seqDoneOutCount, 1u);
     ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::OK);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
@@ -2565,7 +2420,7 @@ TEST_F(WasmSequencerTester, SeqDoneEmittedWithErrorOnRunFailure) {
     // A RUN whose module traps reports a start, then a done with EXECUTION_ERROR.
     StagedAsset file_asset(*this, "unreachable.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 201, file, BLOCK, {});
+    this->sendCmd_RUN(0, 201, file, BLOCK);
     // The run both starts and ends in IDLE (it traps), so pump the whole queue
     // rather than dispatching "until IDLE" (which would be an immediate no-op).
     this->dispatchAll();
@@ -2586,7 +2441,7 @@ TEST_F(WasmSequencerTester, SeqDoneEmittedWithErrorOnRunCancel) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 202, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 202, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     ASSERT_EQ(this->seqStartOutCount, 1u);
@@ -2610,7 +2465,7 @@ TEST_F(WasmSequencerTester, InvokeDoesNotEmitSeqStartOrDone) {
     this->sendCmd_LOAD(0, 204, file, Fw::CmdStringArg(""));
     this->dispatchUntilControllerState(ControllerState::READY);
 
-    this->sendCmd_INVOKE(0, 205, Fw::CmdStringArg(""), BLOCK, {});
+    this->sendCmd_INVOKE(0, 205, Fw::CmdStringArg(""), BLOCK);
     // INVOKE starts and ends in READY; pump the queue rather than waiting for a
     // state change that already holds.
     this->dispatchAll();
@@ -2624,15 +2479,10 @@ TEST_F(WasmSequencerTester, InvokeDoesNotEmitSeqStartOrDone) {
 TEST_F(WasmSequencerTester, SeqRunInPortRunsSequence) {
     REQUIREMENT("WASM-SEQ-005");
     REQUIREMENT("WASM-SEQ-018");
-    // The seqRunIn port drives a non-blocking RUN: it reports a start, runs to
-    // completion in READY, and reports a done with OK. There is no command
-    // response because the run was requested from a port, not a command.
-    const U8 argBytes[] = {0x01, 0x02, 0x03};
-    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
 
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
-    this->invoke_to_seqRunIn(0, file, args);
+    this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -2640,7 +2490,6 @@ TEST_F(WasmSequencerTester, SeqRunInPortRunsSequence) {
 
     ASSERT_EQ(this->seqStartOutCount, 1u);
     ASSERT_EQ(this->lastSeqStartFilename, file);
-    ASSERT_EQ(this->lastSeqStartArgs, args);
     ASSERT_EQ(this->seqDoneOutCount, 1u);
     ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::OK);
 
@@ -2680,7 +2529,7 @@ TEST_F(WasmSequencerTester, SeqRunInWhileRunningRejected) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 207, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 207, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     const U32 startsBefore = this->seqStartOutCount;
@@ -2817,7 +2666,7 @@ TEST_F(WasmSequencerTester, RunCommandFailureBeforeStartEmitsNoSeqDone) {
     // UnknownSequenceFinished warning from a connected dispatcher.
     this->removeFile("does_not_exist.wasm");
 
-    this->sendCmd_RUN(0, 209, Fw::CmdStringArg("does_not_exist.wasm"), BLOCK, {});
+    this->sendCmd_RUN(0, 209, Fw::CmdStringArg("does_not_exist.wasm"), BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -2839,7 +2688,7 @@ TEST_F(WasmSequencerTester, RunReportsSkippedWhenPortsUnconnected) {
 
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 210, file, BLOCK, {});
+    this->sendCmd_RUN(0, 210, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     // The run completes normally; the reports are simply skipped.
@@ -2897,7 +2746,7 @@ TEST_F(WasmSequencerTester, PauseAtHostFunctionThenContinueResumes) {
     // RUNNING_PAUSED with the host function still pending, rather than dispatching it.
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 135, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 135, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_PAUSE(0, 136);
@@ -2931,7 +2780,7 @@ TEST_F(WasmSequencerTester, CheckTimersWhileAwaitingWithoutTimer) {
     // (guard_pendingTimer false -> checkTimeout only) and stays awaiting.
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 138, file, BLOCK, {});
+    this->sendCmd_RUN(0, 138, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_FALSE(this->hasPendingTimer());
 
@@ -2962,7 +2811,7 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsAwaitingCommand) {
 
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 400, file, BLOCK, {});
+    this->sendCmd_RUN(0, 400, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // A tick before the deadline keeps it awaiting.
@@ -3002,7 +2851,7 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutTimeIncomparableFails) {
 
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 401, file, BLOCK, {});
+    this->sendCmd_RUN(0, 401, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Change the time base: comparison against the host-function-start deadline becomes
@@ -3033,7 +2882,7 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutDisabledByZero) {
 
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 401, file, BLOCK, {});
+    this->sendCmd_RUN(0, 401, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Advance well past any plausible timeout and tick: still awaiting.
@@ -3061,7 +2910,7 @@ TEST_F(WasmSequencerTester, HostFunctionTimeoutFailsBlockingSerialRecv) {
 
     StagedAsset file_asset(*this, "serial_recv.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 402, file, BLOCK, {});
+    this->sendCmd_RUN(0, 402, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::SERIAL_RECV);
 
@@ -3085,7 +2934,7 @@ TEST_F(WasmSequencerTester, LateCmdResponseFromOldSequenceIgnored) {
     // sequence currently awaiting its own response.
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 410, file, BLOCK, {});
+    this->sendCmd_RUN(0, 410, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Craft a cmdUid from an older sequence index (current - 1).
@@ -3117,7 +2966,7 @@ TEST_F(WasmSequencerTester, WrongCmdResponseIndexFails) {
     // low-half index) is an integrity error and fails the sequence.
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 411, file, BLOCK, {});
+    this->sendCmd_RUN(0, 411, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     // Keep the current sequence index, but perturb the command index.
@@ -3150,7 +2999,7 @@ TEST_F(WasmSequencerTester, SequenceIndexIncrementsAcrossRuns) {
     const Fw::String& file = file_asset.file();
 
     // First run: park awaiting its command response and capture the dispatched cmdUid.
-    this->sendCmd_RUN(0, 420, file, BLOCK, {});
+    this->sendCmd_RUN(0, 420, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     const U32 firstUid = this->lastCmdContext();
     const U16 firstSeqIdx = static_cast<U16>((firstUid >> 16) & 0xFFFF);
@@ -3160,7 +3009,7 @@ TEST_F(WasmSequencerTester, SequenceIndexIncrementsAcrossRuns) {
     this->dispatchUntilControllerState(ControllerState::IDLE);
 
     // Second run: park again and capture its cmdUid.
-    this->sendCmd_RUN(0, 422, file, BLOCK, {});
+    this->sendCmd_RUN(0, 422, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     const U32 secondUid = this->lastCmdContext();
     const U16 secondSeqIdx = static_cast<U16>((secondUid >> 16) & 0xFFFF);
@@ -3192,7 +3041,7 @@ TEST_F(WasmSequencerTester, LateCmdResponseFromPreviousRunIgnored) {
 
     // First run parks awaiting its command response; capture its real cmdUid, then
     // cancel it before it is ever answered.
-    this->sendCmd_RUN(0, 423, file, BLOCK, {});
+    this->sendCmd_RUN(0, 423, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     const U32 firstRunUid = this->lastCmdContext();
 
@@ -3201,7 +3050,7 @@ TEST_F(WasmSequencerTester, LateCmdResponseFromPreviousRunIgnored) {
     ASSERT_EVENTS_SequenceCancelled_SIZE(1);
 
     // Second run parks awaiting its own (distinct) command response.
-    this->sendCmd_RUN(0, 425, file, BLOCK, {});
+    this->sendCmd_RUN(0, 425, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     const U32 secondRunUid = this->lastCmdContext();
     ASSERT_NE(firstRunUid, secondRunUid);
@@ -3234,14 +3083,14 @@ TEST_F(WasmSequencerTester, RunWhileRunningRejected) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 150, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 150, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // RUN is only valid from IDLE/READY; from RUNNING it is rejected as BUSY
     // (ControllerBusy for the COMMAND_RUN signal) without disturbing the running
     // loop. The original NO_BLOCK RUN already responded OK at load (index 0); the
     // rejected RUN lands as a BUSY (index 1). The loop still finishes.
-    this->sendCmd_RUN(0, 151, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 151, file, NO_BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -3259,7 +3108,7 @@ TEST_F(WasmSequencerTester, LoadWhileRunningRejected) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 152, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 152, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // LOAD is only valid from IDLE/READY; from RUNNING it is rejected as BUSY
@@ -3284,7 +3133,7 @@ TEST_F(WasmSequencerTester, InvokeWhileRunningRejected) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 154, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 154, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // INVOKE is only valid from READY; from a running sequence it is rejected as
@@ -3294,7 +3143,7 @@ TEST_F(WasmSequencerTester, InvokeWhileRunningRejected) {
     // from IDLE (see InvokeFromIdleInvalid). The original NO_BLOCK RUN already
     // responded OK at load (index 0); the rejected INVOKE lands as a BUSY (index 1).
     // The loop still finishes.
-    this->sendCmd_INVOKE(0, 155, Fw::CmdStringArg(""), NO_BLOCK, {});
+    this->sendCmd_INVOKE(0, 155, Fw::CmdStringArg(""), NO_BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -3312,7 +3161,7 @@ TEST_F(WasmSequencerTester, WaitWhileRunningQueuesUntilFinish) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 160, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 160, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // WAIT while running enqueues on the finish queue (default branch of
@@ -3334,7 +3183,7 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileSpinningFails) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 170, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 170, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // A cmdResponseIn while spinning (not awaiting a host command) is "unexpected"
@@ -3360,7 +3209,7 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileAwaitingSleepFails) {
     StagedAsset file_asset(*this, "rsleep.wasm");
     const Fw::String& file = file_asset.file();
     this->setTestTime(Fw::Time(0, 0));
-    this->sendCmd_RUN(0, 172, file, BLOCK, {});
+    this->sendCmd_RUN(0, 172, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_SLEEPING);
     ASSERT_TRUE(this->hasPendingTimer());
 
@@ -3431,7 +3280,7 @@ TEST_F(WasmSequencerTester, PauseWhileAwaitingResponseIsPending) {
     // command response arrives, the pending pause takes effect at PAUSE_CHECK.
     StagedAsset file_asset(*this, "cmd.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 175, file, BLOCK, {});
+    this->sendCmd_RUN(0, 175, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
 
     this->sendCmd_PAUSE(0, 176);
@@ -3460,7 +3309,7 @@ TEST_F(WasmSequencerTester, PauseWhilePausedIsIdempotent) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 178, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 178, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_PAUSE(0, 179);
@@ -3488,7 +3337,7 @@ TEST_F(WasmSequencerTester, WaitFinishQueueOverflow) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 180, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 180, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // Queue nine WAITs up front (test queue depth is 20) so they are all handled
@@ -3518,7 +3367,7 @@ TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenRunningSequenceCancelled) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 500, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 500, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_WAIT(0, 501);  // queues: controller busy in RUNNING_MAIN
@@ -3545,7 +3394,7 @@ TEST_F(WasmSequencerTester, WaitDrainedWithErrorWhenRunWithStartCancelled) {
     StagedAsset file_asset(*this, "start.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 510, file, BLOCK, {});
+    this->sendCmd_RUN(0, 510, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::RUNNING_START_PENDING_MAIN);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
     this->dispatchOne();  // run the (empty) start spin -> interpreterFinished queued
@@ -3592,7 +3441,7 @@ TEST_F(WasmSequencerTester, ContinueWhileSpinningIsOk) {
 
     StagedAsset file_asset(*this, "loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 140, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 140, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     this->sendCmd_CONTINUE(0, 141);
@@ -3616,7 +3465,7 @@ TEST_F(WasmSequencerTester, SerialOutByteFidelityAndResume) {
     // The guest calls serial_send on port index 1 with an 8-byte pattern. The host copies
     // the payload out, emits it on serialOut[1], and resumes immediately (fire-and-forget,
     // no reply awaited), so the sequence runs straight to completion.
-    this->sendCmd_RUN(0, 200, file, BLOCK, {});
+    this->sendCmd_RUN(0, 200, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
@@ -3637,7 +3486,7 @@ TEST_F(WasmSequencerTester, SerialOutInvalidPortTraps) {
     // trap before any port invocation.
     StagedAsset file_asset(*this, "serial_out_badport.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 201, file, BLOCK, {});
+    this->sendCmd_RUN(0, 201, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -3653,7 +3502,7 @@ TEST_F(WasmSequencerTester, SerialOutPayloadTooLargeTraps) {
     // function with a trap (BufferTooLarge) before any port invocation.
     StagedAsset file_asset(*this, "serial_out_toobig.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 202, file, BLOCK, {});
+    this->sendCmd_RUN(0, 202, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -3670,7 +3519,7 @@ TEST_F(WasmSequencerTester, SerialOutBadPointerFails) {
     // never invoked.
     StagedAsset file_asset(*this, "serial_out_badptr.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 206, file, BLOCK, {});
+    this->sendCmd_RUN(0, 206, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -3690,7 +3539,7 @@ TEST_F(WasmSequencerTester, SerialOutDisconnectedPortTraps) {
 
     StagedAsset file_asset(*this, "serial_out_port3.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 210, file, BLOCK, {});
+    this->sendCmd_RUN(0, 210, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -3710,7 +3559,7 @@ TEST_F(WasmSequencerTester, SerialOutSendFailureFailsSequence) {
 
     StagedAsset file_asset(*this, "serial_out_port3.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 211, file, BLOCK, {});
+    this->sendCmd_RUN(0, 211, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -3735,7 +3584,7 @@ TEST_F(WasmSequencerTester, SerialRecvBlockingDeliversMessageAtDataPtr) {
 
     StagedAsset file_asset(*this, "serial_recv.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 300, file, BLOCK, {});
+    this->sendCmd_RUN(0, 300, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -3749,7 +3598,7 @@ TEST_F(WasmSequencerTester, SerialRecvBlocksThenWakesOnMessage) {
     // engine, the payload is dequeued into guest memory, and the sequence completes.
     StagedAsset file_asset(*this, "serial_recv.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 301, file, BLOCK, {});
+    this->sendCmd_RUN(0, 301, file, BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_AWAITING_RESPONSE_WAITING);
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::SERIAL_RECV);
 
@@ -3776,7 +3625,7 @@ TEST_F(WasmSequencerTester, SerialRecvMultiChunkMessage) {
 
     StagedAsset file_asset(*this, "serial_recv_big.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 302, file, BLOCK, {});
+    this->sendCmd_RUN(0, 302, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -3796,7 +3645,7 @@ TEST_F(WasmSequencerTester, SerialRecvExactChunkMultipleMessage) {
 
     StagedAsset file_asset(*this, "serial_recv_chunk32.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 303, file, BLOCK, {});
+    this->sendCmd_RUN(0, 303, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -3810,7 +3659,7 @@ TEST_F(WasmSequencerTester, SerialRecvNonBlockingEmptyReturnsEmptyStatus) {
     // asserts both, so a clean finish proves the empty-nonblocking fast path.
     StagedAsset file_asset(*this, "serial_recv_nonblock_empty.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 304, file, BLOCK, {});
+    this->sendCmd_RUN(0, 304, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -3823,7 +3672,7 @@ TEST_F(WasmSequencerTester, SerialRecvInvalidPortTraps) {
     // trap before parking to wait.
     StagedAsset file_asset(*this, "serial_recv_badport.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 305, file, BLOCK, {});
+    this->sendCmd_RUN(0, 305, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -3840,7 +3689,7 @@ TEST_F(WasmSequencerTester, SerialRecvInvalidBlockingTypeTraps) {
     // full-width value and emit InvalidBlockingTypeValue instead.
     StagedAsset file_asset(*this, "serial_recv_badblock.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 306, file, BLOCK, {});
+    this->sendCmd_RUN(0, 306, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -3859,7 +3708,7 @@ TEST_F(WasmSequencerTester, SerialRecvMessageLargerThanGuestBufferFails) {
 
     StagedAsset file_asset(*this, "serial_recv_toobig.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 307, file, BLOCK, {});
+    this->sendCmd_RUN(0, 307, file, BLOCK);
     // The sequence starts and ends in IDLE (it fails on recv), so dispatchUntilControllerState
     // would be a no-op; drain the queue explicitly instead.
     this->dispatchAll();
@@ -3882,7 +3731,7 @@ TEST_F(WasmSequencerTester, SerialRecvBadPointerFails) {
 
     StagedAsset file_asset(*this, "serial_recv_badptr.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 308, file, BLOCK, {});
+    this->sendCmd_RUN(0, 308, file, BLOCK);
     // The sequence starts and ends in IDLE (it fails on recv), so dispatchUntilControllerState
     // would be a no-op; drain the queue explicitly instead.
     this->dispatchAll();
@@ -3906,7 +3755,7 @@ TEST_F(WasmSequencerTester, SerialRecvBadDataPointerPartialChunkFails) {
 
     StagedAsset file_asset(*this, "serial_recv_baddata.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 309, file, BLOCK, {});
+    this->sendCmd_RUN(0, 309, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -3929,7 +3778,7 @@ TEST_F(WasmSequencerTester, SerialRecvBadDataPointerFullChunkFails) {
 
     StagedAsset file_asset(*this, "serial_recv_baddata_big.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 310, file, BLOCK, {});
+    this->sendCmd_RUN(0, 310, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -4206,7 +4055,7 @@ TEST_F(WasmSequencerConfigTester, SerialOutUnconfiguredTrapsSend) {
 
     StagedAsset file_asset(*this, "serial_out.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 500, file, BLOCK, {});
+    this->sendCmd_RUN(0, 500, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -4227,7 +4076,7 @@ TEST_F(WasmSequencerConfigTester, SerialOutBufferSizeFromConfig) {
 
     StagedAsset file_asset(*this, "serial_out.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 501, file, BLOCK, {});
+    this->sendCmd_RUN(0, 501, file, BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -4301,7 +4150,7 @@ TEST_F(WasmSequencerTester, MemoryGrowSucceedsAndRegionUsable) {
     // grow reported the previous size (1 page), writes/reads the new region, and exits cleanly.
     StagedAsset file_asset(*this, "mem_grow.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 600, file, BLOCK, {});
+    this->sendCmd_RUN(0, 600, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -4316,7 +4165,7 @@ TEST_F(WasmSequencerTester, MemoryGrowBeyondPoolReturnsMinusOneGracefully) {
     // memory.grow yields -1 to the guest (no trap). The module asserts it received -1 and exits clean.
     StagedAsset file_asset(*this, "mem_grow_toobig.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 601, file, BLOCK, {});
+    this->sendCmd_RUN(0, 601, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -4425,7 +4274,7 @@ TEST_F(WasmSequencerTester, MemoryGrowFailsWhenNotLastAllocation) {
     this->dispatchAll();
 
     // Invoke "a": its memory (offset 0) is behind "b", so guestRealloc rejects the grow -> guest -1.
-    this->sendCmd_INVOKE(0, 702, Fw::CmdStringArg("a"), BLOCK, {});
+    this->sendCmd_INVOKE(0, 702, Fw::CmdStringArg("a"), BLOCK);
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -4473,7 +4322,7 @@ TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
     U32 failedCount = 0;  // telemetry SequencesFailed (execution + load failures)
 
     // 1. RUN empty -> success, land READY.
-    this->sendCmd_RUN(0, 1, empty, BLOCK, {});
+    this->sendCmd_RUN(0, 1, empty, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
     succeeded++;
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
@@ -4481,7 +4330,7 @@ TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
 
     // 2. RUN unreachable from READY -> traps, store is torn down to IDLE. Proves a
     //    failure after a prior success returns to a clean IDLE (not a wedged store).
-    this->sendCmd_RUN(0, 2, unreachable, BLOCK, {});
+    this->sendCmd_RUN(0, 2, unreachable, BLOCK);
     this->dispatchUntilControllerState(ControllerState::IDLE);
     seqFailedEvents++;
     failedCount++;
@@ -4496,7 +4345,7 @@ TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
     // 4. RUN malformed from READY -> load fails (resetStore then load). A failed
     //    load invalidates the store and returns to IDLE. It reports ModuleLoadFailed
     //    (not an execution-failure event) but still counts toward SequencesFailed.
-    this->sendCmd_RUN(0, 4, malformed, BLOCK, {});
+    this->sendCmd_RUN(0, 4, malformed, BLOCK);
     this->dispatchUntilControllerState(ControllerState::IDLE);
     failedCount++;
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -4504,7 +4353,7 @@ TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
     this->assertSequenceFailureCount(seqFailedEvents);  // unchanged: a load failure is not an execution-failure event
 
     // 5. RUN loop NO_BLOCK, then CANCEL mid-spin -> cancelled, back to IDLE.
-    this->sendCmd_RUN(0, 5, loop, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 5, loop, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
     this->sendCmd_CANCEL(0, 6);
     this->dispatchUntilControllerState(ControllerState::IDLE);
@@ -4514,14 +4363,14 @@ TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
 
     // 6. RUN exit0 -> clean exit(0) counts as success, land READY. Proves the
     //    store recovered from the cancel.
-    this->sendCmd_RUN(0, 7, exit0, BLOCK, {});
+    this->sendCmd_RUN(0, 7, exit0, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
     succeeded++;
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(succeeded);
 
     // 7. RUN panic from READY -> host panic, back to IDLE.
-    this->sendCmd_RUN(0, 8, panic, BLOCK, {});
+    this->sendCmd_RUN(0, 8, panic, BLOCK);
     this->dispatchUntilControllerState(ControllerState::IDLE);
     seqFailedEvents++;
     failedCount++;
@@ -4963,7 +4812,7 @@ TEST_F(WasmSequencerTester, GlobalSetPersistsIntoInvoke) {
     ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I32, 105, Fw::CmdResponse::OK);
 
     // INVOKE main (BLOCK) -> reads 100, writes 110. Store is retained after INVOKE.
-    this->sendCmd_INVOKE(0, 106, Fw::CmdStringArg(""), BLOCK, {});
+    this->sendCmd_INVOKE(0, 106, Fw::CmdStringArg(""), BLOCK);
     this->dispatchAll();
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
@@ -4986,7 +4835,7 @@ TEST_F(WasmSequencerTester, GlobalSetOverwrittenAfterRunResetsStore) {
     StagedAsset file_asset(*this, "global_incr.wasm");
     const Fw::String& file = file_asset.file();
 
-    this->sendCmd_RUN(0, 108, file, BLOCK, {});
+    this->sendCmd_RUN(0, 108, file, BLOCK);
     this->dispatchUntilControllerState(ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
 
@@ -4998,7 +4847,7 @@ TEST_F(WasmSequencerTester, GlobalSetOverwrittenAfterRunResetsStore) {
     // The component is already in READY and the RUN returns to READY, so drain the
     // queue rather than waiting on a state change that has effectively already
     // happened (cf. LoadStartModuleTwiceDoesNotWedge).
-    this->sendCmd_RUN(0, 110, file, BLOCK, {});
+    this->sendCmd_RUN(0, 110, file, BLOCK);
     this->dispatchAll();
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(2);
@@ -5076,7 +4925,7 @@ TEST_F(WasmSequencerTester, GlobalGetSetWhileSequencePaused) {
 
     StagedAsset file_asset(*this, "global_loop.wasm");
     const Fw::String& file = file_asset.file();
-    this->sendCmd_RUN(0, 123, file, NO_BLOCK, {});
+    this->sendCmd_RUN(0, 123, file, NO_BLOCK);
     this->dispatchUntilInterpreterState(InterpreterState::RUNNING_SPINNING);
 
     // Pause so the engine parks quiescently (no self-posted spin messages),
