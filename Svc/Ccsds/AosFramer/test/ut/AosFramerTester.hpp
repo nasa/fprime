@@ -50,6 +50,8 @@ class AosFramerTester final : public AosFramerGTestBase {
     void testBufferOwnershipState();
     void testLongPacket();
     void testShortPackets();
+    void testIdlePadding(FwSizeType idleBytes, bool fecf, bool sendNow, U8 idlePvns);
+    void testUnsupportedIdleMask(U8 idlePvns);
 
   private:
     // ----------------------------------------------------------------------

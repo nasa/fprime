@@ -20,6 +20,22 @@ The AOS Framer and Deframer support the following subset of CCSDS AOS SDL:
 * Frame Error Control Field is configurable per instance via `configure`
 * This component supports packing multiple CCSDS Recognized packets (i.e. Space Packet Protocol or Encapsulation Packet Protocol) into one AOS SDL Frame. It also supports striping a single packet across multiple frames. Extra space is padded with idle packets.
 
+## Idle Packet Selection
+
+The `idlePvns` argument to `configure()` must include `PvnBitfield::SPP_MASK`.
+Padding uses Space Packet Protocol (SPP) idle packets, including when
+`PvnBitfield::EPP_MASK` is also enabled. EPP-only idle generation remains
+unsupported and is rejected at configuration. The EPP bit must not prevent a
+`sendNow` request from filling and transmitting a partial frame.
+
+The minimum idle SPP is seven bytes. When fewer bytes remain in the frame, the
+idle packet continues into the next frame without returning internal idle
+storage upstream. Padding remains inactive when `sendNow` is false.
+
+Regression tests check every non-empty padding length in a 64-byte frame with
+and without FECF, exact idle-header and payload bytes, CRCs, short idle-packet
+continuations, SPP-only compatibility, and unsupported configurations.
+
 ## Internals
 
 The AOS protocol specifies a fixed frame size. The maximum for all AOS framers can be configured in the `config/ComCfg.fpp` file. Individual AOS Framer instances can have their frame size overridden via the `configure` function.

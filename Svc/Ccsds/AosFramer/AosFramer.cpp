@@ -407,13 +407,10 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
         vc.past_first_fresh_packet = true;
     }
 
-    // EPP-only idle fill is not yet supported; configure() requires the SPP bit
-    if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
-        // TODO: Serialize an EPP of the right size once EPP idle is supported
-    }
-    // While we are using only SPP, we have to comply w/ the min SPP packet size
-    // We'll stripe this packet onto the next frame of this VC if we have to
-    else if (idlePacketSize < 7) {
+    // configure() requires SPP idle support. Use it even when the EPP bit is
+    // also set; EPP idle generation is not implemented yet.
+    // An idle SPP smaller than the minimum must continue into the next frame.
+    if (idlePacketSize < MIN_SPP_LENGTH) {
         // Serialize the Idle packet into the spp_idle_backer
 
         // Make sure we aren't overwriting a packet fragment
