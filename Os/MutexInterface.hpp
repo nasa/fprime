@@ -8,7 +8,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Os.hpp>
-#include "config/OsDelegateMutex.hpp"  // defines Os::Mutex alias and OS_MUTEX_HEADER consumed by Os/Mutex.hpp; do not remove
+#include "config/OsSelection.hpp"  // defines Os::Mutex alias and OS_MUTEX_HEADER consumed by Os/Mutex.hpp; do not remove
 
 namespace Os {
 
