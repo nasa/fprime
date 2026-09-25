@@ -29,10 +29,17 @@ module Ccsds {
         DECRYPTION_FAILURE = 4  @< Decryption operation failed
         KEY_ERROR = 5           @< Key retrieval failed
         MAC_VERIFICATION_FAILURE = 6 @< Frame failed its authentication check
+        ANTI_REPLAY_FAILURE = 7 @< Frame authenticated, but its IV was reused or outside the anti-replay window
     }
 
     @ An on-stack buffer sized to hold an SDLS key
     type SdlsKeyBuffer
+
+    @ Length, in bytes, of the SDLS AES-GCM initialization vector
+    constant SdlsIvSize = 12
+
+    @ An SDLS AES-GCM initialization vector, treated as a big-endian sequence number that wraps
+    array SdlsIv = [SdlsIvSize] U8 format "{x}"
 
     @ A single security association index to port index mapping entry
     struct SaMapEntry {

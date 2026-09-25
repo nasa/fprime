@@ -105,6 +105,34 @@ class AesGcmDecryptorTester final : public AesGcmDecryptorGTestBase {
     //! reused, so a failed MAC check must not leave it unusable. Covers SVC-CCSDS-AES-DECRYPTOR-003.
     void testRecoversAfterMacFailure();
 
+    //! With anti-replay off (the default), a repeated or backwards IV is still accepted and
+    //! no event is emitted. Covers SVC-CCSDS-AES-DECRYPTOR-008.
+    void testAntiReplayDisabled();
+
+    //! With anti-replay on, consecutive IVs counting up from zero are all accepted.
+    //! Covers SVC-CCSDS-AES-DECRYPTOR-008.
+    void testAntiReplayAcceptsNext();
+
+    //! An IV up to `window` ahead of the last accepted one is taken, moving the sequence to it;
+    //! one beyond, or one behind, is refused. Covers SVC-CCSDS-AES-DECRYPTOR-008 and -009.
+    void testAntiReplayWindow();
+
+    //! An exact replay of an accepted frame authenticates but is refused with
+    //! ANTI_REPLAY_FAILURE and the IvReplayed event. Covers SVC-CCSDS-AES-DECRYPTOR-009.
+    void testAntiReplayRejectsReuse();
+
+    //! The window carries across the 96-bit wrap, and a distance that only differs above the
+    //! low 32 bits is out of window. Covers SVC-CCSDS-AES-DECRYPTOR-008.
+    void testAntiReplayWrapsAround();
+
+    //! Only an authenticated, in-window frame advances the sequence: a forged frame, an
+    //! out-of-window frame, and a key failure leave it alone. Covers SVC-CCSDS-AES-DECRYPTOR-010.
+    void testAntiReplayStateOnlyOnAccept();
+
+    //! IvReplayed is throttled after five reports while every replay is still refused.
+    //! Covers SVC-CCSDS-AES-DECRYPTOR-009.
+    void testAntiReplayEventThrottle();
+
     //! A buffer too short to hold an IV and a MAC is rejected without touching the key.
     //! Covers SVC-CCSDS-AES-DECRYPTOR-004.
     void testShortBuffer();
@@ -147,6 +175,19 @@ class AesGcmDecryptorTester final : public AesGcmDecryptorGTestBase {
     //! Build IV | ciphertext | MAC into the harness storage for the given plaintext, and
     //! return a buffer wrapping it
     Fw::Buffer buildFrame(const U8* plaintext, FwSizeType plainLen, U8 vcId, U16 spi);
+
+    //! As buildFrame, with the IV chosen by the caller
+    Fw::Buffer buildFrameWithIv(const U8* plaintext,
+                                FwSizeType plainLen,
+                                const SdlsIv& iv,
+                                U8 vcId = TEST_VC_ID,
+                                U16 spi = TEST_SPI);
+
+    //! Build and send a small well-formed frame carrying the given IV
+    void sendIv(const SdlsIv& iv);
+
+    //! An IV whose low eight bytes hold the given big-endian value, with the rest zero
+    static SdlsIv ivFrom(U64 low);
 
     //! Hand a frame to the component, naming the virtual channel on the context
     void sendDecrypt(Fw::Buffer& data, U16 spi, U8 vcId = TEST_VC_ID);

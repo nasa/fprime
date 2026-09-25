@@ -77,9 +77,17 @@ class AesGcmEncryptorTester final : public AesGcmEncryptorGTestBase {
     //! also the one Svc::Ccsds::TmFramer writes into the header. Covers SVC-CCSDS-AES-ENCRYPTOR-008.
     void testContextVcIdIsAuthenticated();
 
-    //! Two frames with identical plaintext get different IVs and different ciphertext.
-    //! Covers SVC-CCSDS-AES-ENCRYPTOR-003.
-    void testIvIsFreshPerFrame();
+    //! Consecutive frames carry consecutive IVs, counting up from zero, so identical plaintext
+    //! still yields different ciphertext. Covers SVC-CCSDS-AES-ENCRYPTOR-003.
+    void testIvIsSequential();
+
+    //! The IV set by setNextIv() is used for the next frame, and the all-ones IV wraps to zero.
+    //! Covers SVC-CCSDS-AES-ENCRYPTOR-003 and SVC-CCSDS-AES-ENCRYPTOR-011.
+    void testIvWrapsAround();
+
+    //! A frame refused before encryption (key, size, or busy store) does not spend an IV, so the
+    //! sequence has no gaps for the receiver's window to absorb. Covers SVC-CCSDS-AES-ENCRYPTOR-003.
+    void testIvNotSpentByRefusedFrame();
 
     //! A zero-length plaintext still produces a well-formed IV and MAC.
     //! Covers SVC-CCSDS-AES-ENCRYPTOR-001.
@@ -148,6 +156,12 @@ class AesGcmEncryptorTester final : public AesGcmEncryptorGTestBase {
 
     //! Assert that exactly one buffer came out on encryptOut carrying the given status
     void assertStatus(Svc::Ccsds::SdlsStatus status);
+
+    //! Assert that the emitted frame starts with the given IV
+    void assertIv(const SdlsIv& expected);
+
+    //! Encrypt one frame, assert it succeeded, and hand the output store back to the component
+    void sendAndReturn(FwSizeType plainLen);
 
     //! Decrypt the emitted frame with the AAD this harness builds for the given VC and SA,
     //! and assert it yields the expected plaintext. This is what proves the component's AAD.
