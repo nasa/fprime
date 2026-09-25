@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  BadUSecFile.cpp
-// \author Rob Bocchino
+// \author sjsreehari
 // \brief  BadUSecFile implementation
 //
 // \copyright
@@ -10,6 +10,7 @@
 // ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/BadUSecFile.hpp"
+#include "Fw/Com/ComPacket.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/Buffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
 #include "gtest/gtest.h"

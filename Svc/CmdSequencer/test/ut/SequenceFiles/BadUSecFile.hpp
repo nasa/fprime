@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  BadUSecFile.hpp
-// \author Rob Bocchino
+// \author sjsreehari
 // \brief  BadUSecFile interface
 //
 // \copyright

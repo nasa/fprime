@@ -262,6 +262,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeDescr
 }
 
 Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeTimeTag(Fw::Time& timeTag) {
+    static constexpr U32 USECONDS_PER_SECOND = 1000000;
     Fw::LinearBufferBase& buffer = this->m_buffer;
     U32 seconds;
     U32 useconds;
@@ -269,10 +270,11 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeTimeT
     if (status == Fw::FW_SERIALIZE_OK) {
         status = buffer.deserializeTo(useconds);
     }
+    if (status == Fw::FW_SERIALIZE_OK and useconds >= USECONDS_PER_SECOND) {
+        // Fw::Time::set asserts useconds < 1000000
+        status = Fw::FW_DESERIALIZE_FORMAT_ERROR;
+    }
     if (status == Fw::FW_SERIALIZE_OK) {
-        if (useconds >= 1000000) {
-            return Fw::FW_DESERIALIZE_FORMAT_ERROR;
-        }
         timeTag.set(seconds, useconds);
     }
     return status;
