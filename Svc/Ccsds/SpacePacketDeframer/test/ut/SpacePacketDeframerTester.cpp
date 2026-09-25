@@ -44,9 +44,9 @@ void SpacePacketDeframerTester ::testDataReturnPassthrough() {
 
 void SpacePacketDeframerTester ::testNominalDeframing() {
     ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
-    U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
+    U16 seqCount = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
     U16 dataLength =
-        static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
+        static_cast<U16>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
     U8 data[dataLength];
     U16 lengthToken = static_cast<U16>(dataLength - 1);  // Length token is length - 1
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(dataLength); ++i) {
@@ -85,9 +85,9 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
 
 void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
     ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
-    U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
+    U16 seqCount = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
     U16 realDataLength =
-        static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
+        static_cast<U16>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
     U16 invalidLengthToken =
         static_cast<U16>(realDataLength + 1);  // Length token is greater than actual data available
     U8 data[realDataLength];
