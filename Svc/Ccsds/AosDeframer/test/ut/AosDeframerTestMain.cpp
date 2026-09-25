@@ -227,12 +227,10 @@ TEST(AosDeframer, testEppSizeOverflowHeaderSpansFrame) {
     tester.testEppSizeOverflowHeaderSpansFrame();
 }
 
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+// ----------------------------------------------------------------------
+// Tests - EPP wire-length regressions
+// ----------------------------------------------------------------------
 
-// Independent on-wire EPP length regressions.
 
 TEST(AosDeframer, testEppConformantAdjacentLengths) {
     COMMENT("Verify CCSDS 133.1-B-3 packet length semantics.");
@@ -268,4 +266,9 @@ TEST(AosDeframer, testEppConformantAllocationFailure) {
     COMMENT("Verify CCSDS 133.1-B-3 packet length semantics.");
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppConformantAllocationFailure();
+}
+
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

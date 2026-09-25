@@ -33,6 +33,7 @@ void AosDeframerTester::testEppConformantAdjacentLengths() {
 void AosDeframerTester::testEppConformantLengthBoundaries() {
     // Largest one-octet length and first length requiring two octets.
     for (FwSizeType packetSize = 255; packetSize <= 256; ++packetSize) {
+        SCOPED_TRACE(::testing::Message() << "packetSize=" << packetSize);
         this->configureDefault();
         this->clearHistory();
         U8 packet[256];
@@ -71,6 +72,7 @@ void AosDeframerTester::testEppConformantHeaderSplits() {
         const FwSizeType headerSize = headerSizes[variant];
         const FwSizeType packetSize = headerSize + 3;
         for (FwSizeType split = 1; split < headerSize; ++split) {
+            SCOPED_TRACE(::testing::Message() << "headerSize=" << headerSize << " split=" << split);
             this->configureDefault();
             this->clearHistory();
             // Each possible header split, followed immediately by another packet.
@@ -116,6 +118,7 @@ void AosDeframerTester::testEppInvalidDeclaredLengths() {
         // Header-only non-idle packets are invalid per section 4.1.3.1.5.
         const FwSizeType maxLength = variant == 0 ? 0 : headerSize;
         for (FwSizeType declared = 0; declared <= maxLength; ++declared) {
+            SCOPED_TRACE(::testing::Message() << "headerSize=" << headerSize << " declared=" << declared);
             this->configureDefault();
             this->clearHistory();
             this->m_allocationCalls = 0;
@@ -148,6 +151,7 @@ void AosDeframerTester::testEppHelperEncodesTotalLength() {
     const U8 headerSizes[] = {2, 4, 8};
     const U8 firstBytes[] = {0xFD, 0xFE, 0xFF};
     for (U32 variant = 0; variant < 3; ++variant) {
+        SCOPED_TRACE(::testing::Message() << "variant=" << variant);
         U8 packet[13] = {};
         const FwSizeType size = this->createEppPacket(packet, EppProtocolId::MissionSpecific, variants[variant], 5);
         ASSERT_EQ(size, static_cast<FwSizeType>(headerSizes[variant] + 5));

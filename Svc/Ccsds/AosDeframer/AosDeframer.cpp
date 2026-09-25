@@ -313,8 +313,8 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             seekForward += toHeader;
         }
 
-        // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
-        // packet)
+        // Attempt to determine the packet size from the buffered header. Zero means idle,
+        // incomplete, or an invalid packet length, so no packet can be completed here.
         const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
         if (packetSize == 0) {
             return 0;
@@ -461,7 +461,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
         FwSizeType packetSize = this->appendToSpanningPacket(vc, packetStart, remainingBytes);
 
         if (packetSize == 0) {
-            // Break out of loop since we ran out of data
+            // Stop extraction when the packet is idle, incomplete, or has an invalid length.
             return;
         }
 
@@ -517,7 +517,7 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
     // packetDataLength is a 16-bit field (max 65535); SERIALIZED_SIZE is a small constant.
     // Guarantee at compile time that the maximum possible sum fits in FwSizeType. If
     // FwSizeType is ever narrowed below 17 bits, this fails to build and the addition
-    // below must be guarded the same way sizeEppPacket is.
+    // below must be guarded against overflow.
     constexpr FwSizeType MAX_LENGTH = std::numeric_limits<FwSizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE;
     static_assert(MAX_LENGTH >= std::numeric_limits<U16>::max() + 1,
                   "FwSizeType must be wide enough to hold the maximum SPP packet size without overflow");
@@ -584,9 +584,8 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
     }
 
     const FwSizeType packetSize = static_cast<FwSizeType>(packetLength);
-    // Reject an unrepresentable size or a non-idle packet with no data. The
-    // latter also rejects the absent length field, which is reserved for idle
-    // packets (sections 4.1.2.4.4 and 4.1.3.1.5). Idle packets were handled above.
+    // Reject an unrepresentable size, or a length not exceeding the header (including the
+    // absent length reserved for idle packets, CCSDS 133.1-B-3 4.1.2.4.4 / 4.1.3.1.5).
     if ((static_cast<U32>(packetSize) != packetLength) || (packetSize <= headerLength)) {
         return 0;
     }
