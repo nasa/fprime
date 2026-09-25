@@ -142,8 +142,7 @@ googletest/googletest/include/gtest/internal/gtest-param-util.h
                                              151     138    91%   325-326,344,350,354-355,389,584,588,610-611,710-711
 googletest/googletest/include/gtest/internal/gtest-port.h
                                               15       8    53%   904,910-911,967,1065-1066,2102
-Os/Condition.cpp                              25      24    96%   14
-Os/Condition.hpp                               2       2   100%
+Os/ConditionVariableInterface.hpp              6       6   100%
 Os/Console.cpp                                42      39    92%   39-41
 Os/Console.hpp                                 2       2   100%
 Os/CountingSemaphore.cpp                      20      17    85%   32-34
@@ -151,8 +150,10 @@ Os/CountingSemaphore.hpp                       2       2   100%
 Os/Cpu.cpp                                    23      20    87%   35-37
 Os/Cpu.hpp                                     2       2   100%
 Os/Delegate.hpp                               20      20   100%
+Os/DelegateConditionVariable.cpp              22      21    95%   19
+Os/DelegateMutex.cpp                          16      16   100%
 Os/DelegateRawTime.cpp                        66      64    97%   102-103
-Os/Directory.cpp                              92      76    82%   26-28,86,90,103,109,118,122,133,135,141,147,150-152
+Os/Directory.cpp                              92      77    83%   26-28,86,90,103,109,118,122,135,141,147,150-152
 Os/Directory.hpp                               2       2   100%
 Os/File.cpp                                  211     182    86%   59-60,88-90,115,137,169-173,175-176,290-291,293-294,299-301,312-314,318-319,337-339
 Os/File.hpp                                    1       1   100%
@@ -169,7 +170,7 @@ Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 164     137    83%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,258-259
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,201,248-249,253,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     157    92%   21-26,28,248-249,253,318,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -182,13 +183,12 @@ Os/Linux/Memory.cpp                           15      10    66%   22-24,32-33
 Os/Linux/Memory.hpp                            2       2   100%
 Os/Memory.cpp                                 18      15    83%   34-36
 Os/Memory.hpp                                  2       2   100%
-Os/Mutex.cpp                                  32      32   100%
-Os/Mutex.hpp                                   3       3   100%
+Os/MutexInterface.hpp                         13      13   100%
 Os/Os.cpp                                      7       7   100%
-Os/Posix/ConditionVariable.cpp                22      20    90%   37-38
+Os/Posix/ConditionVariable.cpp                22      20    90%   39-40
 Os/Posix/Console.cpp                          20      17    85%   37-39
 Os/Posix/Console.hpp                           3       2    66%   39
-Os/Posix/CountingSemaphore.cpp                37      33    89%   44-45,69-70
+Os/Posix/CountingSemaphore.cpp                37      35    94%   69-70
 Os/Posix/DefaultConsole.cpp                    2       2   100%
 Os/Posix/DefaultCountingSemaphore.cpp          4       4   100%
 Os/Posix/DefaultFile.cpp                       6       6   100%
@@ -198,7 +198,7 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      89    50%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,134-136,140-142,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
@@ -443,5 +443,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      25748   21916    85%
+TOTAL                                      25743   21918    85%
 ------------------------------------------------------------------------------
