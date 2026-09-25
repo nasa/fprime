@@ -185,11 +185,16 @@ option(FPRIME_ENABLE_TEXT_LOGGERS "Enable text loggers in build" ON)
 ####
 # `FPRIME_ENABLE_JSON_MODEL_GENERATION`:
 #
+# **Deprecated:** the FPP JSON model is deprecated in favor of the native FPP Python bindings
+# (`fprime-fpp-python`). FPP 3.4.0, shipped alongside F Prime 4.4.0, is the final version that supports the JSON
+# model. Users of `fprime-python-model` should follow the migration guide to `fprime-fpp-python`. Enabling this
+# option emits a deprecation warning at configure time.
+#
 # Turns on the generation of JSON models for all modules in the build system. This will run `fpp-to-json` and may
 # require the user to install `java` and the .jar variants of FPP.
 #
 # **Values:**
-# - ON: enable JSON model generation
+# - ON: enable JSON model generation (deprecated)
 # - OFF: (default) disable JSON model generation
 #
 # e.g. `-DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON`
