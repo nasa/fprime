@@ -24,7 +24,7 @@ The AOS Framer and Deframer support the following subset of CCSDS AOS SDL:
 
 The AOS protocol specifies a fixed frame size. The maximum for all AOS framers can be configured in the `config/ComCfg.fpp` file. Individual AOS Framer instances can have their frame size overridden via the `configure` function.
 
-The `Svc::Ccsds::AosFramer` uses an internal (member) buffer to hold the fixed size frame. The buffer **must** be returned to the AosFramer via the `dataReturnIn` port once it has been used or consumed. When the buffer returns to the AosFramer it will reuse the buffer for the next frame. Should a component want to use the frame data past the time it is returned to the AosFramer, data should be copied before the original buffer is returned to the AosFramer via the `dataReturnIn` port. 
+The `Svc::Ccsds::AosFramer` uses an internal (member) buffer to hold the fixed size frame. The buffer **must** be returned to the AosFramer via the `dataReturnIn` port once it has been used or consumed. The returned buffer is reused for the next frame after the adapter reports `SUCCESS` on `comStatusIn`. Should a component want to use the frame data past the time it is returned to the AosFramer, data should be copied before the original buffer is returned to the AosFramer via the `dataReturnIn` port.
 
 ## Port Descriptions
 
@@ -36,3 +36,29 @@ The `Svc::Ccsds::AosFramer` uses an internal (member) buffer to hold the fixed s
 | sync input | dataReturnIn | Svc.ComDataWithContext | Receives buffer from a deallocate call in a ComDriver component |
 | sync input | comStatusIn | Fw.SuccessCondition | Receives status from downstream communication adapter per the [Communication Adapter Protocol](../../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol) |
 | output | comStatusOut | Fw.SuccessCondition | Passes status through to upstream `Svc::ComQueue` per the [Framer Status Protocol](../../../../docs/reference/communication-adapter-interface.md#framer-status-protocol) |
+
+## Status and buffer-return ordering
+
+`dataReturnIn` restores ownership of the internal frame buffer. It neither emits
+an upstream status nor starts another transmission. The communications adapter
+must return this buffer before invoking `comStatusIn`, as required by the
+[Communication Adapter Protocol](../../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol).
+
+For a packet spanning multiple frames, each downstream `SUCCESS` advances the
+pending packet. Intermediate frame acknowledgements are consumed locally. When
+no additional frame is produced, the framer emits one readiness credit; otherwise
+it waits for the next frame's acknowledgement. This also applies to an internal
+idle packet that crosses a frame boundary. Exactly one upstream `SUCCESS` is
+issued per accepted input, with startup and recovery statuses passed through.
+
+On downstream failure, any unsent packet remainder is discarded and its original
+buffer is returned before `FAILURE` is forwarded. Internal idle buffers are not
+returned upstream. Recovery is forwarded to restart the upstream queue without transmitting the
+discarded remainder.
+
+Unit tests cover synchronous and delayed adapter callbacks, packet/frame-size
+boundaries, multiple frames, idle tails, CRC preservation, and failure at each
+frame followed by recovery. Integration tests connect the real `Svc::ComStub`
+for synchronous success, failure and reconnection. The tests assert that buffer return alone produces
+neither a new frame nor a status, and that input ownership returns exactly once
+before an upstream status.
