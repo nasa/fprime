@@ -157,7 +157,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Fw/Test/UnitTestAssert.cpp
                                               47       0     0%   22-32,34-35,37,39-40,42-43,47,49,51,63,65-73,75,84-93,95-96,99-101
 /home/runner/work/fprime/fprime/Fw/Time/Time.cpp
-                                             162      68    42%   16-18,20-22,28-30,32-34,42-44,46-48,50-52,54-55,64-66,69-71,78-79,82-83,86-87,95-98,100-103,106-107,118,122,144-146,164,166,168,174-175,179-184,188-190,193-194,197,200,204,206,208-210,212,216-218,221,224,226-227,230,232-234,236-237,245-246,251-253,255-256
+                                             162      69    42%   16-18,20-22,28-30,32-34,42-44,46-48,50-52,54-55,64-66,69-71,78-79,82-83,86-87,95-98,100-103,106-107,118,122,144-146,164,168,174-175,179-184,188-190,193-194,197,200,204,206,208-210,212,216-218,221,224,226-227,230,232-234,236-237,245-246,251-253,255-256
 /home/runner/work/fprime/fprime/Fw/Time/Time.hpp
                                                1       1   100%
 /home/runner/work/fprime/fprime/Fw/Time/TimeInterval.cpp
@@ -206,10 +206,8 @@ File                                       Lines    Exec  Cover   Missing
                                               65      27    41%   9,13,18,31,35-36,70-71,74-75,92,97,101,106,109,114,118,123,125,130,133,138,140,145,147,151-154,156-157,160,164-167,169-170
 /home/runner/work/fprime/fprime/Fw/Types/StringUtils.cpp
                                               60      16    26%   10,24-26,29,43,47-48,51-52,56-57,60,63-65,68,70,72-74,76,82,85,89-90,92,95-96,101,105-106,109,112-114,117,119,121-123,125,130,136
-/home/runner/work/fprime/fprime/Os/Condition.cpp
-                                              25      17    68%   14,27-30,32-34
-/home/runner/work/fprime/fprime/Os/Condition.hpp
-                                               2       2   100%
+/home/runner/work/fprime/fprime/Os/ConditionVariableInterface.hpp
+                                               6       6   100%
 /home/runner/work/fprime/fprime/Os/Console.cpp
                                               42      24    57%   20-23,25-28,30,43-45,48-50,52-54
 /home/runner/work/fprime/fprime/Os/Console.hpp
@@ -223,7 +221,11 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Os/Cpu.hpp
                                                2       2   100%
 /home/runner/work/fprime/fprime/Os/Delegate.hpp
-                                              20      19    95%   100
+                                              20      18    90%   100,130
+/home/runner/work/fprime/fprime/Os/DelegateConditionVariable.cpp
+                                              22      14    63%   19,28-31,33-35
+/home/runner/work/fprime/fprime/Os/DelegateMutex.cpp
+                                              16      16   100%
 /home/runner/work/fprime/fprime/Os/DelegateRawTime.cpp
                                               66      34    51%   15-18,27-31,33-36,38,51-53,71-73,76-77,90,97-98,102-103,110-112,116-117
 /home/runner/work/fprime/fprime/Os/Directory.cpp
@@ -282,14 +284,12 @@ File                                       Lines    Exec  Cover   Missing
                                               18      15    83%   34-36
 /home/runner/work/fprime/fprime/Os/Memory.hpp
                                                2       2   100%
-/home/runner/work/fprime/fprime/Os/Mutex.cpp
-                                              32      32   100%
-/home/runner/work/fprime/fprime/Os/Mutex.hpp
-                                               3       3   100%
+/home/runner/work/fprime/fprime/Os/MutexInterface.hpp
+                                              13      13   100%
 /home/runner/work/fprime/fprime/Os/Os.cpp
                                                7       7   100%
 /home/runner/work/fprime/fprime/Os/Posix/ConditionVariable.cpp
-                                              22      16    72%   32-35,37-38
+                                              22      16    72%   34-37,39-40
 /home/runner/work/fprime/fprime/Os/Posix/Console.cpp
                                               20       6    30%   25-26,29-39,41
 /home/runner/work/fprime/fprime/Os/Posix/Console.hpp
@@ -313,7 +313,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Os/Posix/Directory.hpp
                                                1       1   100%
 /home/runner/work/fprime/fprime/Os/Posix/error.cpp
-                                             176      31    17%   14-16,18,20-21,26,28-35,37,39-46,51-56,58-61,64-69,71-85,87-89,91-101,103,106-126,128,131-142,144,153-155,159-164,175-183,194-199,204-210,212-219,221
+                                             176      34    19%   14-16,18,20-21,26,28-35,37,39-46,51-56,58-61,64-69,71-85,87-89,91-101,103,106-126,128,131-142,144,153-155,159-164,175-180,194-199,204-210,212-219,221
 /home/runner/work/fprime/fprime/Os/Posix/File.cpp
                                              172      89    51%   57,59-60,62-64,66,113-115,120-125,144-148,150,152-155,158-159,161,169-170,177-178,180-182,191-192,196,198-200,202-203,205-207,210-213,215-216,218-219,224,226,232,238,244,246,252-256,258,271,280,282-283,285-286,312,322,324-325,327-328,337-338,344-345
 /home/runner/work/fprime/fprime/Os/Posix/File.hpp
@@ -720,5 +720,5 @@ Ref/TypeDemo/TypeDemo.hpp                      1       1   100%
 /home/runner/work/fprime/fprime/Utils/Types/Queue.cpp
                                              104      35    33%   36-38,40-41,44,46-48,52-54,57,61,72-74,78-80,83,90-91,98-100,102,105,107-109,111,114-116,118-121,123,136,141-143,145-148,150,154-155,162-165,167-169,171,175-176,178-180,182,185-186,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      31679    9574    30%
+TOTAL                                      31674    9572    30%
 ------------------------------------------------------------------------------
