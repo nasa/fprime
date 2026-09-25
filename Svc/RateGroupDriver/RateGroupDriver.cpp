@@ -3,17 +3,41 @@
 #include <Svc/RateGroupDriver/RateGroupDriver.hpp>
 #include <cstdio>
 #include <cstring>
+#include <limits>
 
 namespace Svc {
 
 RateGroupDriver::RateGroupDriver(const char* compName)
     : RateGroupDriverComponentBase(compName), m_ticks(0), m_rollover(1), m_configured(false) {}
 
+FwSizeType RateGroupDriver::gcd(FwSizeType a, FwSizeType b) {
+    const FwIndexType maxIterations = static_cast<FwIndexType>(sizeof(FwSizeType) * 8 * 2);
+    for (FwIndexType i = 0; (i < maxIterations) && (b != 0); i++) {
+        FwSizeType temp = b;
+        b = a % b;
+        a = temp;
+    }
+    FW_ASSERT(b == 0);
+    return a;
+}
+
+FwSizeType RateGroupDriver::lcm(FwSizeType a, FwSizeType b) {
+    FW_ASSERT(a != 0);
+    FW_ASSERT(b != 0);
+    const FwSizeType g = gcd(a, b);
+    const FwSizeType a_div_g = a / g;
+    // Ensure that lcm will not overflow
+    FW_ASSERT((std::numeric_limits<FwSizeType>::max() / b) >= a_div_g,
+              static_cast<FwAssertArgType>(a),
+              static_cast<FwAssertArgType>(b));
+    return a_div_g * b;
+}
+
 void RateGroupDriver::configure(const DividerSet& dividerSet) {
     // verify port/table size matches
     static_assert(FW_NUM_ARRAY_ELEMENTS(m_dividers) == NUM_CYCLEOUT_OUTPUT_PORTS,
                   "Divider table size must match the number of cycle output ports");
-    // reset rollover so a reconfigure does not multiply onto the prior product
+    // reset rollover so a reconfigure does not carry over the prior rollover
     this->m_rollover = 1;
     // copy provided array of dividers
     for (FwIndexType entry = 0; entry < RateGroupDriver::DIVIDER_SIZE; entry++) {
@@ -23,14 +47,10 @@ void RateGroupDriver::configure(const DividerSet& dividerSet) {
                   static_cast<FwAssertArgType>(dividerSet.dividers[entry].offset),
                   static_cast<FwAssertArgType>(dividerSet.dividers[entry].divisor));
         this->m_dividers[entry] = dividerSet.dividers[entry];
-        // rollover value should be product of all dividers to make sure integer rollover doesn't jump cycles
+        // rollover value should be the least common multiple of all dividers to make sure integer rollover doesn't jump cycles
         // only use non-zero dividers
         if (dividerSet.dividers[entry].divisor != 0) {
-            // Ensure that rollover will not overflow
-            FW_ASSERT((std::numeric_limits<FwSizeType>::max() / dividerSet.dividers[entry].divisor) >= this->m_rollover,
-                      static_cast<FwAssertArgType>(this->m_rollover),
-                      static_cast<FwAssertArgType>(dividerSet.dividers[entry].divisor));
-            this->m_rollover *= dividerSet.dividers[entry].divisor;
+            this->m_rollover = RateGroupDriver::lcm(this->m_rollover, dividerSet.dividers[entry].divisor);
         }
     }
     this->m_configured = true;
@@ -57,7 +77,7 @@ void RateGroupDriver::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
     }
 
     // rollover the tick value when the tick count reaches the rollover value
-    // the rollover value is the product of all the dividers. See comment in constructor.
+    // the rollover value is the least common multiple of all the dividers.
     FW_ASSERT(this->m_rollover > 0);
     this->m_ticks = (this->m_ticks + 1) % this->m_rollover;
 }

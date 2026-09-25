@@ -3,7 +3,7 @@
 ## 1. Introduction
 
 The RateGroupDriver Component is used to take a single system tick and distribute it to multiple rate groups in a system. 
-It takes the input `Svc::Sched` port, then divides down the tick rate based on arguments to the constructor. 
+It takes the input `Svc::Cycle` port, then divides down the tick rate based on dividers configured via `configure()`. 
 Typically, the output ports would be connected to the asynchronous inputs of an `ActiveRateGroup`.
 
 ## 2. Requirements
@@ -50,7 +50,7 @@ The `configure()` function is passed a divider set that specifies the divisors a
 * Output port `n` is called on a tick when `ticks % dividers[n].divisor == dividers[n].offset`, so the input rate is divided down by `divisor` and the output is shifted by `offset` ticks. Different offsets let rate groups with the same divisor run on different ticks.
 * A `divisor` of `0` disables the output port; it is never called. This is the default for an entry that is not set.
 * The `offset` must be `0` or less than the `divisor`; `configure()` asserts otherwise because such a port would never be called.
-* The tick counter rolls over at the product of all non-zero divisors, so every port keeps its cadence across the rollover. `configure()` asserts if this product would overflow.
+* The tick counter rolls over at the least common multiple (LCM) of all non-zero divisors, so every port keeps its cadence across the rollover. `configure()` asserts if this value would overflow.
 
 The implementation will be ISR compliant by avoiding the following:
 
@@ -79,7 +79,7 @@ RateGroupDriver has no state machines.
 
 ### 3.5 Algorithms
 
-RateGroupDriver has no significant algorithms.
+RateGroupDriver uses the Euclidean algorithm to compute the greatest common divisor (GCD) and least common multiple (LCM) of non-zero dividers during `configure()`.
 
 ## 4. Dictionary
 
@@ -104,6 +104,7 @@ Date | Description
 6/19/2015 | Design review edits
 7/22/2015 | Design review actions
 9/2/2015| Unit test updates
+2026-09-24 | Updated rollover computation to use least common multiple (LCM) rather than product to prevent integer overflow (#5987)
 
 
 

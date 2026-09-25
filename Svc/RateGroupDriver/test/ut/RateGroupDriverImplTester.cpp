@@ -25,6 +25,10 @@ void RateGroupDriverImplTester::clearPortCalls() {
 
 RateGroupDriverImplTester::~RateGroupDriverImplTester() {}
 
+FwSizeType RateGroupDriverImplTester::getRollover() const {
+    return this->m_impl.m_rollover;
+}
+
 void RateGroupDriverImplTester::from_CycleOut_handler(FwIndexType portNum, Os::RawTime& cycleStart) {
     this->m_portCalls[portNum] = true;
 }
@@ -38,10 +42,12 @@ void RateGroupDriverImplTester::runSchedNominal(Svc::RateGroupDriver::DividerSet
     FwSizeType expected_rollover = 1;
 
     for (FwIndexType div = 0; div < numDividers; div++) {
-        expected_rollover *= dividersSet.dividers[div].divisor;
+        if (dividersSet.dividers[div].divisor != 0) {
+            expected_rollover = Svc::RateGroupDriver::lcm(expected_rollover, dividersSet.dividers[div].divisor);
+        }
     }
 
-    ASSERT_EQ(expected_rollover, this->m_impl.m_rollover);
+    ASSERT_EQ(expected_rollover, this->getRollover());
 
     FwSizeType iters = expected_rollover * 10;
 
@@ -55,8 +61,12 @@ void RateGroupDriverImplTester::runSchedNominal(Svc::RateGroupDriver::DividerSet
         ASSERT_EQ((cycle + 1) % expected_rollover, this->m_impl.m_ticks);
         // check for various intervals
         for (FwIndexType div = 0; div < numDividers; div++) {
-            if (cycle % dividersSet.dividers[div].divisor == dividersSet.dividers[div].offset) {
-                EXPECT_TRUE(this->m_portCalls[div]);
+            if (dividersSet.dividers[div].divisor != 0) {
+                if (cycle % dividersSet.dividers[div].divisor == dividersSet.dividers[div].offset) {
+                    EXPECT_TRUE(this->m_portCalls[div]);
+                } else {
+                    EXPECT_FALSE(this->m_portCalls[div]);
+                }
             } else {
                 EXPECT_FALSE(this->m_portCalls[div]);
             }
