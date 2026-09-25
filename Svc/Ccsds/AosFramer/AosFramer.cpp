@@ -42,10 +42,9 @@ void AosFramer::configure(const U32 fixedFrameSize,
     // Virtual Channel ID is 6 bits (per CCSDS 732.0-B-5 Section 4.1.2.3)
     FW_ASSERT((vcId & 0xC0) == 0, static_cast<FwAssertArgType>(vcId));
 
-    // AOS Framer must be provided with a protocol to use for Idle Packets
-    // Currently, only SPP idle packing is supported
-    // EPP is more optimal, however
-    FW_ASSERT((idlePvns & PvnBitfield::SPP_MASK) != 0, static_cast<FwAssertArgType>(idlePvns));
+    // Only SPP idle packet generation is currently supported. Reject EPP,
+    // including mixed SPP/EPP masks, rather than silently ignoring it.
+    FW_ASSERT(idlePvns == PvnBitfield::SPP_MASK, static_cast<FwAssertArgType>(idlePvns));
 
     // FECF is constant for a given Physical Channel during a Mission Phase (4.1.6.1.3)
     this->m_fecf = frameErrorControlField;
@@ -59,8 +58,6 @@ void AosFramer::configure(const U32 fixedFrameSize,
         currentVc.vc_struct_index = ind;
         currentVc.virtualChannelId = vcId;
         currentVc.frame.buffer = {currentVc.frame.backer, fixedFrameSize};
-        // Set the bitmask of PVNs to use for idle packets
-        currentVc.idle_packet_types = idlePvns;
     }
 }
 
@@ -407,13 +404,9 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
         vc.past_first_fresh_packet = true;
     }
 
-    // EPP-only idle fill is not yet supported; configure() requires the SPP bit
-    if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
-        // TODO: Serialize an EPP of the right size once EPP idle is supported
-    }
-    // While we are using only SPP, we have to comply w/ the min SPP packet size
-    // We'll stripe this packet onto the next frame of this VC if we have to
-    else if (idlePacketSize < 7) {
+    // Only SPP idle packets can reach this path. An idle SPP smaller than
+    // the minimum must continue into the next frame.
+    if (idlePacketSize < MIN_SPP_LENGTH) {
         // Serialize the Idle packet into the spp_idle_backer
 
         // Make sure we aren't overwriting a packet fragment

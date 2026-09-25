@@ -57,10 +57,6 @@ class AosFramer final : public AosFramerComponentBase {
         // multi frame per PDU support
         PDU outstanding;
 
-        // Bitfield of supported PVNs for inserted Idle Packets
-        // Default to only supporting SPP Idle packets
-        U8 idle_packet_types = PvnBitfield::SPP_MASK;
-
         // SPP Idle packet backstop
         // Technically we'd only use 6 of the 7 bytes at worst
         // cuz the first one had to go into the prev frame
@@ -92,9 +88,9 @@ class AosFramer final : public AosFramerComponentBase {
                    bool frameErrorControlField,              //!< Whether to enable the frame error control field
                    U16 spacecraftId = ComCfg::SpacecraftId,  //!< Spacecraft ID
                    U8 vcId = 1,                              //!< Virtual Channel ID (default 1)
-                   U8 idlePvns = PvnBitfield::SPP_MASK       //!< Bitfield of which Packet Version Numbers to use
-                                                             //!< for idle packets
-                                                             //!< Default to SPP
+                   U8 idlePvns = PvnBitfield::SPP_MASK       //!< Idle-packet PVN selection. Must be exactly
+                                                             //!< PvnBitfield::SPP_MASK; EPP idle packets are
+                                                             //!< not implemented and mixed/EPP-only masks assert
     );
 
   private:

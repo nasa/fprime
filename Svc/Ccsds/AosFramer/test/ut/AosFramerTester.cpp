@@ -29,6 +29,19 @@ AosFramerTester ::AosFramerTester()
 
 AosFramerTester ::~AosFramerTester() {}
 
+void AosFramerTester ::testIdlePacketPvnConfiguration() {
+    // SPP is the only supported idle-packet format.
+    this->component.configure(64, true, ComCfg::SpacecraftId, 1, PvnBitfield::SPP_MASK);
+
+    // No idle protocol, EPP-only, and mixed SPP/EPP are all unsupported.
+    ASSERT_DEATH_IF_SUPPORTED(this->component.configure(64, true, ComCfg::SpacecraftId, 1, 0), "AosFramer.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(this->component.configure(64, true, ComCfg::SpacecraftId, 1, PvnBitfield::EPP_MASK),
+                              "AosFramer.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(
+        this->component.configure(64, true, ComCfg::SpacecraftId, 1, PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK),
+        "AosFramer.cpp");
+}
+
 // ----------------------------------------------------------------------
 // Base Operational Tests (Same as TM)
 // ----------------------------------------------------------------------
