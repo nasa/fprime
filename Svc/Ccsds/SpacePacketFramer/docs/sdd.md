@@ -30,7 +30,7 @@ For each Space Packet generated, the `Svc::Ccsds::SpacePacketFramer` will popula
 | Field | Value | Notes |
 |---|---|---|
 | Version Number | 000 | As per protocol 4.1.3.2 |
-| Packet Type | Uses value passed in the `context` argument (defaults to `SPP_TELEMETRY` = 0) | `ComCfg.SppPacketType`: 0 = Telemetry (reporting), 1 = Command, as per 4.1.3.3.2 |
+| Packet Type | Uses `pktType` passed in the `context` argument (defaults to `0`, Telemetry) | `SppPacketType.SPP_TELEMETRY` (0) or `SPP_COMMAND` (1), as per 4.1.3.3.2; `Svc::ComQueue` leaves the default |
 | Secondary Header Flag | Uses value passed in the `context` argument | Presence of secondary header are defined in `config/ComCfg.fpp` |
 | Application Process Identifier (APID) | Uses value passed in the `context` argument | Project APIDs are defined in `config/ComCfg.fpp` |
 | Sequence Flags | Uses value passed in the `context` argument (defaults to `0b11` Unsegmented) | Indicates segmentation state: 0b00=Continuation, 0b01=First, 0b10=Last, 0b11=Unsegmented |
