@@ -191,7 +191,7 @@ just the fixed-length header).
 
 ##### 3.3.2.3 allocateBuffer
 
-The `allocateBuffer()` public method passes a memory allocator to provide memory for the sequence buffer needed by `cmdSequencer`. The user will provide an instance of a sub-class of `Fw::MemAllocator` that implements memory allocation. An example of this using the heap can be found in `Fw/Types/MallocAllocator.hpp`.
+The `allocateBuffer()` public method passes a memory allocator to provide memory for the sequence buffer needed by `cmdSequencer`. The user will provide an instance of a sub-class of `Fw::MemAllocator` that implements memory allocation. An example of this using the heap can be found in `Fw/Types/MallocAllocator.hpp`. The buffer capacity is the size actually granted by the allocator, which may be smaller than the request. Allocation must return a non-null buffer large enough for a sequence header; otherwise initialization asserts. Files larger than the granted capacity are rejected by the existing file-size checks.
 
 <a name="loadSequence"></a>
 ##### 3.3.2.4 loadSequence (Optional)
