@@ -29,11 +29,12 @@
 //    Os::Mutex::getHandle() to its own MutexHandle type (e.g.
 //    Os/Posix/ConditionVariable.cpp reinterpret_casts it to PosixMutexHandle).
 //    Pairing a Mutex with a ConditionVariable that expects a different handle
-//    type (including leaving Os::ConditionVariable on the link-time delegate
-//    while Os::Mutex is aliased to a project type) is undefined behavior that
-//    the compiler cannot detect. A ConditionVariable that does not inspect the
-//    mutex handle (e.g. Os::Stub::Mutex::StubConditionVariable) is compatible
-//    with any Mutex.
+//    type is undefined behavior that the compiler cannot detect. The one case it
+//    can detect is enforced: Os/ConditionVariableInterface.hpp static_asserts
+//    that either both or neither of the two are the link-time delegates, so
+//    aliasing Os::Mutex alone is a build error. A ConditionVariable that does
+//    not inspect the mutex handle (e.g. Os::Stub::Mutex::StubConditionVariable)
+//    is compatible with any Mutex.
 //
 //    The alias only changes the C++ type; the implementation module providing
 //    the aliased classes must still be in the link (via CHOOSES_IMPLEMENTATIONS
