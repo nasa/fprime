@@ -89,7 +89,8 @@ class ConditionVariableInterface {
     //! \param mutex: mutex to unlock as part of this operation
     void wait(Os::Mutex& mutex) {
         const Status status = this->pend(mutex);
-        FW_ASSERT(status == Status::OP_OK, static_cast<FwAssertArgType>(status));
+        FW_ASSERT(status == Status::OP_OK,
+                  static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
     }
 };
 

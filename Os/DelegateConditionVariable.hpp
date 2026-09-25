@@ -69,11 +69,11 @@ class DelegateConditionVariable final : public ConditionVariableInterface {
     //! Pointer to mutex object previously used
     Os::Mutex* m_lock = nullptr;
 
-    // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
-    // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
-    // the byte-array here and set `handle` to that address for storage.
+    // This section is used to store the implementation-defined condition variable handle. To Os::ConditionVariable
+    // and fprime, this type is opaque and thus normal allocation cannot be done. Instead, we allow the implementor to
+    // store the handle in the byte-array here and set `handle` to that address for storage.
     alignas(FW_HANDLE_ALIGNMENT)
-        ConditionVariableHandleStorage m_handle_storage;  //!< Storage for aligned FileHandle data
+        ConditionVariableHandleStorage m_handle_storage;  //!< Storage for aligned ConditionVariableHandle data
     ConditionVariableInterface& m_delegate;               //!< Delegate for the real implementation
 };
 

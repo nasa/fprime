@@ -35,7 +35,7 @@
 
 // Validate that OS_CONDITION_VARIABLE_HEADER was defined by config/OsDelegateMutex.hpp
 #ifndef OS_CONDITION_VARIABLE_HEADER
-#error "OS_CONDITION_VARIABLE_HEADER must be defined in config/OsDelegateMutex.hpp"
+#error "OS_CONDITION_VARIABLE_HEADER must be defined in config/OsDelegateMutex.hpp, paired with Os::Mutex"
 #endif
 
 #include OS_CONDITION_VARIABLE_HEADER

@@ -5,7 +5,7 @@
 // This header configures how Os::Mutex and Os::ConditionVariable resolve to
 // concrete implementations. The two are configured together because a
 // condition variable operates on the handle of the configured Os::Mutex, so
-// they must always come from the same implementation. Two mechanisms are
+// they must always be selected as a compatible pair. Two mechanisms are
 // available:
 //
 // 1. Link-time selection (default): Os::Mutex aliases to Os::DelegateMutex,
@@ -23,22 +23,34 @@
 //
 //    WARNING: the aliased types MUST derive from Os::MutexInterface (lock()/unLock()/
 //    ScopeLock are defined there) and Os::ConditionVariableInterface (wait() is
-//    defined there). Os::Mutex and Os::ConditionVariable MUST be overridden as a
-//    pair from the same implementation: a ConditionVariable implementation casts
+//    defined there). Os::Mutex and Os::ConditionVariable MUST be overridden
+//    together, and the selected ConditionVariable MUST accept the handle of the
+//    selected Os::Mutex: a ConditionVariable implementation typically casts
 //    Os::Mutex::getHandle() to its own MutexHandle type (e.g.
-//    Os/Posix/ConditionVariable.cpp reinterpret_casts it to PosixMutexHandle), so
-//    a compile-time Mutex paired with a different ConditionVariable implementation
-//    is undefined behavior with no build-time error.
+//    Os/Posix/ConditionVariable.cpp reinterpret_casts it to PosixMutexHandle).
+//    Pairing a Mutex with a ConditionVariable that expects a different handle
+//    type (including leaving Os::ConditionVariable on the link-time delegate
+//    while Os::Mutex is aliased to a project type) is undefined behavior that
+//    the compiler cannot detect. A ConditionVariable that does not inspect the
+//    mutex handle (e.g. Os::Stub::Mutex::StubConditionVariable) is compatible
+//    with any Mutex.
 //
-// Example compile-time selection override:
+//    The alias only changes the C++ type; the implementation module providing
+//    the aliased classes must still be in the link (via CHOOSES_IMPLEMENTATIONS
+//    for an in-tree Os_Mutex_* implementation, or DEPENDS for a project module).
+//    The Os_Mutex module always REQUIRES_IMPLEMENTATIONS Os_Mutex, so a chosen
+//    implementation is still needed even though its getDelegate() goes unused.
 //
-//     namespace Va416x0Os { namespace AtomicMutex { class AtomicMutex; class AtomicConditionVariable; } }
+// Example compile-time selection override (project mutex, no-op condition variable):
+//
+//     namespace Va416x0Os { namespace AtomicMutex { class AtomicMutex; } }
+//     namespace Os { namespace Stub { namespace Mutex { class StubConditionVariable; } } }
 //     namespace Os {
 //     using Mutex = Va416x0Os::AtomicMutex::AtomicMutex;
-//     using ConditionVariable = Va416x0Os::AtomicMutex::AtomicConditionVariable;
+//     using ConditionVariable = Os::Stub::Mutex::StubConditionVariable;
 //     }  // namespace Os
 //     #define OS_MUTEX_HEADER "Va416x0/Os/AtomicMutex/AtomicMutex.hpp"
-//     #define OS_CONDITION_VARIABLE_HEADER "Va416x0/Os/AtomicMutex/AtomicConditionVariable.hpp"
+//     #define OS_CONDITION_VARIABLE_HEADER "Os/Stub/ConditionVariable.hpp"
 //
 // IMPORTANT: CIRCULAR DEPENDENCY PREVENTION
 //
