@@ -101,6 +101,11 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     ComCfg::FrameContext contextCopy = context;
     contextCopy.set_apid(apid);
 
+    // Extract packet type
+    U8 pktType = static_cast<U8>((header.get_packetIdentification() & SpacePacketSubfields::PktTypeMask) >>
+                                 SpacePacketSubfields::PktTypeOffset);
+    contextCopy.set_pktType(static_cast<ComCfg::SppPacketType::T>(pktType));
+
     // Extract secondary header flag
     bool hasSecHdr = (header.get_packetIdentification() & SpacePacketSubfields::SecHdrMask) != 0;
     contextCopy.set_hasSecHdr(hasSecHdr);

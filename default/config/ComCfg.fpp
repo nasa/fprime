@@ -50,10 +50,17 @@ module ComCfg {
     @ Reserved SA index sentinel meaning "unset"; SA index 0xFFFF cannot be selected via context
     constant SaIndexUnset = 0xFFFF
 
+    @ Packet type in the Space Packet Primary Header
+    enum SppPacketType : U8 {
+        SPP_TELEMETRY = 0  @< Telemetry / data packet (downlink)
+        SPP_COMMAND   = 1  @< Telecommand packet (uplink)
+    } default SPP_TELEMETRY
+
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {
         comQueueIndex: FwIndexType  @< Queue Index used by the ComQueue, other components shall not modify
         apid: Apid                  @< 11 bits APID in CCSDS
+        pktType: SppPacketType      @< 1 bit packet type in space packet primary header
         hasSecHdr: bool             @< Secondary header flag for SpacePacketFramer
         sequenceFlags: U8           @< 2 bit Sequence flags (0b00=continuation, 0b01=first, 0b10=last, 0b11=unsegmented)
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
@@ -65,6 +72,7 @@ module ComCfg {
     } default {
         comQueueIndex = 0
         apid = Apid.FW_PACKET_UNKNOWN
+        pktType = SppPacketType.SPP_TELEMETRY
         hasSecHdr = false
         sequenceFlags = 0x3
         sequenceCount = 0
