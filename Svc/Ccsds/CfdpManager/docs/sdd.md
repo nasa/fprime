@@ -690,10 +690,12 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 
 In addition to `ChannelTelemetry`, `CfdpManager` mirrors every parameter to a
 telemetry channel so ground operators can verify the active configuration
-without relying on parameter-set confirmations alone. `parametersLoaded()`
-emits an initial sample for every channel by driving each parameter through
-`parameterUpdated()`; thereafter `parameterUpdated()` re-emits only the channel
-for the parameter that changed. Channel names carry a `PRM_` prefix to mark them
+without relying on parameter-set confirmations alone. The component overrides
+`parameterUpdated()`, which the framework invokes both at load — `loadParameters()`
+calls `parameterLoaded()` for each parameter, which in turn calls
+`parameterUpdated()` — and whenever a parameter is set at runtime. Every channel
+therefore emits an initial sample on load; thereafter only the channel for the
+parameter that changed is re-emitted. Channel names carry a `PRM_` prefix to mark them
 as parameter mirrors, and each is declared `update on change` so a value is only
 reported when it differs from the last sample. Descriptions and units are
 documented once at the parameter definitions in the [Parameters](#parameters)

@@ -184,7 +184,8 @@ void CfdpManagerTester::testParamFileInDefaultPrioritySetGet() {
 // ----------------------------------------------------------------------
 //
 // Each parameter is mirrored to a telemetry channel from parameterUpdated().
-// parametersLoaded() drives every parameter through parameterUpdated() on load;
+// On load, loadParameters() calls parameterLoaded() for each parameter, which
+// in turn calls parameterUpdated(), so every channel emits an initial sample;
 // thereafter parameterUpdated() re-emits only the channel for the parameter
 // that changed.
 //
