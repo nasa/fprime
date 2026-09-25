@@ -1,52 +1,46 @@
 // ======================================================================
-// \title Os/Posix/File.hpp
-// \brief posix implementation for Os::File, header and test definitions
+// \title Os/DelegateFile.hpp
+// \brief Define the Os::DelegateFile class
 // ======================================================================
-#include <Os/File.hpp>
-#ifndef OS_POSIX_FILE_HPP
-#define OS_POSIX_FILE_HPP
+#ifndef OS_DELEGATEFILE_HPP_
+#define OS_DELEGATEFILE_HPP_
 
-#include <sys/stat.h>
+#include <Utils/Hash/Hash.hpp>
+#include "Os/FileInterface.hpp"
 
 namespace Os {
-namespace Posix {
-namespace File {
 
-//! FileHandle class definition for posix implementations.
-//!
-struct PosixFileHandle : public FileHandle {
-    static constexpr int INVALID_FILE_DESCRIPTOR = -1;
-    static constexpr int ERROR_RETURN_VALUE = -1;
+class DelegateFile final : public FileInterface {
+    // The file unit-test harness reaches into the CRC scratch state (`m_hash`) to check the running
+    // accumulator against its shadow model. That state moved here from `FileInterface`, so the tester
+    // must befriend this wrapper too (it is already a friend of `FileInterface`).
+    friend struct Os::Test::FileTest::Tester;
 
-    //! Posix file descriptor
-    int m_file_descriptor = INVALID_FILE_DESCRIPTOR;
-};
-
-//! \brief posix implementation of Os::File
-//!
-//! Posix implementation of `FileInterface` for use as a delegate class handling posix file operations. Posix files use
-//! standard `open`, `read`, and `write` posix calls. The handle is represented as a `PosixFileHandle` which wraps a
-//! single `int` type file descriptor used in those API calls.
-//!
-class PosixFile : public FileInterface {
   public:
     //! \brief constructor
     //!
-    PosixFile() = default;
-
-    //! \brief copy constructor
-    PosixFile(const PosixFile& other);
-
-    //! \brief assignment operator that copies the internal representation
-    PosixFile& operator=(const PosixFile& other);
+    DelegateFile();
 
     //! \brief destructor
     //!
-    ~PosixFile() override = default;
+    //! Destructor closes the file if it is open
+    ~DelegateFile() final;
+
+    //! \brief copy constructor that copies the internal representation
+    DelegateFile(const DelegateFile& other);
+
+    //! \brief assignment operator that copies the internal representation
+    DelegateFile& operator=(const DelegateFile& other);
 
     // ------------------------------------
     // Functions overrides
     // ------------------------------------
+
+    // Bring the FileInterface convenience overloads into scope; overriding a
+    // single `open` overload below would otherwise hide all of them.
+    using FileInterface::open;
+    using FileInterface::read;
+    using FileInterface::write;
 
     //! \brief open file with supplied path and mode
     //!
@@ -65,13 +59,6 @@ class PosixFile : public FileInterface {
     //! \return: status of the open
     //!
     Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
-
-    // Bring the base class's open(const char*, Mode) convenience overload, and the read/write overloads
-    // without a WaitType parameter, back into scope; they would otherwise be hidden by the
-    // open/read/write overrides declared here and below.
-    using FileInterface::open;
-    using FileInterface::read;
-    using FileInterface::write;
 
     //! \brief close the file, if not opened then do nothing
     //!
@@ -179,22 +166,36 @@ class PosixFile : public FileInterface {
     //!
     FileHandle* getHandle() override;
 
-  private:
-    //! \brief Maps FILE_MODE_ constants in config/OsCfg.fpp to mode_t type for open
-    //!
-    //! \param create_mode: Bitmask of file permissions derived from the FILE_MODE_
-    //!                     constants in OsCfg.fpp
-    //!
-    //! \return mode_t value that corresponds to the provided create_mode bitmask
-    //!
-    static mode_t map_open_create_mode(const U32 create_mode);
+    // ------------------------------------
+    // CRC overrides
+    //
+    // The CRC scratch state (`m_hash` accumulator + `m_crc_buffer` read
+    // buffer) and the working algorithm live here on the wrapper rather than
+    // on `FileInterface`. See the design note in Os/FileInterface.hpp.
+    // ------------------------------------
+
+    //! \brief calculate the CRC32 of the entire file. See FileInterface::calculateCrc.
+    Status calculateCrc(U32& crc) override;
+
+    //! \brief calculate the CRC32 of the next section of data. See FileInterface::incrementalCrc.
+    Status incrementalCrc(FwSizeType& size) override;
+
+    //! \brief finalize and retrieve the CRC value. See FileInterface::finalizeCrc.
+    Status finalizeCrc(U32& crc) override;
 
   private:
-    //! File handle for PosixFile
-    PosixFileHandle m_handle;
+    // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
+    // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
+    // the byte-array here and set `handle` to that address for storage.
+    //
+    alignas(FW_HANDLE_ALIGNMENT) FileHandleStorage m_handle_storage;  //!< Storage for aligned FileHandle data
+    FileInterface& m_delegate;                                        //!< Delegate for the real implementation
+
+    // CRC scratch state -- see the "CRC overrides" note above. Kept off the
+    // handle-size-constrained delegate and on this wrapper instead.
+    Utils::Hash m_hash;                   //!< Hash object for incremental CRC calculation
+    U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];  //!< Read buffer for incremental CRC calculation
 };
-}  // namespace File
-}  // namespace Posix
 }  // namespace Os
 
-#endif  // OS_POSIX_FILE_HPP
+#endif  // OS_DELEGATEFILE_HPP_

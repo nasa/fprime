@@ -27,8 +27,8 @@ struct Tester {
         FwSizeType position = std::numeric_limits<FwSizeType>::max();
     };
 
-    //! Assert in File.cpp for searching death text
-    static constexpr const char* ASSERT_IN_FILE_CPP = "Assert: \".*/?Os/File\\.cpp:[0-9]+\"";
+    //! Assert in FileInterface.cpp or DelegateFile.cpp for searching death text
+    static constexpr const char* ASSERT_IN_FILE_CPP = "Assert: \".*/?Os/(FileInterface|DelegateFile)\\.cpp:[0-9]+\"";
 
     // Constructors that ensures the file is always valid
     Tester();
