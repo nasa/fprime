@@ -9,6 +9,8 @@ The `Svc::Ccsds::SpacePacketFramer` is typically used upstream of a component th
 ## Configuration
 The `Svc::Ccsds::SpacePacketFramer` requires an Application Process Identifier (APID) for the Space Packets it generates. This APID is typically provided during instantiation or configuration. It also uses a sequence count, which is managed per APID via the `getApidSeqCount` port.
 
+The component uses packet type ('pktType') passed in the `FrameContext` (0 = Telemetry (reporting), 1 = Command).
+
 The component supports an optional Secondary Header Flag (`hasSecHdr`) that can be set via the `FrameContext` passed to the `dataIn` port. This flag defaults to `false` (no secondary header) but can be configured per packet to indicate the presence of a secondary header.
 
 The component also supports configurable Sequence Flags (`sequenceFlags`) via the `FrameContext`. These 2-bit flags indicate the segmentation state of the user data and default to `0x3` (unsegmented). The flags can be set to:
@@ -28,7 +30,7 @@ For each Space Packet generated, the `Svc::Ccsds::SpacePacketFramer` will popula
 | Field | Value | Notes |
 |---|---|---|
 | Version Number | 000 | As per protocol 4.1.3.2 |
-| Packet Type | 0 (Telemetry) | SpacePacketFramer emits reporting packets only (no commanding), as per 4.1.3.3.2 |
+| Packet Type | Uses value passed in the `context` argument (defaults to `SPP_TELEMETRY` = 0) | `ComCfg.SppPacketType`: 0 = Telemetry (reporting), 1 = Command, as per 4.1.3.3.2 |
 | Secondary Header Flag | Uses value passed in the `context` argument | Presence of secondary header are defined in `config/ComCfg.fpp` |
 | Application Process Identifier (APID) | Uses value passed in the `context` argument | Project APIDs are defined in `config/ComCfg.fpp` |
 | Sequence Flags | Uses value passed in the `context` argument (defaults to `0b11` Unsegmented) | Indicates segmentation state: 0b00=Continuation, 0b01=First, 0b10=Last, 0b11=Unsegmented |

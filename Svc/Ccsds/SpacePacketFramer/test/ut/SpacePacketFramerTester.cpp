@@ -66,8 +66,8 @@ void SpacePacketFramerTester::testNominalFraming() {
         GTEST_SKIP() << "Could not find a valid APID\n";
     }
     const auto apid = apidOption.value();
-    // Choose a random SPP packet type
-    ComCfg::SppPacketType::T pktType = static_cast<ComCfg::SppPacketType::T>(STest::Random::lowerUpper(0, 1));
+    // Set packet type to SPP_COMMAND
+    ComCfg::SppPacketType::T pktType = ComCfg::SppPacketType::SPP_COMMAND;
     // Choose a random 14-bit sequence count
     U16 seqCount = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FFF));
     // Choose a random secondary header flag

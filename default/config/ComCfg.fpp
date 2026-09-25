@@ -51,10 +51,10 @@ module ComCfg {
     constant SaIndexUnset = 0xFFFF
 
     @ Packet type in the Space Packet Primary Header
-    enum SppPacketType: U8 {
-        SPP_TELEMETRY = 0,
-        SPP_COMMAND = 1
-    }
+    enum SppPacketType : U8 {
+        SPP_TELEMETRY = 0  @< Telemetry / data packet (downlink)
+        SPP_COMMAND   = 1  @< Telecommand packet (uplink)
+    } default SPP_TELEMETRY
 
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {
