@@ -34,7 +34,6 @@ WasmSequencerTester ::WasmSequencerTester(bool autoConfigure)
       lastSerialOutSize(0),
       seqStartOutCount(0),
       lastSeqStartFilename(""),
-      lastSeqStartArgs(),
       seqDoneOutCount(0),
       lastSeqDoneResponse(Fw::CmdResponse::OK),
       component("WasmSequencer") {
@@ -284,7 +283,6 @@ void WasmSequencerTester ::from_seqStartOut_handler(FwIndexType portNum,
                                                     const Svc::SeqArgs& args) {
     this->seqStartOutCount++;
     this->lastSeqStartFilename = filename;
-    this->lastSeqStartArgs = args;
 }
 
 void WasmSequencerTester ::from_seqDoneOut_handler(FwIndexType portNum,

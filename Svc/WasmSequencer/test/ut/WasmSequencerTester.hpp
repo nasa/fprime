@@ -318,7 +318,7 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     U8 lastSerialOutData[SERIAL_OUT_MAX_SIZE];
     FwSizeType lastSerialOutSize;
 
-    //! Number of seqStartOut invocations observed, and the arguments of the last one.
+    //! Number of seqStartOut invocations observed, and the file name of the last one.
     U32 seqStartOutCount;
     Fw::String lastSeqStartFilename;
 
