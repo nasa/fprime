@@ -588,43 +588,43 @@ void CfdpManager ::parameterUpdated(FwPrmIdType id) {
     Fw::ParamValid valid;
     switch (id) {
         case PARAMID_LOCALEID: {
-            this->tlmWrite_LOCAL_EID(this->paramGet_LocalEid(valid));
+            this->tlmWrite_PRM_LOCAL_EID(this->paramGet_LocalEid(valid));
             break;
         }
         case PARAMID_OUTGOINGFILECHUNKSIZE: {
-            this->tlmWrite_OUTGOING_FILE_CHUNK_SIZE(this->paramGet_OutgoingFileChunkSize(valid));
+            this->tlmWrite_PRM_OUTGOING_FILE_CHUNK_SIZE(this->paramGet_OutgoingFileChunkSize(valid));
             break;
         }
         case PARAMID_RXCRCCALCBYTESPERCYCLE: {
-            this->tlmWrite_RX_CRC_CALC_BYTES_PER_CYCLE(this->paramGet_RxCrcCalcBytesPerCycle(valid));
+            this->tlmWrite_PRM_RX_CRC_CALC_BYTES_PER_CYCLE(this->paramGet_RxCrcCalcBytesPerCycle(valid));
             break;
         }
         case PARAMID_POSTINACTIVITYSENDRETRIES: {
-            this->tlmWrite_POST_INACTIVITY_SEND_RETRIES(this->paramGet_PostInactivitySendRetries(valid));
+            this->tlmWrite_PRM_POST_INACTIVITY_SEND_RETRIES(this->paramGet_PostInactivitySendRetries(valid));
             break;
         }
         case PARAMID_FILEINDEFAULTCHANNEL: {
-            this->tlmWrite_FILE_IN_DEFAULT_CHANNEL(this->paramGet_FileInDefaultChannel(valid));
+            this->tlmWrite_PRM_FILE_IN_DEFAULT_CHANNEL(this->paramGet_FileInDefaultChannel(valid));
             break;
         }
         case PARAMID_FILEINDEFAULTDESTENTITYID: {
-            this->tlmWrite_FILE_IN_DEFAULT_DEST_ENTITY_ID(this->paramGet_FileInDefaultDestEntityId(valid));
+            this->tlmWrite_PRM_FILE_IN_DEFAULT_DEST_ENTITY_ID(this->paramGet_FileInDefaultDestEntityId(valid));
             break;
         }
         case PARAMID_FILEINDEFAULTCLASS: {
-            this->tlmWrite_FILE_IN_DEFAULT_CLASS(this->paramGet_FileInDefaultClass(valid));
+            this->tlmWrite_PRM_FILE_IN_DEFAULT_CLASS(this->paramGet_FileInDefaultClass(valid));
             break;
         }
         case PARAMID_FILEINDEFAULTKEEP: {
-            this->tlmWrite_FILE_IN_DEFAULT_KEEP(this->paramGet_FileInDefaultKeep(valid));
+            this->tlmWrite_PRM_FILE_IN_DEFAULT_KEEP(this->paramGet_FileInDefaultKeep(valid));
             break;
         }
         case PARAMID_FILEINDEFAULTPRIORITY: {
-            this->tlmWrite_FILE_IN_DEFAULT_PRIORITY(this->paramGet_FileInDefaultPriority(valid));
+            this->tlmWrite_PRM_FILE_IN_DEFAULT_PRIORITY(this->paramGet_FileInDefaultPriority(valid));
             break;
         }
         case PARAMID_CHANNELCONFIG: {
-            this->tlmWrite_CHANNEL_CONFIG(this->paramGet_ChannelConfig(valid));
+            this->tlmWrite_PRM_CHANNEL_CONFIG(this->paramGet_ChannelConfig(valid));
             break;
         }
         default: {

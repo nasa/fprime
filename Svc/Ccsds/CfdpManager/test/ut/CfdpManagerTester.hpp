@@ -515,34 +515,34 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     // Each verifies the parameter-mimic channel reports the FPP default after
     // load and the updated value after a parameter change.
 
-    //! Test LOCAL_EID telemetry mirrors the LocalEid parameter
+    //! Test PRM_LOCAL_EID telemetry mirrors the LocalEid parameter
     void testTlmLocalEid();
 
-    //! Test OUTGOING_FILE_CHUNK_SIZE telemetry mirrors the OutgoingFileChunkSize parameter
+    //! Test PRM_OUTGOING_FILE_CHUNK_SIZE telemetry mirrors the OutgoingFileChunkSize parameter
     void testTlmOutgoingFileChunkSize();
 
-    //! Test RX_CRC_CALC_BYTES_PER_CYCLE telemetry mirrors the RxCrcCalcBytesPerCycle parameter
+    //! Test PRM_RX_CRC_CALC_BYTES_PER_CYCLE telemetry mirrors the RxCrcCalcBytesPerCycle parameter
     void testTlmRxCrcCalcBytesPerCycle();
 
-    //! Test POST_INACTIVITY_SEND_RETRIES telemetry mirrors the PostInactivitySendRetries parameter
+    //! Test PRM_POST_INACTIVITY_SEND_RETRIES telemetry mirrors the PostInactivitySendRetries parameter
     void testTlmPostInactivitySendRetries();
 
-    //! Test FILE_IN_DEFAULT_CHANNEL telemetry mirrors the FileInDefaultChannel parameter
+    //! Test PRM_FILE_IN_DEFAULT_CHANNEL telemetry mirrors the FileInDefaultChannel parameter
     void testTlmFileInDefaultChannel();
 
-    //! Test FILE_IN_DEFAULT_DEST_ENTITY_ID telemetry mirrors the FileInDefaultDestEntityId parameter
+    //! Test PRM_FILE_IN_DEFAULT_DEST_ENTITY_ID telemetry mirrors the FileInDefaultDestEntityId parameter
     void testTlmFileInDefaultDestEntityId();
 
-    //! Test FILE_IN_DEFAULT_CLASS telemetry mirrors the FileInDefaultClass parameter
+    //! Test PRM_FILE_IN_DEFAULT_CLASS telemetry mirrors the FileInDefaultClass parameter
     void testTlmFileInDefaultClass();
 
-    //! Test FILE_IN_DEFAULT_KEEP telemetry mirrors the FileInDefaultKeep parameter
+    //! Test PRM_FILE_IN_DEFAULT_KEEP telemetry mirrors the FileInDefaultKeep parameter
     void testTlmFileInDefaultKeep();
 
-    //! Test FILE_IN_DEFAULT_PRIORITY telemetry mirrors the FileInDefaultPriority parameter
+    //! Test PRM_FILE_IN_DEFAULT_PRIORITY telemetry mirrors the FileInDefaultPriority parameter
     void testTlmFileInDefaultPriority();
 
-    //! Test CHANNEL_CONFIG telemetry mirrors the ChannelConfig parameter
+    //! Test PRM_CHANNEL_CONFIG telemetry mirrors the ChannelConfig parameter
     void testTlmChannelConfig();
 
   public:

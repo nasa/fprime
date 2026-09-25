@@ -693,22 +693,24 @@ telemetry channel so ground operators can verify the active configuration
 without relying on parameter-set confirmations alone. `parametersLoaded()`
 emits an initial sample for every channel by driving each parameter through
 `parameterUpdated()`; thereafter `parameterUpdated()` re-emits only the channel
-for the parameter that changed. Channel names follow the parameter-mimic
-convention (UPPER_SNAKE_CASE); descriptions and units are documented once at the
-parameter definitions in the [Parameters](#parameters) section above.
+for the parameter that changed. Channel names carry a `PRM_` prefix to mark them
+as parameter mirrors, and each is declared `update on change` so a value is only
+reported when it differs from the last sample. Descriptions and units are
+documented once at the parameter definitions in the [Parameters](#parameters)
+section above.
 
 | Channel | Type | Mirrors Parameter |
 |---|---|---|
-| LOCAL_EID | `EntityId` | LocalEid |
-| OUTGOING_FILE_CHUNK_SIZE | U32 | OutgoingFileChunkSize |
-| RX_CRC_CALC_BYTES_PER_CYCLE | U32 | RxCrcCalcBytesPerCycle |
-| POST_INACTIVITY_SEND_RETRIES | U8 | PostInactivitySendRetries |
-| FILE_IN_DEFAULT_CHANNEL | U8 | FileInDefaultChannel |
-| FILE_IN_DEFAULT_DEST_ENTITY_ID | `EntityId` | FileInDefaultDestEntityId |
-| FILE_IN_DEFAULT_CLASS | `Class` | FileInDefaultClass |
-| FILE_IN_DEFAULT_KEEP | `Keep` | FileInDefaultKeep |
-| FILE_IN_DEFAULT_PRIORITY | U8 | FileInDefaultPriority |
-| CHANNEL_CONFIG | `ChannelArrayParams` | ChannelConfig |
+| PRM_LOCAL_EID | `EntityId` | LocalEid |
+| PRM_OUTGOING_FILE_CHUNK_SIZE | U32 | OutgoingFileChunkSize |
+| PRM_RX_CRC_CALC_BYTES_PER_CYCLE | U32 | RxCrcCalcBytesPerCycle |
+| PRM_POST_INACTIVITY_SEND_RETRIES | U8 | PostInactivitySendRetries |
+| PRM_FILE_IN_DEFAULT_CHANNEL | U8 | FileInDefaultChannel |
+| PRM_FILE_IN_DEFAULT_DEST_ENTITY_ID | `EntityId` | FileInDefaultDestEntityId |
+| PRM_FILE_IN_DEFAULT_CLASS | `Class` | FileInDefaultClass |
+| PRM_FILE_IN_DEFAULT_KEEP | `Keep` | FileInDefaultKeep |
+| PRM_FILE_IN_DEFAULT_PRIORITY | U8 | FileInDefaultPriority |
+| PRM_CHANNEL_CONFIG | `ChannelArrayParams` | ChannelConfig |
 
 ## Requirements
 
