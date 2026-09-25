@@ -47,7 +47,7 @@ void RateGroupDriverImplTester::runSchedNominal(Svc::RateGroupDriver::DividerSet
         }
     }
 
-    ASSERT_EQ(expected_rollover, this->m_impl.m_rollover);
+    ASSERT_EQ(expected_rollover, this->getRollover());
 
     FwSizeType iters = expected_rollover * 10;
 
@@ -61,8 +61,12 @@ void RateGroupDriverImplTester::runSchedNominal(Svc::RateGroupDriver::DividerSet
         ASSERT_EQ((cycle + 1) % expected_rollover, this->m_impl.m_ticks);
         // check for various intervals
         for (FwIndexType div = 0; div < numDividers; div++) {
-            if (cycle % dividersSet.dividers[div].divisor == dividersSet.dividers[div].offset) {
-                EXPECT_TRUE(this->m_portCalls[div]);
+            if (dividersSet.dividers[div].divisor != 0) {
+                if (cycle % dividersSet.dividers[div].divisor == dividersSet.dividers[div].offset) {
+                    EXPECT_TRUE(this->m_portCalls[div]);
+                } else {
+                    EXPECT_FALSE(this->m_portCalls[div]);
+                }
             } else {
                 EXPECT_FALSE(this->m_portCalls[div]);
             }
