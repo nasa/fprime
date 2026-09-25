@@ -166,20 +166,20 @@ Task::Status posix_status_to_task_status(int posix_status) {
     return status;
 }
 
-Mutex::Status posix_status_to_mutex_status(int posix_status) {
-    Mutex::Status status = Mutex::Status::ERROR_OTHER;
+Os::Mutex::Status posix_status_to_mutex_status(int posix_status) {
+    Os::Mutex::Status status = Os::Mutex::Status::ERROR_OTHER;
     switch (posix_status) {
         case 0:
-            status = Mutex::Status::OP_OK;
+            status = Os::Mutex::Status::OP_OK;
             break;
         case EBUSY:
-            status = Mutex::Status::ERROR_BUSY;
+            status = Os::Mutex::Status::ERROR_BUSY;
             break;
         case EDEADLK:
-            status = Mutex::Status::ERROR_DEADLOCK;
+            status = Os::Mutex::Status::ERROR_DEADLOCK;
             break;
         default:
-            status = Mutex::Status::ERROR_OTHER;
+            status = Os::Mutex::Status::ERROR_OTHER;
             break;
     }
     return status;
