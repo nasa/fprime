@@ -322,6 +322,11 @@ TEST(InvalidFiles, USecFieldTooShort) {
     tester.USecFieldTooShort();
 }
 
+TEST(InvalidFiles, BadUSec) {
+    Svc::InvalidFiles::CmdSequencerTester tester;
+    tester.BadUSec();
+}
+
 TEST(Mixed, AutoByCommand) {
     TEST_CASE(103.1.4, "Nominal Timed Relative Commands");
     Svc::Mixed::CmdSequencerTester tester;
@@ -410,8 +415,18 @@ TEST(InvalidFiles, RunNoRecords) {
     tester.RunNoRecords();
 }
 
+TEST(InvalidFiles, RunNoRecordsAMPCS) {
+    Svc::NoRecords::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
+    tester.RunNoRecords();
+}
+
 TEST(InvalidFiles, ValidateNoRecords) {
     Svc::NoRecords::CmdSequencerTester tester;
+    tester.ValidateNoRecords();
+}
+
+TEST(InvalidFiles, ValidateNoRecordsAMPCS) {
+    Svc::NoRecords::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
     tester.ValidateNoRecords();
 }
 
