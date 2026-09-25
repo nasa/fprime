@@ -603,6 +603,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | LocalEid | Local CFDP entity ID used in PDU headers to identify this node in the CFDP network |
 | OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission |
 | RxCrcCalcBytesPerCycle | Maximum number of received file bytes to process for CRC calculation in a single scheduler cycle. Prevents blocking during large file verification |
+| PostInactivitySendRetries | Extra scheduler cycles a pending terminal send (EOF or FIN-ACK) is retried after the inactivity timer fires before the transaction is recycled regardless |
 | FileInDefaultChannel | CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
 | FileInDefaultDestEntityId | Destination entity ID used for file transfers initiated via the `fileIn` port interface |
 | FileInDefaultClass | CFDP class (CLASS_1 or CLASS_2) for file transfers initiated via the `fileIn` port interface |
@@ -684,6 +685,34 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 |---|---|---|
 | playbackCounter | U8 | Number of active directory playback operations |
 | pollCounter | U8 | Number of active directory poll operations |
+
+#### Parameter Telemetry
+
+In addition to `ChannelTelemetry`, `CfdpManager` mirrors every parameter to a
+telemetry channel so ground operators can verify the active configuration
+without relying on parameter-set confirmations alone. The component overrides
+`parameterUpdated()`, which the framework invokes both at load — `loadParameters()`
+calls `parameterLoaded()` for each parameter, which in turn calls
+`parameterUpdated()` — and whenever a parameter is set at runtime. Every channel
+therefore emits an initial sample on load; thereafter only the channel for the
+parameter that changed is re-emitted. Channel names carry a `PRM_` prefix to mark them
+as parameter mirrors, and each is declared `update on change` so a value is only
+reported when it differs from the last sample. Descriptions and units are
+documented once at the parameter definitions in the [Parameters](#parameters)
+section above.
+
+| Channel | Type | Mirrors Parameter |
+|---|---|---|
+| PRM_LOCAL_EID | `EntityId` | LocalEid |
+| PRM_OUTGOING_FILE_CHUNK_SIZE | U32 | OutgoingFileChunkSize |
+| PRM_RX_CRC_CALC_BYTES_PER_CYCLE | U32 | RxCrcCalcBytesPerCycle |
+| PRM_POST_INACTIVITY_SEND_RETRIES | U8 | PostInactivitySendRetries |
+| PRM_FILE_IN_DEFAULT_CHANNEL | U8 | FileInDefaultChannel |
+| PRM_FILE_IN_DEFAULT_DEST_ENTITY_ID | `EntityId` | FileInDefaultDestEntityId |
+| PRM_FILE_IN_DEFAULT_CLASS | `Class` | FileInDefaultClass |
+| PRM_FILE_IN_DEFAULT_KEEP | `Keep` | FileInDefaultKeep |
+| PRM_FILE_IN_DEFAULT_PRIORITY | U8 | FileInDefaultPriority |
+| PRM_CHANNEL_CONFIG | `ChannelArrayParams` | ChannelConfig |
 
 ## Requirements
 

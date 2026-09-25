@@ -429,6 +429,20 @@ class CfdpManager final : public CfdpManagerComponentBase {
     Fw::CmdResponse::T checkCommandPollInterval(U32 interval  //!< The poll interval to check
     );
 
+  private:
+    // ----------------------------------------------------------------------
+    // Parameter update handling
+    // ----------------------------------------------------------------------
+
+    //! Callback invoked when a parameter is updated at runtime
+    //!
+    //! Mirrors the updated parameter to its telemetry channel so ground
+    //! operators can verify the active configuration. The framework also
+    //! invokes this once per parameter as it is loaded (via parameterLoaded),
+    //! so each parameter emits an initial telemetry sample at load time.
+    void parameterUpdated(FwPrmIdType id  //!< The id of the updated parameter
+                          ) override;
+
   public:
     // ----------------------------------------------------------------------
     // Parameter helpers used by the CFDP engine

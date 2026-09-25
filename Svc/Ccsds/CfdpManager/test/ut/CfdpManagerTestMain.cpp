@@ -302,6 +302,61 @@ TEST(Parameter, FileInDefaultPriorityDefault) {
     tester.testParamFileInDefaultPriorityDefault();
 }
 
+TEST(ParameterTelemetry, LocalEid) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmLocalEid();
+}
+
+TEST(ParameterTelemetry, OutgoingFileChunkSize) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmOutgoingFileChunkSize();
+}
+
+TEST(ParameterTelemetry, RxCrcCalcBytesPerCycle) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmRxCrcCalcBytesPerCycle();
+}
+
+TEST(ParameterTelemetry, PostInactivitySendRetries) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmPostInactivitySendRetries();
+}
+
+TEST(ParameterTelemetry, FileInDefaultChannel) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmFileInDefaultChannel();
+}
+
+TEST(ParameterTelemetry, FileInDefaultDestEntityId) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmFileInDefaultDestEntityId();
+}
+
+TEST(ParameterTelemetry, FileInDefaultClass) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmFileInDefaultClass();
+}
+
+TEST(ParameterTelemetry, FileInDefaultKeep) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmFileInDefaultKeep();
+}
+
+TEST(ParameterTelemetry, FileInDefaultPriority) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmFileInDefaultPriority();
+}
+
+TEST(ParameterTelemetry, ChannelConfig) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTlmChannelConfig();
+}
+
+TEST(ParameterTelemetry, UnknownIdAsserts) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testParameterUpdatedUnknownIdAsserts();
+}
+
 TEST(Port, DataReturnInChannel0) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testDataReturnInChannel0();
