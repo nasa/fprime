@@ -10,7 +10,7 @@
 #include "Fw/Types/Assert.hpp"
 #include "Os/Mutex.hpp"
 #include "Os/Os.hpp"
-#include "config/OsDelegateMutex.hpp"  // defines Os::ConditionVariable alias and OS_CONDITION_VARIABLE_HEADER consumed by Os/Condition.hpp; do not remove
+#include "config/OsSelection.hpp"  // defines Os::ConditionVariable alias and OS_CONDITION_VARIABLE_HEADER consumed by Os/Condition.hpp; do not remove
 
 namespace Os {
 
@@ -22,7 +22,7 @@ class DelegateConditionVariable;
 // CMake-chosen implementation a handle of the wrong type, so both must be delegates or neither may be.
 static_assert(std::is_same<Os::Mutex, Os::DelegateMutex>::value ==
                   std::is_same<Os::ConditionVariable, Os::DelegateConditionVariable>::value,
-              "Os::Mutex and Os::ConditionVariable must be overridden together in config/OsDelegateMutex.hpp");
+              "Os::Mutex and Os::ConditionVariable must be overridden together in config/OsSelection.hpp");
 
 //! \brief Condition variable handle parent
 class ConditionVariableHandle {};
