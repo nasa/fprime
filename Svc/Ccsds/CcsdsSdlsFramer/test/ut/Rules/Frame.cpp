@@ -99,9 +99,13 @@ void CcsdsSdlsFramerTester::Frame__EncryptFailure__action() {
 
     this->invoke_to_encryptIn(0, status, buffer, context);
 
-    ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_EncryptionFailed_SIZE(1);
-    ASSERT_EVENTS_EncryptionFailed(0, status);
+    const bool reportEvent = this->m_encryptionFailureEvents < FAILURE_EVENT_LIMIT;
+    ASSERT_EVENTS_SIZE(reportEvent ? 1 : 0);
+    ASSERT_EVENTS_EncryptionFailed_SIZE(reportEvent ? 1 : 0);
+    if (reportEvent) {
+        ASSERT_EVENTS_EncryptionFailed(0, status);
+        ++this->m_encryptionFailureEvents;
+    }
 
     // The frame is dropped: no allocation or frame output, ownership returns to the encryption helper
     ASSERT_from_bufferAllocate_SIZE(0);
