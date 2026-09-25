@@ -110,14 +110,10 @@ TEST(RateGroupDriverTest, LcmRolloverCommonFactors) {
 
     connectPorts(impl, tester);
 
-    // Verify rollover matches LCM
-    FwSizeType expectedLcm = 2;
-    if (Svc::RateGroupDriver::DIVIDER_SIZE > 1) {
-        expectedLcm = Svc::RateGroupDriver::lcm(expectedLcm, 4);
-    }
-    if (Svc::RateGroupDriver::DIVIDER_SIZE > 2) {
-        expectedLcm = Svc::RateGroupDriver::lcm(expectedLcm, 8);
-    }
+    // Verify rollover matches literal LCM
+    const FwSizeType expectedLcm = (Svc::RateGroupDriver::DIVIDER_SIZE > 2)   ? 8
+                                   : (Svc::RateGroupDriver::DIVIDER_SIZE > 1) ? 4
+                                                                              : 2;
     EXPECT_EQ(expectedLcm, tester.getRollover());
 
     tester.runSchedNominal(dividersSet, Svc::RateGroupDriver::DIVIDER_SIZE);
@@ -126,7 +122,7 @@ TEST(RateGroupDriverTest, LcmRolloverCommonFactors) {
 TEST(RateGroupDriverTest, LargeDivisorsNoOverflow) {
     // Select divisors such that their product would overflow FwSizeType max,
     // but their LCM easily fits in FwSizeType without overflow (#5987)
-    const FwSizeType base = std::numeric_limits<FwSizeType>::max() / 4;
+    const FwSizeType base = (std::numeric_limits<FwSizeType>::max() / 4) + 1;
     Svc::RateGroupDriver::DividerSet dividersSet{};
 
     // All divisors are multiples of base / 2: {base / 2, base, base}
