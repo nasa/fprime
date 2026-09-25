@@ -81,7 +81,7 @@ F´ provides configuration options to optimize for the constrained environments 
 
 ### F´ Configuration
 
-F´ has numerous configuration options to scale the size of F´ down for resource-constrained environments. These are found in the project's copy of the `default/config` directory. For complete configuration details, see [User Guide: Configuring F´](../framework/configuring-fprime.md).
+F´ has numerous configuration options to scale the size of F´ down for resource-constrained environments. The defaults live in `default/config`; a project overrides individual files through a configuration module (see [Configuration Modules](../build-system/configuration.md#overriding-configuration-in-a-project)). For the list of settings, see [User Guide: Configuring F´](../framework/configuring-fprime.md).
 
 Example configuration options include the following:
 

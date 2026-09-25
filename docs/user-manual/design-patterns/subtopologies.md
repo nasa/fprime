@@ -65,7 +65,7 @@ topology ExamplesDeployment {
 
 ### Configuration Overview
 
-Subtopologies _can_ be designed with configurability in mind. This means that parameters can be defined and used at the subtopology definition level and then overridden when the subtopology is instantiated by a user in their own project. This is enabled by the use of F´ config modules (see [`register_fprime_config` API](https://fprime.jpl.nasa.gov/latest/docs/reference/api/cmake/API/#function-register_fprime_config) in the build system), which allow subtopology developers to define default configuration files, and projects to optionally override those files at build time.
+Subtopologies _can_ be designed with configurability in mind. This means that parameters can be defined and used at the subtopology definition level and then overridden when the subtopology is instantiated by a user in their own project. This is enabled by the use of F´ configuration modules (see [Configuration Modules](../build-system/configuration.md) and the [`register_fprime_config` API](../../reference/api/cmake/API.md)), which allow subtopology developers to define default configuration files, and projects to optionally override those files at build time.
 
 Let's look at the [Svc.CdhCore](../../../Svc/Subtopologies/CdhCore) subtopology, and specifically the `CdhCoreConfig` directory.
 
@@ -114,7 +114,7 @@ module CdhCoreConfig {
 ```
 
 #### Step 3: Register the Configuration Module
-In your config module `CMakeLists.txt`, register a config module with `register_fprime_config()` as shown below. The config name, passed as first argument, must be unique and different from `config`.
+In your configuration module `CMakeLists.txt`, register a configuration module with `register_fprime_config()` as shown below. The module name, passed as first argument, must be unique; do not name the directory `config/` (see [Configuration Modules](../build-system/configuration.md#overriding-configuration-in-a-project)).
 ```cmake
 # File: MyDeployment/MyCdhCoreConfig/CMakeLists.txt
 register_fprime_config(
@@ -126,8 +126,14 @@ register_fprime_config(
 )
 ```
 
+Add the directory to the build from the deployment's `CMakeLists.txt`:
+```cmake
+# File: MyDeployment/CMakeLists.txt
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MyCdhCoreConfig/")
+```
+
 #### Step 4: Add as Dependency
-Include the config module as a dependency of your deployment's topology module registration:
+Include the configuration module as a dependency of your deployment's topology module registration:
 ```cmake
 # File: MyDeployment/Top/CMakeLists.txt
 register_fprime_module(
