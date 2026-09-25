@@ -16,6 +16,7 @@ For reference deployments running on specific hardware platforms, see [Supported
 | [`fprime-sensors-reference`](https://github.com/fprime-community/fprime-sensors-reference) | Reference project for the `fprime-sensors` library |
 | [`fprime-encryption-reference`](https://github.com/fprime-community/fprime-encryption-reference) | Reference project for encrypting the communications link |
 | [`fprime-phased-deployment-reference`](https://github.com/fprime-community/fprime-phased-deployment-reference) | Reference deployment demonstrating how to run F´ entirely through [FPP phases](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers_Execution-Phases) |
+| [`fprime-mlpack-reference`](https://github.com/fprime-community/fprime-mlpack-reference) | Reference project demonstrating use of the [mlpack machine learning library](https://www.mlpack.org/) inside F Prime for on-satellite ML |
 
 For status of the CI on those and other references, please see https://github.com/nasa/fprime/actions.
 
