@@ -124,7 +124,7 @@ class AosDeframer : public AosDeframerComponentBase {
     //! Attempt to parse an Encapsulation Packet header from the M_PDU data zone per CCSDS 133.1-B-3
     //! \param payloadStart Pointer to start of packet data within the incoming frame buffer
     //! \param payloadSize Available bytes in the data zone
-    //! \return Number of bytes the packet spans, or 0 not yet known
+    //! \return Number of bytes the packet spans, or 0 if idle, incomplete, or the declared length is invalid
     FwSizeType sizeEppPacket(const U8* const payloadStart, FwSizeType payloadSize);
 
     //! Determine packet type from first byte (PVN field)

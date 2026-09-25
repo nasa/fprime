@@ -148,6 +148,24 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test EPP extraction for all length-of-length variants (lol=1, lol=2, lol=4)
     void testEppLengthOfLength();
 
+    //! Test adjacent 2-, 4- and 8-byte-header EPP packets and a trailing SPP from independent wire bytes
+    void testEppConformantAdjacentLengths();
+
+    //! Test the 255/256-byte EPP length boundary (one- vs two-octet length field)
+    void testEppConformantLengthBoundaries();
+
+    //! Test every EPP header split position across a frame boundary
+    void testEppConformantHeaderSplits();
+
+    //! Test rejection of absent, short, and header-only EPP lengths, then recovery
+    void testEppInvalidDeclaredLengths();
+
+    //! Test that createEppPacket encodes the header-inclusive total length
+    void testEppHelperEncodesTotalLength();
+
+    //! Test EPP allocation failure followed by extraction of the next packet
+    void testEppConformantAllocationFailure();
+
     //! Test EPP idle packet handling
     void testEppIdlePacket();
 
@@ -184,13 +202,10 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test untrusted inputs
     void testUntrustedFhp();
 
-    //! Regression test: EPP lol=4 integer overflow in sizeEppPacket must not reach memcpy
-    //! (CWE-190 / CWE-122). Single-frame delivery of the malicious header.
+    //! Preserve the on-wire total when rejecting a large EPP allocation request.
     void testEppSizeOverflowRejected();
 
-    //! Regression test: same integer overflow as testEppSizeOverflowRejected, but with
-    //! the 8-byte EPP header split across two AOS frames to exercise the header
-    //! accumulation path in appendToSpanningPacket.
+    //! Preserve the same large total with the header split across two frames.
     void testEppSizeOverflowHeaderSpansFrame();
 
   private:
@@ -199,6 +214,8 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     // ----------------------------------------------------------------------
 
     Fw::Buffer from_allocate_handler(FwIndexType portNum, FwSizeType size) override;
+
+    void from_dataOut_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -265,6 +282,12 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Static backing storage returned by the allocate port in unit tests
     U8 m_allocBuf[ALLOC_BUF_SIZE];
+
+    //! Optional expected bytes, checked synchronously before the allocator storage is reused
+    const U8* m_expectedPacketBytes = nullptr;
+    FwSizeType m_expectedPacketSize = 0;
+    FwSizeType m_checkedPacketBytes = 0;
+    U32 m_allocationCalls = 0;
 
     //! When true, the next allocate call returns an invalid buffer (simulates alloc failure)
     bool m_failNextAlloc = false;
