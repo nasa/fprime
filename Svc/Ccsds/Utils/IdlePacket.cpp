@@ -4,7 +4,6 @@
 // ======================================================================
 
 #include "Svc/Ccsds/Utils/IdlePacket.hpp"
-#include <limits>
 #include "Fw/Types/Assert.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "config/ApidEnumAc.hpp"
@@ -16,9 +15,9 @@ namespace IdlePacket {
 
 Fw::SerializeStatus serialize(Fw::SerialBufferBase& serializer, FwSizeType size) {
     FW_ASSERT(size >= MIN_SIZE, static_cast<FwAssertArgType>(size));
+    FW_ASSERT(size <= MAX_SIZE, static_cast<FwAssertArgType>(size));
     // Length token is defined as the number of bytes of payload data minus 1
     const FwSizeType lengthToken = size - SpacePacketHeader::SERIALIZED_SIZE - 1;
-    FW_ASSERT(lengthToken <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(lengthToken));
 
     SpacePacketHeader header;
     header.set_packetIdentification(static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET));

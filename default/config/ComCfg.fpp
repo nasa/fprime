@@ -10,17 +10,17 @@ module ComCfg {
     @ Spacecraft ID (10 bits) for CCSDS Data Link layer
     dictionary constant SpacecraftId = 0x0044
 
-    @ Fixed size of CCSDS TM frames
-    dictionary constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
+    @ Fixed size of CCSDS TM frames. The data field (Svc.Ccsds.TmDataFieldSize: this minus the TM header and
+    @ trailer) is the aggregate size Svc.Ccsds.TmFramer expects; see ComCcsdsConfig.Aggregator.aggregationSize for
+    @ the sizing constraints. Without packet spanning, whole packets only: the data field must hold a full com
+    @ buffer or file buffer Space Packet next to a minimum idle packet
+    @ (Svc.ComAggregator.MIN_NON_SPANNING_AGGREGATION_SIZE, asserted by configure()); with the defaults a single
+    @ file packet fits per frame. Enable packet spanning, or size the data field for N file packets (exactly, or
+    @ with at least a minimum idle packet to spare), if file downlink throughput matters.
+    dictionary constant TmFrameFixedSize = 1024
 
     @ Upper Bound on Fixed size of CCSDS AOS frames
     constant AosMaxFrameFixedSize = 1536
-
-    @ Bytes of transfer-frame data field available to Svc.ComAggregator output (TM: frame minus 6-byte header and
-    @ 2-byte trailer). Projects inserting a layer between the aggregator and Svc.Ccsds.TmFramer that adds bytes
-    @ (e.g. the 2-byte SA index of Svc.Ccsds.CcsdsSdlsFramer) must subtract that overhead here.
-    @ With packet spanning enabled this must not exceed 2046 (0x7FE), the TM First Header Pointer range; Svc.ComAggregator.configure() asserts otherwise.
-    constant AggregationSize = TmFrameFixedSize - 6 - 2  # TM primary header (6) + TM trailer/CRC (2)
 
     @ Packet Version Numbers are 3 bits with only 2 currently valid values
     dictionary enum Pvn : U8 {
