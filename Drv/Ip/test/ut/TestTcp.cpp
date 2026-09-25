@@ -50,6 +50,64 @@ TEST(ErrorHandling, TestRecvRetriesEintr) {
     EXPECT_EQ(data[0], 0xA5);
 }
 
+// Fails every send with the given errno (a send timeout is -1/EAGAIN), optionally accepting a partial write first
+class SendTimeoutSocket final : public Drv::IpSocket {
+  public:
+    explicit SendTimeoutSocket(FwSizeType partial_write, int timeout_errno = EAGAIN)
+        : m_partial_write(partial_write), m_timeout_errno(timeout_errno) {}
+    U32 send_calls = 0;
+
+  private:
+    Drv::SocketIpStatus openProtocol(Drv::SocketDescriptor& fd) override {
+        fd.fd = 0;
+        return Drv::SOCK_SUCCESS;
+    }
+
+    FwSignedSizeType sendProtocol(const Drv::SocketDescriptor&, const U8* const, const FwSizeType size) override {
+        this->send_calls++;
+        if ((this->send_calls == 1) && (this->m_partial_write > 0)) {
+            return static_cast<FwSignedSizeType>(FW_MIN(this->m_partial_write, size));
+        }
+        errno = this->m_timeout_errno;
+        return -1;
+    }
+
+    FwSignedSizeType recvProtocol(const Drv::SocketDescriptor&, U8* const, const FwSizeType) override {
+        errno = EBADF;
+        return -1;
+    }
+
+    FwSizeType m_partial_write;
+    int m_timeout_errno;
+};
+
+TEST(ErrorHandling, TestSendTimeoutIsRetryable) {
+    SendTimeoutSocket socket(0);
+    Drv::SocketDescriptor fd;
+    U8 data[4] = {1, 2, 3, 4};
+
+    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_INTERRUPTED_TRY_AGAIN);
+    EXPECT_EQ(socket.send_calls, 1u);
+}
+
+TEST(ErrorHandling, TestSendTimeoutAfterPartialWriteIsRetryable) {
+    SendTimeoutSocket socket(2);
+    Drv::SocketDescriptor fd;
+    U8 data[4] = {1, 2, 3, 4};
+
+    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_INTERRUPTED_TRY_AGAIN);
+    EXPECT_EQ(socket.send_calls, 2u);
+}
+
+TEST(ErrorHandling, TestSendOtherErrorIsStillFatal) {
+    SendTimeoutSocket socket(0, EPIPE);
+    Drv::SocketDescriptor fd;
+    U8 data[4] = {1, 2, 3, 4};
+
+    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_SEND_ERROR);
+    EXPECT_EQ(socket.send_calls, 1u);
+}
+
 void test_with_loop(U32 iterations) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;

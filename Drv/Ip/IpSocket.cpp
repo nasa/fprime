@@ -158,7 +158,7 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
         errno = 0;
         // Send using my specific protocol
         sent = this->sendProtocol(socketDescriptor, data + total, size - total);
-        // Error is EINTR or timeout just try again
+        // Error is EINTR just try again
         if (((sent == -1) && (errno == EINTR)) || (sent == 0)) {
             continue;
         }
@@ -166,7 +166,11 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
         else if ((sent == -1) && ((errno == EBADF) || (errno == ECONNRESET))) {
             return SOCK_DISCONNECTED;
         }
-        // Error returned, and it wasn't an interrupt nor a disconnect
+        // Error is a send timeout (SO_SNDTIMEO) or would-block, recoverable by a caller retry
+        else if ((sent == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK))) {
+            return SOCK_INTERRUPTED_TRY_AGAIN;
+        }
+        // Error returned, and it wasn't an interrupt, a timeout, nor a disconnect
         else if (sent == -1) {
             return SOCK_SEND_ERROR;
         }
