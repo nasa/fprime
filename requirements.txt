@@ -24,13 +24,13 @@ Flask-RESTful==0.3.10
 fprime-fpl-layout==1.0.4
 fprime-fpl-write-pic==1.0.4
 fprime-fpy==0.5.1
-fprime-fpp==3.3.1a1
+fprime-fpp==3.3.1a2
 fprime-gds==4.4.0a3
 fprime-jre==25.0.4.1.1; (sys_platform == "linux" and (platform_machine == "x86_64" or platform_machine == "aarch64")) or (sys_platform == "darwin" and (platform_machine == "x86_64" or platform_machine == "arm64")) or (sys_platform == "win32" and platform_machine == "AMD64")
 fprime-tools==4.3.0
 fprime-visual==1.0.2
-fprime-xtce==0.1.3
-fprime-yamcs==0.2.2
+fprime-xtce==0.1.5
+fprime-yamcs==0.2.3
 fprime-yamcs-bundle==5.12.8.0
 gcovr==8.2
 idna==3.15

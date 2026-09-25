@@ -78,12 +78,14 @@ state machine ControllerStateMachine {
     guard cancelRequested
 
     @ Abort a load/invoke that was cancelled before the engine ran
+    @ Reports a done on seqDoneOut for a port-sourced RUN
     action cancelPendingRequest: RequestContext
 
     @ Responds to $block == NO_BLOCK requests with OK
     action respond_noblock_OK: RequestContext
 
     @ Responds to request with EXECUTION_ERROR
+    @ Reports a done on seqDoneOut for a port-sourced RUN
     action respond_ERROR: RequestContext
 
     @ Increment the SequencesFailed telemetry counter
@@ -99,6 +101,7 @@ state machine ControllerStateMachine {
 
     @ Responds to request with BUSY
     @ Emit an event to say why we are rejecting this request in the current state
+    @ Reports a done on seqDoneOut for a port-sourced RUN
     action respondLoad_BUSY: LoadRequest
 
     @ Responds to $block == BLOCK requests with OK
