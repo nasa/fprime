@@ -7,6 +7,7 @@
 #ifndef FPRIME_SPACEWASM_GUEST_H
 #define FPRIME_SPACEWASM_GUEST_H
 
+#include "Fw/Deprecate.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus
@@ -47,7 +48,7 @@ extern void fprime_wasm_panic(I32 code);
 ///                         passed to the sequence otherwise the interpreter will trap
 /// @returns The number of bytes written to [destination_ptr]
 WASM_IMPORT(WASM_MODULE_NAME, "args")
-extern U32 fprime_wasm_get_args(U32 destination_ptr, U32 destination_size);
+extern U32 DEPRECATED(fprime_wasm_get_args(U32 destination_ptr, U32 destination_size), "args will never return a value. Call exported wasm functions through their signature to pass arguments");
 
 /// @brief Read the current F´ system time into guest memory
 ///
