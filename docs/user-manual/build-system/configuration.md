@@ -39,6 +39,32 @@ header that is not listed under `HEADERS` is not configuration.
 copied into the build cache and the module is built from the copies. This is what allows a later module to
 replace a file that an earlier module supplied.
 
+The diagram below follows a build in which the platform, the framework, and a library each supply
+configuration files, and the project overrides one framework file and one library file:
+
+```mermaid
+%%{init: {'sequence': {'mirrorActors': false, 'actorMargin': 90}}}%%
+sequenceDiagram
+    participant P as Platform<br>cmake/platform/unix/Platform/
+    participant F as Framework defaults<br>default/config/
+    participant L as Library<br>default-config/config-my-library/
+    participant J as Project<br>config-overrides/
+    participant C as Build cache
+
+    Note over P,J: register_fprime_config() calls, in CMake traversal order (overrides match by file name)
+    P->>C: HEADERS PlatformTypes.h → new file Platform/PlatformTypes.h
+    F->>C: HEADERS FpConfig.h → new file config/FpConfig.h
+    F->>C: AUTOCODER_INPUTS AcConstants.fpp → new file config/AcConstants.fpp
+    L->>C: HEADERS MyDriverCfg.hpp → new file config-my-library/MyDriverCfg.hpp
+    J-->>C: CONFIGURATION_OVERRIDES FpConfig.h → replaces config/FpConfig.h
+    J-->>C: CONFIGURATION_OVERRIDES MyDriverCfg.hpp → replaces config-my-library/MyDriverCfg.hpp
+    Note over J,C: Final contents of the build cache:<br>Platform/PlatformTypes.h — platform's copy<br>config/AcConstants.fpp — framework's copy<br>config/FpConfig.h — project's copy<br>config-my-library/MyDriverCfg.hpp — project's copy
+```
+
+Solid arrows are new files (`SOURCES`, `HEADERS`, `AUTOCODER_INPUTS`), copied to a path derived from the
+providing module; dashed arrows are `CONFIGURATION_OVERRIDES`, copied over the file of the same name wherever an
+earlier module put it. In detail:
+
 1. **New files are copied into the build cache.** Each file under `SOURCES`, `HEADERS`, or `AUTOCODER_INPUTS`
    is copied to `<build cache>/<module path>/<file name>` (subdirectories in the source tree are not preserved;
    the file is copied by name), and the module is built from that copy. File names are therefore a single flat
