@@ -547,8 +547,6 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
     U8 firstByte = payloadStart[0];
     U8 protocolId = static_cast<U8>((firstByte & EPPSubfields::protocolIdMask) >> EPPSubfields::protocolIdOffset);
 
-    FwSizeType totalPacketSize = 0;
-
     // Idle means this is the last packet in the frame
     if (protocolId == static_cast<U8>(EppProtocolId::Idle)) {
         return 0;
@@ -579,27 +577,20 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
         return 0;  // Incomplete
     }
 
-    // Read length field (big-endian)
-    U32 packetDataLength = 0;
+    // CCSDS 133.1-B-3 section 4.1.2.8.2: the length includes the header.
+    U32 packetLength = 0;
     for (U8 i = 0; i < lengthOfLength; i++) {
-        packetDataLength = (packetDataLength << 8) | payloadStart[lengthOffset + i];
+        packetLength = (packetLength << 8) | payloadStart[lengthOffset + i];
     }
 
-    // Guard against integer overflow and return 0 as incomplete/invalid (if true).
-    // This fires on 32-bit targets (FwSizeType = U32) where the sum would wrap.
-    if (packetDataLength > (std::numeric_limits<FwSizeType>::max() - static_cast<FwSizeType>(headerLength))) {
+    const FwSizeType packetSize = static_cast<FwSizeType>(packetLength);
+    // Reject an unrepresentable size or a non-idle packet with no data. The
+    // latter also rejects the absent length field, which is reserved for idle
+    // packets (sections 4.1.2.4.4 and 4.1.3.1.5). Idle packets were handled above.
+    if ((static_cast<U32>(packetSize) != packetLength) || (packetSize <= headerLength)) {
         return 0;
     }
-
-    // Cast both operands to FwSizeType BEFORE adding.
-    // Without the cast, C++ computes headerLength(U8) + packetDataLength(U32) in U32
-    // arithmetic, which wraps on both 32-bit and 64-bit hosts even when FwSizeType is
-    // 64 bits wide.  The guard above is not sufficient on its own: on 64-bit it never
-    // fires (packetDataLength can never exceed UINT64_MAX-8), so the unguarded addition
-    // would still silently truncate to 4 on a 64-bit host.
-    totalPacketSize = static_cast<FwSizeType>(headerLength) + static_cast<FwSizeType>(packetDataLength);
-
-    return totalPacketSize;
+    return packetSize;
 }
 
 U8 AosDeframer::getPacketVersion(U8 firstByte) {

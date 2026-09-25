@@ -27,6 +27,10 @@ For each valid frame, the M_PDU First Header Pointer (FHP) is used to locate pac
 
 Ownership of incoming frame buffers is returned to the sender via the `dataReturnOut` port; downstream consumers return emitted packet buffers via the `dataReturnIn` port, which the deframer deallocates when it owns them (spanning-packet buffers) or passes back upstream otherwise.
 
+EPP Packet Length fields include the complete packet header, as specified in CCSDS 133.1-B-3 section 4.1.2.8.2. The deframer uses this total directly for allocation, reassembly, and advancement to the next packet. Non-idle packets must declare a representable length larger than their header; absent, shorter, and header-only lengths are rejected without allocating or emitting a packet. Idle packets retain their existing discard behavior. Oversized allocation requests are handled by the existing allocation-failure path.
+
+The EPP tests use independently encoded wire bytes for adjacent packets, mixed EPP/SPP traffic, every split position in each header width, 255/256-byte length boundaries, invalid lengths, and recovery after allocation failure. Output bytes are checked synchronously before the test allocator reuses its storage.
+
 ## Configuration
 
 The `configure()` function must be called before any frames are processed:
