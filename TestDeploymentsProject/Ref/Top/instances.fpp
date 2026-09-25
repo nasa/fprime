@@ -110,4 +110,8 @@ module Ref {
 
   instance comDriver: Drv.TcpClient base id 0x10025000
 
+  instance eventSplitter: Svc.ComSplitter base id 0x10026000
+
+  instance tlmSplitter: Svc.ComSplitter base id 0x10027000
+
 }

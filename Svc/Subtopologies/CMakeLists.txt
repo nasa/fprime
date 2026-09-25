@@ -31,6 +31,8 @@ set(SUBTOPOLOGY_DEPS
     Svc_Subtopologies_DataProducts
     Svc_Subtopologies_DataProducts_DataProductsConfig
     Svc_Subtopologies_ComLoggerTee
+    Svc_Subtopologies_RecordedCom
+    Svc_Subtopologies_RecordedCom_RecordedComConfig
 )
 
 if (ZLIB_FOUND)
@@ -49,3 +51,4 @@ add_custom_target(
     Svc_Subtopologies
     DEPENDS ${SUBTOPOLOGY_DEPS}
 )
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecordedCom/")
