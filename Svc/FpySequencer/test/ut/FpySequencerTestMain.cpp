@@ -1804,9 +1804,10 @@ TEST_F(FpySequencerTester, pushRand) {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 7, 123, 456);
     setTestTime(testTime);
     std::mt19937 expectedRng;
-    std::seed_seq seedSeq{static_cast<U32>(testTime.getTimeBase()), static_cast<U32>(testTime.getContext()),
-                          testTime.getSeconds(), testTime.getUSeconds()};
-    expectedRng.seed(seedSeq);
+    const U32 expectedSeed = testTime.getSeconds() ^ testTime.getUSeconds() ^
+                             static_cast<U32>(testTime.getTimeBase()) ^
+                             static_cast<U32>(testTime.getContext());
+    expectedRng.seed(expectedSeed);
 
     tester_get_m_runtime_ptr()->stack.size = 0;
     Signal result = tester_pushRand_directiveHandler(directive, err);
