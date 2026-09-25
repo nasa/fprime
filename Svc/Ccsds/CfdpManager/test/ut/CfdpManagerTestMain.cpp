@@ -352,6 +352,11 @@ TEST(ParameterTelemetry, ChannelConfig) {
     tester.testTlmChannelConfig();
 }
 
+TEST(ParameterTelemetry, UnknownIdAsserts) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testParameterUpdatedUnknownIdAsserts();
+}
+
 TEST(Port, DataReturnInChannel0) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testDataReturnInChannel0();

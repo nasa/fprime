@@ -351,6 +351,16 @@ void CfdpManagerTester::testTlmChannelConfig() {
     ASSERT_TLM_PRM_CHANNEL_CONFIG(0, updated);
 }
 
+// ---- Unknown parameter id ----
+
+void CfdpManagerTester::testParameterUpdatedUnknownIdAsserts() {
+    // The default branch guards against a parameter being added to the model
+    // without a matching case in parameterUpdated(). An id that maps to no
+    // parameter must trip the coding-error assert rather than pass silently.
+    ASSERT_DEATH_IF_SUPPORTED(this->component.parameterUpdated(static_cast<FwPrmIdType>(0xFFFFFFFF)),
+                              "CfdpManager.cpp");
+}
+
 }  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

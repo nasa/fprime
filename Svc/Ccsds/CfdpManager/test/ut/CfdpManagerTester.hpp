@@ -545,6 +545,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test PRM_CHANNEL_CONFIG telemetry mirrors the ChannelConfig parameter
     void testTlmChannelConfig();
 
+    //! Test parameterUpdated() asserts on an unknown parameter id (default branch)
+    void testParameterUpdatedUnknownIdAsserts();
+
   public:
     // ----------------------------------------------------------------------
     // Port Tests
