@@ -7,7 +7,6 @@ enum HostFunction : U8 {
     EVENT
     RSLEEP
     ASLEEP
-    ARGS
     TIME
     SERIAL_OUT
     SERIAL_RECV

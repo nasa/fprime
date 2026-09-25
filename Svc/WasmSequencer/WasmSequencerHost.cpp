@@ -181,23 +181,20 @@ spacewasm_hostcall_result_t WasmSequencer::wasmPanic(spacewasm_caller_t* caller,
 spacewasm_hostcall_result_t WasmSequencer::wasmArgs(spacewasm_caller_t* caller,
                                                     const spacewasm_value_t* params,
                                                     size_t n_params,
-                                                    spacewasm_value_t*) {
+                                                    spacewasm_value_t* ret) {
     FW_ASSERT(!this->m_pendingHostFunction.isPending());
     FW_ASSERT(params != nullptr);
     FW_ASSERT(n_params == 2, static_cast<FwAssertArgType>(n_params));
 
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
     FW_ASSERT(params[1].tag == spacewasm_valtype_t::SPACEWASM_I32, params[1].tag);
+    FW_ASSERT(ret != nullptr);
 
-    const U32 ptr = static_cast<U32>(params[0].u.i32_);
-    const U32 size = static_cast<U32>(params[1].u.i32_);
+    // Deprecated: this sequencer does not pass arguments to a sequence
+    ret->tag = spacewasm_valtype_t::SPACEWASM_I32;
+    ret->u.i32_ = 0;
 
-    this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::ARGS;
-    this->m_pendingHostFunction.caller = caller;
-    this->m_pendingHostFunction.u.args.ptr = ptr;
-    this->m_pendingHostFunction.u.args.len = size;
-
-    return SPACEWASM_PAUSE;
+    return SPACEWASM_CONTINUE_SOME;
 }
 
 spacewasm_hostcall_result_t WasmSequencer::wasmTime(spacewasm_caller_t* caller,

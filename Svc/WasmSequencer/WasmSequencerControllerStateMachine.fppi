@@ -17,13 +17,11 @@ struct CommandRequest {
 struct LoadRequest {
     fileName: string size FileNameStringSize
     moduleName: string size Wasm.MODULE_NAME_STRING_SIZE
-    args: Svc.SeqArgs
     context: RequestContext
 }
 
 struct InvokeRequest {
     moduleName: string size Wasm.MODULE_NAME_STRING_SIZE
-    args: Svc.SeqArgs
     context: RequestContext
 }
 
