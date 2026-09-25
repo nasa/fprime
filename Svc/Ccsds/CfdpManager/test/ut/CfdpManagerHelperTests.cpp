@@ -218,12 +218,20 @@ CListTraverseStatus countCb(CListNode* node, void* context) {
     return CLIST_TRAVERSE_CONTINUE;
 }
 
-//! Traversal callback that stops on the first node visited
-CListTraverseStatus exitFirstCb(CListNode* node, void* context) {
-    (void)node;
-    int* count = static_cast<int*>(context);
-    (*count)++;
-    return CLIST_TRAVERSE_EXIT;
+//! Record node identity as well as count, and stop before visiting the whole list.
+struct TraversalTrace {
+    CListNode* visited[3] = {};
+    U32 count = 0;
+    U32 stopAfter = 0;
+};
+
+CListTraverseStatus traceUntilExit(CListNode* node, void* context) {
+    TraversalTrace& trace = *static_cast<TraversalTrace*>(context);
+    if (trace.count < 3) {
+        trace.visited[trace.count] = node;
+    }
+    ++trace.count;
+    return trace.count == trace.stopAfter ? CLIST_TRAVERSE_EXIT : CLIST_TRAVERSE_CONTINUE;
 }
 }  // namespace
 
@@ -363,18 +371,33 @@ TEST(ClistHelper, TraverseForwardAllNodes) {
 }
 
 TEST(ClistHelper, TraverseForwardEarlyExit) {
-    // Cover the early-exit break in CfdpCListTraverse. The trailing FW_ASSERT(last)
-    // only holds when traversal stops on the terminal node, so use a single-node
-    // list: its sole node is also the last node, and the EXIT callback breaks with
-    // last already true.
-    CListNode a;
+    CListNode a, b, c;
     CfdpCListInitNode(&a);
+    CfdpCListInitNode(&b);
+    CfdpCListInitNode(&c);
     CListNode* head = nullptr;
     CfdpCListInsertBack(&head, &a);
+    CfdpCListInsertBack(&head, &b);
+    CfdpCListInsertBack(&head, &c);
+    CListNode* const expected[] = {&a, &b, &c};
 
-    int count = 0;
-    CfdpCListTraverse(head, exitFirstCb, &count);
-    EXPECT_EQ(1, count);
+    // With three nodes, stopping after one or two cannot be natural exhaustion.
+    for (U32 stopAfter = 1; stopAfter <= 3; ++stopAfter) {
+        TraversalTrace trace;
+        trace.stopAfter = stopAfter;
+        CfdpCListTraverse(head, traceUntilExit, &trace);
+        ASSERT_EQ(trace.count, stopAfter);
+        for (U32 i = 0; i < stopAfter; ++i) {
+            EXPECT_EQ(trace.visited[i], expected[i]);
+        }
+        EXPECT_EQ(&a, head);
+        EXPECT_EQ(&b, a.next);
+        EXPECT_EQ(&c, b.next);
+        EXPECT_EQ(&a, c.next);
+        EXPECT_EQ(&c, a.prev);
+        EXPECT_EQ(&a, b.prev);
+        EXPECT_EQ(&b, c.prev);
+    }
 }
 
 TEST(ClistHelper, TraverseReverseAllNodes) {
@@ -393,17 +416,33 @@ TEST(ClistHelper, TraverseReverseAllNodes) {
 }
 
 TEST(ClistHelper, TraverseReverseEarlyExit) {
-    // Cover the early-exit break in CfdpCListTraverseR. As with the forward case,
-    // the trailing FW_ASSERT(last) only holds when traversal stops on the terminal
-    // node, so use a single-node list.
-    CListNode a;
+    CListNode a, b, c;
     CfdpCListInitNode(&a);
+    CfdpCListInitNode(&b);
+    CfdpCListInitNode(&c);
     CListNode* head = nullptr;
     CfdpCListInsertBack(&head, &a);
+    CfdpCListInsertBack(&head, &b);
+    CfdpCListInsertBack(&head, &c);
+    CListNode* const expected[] = {&c, &b, &a};
 
-    int count = 0;
-    CfdpCListTraverseR(head, exitFirstCb, &count);
-    EXPECT_EQ(1, count);
+    // With three nodes, stopping after one or two cannot be natural exhaustion.
+    for (U32 stopAfter = 1; stopAfter <= 3; ++stopAfter) {
+        TraversalTrace trace;
+        trace.stopAfter = stopAfter;
+        CfdpCListTraverseR(head, traceUntilExit, &trace);
+        ASSERT_EQ(trace.count, stopAfter);
+        for (U32 i = 0; i < stopAfter; ++i) {
+            EXPECT_EQ(trace.visited[i], expected[i]);
+        }
+        EXPECT_EQ(&a, head);
+        EXPECT_EQ(&b, a.next);
+        EXPECT_EQ(&c, b.next);
+        EXPECT_EQ(&a, c.next);
+        EXPECT_EQ(&c, a.prev);
+        EXPECT_EQ(&a, b.prev);
+        EXPECT_EQ(&b, c.prev);
+    }
 }
 
 TEST(ClistHelper, TraverseNullStartIsNoOp) {

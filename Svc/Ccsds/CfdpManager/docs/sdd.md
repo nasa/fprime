@@ -685,6 +685,22 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 | playbackCounter | U8 | Number of active directory playback operations |
 | pollCounter | U8 | Number of active directory poll operations |
 
+## Regression Testing
+
+Circular-list early-exit tests use three nodes and stop after the first, second,
+and final node in both traversal directions. They check the visited node identities,
+visit count, and retained list links so that natural exhaustion cannot masquerade
+as a successful early exit.
+
+`PostInactivityRetries` tests verify the default budget of three and parameter
+updates, then establish a Class 2 transmit transaction through the normal command
+and PDU interfaces. With a FIN-ACK pending, the tests expire its inactivity timer
+and deny buffer allocation. Budgets of 0, 1, 3, 5, and 255 must produce the corresponding
+number of additional retry cycles before recycling the transaction. A separate case
+restores buffer availability before exhaustion and checks that the pending FIN-ACK
+is sent. Timer expiry and buffer exhaustion are injected; retry counters and queue
+membership are changed only by the implementation under test.
+
 ## Requirements
 
 | Requirement | Description | Rationale | Verification Method |

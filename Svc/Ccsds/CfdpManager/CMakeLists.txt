@@ -40,6 +40,7 @@ register_fprime_ut(
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerTester.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerCommandTests.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerParameterTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/PostInactivityRetries.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerMultiChannelTests.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerEventTests.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerHelperTests.cpp"

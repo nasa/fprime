@@ -48,6 +48,7 @@ CfdpManagerTester ::~CfdpManagerTester() {
 // ----------------------------------------------------------------------
 
 Fw::Buffer CfdpManagerTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
+    ++this->m_bufferAllocationCalls;
     // Simulate allocation failure if flag is set
     if (this->m_failBufferAllocation) {
         return Fw::Buffer();
