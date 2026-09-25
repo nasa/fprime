@@ -164,11 +164,14 @@ Each service below ships a default configuration header at `default/config/OsDel
 | File | `config/OsDelegateFile.hpp` | `OS_FILE_HEADER` |
 | FileSystem | `config/OsDelegateFileSystem.hpp` | `OS_FILE_SYSTEM_HEADER` |
 | Directory | `config/OsDelegateDirectory.hpp` | `OS_DIRECTORY_HEADER` |
-| ConditionVariable | `config/OsDelegateConditionVariable.hpp` | `OS_CONDITION_VARIABLE_HEADER` |
+| Mutex | `config/OsDelegateMutex.hpp` | `OS_MUTEX_HEADER` |
+| ConditionVariable | `config/OsDelegateMutex.hpp` | `OS_CONDITION_VARIABLE_HEADER` |
 | Console | `config/OsDelegateConsole.hpp` | `OS_CONSOLE_HEADER` |
 | CountingSemaphore | `config/OsDelegateCountingSemaphore.hpp` | `OS_COUNTING_SEMAPHORE_HEADER` |
 | Cpu | `config/OsDelegateCpu.hpp` | `OS_CPU_HEADER` |
 | Memory | `config/OsDelegateMemory.hpp` | `OS_MEMORY_HEADER` |
+
+Mutex and ConditionVariable are configured together in the same header because a condition variable operates on the handle of the configured `Os::Mutex`; the two must be overridden together (a `static_assert` in `Os/ConditionVariableInterface.hpp` rejects aliasing only one of them), and the selected ConditionVariable must accept the handle of the selected `Os::Mutex` (implementations such as Posix cast it to their own handle type; `Os::Stub::Mutex::StubConditionVariable` accepts any mutex). Note that `ERROR_DIFFERENT_MUTEX` is reported only by the link-time `DelegateConditionVariable`; a directly aliased implementation does not track which mutex it was first used with.
 
 The configuration header mechanism allows projects to opt into compile-time selection while maintaining link-time selection as the default for backward compatibility.
 

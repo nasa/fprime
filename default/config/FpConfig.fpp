@@ -41,7 +41,7 @@ type FwQueuePriorityType = PlatformQueuePriorityType
 @ The id type.
 type FwIdType = U32
 
-@ The type of task priorities used.
+@ The type of task identifiers used.
 type FwTaskIdType = PlatformTaskIdType
 
 ####

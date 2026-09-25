@@ -204,10 +204,10 @@ TEST_F(WasmSequencerTester, LoadNamedModuleReady) {
 TEST_F(WasmSequencerTester, LoadStartModuleRespondsOk) {
     REQUIREMENT("WASM-SEQ-001");
     // A LOAD whose module carries a (running) Wasm start function drives
-    // STARTING -> startInvoked -> RUNNING and spins the start to completion. The
-    // load command must be answered when the start finishes and we settle in
-    // READY -- not left dangling (which previously also wedged the single load-cmd
-    // slot, tripping an assert on the next load).
+    // LOAD_START_CHECK -> invokeStart -> LOAD_START_INVOKE_CHECK -> LOAD_RUNNING_START
+    // and spins the start to completion. The load command must be answered when the
+    // start finishes and we settle in READY -- not left dangling (which previously
+    // also wedged the single load-cmd slot, tripping an assert on the next load).
     StagedAsset file_asset(*this, "start.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -526,7 +526,7 @@ TEST_F(WasmSequencerTester, RunExitNonZeroFails) {
     REQUIREMENT("WASM-SEQ-018");
     REQUIREMENT("WASM-SEQ-021");
     // exit.wasm calls fprime_v1.exit(1). A non-zero exit is a program failure,
-    // surfaced as a ProgramExited event (not a trap) with an EXECUTION_ERROR.
+    // surfaced as a SequenceExited event (not a trap) with an EXECUTION_ERROR.
     StagedAsset file_asset(*this, "exit.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -549,7 +549,7 @@ TEST_F(WasmSequencerTester, RunExitNonZeroFails) {
 TEST_F(WasmSequencerTester, RunPanicFails) {
     REQUIREMENT("WASM-SEQ-018");
     // panic.wasm calls fprime_v1.panic(7). A panic is a program failure, surfaced
-    // as a PanicOccurred event (not a trap).
+    // as a SequencePanic event (not a trap).
     StagedAsset file_asset(*this, "panic.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -566,7 +566,7 @@ TEST_F(WasmSequencerTester, RunPanicFails) {
 TEST_F(WasmSequencerTester, RunExitZeroSucceeds) {
     REQUIREMENT("WASM-SEQ-018");
     // exit0.wasm calls fprime_v1.exit(0). A zero exit code is a clean success:
-    // no trap, no ProgramExited event, and an OK response.
+    // no trap, no SequenceExited event, and an OK response.
     StagedAsset file_asset(*this, "exit0.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -584,8 +584,8 @@ TEST_F(WasmSequencerTester, RunStartTrapsToIdle) {
     REQUIREMENT("WASM-SEQ-018");
     REQUIREMENT("WASM-SEQ-021");
     // A module whose `start` function contains `unreachable`. The interpreter
-    // begins the start function (startInvoked -> RUNNING) and traps while
-    // spinning, surfacing as a SequenceTrap and returning to IDLE with an
+    // begins the start function (runEngine -> RUNNING_START_PENDING_MAIN) and traps
+    // while spinning, surfacing as a SequenceTrapped and returning to IDLE with an
     // EXECUTION_ERROR response.
     StagedAsset file_asset(*this, "start_trap.wasm");
     const Fw::String& file = file_asset.file();
@@ -610,11 +610,13 @@ TEST_F(WasmSequencerTester, RunStartOverflowTrapsToIdle) {
     REQUIREMENT("WASM-SEQ-018");
     REQUIREMENT("WASM-SEQ-021");
     // A module whose `start` function declares more locals than fit the guest
-    // stack. spacewasm_invoke_start fails at call setup (StackOverflow) and
-    // returns SPACEWASM_RUN_TRAP *directly* -- exercising the startError branch
-    // (STARTING -> invokeStartOfLastModule -> startError -> reportInvokeFailure).
-    // This is distinct from start_trap.wasm, whose start begins running
-    // (RUN_OUT_OF_FUEL -> startInvoked -> RUNNING) and only traps while spinning.
+    // stack. invokeStart's spacewasm_invoke fails at call setup with
+    // ERR_STACK_OVERFLOW rather than trapping at run time, exercising the
+    // start-invoke failure branch (START_CHECK_PENDING_MAIN -> invokeStart ->
+    // START_INVOKE_CHECK_PENDING_CHAIN -> reportModuleStartInvokeFailed).
+    // This is distinct from start_trap.wasm, whose start is set up successfully
+    // and begins running (runEngine -> RUNNING_START_PENDING_MAIN), only trapping
+    // while spinning.
     StagedAsset file_asset(*this, "start_overflow.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -622,9 +624,10 @@ TEST_F(WasmSequencerTester, RunStartOverflowTrapsToIdle) {
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    // reportModuleStartInvokeFailed fires; the exact status is not asserted
-    // because m_invokeStatus is not set on the start-invoke path.
     ASSERT_EVENTS_ModuleStartInvokeFailed_SIZE(1);
+    // invokeStart records the spacewasm_invoke status, which fails at call setup
+    // with ERR_STACK_OVERFLOW rather than trapping at run time.
+    ASSERT_EVENTS_ModuleStartInvokeFailed(0, WasmSequencer_Status::ERR_STACK_OVERFLOW);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 29, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 

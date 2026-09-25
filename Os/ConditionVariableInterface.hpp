@@ -5,11 +5,24 @@
 #ifndef OS_CONDITIONVARIABLEINTERFACE_HPP_
 #define OS_CONDITIONVARIABLEINTERFACE_HPP_
 
+#include <type_traits>
+
+#include "Fw/Types/Assert.hpp"
 #include "Os/Mutex.hpp"
 #include "Os/Os.hpp"
-#include "config/OsDelegateConditionVariable.hpp"
+#include "config/OsDelegateMutex.hpp"  // defines Os::ConditionVariable alias and OS_CONDITION_VARIABLE_HEADER consumed by Os/Condition.hpp; do not remove
 
 namespace Os {
+
+class DelegateMutex;
+class DelegateConditionVariable;
+
+// A condition variable implementation operates on the handle of the configured Os::Mutex. Selecting a
+// compile-time Mutex while leaving Os::ConditionVariable on the link-time delegate (or vice versa) hands the
+// CMake-chosen implementation a handle of the wrong type, so both must be delegates or neither may be.
+static_assert(std::is_same<Os::Mutex, Os::DelegateMutex>::value ==
+                  std::is_same<Os::ConditionVariable, Os::DelegateConditionVariable>::value,
+              "Os::Mutex and Os::ConditionVariable must be overridden together in config/OsDelegateMutex.hpp");
 
 //! \brief Condition variable handle parent
 class ConditionVariableHandle {};
@@ -66,14 +79,20 @@ class ConditionVariableInterface {
     //! \return internal task handle representation
     virtual ConditionVariableHandle* getHandle() = 0;
 
-    //! \brief provide a pointer to a Mutex delegate object
+    //! \brief provide a pointer to a ConditionVariable delegate object
+    //!
+    //! \note ERROR_DIFFERENT_MUTEX is reported by the link-time Os::DelegateConditionVariable, which records the mutex
+    //! first supplied to pend(); an implementation selected directly as Os::ConditionVariable does not perform that
+    //! check.
     static ConditionVariableInterface* getDelegate(ConditionVariableHandleStorage& aligned_new_memory);
 
     // ------------------------------------------------------------------
-    // Common virtual functions built on top of OS-specific functions
+    // Common (non-virtual) functions built on top of pend(). Defined inline
+    // on the interface so they are available regardless of which
+    // implementation Os::ConditionVariable is configured to be.
     // ------------------------------------------------------------------
 
-    //! \brief wait on a condition variable (convenience wrapper that asserts on non-OP_OK status)
+    //! \brief wait on a condition variable and assert success
     //!
     //! Wait on a condition variable. This function will atomically unlock the provided mutex and block on the condition
     //! in one step. Blocking will occur until a future `notify` or `notifyAll` call is made to this variable on another
@@ -84,7 +103,11 @@ class ConditionVariableInterface {
     //! \warning the mutex must be locked by the calling task
     //!
     //! \param mutex: mutex to unlock as part of this operation
-    virtual void wait(Os::Mutex& mutex);
+    void wait(Os::Mutex& mutex) {
+        const Status status = this->pend(mutex);
+        FW_ASSERT(status == Status::OP_OK,
+                  static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
+    }
 };
 
 }  // namespace Os

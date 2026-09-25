@@ -9,10 +9,13 @@
 
 namespace Os {
 
-//! \brief condition variable delegate implementation
+//! \brief Link-time delegating ConditionVariable implementation.
 //!
-//! Condition variables allow a program to block on a condition while atomically releasing an Os::Mutex and atomically
-//! reacquiring the mutex once the condition has been notified.
+//! Stores an implementation-defined condition variable handle in a byte array and forwards all operations to a
+//! delegate constructed (via placement-new) by ConditionVariableInterface::getDelegate(). Which getDelegate()
+//! is linked selects the concrete implementation at link time. This is the default binding of the
+//! Os::ConditionVariable alias; platforms may instead alias Os::ConditionVariable directly to a concrete
+//! implementation for compile-time selection (see config/OsDelegateMutex.hpp).
 class DelegateConditionVariable final : public ConditionVariableInterface {
   public:
     //! \brief default constructor
@@ -44,19 +47,6 @@ class DelegateConditionVariable final : public ConditionVariableInterface {
     //! \return status of the conditional wait
     Status pend(Os::Mutex& mutex) override;
 
-    //! \brief wait on a condition variable (convenience wrapper that asserts on non-OP_OK status)
-    //!
-    //! Wait on a condition variable. This function will atomically unlock the provided mutex and block on the condition
-    //! in one step. Blocking will occur until a future `notify` or `notifyAll` call is made to this variable on another
-    //! thread of execution. This function delegates to the underlying implementation.
-    //!
-    //! \warning it is invalid to supply a mutex different from those supplied by others
-    //! \warning conditions *must* be rechecked after the condition variable unlocks
-    //! \warning the mutex must be locked by the calling task
-    //!
-    //! \param mutex: mutex to unlock as part of this operation
-    void wait(Os::Mutex& mutex) override;
-
     //! \brief notify a single waiter on this condition variable
     //!
     //! Notify a single waiter on this condition variable. It is not necessary to hold the mutex supplied by the waiters
@@ -79,9 +69,9 @@ class DelegateConditionVariable final : public ConditionVariableInterface {
     //! Pointer to mutex object previously used
     Os::Mutex* m_lock = nullptr;
 
-    // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
-    // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
-    // the byte-array here and set `handle` to that address for storage.
+    // This section is used to store the implementation-defined condition variable handle. To Os::ConditionVariable
+    // and fprime, this type is opaque and thus normal allocation cannot be done. Instead, we allow the implementor to
+    // store the handle in the byte-array here and set `handle` to that address for storage.
     alignas(FW_HANDLE_ALIGNMENT)
         ConditionVariableHandleStorage m_handle_storage;  //!< Storage for aligned ConditionVariableHandle data
     ConditionVariableInterface& m_delegate;               //!< Delegate for the real implementation
