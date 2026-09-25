@@ -513,6 +513,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test FileInDefaultPriority parameter default value
     void testParamFileInDefaultPriorityDefault();
 
+    //! Check the default, updates, and actual post-inactivity transmit retry budget.
+    enum class BufferRecovery { NONE, BEFORE_EXHAUSTION };
+    void testParamPostInactivitySendRetriesDefault();
+    void testParamPostInactivitySendRetriesSetGet();
+    void testPostInactivitySendRetryBudget(U8 retries, BufferRecovery recovery);
+
   public:
     // ----------------------------------------------------------------------
     // Parameter Telemetry Tests
@@ -873,6 +879,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Flag to simulate buffer allocation failure for testing
     bool m_failBufferAllocation;
+
+    //! Count attempted allocations, including rejected terminal-PDU sends.
+    U32 m_bufferAllocationCalls;
 };
 
 }  // namespace Cfdp
