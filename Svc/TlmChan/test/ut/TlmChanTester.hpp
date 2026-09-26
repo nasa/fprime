@@ -49,6 +49,18 @@ class TlmChanTester : public TlmChanGTestBase {
     //! TlmChanBucketPoolExhausted WARNING_HI event instead of asserting.
     void runBucketPoolExhaustion();
 
+    //! Verify that the per-buffer updated set tracks exactly the buckets whose
+    //! updated flag is set: repeated updates of one channel do not grow it,
+    //! Run drains it in bucket order, and the buffer swap empties the set and
+    //! clears every remaining updated flag (including deferred entries).
+    void runUpdatedSetTracking();
+
+    //! Verify that after every bucket has been populated, a cycle that updates
+    //! a single channel records one entry in the updated set and sends exactly
+    //! one packet holding that channel, so Run's work scales with the number of
+    //! updated channels rather than the table size.
+    void runUpdatedSetSparseUpdate();
+
     // ----------------------------------------------------------------------
     // doHash() cyber-security tests
     //
@@ -141,6 +153,9 @@ class TlmChanTester : public TlmChanGTestBase {
     void checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwChanIdType id, U32 val);
 
     void clearBuffs();
+
+    //! Count the buckets in the given buffer whose updated flag is set
+    U32 countUpdatedFlags(U8 bufferIndex) const;
 
     //! Verify the ProcCapReached event emitted by Run_handler when the
     //! processing cap was reached.  Asserts that exactly one event was

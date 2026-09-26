@@ -313,6 +313,108 @@ void TlmChanTester::runBucketPoolExhaustion() {
     ASSERT_EVENTS_TlmChanBucketPoolExhausted_SIZE(0);
 }
 
+void TlmChanTester::runUpdatedSetTracking() {
+    const U32 numUnique = 5;
+    const FwChanIdType baseId = 0x9000U;
+    TlmChan::TlmSet& set0 = this->component.m_tlmEntries[0];
+    TlmChan::TlmSet& set1 = this->component.m_tlmEntries[1];
+
+    this->clearBuffs();
+    ASSERT_EQ(TlmChan::ActiveBuffer::Buffer_0, this->component.m_activeBuffer);
+    ASSERT_EQ(0u, set0.updated.getSize());
+    ASSERT_EQ(0u, set1.updated.getSize());
+
+    // Write numUnique distinct channels, then rewrite the first one
+    for (U32 n = 0; n < numUnique; n++) {
+        this->sendBuff(static_cast<FwChanIdType>(baseId + n), n);
+    }
+    this->sendBuff(baseId, 42);
+
+    // The set holds one index per updated bucket, and the repeat did not grow it
+    ASSERT_EQ(numUnique, set0.updated.getSize());
+    ASSERT_EQ(numUnique, this->countUpdatedFlags(0));
+    for (const FwChanIdType bucketNo : set0.updated) {
+        ASSERT_LT(bucketNo, TLMCHAN_HASH_BUCKETS);
+        ASSERT_TRUE(set0.buckets[bucketNo].updated);
+        ASSERT_TRUE(set0.buckets[bucketNo].used);
+    }
+    ASSERT_EQ(0u, set1.updated.getSize());
+
+    // Run swaps to buffer 1 and drains buffer 0 in bucket order
+    this->doRun(true);
+    ASSERT_EQ(TlmChan::ActiveBuffer::Buffer_1, this->component.m_activeBuffer);
+    ASSERT_EQ(1, this->m_numBuffs);
+    this->checkBuff(0, numUnique, baseId, 42);
+    for (U32 n = 1; n < numUnique; n++) {
+        this->checkBuff(static_cast<FwChanIdType>(n), numUnique, static_cast<FwChanIdType>(baseId + n), n);
+    }
+
+    // Processed entries had their flags cleared; the set is retained until the
+    // buffer is swapped back in, when any deferred flags are cleared with it
+    ASSERT_EQ(0u, this->countUpdatedFlags(0));
+    ASSERT_EQ(numUnique, set0.updated.getSize());
+    ASSERT_EQ(0u, set1.updated.getSize());
+
+    // Mimic an entry deferred by the per-run cap: its flag stays set while its
+    // bucket is still in the set.  The swap-time drain must clear it.
+    set0.buckets[*set0.updated.begin()].updated = true;
+    ASSERT_EQ(1u, this->countUpdatedFlags(0));
+
+    // A second run with nothing new swaps back to buffer 0: its set is drained
+    // (deferred flag included) and no flag remains set in either buffer;
+    // nothing is sent from buffer 1
+    this->clearBuffs();
+    const bool sent = this->doRun(false);
+    ASSERT_FALSE(sent);
+    ASSERT_EQ(TlmChan::ActiveBuffer::Buffer_0, this->component.m_activeBuffer);
+    ASSERT_EQ(0u, set0.updated.getSize());
+    ASSERT_EQ(0u, set1.updated.getSize());
+    ASSERT_EQ(0u, this->countUpdatedFlags(0));
+    ASSERT_EQ(0u, this->countUpdatedFlags(1));
+}
+
+void TlmChanTester::runUpdatedSetSparseUpdate() {
+    const FwChanIdType baseId = 0x5000U;
+    TlmChan::TlmSet& set0 = this->component.m_tlmEntries[0];
+    TlmChan::TlmSet& set1 = this->component.m_tlmEntries[1];
+
+    // Populate every bucket in buffer 0 and drain it
+    this->clearBuffs();
+    for (U32 n = 0; n < TLMCHAN_HASH_BUCKETS; n++) {
+        this->sendBuff(static_cast<FwChanIdType>(baseId + n), n);
+    }
+    ASSERT_EQ(static_cast<FwSizeType>(TLMCHAN_HASH_BUCKETS), set0.updated.getSize());
+    this->doRun(true);
+    ASSERT_EQ(TlmChan::ActiveBuffer::Buffer_1, this->component.m_activeBuffer);
+
+    // Update one channel: the active set records exactly one bucket
+    this->clearBuffs();
+    const FwChanIdType sparseId = static_cast<FwChanIdType>(baseId + 7U);
+    this->sendBuff(sparseId, 99);
+    ASSERT_EQ(1u, set1.updated.getSize());
+    ASSERT_EQ(1u, this->countUpdatedFlags(1));
+
+    // Run sends exactly one packet holding only that channel
+    this->doRun(true);
+    ASSERT_EQ(TlmChan::ActiveBuffer::Buffer_0, this->component.m_activeBuffer);
+    ASSERT_EQ(1, this->m_numBuffs);
+    this->checkBuff(0, 1, sparseId, 99);
+
+    // The swap back to buffer 0 emptied its set and cleared any deferred flags
+    ASSERT_EQ(0u, set0.updated.getSize());
+    ASSERT_EQ(0u, this->countUpdatedFlags(0));
+}
+
+U32 TlmChanTester::countUpdatedFlags(U8 bufferIndex) const {
+    U32 count = 0;
+    for (U32 n = 0; n < TLMCHAN_HASH_BUCKETS; n++) {
+        if (this->component.m_tlmEntries[bufferIndex].buckets[n].updated) {
+            count++;
+        }
+    }
+    return count;
+}
+
 void TlmChanTester ::from_PktSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     if (this->m_packetSendGateArmed.tryWait() == Os::CountingSemaphore::Status::OP_OK) {
         (void)this->m_packetSendEntered.post();

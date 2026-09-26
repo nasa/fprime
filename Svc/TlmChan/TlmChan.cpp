@@ -281,6 +281,11 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
     entryToUse->updated = true;
     entryToUse->lastUpdate = timeTag;
     entryToUse->buffer = val;
+    // Track the bucket in the active buffer's updated set; re-inserting an
+    // existing index is a no-op and the set has one slot per bucket.
+    const Fw::Success insertStatus =
+        this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].updated.insert(entryToUse->bucketNo);
+    FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(entryToUse->bucketNo));
 }
 
 void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
@@ -296,13 +301,24 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     this->m_activeBuffer =
         (this->m_activeBuffer == ActiveBuffer::Buffer_0) ? ActiveBuffer::Buffer_1 : ActiveBuffer::Buffer_0;
     // Clear the new active buffer's updated flags so it is clean for incoming
-    // writes.  Any entries that were deferred (skipped) in the previous cycle
-    // and still carry updated=true in this buffer are also cleared here.
-    // This is intentional: deferred entries are dropped rather than re-queued,
-    // which preserves Run_handler's bounded execution-time guarantee.
-    for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
-        this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].buckets[entry].updated = false;
+    // writes.  Only the buckets recorded in its updated set can carry
+    // updated=true, so drain that set element by element rather than walking
+    // every bucket.  UpdatedSet::clear() is deliberately not used: it rebuilds
+    // the set's whole free list, which costs O(TLMCHAN_HASH_BUCKETS) under the
+    // mutex.  Entries deferred by the per-run cap in the previous cycle still
+    // carry updated=true here and are cleared too: deferred entries are
+    // dropped rather than re-queued, which preserves Run_handler's bounded
+    // execution-time guarantee.
+    TlmSet& newActiveBuffer = this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)];
+    for (FwSizeType drained = 0; (drained < TLMCHAN_HASH_BUCKETS) && (newActiveBuffer.updated.getSize() > 0);
+         drained++) {
+        const FwChanIdType bucketNo = *newActiveBuffer.updated.begin();
+        FW_ASSERT(bucketNo < TLMCHAN_HASH_BUCKETS, static_cast<FwAssertArgType>(bucketNo));
+        newActiveBuffer.buckets[bucketNo].updated = false;
+        const Fw::Success removeStatus = newActiveBuffer.updated.remove(bucketNo);
+        FW_ASSERT(removeStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(bucketNo));
     }
+    FW_ASSERT(newActiveBuffer.updated.getSize() == 0, static_cast<FwAssertArgType>(newActiveBuffer.updated.getSize()));
     this->unLock();
 
     // -----------------------------------------------------------------------
@@ -322,8 +338,12 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     Fw::SerializeStatus resetStat = pkt.resetPktSer();
     FW_ASSERT(Fw::FW_SERIALIZE_OK == resetStat, static_cast<FwAssertArgType>(resetStat));
 
-    for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
-        TlmEntry* p_entry = &this->m_tlmEntries[1 - static_cast<U8>(this->m_activeBuffer)].buckets[entry];
+    // Walk only the buckets updated since this buffer was last drained, in
+    // ascending bucket order.  The inactive buffer receives no writes meanwhile.
+    TlmSet& inactiveBuffer = this->m_tlmEntries[1 - static_cast<U8>(this->m_activeBuffer)];
+    for (const FwChanIdType bucketNo : inactiveBuffer.updated) {
+        FW_ASSERT(bucketNo < TLMCHAN_HASH_BUCKETS, static_cast<FwAssertArgType>(bucketNo));
+        TlmEntry* p_entry = &inactiveBuffer.buckets[bucketNo];
         if ((p_entry->updated) && (p_entry->used)) {
             // ------------------------------------------------------------------
             // CPU guard check: once the per-run cap is reached, count this entry

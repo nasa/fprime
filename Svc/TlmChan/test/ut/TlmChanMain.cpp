@@ -66,6 +66,22 @@ TEST(TlmChanTest, ProcGuardTest) {
     tester.runProcGuard();
 }
 
+TEST(TlmChanTest, UpdatedSetTracking) {
+    TEST_CASE(107.1.3, "Updated set tracks updated buckets across the buffer swap");
+    COMMENT("Verify the updated set mirrors the updated flags, drains in bucket order, and empties on swap.");
+
+    Svc::TlmChanTester tester;
+    tester.runUpdatedSetTracking();
+}
+
+TEST(TlmChanTest, UpdatedSetSparseUpdate) {
+    TEST_CASE(107.1.4, "Run work scales with updated channels, not table size");
+    COMMENT("Fill every bucket, then update one channel and verify Run sends exactly that channel.");
+
+    Svc::TlmChanTester tester;
+    tester.runUpdatedSetSparseUpdate();
+}
+
 TEST(TlmChanTest, BucketPoolExhaustionTest) {
     TEST_CASE(107.3.2, "Off-nominal hash-bucket pool exhaustion");
     COMMENT("Verify a new channel arriving with no free buckets is dropped with a warning event, not an assert.");
