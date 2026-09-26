@@ -3,7 +3,6 @@
 // \brief Implementation of directory-sandboxed file wrapper
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/StringUtils.hpp>
 #include <Os/SandboxedFile.hpp>
 #include <cstring>
 
@@ -22,20 +21,12 @@ void SandboxedFile::configure(const char* allowedDirectory) {
     FW_ASSERT(allowedDirectory != nullptr);
     FW_ASSERT(!m_file.isOpen());
 
-    // Resolve the allowed directory (relative paths resolve against CWD)
+    // Resolve the allowed directory (relative paths resolve against CWD) into the
+    // canonical trailing-'/' form that checkContainment requires
     char resolved[FilePathUtils::MAX_PATH_LENGTH];
     const FilePathUtils::Status resolveStatus =
-        FilePathUtils::resolveFromCwd(allowedDirectory, resolved, sizeof(resolved));
-    FW_ASSERT(resolveStatus == FilePathUtils::VALID);
-
-    // Ensure trailing '/'
-    const FwSizeType resolvedLen = Fw::StringUtils::string_length(resolved, FilePathUtils::MAX_PATH_LENGTH);
-    FW_ASSERT(resolvedLen > 0);
-    FW_ASSERT(resolvedLen + 2 <= FilePathUtils::MAX_PATH_LENGTH);
-    if (resolved[resolvedLen - 1] != '/') {
-        resolved[resolvedLen] = '/';
-        resolved[resolvedLen + 1] = '\0';
-    }
+        FilePathUtils::resolveDirectoryFromCwd(allowedDirectory, resolved, sizeof(resolved));
+    FW_ASSERT(resolveStatus == FilePathUtils::VALID, static_cast<FwAssertArgType>(resolveStatus));
 
     m_allowedDirectory = resolved;
     m_configured = true;
