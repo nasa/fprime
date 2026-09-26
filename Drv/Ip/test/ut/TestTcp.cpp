@@ -9,7 +9,9 @@
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Os/Console.hpp>
+#include <Os/Task.hpp>
 #include <cerrno>
+#include <csignal>
 
 Os::Console logger;
 
@@ -37,6 +39,29 @@ class InterruptOnceSocket final : public Drv::IpSocket {
         return 1;
     }
 };
+
+class BrokenPipeSocket final : public Drv::IpSocket {
+  private:
+    Drv::SocketIpStatus openProtocol(Drv::SocketDescriptor& fd) override {
+        fd.fd = 0;
+        return Drv::SOCK_SUCCESS;
+    }
+
+    FwSignedSizeType sendProtocol(const Drv::SocketDescriptor&, const U8* const, const FwSizeType) override {
+        errno = EPIPE;
+        return -1;
+    }
+
+    FwSignedSizeType recvProtocol(const Drv::SocketDescriptor&, U8* const, const FwSizeType) override { return 0; }
+};
+
+TEST(ErrorHandling, TestSendBrokenPipeIsDisconnected) {
+    BrokenPipeSocket socket;
+    Drv::SocketDescriptor fd;
+    U8 data[1] = {0};
+
+    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_DISCONNECTED);
+}
 
 TEST(ErrorHandling, TestRecvRetriesEintr) {
     InterruptOnceSocket socket;
@@ -89,6 +114,60 @@ void test_with_loop(U32 iterations) {
         client.close(client_fd);
     }
     server.terminate(server_fd);
+}
+
+//! Send on a connection whose peer has closed until a send fails, returning the failing status
+//!
+//! The first sends after the peer closes are usually buffered and succeed; the peer's reset makes a later send fail.
+Drv::SocketIpStatus send_until_failure(Drv::IpSocket& sender, const Drv::SocketDescriptor& fd) {
+    constexpr U32 MAX_SENDS = 100;
+    U8 data[64] = {};
+    Drv::SocketIpStatus status = Drv::SOCK_SUCCESS;
+    for (U32 i = 0; (i < MAX_SENDS) && (status == Drv::SOCK_SUCCESS); i++) {
+        status = sender.send(fd, data, sizeof data);
+        if (status == Drv::SOCK_SUCCESS) {
+            (void)Os::Task::delay(Fw::TimeInterval(0, 1000));
+        }
+    }
+    return status;
+}
+
+//! Close one end of a connected TCP pair, then send from the other end
+//!
+//! SIGPIPE is left at its default action, which terminates the process. A send that raised it would end this test
+//! executable rather than return a status.
+void test_send_after_peer_closes(bool server_sends) {
+    (void)std::signal(SIGPIPE, SIG_DFL);
+
+    U16 port = 0;  // Choose a port
+    Drv::TcpServerSocket server;
+    Drv::TcpClientSocket client;
+    Drv::SocketDescriptor server_fd;
+    Drv::SocketDescriptor client_fd;
+    server.configure("127.0.0.1", port, 0, 100);
+    ASSERT_EQ(server.startup(server_fd), Drv::SOCK_SUCCESS);
+    client.configure("127.0.0.1", server.getListenPort(), 0, 100);
+    ASSERT_EQ(client.open(client_fd), Drv::SOCK_SUCCESS) << "With errno: " << errno;
+    ASSERT_EQ(server.open(server_fd), Drv::SOCK_SUCCESS);
+
+    if (server_sends) {
+        client.close(client_fd);
+        EXPECT_EQ(send_until_failure(server, server_fd), Drv::SOCK_DISCONNECTED);
+        server.close(server_fd);
+    } else {
+        server.close(server_fd);
+        EXPECT_EQ(send_until_failure(client, client_fd), Drv::SOCK_DISCONNECTED);
+        client.close(client_fd);
+    }
+    server.terminate(server_fd);
+}
+
+TEST(ErrorHandling, TestServerSendAfterClientClosesIsDisconnected) {
+    test_send_after_peer_closes(true);
+}
+
+TEST(ErrorHandling, TestClientSendAfterServerClosesIsDisconnected) {
+    test_send_after_peer_closes(false);
 }
 
 TEST(Nominal, TestNominalTcp) {

@@ -123,6 +123,11 @@ SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor)
         (void)::close(clientFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
+    // Sends to a client that has disconnected must not raise SIGPIPE
+    if (IpSocket::setupNoSigPipe(clientFd) != SOCK_SUCCESS) {
+        (void)::close(clientFd);
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    }
 
     Fw::Logger::log("Accepted client at %s:%hu\n", this->m_ipv4_address, this->m_port);
     socketDescriptor.fd = clientFd;
@@ -133,7 +138,7 @@ FwSignedSizeType TcpServerSocket::sendProtocol(const SocketDescriptor& socketDes
                                                const U8* const data,
                                                const FwSizeType size) {
     return static_cast<FwSignedSizeType>(
-        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS));
+        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS | SEND_NO_SIGNAL_FLAGS));
 }
 
 FwSignedSizeType TcpServerSocket::recvProtocol(const SocketDescriptor& socketDescriptor,

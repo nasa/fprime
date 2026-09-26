@@ -187,6 +187,26 @@ class IpSocket {
      */
     SocketIpStatus setupTimeouts(int socketFd);
 
+    //! Flags added to every TCP send, on top of SOCKET_IP_SEND_FLAGS. MSG_NOSIGNAL makes a send to a peer that has
+    //! closed the connection fail with EPIPE instead of raising SIGPIPE, which would terminate the process. Where
+    //! MSG_NOSIGNAL is not defined, setupNoSigPipe covers platforms that provide SO_NOSIGPIPE (e.g. macOS).
+#ifdef MSG_NOSIGNAL
+    static constexpr int SEND_NO_SIGNAL_FLAGS = MSG_NOSIGNAL;
+#else
+    static constexpr int SEND_NO_SIGNAL_FLAGS = 0;
+#endif
+
+    /**
+     * \brief prevent sends on a connected stream socket from raising SIGPIPE on platforms without MSG_NOSIGNAL
+     *
+     * Sets SO_NOSIGPIPE where the platform provides it (e.g. macOS). Elsewhere this does nothing: sends pass
+     * SEND_NO_SIGNAL_FLAGS instead.
+     *
+     * \param socketFd: connected stream socket to setup
+     * \return SOCK_SUCCESS, or SOCK_FAILED_TO_SET_SOCKET_OPTIONS if the option could not be set
+     */
+    SocketIpStatus setupNoSigPipe(int socketFd);
+
     /**
      * \brief converts a given IPv4 address in dotted-quad form "x.x.x.x" to a network-order
      *        in_addr structure. ONLY works for IPv4; does NOT perform DNS resolution.
