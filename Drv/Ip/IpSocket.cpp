@@ -89,6 +89,18 @@ SocketIpStatus IpSocket::setupTimeouts(int socketFd) {
     return SOCK_SUCCESS;
 }
 
+SocketIpStatus IpSocket::setupNoSigPipe(int socketFd) {
+#ifdef SO_NOSIGPIPE
+    const int enable = 1;
+    if (setsockopt(socketFd, SOL_SOCKET, SO_NOSIGPIPE, &enable, sizeof(enable)) < 0) {
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    }
+#else
+    (void)socketFd;
+#endif
+    return SOCK_SUCCESS;
+}
+
 SocketIpStatus IpSocket::addressToIp4(const char* const ipv4_address, void* const out) {
     FW_ASSERT(ipv4_address != nullptr);
     FW_ASSERT(out != nullptr);
@@ -162,8 +174,8 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
         if (((sent == -1) && (errno == EINTR)) || (sent == 0)) {
             continue;
         }
-        // Error bad file descriptor is a close along with reset
-        else if ((sent == -1) && ((errno == EBADF) || (errno == ECONNRESET))) {
+        // A bad file descriptor, a reset, or a broken pipe (the peer closed the connection) is a disconnect
+        else if ((sent == -1) && ((errno == EBADF) || (errno == ECONNRESET) || (errno == EPIPE))) {
             return SOCK_DISCONNECTED;
         }
         // Error returned, and it wasn't an interrupt nor a disconnect

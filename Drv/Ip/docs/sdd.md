@@ -47,6 +47,12 @@ number of times on correctable errors before finally succeeding once all data ha
 socket send fail. Interrupts and timeouts are the only recoverable errors. Users must call `close` and `open` to recover
 from other errors.
 
+A send to a peer that has closed or reset the connection returns `SOCK_DISCONNECTED`: the socket reports `EPIPE`,
+`ECONNRESET`, or `EBADF`. Such a send must not raise `SIGPIPE`, whose default action terminates the process, so TCP
+sends pass `MSG_NOSIGNAL` where the platform defines it, and connected TCP sockets have `SO_NOSIGPIPE` set where the
+platform provides that option instead (e.g. macOS). On Linux and macOS, applications therefore do not need to ignore
+`SIGPIPE` to survive a disconnect.
+
 `Drv::IpSocket::recv` will attempt to read data from across the socket. It will block until data is received and
 in the case that the socket is interrupted without data, it will retry a configurable number of times. Users must call
 `close` and `open` to recover from other errors.
@@ -96,6 +102,10 @@ static const IpSocketOptions IP_SOCKET_OPTIONS[] = {
 
 Additional socket options can be appended to the `IP_SOCKET_OPTIONS` array using the `makeIntOption` and
 `makeSizeOption` helper functions defined in `IpCfg.hpp`.
+
+`SOCKET_IP_SEND_FLAGS` in `IpCfg.hpp` sets the flags passed to every `send`/`sendto`. TCP sends add `MSG_NOSIGNAL` to
+these flags themselves (see [Drv::IpSocket Baseclass](#drvipsocket-baseclass)), so a project that overrides `IpCfg.hpp`
+does not need to include it.
 
 ## Drv::TcpClientSocket Class
 
