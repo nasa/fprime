@@ -1183,6 +1183,72 @@ void CfdpManagerTester::testClass2RxFileDataOffsetOverflow() {
     cleanupTestFile(txn->m_history->fnames.dst_filename.toChar());
 }
 
+void CfdpManagerTester::testClass2RxTruncatedFileDataCrcSpin() {
+    const char* groundSrcFile = "/ground/test_class2_rx_crcspin_source.bin";
+    const char* dstFile = "test/ut/output/test_class2_rx_crcspin_received.bin";
+    const U8 channelId = 0;
+    const U32 transactionSeq = 7;
+    const U32 declaredFileSize = 0x10000000;
+
+    // Metadata declares a large file and creates a zero-length destination.
+    TransactionSetup setup;
+    setupRxTransaction(groundSrcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, declaredFileSize,
+                       transactionSeq, TxnState::TXN_STATE_R2, setup);
+
+    // A FileData PDU declaring 196 payload bytes but carrying 2 fails deserialization.
+    U8 pdu[] = {0x00, 0x03, 0x34, 0x00, 0xC8, 0x00, 0x64, 0x07, 0x2A, 0x00, 0x00, 0x00, 0x00, 0xAA, 0xBB};
+    pdu[6] = static_cast<U8>(TEST_GROUND_EID);
+    pdu[8] = static_cast<U8>(component.getLocalEidParam());
+    Fw::Buffer fileDataBuffer(pdu, sizeof(pdu));
+    this->invoke_to_dataIn(channelId, fileDataBuffer);
+    this->component.doDispatch();
+
+    // The malformed PDU must fault the transaction, not leave it in a no-error state that later
+    // invites CRC processing of a file shorter than the declared size.
+    ASSERT_EVENTS_FailFileDataPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
+
+    // One tick. Before the fix this never returned: r2CalcCrcChunk looped on end-of-file short
+    // reads that advanced neither rx_crc_calc_bytes nor count_bytes.
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    cleanupTestFile(dstFile);
+}
+
+void CfdpManagerTester::testClass2RxCrcShortFile() {
+    const char* groundSrcFile = "/ground/test_class2_rx_crcshort_source.bin";
+    const char* dstFile = "test/ut/output/test_class2_rx_crcshort_received.bin";
+    const U8 channelId = 0;
+    const U32 transactionSeq = 504;
+    const U16 dataSize = 16;
+    U8 data[dataSize];
+    memset(data, 0x5A, sizeof(data));
+
+    TransactionSetup setup;
+    setupRxTransaction(groundSrcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, dataSize,
+                       transactionSeq, TxnState::TXN_STATE_R2, setup);
+
+    sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, 0, dataSize, data,
+                    Cfdp::Class::CLASS_2);
+    component.doDispatch();
+
+    // Drive the transaction into CRC verification with a declared size larger than the bytes on
+    // disk. r2CalcCrcChunk must treat the resulting end-of-file short read as a file size error
+    // rather than as progress.
+    setup.txn->m_fsize = 4 * dataSize;
+    setup.txn->m_flags.rx.send_fin = true;
+
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxReadCrcFailed_SIZE(1);
+    EXPECT_EQ(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR, setup.txn->m_history->txn_stat);
+    EXPECT_FALSE(setup.txn->m_flags.com.crc_calc);
+
+    cleanupTestFile(dstFile);
+}
+
 void CfdpManagerTester::testClass2RxZeroLengthFileData() {
     // Regression test for GHSA-mh5x-2m6h-8267.
     //
