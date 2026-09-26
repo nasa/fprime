@@ -135,6 +135,93 @@ TEST(LocklessConcurrent, MultiProducerMultiConsumer) {
     state.queue.teardown();
 }
 
+//! Regression test for GitHub issue #6055: m_available must never transiently wrap to a huge
+//! value under concurrent producer/consumer activity. The defect was that m_available was
+//! incremented *after* a READY publish, so a consumer could decrement it before the producer's
+//! matching increment landed, causing a 0 - 1 underflow to ~0u. The fix increments m_available
+//! before the READY publish; this test asserts the invariant `available <= depth` holds
+//! throughout the run (a wrapped value of ~0u would trivially violate it).
+TEST(LocklessConcurrent, AvailableNeverWraps) {
+    constexpr FwSizeType WRAP_DEPTH = 8;
+    constexpr U32 WRAP_PRODUCERS = 4;
+    constexpr U32 WRAP_CONSUMERS = 4;
+    constexpr U32 WRAP_MESSAGES_PER_PRODUCER = 2000;
+    constexpr U32 WRAP_TOTAL = WRAP_PRODUCERS * WRAP_MESSAGES_PER_PRODUCER;
+
+    struct WrapState {
+        Os::Queue queue;
+        std::atomic<U32> consumed;
+        std::atomic<bool> producers_done;
+        std::atomic<bool> invariant_violated;
+        WrapState() : consumed(0), producers_done(false), invariant_violated(false) {}
+    } state;
+
+    Fw::String name("wrap-regression-test");
+    ASSERT_EQ(state.queue.create(0, name, WRAP_DEPTH, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
+
+    // Observer thread: continuously samples getMessagesAvailable() and flags any violation.
+    std::atomic<bool> observer_stop(false);
+    std::thread observer([&]() {
+        while (!observer_stop.load(std::memory_order_acquire)) {
+            const FwSizeType avail = state.queue.getMessagesAvailable();
+            if (avail > WRAP_DEPTH) {
+                state.invariant_violated.store(true, std::memory_order_release);
+            }
+            std::this_thread::yield();
+        }
+    });
+
+    std::thread producers[WRAP_PRODUCERS];
+    for (U32 p = 0; p < WRAP_PRODUCERS; p++) {
+        producers[p] = std::thread([&, p]() {
+            U8 buf[sizeof(U32)] = {0};
+            for (U32 m = 0; m < WRAP_MESSAGES_PER_PRODUCER; m++) {
+                Os::QueueInterface::Status st = Os::QueueInterface::Status::FULL;
+                while (st == Os::QueueInterface::Status::FULL) {
+                    st = state.queue.send(buf, sizeof buf, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
+                    if (st == Os::QueueInterface::Status::FULL) {
+                        std::this_thread::yield();
+                    }
+                }
+            }
+        });
+    }
+
+    std::thread consumers[WRAP_CONSUMERS];
+    for (U32 c = 0; c < WRAP_CONSUMERS; c++) {
+        consumers[c] = std::thread([&]() {
+            U8 buf[sizeof(U32)] = {0};
+            FwSizeType actualSize = 0;
+            FwQueuePriorityType priority = 0;
+            while (state.consumed.load(std::memory_order_acquire) < WRAP_TOTAL) {
+                Os::QueueInterface::Status st = state.queue.receive(
+                    buf, sizeof buf, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+                if (st == Os::QueueInterface::Status::OP_OK) {
+                    state.consumed.fetch_add(1, std::memory_order_acq_rel);
+                } else if (state.producers_done.load(std::memory_order_acquire) &&
+                           state.consumed.load(std::memory_order_acquire) >= WRAP_TOTAL) {
+                    break;
+                } else {
+                    std::this_thread::yield();
+                }
+            }
+        });
+    }
+
+    for (U32 p = 0; p < WRAP_PRODUCERS; p++) { producers[p].join(); }
+    state.producers_done.store(true, std::memory_order_release);
+    for (U32 c = 0; c < WRAP_CONSUMERS; c++) { consumers[c].join(); }
+
+    observer_stop.store(true, std::memory_order_release);
+    observer.join();
+
+    EXPECT_EQ(state.consumed.load(std::memory_order_acquire), WRAP_TOTAL);
+    EXPECT_FALSE(state.invariant_violated.load(std::memory_order_acquire))
+        << "getMessagesAvailable() exceeded queue depth — m_available wrapped!";
+    EXPECT_LE(state.queue.getMessagesAvailable(), WRAP_DEPTH);
+    state.queue.teardown();
+}
+
 //! Validate single-threaded strict priority ordering: batches of distinct-priority messages
 //! must drain in non-increasing priority order. (Concurrent-drain and FIFO-tiebreak coverage
 //! live in the TSan adversarial suite.)
