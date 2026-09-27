@@ -90,6 +90,26 @@ TEST(ActiveRateGroupTest, CycleOverrun) {
     }
 }
 
+TEST(ActiveRateGroupTest, MultiCycleSlip) {
+    Svc::ActiveRateGroup::ContextArray contexts;
+    for (U32 i = 0; i < Svc::ActiveRateGroup::CONNECTION_COUNT_MAX; i++) {
+        contexts[i] = i + 1;
+    }
+
+    Svc::ActiveRateGroup impl("ActiveRateGroup");
+    impl.configure(contexts);
+
+    Svc::ActiveRateGroupTester tester(impl);
+
+    tester.init();
+    impl.init(10, 0);
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runMultiCycleSlip();
+}
+
 TEST(ActiveRateGroupTest, PingPort) {
     Svc::ActiveRateGroup::ContextArray contexts;
     for (FwIndexType i = 0; i < Svc::ActiveRateGroup::CONNECTION_COUNT_MAX; i++) {
