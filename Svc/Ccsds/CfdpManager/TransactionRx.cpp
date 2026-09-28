@@ -773,7 +773,7 @@ void Transaction::r2SubstateRecvFileData(const Fw::Buffer& buffer) {
         // Bad file data PDU, reset transaction
         this->m_cfdpManager->log_WARNING_LO_FailFileDataPduDeserialization(this->getChannelId(),
                                                                            static_cast<I32>(deserStatus));
-        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_INVALID_FILE_STRUCTURE);
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_PROTOCOL_ERROR);
         this->r2Reset();
         return;
     }

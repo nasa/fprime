@@ -1198,6 +1198,7 @@ void CfdpManagerTester::testClass2RxTruncatedFileDataCrcSpin() {
     // A FileData PDU declaring 196 payload bytes but carrying 2 fails deserialization.
     U8 pdu[] = {0x00, 0x03, 0x34, 0x00, 0xC8, 0x00, 0x64, 0x07, 0x2A, 0x00, 0x00, 0x00, 0x00, 0xAA, 0xBB};
     pdu[6] = static_cast<U8>(TEST_GROUND_EID);
+    pdu[7] = static_cast<U8>(transactionSeq);
     pdu[8] = static_cast<U8>(component.getLocalEidParam());
     Fw::Buffer fileDataBuffer(pdu, sizeof(pdu));
     this->invoke_to_dataIn(channelId, fileDataBuffer);
@@ -1207,11 +1208,17 @@ void CfdpManagerTester::testClass2RxTruncatedFileDataCrcSpin() {
     // invites CRC processing of a file shorter than the declared size.
     ASSERT_EVENTS_FailFileDataPduDeserialization_SIZE(1);
     ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
+    EXPECT_EQ(static_cast<U8>(TxnStatus::TXN_STATUS_PROTOCOL_ERROR),
+              this->eventHistory_RxFileTransferFailed->at(0).conditionCode);
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, setup.txn->m_state) << "Faulted transaction must be released";
 
     // One tick. Before the fix this never returned: r2CalcCrcChunk looped on end-of-file short
     // reads that advanced neither rx_crc_calc_bytes nor count_bytes.
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
+
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, setup.txn->m_state) << "Released transaction must not re-enter R2";
+    ASSERT_EVENTS_RxReadCrcFailed_SIZE(0);
 
     cleanupTestFile(dstFile);
 }
@@ -1222,7 +1229,7 @@ void CfdpManagerTester::testClass2RxCrcShortFile() {
     const U8 channelId = 0;
     const U32 transactionSeq = 504;
     const U16 dataSize = 16;
-    U8 data[dataSize];
+    U8 data[dataSize] = {};
     memset(data, 0x5A, sizeof(data));
 
     TransactionSetup setup;
@@ -1243,6 +1250,7 @@ void CfdpManagerTester::testClass2RxCrcShortFile() {
     this->component.doDispatch();
 
     ASSERT_EVENTS_RxReadCrcFailed_SIZE(1);
+    ASSERT_EVENTS_RxReadCrcFailed(0, Cfdp::Class::CLASS_2, TEST_GROUND_EID, transactionSeq, 4 * dataSize, dataSize);
     EXPECT_EQ(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR, setup.txn->m_history->txn_stat);
     EXPECT_FALSE(setup.txn->m_flags.com.crc_calc);
 

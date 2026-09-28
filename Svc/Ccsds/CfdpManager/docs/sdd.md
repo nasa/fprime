@@ -138,6 +138,8 @@ Because CfdpManager processes PDUs received from an external link, it must remai
 
 A specific case handled here is a syntactically valid FileData PDU that declares a file offset but carries zero file-data octets (its PDU payload length equals the encoded offset length). Such an empty segment conveys no data: the receive handler treats it as a successful no-op — no file write and no gap-tracking update — so it can never produce a zero-length interval in the chunk tracker. This closes the denial-of-service reported in [GHSA-mh5x-2m6h-8267](https://github.com/nasa/fprime/security/advisories/GHSA-mh5x-2m6h-8267), where a single zero-length Class 2 FileData PDU could reach a gap-tracking assertion and terminate the process. Note that this is an availability hardening measure; it does not by itself remove the need for the authenticated lower layers described above.
 
+A related case is a Class 2 FileData PDU whose header declares more file-data octets than the PDU carries, following a Metadata PDU with an oversized `fileSize`. Such a PDU fails deserialization; the receive handler faults the transaction with `PROTOCOL_ERROR` (the same status used for other unsupported FileData PDUs) and tears it down instead of leaving it eligible for FIN/CRC processing. Independently, the CRC pass over the received file treats an end-of-file short read — fewer bytes returned than requested while `rx_crc_calc_bytes` is still below the declared file size — as a `FILE_SIZE_ERROR` (`RxReadCrcFailed`) rather than as progress, so a file shorter than its declared size can never keep the CRC loop spinning on zero-byte reads and pin the `CfdpManager` thread.
+
 ### Main Class Hierarchy
 
 CfdpManager ([CfdpManager.hpp](../CfdpManager.hpp))
@@ -517,7 +519,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | RxEofCancelReceived | activity high | RX transaction cancelled by sender |
 | RxEofWithError | warning low | RX transaction received EOF with error condition code |
 | RxSeekCrcFailed | warning low | RX transaction failed to seek during CRC calculation |
-| RxReadCrcFailed | warning low | RX transaction failed to read during CRC calculation |
+| RxReadCrcFailed | warning low | RX transaction failed to read, or read fewer bytes than expected, during CRC calculation |
 | RxEofMdSizeMismatch | warning low | RX transaction EOF/metadata size mismatch |
 | RxFileRenameFailed | warning low | RX transaction failed to rename temp file to final file |
 | RxFileReopenFailed | warning low | RX transaction failed to reopen file after rename |
