@@ -1,0 +1,89 @@
+# Cross-compile https://github.com/fprime-community/fprime-vorago-reference
+
+name: "External Repo: Vorago Reference"
+
+on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
+  push:
+    branches: [ release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-vorago-reference
+
+  build:
+    name: "Vorago Build (all toolchains)"
+    needs: get-branch
+    runs-on: ubuntu-22.04
+    container:
+      image: ghcr.io/fprime-community/llvm-vorago-arm-toolchain:lvat-23.1.0.0
+    env:
+      # Some build tooling (e.g. generate_build_info.py) expects a USER
+      # environment variable to be set; container jobs don't set one by
+      # default. Now it matches the same workaround the manual docker exec flow uses.
+      USER: docker
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - toolchain: va416x0-baremetal
+            generate_args: va416x0-baremetal -f
+            build_cmd: build va416x0-baremetal
+          - toolchain: va416x0-baremetal-nostrb
+            generate_args: va416x0-baremetal-nostrb -f
+            build_cmd: build va416x0-baremetal-nostrb
+          - toolchain: va416x0-baremetal-profiler
+            generate_args: va416x0-baremetal-profiler -f
+            build_cmd: build va416x0-baremetal-profiler
+          - toolchain: linux-gcc-ut
+            generate_args: --ut -f
+            build_cmd: check
+
+    steps:
+      # nasa/fprime-actions/ccache fails on RHEL-based containers
+      # By installing this directly, we can skip the failing step.
+      - name: "Install ccache"
+        run: dnf install -y ccache
+
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-vorago-reference
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+          stage: build
+
+      - name: Mark workspace as a safe git directory
+        # Needed even under the job-level `container:` key: whatever user
+        # context checkout ran under doesn't match the one build steps (e.g.
+        # generate_build_info.py's `git branch --show-current` call) run
+        # under on this runner's containerized-pod implementation, so git
+        # flags the checkout as "dubious ownership" without this.
+        run: git config --global --add safe.directory "*"
+
+      - name: Generate and build
+        run: |
+          . ./ci-venv/bin/activate
+          fprime-util generate ${{ matrix.generate_args }}
+          fprime-util ${{ matrix.build_cmd }}
