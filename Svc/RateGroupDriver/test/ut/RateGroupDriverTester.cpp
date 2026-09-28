@@ -111,9 +111,13 @@ TEST(RateGroupDriverTest, LcmRolloverCommonFactors) {
     connectPorts(impl, tester);
 
     // Verify rollover matches literal LCM
-    const FwSizeType expectedLcm = (Svc::RateGroupDriver::DIVIDER_SIZE > 2)   ? 8
-                                   : (Svc::RateGroupDriver::DIVIDER_SIZE > 1) ? 4
-                                                                              : 2;
+    FwSizeType expectedLcm = 2;  // lcm(2)
+    if (Svc::RateGroupDriver::DIVIDER_SIZE > 1) {
+        expectedLcm = 4;  // lcm(2, 4)
+    }
+    if (Svc::RateGroupDriver::DIVIDER_SIZE > 2) {
+        expectedLcm = 8;  // lcm(2, 4, 8)
+    }
     EXPECT_EQ(expectedLcm, tester.getRollover());
 
     tester.runSchedNominal(dividersSet, Svc::RateGroupDriver::DIVIDER_SIZE);
