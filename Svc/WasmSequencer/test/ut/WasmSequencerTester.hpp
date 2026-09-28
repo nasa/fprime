@@ -124,10 +124,6 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
         Fw::String m_file;
     };
 
-    //! Build a Svc::SeqArgs holding the given raw bytes (size + buffer), for driving
-    //! the `args` host function round trip through RUN/INVOKE.
-    static Svc::SeqArgs makeSeqArgs(const U8* bytes, FwSizeType size);
-
     //! Drive the writeTelemetry scheduler tick and dispatch it, flushing every
     //! telemetry channel into the tester history so ASSERT_TLM_* can read them.
     void flushTelemetry();
@@ -322,10 +318,9 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     U8 lastSerialOutData[SERIAL_OUT_MAX_SIZE];
     FwSizeType lastSerialOutSize;
 
-    //! Number of seqStartOut invocations observed, and the arguments of the last one.
+    //! Number of seqStartOut invocations observed, and the file name of the last one.
     U32 seqStartOutCount;
     Fw::String lastSeqStartFilename;
-    Svc::SeqArgs lastSeqStartArgs;
 
     //! Number of seqDoneOut invocations observed, and the response of the last one.
     U32 seqDoneOutCount;

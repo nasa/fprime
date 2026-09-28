@@ -15,7 +15,7 @@ Modules that require an implementation should use the directive `REQUIRES_IMPLEM
 
 Platform developers *must* specify an implementation of every package used in the system. Failing to do so means that a given functionality is undefined and impossible to link.  Stub implementations are provided in the case that a platform does not support a given package's functionality.
 
-Choosing an implementation is done with the `CHOOSES_IMPLEMENTATIONS` directive available to `register_fprime_config`. Platform developers should choose implementations as part of the platform definition.
+Choosing an implementation is done with the `CHOOSES_IMPLEMENTATIONS` directive available to `register_fprime_config`. Platform developers should choose implementations as part of the platform definition (see [Configuration Modules](./configuration.md#platform-packages)). A project may also choose implementations from its own configuration module; the choice registered last wins, except for an implementation an earlier configuration module already listed (choices are de-duplicated in registration order; see [Overriding Configuration in a Project](./configuration.md#overriding-configuration-in-a-project)).
 
 https://github.com/nasa/fprime/blob/dfaf496263bdfff04461179eb99fb3f906a10009/cmake/platform/Linux.cmake#L15-L17
 

@@ -7,6 +7,8 @@
 #ifndef FPRIME_SPACEWASM_GUEST_H
 #define FPRIME_SPACEWASM_GUEST_H
 
+#include <Fw/Deprecate.hpp>
+
 #ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus
@@ -37,17 +39,18 @@ extern void fprime_wasm_exit(I32 code);
 WASM_IMPORT(WASM_MODULE_NAME, "panic")
 extern void fprime_wasm_panic(I32 code);
 
-/// @brief Get the sequence arguments this sequence was invoked with
-/// This function will write the arguments provided from the invoke/run
-/// into the guest memory.
+/// @brief Deprecated no-op retained for binary compatibility with older guests.
 ///
-/// @param destination_ptr Guest memory address to argument buffer
-/// @param destination_size Length of the argument buffer.
-///                         This size must be greater than or equal to the length of arguments
-///                         passed to the sequence otherwise the interpreter will trap
-/// @returns The number of bytes written to [destination_ptr]
+/// The sequencer no longer passes arguments to a sequence. This import writes nothing to
+/// [destination_ptr] and always reports 0 bytes. A sequence that needs inputs should take
+/// them through its exported function signature instead.
+///
+/// @param destination_ptr Ignored
+/// @param destination_size Ignored
+/// @returns Always 0
 WASM_IMPORT(WASM_MODULE_NAME, "args")
-extern U32 fprime_wasm_get_args(U32 destination_ptr, U32 destination_size);
+extern U32 DEPRECATED(fprime_wasm_get_args(U32 destination_ptr, U32 destination_size),
+                      "args always returns 0. Pass inputs through the sequence's exported function signature instead");
 
 /// @brief Read the current F´ system time into guest memory
 ///
