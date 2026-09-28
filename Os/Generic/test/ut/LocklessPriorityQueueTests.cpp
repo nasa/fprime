@@ -290,3 +290,21 @@ int main(int argc, char** argv) {
     STest::Random::seed();
     return RUN_ALL_TESTS();
 }
+
+//! Validate that an undersized receive buffer returns SIZE_MISMATCH and leaves the message queued.
+TEST(LocklessLifetime, ReceiveTooSmallReportsSizeMismatch) {
+    Os::Generic::LocklessPriorityQueue queue;
+    Fw::String name("receive-too-small");
+    const U8 message[sizeof(U32)] = {1, 2, 3, 4};
+    U8 destination[sizeof(message) - 1] = {0};
+    FwSizeType actualSize = 0;
+    FwQueuePriorityType priority = 0;
+    ASSERT_EQ(queue.create(0, name, 1, sizeof(message)), Os::QueueInterface::Status::OP_OK);
+    ASSERT_EQ(queue.send(message, sizeof message, 0, Os::QueueInterface::BlockingType::NONBLOCKING),
+              Os::QueueInterface::Status::OP_OK);
+    EXPECT_EQ(queue.receive(destination, sizeof destination, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize,
+                            priority),
+              Os::QueueInterface::Status::SIZE_MISMATCH);
+    EXPECT_EQ(queue.getMessagesAvailable(), 1u);
+    queue.teardown();
+}
