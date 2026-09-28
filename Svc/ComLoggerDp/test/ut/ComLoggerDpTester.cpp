@@ -824,25 +824,28 @@ void ComLoggerDpTester::testSerializationFailureCounter() {
     this->invoke_to_comIn(0, comBuf, 0);
     this->component.doDispatch();
 
-    // Check telemetry - counter should be 0 in normal operation
+    // Check telemetry - two buffers logged, none dropped
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
     ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_NumBuffersLogged(0, 2);
+    ASSERT_TLM_NumBuffersDropped(0, 0);
 
-    // Test that CLEAR_COUNTERS command clears this counter
-    // (even though it's 0, this verifies the command handles it)
+    // Test that CLEAR_COUNTERS command clears the counters
     this->clearHistory();
     this->sendCmd_CLEAR_COUNTERS(0, 0);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_CLEAR_COUNTERS, 0, Fw::CmdResponse::OK);
 
-    // Verify counter is still 0 after clear
+    // Verify counters are 0 after clear
     this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
     ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_NumBuffersLogged(0, 0);
+    ASSERT_TLM_NumBuffersDropped(0, 0);
 }
 
 void ComLoggerDpTester::testAutoFlush() {
@@ -977,7 +980,34 @@ void ComLoggerDpTester::testPacketsPerContainerTooLarge() {
     ASSERT_EVENTS_StartRecordingFailed(0, MAX_PACKETS + 1);
 
     // Component should remain disabled
-    ASSERT_TLM_SIZE(0);
+    this->clearHistory();
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+    ASSERT_TLM_LoggingEnabled_SIZE(1);
+    ASSERT_TLM_LoggingEnabled(0, false);
+
+    // Start recording and log one packet so a partial container is pending
+    this->startLoggingAndClearHistory(2, 10);
+    Fw::ComBuffer comBuf = this->createTestComBuffer(8);
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+
+    // Rejected reconfiguration while recording flushes the partial container and disables logging
+    this->sendCmd_StartComDp(0, 1, MAX_PACKETS + 1, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STARTCOMDP, 1, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_PRODUCT_SEND_SIZE(1);
+    this->clearHistory();
+    this->invoke_to_schedIn(0, 0);
+    this->component.doDispatch();
+    ASSERT_TLM_LoggingEnabled(0, false);
+
+    // Packets are no longer logged
+    this->invoke_to_comIn(0, comBuf, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(0);
 }
 
 void ComLoggerDpTester::testStopWhenAlreadyStopped() {
