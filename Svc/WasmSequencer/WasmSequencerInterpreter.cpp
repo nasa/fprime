@@ -213,9 +213,6 @@ void WasmSequencer ::Svc_WasmSequencer_InterpreterStateMachine_action_dispatchPe
         case WasmSequencer_HostFunction::ASLEEP:
             this->dispatchAbsoluteSleep();
             break;
-        case WasmSequencer_HostFunction::ARGS:
-            this->dispatchArgs();
-            break;
         case WasmSequencer_HostFunction::TIME:
             this->dispatchTime();
             break;
@@ -425,33 +422,6 @@ void WasmSequencer ::dispatchAbsoluteSleep() {
 
     this->m_pendingTimer = timer;
     this->m_hasPendingTimer = true;
-}
-
-void WasmSequencer ::dispatchArgs() {
-    const FwSizeType argCapacity = static_cast<FwSizeType>(sizeof(this->m_args.get_buffer()));
-    if (this->m_args.get_size() > argCapacity) {
-        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::ARGS, static_cast<U32>(this->m_args.get_size()),
-                                            static_cast<U32>(argCapacity));
-        this->interpreter_sendSignal_hostResponseFailure();
-        return;
-    }
-
-    if (this->m_args.get_size() > this->m_pendingHostFunction.u.args.len) {
-        // Too many param bytes and we are going to leak data into the guest memory
-        this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::ARGS, this->m_pendingHostFunction.u.args.len,
-                                            static_cast<U32>(this->m_args.get_size()));
-        this->interpreter_sendSignal_hostResponseFailure();
-        return;
-    }
-
-    // Write the arguments to linear memory
-    if (this->writeGuestMemory(Svc::WasmSequencer_HostFunction::ARGS, this->m_pendingHostFunction.u.args.ptr,
-                               this->m_args.get_buffer(), this->m_args.get_size()) != Fw::Success::SUCCESS) {
-        this->interpreter_sendSignal_hostResponseFailure();
-        return;
-    }
-
-    this->interpreter_sendSignal_hostResumeI32(static_cast<I32>(this->m_args.get_size()));
 }
 
 void WasmSequencer ::dispatchTime() {

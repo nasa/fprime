@@ -5,17 +5,13 @@
 @ ```sh
 @ CANCEL # doesn't actually cancel a sequence, just resets the store
 @ LOAD [fileName] ""
-@ INVOKE "" [block] [seqArgs]
+@ INVOKE "" [block]
 @ ```
 @
 @ If $block == Svc.BlockState.BLOCK this command will wait for completion.
 async command RUN(
     fileName: string size FileNameStringSize  @< The name of the sequence file
-    @ Block until sequence has finished running
-    $block: Svc.BlockState
-    @ Optional arguments to execute the sequence with
-    @ Depending on the sequence being loaded these arguments may differ
-    seqArgs: Svc.SeqArgs
+    $block: Svc.BlockState                    @< Block until sequence has finished running
 ) \
     opcode 0
 
@@ -33,7 +29,6 @@ async command LOAD(
 async command INVOKE(
     $module: string size Wasm.MODULE_NAME_STRING_SIZE  @< Name of the module to invoke a function from
     $block: Svc.BlockState                             @< Block until sequence has finished running
-    seqArgs: Svc.SeqArgs                               @< Arguments to invoke the sequence entrypoint with
 ) \
     opcode 2
 
