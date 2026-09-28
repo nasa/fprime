@@ -208,9 +208,13 @@ TEST(LocklessConcurrent, AvailableNeverWraps) {
         });
     }
 
-    for (U32 p = 0; p < WRAP_PRODUCERS; p++) { producers[p].join(); }
+    for (U32 p = 0; p < WRAP_PRODUCERS; p++) {
+        producers[p].join();
+    }
     state.producers_done.store(true, std::memory_order_release);
-    for (U32 c = 0; c < WRAP_CONSUMERS; c++) { consumers[c].join(); }
+    for (U32 c = 0; c < WRAP_CONSUMERS; c++) {
+        consumers[c].join();
+    }
 
     observer_stop.store(true, std::memory_order_release);
     observer.join();
