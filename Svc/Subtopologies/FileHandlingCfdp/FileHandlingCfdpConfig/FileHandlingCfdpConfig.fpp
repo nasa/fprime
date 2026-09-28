@@ -20,6 +20,10 @@ module FileHandlingCfdpConfig {
         constant prmDb         = 21
     }
 
+    module CfdpManagerConfig {
+        constant fileQueueDepth = 10           # Depth of the fileIn request handoff queue
+    }
+
     module CpuAffinities {
         constant cfdpManager   = Os.TASK_DEFAULT
         constant fileManager   = Os.TASK_DEFAULT

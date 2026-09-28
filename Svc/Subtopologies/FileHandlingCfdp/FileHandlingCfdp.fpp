@@ -10,7 +10,10 @@ module FileHandlingCfdp {
         cpu FileHandlingCfdpConfig.CpuAffinities.cfdpManager \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        FileHandlingCfdp::cfdpManager.configure(FileHandlingCfdp::Allocation::memAllocator);
+        FileHandlingCfdp::cfdpManager.configure(
+            FileHandlingCfdp::Allocation::memAllocator,
+            FileHandlingCfdpConfig::CfdpManagerConfig::fileQueueDepth
+        );
         """
         phase Fpp.ToCpp.Phases.tearDownComponents """
         FileHandlingCfdp::cfdpManager.cleanup();
