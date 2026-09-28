@@ -570,58 +570,6 @@ Fw::ComBuffer ComLoggerDpTester::createTestComBuffer(FwSizeType size, U8 startVa
     return comBuf;
 }
 
-void ComLoggerDpTester::connectPorts() {
-    // cmdIn
-    this->connect_to_cmdIn(0, this->component.get_cmdIn_InputPort(0));
-
-    // comIn
-    this->connect_to_comIn(0, this->component.get_comIn_InputPort(0));
-
-    // pingIn
-    this->connect_to_pingIn(0, this->component.get_pingIn_InputPort(0));
-
-    // schedIn
-    this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
-
-    // startRecordingIn
-    this->connect_to_startRecordingIn(0, this->component.get_startRecordingIn_InputPort(0));
-
-    // stopRecordingIn
-    this->connect_to_stopRecordingIn(0, this->component.get_stopRecordingIn_InputPort(0));
-
-    // cmdRegOut
-    this->component.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
-
-    // cmdResponseOut
-    this->component.set_cmdResponseOut_OutputPort(0, this->get_from_cmdResponseOut(0));
-
-    // logOut
-    this->component.set_logOut_OutputPort(0, this->get_from_logOut(0));
-
-    // LogText
-    this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
-
-    // timeCaller
-    this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
-
-    // tlmOut
-    this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
-
-    // productGetOut
-    this->component.set_productGetOut_OutputPort(0, this->get_from_productGetOut(0));
-
-    // productSendOut
-    this->component.set_productSendOut_OutputPort(0, this->get_from_productSendOut(0));
-
-    // pingOut
-    this->component.set_pingOut_OutputPort(0, this->get_from_pingOut(0));
-}
-
-void ComLoggerDpTester::initComponents() {
-    this->init();
-    this->component.init(TEST_INSTANCE_QUEUE_DEPTH, TEST_INSTANCE_ID);
-}
-
 Fw::Success::T ComLoggerDpTester::productGet_handler(FwDpIdType id, FwSizeType dataSize, Fw::Buffer& buffer) {
     this->pushProductGetEntry(id, dataSize);
 
