@@ -116,6 +116,7 @@ SpaceWasm uses Rust `1.87` therefore `Svc::WasmSequencer` depends on Rust `>= 1.
 | WASM-SEQ-022 | The sequencer shall let a running sequence grow its linear memory via `memory.grow` in strictly O(1) time complexity. Disallowed growth shall telemetry reason to operator.                    | Guests that size working buffers at run time need `memory.grow`. Certain kinds of memory growth are O(1) (i.e. increment a counter) while others require O(n) data copy or move (these are not allowed).                                                                                       | Unit Test  |
 | WASM-SEQ-023 | The sequencer shall let an operator read, and write (when mutable), a loaded module's exported globals addressed by module and global name.                                                    | Exposing module globals lets ground inspect and adjust sequence state (tuning constants, flags, thresholds) without reloading, and enables coordination through shared globals; type mismatches, immutable targets, and unknown module/global names are rejected without disturbing the store. | Unit Test  |
 | WASM-SEQ-024 | The sequencer shall reject a `RUN`, `LOAD`, or `INVOKE` request that arrives while it is already loading or running a sequence, responding `BUSY` without disturbing the in-progress sequence. | The store and interpreter serve one sequence at a time. Reject overlapping requests with `BUSY` keeps execution deterministic and prevents a late or spurious request from corrupting an in-flight sequence.                                                                                   | Unit Test  |
+| WASM-SEQ-025 | The sequencer shall report the outcome of every port-requested sequence run on `seqDoneOut`.                                                                                                   | A caller such as `Svc::SeqDispatcher` reserves a sequencer slot the instant it makes the request and releases it only on a done report, so an unreported outcome retires that sequencer for the rest of the mission.                                                                           | Unit Test  |
 
 ## Design
 
@@ -309,7 +310,21 @@ The interpreter runs a loaded program in fuel-bounded slices: each slice execute
 | `Svc.CmdSeqIn`     | `seqRunIn`       | Input     | async        | Request to run a sequence (as the `RUN` command).                      |
 | `Svc.CmdSeqCancel` | `seqCancelIn`    | Input     | sync         | Request to cancel the running sequence (as `CANCEL`).                  |
 | `Svc.CmdSeqIn`     | `seqStartOut`    | Output    | —            | Signalled when a sequence begins running.                              |
-| `Fw.CmdResponse`   | `seqDoneOut`     | Output    | —            | Signalled when a sequence finishes.                                    |
+| `Fw.CmdResponse`   | `seqDoneOut`     | Output    | —            | Signalled when a sequence run ends. See the run-reporting contract.    |
+
+**Run-reporting.**
+
+`seqStartOut` is emitted once a run has actually entered its `main` function, for a run requested either by the `RUN` command or over `seqRunIn`. `seqDoneOut` then reports how that run ended.
+
+A run can also end *before* it starts:
+
+- Rejected as `BUSY` because the sequencer was already loading or running
+- Unable to open or decode its file, missing a usable `main`
+- Failing at call setup, trapping in its `start` function, or cancelled while loading.
+
+In that case no `seqStartOut` was emitted. `seqDoneOut` is emitted only if the originating request was from a `seqRunIn` port call.
+
+`LOAD` and `INVOKE` are outside this contract and report neither port.
 
 The serial-port array bounds come from the `Wasm.MAX_SERIAL_OUT_PORTS` / `Wasm.MAX_SERIAL_IN_PORTS` constants in `config/WasmSequencerCfg.fpp`. The component also uses the standard command, event, telemetry, parameter, and time special ports.
 

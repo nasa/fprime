@@ -9,6 +9,7 @@
 // acknowledged.
 // ======================================================================
 
+#include <algorithm>
 #include <limits>
 #include <string>
 
@@ -329,8 +330,11 @@ void TestState ::action__BufferSendIn__BufferTooSmallForData() {
     // Invalidate the data size
     Fw::SerializeStatus serialStatus = container.deserializeHeader();
     ASSERT_EQ(serialStatus, Fw::FW_SERIALIZE_OK);
+    // Bound the pick by U32 since Pick::lowerUpper operates on U32 values
+    constexpr FwSizeType maxDataSize = std::min(static_cast<FwSizeType>(std::numeric_limits<FwSizeStoreType>::max()),
+                                                static_cast<FwSizeType>(std::numeric_limits<U32>::max()));
     const FwSizeType dataSize =
-        STest::Pick::lowerUpper(AbstractState::MAX_DATA_SIZE + 1, std::numeric_limits<FwSizeStoreType>::max());
+        STest::Pick::lowerUpper(static_cast<U32>(AbstractState::MAX_DATA_SIZE + 1), static_cast<U32>(maxDataSize));
     container.setDataSize(dataSize);
     container.updateHeaderHash();
     container.serializeHeader();

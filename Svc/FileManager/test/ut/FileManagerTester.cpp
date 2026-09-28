@@ -10,6 +10,7 @@
 //
 // ======================================================================
 
+#include <cstring>
 #include <fstream>
 
 #include "FileManagerTester.hpp"
@@ -223,7 +224,7 @@ void FileManagerTester ::appendFileSucceed_newFile() {
 
     //================================================================
     // Case 1: 1 normal files appended, new file created
-    this->system("echo 'file1 text' > file1");
+    this->writeFile("file1", "file1 text\n");
 #else
     FAIL();  // Commands not implemented for this OS
 #endif
@@ -251,8 +252,8 @@ void FileManagerTester ::appendFileSucceed_existingFile() {
     //================================================================
     // Case 2: 2 normal files appended, stored in existing file
     // create existing files
-    this->system("echo 'file1 text' > file1");
-    this->system("echo 'file2 text' > file2");
+    this->writeFile("file1", "file1 text\n");
+    this->writeFile("file2", "file2 text\n");
 #else
     FAIL();  // Commands not implemented for this OS
 #endif
@@ -294,7 +295,7 @@ void FileManagerTester ::fileSizeSucceed() {
     // Remove testing files, if they exist
     this->system("rm -rf file1");
 
-    this->system("echo 'file1 text' > file1");
+    this->writeFile("file1", "file1 text\n");
 #else
     FAIL();  // Commands not implemented for this OS
 #endif
@@ -327,11 +328,7 @@ void FileManagerTester ::calculateCrcSucceed() {
 
     // Remove and recreate the test file with deterministic content
     this->system("rm -f crc_test_file");
-    {
-        std::ofstream outFile(fileName, std::ios::binary);
-        ASSERT_TRUE(outFile.is_open());
-        outFile << "123456789";  // Payload with a well-known CRC32
-    }
+    this->writeFile(fileName, "123456789");  // Payload with a well-known CRC32
 
     // Compute expected CRC using the same file utility as the component
     Os::File crcFile;
@@ -777,20 +774,20 @@ void FileManagerTester ::listDirectoryWithSubdirs() {
     this->system("mkdir -p test_dir/emptydir");  // An empty directory
 
     // Create various files with different sizes in root directory
-    this->system("echo 'Small file content' > test_dir/file1.txt");
-    this->system("echo 'Medium sized file with more content than the first one' > test_dir/file2.txt");
+    this->writeFile("test_dir/file1.txt", "Small file content\n");
+    this->writeFile("test_dir/file2.txt", "Medium sized file with more content than the first one\n");
     this->system("dd if=/dev/zero bs=1K count=4 of=test_dir/binaryfile.dat 2>/dev/null");  // 4KB binary file
 
     // Create files in subdirectories
-    this->system("echo 'Subdir1 file 1' > test_dir/subdir1/sub1_file1.txt");
-    this->system("echo 'Subdir1 file 2' > test_dir/subdir1/sub1_file2.txt");
-    this->system("echo 'Nested1 file' > test_dir/subdir1/nested1/nested_file.txt");
+    this->writeFile("test_dir/subdir1/sub1_file1.txt", "Subdir1 file 1\n");
+    this->writeFile("test_dir/subdir1/sub1_file2.txt", "Subdir1 file 2\n");
+    this->writeFile("test_dir/subdir1/nested1/nested_file.txt", "Nested1 file\n");
 
-    this->system("echo 'Subdir2 file 1' > test_dir/subdir2/sub2_file1.txt");
-    this->system("echo 'Nested2 file' > test_dir/subdir2/nested2/nested_file.txt");
+    this->writeFile("test_dir/subdir2/sub2_file1.txt", "Subdir2 file 1\n");
+    this->writeFile("test_dir/subdir2/nested2/nested_file.txt", "Nested2 file\n");
 
-    this->system("echo 'Subdir3 file 1' > test_dir/subdir3/sub3_file1.txt");
-    this->system("echo 'Deep1 file' > test_dir/subdir3/nested3/deep1/deep_file.txt");
+    this->writeFile("test_dir/subdir3/sub3_file1.txt", "Subdir3 file 1\n");
+    this->writeFile("test_dir/subdir3/nested3/deep1/deep_file.txt", "Deep1 file\n");
 #else
     FAIL();  // Commands not implemented for this OS
 #endif
@@ -843,6 +840,16 @@ void FileManagerTester ::listDirectoryFail() {
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
+
+void FileManagerTester ::writeFile(const char* const fileName, const char* const content) {
+    Os::File file;
+    ASSERT_EQ(Os::File::OP_OK, file.open(fileName, Os::File::OPEN_CREATE, Os::File::OVERWRITE));
+    const FwSizeType expectedSize = static_cast<FwSizeType>(::strlen(content));
+    FwSizeType size = expectedSize;
+    ASSERT_EQ(Os::File::OP_OK, file.write(reinterpret_cast<const U8*>(content), size, Os::File::WAIT));
+    ASSERT_EQ(expectedSize, size);
+    file.close();
+}
 
 void FileManagerTester ::system(const char* const cmd) {
     const int status = ::system(cmd);
@@ -972,7 +979,7 @@ void FileManagerTester ::sandboxRejectsOutsidePaths() {
     ASSERT_NE(ret, 0) << "directory must not be created outside the sandbox";
 
     // MoveFile: contained source, escaping destination — nothing may happen
-    this->system("echo data > sandbox_ut/contained.txt");
+    this->writeFile("sandbox_ut/contained.txt", "data\n");
     this->clearHistory();
     this->moveFile("sandbox_ut/contained.txt", "../moved_out.txt");
     this->assertSandboxRejection(FileManager::OPCODE_MOVEFILE, "../moved_out.txt");
@@ -1047,7 +1054,7 @@ void FileManagerTester ::sandboxResolvesPaths() {
 
     // 'a/../inside.txt' resolves to '<sandbox>/inside.txt': contained, so it is accepted
     this->clearHistory();
-    this->system("echo hello > sandbox_res/inside.txt");
+    this->writeFile("sandbox_res/inside.txt", "hello\n");
     Fw::CmdStringArg sizeArg("sandbox_res/a/../inside.txt");
     this->sendCmd_FileSize(INSTANCE, CMD_SEQ, sizeArg);
     this->component.doDispatch();
@@ -1076,7 +1083,7 @@ void FileManagerTester ::sandboxOpenRootIsUnrestricted() {
     ASSERT_EQ(ret, 0);
 
     // FileSize at an arbitrary absolute path
-    this->system("echo -n '0123456789AB' > /tmp/fprime_sandbox_ut_open/file.txt");
+    this->writeFile("/tmp/fprime_sandbox_ut_open/file.txt", "0123456789AB");
     this->clearHistory();
     Fw::CmdStringArg sizeArg("/tmp/fprime_sandbox_ut_open/file.txt");
     this->sendCmd_FileSize(INSTANCE, CMD_SEQ, sizeArg);

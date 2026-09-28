@@ -167,6 +167,20 @@ void WasmSequencerTester ::disconnectCmdOut(FwIndexType portNum) {
     port.init();
 }
 
+void WasmSequencerTester ::disconnectSeqStartOut(FwIndexType portNum) {
+    Svc::OutputCmdSeqInPort& port = this->component.m_seqStartOut_OutputPort[portNum];
+    port.~OutputCmdSeqInPort();
+    new (&port) Svc::OutputCmdSeqInPort();
+    port.init();
+}
+
+void WasmSequencerTester ::disconnectSeqDoneOut(FwIndexType portNum) {
+    Fw::OutputCmdResponsePort& port = this->component.m_seqDoneOut_OutputPort[portNum];
+    port.~OutputCmdResponsePort();
+    new (&port) Fw::OutputCmdResponsePort();
+    port.init();
+}
+
 Svc::SeqArgs WasmSequencerTester ::makeSeqArgs(const U8* bytes, FwSizeType size) {
     Svc::SeqArgs args;
     Svc::SeqArgs::Type_of_buffer buffer = {};

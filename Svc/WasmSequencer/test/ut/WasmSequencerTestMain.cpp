@@ -204,10 +204,10 @@ TEST_F(WasmSequencerTester, LoadNamedModuleReady) {
 TEST_F(WasmSequencerTester, LoadStartModuleRespondsOk) {
     REQUIREMENT("WASM-SEQ-001");
     // A LOAD whose module carries a (running) Wasm start function drives
-    // STARTING -> startInvoked -> RUNNING and spins the start to completion. The
-    // load command must be answered when the start finishes and we settle in
-    // READY -- not left dangling (which previously also wedged the single load-cmd
-    // slot, tripping an assert on the next load).
+    // LOAD_START_CHECK -> invokeStart -> LOAD_START_INVOKE_CHECK -> LOAD_RUNNING_START
+    // and spins the start to completion. The load command must be answered when the
+    // start finishes and we settle in READY -- not left dangling (which previously
+    // also wedged the single load-cmd slot, tripping an assert on the next load).
     StagedAsset file_asset(*this, "start.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -526,7 +526,7 @@ TEST_F(WasmSequencerTester, RunExitNonZeroFails) {
     REQUIREMENT("WASM-SEQ-018");
     REQUIREMENT("WASM-SEQ-021");
     // exit.wasm calls fprime_v1.exit(1). A non-zero exit is a program failure,
-    // surfaced as a ProgramExited event (not a trap) with an EXECUTION_ERROR.
+    // surfaced as a SequenceExited event (not a trap) with an EXECUTION_ERROR.
     StagedAsset file_asset(*this, "exit.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -549,7 +549,7 @@ TEST_F(WasmSequencerTester, RunExitNonZeroFails) {
 TEST_F(WasmSequencerTester, RunPanicFails) {
     REQUIREMENT("WASM-SEQ-018");
     // panic.wasm calls fprime_v1.panic(7). A panic is a program failure, surfaced
-    // as a PanicOccurred event (not a trap).
+    // as a SequencePanic event (not a trap).
     StagedAsset file_asset(*this, "panic.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -566,7 +566,7 @@ TEST_F(WasmSequencerTester, RunPanicFails) {
 TEST_F(WasmSequencerTester, RunExitZeroSucceeds) {
     REQUIREMENT("WASM-SEQ-018");
     // exit0.wasm calls fprime_v1.exit(0). A zero exit code is a clean success:
-    // no trap, no ProgramExited event, and an OK response.
+    // no trap, no SequenceExited event, and an OK response.
     StagedAsset file_asset(*this, "exit0.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -584,8 +584,8 @@ TEST_F(WasmSequencerTester, RunStartTrapsToIdle) {
     REQUIREMENT("WASM-SEQ-018");
     REQUIREMENT("WASM-SEQ-021");
     // A module whose `start` function contains `unreachable`. The interpreter
-    // begins the start function (startInvoked -> RUNNING) and traps while
-    // spinning, surfacing as a SequenceTrap and returning to IDLE with an
+    // begins the start function (runEngine -> RUNNING_START_PENDING_MAIN) and traps
+    // while spinning, surfacing as a SequenceTrapped and returning to IDLE with an
     // EXECUTION_ERROR response.
     StagedAsset file_asset(*this, "start_trap.wasm");
     const Fw::String& file = file_asset.file();
@@ -610,11 +610,13 @@ TEST_F(WasmSequencerTester, RunStartOverflowTrapsToIdle) {
     REQUIREMENT("WASM-SEQ-018");
     REQUIREMENT("WASM-SEQ-021");
     // A module whose `start` function declares more locals than fit the guest
-    // stack. spacewasm_invoke_start fails at call setup (StackOverflow) and
-    // returns SPACEWASM_RUN_TRAP *directly* -- exercising the startError branch
-    // (STARTING -> invokeStartOfLastModule -> startError -> reportInvokeFailure).
-    // This is distinct from start_trap.wasm, whose start begins running
-    // (RUN_OUT_OF_FUEL -> startInvoked -> RUNNING) and only traps while spinning.
+    // stack. invokeStart's spacewasm_invoke fails at call setup with
+    // ERR_STACK_OVERFLOW rather than trapping at run time, exercising the
+    // start-invoke failure branch (START_CHECK_PENDING_MAIN -> invokeStart ->
+    // START_INVOKE_CHECK_PENDING_CHAIN -> reportModuleStartInvokeFailed).
+    // This is distinct from start_trap.wasm, whose start is set up successfully
+    // and begins running (runEngine -> RUNNING_START_PENDING_MAIN), only trapping
+    // while spinning.
     StagedAsset file_asset(*this, "start_overflow.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -622,9 +624,10 @@ TEST_F(WasmSequencerTester, RunStartOverflowTrapsToIdle) {
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    // reportModuleStartInvokeFailed fires; the exact status is not asserted
-    // because m_invokeStatus is not set on the start-invoke path.
     ASSERT_EVENTS_ModuleStartInvokeFailed_SIZE(1);
+    // invokeStart records the spacewasm_invoke status, which fails at call setup
+    // with ERR_STACK_OVERFLOW rather than trapping at run time.
+    ASSERT_EVENTS_ModuleStartInvokeFailed(0, WasmSequencer_Status::ERR_STACK_OVERFLOW);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 29, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 
@@ -785,11 +788,12 @@ TEST_F(WasmSequencerTester, WaitFromReadyRespondsImmediately) {
 TEST_F(WasmSequencerTester, WaitDuringLoadRespondsOnLoadComplete) {
     REQUIREMENT("WASM-SEQ-007");
     // A WAIT that queues while a LOAD is in flight must be answered when the load settles to
-    // READY. respond_noblock_OK is the LOAD's only completion action -- a LOAD never runs
-    // main, so respond_block_OK/respond_block_ERROR never fire for it -- so it must drain
-    // m_waiting. Previously it did not, orphaning the WAIT until an unrelated later sequence
-    // answered it. start.wasm has a start function, so a LOAD parks in RUNNING_START (running
-    // that start function): a busy state in which a WAIT queues rather than answering now.
+    // READY, so a second sequence engine can synchronize on the staged module being ready.
+    // respond_block_OK is the LOAD's settle-to-READY action on both LOAD paths (directly from
+    // LOAD_START_CHECK when the module has no start, or from LOAD_RUNNING_START once the start
+    // function finishes), and it drains m_waiting. start.wasm has a start function, so this
+    // LOAD parks in LOAD_RUNNING_START running it -- a busy state in which a WAIT queues
+    // rather than answering immediately.
     StagedAsset file_asset(*this, "start.wasm");
     const Fw::String& file = file_asset.file();
     this->sendCmd_LOAD(0, 60, file, Fw::CmdStringArg(""));
@@ -2442,8 +2446,9 @@ TEST_F(WasmSequencerTester, SeqCancelInDuringLoadDiverts) {
     REQUIREMENT("WASM-SEQ-010");
     REQUIREMENT("WASM-SEQ-021");
     // The seqCancelIn port latches a cancel during load like the CANCEL command. A
-    // port-sourced RUN cancelled before it runs emits no cmdResponse and neither
-    // seqStartOut nor seqDoneOut (the pair stays balanced, as on the load-failure path).
+    // port-sourced RUN cancelled before it runs emits no cmdResponse and no seqStartOut
+    // (it never started), but it must still report a done: the caller reserved a
+    // sequencer slot when it drove seqRunIn and only releases it on seqDoneOut.
     StagedAsset file_asset(*this, "empty.wasm");
     const Fw::String& file = file_asset.file();
 
@@ -2461,7 +2466,8 @@ TEST_F(WasmSequencerTester, SeqCancelInDuringLoadDiverts) {
     ASSERT_EVENTS_SequenceStarting_SIZE(0);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
     ASSERT_EQ(this->seqStartOutCount, 0u);
-    ASSERT_EQ(this->seqDoneOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::EXECUTION_ERROR);
     this->flushTelemetry();
     ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
 }
@@ -2670,7 +2676,9 @@ TEST_F(WasmSequencerTester, SeqRunInWhileRunningRejected) {
     REQUIREMENT("WASM-SEQ-024");
     // seqRunIn is only valid from IDLE or READY. A run request while already
     // running is rejected as BUSY (ControllerBusy for the PORT_RUN signal in the
-    // RUNNING_MAIN state) and leaves the run untouched.
+    // RUNNING_MAIN state) and leaves the run untouched. The rejection is still reported
+    // on seqDoneOut so the port caller releases the sequencer slot it reserved for the
+    // request that was turned away.
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     StagedAsset file_asset(*this, "loop.wasm");
@@ -2680,18 +2688,186 @@ TEST_F(WasmSequencerTester, SeqRunInWhileRunningRejected) {
 
     const U32 startsBefore = this->seqStartOutCount;
 
-    // The rejected call is handled asynchronously; dispatch it.
+    // The rejected call is handled asynchronously; dispatch one message at a time and
+    // stop as soon as the rejection lands. Pumping the whole queue would also run the
+    // original sequence to completion, and its own (correct) done report would mask the
+    // one the rejection owes.
     this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
-    this->dispatchAll();
+    const U32 bound = 100;
+    U32 iters = 0;
+    while (this->eventHistory_ControllerBusy->size() == 0 && iters < bound) {
+        this->dispatchOne();
+        iters++;
+    }
+    ASSERT_LT(iters, bound) << "the port request was never rejected";
 
     ASSERT_EVENTS_ControllerBusy_SIZE(1);
     ASSERT_EVENTS_ControllerBusy(0, WasmSequencer_SignalSource::PORT_RUN, ControllerState::RUNNING_MAIN);
     // No new start was reported; the original run is still active.
     ASSERT_EQ(this->seqStartOutCount, startsBefore);
+    // ...but the rejected request was answered, carrying the BUSY it was rejected with.
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::BUSY);
 
     // Clean up: cancel the still-running sequence.
     this->sendCmd_CANCEL(0, 208);
     this->dispatchUntilControllerState(ControllerState::IDLE);
+}
+
+TEST_F(WasmSequencerTester, SeqRunInLoadFailureEmitsSeqDone) {
+    REQUIREMENT("WASM-SEQ-025");
+    // A port-driven RUN whose file cannot be opened fails in LOADING_TO_RUN before it
+    // ever starts, so there is no seqStartOut. It must still report a done: the caller
+    // reserved a sequencer slot when it drove seqRunIn and only releases it on
+    // seqDoneOut, so an unreported load failure retires that sequencer permanently.
+    this->removeFile("does_not_exist.wasm");
+
+    this->invoke_to_seqRunIn(0, Fw::String("does_not_exist.wasm"), Svc::SeqArgs());
+    // The run both starts and ends in IDLE, so pump the queue rather than dispatching
+    // "until IDLE" (which would be an immediate no-op).
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    ASSERT_EQ(this->seqStartOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::EXECUTION_ERROR);
+    // The request came from a port, so nothing is owed on cmdResponse.
+    ASSERT_CMD_RESPONSE_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, SeqRunInNoMainEmitsSeqDone) {
+    REQUIREMENT("WASM-SEQ-025");
+    // A port-driven RUN of a module that loads cleanly but exports no `main` is rejected
+    // at the entrypoint check, which settles in READY (the store is valid) rather than
+    // IDLE. That branch must report a done too.
+    StagedAsset file_asset(*this, "no_main.wasm");
+    const Fw::String& file = file_asset.file();
+
+    this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_InvalidModuleEntrypoint_SIZE(1);
+    ASSERT_EQ(this->seqStartOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, SeqRunInStartInvokeFailureEmitsSeqDone) {
+    REQUIREMENT("WASM-SEQ-025");
+    // A port-driven RUN whose `start` function fails at call setup (more locals than fit
+    // the guest stack) never reaches main, so no seqStartOut is emitted. The done report
+    // still has to go out.
+    StagedAsset file_asset(*this, "start_overflow.wasm");
+    const Fw::String& file = file_asset.file();
+
+    this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_ModuleStartInvokeFailed_SIZE(1);
+    ASSERT_EQ(this->seqStartOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, SeqRunInStartTrapEmitsSeqDone) {
+    REQUIREMENT("WASM-SEQ-025");
+    // A port-driven RUN whose `start` function begins running and then traps fails in
+    // RUNNING_START_PENDING_MAIN -- the engine ran, but main never did, so again no
+    // seqStartOut. This is the one pre-start failure that goes through the interpreter.
+    StagedAsset file_asset(*this, "start_trap.wasm");
+    const Fw::String& file = file_asset.file();
+
+    this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_SequenceTrapped(0, 0, WasmSequencer_SequencePhase::START, WasmSequencer_TrapReason::UNREACHABLE);
+    ASSERT_EQ(this->seqStartOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, SeqRunInMainInvokeFailureEmitsSeqDone) {
+    REQUIREMENT("WASM-SEQ-025");
+    // A port-driven RUN whose `main` has a valid signature but fails at call setup takes
+    // the last pre-start failure branch (MAIN_INVOKE_CHECK). reportModuleStarted sits on
+    // the other side of that choice, so there is no seqStartOut -- but there is a done.
+    StagedAsset file_asset(*this, "main_overflow.wasm");
+    const Fw::String& file = file_asset.file();
+
+    this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_ModuleMainInvokeFailed_SIZE(1);
+    ASSERT_EQ(this->seqStartOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, RunCommandFailureBeforeStartEmitsNoSeqDone) {
+    REQUIREMENT("WASM-SEQ-025");
+    // The counterpart to the seqRunIn tests above: a RUN *command* that fails before it
+    // starts reports neither port. Its requester is answered on cmdResponse and holds no
+    // sequencer reservation to unwind, so an unpaired seqDoneOut would only draw an
+    // UnknownSequenceFinished warning from a connected dispatcher.
+    this->removeFile("does_not_exist.wasm");
+
+    this->sendCmd_RUN(0, 209, Fw::CmdStringArg("does_not_exist.wasm"), BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 209, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EQ(this->seqStartOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 0u);
+}
+
+TEST_F(WasmSequencerTester, RunReportsSkippedWhenPortsUnconnected) {
+    REQUIREMENT("WASM-SEQ-025");
+    // seqStartOut and seqDoneOut are plain (not-required) output ports, so a deployment
+    // that wires no dispatcher leaves them unconnected. Every report site must check
+    // isConnected first; without those guards the generated invoker FW_ASSERTs and a
+    // sequence run takes the whole deployment down. Covers the reportModuleStarted and
+    // reportSeqDone sites, which a run to completion drives.
+    this->disconnectSeqStartOut(0);
+    this->disconnectSeqDoneOut(0);
+
+    StagedAsset file_asset(*this, "empty.wasm");
+    const Fw::String& file = file_asset.file();
+    this->sendCmd_RUN(0, 210, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    // The run completes normally; the reports are simply skipped.
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 210, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->seqStartOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 0u);
+}
+
+TEST_F(WasmSequencerTester, PortRunAbortReportSkippedWhenSeqDoneOutUnconnected) {
+    REQUIREMENT("WASM-SEQ-025");
+    // The reportSeqAborted counterpart of RunReportsSkippedWhenPortsUnconnected: a
+    // port-driven RUN that fails before it starts owes a done report, but must still
+    // check isConnected before making it. A caller can drive seqRunIn while leaving
+    // seqDoneOut unwired, and the abort path must not FW_ASSERT.
+    this->disconnectSeqDoneOut(0);
+    this->removeFile("does_not_exist.wasm");
+
+    this->invoke_to_seqRunIn(0, Fw::String("does_not_exist.wasm"), Svc::SeqArgs());
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    ASSERT_EQ(this->seqDoneOutCount, 0u);
 }
 
 TEST_F(WasmSequencerTester, SeqCancelInCancelsRunningSequence) {

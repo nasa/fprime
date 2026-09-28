@@ -38,7 +38,8 @@ constant FW_LOG_STRING_MAX_SIZE = 200
 @ Specifies the size of the buffer that contains the serialized telemetry value
 constant FW_TLM_BUFFER_MAX_SIZE = FW_COM_BUFFER_MAX_SIZE - sizeof(FwChanIdType) - sizeof(FwPacketDescriptorType)
 
-@ Specifies the size of the buffer that contains the serialized telemetry value
+@ Specifies the size of the buffer that contains the serialized arguments of a
+@ sequencer statement; sized to match a command argument buffer
 constant FW_STATEMENT_ARG_BUFFER_MAX_SIZE = FW_CMD_ARG_BUFFER_MAX_SIZE
 
 @ Specifies the maximum size of a string in a telemetry channel

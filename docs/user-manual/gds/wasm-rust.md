@@ -57,8 +57,8 @@ pub fn main() {
     // Fail the sequence if a dispatched command does not respond OK
     set_fail_mode(FailMode::Checked);
 
-    // Do not fail the sequence. Pass the return to 
-    // set_fail_mode(FailMode::Checked);
+    // Or let responses bubble up to the caller instead of failing the sequence:
+    // set_fail_mode(FailMode::Permissive);
 
     message(EventSeverity::ActivityHigh, "starting safing");
 

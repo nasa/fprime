@@ -21,7 +21,10 @@ enum {
 };
 
 enum {
-    TELEM_ID_FILTER_SIZE = 25,  //!< Size of telemetry ID filter
+    //! Size of the event ID filter. Despite the name, this sizes
+    //! Svc::EventManager's filtered *event* ID set (see m_filteredIDs); the
+    //! name is kept for backwards compatibility with existing configurations.
+    TELEM_ID_FILTER_SIZE = 25,
 };
 
 #endif /* Config_EventManagerCfg_HPP_ */

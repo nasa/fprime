@@ -78,6 +78,10 @@ TEST_F(PosixTaskScheduling, NonRealtimeTaskUsesSchedOther) {
 // When this thread can itself run under SCHED_RR, an inheriting task would also be SCHED_RR; the sentinel must
 // still yield SCHED_OTHER. Skipped when realtime scheduling is not permitted (the common CI case).
 TEST_F(PosixTaskScheduling, NonRealtimeTaskUsesSchedOtherFromRealtimeCaller) {
+#ifdef __APPLE__
+    // Darwin threads do not inherit the caller's SCHED_RR policy, so the inherited-vs-sentinel contrast cannot be shown
+    GTEST_SKIP() << "Default-priority tasks do not inherit the caller's SCHED_RR policy on Darwin";
+#endif
     int original_policy = -1;
     sched_param original_param;
     original_param.sched_priority = -1;

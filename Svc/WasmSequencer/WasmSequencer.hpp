@@ -925,7 +925,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     bool m_heapPoisoned;
 
     //! Pool backing the per-load guest linear-memory allocator; a simple
-    //! bump allocator (guest modules are compiled with memory.grow disabled).
+    //! bump allocator. `memory.grow` is enabled, but a bump allocator can only
+    //! service growth at the tail of the pool; see `guestRealloc`.
     U8* m_guestPool;
 
     //! Current bump offset into `m_guestPool`.
@@ -1156,6 +1157,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! (respond_block_OK and respond_block_ERROR, which send the final command
     //! response) can call it unconditionally.
     void reportSeqDone(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response);
+
+    //! Report that a RUN ended before it ever started running on seqDoneOut (if
+    //! connected) with the given response: rejected as BUSY, failed to load, failed to
+    //! resolve an entrypoint, or cancelled while loading.
+    void reportSeqAborted(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response);
 
     //! Set a global to a value given the name of the module, global export name and value
     spacewasm_status_t setGlobal(const Fw::StringBase& moduleName, const Fw::StringBase& name, spacewasm_value_t value);

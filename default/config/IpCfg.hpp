@@ -22,7 +22,7 @@
 
 enum IpCfg {
     SOCKET_SEND_TIMEOUT_SECONDS = 1,       // Seconds component of timeout to an individual send
-    SOCKET_SEND_TIMEOUT_MICROSECONDS = 0,  // Milliseconds component of timeout to an individual send
+    SOCKET_SEND_TIMEOUT_MICROSECONDS = 0,  // Microseconds component of timeout to an individual send
     SOCKET_IP_SEND_FLAGS = 0,              // send, sendto FLAGS argument
     SOCKET_IP_RECV_FLAGS = 0,              // recv FLAGS argument
     SOCKET_MAX_ITERATIONS = 0xFFFF,        // Maximum send/recv attempts before an error is returned
