@@ -11,8 +11,8 @@ RateGroupDriver::RateGroupDriver(const char* compName)
     : RateGroupDriverComponentBase(compName), m_ticks(0), m_rollover(1), m_configured(false) {}
 
 FwSizeType RateGroupDriver::gcd(FwSizeType a, FwSizeType b) {
-    const FwIndexType maxIterations = static_cast<FwIndexType>(sizeof(FwSizeType) * 8 * 2);
-    for (FwIndexType i = 0; (i < maxIterations) && (b != 0); i++) {
+    const FwSizeType maxIterations = static_cast<FwSizeType>(std::numeric_limits<FwSizeType>::digits) * 2;
+    for (FwSizeType i = 0; (i < maxIterations) && (b != 0); i++) {
         FwSizeType temp = b;
         b = a % b;
         a = temp;
