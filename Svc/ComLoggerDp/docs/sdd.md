@@ -223,47 +223,11 @@ If `flushTimeout` is configured > 0 during `configure()`:
 2. `stopRecordingInternal()` checks for partial container
 3. If partial container exists, send it via `productSendOut`
 4. Disable logging and reset auto-flush counter
-5. Log `ComDpStopped` event with count of partial containers sent
+5. Log `ComDpStopped` event indicating whether a partial container was sent
 
 ## 4. Unit Tests
 
-The component includes comprehensive unit tests covering all functionality:
-
-| Test | Description | Requirements Validated |
-|---|---|---|
-| `ComLogging` | Tests basic Com buffer logging with container allocation and sending when full | SVC-COMLOGGERDP-001 |
-| `StartComDp` | Tests `StartComDp` command with valid and invalid parameters, verifies event logging including `StartRecordingFailed` event on validation error | SVC-COMLOGGER-002 |
-| `StopComDp` | Tests `StopComDp` command and verifies partial container is sent with correct `ComDpStopped` event | SVC-COMLOGGER-003 |
-| `UpdatePriority` | Tests `UpdatePriority` command and verifies priority is updated on active container with `PriorityUpdated` event | SVC-COMLOGGER-004 |
-| `Ping` | Tests ping functionality via `pingIn` port | - |
-| `ContainerFill` | Tests that containers are sent at the correct boundary and partial containers are not sent prematurely | SVC-COMLOGGERDP-001 |
-| `AllocationFailure` | Tests error handling when container allocation fails, verifies `DpBufferError` event with correct size (including sentry overhead) | - |
-| `PortValidationFailure` | Tests validation failure via `startRecordingIn` port with invalid parameters, verifies `StartRecordingFailed` event is logged | SVC-COMLOGGER-002 |
-| `Telemetry` | Tests that `LoggingEnabled` and `NumBuffersLogged` telemetry is written correctly via `schedIn` | - |
-| `PriorityPreserved` | Tests that priority from `StartComDp` is preserved and applied even when starting from disabled state | SVC-COMLOGGER-002, SVC-COMLOGGER-004 |
-| `StartRecordingPort` | Tests starting recording via `startRecordingIn` port with separate parameters (no longer encoded) | SVC-COMLOGGER-002 |
-| `StopRecordingPort` | Tests stopping recording via `stopRecordingIn` port | SVC-COMLOGGER-003 |
-| `ClearCounters` | Tests `CLEAR_COUNTERS` command, verifies `NumBuffersLogged` and `NumBuffersDropped` are reset and `DpBufferError` throttle is cleared | - |
-| `BufferOverflow` | Tests that large buffers are handled correctly and serialization status is checked | - |
-| `DpBufferErrorThrottling` | Tests that `DpBufferError` event is properly throttled and that `CLEAR_COUNTERS` resets the throttle | SVC-COMLOGGER-005 |
-| `UpdatePriorityNotRecording` | Tests `UpdatePriority` command when not recording, verifies priority is stored for future use | SVC-COMLOGGER-004 |
-| `UpdatePriorityNoContainer` | Tests `UpdatePriority` command when recording but no container allocated yet, verifies new container gets updated priority | SVC-COMLOGGER-004 |
-| `DataProductFormat` | Tests that data products contain correct sentry values and ComBuffer structure | - |
-| `ConfigureEnabled` | Tests `configure()` with enabled=true, verifies logging starts and parameters are validated | SVC-COMLOGGER-005 |
-| `ReconfigureWithPartialContainer` | Tests reconfiguring while recording with partial container, verifies partial container is sent before applying new configuration | - |
-| `PacketTooLarge` | Tests allocation failure when trying to get a new container | - |
-| `ContainerOverflowRetry` | Tests normal operation with large packets and container management | - |
-| `SerializationFailureCounter` | Tests CLEAR_COUNTERS command functionality (legacy test name retained for continuity) | - |
-| `AutoFlush` | Tests that partial container is auto-flushed after configured timeout with no new packets | - |
-| `AutoFlushResetOnPacket` | Tests that auto-flush counter resets when a packet arrives, restarting the timeout period | - |
-| `AutoFlushDisabled` | Tests that auto-flush does not occur when flushTimeout=0 (disabled), verifying `m_flushTimeout > 0` guard works correctly | - |
-
-All tests verify:
-- Correct port behavior
-- Event generation
-- Telemetry updates
-- Data product container allocation and sending
-- Memory cleanup (no leaks detected by AddressSanitizer)
+Unit tests are located in `test/ut/`. Each test case that validates a requirement records it with the `REQUIREMENT` macro from `Fw/Test/UnitTest.hpp`, so requirement traceability is derived from the test code.
 
 ## 5. Usage
 
