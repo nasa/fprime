@@ -42,6 +42,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/NoRecordsFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadTimeBaseFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadTimeContextFile.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadUSecFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/Buffers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/DataAfterRecordsFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/EmptyFile.cpp"
