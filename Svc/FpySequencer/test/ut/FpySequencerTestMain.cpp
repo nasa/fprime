@@ -2573,6 +2573,8 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
     ASSERT_from_seqDoneOut_SIZE(1);
     ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->sequencesSucceeded, 1);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->sequencesFailed, 0);
     this->clearHistory();
 
     sendCmd_RUN(0, 0, Fw::String("test.bin"), BlockState::NO_BLOCK);
@@ -2588,6 +2590,8 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_from_seqDoneOut_SIZE(1);
     ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->sequencesSucceeded, 2);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->sequencesFailed, 0);
 
     this->clearHistory();
 
@@ -2601,6 +2605,8 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_from_seqDoneOut_SIZE(1);
     ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->sequencesSucceeded, 2);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->sequencesFailed, 1);
 
     this->clearHistory();
 
@@ -4197,6 +4203,8 @@ TEST_F(FpySequencerTester, cmdResponse) {
     // should fail seq
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->sequencesSucceeded, 1);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->sequencesFailed, 1);
     clearHistory();
 
     tester_set_m_sequencesStarted(255);
