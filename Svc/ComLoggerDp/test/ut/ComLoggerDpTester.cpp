@@ -93,10 +93,10 @@ void ComLoggerDpTester::testStopComDp() {
     ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STOPCOMDP, 1, Fw::CmdResponse::OK);
     ASSERT_PRODUCT_SEND_SIZE(1);
 
-    // Verify ComDpStopped event was emitted with correct numSent
+    // Verify ComDpStopped event was emitted with correct partial container status
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_ComDpStopped_SIZE(1);
-    ASSERT_EVENTS_ComDpStopped(0, 1);  // 1 partial container sent
+    ASSERT_EVENTS_ComDpStopped(0, ComLoggerDp_PartialContainerStatus::SENT);
 }
 
 void ComLoggerDpTester::testUpdatePriority() {
@@ -187,9 +187,7 @@ void ComLoggerDpTester::testAllocationFailure() {
     ASSERT_EVENTS_DpBufferError_SIZE(1);
     // Calculate expected container size: packetsPerContainer=2, each packet can hold FW_COM_BUFFER_MAX_SIZE + sentry
     // Note: This is the data size requested from dpGet, not the total container size
-    const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
-    const FwSizeType expectedSize =
-        2 * ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
+    const FwSizeType expectedSize = 2 * ComLoggerDp::RECORD_SIZE;
     ASSERT_EVENTS_DpBufferError(0, expectedSize);
 
     // Should not have sent a container
@@ -282,7 +280,7 @@ void ComLoggerDpTester::testTelemetry() {
     this->sendCmd_StopComDp(0, 1);
     this->component.doDispatch();
     ASSERT_EVENTS_ComDpStopped_SIZE(1);
-    ASSERT_EVENTS_ComDpStopped(0, 0);  // no partial container to send
+    ASSERT_EVENTS_ComDpStopped(0, ComLoggerDp_PartialContainerStatus::NOT_SENT);
     this->clearHistory();
 
     // Call schedIn again
@@ -374,7 +372,7 @@ void ComLoggerDpTester::testStopRecordingPort() {
     // Verify stop event was logged
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_ComDpStopped_SIZE(1);
-    ASSERT_EVENTS_ComDpStopped(0, 1);  // 1 partial container sent
+    ASSERT_EVENTS_ComDpStopped(0, ComLoggerDp_PartialContainerStatus::SENT);
 }
 
 void ComLoggerDpTester::testClearCounters() {
@@ -478,9 +476,7 @@ void ComLoggerDpTester::testDpBufferErrorThrottling() {
     // Should only have ONE DpBufferError event due to throttling
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpBufferError_SIZE(1);
-    const FwSizeType sentrySize = sizeof(ComLoggerDpSentry);
-    const FwSizeType expectedSize =
-        2 * ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sentrySize);
+    const FwSizeType expectedSize = 2 * ComLoggerDp::RECORD_SIZE;
     ASSERT_EVENTS_DpBufferError(0, expectedSize);
 
     // Clear counters should clear the throttle
@@ -555,7 +551,7 @@ void ComLoggerDpTester::testUpdatePriorityNoContainer() {
 // Helper functions
 // ----------------------------------------------------------------------
 
-void ComLoggerDpTester::startLoggingAndClearHistory(U32 packetsPerContainer, FwDpPriorityType priority) {
+void ComLoggerDpTester::startLoggingAndClearHistory(FwSizeType packetsPerContainer, FwDpPriorityType priority) {
     this->sendCmd_StartComDp(0, 0, packetsPerContainer, priority);
     this->component.doDispatch();
     this->clearHistory();
@@ -816,8 +812,7 @@ void ComLoggerDpTester::testPacketTooLarge() {
     // Should have generated DpBufferError event for the dropped buffer
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpBufferError_SIZE(1);
-    ASSERT_EVENTS_DpBufferError(
-        0, ComLoggerDp::SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry)));
+    ASSERT_EVENTS_DpBufferError(0, ComLoggerDp::RECORD_SIZE);
 
     // Buffer should be counted as dropped
     this->clearHistory();
@@ -1018,8 +1013,9 @@ void ComLoggerDpTester::testAutoFlushDisabled() {
 
 void ComLoggerDpTester::testPacketsPerContainerTooLarge() {
     // Calculate max packets per container (same formula as in ComLoggerDp.cpp)
-    constexpr U32 MAX_PACKETS = static_cast<U32>((std::numeric_limits<U32>::max() - Fw::DpContainer::MIN_PACKET_SIZE) /
-                                                 ComLoggerDp::RECORD_SIZE);
+    constexpr FwSizeType MAX_PACKETS =
+        (static_cast<FwSizeType>(std::numeric_limits<U32>::max()) - Fw::DpContainer::MIN_PACKET_SIZE) /
+        ComLoggerDp::RECORD_SIZE;
     // Try to start with one more than max - should fail validation
     this->sendCmd_StartComDp(0, 0, MAX_PACKETS + 1, 10);
     this->component.doDispatch();
@@ -1046,9 +1042,9 @@ void ComLoggerDpTester::testStopWhenAlreadyStopped() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, ComLoggerDp::OPCODE_STOPCOMDP, 0, Fw::CmdResponse::OK);
 
-    // Event should show 0 partial containers sent
+    // Event should show no partial container sent
     ASSERT_EVENTS_ComDpStopped_SIZE(1);
-    ASSERT_EVENTS_ComDpStopped(0, 0);
+    ASSERT_EVENTS_ComDpStopped(0, ComLoggerDp_PartialContainerStatus::NOT_SENT);
 }
 
 void ComLoggerDpTester::testComBufferWhenDisabled() {

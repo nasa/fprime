@@ -57,12 +57,22 @@ module Svc {
     product send port productSendOut
 
     # ----------------------------------------------------------------------
+    # Types
+    # ----------------------------------------------------------------------
+
+    @ Whether a partial container was sent when recording stopped
+    enum PartialContainerStatus : U8 {
+      NOT_SENT = 0 @< No partial container was pending
+      SENT = 1 @< A partial container was sent
+    }
+
+    # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------
 
     @ Starts recording ComBuffers at the specified priority
     async command StartComDp (
-        packetsPerContainer: U32
+        packetsPerContainer: FwSizeType
         $priority: FwDpPriorityType
     ) \
     opcode 0x00
@@ -95,19 +105,19 @@ module Svc {
     throttle DpBufferErrorThrottle
 
     @ Started recording Com buffers
-    event ComDpStarted($packetsPerContainer: U32) \
+    event ComDpStarted($packetsPerContainer: FwSizeType) \
     severity activity high \
     id 0x01 \
     format "Started Com DP logging: {} packets per container"
 
     @ Stopped recording Com buffers
-    event ComDpStopped($numSent: U32) \
+    event ComDpStopped(partialContainer: PartialContainerStatus) \
     severity activity high \
     id 0x02 \
-    format "Stopped Com DP logging: sent {} partial container"
+    format "Stopped Com DP logging: partial container {}"
 
     @ Updated data product priority
-    event PriorityUpdated($priority: U32) \
+    event PriorityUpdated($priority: FwDpPriorityType) \
     severity activity low \
     id 0x03 \
     format "Updated Com DP priority to {}"
@@ -120,7 +130,7 @@ module Svc {
 
     @ Failed to start recording due to invalid configuration
     event StartRecordingFailed(
-        $packetsPerContainer: U32 @< The invalid packets per container value
+        $packetsPerContainer: FwSizeType @< The invalid packets per container value
     ) \
     severity warning low \
     id 0x05 \

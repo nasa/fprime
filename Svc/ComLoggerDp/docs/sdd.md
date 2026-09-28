@@ -39,7 +39,7 @@ The component uses a stateful design that:
 | `comIn` | `Fw.Com` | Async port receiving Com buffers to be logged. Queue-full policy is `drop`: when the component queue is full, incoming buffers are discarded with no event; the cumulative count is reported in `NumQueueDrops` on the next `schedIn` cycle and is not reset by `CLEAR_COUNTERS`. Size the instance queue depth for the largest expected com burst between component task executions |
 | `pingIn` | `Svc.Ping` | Async port for health ping requests |
 | `schedIn` | `Svc.Sched` | Async port for periodic telemetry updates |
-| `startRecordingIn` | `Svc.ComLoggerStart` | Async port to start recording via port interface. Parameters: `packetsPerContainer` (U32), `priority` (FwDpPriorityType). Logs `StartRecordingFailed` event on validation failure. |
+| `startRecordingIn` | `Svc.ComLoggerStart` | Async port to start recording via port interface. Parameters: `packetsPerContainer` (FwSizeType), `priority` (FwDpPriorityType). Logs `StartRecordingFailed` event on validation failure. |
 | `stopRecordingIn` | `Svc.ComLoggerStop` | Async port to stop recording via port interface |
 | `cmdIn` | Command receive | Standard command receive port |
 
@@ -63,12 +63,12 @@ The component uses a stateful design that:
 |---|---|---|---|
 | `m_enabled` | `bool` | `false` | Whether data product logging is currently active |
 | `m_container` | `DpContainer` | - | Current data product container being filled |
-| `m_packetsPerContainer` | `U32` | `0` | Target number of packets per container |
-| `m_currentPacketCount` | `U32` | `0` | Current count of packets in the active container |
+| `m_packetsPerContainer` | `FwSizeType` | `0` | Target number of packets per container |
+| `m_currentPacketCount` | `FwSizeType` | `0` | Current count of packets in the active container |
 | `m_numBuffersLogged` | `U32` | `0` | Total number of buffers logged since initialization |
 | `m_numBuffersDropped` | `U32` | `0` | Number of buffers dropped due to allocation failure |
 | `m_priority` | `FwDpPriorityType` | `5` | Priority for data product containers |
-| `m_recordBuffer` | `U8[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)]` | - | Buffer for building records with sentry value followed by ComBuffer data |
+| `m_recordBuffer` | `U8[MAX_RECORD_DATA_SIZE]` | - | Buffer for building records with sentry value followed by ComBuffer data |
 | `m_schedCallsSinceLastPacket` | `U32` | `0` | Counter for schedIn calls since last packet received (used for auto-flush) |
 | `m_flushTimeout` | `U32` | `0` | Number of schedIn calls without packets before auto-flush (0 = disabled) |
 
@@ -87,7 +87,7 @@ These constants can be overridden in deployment-specific configuration files to 
 
 ### 3.5 Initialization
 
-The component requires calling `configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority, U32 flushTimeout)` during initialization to set the initial state:
+The component requires calling `configure(bool enabled, FwSizeType packetsPerContainer, FwDpPriorityType priority, U32 flushTimeout)` during initialization to set the initial state:
 
 - `enabled`: Whether to enable logging immediately
 - `packetsPerContainer`: Number of packets per container (validated > 0 if enabled)
@@ -100,9 +100,9 @@ If `enabled` is `true`, the function validates `packetsPerContainer` exactly as 
 
 | Command | Opcode | Parameters | Description |
 |---|---|---|---|
-| `StartComDp` | 0x00 | `packetsPerContainer: U32`<br>`priority: FwDpPriorityType` | Starts recording Com buffers into data products with the specified configuration. Validates that `packetsPerContainer > 0` and that the resulting container size fits in a `U32` (`packetsPerContainer <= (U32 max - Fw::DpContainer::MIN_PACKET_SIZE) / SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry))`). If validation fails, logs `StartRecordingFailed` event and returns `VALIDATION_ERROR`. If recording is already active with a partial container, sends the partial container before reconfiguring. Logs `ComDpStarted` event on success. |
+| `StartComDp` | 0x00 | `packetsPerContainer: FwSizeType`<br>`priority: FwDpPriorityType` | Starts recording Com buffers into data products with the specified configuration. Validates that `packetsPerContainer > 0` and that the resulting container size fits in a `U32` (`packetsPerContainer <= (U32 max - Fw::DpContainer::MIN_PACKET_SIZE) / RECORD_SIZE`, where `RECORD_SIZE = SIZE_OF_ComBufferRecord_RECORD(MAX_RECORD_DATA_SIZE)` and `MAX_RECORD_DATA_SIZE = FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry)`). If validation fails, logs `StartRecordingFailed` event and returns `VALIDATION_ERROR`. If recording is already active with a partial container, sends the partial container before reconfiguring. Logs `ComDpStarted` event on success. |
 | `UpdatePriority` | 0x01 | `priority: FwDpPriorityType` | Updates the priority of the currently active container (if any) and stores the priority for future containers. Logs `PriorityUpdated` event. |
-| `StopComDp` | 0x02 | None | Stops recording and sends any partial container. Logs `ComDpStopped` event with count of partial containers sent. |
+| `StopComDp` | 0x02 | None | Stops recording and sends any partial container. Logs `ComDpStopped` event indicating whether a partial container was sent. |
 | `CLEAR_COUNTERS` | 0x03 | None | Clears the `NumBuffersLogged` and `NumBuffersDropped` telemetry counters to 0 and resets the `DpBufferError` event throttle. Logs `CountersCleared` event. |
 
 ### 3.6 Events
@@ -110,11 +110,11 @@ If `enabled` is `true`, the function validates `packetsPerContainer` exactly as 
 | Event | ID | Severity | Parameters | Throttle | Description |
 |---|---|---|---|---|---|
 | `DpBufferError` | 0x00 | WARNING_HI | `size: U32` | `DpBufferErrorThrottle` (default: 1) | Error getting data product buffer of the requested size |
-| `ComDpStarted` | 0x01 | ACTIVITY_HI | `packetsPerContainer: U32` | None | Recording started with specified configuration |
-| `ComDpStopped` | 0x02 | ACTIVITY_HI | `numSent: U32` | None | Recording stopped, partial container sent if any |
-| `PriorityUpdated` | 0x03 | ACTIVITY_LO | `priority: U32` | None | Data product priority updated |
+| `ComDpStarted` | 0x01 | ACTIVITY_HI | `packetsPerContainer: FwSizeType` | None | Recording started with specified configuration |
+| `ComDpStopped` | 0x02 | ACTIVITY_HI | `partialContainer: PartialContainerStatus` | None | Recording stopped; `SENT` if a partial container was sent, `NOT_SENT` otherwise |
+| `PriorityUpdated` | 0x03 | ACTIVITY_LO | `priority: FwDpPriorityType` | None | Data product priority updated |
 | `CountersCleared` | 0x04 | ACTIVITY_LO | None | None | Counters and throttles cleared |
-| `StartRecordingFailed` | 0x05 | WARNING_LO | `packetsPerContainer: U32` | None | Failed to start recording due to invalid configuration (`packetsPerContainer` is 0 or exceeds the container-size limit given for `StartComDp`) |
+| `StartRecordingFailed` | 0x05 | WARNING_LO | `packetsPerContainer: FwSizeType` | None | Failed to start recording due to invalid configuration (`packetsPerContainer` is 0 or exceeds the container-size limit given for `StartComDp`) |
 
 ### 3.7 Telemetry
 
@@ -147,12 +147,12 @@ Telemetry is written periodically when the `schedIn` port is invoked (typically 
 
 The component uses private helper functions to share logic between command handlers and port handlers:
 
-- `startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority)`: Validates parameters, stores configuration, enables logging, and logs event. If recording is already active with a partial container, sends the partial container before reconfiguring. On validation failure, disables logging and returns `false`. Returns `true` on success.
-- `stopRecordingInternal()`: Sends any partial container, disables logging, logs event, and returns the number of partial containers sent (0 or 1).
+- `startRecordingInternal(FwSizeType packetsPerContainer, FwDpPriorityType priority)`: Validates parameters, stores configuration, enables logging, and logs event. If recording is already active with a partial container, sends the partial container before reconfiguring. On validation failure, disables logging and returns `Fw::Success::FAILURE`. Returns `Fw::Success::SUCCESS` on success.
+- `stopRecordingInternal()`: Sends any partial container, disables logging, logs event, and returns a `PartialContainerStatus` indicating whether a partial container was sent.
 - `handleBufferDrop(U32 size)`: Logs `DpBufferError` event (with throttling) and increments `m_numBuffersDropped` counter. Called when a buffer must be dropped due to allocation failure.
-- `allocateAndSetupContainer()`: Allocates a new data product container with size calculated to hold `m_packetsPerContainer` records (each with sentry + ComBuffer data), sets the priority to `m_priority`, and returns `true` on success. On allocation failure, calls `handleBufferDrop()` and returns `false`.
+- `allocateAndSetupContainer()`: Allocates a new data product container with size calculated to hold `m_packetsPerContainer` records (each with sentry + ComBuffer data), sets the priority to `m_priority`, and returns `Fw::Success::SUCCESS` on success. On allocation failure, calls `handleBufferDrop()` and returns `Fw::Success::FAILURE`.
 - `serializePacket(const U8* dataPtr, FwSizeType dataSize)`: Builds a record with sentry value followed by ComBuffer data in `m_recordBuffer`, then serializes it into the current container. Uses assertions to ensure serialization succeeds (containers are pre-sized correctly).
-- `sendContainerIfNonEmpty()`: Sends the current container if logging is enabled and it has any packets via `productSendOut` and resets `m_currentPacketCount` to 0. Handles both full and partial containers. Note that `dpSend()` invalidates the container; a new one will be allocated when the next packet arrives.
+- `sendContainerIfNonEmpty()`: Sends the current container if logging is enabled and it has any packets via `productSendOut`, resets `m_currentPacketCount` to 0, and returns a `PartialContainerStatus` indicating whether a container was sent. Handles both full and partial containers. Note that `dpSend()` invalidates the container; a new one will be allocated when the next packet arrives.
 - `finalizeContainer()`: Delegates to `sendContainerIfNonEmpty()` to send the current container.
 
 This design allows both command-based and port-based control to use the same implementation, provides consistent error handling across different failure modes, and encapsulates the complexity of sentry value handling and container management.
@@ -362,7 +362,7 @@ The component can also be controlled via ports for integration with autonomous f
 
 ```cpp
 // Start recording with separate parameters
-U32 packetsPerContainer = 100;
+FwSizeType packetsPerContainer = 100;
 FwDpPriorityType priority = 5;
 comLogger.get_startRecordingIn_InputPort(0)->invoke(packetsPerContainer, priority);
 

@@ -25,9 +25,11 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     // Public interface
     // ----------------------------------------------------------------------
 
-    //! Serialized size of one ComBufferRecord holding a sentry plus a maximum-size ComBuffer
-    static constexpr FwSizeType RECORD_SIZE =
-        SIZE_OF_ComBufferRecord_RECORD(FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry));
+    //! Maximum data size of one record: a sentry followed by a maximum-size ComBuffer
+    static constexpr FwSizeType MAX_RECORD_DATA_SIZE = FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry);
+
+    //! Serialized size of one ComBufferRecord holding MAX_RECORD_DATA_SIZE bytes
+    static constexpr FwSizeType RECORD_SIZE = SIZE_OF_ComBufferRecord_RECORD(MAX_RECORD_DATA_SIZE);
 
     //! Calculate total buffer size needed for a data product container
     //! This is the TOTAL size including:
@@ -44,7 +46,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //!
     //! \param packetsPerContainer: Number of packets that will fit in the container
     //! \return Total buffer size in bytes needed for the complete container
-    static constexpr FwSizeType ComLoggerDpBuffSize(U32 packetsPerContainer) {
+    static constexpr FwSizeType ComLoggerDpBuffSize(FwSizeType packetsPerContainer) {
         return DpContainer::MIN_PACKET_SIZE + packetsPerContainer * RECORD_SIZE;
     }
 
@@ -77,7 +79,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! \param packetsPerContainer: number of packets per container (must be > 0 if enabled is true, ignored otherwise)
     //! \param priority: data product priority (ignored if enabled is false)
     //! \param flushTimeout: number of schedIn calls without packets before auto-flush (0 = disable auto-flush)
-    void configure(bool enabled, U32 packetsPerContainer, FwDpPriorityType priority, U32 flushTimeout);
+    void configure(bool enabled, FwSizeType packetsPerContainer, FwDpPriorityType priority, U32 flushTimeout);
 
   private:
     // ----------------------------------------------------------------------
@@ -109,9 +111,9 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Handler implementation for startRecordingIn
     //!
     //! Port to start recording
-    void startRecordingIn_handler(FwIndexType portNum,       //!< The port number
-                                  U32 packetsPerContainer,   //!< Number of packets per container
-                                  FwDpPriorityType priority  //!< Data product priority
+    void startRecordingIn_handler(FwIndexType portNum,             //!< The port number
+                                  FwSizeType packetsPerContainer,  //!< Number of packets per container
+                                  FwDpPriorityType priority        //!< Data product priority
                                   ) override;
 
     //! Handler implementation for stopRecordingIn
@@ -130,7 +132,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Starts recording ComBuffers at the specified priority
     void StartComDp_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                U32 cmdSeq,           //!< The command sequence number
-                               U32 packetsPerContainer,
+                               FwSizeType packetsPerContainer,
                                FwDpPriorityType priority) override;
 
     //! Handler implementation for command UpdatePriority
@@ -162,16 +164,16 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     //! Internal function to start recording
     //! \param packetsPerContainer: Number of packets per container
     //! \param priority: Data product priority
-    //! \return true if successful, false if validation failed
-    bool startRecordingInternal(U32 packetsPerContainer, FwDpPriorityType priority);
+    //! \return SUCCESS if recording started, FAILURE if validation failed
+    Fw::Success startRecordingInternal(FwSizeType packetsPerContainer, FwDpPriorityType priority);
 
     //! Internal function to stop recording
-    //! \return Number of partial containers sent
-    U32 stopRecordingInternal();
+    //! \return SENT if a partial container was sent, NOT_SENT otherwise
+    ComLoggerDp_PartialContainerStatus stopRecordingInternal();
 
     //! Internal function to allocate and setup a new container
-    //! \return true if allocation succeeded, false if it failed
-    bool allocateAndSetupContainer();
+    //! \return SUCCESS if allocation succeeded, FAILURE otherwise
+    Fw::Success allocateAndSetupContainer();
 
     //! Internal function to serialize packet into container
     //! \param dataPtr: Pointer to the packet data
@@ -180,7 +182,8 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
 
     //! Send container if logging is enabled and it has packets, then reset counter
     //! Handles both full and partial containers
-    void sendContainerIfNonEmpty();
+    //! \return SENT if a container was sent, NOT_SENT otherwise
+    ComLoggerDp_PartialContainerStatus sendContainerIfNonEmpty();
 
     //! Send the current container (full or partial) and reset the packet count
     void finalizeContainer();
@@ -201,10 +204,10 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     DpContainer m_container;
 
     //! Target number of packets per container
-    U32 m_packetsPerContainer{0};
+    FwSizeType m_packetsPerContainer{0};
 
     //! Current count of packets in container
-    U32 m_currentPacketCount{0};
+    FwSizeType m_currentPacketCount{0};
 
     //! Total number of buffers logged since initialization
     U32 m_numBuffersLogged{0};
@@ -222,8 +225,7 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     FwDpPriorityType m_priority{ContainerPriority::ComBuffContainer};  // Default priority from FPP
 
     //! Buffer for building records with sentry + ComBuffer data
-    //! Size: sentry (4 bytes) + max ComBuffer size
-    U8 m_recordBuffer[FW_COM_BUFFER_MAX_SIZE + sizeof(ComLoggerDpSentry)];
+    U8 m_recordBuffer[MAX_RECORD_DATA_SIZE];
 };
 
 }  // namespace Svc

@@ -142,7 +142,7 @@ class ComLoggerDpTester final : public ComLoggerDpGTestBase {
     void initComponents();
 
     //! Helper to start logging and clear history (reduces test duplication)
-    void startLoggingAndClearHistory(U32 packetsPerContainer, FwDpPriorityType priority);
+    void startLoggingAndClearHistory(FwSizeType packetsPerContainer, FwDpPriorityType priority);
 
     //! Validate data product format (sentry + ComBuffer structure)
     void validateDataProductFormat(const Fw::Buffer& buffer,
