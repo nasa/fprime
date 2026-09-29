@@ -16,6 +16,8 @@ Sleeps for a relative duration from the current time.
 | ------------------|-------------|
 | N/A | |
 
+- If `useconds` is not less than 1000000: `INVALID_ARG`
+
 **Requirement:** FPY-SEQ-007
 
 ## WAIT_ABS (2)
@@ -30,6 +32,8 @@ Sleeps until an absolute time.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | N/A | |
+
+- If `useconds` is not less than 1000000: `INVALID_ARG`
 
 **Requirement:** FPY-SEQ-008
 
