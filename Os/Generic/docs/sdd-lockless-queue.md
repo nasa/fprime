@@ -200,6 +200,8 @@ and is not safe to call from ISR context.
 
 ```
 receive(destination, capacity, blockType, &actualSize, &priority):
+  if capacity < m_messageSize:
+      return SIZE_MISMATCH  // before any claim, so the message stays queued
   for pass = 0 .. (NONBLOCKING ? MAX_RETRY_PASSES - 1 : infinity):
       if m_available.load(acquire) == 0:
           continue  // skip the O(depth) scan; blocking callers back off first

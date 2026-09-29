@@ -272,6 +272,11 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
     FW_ASSERT(this->m_handle.m_data != nullptr);
     FW_ASSERT(destination != nullptr);
 
+    // Reject undersized buffers before claiming a slot so the message stays queued.
+    if (capacity < this->m_handle.m_messageSize) {
+        return QueueInterface::Status::SIZE_MISMATCH;
+    }
+
     const FwSizeType depth = this->m_handle.m_depth;
     const bool blocking = (blockType == QueueInterface::BlockingType::BLOCKING);
 
