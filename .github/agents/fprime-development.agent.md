@@ -86,6 +86,9 @@ enter the loop on your own initiative.
 - Work that modifies pre-existing code also follows
   `fprime-maintenance`: the minimal change that completes the task,
   low-hanging cleanup only, and engineer approval before any rework.
+- Comments are brief and describe the code as it is. Never write a
+  comment that explains the change, the previous behavior, or why the
+  new code differs from the old; put that in the PR description.
 - **Ask, don't guess.** Uncertainty about a requirement, interface,
   or deployment context stops work until the user answers.
 - Never edit autocoded outputs (`*Ac.hpp` / `*Ac.cpp`, files under

@@ -60,6 +60,10 @@ task touches code that already exists.
   behavior the task did not touch; record coverage gaps as future work
   (§5). Once the new tests pass, run the consolidation step in
   `fprime-unit-testing` §1 so shared sequences become helpers or rules.
+- Keep comments short and about the code as it now is. Do not add
+  comments that narrate the change, describe the old behavior, or
+  justify the new code against it; that context belongs in the PR
+  description.
 - Keep the diff reviewable: every hunk must map to the task statement
   or to a cleanup item declared under §3.
 
@@ -123,6 +127,7 @@ of the current change.
 - [ ] Tests, `docs/sdd.md`, and `docs/` updated only where the change
       invalidated them; new tests trace to the task and were
       consolidated.
+- [ ] No comment narrates the change or the old behavior.
 - [ ] Out-of-scope observations recorded, not fixed.
 - [ ] PR description distinguishes the fix, declared cleanup, and
       future work.
