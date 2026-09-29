@@ -24,9 +24,12 @@ The AOS Framer and Deframer support the following subset of CCSDS AOS SDL:
 
 The `idlePvns` argument to `configure()` must be exactly
 `PvnBitfield::SPP_MASK`. SPP is currently the only implemented idle-packet
-format. EPP-only and mixed SPP/EPP masks are rejected at configuration rather
-than being accepted and leaving `sendNow` frames unpadded. EPP idle-packet
-generation requires a separate implementation before those masks can be used.
+format. EPP-only and mixed SPP/EPP masks are rejected at configuration by
+`FW_ASSERT` rather than being accepted and leaving `sendNow` frames unpadded.
+A deployment that previously passed `SPP_MASK | EPP_MASK` therefore fails at
+initialization, before any frame is sent, until it is changed to `SPP_MASK`;
+SPP padding behavior is unchanged. EPP idle-packet generation requires a
+separate implementation before those masks can be used.
 
 ## Internals
 

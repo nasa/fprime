@@ -223,7 +223,8 @@ module Ccsds {
     # ------------------------------------------------
     @ Bitmask of enabled Packet Version Numbers (PVN)
     @ Each bit position corresponds to a PVN value (bit N set = PVN N is enabled)
-    @ Used to selectively enable one or multiple protocols for Aos Framers/Deframers
+    @ Used to selectively enable one or multiple protocols for Aos Deframers; AosFramer idle-packet
+    @ generation currently accepts SPP_MASK only
     @ SPP PVN = 0, EPP PVN = 7 per CCSDS 133.0-B-2 / 133.1-B-3
     module PvnBitfield {
         constant SPP_MASK   = 0x01  @< 1 << 0 (SPP PVN = 0)

@@ -84,7 +84,7 @@ class AosFramer final : public AosFramerComponentBase {
 
     //! Configure Managed Parameters for this AOS Framer
     //!
-    void configure(U32 fixedFixedSize,                       //!< Number of bytes in each AOS SDL Frame
+    void configure(U32 fixedFrameSize,                       //!< Number of bytes in each AOS SDL Frame
                    bool frameErrorControlField,              //!< Whether to enable the frame error control field
                    U16 spacecraftId = ComCfg::SpacecraftId,  //!< Spacecraft ID
                    U8 vcId = 1,                              //!< Virtual Channel ID (default 1)
