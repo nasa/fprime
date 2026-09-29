@@ -158,7 +158,7 @@ FileSystem::Status FileSystem::copyFile(const char* sourcePath, const char* dest
     if (fileStatus != Os::File::OP_OK) {
         return FileSystem::handleFileError(fileStatus);
     }
-    fileStatus = destination.open(destPath, Os::File::OPEN_WRITE);
+    fileStatus = destination.open(destPath, Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE);
     if (fileStatus != Os::File::OP_OK) {
         return FileSystem::handleFileError(fileStatus);
     }

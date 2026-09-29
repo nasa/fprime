@@ -59,6 +59,9 @@ class CmdSequencerTester : public Svc::CmdSequencerTester {
     //! Microseconds field too short
     void USecFieldTooShort();
 
+    //! Microseconds field out of range (>= 1,000,000)
+    void BadUSec();
+
     //! Missing CRC
     void MissingCRC();
 

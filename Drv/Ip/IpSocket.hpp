@@ -116,14 +116,16 @@ class IpSocket {
      * socket be unavailable, SOCK_DISCONNECTED is returned and the socket should be reopened using the `open` call.
      * This can happen even when the socket has already been opened should a transmission error/closure be detected.
      * Unless an error is received, all data will have been transmitted. A zero-size send is a no-op returning
-     * SOCK_SUCCESS.
+     * SOCK_SUCCESS. Should the send be interrupted or time out (SO_SNDTIMEO) before all data is transmitted,
+     * SOCK_INTERRUPTED_TRY_AGAIN is returned and the caller should retry the send.
      *
      * Note: delegates to `sendProtocol` to send the data
      *
      * \param fd: file descriptor to send to
      * \param data: pointer to data to send
      * \param size: size of data to send
-     * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
+     * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success,
+     *         SOCK_INTERRUPTED_TRY_AGAIN to retry, something else on error
      */
     virtual SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const FwSizeType size);
     /**

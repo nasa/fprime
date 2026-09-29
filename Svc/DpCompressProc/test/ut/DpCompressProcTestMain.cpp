@@ -129,11 +129,6 @@ TEST(Nominal, FailureHelper) {
 TEST(Nominal, Random) {
     const int iterations = 10000;
 
-    U32 seed = STest::Random::SeedValue::getFromTime();
-    // U32 seed = 87206;
-    fprintf(stderr, "Random seed %u\n", seed);
-    STest::Random::SeedValue::set(seed);
-
     // Max FwSizeStoreType is U16 so the total container size
     // should be smaller than this
     // This would be 128 512 byte chunks
@@ -170,6 +165,7 @@ TEST(Nominal, Random) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

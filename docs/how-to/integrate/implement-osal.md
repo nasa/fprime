@@ -176,10 +176,10 @@ This optimization is most valuable for bare-metal systems with high-frequency op
 
 Projects override compile-time selection by providing their own configuration header that replaces F´'s default. The override replaces the whole `config/OsSelection.hpp`, so it must define every alias and `OS_*_HEADER` macro, not just the service being changed. For `RawTime`, create a project-specific override of `config/OsSelection.hpp`:
 
-**Step 1:** In your project's config directory, create `config/OsSelection.hpp`:
+**Step 1:** In your project's config directory, create `OsSelection.hpp`:
 
 ```c++
-// my-project/config/OsSelection.hpp
+// my-project/config-overrides/OsSelection.hpp
 #ifndef CONFIG_OSSELECTION_HPP
 #define CONFIG_OSSELECTION_HPP
 
@@ -211,14 +211,15 @@ namespace Os {
 #endif  // CONFIG_OSSELECTION_HPP
 ```
 
-**Step 2:** Register the config header in your project's `config/CMakeLists.txt`:
+**Step 2:** Register the config header in your project's `config-overrides/CMakeLists.txt` (see [Configuration Modules](../../user-manual/build-system/configuration.md#overriding-configuration-in-a-project)):
 
-```cmake
+```diff
 register_fprime_config(
     # ... project config name & other options 
     CONFIGURATION_OVERRIDES
-        "${CMAKE_CURRENT_LIST_DIR}/OsSelection.hpp"
++        "${CMAKE_CURRENT_LIST_DIR}/OsSelection.hpp"
         # ... other project override config headers
+    INTERFACE
 )
 ```
 
