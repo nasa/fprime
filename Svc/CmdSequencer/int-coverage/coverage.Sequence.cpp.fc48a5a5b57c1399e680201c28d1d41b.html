@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-28 22:14:11</td>
+      <td>2026-09-29 22:13:24</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>36</td>
-      <td>42</td>
-      <td class="coverage-medium">85.7%</td>
+      <td>40</td>
+      <td>46</td>
+      <td class="coverage-medium">87.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -73,13 +73,13 @@
     <tr><td><a href="#l21">Svc::CmdSequencerComponentImpl::Sequence::Header::Header() (line 21)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l24">Svc::CmdSequencerComponentImpl::Sequence::Header::validateTime(Svc::CmdSequencerComponentImpl&amp;) (line 24)</a></td><td>called 2 times</td><td>50.0%</td></tr>
     <tr><td><a href="#l16">Svc::CmdSequencerComponentImpl::Sequence::Sequence(Svc::CmdSequencerComponentImpl&amp;) (line 16)</a></td><td>called 1 time</td><td>53.0%</td></tr>
-    <tr><td><a href="#l45">Svc::CmdSequencerComponentImpl::Sequence::allocateBuffer(int, Fw::MemAllocator&amp;, unsigned long) (line 45)</a></td><td>called 1 time</td><td>83.0%</td></tr>
-    <tr><td><a href="#l55">Svc::CmdSequencerComponentImpl::Sequence::deallocateBuffer(Fw::MemAllocator&amp;) (line 55)</a></td><td>called 1 time</td><td>100.0%</td></tr>
-    <tr><td><a href="#l70">Svc::CmdSequencerComponentImpl::Sequence::getFileName() (line 70)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l60">Svc::CmdSequencerComponentImpl::Sequence::getHeader() const (line 60)</a></td><td>called 5 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l74">Svc::CmdSequencerComponentImpl::Sequence::getLogFileName() (line 74)</a></td><td>called 9 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l78">Svc::CmdSequencerComponentImpl::Sequence::getStringFileName() (line 78)</a></td><td>called 2 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l64">Svc::CmdSequencerComponentImpl::Sequence::setFileName(Fw::ConstStringBase const&amp;) (line 64)</a></td><td>called 2 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l45">Svc::CmdSequencerComponentImpl::Sequence::allocateBuffer(int, Fw::MemAllocator&amp;, unsigned long) (line 45)</a></td><td>called 1 time</td><td>70.0%</td></tr>
+    <tr><td><a href="#l59">Svc::CmdSequencerComponentImpl::Sequence::deallocateBuffer(Fw::MemAllocator&amp;) (line 59)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+    <tr><td><a href="#l74">Svc::CmdSequencerComponentImpl::Sequence::getFileName() (line 74)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l64">Svc::CmdSequencerComponentImpl::Sequence::getHeader() const (line 64)</a></td><td>called 5 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l78">Svc::CmdSequencerComponentImpl::Sequence::getLogFileName() (line 78)</a></td><td>called 9 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l82">Svc::CmdSequencerComponentImpl::Sequence::getStringFileName() (line 82)</a></td><td>called 2 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l68">Svc::CmdSequencerComponentImpl::Sequence::setFileName(Fw::ConstStringBase const&amp;) (line 68)</a></td><td>called 2 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l19">Svc::CmdSequencerComponentImpl::Sequence::~Sequence() (line 19)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -494,8 +494,8 @@
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">recoverable</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">recoverable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
@@ -507,86 +507,91 @@
     <tr class="source-line">
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
-          </div>
-        </details>
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">setExtBuffer</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">allocator</span><span class="p">.</span><span class="n">allocate</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="n">bytes</span><span class="p">,</span><span class="w"> </span><span class="n">recoverable</span><span class="p">)),</span><span class="w"> </span><span class="n">bytes</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Allocation may change bytes. Finish it before using the granted capacity.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+          </div>
+        </details>
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">allocator</span><span class="p">.</span><span class="n">allocate</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="n">bytes</span><span class="p">,</span><span class="w"> </span><span class="n">recoverable</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">buffer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">deallocateBuffer</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">allocator</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">bytes</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">Sequence</span><span class="o">::</span><span class="n">Header</span><span class="o">::</span><span class="n">SERIALIZED_SIZE</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytes</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+          </div>
+        </details>
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">deallocate</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_allocatorId</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">getBuffAddr</span><span class="p">());</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">setExtBuffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">bytes</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l58" href="#l58">58</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l59" href="#l59">59</a></td>
+      <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
+      <td class="lineno"><a id="l59" href="#l59">59</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">deallocateBuffer</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">allocator</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
       <td class="lineno"><a id="l60" href="#l60">60</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="k">const</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="o">::</span><span class="n">Header</span><span class="o">&amp;</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">getHeader</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">deallocate</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_allocatorId</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">getBuffAddr</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
@@ -599,64 +604,64 @@
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">setFileName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ConstStringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fileName</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="k">const</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="o">::</span><span class="n">Header</span><span class="o">&amp;</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">getHeader</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fileName</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_logFileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fileName</span><span class="p">;</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_stringFileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fileName</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l68" href="#l68">68</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
+      <td class="lineno"><a id="l68" href="#l68">68</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">setFileName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ConstStringBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fileName</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l69" href="#l69">69</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fileName</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">CmdStringArg</span><span class="o">&amp;</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">getFileName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_logFileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fileName</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fileName</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_stringFileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fileName</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l72" href="#l72">72</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
@@ -669,15 +674,15 @@
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">LogStringArg</span><span class="o">&amp;</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">getLogFileName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">CmdStringArg</span><span class="o">&amp;</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">getFileName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_logFileName</span><span class="p">;</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fileName</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
@@ -697,15 +702,15 @@
       <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">getStringFileName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">LogStringArg</span><span class="o">&amp;</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">getLogFileName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_stringFileName</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_logFileName</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
@@ -725,11 +730,39 @@
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">Sequence</span><span class="w"> </span><span class="o">::</span><span class="n">getStringFileName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l83" href="#l83">83</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_stringFileName</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l84" href="#l84">84</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l85" href="#l85">85</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="linebranch">
+      </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l83" href="#l83">83</a></td>
+      <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

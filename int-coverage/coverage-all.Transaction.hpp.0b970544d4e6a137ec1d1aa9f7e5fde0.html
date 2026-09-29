@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-09-28 22:13:14</td>
+      <td>2026-09-29 22:12:38</td>
     </tr>
   </table>
 </div>
@@ -4727,350 +4727,350 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * the checksum error condition code if the final CRC does not match.</span></td>
+      <td class="src "><span class="cm">     * the checksum error condition code if the final CRC does not match, and</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l664" href="#l664">664</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="cm">     * the file size error condition code if a read returns fewer bytes than</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l665" href="#l665">665</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @par PTFO</span></td>
+      <td class="src "><span class="cm">     * requested (the file on disk is shorter than the declared file size).</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l666" href="#l666">666</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *       Increase throughput by consuming all CRC bytes per scheduler cycle in</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l667" href="#l667">667</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *       transaction-order. This would require a change to the meaning</span></td>
+      <td class="src "><span class="cm">     * @par PTFO</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l668" href="#l668">668</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *       of the RxCrcCalcBytesPerCycle parameter.</span></td>
+      <td class="src "><span class="cm">     *       Increase throughput by consuming all CRC bytes per scheduler cycle in</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l669" href="#l669">669</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="cm">     *       transaction-order. This would require a change to the meaning</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l670" href="#l670">670</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @retval Cfdp::Status::SUCCESS on completion.</span></td>
+      <td class="src "><span class="cm">     *       of the RxCrcCalcBytesPerCycle parameter.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l671" href="#l671">671</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @retval Cfdp::Status::CFDP_ERROR on non-completion.</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l672" href="#l672">672</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     * @retval Cfdp::Status::SUCCESS on completion.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l673" href="#l673">673</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">r2CalcCrcChunk</span><span class="p">();</span></td>
+      <td class="src "><span class="cm">     * @retval Cfdp::Status::CFDP_ERROR on non-completion.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l674" href="#l674">674</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l675" href="#l675">675</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/************************************************************************/</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">r2CalcCrcChunk</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l676" href="#l676">676</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/** @brief Send a FIN PDU.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l677" href="#l677">677</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/************************************************************************/</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l678" href="#l678">678</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/** @brief Send a FIN PDU.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l679" href="#l679">679</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l680" href="#l680">680</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">r2SubstateSendFin</span><span class="p">();</span></td>
+      <td class="src "><span class="cm">     * @retval Cfdp::Status::SUCCESS on success. Cfdp::Status::CFDP_ERROR on error.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l681" href="#l681">681</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l682" href="#l682">682</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/************************************************************************/</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">r2SubstateSendFin</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l683" href="#l683">683</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/** @brief Process receive FIN-ACK PDU.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l684" href="#l684">684</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/************************************************************************/</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l685" href="#l685">685</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * This is the end of an R2 transaction. Simply reset the transaction</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/** @brief Process receive FIN-ACK PDU.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l686" href="#l686">686</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * state.</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l687" href="#l687">687</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="cm">     * This is the end of an R2 transaction. Simply reset the transaction</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l688" href="#l688">688</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @param pdu Buffer containing the ACK PDU to process</span></td>
+      <td class="src "><span class="cm">     * state.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l689" href="#l689">689</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l690" href="#l690">690</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">r2RecvFinAck</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pdu</span><span class="p">);</span></td>
+      <td class="src "><span class="cm">     * @param pdu Buffer containing the ACK PDU to process</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l691" href="#l691">691</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l692" href="#l692">692</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/************************************************************************/</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">r2RecvFinAck</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pdu</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l693" href="#l693">693</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/** @brief Process receive metadata PDU for R2.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l694" href="#l694">694</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/************************************************************************/</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l695" href="#l695">695</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * It&#39;s possible that metadata PDU was missed in cf_cfdp.c, or that</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/** @brief Process receive metadata PDU for R2.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l696" href="#l696">696</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * it was re-sent. This function checks if it was already processed,</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l697" href="#l697">697</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * and if not, handles it. If there was a temp file opened due to</span></td>
+      <td class="src "><span class="cm">     * It&#39;s possible that metadata PDU was missed in cf_cfdp.c, or that</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l698" href="#l698">698</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * missed metadata PDU, it will move the file to the correct</span></td>
+      <td class="src "><span class="cm">     * it was re-sent. This function checks if it was already processed,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l699" href="#l699">699</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * destination according to the metadata PDU.</span></td>
+      <td class="src "><span class="cm">     * and if not, handles it. If there was a temp file opened due to</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l700" href="#l700">700</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="cm">     * missed metadata PDU, it will move the file to the correct</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l701" href="#l701">701</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @param pdu Buffer containing the metadata PDU to process</span></td>
+      <td class="src "><span class="cm">     * destination according to the metadata PDU.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l702" href="#l702">702</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l703" href="#l703">703</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">r2RecvMd</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pdu</span><span class="p">);</span></td>
+      <td class="src "><span class="cm">     * @param pdu Buffer containing the metadata PDU to process</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l704" href="#l704">704</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l705" href="#l705">705</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/************************************************************************/</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">r2RecvMd</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pdu</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l706" href="#l706">706</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/** @brief Logs an inactivity timer expired event.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l707" href="#l707">707</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/************************************************************************/</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l708" href="#l708">708</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">rSendInactivityEvent</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/** @brief Logs an inactivity timer expired event.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l709" href="#l709">709</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l710" href="#l710">710</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">rSendInactivityEvent</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l711" href="#l711">711</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l712" href="#l712">712</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Member Variables</span></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l713" href="#l713">713</a></td>
@@ -5084,1018 +5084,1032 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Member Variables</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l715" href="#l715">715</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l716" href="#l716">716</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief High-level transaction state</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l717" href="#l717">717</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l718" href="#l718">718</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Each engine is commanded to do something, which is the overall state.</span></td>
+      <td class="src "><span class="cm">     * @brief High-level transaction state</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l719" href="#l719">719</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l720" href="#l720">720</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">TxnState</span><span class="w"> </span><span class="n">m_state</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * Each engine is commanded to do something, which is the overall state.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l721" href="#l721">721</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l722" href="#l722">722</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">TxnState</span><span class="w"> </span><span class="n">m_state</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l723" href="#l723">723</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Transaction class (CLASS_1 or CLASS_2)</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l724" href="#l724">724</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l725" href="#l725">725</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Set at initialization and never changes.</span></td>
+      <td class="src "><span class="cm">     * @brief Transaction class (CLASS_1 or CLASS_2)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l726" href="#l726">726</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l727" href="#l727">727</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Class</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">m_txn_class</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * Set at initialization and never changes.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l728" href="#l728">728</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l729" href="#l729">729</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Class</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">m_txn_class</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l730" href="#l730">730</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Pointer to history entry</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l731" href="#l731">731</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l732" href="#l732">732</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Holds active filenames and possibly other info.</span></td>
+      <td class="src "><span class="cm">     * @brief Pointer to history entry</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l733" href="#l733">733</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l734" href="#l734">734</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">History</span><span class="o">*</span><span class="w"> </span><span class="n">m_history</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * Holds active filenames and possibly other info.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l735" href="#l735">735</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l736" href="#l736">736</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">History</span><span class="o">*</span><span class="w"> </span><span class="n">m_history</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l737" href="#l737">737</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Pointer to chunk wrapper</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l738" href="#l738">738</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l739" href="#l739">739</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * For gap tracking, only used on class 2.</span></td>
+      <td class="src "><span class="cm">     * @brief Pointer to chunk wrapper</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l740" href="#l740">740</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l741" href="#l741">741</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">CfdpChunkWrapper</span><span class="o">*</span><span class="w"> </span><span class="n">m_chunks</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * For gap tracking, only used on class 2.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l742" href="#l742">742</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l743" href="#l743">743</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">CfdpChunkWrapper</span><span class="o">*</span><span class="w"> </span><span class="n">m_chunks</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l744" href="#l744">744</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Inactivity timer</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l745" href="#l745">745</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l746" href="#l746">746</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Set to the overall inactivity timer of a remote.</span></td>
+      <td class="src "><span class="cm">     * @brief Inactivity timer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l747" href="#l747">747</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l748" href="#l748">748</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Timer</span><span class="w"> </span><span class="n">m_inactivity_timer</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * Set to the overall inactivity timer of a remote.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l749" href="#l749">749</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l750" href="#l750">750</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Timer</span><span class="w"> </span><span class="n">m_inactivity_timer</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l751" href="#l751">751</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief ACK/NAK timer</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l752" href="#l752">752</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l753" href="#l753">753</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Called ack_timer, but is also nak_timer.</span></td>
+      <td class="src "><span class="cm">     * @brief ACK/NAK timer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l754" href="#l754">754</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l755" href="#l755">755</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Timer</span><span class="w"> </span><span class="n">m_ack_timer</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * Called ack_timer, but is also nak_timer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l756" href="#l756">756</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l757" href="#l757">757</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Timer</span><span class="w"> </span><span class="n">m_ack_timer</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l758" href="#l758">758</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief File size</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l759" href="#l759">759</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l760" href="#l760">760</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">FileSize</span><span class="w"> </span><span class="n">m_fsize</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * @brief File size</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l761" href="#l761">761</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l762" href="#l762">762</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">FileSize</span><span class="w"> </span><span class="n">m_fsize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l763" href="#l763">763</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief File offset for next read</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l764" href="#l764">764</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l765" href="#l765">765</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">FileSize</span><span class="w"> </span><span class="n">m_foffs</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * @brief File offset for next read</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l766" href="#l766">766</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l767" href="#l767">767</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">FileSize</span><span class="w"> </span><span class="n">m_foffs</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l768" href="#l768">768</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief File descriptor</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l769" href="#l769">769</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l770" href="#l770">770</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="w"> </span><span class="n">m_fd</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * @brief File descriptor</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l771" href="#l771">771</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l772" href="#l772">772</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="w"> </span><span class="n">m_fd</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l773" href="#l773">773</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief CRC checksum object</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l774" href="#l774">774</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l775" href="#l775">775</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">CFDP</span><span class="o">::</span><span class="n">Checksum</span><span class="w"> </span><span class="n">m_crc</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * @brief CRC checksum object</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l776" href="#l776">776</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l777" href="#l777">777</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">CFDP</span><span class="o">::</span><span class="n">Checksum</span><span class="w"> </span><span class="n">m_crc</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l778" href="#l778">778</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Keep file flag</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l779" href="#l779">779</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l780" href="#l780">780</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Keep</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">m_keep</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * @brief Keep file flag</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l781" href="#l781">781</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l782" href="#l782">782</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Keep</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">m_keep</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l783" href="#l783">783</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Channel number</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l784" href="#l784">784</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l785" href="#l785">785</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * If ever more than one engine, this may need to change to pointer.</span></td>
+      <td class="src "><span class="cm">     * @brief Channel number</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l786" href="#l786">786</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l787" href="#l787">787</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">m_chan_num</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * If ever more than one engine, this may need to change to pointer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l788" href="#l788">788</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l789" href="#l789">789</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">m_chan_num</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l790" href="#l790">790</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Priority</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l791" href="#l791">791</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l792" href="#l792">792</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">m_priority</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * @brief Priority</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l793" href="#l793">793</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l794" href="#l794">794</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">m_priority</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l795" href="#l795">795</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Transaction initiation method</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l796" href="#l796">796</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l797" href="#l797">797</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Indicates whether this transaction was initiated via command or port.</span></td>
+      <td class="src "><span class="cm">     * @brief Transaction initiation method</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l798" href="#l798">798</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Used to determine whether completion should be notified via FileComplete port.</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l799" href="#l799">799</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     * Indicates whether this transaction was initiated via command or port.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l800" href="#l800">800</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">TransactionInitType</span><span class="w"> </span><span class="n">m_initType</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * Used to determine whether completion should be notified via FileComplete port.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l801" href="#l801">801</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l802" href="#l802">802</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">TransactionInitType</span><span class="w"> </span><span class="n">m_initType</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l803" href="#l803">803</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Circular list node</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l804" href="#l804">804</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l805" href="#l805">805</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * For connection to a CList (intrusive linked list).</span></td>
+      <td class="src "><span class="cm">     * @brief Circular list node</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l806" href="#l806">806</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l807" href="#l807">807</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">CListNode</span><span class="w"> </span><span class="n">m_cl_node</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * For connection to a CList (intrusive linked list).</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l808" href="#l808">808</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l809" href="#l809">809</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">CListNode</span><span class="w"> </span><span class="n">m_cl_node</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l810" href="#l810">810</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Pointer to playback entry</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l811" href="#l811">811</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l812" href="#l812">812</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * nullptr if transaction does not belong to a playback.</span></td>
+      <td class="src "><span class="cm">     * @brief Pointer to playback entry</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l813" href="#l813">813</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l814" href="#l814">814</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Playback</span><span class="o">*</span><span class="w"> </span><span class="n">m_pb</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * nullptr if transaction does not belong to a playback.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l815" href="#l815">815</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l816" href="#l816">816</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Playback</span><span class="o">*</span><span class="w"> </span><span class="n">m_pb</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l817" href="#l817">817</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief State-specific data (TX or RX)</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l818" href="#l818">818</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l819" href="#l819">819</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">CfdpStateData</span><span class="w"> </span><span class="n">m_state_data</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * @brief State-specific data (TX or RX)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l820" href="#l820">820</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l821" href="#l821">821</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">CfdpStateData</span><span class="w"> </span><span class="n">m_state_data</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l822" href="#l822">822</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief State flags (TX or RX)</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l823" href="#l823">823</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l824" href="#l824">824</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Note: The flags here look a little strange, because there are different</span></td>
+      <td class="src "><span class="cm">     * @brief State flags (TX or RX)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l825" href="#l825">825</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * flags for TX and RX. Both types share the same type of flag, though.</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l826" href="#l826">826</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Since RX flags plus the global flags is over one byte, storing them this</span></td>
+      <td class="src "><span class="cm">     * Note: The flags here look a little strange, because there are different</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l827" href="#l827">827</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * way allows 2 bytes to cover all possible flags. Please ignore the</span></td>
+      <td class="src "><span class="cm">     * flags for TX and RX. Both types share the same type of flag, though.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l828" href="#l828">828</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * duplicate declarations of the &quot;all&quot; flags.</span></td>
+      <td class="src "><span class="cm">     * Since RX flags plus the global flags is over one byte, storing them this</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l829" href="#l829">829</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     * way allows 2 bytes to cover all possible flags. Please ignore the</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l830" href="#l830">830</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">CfdpStateFlags</span><span class="w"> </span><span class="n">m_flags</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * duplicate declarations of the &quot;all&quot; flags.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l831" href="#l831">831</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l832" href="#l832">832</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">CfdpStateFlags</span><span class="w"> </span><span class="n">m_flags</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l833" href="#l833">833</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Reference to the wrapper F&#39; component</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l834" href="#l834">834</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l835" href="#l835">835</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * Used to send PDUs.</span></td>
+      <td class="src "><span class="cm">     * @brief Reference to the wrapper F&#39; component</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l836" href="#l836">836</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l837" href="#l837">837</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">CfdpManager</span><span class="o">*</span><span class="w"> </span><span class="n">m_cfdpManager</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * Used to send PDUs.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l838" href="#l838">838</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l839" href="#l839">839</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">CfdpManager</span><span class="o">*</span><span class="w"> </span><span class="n">m_cfdpManager</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l840" href="#l840">840</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Pointer to the channel wrapper</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l841" href="#l841">841</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l842" href="#l842">842</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * The channel this transaction belongs to.</span></td>
+      <td class="src "><span class="cm">     * @brief Pointer to the channel wrapper</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l843" href="#l843">843</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l844" href="#l844">844</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Channel</span><span class="o">*</span><span class="w"> </span><span class="n">m_chan</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * The channel this transaction belongs to.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l845" href="#l845">845</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l846" href="#l846">846</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Channel</span><span class="o">*</span><span class="w"> </span><span class="n">m_chan</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l847" href="#l847">847</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * @brief Pointer to the CFDP engine</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l848" href="#l848">848</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     *</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/**</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l849" href="#l849">849</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     * The engine this transaction belongs to.</span></td>
+      <td class="src "><span class="cm">     * @brief Pointer to the CFDP engine</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l850" href="#l850">850</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="cm">     *</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l851" href="#l851">851</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Engine</span><span class="o">*</span><span class="w"> </span><span class="n">m_engine</span><span class="p">;</span></td>
+      <td class="src "><span class="cm">     * The engine this transaction belongs to.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l852" href="#l852">852</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "><span class="cm">     */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l853" href="#l853">853</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">Engine</span><span class="o">*</span><span class="w"> </span><span class="n">m_engine</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l854" href="#l854">854</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Cfdp</span></td>
+      <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l855" href="#l855">855</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l856" href="#l856">856</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Cfdp</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l857" href="#l857">857</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l858" href="#l858">858</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif  </span><span class="c1">// Svc_Ccsds_CfdpTransaction_HPP</span></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l859" href="#l859">859</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l860" href="#l860">860</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif  </span><span class="c1">// Svc_Ccsds_CfdpTransaction_HPP</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l861" href="#l861">861</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
