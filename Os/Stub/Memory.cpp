@@ -8,6 +8,11 @@ namespace Os {
 namespace Stub {
 namespace Memory {
 
+StubMemory& StubMemory::getSingleton() {
+    static StubMemory s_singleton;
+    return s_singleton;
+}
+
 MemoryInterface::Status StubMemory::_getUsage(Os::Memory::Usage& memory_usage) {
     memory_usage.used = 0;
     memory_usage.total = 0;

@@ -74,13 +74,15 @@ Every OSAL _core service_ (e.g. File, Task, Mutex, etc.) follows a uniform three
 
 | Layer | Example | Description |
 |---|---|---|
-| Interface | [`Os::FileInterface`](../File.hpp#L27) | A pure-virtual base class that defines the contract for a given OS service. |
-| Wrapper | [`Os::File`](../File.hpp#L225) | A `final` concrete class that holds a reference to the interface delegate constructed inside it. Application code interacts exclusively with the wrapper. |
+| Interface | [`Os::FileInterface`](../FileInterface.hpp) | A pure-virtual base class that defines the contract for a given OS service. |
+| Wrapper | [`Os::DelegateFile`](../DelegateFile.hpp) | A `final` concrete class that holds a reference to the interface delegate constructed inside it. Application code interacts exclusively with `Os::File`, which is the configured alias for the wrapper (see [§5.2](#52-selection-mechanisms-link-time-vs-compile-time)). |
 | Implementation | [`Os::Posix::File`](../Posix/File.hpp) | A concrete class that implements the interface. This is what needs to be implemented to support a new OS on F Prime. |
+
+For services that follow this pattern, the public header (e.g. `Os/File.hpp`) is a thin aggregator: it includes `Os/<Service>Interface.hpp` (which in turn pulls in the `config/OsDelegate<Service>.hpp` alias definition) and then the configured implementation header. The pure-virtual contract lives in `Os/<Service>Interface.hpp`.
 
 This pattern allows for the selection of the implementation used for a given build to be performed through the build system at link-time: CMake chooses which `Default*.cpp` file to link, and that file provides the `getDelegate` factory function for a given OSAL implementation.
 
-The following diagram (simplified for brevity) illustrates the relationship between these layers for the File service as an illustration.  The same pattern applies to all other services. In the final `Os::File` wrapper, the OS functions (e.g. `open()`, `read()`, `close()`) are forwarded to its `m_delegate` which is a reference to an implementation of the `Os::FileInterface`, which is implemented by the platform-specific implementation class.
+The following diagram (simplified for brevity) illustrates the relationship between these layers for the File service as an illustration.  The same pattern applies to all other services. In the `Os::DelegateFile` wrapper, the OS functions (e.g. `open()`, `read()`, `close()`) are forwarded to its `m_delegate` which is a reference to an implementation of the `Os::FileInterface`, which is implemented by the platform-specific implementation class.
 
 ```mermaid
 classDiagram
@@ -90,7 +92,7 @@ classDiagram
             <<interface>>
             +read()
         }
-        class File {
+        class DelegateFile {
             <<final>>
             -FileInterface& m_delegate
             +read()
@@ -104,10 +106,10 @@ classDiagram
     }
 
 
-    File *-- FileInterface
+    DelegateFile *-- FileInterface
     FileInterface <|--  PosixFile
     FileInterface <|--  FreeRTOSFile
-    FileInterface <|--  File
+    FileInterface <|--  DelegateFile
 
 ```
 
@@ -153,9 +155,23 @@ For performance-critical services, the OSAL supports **compile-time selection** 
 - More complex build configuration
 
 **Currently Supported Services:**
-- **RawTime** (`config/OsDelegateRawTime.hpp`, `OS_RAW_TIME_HEADER`)
-- **Mutex** (`config/OsDelegateMutex.hpp`, `OS_MUTEX_HEADER`)
-- **ConditionVariable** (`config/OsDelegateMutex.hpp`, `OS_CONDITION_VARIABLE_HEADER`) — configured in the same header as Mutex; the two must be overridden together (a `static_assert` in `Os/ConditionVariableInterface.hpp` rejects aliasing only one of them), and the selected ConditionVariable must accept the handle of the selected `Os::Mutex` (implementations such as Posix cast it to their own handle type; `Os::Stub::Mutex::StubConditionVariable` accepts any mutex). Note that `ERROR_DIFFERENT_MUTEX` is reported only by the link-time `DelegateConditionVariable`; a directly aliased implementation does not track which mutex it was first used with.
+
+Each service below ships a default configuration header at `default/config/OsDelegate<Service>.hpp`, which defines the `Os::<Service>` alias and an `OS_<SERVICE>_HEADER` macro naming the implementation header to include:
+
+| Service | Configuration header | Implementation-header macro |
+|---|---|---|
+| RawTime | `config/OsDelegateRawTime.hpp` | `OS_RAW_TIME_HEADER` |
+| File | `config/OsDelegateFile.hpp` | `OS_FILE_HEADER` |
+| FileSystem | `config/OsDelegateFileSystem.hpp` | `OS_FILE_SYSTEM_HEADER` |
+| Directory | `config/OsDelegateDirectory.hpp` | `OS_DIRECTORY_HEADER` |
+| Mutex | `config/OsDelegateMutex.hpp` | `OS_MUTEX_HEADER` |
+| ConditionVariable | `config/OsDelegateMutex.hpp` | `OS_CONDITION_VARIABLE_HEADER` |
+| Console | `config/OsDelegateConsole.hpp` | `OS_CONSOLE_HEADER` |
+| CountingSemaphore | `config/OsDelegateCountingSemaphore.hpp` | `OS_COUNTING_SEMAPHORE_HEADER` |
+| Cpu | `config/OsDelegateCpu.hpp` | `OS_CPU_HEADER` |
+| Memory | `config/OsDelegateMemory.hpp` | `OS_MEMORY_HEADER` |
+
+Mutex and ConditionVariable are configured together in the same header because a condition variable operates on the handle of the configured `Os::Mutex`; the two must be overridden together (a `static_assert` in `Os/ConditionVariableInterface.hpp` rejects aliasing only one of them), and the selected ConditionVariable must accept the handle of the selected `Os::Mutex` (implementations such as Posix cast it to their own handle type; `Os::Stub::Mutex::StubConditionVariable` accepts any mutex). Note that `ERROR_DIFFERENT_MUTEX` is reported only by the link-time `DelegateConditionVariable`; a directly aliased implementation does not track which mutex it was first used with.
 
 The configuration header mechanism allows projects to opt into compile-time selection while maintaining link-time selection as the default for backward compatibility.
 
@@ -188,6 +204,32 @@ namespace Os {
 > - All object files in the build directory must use the same configuration (same ABI)
 > - The concrete implementation MUST inherit from the corresponding interface class
 > - The configuration header MUST NOT include Os OSAL headers (to avoid circular dependencies)
+
+**Additional requirements for singleton services.** `Console`, `FileSystem`, `Cpu` and `Memory` expose
+static convenience wrappers that resolve through `Os::<Service>::getSingleton()`, and `Os::init()`
+(`Os/Os.cpp`) calls `Os::<Service>::init()`. These are *not* declared on the interface class, so a
+compile-time alias for one of these services MUST additionally provide:
+
+```c++
+static void init();               //!< called by Os::init()
+static <Impl>& getSingleton();    //!< backing instance for the static convenience API
+```
+
+`Os/Stub/FileSystem.hpp` shows the minimal shape. `Console` additionally needs `static void
+write(const CHAR*, FwSizeType)` / `static void write(const Fw::ConstStringBase&)`, and its
+`getSingleton()` is responsible for the one-time `Fw::Logger::registerLogger()` call — omitting it
+silently drops all `Fw::Logger` output. Without these, the build fails to link (or, for the logger,
+loses output at runtime) rather than failing at compile time.
+
+**Additional requirements for `Os::File`.** `FileInterface` tracks open mode in a non-virtual
+`m_mode` member maintained by `DelegateFile`, and its CRC methods (`calculateCrc`,
+`incrementalCrc`, `finalizeCrc`) are virtual stubs returning `NOT_SUPPORTED` whose real
+implementation lives on `DelegateFile` (see the design note in `Os/FileInterface.hpp`). A
+compile-time `Os::File` alias MUST therefore call `setMode()` on open/close so that `isOpen()`,
+`readline()` and the mode checks in the `open(...)` overloads behave, and MUST override the three
+CRC methods — otherwise `Svc::PrmDb::readParamFile` fails on every boot and
+`Svc::FileManager`'s `CALCULATE_CRC` command always returns `EXECUTION_ERROR`. The same `setMode`
+style obligation applies to `Os::Directory` (`setOpen()`).
 
 ### 5.3 API usage
 

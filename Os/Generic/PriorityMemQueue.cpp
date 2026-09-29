@@ -76,7 +76,7 @@ void PriorityMemQueueHandle::init() {
 
     // Initialize the not-empty semaphore with count 0 (queue starts empty)
     if (this->m_notEmptySem != nullptr) {
-        this->m_notEmptySem->~CountingSemaphore();
+        this->m_notEmptySem->Os::CountingSemaphore::~CountingSemaphore();
         this->m_notEmptySem = nullptr;
     }
 
@@ -556,7 +556,7 @@ void PriorityMemQueue::teardownInternal() {
     if (this->m_handle.m_notEmptySem != nullptr) {
         Fw::MemAllocator& allocator = this->getAllocator();
         FW_ASSERT(this->m_handle.m_allocatorId != 0 || this->m_handle.m_notEmptySem != nullptr, this->m_handle.m_id);
-        this->m_handle.m_notEmptySem->~CountingSemaphore();
+        this->m_handle.m_notEmptySem->Os::CountingSemaphore::~CountingSemaphore();
         allocator.deallocate(this->m_handle.m_allocatorId, this->m_handle.m_notEmptySem);
         this->m_handle.m_notEmptySem = nullptr;
     }
