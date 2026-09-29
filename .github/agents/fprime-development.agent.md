@@ -83,6 +83,9 @@ enter the loop on your own initiative.
 - All C++ complies with `fprime-cpp-design` (CPP-1 through CPP-37);
   consult it before writing code. Design-level expectations are in
   `jpl-design-principles`.
+- Work that modifies pre-existing code also follows
+  `fprime-maintenance`: the minimal change that completes the task,
+  low-hanging cleanup only, and engineer approval before any rework.
 - **Ask, don't guess.** Uncertainty about a requirement, interface,
   or deployment context stops work until the user answers.
 - Never edit autocoded outputs (`*Ac.hpp` / `*Ac.cpp`, files under
