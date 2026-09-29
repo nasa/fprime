@@ -1148,13 +1148,27 @@ Pops `size` bytes of serialized data from the stack and sends them to an externa
 **Semantics:**
 1. Validate the port index is within bounds.
 2. Check that the specified port is connected.
-3. Pop `size` bytes from the stack.
-4. Send the popped bytes to the target component via `serialOut[port_index]`.
+3. Check that the stack holds at least `size` bytes.
+4. Send the top `size` bytes of the stack to the target component via `serialOut[port_index]`.
+5. Pop those `size` bytes from the stack. The bytes are popped only once the send has succeeded,
+   so a failure in step 4 leaves the stack unchanged.
 
 **Error Conditions:**
 - If `port_index >= MAX_SERIAL_PORTS`: `SERIAL_PORT_INVALID_INDEX`
 - If `serialOut[port_index]` is not connected: `SERIAL_PORT_NOT_CONNECTED`
 - If `len(stack) < size`: `STACK_UNDERFLOW`
+- If `serialOut[port_index]` is connected to a typed input port and the bytes fail to deserialize
+  into that port's arguments (`size` too small for the connected type):
+  `SERIAL_PORT_DESERIALIZE_FAILURE`. The bytes are left on the stack.
+
+> [!WARNING]
+> A `size` *larger* than the connected type is **not** detected. A typed port's generated
+> `deserializePortArgs` stops after its last argument and never checks for leftover bytes, so the
+> send returns success, all `size` bytes are popped, and the component receives a value decoded
+> from the *leading* bytes of the popped range. Because the range is taken as the top `size` bytes
+> of the stack, an oversized `size` shifts the window down and the value is built from whatever
+> preceded the intended one. Sequence authors must size this argument to match the connected
+> port's type exactly; this directive validates only the undersized case.
 
 | Arg Name     | Arg Type       | Source     | Description |
 |--------------|----------------|------------|-------------|

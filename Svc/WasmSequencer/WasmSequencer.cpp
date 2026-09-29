@@ -263,7 +263,7 @@ void WasmSequencer ::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase&
     Fw::String runModuleName = "";
 
     this->controller_sendSignal_run(Svc::WasmSequencer_LoadRequest(
-        filename, runModuleName, args,
+        filename, runModuleName,
         Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::PORT_RUN, WasmSequencer_CommandRequest(0, 0),
                                           BlockState::NO_BLOCK,
                                           /* moduleIdx */ 0  // placeholder, gets filled in after load
@@ -361,13 +361,12 @@ void WasmSequencer ::serialIn_handler(FwIndexType portNum, Fw::LinearBufferBase&
 void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
                                     U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
-                                    const Svc::BlockState& block,
-                                    const SeqArgs& seqArgs) {
+                                    const Svc::BlockState& block) {
     FW_ASSERT(this->m_wasm != nullptr);
 
     Fw::String runModuleName = "";
     this->controller_sendSignal_run(Svc::WasmSequencer_LoadRequest(
-        fileName, runModuleName, seqArgs,
+        fileName, runModuleName,
         Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_RUN,
                                           WasmSequencer_CommandRequest(opCode, cmdSeq), block,
                                           /* moduleIdx */ 0  // placeholder, gets filled in after load
@@ -400,7 +399,7 @@ void WasmSequencer ::LOAD_cmdHandler(FwOpcodeType opCode,
     FW_ASSERT(this->m_wasm != nullptr);
 
     this->controller_sendSignal_load(Svc::WasmSequencer_LoadRequest(
-        fileName, name, Svc::SeqArgs(),
+        fileName, name,
         Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_LOAD,
                                           WasmSequencer_CommandRequest(opCode, cmdSeq), Svc::BlockState::BLOCK,
                                           /* moduleIdx */ 0  // placeholder, gets filled in after load
@@ -410,16 +409,14 @@ void WasmSequencer ::LOAD_cmdHandler(FwOpcodeType opCode,
 void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
                                        U32 cmdSeq,
                                        const Fw::CmdStringArg& module,
-                                       const Svc::BlockState& block,
-                                       const Svc::SeqArgs& seqArgs) {
+                                       const Svc::BlockState& block) {
     FW_ASSERT(this->m_wasm != nullptr);
 
     this->controller_sendSignal_invoke(Svc::WasmSequencer_InvokeRequest(
-        module, seqArgs,
-        Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_INVOKE,
-                                          WasmSequencer_CommandRequest(opCode, cmdSeq), block,
-                                          /* moduleIdx */ 0  // placeholder, gets filled in after invoke
-                                          )));
+        module, Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_INVOKE,
+                                                  WasmSequencer_CommandRequest(opCode, cmdSeq), block,
+                                                  /* moduleIdx */ 0  // placeholder, gets filled in after invoke
+                                                  )));
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {

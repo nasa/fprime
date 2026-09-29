@@ -14,6 +14,7 @@ The `Svc::Ccsds::SpacePacketDeframer` extracts the following fields from the CCS
 |---|---|---|
 | Application Process Identifier (APID) | `apid` | Extracted from bits [10:0] of the Packet Identification field. Invalid APID values (per `ComCfg::Apid::isValid()`) are mapped to `INVALID_UNINITIALIZED`. |
 | Secondary Header Flag | `hasSecHdr` | Extracted from bit [11] of the Packet Identification field |
+| Packet Type | `pktType` | Extracted from bit [12] of the Packet Identification field (0=Telemetry, 1=Command). Propagated only; routing is by APID and the type bit is not validated against it. |
 | Sequence Flags | `sequenceFlags` | Extracted from bits [15:14] of the Packet Sequence Control field (0b00=Continuation, 0b01=First, 0b10=Last, 0b11=Unsegmented) |
 | Packet Sequence Count | `sequenceCount` | Extracted from bits [13:0] of the Packet Sequence Control field |
 

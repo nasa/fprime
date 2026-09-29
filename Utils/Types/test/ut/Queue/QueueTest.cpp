@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 #include <Fw/Types/Assert.hpp>
+#include <STest/Random/Random.hpp>
 #include <Utils/Types/Queue.hpp>
 
 class QueueTest : public ::testing::Test {
@@ -222,6 +223,7 @@ TEST_F(QueueTest, AlternatingLIFO) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

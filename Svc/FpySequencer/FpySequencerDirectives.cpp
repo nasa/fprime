@@ -1791,9 +1791,13 @@ Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSeri
     Fw::SerializeStatus stat = buf.setBuffLen(directive.get_size());
     FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
 
-    // Call output port and verify serialization succeeds
+    // Call output port; a typed downstream port reports deserialize failures here, which is
+    // untrusted sequence content (e.g. undersized payload), not an invariant to assert on
     Fw::SerializeStatus portStatus = this->serialOut_out(portIndex, buf);
-    FW_ASSERT(portStatus == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(portStatus));
+    if (portStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        error = DirectiveError::SERIAL_PORT_DESERIALIZE_FAILURE;
+        return Signal::stmtResponse_failure;
+    }
 
     // Pop data from stack
     this->m_runtime.stack.size -= directive.get_size();

@@ -266,6 +266,8 @@ SocketIpStatus UdpSocket::send(const SocketDescriptor& socketDescriptor, const U
             if (sent == -1) {
                 if ((errno == EBADF) || (errno == ECONNRESET)) {
                     return SOCK_DISCONNECTED;
+                } else if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
+                    return SOCK_INTERRUPTED_TRY_AGAIN;
                 } else {
                     return SOCK_SEND_ERROR;
                 }

@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "GenericHubTester.hpp"
+#include "STest/Random/Random.hpp"
 
 TEST(Nominal, TestIo) {
     Svc::GenericHubTester tester;
@@ -45,6 +46,7 @@ TEST(Invalid, TestDeserializationGuards) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
