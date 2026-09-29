@@ -79,7 +79,7 @@ RateGroupDriver has no state machines.
 
 ### 3.5 Algorithms
 
-RateGroupDriver uses the Euclidean algorithm to compute the greatest common divisor (GCD) and least common multiple (LCM) of non-zero dividers during `configure()`.
+RateGroupDriver uses the least common multiple algorithm (from `Utils::Algorithms`) to compute the rollover of non-zero dividers during `configure()`.
 
 ## 4. Dictionary
 

@@ -24,24 +24,6 @@ void connectPorts(Svc::RateGroupDriver& impl, Svc::RateGroupDriverImplTester& te
     tester.connect_to_CycleIn(0, impl.get_CycleIn_InputPort(0));
 }
 
-TEST(RateGroupDriverTest, MathGcdLcm) {
-    // GCD properties
-    EXPECT_EQ(0, Svc::RateGroupDriver::gcd(0, 0));
-    EXPECT_EQ(5, Svc::RateGroupDriver::gcd(0, 5));
-    EXPECT_EQ(5, Svc::RateGroupDriver::gcd(5, 0));
-    EXPECT_EQ(6, Svc::RateGroupDriver::gcd(12, 18));
-    EXPECT_EQ(6, Svc::RateGroupDriver::gcd(18, 12));
-    EXPECT_EQ(1, Svc::RateGroupDriver::gcd(17, 19));
-    EXPECT_EQ(25, Svc::RateGroupDriver::gcd(100, 25));
-
-    // LCM properties
-    EXPECT_EQ(1, Svc::RateGroupDriver::lcm(1, 1));
-    EXPECT_EQ(12, Svc::RateGroupDriver::lcm(4, 6));
-    EXPECT_EQ(36, Svc::RateGroupDriver::lcm(12, 18));
-    EXPECT_EQ(20, Svc::RateGroupDriver::lcm(10, 20));
-    EXPECT_EQ(2000, Svc::RateGroupDriver::lcm(1000, 2000));
-}
-
 TEST(RateGroupDriverTest, NominalSchedule) {
     Svc::RateGroupDriver::DividerSet dividersSet{};
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(Svc::RateGroupDriver::DIVIDER_SIZE); i++) {
