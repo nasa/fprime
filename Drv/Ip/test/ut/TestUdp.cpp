@@ -12,6 +12,7 @@
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Os/Console.hpp>
+#include <STest/Random/Random.hpp>
 
 Os::Console logger;
 
@@ -235,6 +236,7 @@ TEST(SendTimeout, TestSendTimeoutAppliedWithoutSendPort) {
 #endif
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

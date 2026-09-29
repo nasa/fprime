@@ -9,6 +9,7 @@
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Os/Console.hpp>
+#include <STest/Random/Random.hpp>
 #include <cerrno>
 
 Os::Console logger;
@@ -158,6 +159,7 @@ TEST(Nominal, TestMultipleTcp) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
