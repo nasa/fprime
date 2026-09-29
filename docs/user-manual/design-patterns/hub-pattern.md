@@ -67,6 +67,12 @@ port.
 - Use a buffer driver at each end of the transport. The
   `Drv::ByteStreamBufferAdapter` can pair a byte-stream driver with the
   buffer-driver interface expected by GenericHub.
+- Wire command ports with the same indices on both hubs; the index is how a
+  command response finds its originator.
+- Size the hub's buffer pool for the worst case. GenericHub asserts when
+  allocation fails.
+- Monitor the link outside the hub. GenericHub reports no transport errors and
+  silently drops invalid received messages.
 
 ## Putting it together
 
