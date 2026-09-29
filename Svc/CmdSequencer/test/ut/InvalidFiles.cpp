@@ -335,6 +335,33 @@ void CmdSequencerTester ::USecFieldTooShort() {
     ASSERT_EVENTS_CS_RecordInvalid(0, file.getName().toChar(), 0, Fw::FW_DESERIALIZE_SIZE_MISMATCH);
 }
 
+void CmdSequencerTester ::BadUSec() {
+    // Set the time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
+    this->setTestTime(testTime);
+    // Write the file
+    SequenceFiles::BadUSecFile file(this->format);
+    file.write();
+    // Validate the file
+    this->sendCmd_CS_VALIDATE(0, 0, file.getName());
+    this->clearAndDispatch();
+    // Assert command response
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, this->getValidateOpcode(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    // Assert events
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_RecordInvalid(0, file.getName().toChar(), 0, Fw::FW_DESERIALIZE_FORMAT_ERROR);
+    // Run the sequence
+    this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::BlockState::NO_BLOCK);
+    this->clearAndDispatch();
+    // Assert command response
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, this->getRunOpcode(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    // Assert events
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_RecordInvalid(0, file.getName().toChar(), 0, Fw::FW_DESERIALIZE_FORMAT_ERROR);
+}
+
 }  // namespace InvalidFiles
 
 }  // namespace Svc

@@ -133,7 +133,7 @@ fprime-wasm verify
 ## Running The Sequence
 
 Once uploaded, the sequence is run with the `.RUN` command of any `Svc.WasmSequencer` instance. Here we run the
-`wasmSeq` instance's `.RUN` command on `safing.wasm`, waiting for it to finish, with no arguments:
+`wasmSeq` instance's `.RUN` command on `safing.wasm`, waiting for it to finish:
 
 ```
 wasmSeq.RUN "safing.wasm", BLOCK

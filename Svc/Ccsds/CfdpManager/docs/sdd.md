@@ -138,6 +138,8 @@ Because CfdpManager processes PDUs received from an external link, it must remai
 
 A specific case handled here is a syntactically valid FileData PDU that declares a file offset but carries zero file-data octets (its PDU payload length equals the encoded offset length). Such an empty segment conveys no data: the receive handler treats it as a successful no-op — no file write and no gap-tracking update — so it can never produce a zero-length interval in the chunk tracker. This closes the denial-of-service reported in [GHSA-mh5x-2m6h-8267](https://github.com/nasa/fprime/security/advisories/GHSA-mh5x-2m6h-8267), where a single zero-length Class 2 FileData PDU could reach a gap-tracking assertion and terminate the process. Note that this is an availability hardening measure; it does not by itself remove the need for the authenticated lower layers described above.
 
+A related case is a Class 2 FileData PDU whose header declares more file-data octets than the PDU carries, following a Metadata PDU with an oversized `fileSize`. Such a PDU fails deserialization; the receive handler faults the transaction with `PROTOCOL_ERROR` (the same status used for other unsupported FileData PDUs) and tears it down instead of leaving it eligible for FIN/CRC processing. Independently, the CRC pass over the received file treats an end-of-file short read — fewer bytes returned than requested while `rx_crc_calc_bytes` is still below the declared file size — as a `FILE_SIZE_ERROR` (`RxReadCrcFailed`) rather than as progress, so a file shorter than its declared size can never keep the CRC loop spinning on zero-byte reads and pin the `CfdpManager` thread.
+
 ### Main Class Hierarchy
 
 CfdpManager ([CfdpManager.hpp](../CfdpManager.hpp))
@@ -517,7 +519,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | RxEofCancelReceived | activity high | RX transaction cancelled by sender |
 | RxEofWithError | warning low | RX transaction received EOF with error condition code |
 | RxSeekCrcFailed | warning low | RX transaction failed to seek during CRC calculation |
-| RxReadCrcFailed | warning low | RX transaction failed to read during CRC calculation |
+| RxReadCrcFailed | warning low | RX transaction failed to read, or read fewer bytes than expected, during CRC calculation |
 | RxEofMdSizeMismatch | warning low | RX transaction EOF/metadata size mismatch |
 | RxFileRenameFailed | warning low | RX transaction failed to rename temp file to final file |
 | RxFileReopenFailed | warning low | RX transaction failed to reopen file after rename |
@@ -603,6 +605,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | LocalEid | Local CFDP entity ID used in PDU headers to identify this node in the CFDP network |
 | OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission |
 | RxCrcCalcBytesPerCycle | Maximum number of received file bytes to process for CRC calculation in a single scheduler cycle. Prevents blocking during large file verification |
+| PostInactivitySendRetries | Extra scheduler cycles a pending terminal send (EOF or FIN-ACK) is retried after the inactivity timer fires before the transaction is recycled regardless |
 | FileInDefaultChannel | CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
 | FileInDefaultDestEntityId | Destination entity ID used for file transfers initiated via the `fileIn` port interface |
 | FileInDefaultClass | CFDP class (CLASS_1 or CLASS_2) for file transfers initiated via the `fileIn` port interface |
@@ -684,6 +687,34 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 |---|---|---|
 | playbackCounter | U8 | Number of active directory playback operations |
 | pollCounter | U8 | Number of active directory poll operations |
+
+#### Parameter Telemetry
+
+In addition to `ChannelTelemetry`, `CfdpManager` mirrors every parameter to a
+telemetry channel so ground operators can verify the active configuration
+without relying on parameter-set confirmations alone. The component overrides
+`parameterUpdated()`, which the framework invokes both at load — `loadParameters()`
+calls `parameterLoaded()` for each parameter, which in turn calls
+`parameterUpdated()` — and whenever a parameter is set at runtime. Every channel
+therefore emits an initial sample on load; thereafter only the channel for the
+parameter that changed is re-emitted. Channel names carry a `PRM_` prefix to mark them
+as parameter mirrors, and each is declared `update on change` so a value is only
+reported when it differs from the last sample. Descriptions and units are
+documented once at the parameter definitions in the [Parameters](#parameters)
+section above.
+
+| Channel | Type | Mirrors Parameter |
+|---|---|---|
+| PRM_LOCAL_EID | `EntityId` | LocalEid |
+| PRM_OUTGOING_FILE_CHUNK_SIZE | U32 | OutgoingFileChunkSize |
+| PRM_RX_CRC_CALC_BYTES_PER_CYCLE | U32 | RxCrcCalcBytesPerCycle |
+| PRM_POST_INACTIVITY_SEND_RETRIES | U8 | PostInactivitySendRetries |
+| PRM_FILE_IN_DEFAULT_CHANNEL | U8 | FileInDefaultChannel |
+| PRM_FILE_IN_DEFAULT_DEST_ENTITY_ID | `EntityId` | FileInDefaultDestEntityId |
+| PRM_FILE_IN_DEFAULT_CLASS | `Class` | FileInDefaultClass |
+| PRM_FILE_IN_DEFAULT_KEEP | `Keep` | FileInDefaultKeep |
+| PRM_FILE_IN_DEFAULT_PRIORITY | U8 | FileInDefaultPriority |
+| PRM_CHANNEL_CONFIG | `ChannelArrayParams` | ChannelConfig |
 
 ## Requirements
 

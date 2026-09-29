@@ -19,23 +19,24 @@ automatically incorporated into the build by the build system.
 The Docs directory contains documentation related to the design and
 usage of the F′ framework.
 
+## default/config
+
+The `default/config` directory contains the default FPP and header files used to
+configure various properties of the architecture. Projects do not modify these files; they
+override individual files through the build system to tune the architecture for a
+particular deployment, as described in
+[Configuration Modules](../build-system/configuration.md). The individual settings are
+described in [Configuring F´](../framework/configuring-fprime.md).
+
+The file AcConstants.fpp contains a set of values for variables used in
+the code generation. Using this file allows component features like opcodes
+and port numbers to be changed without modifying the component FPP itself. 
+
 ## Fw
 
 The Fw directory is the location of framework code and base classes.
 This code should not be modified by developers using the framework. The code generation relies on
 the types declared to construct the entities in the architecture.
-
-### config
-
-The config directory contains header files used to
-configure various properties of the architecture. The developer can
-modify the file to tune the architecture for the requirements of a
-particular deployment environment. The contents are described in Section
-9.
-
-The file AcConstants.fpp contains a set of values for variables used in
-the code generation. Using this file allows component features like opcodes
-and port numbers to be changed without modifying the component FPP itself. 
 
 ### Types
 

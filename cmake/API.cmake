@@ -388,36 +388,50 @@ endfunction()
 ####
 # Function `register_fprime_config`:
 #
-# Registers a configuration build target using the fprime build system. This comes with dependency management and
-# fprime autocoding capabilities. The call format is identical to `register_fprime_library` and additionally supports
-# the CONFIGURATION_OVERRIDES and GLOBAL_IMPLICIT_DEPENDENCY directives. EXCLUDE_FROM_ALL is not supported.
+# Registers a configuration module using the fprime build system. This comes with dependency management and fprime
+# autocoding capabilities. The call format is identical to `register_fprime_library` (SOURCES, AUTOCODER_INPUTS,
+# HEADERS, DEPENDS, INTERFACE, EXCLUDE_FROM_ALL) and additionally supports the following directives:
 #
-# CONFIGURATION_OVERRIDES allows users to override the configuration files supplied by previous configuration modules
-# supplied by the build (e.g. fprime default configuration and library configuration).
-#
-# GLOBAL_IMPLICIT_DEPENDENCY is a flag that links the configuration module into the global interface target. Every
-# module that transitively depends on `Fw_Types` (i.e. all F Prime modules) then receives the configuration's include
-# root and link dependency without listing the module in DEPENDS. F Prime's default configuration and platform
-# configuration use this flag, and library authors may use it to supply default configuration for their library that
-# is implicitly available to everything in the build.
+# - **CONFIGURATION_OVERRIDES**: files replacing configuration files supplied by a previously registered configuration
+#   module (framework defaults, platform, library, or subtopology configuration). An override is matched to the file it
+#   replaces by file name only and is copied into the original module's location in the build cache. Listing a file
+#   that no earlier module supplied is an error.
+# - **GLOBAL_IMPLICIT_DEPENDENCY**: links the configuration module into the global interface target. Every module that
+#   transitively depends on `Fw_Types` (i.e. all F Prime modules) then receives the configuration's include root and
+#   link dependency without listing the module in DEPENDS. Used by the framework defaults and by platform
+#   configuration; library authors may use it to make their default configuration implicitly available to everything
+#   in the build. Configuration not marked this way must be listed in DEPENDS by the modules that use it. A module
+#   marked this way must not list Fw_Types in DEPENDS (Fw_Types depends on the global interface target, so the
+#   dependency would be circular and is rejected under BUILD_SHARED_LIBS=ON); depend on
+#   `${FPRIME_GLOBAL_INTERFACE_TARGET}` instead, as `default/config` does.
+# - **CHOOSES_IMPLEMENTATIONS**: implementations (e.g. `Os_File_Posix`) selected by this configuration. See
+#   `register_fprime_implementation`.
 #
 # > [!NOTE]
 # > GLOBAL_IMPLICIT_DEPENDENCY replaces the BASE_CONFIG flag, which is deprecated and will be removed in a future
 # > release. BASE_CONFIG remains a synonym and emits a deprecation warning.
 #
-# All configuration module sources (SOURCES, HEADERS, and AUTOCODER_INPUTS) are copied into the build cache.
-# Overrides are copied into the original module's build that the file overrides as this preserves the original build
-# module set up. Overrides only work in order of detection within the CMakeList.txt tree:
+# All configuration module sources (SOURCES, HEADERS, and AUTOCODER_INPUTS) are copied into the build cache and are
+# included via the parent of the module's build directory, i.e. a header registered from `default/config/FpConfig.h`
+# is included as `config/FpConfig.h`. The source directory must therefore not sit directly under a source include
+# root (project root, framework root, or library root), otherwise the source-tree file shadows the build cache copy;
+# this is detected for SOURCES and HEADERS (not AUTOCODER_INPUTS or CONFIGURATION_OVERRIDES) and reported as an
+# error. Configuration files are processed in order of detection within the CMakeLists.txt tree, and the last
+# registration of a given file name wins:
 #
-#    platform -> fprime config -> library -> project.
+#    platform -> framework defaults (default/config) -> libraries -> project.
 #
+# Modules supplying SOURCES or AUTOCODER_INPUTS must be STATIC libraries (or INTERFACE when nothing compiles), so that
+# they can depend on Fw_Types regardless of the Fw_Types library type (e.g. BUILD_SHARED_LIBS=ON). Declare STATIC
+# explicitly whenever the module supplies SOURCES: the automatic STATIC default currently applies only to modules
+# with AUTOCODER_INPUTS (see https://github.com/nasa/fprime/issues/5970). Modules supplying
+# only HEADERS and/or CONFIGURATION_OVERRIDES must be declared INTERFACE (CMake otherwise fails at generate time with
+# "No SOURCES given to target").
+#
+# See the user manual for the full description: docs/user-manual/build-system/configuration.md
 #
 # > [!WARNING]
-# > Specifying headers in this command is crucial to providing as configuration.
-#
-# > [!NOTE]
-# > Configuration is built as a series of STATIC libraries in order to allow for interdependencies between config and
-# > Fw_Types regardless of the Fw_Types library type.
+# > Headers must be listed under HEADERS to be treated as configuration.
 #
 # Example:
 # ```
@@ -435,10 +449,11 @@ endfunction()
 # )
 # ```
 #
-# Example library default configuration, implicitly available to all modules:
+# Example library default configuration (my-library/default-config/config-my-library/CMakeLists.txt), implicitly
+# available to all modules:
 # ```
 # register_fprime_config(
-#         MyLibraryConfig
+#         config-my-library
 #     HEADERS
 #         MyLibraryCfg.hpp
 #     AUTOCODER_INPUTS
