@@ -173,7 +173,7 @@ TEST(LocklessConcurrent, AvailableNeverWraps) {
 
     std::thread producers[WRAP_PRODUCERS];
     for (U32 p = 0; p < WRAP_PRODUCERS; p++) {
-        producers[p] = std::thread([&, p]() {
+        producers[p] = std::thread([&]() {
             U8 buf[sizeof(U32)] = {0};
             for (U32 m = 0; m < WRAP_MESSAGES_PER_PRODUCER; m++) {
                 Os::QueueInterface::Status st = Os::QueueInterface::Status::FULL;
