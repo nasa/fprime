@@ -64,6 +64,46 @@ void BufferLoggerTester ::CloseFile() {
     tester.test();
 }
 
+class FlushFileTester : public Logging::BufferLoggerTester {
+  public:
+    FlushFileTester() {
+        Fw::Time testTime = this->generateTestTime(0);
+        this->setTestTime(testTime);
+    }
+
+  private:
+    //! Send a flush command and check it succeeds without emitting any event (so it did not close the file)
+    void sendFlushFileCommand(const U32 cmdSeq) {
+        this->clearHistory();
+        this->sendCmd_BL_FlushFile(0, cmdSeq);
+        this->dispatchOne();
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(0, BufferLogger::OPCODE_BL_FLUSHFILE, cmdSeq, Fw::CmdResponse::OK);
+        ASSERT_EVENTS_SIZE(0);
+    }
+
+  public:
+    void test() {
+        // No log file is open yet; flushing is a no-op that still succeeds
+        this->sendFlushFileCommand(0);
+        // Open a log file and write to it, then flush it
+        this->sendCmd_BL_OpenFile(0, 1, Fw::CmdStringArg("FlushFileTester"));
+        this->dispatchOne();
+        this->sendComBuffers(3);
+        this->sendFlushFileCommand(2);
+        // The file is still open after the flush: closing it now reports it closed
+        this->clearHistory();
+        this->sendCmd_BL_CloseFile(0, 3);
+        this->dispatchOne();
+        ASSERT_EVENTS_BL_LogFileClosed_SIZE(1);
+    }
+};
+
+void BufferLoggerTester ::FlushFile() {
+    FlushFileTester tester;
+    tester.test();
+}
+
 class SendBuffersTester : public Logging::BufferLoggerTester {
   protected:
     //! Send buffers
