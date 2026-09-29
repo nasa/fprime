@@ -29,10 +29,11 @@ The following diagram shows the complete ComCcsds subtopology:
 
 ![ComCcsds Downlink Path](img/com-ccsds-downlink.png)
 
-Outgoing data follows a two-stage framing process:
+Outgoing data follows a three-stage framing process:
 
 1. The Communication Queue sends data to the Space Packet Framer, which constructs CCSDS Space Packets with proper APIDs and sequence counts.
-2. The TM Framer wraps each Space Packet into a CCSDS TM Transfer Frame for transmission over the space link.
+2. The ComAggregator packs Space Packets into fixed-size aggregates of `ComCcsdsConfig.Aggregator.aggregationSize` bytes (the TM Transfer Frame Data Field by default), filling any residual space with an idle packet and optionally spanning packets across aggregates.
+3. The TM Framer wraps each complete aggregate into a CCSDS TM Transfer Frame for transmission over the space link.
 
 ### Uplink Path
 
@@ -46,6 +47,7 @@ Incoming data follows a two-stage deframing process:
 ### Included Components
 
 - **Space Packet Framer / Deframer** — CCSDS Space Packet Protocol layer
+- **ComAggregator** — Packs Space Packets into fixed-size, idle-filled aggregates for the TM Framer
 - **TM Framer** — CCSDS TM Transfer Frame construction for downlink
 - **TC Deframer** — CCSDS TC Transfer Frame extraction for uplink
 - **F Prime Router** — Routes deframed packets to their destinations
@@ -56,6 +58,7 @@ Incoming data follows a two-stage deframing process:
 ### Configuration
 
 - Base IDs, queue sizes, stack sizes, priorities, and CPU affinities via ComCcsdsConfig.
+- Aggregate size and packet spanning via `ComCcsdsConfig.Aggregator` (`aggregationSize` defaults to `Svc.Ccsds.TmDataFieldSize` and must be reduced by any layer inserted before the TM framer, e.g. `Svc.ComCcsdsSdls`; see the `Svc.ComAggregator` SDD).
 - CCSDS-specific parameters (APIDs, virtual channels) are configured through the protocol components.
 
 ### Required Inputs
