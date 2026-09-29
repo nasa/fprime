@@ -55,6 +55,11 @@ task touches code that already exists.
 - Update only the artifacts the change invalidates: unit tests for the
   changed behavior, the component `docs/sdd.md`, and the `docs/` pages
   that describe it.
+- Fit the tests to the change: a regression test for the defect and one
+  test per behavior the task added or changed. Do not add tests for
+  behavior the task did not touch; record coverage gaps as future work
+  (§5). Once the new tests pass, run the consolidation step in
+  `fprime-unit-testing` §1 so shared sequences become helpers or rules.
 - Keep the diff reviewable: every hunk must map to the task statement
   or to a cleanup item declared under §3.
 
@@ -116,7 +121,8 @@ of the current change.
 - [ ] Any rework was approved by an engineer beforehand and is
       separated from the fix.
 - [ ] Tests, `docs/sdd.md`, and `docs/` updated only where the change
-      invalidated them.
+      invalidated them; new tests trace to the task and were
+      consolidated.
 - [ ] Out-of-scope observations recorded, not fixed.
 - [ ] PR description distinguishes the fix, declared cleanup, and
       future work.
