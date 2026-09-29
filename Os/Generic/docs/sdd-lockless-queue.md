@@ -157,23 +157,24 @@ send(buffer, size, priority, blockType):
               m_slots[i].m_priority = priority
               m_slots[i].m_sequence = m_sequence.fetch_add(1, relaxed)
               count = m_count.fetch_add(1, acq_rel) + 1
+              m_available.fetch_add(1, acq_rel)   // credit the message before it is claimable
               m_slots[i].m_stateTag.store(pack(READY, tag(desired) + 1), release)
-              m_available.fetch_add(1, acq_rel)   // message is now receivable
               raise_high_mark_to(count)  // CAS until mark >= count; bounded by depth
               return OP_OK
   return FULL
 ```
 
-Two counters are maintained. The occupancy count `m_count` is incremented
-*before* the `release` store that publishes `READY`: a consumer can only
-decrement after observing `READY`, so the decrement is ordered after the
-increment, `m_count` never transiently underflows, and the high-water mark
-derived from it never exceeds `depth`. The receivable count `m_available`,
-which backs `getMessagesAvailable`, is incremented only *after* `READY` is
-published, so it never counts a message that a receive cannot yet complete
-(see §8). The high-water CAS loop runs after publication so the message is
-never invisible to consumers (including ISRs) while the producer updates the
-mark.
+Two counters are maintained, and both are incremented *before* the `release`
+store that publishes `READY`: a consumer can only decrement after observing
+`READY`, so every decrement is ordered after its matching increment and
+neither counter can transiently underflow (and wrap to a huge value). For the
+occupancy count `m_count` this bounds the high-water mark by `depth`. For the
+receivable count `m_available`, which backs `getMessagesAvailable`, it means
+the counter may briefly *over*-report a message that is credited but not yet
+published — by at most one per producer in that window — but never
+under-reports a published message and never wraps (see §8). The high-water
+CAS loop runs after publication so the message is never invisible to
+consumers (including ISRs) while the producer updates the mark.
 
 The outer loop is bounded for non-blocking callers and unbounded for blocking
 callers. The blocking spin is the explicit contract of `BlockingType::BLOCKING`
@@ -246,7 +247,9 @@ causing the CAS to fail and the pass to retry.
 
 The receivable count `m_available` is decremented at the successful
 `READY -> READING` claim, since the claimed message can no longer complete
-another receive. The occupancy count `m_count` is decremented *before* the
+another receive. Because the producer credited `m_available` before
+publishing `READY`, the credit is always present when the claim succeeds and
+the decrement never underflows. The occupancy count `m_count` is decremented *before* the
 `release` store that frees the slot. A producer can only re-claim (and
 re-count) the slot after observing `FREE`, so `m_count` — and therefore the
 high-water mark — never exceeds `depth`.
@@ -254,7 +257,8 @@ high-water mark — never exceeds `depth`.
 Each pass begins with a check of `m_available`: while no message is
 receivable, the O(`depth`) selection scan is skipped entirely, so an idle
 blocking receiver performs one atomic load per wakeup rather than a full
-array scan.
+array scan. A published (`READY`) message always has its credit in
+`m_available`, so this fast path never skips a claimable message.
 
 **Priority ordering is inherent, not global.** Strict priority holds only
 against messages that are published (`READY`) before the consumer's scan
@@ -292,16 +296,24 @@ counter is retained and the window is documented as a limitation (§15).
 Two atomic counters are maintained:
 
 - `m_available` is the **receivable** count returned by
-  `getMessagesAvailable`. It is incremented after a slot is published `READY`
-  and decremented at the successful `READY -> READING` claim. A nonzero value
-  therefore means a receive of at least one message can complete; a zero
-  value never counts a message a receive could not obtain. This matches the
-  contract framework control flow depends on (e.g.
-  `ActiveComponentBase::dispatch` uses it as a blocking-receive guard for
-  cooperative tasks, and `QueuedComponentBase::dispatchAvailableMessages`
-  uses it as an iteration bound). Because the increment follows publication,
-  the counter may briefly *under*-report a just-published message; it never
-  over-reports.
+  `getMessagesAvailable`. It is incremented before a slot is published
+  `READY` and decremented at the successful `READY -> READING` claim. Because
+  a consumer can only claim a slot after observing `READY`, every decrement
+  is preceded by its matching increment: the counter never underflows, never
+  wraps, and is bounded by `m_count` and therefore by `depth`. A zero value
+  means no published message is receivable, which is the contract framework
+  control flow depends on (e.g. `ActiveComponentBase::dispatch` uses it as a
+  blocking-receive guard for cooperative tasks, and
+  `QueuedComponentBase::dispatchAvailableMessages` uses it as an iteration
+  bound). Because the increment precedes publication, the counter may briefly
+  *over*-report a message that a producer has credited but not yet published
+  — by at most one per producer in that window — so a nonzero value means a
+  receive can complete either immediately or as soon as that producer's
+  pending `release` store lands. It never under-reports a published message.
+  (Incrementing after publication instead would let a consumer's decrement
+  precede the increment, underflowing the counter to `~0u` and letting the
+  empty-queue fast path in §6 return a spurious `EMPTY` for a claimable
+  message.)
 - `m_count` is the **occupancy** count (claimed-or-queued slots), maintained
   solely to compute the high-water mark. It is incremented before `READY`
   and decremented before `FREE`, bounding it by `depth`.
@@ -468,6 +480,11 @@ lockless-specific tests, including:
 - `LocklessConcurrent.MultiProducerMultiConsumer`: four producer threads and
   four consumer threads exchange 4,000 messages through a 64-slot queue. Every
   value must be received exactly once.
+- `LocklessConcurrent.AvailableNeverWraps`: four producer threads and four
+  consumer threads exchange 8,000 messages through an 8-slot queue while an
+  observer thread continuously samples `getMessagesAvailable()`; the sampled
+  value must never exceed the queue depth (a wrapped counter would read
+  `~0u`).
 - `LocklessConcurrent.PriorityOrderSingleProducer`: 200 batches of 16
   increasing-priority messages are sent and drained; the receive order must
   be strictly non-increasing in priority.
@@ -497,6 +514,9 @@ run in CI by the framework ThreadSanitizer unit-test job.
   callers. ISR callers must use `BlockingType::NONBLOCKING`.
 - Non-blocking `send`/`receive` may return spurious `FULL`/`EMPTY` under
   contention (§5, §6).
+- `getMessagesAvailable` is an upper bound: it may transiently exceed the
+  number of published messages by at most one per producer that has credited
+  a message but not yet published it (§8).
 - Strict priority ordering applies only to messages published before the
   consumer's scan; a producer preempted mid-`WRITING` with a high-priority
   message lets lower-priority messages pass it (§6).

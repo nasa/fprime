@@ -232,16 +232,14 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
                 slot.m_sequence.store(this->m_handle.m_sequence.fetch_add(1, std::memory_order_relaxed),
                                       std::memory_order_relaxed);
 
-                // Increment the occupancy count *before* publishing READY. This guarantees a
-                // consumer's decrement (which can only follow a READY observation) never precedes
-                // this increment, so m_count cannot transiently underflow.
+                // Increment both counters *before* publishing READY. This guarantees that a
+                // consumer's decrement (which can only follow a READY observation) never races
+                // ahead of the matching increment, so neither m_count nor m_available can
+                // transiently underflow or wrap to a huge value (fixes GitHub issue #6055).
                 const U32 nextCount = this->m_handle.m_count.fetch_add(1, std::memory_order_acq_rel) + 1;
+                static_cast<void>(this->m_handle.m_available.fetch_add(1, std::memory_order_acq_rel));
 
                 slot.m_stateTag.store(packStateTag(LOCKLESS_SLOT_READY, tagOf(desired) + 1), std::memory_order_release);
-
-                // Increment the receivable count only after READY is published, so a nonzero
-                // getMessagesAvailable() implies at least one message has been made receivable.
-                static_cast<void>(this->m_handle.m_available.fetch_add(1, std::memory_order_acq_rel));
 
                 // Raise the high-water mark after publication so the message is never invisible
                 // while the producer runs this loop. Each strong-CAS failure strictly raises
@@ -324,8 +322,9 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
         const LocklessStateTagType desired = packStateTag(LOCKLESS_SLOT_READING, tagOf(bestPacked) + 1);
         if (this->m_handle.m_slots[bestIndex].m_stateTag.compare_exchange_strong(
                 bestPacked, desired, std::memory_order_acq_rel, std::memory_order_relaxed)) {
-            // Decrement the receivable count at the successful READY->READING claim: this
-            // message can no longer complete another receive.
+            // Decrement the receivable count at the successful READY->READING claim. Because
+            // m_available is incremented before READY is published, it is always >= the number
+            // of genuinely READY slots, so this decrement can never underflow.
             static_cast<void>(this->m_handle.m_available.fetch_sub(1, std::memory_order_acq_rel));
             LocklessSlot& slot = this->m_handle.m_slots[bestIndex];
             const FwSizeType storedSize = slot.m_size;
