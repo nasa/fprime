@@ -513,8 +513,10 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test FileInDefaultPriority parameter default value
     void testParamFileInDefaultPriorityDefault();
 
-    //! Check the default, updates, and actual post-inactivity transmit retry budget.
+    //! Retry-budget test mode: whether buffer allocation recovers before the budget is exhausted
     enum class BufferRecovery { NONE, BEFORE_EXHAUSTION };
+
+    //! Check the default, updates, and actual post-inactivity transmit retry budget.
     void testParamPostInactivitySendRetriesDefault();
     void testParamPostInactivitySendRetriesSetGet();
     void testPostInactivitySendRetryBudget(U8 retries, BufferRecovery recovery);

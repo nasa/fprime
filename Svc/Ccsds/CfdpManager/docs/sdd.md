@@ -605,7 +605,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | LocalEid | Local CFDP entity ID used in PDU headers to identify this node in the CFDP network |
 | OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission |
 | RxCrcCalcBytesPerCycle | Maximum number of received file bytes to process for CRC calculation in a single scheduler cycle. Prevents blocking during large file verification |
-| PostInactivitySendRetries | U8 retry budget (0-255, default 3) for a pending terminal send (EOF or FIN-ACK) after the inactivity timer fires. If buffer allocation remains unavailable, the transaction is recycled after the initial failed post-inactivity send plus this many retry cycles; 0 therefore recycles after the first failed send |
+| PostInactivitySendRetries | U8 retry budget (0-255, default 3) for a pending terminal send (TX: EOF or FIN-ACK; RX: ACK(EOF), NAK, or FIN) after the inactivity timer fires. If buffer allocation remains unavailable, the transaction is recycled after the initial failed post-inactivity send plus this many retry cycles; 0 therefore recycles after the first failed send |
 | FileInDefaultChannel | CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
 | FileInDefaultDestEntityId | Destination entity ID used for file transfers initiated via the `fileIn` port interface |
 | FileInDefaultClass | CFDP class (CLASS_1 or CLASS_2) for file transfers initiated via the `fileIn` port interface |
