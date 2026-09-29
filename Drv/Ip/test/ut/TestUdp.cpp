@@ -183,6 +183,30 @@ TEST(Ephemeral, TestEphemeralPorts) {
     receiver.close(recv_fd);
 }
 
+// Fails every send with the given errno; the zero-length datagram path classifies errors on its own
+class UdpSendTimeoutSocket final : public Drv::UdpSocket {
+  public:
+    explicit UdpSendTimeoutSocket(int send_errno) : m_send_errno(send_errno) {}
+    U32 send_calls = 0;
+
+  private:
+    FwSignedSizeType sendProtocol(const Drv::SocketDescriptor&, const U8* const, const FwSizeType) override {
+        this->send_calls++;
+        errno = this->m_send_errno;
+        return -1;
+    }
+
+    int m_send_errno;
+};
+
+TEST(SendTimeout, TestZeroLengthSendTimeoutIsRetryable) {
+    UdpSendTimeoutSocket socket(EAGAIN);
+    Drv::SocketDescriptor fd;
+
+    EXPECT_EQ(socket.send(fd, nullptr, 0), Drv::SOCK_INTERRUPTED_TRY_AGAIN);
+    EXPECT_EQ(socket.send_calls, 1u);
+}
+
 #ifndef TGT_OS_TYPE_VXWORKS
 // A send port of 0 means "reply to the source of the last datagram received", so such a
 // socket does send and the configured send timeout has to reach it. It used to be applied
