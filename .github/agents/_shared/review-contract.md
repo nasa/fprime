@@ -66,6 +66,33 @@ drives the tag.
 
 Decision tree and worked examples live in `.github/skills/triage-classifier/SKILL.md`.
 
+### 1a. Tag by consequence, never by effort spent
+
+The review effort budget (§13) governs how much an agent
+**investigates**; it never governs how it **tags** what it found. A
+finding reached cheaply is tagged exactly as one reached expensively.
+
+These consequences are `**must fix**` whenever the agent can
+demonstrate them from its own rationale — not `suggestion`:
+
+- A reachable `FW_ASSERT`, bound violation, or out-of-range index
+  driven by a ground-settable or uplinked value.
+- A code path that reports success (return status, event, telemetry)
+  for an operation that in fact failed or was rejected.
+- A documented claim (component `docs/sdd.md`, user manual, Doxygen
+  comment) this PR makes false — including a superseded sentence left
+  standing beside its replacement.
+- A new ground-facing command, event, telemetry channel, or parameter
+  absent from the document that enumerates them.
+- State left inconsistent on an error path.
+- A behavior change to an existing topology or deployment whose owner
+  has not signed off.
+
+When an agent judges one of the above to be below `must fix`, it says
+why in the comment's prose. The aggregator re-tags on consequence at
+aggregation time (§14), so an under-tagged finding is corrected rather
+than lost — but the reviewer tags correctly in the first place.
+
 ---
 
 ## 2. Per-agent review submission
@@ -85,7 +112,13 @@ Review body shape (the ONLY content in the review body):
 <!-- verdict: Go | No-Go -->
 <!-- run: N -->
 <!-- since_last_run: {"resolved": X, "still_open": Y, "newly_added": Z, "incorrect_fix": W, "improperly_resolved": V, "disagreements": U} -->
+<!-- unexplored_below_must_fix: N -->
 ```
+
+`unexplored_below_must_fix` is the count of below-must-fix candidate
+sites the lens deliberately left unexplored under the effort budget
+(§13b); it is `0` for an exempt lens (§13d) and tells a maintainer how
+much nit-tier surface was traded away for cost.
 
 This metadata is machine-readable by the aggregator but invisible to
 human reviewers browsing the PR. The visible output of each reviewer
@@ -218,9 +251,10 @@ Sub-agent thanks is **not** posted on GitHub and **not** in any agent's
 working response. It lives exclusively in the kickoff prompt the
 orchestrator sends to each sub-agent on invocation.
 
-- The orchestrator agent (`review-orchestrator.agent.md`) carries
-  kickoff prompt templates in its body, one per sub-agent it invokes.
-- Each template opens with a brief, sincere thanks line.
+- The orchestrator agent (`review-orchestrator.agent.md`) carries the
+  session preamble and one per-lens directive block per reviewer in
+  its body; one kickoff prompt is assembled per review session.
+- Each session preamble opens with a brief, sincere thanks line.
 - Neither the orchestrator nor the sub-agents render this thanks to
   the human operator or post it on GitHub.
 
@@ -274,8 +308,9 @@ same *issue* is decided by the concurrence rule below. Footers that
 carry a site-key use the `v2` marker (§9); `v1` footers without a
 site-key remain valid and readable.
 
-**First-poster-wins concurrence rule.** Reviewers run sequentially in
-a fixed order (orchestrator §Sequence). During Phase A each reviewer
+**First-poster-wins concurrence rule.** Reviewer sessions run
+sequentially in a fixed order, and the lenses inside a session run in
+registry order (orchestrator §Sequence, §13a). During Phase A each reviewer
 inventories **all** agents' prior inline comments on the PR (any
 `fprime-agent:` footer, not just its own), indexed by site-key.
 Before posting a new finding, the reviewer checks for an existing
@@ -604,6 +639,24 @@ agent's tag is stricter than the thread's current tag. One
 concurrence reply per agent per thread; the `reply-kind: concurrence`
 attribute is the de-dup key on later runs.
 
+### Severity-promotion reply (severity reconciliation, §14)
+
+Posted by the aggregator on a thread whose finding it promoted to
+`**must fix**` on the strength of the finding's own rationale.
+
+```
+[Summary] **Promoted to must fix** — <the §1a consequence the rationale demonstrates, ≤ 1 line>.
+
+The summary counts this finding as `must fix`; the original tag above stands as posted.
+
+<!-- fprime-review-summary; site-key: <skey>; v2; reply-kind: severity-promotion -->
+```
+
+One severity-promotion reply per thread, ever; the `reply-kind`
+attribute is the de-dup key across runs. Reviewers do not treat this
+reply as contributor pushback (§11) and never un-resolve or re-tag
+because of it.
+
 ---
 
 ## 10. Posting mechanics
@@ -691,15 +744,143 @@ each ping happens at most once per thread.
 
 Each entry in `agent-registry.yml` carries a `role` field:
 
-- `orchestrator` — the single human entry point. Invokes reviewers
-  and aggregator. Does not post comments itself.
+- `orchestrator` — the single human entry point. Drives the reviewer
+  sessions and then performs the aggregation itself. Posts no inline
+  comments.
 - `reviewer` — posts inline comments only (no visible summary table).
   Submits a single PR review (event: `COMMENT`) whose body contains
   only a hidden metadata block (§2) and whose inline comments are the
   findings.
 - `aggregator` — consumes per-agent hidden metadata and inline
-  comments, then submits ONE PR review with event `APPROVE` or
-  `REQUEST_CHANGES` based on the consolidated Go/No-Go verdict.
+  comments, reconciles severity (§14), then submits ONE PR review
+  with event `APPROVE` or `REQUEST_CHANGES` based on the consolidated
+  Go/No-Go verdict.
 
 The orchestrator iterates over `role: reviewer` entries to drive
-reviewers, then invokes the `role: aggregator` entry.
+reviewers, then executes the `role: aggregator` entry.
+
+**A role is a lens, not a process.** How many sessions the review
+occupies is an orchestration decision (§13) and never changes what is
+posted:
+
+- Several `role: reviewer` lenses may share one review session. Each
+  lens still posts its own inline comments under its own
+  `review_label`, its own hidden-metadata review keyed by its own
+  marker (§2), and its own run ordinal. A reader of the PR cannot tell
+  how lenses were packed.
+- The orchestrator executes the `role: aggregator` entry itself rather
+  than delegating it to a further session; the aggregator's own file
+  governs the summary's content, and while acting in that role the
+  orchestrator is bound by every aggregator rule, including the
+  prohibition on analyzing code or opening new threads. The aggregator
+  remains separately invocable for debugging.
+- Lenses never merge, share, or trade findings inside a shared
+  session. Each lens applies its own agent file and reaches its own
+  conclusions; Priority 1 (§8) binds each lens individually. Sharing a
+  session saves startup cost, not review work.
+
+---
+
+## 13. Review effort budget
+
+Review cost is dominated by session startup and by deep verification —
+full-file reads, caller tracing, reachability arguments. This section
+bounds where that effort is spent. It bounds **investigation only**;
+§1a governs tagging, and Priority 1 (§8) still forbids discarding
+anything the agent actually found.
+
+### 13a. Session packing
+
+The orchestrator packs the reviewer set into one session per
+`review_group` in `agent-registry.yml`, at most four lenses per
+session, and runs the groups in the fixed order that registry's header
+specifies. A reviewer with a missing or unrecognized `review_group`
+runs in its own session — never folded in silently, never skipped.
+
+### 13b. Must-fix-first budget (non-exempt lenses)
+
+A missed `must fix` is an unrecoverable failure; a missed `could fix`
+or nit-tier `suggestion` is an acceptable saving. So each non-exempt
+lens sweeps its scope for candidate sites, ranks them by the worst tag
+they could plausibly carry, and spends deep verification on the
+candidates that could be `must fix` — plus any below-must-fix
+candidate cheap to confirm from context already read.
+
+- The must-fix search itself is never weakened: full-file reads and
+  caller tracing remain mandatory before asserting **or** dismissing a
+  must-fix (§CONTEXT MANDATE in the orchestrator's kickoff prompts).
+- Do not open new files or trace new call chains solely to firm up a
+  `could fix` or `future work` item. Report those when already
+  evident, and stop after roughly three per lens.
+- Note in the lens's hidden metadata how many below-must-fix
+  candidates were left unexplored:
+  `<!-- unexplored_below_must_fix: N -->`.
+
+### 13c. Slim first-pass reading (non-exempt lenses, run 1 only)
+
+On run 1 a non-exempt lens reads of this contract only §0, §1/§1a,
+§3, §4, and §8 — the sections that govern what it is looking for and
+how to tag it. The remaining sections govern posting mechanics,
+de-duplication and re-review state, which the lens follows through
+`post-inline-review` and `re-review-state` as it posts.
+
+On **run ≥ 2** this narrowing does not apply: re-review needs §6, §6a,
+§7 and §11 in full, and a lens that skipped them would repost,
+mis-resolve, or re-escalate. Each lens reads its own agent file in
+full, always; of the skills that file references, it reads the ones
+whose subject matter the diff actually touches.
+
+### 13d. Safety exemption (mandatory)
+
+A lens with `contributes_to_ci_safety: true` — the `safety` group — is
+**exempt from §13b and §13c**. It reads in full, caps nothing, and for
+every value this PR lets ground or hardware touch (commands,
+parameters, uplinked file content, sequence directives, config
+constants a deployment can change) traces that value from its entry
+point to every `FW_ASSERT`, buffer-size computation, index, and array
+write it can reach, across files and components, per
+`.github/skills/fprime-ground-input-tracing/SKILL.md` and
+`.github/skills/fprime-hardware-input-tracing/SKILL.md`. The rationale
+names which entry point reaches which assert.
+
+A reachable assert or bound violation driven by a ground-settable
+value is a `must fix`. Cost is never a reason to stop that trace
+early: uniformly budgeting every lens measurably lost exactly this
+finding class, which is why the exemption exists. The saving comes
+from the other groups.
+
+---
+
+## 14. Severity reconciliation at aggregation
+
+Severity tagging is a cheap centralized judgement and an expensive
+distributed one: reviewers reliably find the defective site, then
+disagree about which tag it carries — a disagreement two runs of the
+same reviewer set exhibit against each other. The aggregator therefore
+arbitrates severity once, holding every finding and its rationale.
+
+Before composing the summary, the aggregator re-reads each outstanding
+finding's rationale against §1/§1a and **promotes** any finding whose
+stated consequence is must-fix-tier though its reviewer tagged it
+lower. The promotion list is exactly §1a's consequence list.
+
+- **Never demote** a reviewer's `**must fix**`. Arbitration is
+  one-directional; a maintainer resolving the thread is how a
+  disputed must-fix is settled (§0).
+- Promote on the finding's own stated rationale, not on the
+  aggregator's fresh analysis of the code. The aggregator does not
+  analyze code (`review-summary.agent.md` §Role); if the rationale
+  does not demonstrate the consequence, the tag stands.
+- A promoted finding counts as `must fix` in the summary's Totals,
+  `Outstanding must-fix items`, and both verdicts (§5c) — so a
+  promotion can flip `Merge readiness` to `No-Go`.
+- Reviewer hidden-metadata counts are **not** rewritten (as in §5h):
+  each lens owns its own counts, and the aggregator adjusts only its
+  own consolidated rendering.
+- Every promotion, and every deliberate non-promotion of a finding the
+  aggregator considered, is recorded in the summary's promotion log
+  (`review-summary.agent.md` §5j) so the arbitration is auditable
+  rather than silent.
+- The aggregator notes the promoted tag on the thread with one
+  `reply-kind: severity-promotion` reply (§9), once per thread ever,
+  so the maintainer reading the thread sees the tag the summary used.
