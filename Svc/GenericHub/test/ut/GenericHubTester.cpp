@@ -95,18 +95,7 @@ void GenericHubTester ::fill(Fw::SerialBufferBase& buffer, U32 size) {
 }
 
 void GenericHubTester ::test_telemetry() {
-    Fw::TlmBuffer buffer;
-    clearFromPortHistory();
-    random_fill(buffer, FW_TLM_BUFFER_MAX_SIZE);
-
-    Fw::Time time(100, 200);
-    invoke_to_tlmIn(0, 123, time, buffer);
-
-    // **must** return buffer
-    ASSERT_from_fromBufferDriverReturn_SIZE(1);
-    ASSERT_from_tlmOut_SIZE(1);
-    ASSERT_from_tlmOut(0, 123, time, buffer);
-    clearFromPortHistory();
+    test_telemetry_size(STest::Pick::lowerUpper(0, FW_TLM_BUFFER_MAX_SIZE));
 }
 
 void GenericHubTester ::test_telemetry_size(U32 size) {
@@ -117,25 +106,14 @@ void GenericHubTester ::test_telemetry_size(U32 size) {
     Fw::Time time(100, 200);
     invoke_to_tlmIn(0, 123, time, buffer);
 
-    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);  // **must** return buffer
     ASSERT_from_tlmOut_SIZE(1);
     ASSERT_from_tlmOut(0, 123, time, buffer);
     clearFromPortHistory();
 }
 
 void GenericHubTester ::test_events() {
-    Fw::LogSeverity severity = Fw::LogSeverity::WARNING_HI;
-    Fw::LogBuffer buffer;
-    random_fill(buffer, FW_LOG_BUFFER_MAX_SIZE);
-
-    Fw::Time time(100, 200);
-    invoke_to_eventIn(0, 123, time, severity, buffer);
-
-    // **must** deallocate buffer
-    ASSERT_from_fromBufferDriverReturn_SIZE(1);
-    ASSERT_from_eventOut_SIZE(1);
-    ASSERT_from_eventOut(0, 123, time, severity, buffer);
-    clearFromPortHistory();
+    test_events_size(STest::Pick::lowerUpper(0, FW_LOG_BUFFER_MAX_SIZE));
 }
 
 void GenericHubTester ::test_events_size(U32 size) {
@@ -147,7 +125,7 @@ void GenericHubTester ::test_events_size(U32 size) {
     Fw::Time time(100, 200);
     invoke_to_eventIn(0, 123, time, severity, buffer);
 
-    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);  // **must** deallocate buffer
     ASSERT_from_eventOut_SIZE(1);
     ASSERT_from_eventOut(0, 123, time, severity, buffer);
     clearFromPortHistory();
