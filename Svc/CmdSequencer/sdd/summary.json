@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "artifact": "sdd",
-  "generated_at": "2026-09-28T21:13:52Z",
+  "generated_at": "2026-09-29T21:14:39Z",
   "ref": "devel",
-  "commit": "5a16c7fc2e46e02332616e9b425c874168349486",
+  "commit": "63127204b026958495bcd1622ad860f4ba6f585f",
   "tier": "gold",
   "has_sdd": true,
   "sections": 37,
   "filled_sections": 18,
-  "prose_words": 1558,
+  "prose_words": 1604,
   "placeholder_hits": 2,
   "table_kinds": [
     "data_products",
