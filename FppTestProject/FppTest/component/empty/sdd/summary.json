@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-09-30T23:34:24Z",
+  "ref": "v4.4.0",
+  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "tier": "bronze",
+  "has_sdd": false,
+  "doxygen": [
+    {
+      "name": "Empty",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.0/docs/reference/api/cpp/html/class_empty.html"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-09-30T23:34:24Z",
+  "ref": "v4.4.0",
+  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 17,
+  "filled_sections": 5,
+  "prose_words": 621,
+  "placeholder_hits": 2,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "commands",
+    "events",
+    "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.0/Svc/PrmDb/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::PrmDbImpl",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.0/docs/reference/api/cpp/html/class_svc_1_1_prm_db_impl.html"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-09-30T23:34:24Z",
+  "ref": "v4.4.0",
+  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "tier": "bronze",
+  "has_sdd": true,
+  "sections": 8,
+  "filled_sections": 1,
+  "prose_words": 127,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "events",
+    "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.0/Svc/ActivePhaser/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::ActivePhaser",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.0/docs/reference/api/cpp/html/class_svc_1_1_active_phaser.html"
+    }
+  ]
+}

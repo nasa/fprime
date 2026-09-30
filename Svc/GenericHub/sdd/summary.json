@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-09-30T23:34:24Z",
+  "ref": "v4.4.0",
+  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "tier": "platinum",
+  "has_sdd": true,
+  "sections": 15,
+  "filled_sections": 11,
+  "prose_words": 773,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.0/Svc/GenericHub/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::GenericHub",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.0/docs/reference/api/cpp/html/class_svc_1_1_generic_hub.html"
+    }
+  ]
+}

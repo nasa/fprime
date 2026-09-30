@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-09-30T23:34:24Z",
+  "ref": "v4.4.0",
+  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "tier": "bronze",
+  "has_sdd": true,
+  "sections": 5,
+  "filled_sections": 1,
+  "prose_words": 167,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "events"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.0/Svc/Ccsds/SdlsFileKeyManager/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::Ccsds::SdlsFileKeyManager",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.0/docs/reference/api/cpp/html/class_svc_1_1_ccsds_1_1_sdls_file_key_manager.html"
+    }
+  ]
+}
