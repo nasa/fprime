@@ -201,18 +201,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! ```sh
     //! CANCEL # doesn't actually cancel a sequence, just resets the store
     //! LOAD [fileName] ""
-    //! INVOKE "" [block] [seqArgs]
+    //! INVOKE "" [block]
     //! ```
     //!
     //! If $block == Svc.BlockState.BLOCK this command will wait for completion.
-    void RUN_cmdHandler(
-        FwOpcodeType opCode,               //!< The opcode
-        U32 cmdSeq,                        //!< The command sequence number
-        const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-        const Svc::BlockState& block,      //!< Block until sequence has finished running
-        const Svc::SeqArgs& seqArgs        //!< Optional arguments to execute the sequence with
-                                           //!< Depending on the sequence being loaded these arguments may differ
-        ) override;
+    void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                        U32 cmdSeq,                        //!< The command sequence number
+                        const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+                        const Svc::BlockState& block       //!< Block until sequence has finished running
+                        ) override;
 
     //! Handler implementation for command LOAD
     //!
@@ -232,8 +229,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void INVOKE_cmdHandler(FwOpcodeType opCode,             //!< The opcode
                            U32 cmdSeq,                      //!< The command sequence number
                            const Fw::CmdStringArg& module,  //!< Name of the module to invoke a function from
-                           const Svc::BlockState& block,    //!< Block until sequence has finished running
-                           const Svc::SeqArgs& seqArgs      //!< Arguments to invoke the sequence entrypoint with
+                           const Svc::BlockState& block     //!< Block until sequence has finished running
                            ) override;
 
     //! Handler implementation for command WAIT
@@ -356,6 +352,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Implementation for action cancelPendingRequest of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Abort a load/invoke that was cancelled before the engine ran
+    //! Reports a done on seqDoneOut for a port-sourced RUN
     void Svc_WasmSequencer_ControllerStateMachine_action_cancelPendingRequest(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
@@ -374,6 +371,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Implementation for action respond_ERROR of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Responds to request with EXECUTION_ERROR
+    //! Reports a done on seqDoneOut for a port-sourced RUN
     void Svc_WasmSequencer_ControllerStateMachine_action_respond_ERROR(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
@@ -412,6 +410,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //!
     //! Responds to request with BUSY
     //! Emit an event to say why we are rejecting this request in the current state
+    //! Reports a done on seqDoneOut for a port-sourced RUN
     void Svc_WasmSequencer_ControllerStateMachine_action_respondLoad_BUSY(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
@@ -950,9 +949,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! WAIT commands waiting for sequence completion
     Fw::FifoQueue<WaitingCmd, WasmSequencerConfig::MAX_CONCURRENT_WAIT_COMMANDS> m_waiting;
 
-    //! Currently stored sequence arguments
-    Svc::SeqArgs m_args;
-
     //! File path of the last module load
     Fw::FileNameString m_lastLoadFileName;
 
@@ -1100,12 +1096,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                 U64 us;
             } asleep;
 
-            // ARGS: where to write the stored sequence arguments
-            struct {
-                U32 ptr;
-                U32 len;
-            } args;
-
             // TIME: where to write the serialized current time
             struct {
                 U32 ptr;
@@ -1252,9 +1242,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! ASLEEP: arm an absolute sleep timer.
     void dispatchAbsoluteSleep();
-
-    //! ARGS: write the stored sequence arguments into guest memory.
-    void dispatchArgs();
 
     //! TIME: write the current time into guest memory.
     void dispatchTime();

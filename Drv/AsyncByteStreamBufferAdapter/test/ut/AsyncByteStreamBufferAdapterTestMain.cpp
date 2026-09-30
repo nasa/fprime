@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "AsyncByteStreamBufferAdapterTester.hpp"
+#include "STest/Random/Random.hpp"
 
 TEST(Nominal, Test_Stream_out) {
     Drv::AsyncByteStreamBufferAdapterTester tester;
@@ -21,6 +22,7 @@ TEST(Nominal, Test_Stream_Return) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

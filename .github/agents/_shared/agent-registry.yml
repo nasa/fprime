@@ -7,8 +7,51 @@
 # point.
 #
 # Adding a new reviewer agent in the future is a matter of adding a
-# new entry here with `role: reviewer` plus the agent file. No code
-# changes elsewhere are required.
+# new entry here with `role: reviewer`, a `review_group`, plus the
+# agent file. No code changes elsewhere are required.
+#
+# Review groups (`review_group`) — session packing
+# ------------------------------------------------
+# Reviewers are lenses, not processes. The orchestrator packs the
+# reviewer set into one review session per `review_group` and runs
+# every lens in that group inside it, in registry order. Each lens
+# still posts its own inline comments and its own hidden-metadata
+# review exactly as before, so the GitHub-side artifacts, finding
+# keys, run ordinals and the aggregator's per-agent table are
+# unchanged by how lenses are packed. Grouping exists because session
+# startup, not prompt content, dominates review cost: measured over
+# small, medium and large PRs, one session per lens costs roughly
+# twice what four grouped sessions cost for the same findings.
+#
+# Rules the orchestrator enforces (see review-orchestrator.agent.md
+# §Sequence, review contract §13):
+#
+#   1. Every `role: reviewer` entry carries `review_group`. A missing
+#      or unrecognized value is not an error and never drops a lens:
+#      that reviewer runs in its own session. Adding a reviewer
+#      without touching this header is therefore always safe, just
+#      not maximally cheap.
+#   2. Any reviewer with `contributes_to_ci_safety: true` belongs to
+#      `review_group: safety`, which is exempt from the review effort
+#      budget (contract §13). Safety lenses read in full and trace
+#      untrusted input to exhaustion; the savings come from the other
+#      groups.
+#   3. At most four lenses per session. A group that grows past four
+#      is split into as many sessions as needed, in registry order --
+#      five lenses sharing one context measurably dropped scopes.
+#   4. An optional `routing_skip_when` predicate lets the
+#      orchestrator skip a lens on a PR that touches nothing in its
+#      scope (review-orchestrator.agent.md §Routing). Predicates are
+#      evaluated against the changed-file list only, are conservative
+#      by construction, and default to absent — a lens without one
+#      always runs, and no predicate may be written for a safety
+#      lens. A skipped lens is reported as skipped, not as a lens
+#      that did not run, and forces no verdict.
+#   5. Groups run in the order `safety`, `code`, `system`,
+#      `verification`, then any single-lens groups in registry order.
+#      Safety first because it is the CI-safety contributor; the
+#      fixed order is what makes the first-poster-wins concurrence
+#      rule (contract §6a) deterministic.
 
 agents:
 
@@ -18,9 +61,13 @@ agents:
     path: .github/agents/review-orchestrator.agent.md
     invocable_by_humans: true
     notes: >
-      Single human entry point. Drives the reviewer agents in
-      sequence, then the aggregator. Owns kickoff prompts (with the
-      orchestrator->agent thanks convention) and error handling.
+      Single human entry point. Packs the `role: reviewer` lenses
+      into one review session per `review_group`, drives those
+      sessions in fixed order, then performs the `role: aggregator`
+      work itself. Owns session assembly, routing, the effort-budget
+      blocks (contract 13), kickoff prompts (with the
+      orchestrator->agent thanks convention), severity reconciliation
+      (contract 14) and error handling.
 
   - name: F Prime Full-Codebase Review Orchestrator
     short_name: full-codebase-review
@@ -40,6 +87,7 @@ agents:
     short_name: security-review
     review_label: Security
     role: reviewer
+    review_group: safety
     path: .github/agents/security-review.agent.md
     invocable_by_humans: true
     contributes_to_ci_safety: true
@@ -53,6 +101,7 @@ agents:
     short_name: supply-chain-review
     review_label: Supply Chain
     role: reviewer
+    review_group: safety
     path: .github/agents/supply-chain-review.agent.md
     invocable_by_humans: true
     contributes_to_ci_safety: true
@@ -67,6 +116,10 @@ agents:
     short_name: fprime-code-review
     review_label: C++ Design
     role: reviewer
+    review_group: code
+    routing_skip_when: >
+      The PR's changed-file list contains no C or C++ source or
+      header file.
     path: .github/agents/fprime-code-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -82,6 +135,7 @@ agents:
     short_name: stale-documentation-review
     review_label: Documentation
     role: reviewer
+    review_group: verification
     path: .github/agents/stale-documentation-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -97,6 +151,7 @@ agents:
     short_name: design-review
     review_label: Design
     role: reviewer
+    review_group: system
     path: .github/agents/design-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -114,6 +169,10 @@ agents:
     short_name: architecture-review
     review_label: Architecture
     role: reviewer
+    review_group: system
+    routing_skip_when: >
+      The PR's changed-file list contains no `.fpp` model, no
+      topology or deployment file, and no component source or header.
     path: .github/agents/architecture-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -129,6 +188,10 @@ agents:
     short_name: test-quality-review
     review_label: Test Quality
     role: reviewer
+    review_group: verification
+    routing_skip_when: >
+      The PR's changed-file list contains no test file and no C/C++,
+      Python, or `.fpp` source whose behavior a test could cover.
     path: .github/agents/test-quality-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -147,6 +210,10 @@ agents:
     short_name: correctness-review
     review_label: Correctness
     role: reviewer
+    review_group: code
+    routing_skip_when: >
+      The PR's changed-file list contains no executable source of any
+      kind (C/C++, Python, CMake, shell).
     path: .github/agents/correctness-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -170,6 +237,7 @@ agents:
     short_name: operational-consequences-review
     review_label: Operational
     role: reviewer
+    review_group: system
     path: .github/agents/operational-consequences-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -196,6 +264,10 @@ agents:
     short_name: maintainability-review
     review_label: Maintainability
     role: reviewer
+    review_group: code
+    routing_skip_when: >
+      The PR's changed-file list contains no executable source of any
+      kind (C/C++, Python, CMake, shell).
     path: .github/agents/maintainability-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -222,5 +294,11 @@ agents:
       status list) and submits ONE PR review (APPROVE or
       REQUEST_CHANGES) with the consolidated table, CI safety
       verdict, merge readiness verdict, optional Recommend Close
-      section, outstanding must-fix bullets, and a since-last-run
-      delta table.
+      section, outstanding must-fix bullets, a since-last-run delta
+      table, and the severity-reconciliation promotion log
+      (contract 14). The orchestrator executes this role itself once
+      the reviewer sessions have settled, rather than spawning a
+      further session for it (review-orchestrator.agent.md
+      Aggregation); this file remains the source of truth for what
+      the summary contains either way, and the agent stays
+      separately invocable for debugging.

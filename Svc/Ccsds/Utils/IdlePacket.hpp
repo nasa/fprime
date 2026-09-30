@@ -5,6 +5,7 @@
 #ifndef SVC_CCSDS_UTILS_IDLE_PACKET_HPP
 #define SVC_CCSDS_UTILS_IDLE_PACKET_HPP
 
+#include <limits>
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Serializable.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
@@ -21,6 +22,10 @@ constexpr U8 DATA_PATTERN = 0x44;
 
 //! Minimum idle packet size: header plus one byte of idle data
 constexpr FwSizeType MIN_SIZE = SpacePacketHeader::SERIALIZED_SIZE + 1;
+
+//! Maximum idle packet size: header plus the largest data length the SPP length field can express
+constexpr FwSizeType MAX_SIZE =
+    SpacePacketHeader::SERIALIZED_SIZE + 1 + static_cast<FwSizeType>(std::numeric_limits<U16>::max());
 
 //! \brief Serialize an idle packet of exactly `size` bytes (header and idle data) into `serializer`
 //!

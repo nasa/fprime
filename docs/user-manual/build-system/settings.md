@@ -45,16 +45,21 @@ These settings include:
   computer platform.
 - `environment_file`: An ini file that can be used to set environmental variables during the build
   process.
-- `config_directory`: Path to configuration header directory.
+
+> [!NOTE]
+> `config_directory` is no longer used by the build system: `fprime-util` still accepts it but CMake ignores the
+> value. Projects that copied `default/config` to `<project>/config/` under the old recipe should move the files
+> they still change into a `CONFIGURATION_OVERRIDES` module (see
+> [Configuration Modules](./configuration.md#overriding-configuration-in-a-project)) and delete the rest: a
+> `config/` directory left at the project root shadows the framework defaults silently.
 
 ### Platform Sections
 
 Some settings may be overridden for specific platforms using specific platform sections. These sections
 have the same name as the platform and may set the following settings:
 
-1. `config_directory`
-2. `install_destination`
-3. `environment_file`
+1. `install_destination`
+2. `environment_file`
 
 These settings only apply when building for the specified platform.
 
@@ -71,10 +76,6 @@ framework_path: ../fprime
 library_locations: ../fprime-vxworks:../fprime-sphinx-drivers:../fprime-jplffs
 default_toolchain: gr712-vxworks6
 environment_file: ../fprime-vxworks/cmake/env/VxWorks-GR712.ini
-config_directory: ./config
-
-[gr712-vxworks6]
-config_directory: Cfg_gr712
 ```
 
 ### Example Environment Ini File

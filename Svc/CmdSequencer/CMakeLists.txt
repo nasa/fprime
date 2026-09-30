@@ -22,6 +22,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/CmdSequencer.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AMPCS.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferAllocation.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandBuffers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Health.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ImmediateBase.cpp"
@@ -42,6 +43,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/NoRecordsFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadTimeBaseFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadTimeContextFile.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadUSecFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/Buffers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/DataAfterRecordsFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/EmptyFile.cpp"
