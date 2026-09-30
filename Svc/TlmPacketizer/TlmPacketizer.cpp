@@ -540,7 +540,7 @@ void TlmPacketizer ::CONFIGURE_GROUP_RATES_cmdHandler(FwOpcodeType opCode,
 void TlmPacketizer ::GET_PACKET_CONFIG_cmdHandler(FwOpcodeType opCode,
                                                   U32 cmdSeq,
                                                   U32 packetId,
-                                                  Svc::TelemetrySection section) {
+                                                  const Svc::TelemetrySection& section) {
     FW_ASSERT(section.isValid());
     if (section < 0 or section >= TelemetrySection::NUM_SECTIONS) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);

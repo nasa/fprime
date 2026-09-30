@@ -127,25 +127,25 @@ TEST(TestNominal, sectionConfigParameterTest) {
 }
 
 TEST(TestNominal, PerPacketOverrideTest) {
-    TEST_CASE(100.1.13, "Per-packet ENABLE_PACKET override disables a single packet/section");
+    TEST_CASE(100.1.15, "Per-packet ENABLE_PACKET override disables a single packet/section");
     Svc::TlmPacketizerTester tester;
     tester.perPacketOverrideTest();
 }
 
 TEST(TestNominal, PerPacketCommandsTest) {
-    TEST_CASE(100.1.15, "Per-packet commands update overrides + mirror out configOut");
+    TEST_CASE(100.1.16, "Per-packet commands update overrides + mirror out configOut");
     Svc::TlmPacketizerTester tester;
     tester.perPacketCommandsTest();
 }
 
 TEST(TestNominal, ConfigInReloadTest) {
-    TEST_CASE(100.1.16, "configIn reload applies overrides to the volatile table without echo");
+    TEST_CASE(100.1.17, "configIn reload applies overrides to the volatile table without echo");
     Svc::TlmPacketizerTester tester;
     tester.configInReloadTest();
 }
 
 TEST(TestNominal, GetPacketConfigTest) {
-    TEST_CASE(100.1.14, "GET_PACKET_CONFIG reports effective config; unknown id warns");
+    TEST_CASE(100.1.18, "GET_PACKET_CONFIG reports effective config; unknown id warns");
     Svc::TlmPacketizerTester tester;
     tester.getPacketConfigTest();
 }

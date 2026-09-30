@@ -161,10 +161,10 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //! Handler implementation for command GET_PACKET_CONFIG
     //!
     //! Emits the effective per-packet configuration on QueriedPacketConfig.
-    void GET_PACKET_CONFIG_cmdHandler(FwOpcodeType opCode,           //!< The opcode
-                                      U32 cmdSeq,                    //!< The command sequence number
-                                      U32 packetId,                  //!< Packet identifier
-                                      Svc::TelemetrySection section  //!< Section to query
+    void GET_PACKET_CONFIG_cmdHandler(FwOpcodeType opCode,                  //!< The opcode
+                                      U32 cmdSeq,                           //!< The command sequence number
+                                      U32 packetId,                         //!< Packet identifier
+                                      const Svc::TelemetrySection& section  //!< Section to query
                                       ) override;
 
     //! Handler implementation for command ENABLE_PACKET
