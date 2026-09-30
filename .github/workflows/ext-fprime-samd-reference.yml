@@ -1,0 +1,80 @@
+# This workflow builds fprime-samd-reference against the current F Prime revision, flashes the result onto a SAMD21
+# Curiosity Nano attached to a self-hosted runner, and runs the deployment's integration tests through fprime-ci.
+#
+# The build job uses the fprime-samd reusable actions (cross toolchain + fprime-util) rather than the fprime-ci build
+# stage, then hands build-artifacts to the hardware job as the fprime-ci archive.
+name: "External Repo: fprime-samd-reference"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+  workflow_dispatch:
+
+env:
+  TARGET_REPOSITORY: fprime-community/fprime-samd-reference
+  CI_CONFIG_FILE: ci/curiosity-nano.yml
+  DEPLOYMENT: CuriosityReference
+  TOOLCHAIN: microchip_curiosity
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-samd-reference
+      default_target_ref: main
+
+  build:
+    name: "Build CuriosityReference"
+    needs: get-branch
+    runs-on: ubuntu-24.04
+    steps:
+      - name: "Checkout target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: ${{ env.TARGET_REPOSITORY }}
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+          stage: build
+      - name: "Build deployment"
+        uses: ./lib/fprime-samd/.github/actions/build-deployment
+        with:
+          deployment: ${{ env.DEPLOYMENT }}
+          toolchain: ${{ env.TOOLCHAIN }}
+      - name: "Archive build artifacts"
+        run: tar -czf archive.tar.gz build-artifacts
+      - name: "Upload archive"
+        uses: actions/upload-artifact@v7
+        with:
+          name: archive-samd21-curiosity.tar.gz
+          path: ./archive.tar.gz
+
+  integration-tests:
+    name: "SAMD21 Curiosity Nano integration tests"
+    needs: [get-branch, build]
+    runs-on: [self-hosted, samd21-curiosity]
+    # One board: never run two hardware jobs against it at the same time
+    concurrency:
+      group: samd21-curiosity-testbed
+      cancel-in-progress: false
+    steps:
+      - name: "Checkout target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: ${{ env.TARGET_REPOSITORY }}
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+          stage: int
+      - name: "Download archive"
+        uses: actions/download-artifact@v8
+        with:
+          name: archive-samd21-curiosity.tar.gz
+      - name: "Flash, launch GDS, and run integration tests"
+        run: fprime-ci -c ${CI_CONFIG_FILE} --skip-stage build
+      - name: "Upload GDS logs"
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gds-logs-samd21-curiosity
+          path: logs/
+          if-no-files-found: ignore
