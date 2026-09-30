@@ -14,6 +14,10 @@ who it is for. Links marked *(reference)* are for looking things up later; skim 
 **Keep the [F´ Cheatsheet](https://fprime.jpl.nasa.gov/cheatsheet) open:** it summarizes the core terms, component and
 port kinds, the `fprime-util` commands, and the day-to-day development workflow on two pages.
 
+> [!TIP]
+> On the F´ website, the documentation tree on the left shows where each linked page lives, the table of contents on
+> the right jumps to any chapter of the current page, and the search bar at the top searches all of the documentation.
+
 ---
 
 ## Part I: Getting Oriented
