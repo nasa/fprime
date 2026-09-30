@@ -41,29 +41,6 @@ class InterruptOnceSocket final : public Drv::IpSocket {
     }
 };
 
-class BrokenPipeSocket final : public Drv::IpSocket {
-  private:
-    Drv::SocketIpStatus openProtocol(Drv::SocketDescriptor& fd) override {
-        fd.fd = 0;
-        return Drv::SOCK_SUCCESS;
-    }
-
-    FwSignedSizeType sendProtocol(const Drv::SocketDescriptor&, const U8* const, const FwSizeType) override {
-        errno = EPIPE;
-        return -1;
-    }
-
-    FwSignedSizeType recvProtocol(const Drv::SocketDescriptor&, U8* const, const FwSizeType) override { return 0; }
-};
-
-TEST(ErrorHandling, TestSendBrokenPipeIsDisconnected) {
-    BrokenPipeSocket socket;
-    Drv::SocketDescriptor fd;
-    U8 data[1] = {0};
-
-    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_DISCONNECTED);
-}
-
 TEST(ErrorHandling, TestRecvRetriesEintr) {
     InterruptOnceSocket socket;
     Drv::SocketDescriptor fd;
@@ -126,11 +103,20 @@ TEST(ErrorHandling, TestSendTimeoutAfterPartialWriteIsRetryable) {
 }
 
 TEST(ErrorHandling, TestSendOtherErrorIsStillFatal) {
-    SendTimeoutSocket socket(0, EPIPE);
+    SendTimeoutSocket socket(0, EACCES);
     Drv::SocketDescriptor fd;
     U8 data[4] = {1, 2, 3, 4};
 
     EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_SEND_ERROR);
+    EXPECT_EQ(socket.send_calls, 1u);
+}
+
+TEST(ErrorHandling, TestSendBrokenPipeIsDisconnected) {
+    SendTimeoutSocket socket(0, EPIPE);
+    Drv::SocketDescriptor fd;
+    U8 data[1] = {0};
+
+    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_DISCONNECTED);
     EXPECT_EQ(socket.send_calls, 1u);
 }
 
