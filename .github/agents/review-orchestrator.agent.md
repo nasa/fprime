@@ -44,19 +44,30 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
    `role: reviewer`, and assemble the review sessions per
    §"Session assembly" below. Never hardcode the reviewer set — it
    changes over time, and the registry is its only source of truth.
-   With today's registry the assembly yields four sessions:
+   With today's registry the assembly yields eight sessions:
 
    | Session | Lenses, in registry order |
    |---|---|
-   | `safety` | `security-review`, `supply-chain-review` |
-   | `code` | `fprime-code-review`, `correctness-review`, `maintainability-review` |
-   | `system` | `design-review`, `architecture-review`, `operational-consequences-review` |
-   | `verification` | `stale-documentation-review`, `test-quality-review` |
+   | `security` | `security-review`, `correctness-review` |
+   | `supply-chain` | `supply-chain-review` |
+   | `system` | `design-review`, `operational-consequences-review` |
+   | `fprime-code` | `fprime-code-review` |
+   | `stale-documentation` | `stale-documentation-review` |
+   | `architecture` | `architecture-review` |
+   | `test-quality` | `test-quality-review` |
+   | `maintainability` | `maintainability-review` |
 
-   Run the sessions in that order, one after another. `safety` comes
-   first because it carries the CI-safety contributors; the fixed
-   order is also what makes the first-poster-wins concurrence rule
-   (contract §6a) deterministic.
+   Run the sessions in that order, one after another. The two
+   CI-safety contributors come first; the fixed order is also what
+   makes the first-poster-wins concurrence rule (contract §6a)
+   deterministic.
+
+   Then **extract the diff once**: fetch the changed-file list and the
+   hunks (`gh api repos/<owner>/<repo>/pulls/<N>/files`, `gh pr diff`)
+   and sort the files into the fixed reading order of contract §13f —
+   `.fpp`, documentation, headers, sources, tests, build/CI, other;
+   alphabetical within each class. Every session's kickoff prompt
+   carries this same ordered list; no lens re-derives it.
 2. Compute the run ordinal for each reviewer from its newest prior
    metadata review on PR `#N` (the review whose HTML marker matches
    that reviewer's name): ordinal = that review's `run` line + 1, or
@@ -132,16 +143,18 @@ hold. Orchestration overhead is pure cost — it finds nothing.
 Purely mechanical, from the registry:
 
 1. Take the `role: reviewer` entries in registry order.
-2. Bucket them by `review_group`. A reviewer whose `review_group` is
-   missing or is not one of the known groups gets a bucket of its own
-   — never fold it into another group, and never skip it. An unknown
+2. Bucket them by `review_group`. A reviewer whose `review_group` or
+   `lens_kind` is missing or unrecognized gets a bucket of its own —
+   never fold it into another group, and never skip it. An unknown
    group is a cheap-orchestration miss, not a review gap.
-3. Split any bucket larger than **four** lenses into consecutive
-   sessions of at most four, in registry order (`code (1/2)`,
-   `code (2/2)`). Five lenses in one context measurably dropped
-   scopes; four did not.
-4. Order the sessions `safety`, `code`, `system`, `verification`, then
-   any remaining buckets in registry order.
+3. A bucket may hold at most **two** lenses, both
+   `lens_kind: judgement`. Split any bucket that holds a `checklist`
+   lens, or more than two lenses, into single-lens sessions in
+   registry order (`system (1/2)`, `system (2/2)`). Checklist lenses
+   measurably lost half or more of their recall in a shared context;
+   judgement lenses paired did not.
+4. Order the sessions `security`, `supply-chain`, `system`, then any
+   remaining buckets in registry order.
 5. Drop a session only when **every** lens in it is routed out
    (§Routing).
 
@@ -156,7 +169,7 @@ than proceeding (P1).
 
 A lens may be skipped only when it declares a `routing_skip_when`
 predicate in the registry **and** that predicate holds for this PR's
-file list. A lens with no predicate always runs. The safety group is
+file list. A lens with no predicate always runs. A CI-safety lens is
 never skipped, whatever its diff looks like.
 
 Evaluate predicates against the PR's changed-file list only — never
@@ -175,19 +188,25 @@ wrong. When in doubt, run the lens.
 ## Effort budget passed to the lenses
 
 Every session's kickoff prompt carries the effort-budget blocks from
-contract §13, and which blocks it carries depends only on the group:
+contract §13, and which blocks it carries depends only on the lenses
+in it — each block names the lenses it binds:
 
-- **Safety group** (any lens with `contributes_to_ci_safety: true`):
-  the exemption block (§13d). No budget, no slim reading, mandatory
-  ground- and hardware-input tracing to exhaustion. Uniformly
-  budgeting every lens measurably lost exactly the
-  ground-parameter-reaches-`FW_ASSERT` finding class; this exemption
-  is why the savings elsewhere are safe.
-- **Every other group**: the must-fix-first budget (§13b) and, on run
+- **Safety lens** (any lens with `contributes_to_ci_safety: true`):
+  the exemption block (§13d), addressed to that lens by name. No
+  budget, no slim reading, mandatory ground- and hardware-input
+  tracing to exhaustion. Uniformly budgeting every lens measurably
+  lost exactly the ground-parameter-reaches-`FW_ASSERT` finding class;
+  this exemption is why the savings elsewhere are safe. A non-safety
+  lens sharing the session (today: `correctness-review` beside
+  `security-review`) is **not** exempt.
+- **Every other lens**: the must-fix-first budget (§13b) and, on run
   1 only, slim first-pass reading (§13c). On run ≥ 2 the slim block is
   omitted — re-review needs contract §6, §6a, §7 and §11 in full.
-- **All groups**: the tag-by-consequence block (§1a). The budget
-  governs investigation, never tagging.
+- **All lenses**: the tag-by-consequence block (§1a), the ledger block
+  (§13e) and the reading-order block (§13f) with the ordered file list
+  from sequence step 1. The budget governs investigation, never
+  tagging; the ledger and the reading order govern completeness and
+  order, never what is reported.
 
 ---
 
@@ -234,8 +253,12 @@ in-scope is dropped because another lens already looked at the file.
 
 <CONTEXT MANDATE block>
 
-<effort-budget blocks for this group, per §"Effort budget passed to
-the lenses">
+<READING ORDER block>
+
+<LEDGER block>
+
+<effort-budget blocks for the lenses in this session, per §"Effort
+budget passed to the lenses">
 
 When every lens is done, report per lens: `<lens>: completed` or
 `<lens>: FAILED: <one-line reason>`, plus whether any GitHub
@@ -273,6 +296,38 @@ agents' prior inline comments by site-key; if another agent's open
 thread already covers the same underlying issue at the same site-key,
 post one concurrence reply on that thread instead of opening a new
 one, and still count the finding in your own hidden metadata.
+```
+
+### Reading-order block (all sessions; contract §13f)
+
+```
+READING ORDER: the PR changes the following files. Read them in this
+order and no other -- whole file first, then its hunks top to bottom;
+caller tracing only after the last file:
+  1. <path>   (<class>, <n> hunks)
+  2. <path>   ...
+Do not re-derive this list. A file you need that is not on it is read
+when tracing demands it; note the omission in your session output.
+```
+
+The `<class>` is one of `fpp`, `docs`, `header`, `source`, `test`,
+`build`, `other`, and the list is the one sequence step 1 produced.
+
+### Ledger block (all sessions; contract §13e)
+
+```
+LEDGER: before writing any finding for a lens, enumerate its ledger --
+every hunk in reading order, and within that lens's scope every
+changed or newly reachable FW_ASSERT / bound / index / array write,
+every ground- or hardware-settable value the PR introduces or
+re-routes, every documented claim the diff could falsify, every rule
+the lens's agent file enumerates. Disposition each row as `finding
+(<tag>)`, `clean (<why>)` or `out of scope (<lens>)`; leave none
+blank. Post findings only from `finding` rows; the ledger itself is
+never posted. Record its size in the hidden metadata as
+`<!-- ledger_rows: N -->`. The ledger fixes what you examine, not the
+bar for what you report -- Priority 1 and contract 1a apply to every
+row.
 ```
 
 ### Per-lens directive blocks
@@ -513,9 +568,9 @@ Inputs the orchestrator already holds and passes into the role:
 Then, in this order:
 
 1. **Severity reconciliation** (contract §14, `review-summary.agent.md`
-   §5j) — promote findings whose own rationale demonstrates a §1a
-   must-fix consequence, never demote a `must fix`, and record every
-   promotion and every deliberate non-promotion in the promotion log.
+   §5j) — apply the §14 decision table to each finding's own
+   rationale, never demote a `must fix`, and record every promotion
+   and every deliberate non-promotion in the promotion log.
 2. **De-duplication post-pass** (§5h) — group open agent-authored
    threads by site-key, close each non-canonical duplicate with a
    linking reply plus `resolveReviewThread`, and report the
@@ -631,7 +686,8 @@ No special-case logic. On the second-and-later run on the same PR:
   from run ≥ 2 kickoff prompts. Re-review needs contract §6, §6a, §7
   and §11 in full; a lens that skipped them would repost,
   mis-resolve, or re-escalate. The must-fix-first budget (§13b) still
-  applies, and the safety group remains exempt from both.
+  applies, and the safety lenses remain exempt from both. The ledger
+  (§13e) and reading-order (§13f) blocks are sent on every run.
 - Each reviewer handles re-review state internally per the contract
   §7 (phases A–D) and `.github/skills/re-review-state/SKILL.md`:
   its metadata review is updated in place, new below-must-fix

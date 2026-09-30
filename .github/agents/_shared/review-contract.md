@@ -113,12 +113,14 @@ Review body shape (the ONLY content in the review body):
 <!-- run: N -->
 <!-- since_last_run: {"resolved": X, "still_open": Y, "newly_added": Z, "incorrect_fix": W, "improperly_resolved": V, "disagreements": U} -->
 <!-- unexplored_below_must_fix: N -->
+<!-- ledger_rows: N -->
 ```
 
 `unexplored_below_must_fix` is the count of below-must-fix candidate
 sites the lens deliberately left unexplored under the effort budget
 (§13b); it is `0` for an exempt lens (§13d) and tells a maintainer how
-much nit-tier surface was traded away for cost.
+much nit-tier surface was traded away for cost. `ledger_rows` is the
+size of the lens's enumerate-then-evaluate ledger (§13e).
 
 This metadata is machine-readable by the aggregator but invisible to
 human reviewers browsing the PR. The visible output of each reviewer
@@ -792,10 +794,14 @@ anything the agent actually found.
 ### 13a. Session packing
 
 The orchestrator packs the reviewer set into one session per
-`review_group` in `agent-registry.yml`, at most four lenses per
-session, and runs the groups in the fixed order that registry's header
-specifies. A reviewer with a missing or unrecognized `review_group`
-runs in its own session — never folded in silently, never skipped.
+`review_group` in `agent-registry.yml` and runs the groups in the
+fixed order that registry's header specifies. A session holds at most
+two lenses, both `lens_kind: judgement`; a `lens_kind: checklist` lens
+always runs alone. Checklist lenses walk an enumerated list over every
+hunk and measurably lose half or more of their recall when another
+lens shares their context; judgement lenses do not. A reviewer with a
+missing or unrecognized `review_group` or `lens_kind` runs in its own
+session — never folded in silently, never skipped.
 
 ### 13b. Must-fix-first budget (non-exempt lenses)
 
@@ -832,8 +838,9 @@ whose subject matter the diff actually touches.
 
 ### 13d. Safety exemption (mandatory)
 
-A lens with `contributes_to_ci_safety: true` — the `safety` group — is
-**exempt from §13b and §13c**. It reads in full, caps nothing, and for
+A lens with `contributes_to_ci_safety: true` is **exempt from §13b
+and §13c**, whichever session it shares; a non-safety lens in the same
+session is not. It reads in full, caps nothing, and for
 every value this PR lets ground or hardware touch (commands,
 parameters, uplinked file content, sequence directives, config
 constants a deployment can change) traces that value from its entry
@@ -847,7 +854,52 @@ A reachable assert or bound violation driven by a ground-settable
 value is a `must fix`. Cost is never a reason to stop that trace
 early: uniformly budgeting every lens measurably lost exactly this
 finding class, which is why the exemption exists. The saving comes
-from the other groups.
+from the other lenses.
+
+### 13e. Enumerate-then-evaluate ledger (every lens)
+
+A lens that reads the diff and writes findings as it goes reports a
+different subset each run. Before writing any finding, a lens
+enumerates every unit in its scope and then evaluates each one
+explicitly:
+
+1. **List** — in the order §13f fixes — every changed hunk, and within
+   scope of the lens every changed or newly reachable `FW_ASSERT`,
+   bound, index or array write, every ground- or hardware-settable
+   value the PR introduces or re-routes, every documented claim the
+   diff could falsify, and every checklist rule the lens's agent file
+   enumerates. This is the ledger.
+2. **Disposition** each ledger row as exactly one of `finding` (with
+   the tag), `clean` (one clause why), or `out of scope` (the lens
+   whose scope covers it). No row is left blank.
+3. **Write** findings only from rows dispositioned `finding`. A
+   ledger row is not itself a finding, and never posts.
+
+The ledger is the lens's working state, kept in its own session
+output, not posted to the PR; the hidden metadata records only its
+size: `<!-- ledger_rows: N -->`. The ledger fixes *what is examined*;
+it does not lower the bar for *what is reported* — Priority 1 (§8) and
+§1a apply to every row exactly as before. Safety lenses keep the ledger
+too: it is a completeness device, not a budget.
+
+### 13f. Scripted diff and fixed reading order (every lens)
+
+A lens does not choose which files to read first. The orchestrator's
+kickoff prompt carries the changed-file list in a fixed order, and
+every lens reads in that order:
+
+1. Changed `.fpp` models, then `docs/sdd.md` and other documentation,
+   then headers, then sources, then tests, then build and CI files,
+   then everything else; alphabetical by path within each class.
+2. For each file: the whole file first (CONTEXT MANDATE), then its
+   hunks top to bottom.
+3. Only after the last file: caller tracing and the reads that
+   tracing demands, in the order the ledger rows raise them.
+
+The list and the hunks are extracted by the orchestrator once (`gh pr
+diff`, `gh api .../files`), not re-derived by each lens. A lens that
+finds a file the list omits reads it anyway and notes the omission in
+its session output; the list bounds order, never scope.
 
 ---
 
@@ -860,9 +912,28 @@ same reviewer set exhibit against each other. The aggregator therefore
 arbitrates severity once, holding every finding and its rationale.
 
 Before composing the summary, the aggregator re-reads each outstanding
-finding's rationale against §1/§1a and **promotes** any finding whose
-stated consequence is must-fix-tier though its reviewer tagged it
-lower. The promotion list is exactly §1a's consequence list.
+finding's rationale and **promotes** any finding whose stated
+consequence is must-fix-tier though its reviewer tagged it lower, by
+applying the decision table below mechanically. The table is §1a's
+consequence list, one row per consequence; it lives here and in
+`review-summary.agent.md` §5j only, and is never placed in a reviewer
+prompt as a filter on what to raise — a reviewer-side table measurably
+suppressed borderline findings, while the same table applied here
+removed per-run tag drift without touching recall.
+
+| The finding's own rationale demonstrates… | Tag after reconciliation |
+|---|---|
+| a reachable `FW_ASSERT`, bound violation or out-of-range index driven by a ground-settable, uplinked or hardware-supplied value | `must fix` |
+| success reported (status, event, telemetry) for an operation that failed or was rejected | `must fix` |
+| a documented claim (`docs/sdd.md`, user manual, Doxygen) the PR makes false, or a superseded sentence left beside its replacement | `must fix` |
+| a new ground-facing command, event, channel or parameter absent from the document that enumerates them | `must fix` |
+| state left inconsistent on an error path | `must fix` |
+| a behavior change to an existing topology or deployment without owner sign-off | `must fix` |
+| none of the above | the reviewer's tag stands |
+
+A row applies only when the rationale *states* the consequence — names
+the entry point, the failed operation, the false sentence. "Could
+become" or "might reach" does not match a row.
 
 - **Never demote** a reviewer's `**must fix**`. Arbitration is
   one-directional; a maintainer resolving the thread is how a
