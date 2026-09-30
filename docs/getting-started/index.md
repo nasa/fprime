@@ -24,6 +24,7 @@ New users should start with the [Hello World tutorial](../../tutorials-hello-wor
 
 Here are some additional references to continue learning about F´:
 
+- [The F´ Book](../the_book.md): a guided reading order through the F´ documentation
 - [F' Cheatsheet](https://fprime.jpl.nasa.gov/cheatsheet.pdf)
 - [More tutorials](../tutorials/index.md)
 - [F´ User Manual](../user-manual/index.md)

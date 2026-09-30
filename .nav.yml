@@ -10,6 +10,7 @@ nav:
   - Getting Started: 
     - 'Getting Started': docs/getting-started/index.md
     - 'Installation and Troubleshooting': docs/getting-started/installing-fprime.md
+    - 'The F´ Book': docs/the_book.md
   - Documentation:
     - docs/index.md
     - Tutorials:
