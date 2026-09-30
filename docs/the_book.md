@@ -11,6 +11,13 @@ assumed.
 independent chapters: pick the ones that match what you are building, in any order. Each Part IV chapter starts with
 who it is for.
 
+**Keep the [F´ Cheatsheet](https://fprime.jpl.nasa.gov/cheatsheet) open:** it summarizes the core terms, component and
+port kinds, the `fprime-util` commands, and the day-to-day development workflow on two pages.
+
+**Shortcuts for experienced readers:** if you already know flight software or are evaluating F´, read Chapters 1, 3, 4,
+and 15. Ground and operations engineers: Chapters 1, 2, 4, 10, 11, and 18. Porting to a new platform: Chapters 1–3, 7,
+13, 16, and 17. Links marked *(reference)* are for looking things up later; skim them the first time.
+
 ---
 
 ## Part I: Getting Oriented
@@ -21,11 +28,12 @@ F´ is a component-based framework for flight and embedded software. A system is
 talk to each other only through typed **ports**, wired together into a **topology**. F´ provides the framework (threads,
 queues, an OS abstraction layer), a modeling language (FPP) that generates most of the boilerplate code, a library of
 ready-to-use flight components, and a ground data system (GDS) to command and monitor the software. Start by reading
-why F´ is designed this way; the rest of the book builds on that. Keep the glossary open as you go.
+why F´ is designed this way; the rest of the book builds on that.
 
 - [Introduction to F´](user-manual/overview/01-full-intro.md): origins, design goals, and how F´ deployments are organized
 - [F´ Features](getting-started/features.md): what the framework provides
-- [Nomenclature](reference/nomenclature.md): glossary of F´ terms
+- [F´ Terminology](../tutorials-hello-world/docs/hello-world.md#f-terminology): short definitions of the core terms
+- [F´ Translation Guide](reference/fprime-translations.md): common software concepts and their F´ equivalents
 
 ### Chapter 2: Installing F´ and Your First Component
 
@@ -48,7 +56,6 @@ kinds (passive, queued, active) and ports can be synchronous or asynchronous. Th
 the work, and it is one of the most important design decisions you will make.
 
 - [Core Constructs: Ports, Components, and Topologies](user-manual/overview/03-port-comp-top.md)
-- [F´ Software Architecture](user-manual/overview/02-fprime-architecture.md): course slides on F´ and flight software architecture
 - [Selecting Component, Port, and Command Kinds](user-manual/framework/component-and-port-selection.md)
 
 ### Chapter 4: Commands, Events, Telemetry, Parameters, and Types
@@ -71,8 +78,10 @@ components that talk to each other, adds telemetry and error handling, and write
 User's Guide to learn the language in depth and keep the spec for reference.
 
 - [Math Component Tutorial](../tutorials-math-component/docs/math-component.md)
-- [FPP User's Guide](https://nasa.github.io/fpp/fpp-users-guide.html)
-- [FPP Language Specification](https://nasa.github.io/fpp/fpp-spec.html)
+- [FPP User's Guide](https://nasa.github.io/fpp/fpp-users-guide.html): after the tutorial, read sections 6–14
+  ([Defining Types](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Types) through
+  [Defining Topologies](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Topologies))
+- [FPP Language Specification](https://nasa.github.io/fpp/fpp-spec.html) *(reference)*
 - [Autocoded Functions and Component Classes](user-manual/framework/autocoded-functions.md): what the generated C++ gives you
 
 ### Chapter 6: Projects, Deployments, and the Development Process
@@ -80,13 +89,12 @@ User's Guide to learn the language in depth and keep the spec for reference.
 You have now built components; this chapter zooms out. A **project** holds your code and configuration, and a
 **deployment** is one executable built from a topology. F´ has a recommended development process: requirements, then
 FPP design, implementation, unit testing, topology integration, and integration testing. The LED Blinker tutorial
-follows that process end to end on a more realistic component. For now, work through it on your development machine;
-the hardware sections are covered in Chapter 12.
+follows that process end to end on a more realistic component. For now, do Steps 1–7 and 9 on your development
+machine; Step 8 (running on hardware) is covered in Chapter 12.
 
 - [Projects and Deployments](user-manual/overview/proj-dep.md)
 - [F´ Development Process](user-manual/overview/development-practice.md)
 - [LED Blinker Tutorial](../tutorials-led-blinker/docs/led-blinker.md)
-- [A Tour of the Source Tree](user-manual/overview/source-tree.md): what lives where in the F´ repository
 
 ---
 
@@ -95,23 +103,23 @@ the hardware sections are covered in Chapter 12.
 ### Chapter 7: The Build System
 
 F´ builds with CMake, plus a thin tool (`fprime-util`) that drives it. You don't need to be a CMake expert: most
-modules only call a single `register_fprime_*` function in their `CMakeLists.txt`. Learn how modules are registered,
-which build targets exist, and how `settings.ini` configures a project. Toolchains and platforms come later
-(Chapter 13).
+modules only call a single `register_fprime_*` function in their `CMakeLists.txt`. Learn how modules are registered
+and how `settings.ini` configures a project. The cheatsheet lists the `fprime-util` commands you will use every day,
+and `fprime-util --help` lists the rest. Toolchains and platforms come later (Chapter 13).
 
 - [F´ CMake Build System](user-manual/build-system/01-cmake-intro.md): start here
-- [Targets](user-manual/build-system/cmake-targets.md)
+- [F´ Cheatsheet](https://fprime.jpl.nasa.gov/cheatsheet): `fprime-util` commands and the development workflow
 - [`settings.ini`: Build Settings Configuration](user-manual/build-system/settings.md)
-- [CMake API Reference](user-manual/build-system/cmake-api.md)
+- [CMake API Reference](user-manual/build-system/cmake-api.md) *(reference)*, [Targets](user-manual/build-system/cmake-targets.md) *(reference)*
 
 ### Chapter 8: Topologies and Subtopologies
 
 A real deployment has dozens of component instances. F´ ships **subtopologies**, pre-wired groups of standard
 components, for command and data handling (CdhCore), communications (ComFprime / ComCcsds), and file handling.
-Most projects import these and connect their own components to them. Learn how a topology is built, how
-instances are initialized, and how to create your own subtopologies.
+Most projects import these and connect their own components to them. Learn how instances and topologies are
+defined in FPP, then how to use and create subtopologies.
 
-- [Constructing the F´ Topology](user-manual/framework/building-topology.md)
+- FPP User's Guide: [Defining Component Instances](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances) and [Defining Topologies](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Topologies)
 - [Subtopologies](user-manual/design-patterns/subtopologies.md)
 - [CDH Core Subtopology](reference/system-functional/subtopology-cdh-core.md), [ComFprime Subtopology](reference/system-functional/subtopology-com-fprime.md), [File Handling Subtopology](reference/system-functional/subtopology-file-handling.md)
 - [Develop a Subtopology](how-to/develop/develop-subtopologies.md)
@@ -138,7 +146,9 @@ generated from your FPP model is what connects the two sides.
 - [The F´ Ground Data System](user-manual/overview/gds-introduction.md)
 - [The F´ GDS CLI](user-manual/gds/gds-cli.md)
 - [The GDS Dashboard](user-manual/gds/gds-custom-dashboards.md)
-- [Sequencing in F´](user-manual/gds/seqgen.md)
+- [Sequencing in F´](user-manual/gds/seqgen.md): command sequences with CmdSequencer
+- [FpySequencer](../Svc/FpySequencer/docs/sdd.md) and [Advanced Sequencing with Rust](user-manual/gds/wasm-rust.md): sequencers
+  that run programs (with branching, telemetry checks, and waits) rather than fixed command lists
 
 ### Chapter 11: Testing
 
@@ -150,6 +160,7 @@ tests in the tutorials; this chapter covers the full toolset.
 - [Unit Testing in F´](user-manual/overview/unit-testing.md)
 - [Test-Driven Development in F´](how-to/test/test-driven-development.md)
 - [Write Rule-Based Tests](how-to/test/rule-based-testing.md)
+- [LED Blinker Step 9: System Testing](../tutorials-led-blinker/docs/led-blinker.md#9-system-testing): a first integration test
 - [GDS Integration Test API](user-manual/gds/gds-test-api-guide.md)
 - [Reusable Integration Tests](user-manual/gds/reusable-integration-tests.md)
 
@@ -167,10 +178,11 @@ specialized topics.
 Running on a target means cross-compiling with the right toolchain and talking to hardware through driver components.
 F´ separates hardware access from application logic with the Application-Manager-Driver pattern, so most of your code
 stays portable and testable. Finish the hardware sections of the LED Blinker tutorial, then learn how drivers are
-structured.
+structured. The two tutorials take different routes: LED Blinker runs on embedded Linux (such as a Raspberry Pi),
+while Arduino LED Blinker runs on a microcontroller without a full OS.
 
 - [Cross-Compilation Setup Tutorial](tutorials/cross-compilation.md)
-- [LED Blinker Tutorial](../tutorials-led-blinker/docs/led-blinker.md) (hardware sections) or [Arduino LED Blinker](../tutorials-arduino-led-blinker/docs/arduino-led-blinker.md)
+- [LED Blinker Step 8: Running on Hardware](../tutorials-led-blinker/docs/led-blinker.md#8-led-blinker-running-on-hardware) (embedded Linux) or [Arduino LED Blinker](../tutorials-arduino-led-blinker/docs/arduino-led-blinker.md) (microcontroller)
 - [Supported Platforms](user-manual/framework/supported-platforms.md): existing platforms and reference projects
 - [Application-Manager-Driver Architecture](user-manual/design-patterns/app-man-drv.md)
 - [ISR Device Driver Pattern](user-manual/design-patterns/isr-driver.md)
@@ -181,9 +193,9 @@ structured.
 
 *For: anyone bringing F´ to an OS, RTOS, or board that isn't supported yet.*
 
-F´ runs on a new platform through three pieces: a CMake toolchain file (the compiler), a platform file (build settings
-and which implementations to use), and an implementation of the OS Abstraction Layer (tasks, mutexes, files, and so on).
-F´ can also run without an OS.
+Porting F´ to a new platform involves four pieces: CMake toolchain and platform files (the compiler, build settings,
+and which implementations to use), platform types and configuration, drivers for the hardware, and an implementation of
+the OS Abstraction Layer (tasks, mutexes, files, and so on). F´ can also run without an OS.
 
 - [Porting to New Platforms](how-to/integrate/porting-guide.md): start here
 - [CMake Toolchain Files](user-manual/build-system/cmake-toolchains.md), [F´ and CMake Platforms](user-manual/build-system/cmake-platforms.md), [CMake Implementations](user-manual/build-system/cmake-implementations.md)
@@ -251,10 +263,10 @@ supports state machines, and components can be written in Python.
 The GDS is extensible through plugins (communication, framing, data handling, apps). The JSON dictionary generated by
 FPP is the interface for any other ground system.
 
-- [GDS Developer's Guide](user-manual/gds/gds-dev-guide.md)
-- [Develop a GDS Plugin](how-to/operate/develop-gds-plugins.md), [GDS Plugins Reference](reference/gds-plugins/index.md)
+- [Develop a GDS Plugin](how-to/operate/develop-gds-plugins.md): start here; [GDS Plugins Reference](reference/gds-plugins/index.md) *(reference)*
 - [Create Ground-Derived Channels](how-to/operate/derive-channels-on-ground.md)
-- [Dictionary Capabilities](reference/system-functional/dictionary.md), [FPP JSON Dictionary Specification](reference/fpp-json-dict.md)
+- [Dictionary Capabilities](reference/system-functional/dictionary.md), [FPP JSON Dictionary Specification](reference/fpp-json-dict.md) *(reference)*
+- [GDS Developer's Guide](user-manual/gds/gds-dev-guide.md): internals of the GDS command-line tools, for maintainers
 
 ---
 
@@ -264,4 +276,6 @@ FPP is the interface for any other ground system.
 - [F´ Examples](https://github.com/nasa/fprime-examples): small, focused examples
 - [F´ Community GitHub](https://github.com/fprime-community): tutorials, workshops, and platform support packages
 - [Reference](reference/index.md): C++ and CMake APIs, component SDDs, specifications
-- [F´ Translation Guide](reference/fprime-translations.md): mapping F´ concepts to other frameworks
+- [F´ Course Materials](user-manual/overview/02-fprime-architecture.md): slide decks on F´ and flight software architecture
+- [F´ Cheatsheet](https://fprime.jpl.nasa.gov/cheatsheet): the two-page summary, handy to print
+- [GitHub Discussions](https://github.com/nasa/fprime/discussions): ask questions and get help
