@@ -338,6 +338,7 @@ void AosDeframerTester::testFhpReservedBitsIgnored() {
         this->invoke_to_dataIn(0, buffer, context);
         ASSERT_from_dataOut_SIZE(0);
         ASSERT_EVENTS_IdleFrame_SIZE(1);
+        ASSERT_EVENTS_IdleFrame(0, 0);  // vcId=0 (the configured VC)
         ASSERT_EVENTS_InvalidFhp_SIZE(0);
     }
 }

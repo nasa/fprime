@@ -209,7 +209,7 @@ module Ccsds {
 
     @ Describes the header format for a Advanced Orbiting Systems (AOS) Space Data Link (SDL) multiplex protocol data unit (M_PDU)
     struct M_PDUHeader {
-        firstHeaderPointer: U16     @< bytes to the header of the first new CCSDS Packet
+        firstHeaderPointer: U16     @< 5 spare bits (zero) | 11 bit offset in bytes to the header of the first new CCSDS Packet
     } default {
         firstHeaderPointer = M_PDUSubfields.FHP_NO_PACKET_START # 11 bit all ones: no packet starts here (4.1.4.2.2.4)
     }
