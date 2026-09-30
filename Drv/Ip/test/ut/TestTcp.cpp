@@ -181,7 +181,9 @@ Drv::SocketIpStatus send_until_failure(Drv::IpSocket& sender, const Drv::SocketD
 //!
 //! SIGPIPE is left at its default action, which terminates the process. A send that raised it would end this test
 //! executable rather than return a status.
-void test_send_after_peer_closes(bool server_sends) {
+enum class Sender { SERVER, CLIENT };
+
+void test_send_after_peer_closes(Sender sender) {
     (void)std::signal(SIGPIPE, SIG_DFL);
 
     U16 port = 0;  // Choose a port
@@ -195,7 +197,7 @@ void test_send_after_peer_closes(bool server_sends) {
     ASSERT_EQ(client.open(client_fd), Drv::SOCK_SUCCESS) << "With errno: " << errno;
     ASSERT_EQ(server.open(server_fd), Drv::SOCK_SUCCESS);
 
-    if (server_sends) {
+    if (sender == Sender::SERVER) {
         client.close(client_fd);
         EXPECT_EQ(send_until_failure(server, server_fd), Drv::SOCK_DISCONNECTED);
         server.close(server_fd);
@@ -208,11 +210,11 @@ void test_send_after_peer_closes(bool server_sends) {
 }
 
 TEST(ErrorHandling, TestServerSendAfterClientClosesIsDisconnected) {
-    test_send_after_peer_closes(true);
+    test_send_after_peer_closes(Sender::SERVER);
 }
 
 TEST(ErrorHandling, TestClientSendAfterServerClosesIsDisconnected) {
-    test_send_after_peer_closes(false);
+    test_send_after_peer_closes(Sender::CLIENT);
 }
 
 TEST(Nominal, TestNominalTcp) {
