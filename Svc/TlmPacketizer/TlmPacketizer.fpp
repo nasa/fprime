@@ -169,6 +169,14 @@ module Svc {
                                         ) \
       opcode 9
 
+    @ Clear a single packet's per-packet override, reverting it to group-derived behavior.
+    @ The cleared state is mirrored out configOut so persistent storage stays consistent.
+    async command CLEAR_PACKET_OVERRIDE(
+                                         packetId: U32               @< Packet identifier
+                                         section: TelemetrySection   @< Section to clear
+                                       ) \
+      opcode 10
+
     @ Parameter to control section enable flags
     external param SECTION_ENABLED: SectionEnabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
     @ Parameter to control section configuration
@@ -245,6 +253,16 @@ module Svc {
       severity warning low \
       id 7 \
       format "Packet id {} not found in packet list"
+
+    @ A configIn batch carried more entries than the packetizer can accept
+    event ConfigBatchTruncated(
+                                count: FwSizeType @< The number of entries offered
+                                cap: U32          @< The maximum number of entries accepted
+                              ) \
+      severity warning high \
+      id 8 \
+      format "configIn batch of {} entries exceeds cap {}; extra entries dropped" \
+      throttle 10
 
     # ----------------------------------------------------------------------
     # Telemetry

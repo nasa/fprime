@@ -150,6 +150,24 @@ TEST(TestNominal, GetPacketConfigTest) {
     tester.getPacketConfigTest();
 }
 
+TEST(TestNominal, SeedFromEffectiveConfigTest) {
+    TEST_CASE(100.1.19, "First per-packet override seeds from group-derived effective config");
+    Svc::TlmPacketizerTester tester;
+    tester.seedFromEffectiveConfigTest();
+}
+
+TEST(TestNominal, ClearPacketOverrideTest) {
+    TEST_CASE(100.1.20, "CLEAR_PACKET_OVERRIDE reverts to group behavior and mirrors the clear");
+    Svc::TlmPacketizerTester tester;
+    tester.clearPacketOverrideTest();
+}
+
+TEST(TestNominal, ConfigInBatchCapTest) {
+    TEST_CASE(100.1.21, "configIn batch exceeding the cap drops extras and warns");
+    Svc::TlmPacketizerTester tester;
+    tester.configInBatchCapTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -20,20 +20,18 @@ module Svc {
         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
     )
 
-    @ Maximum number of per-packet config entries carried in a single push batch.
-    @ Sized so one fully-serialized batch stays well within FW_COM_BUFFER_MAX_SIZE.
-    constant TLM_PACKET_CONFIG_BATCH_MAX = 32
-
     @ A single per-packet configuration record: which packet, which section, and its policy.
     @ packetId matches the packet id used by the TlmPacketizer SEND_PKT command.
     struct PacketConfigEntry {
         packetId: U32                @< Packet identifier
         section: TelemetrySection    @< Section the policy applies to
         config: PacketConfig         @< Enable + rate policy for this packet/section
+        overridden: Fw.Enabled       @< Whether this entry is an active override (ENABLED) or a
+                                     @< cleared packet reverting to group-derived policy (DISABLED)
     }
 
     @ A fixed-capacity batch of per-packet config entries. Only the first `count` are valid.
-    array PacketConfigBatch = [TLM_PACKET_CONFIG_BATCH_MAX] PacketConfigEntry
+    array PacketConfigBatch = [MAX_TLM_PACKET_CONFIG_BATCH] PacketConfigEntry
 
     @ Port pushing a batch of per-packet configuration from the config persistent-memory owner
     @ to the packetizer (TlmPacketizer). Batching bounds the number of async messages required

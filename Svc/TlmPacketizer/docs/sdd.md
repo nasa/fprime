@@ -23,6 +23,10 @@ The requirements for `Svc::TlmPacketizer` are as follows:
 | TPK-005 | The `Svc::TlmPacketizer` component shall write packets upon fulfilling the rate send configurations for its group | Unit Test |
 | TPK-006 | The `Svc::TlmPacketizer` component shall determine output port index based on section and group | Unit Test |
 | TPK-007 | The `Svc::TlmPacketizer` component shall accept a packet specification containing no channels | Unit Test |
+| TPK-008 | The `Svc::TlmPacketizer` component shall provide per-packet enable, force, and rate overrides that take precedence over the packet's group configuration | Unit Test |
+| TPK-009 | The `Svc::TlmPacketizer` component shall provide a command to clear a per-packet override, reverting the packet to its group-derived configuration | Unit Test |
+| TPK-010 | The `Svc::TlmPacketizer` component shall mirror per-packet override changes out `configOut` and accept a reload of overrides on `configIn` for persistence across reboot | Unit Test |
+| TPK-011 | The `Svc::TlmPacketizer` component shall event on a configuration referencing an unknown packet id and on a `configIn` batch that exceeds the accepted capacity | Unit Test |
 
 
 ## 3. Design
@@ -43,8 +47,13 @@ Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
 [`Svc::Sched`](../../Sched/docs/sdd.md) | Run | Input | Asynchronous | Execute a cycle to write changed telemetry channels\r
 [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | TlmRecv | Input | Synchronous Input | Update a telemetry channel\r
+[`Fw::TlmGet`](../../../Fw/Tlm/docs/sdd.md) | TlmGet | Input | Synchronous | Read back the latest stored value of a channel\r
 [`Fw::Com`](../../../Fw/Com/docs/sdd.md) | PktSend | Output | n/a | Array of ports used to write packets with updated telemetry\r
 [`Svc::EnableSection`](../../Ports/TlmPacketizerPorts/sdd.md) | controlIn | Input | Asynchronous | Enable / Disable sections of telemetry groups\r
+[`Svc::ConfigureGroupRate`](../../Ports/TlmPacketizerPorts/sdd.md) | configureSectionGroupRate | Input | Asynchronous | Configure a section/group rate logic and thresholds\r
+[`Svc::TlmPacketConfigUpdate`](../../Ports/TlmPacketizerPorts/sdd.md) | configOut | Output | n/a | Mirror per-packet override changes to an external persistence component\r
+[`Svc::TlmPacketConfigUpdate`](../../Ports/TlmPacketizerPorts/sdd.md) | configIn | Input | Asynchronous | Reload per-packet overrides from the persistence component (e.g. at boot)\r
+[`Svc::Ping`](../../Ping/docs/sdd.md) | pingIn / pingOut | Input / Output | Asynchronous / n/a | Health ping request and response\r
 
 #### 3.1.3 Terminology
 
@@ -104,6 +113,26 @@ Telemetry sections are enabled and disabled upon spacecraft state transitions th
 Disabling groups / sections will freeze the group's counter between sent output.
 Updated groups using `ON_CHANGE_MIN` or `ON_CHANGE_MIN_OR_EVERY_MAX` while group disabled / section disabled will be marked "NEW" but not sent. The group counter resumes once the group / section is re-enabled and will be sent upon reaching their MIN counter.
 
+#### 3.3.4 Per-Packet Configuration Overrides
+
+Beyond the section/group controls above, `Svc::TlmPacketizer` supports fine-grained *per-packet* overrides. An override targets a single (packet id, section) pair and carries the same policy fields as a group configuration (`enabled`, `forceEnabled`, `rateLogic`, `min`, `max`). The following commands manage overrides:
+
+* `ENABLE_PACKET`: Enable / disable a single packet in a section.
+* `FORCE_PACKET`: Force a single packet to be emitted even when it or its section is disabled.
+* `CONFIGURE_PACKET_RATES`: Set the rate logic and MIN/MAX thresholds of a single packet.
+* `GET_PACKET_CONFIG`: Query a packet's effective configuration; the result is emitted on the `QueriedPacketConfig` telemetry channel. An unknown packet id raises the `UnknownPacketId` warning event.
+* `CLEAR_PACKET_OVERRIDE`: Remove a packet's override, reverting it to group-derived behavior.
+
+**Authority / priority.** A per-packet override takes precedence over the section/group policy for that packet. Once a packet is overridden, its effective configuration is read entirely from the override and the group's `enabled` / `forceEnabled` / rate settings no longer apply to it. An overridden-disabled packet stays silent even in a group that is Force-Enabled. A packet remains overridden until `CLEAR_PACKET_OVERRIDE` (or a cleared `configIn` reload) restores group-derived behavior.
+
+**Seeding.** The first command that touches a packet seeds its override slot from the packet's *current effective* configuration (the group-derived policy for the packet's level). This preserves existing behavior: enabling a packet does not silently reset its rate logic or thresholds — untouched fields carry through from the group and only the commanded field changes.
+
+**Persistence (`configOut` / `configIn`).** Whenever a command changes or clears an override, the packetizer mirrors the resulting state out the `configOut` port to an external persistence component. Each mirrored `PacketConfigEntry` carries an `overridden` flag: `ENABLED` for an active override, `DISABLED` for a cleared packet. On boot (or on command) the persistence component pushes the stored overrides back in on the `configIn` port as one or more `TlmPacketConfigUpdate` batches; entries with `overridden == ENABLED` are re-applied and entries with `overridden == DISABLED` clear the corresponding slot. Entries referencing an unknown packet id are warned (`UnknownPacketId`) and skipped.
+
+A single `configIn` batch is bounded by `MAX_TLM_PACKET_CONFIG_BATCH`. If a batch offers more entries than that capacity, the extra entries are dropped and the `ConfigBatchTruncated` warning event is emitted. Because a full reload may arrive as several back-to-back `configIn` messages, the packetizer's message queue must be sized to absorb that burst or reload messages may be dropped or assert on a full queue.
+
+**Telemetry timing caveat.** The `GET_PACKET_CONFIG` result is published asynchronously on the `QueriedPacketConfig` channel. Any consumer that reads that channel back after issuing the command (e.g. an FDIR response) must run the channel at `ON_CHANGE` and poll it *slower* than the TlmPacketizer's own rate group; otherwise it may observe a stale value from a previous query.
+
 ### 3.4 State
 
 `Svc::TlmPacketizer` has no state machines.
@@ -125,6 +154,7 @@ The `Svc::TlmPacketizer` component has the following configuration parameters:
 - `TELEMETRY_SEND_PORTS` (TlmPacketizerCfg.fpp): Number of output ports for telemetry packets
 - `TELEMETRY_SEND_PORT_MAPPING` (TlmPacketizerCfg.fpp): A mapping of each section/group pair to the output port index used.
 - `TELEMETRY_SECTION_DEFAULTS` (TlmPacketizerCfg.fpp): A mapping of each section/group pair to the default rate logic and parameters for that section/group pair.
+- `MAX_TLM_PACKET_CONFIG_BATCH` (TlmPacketizerCfg.fpp): Maximum number of per-packet config entries carried in a single `configOut` / `configIn` batch.
 
 ### 4.1 Sizing
 
@@ -294,6 +324,12 @@ constant TELEMETRY_SECTION_DEFAULTS = [
 ]
 ```
 
+### 4.6 Per-Packet Configuration Batch Sizing and Queue Depth
+
+`MAX_TLM_PACKET_CONFIG_BATCH` (TlmPacketizerCfg.fpp) sets the maximum number of `PacketConfigEntry` records carried in a single `configOut` / `configIn` `TlmPacketConfigUpdate` message. It is sized so one fully-serialized batch stays well within `FW_COM_BUFFER_MAX_SIZE`.
+
+When an external persistence component reloads overrides on `configIn`, a full push covering many packets may be split across several back-to-back messages of up to `MAX_TLM_PACKET_CONFIG_BATCH` entries each. The deployment must size the `Svc::TlmPacketizer` component's message queue deep enough to absorb this burst alongside its other async traffic (`Run`, `controlIn`, `configureSectionGroupRate`, commands); otherwise reload messages may be dropped or trigger a full-queue assert. A batch offering more than `MAX_TLM_PACKET_CONFIG_BATCH` entries has its extras dropped and raises the `ConfigBatchTruncated` warning event.
+
 ## 5. Unit Testing
 
 To see unit test coverage run fprime-util check --coverage
@@ -306,3 +342,4 @@ Date | Description
 01/23/2026 | Added group level rate logic
 02/23/2026 | Added section/group mapping logic
 03/30/2026 | Added configuration section
+09/30/2026 | Added per-packet configuration
