@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "f94deadcde1937c55d9a7263ae4592081193a0d7",
-  "generated_at": "2026-09-30T21:14:16Z",
+  "generated_at": "2026-09-30T21:15:20Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -8288,15 +8288,25 @@
         },
         "codeql-jpl": null
       },
-      "checks": null,
-      "sdd": null,
+      "checks": {
+        "passed": 5,
+        "failed": 6,
+        "skipped": 5,
+        "tier": "bronze",
+        "report": "Svc/ComLoggerDp/checks/index.html"
+      },
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/ComLoggerDp/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "silver",
-        "checks": null,
-        "sdd": "bronze"
+        "checks": "bronze",
+        "sdd": "platinum"
       }
     },
     {

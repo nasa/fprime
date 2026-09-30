@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-09-30T21:15:20Z",
+  "ref": "devel",
+  "commit": "f94deadcde1937c55d9a7263ae4592081193a0d7",
+  "tier": "platinum",
+  "has_sdd": true,
+  "sections": 36,
+  "filled_sections": 17,
+  "prose_words": 1457,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "commands",
+    "data_products",
+    "events",
+    "parameters",
+    "ports",
+    "telemetry"
+  ],
+  "declared_kinds": [
+    "commands",
+    "data_products",
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/devel/Svc/ComLoggerDp/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::ComLoggerDp",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_svc_1_1_com_logger_dp.html"
+    }
+  ]
+}

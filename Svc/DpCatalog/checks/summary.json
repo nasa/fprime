@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-29T21:14:35Z",
+  "generated_at": "2026-09-30T21:15:15Z",
   "ref": "devel",
-  "commit": "63127204b026958495bcd1622ad860f4ba6f585f",
+  "commit": "f94deadcde1937c55d9a7263ae4592081193a0d7",
   "passed": 3,
   "failed": 8,
   "skipped": 5,
@@ -132,6 +132,7 @@
         "event 'CatalogXmitCompleted' has no requirement referencing it (add a requirement mentioning 'CatalogXmitCompleted')",
         "event 'SendingProduct' has no requirement referencing it (add a requirement mentioning 'SendingProduct')",
         "event 'ProductComplete' has no requirement referencing it (add a requirement mentioning 'ProductComplete')",
+        "event 'CatalogCleared' has no requirement referencing it (add a requirement mentioning 'CatalogCleared')",
         "event 'CatalogFull' has no requirement referencing it (add a requirement mentioning 'CatalogFull')",
         "event 'FileOpenError' has no requirement referencing it (add a requirement mentioning 'FileOpenError')",
         "event 'FileReadError' has no requirement referencing it (add a requirement mentioning 'FileReadError')",
@@ -154,9 +155,10 @@
         "event 'XmitUnbuiltCatalog' has no requirement referencing it (add a requirement mentioning 'XmitUnbuiltCatalog')",
         "event 'InvalidFileName' has no requirement referencing it (add a requirement mentioning 'InvalidFileName')",
         "event 'FileCorruptedDataError' has no requirement referencing it (add a requirement mentioning 'FileCorruptedDataError')",
-        "event 'FileNameFormatError' has no requirement referencing it (add a requirement mentioning 'FileNameFormatError')"
+        "event 'FileNameFormatError' has no requirement referencing it (add a requirement mentioning 'FileNameFormatError')",
+        "event 'StaleFileDone' has no requirement referencing it (add a requirement mentioning 'StaleFileDone')"
       ],
-      "detail": "32 event(s) traced against 13 requirement(s)"
+      "detail": "34 event(s) traced against 13 requirement(s)"
     },
     {
       "id": "R4",
