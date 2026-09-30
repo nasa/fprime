@@ -26,7 +26,7 @@ Buffer ownership follows the standard F Prime data-with-context return pattern: 
 | SVC-CCSDS-SDLS-FRAMER-006 | The CcsdsSdlsFramer shall return original data buffers received back from the encryption helper (`bufferReturnIn`) upstream via `dataReturnOut`. | Original data buffers must return to their upstream allocator. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-007 | The CcsdsSdlsFramer shall pass com status received on `comStatusIn` through to `comStatusOut` unmodified. | Ready signals must traverse the framing pipeline. | Unit test |
 | SVC-CCSDS-SDLS-FRAMER-008 | Upon an invalid or undersized buffer allocation, the CcsdsSdlsFramer shall emit the `BufferAllocationFailed` WARNING_HI event subject to its throttle, deallocate the undersized buffer when valid, return the encrypted buffer via `encryptReturnOut`, and emit a ready-for-more com status on `comStatusOut`. | Allocation failures must be reported, no buffer may leak, and a ComQueue-driven downlink must not stall; invalid buffers need not be deallocated. | Unit test |
-| SVC-CCSDS-SDLS-FRAMER-009 | Each failure event shall be limited to five emissions per component instance until its throttle is explicitly cleared or the component is reconstructed. Buffer returns and ready-for-more status shall continue after the quota is exhausted. | Persistent failures must not flood the event stream or stall ownership returns. | Unit test |
+| SVC-CCSDS-SDLS-FRAMER-009 | Each failure event shall be limited to five emissions per 60-second throttle period per component instance; the period starts at the first emission and the quota is re-armed by the first emission request at or after the period elapses. Buffer returns and ready-for-more status shall continue while an event is suppressed. | Persistent failures must not flood the event stream or stall ownership returns, yet must remain observable while they persist. | Unit test |
 
 ## Design
 
@@ -47,7 +47,7 @@ The component is passive with no commands or telemetry. It composes two interfac
 | output | bufferAllocate | Fw.BufferGet | Allocates the frame buffer for the SA prepend. |
 | output | bufferDeallocate | Fw.BufferSend | Deallocates frame buffers. |
 
-Events: `EncryptionFailed` (WARNING_HI, carries the `SdlsStatus`) and `BufferAllocationFailed` (WARNING_HI, carries the requested size as `FwSizeType`). Each event has an independent throttle of five emissions. This is an emission quota, not a rate per second. Successful frames do not reset either quota. The generated protected `log_WARNING_HI_<event>_ThrottleClear()` methods can reset the quotas from component implementation code. This component exposes no reset command and does not reset them automatically.
+Events: `EncryptionFailed` (WARNING_HI, carries the `SdlsStatus`) and `BufferAllocationFailed` (WARNING_HI, carries the requested size as `FwSizeType`). Each event has an independent time-based throttle (`throttle 5 every { seconds = 60 }`): at most five emissions per 60-second period, measured with the component's time port from the first emission of the period. Once the quota is exhausted, further failures are suppressed until the period elapses; the next failure at or after that point is emitted and re-arms the quota, so a persistent failure keeps reporting at a bounded rate. Successful frames do not reset either quota. This component exposes no reset command.
 
 Parameters: `SA_INDEX` (U16, default 1) — the SA index used when the incoming frame context does not specify one (context `saIndex` equal to its default value of 0xFFFF is treated as unset).
 
@@ -59,7 +59,7 @@ Note that `Svc.Ccsds.SpacePacketFramer` does not set `saIndex` on the frame cont
 
 ## Unit Testing
 
-Rule-based testing (STest) with rules covering both SA selection paths, both error paths, the encrypted-data framing path, the ownership return paths, and the comStatus pass-through; a 10000-step randomized scenario interleaves all rules. The error rules retain shadow counts across history clearing and verify buffer/status handling even when events are suppressed. Deterministic tests check independent quotas, interleaved successful frames, and separate component instances. Requirements are traced with `REQUIREMENT()` macros in the test main.
+Rule-based testing (STest) with rules covering both SA selection paths, both error paths, the encrypted-data framing path, the ownership return paths, and the comStatus pass-through; a 10000-step randomized scenario interleaves all rules. The error rules retain shadow counts across history clearing and verify buffer/status handling even when events are suppressed. Deterministic tests check independent quotas, interleaved successful frames, separate component instances, and re-arming of the quota once the throttle period has elapsed on the test time port. Requirements are traced with `REQUIREMENT()` macros in the test main.
 
 ## See Also
 
