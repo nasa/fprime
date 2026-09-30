@@ -91,7 +91,7 @@ SocketIpStatus IpSocket::setupTimeouts(int socketFd) {
 
 SocketIpStatus IpSocket::setupNoSigPipe(int socketFd) {
 #ifdef SO_NOSIGPIPE
-    const int enable = 1;
+    constexpr int enable = 1;
     if (setsockopt(socketFd, SOL_SOCKET, SO_NOSIGPIPE, &enable, sizeof(enable)) < 0) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }

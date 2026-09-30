@@ -43,7 +43,7 @@ enum SocketIpStatus {
     SOCK_FAILED_TO_SET_SOCKET_OPTIONS = -5,  //!< Failed to configure socket
     SOCK_INTERRUPTED_TRY_AGAIN = -6,         //!< Interrupted status for retries
     SOCK_READ_ERROR = -7,                    //!< Failed to read socket
-    SOCK_DISCONNECTED = -8,                  //!< Failed to read socket with disconnect
+    SOCK_DISCONNECTED = -8,                  //!< Socket disconnected during read or send
     SOCK_FAILED_TO_BIND = -9,                //!< Failed to bind to socket
     SOCK_FAILED_TO_LISTEN = -10,             //!< Failed to listen on socket
     SOCK_FAILED_TO_ACCEPT = -11,             //!< Failed to accept connection
@@ -207,12 +207,12 @@ class IpSocket {
 #endif
 
     /**
-     * \brief prevent sends on a connected stream socket from raising SIGPIPE on platforms without MSG_NOSIGNAL
+     * \brief prevent sends on a stream socket from raising SIGPIPE on platforms without MSG_NOSIGNAL
      *
      * Sets SO_NOSIGPIPE where the platform provides it (e.g. macOS). Elsewhere this does nothing: sends pass
      * SEND_NO_SIGNAL_FLAGS instead.
      *
-     * \param socketFd: connected stream socket to setup
+     * \param socketFd: stream socket to setup; may be called before connect
      * \return SOCK_SUCCESS, or SOCK_FAILED_TO_SET_SOCKET_OPTIONS if the option could not be set
      */
     SocketIpStatus setupNoSigPipe(int socketFd);
