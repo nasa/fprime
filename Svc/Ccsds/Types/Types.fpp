@@ -201,16 +201,17 @@ module Ccsds {
     @ Special values for AOS M_PDU First Header Pointer
     @ Per CCSDS 732.0-B-5 Section 4.1.4.2.2
     module M_PDUSubfields {
+        constant fhpMask = 0x07FF                 @< 11 bit First Header Pointer field; upper 5 bits are reserved spares
         # Special First Header Pointer values per CCSDS 732.0-B-5 Section 4.1.4.2.2.4 & 4.1.4.2.2.5
-        constant FHP_NO_PACKET_START = 0xFFFF     @< No packet starts in this frame
-        constant FHP_IDLE_DATA_ONLY = 0xFFFE      @< Frame contains only idle data
+        constant FHP_NO_PACKET_START = 0x7FF      @< No packet starts in this frame (continuation data only)
+        constant FHP_IDLE_DATA_ONLY = 0x7FE       @< Frame contains only idle data
     }
 
     @ Describes the header format for a Advanced Orbiting Systems (AOS) Space Data Link (SDL) multiplex protocol data unit (M_PDU)
     struct M_PDUHeader {
         firstHeaderPointer: U16     @< bytes to the header of the first new CCSDS Packet
     } default {
-        firstHeaderPointer = M_PDUSubfields.FHP_NO_PACKET_START # Set first header pointer to all ones to mean no packet starts here (4.1.4.2.2.4)
+        firstHeaderPointer = M_PDUSubfields.FHP_NO_PACKET_START # 11 bit all ones: no packet starts here (4.1.4.2.2.4)
     }
 
     @ Describes the frame trailer format for a Advanced Orbiting Systems (AOS) Space Data Link (SDL) Transfer Frame
