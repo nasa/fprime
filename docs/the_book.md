@@ -9,14 +9,10 @@ assumed.
 
 **How to read this book:** Parts I–III are the core path and are meant for everyone, in order. Part IV is a set of
 independent chapters: pick the ones that match what you are building, in any order. Each Part IV chapter starts with
-who it is for.
+who it is for. Links marked *(reference)* are for looking things up later; skim them the first time.
 
 **Keep the [F´ Cheatsheet](https://fprime.jpl.nasa.gov/cheatsheet) open:** it summarizes the core terms, component and
 port kinds, the `fprime-util` commands, and the day-to-day development workflow on two pages.
-
-**Shortcuts for experienced readers:** if you already know flight software or are evaluating F´, read Chapters 1, 3, 4,
-and 15. Ground and operations engineers: Chapters 1, 2, 4, 10, 11, and 18. Porting to a new platform: Chapters 1–3, 7,
-13, 16, and 17. Links marked *(reference)* are for looking things up later; skim them the first time.
 
 ---
 
