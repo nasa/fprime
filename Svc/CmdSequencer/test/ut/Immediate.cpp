@@ -51,6 +51,59 @@ void CmdSequencerTester ::AutoByFileDispatcherPort() {
     this->parameterizedAutoByFileDispatchPort(file, numCommands, bound);
 }
 
+void CmdSequencerTester ::AutoByCommandMaxFileName() {
+    const U32 numRecords = 5;
+    const U32 numCommands = numRecords;
+    const U32 bound = numCommands;
+    SequenceFiles::ImmediateFile file(numRecords, this->format);
+    this->setFileNameLength(file, FW_CMD_STRING_MAX_SIZE);
+    this->parameterizedAutoByCommand(file, numCommands, bound);
+}
+
+void CmdSequencerTester ::AutoByPortLongFileName() {
+    const U32 numRecords = 5;
+    const U32 numCommands = numRecords;
+    const U32 bound = numCommands;
+    SequenceFiles::ImmediateFile file(numRecords, this->format);
+    this->setFileNameLength(file, static_cast<FwSizeType>(FW_CMD_STRING_MAX_SIZE) + 1);
+    // Set the time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
+    this->setTestTime(testTime);
+    // Write the file
+    const char* const fileName = file.getName().toChar();
+    file.write();
+    // Run the sequence by port call
+    this->runSequenceByPortCall(fileName);
+    // Execute commands
+    this->executeCommandsAuto(fileName, numCommands, bound, CmdExecMode::NO_NEW_SEQUENCE);
+    // Check for command complete on seqDone
+    ASSERT_from_seqDone_SIZE(1);
+    ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
+}
+
+void CmdSequencerTester ::AutoByFileDispatcherPortMaxFileName() {
+    const U32 numRecords = 5;
+    SequenceFiles::ImmediateFile file(numRecords, this->format);
+    this->setFileNameLength(file, FileNameStringSize);
+    // Set the time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
+    this->setTestTime(testTime);
+    // Write the file
+    file.write();
+    // Run the sequence by file dispatcher port call
+    Fw::String fileName(file.getName());
+    this->invoke_to_seqDispatchIn(0, fileName);
+    this->clearAndDispatch();
+    // Assert no command response
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    // Assert events. Events carry a shortened file name, so only their presence is checked.
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_CS_SequenceLoaded_SIZE(1);
+    ASSERT_EVENTS_CS_PortSequenceStarted_SIZE(1);
+    // Assert the first command was sent
+    ASSERT_from_comCmdOut_SIZE(1);
+}
+
 void CmdSequencerTester ::Cancel() {
     const U32 numRecords = 5;
     const U32 numCommands = numRecords;

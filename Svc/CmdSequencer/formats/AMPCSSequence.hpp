@@ -97,7 +97,7 @@ class AMPCSSequence : public CmdSequencerComponentImpl::Sequence {
   private:
     //! Read a CRC file
     //! \return Success or failure
-    bool readCRCFile(Fw::CmdStringArg& crcFileName  //!< The CRC file name
+    bool readCRCFile(Fw::FileNameString& crcFileName  //!< The CRC file name
     );
 
     //! Read the CRC out of an open CRC file

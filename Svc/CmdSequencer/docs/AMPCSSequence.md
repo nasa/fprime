@@ -30,6 +30,9 @@ The `AMPCSSequence` class implements the virtual functions of
 ### 2.1 `loadFile(`*filename*`)`
 
 1. Read the stored CRC value from *filename*`.CRC32`.
+If *filename*`.CRC32` is longer than `FileNameStringSize` characters, the load
+fails and `CmdSequencer` emits `CS_FileInvalid` with stage `READ_SEQ_CRC` and
+the `Fw::FormatStatus` value as the error (1, `OVERFLOWED`).
 
 2. Ask the OS for the size of the sequence file, and use it to compute the size
 of the command record data.

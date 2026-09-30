@@ -84,7 +84,9 @@ The `cmdResponseIn` port is called when a command in a sequence is completed. If
 This port takes two arguments: `filename`, the sequence file name, and
 `args` of type `Svc.SeqArgs` (currently unused by this component). In
 general, sending `filename` on this port has the same  effect as issuing
-a `CS_Run` command with `filename` as the file name argument. If the
+a `CS_Run` command with `filename` as the file name argument. The port
+accepts file names up to `FileNameStringSize` characters, while the `CS_Run`
+file name argument is limited to `FW_CMD_STRING_MAX_SIZE` characters. If the
 sequencer is in manual stepping mode (see `CS_Manual`), the request is
 rejected: the `CS_InvalidMode` event is emitted and `EXECUTION_ERROR` is
 returned on the `seqDone` port.
@@ -348,3 +350,4 @@ Date | Change Description
 4/6/2017|Version for Unit test
 10/30/2017|Revise design to make sequence format configurable
 09/24/2026|Reject invalid time-tag microseconds and zero-record AMPCS files during validation (#5891)
+09/30/2026|Keep sequence file names up to `FileNameStringSize` characters; reject AMPCS file names that leave no room for `.CRC32` (#5892)
