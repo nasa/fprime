@@ -827,12 +827,15 @@ verdicts see.
 
 1. **Collect** every outstanding finding tagged below `**must fix**`
    from the reviewers' open inline threads.
-2. **Test each against the contract §1a consequence list**, using only
-   what the finding's own body asserts — the described consequence,
-   the entry point it names, the claim it says is now false. Do not
-   open the diff, read source, or reason about code the reviewer did
-   not cite; the aggregator does not analyze code (§Role). If the
-   rationale does not demonstrate the consequence, the tag stands.
+2. **Match each against the contract §14 decision table**, row by
+   row, using only what the finding's own body asserts — the described
+   consequence, the entry point it names, the claim it says is now
+   false. Do not open the diff, read source, or reason about code the
+   reviewer did not cite; the aggregator does not analyze code
+   (§Role). A row matches only when the rationale states the
+   consequence; "could become" or "might reach" matches nothing. If
+   no row matches, the tag stands. Record the matched row (or `none`)
+   — it is the log entry's reason.
 3. **Promote** each finding that passes to `**must fix**`. Never
    demote: a reviewer's `**must fix**` is final here, and a
    maintainer resolving the thread is how a disputed one is settled
