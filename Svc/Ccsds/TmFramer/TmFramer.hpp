@@ -9,7 +9,6 @@
 
 #include "Svc/Ccsds/TmFramer/TmFramerComponentAc.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
-#include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
 
@@ -23,21 +22,13 @@ class TmFramer final : public TmFramerComponentBase {
     static_assert(ComCfg::TmFrameFixedSize > TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE,
                   "TM Frame Fixed Size must be at least large enough to hold header, trailer and data");
 
-    static constexpr FwSizeType TmPayloadCapacity =
-        ComCfg::TmFrameFixedSize - (TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE);
-    static constexpr FwSizeType SppOverhead = (2 * SpacePacketHeader::SERIALIZED_SIZE) + 1;
+    static_assert(static_cast<FwSizeType>(TMHeader::SERIALIZED_SIZE) == static_cast<FwSizeType>(TmHeaderSize),
+                  "Svc.Ccsds.TmHeaderSize must match TMHeader");
+    static_assert(static_cast<FwSizeType>(TMTrailer::SERIALIZED_SIZE) == static_cast<FwSizeType>(TmTrailerSize),
+                  "Svc.Ccsds.TmTrailerSize must match TMTrailer");
 
-    // These are to ensure the frame can hold the packet buffer, its SP header and an idle packet of 1 byte
-    // This is because TM specifies a frame to be padded with an idle packet of at least 1 byte of idle data
-    static_assert(TmPayloadCapacity >= FW_COM_BUFFER_MAX_SIZE + SppOverhead,
-                  "TM Frame Fixed Size must be at least large enough to hold Tm Header + Footer, a full com buffer, 2 "
-                  "SP headers, and 1 idle byte");
-    static_assert(TmPayloadCapacity >= FW_FILE_BUFFER_MAX_SIZE + SppOverhead,
-                  "TM Frame Fixed Size must be at least large enough to hold Tm Header + Footer, a full file buffer, 2 "
-                  "SP headers, and 1 idle byte");
-
-    static_assert(static_cast<FwSizeType>(ComCfg::AggregationSize) <= TmPayloadCapacity,
-                  "ComCfg::AggregationSize must fit in the TM data field");
+    //! Size of the frame data field: every dataIn payload must be exactly this size
+    static constexpr FwSizeType TmPayloadCapacity = static_cast<FwSizeType>(TmDataFieldSize);
 
     enum class BufferOwnershipState {
         NOT_OWNED,  //!< The buffer is currently not owned by the TmFramer
@@ -71,9 +62,9 @@ class TmFramer final : public TmFramerComponentBase {
 
     //! Handler implementation for dataIn
     //!
-    //! Port to receive data to frame, in a Fw::Buffer with optional context.
-    //! This is essentially the CCSDS TM VCP.request Service Primitive, with
-    //! Packet=data and GVCID implicitly passed in context (TM Protocol 3.3.3.2)
+    //! Port to receive a complete frame data field to frame, in a Fw::Buffer with optional context.
+    //! The buffer must be exactly TmPayloadCapacity bytes (idle-filled upstream, e.g. by Svc::ComAggregator);
+    //! any other size asserts. GVCID and the First Header Pointer are passed in the context.
     //!
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
@@ -85,15 +76,6 @@ class TmFramer final : public TmFramerComponentBase {
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
-
-    // ----------------------------------------------------------------------
-    // Helpers
-    // ----------------------------------------------------------------------
-  private:
-    //! Fill the frame buffer with an Idle Packet to complete the frame data field
-    //! as per CCSDS TM Protocol paragraph 4.2.2.5. Idle packet is inserted at the
-    //! start_index index of the frame buffer, and fills it up to the end minus CRC
-    void fill_with_idle_packet(Fw::SerialBufferBase& serializer);
 
     // ----------------------------------------------------------------------
     // Members

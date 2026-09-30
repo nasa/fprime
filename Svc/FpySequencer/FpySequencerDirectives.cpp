@@ -308,6 +308,11 @@ Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirectiv
     U32 uSeconds = this->m_runtime.stack.pop<U32>();
     U32 seconds = this->m_runtime.stack.pop<U32>();
 
+    if (uSeconds >= 1000000) {
+        error = DirectiveError::INVALID_ARG;
+        return Signal::stmtResponse_failure;
+    }
+
     wakeupTime.add(seconds, uSeconds);
     this->m_runtime.wakeupTime = wakeupTime;
     return Signal::stmtResponse_beginSleep;
@@ -324,6 +329,11 @@ Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirectiv
     U32 seconds = this->m_runtime.stack.pop<U32>();
     FwTimeContextStoreType ctx = this->m_runtime.stack.pop<FwTimeContextStoreType>();
     FwTimeBaseStoreType base = this->m_runtime.stack.pop<FwTimeBaseStoreType>();
+
+    if (uSeconds >= 1000000) {
+        error = DirectiveError::INVALID_ARG;
+        return Signal::stmtResponse_failure;
+    }
 
     this->m_runtime.wakeupTime = Fw::Time(static_cast<TimeBase::T>(base), ctx, seconds, uSeconds);
     return Signal::stmtResponse_beginSleep;
@@ -1791,9 +1801,13 @@ Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSeri
     Fw::SerializeStatus stat = buf.setBuffLen(directive.get_size());
     FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
 
-    // Call output port and verify serialization succeeds
+    // Call output port; a typed downstream port reports deserialize failures here, which is
+    // untrusted sequence content (e.g. undersized payload), not an invariant to assert on
     Fw::SerializeStatus portStatus = this->serialOut_out(portIndex, buf);
-    FW_ASSERT(portStatus == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(portStatus));
+    if (portStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        error = DirectiveError::SERIAL_PORT_DESERIALIZE_FAILURE;
+        return Signal::stmtResponse_failure;
+    }
 
     // Pop data from stack
     this->m_runtime.stack.size -= directive.get_size();

@@ -660,7 +660,9 @@ class Transaction {
      * The RxCrcCalcBytesPerCycle parameter specifies the number of bytes
      * to calculate per transaction per scheduler cycle. At each cycle, the file is
      * read and this number of bytes are calculated. This function will set
-     * the checksum error condition code if the final CRC does not match.
+     * the checksum error condition code if the final CRC does not match, and
+     * the file size error condition code if a read returns fewer bytes than
+     * requested (the file on disk is shorter than the declared file size).
      *
      * @par PTFO
      *       Increase throughput by consuming all CRC bytes per scheduler cycle in

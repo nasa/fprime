@@ -58,10 +58,11 @@ The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied pat
 > topology setup code with a restricted directory, after which `../` traversal and absolute paths
 > outside it are rejected. `configure(file)` sets the store-file name only and is **not** a sandbox.
 
-The fields for each parameter value as stored in the parameter file are as follows:
+The parameter file begins with a CRC32 followed by the serialized parameter records. The CRC is written as a placeholder, then overwritten after all records are written, and is computed over all record bytes.
 
 Description | Size (in bytes) | Value
 ----------- | ---- | -----
+CRC32 | 4 | Offset 0; placeholder initially, then the CRC over all record bytes; verified on load, with a mismatch emitting `PrmFileBadCrc`
 Entry Delimiter | 1 | 0xA5
 Record Size | 4 | Id type size + number of bytes in parameter value
 Parameter ID | Size of FwPrmIdType | Value of parameter ID
@@ -89,7 +90,13 @@ This diagram shows the scenario where parameters are saved to a file.
 
 ### 3.4 State
 
-`Svc::PrmDb` has no state machines.
+`Svc::PrmDb` uses the `PrmDbFileLoadState` state machine:
+
+- `IDLE` transitions to `LOADING_FILE_UPDATES` when `PRM_LOAD_FILE` is accepted.
+- A successful load transitions to `FILE_UPDATES_STAGED`.
+- A failed load clears the staging database, emits `PrmDbFileLoadFailed`, returns `EXECUTION_ERROR`, and transitions to `IDLE`.
+- `FILE_UPDATES_STAGED` transitions to `IDLE` on `PRM_COMMIT_STAGED`, which swaps the active and staging databases and emits `PrmDbCommitComplete`.
+- In any non-`IDLE` state, `setPrm` is rejected with `PrmDbFileLoadInvalidAction`; `PRM_SAVE_FILE` and `PRM_LOAD_FILE` are rejected with that event and `BUSY`. `PRM_COMMIT_STAGED` outside `FILE_UPDATES_STAGED` emits `PrmDbFileLoadInvalidAction` and returns `VALIDATION_ERROR`.
 
 ### 3.5 Algorithms
 
@@ -117,6 +124,4 @@ Date | Description
 ---- | -----------
 7/15/2015 | Design review edits
 10/6/2015 | Unit test review edits 
-
-
 

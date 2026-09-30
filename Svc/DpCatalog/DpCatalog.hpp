@@ -233,6 +233,10 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param response the command response for pass/fail
     void dispatchWaitedResponse(Fw::CmdResponse response);
 
+    /// @brief abandon the transmit: clear both transmit flags and answer a waited START_XMIT_CATALOG
+    /// @param response the command response for the waited command
+    void abortXmit(Fw::CmdResponse response);
+
     // ----------------------------------
     // Private data
     // ----------------------------------
@@ -241,6 +245,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES> m_dpCatalog;  //!< The sorted catalog of DPs
     DpStateEntry m_currentXmitEntry;                              //!< Entry currently being transmitted
     bool m_hasCurrentXmit = false;                                //!< Whether m_currentXmitEntry is valid
+    U32 m_currXmitContext = 0;  //!< FileDownlink context of the send in flight, echoed back in fileDone
 
     FwSizeType m_numDpSlots = 0;  //!< Stores the available number of record slots.
 
