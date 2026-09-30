@@ -20,7 +20,7 @@
 #ifdef TGT_OS_TYPE_VXWORKS
 #include <sockLib.h>
 #include <socket.h>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#elif defined(TGT_OS_TYPE_LINUX) || defined(TGT_OS_TYPE_DARWIN)
 #include <sys/socket.h>
 #endif
 

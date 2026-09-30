@@ -51,10 +51,10 @@ A send on a connection the peer has closed or reset, or on a descriptor already 
 `SOCK_DISCONNECTED` (`EPIPE`, `ECONNRESET`, or `EBADF`). Such a send must not raise `SIGPIPE`, whose default action
 terminates the process, so TCP sends pass `MSG_NOSIGNAL` where the platform defines it, and connected TCP sockets have
 `SO_NOSIGPIPE` set where the platform provides that option instead (e.g. macOS). On Linux and macOS, a `Drv::Ip` TCP
-send therefore cannot raise
-`SIGPIPE` on disconnect. This covers only `Drv::Ip` sends: other `write`/`send` calls in the process, and targets
-with neither `MSG_NOSIGNAL` nor `SO_NOSIGPIPE`, still raise `SIGPIPE` (default action: process termination), so a
-deployment that removes a global `SIGPIPE` handler on the strength of this section must audit those paths first.
+send therefore cannot raise `SIGPIPE` on disconnect. This covers only `Drv::Ip` sends: other `write`/`send` calls in
+the process, and targets with neither `MSG_NOSIGNAL` nor `SO_NOSIGPIPE`, still raise `SIGPIPE` (default action: process
+termination), so a deployment that removes a global `SIGPIPE` handler on the strength of this section must audit those
+paths first.
 
 `Drv::IpSocket::recv` will attempt to read data from across the socket. It will block until data is received and
 in the case that the socket is interrupted without data, it will retry a configurable number of times. Users must call

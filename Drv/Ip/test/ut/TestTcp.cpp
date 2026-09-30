@@ -177,12 +177,13 @@ Drv::SocketIpStatus send_until_failure(Drv::IpSocket& sender, const Drv::SocketD
     return status;
 }
 
+//! Which end of the connected TCP pair sends after the other end has closed
+enum class Sender { SERVER, CLIENT };
+
 //! Close one end of a connected TCP pair, then send from the other end
 //!
 //! SIGPIPE is left at its default action, which terminates the process. A send that raised it would end this test
 //! executable rather than return a status.
-enum class Sender { SERVER, CLIENT };
-
 void test_send_after_peer_closes(Sender sender) {
     (void)std::signal(SIGPIPE, SIG_DFL);
 
