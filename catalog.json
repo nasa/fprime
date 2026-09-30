@@ -2,8 +2,8 @@
   "schema": 6,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "c82d523132557c7dc7ffe700c0501fa61465f7b5",
-  "generated_at": "2026-09-29T22:14:05Z",
+  "commit": "f94deadcde1937c55d9a7263ae4592081193a0d7",
+  "generated_at": "2026-09-30T21:14:16Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -36,11 +36,11 @@
     "tier": "bronze"
   },
   "overall_codeql": {
-    "findings": 473,
+    "findings": 475,
     "by_severity": {
       "error": 0,
       "medium": 207,
-      "low": 266
+      "low": 268
     },
     "worst": "medium",
     "tier": "bronze",
@@ -49,11 +49,11 @@
   },
   "overall_codeql_checks": {
     "codeql": {
-      "findings": 3,
+      "findings": 5,
       "by_severity": {
         "error": 0,
         "medium": 1,
-        "low": 2
+        "low": 4
       },
       "worst": "medium",
       "tier": "bronze",
@@ -8252,6 +8252,51 @@
         "codeql": "platinum",
         "checks": "bronze",
         "sdd": "platinum"
+      }
+    },
+    {
+      "path": "Svc/ComLoggerDp",
+      "has_ut": true,
+      "has_coverage": false,
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 2,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 2
+        },
+        "worst": "low",
+        "tier": "silver",
+        "dismissed": 0,
+        "report": "Svc/ComLoggerDp/codeql/index.html"
+      },
+      "codeql_checks": {
+        "codeql": {
+          "findings": 2,
+          "by_severity": {
+            "error": 0,
+            "medium": 0,
+            "low": 2
+          },
+          "worst": "low",
+          "tier": "silver",
+          "dismissed": 0,
+          "label": "Static Analysis (Security) [CodeQL]",
+          "report": "Svc/ComLoggerDp/codeql/index.html"
+        },
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "sdd": null,
+      "tiers": {
+        "overall": "bronze",
+        "ut": "bronze",
+        "int": null,
+        "codeql": "silver",
+        "checks": null,
+        "sdd": "bronze"
       }
     },
     {
