@@ -15,8 +15,8 @@ who it is for. Links marked *(reference)* are for looking things up later; skim 
 port kinds, the `fprime-util` commands, and the day-to-day development workflow on two pages.
 
 > [!TIP]
-> On the F´ website, the documentation tree on the left shows where each linked page lives, the table of contents on
-> the right jumps to any chapter of the current page, and the search bar at the top searches all of the documentation.
+> On the F´ website, use the documentation tree on the left to browse all pages, the table of contents on the right to
+> jump to any chapter of this page, and the search bar at the top to search all of the documentation.
 
 ---
 
