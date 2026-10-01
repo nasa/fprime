@@ -137,7 +137,7 @@ Most OSAL services use **link-time selection** with runtime virtual dispatch:
 
 For performance-critical services, the OSAL supports **compile-time selection** that eliminates virtual dispatch:
 
-1. A configuration header (e.g., `default/config/OsDelegateRawTime.hpp`) defines a type alias
+1. A configuration header (`default/config/OsSelection.hpp`) defines a type alias
 2. The wrapper type (e.g., `Os::RawTime`) directly aliases the concrete implementation
 3. All calls are direct function calls that the compiler can inline
 4. With LTO enabled, the entire call chain can be optimized away for simple operations
@@ -153,15 +153,15 @@ For performance-critical services, the OSAL supports **compile-time selection** 
 - More complex build configuration
 
 **Currently Supported Services:**
-- **RawTime** (`config/OsDelegateRawTime.hpp`, `OS_RAW_TIME_HEADER`)
-- **Mutex** (`config/OsDelegateMutex.hpp`, `OS_MUTEX_HEADER`)
-- **ConditionVariable** (`config/OsDelegateMutex.hpp`, `OS_CONDITION_VARIABLE_HEADER`) — configured in the same header as Mutex; the two must be overridden together (a `static_assert` in `Os/ConditionVariableInterface.hpp` rejects aliasing only one of them), and the selected ConditionVariable must accept the handle of the selected `Os::Mutex` (implementations such as Posix cast it to their own handle type; `Os::Stub::Mutex::StubConditionVariable` accepts any mutex). Note that `ERROR_DIFFERENT_MUTEX` is reported only by the link-time `DelegateConditionVariable`; a directly aliased implementation does not track which mutex it was first used with.
+- **RawTime** (`config/OsSelection.hpp`, `OS_RAW_TIME_HEADER`)
+- **Mutex** (`config/OsSelection.hpp`, `OS_MUTEX_HEADER`)
+- **ConditionVariable** (`config/OsSelection.hpp`, `OS_CONDITION_VARIABLE_HEADER`) — configured in the same header as Mutex; the two must be overridden together (a `static_assert` in `Os/ConditionVariableInterface.hpp` rejects aliasing only one of them), and the selected ConditionVariable must accept the handle of the selected `Os::Mutex` (implementations such as Posix cast it to their own handle type; `Os::Stub::Mutex::StubConditionVariable` accepts any mutex). Note that `ERROR_DIFFERENT_MUTEX` is reported only by the link-time `DelegateConditionVariable`; a directly aliased implementation does not track which mutex it was first used with.
 
 The configuration header mechanism allows projects to opt into compile-time selection while maintaining link-time selection as the default for backward compatibility.
 
 **Example: RawTime Configuration Header**
 
-F´ provides a default `default/config/OsDelegateRawTime.hpp` that enables link-time selection:
+F´ provides a default `default/config/OsSelection.hpp` that enables link-time selection for RawTime:
 
 ```c++
 namespace Os {
