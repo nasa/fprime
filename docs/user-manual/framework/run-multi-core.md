@@ -112,12 +112,43 @@ instance fileManager: Svc.FileManager base id 0x2000 \
 The sentinel is defined in `Os/Posix/Models/Task.fpp`, is only built for POSIX platforms, and is not used by
 the subtopologies shipped with F´. Deployments that want it must set it in their own instance definitions or
 subtopology configuration overrides. `TASK_PRIORITY_DEFAULT` remains the platform default (inherited
-scheduling), and numeric priorities remain `SCHED_RR`. See the [OSAL SDD](../../../Os/docs/sdd.md).
+scheduling), and numeric priorities remain `SCHED_RR` unless [Linux-defined priorities](#linux-defined-priorities)
+are enabled. See the [OSAL SDD](../../../Os/docs/sdd.md).
 
 A non-realtime task is scheduled only when no realtime task is runnable, so it must not be on the critical
 path of a realtime task: keep interactions to message queues, avoid sharing locks held for long, and expect
 its latency to be unbounded under realtime load. The task runs at the lowest static priority of `SCHED_OTHER`
 (`sched_get_priority_min(SCHED_OTHER)`, 0 on Linux).
+
+### Linux-Defined Priorities
+
+Linux schedules every thread on a single scale of 140 levels, 0 (highest) through 139 (lowest): levels 0-98 are
+the realtime `SCHED_RR` priorities 99 down to 1, level 99 is unoccupied, and levels 100-139 are `SCHED_OTHER`
+threads at nice values -20 through 19 (level 120 is nice 0, the default). By default F´ passes a numeric
+`priority` to POSIX as a `SCHED_RR` priority, so the nice levels are unreachable. Setting the
+`POSIX_THREADS_USE_LINUX_PRIORITIES` option to `1` in a project's `FpConfig.h` instead interprets every numeric
+`priority` as a Linux level:
+
+| `priority` | Policy | Scheduling |
+|---|---|---|
+| 0 - 98 | `SCHED_RR` | `sched_priority` 99 - `priority`; requires scheduling privileges, otherwise the task inherits the caller's scheduling as described above |
+| 99 | `SCHED_RR` | Unoccupied; clamped to `sched_priority` 1 with a warning |
+| 100 - 139 | `SCHED_OTHER` | nice `priority` - 120, applied by the task to itself on start |
+| 140 - 253 | `SCHED_OTHER` | Clamped to nice 19 with a warning |
+
+```
+instance fileManager: Svc.FileManager base id 0x2000 \
+    queue size 30 \
+    stack size 64 * 1024 \
+    priority 130
+```
+
+Note that this scale is inverted relative to the default: a larger number is a *lower* priority. Raising a nice
+value above the inherited one needs no privilege; lowering it (including below a nice inherited from the shell)
+requires `CAP_SYS_NICE` or a permissive `RLIMIT_NICE`, and a task that cannot lower its nice runs at the inherited
+value after a one-time note is logged. `TASK_PRIORITY_DEFAULT` and `Os.Posix.TASK_PRIORITY_NON_REALTIME` keep
+their meanings in this mode. The option requires a Linux target: other POSIX systems do not schedule nice per
+thread, and enabling it for them is a compile error.
 
 ### Important Considerations
 

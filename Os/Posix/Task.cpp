@@ -3,10 +3,14 @@
 // \brief implementation of Posix implementation of Os::Task
 // ======================================================================
 #include <pthread.h>
+#include <sys/resource.h>
 #include <unistd.h>
 #include <cerrno>
 #include <climits>
 #include <cstring>
+#if defined(TGT_OS_TYPE_LINUX)
+#include <sys/syscall.h>
+#endif
 
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -15,28 +19,47 @@
 #include "Os/Posix/error.hpp"
 #include "Os/Task.hpp"
 
+#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES && !defined(TGT_OS_TYPE_LINUX)
+#error "POSIX_THREADS_USE_LINUX_PRIORITIES requires a Linux target"
+#endif
+
 namespace Os {
 namespace Posix {
 namespace Task {
 std::atomic<bool> PosixTask::s_permissions_reported(false);
 static const int SCHED_POLICY = SCHED_RR;
 static const int SCHED_POLICY_NON_REALTIME = SCHED_OTHER;
+static const int SCHED_PRIORITY_LINUX_NON_REALTIME = 0;  //!< The only SCHED_OTHER priority on Linux
+#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
+static std::atomic<bool> s_nice_permissions_reported(false);
+#endif
 
 typedef void* (*pthread_func_ptr)(void*);
 
-// Forward declaration
+// Forward declarations
 int set_task_name(pthread_t thread, char* name);
+#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
+void apply_task_nice(const CHAR* name, int nice);
+#endif
 
 void* pthread_entry_wrapper(void* wrapper_pointer) {
     FW_ASSERT(wrapper_pointer != nullptr);
     // Both downcasts are safe because we know the types
     Os::Task::TaskRoutineWrapper& wrapper = *reinterpret_cast<Os::Task::TaskRoutineWrapper*>(wrapper_pointer);
-#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
+#if (defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES) || \
+    (defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES)
     auto handle = reinterpret_cast<Os::Posix::Task::PosixTaskHandle*>(wrapper.m_task.getHandle());
     FW_ASSERT(handle != nullptr);
+#endif
+#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
     // Task name is on a best effort basis. Use pthread_self() since the handle's task
     // descriptor is written by pthread_create concurrently with this thread's start.
     (void)set_task_name(pthread_self(), handle->m_name);
+#endif
+#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
+    if (handle->m_apply_nice) {
+        apply_task_nice(wrapper.m_task.getName().toChar(), handle->m_nice);
+    }
 #endif
     wrapper.run(&wrapper);
     return nullptr;
@@ -77,6 +100,20 @@ int set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& argume
     return status;
 }
 
+int set_sched_params(pthread_attr_t& attributes, const int policy, const int priority) {
+    int status = pthread_attr_setschedpolicy(&attributes, policy);
+    if (status == PosixTaskHandle::SUCCESS) {
+        status = pthread_attr_setinheritsched(&attributes, PTHREAD_EXPLICIT_SCHED);
+    }
+    if (status == PosixTaskHandle::SUCCESS) {
+        sched_param schedParam;
+        (void)memset(&schedParam, 0, sizeof(sched_param));
+        schedParam.sched_priority = priority;
+        status = pthread_attr_setschedparam(&attributes, &schedParam);
+    }
+    return status;
+}
+
 int set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
     const FwSizeType min_priority = static_cast<FwSizeType>(sched_get_priority_min(SCHED_POLICY));
     const FwSizeType max_priority = static_cast<FwSizeType>(sched_get_priority_max(SCHED_POLICY));
@@ -99,16 +136,7 @@ int set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& a
     FW_ASSERT(priority >= min_priority && priority <= max_priority, static_cast<FwAssertArgType>(priority));
 
     // Set attributes required for priority
-    status = pthread_attr_setschedpolicy(&attributes, SCHED_POLICY);
-    if (status == PosixTaskHandle::SUCCESS) {
-        status = pthread_attr_setinheritsched(&attributes, PTHREAD_EXPLICIT_SCHED);
-    }
-    if (status == PosixTaskHandle::SUCCESS) {
-        sched_param schedParam;
-        (void)memset(&schedParam, 0, sizeof(sched_param));
-        schedParam.sched_priority = static_cast<int>(priority);
-        status = pthread_attr_setschedparam(&attributes, &schedParam);
-    }
+    status = set_sched_params(attributes, SCHED_POLICY, static_cast<int>(priority));
     return status;
 }
 
@@ -118,19 +146,91 @@ int set_non_realtime_params(pthread_attr_t& attributes) {
     const int priority = sched_get_priority_min(SCHED_POLICY_NON_REALTIME);
     int status = (priority >= 0) ? PosixTaskHandle::SUCCESS : errno;
     if (status == PosixTaskHandle::SUCCESS) {
-        status = pthread_attr_setschedpolicy(&attributes, SCHED_POLICY_NON_REALTIME);
-    }
-    if (status == PosixTaskHandle::SUCCESS) {
-        status = pthread_attr_setinheritsched(&attributes, PTHREAD_EXPLICIT_SCHED);
-    }
-    if (status == PosixTaskHandle::SUCCESS) {
-        sched_param schedParam;
-        (void)memset(&schedParam, 0, sizeof(sched_param));
-        schedParam.sched_priority = priority;
-        status = pthread_attr_setschedparam(&attributes, &schedParam);
+        status = set_sched_params(attributes, SCHED_POLICY_NON_REALTIME, priority);
     }
     return status;
 }
+
+LinuxSchedule linux_priority_to_schedule(const CHAR* name, const FwTaskPriorityType priority) {
+    FW_ASSERT(name != nullptr);
+    FwTaskPriorityType clamped = priority;
+    if (priority == LINUX_PRIORITY_REALTIME_BASE) {
+        Fw::Logger::log("[WARNING] %s unoccupied task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
+                        const_cast<CHAR*>(name), static_cast<FwSizeType>(priority),
+                        static_cast<FwSizeType>(LINUX_PRIORITY_REALTIME_MAX));
+        clamped = LINUX_PRIORITY_REALTIME_MAX;
+    } else if (priority > LINUX_PRIORITY_MAX) {
+        Fw::Logger::log("[WARNING] %s low task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
+                        const_cast<CHAR*>(name), static_cast<FwSizeType>(priority),
+                        static_cast<FwSizeType>(LINUX_PRIORITY_MAX));
+        clamped = LINUX_PRIORITY_MAX;
+    }
+    LinuxSchedule schedule = {SCHED_POLICY_NON_REALTIME, SCHED_PRIORITY_LINUX_NON_REALTIME, 0};
+    if (clamped <= LINUX_PRIORITY_REALTIME_MAX) {
+        schedule.m_policy = SCHED_POLICY;
+        schedule.m_priority = static_cast<int>(LINUX_PRIORITY_REALTIME_BASE - clamped);
+    } else {
+        schedule.m_nice = static_cast<int>(clamped) - static_cast<int>(LINUX_PRIORITY_NICE_ZERO);
+    }
+    return schedule;
+}
+
+int set_task_nice(const int nice) {
+    int status = ENOTSUP;
+#if defined(TGT_OS_TYPE_LINUX)
+    // Linux nice is per thread, addressed by the kernel thread id rather than the process id
+    const pid_t thread_id = static_cast<pid_t>(syscall(SYS_gettid));
+    status = (setpriority(PRIO_PROCESS, static_cast<id_t>(thread_id), nice) == 0) ? PosixTaskHandle::SUCCESS : errno;
+#else
+    (void)nice;
+#endif
+    return status;
+}
+
+#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
+//! Apply the nice value to the calling task, reporting failures: permission failures once, others per task
+void apply_task_nice(const CHAR* name, const int nice) {
+    FW_ASSERT(name != nullptr);
+    const int status = set_task_nice(nice);
+    if ((status == EACCES) || (status == EPERM)) {
+        if (not s_nice_permissions_reported.exchange(true)) {
+            Fw::Logger::log("\n");
+            Fw::Logger::log("[NOTE] Task Nice Permissions:\n");
+            Fw::Logger::log("[NOTE]\n");
+            Fw::Logger::log("[NOTE] You have insufficient permissions to lower a task's nice value below the\n");
+            Fw::Logger::log("[NOTE] inherited value. Such tasks will run at the inherited nice value.\n");
+            Fw::Logger::log("[NOTE]\n");
+            Fw::Logger::log("[NOTE] There are three possible resolutions:\n");
+            Fw::Logger::log("[NOTE] 1. Use task priorities of %" PRI_FwSizeType " plus the inherited nice or higher\n",
+                            static_cast<FwSizeType>(LINUX_PRIORITY_NICE_ZERO));
+            Fw::Logger::log("[NOTE] 2. Run this executable as a user with task priority permission\n");
+            Fw::Logger::log("[NOTE] 3. Grant capability with \"setcap 'cap_sys_nice=eip'\" or equivalent\n");
+            Fw::Logger::log("\n");
+        }
+    } else if (status != PosixTaskHandle::SUCCESS) {
+        Fw::Logger::log("[WARNING] %s nice value of %d not applied: %s\n", const_cast<CHAR*>(name), nice,
+                        strerror(status));
+    }
+}
+
+//! Set scheduling attributes from a Linux-defined priority. The realtime band requires permission; the nice band
+//! records the nice value for the task to apply on start.
+int set_linux_priority_params(pthread_attr_t& attributes,
+                              PosixTaskHandle& handle,
+                              const Os::Task::Arguments& arguments,
+                              const bool expect_permission) {
+    int status = PosixTaskHandle::SUCCESS;
+    const LinuxSchedule schedule = linux_priority_to_schedule(arguments.m_name.toChar(), arguments.m_priority);
+    if (schedule.m_policy == SCHED_POLICY_NON_REALTIME) {
+        handle.m_nice = static_cast<I8>(schedule.m_nice);
+        handle.m_apply_nice = true;
+        status = set_sched_params(attributes, schedule.m_policy, schedule.m_priority);
+    } else if (expect_permission) {
+        status = set_sched_params(attributes, schedule.m_policy, schedule.m_priority);
+    }
+    return status;
+}
+#endif
 
 int set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
     int status = 0;
@@ -183,13 +283,22 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_stack_size(attributes, arguments);
     }
+#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
+    handle.m_apply_nice = false;
+#endif
     // Non-realtime scheduling requires no special permission; realtime priorities do
     if ((arguments.m_priority == PosixTask::TASK_PRIORITY_NON_REALTIME) &&
         (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_non_realtime_params(attributes);
-    } else if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) && (expect_permission) &&
+    } else if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) &&
                (pthread_status == PosixTaskHandle::SUCCESS)) {
-        pthread_status = set_priority_params(attributes, arguments);
+#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
+        pthread_status = set_linux_priority_params(attributes, handle, arguments, expect_permission);
+#else
+        if (expect_permission) {
+            pthread_status = set_priority_params(attributes, arguments);
+        }
+#endif
     }
     if ((arguments.m_cpuAffinity != Os::Task::TASK_DEFAULT) && (expect_permission) &&
         (pthread_status == PosixTaskHandle::SUCCESS)) {
