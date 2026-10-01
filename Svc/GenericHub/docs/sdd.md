@@ -214,10 +214,6 @@ unmatched hub.cmdDispOut[0] -> cmdDisp.seqCmdBuff[2]
 unmatched cmdDisp.seqCmdStatus[2] -> hub.cmdRespIn[0]
 ```
 
-FPP currently rejects `unmatched` when an endpoint is a topology port
-([nasa/fpp#1126](https://github.com/nasa/fpp/issues/1126)); name the hub
-instance directly instead.
-
 ### Known limitation
 
 Although GenericHub serializes and forwards command responses, the standard
