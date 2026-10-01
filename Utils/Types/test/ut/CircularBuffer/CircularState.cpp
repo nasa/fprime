@@ -71,7 +71,9 @@ bool CircularState::addInfinite(const U8* buffer, FwSizeType size) {
         m_infinite_store = static_cast<U8*>(new_pointer);
         m_infinite_size += 1048576;
     }
-    std::memcpy(m_infinite_store + m_infinite_write, buffer, size);
+    if (size > 0) {
+        std::memcpy(m_infinite_store + m_infinite_write, buffer, size);
+    }
     m_infinite_write += size;
     return true;
 }
