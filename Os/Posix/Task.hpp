@@ -34,45 +34,10 @@ struct PosixTaskHandle : public TaskHandle {
     char m_name[PosixTaskHandle::PTHREAD_NAME_LENGTH];
 #endif
 #if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
-    //! Nice value (-20 through 19) the task applies to itself on start
-    I8 m_nice = 0;
-    //! Apply m_nice on start
-    bool m_apply_nice = false;
+    //! Requested priority, read by the task on start to apply its nice value
+    FwTaskPriorityType m_priority = Os::Task::TASK_PRIORITY_DEFAULT;
 #endif
 };
-
-//! Linux-defined task priorities run 0 (highest) through 139 (lowest): 0-98 are the SCHED_RR priorities 99-1, 99 is
-//! unoccupied, and 100-139 are SCHED_OTHER at nice -20 through 19. Selected by POSIX_THREADS_USE_LINUX_PRIORITIES.
-static constexpr FwTaskPriorityType LINUX_PRIORITY_REALTIME_BASE = 99;  //!< SCHED_RR priority is this minus priority
-static constexpr FwTaskPriorityType LINUX_PRIORITY_REALTIME_MAX = 98;   //!< Last SCHED_RR priority (SCHED_RR 1)
-static constexpr FwTaskPriorityType LINUX_PRIORITY_NICE_MIN = 100;      //!< First SCHED_OTHER priority (nice -20)
-static constexpr FwTaskPriorityType LINUX_PRIORITY_NICE_ZERO = 120;     //!< SCHED_OTHER priority at nice 0
-static constexpr FwTaskPriorityType LINUX_PRIORITY_MAX = 139;           //!< Last SCHED_OTHER priority (nice 19)
-
-//! Scheduling parameters resolved from a Linux-defined task priority
-struct LinuxSchedule {
-    int m_policy;    //!< SCHED_RR or SCHED_OTHER
-    int m_priority;  //!< sched_priority for the policy
-    int m_nice;      //!< Nice value applied within the task; meaningful for SCHED_OTHER only
-};
-
-//! \brief resolve a Linux-defined priority into scheduling parameters
-//!
-//! Priority 99 and priorities above 139 are clamped with a warning. Callers exclude the TASK_PRIORITY_DEFAULT and
-//! TASK_PRIORITY_NON_REALTIME sentinels.
-//!
-//! \param name: task name used in warnings
-//! \param priority: Linux-defined priority
-//! \return resolved scheduling parameters
-LinuxSchedule linux_priority_to_schedule(const CHAR* name, FwTaskPriorityType priority);
-
-//! \brief set the nice value of the calling thread
-//!
-//! Nice is applied per thread on Linux; other POSIX systems return ENOTSUP.
-//!
-//! \param nice: nice value, -20 (most favorable) through 19 (least favorable)
-//! \return 0 on success, otherwise errno
-int set_task_nice(int nice);
 
 //! Posix task implementation as driven by pthreads implementation
 class PosixTask : public TaskInterface {
