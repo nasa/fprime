@@ -8,6 +8,14 @@ hide:
 
 <div class="grid cards" markdown>
 
+-   <span class="card-title">__The F´ Book__</span> *Guided reading order*
+
+    ---
+
+    The F´ Book is a chronological map through the documentation: what to learn, what to read, and in which order, from first concepts to specialized topics.
+
+    [Read The F´ Book](the_book.md){ .md-button .md-button--primary }
+
 -   <span class="card-title">__Tutorials__</span> *Learning-oriented*
 
     ---

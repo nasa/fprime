@@ -13,6 +13,7 @@ nav:
     - 'The F´ Book': docs/the_book.md
   - Documentation:
     - docs/index.md
+    - 'The F´ Book': docs/the_book.md
     - Tutorials:
       - Tutorials Index: docs/tutorials/index.md
       - 'Hello World': tutorials-hello-world/docs/hello-world.md
