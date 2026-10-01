@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-01T19:15:45Z",
+  "ref": "release/v4.4.0-maintenance",
+  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 28,
+  "filled_sections": 13,
+  "prose_words": 956,
+  "placeholder_hits": 1,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "commands",
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/release/v4.4.0-maintenance/Svc/Health/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::HealthImpl",
+      "url": "https://fprime.jpl.nasa.gov/release/v4.4.0-maintenance/docs/reference/api/cpp/html/class_svc_1_1_health_impl.html"
+    }
+  ]
+}

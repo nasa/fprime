@@ -1,0 +1,259 @@
+# Svc::DpWriter (Active Component)
+
+## 1. Introduction
+
+`Svc::DpWriter` is an active component for writing data products to disk.
+It does the following:
+
+1. Receive buffers containing filled data product containers.
+The buffers typically come from one or more components that produce
+data products.
+They typically pass through an instance of
+[`Svc::DpManager`](../../DpManager/docs/sdd.md), and possibly through
+an instance of
+[`Svc::BufferAccumulator`](../../BufferAccumulator/docs/sdd.md),
+before reaching `DpWriter`.
+
+1. For each buffer _B_ received in step 1:
+
+   1. Perform any requested processing, such as data compression, on _B_.
+
+   1. Write _B_ to disk.
+
+   1. If a notification port is connected, then send out a notification
+that the write occurred.
+An instance of [`Svc::DpCatalog`](../../DpCatalog/docs/sdd.md) can
+receive this notification and use it to update the data product catalog.
+
+## 2. Requirements
+
+Requirement | Description | Rationale | Verification Method
+----------- | ----------- | ----------| -------------------
+SVC-DPWRITER-001 | `Svc::DpWriter` shall provide an array of ports for receiving `Fw::Buffer` objects pointing to filled data product containers. | The purpose of `DpWriter` is to write the data products to disk. The array permits the fusion of multiple logical writer components with separate routing paths into a single component. This fusion increases resource efficiency (it requires fewer component instances and threads), but it restricts concurrency by forcing sequential execution of all routing paths on the same thread. The component allows developers to manage this tradeoff. | Unit Test
+SVC-DPWRITER-002 | `Svc::DpWriter` shall provide an array of ports for sending `Fw::Buffer` objects for processing. | This requirement supports downstream processing of the data in the buffer. | Unit Test
+SVC-DPWRITER-003 | On receiving a data product container _C_, `Svc::DpWriter` shall use the processing type field of the header of _C_ to select zero or more processing ports to invoke, in port order. | The processing type field is a bit mask. A one in bit `2^n` in the bit mask selects port index `n`. | Unit Test
+SVC-DPWRITER-004 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall write _B_ to disk. | The purpose of `DpWriter` is to write data products to the disk. | Unit Test
+SVC-DPWRITER-005 | `Svc::DpWriter` shall provide an array of ports for notifying other components that data products have been written. A notification shall use the same routing port index as the corresponding input buffer. | The notification output allows `Svc::DpCatalog` or a similar component to update a data product catalog in real time. It is possible to notify a single instance of `Svc::DpCatalog` of all outputs, by connecting all the output ports of `Svc::DpWriter` to that component. It is also possible to notify different components via the different output ports. The array preserves symmetry across the port behaviors of this component (input, buffer return, and notification). | Unit Test
+SVC-DPWRITER-006 | `Svc::DpWriter` shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors. | This requirement establishes the telemetry interface for the component. | Unit test
+SVC-DPWRITER-007 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall re-parse the container header and shrink the size of the product. | Allows processing interfaces to compress data products and communicate that compressed state back to `Svc::DpWriter`. | Unit Test
+SVC-DPWRITER-008 | `Svc::DpWriter` shall return each valid received buffer on the `deallocBufferSendOut` port whose index matches the `bufferSendIn` port that received it. | Matching send and return paths allows a `DpWriter` instance to route buffers back toward the correct allocator. | Unit Test
+
+## 3. Design
+
+### 3.1. Component Diagram
+
+The diagram below shows the `DpWriter` component.
+
+![DpWriter](img/DpWriter.png)
+
+### 3.2. Ports
+
+`DpWriter` has the following ports:
+
+| Kind | Name | Port Type | Usage |
+|------|------|-----------|-------|
+| `async input` | `schedIn` | `Svc.Sched` | Schedule in port |
+| `async input` | `bufferSendIn` | `[DpWriterNumPorts] Fw.BufferSend` | Ports for receiving data products to write to disk |
+| `output` | `procBufferSendOut` | `[DpWriterNumProcPorts] Fw.BufferSend` | Port for processing data products |
+| `output` | `dpWrittenOut` | `[DpWriterNumPorts] DpWritten` | Ports for sending `DpWritten` notifications |
+| `output` | `deallocBufferSendOut` | `[DpWriterNumPorts] Fw.BufferSend` | Ports for returning data product buffers |
+| `time get` | `timeGetOut` | `Fw.Time` | Time get port |
+| `telemetry` | `tlmOut` | `Fw.Tlm` | Telemetry port |
+| `event` | `eventOut` | `Fw.Log` | Event port |
+| `text event` | `textEventOut` | `Fw.LogText` | Text event port |
+
+The `bufferSendIn`, `dpWrittenOut`, and `deallocBufferSendOut` arrays form matching routing paths. A buffer received at index _N_ is notified and returned through index _N_. Topologies must connect `deallocBufferSendOut[N]` for every connected `bufferSendIn[N]`; the buffer return is unconditional and invoking an unconnected return port asserts. `dpWrittenOut[N]` may be left unconnected.
+
+### 3.3. State
+
+`DpWriter` maintains the following state:
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `m_numBuffersReceived` | `U32` | The number of buffers received |
+| `m_numBytesWritten` | `U64` | The number of bytes written |
+| `m_numSuccessfulWrites` | `U32` | The number of successful writes |
+| `m_numFailedWrites` | `U32` | The number of failed writes |
+| `m_numErrors` | `U32` | The number of errors |
+
+The component also retains its configured file-name prefix in `m_dpFileNamePrefix`.
+
+### 3.4. Compile-Time Setup
+
+1. The configuration constant [`DpWriterNumPorts`](../../../default/config/AcConstants.fpp)
+   specifies the number of matched input, notification, and buffer-return routing paths.
+   Its default value is five, matching the default `DpManagerNumPorts` configuration.
+   Projects can override this value to fit their topology. All routing paths share one
+   message queue with `schedIn` and the asynchronous `CLEAR_EVENT_THROTTLE` command.
+   Size the queue for the sum of the maximum queued buffers across all connected paths,
+   plus the maximum pending scheduler ticks and commands. If at most one tick and one
+   command can be pending, reserve at least two additional slots; deployments permitting
+   larger bursts must reserve more. A full queue asserts.
+
+1. The configuration constant [`DpWriterNumProcPorts`](../../../default/config/AcConstants.fpp)
+   specifies the number of ports for connecting components that perform
+   processing.
+
+1. The configuration [`DP_FILENAME_FORMAT`](../../../default/config/DpCfg.hpp)
+   specifies the file name format.
+
+### 3.5. Runtime Setup
+
+You can call the `configure` function to supply the DP file name
+prefix. This is the prefix used when constructing names of files to write.
+For more information about the file name format, see the [**File
+Format**](#file_format) section.
+
+If you do not call the `configure` function, then the default
+DP file name prefix is the empty string.
+
+### 3.6. Port Handlers
+
+#### 3.6.1. schedIn
+
+This handler sends out the state variables as telemetry.
+
+#### 3.6.2. bufferSendIn
+
+This handler receives a mutable reference to a buffer `B` on routing port _N_.
+It does the following:
+
+1. Check that `B` is valid. If not, emit a warning event.
+
+1. If the previous step succeeded, then check that the size of `B` is large enough to
+   hold a data product container packet. If not, emit a warning event.
+
+1. If the previous steps succeeded, then check that the packet
+   header of `B` can be successfully deserialized.
+   If not, emit a warning event.
+
+1. If the previous steps succeeded, then check that the header
+   hash of `B` is valid.
+   If not, emit a warning event.
+
+1. If the previous steps succeeded, then check that the data
+   size recorded in the packet header fits within the buffer.
+   If not, emit a warning event.
+
+1. If the previous steps succeeded, then
+
+   1. Read the `ProcType` field out of the container header stored in the
+      memory pointed to by `B`. Let the resulting bit mask be `M`.
+
+   1. Visit the port numbers of `procBufferSendOut` in order.
+      For each port number `P`, if `P` is set in `M`, then invoke
+      `procBufferSendOut` at port number `P`, passing in `B`.
+      This step updates the memory pointed to by `B` in place.
+
+   1. Re-parse the container header pointed to by `B`. If necessary,
+      shrink the size of the `B` buffer to be consistent with the data
+      size in the updated container header.
+
+   1. Write `B` to a file, using the format described in the [**File
+      Format**](#file_format) section. For the time stamp, use the time
+      provided by `timeGetOut`.
+
+1. If the file write succeeded and `dpWrittenOut[N]` is connected, then send the
+   file name, priority, and file size out on `dpWrittenOut[N]`.
+
+1. If `B` is valid, then send `B` on `deallocBufferSendOut[N]`.
+
+<a name="file_format"></a>
+## 4. File Format
+
+### 4.1. Data Format
+
+Each file stores a serialized data product record,
+with the format described in the
+[data products documentation](../../../Fw/Dp/docs/sdd.md#serial-format).
+
+### 4.2. File Name
+
+The name of each file is formatted with the configurable format string
+[`DP_FILENAME_FORMAT`](../../../default/config/DpCfg.hpp).
+The format string must contain format specifications for the following arguments,
+in order.
+
+Format Specifier | Type |
+---------------- | -----|
+The DP file name prefix | `%s`
+Container ID | `%PRI_FwDpIdType`
+Time seconds | `%PRI_u32`
+Time microseconds | `%PRI_u32`
+
+The exact meaning of the DP file name prefix depends on the format string.
+Typically it is a directory path prefix.
+
+<a name="ground_interface"></a>
+## 5. Ground Interface
+
+### 5.1. Commands
+
+| Kind | Name | Description |
+|------|------|-------------|
+| `async` | `CLEAR_EVENT_THROTTLE` | Clear event throttling |
+
+### 5.2. Telemetry
+
+| Name | Type | Description |
+|------|------|-------------|
+| `NumBuffersReceived` | `U32` | The number of buffers received |
+| `NumBytesWritten` | `U64` | The number of bytes written |
+| `NumSuccessfulWrites` | `U32` | The number of successful writes |
+| `NumFailedWrites` | `U32` | The number of failed writes |
+| `NumErrors` | `U32` | The number of errors |
+
+### 5.3. Events
+
+| Name | Severity | Description |
+|------|----------|-------------|
+| `InvalidBuffer` | `warning high` | Incoming buffer is invalid |
+| `BufferTooSmallForPacket` | `warning high` | Incoming buffer is too small to hold a data product packet |
+| `InvalidHeaderHash` | `warning high` | Incoming buffer has an invalid header hash |
+| `InvalidHeader` | `warning high` | An error occurred while deserializing the packet header |
+| `BufferTooSmallForData` | `warning high` | Buffer is too small for the data size specified in the header |
+| `FileNameFormatError` | `warning high` | An error occurred when formatting a file name |
+| `FileOpenError` | `warning high` | An error occurred when opening a file |
+| `FileWriteError` | `warning high` | An error occurred when writing to a file |
+| `FileWritten` | `activity low` | A data product file was written |
+
+## 6. Example Uses
+
+<a name="top-diagrams"></a>
+### 6.1. Topology Diagrams
+
+The following topology diagram shows how to connect `Svc::DpWriter`
+to a `DpManager` component and a processor component.
+The diagrams use the following instances:
+
+* `dpManager`: An instance of [`Svc::DpManager`](../../DpManager/docs/sdd.md).
+
+* `dpProcessor`: A component that processes data product containers.
+
+* `dpWriter`: An instance of `Svc::DpWriter`.
+
+* `producer`: A component that produces data products.
+
+![product-write](./img/top/product-write.png)
+
+### 6.2. Sequence Diagrams
+
+The following diagram shows what happens when a buffer is sent to `DpWriter`,
+is processed, and is written to disk.
+
+```mermaid
+sequenceDiagram
+    activate producer
+    activate dpManager
+    activate dpWriter
+    producer-)dpManager: Send buffer
+    dpManager-)dpWriter: Send buffer [bufferSendIn]
+    dpWriter->>dpProcessor: Process buffer B [procBufferSendOut]
+    dpProcessor-->>dpWriter: Return
+    dpWriter->>dpWriter: Write B to disk
+    dpWriter->>bufferManager: Deallocate B [deallocBufferSendOut]
+    bufferManager-->>dpWriter: Return
+    deactivate dpWriter
+    deactivate dpManager
+    deactivate producer
+```

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-01T19:15:45Z",
+  "ref": "release/v4.4.0-maintenance",
+  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "tier": "platinum",
+  "has_sdd": true,
+  "sections": 21,
+  "filled_sections": 14,
+  "prose_words": 914,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [],
+  "rendered_url": "https://fprime.jpl.nasa.gov/release/v4.4.0-maintenance/Os/Generic/Types/docs/sdd/",
+  "doxygen": []
+}

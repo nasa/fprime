@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-01T19:15:45Z",
+  "ref": "release/v4.4.0-maintenance",
+  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "tier": "bronze",
+  "has_sdd": true,
+  "sections": 3,
+  "filled_sections": 1,
+  "prose_words": 53,
+  "placeholder_hits": 0,
+  "table_kinds": [],
+  "declared_kinds": [
+    "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/release/v4.4.0-maintenance/Svc/StaticMemory/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::StaticMemoryComponentImpl",
+      "url": "https://fprime.jpl.nasa.gov/release/v4.4.0-maintenance/docs/reference/api/cpp/html/class_svc_1_1_static_memory_component_impl.html"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-01T19:15:45Z",
+  "ref": "release/v4.4.0-maintenance",
+  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "tier": "bronze",
+  "has_sdd": false,
+  "doxygen": [
+    {
+      "name": "Fw::ActiveComponentBase",
+      "url": "https://fprime.jpl.nasa.gov/release/v4.4.0-maintenance/docs/reference/api/cpp/html/class_fw_1_1_active_component_base.html"
+    },
+    {
+      "name": "Fw::QueuedComponentBase",
+      "url": "https://fprime.jpl.nasa.gov/release/v4.4.0-maintenance/docs/reference/api/cpp/html/class_fw_1_1_queued_component_base.html"
+    }
+  ]
+}
