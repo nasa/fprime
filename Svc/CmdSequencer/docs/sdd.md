@@ -85,8 +85,11 @@ This port takes two arguments: `filename`, the sequence file name, and
 `args` of type `Svc.SeqArgs` (currently unused by this component). In
 general, sending `filename` on this port has the same  effect as issuing
 a `CS_Run` command with `filename` as the file name argument. The port
-accepts file names up to `FileNameStringSize` characters, while the `CS_Run`
-file name argument is limited to `FW_CMD_STRING_MAX_SIZE` characters. If the
+accepts file names up to `FileNameStringSize` characters, as does
+`seqDispatchIn`, while the `CS_Run` file name argument is limited to
+`FW_CMD_STRING_MAX_SIZE` characters. Events carry at most the first 60
+characters of the file name, and the `CS_CurrentSequence` channel at most the
+first `FW_TLM_STRING_MAX_SIZE` characters. If the
 sequencer is in manual stepping mode (see `CS_Manual`), the request is
 rejected: the `CS_InvalidMode` event is emitted and `EXECUTION_ERROR` is
 returned on the `seqDone` port.
@@ -201,7 +204,8 @@ The `allocateBuffer()` public method passes a memory allocator to provide memory
 This function takes a single argument `fileName` of type `Fw::String`.
 When you call this function, `CmdSequencer` loads the sequence file `fileName`
 into its buffer so that you can execute it later by calling
-[`seqRunIn`](#seqRunIn).
+[`seqRunIn`](#seqRunIn). `fileName` can be at most `FileNameStringSize`
+characters long.
 
 This function issues events, so you must connect the event topology before
 calling this function.

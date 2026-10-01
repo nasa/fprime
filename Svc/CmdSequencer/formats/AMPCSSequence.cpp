@@ -26,7 +26,7 @@ bool AMPCSSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     Fw::FileNameString crcFileName;
     const Fw::FormatStatus formatStatus = crcFileName.format("%s.CRC32", fileName.toChar());
     if (formatStatus != Fw::FormatStatus::SUCCESS) {
-        // No room for the .CRC32 suffix within FileNameStringSize
+        // format() failed; OVERFLOWED when the .CRC32 suffix does not fit in FileNameStringSize
         this->setFileName(fileName);
         this->m_events.fileInvalid(CmdSequencer_FileReadStage::READ_SEQ_CRC, static_cast<I32>(formatStatus));
         return false;
@@ -42,7 +42,7 @@ bool AMPCSSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     return status;
 }
 
-bool AMPCSSequence ::readCRCFile(Fw::FileNameString& crcFileName) {
+bool AMPCSSequence ::readCRCFile(const Fw::ConstStringBase& crcFileName) {
     bool result;
 
     this->setFileName(crcFileName);

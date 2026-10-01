@@ -10,6 +10,7 @@
 // ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/Immediate.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 
 namespace Svc {
@@ -96,12 +97,26 @@ void CmdSequencerTester ::AutoByFileDispatcherPortMaxFileName() {
     this->clearAndDispatch();
     // Assert no command response
     ASSERT_CMD_RESPONSE_SIZE(0);
-    // Assert events. Events carry a shortened file name, so only their presence is checked.
+    // Events carry the first 60 characters of the file name (fileName size in Events.fppi),
+    // CS_CurrentSequence the first FW_TLM_STRING_MAX_SIZE characters
+    const FwSizeType eventFileNameSize = 60;
+    char eventFileName[eventFileNameSize + 1];
+    (void)Fw::StringUtils::string_copy(eventFileName, fileName.toChar(),
+                                       static_cast<FwSizeType>(sizeof(eventFileName)));
+    char tlmFileName[FW_TLM_STRING_MAX_SIZE + 1];
+    (void)Fw::StringUtils::string_copy(tlmFileName, fileName.toChar(), static_cast<FwSizeType>(sizeof(tlmFileName)));
+    // Assert events
     ASSERT_EVENTS_SIZE(2);
-    ASSERT_EVENTS_CS_SequenceLoaded_SIZE(1);
-    ASSERT_EVENTS_CS_PortSequenceStarted_SIZE(1);
+    ASSERT_EVENTS_CS_SequenceLoaded(0, eventFileName);
+    ASSERT_EVENTS_CS_PortSequenceStarted(0, eventFileName);
+    // Assert telemetry
+    ASSERT_TLM_CS_CurrentSequence_SIZE(1);
+    ASSERT_TLM_CS_CurrentSequence(0, tlmFileName);
     // Assert the first command was sent
+    Fw::ComBuffer comBuff;
+    CommandBuffers::create(comBuff, 0, 1);
     ASSERT_from_comCmdOut_SIZE(1);
+    ASSERT_from_comCmdOut(0, comBuff, 0U);
 }
 
 void CmdSequencerTester ::Cancel() {
