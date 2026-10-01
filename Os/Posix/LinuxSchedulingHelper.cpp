@@ -37,6 +37,9 @@ FwTaskPriorityType linux_to_posix_priority(const CHAR* name, const FwTaskPriorit
     if (clamped <= LINUX_PRIORITY_REALTIME_MAX) {
         posix_priority = static_cast<FwTaskPriorityType>(LINUX_PRIORITY_REALTIME_MAX + 1 - clamped);
     } else if (clamped <= LINUX_PRIORITY_MAX) {
+        // The nice band has no Posix priority: SCHED_OTHER is the single Posix priority 0 on Linux, with the nice
+        // value applied afterwards by apply_linux_nice. The sentinel is the only way to request SCHED_OTHER from
+        // Os::Posix::Task::create today; replace this with a direct SCHED_OTHER request once the sentinel is retired.
         posix_priority = PosixTask::TASK_PRIORITY_NON_REALTIME;
     }
     return posix_priority;
