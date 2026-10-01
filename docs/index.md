@@ -6,8 +6,8 @@ hide:
 # Documentation
 
 > [!TIP]
-> **New to F´? Start with [The F´ Book](the_book.md)**: a guided reading order through this documentation, from first
-> concepts to specialized topics.
+> **[The F Prime Book](the_book.md)** maps out what to learn and in which order: a guided reading path through this
+> documentation, from first concepts to specialized topics.
 
 <div class="grid cards" markdown>
 

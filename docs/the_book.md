@@ -1,4 +1,4 @@
-# The F´ Book
+# The F Prime Book
 
 F´ has a lot of documentation. This page is a guided reading order: each chapter introduces a set of concepts in a
 paragraph, then points to the existing documents that cover them. Read the chapters in order the first time through;
