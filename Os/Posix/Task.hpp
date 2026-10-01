@@ -34,7 +34,7 @@ struct PosixTaskHandle : public TaskHandle {
     char m_name[PosixTaskHandle::PTHREAD_NAME_LENGTH];
 #endif
 #if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
-    //! Nice value the task applies to itself on start; -20 through 19 fits the handle size budget
+    //! Nice value (-20 through 19) the task applies to itself on start
     I8 m_nice = 0;
     //! Apply m_nice on start
     bool m_apply_nice = false;
@@ -58,7 +58,8 @@ struct LinuxSchedule {
 
 //! \brief resolve a Linux-defined priority into scheduling parameters
 //!
-//! Priority 99 and priorities above 139 are clamped with a warning.
+//! Priority 99 and priorities above 139 are clamped with a warning. Callers exclude the TASK_PRIORITY_DEFAULT and
+//! TASK_PRIORITY_NON_REALTIME sentinels.
 //!
 //! \param name: task name used in warnings
 //! \param priority: Linux-defined priority

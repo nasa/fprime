@@ -188,7 +188,7 @@ int set_task_nice(const int nice) {
 }
 
 #if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
-//! Apply the nice value to the calling task, reporting failures: permission failures once, others per task
+// Permission failures are reported once; other failures per task
 void apply_task_nice(const CHAR* name, const int nice) {
     FW_ASSERT(name != nullptr);
     const int status = set_task_nice(nice);
@@ -213,8 +213,7 @@ void apply_task_nice(const CHAR* name, const int nice) {
     }
 }
 
-//! Set scheduling attributes from a Linux-defined priority. The realtime band requires permission; the nice band
-//! records the nice value for the task to apply on start.
+// The realtime band requires permission; the nice band records the nice for the task to apply on start
 int set_linux_priority_params(pthread_attr_t& attributes,
                               PosixTaskHandle& handle,
                               const Os::Task::Arguments& arguments,

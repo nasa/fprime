@@ -349,6 +349,7 @@ TEST_F(PosixTaskScheduling, LinuxNiceZeroTaskDoesNotInheritParentNice) {
 // Linux priority mode: the realtime band runs under SCHED_RR at the inverted priority when permitted, otherwise it
 // falls back to inherited scheduling
 TEST_F(PosixTaskScheduling, LinuxRealtimeBandTaskUsesSchedRrOrFallsBack) {
+    const int inherited_nice = currentNice();
     int expected_policy = -1;
     sched_param expected_param;
     expected_param.sched_priority = -1;
@@ -364,11 +365,14 @@ TEST_F(PosixTaskScheduling, LinuxRealtimeBandTaskUsesSchedRrOrFallsBack) {
         ASSERT_EQ(lowest.policy.load(), SCHED_RR);
         ASSERT_EQ(lowest.priority.load(), 1);
     } else {
+        // Fallback must not leave a nice value from the first attempt behind
         ASSERT_EQ(highest.policy.load(), expected_policy);
         ASSERT_EQ(highest.priority.load(), expected_param.sched_priority);
         ASSERT_EQ(lowest.policy.load(), expected_policy);
         ASSERT_EQ(lowest.priority.load(), expected_param.sched_priority);
     }
+    ASSERT_EQ(highest.nice.load(), inherited_nice);
+    ASSERT_EQ(lowest.nice.load(), inherited_nice);
 }
 #else
 // Default mode: a priority in the Linux nice band is still a (clamped) SCHED_RR priority, or falls back to inherited
