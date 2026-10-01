@@ -172,74 +172,30 @@ TEST_F(PosixTaskScheduling, NumericPriorityTaskUsesSchedRrOrFallsBack) {
 #endif
 
 #if defined(TGT_OS_TYPE_LINUX)
-// Linux-defined priorities: 99 (unoccupied) clamps to 98 and anything above 139 clamps to 139; others are unchanged
-TEST_F(PosixTaskScheduling, LinuxPriorityClamping) {
-    using Os::Posix::Task::clamp_linux_priority;
-    const CHAR* name = "ClampTask";
-    EXPECT_EQ(clamp_linux_priority(name, 0), 0);
-    EXPECT_EQ(clamp_linux_priority(name, 98), 98);
-    EXPECT_EQ(clamp_linux_priority(name, 99), 98);
-    EXPECT_EQ(clamp_linux_priority(name, 100), 100);
-    EXPECT_EQ(clamp_linux_priority(name, 139), 139);
-    EXPECT_EQ(clamp_linux_priority(name, 140), 139);
-    EXPECT_EQ(clamp_linux_priority(name, 253), 139);
-}
-
-namespace {
-//! Resolve a Linux-defined priority into pthread attributes and read back the policy and priority
-void resolveLinuxParams(const FwTaskPriorityType priority, const bool expect_permission, int& policy, int& sched) {
-    Fw::String name("ParamsTask");
-    Os::Task::Arguments arguments(name, recordScheduleRoutine, nullptr, priority);
-    pthread_attr_t attributes;
-    ASSERT_EQ(pthread_attr_init(&attributes), 0);
-    ASSERT_EQ(Os::Posix::Task::set_linux_priority_params(attributes, arguments, expect_permission), 0);
-    sched_param param;
-    param.sched_priority = -1;
-    ASSERT_EQ(pthread_attr_getschedpolicy(&attributes, &policy), 0);
-    ASSERT_EQ(pthread_attr_getschedparam(&attributes, &param), 0);
-    (void)pthread_attr_destroy(&attributes);
-    sched = param.sched_priority;
-}
-}  // namespace
-
-// The Linux-defined bands resolve to SCHED_RR 99-1 for 0-98 (99 clamped) and SCHED_OTHER 0 for 100-139 and above
-TEST_F(PosixTaskScheduling, LinuxPriorityParamsBands) {
+// Linux-defined priorities convert to SCHED_RR 99-1 for 0-98 (99 clamped to 98), the non-realtime sentinel for
+// 100-139 and above (clamped to 139), and leave the sentinels unchanged
+TEST_F(PosixTaskScheduling, LinuxToPosixPriority) {
+    using Os::Posix::Task::linux_to_posix_priority;
+    const FwTaskPriorityType non_realtime = Os::Posix::Task::PosixTask::TASK_PRIORITY_NON_REALTIME;
+    const FwTaskPriorityType default_priority = Os::Task::TASK_PRIORITY_DEFAULT;
     const struct {
-        FwTaskPriorityType priority;
-        int policy;
-        int sched;
-    } expected[] = {{0, SCHED_RR, 99},     {50, SCHED_RR, 49},    {98, SCHED_RR, 1},
-                    {99, SCHED_RR, 1},     {100, SCHED_OTHER, 0}, {120, SCHED_OTHER, 0},
-                    {139, SCHED_OTHER, 0}, {140, SCHED_OTHER, 0}, {253, SCHED_OTHER, 0}};
+        FwTaskPriorityType linux;
+        FwTaskPriorityType posix;
+    } expected[] = {{0, 99},
+                    {50, 49},
+                    {98, 1},
+                    {99, 1},
+                    {100, non_realtime},
+                    {120, non_realtime},
+                    {139, non_realtime},
+                    {140, non_realtime},
+                    {253, non_realtime},
+                    {non_realtime, non_realtime},
+                    {default_priority, default_priority}};
     for (const auto& item : expected) {
-        int policy = -1;
-        int sched = -1;
-        resolveLinuxParams(item.priority, true, policy, sched);
-        EXPECT_EQ(policy, item.policy) << "priority " << static_cast<int>(item.priority);
-        EXPECT_EQ(sched, item.sched) << "priority " << static_cast<int>(item.priority);
+        EXPECT_EQ(linux_to_posix_priority("ConvertTask", item.linux), item.posix)
+            << "priority " << static_cast<int>(item.linux);
     }
-}
-
-// Without permission the realtime band leaves the attributes at their defaults while the nice band is still set
-TEST_F(PosixTaskScheduling, LinuxPriorityParamsWithoutPermission) {
-    int default_policy = -1;
-    int default_sched = -1;
-    pthread_attr_t attributes;
-    ASSERT_EQ(pthread_attr_init(&attributes), 0);
-    sched_param param;
-    ASSERT_EQ(pthread_attr_getschedpolicy(&attributes, &default_policy), 0);
-    ASSERT_EQ(pthread_attr_getschedparam(&attributes, &param), 0);
-    (void)pthread_attr_destroy(&attributes);
-    default_sched = param.sched_priority;
-
-    int policy = -1;
-    int sched = -1;
-    resolveLinuxParams(0, false, policy, sched);
-    EXPECT_EQ(policy, default_policy);
-    EXPECT_EQ(sched, default_sched);
-    resolveLinuxParams(130, false, policy, sched);
-    EXPECT_EQ(policy, SCHED_OTHER);
-    EXPECT_EQ(sched, 0);
 }
 
 // The Linux priority definition is fixed by the kernel; confirm the platform agrees with the constants used

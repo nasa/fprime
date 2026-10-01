@@ -5,7 +5,6 @@
 #ifndef Os_Posix_LinuxSchedulingHelper_hpp_
 #define Os_Posix_LinuxSchedulingHelper_hpp_
 
-#include <pthread.h>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Task.hpp>
 
@@ -24,22 +23,16 @@ static constexpr FwTaskPriorityType LINUX_PRIORITY_NICE_MIN = 100;     //!< Firs
 static constexpr FwTaskPriorityType LINUX_PRIORITY_NICE_ZERO = 120;    //!< SCHED_OTHER priority at nice 0
 static constexpr FwTaskPriorityType LINUX_PRIORITY_MAX = 139;          //!< Last SCHED_OTHER priority (nice 19)
 
-//! \brief clamp a Linux-defined priority onto an occupied level, warning when it changes
+//! \brief convert a Linux-defined priority to the Posix priority understood by Os::Posix::Task
 //!
-//! \param name: task name used in the warning
+//! The realtime band 0-98 becomes the SCHED_RR priority 99-1 (99 is clamped to 98 with a warning); the nice band
+//! 100-139 becomes TASK_PRIORITY_NON_REALTIME (SCHED_OTHER), with the nice value applied later by apply_linux_nice
+//! (above 139 is clamped to 139 with a warning). TASK_PRIORITY_DEFAULT and TASK_PRIORITY_NON_REALTIME are unchanged.
+//!
+//! \param name: task name used in warnings
 //! \param priority: Linux-defined priority
-//! \return priority 0-98 or 100-139
-FwTaskPriorityType clamp_linux_priority(const CHAR* name, FwTaskPriorityType priority);
-
-//! \brief set the scheduling attributes for a Linux-defined priority
-//!
-//! The realtime band (SCHED_RR) is only set when permission is expected; the nice band (SCHED_OTHER) needs none.
-//!
-//! \param attributes: pthread attributes to set
-//! \param arguments: task arguments supplying the name and priority
-//! \param expect_permission: whether realtime scheduling permission is expected
-//! \return 0 on success, otherwise the pthread error
-int set_linux_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& arguments, bool expect_permission);
+//! \return Posix priority or sentinel
+FwTaskPriorityType linux_to_posix_priority(const CHAR* name, FwTaskPriorityType priority);
 
 //! \brief apply the nice value of a Linux-defined priority to the calling thread
 //!

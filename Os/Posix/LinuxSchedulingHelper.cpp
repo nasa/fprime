@@ -2,7 +2,6 @@
 // \title Os/Posix/LinuxSchedulingHelper.cpp
 // \brief Linux-defined task priorities for the Posix implementation of Os::Task
 // ======================================================================
-#include <sched.h>
 #include <sys/resource.h>
 #include <sys/syscall.h>
 #include <unistd.h>
@@ -21,41 +20,26 @@ namespace Task {
 static const FwTaskPriorityType LINUX_PRIORITY_UNOCCUPIED = 99;
 static std::atomic<bool> s_nice_permissions_reported(false);
 
-FwTaskPriorityType clamp_linux_priority(const CHAR* name, const FwTaskPriorityType priority) {
+FwTaskPriorityType linux_to_posix_priority(const CHAR* name, const FwTaskPriorityType priority) {
     FW_ASSERT(name != nullptr);
     FwTaskPriorityType clamped = priority;
     if (priority == LINUX_PRIORITY_UNOCCUPIED) {
         clamped = LINUX_PRIORITY_REALTIME_MAX;
-    } else if (priority > LINUX_PRIORITY_MAX) {
+    } else if ((priority > LINUX_PRIORITY_MAX) && (priority != Os::Task::TASK_PRIORITY_DEFAULT) &&
+               (priority != PosixTask::TASK_PRIORITY_NON_REALTIME)) {
         clamped = LINUX_PRIORITY_MAX;
     }
     if (clamped != priority) {
         Fw::Logger::log("[WARNING] %s task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
                         const_cast<CHAR*>(name), static_cast<FwSizeType>(priority), static_cast<FwSizeType>(clamped));
     }
-    return clamped;
-}
-
-int set_linux_priority_params(pthread_attr_t& attributes,
-                              const Os::Task::Arguments& arguments,
-                              const bool expect_permission) {
-    int status = PosixTaskHandle::SUCCESS;
-    const FwTaskPriorityType clamped = clamp_linux_priority(arguments.m_name.toChar(), arguments.m_priority);
-    const bool realtime = (clamped <= LINUX_PRIORITY_REALTIME_MAX);
-    // SCHED_OTHER has the single priority 0 on Linux and needs no permission; SCHED_RR does
-    if (!realtime || expect_permission) {
-        sched_param schedParam;
-        (void)memset(&schedParam, 0, sizeof(sched_param));
-        schedParam.sched_priority = realtime ? static_cast<int>(LINUX_PRIORITY_REALTIME_MAX + 1 - clamped) : 0;
-        status = pthread_attr_setschedpolicy(&attributes, realtime ? SCHED_RR : SCHED_OTHER);
-        if (status == PosixTaskHandle::SUCCESS) {
-            status = pthread_attr_setinheritsched(&attributes, PTHREAD_EXPLICIT_SCHED);
-        }
-        if (status == PosixTaskHandle::SUCCESS) {
-            status = pthread_attr_setschedparam(&attributes, &schedParam);
-        }
+    FwTaskPriorityType posix_priority = clamped;
+    if (clamped <= LINUX_PRIORITY_REALTIME_MAX) {
+        posix_priority = static_cast<FwTaskPriorityType>(LINUX_PRIORITY_REALTIME_MAX + 1 - clamped);
+    } else if (clamped <= LINUX_PRIORITY_MAX) {
+        posix_priority = PosixTask::TASK_PRIORITY_NON_REALTIME;
     }
-    return status;
+    return posix_priority;
 }
 
 void apply_linux_nice(const CHAR* name, const FwTaskPriorityType priority) {

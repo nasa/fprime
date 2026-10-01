@@ -34,11 +34,8 @@ void* pthread_entry_wrapper(void* wrapper_pointer) {
     FW_ASSERT(wrapper_pointer != nullptr);
     // Both downcasts are safe because we know the types
     Os::Task::TaskRoutineWrapper& wrapper = *reinterpret_cast<Os::Task::TaskRoutineWrapper*>(wrapper_pointer);
-#if (defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES) || \
-    (defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES)
     auto handle = reinterpret_cast<Os::Posix::Task::PosixTaskHandle*>(wrapper.m_task.getHandle());
     FW_ASSERT(handle != nullptr);
-#endif
 #if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
     // Task name is on a best effort basis. Use pthread_self() since the handle's task
     // descriptor is written by pthread_create concurrently with this thread's start.
@@ -184,6 +181,14 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     int pthread_status = PosixTaskHandle::SUCCESS;
     PosixTaskHandle& handle = this->m_handle;
     const bool expect_permission = (permissions == EXPECT_PERMISSION);
+    handle.m_priority = arguments.m_priority;
+#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
+    // Priorities are Linux-defined: convert to the Posix priority or non-realtime sentinel the branches below expect
+    Os::Task::Arguments posix_arguments(arguments);
+    posix_arguments.m_priority = linux_to_posix_priority(arguments.m_name.toChar(), arguments.m_priority);
+#else
+    const Os::Task::Arguments& posix_arguments = arguments;
+#endif
     // Initialize and clear pthread attributes
     pthread_attr_t attributes;
     (void)memset(&attributes, 0, sizeof(attributes));
@@ -193,18 +198,12 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
         pthread_status = set_stack_size(attributes, arguments);
     }
     // Non-realtime scheduling requires no special permission; realtime priorities do
-    if ((arguments.m_priority == PosixTask::TASK_PRIORITY_NON_REALTIME) &&
+    if ((posix_arguments.m_priority == PosixTask::TASK_PRIORITY_NON_REALTIME) &&
         (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_non_realtime_params(attributes);
-#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
-    } else if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) &&
+    } else if ((posix_arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) && (expect_permission) &&
                (pthread_status == PosixTaskHandle::SUCCESS)) {
-        pthread_status = set_linux_priority_params(attributes, arguments, expect_permission);
-#else
-    } else if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) && (expect_permission) &&
-               (pthread_status == PosixTaskHandle::SUCCESS)) {
-        pthread_status = set_priority_params(attributes, arguments);
-#endif
+        pthread_status = set_priority_params(attributes, posix_arguments);
     }
     if ((arguments.m_cpuAffinity != Os::Task::TASK_DEFAULT) && (expect_permission) &&
         (pthread_status == PosixTaskHandle::SUCCESS)) {
@@ -213,9 +212,6 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
 #if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
     // Copy the name before the thread starts, since the new thread reads it
     (void)Fw::StringUtils::string_copy(handle.m_name, arguments.m_name.toChar(), sizeof(handle.m_name));
-#endif
-#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
-    handle.m_priority = arguments.m_priority;
 #endif
 
     if (pthread_status == PosixTaskHandle::SUCCESS) {
