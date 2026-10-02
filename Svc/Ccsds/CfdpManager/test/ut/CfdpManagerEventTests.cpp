@@ -716,7 +716,7 @@ void CfdpManagerTester::testClass1RxCrcMismatchRemovesFile() {
     this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, static_cast<U16>(fileSize), testData,
                           Cfdp::Class::CLASS_1);
     this->component.doDispatch();
-    ASSERT_EQ(Os::FileSystem::FILE, Os::FileSystem::getPathType(dstFile));
+    ASSERT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(dstFile));
 
     U32 wrongChecksum = 0xDEADBEEF;
     this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
@@ -725,6 +725,99 @@ void CfdpManagerTester::testClass1RxCrcMismatchRemovesFile() {
 
     ASSERT_EVENTS_RxCrcMismatch_SIZE(1);
     ASSERT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(dstFile));
+}
+
+namespace {
+
+const U8 OLD_CONTENT[3] = {0xA, 0xB, 0xC};
+
+void writeOldContent(const char* path) {
+    Os::File file;
+    ASSERT_EQ(Os::File::OP_OK, file.open(path, Os::File::OPEN_CREATE, Os::File::OVERWRITE));
+    FwSizeType size = sizeof(OLD_CONTENT);
+    ASSERT_EQ(Os::File::OP_OK, file.write(OLD_CONTENT, size, Os::File::WAIT));
+    file.close();
+}
+
+FwSizeType sizeOf(const char* path) {
+    FwSizeType size = 0;
+    if (Os::FileSystem::getFileSize(path, size) != Os::FileSystem::OP_OK) {
+        return 0;
+    }
+    return size;
+}
+
+}  // namespace
+
+void CfdpManagerTester::testClass1RxWritesIntoTmpUntilComplete() {
+    U8 channelId = 0;
+    Cfdp::EntityId sourceEid = TEST_GROUND_EID;
+    Cfdp::EntityId destEid = this->component.getLocalEidParam();
+    Cfdp::TransactionSeq transactionSeq = 811;
+    const char* srcFile = "/ground/tmp_then_rename.bin";
+    const char* dstFile = "test/ut/output/tmp_then_rename_rx.bin";
+    Fw::String tmpFile;
+    tmpFile.format("%s/%" CFDP_PRI_ENTITY_ID ":%" CFDP_PRI_TRANSACTION_SEQ ".tmp",
+                   this->component.getTmpDirParam(channelId).toChar(), sourceEid, transactionSeq);
+
+    U8 testData[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Cfdp::FileSize fileSize = sizeof(testData);
+    CFDP::Checksum checksum;
+    checksum.update(testData, 0, fileSize);
+
+    writeOldContent(dstFile);
+    this->clearHistory();
+
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, static_cast<U16>(fileSize), testData,
+                          Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+    ASSERT_EQ(sizeof(OLD_CONTENT), sizeOf(dstFile));
+    ASSERT_EQ(Os::FileSystem::FILE, Os::FileSystem::getPathType(tmpFile.toChar()));
+
+    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     checksum.getValue(), fileSize, Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(1);
+    ASSERT_EQ(fileSize, sizeOf(dstFile));
+    ASSERT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(tmpFile.toChar()));
+    (void)Os::FileSystem::removeFile(dstFile);
+}
+
+void CfdpManagerTester::testClass1RxFailureKeepsTheOldFile() {
+    U8 channelId = 0;
+    Cfdp::EntityId sourceEid = TEST_GROUND_EID;
+    Cfdp::EntityId destEid = this->component.getLocalEidParam();
+    Cfdp::TransactionSeq transactionSeq = 812;
+    const char* srcFile = "/ground/keeps_old.bin";
+    const char* dstFile = "test/ut/output/keeps_old_rx.bin";
+    Fw::String tmpFile;
+    tmpFile.format("%s/%" CFDP_PRI_ENTITY_ID ":%" CFDP_PRI_TRANSACTION_SEQ ".tmp",
+                   this->component.getTmpDirParam(channelId).toChar(), sourceEid, transactionSeq);
+
+    U8 testData[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Cfdp::FileSize fileSize = sizeof(testData);
+
+    writeOldContent(dstFile);
+    this->clearHistory();
+
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, static_cast<U16>(fileSize), testData,
+                          Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     0xDEADBEEF, fileSize, Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxCrcMismatch_SIZE(1);
+    ASSERT_EQ(sizeof(OLD_CONTENT), sizeOf(dstFile));
+    ASSERT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(tmpFile.toChar()));
+    (void)Os::FileSystem::removeFile(dstFile);
 }
 
 void CfdpManagerTester::testRxFileSizeMismatchEvent() {
@@ -1792,8 +1885,8 @@ void CfdpManagerTester::testFileRemoveFailedEvent() {
 
     // Modify transaction to point to a file in a protected/nonexistent location
     // Use /root which typically requires root permissions to write/delete
-    txn->m_history->fnames.dst_filename = "/root/protected_file_that_cannot_be_deleted.bin";
-    txn->m_history->dir = Direction::DIRECTION_RX;  // RX uses dst_filename
+    txn->m_rxTmpFilename = "/root/protected_file_that_cannot_be_deleted.bin";
+    txn->m_history->dir = Direction::DIRECTION_RX;  // RX removes the file it was receiving into
 
     // Directly call handleNotKeepFile which will try to delete the protected file
     this->component.m_engine->handleNotKeepFile(txn);
@@ -1909,98 +2002,86 @@ void CfdpManagerTester::testRxSeekFailedEvent() {
 }
 
 void CfdpManagerTester::testRxFileRenameFailedEvent() {
-    // RxFileRenameFailed emitted in r2RecvMd() when the Class-2 receiver learns the true
-    // destination filename from a late Metadata PDU and the rename (moveFile) of the
-    // current/temp file to that final destination fails.
-    //
-    // r2RecvMd() logic (TransactionRx.cpp ~1013-1090):
-    //   fname = m_history->fnames.dst_filename;         // saved BEFORE parsing -> move SOURCE
-    //   engine->recvMd(...)  ->  m_history->fnames.dst_filename = md.getDestFilename();  // move DEST
-    //   m_fd.close();
-    //   moveFile(fname /*src*/, dst_filename /*dst*/);   // fails -> RxFileRenameFailed
-    //
-    // Strategy: the move SOURCE (the txn's initial dst_filename) must be a real file on disk,
-    // while the Metadata PDU's destination filename points to a nonexistent directory so
-    // moveFile() fails. eof_recv is left false so the EOF/MD size-mismatch check is skipped
-    // and control reaches the rename block with success==true.
+    // RxFileRenameFailed emitted when a received file passes its checksum but cannot be moved
+    // from its temporary path to its destination: here the destination is an existing directory
 
     U8 channelId = 0;
     Cfdp::EntityId sourceEid = TEST_GROUND_EID;
-    Cfdp::FileSize fileSize = 1000;
-    Cfdp::TransactionSeq seq = 1;
+    Cfdp::EntityId destEid = this->component.getLocalEidParam();
+    Cfdp::TransactionSeq transactionSeq = 1;
+    const char* srcFile = "/ground/rename_onto_dir.bin";
+    const char* dstDir = "test/ut/output/rename_onto_dir";
+    const char* dstOccupant = "test/ut/output/rename_onto_dir/occupant.bin";
+    Fw::String tmpFile;
+    tmpFile.format("%s/%" CFDP_PRI_ENTITY_ID ":%" CFDP_PRI_TRANSACTION_SEQ ".tmp",
+                   this->component.getTmpDirParam(channelId).toChar(), sourceEid, transactionSeq);
 
-    // Move SOURCE: the transaction's initial dst_filename (must exist on disk before moveFile)
-    const char* moveSource = "test/ut/output/rename_src.bin";
-    // Move DEST: comes from the Metadata PDU; point at a nonexistent directory to force failure
+    (void)Os::FileSystem::createDirectory(dstDir);
+    writeOldContent(dstOccupant);
+
+    U8 testData[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Cfdp::FileSize fileSize = sizeof(testData);
+    CFDP::Checksum checksum;
+    checksum.update(testData, 0, fileSize);
+
+    this->clearHistory();
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstDir,
+                          Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, static_cast<U16>(fileSize), testData,
+                          Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     checksum.getValue(), fileSize, Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxFileRenameFailed_SIZE(1);
+    ASSERT_EQ(Cfdp::Class::CLASS_1, this->eventHistory_RxFileRenameFailed->at(0).cfdpClass);
+    ASSERT_EQ(sourceEid, this->eventHistory_RxFileRenameFailed->at(0).srcEid);
+    ASSERT_EQ(transactionSeq, this->eventHistory_RxFileRenameFailed->at(0).seqNum);
+    ASSERT_STREQ(tmpFile.toChar(), this->eventHistory_RxFileRenameFailed->at(0).tempFile.toChar());
+    ASSERT_STREQ(dstDir, this->eventHistory_RxFileRenameFailed->at(0).finalFile.toChar());
+    ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(tmpFile.toChar()));
+    ASSERT_EQ(sizeof(OLD_CONTENT), sizeOf(dstOccupant));
+
+    (void)Os::FileSystem::removeFile(dstOccupant);
+    (void)Os::FileSystem::removeDirectory(dstDir);
+}
+
+void CfdpManagerTester::testR2LateMetadataToAMissingDirectoryIsRejected() {
+    U8 channelId = 0;
+    Cfdp::EntityId sourceEid = TEST_GROUND_EID;
+    Cfdp::FileSize fileSize = 1000;
+    Cfdp::TransactionSeq seq = 2;
     const char* badDest = "/nonexistent_dir/subdir/renamed.bin";
 
-    // Create the move-source file on disk so moveFile()'s source is valid
-    Os::File srcFile;
-    Os::File::Status openStatus = srcFile.open(moveSource, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
-    ASSERT_EQ(Os::File::OP_OK, openStatus);
-    U8 data[4] = {1, 2, 3, 4};
-    FwSizeType writeSize = sizeof(data);
-    srcFile.write(data, writeSize);
-    srcFile.close();
-
-    // Set up Class 2 receiver transaction; its dst_filename is the move SOURCE
-    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Class 2 receiver
-                                            channelId,
-                                            "test_src.dat",  // srcFilename (unused for rename)
-                                            moveSource,      // dstFilename -> becomes the move SOURCE (fname)
-                                            fileSize, seq, sourceEid);
-
+    Transaction* txn =
+        setupTestTransaction(TxnState::TXN_STATE_R2, channelId, "test_src.dat", "", fileSize, seq, sourceEid);
     txn->m_engine = this->component.m_engine;
     txn->m_history->src_eid = sourceEid;
+    txn->m_flags.rx.md_recv = false;
+    txn->m_flags.rx.eof_recv = false;
 
-    // Force the "metadata arriving late" rename path:
-    txn->m_flags.rx.md_recv = false;   // metadata not yet received -> enter rename branch
-    txn->m_flags.rx.eof_recv = false;  // skip EOF/MD size-mismatch check -> keep success==true
-
-    // Build the Metadata PDU whose destination filename is the (bad) rename target
     Cfdp::MetadataPdu metadataPdu;
-    metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                           sourceEid,                           // sourceEid
-                           seq,                                 // transactionSeq
-                           this->component.getLocalEidParam(),  // destEid
-                           fileSize,                            // fileSize
-                           "test_src.dat",                      // source filename
-                           badDest,                             // dest filename -> move DEST (bad dir)
-                           Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
-                           1);  // closureRequested for Class 2
-
-    // Serialize PDU to buffer (direct r2RecvMd call: no packet descriptor prefix)
+    metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, sourceEid, seq,
+                           this->component.getLocalEidParam(), fileSize, "test_src.dat", badDest,
+                           Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR, 1);
     U8 tempBuffer[300];
     Fw::SerialBuffer sb(tempBuffer, sizeof(tempBuffer));
     metadataPdu.serializeTo(sb);
     Fw::Buffer pduBuffer(tempBuffer, sb.getSize());
 
-    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
-
-    // Directly call r2RecvMd -> parses MD (MetadataReceived) then moveFile fails (RxFileRenameFailed)
     txn->r2RecvMd(pduBuffer);
 
-    // Verify events: MetadataReceived (from recvMd) + RxFileRenameFailed (rename failure).
-    // The rename SOURCE (tempFile) is the transaction's initial dst_filename (moveSource); the
-    // rename DEST (finalFile) is the metadata's dest filename (badDest). The status field is an
-    // OS-dependent file-op code, so it is intentionally not asserted.
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
-    ASSERT_EVENTS_MetadataReceived(0,               // index
-                                   "test_src.dat",  // srcFile from metadata
-                                   badDest,         // destFile from metadata
-                                   seq              // transaction sequence number
-    );
-    ASSERT_EVENTS_RxFileRenameFailed_SIZE(1);
-    ASSERT_EQ(Cfdp::Class::CLASS_2, this->eventHistory_RxFileRenameFailed->at(0).cfdpClass);
-    ASSERT_EQ(sourceEid, this->eventHistory_RxFileRenameFailed->at(0).srcEid);
-    ASSERT_EQ(seq, this->eventHistory_RxFileRenameFailed->at(0).seqNum);
-    ASSERT_STREQ(moveSource, this->eventHistory_RxFileRenameFailed->at(0).tempFile.toChar());
-    ASSERT_STREQ(badDest, this->eventHistory_RxFileRenameFailed->at(0).finalFile.toChar());
-
-    // Cleanup: moveFile failed so the source file still exists
-    Os::FileSystem::removeFile(moveSource);
+    ASSERT_EVENTS_RxFileCreateFailed_SIZE(1);
+    ASSERT_STREQ(badDest, this->eventHistory_RxFileCreateFailed->at(0).filename.toChar());
+    ASSERT_EQ(TxnStatus::TXN_STATUS_FILESTORE_REJECTION, txn->m_history->txn_stat);
+    ASSERT_FALSE(txn->m_flags.rx.md_recv);
 }
 
 void CfdpManagerTester::testTxFileSeekFailedEvent() {
@@ -3094,108 +3175,6 @@ void CfdpManagerTester::testPlaybackDirSlotUnavailableEvent() {
     ASSERT_EQ(status, Cfdp::Status::ERROR) << "playbackDir should fail when all slots are busy";
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PlaybackDirSlotUnavailable_SIZE(1);
-}
-
-void CfdpManagerTester::testRxFileReopenFailedEvent() {
-    // RxFileReopenFailed emitted in r2RecvMd() (TransactionRx.cpp ~1073) on the SUCCESS branch
-    // of the file rename: moveFile(fname -> dst_filename) succeeds, but the immediately-following
-    // reopen open(dst_filename, OPEN_WRITE) fails.
-    //
-    // r2RecvMd() logic:
-    //   fname = m_history->fnames.dst_filename;          // saved BEFORE parsing -> move SOURCE
-    //   engine->recvMd(...) -> m_history->fnames.dst_filename = md.getDestFilename();  // move DEST
-    //   m_fd.close();
-    //   moveFile(fname /*src*/, dst_filename /*dst*/);    // must SUCCEED
-    //   m_fd.open(dst_filename, OPEN_WRITE);              // must FAIL -> RxFileReopenFailed
-    //
-    // White-box trigger (real Posix Os backend, verified against Os/Posix source):
-    //   - Os::FileSystem::moveFile() -> _rename() -> ::rename(2). rename(2) will happily rename a
-    //     DIRECTORY to a new name, so if the move SOURCE (the txn's initial dst_filename) is a
-    //     directory, the rename SUCCEEDS and the DEST path is now itself a directory.
-    //   - Os::File::open(OPEN_WRITE) -> ::open(dst, O_WRONLY | O_CREAT). Opening an existing
-    //     directory O_WRONLY fails with EISDIR, which errno_to_file_status() maps to a non-OP_OK
-    //     status -> RxFileReopenFailed is emitted.
-    //
-    // eof_recv is left false so the EOF/MD size-mismatch check is skipped and control reaches the
-    // rename block with success==true.
-
-    U8 channelId = 0;
-    Cfdp::EntityId sourceEid = TEST_GROUND_EID;
-    Cfdp::FileSize fileSize = 1000;
-    Cfdp::TransactionSeq seq = 1;
-
-    // Move SOURCE: the transaction's initial dst_filename. Make it a DIRECTORY so that
-    // rename(source_dir -> dest) succeeds and turns the DEST into a directory.
-    const char* moveSourceDir = "test/ut/output/reopen_src_dir";
-    // Move DEST: comes from the Metadata PDU. After the rename it is a directory; opening a
-    // directory for writing then fails with EISDIR.
-    const char* moveDest = "test/ut/output/reopen_dst_dir";
-
-    // Make sure neither path pre-exists (clean slate), then create the source directory on disk.
-    Os::FileSystem::removeDirectory(moveDest);
-    Os::FileSystem::removeDirectory(moveSourceDir);
-    Os::FileSystem::Status mkStatus = Os::FileSystem::createDirectory(moveSourceDir);
-    ASSERT_EQ(Os::FileSystem::OP_OK, mkStatus);
-
-    // Set up Class 2 receiver transaction; its dst_filename is the move SOURCE (the directory)
-    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Class 2 receiver
-                                            channelId,
-                                            "test_src.dat",  // srcFilename (unused for rename)
-                                            moveSourceDir,   // dstFilename -> becomes the move SOURCE (fname)
-                                            fileSize, seq, sourceEid);
-
-    txn->m_engine = this->component.m_engine;
-    txn->m_history->src_eid = sourceEid;
-
-    // Force the "metadata arriving late" rename path:
-    txn->m_flags.rx.md_recv = false;   // metadata not yet received -> enter rename branch
-    txn->m_flags.rx.eof_recv = false;  // skip EOF/MD size-mismatch check -> keep success==true
-
-    // Build the Metadata PDU whose destination filename is the rename target
-    Cfdp::MetadataPdu metadataPdu;
-    metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                           sourceEid,                           // sourceEid
-                           seq,                                 // transactionSeq
-                           this->component.getLocalEidParam(),  // destEid
-                           fileSize,                            // fileSize
-                           "test_src.dat",                      // source filename
-                           moveDest,                            // dest filename -> move DEST (becomes a directory)
-                           Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
-                           1);  // closureRequested for Class 2
-
-    // Serialize PDU to buffer (direct r2RecvMd call: no packet descriptor prefix)
-    U8 tempBuffer[300];
-    Fw::SerialBuffer sb(tempBuffer, sizeof(tempBuffer));
-    metadataPdu.serializeTo(sb);
-    Fw::Buffer pduBuffer(tempBuffer, sb.getSize());
-
-    // preserve port/tlm history from setup; reset only events
-    this->clearEvents();
-
-    // Directly call r2RecvMd -> parses MD (MetadataReceived), rename of the directory succeeds,
-    // then reopen of the (now-directory) dest for writing fails -> RxFileReopenFailed.
-    txn->r2RecvMd(pduBuffer);
-
-    // Verify events: MetadataReceived (from recvMd) + RxFileReopenFailed (reopen failure).
-    // After the successful rename, the transaction's dst_filename is the metadata dest (moveDest),
-    // which is the file that failed to reopen. The status field is an OS-dependent file-op code,
-    // so it is intentionally not asserted.
-    ASSERT_EVENTS_SIZE(2);
-    ASSERT_EVENTS_MetadataReceived_SIZE(1);
-    ASSERT_EVENTS_MetadataReceived(0,               // index
-                                   "test_src.dat",  // srcFile from metadata
-                                   moveDest,        // destFile from metadata
-                                   seq              // transaction sequence number
-    );
-    ASSERT_EVENTS_RxFileReopenFailed_SIZE(1);
-    ASSERT_EQ(Cfdp::Class::CLASS_2, this->eventHistory_RxFileReopenFailed->at(0).cfdpClass);
-    ASSERT_EQ(sourceEid, this->eventHistory_RxFileReopenFailed->at(0).srcEid);
-    ASSERT_EQ(seq, this->eventHistory_RxFileReopenFailed->at(0).seqNum);
-    ASSERT_STREQ(moveDest, this->eventHistory_RxFileReopenFailed->at(0).filename.toChar());
-
-    // Cleanup: rename succeeded, so the source no longer exists; the dest is now the directory.
-    Os::FileSystem::removeDirectory(moveDest);
-    Os::FileSystem::removeDirectory(moveSourceDir);
 }
 
 }  // namespace Cfdp

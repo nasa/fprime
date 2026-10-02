@@ -68,6 +68,7 @@ Transaction::Transaction(Channel* channel, U8 channelId, Engine* engine, CfdpMan
       m_foffs(0),
       m_fd(),
       m_crc(),
+      m_rxTmpFilename(),
       m_keep(Cfdp::Keep::KEEP),
       m_chan_num(channelId),  // Initialize from parameter
       m_priority(0),
@@ -97,6 +98,7 @@ void Transaction::reset() {
     this->m_priority = 0;
     this->m_initType = TransactionInitType::INIT_BY_COMMAND;
     this->m_crc = CFDP::Checksum(0);
+    this->m_rxTmpFilename = "";
     this->m_pb = nullptr;
 
     // Fully zero the union storage
@@ -342,34 +344,31 @@ void Transaction::rCancel() {
 void Transaction::rInit() {
     Os::File::Status status;
     Fw::String tmpDir;
-    Fw::String dst;
+
+    tmpDir = this->m_cfdpManager->getTmpDirParam(this->m_chan_num);
+    this->m_rxTmpFilename.format("%s/%" CFDP_PRI_ENTITY_ID ":%" CFDP_PRI_TRANSACTION_SEQ ".tmp", tmpDir.toChar(),
+                                 this->m_history->src_eid, this->m_history->seq_num);
 
     if (this->m_state == TxnState::TXN_STATE_R2) {
         if (!this->m_flags.rx.md_recv) {
-            tmpDir = this->m_cfdpManager->getTmpDirParam(this->m_chan_num);
             /* we need to make a temp file and then do a NAK for md PDU */
-            /* the transaction already has a history, and that has a buffer that we can use to
-             * hold the temp filename which is defined by the sequence number and the source entity ID */
-
-            // Create destination filepath with format: <tmpDir>/<src_eid>:<seq_num>.tmp
-            dst.format("%s/%" CFDP_PRI_ENTITY_ID ":%" CFDP_PRI_TRANSACTION_SEQ ".tmp", tmpDir.toChar(),
-                       this->m_history->src_eid, this->m_history->seq_num);
-
-            this->m_history->fnames.dst_filename = dst;
-
             this->m_cfdpManager->log_ACTIVITY_LO_RxTempFileCreated(this->getClass(), this->m_history->src_eid,
-                                                                   this->m_history->seq_num,
-                                                                   this->m_history->fnames.dst_filename);
+                                                                   this->m_history->seq_num, this->m_rxTmpFilename);
         }
 
         this->m_engine->armAckTimer(this);
     }
 
-    status = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    const Fw::String* failedFile = &this->m_rxTmpFilename;
+    if (this->m_flags.rx.md_recv && !this->rDestinationDirExists()) {
+        status = Os::File::DOESNT_EXIST;
+        failedFile = &this->m_history->fnames.dst_filename;
+    } else {
+        status = this->m_fd.open(this->m_rxTmpFilename.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    }
     if (status != Os::File::OP_OK) {
         this->m_cfdpManager->log_WARNING_LO_RxFileCreateFailed(this->getClass(), this->m_history->src_eid,
-                                                               this->m_history->seq_num,
-                                                               this->m_history->fnames.dst_filename, status);
+                                                               this->m_history->seq_num, *failedFile, status);
         this->m_cfdpManager->incrementFaultFileOpen(this->m_chan_num);
         if (this->m_state == TxnState::TXN_STATE_R2) {
             this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
@@ -379,6 +378,37 @@ void Transaction::rInit() {
     } else {
         this->m_state_data.receive.sub_state = RxSubState::RX_SUB_STATE_FILEDATA;
     }
+}
+
+bool Transaction::rDestinationDirExists() const {
+    const Fw::String& dst = this->m_history->fnames.dst_filename;
+    const char* const slash = ::strrchr(dst.toChar(), '/');
+    if (slash == nullptr) {
+        return true;
+    }
+    if (slash == dst.toChar()) {
+        return Os::FileSystem::getPathType("/") == Os::FileSystem::DIRECTORY;
+    }
+    Fw::String dir;
+    (void)dir.format("%.*s", static_cast<int>(slash - dst.toChar()), dst.toChar());
+    return Os::FileSystem::getPathType(dir.toChar()) == Os::FileSystem::DIRECTORY;
+}
+
+bool Transaction::rCommitFile() {
+    if (this->m_fd.isOpen()) {
+        this->m_fd.close();
+    }
+    Os::FileSystem::Status status =
+        Os::FileSystem::moveFile(this->m_rxTmpFilename.toChar(), this->m_history->fnames.dst_filename.toChar());
+    if (status == Os::FileSystem::OP_OK) {
+        return true;
+    }
+    this->m_cfdpManager->log_WARNING_LO_RxFileRenameFailed(this->getClass(), this->m_history->src_eid,
+                                                           this->m_history->seq_num, this->m_rxTmpFilename,
+                                                           this->m_history->fnames.dst_filename, status);
+    this->m_cfdpManager->incrementFaultFileRename(this->m_chan_num);
+    (void)Os::FileSystem::removeFile(this->m_rxTmpFilename.toChar());
+    return false;
 }
 
 void Transaction::r2SetFinTxnStatus(TxnStatus txn_stat) {
@@ -652,7 +682,11 @@ void Transaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
             /* Verify CRC */
             if (this->rCheckCrc(crc) == Cfdp::Status::SUCCESS) {
                 /* successfully processed the file */
-                this->m_keep = Cfdp::Keep::KEEP; /* save the file */
+                if (this->rCommitFile()) {
+                    this->m_keep = Cfdp::Keep::KEEP; /* save the file */
+                } else {
+                    this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
+                }
             }
             /* if file failed to process, there's nothing to do. CFDP_R_CheckCrc() generates an event on failure */
         }
@@ -912,7 +946,7 @@ Status::T Transaction::r2CalcCrcChunk() {
                 this->m_fd.close();
             }
 
-            fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_READ);
+            fileStatus = this->m_fd.open(this->m_rxTmpFilename.toChar(), Os::File::OPEN_READ);
             if (fileStatus != Os::File::OP_OK) {
                 this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
                 ret = Cfdp::Status::ERROR;
@@ -980,11 +1014,15 @@ Status::T Transaction::r2CalcCrcChunk() {
             /* all bytes calculated, so now check */
             if (this->rCheckCrc(this->m_state_data.receive.r2.eof_crc) == Cfdp::Status::SUCCESS) {
                 /* CRC matched! We are happy */
-                this->m_keep = Cfdp::Keep::KEEP; /* save the file */
+                if (this->rCommitFile()) {
+                    this->m_keep = Cfdp::Keep::KEEP; /* save the file */
 
-                /* set FIN PDU status */
-                this->m_state_data.receive.r2.dc = FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE;
-                this->m_state_data.receive.r2.fs = FinFileStatus::FIN_FILE_STATUS_RETAINED;
+                    /* set FIN PDU status */
+                    this->m_state_data.receive.r2.dc = FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE;
+                    this->m_state_data.receive.r2.fs = FinFileStatus::FIN_FILE_STATUS_RETAINED;
+                } else {
+                    this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
+                }
             } else {
                 this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILE_CHECKSUM_FAILURE);
             }
@@ -1048,18 +1086,11 @@ void Transaction::r2RecvFinAck(const Fw::Buffer& buffer) {
 }
 
 void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
-    Fw::String fname;
-    Os::File::Status fileStatus;
-    Os::FileSystem::Status fileSysStatus;
     bool success = true;
 
     /* it isn't an error to get another MD PDU, right? */
     if (!this->m_flags.rx.md_recv) {
         /* NOTE: this->m_flags.rx.md_recv always 1 in R1, so this is R2 only */
-        /* parse the md PDU. this will overwrite the transaction's history, which contains our filename. so let's
-         * save the filename in a local buffer so it can be used with moveFile upon successful parsing of
-         * the md PDU */
-        fname = this->m_history->fnames.dst_filename;
 
         // Deserialize Metadata PDU from buffer
         MetadataPdu md;
@@ -1079,7 +1110,14 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
         this->m_engine->recvMd(this, md);
 
         /* successfully obtained md PDU */
-        if (this->m_flags.rx.eof_recv) {
+        if (!this->rDestinationDirExists()) {
+            this->m_cfdpManager->log_WARNING_LO_RxFileCreateFailed(
+                this->getClass(), this->m_history->src_eid, this->m_history->seq_num,
+                this->m_history->fnames.dst_filename, Os::File::DOESNT_EXIST);
+            this->m_cfdpManager->incrementFaultFileOpen(this->m_chan_num);
+            this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
+            success = false;
+        } else if (this->m_flags.rx.eof_recv) {
             /* EOF was received, so check that md and EOF sizes match */
             if (this->m_state_data.receive.r2.eof_size != this->m_fsize) {
                 this->m_cfdpManager->log_WARNING_LO_RxEofMdSizeMismatch(this->getClass(), this->m_history->src_eid,
@@ -1092,36 +1130,9 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
         }
 
         if (success) {
-            /* close and rename file */
-            this->m_fd.close();
-
-            fileSysStatus = Os::FileSystem::moveFile(fname.toChar(), this->m_history->fnames.dst_filename.toChar());
-            if (fileSysStatus != Os::FileSystem::OP_OK) {
-                this->m_cfdpManager->log_WARNING_LO_RxFileRenameFailed(
-                    this->getClass(), this->m_history->src_eid, this->m_history->seq_num, fname,
-                    this->m_history->fnames.dst_filename, fileSysStatus);
-                this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
-                this->m_cfdpManager->incrementFaultFileRename(this->m_chan_num);
-                success = false;
-            } else {
-                // File was successfully renamed, open for writing
-                fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_WRITE);
-                if (fileStatus != Os::File::OP_OK) {
-                    this->m_cfdpManager->log_WARNING_LO_RxFileReopenFailed(
-                        this->getClass(), this->m_history->src_eid, this->m_history->seq_num,
-                        this->m_history->fnames.dst_filename, fileStatus);
-                    this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
-                    this->m_cfdpManager->incrementFaultFileOpen(this->m_chan_num);
-                    success = false;
-                }
-            }
-
-            if (success) {
-                this->m_state_data.receive.cached_pos = 0; /* reset psn due to open */
-                this->m_flags.rx.md_recv = true;
-                this->m_state_data.receive.r2.acknak_count = 0; /* in case part of NAK */
-                this->r2Complete(true);                         /* check for completion now that md is received */
-            }
+            this->m_flags.rx.md_recv = true;
+            this->m_state_data.receive.r2.acknak_count = 0; /* in case part of NAK */
+            this->r2Complete(true);                         /* check for completion now that md is received */
         }
     }
 }

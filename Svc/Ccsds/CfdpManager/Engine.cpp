@@ -1173,9 +1173,9 @@ void Engine::handleNotKeepFile(Transaction* txn) {
     }
     // Not Sender
     else {
-        fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.dst_filename.toChar());
+        fileStatus = Os::FileSystem::removeFile(txn->m_rxTmpFilename.toChar());
         if (fileStatus != Os::FileSystem::OP_OK) {
-            m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.dst_filename, fileStatus);
+            m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_rxTmpFilename, fileStatus);
         }
     }
 }

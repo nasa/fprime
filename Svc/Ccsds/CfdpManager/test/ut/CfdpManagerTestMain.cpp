@@ -432,6 +432,21 @@ TEST(Event, Class1RxCrcMismatchRemovesFile) {
     tester.testClass1RxCrcMismatchRemovesFile();
 }
 
+TEST(Event, Class1RxWritesIntoTmpUntilComplete) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxWritesIntoTmpUntilComplete();
+}
+
+TEST(Event, Class1RxFailureKeepsTheOldFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxFailureKeepsTheOldFile();
+}
+
+TEST(Event, R2LateMetadataToAMissingDirectoryIsRejected) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testR2LateMetadataToAMissingDirectoryIsRejected();
+}
+
 TEST(Event, RxFileSizeMismatch) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testRxFileSizeMismatchEvent();
@@ -676,11 +691,6 @@ TEST(Event, PlaybackDirReadFailed) {
 TEST(Event, PlaybackDirSlotUnavailable) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testPlaybackDirSlotUnavailableEvent();
-}
-
-TEST(Event, RxFileReopenFailed) {
-    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
-    tester.testRxFileReopenFailedEvent();
 }
 
 TEST(Miscellaneous, Ping) {

@@ -464,6 +464,23 @@ class Transaction {
     void rInit();
 
     /************************************************************************/
+    /** @brief Move a received file from its temporary path to its destination.
+     *
+     * Closes the file first. On failure, reports the rename and removes the
+     * temporary file.
+     *
+     * @returns true if the file is at its destination
+     */
+    bool rCommitFile();
+
+    /************************************************************************/
+    /** @brief Check that the directory a received file is moved into exists.
+     *
+     * @returns true if the destination's directory exists
+     */
+    bool rDestinationDirExists() const;
+
+    /************************************************************************/
     /** @brief Helper function to store transaction status code and set send_fin flag.
      *
      * @param txn_stat Status Code value to set within transaction
@@ -775,6 +792,11 @@ class Transaction {
      * @brief CRC checksum object
      */
     CFDP::Checksum m_crc;
+
+    /**
+     * @brief Temporary path a received file is written to until it completes
+     */
+    Fw::String m_rxTmpFilename;
 
     /**
      * @brief Keep file flag

@@ -607,6 +607,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testRxFileCreateFailedEvent();
     void testRxCrcMismatchEvent();
     void testClass1RxCrcMismatchRemovesFile();
+    void testClass1RxWritesIntoTmpUntilComplete();
+    void testClass1RxFailureKeepsTheOldFile();
+    void testR2LateMetadataToAMissingDirectoryIsRejected();
     void testRxFileSizeMismatchEvent();
     void testRxFileDataOutOfBoundsEvent();
     void testRxEofCancelReceivedEvent();
@@ -640,7 +643,6 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testRxWriteFailedEvent();
     void testRxSeekFailedEvent();
     void testRxFileRenameFailedEvent();
-    void testRxFileReopenFailedEvent();
     void testTxFileSeekFailedEvent();
     void testTxSendMetadataFailedEvent();
 
