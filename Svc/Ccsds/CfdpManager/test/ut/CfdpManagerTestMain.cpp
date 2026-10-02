@@ -653,6 +653,16 @@ TEST(Event, FailPollFileMove) {
     tester.testFailPollFileMoveEvent();
 }
 
+TEST(Event, MoveDirKeepsTheSentFileByName) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testMoveDirKeepsTheSentFileByName();
+}
+
+TEST(Event, FailDirKeepsAFailedPollFileByName) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testFailDirKeepsAFailedPollFileByName();
+}
+
 TEST(Event, FileDataSegmentMetadata) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testFileDataSegmentMetadataEvent();

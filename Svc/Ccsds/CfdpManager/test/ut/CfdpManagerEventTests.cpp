@@ -2837,6 +2837,89 @@ void CfdpManagerTester::testFailPollFileMoveEvent() {
     Os::FileSystem::removeFile(srcFile);
 }
 
+namespace {
+
+void writeTestFile(const char* path) {
+    Os::File file;
+    ASSERT_EQ(Os::File::OP_OK, file.open(path, Os::File::OPEN_CREATE, Os::File::OVERWRITE));
+    U8 data[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    FwSizeType size = sizeof(data);
+    ASSERT_EQ(Os::File::OP_OK, file.write(data, size, Os::File::WAIT));
+    file.close();
+}
+
+}  // namespace
+
+void CfdpManagerTester::setDirectories(U8 channelId, const char* moveDir, const char* failDir) {
+    Cfdp::ChannelArrayParams channelConfig;
+    Cfdp::ChannelParams& params = channelConfig[channelId];
+    params.set_ack_limit(2);
+    params.set_nack_limit(3);
+    params.set_ack_timer(5000);
+    params.set_inactivity_timer(30000);
+    params.set_dequeue_enabled(Fw::Enabled::ENABLED);
+    params.set_move_dir(Fw::String(moveDir));
+    params.set_max_outgoing_pdus_per_cycle(10);
+    params.set_tmp_dir(Fw::String("test/ut/output/tmp"));
+    params.set_fail_dir(Fw::String(failDir));
+    this->paramSet_ChannelConfig(channelConfig, Fw::ParamValid::VALID);
+    this->paramSend_ChannelConfig(0, 0);
+}
+
+void CfdpManagerTester::testMoveDirKeepsTheSentFileByName() {
+    U8 channelId = 0;
+    const char* moveDir = "test/ut/output/moved";
+    const char* srcFile = "test/ut/output/move_by_name.bin";
+    const char* movedFile = "test/ut/output/moved/move_by_name.bin";
+    (void)Os::FileSystem::createDirectory(moveDir);
+    (void)Os::FileSystem::removeFile(movedFile);
+    writeTestFile(srcFile);
+
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1, channelId, srcFile, "/ground/move_by_name.bin", 10,
+                                            4200, TEST_GROUND_EID);
+    ASSERT_NE(txn, nullptr);
+    txn->m_engine = component.m_engine;
+    txn->m_chan = component.m_engine->m_channels[channelId];
+    txn->m_keep = Cfdp::Keep::DELETE;
+    this->setDirectories(channelId, moveDir, "test/ut/output/failed");
+    this->clearEvents();
+
+    component.m_engine->handleNotKeepFile(txn);
+
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_FALSE(Os::FileSystem::exists(srcFile));
+    ASSERT_TRUE(Os::FileSystem::exists(movedFile));
+    (void)Os::FileSystem::removeFile(movedFile);
+}
+
+void CfdpManagerTester::testFailDirKeepsAFailedPollFileByName() {
+    U8 channelId = 0;
+    const char* failDir = "test/ut/output/failed";
+    const char* srcFile = "test/ut/output/fail_by_name.bin";
+    const char* failedFile = "test/ut/output/failed/fail_by_name.bin";
+    (void)Os::FileSystem::createDirectory(failDir);
+    (void)Os::FileSystem::removeFile(failedFile);
+    writeTestFile(srcFile);
+
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1, channelId, srcFile, "/ground/fail_by_name.bin", 10,
+                                            4300, TEST_GROUND_EID);
+    ASSERT_NE(txn, nullptr);
+    txn->m_engine = component.m_engine;
+    txn->m_chan = component.m_engine->m_channels[channelId];
+    txn->m_keep = Cfdp::Keep::DELETE;
+    txn->m_history->txn_stat = TxnStatus::TXN_STATUS_PROTOCOL_ERROR;
+    component.m_engine->m_channels[channelId]->getPollDir(0)->srcDir = Fw::String("test/ut/output");
+    this->setDirectories(channelId, "test/ut/output/moved", failDir);
+    this->clearEvents();
+
+    component.m_engine->handleNotKeepFile(txn);
+
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_FALSE(Os::FileSystem::exists(srcFile));
+    ASSERT_TRUE(Os::FileSystem::exists(failedFile));
+    (void)Os::FileSystem::removeFile(failedFile);
+}
+
 void CfdpManagerTester::testFileDataSegmentMetadataEvent() {
     // FileDataSegmentMetadata emitted when a received FileData PDU has the (unsupported)
     // segment-metadata flag set. Engine::recvFd() checks header.hasSegmentMetadata() and,

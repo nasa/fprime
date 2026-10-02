@@ -1134,7 +1134,7 @@ void Engine::handleNotKeepFile(Transaction* txn) {
             // If move directory is defined attempt move
             moveDir = m_manager->getMoveDirParam(txn->getChannelId());
             if (moveDir.length() > 0) {
-                fileStatus = Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), moveDir.toChar());
+                fileStatus = this->moveIntoDir(txn->m_history->fnames.src_filename, moveDir);
                 if (fileStatus != Os::FileSystem::OP_OK) {
                     m_manager->log_WARNING_LO_FailKeepFileMove(txn->m_history->fnames.src_filename, moveDir,
                                                                fileStatus);
@@ -1154,8 +1154,7 @@ void Engine::handleNotKeepFile(Transaction* txn) {
                 // If fail directory is defined attempt move
                 failDir = m_manager->getFailDirParam(txn->getChannelId());
                 if (failDir.length() > 0) {
-                    fileStatus =
-                        Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), failDir.toChar());
+                    fileStatus = this->moveIntoDir(txn->m_history->fnames.src_filename, failDir);
                     if (fileStatus != Os::FileSystem::OP_OK) {
                         m_manager->log_WARNING_LO_FailPollFileMove(txn->m_history->fnames.src_filename, failDir,
                                                                    fileStatus);
@@ -1179,6 +1178,16 @@ void Engine::handleNotKeepFile(Transaction* txn) {
             m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.dst_filename, fileStatus);
         }
     }
+}
+
+Os::FileSystem::Status Engine::moveIntoDir(const Fw::StringBase& src, const Fw::StringBase& dir) {
+    const char* const slash = ::strrchr(src.toChar(), '/');
+    const char* const name = (slash != nullptr) ? slash + 1 : src.toChar();
+    Fw::String dst;
+    if (dst.format("%s/%s", dir.toChar(), name) != Fw::FormatStatus::SUCCESS) {
+        return Os::FileSystem::OTHER_ERROR;
+    }
+    return Os::FileSystem::moveFile(src.toChar(), dst.toChar());
 }
 
 Cfdp::ChannelTelemetry& Engine::getChannelTelemetryRef(U8 channelId) {
