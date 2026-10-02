@@ -4,14 +4,13 @@ F´ has a lot of documentation. This page is a guided reading order: each chapte
 paragraph, then points to the existing documents that cover them. Read the chapters in order the first time through;
 come back later and use it as a map.
 
-**Assumed background:** working knowledge of C++ and Python. No prior knowledge of CMake, flight software, or F´ is
-assumed.
+**Assumed background:** some knowledge of C/C++. No prior knowledge of CMake, flight software, or F´ is assumed.
 
 **How to read this book:** Parts I–III are the core path and are meant for everyone, in order. Part IV is a set of
 independent chapters: pick the ones that match what you are building, in any order. Each Part IV chapter starts with
 who it is for. Links marked *(reference)* are for looking things up later; skim them the first time.
 
-**Keep the [F´ Cheatsheet](https://fprime.jpl.nasa.gov/cheatsheet) open:** it summarizes the core terms, component and
+**Check out the [F´ Cheatsheet](https://fprime.jpl.nasa.gov/cheatsheet):** it summarizes the core terms, component and
 port kinds, the `fprime-util` commands, and the day-to-day development workflow on two pages.
 
 > [!TIP]
@@ -117,12 +116,15 @@ and `fprime-util --help` lists the rest. Toolchains and platforms come later (Ch
 A real deployment has dozens of component instances. F´ ships **subtopologies**, pre-wired groups of standard
 components, for command and data handling (CdhCore), communications (ComFprime / ComCcsds), and file handling.
 Most projects import these and connect their own components to them. Learn how instances and topologies are
-defined in FPP, then how to use and create subtopologies.
+defined in FPP, then how to use and create subtopologies. Each standard component has a Software Design Document
+(SDD) describing its ports, commands, events, and behavior. Find SDDs under Reference → Software Design Documents in
+the navigation pane, or next to each component's source in `docs/sdd.md`.
 
 - FPP User's Guide: [Defining Component Instances](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances) and [Defining Topologies](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Topologies)
 - [Subtopologies](user-manual/design-patterns/subtopologies.md)
 - [CDH Core Subtopology](reference/system-functional/subtopology-cdh-core.md), [ComFprime Subtopology](reference/system-functional/subtopology-com-fprime.md), [File Handling Subtopology](reference/system-functional/subtopology-file-handling.md)
 - [Develop a Subtopology](how-to/develop/develop-subtopologies.md)
+- [Command Dispatcher SDD](../Svc/CmdDispatcher/docs/sdd.md): an example SDD *(reference)*
 
 ### Chapter 9: Scheduling, Threads, and Design Patterns
 
