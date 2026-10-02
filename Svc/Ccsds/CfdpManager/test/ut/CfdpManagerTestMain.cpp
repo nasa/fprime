@@ -447,6 +447,11 @@ TEST(Event, R2LateMetadataToAMissingDirectoryIsRejected) {
     tester.testR2LateMetadataToAMissingDirectoryIsRejected();
 }
 
+TEST(Event, Class1RxInactivityRemovesTheTempFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxInactivityRemovesTheTempFile();
+}
+
 TEST(Event, RxFileSizeMismatch) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testRxFileSizeMismatchEvent();

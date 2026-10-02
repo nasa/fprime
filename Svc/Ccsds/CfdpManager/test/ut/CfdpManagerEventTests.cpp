@@ -820,6 +820,42 @@ void CfdpManagerTester::testClass1RxFailureKeepsTheOldFile() {
     (void)Os::FileSystem::removeFile(dstFile);
 }
 
+void CfdpManagerTester::testClass1RxInactivityRemovesTheTempFile() {
+    U8 channelId = 0;
+    Cfdp::EntityId sourceEid = TEST_GROUND_EID;
+    Cfdp::EntityId destEid = this->component.getLocalEidParam();
+    Cfdp::TransactionSeq transactionSeq = 821;
+    const char* srcFile = "/ground/r1_inactive.bin";
+    const char* dstFile = "test/ut/output/r1_inactive_rx.bin";
+    Fw::String tmpFile;
+    tmpFile.format("%s/%" CFDP_PRI_ENTITY_ID ":%" CFDP_PRI_TRANSACTION_SEQ ".tmp",
+                   this->component.getTmpDirParam(channelId).toChar(), sourceEid, transactionSeq);
+
+    U8 testData[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Cfdp::FileSize fileSize = 100;
+
+    (void)Os::FileSystem::removeFile(dstFile);
+    this->clearHistory();
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, sizeof(testData), testData,
+                          Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+    ASSERT_EQ(Os::FileSystem::FILE, Os::FileSystem::getPathType(tmpFile.toChar()));
+
+    Transaction* txn = this->findTransaction(channelId, transactionSeq);
+    ASSERT_NE(txn, nullptr);
+    txn->m_flags.com.inactivity_fired = false;
+    txn->m_inactivity_timer.setTimer(1);
+    I32 cont = 0;
+    txn->rTick(&cont);
+
+    ASSERT_EVENTS_RxInactivityTimeout_SIZE(1);
+    ASSERT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(tmpFile.toChar()));
+    ASSERT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(dstFile));
+}
+
 void CfdpManagerTester::testRxFileSizeMismatchEvent() {
     // RxFileSizeMismatch emitted when metadata size != EOF size
 

@@ -610,6 +610,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testClass1RxWritesIntoTmpUntilComplete();
     void testClass1RxFailureKeepsTheOldFile();
     void testR2LateMetadataToAMissingDirectoryIsRejected();
+    void testClass1RxInactivityRemovesTheTempFile();
     void testRxFileSizeMismatchEvent();
     void testRxFileDataOutOfBoundsEvent();
     void testRxEofCancelReceivedEvent();

@@ -34,6 +34,7 @@
 #include <new>
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Os/FileSystem.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/Channel.hpp>
@@ -626,6 +627,9 @@ void Channel::recycleTransaction(Transaction* txn) {
     if (true == txn->m_fd.isOpen()) {
         this->m_cfdpManager->log_WARNING_LO_DanglingFileHandleClosed(txn->getChannelId(), txn->m_history->seq_num);
         txn->m_fd.close();
+        if ((txn->m_history->dir == Direction::DIRECTION_RX) && !txn->m_keep) {
+            (void)Os::FileSystem::removeFile(txn->m_rxTmpFilename.toChar());
+        }
     }
 
     this->dequeueTransaction(txn);  // this makes it "float" (not in any queue)
