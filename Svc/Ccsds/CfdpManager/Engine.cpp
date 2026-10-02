@@ -810,6 +810,8 @@ Transaction* Engine::startRxTransaction(U8 chan_num) {
         // set default FIN status
         txn->m_state_data.receive.r2.dc = FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE;
         txn->m_state_data.receive.r2.fs = FinFileStatus::FIN_FILE_STATUS_DISCARDED;
+        // Discard the received file unless the transaction completes successfully, which sets KEEP
+        txn->m_keep = Keep::DELETE;
 
         txn->m_flags.com.q_index = QueueId::RX;
         chan->insertBackInQueue(static_cast<QueueId::T>(txn->m_flags.com.q_index), &txn->m_cl_node);

@@ -427,6 +427,11 @@ TEST(Event, RxCrcMismatch) {
     tester.testRxCrcMismatchEvent();
 }
 
+TEST(Event, Class1RxCrcMismatchRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxCrcMismatchRemovesFile();
+}
+
 TEST(Event, RxFileSizeMismatch) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testRxFileSizeMismatchEvent();

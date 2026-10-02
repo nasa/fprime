@@ -694,6 +694,39 @@ void CfdpManagerTester::testRxCrcMismatchEvent() {
     // or specific PDU sequencing. Consider testing in a more complete transaction scenario.
 }
 
+void CfdpManagerTester::testClass1RxCrcMismatchRemovesFile() {
+    // A Class 1 receive that fails its checksum must not leave the partial file at its destination
+
+    U8 channelId = 0;
+    Cfdp::EntityId sourceEid = TEST_GROUND_EID;
+    Cfdp::EntityId destEid = this->component.getLocalEidParam();
+    Cfdp::TransactionSeq transactionSeq = 801;
+    const char* srcFile = "/ground/crc_test_class1.bin";
+    const char* dstFile = "test/ut/output/crc_mismatch_class1_rx.bin";
+
+    U8 testData[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Cfdp::FileSize fileSize = sizeof(testData);
+
+    (void)Os::FileSystem::removeFile(dstFile);
+    this->clearHistory();
+
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, static_cast<U16>(fileSize), testData,
+                          Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+    ASSERT_EQ(Os::FileSystem::FILE, Os::FileSystem::getPathType(dstFile));
+
+    U32 wrongChecksum = 0xDEADBEEF;
+    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     wrongChecksum, fileSize, Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxCrcMismatch_SIZE(1);
+    ASSERT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(dstFile));
+}
+
 void CfdpManagerTester::testRxFileSizeMismatchEvent() {
     // RxFileSizeMismatch emitted when metadata size != EOF size
 
