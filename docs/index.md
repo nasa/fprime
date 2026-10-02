@@ -5,11 +5,13 @@ hide:
 
 # Documentation
 
-The documentation is organized into four sections, following the [Diátaxis](https://diataxis.fr/) framework. To learn
-F Prime in chronological order, follow The F Prime Book: it tells the story across all four sections, from first
-concepts to specialized topics.
+If you are learning F Prime, start with The F Prime Book. It walks you through this documentation in order, one topic at
+a time, from your first component to specialized topics.
 
 [Read The F Prime Book](the_book.md){ .md-button }
+
+If you already know what you are looking for, go straight to one of the four sections below (organized following
+[Diátaxis](https://diataxis.fr/)), browse the navigation pane on the left, or use the search bar at the top.
 
 <div class="grid cards" markdown>
 
