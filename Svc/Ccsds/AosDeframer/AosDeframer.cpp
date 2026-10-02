@@ -584,8 +584,9 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
     }
 
     const FwSizeType packetSize = static_cast<FwSizeType>(packetLength);
-    // Reject an unrepresentable size, or a length not exceeding the header (including the
-    // absent length reserved for idle packets, CCSDS 133.1-B-3 4.1.2.4.4 / 4.1.3.1.5).
+    // Return 0 if the declared length cannot be represented by FwSizeType or does not
+    // extend beyond the EPP header. Idle packets, including the absent-length form, were
+    // handled above before this non-idle validation.
     if ((static_cast<U32>(packetSize) != packetLength) || (packetSize <= headerLength)) {
         return 0;
     }

@@ -112,7 +112,7 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \param vc The virtual channel state
     //! \param packetStart Pointer to start of packet data within the incoming frame buffer
     //! \param remainingBytes Available bytes in the data zone
-    //! \return Number of bytes the packet spans, or 0 if not yet known/idle
+    //! \return Number of bytes the packet spans, or 0 if incomplete, idle, or invalid
     FwSizeType sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeType remainingBytes);
 
     //! Attempt to parse a Space Packet header from the M_PDU data zone per CCSDS 133.0-B-2
