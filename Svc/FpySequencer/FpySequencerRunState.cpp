@@ -505,39 +505,40 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             return;
         }
         case Fpy::DirectiveId::WAIT_REL: {
-            this->directive_waitRel_internalInterfaceInvoke(directive.waitRel);
+            this->directive_waitRel_internalInterfaceInvoke(directive.waitRel, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::WAIT_ABS: {
-            this->directive_waitAbs_internalInterfaceInvoke(directive.waitAbs);
+            this->directive_waitAbs_internalInterfaceInvoke(directive.waitAbs, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::GOTO: {
-            this->directive_goto_internalInterfaceInvoke(directive.gotoDirective);
+            this->directive_goto_internalInterfaceInvoke(directive.gotoDirective, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::IF: {
-            this->directive_if_internalInterfaceInvoke(directive.ifDirective);
+            this->directive_if_internalInterfaceInvoke(directive.ifDirective, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::NO_OP: {
-            this->directive_noOp_internalInterfaceInvoke(directive.noOp);
+            this->directive_noOp_internalInterfaceInvoke(directive.noOp, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::PUSH_TLM_VAL: {
-            this->directive_pushTlmVal_internalInterfaceInvoke(directive.pushTlmVal);
+            this->directive_pushTlmVal_internalInterfaceInvoke(directive.pushTlmVal, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME: {
-            this->directive_pushTlmValAndTime_internalInterfaceInvoke(directive.pushTlmValAndTime);
+            this->directive_pushTlmValAndTime_internalInterfaceInvoke(directive.pushTlmValAndTime,
+                                                                      this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::PUSH_PRM: {
-            this->directive_pushPrm_internalInterfaceInvoke(directive.pushPrm);
+            this->directive_pushPrm_internalInterfaceInvoke(directive.pushPrm, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::CONST_CMD: {
-            this->directive_constCmd_internalInterfaceInvoke(directive.constCmd);
+            this->directive_constCmd_internalInterfaceInvoke(directive.constCmd, this->m_sequencesStarted);
             return;
         }
         // fallthrough on purpose
@@ -592,91 +593,94 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::FFLOOR:
         case Fpy::DirectiveId::IABS:
         case Fpy::DirectiveId::FABS: {
-            this->directive_stackOp_internalInterfaceInvoke(directive.stackOp);
+            this->directive_stackOp_internalInterfaceInvoke(directive.stackOp, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::EXIT: {
-            this->directive_exit_internalInterfaceInvoke(directive.exit);
+            this->directive_exit_internalInterfaceInvoke(directive.exit, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::ALLOCATE: {
-            this->directive_allocate_internalInterfaceInvoke(directive.allocate);
+            this->directive_allocate_internalInterfaceInvoke(directive.allocate, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::STORE_REL_CONST_OFFSET: {
-            this->directive_storeRelConstOffset_internalInterfaceInvoke(directive.storeRelConstOffset);
+            this->directive_storeRelConstOffset_internalInterfaceInvoke(directive.storeRelConstOffset,
+                                                                        this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::LOAD_REL: {
-            this->directive_loadRel_internalInterfaceInvoke(directive.loadRel);
+            this->directive_loadRel_internalInterfaceInvoke(directive.loadRel, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::PUSH_VAL: {
-            this->directive_pushVal_internalInterfaceInvoke(directive.pushVal);
+            this->directive_pushVal_internalInterfaceInvoke(directive.pushVal, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::DISCARD: {
-            this->directive_discard_internalInterfaceInvoke(directive.discard);
+            this->directive_discard_internalInterfaceInvoke(directive.discard, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::MEMCMP: {
-            this->directive_memCmp_internalInterfaceInvoke(directive.memCmp);
+            this->directive_memCmp_internalInterfaceInvoke(directive.memCmp, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::STACK_CMD: {
-            this->directive_stackCmd_internalInterfaceInvoke(directive.stackCmd);
+            this->directive_stackCmd_internalInterfaceInvoke(directive.stackCmd, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::PUSH_TIME: {
-            this->directive_pushTime_internalInterfaceInvoke(directive.pushTime);
+            this->directive_pushTime_internalInterfaceInvoke(directive.pushTime, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::SET_SEED: {
-            this->directive_setSeed_internalInterfaceInvoke(directive.setSeed);
+            this->directive_setSeed_internalInterfaceInvoke(directive.setSeed, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::PUSH_RAND: {
-            this->directive_pushRand_internalInterfaceInvoke(directive.pushRand);
+            this->directive_pushRand_internalInterfaceInvoke(directive.pushRand, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::GET_FIELD: {
-            this->directive_getField_internalInterfaceInvoke(directive.getField);
+            this->directive_getField_internalInterfaceInvoke(directive.getField, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::PEEK: {
-            this->directive_peek_internalInterfaceInvoke(directive.peek);
+            this->directive_peek_internalInterfaceInvoke(directive.peek, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::STORE_REL: {
-            this->directive_storeRel_internalInterfaceInvoke(directive.storeRel);
+            this->directive_storeRel_internalInterfaceInvoke(directive.storeRel, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::CALL: {
-            this->directive_call_internalInterfaceInvoke(directive.call);
+            this->directive_call_internalInterfaceInvoke(directive.call, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::RETURN: {
-            this->directive_return_internalInterfaceInvoke(directive.returnDirective);
+            this->directive_return_internalInterfaceInvoke(directive.returnDirective, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::LOAD_ABS: {
-            this->directive_loadAbs_internalInterfaceInvoke(directive.loadAbs);
+            this->directive_loadAbs_internalInterfaceInvoke(directive.loadAbs, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::STORE_ABS: {
-            this->directive_storeAbs_internalInterfaceInvoke(directive.storeAbs);
+            this->directive_storeAbs_internalInterfaceInvoke(directive.storeAbs, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::STORE_ABS_CONST_OFFSET: {
-            this->directive_storeAbsConstOffset_internalInterfaceInvoke(directive.storeAbsConstOffset);
+            this->directive_storeAbsConstOffset_internalInterfaceInvoke(directive.storeAbsConstOffset,
+                                                                        this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::POP_EVENT: {
-            this->directive_popEvent_internalInterfaceInvoke(directive.popEvent);
+            this->directive_popEvent_internalInterfaceInvoke(directive.popEvent, this->m_sequencesStarted);
             return;
         }
         case Fpy::DirectiveId::POP_SERIALIZABLE: {
-            this->directive_popSerializable_internalInterfaceInvoke(directive.popSerializable);
+            this->directive_popSerializable_internalInterfaceInvoke(directive.popSerializable,
+                                                                    this->m_sequencesStarted);
             return;
         }
     }
