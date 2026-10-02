@@ -6,8 +6,10 @@ hide:
 # Documentation
 
 > [!TIP]
-> **[The F Prime Book](the_book.md)** maps out what to learn and in which order: a guided reading path through this
-> documentation, from first concepts to specialized topics.
+> The documentation is organized into four sections following the [Diátaxis](https://diataxis.fr/) framework:
+> tutorials, user manual, how-to guides, and reference. To learn F Prime in chronological order, read
+> **[The F Prime Book](the_book.md)**: it tells the story across all four sections, from first concepts to specialized
+> topics.
 
 <div class="grid cards" markdown>
 
