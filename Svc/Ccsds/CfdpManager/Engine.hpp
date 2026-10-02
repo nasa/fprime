@@ -36,6 +36,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/MemAllocator.hpp>
+#include <Os/FileSystem.hpp>
 
 #include <Svc/Ccsds/CfdpManager/Transaction.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ChannelTelemetrySerializableAc.hpp>
@@ -730,6 +731,16 @@ class Engine {
      * @param txn  Pointer to the transaction object
      */
     void handleNotKeepFile(Transaction* txn);
+
+    /**
+     * @brief Move a file into a directory, keeping its name
+     *
+     * @param src  Path of the file to move
+     * @param dir  Directory to move it into
+     *
+     * @return status of the move; OTHER_ERROR if the new path does not fit
+     */
+    Os::FileSystem::Status moveIntoDir(const Fw::StringBase& src, const Fw::StringBase& dir);
 
     // Friend declarations for testing
     friend class CfdpManagerTester;

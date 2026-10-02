@@ -598,11 +598,19 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testFailKeepFileMoveEvent();
     void testFailPduSerializationEvent();
     void testFailPollFileMoveEvent();
+    void testMoveDirKeepsTheSentFileByName();
+    void testFailDirKeepsAFailedPollFileByName();
+    void setDirectories(U8 channelId, const char* moveDir, const char* failDir);
     void testFileDataSegmentMetadataEvent();
 
     // RX Error Events
     void testRxFileCreateFailedEvent();
     void testRxCrcMismatchEvent();
+    void testClass1RxCrcMismatchRemovesFile();
+    void testClass1RxWritesIntoTmpUntilComplete();
+    void testClass1RxFailureKeepsTheOldFile();
+    void testR2LateMetadataToAMissingDirectoryIsRejected();
+    void testClass1RxInactivityRemovesTheTempFile();
     void testRxFileSizeMismatchEvent();
     void testRxFileDataOutOfBoundsEvent();
     void testRxEofCancelReceivedEvent();
@@ -636,7 +644,6 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testRxWriteFailedEvent();
     void testRxSeekFailedEvent();
     void testRxFileRenameFailedEvent();
-    void testRxFileReopenFailedEvent();
     void testTxFileSeekFailedEvent();
     void testTxSendMetadataFailedEvent();
 

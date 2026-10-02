@@ -522,7 +522,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | RxReadCrcFailed | warning low | RX transaction failed to read, or read fewer bytes than expected, during CRC calculation |
 | RxEofMdSizeMismatch | warning low | RX transaction EOF/metadata size mismatch |
 | RxFileRenameFailed | warning low | RX transaction failed to rename temp file to final file |
-| RxFileReopenFailed | warning low | RX transaction failed to reopen file after rename |
+| RxFileReopenFailed | warning low | Not emitted: a received file stays at its temporary path until it is renamed into place |
 | RxInactivityTimeout | warning low | RX transaction inactivity timer expired |
 | RxInvalidDirectiveCode | warning low | RX transaction received invalid directive code for substate |
 | RxTransactionLimitReached | warning low | Dropping packet due to max RX transactions reached |

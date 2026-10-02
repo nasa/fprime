@@ -810,6 +810,8 @@ Transaction* Engine::startRxTransaction(U8 chan_num) {
         // set default FIN status
         txn->m_state_data.receive.r2.dc = FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE;
         txn->m_state_data.receive.r2.fs = FinFileStatus::FIN_FILE_STATUS_DISCARDED;
+        // Discard the received file unless the transaction completes successfully, which sets KEEP
+        txn->m_keep = Keep::DELETE;
 
         txn->m_flags.com.q_index = QueueId::RX;
         chan->insertBackInQueue(static_cast<QueueId::T>(txn->m_flags.com.q_index), &txn->m_cl_node);
@@ -1132,7 +1134,7 @@ void Engine::handleNotKeepFile(Transaction* txn) {
             // If move directory is defined attempt move
             moveDir = m_manager->getMoveDirParam(txn->getChannelId());
             if (moveDir.length() > 0) {
-                fileStatus = Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), moveDir.toChar());
+                fileStatus = this->moveIntoDir(txn->m_history->fnames.src_filename, moveDir);
                 if (fileStatus != Os::FileSystem::OP_OK) {
                     m_manager->log_WARNING_LO_FailKeepFileMove(txn->m_history->fnames.src_filename, moveDir,
                                                                fileStatus);
@@ -1152,8 +1154,7 @@ void Engine::handleNotKeepFile(Transaction* txn) {
                 // If fail directory is defined attempt move
                 failDir = m_manager->getFailDirParam(txn->getChannelId());
                 if (failDir.length() > 0) {
-                    fileStatus =
-                        Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), failDir.toChar());
+                    fileStatus = this->moveIntoDir(txn->m_history->fnames.src_filename, failDir);
                     if (fileStatus != Os::FileSystem::OP_OK) {
                         m_manager->log_WARNING_LO_FailPollFileMove(txn->m_history->fnames.src_filename, failDir,
                                                                    fileStatus);
@@ -1172,11 +1173,21 @@ void Engine::handleNotKeepFile(Transaction* txn) {
     }
     // Not Sender
     else {
-        fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.dst_filename.toChar());
+        fileStatus = Os::FileSystem::removeFile(txn->m_rxTmpFilename.toChar());
         if (fileStatus != Os::FileSystem::OP_OK) {
-            m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.dst_filename, fileStatus);
+            m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_rxTmpFilename, fileStatus);
         }
     }
+}
+
+Os::FileSystem::Status Engine::moveIntoDir(const Fw::StringBase& src, const Fw::StringBase& dir) {
+    const char* const slash = ::strrchr(src.toChar(), '/');
+    const char* const name = (slash != nullptr) ? slash + 1 : src.toChar();
+    Fw::String dst;
+    if (dst.format("%s/%s", dir.toChar(), name) != Fw::FormatStatus::SUCCESS) {
+        return Os::FileSystem::OTHER_ERROR;
+    }
+    return Os::FileSystem::moveFile(src.toChar(), dst.toChar());
 }
 
 Cfdp::ChannelTelemetry& Engine::getChannelTelemetryRef(U8 channelId) {
