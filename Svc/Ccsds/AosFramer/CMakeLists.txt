@@ -23,10 +23,12 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosFramerTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosFramerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/StatusProtocol.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/AosFramer.fpp"
   DEPENDS
     Svc_Ccsds_Types
     STest
+    Svc_ComStub
   UT_AUTO_HELPERS
 )
