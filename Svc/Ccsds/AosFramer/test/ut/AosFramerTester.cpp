@@ -211,8 +211,11 @@ void AosFramerTester ::testLongPacket() {
             // First Frame is the start of our big buffer (no idle padding)
             ASSERT_EQ(outFramePointer, 0);
         } else if (frame == 1) {
-            // Second Frame is an exclusively continuing packet (M_PDU pointer is all ones)
-            ASSERT_EQ(outFramePointer, 0xFFFF);
+            // Second Frame is an exclusively continuing packet (11 bit M_PDU pointer is all ones, spare bits zero)
+            ASSERT_EQ(outFramePointer, M_PDUSubfields::FHP_NO_PACKET_START);
+            ASSERT_EQ(outFramePointer, 0x07FF);
+            ASSERT_EQ(outBuffer.getData()[AOSHeader::SERIALIZED_SIZE], 0x07);
+            ASSERT_EQ(outBuffer.getData()[AOSHeader::SERIALIZED_SIZE + 1], 0xFF);
         } else {
             // Third Frame is the final (w/ a ton of idle padding)
 
@@ -221,7 +224,7 @@ void AosFramerTester ::testLongPacket() {
             U16 expectedFramePointer = sizeof(bufferData) % payloadPerFrame;
 
             ASSERT_EQ(outFramePointer, expectedFramePointer);
-            ASSERT_NE(expectedFramePointer, 0xFFFF);
+            ASSERT_LT(expectedFramePointer, M_PDUSubfields::FHP_IDLE_DATA_ONLY);
 
             // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
             const U8 idlePattern = this->component.SPP_IDLE_DATA_PATTERN;

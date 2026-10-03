@@ -87,11 +87,14 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test First Header Pointer at non-zero offset
     void testFhpAtOffset();
 
-    //! Test FHP_NO_PACKET_START (0x7FE) - continuation only
+    //! Test FHP_NO_PACKET_START (0x7FF) - continuation only
     void testFhpNoPacketStart();
 
-    //! Test FHP_IDLE_DATA_ONLY (0x7FF) - idle frame
+    //! Test FHP_IDLE_DATA_ONLY (0x7FE) - idle frame
     void testFhpIdleDataOnly();
+
+    //! Test reserved (spare) bits of the M_PDU header are ignored when reading the FHP
+    void testFhpReservedBitsIgnored();
 
     //! Test multiple packets in single frame
     void testMultiplePacketsInFrame();

@@ -403,7 +403,8 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
     status = deserializer.deserializeTo(mpduHeader);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U16 firstHeaderPointer = mpduHeader.get_firstHeaderPointer();
+    // Upper 5 bits of the M_PDU header are reserved spares (CCSDS 732.0-B-5 Section 4.1.4.2.2.1)
+    const U16 firstHeaderPointer = static_cast<U16>(mpduHeader.get_firstHeaderPointer() & M_PDUSubfields::fhpMask);
 
     // Calculate data zone boundaries
     const FwSizeType dataZoneStart = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE;

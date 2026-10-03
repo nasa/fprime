@@ -71,6 +71,11 @@ TEST(AosDeframer, testFhpIdleDataOnly) {
     tester.testFhpIdleDataOnly();
 }
 
+TEST(AosDeframer, testFhpReservedBitsIgnored) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testFhpReservedBitsIgnored();
+}
+
 TEST(AosDeframer, testMultiplePacketsInFrame) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testMultiplePacketsInFrame();
