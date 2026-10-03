@@ -5,6 +5,13 @@ hide:
 
 # Documentation
 
+If you are learning F Prime, start with The F Prime Book. It walks you through this documentation in order, one topic at
+a time, from your first component to specialized topics.
+
+[Read The F Prime Book](the_book.md){ .md-button }
+
+If you already know what you are looking for, use the search bar at the top, browse the navigation pane on the left, or
+go straight to one of the four sections below.
 
 <div class="grid cards" markdown>
 
