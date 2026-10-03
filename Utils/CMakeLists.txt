@@ -11,11 +11,13 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/RateLimiter.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TokenBucket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/CRCChecker.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Algorithms.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/CRCChecker.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/RateLimiter.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/TestUtils.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/TokenBucket.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Algorithms.hpp"
   DEPENDS
     Fw_Types
     Fw_Time
@@ -28,6 +30,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/CRCCheckerTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/RateLimiterTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TokenBucketTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/AlgorithmsTester.cpp"
   DEPENDS
     STest
     Fw_Types
