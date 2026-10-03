@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "55f597d76f8749b647068fd7aa3581a14dab6ff9",
-  "generated_at": "2026-10-03T22:15:44Z",
+  "generated_at": "2026-10-03T23:01:56Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -24,7 +24,7 @@
   },
   "overall_int": {
     "line_pct": 30.23,
-    "line_covered": 9628,
+    "line_covered": 9627,
     "line_total": 31847,
     "function_pct": 38.24,
     "function_covered": 1660,
@@ -4460,14 +4460,14 @@
         "tier": "silver"
       },
       "int": {
-        "line_pct": 41.53,
-        "line_covered": 103,
+        "line_pct": 41.13,
+        "line_covered": 102,
         "line_total": 248,
         "function_pct": 40.68,
         "function_covered": 24,
         "function_total": 59,
-        "branch_pct": 33.63,
-        "branch_covered": 38,
+        "branch_pct": 32.74,
+        "branch_covered": 37,
         "branch_total": 113,
         "report": "Fw/Time/int-coverage/index.html",
         "tier": "bronze"
@@ -4806,8 +4806,8 @@
         "function_pct": 43.03,
         "function_covered": 250,
         "function_total": 581,
-        "branch_pct": 27.65,
-        "branch_covered": 405,
+        "branch_pct": 27.78,
+        "branch_covered": 407,
         "branch_total": 1465,
         "report": "Os/int-coverage/index.html",
         "tier": "bronze"
@@ -4964,8 +4964,8 @@
         "function_pct": 27.17,
         "function_covered": 25,
         "function_total": 92,
-        "branch_pct": 15.35,
-        "branch_covered": 74,
+        "branch_pct": 15.56,
+        "branch_covered": 75,
         "branch_total": 482,
         "report": "Os/Generic/int-coverage/index.html",
         "tier": "bronze"
@@ -5055,8 +5055,8 @@
         "function_pct": 44.44,
         "function_covered": 12,
         "function_total": 27,
-        "branch_pct": 20.43,
-        "branch_covered": 19,
+        "branch_pct": 21.51,
+        "branch_covered": 20,
         "branch_total": 93,
         "report": "Os/Generic/Types/int-coverage/index.html",
         "tier": "bronze"
@@ -12267,8 +12267,8 @@
         "function_pct": 85.71,
         "function_covered": 6,
         "function_total": 7,
-        "branch_pct": 50.42,
-        "branch_covered": 60,
+        "branch_pct": 49.58,
+        "branch_covered": 59,
         "branch_total": 119,
         "report": "Svc/TlmChan/int-coverage/index.html",
         "tier": "bronze"
