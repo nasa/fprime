@@ -44,9 +44,14 @@ The **FileHandlingCfdp subtopology** packages CFDP-based file-transfer services 
 > `FileHandlingCfdp::prmDb.configureSandbox(<directory>)`, where the directory contains the store
 > file set by `prmDb.configure(<file name>)` (which is **not** itself a sandbox). The
 > `fileManager` command-path sandbox is likewise configured to `"/"`; restrict it with
-> `FileHandlingCfdp::fileManager.configure(<directory>)`. Additionally,
-> CFDP file transfers via `cfdpManager` are not sandboxed: ground-commanded transactions may read
-> or write any path accessible to the process.
+> `FileHandlingCfdp::fileManager.configure(<directory>)`.
+>
+> CFDP file transfers via `cfdpManager` are not sandboxed
+> by default: ground-commanded transactions may read any path accessible to the process, and
+> received files are written wherever the incoming Metadata PDU says. Set the per-channel
+> `cfdpManager.ChannelConfig[n].rx_dir` parameter to confine received files to a directory
+> (see the CfdpManager SDD, *Security Considerations*).
+
 
 ### 2.4 Differences from FileHandling Subtopology
 
@@ -109,7 +114,7 @@ The CFDP manager is configured at runtime via **parameters** defined in `CfdpCfg
 * **Local Entity ID**: Unique identifier for this CFDP entity
 * **ACK/NAK limits**: Maximum retry attempts for acknowledged transfers
 * **Timers**: ACK timeout and inactivity timeout durations
-* **Directories**: Temporary, failure, and move directories for file operations
+* **Directories**: Temporary, failure, move, and receive (`rx_dir`) directories for file operations
 * **Throttling**: Maximum outgoing PDUs per cycle for bandwidth control
 
 See the [CfdpManager SDD](../../../Ccsds/CfdpManager/docs/sdd.md) for detailed configuration options.
