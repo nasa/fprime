@@ -198,7 +198,7 @@ arguments.
 | Argument   | Meaning                                                                                                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------- |
 | identifier | A thread-independent value that is used to identify activities of the thread. Should be unique in the system. |
-| priority   | The execution priority of the task: 0 = low priority, 255 = high priority.                                    |
+| priority   | The execution priority of the task. Priorities are defined by the underlying platform/OS; F´ defines no global priority scheme. |
 | stackSize  | The size of the stack given to the task.                                                                      |
 
 As mentioned in Section 6.7.8.3, the functions preamble() and

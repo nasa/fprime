@@ -19,7 +19,7 @@ Core services are those that directly wrap OS primitives and are implemented by 
 |---|---|
 | **Mutex** | Mutual-exclusion lock and RAII `ScopeLock` helper. |
 | **CountingSemaphore** | Counting semaphore for resource counting and thread synchronization. |
-| **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. Priority is platform-defined; `TASK_PRIORITY_DEFAULT` selects the platform default. The Posix backend additionally accepts `Os::Posix::Task::PosixTask::TASK_PRIORITY_NON_REALTIME` (FPP: `Os.Posix.TASK_PRIORITY_NON_REALTIME`) to run a task under the non-realtime `SCHED_OTHER` policy rather than `SCHED_RR`; see [Non-Realtime Tasks on POSIX](../../docs/user-manual/framework/run-multi-core.md#non-realtime-tasks-on-posix). |
+| **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. Priority is platform-defined; `TASK_PRIORITY_DEFAULT` selects the platform default. The Posix backend additionally accepts `Os::Posix::Task::PosixTask::TASK_PRIORITY_NON_REALTIME` (FPP: `Os.Posix.TASK_PRIORITY_NON_REALTIME`) to run a task under the non-realtime `SCHED_OTHER` policy rather than `SCHED_RR`; see [Non-Realtime Tasks on POSIX](../../docs/user-manual/framework/run-multi-core.md#non-realtime-tasks-on-posix). With `POSIX_THREADS_USE_LINUX_PRIORITIES` set in `FpConfig.h` (Linux only), numeric priorities are instead the Linux levels 0 (highest) through 139 (lowest), spanning `SCHED_RR` and `SCHED_OTHER` nice values; see [Linux-Defined Priorities](../../docs/user-manual/framework/run-multi-core.md#linux-defined-priorities). |
 | **Queue** | Inter-task message passing with configurable depth, priority support, and blocking modes. |
 
 ### 2.2 File system

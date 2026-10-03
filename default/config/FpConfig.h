@@ -149,6 +149,13 @@ extern "C" {
 #define POSIX_THREADS_ENABLE_NAMES (1)  //!< Enable/Disable assigning names to threads
 #endif
 
+// Interpret Posix task priorities as Linux-defined priorities, 0 (highest) through 139 (lowest): 0-98 select
+// SCHED_RR 99-1 and 100-139 select SCHED_OTHER at nice -20 through 19. Requires a Linux target. When disabled,
+// numeric priorities are SCHED_RR priorities (1, lowest, through 99, highest, on Linux).
+#ifndef POSIX_THREADS_USE_LINUX_PRIORITIES
+#define POSIX_THREADS_USE_LINUX_PRIORITIES (0)  //!< Enable/Disable Linux-defined task priorities
+#endif
+
 // Hint to the compiler to always inline LinearBufferBase serialization &
 // deserialization methods
 #define FW_SERIALIZE_FORCE_INLINE_LBB

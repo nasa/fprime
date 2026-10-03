@@ -33,6 +33,8 @@ struct PosixTaskHandle : public TaskHandle {
 #if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
     char m_name[PosixTaskHandle::PTHREAD_NAME_LENGTH];
 #endif
+    //! Requested priority, available to the task on start
+    FwTaskPriorityType m_priority = Os::Task::TASK_PRIORITY_DEFAULT;
 };
 
 //! Posix task implementation as driven by pthreads implementation
