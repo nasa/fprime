@@ -17,6 +17,7 @@ namespace Ccsds {
 
 Fw::Buffer AosDeframerTester::from_allocate_handler(FwIndexType portNum, FwSizeType size) {
     (void)portNum;
+    ++this->m_allocationCalls;
     if (m_failNextAlloc) {
         m_failNextAlloc = false;
         return Fw::Buffer();
@@ -25,6 +26,19 @@ Fw::Buffer AosDeframerTester::from_allocate_handler(FwIndexType portNum, FwSizeT
         return Fw::Buffer(this->m_allocBuf, size);
     }
     return Fw::Buffer();
+}
+
+void AosDeframerTester::from_dataOut_handler(FwIndexType portNum,
+                                             Fw::Buffer& data,
+                                             const ComCfg::FrameContext& context) {
+    if (this->m_expectedPacketBytes != nullptr) {
+        ASSERT_LE(this->m_checkedPacketBytes, this->m_expectedPacketSize);
+        ASSERT_LE(data.getSize(), this->m_expectedPacketSize - this->m_checkedPacketBytes);
+        ASSERT_EQ(::memcmp(data.getData(), this->m_expectedPacketBytes + this->m_checkedPacketBytes, data.getSize()),
+                  0);
+        this->m_checkedPacketBytes += data.getSize();
+    }
+    AosDeframerGTestBase::from_dataOut_handler(portNum, data, context);
 }
 
 void AosDeframerTester::configureDefault() {
@@ -123,7 +137,7 @@ FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
 
     buffer[0] = static_cast<U8>(
         static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset) |
-        static_cast<U8>((protocolId & EPPSubfields::protocolIdMask) << EPPSubfields::protocolIdOffset) |
+        static_cast<U8>((protocolId << EPPSubfields::protocolIdOffset) & EPPSubfields::protocolIdMask) |
         static_cast<U8>(lengthOfLength & EPPSubfields::lengthOfLengthMask));
 
     if (lengthOfLength == EppLengthOfLength::Zero) {
@@ -149,9 +163,10 @@ FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
         lol = 4;
     }
 
-    // Length field (big-endian)
+    // CCSDS 133.1-B-3 section 4.1.2.8.2 includes the header in the wire length.
+    const FwSizeType packetLength = offset + lol + dataLength;
     for (U8 i = 0; i < lol; i++) {
-        buffer[offset++] = static_cast<U8>(dataLength >> (8 * (lol - i - 1)) & 0xFF);
+        buffer[offset++] = static_cast<U8>(packetLength >> (8 * (lol - i - 1)) & 0xFF);
     }
 
     // Fill data
