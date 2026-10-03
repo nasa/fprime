@@ -1,6 +1,7 @@
 # Verify that F' builds and passes unit tests under non-default configuration
 # parameter settings.  Each "profile" in ci/config-profiles.json defines a set
-# of -D compile-definition overrides applied via generate-args.
+# of cache overrides. The CI-only project hook converts FW_* overrides
+# into C/C++ compiler definitions; FPRIME_* options remain CMake settings.
 #
 # This workflow runs the full profile matrix nightly.  Pull requests run only
 # the "minimal" profile via the "Config Test" workflow.
@@ -98,14 +99,14 @@ jobs:
         uses: nasa/fprime-actions/build@devel
         with:
           build-all: "true"
-          generate-args: "${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
+          generate-args: "-DCMAKE_PROJECT_INCLUDE=${{ github.workspace }}/ci/apply-config-profile.cmake ${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
           jobs: ${{ github.event.inputs.jobs || 'random' }}
 
       - name: "Build Ref [${{ matrix.name }}]"
         uses: nasa/fprime-actions/build@devel
         with:
           working-directory: "TestDeploymentsProject"
-          generate-args: "${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
+          generate-args: "-DCMAKE_PROJECT_INCLUDE=${{ github.workspace }}/ci/apply-config-profile.cmake ${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
           jobs: ${{ github.event.inputs.jobs || 'random' }}
 
   # ---------------------------------------------------------------------------
@@ -136,12 +137,12 @@ jobs:
       - name: "Run Framework UTs [${{ matrix.name }}]"
         uses: nasa/fprime-actions/run-unit-tests@devel
         with:
-          generate-args: "${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
+          generate-args: "-DCMAKE_PROJECT_INCLUDE=${{ github.workspace }}/ci/apply-config-profile.cmake ${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
           jobs: ${{ github.event.inputs.jobs || 'random' }}
 
       - name: "Run Ref UTs [${{ matrix.name }}]"
         uses: nasa/fprime-actions/run-unit-tests@devel
         with:
           working-directory: "TestDeploymentsProject"
-          generate-args: "${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
+          generate-args: "-DCMAKE_PROJECT_INCLUDE=${{ github.workspace }}/ci/apply-config-profile.cmake ${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
           jobs: ${{ github.event.inputs.jobs || 'random' }}
