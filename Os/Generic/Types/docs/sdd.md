@@ -51,7 +51,7 @@ After deq @0:  slot[0].seq=4 (next cycle, 0+capacity)
 Later enq @0:  slot[0].seq=5 (4+1, ready for read again)
 ```
 
-**NOTE**: With FwSizeType being a U64, the wrap-around is functionally impossible (~584 years at 1 GHz). However, on 32-bit platforms (FwSizeType=U32), wrap-around occurs after 2^32 operations (~1.2 hours at 1M ops/sec). The algorithm remains correct after wrap (sequence numbers prevent ABA), but applications with sustained high throughput on 32-bit systems should be aware. FwSizeType is used (instead of directly using U64) to support platforms with 32-bit native word size where 64-bit atomics may not be lock-free or require expensive emulation. 
+**NOTE**: Positions and sequence numbers are counted modulo a period P, the largest multiple of the capacity that FwSizeType can hold, so `pos+1`, `pos+capacity` and `seq - pos` in this document are taken modulo P, with differences read as signed values. Because P is a multiple of the capacity, the slot index `pos % capacity` stays continuous when the counters wrap, for any capacity. With FwSizeType being a U64, the wrap-around is functionally impossible (~584 years at 1 GHz). On 32-bit platforms (FwSizeType=U32), it occurs after about 2^32 operations (~1.2 hours at 1M ops/sec). FwSizeType is used (instead of directly using U64) to support platforms with 32-bit native word size where 64-bit atomics may not be lock-free or require expensive emulation. 
 
 ### 2.3 Dequeue Algorithm (O(1))
 
@@ -193,7 +193,7 @@ Later enq @0:  slot[0].seq=5 (4+1, ready for read again)
 
 1. **Position CAS protects slot claiming:**
    - Threads CAS the position counter, not the sequence
-   - Position counter monotonically increases (no wrap-around reuse)
+   - Position counter only returns to a value after a full period of P operations
    - If Thread A's CAS succeeds, it has exclusive access to that slot
 
 2. **Sequence enforces ordering:**
@@ -284,7 +284,7 @@ enqueue() & dequeue() both call semaphore operations (tryWait() and post()) - th
 - Sustained high throughput (verify no O(n) degrade)
 - Alternating enqueue/dequeue bursts
 - ISR preemption simulation
-- Capacity wrap-around (position counter near 2^64)
+- Position counter wrap-around (counters seeded just before the period P, power-of-2 and other capacities, single-threaded and MPMC)
 
 ## 7. References
 

@@ -34,6 +34,7 @@ AtomicQueue::AtomicQueue()
       m_capacity(0),
       m_bufferSize(0),
       m_mask(0),
+      m_period(0),
       m_enqueuePos(0),
       m_dequeuePos(0),
       m_allocator(nullptr),
@@ -59,6 +60,7 @@ void AtomicQueue::create(FwSizeType numBuffers,
     // Optimization: use bitwise AND for power-of-2, otherwise modulo
     bool isPowerOf2 = (numBuffers & (numBuffers - 1)) == 0;
     this->m_mask = isPowerOf2 ? (numBuffers - 1) : 0;
+    this->m_period = (std::numeric_limits<FwSizeType>::max() / numBuffers) * numBuffers;
 
     // Allocate slot array (with overflow check)
     FW_ASSERT(numBuffers <= std::numeric_limits<FwSizeType>::max() / sizeof(Slot),
@@ -146,6 +148,7 @@ void AtomicQueue::teardown() {
     this->m_capacity = 0;
     this->m_bufferSize = 0;
     this->m_mask = 0;
+    this->m_period = 0;
     this->m_allocator = nullptr;
 }
 
@@ -167,7 +170,7 @@ bool AtomicQueue::enqueueInternal(const U8* buffer, FwSizeType size) {
 
         // Check against dequeue position to prevent lapping (detect full queue)
         FwSizeType deqPos = this->m_dequeuePos.load(std::memory_order_relaxed);
-        FwSignedSizeType queueDiff = static_cast<FwSignedSizeType>(pos) - static_cast<FwSignedSizeType>(deqPos);
+        FwSignedSizeType queueDiff = this->distance(pos, deqPos);
         if (queueDiff >= static_cast<FwSignedSizeType>(this->m_capacity)) {
             return false;  // Queue is full
         }
@@ -176,11 +179,11 @@ bool AtomicQueue::enqueueInternal(const U8* buffer, FwSizeType size) {
         FwSizeType seq = slot->sequence.load(std::memory_order_acquire);
 
         // Check if slot is ready for write (seq == pos means available)
-        FwSignedSizeType diff = static_cast<FwSignedSizeType>(seq) - static_cast<FwSignedSizeType>(pos);
+        FwSignedSizeType diff = this->distance(seq, pos);
 
         if (diff == 0) {
             // Slot available, try to claim it
-            if (this->m_enqueuePos.compare_exchange_weak(pos, pos + 1, std::memory_order_release,
+            if (this->m_enqueuePos.compare_exchange_weak(pos, this->advance(pos, 1), std::memory_order_release,
                                                          std::memory_order_relaxed)) {
                 // Claimed the slot, copy message data
                 FW_ASSERT(slot->buffer != nullptr, static_cast<FwAssertArgType>(pos));
@@ -188,7 +191,7 @@ bool AtomicQueue::enqueueInternal(const U8* buffer, FwSizeType size) {
                 slot->size = size;
 
                 // Mark slot as ready for read
-                slot->sequence.store(pos + 1, std::memory_order_release);
+                slot->sequence.store(this->advance(pos, 1), std::memory_order_release);
                 return true;
             }
         } else if (diff < 0) {
@@ -270,11 +273,11 @@ bool AtomicQueue::dequeue(U8* buffer, FwSizeType capacity, FwSizeType& actualSiz
         FwSizeType seq = slot->sequence.load(std::memory_order_acquire);
 
         // Check if slot is ready for read (seq == pos + 1 means data available)
-        FwSignedSizeType diff = static_cast<FwSignedSizeType>(seq) - static_cast<FwSignedSizeType>(pos + 1);
+        FwSignedSizeType diff = this->distance(seq, this->advance(pos, 1));
 
         if (diff == 0) {
             // Slot has data, try to claim it
-            if (this->m_dequeuePos.compare_exchange_weak(pos, pos + 1, std::memory_order_release,
+            if (this->m_dequeuePos.compare_exchange_weak(pos, this->advance(pos, 1), std::memory_order_release,
                                                          std::memory_order_relaxed)) {
                 // Claimed the slot, check size and copy data
                 // Note: sequence.load(acquire) at 10 lines above already synchronizes with
@@ -288,7 +291,7 @@ bool AtomicQueue::dequeue(U8* buffer, FwSizeType capacity, FwSizeType& actualSiz
                 (void)std::memcpy(buffer, slot->buffer, actualSize);
 
                 // Mark slot as available for next cycle (pos + capacity)
-                slot->sequence.store(pos + this->m_capacity, std::memory_order_release);
+                slot->sequence.store(this->advance(pos, this->m_capacity), std::memory_order_release);
 
                 // Post semaphore to wake up blocked enqueue threads (if semaphore exists)
                 // ISR-SAFETY NOTE: Calling from ISR depends on platform semaphore implementation.
@@ -334,7 +337,7 @@ FwSizeType AtomicQueue::getSize() const {
 
     FwSizeType enq = this->m_enqueuePos.load(std::memory_order_relaxed);
     FwSizeType deq = this->m_dequeuePos.load(std::memory_order_relaxed);
-    FwSignedSizeType diff = static_cast<FwSignedSizeType>(enq) - static_cast<FwSignedSizeType>(deq);
+    FwSignedSizeType diff = this->distance(enq, deq);
 
     // Two independent relaxed loads provide no cross-variable consistency guarantee.
     // Restrict to [0, capacity] rather than asserting — diff can be transiently negative

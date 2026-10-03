@@ -15,6 +15,7 @@
 #include <atomic>
 #include <chrono>
 #include <cstdint>
+#include <limits>
 #include <numeric>
 #include <thread>
 #include <vector>
@@ -117,8 +118,20 @@ class PartialFailAllocator : public Fw::MemAllocator {
     U32 m_allocCount;
 };
 
-// Forward declaration for friend access
-class AtomicQueueWrapAroundTest;
+// Friend of Types::AtomicQueue: places the position counters next to their wrap point
+class AtomicQueueWrapAroundTest {
+  public:
+    // Leaves the queue empty, `laps` full laps before the last multiple of the capacity that FwSizeType
+    // holds. Slot i then holds the next position that maps to it, as it would after a long run.
+    static void seedBeforeWrap(Types::AtomicQueue& queue, FwSizeType laps) {
+        const FwSizeType start = (std::numeric_limits<FwSizeType>::max() / queue.m_capacity - laps) * queue.m_capacity;
+        for (FwSizeType i = 0; i < queue.m_capacity; ++i) {
+            queue.m_slots[i].sequence.store(start + i);
+        }
+        queue.m_enqueuePos.store(start);
+        queue.m_dequeuePos.store(start);
+    }
+};
 
 // Fixture: eliminates duplicate setup/teardown across all tests
 class AtomicQueueTest : public ::testing::Test {
@@ -679,45 +692,120 @@ TEST_F(AtomicQueueTest, ISRSafetySimulation) {
     }
 }
 
-// Counter wrap-around boundary test - verifies algorithm correctness near 32-bit limits
-TEST_F(AtomicQueueTest, CounterWrapBoundary) {
-    const FwSizeType cap = 4;
-    queue.create(cap, 32, allocator, 0);
+// Counter wrap-around boundary: FIFO order, size, full and empty hold while the positions wrap
+class AtomicQueueWrapTest : public AtomicQueueTest, public ::testing::WithParamInterface<FwSizeType> {};
 
-    // This test validates wrap-around handling via sustained operations
-    // Note: Directly manipulating counters to near-wrap state would require friend access
-    // For true wrap validation, counters would be set near FwSizeType maximum
-    // For true wrap validation on 64-bit, would require >2^64 operations (infeasible)
-    // For 32-bit platforms, wrap occurs at 2^32 (~4.3B ops, ~1 hour at 1M ops/sec)
+TEST_P(AtomicQueueWrapTest, CounterWrapBoundary) {
+    const FwSizeType cap = GetParam();
+    const FwSizeType cycles = 4;
+    queue.create(cap, 8, allocator, 0);
+    AtomicQueueWrapAroundTest::seedBeforeWrap(queue, 2);
 
-    // Perform operations that span potential wrap boundary
-    const FwSizeType opsAcrossWrap = 200;  // Crosses 32-bit boundary if starting near max
+    // One message first, so that for cap > 1 the wrap falls inside a fill
+    sendBuf[0] = 0xFF;
+    ASSERT_TRUE(queue.enqueue(sendBuf, 1));
+    ASSERT_TRUE(queue.dequeue(recvBuf, 8, actualSize));
 
-    for (FwSizeType cycle = 0; cycle < opsAcrossWrap / cap; ++cycle) {
-        // Fill queue
+    for (FwSizeType cycle = 0; cycle < cycles; ++cycle) {
         for (FwSizeType i = 0; i < cap; ++i) {
-            sendBuf[0] = static_cast<U8>(cycle);
-            sendBuf[1] = static_cast<U8>(i);
-            ASSERT_TRUE(queue.enqueue(sendBuf, 2)) << "Enqueue failed at cycle " << cycle;
+            sendBuf[0] = static_cast<U8>(cycle * cap + i);
+            ASSERT_TRUE(queue.enqueue(sendBuf, 1)) << "cycle " << cycle << " message " << i;
+            ASSERT_EQ(queue.getSize(), i + 1);
         }
+        ASSERT_TRUE(queue.isFull());
+        ASSERT_FALSE(queue.enqueue(sendBuf, 1));
 
-        // Drain queue, verify FIFO order maintained
         for (FwSizeType i = 0; i < cap; ++i) {
-            ASSERT_TRUE(queue.dequeue(recvBuf, 32, actualSize)) << "Dequeue failed at cycle " << cycle;
-            ASSERT_EQ(actualSize, 2);
-            ASSERT_EQ(recvBuf[0], static_cast<U8>(cycle)) << "FIFO violated at cycle " << cycle;
-            ASSERT_EQ(recvBuf[1], static_cast<U8>(i)) << "FIFO violated at cycle " << cycle;
+            ASSERT_TRUE(queue.dequeue(recvBuf, 8, actualSize)) << "cycle " << cycle << " message " << i;
+            ASSERT_EQ(recvBuf[0], static_cast<U8>(cycle * cap + i));
+        }
+        ASSERT_TRUE(queue.isEmpty());
+        ASSERT_FALSE(queue.dequeue(recvBuf, 8, actualSize));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(PowerOf2AndOtherCapacities, AtomicQueueWrapTest, ::testing::Values(1, 3, 4, 10, 64, 100));
+
+// Concurrent producers and consumers across the position wrap
+constexpr FwSizeType WRAP_STRESS_CAPACITY = 10;
+constexpr FwSizeType WRAP_STRESS_PRODUCERS = 3;
+constexpr FwSizeType WRAP_STRESS_CONSUMERS = 2;
+constexpr FwSizeType WRAP_STRESS_MESSAGES = 2000;  // Per producer
+constexpr FwSizeType WRAP_STRESS_TOTAL = WRAP_STRESS_PRODUCERS * WRAP_STRESS_MESSAGES;
+// Consecutive failed attempts before a thread gives up, so a stuck queue fails instead of hanging
+constexpr U32 WRAP_STRESS_MAX_IDLE = 100000;
+
+struct WrapStress {
+    Types::AtomicQueue* queue;
+    std::atomic<U8> timesReceived[WRAP_STRESS_TOTAL];
+    std::atomic<FwSizeType> receivedCount;
+
+    static void produce(WrapStress* stress, U8 producer) {
+        U8 buf[3];
+        buf[0] = producer;
+        for (FwSizeType i = 0; i < WRAP_STRESS_MESSAGES; ++i) {
+            buf[1] = static_cast<U8>(i >> 8);
+            buf[2] = static_cast<U8>(i & 0xFF);
+            bool sent = false;
+            for (U32 idle = 0; (idle < WRAP_STRESS_MAX_IDLE) && !sent; ++idle) {
+                sent = stress->queue->enqueue(buf, sizeof(buf));
+                if (!sent) {
+                    std::this_thread::yield();
+                }
+            }
+            if (!sent) {
+                return;
+            }
         }
     }
 
-    ASSERT_TRUE(queue.isEmpty());
+    static void consume(WrapStress* stress) {
+        U8 buf[8];
+        FwSizeType size = 0;
+        for (U32 idle = 0; (idle < WRAP_STRESS_MAX_IDLE) && (stress->receivedCount.load() < WRAP_STRESS_TOTAL);) {
+            if (stress->queue->dequeue(buf, sizeof(buf), size)) {
+                const FwSizeType index =
+                    buf[0] * WRAP_STRESS_MESSAGES + ((static_cast<FwSizeType>(buf[1]) << 8) | buf[2]);
+                if (index < WRAP_STRESS_TOTAL) {
+                    stress->timesReceived[index]++;
+                }
+                stress->receivedCount++;
+                idle = 0;
+            } else {
+                ++idle;
+                std::this_thread::yield();
+            }
+        }
+    }
+};
 
-    // NOTE: Full 32-bit wrap validation requires either:
-    // 1. Running ~4.3 billion operations (impractical for unit test)
-    // 2. Test-only internal state manipulation (via friend class)
-    // 3. Accelerated test on 16-bit platform (if available)
-    // This test validates algorithm logic; production testing on 32-bit targets
-    // should include extended soak tests (hours) to exercise wrap in deployment environment.
+TEST_F(AtomicQueueTest, ConcurrentMPMCAcrossWrap) {
+    queue.create(WRAP_STRESS_CAPACITY, 8, allocator, 0);
+    AtomicQueueWrapAroundTest::seedBeforeWrap(queue, 2);
+
+    WrapStress stress;
+    stress.queue = &queue;
+    for (FwSizeType i = 0; i < WRAP_STRESS_TOTAL; ++i) {
+        stress.timesReceived[i].store(0);
+    }
+    stress.receivedCount.store(0);
+
+    std::vector<std::thread> threads;
+    for (FwSizeType i = 0; i < WRAP_STRESS_PRODUCERS; ++i) {
+        threads.emplace_back(WrapStress::produce, &stress, static_cast<U8>(i));
+    }
+    for (FwSizeType i = 0; i < WRAP_STRESS_CONSUMERS; ++i) {
+        threads.emplace_back(WrapStress::consume, &stress);
+    }
+    for (std::thread& t : threads) {
+        t.join();
+    }
+
+    ASSERT_EQ(stress.receivedCount.load(), WRAP_STRESS_TOTAL);
+    for (FwSizeType i = 0; i < WRAP_STRESS_TOTAL; ++i) {
+        ASSERT_EQ(stress.timesReceived[i].load(), 1) << "message " << i;
+    }
+    ASSERT_TRUE(queue.isEmpty());
 }
 
 // Partial allocation failure - verify cleanup on mid-creation failure

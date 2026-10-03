@@ -42,13 +42,13 @@ namespace Types {
 //! \note Power-of-2 capacity uses fast bitwise AND; other sizes use modulo (~5-20% slower)
 //!
 //! \warning Position Counter Wrap-Around: The m_enqueuePos and m_dequeuePos counters are
-//! FwSizeType (platform word size). On 64-bit platforms (FwSizeType=U64), wrap-around
-//! is functionally impossible (~584 years at 1 GHz). However, on 32-bit platforms
-//! (FwSizeType=U32), wrap-around occurs after 2^32 operations (~1.2 hours at 1M ops/sec).
-//! The algorithm remains correct after wrap (sequence numbers prevent ABA), but applications
-//! with sustained high throughput on 32-bit systems should be aware. FwSizeType=U32 is
-//! used (instead of forcing U64) to support platforms with 32-bit native word size where
-//! 64-bit atomics may not be lock-free or require expensive emulation.
+//! FwSizeType (platform word size) and wrap at m_period, the largest multiple of the capacity
+//! that FwSizeType can hold, so the slot index stays continuous across the wrap for any
+//! capacity. On 64-bit platforms (FwSizeType=U64), wrap-around is functionally impossible
+//! (~584 years at 1 GHz). On 32-bit platforms (FwSizeType=U32), it occurs after about 2^32
+//! operations (~1.2 hours at 1M ops/sec). FwSizeType=U32 is used (instead of forcing U64) to
+//! support platforms with 32-bit native word size where 64-bit atomics may not be lock-free
+//! or require expensive emulation.
 class AtomicQueue {
     friend class ::AtomicQueueWrapAroundTest;  // Test-only accessor for counter manipulation
   public:
@@ -166,7 +166,7 @@ class AtomicQueue {
     //! \brief Slot structure for circular buffer with embedded buffer storage
     //!
     //! Each slot contains an embedded buffer and sequence number for lock-free coordination.
-    //! Sequence encoding:
+    //! Sequence encoding (positions and sequences are counted modulo m_period):
     //! - seq == index: ready for write (producer can claim)
     //! - seq == index + 1: ready for read (consumer can claim)
     //! - seq == index + capacity: completed read, next cycle's write position
@@ -189,6 +189,26 @@ class AtomicQueue {
         return (this->m_mask != 0) ? (pos & this->m_mask) : (pos % this->m_capacity);
     }
 
+    //! \brief Position \p steps after \p pos, wrapping at m_period
+    //!
+    //! \param pos position value in [0, m_period)
+    //! \param steps number of positions to advance, at most m_period
+    //! \return position in [0, m_period)
+    inline FwSizeType advance(FwSizeType pos, FwSizeType steps) const {
+        return (pos < this->m_period - steps) ? (pos + steps) : (pos - (this->m_period - steps));
+    }
+
+    //! \brief Signed distance from \p from to \p to around the position period
+    //!
+    //! \param to position or sequence value in [0, m_period)
+    //! \param from position or sequence value in [0, m_period)
+    //! \return to - from modulo m_period, in (-m_period / 2, m_period / 2]
+    inline FwSignedSizeType distance(FwSizeType to, FwSizeType from) const {
+        const FwSizeType ahead = (to >= from) ? (to - from) : (to + (this->m_period - from));
+        return (ahead <= this->m_period / 2) ? static_cast<FwSignedSizeType>(ahead)
+                                             : -static_cast<FwSignedSizeType>(this->m_period - ahead);
+    }
+
     //! \brief Compute simple checksum for diagnostic logging
     static U32 computeChecksum(const U8* buffer, FwSizeType size);
 
@@ -208,6 +228,7 @@ class AtomicQueue {
     FwSizeType m_capacity;                 // Number of message buffers
     FwSizeType m_bufferSize;               // Size of each message buffer
     FwSizeType m_mask;                     // Bitmask if power-of-2, else 0
+    FwSizeType m_period;                   // Positions wrap here: largest multiple of m_capacity in FwSizeType
     std::atomic<FwSizeType> m_enqueuePos;  // Next enqueue position (producer cursor)
     std::atomic<FwSizeType> m_dequeuePos;  // Next dequeue position (consumer cursor)
     Fw::MemAllocator* m_allocator;         // Memory allocator (nullptr if not using allocator)
