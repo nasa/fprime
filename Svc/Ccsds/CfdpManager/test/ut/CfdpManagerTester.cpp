@@ -30,7 +30,8 @@ CfdpManagerTester ::CfdpManagerTester()
     : CfdpManagerGTestBase("CfdpManagerTester", MAX_HISTORY_SIZE),
       component("CfdpManager"),
       m_pduCopyCount(0),
-      m_failBufferAllocation(false) {
+      m_failBufferAllocation(false),
+      m_bufferAllocationCalls(0) {
     this->connectPorts();
     this->initComponents();
     this->component.loadParameters();
@@ -48,6 +49,7 @@ CfdpManagerTester ::~CfdpManagerTester() {
 // ----------------------------------------------------------------------
 
 Fw::Buffer CfdpManagerTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
+    ++this->m_bufferAllocationCalls;
     // Simulate allocation failure if flag is set
     if (this->m_failBufferAllocation) {
         return Fw::Buffer();
