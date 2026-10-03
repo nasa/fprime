@@ -14,26 +14,6 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <errnoLib.h>
-#include <fioLib.h>
-#include <hostLib.h>
-#include <inetLib.h>
-#include <ioLib.h>
-#include <sockLib.h>
-#include <socket.h>
-#include <sysLib.h>
-#include <taskLib.h>
-#include <vxWorks.h>
-#include <cstring>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#else
-#error OS not supported for IP Socket Communications
-#endif
-
 #include <cstring>
 
 namespace Drv {
