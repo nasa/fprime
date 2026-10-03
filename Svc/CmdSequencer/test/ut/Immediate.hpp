@@ -61,11 +61,20 @@ class CmdSequencerTester : public ImmediateBase::CmdSequencerTester {
     //! Run an automatic sequence by command
     void AutoByCommand();
 
+    //! Run an automatic sequence by command, with a file name of the maximum command string length
+    void AutoByCommandMaxFileName();
+
     //! Run an automatic sequence through a port call
     void AutoByPort();
 
     //! Run an automatic sequence through a port call
     void AutoByFileDispatcherPort();
+
+    //! Run an automatic sequence through a port call, with a file name longer than a command string argument
+    void AutoByPortLongFileName();
+
+    //! Run an automatic sequence through the file dispatcher port, with a file name of the maximum port length
+    void AutoByFileDispatcherPortMaxFileName();
 
     //! Send invalid manual commands while a sequence is running
     void InvalidManualCommands();

@@ -38,6 +38,9 @@ class CmdSequencerTester : public Svc::CmdSequencerTester {
 
     //! Missing file
     void MissingFile();
+
+    //! Load sequences whose file names are the longest that leaves room for the CRC file suffix, and one longer
+    void CRCFileNameLimit();
 };
 
 }  // namespace AMPCS

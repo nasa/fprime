@@ -13,6 +13,7 @@
 
 #include <Utils/Hash/Hash.hpp>
 #include "Fw/Com/ComBuffer.hpp"
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/File.hpp"
 #include "Os/ValidateFile.hpp"
@@ -216,7 +217,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
 
         //! Get the file name
         //! \return The file name
-        Fw::CmdStringArg& getFileName();
+        Fw::FileNameString& getFileName();
 
         //! Get the log file name
         //! \return The log file name
@@ -260,7 +261,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
         Events m_events;
 
         //! The sequence file name
-        Fw::CmdStringArg m_fileName;
+        Fw::FileNameString m_fileName;
 
         //! Copy of file name for events
         Fw::LogStringArg m_logFileName;
