@@ -50,6 +50,7 @@ class AosFramerTester final : public AosFramerGTestBase {
     void testBufferOwnershipState();
     void testLongPacket();
     void testShortPackets();
+    void testIdlePacketPvnConfiguration();
 
   private:
     // ----------------------------------------------------------------------

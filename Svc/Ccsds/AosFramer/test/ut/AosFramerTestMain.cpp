@@ -42,6 +42,11 @@ TEST(AosFramer, testShortPackets) {
     tester.testShortPackets();
 }
 
+TEST(AosFramer, testIdlePacketPvnConfiguration) {
+    Svc::Ccsds::AosFramerTester tester;
+    tester.testIdlePacketPvnConfiguration();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
