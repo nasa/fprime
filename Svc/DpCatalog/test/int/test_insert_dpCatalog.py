@@ -71,6 +71,14 @@ def transmit_catalog_until_complete(fprime_test_api, remain_active):
     )
 
 
+def reset_catalog(fprime_test_api):
+    """Leave the catalog built, drained of pending products, and not armed by a previous remainActive"""
+    send_dp_catalog_command(fprime_test_api, "STOP_XMIT_CATALOG")
+    send_dp_catalog_command(fprime_test_api, "CLEAR_CATALOG")
+    send_dp_catalog_command(fprime_test_api, "BUILD_CATALOG")
+    transmit_catalog_until_complete(fprime_test_api, remain_active=False)
+
+
 def test_insert_before_build(fprime_test_api):
     """A product written while the catalog is not built is not recorded and is reported with NotLoaded
 
@@ -95,14 +103,16 @@ def test_insert_into_built_catalog(fprime_test_api):
 
     Covers: SVC-DPCAT-009
     """
-    send_dp_catalog_command(fprime_test_api, "STOP_XMIT_CATALOG")
-    send_dp_catalog_command(fprime_test_api, "CLEAR_CATALOG")
-    send_dp_catalog_command(fprime_test_api, "BUILD_CATALOG")
+    reset_catalog(fprime_test_api)
 
     start = fprime_test_api.get_event_test_history().size()
     file_name = write_product(fprime_test_api)
     fprime_test_api.assert_event(
         dp_catalog(fprime_test_api, "DpFileAdded"), [file_name], start=start, timeout=5
+    )
+    # remainActive is not set, so the product waits for the next START_XMIT_CATALOG
+    fprime_test_api.assert_event_count(
+        0, dp_catalog(fprime_test_api, "SendingProduct"), start=start
     )
 
     start = fprime_test_api.get_event_test_history().size()
@@ -113,14 +123,16 @@ def test_insert_into_built_catalog(fprime_test_api):
         start=start,
     )
 
-    # the product is now recorded as transmitted: a rebuild skips it instead of re-adding it
+    # the product is now recorded as transmitted: a rebuild skips it instead of re-adding it, so the next
+    # transmission has nothing to send (per-file build events may be lost in a burst, so check the outcome)
     start = fprime_test_api.get_event_test_history().size()
     send_dp_catalog_command(fprime_test_api, "BUILD_CATALOG")
-    fprime_test_api.assert_event(
-        dp_catalog(fprime_test_api, "DpFileSkipped"), [file_name], start=start, timeout=5
-    )
     fprime_test_api.assert_event_count(
         0, dp_catalog(fprime_test_api, "DpFileAdded"), start=start
+    )
+    transmit_catalog_until_complete(fprime_test_api, remain_active=False)
+    fprime_test_api.assert_event(
+        dp_catalog(fprime_test_api, "CatalogXmitCompleted"), [0], start=start
     )
 
 
@@ -129,9 +141,7 @@ def test_insert_during_active_transmission(fprime_test_api):
 
     Covers: SVC-DPCAT-009
     """
-    send_dp_catalog_command(fprime_test_api, "STOP_XMIT_CATALOG")
-    send_dp_catalog_command(fprime_test_api, "CLEAR_CATALOG")
-    send_dp_catalog_command(fprime_test_api, "BUILD_CATALOG")
+    reset_catalog(fprime_test_api)
     transmit_catalog_until_complete(fprime_test_api, remain_active=True)
 
     start = fprime_test_api.get_event_test_history().size()
@@ -150,4 +160,5 @@ def test_insert_during_active_transmission(fprime_test_api):
         dp_catalog(fprime_test_api, "CatalogXmitCompleted"), start=start, timeout=5
     )
 
-    send_dp_catalog_command(fprime_test_api, "STOP_XMIT_CATALOG")
+    # disarm remainActive so a later product does not restart a transmission on its own
+    transmit_catalog_until_complete(fprime_test_api, remain_active=False)

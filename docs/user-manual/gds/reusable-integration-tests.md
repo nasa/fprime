@@ -32,7 +32,7 @@ Create one JSON file in your deployment (typical location: `<MyDeployment>/test/
 }
 ```
 
-The full reference example is [TestDeploymentsProject/Ref/test/int/int_config.json](../../../TestDeploymentsProject/Ref/test/int/int_config.json) — copy it and replace the right-hand side with your instance names. Only include the components whose tests you intend to run.
+The full reference example is [TestDeploymentsProject/Ref/test/int/int_config.json](../../../TestDeploymentsProject/Ref/test/int/int_config.json) — copy it and replace the right-hand side with your instance names. Only include the components whose tests you intend to run. A few tests also read deployment-specific *values* (not mnemonics) from the same file, e.g. `Svc.PrmDb.filename` and `Svc.DpCatalog.producer.command` / `Svc.DpCatalog.producer.args` (a command, with its arguments, that writes one data product); each such test's module docstring names the keys it needs, and the test is skipped when an optional key is absent.
 
 ## Running the tests
 

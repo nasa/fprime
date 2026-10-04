@@ -395,6 +395,11 @@ TEST(NominalManual, InsertPreservesTransmittedState) {
     tester.test_InsertPreservesTransmittedState();
 }
 
+TEST(NominalManual, InsertAlreadyTransmitted) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertAlreadyTransmitted();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

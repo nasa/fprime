@@ -274,7 +274,7 @@ module Svc {
       format "Error deserializing DP {}" \
       throttle 10
 
-    @ Error inserting entry into list
+    @ Data product already in the catalog; the insert is ignored
     event DpDuplicate(
                             dp: DpRecord @< The DP
                           ) \
