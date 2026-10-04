@@ -1504,10 +1504,6 @@ void DpCatalogTester::test_XmitPriorityRangeInverted() {
 void DpCatalogTester::test_XmitPriorityRangeRuntimeAdd() {
     const char* dir = "./DpTest_RangeRuntime";
     const FwDpPriorityType prios[] = {10};
-    // Ids 2 and 3 are generated below; remove leftovers from an earlier failed run before building
-    this->makeDpDir(dir);
-    this->delDp(2, PRIORITY_RANGE_TIME, dir);
-    this->delDp(3, PRIORITY_RANGE_TIME, dir);
     this->buildPriorityCatalog(dir, prios, FW_NUM_ARRAY_ELEMENTS(prios));
 
     // Transmit [10, 20] and remain active for runtime additions
@@ -1552,6 +1548,56 @@ void DpCatalogTester::test_XmitPriorityRangeRuntimeAdd() {
     // The resume reuses the stored range: no new range-started event, but the resume completes
     ASSERT_EVENTS_CatalogXmitRangeStarted_SIZE(1);
     ASSERT_EVENTS_CatalogXmitCompleted_SIZE(2);
+
+    this->cleanPriorityCatalog(dir, 3);
+}
+
+void DpCatalogTester::test_XmitPriorityRangeStopThenRuntimeAdd() {
+    const char* dir = "./DpTest_RangeStopRuntime";
+    const FwDpPriorityType prios[] = {10, 15};
+    this->buildPriorityCatalog(dir, prios, FW_NUM_ARRAY_ELEMENTS(prios));
+
+    // Start [10, 20] with remainActive, holding the first file in flight, then stop
+    this->clearHistory();
+    this->m_autoFileDone = false;
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, true, 10, 20);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
+    ASSERT_from_fileOut_SIZE(1);
+    EXPECT_EQ(this->eventHistory_SendingProduct->at(0).prio, 10);
+    const U32 inFlight = this->m_lastContext;
+
+    this->sendCmd_STOP_XMIT_CATALOG(0, 12);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_STOP_XMIT_CATALOG, 12, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_CatalogXmitStopped_SIZE(1);
+
+    // The in-flight file completes; priority 15 stays pending because transmission was stopped
+    this->m_autoFileDone = true;
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, inFlight));
+    this->component.doDispatch();
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_from_fileOut_SIZE(1);
+    EXPECT_FALSE(this->component.m_xmitInProgress);
+    EXPECT_EQ(this->component.m_dpCatalog.getSize(), 1);
+
+    // A runtime DP outside the range arrives: remainActive resumes the stopped walk because the pending
+    // priority-15 product is inside the stored range, with no new range-started event
+    Fw::String outside = this->genDP(3, 30, PRIORITY_RANGE_TIME, 100, Fw::DpState::UNTRANSMITTED, false, dir);
+    ASSERT_STRNE(outside.toChar(), "");
+    this->invoke_to_addToCat(0, outside, 30, 0);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_EVENTS_SendingProduct_SIZE(2);
+    EXPECT_EQ(this->eventHistory_SendingProduct->at(1).prio, 15);
+    ASSERT_EVENTS_CatalogXmitRangeStarted_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    EXPECT_FALSE(this->component.m_xmitInProgress);
+    // Only the out-of-range product remains pending
+    EXPECT_EQ(this->component.m_dpCatalog.getSize(), 1);
 
     this->cleanPriorityCatalog(dir, 3);
 }

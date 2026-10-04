@@ -867,8 +867,9 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     const ProcessFileStatus ret = processFile(fileName, dir);
 
     if (ret == ProcessFileStatus::SUCCESS) {
-        // If we already finished, sendNext only if remainingActive and the new product is inside the
-        // active priority range; otherwise it stays pending for a later START_XMIT_CATALOG
+        // If we already finished (or were stopped), resume only if remainingActive and some pending entry
+        // (the new product or one left behind) is inside the active priority range; otherwise the
+        // product stays pending for a later START_XMIT_CATALOG
         if (!this->m_xmitInProgress && this->m_remainActive) {
             DpStateEntry nextEntry;
             if (this->findNextEntry(nextEntry)) {

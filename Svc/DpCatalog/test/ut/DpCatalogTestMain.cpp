@@ -385,6 +385,11 @@ TEST(NominalManual, XmitPriorityRangeRuntimeAdd) {
     tester.test_XmitPriorityRangeRuntimeAdd();
 }
 
+TEST(NominalManual, XmitPriorityRangeStopThenRuntimeAdd) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeStopThenRuntimeAdd();
+}
+
 TEST(OffNominal, MalformedFile) {
     Svc::DpCatalogTester tester;
     tester.test_MalformedFile();

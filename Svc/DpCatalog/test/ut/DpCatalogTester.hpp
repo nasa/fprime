@@ -181,6 +181,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_XmitPriorityRangeBoundary();
     void test_XmitPriorityRangeInverted();
     void test_XmitPriorityRangeRuntimeAdd();
+    void test_XmitPriorityRangeStopThenRuntimeAdd();
 
   private:
     //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog
