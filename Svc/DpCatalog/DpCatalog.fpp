@@ -14,6 +14,14 @@ module Svc {
     CRC
   }
 
+  @ Reason a data product deletion was rejected
+  enum DpDeleteReason : U8 {
+    NOT_BUILT @< Catalog has not been built
+    NOT_FOUND @< Data product is not in the catalog or the state file
+    IN_FLIGHT @< Data product is currently being transmitted
+    NAME_ERROR @< Data product file name could not be formatted
+  }
+
   @ Data structure representing a data product.
   struct DpRecord {
     $id: FwDpIdType # The ID of the data product
@@ -93,6 +101,14 @@ module Svc {
     @ clear existing catalog
     async command CLEAR_CATALOG \
       opcode 3
+
+    @ Delete a single data product: remove its file and drop it from the catalog and state file
+    async command DELETE_DP(
+                            $id: FwDpIdType @< Container ID of the data product
+                            tSec: U32 @< Time stamp seconds of the data product
+                            tSub: U32 @< Time stamp subseconds of the data product
+                          ) \
+      opcode 4
 
     # ----------------------------------------------------------------------
     # Events
@@ -450,6 +466,35 @@ module Svc {
       id 50 \
       format "Stale fileDone context {} status {}, no matching transmit in flight" \
       throttle 10
+
+    @ Data product deleted
+    event DpDeleted(
+                    $file: string size FileNameStringSize @< Deleted data product file
+                    $state: Fw.DpState @< Transmission state of the data product when deleted
+                  ) \
+      severity activity high \
+      id 51 \
+      format "Deleted DP file {} (state {})"
+
+    @ Data product deletion rejected
+    event DpDeleteError(
+                        $id: FwDpIdType @< Container ID requested
+                        tSec: U32 @< Time stamp seconds requested
+                        tSub: U32 @< Time stamp subseconds requested
+                        reason: DpDeleteReason @< Reason the deletion was rejected
+                      ) \
+      severity warning high \
+      id 52 \
+      format "Delete of DP id {} time {}:{} rejected: {}"
+
+    @ Data product file could not be removed
+    event DpFileRemoveError(
+                            $file: string size FileNameStringSize @< Data product file
+                            stat: I32 @< Os::FileSystem status
+                          ) \
+      severity warning high \
+      id 53 \
+      format "Error removing DP file {} stat {}"
 
 
     # ----------------------------------------------------------------------

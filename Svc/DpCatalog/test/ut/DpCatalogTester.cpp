@@ -1349,4 +1349,287 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     this->component.shutdown();
 }
 
+void DpCatalogTester ::test_DeleteDp() {
+    // DELETE_DP removes the file and the catalog entry; the product is no longer transmitted
+    Fw::FileNameString stateFile("");
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = "./DpTest_Delete";
+    this->makeDpDir(dirs[0].toChar());
+    const Fw::Time timeA(1000, 100);
+    const Fw::Time timeB(1000, 200);
+    Fw::String fileA = this->genDP(0x600, 10, timeA, 16, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
+    Fw::String fileB = this->genDP(0x601, 20, timeB, 32, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
+    ASSERT_STRNE(fileA.toChar(), "");
+    ASSERT_STRNE(fileB.toChar(), "");
+    FwSizeType sizeA = 0;
+    FwSizeType sizeB = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(fileA.toChar(), sizeA), Os::FileSystem::Status::OP_OK);
+    ASSERT_EQ(Os::FileSystem::getFileSize(fileB.toChar(), sizeB), Os::FileSystem::Status::OP_OK);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(2);
+    EXPECT_EQ(this->component.m_pendingFiles, 2);
+    EXPECT_EQ(this->component.m_pendingDpBytes, sizeA + sizeB);
+
+    this->sendCmd_DELETE_DP(0, 11, 0x600, timeA.getSeconds(), timeA.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_DELETE_DP, 11, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    ASSERT_EVENTS_DpDeleted(0, fileA.toChar(), Fw::DpState::UNTRANSMITTED);
+    ASSERT_EVENTS_DpDeleteError_SIZE(0);
+    ASSERT_EVENTS_DpFileRemoveError_SIZE(0);
+    ASSERT_FALSE(Os::FileSystem::exists(fileA.toChar()));
+    ASSERT_TRUE(Os::FileSystem::exists(fileB.toChar()));
+    EXPECT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    EXPECT_EQ(this->component.m_pendingFiles, 1);
+    EXPECT_EQ(this->component.m_pendingDpBytes, sizeB);
+
+    // Only the remaining product is transmitted
+    this->sendCmd_START_XMIT_CATALOG(0, 12, Fw::Wait::WAIT, false);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, fileB, fileB, 0, 0);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted(0, sizeB);
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_START_XMIT_CATALOG, 12, Fw::CmdResponse::OK);
+    EXPECT_EQ(this->component.m_pendingFiles, 0);
+    EXPECT_EQ(this->component.m_pendingDpBytes, 0);
+
+    this->delDp(0x601, timeB, dirs[0].toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester ::test_DeleteDpNotFound() {
+    // DELETE_DP is rejected before the catalog is built and for an unknown product; nothing is touched
+    Fw::FileNameString stateFile("");
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = "./DpTest_DeleteNotFound";
+    this->makeDpDir(dirs[0].toChar());
+    const Fw::Time time(1000, 100);
+    Fw::String dpFile = this->genDP(0x610, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
+
+    this->sendCmd_DELETE_DP(0, 10, 0x610, time.getSeconds(), time.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_DELETE_DP, 10, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_DpDeleteError_SIZE(1);
+    ASSERT_EVENTS_DpDeleteError(0, 0x610, time.getSeconds(), time.getUSeconds(), Svc::DpDeleteReason::NOT_BUILT);
+    ASSERT_TRUE(Os::FileSystem::exists(dpFile.toChar()));
+
+    this->sendCmd_BUILD_CATALOG(0, 11);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+
+    // Same id, different time stamp: not the same product
+    this->sendCmd_DELETE_DP(0, 12, 0x610, time.getSeconds(), time.getUSeconds() + 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_DELETE_DP, 12, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_DpDeleteError_SIZE(2);
+    ASSERT_EVENTS_DpDeleteError(1, 0x610, time.getSeconds(), time.getUSeconds() + 1, Svc::DpDeleteReason::NOT_FOUND);
+    ASSERT_EVENTS_DpDeleted_SIZE(0);
+    ASSERT_TRUE(Os::FileSystem::exists(dpFile.toChar()));
+    EXPECT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    EXPECT_EQ(this->component.m_pendingFiles, 1);
+
+    this->delDp(0x610, time, dirs[0].toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester ::test_DeleteDpInFlight() {
+    // The product being sent cannot be deleted (even after STOP, while its completion is pending);
+    // other pending products can be deleted mid-transmit and are then never sent
+    Fw::FileNameString stateFile("");
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[1];
+    dirs[0] = "./DpTest_DeleteInFlight";
+    this->makeDpDir(dirs[0].toChar());
+    const Fw::Time timeA(1000, 100);
+    const Fw::Time timeB(1000, 200);
+    Fw::String fileA = this->genDP(0x620, 10, timeA, 16, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
+    Fw::String fileB = this->genDP(0x621, 20, timeB, 32, Fw::DpState::UNTRANSMITTED, false, dirs[0].toChar());
+    ASSERT_STRNE(fileA.toChar(), "");
+    ASSERT_STRNE(fileB.toChar(), "");
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(2);
+
+    this->m_autoFileDone = false;
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    const U32 inFlight = this->m_lastContext;
+    // Whichever product went first is in flight; the other is still pending
+    const bool aInFlight = (this->fromPortHistory_fileOut->at(0).sourceFileName == fileA);
+    const FwDpIdType sentId = aInFlight ? 0x620 : 0x621;
+    const FwDpIdType pendingId = aInFlight ? 0x621 : 0x620;
+    const Fw::Time& sentTime = aInFlight ? timeA : timeB;
+    const Fw::Time& pendingTime = aInFlight ? timeB : timeA;
+    const Fw::String& sentFile = aInFlight ? fileA : fileB;
+    const Fw::String& pendingFile = aInFlight ? fileB : fileA;
+
+    this->sendCmd_DELETE_DP(0, 12, sentId, sentTime.getSeconds(), sentTime.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_DELETE_DP, 12, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_DpDeleteError_SIZE(1);
+    ASSERT_EVENTS_DpDeleteError(0, sentId, sentTime.getSeconds(), sentTime.getUSeconds(),
+                                Svc::DpDeleteReason::IN_FLIGHT);
+    ASSERT_TRUE(Os::FileSystem::exists(sentFile.toChar()));
+
+    // STOP keeps the send in flight, so the product is still protected
+    this->sendCmd_STOP_XMIT_CATALOG(0, 13);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(4);
+    this->sendCmd_DELETE_DP(0, 14, sentId, sentTime.getSeconds(), sentTime.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(5);
+    ASSERT_CMD_RESPONSE(4, DpCatalog::OPCODE_DELETE_DP, 14, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_DpDeleteError_SIZE(2);
+    ASSERT_EVENTS_DpDeleteError(1, sentId, sentTime.getSeconds(), sentTime.getUSeconds(),
+                                Svc::DpDeleteReason::IN_FLIGHT);
+    ASSERT_TRUE(Os::FileSystem::exists(sentFile.toChar()));
+
+    // The pending product can be deleted while the other completes
+    this->sendCmd_DELETE_DP(0, 15, pendingId, pendingTime.getSeconds(), pendingTime.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(6);
+    ASSERT_CMD_RESPONSE(5, DpCatalog::OPCODE_DELETE_DP, 15, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    ASSERT_EVENTS_DpDeleted(0, pendingFile.toChar(), Fw::DpState::UNTRANSMITTED);
+    ASSERT_FALSE(Os::FileSystem::exists(pendingFile.toChar()));
+    EXPECT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    EXPECT_EQ(this->component.m_pendingFiles, 1);
+
+    // The in-flight completion is applied and nothing further is sent
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, inFlight));
+    this->component.doDispatch();
+    ASSERT_EVENTS_StaleFileDone_SIZE(0);
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_from_fileOut_SIZE(1);
+    EXPECT_EQ(this->component.m_dpCatalog.getSize(), 0);
+    EXPECT_EQ(this->component.m_pendingFiles, 0);
+    EXPECT_EQ(this->component.m_pendingDpBytes, 0);
+
+    this->sendCmd_START_XMIT_CATALOG(0, 16, Fw::Wait::WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(7);
+    ASSERT_CMD_RESPONSE(6, DpCatalog::OPCODE_START_XMIT_CATALOG, 16, Fw::CmdResponse::OK);
+
+    this->delDp(0x620, timeA, dirs[0].toChar());
+    this->delDp(0x621, timeB, dirs[0].toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester ::test_DeleteDpStateFileReload() {
+    // Deleting a transmitted product drops its state file record, so a rebuild no longer sees it;
+    // a product whose file already vanished is still removed from the state file
+    Fw::FileNameString dir("./DpTest_DeleteState");
+    Fw::FileNameString stateFile("./DpTest_DeleteState/dpState.dat");
+    const FwSizeType entrySize = sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE;
+    const Fw::Time timeA(2000, 100);
+    const Fw::Time timeB(2000, 200);
+    FwSizeType size = 0;
+
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    Fw::String fileA = this->genDP(0x630, 10, timeA, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    Fw::String fileB = this->genDP(0x631, 20, timeB, 32, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(fileA.toChar(), "");
+    ASSERT_STRNE(fileB.toChar(), "");
+
+    Fw::MallocAllocator alloc;
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(2);
+
+    // Transmit both: the state file now records two transmitted products
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::WAIT, false);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_EVENTS_ProductComplete_SIZE(2);
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
+    EXPECT_EQ(size, 2 * entrySize);
+
+    // Delete a transmitted product: file and state file record are gone
+    this->sendCmd_DELETE_DP(0, 12, 0x630, timeA.getSeconds(), timeA.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(3);
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_DELETE_DP, 12, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    ASSERT_EVENTS_DpDeleted(0, fileA.toChar(), Fw::DpState::TRANSMITTED);
+    ASSERT_FALSE(Os::FileSystem::exists(fileA.toChar()));
+    ASSERT_TRUE(Os::FileSystem::exists(fileB.toChar()));
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
+    EXPECT_EQ(size, entrySize);
+    this->component.shutdown();
+
+    // Simulated reboot: only the remaining transmitted product is known
+    this->clearHistory();
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 20);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 20, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, fileB.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    EXPECT_EQ(this->component.m_pendingFiles, 0);
+
+    // The file vanished out from under the catalog: the state file record is still removed
+    this->delDp(0x631, timeB, dir.toChar());
+    this->sendCmd_DELETE_DP(0, 21, 0x631, timeB.getSeconds(), timeB.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_DELETE_DP, 21, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpDeleted_SIZE(1);
+    ASSERT_EVENTS_DpDeleted(0, fileB.toChar(), Fw::DpState::TRANSMITTED);
+    ASSERT_EVENTS_DpFileRemoveError_SIZE(0);
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
+    EXPECT_EQ(size, 0);
+
+    // Nothing is left to find after another reload
+    this->component.shutdown();
+    this->clearHistory();
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 30);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(0);
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    this->sendCmd_DELETE_DP(0, 31, 0x631, timeB.getSeconds(), timeB.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_DELETE_DP, 31, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_DpDeleteError_SIZE(1);
+    ASSERT_EVENTS_DpDeleteError(0, 0x631, timeB.getSeconds(), timeB.getUSeconds(), Svc::DpDeleteReason::NOT_FOUND);
+    this->component.shutdown();
+
+    ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+}
+
 }  // namespace Svc

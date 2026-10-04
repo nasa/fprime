@@ -131,6 +131,16 @@ class DpCatalog final : public DpCatalogComponentBase {
                                   U32 cmdSeq            //!< The command sequence number
                                   ) override;
 
+    //! Handler implementation for command DELETE_DP
+    //!
+    //! Delete a single data product: remove its file and drop it from the catalog and state file
+    void DELETE_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                              U32 cmdSeq,           //!< The command sequence number
+                              FwDpIdType id,        //!< Container ID of the data product
+                              U32 tSec,             //!< Time stamp seconds of the data product
+                              U32 tSub              //!< Time stamp subseconds of the data product
+                              ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -236,6 +246,25 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief abandon the transmit: clear both transmit flags and answer a waited START_XMIT_CATALOG
     /// @param response the command response for the waited command
     void abortXmit(Fw::CmdResponse response);
+
+    /// @brief record a transmitted entry in the in-memory state data so it survives the next prune
+    /// @param entry entry to record
+    void recordFileState(const DpStateEntry& entry);
+
+    /// @brief find a data product in the catalog by identity
+    /// @param id container ID
+    /// @param tSec time stamp seconds
+    /// @param tSub time stamp subseconds
+    /// @param entry the matching entry, valid if true is returned
+    /// @return true if found
+    bool findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
+
+    /// @brief find a data product in the in-memory state file data by identity
+    /// @param id container ID
+    /// @param tSec time stamp seconds
+    /// @param tSub time stamp subseconds
+    /// @return index into m_stateFileData, or m_numDpSlots if not found
+    FwSizeType findStateFileEntry(FwDpIdType id, U32 tSec, U32 tSub) const;
 
     // ----------------------------------
     // Private data

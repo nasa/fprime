@@ -172,6 +172,10 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_NonCanonicalDpRejected();
     void test_BadHeaderHashRejected();
     void test_NonDpFilesDoNotConsumeSlots();
+    void test_DeleteDp();
+    void test_DeleteDpNotFound();
+    void test_DeleteDpInFlight();
+    void test_DeleteDpStateFileReload();
 };
 
 }  // namespace Svc

@@ -365,6 +365,26 @@ TEST(OffNominal, MalformedFile) {
     tester.test_MalformedFile();
 }
 
+TEST(NominalManual, DeleteDp) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDp();
+}
+
+TEST(OffNominal, DeleteDpNotFound) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpNotFound();
+}
+
+TEST(OffNominal, DeleteDpInFlight) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpInFlight();
+}
+
+TEST(NominalManual, DeleteDpStateFileReload) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStateFileReload();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
