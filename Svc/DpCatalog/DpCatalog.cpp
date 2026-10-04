@@ -280,6 +280,11 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     // TODO: Have to handle case where state file has partially transmitted
     // state already
 
+    // nothing to append when no state file was specified; loadStateFile already reported it
+    if (this->m_stateFile.length() == 0) {
+        return;
+    }
+
     // open the state file
     Os::File stateFile;
     // we open it as a new file so we don't accumulate invalid entries
@@ -1070,14 +1075,13 @@ bool DpCatalog ::findStateFileEntry(FwDpIdType id, U32 tSec, U32 tSub, FwSizeTyp
 }
 
 void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub) {
-    if (!this->checkInit()) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
-    }
     this->cmdResponse_out(opCode, cmdSeq, this->doDeleteDp(id, tSec, tSub));
 }
 
 Fw::CmdResponse DpCatalog ::doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub) {
+    if (not this->checkInit()) {
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
     if (!this->m_catalogBuilt) {
         this->log_WARNING_HI_DpDeleteError(id, tSec, tSub, DpDeleteReason::NOT_BUILT);
         return Fw::CmdResponse::EXECUTION_ERROR;
