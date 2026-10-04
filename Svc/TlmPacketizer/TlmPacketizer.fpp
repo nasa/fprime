@@ -17,6 +17,24 @@ module Svc {
     array SectionConfigs = [TelemetrySection.NUM_SECTIONS] GroupConfigs default TELEMETRY_SECTION_DEFAULTS
     array SectionEnabled = [TelemetrySection.NUM_SECTIONS] Fw.Enabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
 
+    @ Result of stopping data product recording for a group
+    enum DpStopStatus : U8 {
+      NOT_RECORDING = 0     @< The group was not being recorded
+      PARTIAL_NOT_SENT = 1  @< No partially filled container was pending
+      PARTIAL_SENT = 2      @< A partially filled container was sent
+    }
+
+    @ Reason a data product recording command was rejected
+    enum DpRejectReason : U8 {
+      START_INVALID_GROUP = 0         @< START_DP_RECORDING group exceeds MAX_CONFIGURABLE_TLMPACKETIZER_GROUP
+      START_INVALID_PACKET_COUNT = 1  @< START_DP_RECORDING packetsPerContainer is zero or too large
+      START_NO_PACKETS_IN_GROUP = 2   @< START_DP_RECORDING group has no packets in the packet list
+      STOP_INVALID_GROUP = 3          @< STOP_DP_RECORDING group exceeds MAX_CONFIGURABLE_TLMPACKETIZER_GROUP
+    }
+
+    @ Data product recording state of each telemetry group
+    array DpGroupRecording = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] bool
+
     # ----------------------------------------------------------------------
     # General ports
     # ----------------------------------------------------------------------
@@ -76,6 +94,12 @@ module Svc {
     @ Parameter set port
     param set port paramSetOut
 
+    @ Data product get port
+    product get port productGetOut
+
+    @ Data product send port
+    product send port productSendOut
+
     # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------
@@ -125,6 +149,21 @@ module Svc {
                                         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
                                       ) \
       opcode 5
+
+    @ Start recording the packets of a telemetry group as data products
+    async command START_DP_RECORDING(
+                                      tlmGroup: FwChanIdType              @< Group Identifier
+                                      packetsPerContainer: FwSizeType     @< Number of packets per data product container
+                                      $priority: FwDpPriorityType         @< Data product priority
+                                    ) \
+      opcode 6
+
+    @ Stop recording the packets of a telemetry group as data products, sending any partial container
+    async command STOP_DP_RECORDING(
+                                     tlmGroup: FwChanIdType @< Group Identifier
+                                   ) \
+      opcode 7
+
     @ Parameter to control section enable flags
     external param SECTION_ENABLED: SectionEnabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
     @ Parameter to control section configuration
@@ -193,6 +232,44 @@ module Svc {
       id 6 \
       format "Telemetry ID 0x{x} update of size {} exceeds configured size {}" \
       throttle 10
+
+    @ Data product recording of a telemetry group started
+    event DpRecordingStarted(
+                              tlmGroup: FwChanIdType          @< Group Identifier
+                              packetsPerContainer: FwSizeType @< Number of packets per data product container
+                              $priority: FwDpPriorityType     @< Data product priority
+                            ) \
+      severity activity high \
+      id 7 \
+      format "Started data product recording of group {}: {} packets per container, priority {}"
+
+    @ Data product recording of a telemetry group stopped
+    event DpRecordingStopped(
+                              tlmGroup: FwChanIdType  @< Group Identifier
+                              status: DpStopStatus    @< Partial container status
+                            ) \
+      severity activity high \
+      id 8 \
+      format "Stopped data product recording of group {}: {}"
+
+    @ Data product recording command rejected
+    event DpRecordingRejected(
+                               tlmGroup: FwChanIdType  @< Group Identifier
+                               reason: DpRejectReason  @< Rejection reason
+                             ) \
+      severity warning low \
+      id 9 \
+      format "Rejected data product recording command for group {}: {}"
+
+    @ Failed to get a data product container; the packet was dropped
+    event DpBufferError(
+                         tlmGroup: FwChanIdType @< Group Identifier
+                         $size: FwSizeType      @< The requested container data size
+                       ) \
+      severity warning high \
+      id 10 \
+      format "Failed to get data product container for group {} of {} bytes" \
+      throttle 10
     
     # ----------------------------------------------------------------------
     # Telemetry
@@ -202,8 +279,33 @@ module Svc {
     telemetry GroupConfigs: SectionConfigs id 0
     telemetry SectionEnabled: SectionEnabled id 1
 
+    @ Telemetry groups currently recorded as data products
+    telemetry DpGroupsRecording: DpGroupRecording id 2
+
+    @ Number of packets recorded into data product containers
+    telemetry DpPacketsRecorded: U32 id 3
+
+    @ Number of data product containers sent
+    telemetry DpContainersSent: U32 id 4
+
+    @ Number of packets dropped because no data product container could be obtained
+    telemetry DpPacketsDropped: U32 id 5
+
     array TelemetrySendSection = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] FwIndexType
     array TelemetrySendPortMap = [TelemetrySection.NUM_SECTIONS] TelemetrySendSection default TELEMETRY_SEND_PORT_MAPPING
+
+    # ----------------------------------------------------------------------
+    # Data products
+    # ----------------------------------------------------------------------
+
+    @ Telemetry group of the packets in a container; first record of every container
+    product record TlmGroupRecord: FwChanIdType id 0
+
+    @ One packetized telemetry packet as sent on PktSend: descriptor, packet ID, time tag, channel values
+    product record TlmPacketRecord: U8 array id 1
+
+    @ Container of TlmPacketRecords belonging to a single telemetry group
+    product container TlmPacketContainer id 0 default priority 10
 
   }
 

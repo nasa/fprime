@@ -23,8 +23,6 @@ telemetry packets RefPackets {
     ComCcsds.commsBufferManager.TotalBuffs
     ComCcsds.commsBufferManager.CurrBuffs
     ComCcsds.commsBufferManager.HiBuffs
-    #CdhCore.tlmSend.GroupConfigs
-    #CdhCore.tlmSend.SectionEnabled
 
     rateGroup1Comp.RgMaxTime
     rateGroup2Comp.RgMaxTime
@@ -65,6 +63,10 @@ telemetry packets RefPackets {
     recvBuffComp.Sensor2
     recvBuffComp.Parameter1
     recvBuffComp.Parameter2
+  }
+
+  # Block driver cycle count alone, so the packet is sent exactly when the count changes
+  packet BlockDriver id 41 group 1 {
     blockDrv.BD_Cycles
   }
 
@@ -283,6 +285,16 @@ telemetry packets RefPackets {
 
   packet Version_Custom10 id 37 group 2 {
     CdhCore.version.CustomVersion10
+  }
+
+  # Packetizer configuration and data product recording status
+  packet TlmPacketizer id 40 group 1 {
+    CdhCore.tlmSend.GroupConfigs
+    CdhCore.tlmSend.SectionEnabled
+    CdhCore.tlmSend.DpGroupsRecording
+    CdhCore.tlmSend.DpPacketsRecorded
+    CdhCore.tlmSend.DpContainersSent
+    CdhCore.tlmSend.DpPacketsDropped
   }
 
   # Empty packet: exercises a packet specification with no channels

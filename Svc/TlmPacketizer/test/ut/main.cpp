@@ -126,6 +126,42 @@ TEST(TestNominal, sectionConfigParameterTest) {
     tester.sectionConfigParameterTest();
 }
 
+TEST(TestDataProducts, dpDisabledByDefaultTest) {
+    TEST_CASE(100.2.1, "Data products: disabled by default");
+    Svc::TlmPacketizerTester tester;
+    tester.dpDisabledByDefaultTest();
+}
+
+TEST(TestDataProducts, dpRecordGroupTest) {
+    TEST_CASE(100.2.2, "Data products: record a group and send a full container");
+    Svc::TlmPacketizerTester tester;
+    tester.dpRecordGroupTest();
+}
+
+TEST(TestDataProducts, dpStopAndRestartTest) {
+    TEST_CASE(100.2.3, "Data products: stop and restart send partial containers");
+    Svc::TlmPacketizerTester tester;
+    tester.dpStopAndRestartTest();
+}
+
+TEST(TestDataProducts, dpRecordWhenDownlinkDisabledTest) {
+    TEST_CASE(100.2.4, "Data products: record while downlink is disabled");
+    Svc::TlmPacketizerTester tester;
+    tester.dpRecordWhenDownlinkDisabledTest();
+}
+
+TEST(TestDataProducts, dpCommandRejectTest) {
+    TEST_CASE(100.2.5, "Data products: invalid command arguments are rejected");
+    Svc::TlmPacketizerTester tester;
+    tester.dpCommandRejectTest();
+}
+
+TEST(TestDataProducts, dpAllocationFailureTest) {
+    TEST_CASE(100.2.6, "Data products: container allocation failure");
+    Svc::TlmPacketizerTester tester;
+    tester.dpAllocationFailureTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -34,7 +34,7 @@ It interconnects those application components with reusable service components:
 |Health|Pings active components in the topology to verify their aliveness| [SDD](../../../Svc/Health/docs/sdd.md)|
 |PrmDb|Loads sets of parameters from storage at startup and provides them to components| [SDD](../../../Svc/PrmDb/docs/sdd.md)|
 |RateGroupDriver|Sends messages to ActiveRateGroup instances to run a cycle| [SDD](../../../Svc/RateGroupDriver/docs/sdd.md)|
-|TlmChan|Provides storage for telemetry channels and periodically sends them to the ground system| [SDD](../../../Svc/TlmChan/docs/sdd.md)|
+|TlmPacketizer|Stores telemetry channels in packets, periodically sends them to the ground system, and records them as data products on command| [SDD](../../../Svc/TlmPacketizer/docs/sdd.md)|
 |PolyDb|Manages a database of polymorphic data values| [SDD](../../../Svc/PolyDb/docs/sdd.md)|
 
 
@@ -68,7 +68,7 @@ The connections for the reference deployment commanding are as follows:
 
 ### 2.2 Telemetry
 
-The telemetry view consists of connections for components to update telemetry channels in the `TlmChan` component. 
+The telemetry view consists of connections for components to update telemetry channels in the `TlmPacketizer` component. 
 
 #### 2.2.1 C&DH Telemetry
 

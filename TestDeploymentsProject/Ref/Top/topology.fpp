@@ -150,6 +150,9 @@ module Ref {
       # Asynchronous request
       dpDemo.productRequestOut -> DataProducts.Subtopology.productRequestIn
       DataProducts.Subtopology.productResponseOut -> dpDemo.productRecvIn
+      # Packetized telemetry recorded as data products (synchronous request)
+      CdhCore.tlmSend.productGetOut -> DataProducts.Subtopology.productGetIn
+      CdhCore.tlmSend.productSendOut -> DataProducts.Subtopology.productSendIn
 
       wasmSeq.getTlmChan -> CdhCore.tlmSend.TlmGet
       wasmSeq.getParam ->   FileHandling.prmDb.getPrm

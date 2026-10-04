@@ -14,6 +14,7 @@
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
 #include <TlmPacketizerConfig/FppConstantsAc.hpp>
 #include <cstring>
+#include <limits>
 
 namespace Svc {
 
@@ -26,7 +27,14 @@ static_assert(Svc::TelemetrySection::NUM_SECTIONS >= 1, "At least one telemetry 
 // ----------------------------------------------------------------------
 
 TlmPacketizer ::TlmPacketizer(const char* const compName)
-    : TlmPacketizerComponentBase(compName), m_numPackets(0), m_configured(false), m_numChannels(0) {
+    : TlmPacketizerComponentBase(compName),
+      m_numPackets(0),
+      m_configured(false),
+      m_numChannels(0),
+      m_dpPacketsRecorded(0),
+      m_dpContainersSent(0),
+      m_dpPacketsDropped(0),
+      m_dpTlmUpdated(true) {
     // Register self as parameter delegate
     this->registerExternalParameters(this);
     // clear missing tlm channel check
@@ -38,6 +46,15 @@ TlmPacketizer ::TlmPacketizer(const char* const compName)
     // clear packet buffers
     for (FwChanIdType buffer = 0; buffer < MAX_PACKETIZER_PACKETS; buffer++) {
         this->m_fillBuffers[buffer].updated = false;
+    }
+
+    // data product recording is disabled for every group until commanded
+    for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+        this->m_dpGroups[group].packetsPerContainer = 0;
+        this->m_dpGroups[group].containerDataSize = 0;
+        this->m_dpGroups[group].packetCount = 0;
+        this->m_dpGroups[group].priority = 0;
+        this->m_dpGroups[group].recording = false;
     }
 
     static_assert(NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS == MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1,
@@ -374,8 +391,12 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             }
         }
 
-        // Only perform the buffer copy if at least one section needs to send.
-        if (anySectionNeedsSend) {
+        // A group being recorded as data products captures every packet with new data,
+        // independent of the section configuration that governs downlink
+        const bool groupRecording = isNewData and this->m_dpGroups[entryGroup].recording;
+
+        // Only perform the buffer copy if at least one section needs to send or the packet is recorded.
+        if (anySectionNeedsSend or groupRecording) {
             this->m_lock.lock();
             BufferEntry sendBuffer = this->m_fillBuffers[pkt];
             this->m_lock.unLock();
@@ -397,8 +418,13 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
                     pktEntryFlags.updateFlag = UpdateFlag::PAST;
                 }
             }
+
+            if (groupRecording) {
+                this->recordPacket(entryGroup, sendBuffer.buffer);
+            }
         }
     }
+    this->writeDpTelemetry();
 }
 
 void TlmPacketizer ::controlIn_handler(FwIndexType portNum,
@@ -613,6 +639,151 @@ Fw::SerializeStatus TlmPacketizer::serializeParam(const FwPrmIdType base_id,
             FW_ASSERT(false, static_cast<FwAssertArgType>(local_id));
     }
     return Fw::SerializeStatus::FW_SERIALIZE_FORMAT_ERROR;
+}
+
+// ----------------------------------------------------------------------
+// Data product recording
+// ----------------------------------------------------------------------
+
+void TlmPacketizer ::START_DP_RECORDING_cmdHandler(FwOpcodeType opCode,
+                                                   U32 cmdSeq,
+                                                   FwChanIdType tlmGroup,
+                                                   FwSizeType packetsPerContainer,
+                                                   FwDpPriorityType priority) {
+    if (tlmGroup > MAX_CONFIGURABLE_TLMPACKETIZER_GROUP) {
+        this->log_WARNING_LO_DpRecordingRejected(tlmGroup, TlmPacketizer_DpRejectReason::START_INVALID_GROUP);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+    // Containers are sized for the largest packet of the group so that every packet fits
+    const FwSizeType maxPacketLength = this->maxPacketLengthOfGroup(tlmGroup);
+    if (maxPacketLength == 0) {
+        this->log_WARNING_LO_DpRecordingRejected(tlmGroup, TlmPacketizer_DpRejectReason::START_NO_PACKETS_IN_GROUP);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+    const FwSizeType recordSize = SIZE_OF_TlmPacketRecord_RECORD(maxPacketLength);
+    // The complete data product, header included, must fit the size stored in an Fw::Buffer
+    const FwSizeType maxDataSize = static_cast<FwSizeType>(std::numeric_limits<U32>::max()) -
+                                   Fw::DpContainer::MIN_PACKET_SIZE - SIZE_OF_TlmGroupRecord_RECORD;
+    if (packetsPerContainer == 0 or packetsPerContainer > (maxDataSize / recordSize)) {
+        this->log_WARNING_LO_DpRecordingRejected(tlmGroup, TlmPacketizer_DpRejectReason::START_INVALID_PACKET_COUNT);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    // Restarting an active recording sends the partially filled container with the previous settings
+    (void)this->sendDpContainer(tlmGroup);
+
+    DpGroupState& state = this->m_dpGroups[tlmGroup];
+    state.packetsPerContainer = packetsPerContainer;
+    state.containerDataSize = SIZE_OF_TlmGroupRecord_RECORD + packetsPerContainer * recordSize;
+    state.priority = priority;
+    state.recording = true;
+    this->m_dpTlmUpdated = true;
+
+    this->log_ACTIVITY_HI_DpRecordingStarted(tlmGroup, packetsPerContainer, priority);
+    this->writeDpTelemetry();
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void TlmPacketizer ::STOP_DP_RECORDING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwChanIdType tlmGroup) {
+    if (tlmGroup > MAX_CONFIGURABLE_TLMPACKETIZER_GROUP) {
+        this->log_WARNING_LO_DpRecordingRejected(tlmGroup, TlmPacketizer_DpRejectReason::STOP_INVALID_GROUP);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+    DpGroupState& state = this->m_dpGroups[tlmGroup];
+    TlmPacketizer_DpStopStatus status = TlmPacketizer_DpStopStatus::NOT_RECORDING;
+    if (state.recording) {
+        status = this->sendDpContainer(tlmGroup) ? TlmPacketizer_DpStopStatus::PARTIAL_SENT
+                                                 : TlmPacketizer_DpStopStatus::PARTIAL_NOT_SENT;
+        state.recording = false;
+    }
+    // Report the recording state even when nothing changed so that operators get a fresh snapshot
+    this->m_dpTlmUpdated = true;
+    this->log_ACTIVITY_HI_DpRecordingStopped(tlmGroup, status);
+    this->writeDpTelemetry();
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+FwSizeType TlmPacketizer::maxPacketLengthOfGroup(FwChanIdType tlmGroup) const {
+    // Packet levels and lengths are fixed by setPacketList, so no lock is needed
+    FwSizeType maxLength = 0;
+    for (FwChanIdType pkt = 0; pkt < this->m_numPackets; pkt++) {
+        const BufferEntry& entry = this->m_fillBuffers[pkt];
+        if (entry.level == tlmGroup and entry.buffer.getSize() > maxLength) {
+            maxLength = entry.buffer.getSize();
+        }
+    }
+    return maxLength;
+}
+
+void TlmPacketizer::recordPacket(FwChanIdType tlmGroup, const Fw::ComBuffer& packet) {
+    FW_ASSERT(tlmGroup <= MAX_CONFIGURABLE_TLMPACKETIZER_GROUP, static_cast<FwAssertArgType>(tlmGroup));
+    DpGroupState& state = this->m_dpGroups[tlmGroup];
+    FW_ASSERT(state.recording);
+
+    // The first packet of a container obtains the container
+    if (state.packetCount == 0 and this->allocateDpContainer(tlmGroup) != Fw::Success::SUCCESS) {
+        this->m_dpPacketsDropped++;
+        this->m_dpTlmUpdated = true;
+        return;
+    }
+    // The container was sized for packetsPerContainer packets of the largest packet in the group
+    const Fw::SerializeStatus status =
+        state.container.serializeRecord_TlmPacketRecord(packet.getBuffAddr(), packet.getSize());
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    state.packetCount++;
+    this->m_dpPacketsRecorded++;
+    this->m_dpTlmUpdated = true;
+
+    if (state.packetCount >= state.packetsPerContainer) {
+        (void)this->sendDpContainer(tlmGroup);
+    }
+}
+
+Fw::Success TlmPacketizer::allocateDpContainer(FwChanIdType tlmGroup) {
+    FW_ASSERT(tlmGroup <= MAX_CONFIGURABLE_TLMPACKETIZER_GROUP, static_cast<FwAssertArgType>(tlmGroup));
+    DpGroupState& state = this->m_dpGroups[tlmGroup];
+    const Fw::Success::T status = this->dpGet_TlmPacketContainer(state.containerDataSize, state.container);
+    if (status != Fw::Success::SUCCESS) {
+        this->log_WARNING_HI_DpBufferError(tlmGroup, state.containerDataSize);
+        return Fw::Success::FAILURE;
+    }
+    state.container.setPriority(state.priority);
+    // The group record is part of containerDataSize, so it always fits
+    const Fw::SerializeStatus serStatus = state.container.serializeRecord_TlmGroupRecord(tlmGroup);
+    FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(serStatus));
+    return Fw::Success::SUCCESS;
+}
+
+bool TlmPacketizer::sendDpContainer(FwChanIdType tlmGroup) {
+    FW_ASSERT(tlmGroup <= MAX_CONFIGURABLE_TLMPACKETIZER_GROUP, static_cast<FwAssertArgType>(tlmGroup));
+    DpGroupState& state = this->m_dpGroups[tlmGroup];
+    if (state.packetCount == 0) {
+        return false;
+    }
+    this->dpSend(state.container);
+    state.packetCount = 0;
+    this->m_dpContainersSent++;
+    this->m_dpTlmUpdated = true;
+    return true;
+}
+
+void TlmPacketizer::writeDpTelemetry() {
+    if (not this->m_dpTlmUpdated) {
+        return;
+    }
+    TlmPacketizer_DpGroupRecording groupsRecording;
+    for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+        groupsRecording[group] = this->m_dpGroups[group].recording;
+    }
+    this->tlmWrite_DpGroupsRecording(groupsRecording);
+    this->tlmWrite_DpPacketsRecorded(this->m_dpPacketsRecorded);
+    this->tlmWrite_DpContainersSent(this->m_dpContainersSent);
+    this->tlmWrite_DpPacketsDropped(this->m_dpPacketsDropped);
+    this->m_dpTlmUpdated = false;
 }
 
 }  // end namespace Svc
