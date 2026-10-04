@@ -1159,7 +1159,7 @@ void DpCatalogTester::test_MalformedFile() {
     // 1. Setup paths and corrupted data
     Fw::FileNameString stateFile("DpState.dat");
 
-    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
+    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE] = {};
     memset(buffer, 0xFF, sizeof(buffer));  // Force deserialization failure
 
     // 2. Write the malformed data to disk
@@ -1731,7 +1731,7 @@ void DpCatalogTester ::test_DeleteDpNameError() {
     this->makeDpDir(dir.toChar());
     const FwIndexType staleDir = 1;  // only directory 0 is configured below
     const DpRecord record(0x650, 3000, 100, 10, 64, 0, Fw::DpState::TRANSMITTED);
-    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
+    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE] = {};
     Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
     ASSERT_EQ(entryBuffer.serializeFrom(staleDir), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(entryBuffer.serializeFrom(record), Fw::FW_SERIALIZE_OK);
@@ -1767,7 +1767,7 @@ void DpCatalogTester ::test_DeleteDpStateTableRecycle() {
     this->makeDpDir(dir.toChar());
     const FwIndexType staleDir = 0;
     const DpRecord stale(0x670, 2000, 100, 10, 64, 0, Fw::DpState::TRANSMITTED);
-    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
+    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE] = {};
     Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
     ASSERT_EQ(entryBuffer.serializeFrom(staleDir), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(entryBuffer.serializeFrom(stale), Fw::FW_SERIALIZE_OK);
@@ -1830,8 +1830,9 @@ void DpCatalogTester ::test_DeleteDpStateTableRecycle() {
 }
 
 void DpCatalogTester ::test_DeleteDpStateTableFull() {
-    // With the loaded state data full of records whose files exist, a transmitted record is kept
-    // on disk only: DpStateRecordDropped, NOT_FOUND until the next BUILD_CATALOG, then deletable
+    // With the loaded state data full of records whose files exist, a transmitted record is not kept
+    // in memory: DpStateRecordDropped, NOT_FOUND until the next BUILD_CATALOG, then cataloged again
+    // as untransmitted and deletable. The drop event is throttled and re-armed by BUILD_CATALOG
     Fw::FileNameString dir("./DpTest_DeleteFull");
     Fw::FileNameString stateFile("./DpTest_DeleteFull/dpState.dat");
     this->makeDpDir(dir.toChar());
@@ -1897,7 +1898,58 @@ void DpCatalogTester ::test_DeleteDpStateTableFull() {
     ASSERT_EVENTS_DpDeleted(0, fileB.toChar(), Fw::DpState::UNTRANSMITTED);
     ASSERT_FALSE(Os::FileSystem::exists(fileB.toChar()));
 
-    this->delDp(0x680, timeA, dir.toChar());
+    // Delete the loaded record too, so the first transmitted product fills the single slot and
+    // every later one is dropped
+    this->sendCmd_DELETE_DP(0, 17, 0x680, timeA.getSeconds(), timeA.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(4);
+    ASSERT_CMD_RESPONSE(3, DpCatalog::OPCODE_DELETE_DP, 17, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->component.m_stateFileEntries, 0);
+
+    // Throttle: only the first 10 drops are reported, then a rebuild re-arms the event
+    const U32 throttle = 10;
+    this->clearHistory();
+    for (U32 drop = 0; drop < throttle + 2; drop++) {
+        const Fw::Time timeN(1000, 500 + drop);
+        Fw::String fileN = this->genDP(0x682, 20, timeN, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(fileN.toChar(), "");
+        this->invoke_to_addToCat(0, fileN, 0, 0);
+        this->component.doDispatch();
+        this->sendCmd_START_XMIT_CATALOG(0, 20 + drop, Fw::Wait::WAIT, false);
+        while (this->component.m_queue.getMessagesAvailable() > 0) {
+            this->component.doDispatch();
+        }
+        // The first product keeps its file so its loaded record is not reusable after the rebuild
+        if (drop > 0) {
+            this->delDp(0x682, timeN, dir.toChar());
+        }
+    }
+    ASSERT_from_fileOut_SIZE(throttle + 2);
+    ASSERT_EVENTS_DpStateRecordDropped_SIZE(throttle);
+    ASSERT_EVENTS_DpStateRecordDropped(0, 0x682, 1000, 501);
+    ASSERT_EVENTS_DpStateRecordDropped(throttle - 1, 0x682, 1000, 500 + throttle);
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+
+    this->clearHistory();
+    this->sendCmd_CLEAR_CATALOG(0, 40);
+    this->component.doDispatch();
+    this->sendCmd_BUILD_CATALOG(0, 41);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_BUILD_CATALOG, 41, Fw::CmdResponse::OK);
+    const Fw::Time timeC(1000, 600);
+    Fw::String fileC = this->genDP(0x683, 20, timeC, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(fileC.toChar(), "");
+    this->invoke_to_addToCat(0, fileC, 0, 0);
+    this->component.doDispatch();
+    this->sendCmd_START_XMIT_CATALOG(0, 42, Fw::Wait::WAIT, false);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_EVENTS_DpStateRecordDropped_SIZE(1);
+    ASSERT_EVENTS_DpStateRecordDropped(0, 0x683, timeC.getSeconds(), timeC.getUSeconds());
+    this->delDp(0x683, timeC, dir.toChar());
+    this->delDp(0x682, Fw::Time(1000, 500), dir.toChar());
+
     this->component.shutdown();
     ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
 }

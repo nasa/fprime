@@ -221,6 +221,11 @@ bool DpCatalog::pruneAndWriteStateFile() {
     // the entries that were visited during the last catalog build. This will
     // remove any entries that are no longer valid.
 
+    // nothing to write when no state file was specified; loadStateFile already reported it
+    if (this->m_stateFile.length() == 0) {
+        return true;
+    }
+
     // open the state file
     Os::File stateFile;
     // we open it as a new file so we don't accumulate invalid entries
@@ -351,8 +356,11 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     }
 
     // prune and rewrite the state file
-    this->pruneAndWriteStateFile();
+    // a failed rewrite is reported by the helper's events; this operation itself succeeded
+    (void)this->pruneAndWriteStateFile();
 
+    // the rebuild reloaded the state data, so report drops afresh
+    this->log_WARNING_HI_DpStateRecordDropped_ThrottleClear();
     this->log_ACTIVITY_HI_CatalogBuildComplete();
 
     // Flag so addToCat knows it is good to go
@@ -810,7 +818,7 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     this->m_currentXmitEntry.record.set_state(Fw::DpState::TRANSMITTED);
     // update the transmitted state in the state file
     this->appendFileState(this->m_currentXmitEntry);
-    this->recordFileState(this->m_currentXmitEntry);
+    this->cacheFileState(this->m_currentXmitEntry);
     // add the size
     this->m_xmitBytes += this->m_currentXmitEntry.record.get_size();
 
@@ -876,7 +884,8 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         // Or will be manually tx-ed at next command
 
         // prune and rewrite the state file
-        this->pruneAndWriteStateFile();
+        // a failed rewrite is reported by the helper's events; this operation itself succeeded
+        (void)this->pruneAndWriteStateFile();
     }
 }
 
@@ -1000,22 +1009,23 @@ void DpCatalog ::abortXmit(Fw::CmdResponse response) {
     this->dispatchWaitedResponse(response);
 }
 
-void DpCatalog ::recordFileState(const DpStateEntry& entry) {
+void DpCatalog ::cacheFileState(const DpStateEntry& entry) {
     FW_ASSERT(this->m_stateFileData != nullptr);
     // Slots [0, m_stateFileEntries) hold the used entries
+    const bool append = (this->m_stateFileEntries < this->m_numDpSlots);
     FwSizeType slotIndex = this->m_stateFileEntries;
-    if (slotIndex >= this->m_numDpSlots) {
+    if (not append) {
         // Full: reuse a loaded record whose file was not found at the last build, which the
         // next rewrite would drop anyway
-        slotIndex = this->m_numDpSlots;
-        for (FwSizeType i = 0; i < this->m_stateFileEntries; i++) {
+        bool reused = false;
+        for (FwSizeType i = 0; (i < this->m_stateFileEntries) and not reused; i++) {
             if (this->m_stateFileData[i].used and not this->m_stateFileData[i].visited) {
                 slotIndex = i;
-                break;
+                reused = true;
             }
         }
-        if (slotIndex >= this->m_numDpSlots) {
-            // The record is on disk but not here, so the product is deletable only after the next build
+        if (not reused) {
+            // The record is on disk but not here; the next build catalogs the product as pending again
             this->log_WARNING_HI_DpStateRecordDropped(entry.record.get_id(), entry.record.get_tSec(),
                                                       entry.record.get_tSub());
             return;
@@ -1025,7 +1035,7 @@ void DpCatalog ::recordFileState(const DpStateEntry& entry) {
     slot.used = true;
     slot.visited = true;
     slot.entry = entry;
-    if (slotIndex == this->m_stateFileEntries) {
+    if (append) {
         this->m_stateFileEntries++;
     }
 }
@@ -1064,16 +1074,18 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
+    this->cmdResponse_out(opCode, cmdSeq, this->doDeleteDp(id, tSec, tSub));
+}
+
+Fw::CmdResponse DpCatalog ::doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub) {
     if (!this->m_catalogBuilt) {
         this->log_WARNING_HI_DpDeleteError(id, tSec, tSub, DpDeleteReason::NOT_BUILT);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return Fw::CmdResponse::EXECUTION_ERROR;
     }
     // FileDownlink is still reading this file; its fileDone would also find the entry gone
     if (this->m_hasCurrentXmit and DpCatalog::matchesIdentity(this->m_currentXmitEntry.record, id, tSec, tSub)) {
         this->log_WARNING_HI_DpDeleteError(id, tSec, tSub, DpDeleteReason::IN_FLIGHT);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return Fw::CmdResponse::EXECUTION_ERROR;
     }
 
     DpStateEntry catalogEntry{};
@@ -1082,8 +1094,7 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
     const bool inStateFile = this->findStateFileEntry(id, tSec, tSub, stateSlot);
     if (!inCatalog and !inStateFile) {
         this->log_WARNING_HI_DpDeleteError(id, tSec, tSub, DpDeleteReason::NOT_FOUND);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return Fw::CmdResponse::EXECUTION_ERROR;
     }
     // Copy: the catalog entry carries the live state, and the state slot is compacted away below
     const DpStateEntry entry = inCatalog ? catalogEntry : this->m_stateFileData[stateSlot].entry;
@@ -1095,16 +1106,14 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
     }
     if (formatStatus != Fw::FormatStatus::SUCCESS) {
         this->log_WARNING_HI_DpDeleteError(id, tSec, tSub, DpDeleteReason::NAME_ERROR);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return Fw::CmdResponse::EXECUTION_ERROR;
     }
 
     // A file that already vanished still has its catalog and state references removed
     const Os::FileSystem::Status fsStat = Os::FileSystem::removeFile(fileName.toChar());
     if ((fsStat != Os::FileSystem::OP_OK) and (fsStat != Os::FileSystem::DOESNT_EXIST)) {
         this->log_WARNING_HI_DpFileRemoveError(fileName, static_cast<I32>(fsStat));
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        return Fw::CmdResponse::EXECUTION_ERROR;
     }
 
     if (inCatalog) {
@@ -1123,15 +1132,13 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
         this->m_stateFileData[last].used = false;
         this->m_stateFileData[last].visited = false;
         this->m_stateFileEntries = last;
-        if (this->m_stateFile.length() > 0) {
-            stateFileWritten = this->pruneAndWriteStateFile();
-        }
+        stateFileWritten = this->pruneAndWriteStateFile();
     }
 
     // The file is gone and the loaded state updated either way; a failed rewrite was reported by
-    // pruneAndWriteStateFile and the next successful rewrite repairs the state file
+    // pruneAndWriteStateFile and the next rewrite from the loaded data repairs the state file
     this->log_ACTIVITY_HI_DpDeleted(fileName, entry.record.get_state());
-    this->cmdResponse_out(opCode, cmdSeq, stateFileWritten ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
+    return stateFileWritten ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR;
 }
 
 }  // namespace Svc

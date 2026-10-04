@@ -496,7 +496,7 @@ module Svc {
       id 53 \
       format "Error removing DP file {} stat {}"
 
-    @ Transmitted data product record kept on disk only: the loaded state file data is full
+    @ Transmitted data product record not kept in memory (loaded state file data full): the next BUILD_CATALOG catalogs the product as pending again
     event DpStateRecordDropped(
                                $id: FwDpIdType @< Container ID of the data product
                                tSec: U32 @< Time stamp seconds of the data product
@@ -504,7 +504,7 @@ module Svc {
                              ) \
       severity warning high \
       id 54 \
-      format "State record for DP id {} time {}:{} not kept in memory, state data full; deletable after the next BUILD_CATALOG" \
+      format "State record for DP id {} time {}:{} not kept, state data full; pending again (deletable or re-sent) after the next BUILD_CATALOG" \
       throttle 10
 
 

@@ -210,7 +210,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     void getFileState(DpStateEntry& entry);
 
     /// @brief prune the state file data and write the remaining entries back
-    /// @return true if the state file was written, false if an error was reported
+    /// @return true if the state file was written or none is configured, false if an error was reported
     bool pruneAndWriteStateFile();
 
     /// @brief load state data from file
@@ -248,10 +248,11 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param response the command response for the waited command
     void abortXmit(Fw::CmdResponse response);
 
-    /// @brief record a transmitted entry in the in-memory state data so it survives the next prune;
-    /// when the data is full, a loaded record whose file was not found is reused, else the record is dropped
-    /// @param entry entry to record
-    void recordFileState(const DpStateEntry& entry);
+    /// @brief keep a transmitted entry in the in-memory state data (not the file) so it survives the next
+    /// prune; when the data is full, a loaded record whose file was not found is reused, else the entry is
+    /// dropped and DpStateRecordDropped is emitted
+    /// @param entry entry to keep
+    void cacheFileState(const DpStateEntry& entry);
 
     /// @brief find a data product in the catalog by identity
     /// @param id container ID
@@ -276,6 +277,13 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param tSub time stamp subseconds
     /// @return true if the record has that identity
     static bool matchesIdentity(const DpRecord& record, FwDpIdType id, U32 tSec, U32 tSub);
+
+    /// @brief delete a data product: the file, its catalog entry and its state file record
+    /// @param id container ID
+    /// @param tSec time stamp seconds
+    /// @param tSub time stamp subseconds
+    /// @return the command response
+    Fw::CmdResponse doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub);
 
     // ----------------------------------
     // Private data
