@@ -469,7 +469,7 @@ module Svc {
 
     @ Data product deleted
     event DpDeleted(
-                    $file: string size FileNameStringSize @< Deleted data product file
+                    file: string size FileNameStringSize @< Deleted data product file
                     $state: Fw.DpState @< Transmission state of the data product when deleted
                   ) \
       severity activity high \
@@ -489,12 +489,23 @@ module Svc {
 
     @ Data product file could not be removed
     event DpFileRemoveError(
-                            $file: string size FileNameStringSize @< Data product file
+                            file: string size FileNameStringSize @< Data product file
                             stat: I32 @< Os::FileSystem status
                           ) \
       severity warning high \
       id 53 \
       format "Error removing DP file {} stat {}"
+
+    @ Transmitted data product record kept on disk only: the loaded state file data is full
+    event DpStateRecordDropped(
+                               $id: FwDpIdType @< Container ID of the data product
+                               tSec: U32 @< Time stamp seconds of the data product
+                               tSub: U32 @< Time stamp subseconds of the data product
+                             ) \
+      severity warning high \
+      id 54 \
+      format "State record for DP id {} time {}:{} not kept in memory, state data full; deletable after the next BUILD_CATALOG" \
+      throttle 10
 
 
     # ----------------------------------------------------------------------

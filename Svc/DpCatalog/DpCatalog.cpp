@@ -212,7 +212,7 @@ void DpCatalog::getFileState(DpStateEntry& entry) {
     }
 }
 
-void DpCatalog::pruneAndWriteStateFile() {
+bool DpCatalog::pruneAndWriteStateFile() {
     FW_ASSERT(this->m_stateFileData != nullptr);
 
     // There is a chance that a data product file can disappear after
@@ -229,7 +229,7 @@ void DpCatalog::pruneAndWriteStateFile() {
 
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
-        return;
+        return false;
     }
 
     // buffer for writing entries
@@ -256,13 +256,14 @@ void DpCatalog::pruneAndWriteStateFile() {
             if (stat != Os::File::OP_OK) {
                 this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
                 stateFile.close();
-                return;
+                return false;
             }
         }
     }
 
     // close the state file
     stateFile.close();
+    return true;
 }
 
 void DpCatalog::appendFileState(const DpStateEntry& entry) {
@@ -1001,16 +1002,36 @@ void DpCatalog ::abortXmit(Fw::CmdResponse response) {
 
 void DpCatalog ::recordFileState(const DpStateEntry& entry) {
     FW_ASSERT(this->m_stateFileData != nullptr);
-    // Slots [0, m_stateFileEntries) hold the used entries; a full table drops the record,
-    // which only costs the entry its survival across the next state file rewrite
-    if (this->m_stateFileEntries >= this->m_numDpSlots) {
-        return;
+    // Slots [0, m_stateFileEntries) hold the used entries
+    FwSizeType slotIndex = this->m_stateFileEntries;
+    if (slotIndex >= this->m_numDpSlots) {
+        // Full: reuse a loaded record whose file was not found at the last build, which the
+        // next rewrite would drop anyway
+        slotIndex = this->m_numDpSlots;
+        for (FwSizeType i = 0; i < this->m_stateFileEntries; i++) {
+            if (this->m_stateFileData[i].used and not this->m_stateFileData[i].visited) {
+                slotIndex = i;
+                break;
+            }
+        }
+        if (slotIndex >= this->m_numDpSlots) {
+            // The record is on disk but not here, so the product is deletable only after the next build
+            this->log_WARNING_HI_DpStateRecordDropped(entry.record.get_id(), entry.record.get_tSec(),
+                                                      entry.record.get_tSub());
+            return;
+        }
     }
-    DpDstateFileEntry& slot = this->m_stateFileData[this->m_stateFileEntries];
+    DpDstateFileEntry& slot = this->m_stateFileData[slotIndex];
     slot.used = true;
     slot.visited = true;
     slot.entry = entry;
-    this->m_stateFileEntries++;
+    if (slotIndex == this->m_stateFileEntries) {
+        this->m_stateFileEntries++;
+    }
+}
+
+bool DpCatalog ::matchesIdentity(const DpRecord& record, FwDpIdType id, U32 tSec, U32 tSub) {
+    return (record.get_id() == id) and (record.get_tSec() == tSec) and (record.get_tSub() == tSub);
 }
 
 bool DpCatalog ::findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const {
@@ -1018,8 +1039,7 @@ bool DpCatalog ::findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntr
     typename Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
     for (FwSizeType count = 0; (count < size) and (iter != this->m_dpCatalog.end()); count++, ++iter) {
         const DpStateEntry& candidate = *iter;
-        if ((candidate.record.get_id() == id) and (candidate.record.get_tSec() == tSec) and
-            (candidate.record.get_tSub() == tSub)) {
+        if (DpCatalog::matchesIdentity(candidate.record, id, tSec, tSub)) {
             entry = candidate;
             return true;
         }
@@ -1027,16 +1047,16 @@ bool DpCatalog ::findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntr
     return false;
 }
 
-FwSizeType DpCatalog ::findStateFileEntry(FwDpIdType id, U32 tSec, U32 tSub) const {
+bool DpCatalog ::findStateFileEntry(FwDpIdType id, U32 tSec, U32 tSub, FwSizeType& slot) const {
     FW_ASSERT(this->m_stateFileData != nullptr);
-    for (FwSizeType slot = 0; slot < this->m_stateFileEntries; slot++) {
-        const DpDstateFileEntry& candidate = this->m_stateFileData[slot];
-        if (candidate.used and (candidate.entry.record.get_id() == id) and
-            (candidate.entry.record.get_tSec() == tSec) and (candidate.entry.record.get_tSub() == tSub)) {
-            return slot;
+    for (FwSizeType index = 0; index < this->m_stateFileEntries; index++) {
+        const DpDstateFileEntry& candidate = this->m_stateFileData[index];
+        if (candidate.used and DpCatalog::matchesIdentity(candidate.entry.record, id, tSec, tSub)) {
+            slot = index;
+            return true;
         }
     }
-    return this->m_numDpSlots;
+    return false;
 }
 
 void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub) {
@@ -1050,17 +1070,16 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
         return;
     }
     // FileDownlink is still reading this file; its fileDone would also find the entry gone
-    if (this->m_hasCurrentXmit and (this->m_currentXmitEntry.record.get_id() == id) and
-        (this->m_currentXmitEntry.record.get_tSec() == tSec) and (this->m_currentXmitEntry.record.get_tSub() == tSub)) {
+    if (this->m_hasCurrentXmit and DpCatalog::matchesIdentity(this->m_currentXmitEntry.record, id, tSec, tSub)) {
         this->log_WARNING_HI_DpDeleteError(id, tSec, tSub, DpDeleteReason::IN_FLIGHT);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
-    DpStateEntry catalogEntry;
+    DpStateEntry catalogEntry{};
     const bool inCatalog = this->findCatalogEntry(id, tSec, tSub, catalogEntry);
-    const FwSizeType stateSlot = this->findStateFileEntry(id, tSec, tSub);
-    const bool inStateFile = (stateSlot < this->m_stateFileEntries);
+    FwSizeType stateSlot = 0;
+    const bool inStateFile = this->findStateFileEntry(id, tSec, tSub, stateSlot);
     if (!inCatalog and !inStateFile) {
         this->log_WARNING_HI_DpDeleteError(id, tSec, tSub, DpDeleteReason::NOT_FOUND);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -1094,6 +1113,7 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
         this->m_pendingFiles--;
         this->m_pendingDpBytes -= catalogEntry.record.get_size();
     }
+    bool stateFileWritten = true;
     if (inStateFile) {
         // Compact so slots [0, m_stateFileEntries) remain the used ones, then rewrite the file
         const FwSizeType last = this->m_stateFileEntries - 1;
@@ -1104,12 +1124,14 @@ void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdTyp
         this->m_stateFileData[last].visited = false;
         this->m_stateFileEntries = last;
         if (this->m_stateFile.length() > 0) {
-            this->pruneAndWriteStateFile();
+            stateFileWritten = this->pruneAndWriteStateFile();
         }
     }
 
+    // The file is gone and the loaded state updated either way; a failed rewrite was reported by
+    // pruneAndWriteStateFile and the next successful rewrite repairs the state file
     this->log_ACTIVITY_HI_DpDeleted(fileName, entry.record.get_state());
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    this->cmdResponse_out(opCode, cmdSeq, stateFileWritten ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 }  // namespace Svc

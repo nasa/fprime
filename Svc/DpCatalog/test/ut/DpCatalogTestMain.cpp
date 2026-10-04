@@ -385,6 +385,31 @@ TEST(NominalManual, DeleteDpStateFileReload) {
     tester.test_DeleteDpStateFileReload();
 }
 
+TEST(OffNominal, DeleteDpRemoveError) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpRemoveError();
+}
+
+TEST(OffNominal, DeleteDpNameError) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpNameError();
+}
+
+TEST(NominalManual, DeleteDpStateTableRecycle) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStateTableRecycle();
+}
+
+TEST(OffNominal, DeleteDpStateTableFull) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStateTableFull();
+}
+
+TEST(OffNominal, DeleteDpStateFileWriteError) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStateFileWriteError();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
