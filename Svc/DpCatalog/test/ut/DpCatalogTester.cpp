@@ -1504,6 +1504,10 @@ void DpCatalogTester::test_XmitPriorityRangeInverted() {
 void DpCatalogTester::test_XmitPriorityRangeRuntimeAdd() {
     const char* dir = "./DpTest_RangeRuntime";
     const FwDpPriorityType prios[] = {10};
+    // Ids 2 and 3 are generated below; remove leftovers from an earlier failed run before building
+    this->makeDpDir(dir);
+    this->delDp(2, PRIORITY_RANGE_TIME, dir);
+    this->delDp(3, PRIORITY_RANGE_TIME, dir);
     this->buildPriorityCatalog(dir, prios, FW_NUM_ARRAY_ELEMENTS(prios));
 
     // Transmit [10, 20] and remain active for runtime additions
@@ -1525,6 +1529,10 @@ void DpCatalogTester::test_XmitPriorityRangeRuntimeAdd() {
     }
     ASSERT_EVENTS_DpFileAdded_SIZE(1);
     ASSERT_from_fileOut_SIZE(1);
+    // No new transmission was started, so no spurious completion or range-started event is reported
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitRangeStarted_SIZE(1);
+    EXPECT_FALSE(this->component.m_xmitInProgress);
     EXPECT_EQ(this->component.m_dpCatalog.getSize(), 1);
 
     // A runtime DP inside the range is sent
@@ -1541,6 +1549,9 @@ void DpCatalogTester::test_XmitPriorityRangeRuntimeAdd() {
     EXPECT_EQ(this->eventHistory_SendingProduct->at(0).prio, 10);
     EXPECT_EQ(this->eventHistory_SendingProduct->at(1).prio, 15);
     EXPECT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    // The resume reuses the stored range: no new range-started event, but the resume completes
+    ASSERT_EVENTS_CatalogXmitRangeStarted_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(2);
 
     this->cleanPriorityCatalog(dir, 3);
 }

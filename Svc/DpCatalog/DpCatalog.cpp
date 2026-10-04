@@ -745,6 +745,7 @@ bool DpCatalog::findNextEntry(DpStateEntry& entry) {
     // them; once an entry past m_xmitEndPriority is reached nothing further can be in range.
     const FwSizeType size = this->m_dpCatalog.getSize();
     typename Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
+    // index gives the walk a fixed upper bound (catalog size); the iterator check is the real end condition
     for (FwSizeType index = 0; (index < size) && (iter != this->m_dpCatalog.end()); index++, ++iter) {
         const FwDpPriorityType priority = (*iter).record.get_priority();
         if (priority < this->m_xmitStartPriority) {
@@ -866,10 +867,14 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     const ProcessFileStatus ret = processFile(fileName, dir);
 
     if (ret == ProcessFileStatus::SUCCESS) {
-        // If we already finished, sendNext only if remainingActive
+        // If we already finished, sendNext only if remainingActive and the new product is inside the
+        // active priority range; otherwise it stays pending for a later START_XMIT_CATALOG
         if (!this->m_xmitInProgress && this->m_remainActive) {
-            this->m_xmitInProgress = true;
-            this->sendNextEntry();
+            DpStateEntry nextEntry;
+            if (this->findNextEntry(nextEntry)) {
+                this->m_xmitInProgress = true;
+                this->sendNextEntry();
+            }
         }
         // Otherwise, Current File finishing will invoke sendNextFile & find the right file
         // Or will be manually tx-ed at next command

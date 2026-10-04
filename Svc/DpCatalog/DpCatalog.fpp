@@ -463,7 +463,8 @@ module Svc {
       id 51 \
       format "Invalid priority range: start {} exceeds end {}. Transmit not started."
 
-    @ Catalog transmission started for a priority range
+    @ Catalog transmission started for a priority range (emitted on every accepted START_XMIT_CATALOG;
+    @ the legacy CatalogXmitStarted event is not emitted)
     event CatalogXmitRangeStarted(
                             startPriority: FwDpPriorityType @< start of the priority range, inclusive
                             endPriority: FwDpPriorityType @< end of the priority range, inclusive
