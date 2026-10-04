@@ -157,7 +157,7 @@ Every `sendFile` call returns a `SendFileResponse` whose `context` FileDownlink 
 
 | Condition | Behavior |
 |---|---|
-| Component not configured (`ComponentNotInitialized`/`ComponentNoMemory`) or no memory allocated (`NoDpMemory`) | The file is not recorded; the corresponding warning is emitted, as for the commands. |
+| Component not configured (`ComponentNotInitialized`) or configured with no slots (`ComponentNoMemory`) | The file is not recorded; the corresponding warning is emitted, as for the commands. |
 | Catalog not built (no `BUILD_CATALOG` yet, or `CLEAR_CATALOG` since the last build) | The file is not recorded; `NotLoaded` is emitted. The file is on disk in a managed directory and is found by the next `BUILD_CATALOG`. |
 | File is not under a configured directory | `DirectoryNotManaged`; the file is ignored. |
 | File cannot be read or has a bad size, header, CRC, or name | The same `FileSizeError`/`FileOpenError`/`FileReadError`/`FileHdrError`/`FileHdrDesError`/`FileNameFormatError`/`InvalidFileName` events as at build time; nothing is inserted. |

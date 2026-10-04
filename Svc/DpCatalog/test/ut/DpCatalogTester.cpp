@@ -1371,7 +1371,7 @@ void DpCatalogTester::test_InsertIntoEmptyBuiltCatalog() {
     Fw::Time time(1000, 100);
     this->delDp(id, time, dir.toChar());
 
-    this->configureAndBuild(dir, stateFile, 10, alloc);
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
 
@@ -1426,7 +1426,7 @@ void DpCatalogTester::test_InsertDuringTransmitInPriorityOrder() {
     files[0] = this->genDP(ids[0], prios[0], time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
     files[2] = this->genDP(ids[2], prios[2], time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
 
-    this->configureAndBuild(dir, stateFile, 10, alloc);
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
     ASSERT_EVENTS_DpFileAdded_SIZE(2);
 
     this->m_autoFileDone = false;
@@ -1489,7 +1489,7 @@ void DpCatalogTester::test_InsertWhenFull() {
         ASSERT_STRNE(file.toChar(), "");
     }
 
-    this->configureAndBuild(dir, stateFile, 10, alloc);
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
     ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), DP_MAX_FILES);
     const U32 pendingFiles = this->component.m_pendingFiles;
@@ -1591,7 +1591,7 @@ void DpCatalogTester::test_InsertDuplicate() {
     FwSizeType fileSize = 0;
     ASSERT_EQ(Os::FileSystem::getFileSize(dpFile.toChar(), fileSize), Os::FileSystem::Status::OP_OK);
 
-    this->configureAndBuild(dir, stateFile, 10, alloc);
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
     ASSERT_EVENTS_DpFileAdded_SIZE(1);
     ASSERT_EQ(this->component.m_pendingFiles, 1);
     ASSERT_EQ(this->component.m_pendingDpBytes, fileSize);
@@ -1635,7 +1635,7 @@ void DpCatalogTester::test_InsertPreservesTransmittedState() {
     files[0] = this->genDP(ids[0], 10, times[0], 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
     files[1] = this->genDP(ids[1], 10, times[1], 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
 
-    this->configureAndBuild(dir, stateFile, 10, alloc);
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
     ASSERT_EVENTS_DpFileAdded_SIZE(2);
 
     // transmit both: their TRANSMITTED records are appended to the state file
@@ -1658,7 +1658,7 @@ void DpCatalogTester::test_InsertPreservesTransmittedState() {
 
     // the rebuilt catalog skips the two transmitted products and adds only the new one
     this->clearHistory();
-    this->configureAndBuild(dir, stateFile, 20, alloc);
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
     // directory listing order is not defined, so only the set of skipped files is checked
     ASSERT_EVENTS_DpFileSkipped_SIZE(2);
     for (FwIndexType i = 0; i < 2; i++) {
@@ -1693,7 +1693,7 @@ void DpCatalogTester::test_InsertAlreadyTransmitted() {
     ASSERT_STRNE(dpFile.toChar(), "");
 
     // build and transmit: the TRANSMITTED record is appended to the state file
-    this->configureAndBuild(dir, stateFile, 10, alloc);
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
     ASSERT_EVENTS_DpFileAdded_SIZE(1);
     this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
     while (this->component.m_queue.getMessagesAvailable() > 0) {
@@ -1705,8 +1705,9 @@ void DpCatalogTester::test_InsertAlreadyTransmitted() {
 
     // rebuild so the record is loaded, then report the same file at runtime
     this->clearHistory();
-    this->configureAndBuild(dir, stateFile, 20, alloc);
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
     ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     this->invoke_to_addToCat(0, dpFile, 10, 0);
     this->component.doDispatch();
