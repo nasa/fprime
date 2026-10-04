@@ -131,6 +131,17 @@ class DpCatalog final : public DpCatalogComponentBase {
                                   U32 cmdSeq            //!< The command sequence number
                                   ) override;
 
+    //! Handler implementation for command SET_DP_PRIORITY
+    //!
+    //! Set the transmit priority of one data product in the in-memory catalog
+    void SET_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,       //!< The opcode
+                                    U32 cmdSeq,                //!< The command sequence number
+                                    FwDpIdType id,             //!< Container ID of the data product
+                                    U32 tSec,                  //!< Seconds of the data product time tag
+                                    U32 tSub,                  //!< Microseconds of the data product time tag
+                                    FwDpPriorityType priority  //!< New transmit priority
+                                    ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -139,6 +150,8 @@ class DpCatalog final : public DpCatalogComponentBase {
         friend class DpCatalogTester;
         FwIndexType dir;  //!< index to m_directories entry that has directory name where DP exists
         DpRecord record;  //!< data product metadata
+        //! priority in the DP file header; record priority is the transmit priority, which SET_DP_PRIORITY may change
+        FwDpPriorityType filePriority;
 
         /// @brief insert an entry into the sorted list; if it exists, update the metadata
         /// @param left an entry to compare
@@ -236,6 +249,14 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief abandon the transmit: clear both transmit flags and answer a waited START_XMIT_CATALOG
     /// @param response the command response for the waited command
     void abortXmit(Fw::CmdResponse response);
+
+    /// @brief find the catalog entry for a data product by its identity (id and time tag)
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @param entry the entry found
+    /// @return true if an entry was found
+    bool findEntryByIdentity(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
 
     // ----------------------------------
     // Private data
