@@ -739,24 +739,25 @@ void DpCatalog::sendNextEntry() {
 }  // end sendNextEntry()
 
 bool DpCatalog::findNextEntry(DpStateEntry& entry) {
-    // If catalog is empty, return false
-    if (this->m_dpCatalog.getSize() == 0) {
-        return false;
-    }
-
-    // Get the highest priority entry (begin() returns highest priority)
-    // Since we remove entries as we transmit them, begin() always gives us the next entry
+    // Entries are ordered by ascending priority value (begin() returns the most urgent) and are removed
+    // as they are transmitted, so the next entry to send is the first one at or after m_xmitStartPriority.
+    // Entries before the range are skipped (not removed) so a later START_XMIT_CATALOG can still send
+    // them; once an entry past m_xmitEndPriority is reached nothing further can be in range.
+    const FwSizeType size = this->m_dpCatalog.getSize();
     typename Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
-
-    // Verify iterator is valid
-    if (iter == this->m_dpCatalog.end()) {
-        return false;
+    for (FwSizeType index = 0; (index < size) && (iter != this->m_dpCatalog.end()); index++, ++iter) {
+        const FwDpPriorityType priority = (*iter).record.get_priority();
+        if (priority < this->m_xmitStartPriority) {
+            continue;
+        }
+        if (priority > this->m_xmitEndPriority) {
+            break;
+        }
+        entry = *iter;
+        return true;
     }
 
-    // Get the entry
-    entry = *iter;
-
-    return true;
+    return false;
 }
 
 bool DpCatalog::checkInit() {
@@ -890,7 +891,14 @@ void DpCatalog ::BUILD_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
                                                U32 cmdSeq,
                                                const Fw::Wait& wait,
-                                               bool remainActive) {
+                                               bool remainActive,
+                                               FwDpPriorityType startPriority,
+                                               FwDpPriorityType endPriority) {
+    if (startPriority > endPriority) {
+        this->log_WARNING_LO_XmitPriorityRangeInvalid(startPriority, endPriority);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     this->m_remainActive = remainActive;
 
     // Arm the waited response before starting: an empty catalog completes the
@@ -901,7 +909,7 @@ void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
         this->m_xmitCmdSeq = cmdSeq;
     }
 
-    Fw::CmdResponse resp = this->doCatalogXmit();
+    Fw::CmdResponse resp = this->doCatalogXmit(startPriority, endPriority);
     FW_ASSERT(resp.isValid(), static_cast<FwAssertArgType>(resp.e));
 
     if (resp != Fw::CmdResponse::OK) {
@@ -914,7 +922,7 @@ void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
     }
 }
 
-Fw::CmdResponse DpCatalog::doCatalogXmit() {
+Fw::CmdResponse DpCatalog::doCatalogXmit(FwDpPriorityType startPriority, FwDpPriorityType endPriority) {
     // check initialization
     if (not this->checkInit()) {
         return Fw::CmdResponse::EXECUTION_ERROR;
@@ -943,6 +951,9 @@ Fw::CmdResponse DpCatalog::doCatalogXmit() {
     if (!this->m_hasCurrentXmit) {
         this->m_xmitBytes = 0;
     }
+    this->m_xmitStartPriority = startPriority;
+    this->m_xmitEndPriority = endPriority;
+    this->log_ACTIVITY_HI_CatalogXmitRangeStarted(startPriority, endPriority);
     this->m_xmitInProgress = true;
     // Step 3b - search for and send first entry
     this->sendNextEntry();
