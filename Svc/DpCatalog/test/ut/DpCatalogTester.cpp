@@ -1556,6 +1556,7 @@ void DpCatalogTester ::test_SetPriorityDuringXmit() {
     ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 12, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_SET_DP_PRIORITY, 13, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpPrioritySet_SIZE(2);
+    ASSERT_EVENTS_DpPrioritySet(0, SET_PRIO_IDS[2], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 30, 15);
     ASSERT_EVENTS_DpPrioritySet(1, SET_PRIO_IDS[0], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 10, 50);
     ASSERT_from_fileOut_SIZE(1);
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), 3);
@@ -1664,6 +1665,12 @@ void DpCatalogTester ::test_SetPrioritySameIdByTime() {
     ASSERT_EVENTS_DpNotFound(0, id, 1003, 100);
     ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_SET_DP_PRIORITY, 12, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_DpPrioritySet_SIZE(1);
+
+    for (FwIndexType dp = 0; dp < 3; dp++) {
+        this->delDp(id, Fw::Time(1000 + static_cast<U32>(dp), 100), dir.toChar());
+    }
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
 }
 
 }  // namespace Svc

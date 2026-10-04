@@ -1027,10 +1027,10 @@ void DpCatalog ::SET_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,
         // Only this entry moves, and every send restarts the walk at begin(), so a transmit in
         // progress follows the new order from its next send
         Fw::Success status = this->m_dpCatalog.remove(entry);
-        FW_ASSERT(status == Fw::Success::SUCCESS);
+        FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
         entry.record.set_priority(priority);
         status = this->m_dpCatalog.insert(entry);
-        FW_ASSERT(status == Fw::Success::SUCCESS);
+        FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
         // The send in flight is not affected, but its copy must keep matching the catalog entry so
         // that fileDone can remove it
         if (this->m_hasCurrentXmit && this->m_currentXmitEntry.record.get_id() == id &&
@@ -1045,7 +1045,7 @@ void DpCatalog ::SET_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,
 bool DpCatalog ::findEntryByIdentity(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const {
     // The sort key includes the priority, which is what is being changed, so the lookup is by the
     // identity fields alone; the walk is bounded by the catalog capacity
-    for (typename Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
+    for (Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
          iter != this->m_dpCatalog.end(); ++iter) {
         if ((*iter).record.get_id() == id && (*iter).record.get_tSec() == tSec && (*iter).record.get_tSub() == tSub) {
             entry = *iter;
