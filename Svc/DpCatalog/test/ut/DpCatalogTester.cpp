@@ -1349,4 +1349,343 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     this->component.shutdown();
 }
 
+void DpCatalogTester::test_InsertIntoEmptyBuiltCatalog() {
+    // A product written after BUILD_CATALOG of an empty directory is inserted and, since the previous
+    // transmission completed with remainActive set, sent without a new START_XMIT_CATALOG
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_InsertEmpty");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+    const FwDpIdType id = 0x100;
+    Fw::Time time(1000, 100);
+    this->delDp(id, time, dir.toChar());
+
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, true);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_START_XMIT_CATALOG, 11, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_from_fileOut_SIZE(0);
+
+    Fw::String dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(dpFile.toChar(), fileSize), Os::FileSystem::Status::OP_OK);
+
+    this->invoke_to_addToCat(0, dpFile, 10, fileSize);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, dpFile.toChar());
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+    ASSERT_EQ(this->component.m_pendingDpBytes, fileSize);
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, dpFile, dpFile, 0, 0);
+
+    // the automatic fileDone completes the product and the (resumed) transmission
+    this->component.doDispatch();
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(2);
+    ASSERT_EVENTS_CatalogXmitCompleted(1, fileSize);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    this->delDp(id, time, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_InsertDuringTransmitInPriorityOrder() {
+    // Catalog built with priorities 10 and 30. While 10 is in flight, products of priority 20 and 40 are
+    // inserted. The file in flight is not disturbed and the send order is 10, 20, 30, 40: the new entries
+    // take their place in the existing priority order
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_InsertOrder");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+    Fw::Time time(1000, 100);
+    const FwDpIdType ids[4] = {0x1, 0x2, 0x3, 0x4};
+    const FwDpPriorityType prios[4] = {10, 20, 30, 40};
+    Fw::String files[4];
+    for (FwIndexType i = 0; i < 4; i++) {
+        this->delDp(ids[i], time, dir.toChar());
+    }
+    files[0] = this->genDP(ids[0], prios[0], time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    files[2] = this->genDP(ids[2], prios[2], time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileAdded_SIZE(2);
+
+    this->m_autoFileDone = false;
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, files[0], files[0], 0, 0);
+    const U32 inFlight = this->m_lastContext;
+
+    // insert while priority 10 is in flight
+    files[1] = this->genDP(ids[1], prios[1], time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    files[3] = this->genDP(ids[3], prios[3], time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->invoke_to_addToCat(0, files[3], prios[3], 0);
+    this->component.doDispatch();
+    this->invoke_to_addToCat(0, files[1], prios[1], 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileAdded_SIZE(4);
+    ASSERT_EVENTS_DpFileAdded(2, files[3].toChar());
+    ASSERT_EVENTS_DpFileAdded(3, files[1].toChar());
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 4);
+    ASSERT_EQ(this->component.m_pendingFiles, 4);
+    // nothing new is sent while a file is in flight
+    ASSERT_from_fileOut_SIZE(1);
+
+    // completing each send yields the next in priority order, new entries included
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, inFlight));
+    this->component.doDispatch();
+    for (FwIndexType i = 1; i < 4; i++) {
+        ASSERT_from_fileOut_SIZE(static_cast<U32>(i + 1));
+        ASSERT_from_fileOut(static_cast<U32>(i), files[i], files[i], 0, 0);
+        this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, this->m_lastContext));
+        this->component.doDispatch();
+    }
+    ASSERT_from_fileOut_SIZE(4);
+    ASSERT_EVENTS_ProductComplete_SIZE(4);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    for (FwIndexType i = 0; i < 4; i++) {
+        this->delDp(ids[i], time, dir.toChar());
+    }
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_InsertWhenFull() {
+    // With every slot in use, a runtime insert is refused with DpCatalogFull and leaves the catalog
+    // untouched; once a slot is freed by a completed send, the same insert succeeds
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_InsertFull");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+    const FwDpIdType extraId = DP_MAX_FILES + 1;
+    for (FwDpIdType id = 1; id <= extraId; id++) {
+        this->delDp(id, Fw::Time(1000 + id, 0), dir.toChar());
+    }
+    for (FwDpIdType id = 1; id <= DP_MAX_FILES; id++) {
+        Fw::String file =
+            this->genDP(id, 10, Fw::Time(1000 + id, 0), 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(file.toChar(), "");
+    }
+
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), DP_MAX_FILES);
+    const U32 pendingFiles = this->component.m_pendingFiles;
+    const U64 pendingBytes = this->component.m_pendingDpBytes;
+
+    Fw::String extra =
+        this->genDP(extraId, 10, Fw::Time(1000 + extraId, 0), 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(extra.toChar(), "");
+    this->invoke_to_addToCat(0, extra, 10, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpCatalogFull_SIZE(1);
+    ASSERT_EQ(this->eventHistory_DpCatalogFull->at(0).dp.get_id(), extraId);
+    ASSERT_EVENTS_DpInsertError_SIZE(0);
+    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), DP_MAX_FILES);
+    ASSERT_EQ(this->component.m_pendingFiles, pendingFiles);
+    ASSERT_EQ(this->component.m_pendingDpBytes, pendingBytes);
+
+    // free one slot by completing one send
+    this->m_autoFileDone = false;
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, this->m_lastContext));
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), DP_MAX_FILES - 1);
+
+    this->invoke_to_addToCat(0, extra, 10, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpCatalogFull_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES + 1);
+    ASSERT_EVENTS_DpFileAdded(DP_MAX_FILES, extra.toChar());
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), DP_MAX_FILES);
+
+    for (FwDpIdType id = 1; id <= extraId; id++) {
+        this->delDp(id, Fw::Time(1000 + id, 0), dir.toChar());
+    }
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_InsertBeforeBuild() {
+    // A product reported before BUILD_CATALOG (or after CLEAR_CATALOG) is not recorded and is reported
+    // with NotLoaded; the file on disk is then found by the next BUILD_CATALOG
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_InsertBeforeBuild");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+    const FwDpIdType id = 0x200;
+    Fw::Time time(1000, 100);
+    this->delDp(id, time, dir.toChar());
+    Fw::String dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->invoke_to_addToCat(0, dpFile, 10, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_NotLoaded_SIZE(1);
+    ASSERT_EVENTS_NotLoaded(0, dpFile.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+    ASSERT_EQ(this->component.m_pendingFiles, 0);
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, dpFile.toChar());
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+
+    // CLEAR_CATALOG returns to the unbuilt state
+    this->sendCmd_CLEAR_CATALOG(0, 11);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_CLEAR_CATALOG, 11, Fw::CmdResponse::OK);
+    this->invoke_to_addToCat(0, dpFile, 10, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_NotLoaded_SIZE(2);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    this->delDp(id, time, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_InsertDuplicate() {
+    // Reporting a product that is already in the catalog is a DpDuplicate; counters are unchanged and
+    // the product is sent once
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_InsertDuplicate");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+    const FwDpIdType id = 0x300;
+    Fw::Time time(1000, 100);
+    this->delDp(id, time, dir.toChar());
+    Fw::String dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(dpFile.toChar(), fileSize), Os::FileSystem::Status::OP_OK);
+
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+    ASSERT_EQ(this->component.m_pendingDpBytes, fileSize);
+
+    this->invoke_to_addToCat(0, dpFile, 10, fileSize);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpDuplicate_SIZE(1);
+    ASSERT_EQ(this->eventHistory_DpDuplicate->at(0).dp.get_id(), id);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(0);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+    ASSERT_EQ(this->component.m_pendingDpBytes, fileSize);
+
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted(0, fileSize);
+
+    this->delDp(id, time, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_InsertPreservesTransmittedState() {
+    // A runtime insert must not rewrite the state file: the TRANSMITTED records appended since the build
+    // are still honored by the next BUILD_CATALOG
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_InsertState");
+    Fw::FileNameString stateFile("./DpTest_InsertState/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const FwDpIdType ids[3] = {0x10, 0x11, 0x12};
+    const Fw::Time times[3] = {Fw::Time(2000, 0), Fw::Time(2001, 0), Fw::Time(2002, 0)};
+    Fw::String files[3];
+    for (FwIndexType i = 0; i < 3; i++) {
+        this->delDp(ids[i], times[i], dir.toChar());
+    }
+    files[0] = this->genDP(ids[0], 10, times[0], 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    files[1] = this->genDP(ids[1], 10, times[1], 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(2);
+
+    // transmit both: their TRANSMITTED records are appended to the state file
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_EVENTS_ProductComplete_SIZE(2);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+
+    // insert a new product without transmitting it
+    files[2] = this->genDP(ids[2], 10, times[2], 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->invoke_to_addToCat(0, files[2], 10, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileAdded_SIZE(3);
+    ASSERT_EVENTS_DpFileAdded(2, files[2].toChar());
+    ASSERT_from_fileOut_SIZE(2);
+    this->component.shutdown();
+
+    // the rebuilt catalog skips the two transmitted products and adds only the new one
+    this->clearHistory();
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 20);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 20, Fw::CmdResponse::OK);
+    // directory listing order is not defined, so only the set of skipped files is checked
+    ASSERT_EVENTS_DpFileSkipped_SIZE(2);
+    for (FwIndexType i = 0; i < 2; i++) {
+        const Fw::String skipped(this->eventHistory_DpFileSkipped->at(static_cast<U32>(i)).file.toChar());
+        ASSERT_TRUE(skipped == files[0] || skipped == files[1]) << skipped.toChar();
+    }
+    ASSERT_STRNE(this->eventHistory_DpFileSkipped->at(0).file.toChar(),
+                 this->eventHistory_DpFileSkipped->at(1).file.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, files[2].toChar());
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+
+    for (FwIndexType i = 0; i < 3; i++) {
+        this->delDp(ids[i], times[i], dir.toChar());
+    }
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
 }  // namespace Svc
