@@ -9,7 +9,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Fw/Comp/PassiveComponentBase.cpp
                                               24      14    58%   12-13,16-20,27-28,30
 /home/runner/work/fprime/fprime/Fw/Comp/QueuedComponentBase.cpp
-                                              28      15    53%   23-24,43-45,47-53,56
+                                              28      18    64%   23-24,47-53,56
 ------------------------------------------------------------------------------
-TOTAL                                        112      79    70%
+TOTAL                                        112      82    73%
 ------------------------------------------------------------------------------
