@@ -500,8 +500,16 @@ void CfdpManagerTester::sendAndVerifyClass1TxMaxPduSize(const char* srcFile, con
         const U32 offset = pduIdx * dataPerPdu;
         const U32 remaining = static_cast<U32>(fileSize) - offset;
         const U16 dataSize = static_cast<U16>((remaining < dataPerPdu) ? remaining : dataPerPdu);
-        verifyFileDataPdu(this->getSentPduBuffer(static_cast<FwIndexType>(1 + pduIdx)), component.getLocalEidParam(),
-                          destEid, setup.expectedSeqNum, offset, dataSize, srcFile, Cfdp::Class::CLASS_1);
+
+        Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(static_cast<FwIndexType>(1 + pduIdx));
+
+        if (dataSize == dataPerPdu) {
+            EXPECT_EQ(MAX_PDU_BUFFER_SIZE, fileDataPduBuffer.getSize())
+                << "Full File Data PDU should use the maximum PDU buffer size";
+        }
+
+        verifyFileDataPdu(fileDataPduBuffer, component.getLocalEidParam(), destEid, setup.expectedSeqNum, offset,
+                          dataSize, srcFile, Cfdp::Class::CLASS_1);
     }
 
     // Run second engine cycle - should send EOF PDU

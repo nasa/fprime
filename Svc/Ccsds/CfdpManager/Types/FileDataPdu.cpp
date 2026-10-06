@@ -43,6 +43,8 @@ U32 FileDataPdu::getBufferSize() const {
 }
 
 U32 FileDataPdu::getMaxFileDataSize() {
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::FILE_DATA);
+
     U32 size = this->m_header.getBufferSize();
 
     // Offset field size depends on large file flag
