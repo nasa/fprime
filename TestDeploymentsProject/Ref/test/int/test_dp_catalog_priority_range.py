@@ -25,6 +25,7 @@ def _xmit_range(fprime_test_api, dp_catalog, start, end):
         dp_catalog + ".START_XMIT_CATALOG",
         ["WAIT", "false", start, end],
         max_delay=120,
+        timeout=120,
     )
     assert fprime_test_api.await_event(
         dp_catalog + ".CatalogXmitRangeStarted", args=[start, end], start=0, timeout=10
