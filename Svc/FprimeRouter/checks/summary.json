@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-01T19:15:41Z",
+  "generated_at": "2026-10-06T19:18:33Z",
   "ref": "release/v4.4.0-maintenance",
-  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
+  "commit": "2d623e7a7062d1b15183e92e65fd86466b3df68b",
   "passed": 0,
   "failed": 4,
   "skipped": 12,

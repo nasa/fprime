@@ -2,8 +2,8 @@
   "schema": 6,
   "ref": "release/v4.4.0-maintenance",
   "ref_type": "branch",
-  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
-  "generated_at": "2026-10-01T19:34:19Z",
+  "commit": "2d623e7a7062d1b15183e92e65fd86466b3df68b",
+  "generated_at": "2026-10-06T19:18:39Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -4864,10 +4864,10 @@
         }
       },
       "checks": {
-        "passed": 1,
-        "failed": 1,
+        "passed": 2,
+        "failed": 0,
         "skipped": 14,
-        "tier": "bronze",
+        "tier": "platinum",
         "report": "Os/Posix/checks/index.html"
       },
       "sdd": {
@@ -4880,7 +4880,7 @@
         "ut": "bronze",
         "int": null,
         "codeql": "silver",
-        "checks": "bronze",
+        "checks": "platinum",
         "sdd": "bronze"
       }
     },

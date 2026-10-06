@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-01T19:15:41Z",
+  "generated_at": "2026-10-06T19:18:33Z",
   "ref": "release/v4.4.0-maintenance",
-  "commit": "1a83bb878be673f405d5de3c0cc5ed37b5fc3596",
-  "passed": 1,
-  "failed": 1,
+  "commit": "2d623e7a7062d1b15183e92e65fd86466b3df68b",
+  "passed": 2,
+  "failed": 0,
   "skipped": 14,
   "checks": [
     {
@@ -57,10 +57,8 @@
       "name": "Source dependencies listed in CMakeLists",
       "category": "implementation",
       "module": "/home/runner/work/fprime/fprime/Os/Posix",
-      "status": "fail",
-      "failures": [
-        "dependency 'Fw/Logger' (from #include \"Fw/Logger/Logger.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Logger)"
-      ],
+      "status": "pass",
+      "failures": [],
       "detail": "2 dependency module(s) checked"
     },
     {
