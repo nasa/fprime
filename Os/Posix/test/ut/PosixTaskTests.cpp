@@ -33,7 +33,7 @@ int currentNice() {
     return nice;
 }
 
-#if defined(POSIX_THREADS_USE_LINUX_PRIORITIES) && POSIX_THREADS_USE_LINUX_PRIORITIES
+#if defined(TGT_OS_TYPE_LINUX)
 //! A nice value above the inherited one, which an unprivileged thread may set, saturating at the maximum
 int raisedNice(const int step) {
     const int inherited = currentNice();
