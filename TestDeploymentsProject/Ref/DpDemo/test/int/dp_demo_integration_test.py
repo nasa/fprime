@@ -84,8 +84,12 @@ def test_dp_delete(fprime_test_api):
     identity = [int(field) for field in match.groups()]
 
     # Rebuild the catalog so it knows the new product, then delete it
-    fprime_test_api.send_and_assert_command("DataProducts.dpCat.CLEAR_CATALOG", max_delay=10)
-    fprime_test_api.send_and_assert_command("DataProducts.dpCat.BUILD_CATALOG", max_delay=10)
+    fprime_test_api.send_and_assert_command(
+        "DataProducts.dpCat.CLEAR_CATALOG", max_delay=10
+    )
+    fprime_test_api.send_and_assert_command(
+        "DataProducts.dpCat.BUILD_CATALOG", max_delay=10
+    )
     fprime_test_api.send_and_assert_command(
         "DataProducts.dpCat.DELETE_DP",
         identity,
