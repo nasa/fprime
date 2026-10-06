@@ -3,7 +3,7 @@
   "ref": "release/v4.4.0-maintenance",
   "ref_type": "branch",
   "commit": "2d623e7a7062d1b15183e92e65fd86466b3df68b",
-  "generated_at": "2026-10-06T19:18:39Z",
+  "generated_at": "2026-10-06T19:28:51Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
