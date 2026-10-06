@@ -162,6 +162,12 @@ TEST(TestDataProducts, dpAllocationFailureTest) {
     tester.dpAllocationFailureTest();
 }
 
+TEST(TestDataProducts, dpPortsNotConnectedTest) {
+    TEST_CASE(100.2.7, "Data products: product ports not connected");
+    Svc::TlmPacketizerTester tester(false);
+    tester.dpPortsNotConnectedTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

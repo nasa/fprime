@@ -287,14 +287,10 @@ telemetry packets RefPackets {
     CdhCore.version.CustomVersion10
   }
 
-  # Packetizer configuration and data product recording status
+  # Packetizer configuration
   packet TlmPacketizer id 40 group 1 {
     CdhCore.tlmSend.GroupConfigs
     CdhCore.tlmSend.SectionEnabled
-    CdhCore.tlmSend.DpGroupsRecording
-    CdhCore.tlmSend.DpPacketsRecorded
-    CdhCore.tlmSend.DpContainersSent
-    CdhCore.tlmSend.DpPacketsDropped
   }
 
   # Empty packet: exercises a packet specification with no channels

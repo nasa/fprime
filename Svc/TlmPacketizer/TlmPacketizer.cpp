@@ -27,14 +27,7 @@ static_assert(Svc::TelemetrySection::NUM_SECTIONS >= 1, "At least one telemetry 
 // ----------------------------------------------------------------------
 
 TlmPacketizer ::TlmPacketizer(const char* const compName)
-    : TlmPacketizerComponentBase(compName),
-      m_numPackets(0),
-      m_configured(false),
-      m_numChannels(0),
-      m_dpPacketsRecorded(0),
-      m_dpContainersSent(0),
-      m_dpPacketsDropped(0),
-      m_dpTlmUpdated(true) {
+    : TlmPacketizerComponentBase(compName), m_numPackets(0), m_configured(false), m_numChannels(0) {
     // Register self as parameter delegate
     this->registerExternalParameters(this);
     // clear missing tlm channel check
@@ -54,6 +47,9 @@ TlmPacketizer ::TlmPacketizer(const char* const compName)
         this->m_dpGroups[group].containerDataSize = 0;
         this->m_dpGroups[group].packetCount = 0;
         this->m_dpGroups[group].priority = 0;
+        this->m_dpGroups[group].packetsRecorded = 0;
+        this->m_dpGroups[group].containersSent = 0;
+        this->m_dpGroups[group].packetsDropped = 0;
         this->m_dpGroups[group].recording = false;
     }
 
@@ -424,7 +420,6 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             }
         }
     }
-    this->writeDpTelemetry();
 }
 
 void TlmPacketizer ::controlIn_handler(FwIndexType portNum,
@@ -655,6 +650,12 @@ void TlmPacketizer ::START_DP_RECORDING_cmdHandler(FwOpcodeType opCode,
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
+    // Deployments that do not record data products leave the product ports unconnected
+    if (!this->isConnected_productGetOut_OutputPort(0) or !this->isConnected_productSendOut_OutputPort(0)) {
+        this->log_WARNING_LO_DpRecordingRejected(tlmGroup, TlmPacketizer_DpRejectReason::START_PORTS_NOT_CONNECTED);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     // Containers are sized for the largest packet of the group so that every packet fits
     const FwSizeType maxPacketLength = this->maxPacketLengthOfGroup(tlmGroup);
     if (maxPacketLength == 0) {
@@ -679,11 +680,12 @@ void TlmPacketizer ::START_DP_RECORDING_cmdHandler(FwOpcodeType opCode,
     state.packetsPerContainer = packetsPerContainer;
     state.containerDataSize = SIZE_OF_TlmGroupRecord_RECORD + packetsPerContainer * recordSize;
     state.priority = priority;
+    state.packetsRecorded = 0;
+    state.containersSent = 0;
+    state.packetsDropped = 0;
     state.recording = true;
-    this->m_dpTlmUpdated = true;
 
     this->log_ACTIVITY_HI_DpRecordingStarted(tlmGroup, packetsPerContainer, priority);
-    this->writeDpTelemetry();
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
@@ -700,10 +702,8 @@ void TlmPacketizer ::STOP_DP_RECORDING_cmdHandler(FwOpcodeType opCode, U32 cmdSe
                                                  : TlmPacketizer_DpStopStatus::PARTIAL_NOT_SENT;
         state.recording = false;
     }
-    // Report the recording state even when nothing changed so that operators get a fresh snapshot
-    this->m_dpTlmUpdated = true;
-    this->log_ACTIVITY_HI_DpRecordingStopped(tlmGroup, status);
-    this->writeDpTelemetry();
+    this->log_ACTIVITY_HI_DpRecordingStopped(tlmGroup, status, state.packetsRecorded, state.containersSent,
+                                             state.packetsDropped);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
@@ -726,8 +726,7 @@ void TlmPacketizer::recordPacket(FwChanIdType tlmGroup, const Fw::ComBuffer& pac
 
     // The first packet of a container obtains the container
     if (state.packetCount == 0 and this->allocateDpContainer(tlmGroup) != Fw::Success::SUCCESS) {
-        this->m_dpPacketsDropped++;
-        this->m_dpTlmUpdated = true;
+        state.packetsDropped++;
         return;
     }
     // The container was sized for packetsPerContainer packets of the largest packet in the group
@@ -735,8 +734,7 @@ void TlmPacketizer::recordPacket(FwChanIdType tlmGroup, const Fw::ComBuffer& pac
         state.container.serializeRecord_TlmPacketRecord(packet.getBuffAddr(), packet.getSize());
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     state.packetCount++;
-    this->m_dpPacketsRecorded++;
-    this->m_dpTlmUpdated = true;
+    state.packetsRecorded++;
 
     if (state.packetCount >= state.packetsPerContainer) {
         (void)this->sendDpContainer(tlmGroup);
@@ -766,24 +764,8 @@ bool TlmPacketizer::sendDpContainer(FwChanIdType tlmGroup) {
     }
     this->dpSend(state.container);
     state.packetCount = 0;
-    this->m_dpContainersSent++;
-    this->m_dpTlmUpdated = true;
+    state.containersSent++;
     return true;
-}
-
-void TlmPacketizer::writeDpTelemetry() {
-    if (not this->m_dpTlmUpdated) {
-        return;
-    }
-    TlmPacketizer_DpGroupRecording groupsRecording;
-    for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
-        groupsRecording[group] = this->m_dpGroups[group].recording;
-    }
-    this->tlmWrite_DpGroupsRecording(groupsRecording);
-    this->tlmWrite_DpPacketsRecorded(this->m_dpPacketsRecorded);
-    this->tlmWrite_DpContainersSent(this->m_dpContainersSent);
-    this->tlmWrite_DpPacketsDropped(this->m_dpPacketsDropped);
-    this->m_dpTlmUpdated = false;
 }
 
 }  // end namespace Svc

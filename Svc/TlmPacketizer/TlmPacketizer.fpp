@@ -30,10 +30,8 @@ module Svc {
       START_INVALID_PACKET_COUNT = 1  @< START_DP_RECORDING packetsPerContainer is zero or too large
       START_NO_PACKETS_IN_GROUP = 2   @< START_DP_RECORDING group has no packets in the packet list
       STOP_INVALID_GROUP = 3          @< STOP_DP_RECORDING group exceeds MAX_CONFIGURABLE_TLMPACKETIZER_GROUP
+      START_PORTS_NOT_CONNECTED = 4   @< START_DP_RECORDING issued while the product ports are not connected
     }
-
-    @ Data product recording state of each telemetry group
-    array DpGroupRecording = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] bool
 
     # ----------------------------------------------------------------------
     # General ports
@@ -243,14 +241,17 @@ module Svc {
       id 7 \
       format "Started data product recording of group {}: {} packets per container, priority {}"
 
-    @ Data product recording of a telemetry group stopped
+    @ Data product recording of a telemetry group stopped; the counts cover the recording since START_DP_RECORDING
     event DpRecordingStopped(
                               tlmGroup: FwChanIdType  @< Group Identifier
                               status: DpStopStatus    @< Partial container status
+                              packetsRecorded: U32    @< Packets recorded into containers
+                              containersSent: U32     @< Containers sent
+                              packetsDropped: U32     @< Packets dropped because no container could be obtained
                             ) \
       severity activity high \
       id 8 \
-      format "Stopped data product recording of group {}: {}"
+      format "Stopped data product recording of group {}: {}, {} packets recorded, {} containers sent, {} packets dropped"
 
     @ Data product recording command rejected
     event DpRecordingRejected(
@@ -278,18 +279,6 @@ module Svc {
     @ Telemetry send level
     telemetry GroupConfigs: SectionConfigs id 0
     telemetry SectionEnabled: SectionEnabled id 1
-
-    @ Telemetry groups currently recorded as data products
-    telemetry DpGroupsRecording: DpGroupRecording id 2
-
-    @ Number of packets recorded into data product containers
-    telemetry DpPacketsRecorded: U32 id 3
-
-    @ Number of data product containers sent
-    telemetry DpContainersSent: U32 id 4
-
-    @ Number of packets dropped because no data product container could be obtained
-    telemetry DpPacketsDropped: U32 id 5
 
     array TelemetrySendSection = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] FwIndexType
     array TelemetrySendPortMap = [TelemetrySection.NUM_SECTIONS] TelemetrySendSection default TELEMETRY_SEND_PORT_MAPPING

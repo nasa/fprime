@@ -285,9 +285,6 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //! \return true if a container was sent
     bool sendDpContainer(FwChanIdType tlmGroup);
 
-    //! Write the data product telemetry channels if any of them changed
-    void writeDpTelemetry();
-
     //! Data product recording state of one telemetry group
     struct DpGroupState {
         DpContainer container;           //!< the container being filled
@@ -295,14 +292,13 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         FwSizeType containerDataSize;    //!< data size requested for each container
         FwSizeType packetCount;          //!< packets in the current container
         FwDpPriorityType priority;       //!< priority of the containers
+        U32 packetsRecorded;             //!< packets recorded since the group was started
+        U32 containersSent;              //!< containers sent since the group was started
+        U32 packetsDropped;              //!< packets dropped for lack of a container since the group was started
         bool recording;                  //!< recording enabled for the group
     };
 
     DpGroupState m_dpGroups[NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS];  //!< recording state per group
-    U32 m_dpPacketsRecorded;                                         //!< packets recorded into containers
-    U32 m_dpContainersSent;                                          //!< containers sent
-    U32 m_dpPacketsDropped;                                          //!< packets dropped for lack of a container
-    bool m_dpTlmUpdated;  //!< data product telemetry changed since last written
 };
 
 }  // end namespace Svc

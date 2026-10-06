@@ -24,7 +24,8 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
   public:
     //! Construct object TlmPacketizerTester
     //!
-    TlmPacketizerTester(void);
+    //! Construct the tester, optionally leaving the product ports of the component unconnected
+    TlmPacketizerTester(bool connectProductPorts = true);
 
     //! Destroy object TlmPacketizerTester
     //!
@@ -131,6 +132,9 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Data products: a failed container allocation drops the packet and is reported
     void dpAllocationFailureTest(void);
 
+    //! START_DP_RECORDING is rejected while the product ports are not connected
+    void dpPortsNotConnectedTest(void);
+
     //! Helper to set the component into a stock-configuration regardless of default config
     //!
     void stockConfiguration();
@@ -174,7 +178,7 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
 
     //! Connect ports
     //!
-    void connectPorts(void);
+    void connectPorts(bool connectProductPorts);
 
     //! Initialize components
     //!

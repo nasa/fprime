@@ -24,10 +24,10 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-TlmPacketizerTester ::TlmPacketizerTester()
+TlmPacketizerTester ::TlmPacketizerTester(bool connectProductPorts)
     : TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmPacketizer") {
     this->initComponents();
-    this->connectPorts();
+    this->connectPorts(connectProductPorts);
     this->component.loadParameters();
 }
 
@@ -2054,25 +2054,19 @@ void TlmPacketizerTester ::dpDisabledByDefaultTest() {
     ASSERT_from_PktSend_SIZE(4 * Svc::TelemetrySection::NUM_SECTIONS);
     ASSERT_PRODUCT_GET_SIZE(0);
     ASSERT_PRODUCT_SEND_SIZE(0);
+    ASSERT_EVENTS_SIZE(0);
 
-    // The initial recording telemetry reports no group recorded and zero counters
-    ASSERT_TLM_DpGroupsRecording_SIZE(1);
-    for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
-        ASSERT_FALSE(this->tlmHistory_DpGroupsRecording->at(0).arg[group]) << "group " << group;
-    }
-    ASSERT_TLM_DpPacketsRecorded_SIZE(1);
-    ASSERT_TLM_DpPacketsRecorded(0, 0);
-    ASSERT_TLM_DpContainersSent_SIZE(1);
-    ASSERT_TLM_DpContainersSent(0, 0);
-    ASSERT_TLM_DpPacketsDropped_SIZE(1);
-    ASSERT_TLM_DpPacketsDropped(0, 0);
-
-    // Telemetry is only rewritten when the recording state changes
+    // Stopping a group that was never started reports that nothing was recorded
     this->clearHistory();
+    for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+        this->sendCmd_STOP_DP_RECORDING(0, 0, group);
+        this->component.doDispatch();
+        ASSERT_EVENTS_DpRecordingStopped(group, group, TlmPacketizer_DpStopStatus::NOT_RECORDING, 0, 0, 0);
+    }
+    ASSERT_EVENTS_SIZE(NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS);
     this->pushU32Channel(10, 21);
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
-    ASSERT_TLM_SIZE(0);
     ASSERT_PRODUCT_GET_SIZE(0);
 }
 
@@ -2087,10 +2081,6 @@ void TlmPacketizerTester ::dpRecordGroupTest() {
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_START_DP_RECORDING, 0, Fw::CmdResponse::OK);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpRecordingStarted(0, 2, 2, 7);
-    ASSERT_TLM_DpGroupsRecording_SIZE(1);
-    for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
-        ASSERT_EQ(group == 2, this->tlmHistory_DpGroupsRecording->at(0).arg[group]) << "group " << group;
-    }
     // Starting does not touch any container
     ASSERT_PRODUCT_GET_SIZE(0);
     ASSERT_PRODUCT_SEND_SIZE(0);
@@ -2121,13 +2111,6 @@ void TlmPacketizerTester ::dpRecordGroupTest() {
     Fw::DpContainer sent(TLM_PACKET_CONTAINER_ID, this->productSendHistory->at(0).buffer);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, sent.deserializeHeader());
     ASSERT_EQ(GROUP_RECORD_SIZE + packetRecordSize(PACKET2_SIZE) + packetRecordSize(PACKET3_SIZE), sent.getDataSize());
-
-    ASSERT_TLM_DpPacketsRecorded_SIZE(1);
-    ASSERT_TLM_DpPacketsRecorded(0, 2);
-    ASSERT_TLM_DpContainersSent_SIZE(1);
-    ASSERT_TLM_DpContainersSent(0, 1);
-    ASSERT_TLM_DpPacketsDropped_SIZE(1);
-    ASSERT_TLM_DpPacketsDropped(0, 0);
     ASSERT_EVENTS_SIZE(0);
 
     // A run without new data records nothing
@@ -2136,18 +2119,15 @@ void TlmPacketizerTester ::dpRecordGroupTest() {
     this->component.doDispatch();
     ASSERT_PRODUCT_GET_SIZE(0);
     ASSERT_PRODUCT_SEND_SIZE(0);
-    ASSERT_TLM_SIZE(0);
 
-    // Stop with an empty container, then verify nothing further is recorded
+    // Stop with an empty container: the event reports the counts of the recording, then nothing further is recorded
     this->sendCmd_STOP_DP_RECORDING(0, 0, 2);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_STOP_DP_RECORDING, 0, Fw::CmdResponse::OK);
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_DpRecordingStopped(0, 2, TlmPacketizer_DpStopStatus::PARTIAL_NOT_SENT);
+    ASSERT_EVENTS_DpRecordingStopped(0, 2, TlmPacketizer_DpStopStatus::PARTIAL_NOT_SENT, 2, 1, 0);
     ASSERT_PRODUCT_SEND_SIZE(0);
-    ASSERT_TLM_DpGroupsRecording_SIZE(1);
-    ASSERT_FALSE(this->tlmHistory_DpGroupsRecording->at(0).arg[2]);
     this->clearHistory();
 
     this->pushU32Channel(67, 6);
@@ -2192,8 +2172,6 @@ void TlmPacketizerTester ::dpStopAndRestartTest() {
     ASSERT_EVENTS_DpRecordingStarted(0, 1, 1, 9);
     ASSERT_PRODUCT_SEND_SIZE(1);
     this->checkDpContainer(this->productSendHistory->at(0).buffer, 1, 5, 2, packets);
-    ASSERT_TLM_DpContainersSent_SIZE(1);
-    ASSERT_TLM_DpContainersSent(0, 1);
     this->clearHistory();
 
     // One packet per container now: each run sends a container with the new priority
@@ -2218,27 +2196,19 @@ void TlmPacketizerTester ::dpStopAndRestartTest() {
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_STOP_DP_RECORDING, 0, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpRecordingStopped_SIZE(1);
-    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::PARTIAL_SENT);
+    // The counts cover the last start only: one packet, sent in the partial container
+    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::PARTIAL_SENT, 1, 1, 0);
     ASSERT_PRODUCT_SEND_SIZE(1);
     this->checkDpContainer(this->productSendHistory->at(0).buffer, 1, 5, 1, nullptr);
-    ASSERT_TLM_DpContainersSent_SIZE(1);
-    ASSERT_TLM_DpContainersSent(0, 3);
-    ASSERT_TLM_DpPacketsRecorded_SIZE(1);
-    ASSERT_TLM_DpPacketsRecorded(0, 4);
     this->clearHistory();
 
-    // Stopping a group that is not recording is accepted and reported
+    // Stopping a group that is not recording is accepted and reported with the counts of the last recording
     this->sendCmd_STOP_DP_RECORDING(0, 0, 1);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_STOP_DP_RECORDING, 0, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpRecordingStopped_SIZE(1);
-    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::NOT_RECORDING);
+    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::NOT_RECORDING, 1, 1, 0);
     ASSERT_PRODUCT_SEND_SIZE(0);
-    // The recording state is reported again, unchanged
-    ASSERT_TLM_DpGroupsRecording_SIZE(1);
-    ASSERT_FALSE(this->tlmHistory_DpGroupsRecording->at(0).arg[1]);
-    ASSERT_TLM_DpContainersSent_SIZE(1);
-    ASSERT_TLM_DpContainersSent(0, 3);
 }
 
 void TlmPacketizerTester ::dpRecordWhenDownlinkDisabledTest() {
@@ -2332,10 +2302,7 @@ void TlmPacketizerTester ::dpCommandRejectTest() {
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
     ASSERT_PRODUCT_GET_SIZE(0);
-    ASSERT_TLM_DpGroupsRecording_SIZE(1);
-    for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
-        ASSERT_FALSE(this->tlmHistory_DpGroupsRecording->at(0).arg[group]) << "group " << group;
-    }
+    ASSERT_EVENTS_SIZE(0);
 }
 
 void TlmPacketizerTester ::dpAllocationFailureTest() {
@@ -2355,9 +2322,6 @@ void TlmPacketizerTester ::dpAllocationFailureTest() {
     ASSERT_PRODUCT_SEND_SIZE(0);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DpBufferError(0, 1, GROUP_RECORD_SIZE + 2 * packetRecordSize(PACKET1_SIZE));
-    ASSERT_TLM_DpPacketsDropped_SIZE(1);
-    ASSERT_TLM_DpPacketsDropped(0, 1);
-    ASSERT_TLM_DpPacketsRecorded(0, 0);
     this->clearHistory();
 
     // Every further drop is counted, but the event is throttled after 10 in total
@@ -2369,7 +2333,6 @@ void TlmPacketizerTester ::dpAllocationFailureTest() {
     }
     ASSERT_PRODUCT_GET_SIZE(furtherDrops);
     ASSERT_EVENTS_DpBufferError_SIZE(9);
-    ASSERT_TLM_DpPacketsDropped(this->tlmHistory_DpPacketsDropped->size() - 1, 1 + furtherDrops);
     this->clearHistory();
 
     // Recording resumes with the next packet once containers are available again
@@ -2380,14 +2343,45 @@ void TlmPacketizerTester ::dpAllocationFailureTest() {
     ASSERT_PRODUCT_GET_SIZE(1);
     ASSERT_PRODUCT_SEND_SIZE(0);
     ASSERT_EVENTS_SIZE(0);
-    ASSERT_TLM_DpPacketsRecorded(0, 1);
-    ASSERT_TLM_DpPacketsDropped(0, 1 + furtherDrops);
 
     this->pushU32Channel(10, furtherDrops + 3);
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
     ASSERT_PRODUCT_SEND_SIZE(1);
     this->checkDpContainer(this->productSendHistory->at(0).buffer, 1, 3, 2, nullptr);
+
+    // Stopping reports every drop and every recorded packet of the recording
+    this->clearHistory();
+    this->sendCmd_STOP_DP_RECORDING(0, 0, 1);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpRecordingStopped_SIZE(1);
+    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::PARTIAL_NOT_SENT, 2, 1, 1 + furtherDrops);
+}
+
+void TlmPacketizerTester ::dpPortsNotConnectedTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList2, ignore, 3);
+
+    // A deployment without data products never reaches the product ports
+    this->sendCmd_START_DP_RECORDING(0, 0, 1, 2, 3);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_START_DP_RECORDING, 0, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpRecordingRejected(0, 1, TlmPacketizer_DpRejectReason::START_PORTS_NOT_CONNECTED);
+    this->clearHistory();
+
+    // Packets are downlinked as usual and nothing is recorded
+    this->pushU32Channel(10, 1);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_from_PktSend_SIZE(3 * Svc::TelemetrySection::NUM_SECTIONS);
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    this->sendCmd_STOP_DP_RECORDING(0, 0, 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_STOP_DP_RECORDING, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::NOT_RECORDING, 0, 0, 0);
 }
 
 // ----------------------------------------------------------------------
@@ -2416,7 +2410,7 @@ void TlmPacketizerTester ::from_pingOut_handler(const FwIndexType portNum, U32 k
 // Helper methods
 // ----------------------------------------------------------------------
 
-void TlmPacketizerTester ::connectPorts() {
+void TlmPacketizerTester ::connectPorts(bool connectProductPorts) {
     // PktSend
     // this->component.set_PktSend_OutputPort(0, this->get_from_PktSend(0));
     // this->component.set_PktSend_OutputPort(1, this->get_from_PktSend(1));
@@ -2466,8 +2460,10 @@ void TlmPacketizerTester ::connectPorts() {
     }
 
     // data products
-    this->component.set_productGetOut_OutputPort(0, this->get_from_productGetOut(0));
-    this->component.set_productSendOut_OutputPort(0, this->get_from_productSendOut(0));
+    if (connectProductPorts) {
+        this->component.set_productGetOut_OutputPort(0, this->get_from_productGetOut(0));
+        this->component.set_productSendOut_OutputPort(0, this->get_from_productSendOut(0));
+    }
 
     // controlIn
     this->connect_to_controlIn(0, this->component.get_controlIn_InputPort(0));
