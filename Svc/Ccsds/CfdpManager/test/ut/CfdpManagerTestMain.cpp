@@ -41,6 +41,11 @@ TEST(Transaction, Class1TxNominal) {
     tester.testClass1TxNominal();
 }
 
+TEST(Transaction, Class1TxFileDataFitsMaxPduSize) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1TxFileDataFitsMaxPduSize();
+}
+
 TEST(Transaction, Class2TxNominal) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass2TxNominal();

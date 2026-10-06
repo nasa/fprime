@@ -346,6 +346,10 @@ Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 
     FileDataPdu fdPdu;
     Cfdp::PduDirection direction = PduDirection::DIRECTION_TOWARD_RECEIVER;
 
+    // Initialize the header first: the maximum file data size depends on it
+    fdPdu.initialize(direction, this->getClass(), this->m_cfdpManager->getLocalEidParam(), this->m_history->seq_num,
+                     this->m_history->peer_eid, foffs, 0, nullptr);
+
     // Calculate maximum data size we can send, accounting for PDU overhead
     U32 maxDataCapacity = fdPdu.getMaxFileDataSize();
 

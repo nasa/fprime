@@ -341,6 +341,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test nominal Class 1 TX file transfer
     void testClass1TxNominal();
 
+    //! Test that Class 1 TX File Data PDUs are sized from their own header and fit in MaxPduSize
+    void testClass1TxFileDataFitsMaxPduSize();
+
     //! Test nominal Class 2 TX file transfer
     void testClass2TxNominal();
 
@@ -783,6 +786,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param expectedFileSize Expected size of file to transfer
     void sendAndVerifyClass1Tx(const char* srcFile, const char* dstFile, FwSizeType expectedFileSize);
 
+    //! Send a Class 1 TX transaction whose File Data PDUs are limited by MaxPduSize and verify them
+    //! @param srcFile Source file path
+    //! @param dstFile Destination file path
+    //! @param destEid Destination entity ID
+    void sendAndVerifyClass1TxMaxPduSize(const char* srcFile, const char* dstFile, EntityId destEid);
+
     //! Send and verify a Class 2 TX transaction
     //! @param initType How to initiate the transaction (command or port)
     //! @param srcFile Source file path
@@ -863,12 +872,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Memory allocator for component
     Fw::MallocAllocator m_allocator;
 
+    //! Largest buffer the engine may request: a MaxPduSize PDU plus its packet descriptor
+    static constexpr FwSizeType MAX_PDU_BUFFER_SIZE = MaxPduSize + CfdpManager::PACKET_DESCRIPTOR_SIZE;
+
     //! Reusable buffer for allocation handler
-    U8 m_internalDataBuffer[MaxPduSize];
+    U8 m_internalDataBuffer[MAX_PDU_BUFFER_SIZE];
 
     //! Storage for PDU copies (to avoid buffer reuse issues)
     static constexpr FwSizeType MAX_PDU_COPIES = 100;
-    U8 m_pduCopyStorage[MAX_PDU_COPIES][MaxPduSize];
+    U8 m_pduCopyStorage[MAX_PDU_COPIES][MAX_PDU_BUFFER_SIZE];
     FwSizeType m_pduCopyCount;
 
     //! Flag to simulate buffer allocation failure for testing

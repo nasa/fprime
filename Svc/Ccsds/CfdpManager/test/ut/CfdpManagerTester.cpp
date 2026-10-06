@@ -20,6 +20,7 @@ namespace Cfdp {
 // Static member definitions
 // ----------------------------------------------------------------------
 
+constexpr FwSizeType CfdpManagerTester::MAX_PDU_BUFFER_SIZE;
 constexpr FwSizeType CfdpManagerTester::MAX_PDU_COPIES;
 
 // ----------------------------------------------------------------------
@@ -53,8 +54,8 @@ Fw::Buffer CfdpManagerTester::from_bufferAllocate_handler(FwIndexType portNum, F
         return Fw::Buffer();
     }
 
-    EXPECT_LT(size, MaxPduSize) << "Buffer size request is too large";
-    if (size >= MaxPduSize) {
+    EXPECT_LE(size, MAX_PDU_BUFFER_SIZE) << "Requested PDU exceeds MaxPduSize";
+    if (size > MAX_PDU_BUFFER_SIZE) {
         return Fw::Buffer();
     }
     return Fw::Buffer(this->m_internalDataBuffer, size);
@@ -65,8 +66,8 @@ void CfdpManagerTester::from_dataOut_handler(FwIndexType portNum, Fw::Buffer& fw
     EXPECT_LT(m_pduCopyCount, MAX_PDU_COPIES) << "Too many PDUs sent";
     if (m_pduCopyCount < MAX_PDU_COPIES) {
         FwSizeType copySize = fwBuffer.getSize();
-        if (copySize > MaxPduSize) {
-            copySize = MaxPduSize;
+        if (copySize > MAX_PDU_BUFFER_SIZE) {
+            copySize = MAX_PDU_BUFFER_SIZE;
         }
         memcpy(m_pduCopyStorage[m_pduCopyCount], fwBuffer.getData(), copySize);
 
@@ -471,6 +472,45 @@ void CfdpManagerTester::sendAndVerifyClass1Tx(const char* srcFile, const char* d
 
     // Wait for transaction recycle
     waitForTransactionRecycle(TEST_CHANNEL_ID_0, setup.expectedSeqNum);
+}
+
+void CfdpManagerTester::sendAndVerifyClass1TxMaxPduSize(const char* srcFile, const char* dstFile, EntityId destEid) {
+    this->clearHistory();
+
+    FwSizeType fileSize = 0;
+    createAndVerifyTestFile(srcFile, 2 * MaxPduSize, fileSize);
+
+    TransactionSetup setup;
+    setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, destEid, Cfdp::Class::CLASS_1, TEST_PRIORITY,
+                       TxnState::TXN_STATE_S1, setup);
+
+    // File data that fits in MaxPduSize with this transaction's header
+    Cfdp::FileDataPdu sizingPdu;
+    sizingPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1,
+                         component.getLocalEidParam(), setup.expectedSeqNum, destEid, 0, 0, nullptr);
+    const U32 dataPerPdu = sizingPdu.getMaxFileDataSize();
+    const U8 numFileDataPdus = static_cast<U8>((fileSize + dataPerPdu - 1) / dataPerPdu);
+
+    // Run first engine cycle - should send Metadata + FileData PDUs
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    ASSERT_FROM_PORT_HISTORY_SIZE(1 + numFileDataPdus);
+
+    for (U8 pduIdx = 0; pduIdx < numFileDataPdus; pduIdx++) {
+        const U32 offset = pduIdx * dataPerPdu;
+        const U32 remaining = static_cast<U32>(fileSize) - offset;
+        const U16 dataSize = static_cast<U16>((remaining < dataPerPdu) ? remaining : dataPerPdu);
+        verifyFileDataPdu(this->getSentPduBuffer(static_cast<FwIndexType>(1 + pduIdx)), component.getLocalEidParam(),
+                          destEid, setup.expectedSeqNum, offset, dataSize, srcFile, Cfdp::Class::CLASS_1);
+    }
+
+    // Run second engine cycle - should send EOF PDU
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    ASSERT_FROM_PORT_HISTORY_SIZE(2 + numFileDataPdus);
+
+    waitForTransactionRecycle(TEST_CHANNEL_ID_0, setup.expectedSeqNum);
+    cleanupTestFile(srcFile);
 }
 
 void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
@@ -978,6 +1018,24 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
 void CfdpManagerTester::testClass1TxNominal() {
     sendAndVerifyClass1Tx("test/ut/output/test_class1_tx.bin", "test/ut/output/test_class1_tx_dst.dat",
                           component.getOutgoingFileChunkSizeParam());
+}
+
+void CfdpManagerTester::testClass1TxFileDataFitsMaxPduSize() {
+    // MaxPduSize, not the chunk size, limits the file data in each PDU
+    this->paramSet_OutgoingFileChunkSize(MaxPduSize, Fw::ParamValid::VALID);
+    this->paramSend_OutgoingFileChunkSize(0, 0);
+
+    // One-byte entity IDs and sequence number
+    sendAndVerifyClass1TxMaxPduSize("test/ut/output/test_tx_maxpdu_1.bin", "test/ut/output/test_tx_maxpdu_1_dst.dat",
+                                    TEST_GROUND_EID);
+
+    // Four-byte entity IDs and sequence number
+    this->paramSet_LocalEid(0x01020304, Fw::ParamValid::VALID);
+    this->paramSend_LocalEid(0, 0);
+    // The next sequence number, 0x01000000, is the first that needs four bytes
+    this->component.m_engine->m_seqNum = 0x00FFFFFF;
+    sendAndVerifyClass1TxMaxPduSize("test/ut/output/test_tx_maxpdu_4.bin", "test/ut/output/test_tx_maxpdu_4_dst.dat",
+                                    0x0A0B0C0D);
 }
 
 void CfdpManagerTester::testClass2TxNominal() {
