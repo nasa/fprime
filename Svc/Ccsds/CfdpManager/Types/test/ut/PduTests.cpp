@@ -37,6 +37,14 @@ TEST_F(PduTest, HeaderBufferSize) {
     ASSERT_GE(header.getBufferSize(), 7U);
 }
 
+TEST_F(PduTest, HeaderDefaults) {
+    PduHeader header;
+
+    EXPECT_EQ(PduHeader::MIN_HEADERSIZE, header.getBufferSize());
+    EXPECT_EQ(PduTypeEnum::NONE, header.getType());
+    EXPECT_EQ(LargeFileFlag::LARGE_FILE_32_BIT, header.getLargeFileFlag());
+}
+
 TEST_F(PduTest, HeaderRoundTrip) {
     // Arrange
     PduHeader txHeader;
