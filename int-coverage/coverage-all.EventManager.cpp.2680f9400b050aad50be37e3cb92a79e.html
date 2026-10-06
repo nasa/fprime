@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-05 22:12:04</td>
+      <td>2026-10-06 22:12:29</td>
     </tr>
   </table>
 </div>
@@ -75,7 +75,7 @@
     <tr><td><a href="#l31">Svc::EventManager::LogRecv_handler(short, unsigned int, Fw::Time&amp;, Fw::LogSeverity const&amp;, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 31)</a></td><td>called 596 times</td><td>63.0%</td></tr>
     <tr><td><a href="#l92">Svc::EventManager::SET_EVENT_FILTER_cmdHandler(unsigned int, unsigned int, Svc::EventManager_FilterSeverity const&amp;, Svc::EventManager_Enabled const&amp;) (line 92)</a></td><td>called 13 times</td><td>51.0%</td></tr>
     <tr><td><a href="#l114">Svc::EventManager::SET_ID_FILTER_cmdHandler(unsigned int, unsigned int, unsigned int, Svc::EventManager_Enabled const&amp;) (line 114)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l68">Svc::EventManager::loqQueue_internalInterfaceHandler(unsigned int, Fw::Time const&amp;, Fw::LogSeverity const&amp;, Fw::LinearBufferTemplate&lt;506ul&gt; const&amp;) (line 68)</a></td><td>called 463 times</td><td>83.0%</td></tr>
+    <tr><td><a href="#l68">Svc::EventManager::loqQueue_internalInterfaceHandler(unsigned int, Fw::Time const&amp;, Fw::LogSeverity const&amp;, Fw::LinearBufferTemplate&lt;506ul&gt; const&amp;) (line 68)</a></td><td>called 464 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l180">Svc::EventManager::pingIn_handler(short, unsigned int) (line 180)</a></td><td>called 61 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l176">Svc::EventManager::run_handler(short, unsigned int) (line 176)</a></td><td>called 61 times</td><td>75.0%</td></tr>
     <tr><td><a href="#l29">Svc::EventManager::~EventManager() (line 29)</a></td><td>called 1 time</td><td>100.0%</td></tr>
@@ -676,7 +676,7 @@
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">463</td>
+      <td class="linecount coveredLine">464</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">loqQueue_internalInterfaceHandler</span><span class="p">(</span><span class="n">FwEventIdType</span><span class="w"> </span><span class="n">id</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -711,35 +711,35 @@
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">463</td>
+      <td class="linecount coveredLine">464</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_logPacket</span><span class="p">.</span><span class="n">setId</span><span class="p">(</span><span class="n">id</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">463</td>
+      <td class="linecount coveredLine">464</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_logPacket</span><span class="p">.</span><span class="n">setTimeTag</span><span class="p">(</span><span class="n">timeTag</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">463</td>
+      <td class="linecount coveredLine">464</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_logPacket</span><span class="p">.</span><span class="n">setLogBuffer</span><span class="p">(</span><span class="n">args</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">463</td>
+      <td class="linecount coveredLine">464</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_comBuffer</span><span class="p">.</span><span class="n">resetSer</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">463</td>
+      <td class="linecount coveredLine">464</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_logPacket</span><span class="p">.</span><span class="n">serializeTo</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_comBuffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -770,11 +770,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 463 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 464 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">463</td>
+      <td class="linecount partialCoveredLine">464</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">stat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -818,19 +818,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 463 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 464 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">463</td>
+      <td class="linecount partialCoveredLine">464</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">isConnected_PktSend_OutputPort</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l88" href="#l88">88</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">463</td>
+      <td class="linecount coveredLine">464</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">PktSend_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_comBuffer</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
