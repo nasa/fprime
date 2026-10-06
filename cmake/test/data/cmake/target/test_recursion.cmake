@@ -67,6 +67,9 @@ set(EXPECTED_FULL_DEPENDENCIES
     ${FPRIME_GLOBAL_INTERFACE_TARGET}
     default_config
 )
+if (FPRIME_PLATFORM STREQUAL "Linux")
+    list(APPEND EXPECTED_FULL_DEPENDENCIES Os_Posix_LinuxSchedulingHelper)
+endif()
 
 function(test_recursion_add_global_target TARGET)
 endfunction(test_recursion_add_global_target)

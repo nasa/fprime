@@ -34,7 +34,24 @@ register_fprime_module(
 register_os_implementation("File;FileSystem;Directory" Posix Os_Posix_Shared)
 register_os_implementation("Console" Posix)
 
-register_os_implementation("Task" Posix Os_Posix_Shared Os_Posix_Models Fw_Time)
+# Linux-defined task priorities (POSIX_THREADS_USE_LINUX_PRIORITIES) are implemented by a Linux-only helper
+set(OS_POSIX_TASK_LINUX_DEPS)
+if (FPRIME_PLATFORM STREQUAL "Linux")
+    register_fprime_library(
+        Os_Posix_LinuxSchedulingHelper
+      SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSchedulingHelper.cpp"
+      HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSchedulingHelper.hpp"
+      DEPENDS
+        Fw_Logger
+        Fw_Types
+        Os_Task
+        Os_Posix_Models
+    )
+    set(OS_POSIX_TASK_LINUX_DEPS Os_Posix_LinuxSchedulingHelper)
+endif()
+register_os_implementation("Task" Posix Os_Posix_Shared Os_Posix_Models Fw_Time ${OS_POSIX_TASK_LINUX_DEPS})
 register_os_implementation("Mutex;ConditionVariable" Posix Os_Posix_Shared)
 # POSIX unnamed semaphores (sem_init) are non-functional on macOS (return
 # ENOSYS) and sem_timedwait does not exist. The Darwin implementation
