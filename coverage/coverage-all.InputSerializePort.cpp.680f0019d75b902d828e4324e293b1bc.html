@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-05 21:20:39</td>
+      <td>2026-10-06 21:15:58</td>
     </tr>
   </table>
 </div>
@@ -74,7 +74,7 @@
     <tr><td><a href="#l29">Fw::InputSerializePort::addCallComp(Fw::PassiveComponentBase*, void (*)(Fw::PassiveComponentBase*, short, Fw::LinearBufferBase&amp;)) (line 29)</a></td><td>called 3990 times</td><td>86.0%</td></tr>
     <tr><td><a href="#l37">Fw::InputSerializePort::getToStringFormatString() (line 37)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l13">Fw::InputSerializePort::init() (line 13)</a></td><td>called 3990 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l17">Fw::InputSerializePort::invokeSerial(Fw::LinearBufferBase&amp;) (line 17)</a></td><td>called 10157 times</td><td>93.0%</td></tr>
+    <tr><td><a href="#l17">Fw::InputSerializePort::invokeSerial(Fw::LinearBufferBase&amp;) (line 17)</a></td><td>called 9997 times</td><td>93.0%</td></tr>
     <tr><td><a href="#l11">Fw::InputSerializePort::~InputSerializePort() (line 11)</a></td><td>called 3990 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -205,21 +205,21 @@
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10157</td>
+      <td class="linecount coveredLine">9997</td>
       <td class="src coveredLine"><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">InputSerializePort</span><span class="o">::</span><span class="n">invokeSerial</span><span class="p">(</span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10157</td>
+      <td class="linecount coveredLine">9997</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_comp</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10157</td>
+      <td class="linecount coveredLine">9997</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_func</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -233,7 +233,7 @@
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10157</td>
+      <td class="linecount coveredLine">9997</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_func</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_comp</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_portNum</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -268,7 +268,7 @@
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10157</td>
+      <td class="linecount coveredLine">9997</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">FW_SERIALIZE_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
