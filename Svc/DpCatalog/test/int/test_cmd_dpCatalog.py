@@ -68,7 +68,9 @@ def _generate_dp(fprime_test_api, priority):
     to the built catalog and reports the file name.
     """
     if DP_DEMO_COMMAND not in fprime_test_api.pipeline.dictionaries.command_name:
-        pytest.skip(f"deployment has no {DP_DEMO_COMMAND} command to generate a data product")
+        pytest.skip(
+            f"deployment has no {DP_DEMO_COMMAND} command to generate a data product"
+        )
     dp_cat = fprime_test_api.get_mnemonic("Svc.DpCatalog")
     added = fprime_test_api.send_and_await_event(
         DP_DEMO_COMMAND,
@@ -76,7 +78,9 @@ def _generate_dp(fprime_test_api, priority):
         dp_cat + ".DpFileAdded",
         timeout=30,
     )
-    assert added is not None, "DpFileAdded was not received for the generated data product"
+    assert (
+        added is not None
+    ), "DpFileAdded was not received for the generated data product"
     file_name = added.get_args()[0].val
     return _dp_identity(file_name) + (file_name,)
 
@@ -96,7 +100,9 @@ def test_set_dp_priority_not_found(fprime_test_api):
         [0xDEAD, 1, 2, 1],
         [
             fprime_test_api.get_event_pred(dp_cat + ".DpNotFound", [0xDEAD, 1, 2]),
-            fprime_test_api.get_event_pred(cmd_disp + ".OpCodeError", [set_opcode, "EXECUTION_ERROR"]),
+            fprime_test_api.get_event_pred(
+                cmd_disp + ".OpCodeError", [set_opcode, "EXECUTION_ERROR"]
+            ),
         ],
         timeout=10,
     )
@@ -113,14 +119,20 @@ def test_set_dp_priority_reorders_transmit(fprime_test_api):
     dp_cat = _build_catalog(fprime_test_api)
     first = _generate_dp(fprime_test_api, 20)
     second = _generate_dp(fprime_test_api, 30)
-    assert first[:3] != second[:3], "generated data products must have distinct identities"
+    assert (
+        first[:3] != second[:3]
+    ), "generated data products must have distinct identities"
 
     # Same priority: reported with equal old and new values, command succeeds
     fprime_test_api.send_and_assert_command(
         dp_cat + ".SET_DP_PRIORITY",
         [first[0], first[1], first[2], 20],
         max_delay=10,
-        events=[fprime_test_api.get_event_pred(dp_cat + ".DpPrioritySet", [first[0], first[1], first[2], 20, 20])],
+        events=[
+            fprime_test_api.get_event_pred(
+                dp_cat + ".DpPrioritySet", [first[0], first[1], first[2], 20, 20]
+            )
+        ],
     )
 
     # Raise the second product above the first
@@ -128,17 +140,27 @@ def test_set_dp_priority_reorders_transmit(fprime_test_api):
         dp_cat + ".SET_DP_PRIORITY",
         [second[0], second[1], second[2], 5],
         max_delay=10,
-        events=[fprime_test_api.get_event_pred(dp_cat + ".DpPrioritySet", [second[0], second[1], second[2], 30, 5])],
+        events=[
+            fprime_test_api.get_event_pred(
+                dp_cat + ".DpPrioritySet", [second[0], second[1], second[2], 30, 5]
+            )
+        ],
     )
 
     # The second product is sent before the first, each with its transmit priority
-    sending_second = fprime_test_api.get_event_pred(dp_cat + ".SendingProduct", [second[3], None, 5])
-    sending_first = fprime_test_api.get_event_pred(dp_cat + ".SendingProduct", [first[3], None, 20])
+    sending_second = fprime_test_api.get_event_pred(
+        dp_cat + ".SendingProduct", [second[3], None, 5]
+    )
+    sending_first = fprime_test_api.get_event_pred(
+        dp_cat + ".SendingProduct", [first[3], None, 20]
+    )
     results = fprime_test_api.send_and_await_event(
         dp_cat + ".START_XMIT_CATALOG",
         ["NO_WAIT", False],
         [sending_second, sending_first],
         timeout=120,
     )
-    assert len(results) == 2, "the reprioritized product was not sent before the other one"
+    assert (
+        len(results) == 2
+    ), "the reprioritized product was not sent before the other one"
     fprime_test_api.assert_event(dp_cat + ".CatalogXmitCompleted", timeout=120)
