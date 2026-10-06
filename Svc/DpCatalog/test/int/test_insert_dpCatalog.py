@@ -67,7 +67,9 @@ def transmit_catalog_until_complete(fprime_test_api, remain_active):
         fprime_test_api, "START_XMIT_CATALOG", ["NO_WAIT", remain_active]
     )
     fprime_test_api.assert_event(
-        dp_catalog(fprime_test_api, "CatalogXmitCompleted"), start=start, timeout=XMIT_TIMEOUT
+        dp_catalog(fprime_test_api, "CatalogXmitCompleted"),
+        start=start,
+        timeout=XMIT_TIMEOUT,
     )
 
 
