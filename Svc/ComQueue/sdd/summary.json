@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-07T00:23:18Z",
+  "ref": "v4.4.1",
+  "commit": "558b7ef48edd5d25f3bdddcbbe7afddb9cc22d09",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 25,
+  "filled_sections": 17,
+  "prose_words": 1225,
+  "placeholder_hits": 1,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "commands",
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.1/Svc/ComQueue/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::ComQueue",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.1/docs/reference/api/cpp/html/class_svc_1_1_com_queue.html"
+    }
+  ]
+}

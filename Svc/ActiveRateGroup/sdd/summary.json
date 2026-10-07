@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-07T00:23:18Z",
+  "ref": "v4.4.1",
+  "commit": "558b7ef48edd5d25f3bdddcbbe7afddb9cc22d09",
+  "tier": "silver",
+  "has_sdd": true,
+  "sections": 15,
+  "filled_sections": 3,
+  "prose_words": 252,
+  "placeholder_hits": 1,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.1/Svc/ActiveRateGroup/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::ActiveRateGroup",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.1/docs/reference/api/cpp/html/class_svc_1_1_active_rate_group.html"
+    }
+  ]
+}

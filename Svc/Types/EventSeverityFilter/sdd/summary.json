@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-07T00:23:18Z",
+  "ref": "v4.4.1",
+  "commit": "558b7ef48edd5d25f3bdddcbbe7afddb9cc22d09",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 6,
+  "filled_sections": 5,
+  "prose_words": 221,
+  "placeholder_hits": 0,
+  "table_kinds": [],
+  "declared_kinds": [],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.1/Svc/Types/EventSeverityFilter/docs/sdd/",
+  "doxygen": []
+}

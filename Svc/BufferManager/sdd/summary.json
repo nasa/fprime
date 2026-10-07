@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-07T00:23:18Z",
+  "ref": "v4.4.1",
+  "commit": "558b7ef48edd5d25f3bdddcbbe7afddb9cc22d09",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 20,
+  "filled_sections": 11,
+  "prose_words": 650,
+  "placeholder_hits": 0,
+  "table_kinds": [],
+  "declared_kinds": [
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.1/Svc/BufferManager/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::BufferManagerComponentImpl",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.1/docs/reference/api/cpp/html/class_svc_1_1_buffer_manager_component_impl.html"
+    }
+  ]
+}

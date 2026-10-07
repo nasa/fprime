@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-07T00:23:18Z",
+  "ref": "v4.4.1",
+  "commit": "558b7ef48edd5d25f3bdddcbbe7afddb9cc22d09",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 36,
+  "filled_sections": 32,
+  "prose_words": 4960,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "commands",
+    "parameters",
+    "ports"
+  ],
+  "declared_kinds": [
+    "commands",
+    "events",
+    "parameters",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.1/Svc/WasmSequencer/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::WasmSequencer",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.1/docs/reference/api/cpp/html/class_svc_1_1_wasm_sequencer.html"
+    }
+  ]
+}

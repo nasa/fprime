@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-07T00:23:18Z",
+  "ref": "v4.4.1",
+  "commit": "558b7ef48edd5d25f3bdddcbbe7afddb9cc22d09",
+  "tier": "silver",
+  "has_sdd": true,
+  "sections": 3,
+  "filled_sections": 2,
+  "prose_words": 255,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.1/Svc/Ccsds/AosFramer/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::Ccsds::AosFramer",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.1/docs/reference/api/cpp/html/class_svc_1_1_ccsds_1_1_aos_framer.html"
+    }
+  ]
+}

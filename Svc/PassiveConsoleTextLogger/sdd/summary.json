@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-07T00:23:18Z",
+  "ref": "v4.4.1",
+  "commit": "558b7ef48edd5d25f3bdddcbbe7afddb9cc22d09",
+  "tier": "silver",
+  "has_sdd": true,
+  "sections": 12,
+  "filled_sections": 3,
+  "prose_words": 145,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.1/Svc/PassiveConsoleTextLogger/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::ConsoleTextLoggerImpl",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.1/docs/reference/api/cpp/html/class_svc_1_1_console_text_logger_impl.html"
+    }
+  ]
+}
