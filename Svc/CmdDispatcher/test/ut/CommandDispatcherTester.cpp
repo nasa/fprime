@@ -206,6 +206,7 @@ void CommandDispatcherTester::runNopCommands() {
 
     // dispatch for async command
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+    ASSERT_EVENTS_NoOpReceived_SIZE(1);
     // dispatch for async command response
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     // Verify status passed back to port
@@ -233,8 +234,10 @@ void CommandDispatcherTester::runNopCommands() {
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1);
 
-    // dispatch for async command
+    // dispatch for async command; the handler echoes the string argument
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+    ASSERT_EVENTS_NoOpStringReceived_SIZE(1);
+    ASSERT_EVENTS_NoOpStringReceived(0, "BOO!");
     // dispatch for async command response
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     // Verify status passed back to port
@@ -266,8 +269,10 @@ void CommandDispatcherTester::runNopCommands() {
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched(0, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1);
 
-    // dispatch for async command
+    // dispatch for async command; the handler echoes all three arguments
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+    ASSERT_EVENTS_TestCmd1Args_SIZE(1);
+    ASSERT_EVENTS_TestCmd1Args(0, 1, static_cast<F32>(2.3), 4);
     // dispatch for async command response
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
     // Verify status passed back to port

@@ -6,6 +6,7 @@
 
 #include "DpCatalogTester.hpp"
 #include <cstdlib>
+#include <cstring>
 #include <set>
 #include <vector>
 #include "Fw/Dp/DpContainer.hpp"
@@ -17,6 +18,22 @@
 #include "config/DpCfg.hpp"
 
 namespace Svc {
+
+namespace {
+
+bool hasDuplicateDpSet(const DpCatalogTester::DpSet* dpSet, FwIndexType entry) {
+    for (FwIndexType earlier = 0; earlier < entry; earlier++) {
+        if (dpSet[entry].id == dpSet[earlier].id &&
+            dpSet[entry].time.getSeconds() == dpSet[earlier].time.getSeconds() &&
+            dpSet[entry].time.getUSeconds() == dpSet[earlier].time.getUSeconds() &&
+            std::strcmp(dpSet[entry].dir, dpSet[earlier].dir) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+}  // namespace
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -691,13 +708,14 @@ void DpCatalogTester ::test_RandomDp() {
 
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < entries; entry++) {
-            dpSet[entry].id = STest::Pick::startLength(0, NUM_ENTRIES);
+            do {
+                dpSet[entry].id = STest::Pick::startLength(0, NUM_ENTRIES);
+                dpSet[entry].time.set(STest::Pick::startLength(0, 10000), STest::Pick::startLength(0, 10000));
+                dpSet[entry].dir = dirs[STest::Pick::startLength(0, NUM_DIRS)].toChar();
+            } while (hasDuplicateDpSet(dpSet, entry));
+
             dpSet[entry].prio = STest::Pick::startLength(0, NUM_ENTRIES);
-
-            dpSet[entry].time.set(STest::Pick::startLength(0, 10000), STest::Pick::startLength(0, 10000));
-
             dpSet[entry].dataSize = STest::Pick::startLength(0, MAX_SIZE);
-            dpSet[entry].dir = dirs[STest::Pick::startLength(0, NUM_DIRS)].toChar();
 
             // randomly set if it is untransmitted or partial
             // Transmitted Dps are skipped in processFile
