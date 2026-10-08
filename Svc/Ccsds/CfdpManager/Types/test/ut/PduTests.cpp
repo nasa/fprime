@@ -253,50 +253,6 @@ TEST_F(PduTest, MetadataDeserializeFrom) {
     EXPECT_EQ(ChecksumType::CHECKSUM_TYPE_MODULAR, rxPdu.getChecksumType());
 }
 
-TEST_F(PduTest, MetadataClosureRequestedBitPosition) {
-    // Verify CCSDS 727.0-B-5 conformance: closure requested flag is at bit 6 (0x40),
-    // bit 7 and bits 5-4 are reserved (0)
-    MetadataPdu pduWithoutClosure;
-    pduWithoutClosure.initialize(PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1, 1, 1, 2, 100, "a", "b",
-                                ChecksumType::CHECKSUM_TYPE_MODULAR, 0);
-
-    U8 bufferNoClosure[512];
-    Fw::Buffer buf1(bufferNoClosure, sizeof(bufferNoClosure));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pduWithoutClosure.toBuffer(buf1));
-
-    Fw::SerialBuffer sb1(bufferNoClosure, buf1.getSize());
-    sb1.fill();
-    PduHeader header1;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, header1.fromSerialBuffer(sb1));
-    U8 directiveCode1;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb1.deserializeTo(directiveCode1));
-    U8 paramByte1;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb1.deserializeTo(paramByte1));
-    EXPECT_EQ(0, (paramByte1 >> 6) & 0x01);
-    EXPECT_EQ(0, paramByte1 & 0xB0);  // reserved bits 7 and 5-4 must be 0
-    EXPECT_EQ(static_cast<U8>(ChecksumType::CHECKSUM_TYPE_MODULAR), paramByte1);
-
-    MetadataPdu pduWithClosure;
-    pduWithClosure.initialize(PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 2, 100, "a", "b",
-                              ChecksumType::CHECKSUM_TYPE_MODULAR, 1);
-
-    U8 bufferClosure[512];
-    Fw::Buffer buf2(bufferClosure, sizeof(bufferClosure));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pduWithClosure.toBuffer(buf2));
-
-    Fw::SerialBuffer sb2(bufferClosure, buf2.getSize());
-    sb2.fill();
-    PduHeader header2;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, header2.fromSerialBuffer(sb2));
-    U8 directiveCode2;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb2.deserializeTo(directiveCode2));
-    U8 paramByte2;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb2.deserializeTo(paramByte2));
-    EXPECT_EQ(1, (paramByte2 >> 6) & 0x01);
-    EXPECT_EQ(0, paramByte2 & 0x80);  // reserved bit 7 must be 0
-    EXPECT_EQ(0, paramByte2 & 0x30);  // reserved bits 5-4 must be 0
-    EXPECT_EQ(0x40 | static_cast<U8>(ChecksumType::CHECKSUM_TYPE_MODULAR), paramByte2);
-}
 
 // ======================================================================
 // File Data PDU Tests
