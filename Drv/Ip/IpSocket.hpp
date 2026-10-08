@@ -16,6 +16,14 @@
 #include <Os/Mutex.hpp>
 #include <config/IpCfg.hpp>
 
+// MSG_NOSIGNAL must be visible when SEND_NO_SIGNAL_FLAGS is defined below, independent of what IpCfg.hpp includes
+#ifdef TGT_OS_TYPE_VXWORKS
+#include <sockLib.h>
+#include <socket.h>
+#elif defined(TGT_OS_TYPE_LINUX) || defined(TGT_OS_TYPE_DARWIN)
+#include <sys/socket.h>
+#endif
+
 namespace Drv {
 
 struct SocketDescriptor final {
@@ -35,7 +43,7 @@ enum SocketIpStatus {
     SOCK_FAILED_TO_SET_SOCKET_OPTIONS = -5,  //!< Failed to configure socket
     SOCK_INTERRUPTED_TRY_AGAIN = -6,         //!< Interrupted status for retries
     SOCK_READ_ERROR = -7,                    //!< Failed to read socket
-    SOCK_DISCONNECTED = -8,                  //!< Failed to read socket with disconnect
+    SOCK_DISCONNECTED = -8,                  //!< Socket disconnected during read or send
     SOCK_FAILED_TO_BIND = -9,                //!< Failed to bind to socket
     SOCK_FAILED_TO_LISTEN = -10,             //!< Failed to listen on socket
     SOCK_FAILED_TO_ACCEPT = -11,             //!< Failed to accept connection
@@ -188,6 +196,26 @@ class IpSocket {
      * \return status of timeout setup
      */
     SocketIpStatus setupTimeouts(int socketFd);
+
+    //! Flags added to every TCP send, on top of SOCKET_IP_SEND_FLAGS. MSG_NOSIGNAL makes a send to a peer that has
+    //! closed the connection fail with EPIPE instead of raising SIGPIPE, which would terminate the process. Where
+    //! MSG_NOSIGNAL is not defined, setupNoSigPipe covers platforms that provide SO_NOSIGPIPE (e.g. macOS).
+#ifdef MSG_NOSIGNAL
+    static constexpr int SEND_NO_SIGNAL_FLAGS = MSG_NOSIGNAL;
+#else
+    static constexpr int SEND_NO_SIGNAL_FLAGS = 0;
+#endif
+
+    /**
+     * \brief prevent sends on a stream socket from raising SIGPIPE on platforms without MSG_NOSIGNAL
+     *
+     * Sets SO_NOSIGPIPE where the platform provides it (e.g. macOS). Elsewhere this does nothing: sends pass
+     * SEND_NO_SIGNAL_FLAGS instead.
+     *
+     * \param socketFd: stream socket to setup; may be called before connect
+     * \return SOCK_SUCCESS, or SOCK_FAILED_TO_SET_SOCKET_OPTIONS if the option could not be set
+     */
+    SocketIpStatus setupNoSigPipe(int socketFd);
 
     /**
      * \brief converts a given IPv4 address in dotted-quad form "x.x.x.x" to a network-order
