@@ -253,7 +253,6 @@ TEST_F(PduTest, MetadataDeserializeFrom) {
     EXPECT_EQ(ChecksumType::CHECKSUM_TYPE_MODULAR, rxPdu.getChecksumType());
 }
 
-
 // ======================================================================
 // File Data PDU Tests
 // ======================================================================
