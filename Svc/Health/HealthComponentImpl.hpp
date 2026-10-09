@@ -138,6 +138,7 @@ class HealthImpl final : public HealthComponentBase {
     struct PingTracker {
         PingEntry entry;         //!< entry passed by user
         U32 cycleCount;          //!< current cycle count
+        bool fatalReported;      //!< whether FATAL was reported for this ping
         U32 key;                 //!< key passed to ping
         Fw::Enabled::t enabled;  //!< if current ping result is checked
     } m_pingTrackerEntries[NUM_PINGSEND_OUTPUT_PORTS];

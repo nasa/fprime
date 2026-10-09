@@ -58,6 +58,7 @@ void HealthImpl::setPingEntries(PingEntry* pingEntries, FwIndexType numPingEntri
                   static_cast<FwAssertArgType>(pingEntries[entry].fatalCycles));
         this->m_pingTrackerEntries[entry].entry = pingEntries[entry];
         this->m_pingTrackerEntries[entry].cycleCount = 0;
+        this->m_pingTrackerEntries[entry].fatalReported = false;
         this->m_pingTrackerEntries[entry].enabled = Fw::Enabled::ENABLED;
         this->m_pingTrackerEntries[entry].key = 0;
     }
@@ -77,6 +78,7 @@ void HealthImpl::PingReturn_handler(const FwIndexType portNum, U32 key) {
     } else {
         // reset the counter and clear the key
         this->m_pingTrackerEntries[portNum].cycleCount = 0;
+        this->m_pingTrackerEntries[portNum].fatalReported = false;
         this->m_pingTrackerEntries[portNum].key = 0;
     }
 }
@@ -111,12 +113,16 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
                 } else {
                     // check for FATAL timeout value first: warnCycles == fatalCycles is a legal
                     // configuration, and the FATAL takes precedence over the warning
-                    if (this->m_pingTrackerEntries[entry].entry.fatalCycles ==
-                        this->m_pingTrackerEntries[entry].cycleCount) {
-                        Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
-                        this->log_FATAL_HLTH_PING_LATE(_arg);
-                    } else if (this->m_pingTrackerEntries[entry].cycleCount ==
-                               this->m_pingTrackerEntries[entry].entry.warnCycles) {
+                    if (this->m_pingTrackerEntries[entry].cycleCount >=
+                        this->m_pingTrackerEntries[entry].entry.fatalCycles) {
+                        if (!this->m_pingTrackerEntries[entry].fatalReported) {
+                            Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
+                            this->m_pingTrackerEntries[entry].fatalReported = true;
+                            this->log_FATAL_HLTH_PING_LATE(_arg);
+                        }
+                    } else if (!this->m_pingTrackerEntries[entry].fatalReported &&
+                               this->m_pingTrackerEntries[entry].cycleCount ==
+                                   this->m_pingTrackerEntries[entry].entry.warnCycles) {
                         Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
                         this->log_WARNING_HI_HLTH_PING_WARN(_arg);
                         this->tlmWrite_PingLateWarnings(++this->m_warnings);
