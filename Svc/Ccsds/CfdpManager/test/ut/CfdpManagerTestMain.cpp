@@ -36,6 +36,11 @@ TEST(Pdu, NakPdu) {
     tester.testNakPdu();
 }
 
+TEST(Pdu, NakPduSegmentCountLimit) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testNakPduSegmentCountLimit();
+}
+
 TEST(Transaction, Class1TxNominal) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass1TxNominal();
