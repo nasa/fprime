@@ -86,6 +86,9 @@ class FileUplinkTester : public FileUplinkGTestBase {
     //! Send a CANCEL packet in DATA mode
     //!
     void cancelPacketInDataMode();
+    void tooShortPacket();
+    void descriptorOnlyPacket();
+    void truncatedBodyPacket();
 
   private:
     // ----------------------------------------------------------------------
@@ -138,6 +141,8 @@ class FileUplinkTester : public FileUplinkGTestBase {
     //! Send a CancelPacket
     //!
     void sendCancelPacket();
+    void sendRawPacket(U8* const data, const size_t size);
+    void writeFileDescriptor(U8* const data);
 
     //! Verify file data
     //!

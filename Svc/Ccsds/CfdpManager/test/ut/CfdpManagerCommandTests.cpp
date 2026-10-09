@@ -1180,6 +1180,47 @@ void CfdpManagerTester::testDataInWrongDescriptor() {
     ASSERT_EVENTS_SIZE(0);
 }
 
+void CfdpManagerTester::testDataInDescriptorOnly() {
+    // dataIn_handler early-return: buffer holding exactly the 2-byte FW_PACKET_FILE
+    // descriptor and no PDU bytes. Before the fix this reached Engine::receivePdu with a
+    // zero-length buffer and tripped the LinearBufferBase constructor assertion.
+
+    this->clearHistory();
+
+    const FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    U8 data[sizeof(FwPacketDescriptorType)];
+    data[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    data[1] = static_cast<U8>(descriptor & 0xFF);
+    Fw::Buffer buffer(data, sizeof(data));
+
+    this->invoke_to_dataIn(0, buffer);
+    this->component.doDispatch();
+
+    // Buffer returned to the sender, engine never invoked, no events emitted
+    ASSERT_from_dataInReturn_SIZE(1);
+    ASSERT_EVENTS_SIZE(0);
+}
+
+void CfdpManagerTester::testDataInDescriptorPlusOneByte() {
+    // Control: descriptor plus a single PDU byte reaches the engine, which rejects the
+    // truncated header with an event rather than an assertion.
+
+    this->clearHistory();
+
+    const FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    U8 data[sizeof(FwPacketDescriptorType) + 1];
+    data[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    data[1] = static_cast<U8>(descriptor & 0xFF);
+    data[2] = 0x00;
+    Fw::Buffer buffer(data, sizeof(data));
+
+    this->invoke_to_dataIn(0, buffer);
+    this->component.doDispatch();
+
+    ASSERT_from_dataInReturn_SIZE(1);
+    ASSERT_EVENTS_FailPduHeaderDeserialization_SIZE(1);
+}
+
 void CfdpManagerTester::testGetPduBufferMaxOutgoing() {
     // getPduBuffer: when the channel's outgoing PDU counter has reached the
     // per-cycle maximum, no buffer is allocated and SEND_PDU_NO_BUF_AVAIL_ERROR
