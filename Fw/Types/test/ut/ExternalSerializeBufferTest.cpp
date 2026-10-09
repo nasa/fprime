@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <Fw/FPrimeBasicTypes.hpp>
 
+#include "Fw/Types/SerialBuffer.hpp"
 #include "Fw/Types/Serializable.hpp"
 
 namespace ExternalSerializeBufferTest {
@@ -98,3 +99,51 @@ TEST(ExternalSerializeBufferWithMemberCopy, Assign) {
 }
 
 }  // namespace ExternalSerializeBufferTest
+
+// ----------------------------------------------------------------------
+// LinearBufferBase constructor contract
+// ----------------------------------------------------------------------
+
+namespace LinearBufferBaseCtorTest {
+
+U8 backing[4];
+
+// A valid pointer with zero capacity is a legal, empty buffer. Ingest paths build one
+// when a packet carries a descriptor but no body, so it must not assert.
+TEST(LinearBufferBase, ValidPointerZeroCapacity) {
+    Fw::ExternalSerializeBuffer esb(backing, 0);
+    ASSERT_EQ(esb.getCapacity(), 0);
+    ASSERT_EQ(esb.getSize(), 0);
+    const U8 value = 1;
+    ASSERT_EQ(esb.serializeFrom(value), Fw::FW_SERIALIZE_NO_ROOM_LEFT);
+    U8 out = 0;
+    ASSERT_EQ(esb.deserializeTo(out), Fw::FW_DESERIALIZE_BUFFER_EMPTY);
+}
+
+TEST(SerialBuffer, ValidPointerZeroCapacity) {
+    Fw::SerialBuffer sb(backing, 0);
+    sb.fill();
+    ASSERT_EQ(sb.getCapacity(), 0);
+    ASSERT_EQ(sb.getSize(), 0);
+    U8 out = 0;
+    ASSERT_EQ(sb.deserializeTo(out), Fw::FW_DESERIALIZE_BUFFER_EMPTY);
+}
+
+// Null with zero capacity remains legal (used for initialization and reset)
+TEST(LinearBufferBase, NullPointerZeroCapacity) {
+    Fw::ExternalSerializeBuffer esb(nullptr, 0);
+    ASSERT_EQ(esb.getCapacity(), 0);
+    ASSERT_EQ(esb.getSize(), 0);
+}
+
+// Null with nonzero capacity is the only inconsistent pairing and must still assert
+TEST(LinearBufferBaseDeathTest, NullPointerNonzeroCapacity) {
+    ASSERT_DEATH(
+        {
+            Fw::ExternalSerializeBuffer esb(nullptr, 1);
+            (void)esb;
+        },
+        ".*");
+}
+
+}  // namespace LinearBufferBaseCtorTest

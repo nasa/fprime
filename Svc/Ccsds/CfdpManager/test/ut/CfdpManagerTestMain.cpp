@@ -687,6 +687,16 @@ TEST(Coverage, DataInWrongDescriptor) {
     tester.testDataInWrongDescriptor();
 }
 
+TEST(Coverage, DataInDescriptorOnly) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testDataInDescriptorOnly();
+}
+
+TEST(Coverage, DataInDescriptorPlusOneByte) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testDataInDescriptorPlusOneByte();
+}
+
 TEST(Coverage, GetPduBufferMaxOutgoing) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testGetPduBufferMaxOutgoing();
