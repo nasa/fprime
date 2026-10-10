@@ -27,6 +27,8 @@ For each valid frame, the M_PDU First Header Pointer (FHP) is used to locate pac
 
 Ownership of incoming frame buffers is returned to the sender via the `dataReturnOut` port; downstream consumers return emitted packet buffers via the `dataReturnIn` port, which the deframer deallocates when it owns them (spanning-packet buffers) or passes back upstream otherwise.
 
+EPP Packet Length includes the header (CCSDS 133.1-B-3, 4.1.2.8.2). A non-idle one-byte EPP has no length field. Other non-idle packets may have no data field, but declared lengths smaller than the header are rejected. Idle packets are discarded.
+
 ## Configuration
 
 The `configure()` function must be called before any frames are processed:
