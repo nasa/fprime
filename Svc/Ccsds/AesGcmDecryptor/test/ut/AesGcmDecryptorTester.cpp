@@ -6,7 +6,7 @@
 
 #include "AesGcmDecryptorTester.hpp"
 #include "STest/Pick/Pick.hpp"
-#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
+#include "Svc/Ccsds/Utils/SdlsAad.hpp"
 
 #include <openssl/evp.h>
 #include <cstring>
@@ -150,7 +150,7 @@ void AesGcmDecryptorTester ::testKnownAnswer() {
     this->assertPlaintext(KAT_PLAINTEXT, sizeof KAT_PLAINTEXT);
 }
 
-void AesGcmDecryptorTester ::testAuthMaskLayout() {
+void AesGcmDecryptorTester ::testAadLayout() {
     // Check the ends of the VCID field as well as an ordinary value: a shift or mask
     // error shows up at the boundaries first
     const U8 vcIds[] = {0, 1, TEST_VC_ID, 0x3F};
@@ -159,11 +159,11 @@ void AesGcmDecryptorTester ::testAuthMaskLayout() {
         U8 expected[TC_AAD_LEN];
         buildTcAad(expected, vcIds[i], spi);
 
-        const Svc::Ccsds::Utils::SdlsTcAuthMask actual(vcIds[i], spi);
+        const Svc::Ccsds::Utils::SdlsTcAad actual(vcIds[i], spi);
 
         ASSERT_EQ(static_cast<FwSizeType>(sizeof actual.bytes), TC_AAD_LEN);
         ASSERT_EQ(::memcmp(actual.bytes, expected, TC_AAD_LEN), 0)
-            << "TC auth mask does not match the ground segment's layout for VC " << static_cast<U32>(vcIds[i]);
+            << "TC AAD does not match the ground segment's layout for VC " << static_cast<U32>(vcIds[i]);
     }
 }
 
