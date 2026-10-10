@@ -11,6 +11,7 @@ namespace Svc {
 // Definitions for constants that are ODR-used by gtest assertions
 const FwSizeType ComRetryTester::MAX_HISTORY_SIZE;
 const FwSizeType ComRetryTester::TEST_INSTANCE_QUEUE_DEPTH;
+const FwSizeType ComRetryTester::MAX_INLINE_STATUSES;
 
 static_assert(ComRetryTester::TEST_INSTANCE_QUEUE_DEPTH == ComRetry::MIN_QUEUE_DEPTH,
               "Tests exercise the minimum queue depth documented in the SDD");
@@ -64,7 +65,7 @@ FwSizeType ComRetryTester ::queuedMessages() {
 }
 
 void ComRetryTester ::setInlineAdapter(const Fw::Success* statuses, FwSizeType count) {
-    FW_ASSERT(count <= MAX_INLINE_STATUSES, static_cast<FwAssertArgType>(count));
+    ASSERT_LE(count, MAX_INLINE_STATUSES);
     for (FwSizeType i = 0; i < count; i++) {
         this->m_inlineStatuses[i] = statuses[i];
     }
@@ -362,7 +363,7 @@ void ComRetryTester ::testQueueFullAsserts() {
 
 void ComRetryTester ::checkQueueFullAssert(::Test::UnitTestAssert& assertHook) {
     ASSERT_TRUE(assertHook.assertFailed());
-    ::Test::UnitTestAssert::File file;
+    ::Test::UnitTestAssert::File file = ::Test::UnitTestAssert::fileInit;
     FwSizeType lineNo = 0;
     FwSizeType numArgs = 0;
     FwAssertArgType arg1 = 0, arg2 = 0, arg3 = 0, arg4 = 0, arg5 = 0, arg6 = 0;
@@ -428,7 +429,7 @@ void ComRetryTester ::testQueueDepthCheck() {
     shallow.init(ComRetry::MIN_QUEUE_DEPTH - 1, 0);
     shallow.preamble();
     ASSERT_TRUE(assertHook.assertFailed());
-    ::Test::UnitTestAssert::File file;
+    ::Test::UnitTestAssert::File file = ::Test::UnitTestAssert::fileInit;
     FwSizeType lineNo = 0;
     FwSizeType numArgs = 0;
     FwAssertArgType arg1 = 0, arg2 = 0, arg3 = 0, arg4 = 0, arg5 = 0, arg6 = 0;

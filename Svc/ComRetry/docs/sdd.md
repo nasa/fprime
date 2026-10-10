@@ -2,11 +2,11 @@
 
 ## 1. Introduction
 
-The `Svc::ComRetry` active component forwards messages from upstream to downstream components. When delivery fails, it holds the message and resends it once the communication adapter reports recovery, until the retries are exhausted. Any topology requiring retry capabilities must place this component in the pipeline before a `ComStub` or `Radio` component. This component expects a `ComStatus` response per the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol). It acts as a pass-through component in case of a successful delivery, i.e. when it receives `Fw::Success::SUCCESS`. On receiving `Fw::Success::FAILURE`, it resends the message until it exceeds the maximum number of retries. After all retries are exhausted, it emits `Fw::Success::FAILURE` upstream, and the downstream communication adapter is responsible for eventually emitting a recovery `Fw::Success::SUCCESS` to resume data flow.
+The `Svc::ComRetry` active component forwards messages from upstream to downstream components. When delivery fails, it holds the message and resends it once the communication adapter reports recovery, until the retries are exhausted. Any topology requiring retry capabilities must place this component in the pipeline before a `ComStub` or `Radio` component. This component expects a `ComStatus` response per the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol). It acts as a pass-through component in case of a successful delivery, i.e. when it receives `Fw::Success::SUCCESS`. After all retries are exhausted, it emits `Fw::Success::FAILURE` upstream, and the downstream communication adapter is responsible for eventually emitting a recovery `Fw::Success::SUCCESS` to resume data flow.
 
 All `Svc::ComRetry` inputs are asynchronous: callers only enqueue a message, and all sends to the communication adapter (the first attempt and every resend) are issued from the `Svc::ComRetry` thread. Neither the upstream sender nor a thread delivering a status from the communication adapter is held while a buffer is delivered. Conversely, `dataReturnOut` and `comStatusOut` are invoked on the `Svc::ComRetry` thread, so a passive upstream component runs those handlers on this thread while its own `dataIn` runs on its sender's thread.
 
-`Svc::ComRetry` can be used alongside the other F´ communication components (a `Svc.Framer` implementation such as `Svc::FprimeFramer`, `Svc::FprimeDeframer`, `Svc::ComQueue`).
+`Svc::ComRetry` can be used alongside the other F´ communication components: a `Svc.Framer` implementation (e.g. `Svc::FprimeFramer`), a `Svc.Deframer` implementation (e.g. `Svc::FprimeDeframer`), and `Svc::ComQueue`.
 
 ## 2. Requirements
 
@@ -43,7 +43,7 @@ All `Svc::ComRetry` inputs are asynchronous: callers only enqueue a message, and
 | `async input` | `pingIn` | `Svc.Ping` | Health ping (dropped when the queue is full) |
 | `output` | `pingOut` | `Svc.Ping` | Health ping response |
 
-`dataIn`, `dataReturnIn`, and `comStatusIn` use the default `assert` queue-full behavior. These inputs are commonly invoked by the communication adapter from within the `dataOut` call, i.e. on the `Svc::ComRetry` thread itself, so a `block` policy would deadlock and a `drop` policy would lose a buffer or status. The assertion fires on the thread that invokes the full input, which may be a driver or adapter thread.
+`dataIn`, `dataReturnIn`, and `comStatusIn` use the default `assert` queue-full behavior. `dataReturnIn` and `comStatusIn` are commonly invoked by the communication adapter from within the `dataOut` call, and `dataIn` may be invoked by a passive upstream from within `dataReturnOut` or `comStatusOut`. In both cases the caller is the `Svc::ComRetry` thread itself, so a `block` policy would deadlock and a `drop` policy would lose a buffer or status. The assertion fires on the thread that invokes the full input, which may be a driver or adapter thread.
 
 ### 3.2 Behavior
 
@@ -66,7 +66,7 @@ instance comRetry: Svc.ComRetry base id 0x1000 \
   priority 5
 ```
 
-`Default.STACK_SIZE` is a deployment-defined constant. The `Svc::ComRetry` thread performs the call to the communication adapter's `dataIn` port, so its stack must accommodate that adapter's send path. A priority equal to the upstream `Svc::ComQueue` preserves the timing of the former passive arrangement, in which the send ran on the `Svc::ComQueue` thread. The active conversion costs one thread, its stack, a queue of at least 4 messages, and one queue round-trip per frame.
+`Default.STACK_SIZE` is a deployment-defined constant. The `Svc::ComRetry` thread performs the call to the communication adapter's `dataIn` port, so its stack must accommodate that adapter's send path. A priority equal to the upstream `Svc::ComQueue` keeps first-attempt sends at the priority they had in the former passive arrangement, where the first attempt ran on the `Svc::ComQueue` thread and resends ran on the thread delivering the recovery status. The active conversion costs one thread, its stack, a queue of at least 4 messages, and one queue round-trip per frame.
 
 To monitor the thread, connect `pingIn`/`pingOut` to `Svc.Health` and add a ping entry for the instance; unconnected ping ports leave the thread unmonitored. Because the thread blocks for the duration of each send, the ping thresholds must exceed the adapter's worst-case send time.
 

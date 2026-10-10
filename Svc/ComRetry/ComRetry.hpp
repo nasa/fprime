@@ -18,7 +18,7 @@ class ComRetry final : public ComRetryComponentBase {
     enum RetryState { WAITING_FOR_STATUS, WAITING_FOR_SEND, RETRYING };
 
   public:
-    //! Minimum instance queue depth required by the communication adapter protocol (see SDD)
+    //! Minimum instance queue depth: three communication adapter protocol messages plus one health ping (see SDD)
     static constexpr FwSizeType MIN_QUEUE_DEPTH = 4;
 
     // ----------------------------------------------------------------------
