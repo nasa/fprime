@@ -79,6 +79,22 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testInternalQueueOverflow();
 
+    void testComPacketAsyncIngressDrop();
+
+    void testBufferAsyncIngressDrop();
+
+    void testConcurrentComAsyncIngressDrop();
+
+    void testFifoDropNewestAccounting();
+
+    void testFifoDropOldestAccounting();
+
+  private:
+    static const U32 CONCURRENT_INGRESS_TASKS = 4;
+    static const U32 CONCURRENT_INGRESS_DROPS_PER_TASK = 5000;
+    static void concurrentComAsyncProducerTask(void* context);
+
+  public:
     void testDepthZeroQueue();
 
     void testAllQueuesDisabled();

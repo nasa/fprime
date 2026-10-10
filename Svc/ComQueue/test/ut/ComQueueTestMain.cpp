@@ -44,6 +44,31 @@ TEST(Nominal, InternalQueueOverflow) {
     tester.testInternalQueueOverflow();
 }
 
+TEST(OffNominal, ComPacketAsyncIngressDrop) {
+    Svc::ComQueueTester tester;
+    tester.testComPacketAsyncIngressDrop();
+}
+
+TEST(OffNominal, BufferAsyncIngressDrop) {
+    Svc::ComQueueTester tester;
+    tester.testBufferAsyncIngressDrop();
+}
+
+TEST(OffNominal, ConcurrentComAsyncIngressDrop) {
+    Svc::ComQueueTester tester;
+    tester.testConcurrentComAsyncIngressDrop();
+}
+
+TEST(OffNominal, FifoDropNewestAccounting) {
+    Svc::ComQueueTester tester;
+    tester.testFifoDropNewestAccounting();
+}
+
+TEST(OffNominal, FifoDropOldestAccounting) {
+    Svc::ComQueueTester tester;
+    tester.testFifoDropOldestAccounting();
+}
+
 TEST(Nominal, DepthZeroQueue) {
     Svc::ComQueueTester tester;
     tester.testDepthZeroQueue();

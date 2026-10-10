@@ -208,8 +208,10 @@ class ComQueue final : public ComQueueComponentBase {
     // Hook implementations for typed async input ports
     // ----------------------------------------------------------------------
 
-    //! Queue overflow hook method that deallocates the fwBuffer
-    //!
+    //! Records an Fw::ComBuffer rejected by the async input queue
+    void comPacketQueueIn_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
+
+    //! Returns an Fw::Buffer rejected by the async input queue to its sender
     void bufferQueueIn_overflowHook(FwIndexType portNum,  //!< The port number
                                     Fw::Buffer& fwBuffer  //!< The buffer
                                     ) override;
@@ -273,6 +275,9 @@ class ComQueue final : public ComQueueComponentBase {
     Fw::ComBuffer m_dequeued_com_buffer;                //!< Store a dequeued com buffer so it does not leave scope
     Types::Queue m_queues[TOTAL_PORT_COUNT];            //!< Stores queued data waiting for transmission
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
+    std::atomic<U32> m_comIngressDrops[COM_PORT_COUNT];      //!< Async ingress drops per Com port
+    std::atomic<U32> m_buffIngressDrops[BUFFER_PORT_COUNT];  //!< Async ingress drops per buffer port
+    U32 m_fifoDrops[TOTAL_PORT_COUNT];                       //!< Managed FIFO drops, single writer (dispatch thread)
     bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles
     SendState m_state;                                  //!< State of the component
     std::atomic<BufferState> m_buffer_state;  //!< Ownership state of buffer, shared with the sync dataReturnIn caller
