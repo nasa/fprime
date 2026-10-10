@@ -14,11 +14,11 @@ module Svc {
     @ Per-port counts of async ingress drops for Fw::Buffer
     array BuffQueueIngressDrops = [ComQueueBufferPorts] U32
 
-    @ Per-port counts of managed FIFO drops for Fw::ComBuffer
-    array ComQueueFifoDrops = [ComQueueComPorts] U32
+    @ Per-port counts of managed queue overflow drops for Fw::ComBuffer
+    array ComQueueManagedDrops = [ComQueueComPorts] U32
 
-    @ Per-port counts of managed FIFO drops for Fw::Buffer
-    array BuffQueueFifoDrops = [ComQueueBufferPorts] U32
+    @ Per-port counts of managed queue overflow drops for Fw::Buffer
+    array BuffQueueManagedDrops = [ComQueueBufferPorts] U32
 
     @ Component used to queue buffer types
     active component ComQueue {

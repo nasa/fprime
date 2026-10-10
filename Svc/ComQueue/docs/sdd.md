@@ -37,7 +37,7 @@ Queued messages from the highest priority source port are serviced first and a r
 | SVC-COMQUEUE-010 | `Svc::ComQueue` shall return ownership of incoming buffers once they have been enqueued.                                                | Memory management                                                       | Unit test           | 
 | SVC-COMQUEUE-011 | `Svc::ComQueue` shall provide a command to flush queued items.      | Queue management              | Unit test           | 
 | SVC-COMQUEUE-012 | `Svc::ComQueue` shall accept a configured depth of 0 for a port, allocating no storage for that queue and treating any message received on that port as an overflow. | Deployments may leave a port unused (e.g. no file downlink) without allocating memory or crashing. | Unit test | 
-| SVC-COMQUEUE-013 | `Svc::ComQueue` shall report cumulative, per-port message drops caused by async ingress and managed FIFO overflow separately, including both FIFO overflow modes and disabled FIFOs. | Provide observability without generating additional messages during ingress saturation. | Unit test |
+| SVC-COMQUEUE-013 | `Svc::ComQueue` shall report cumulative, per-port message drops caused by async ingress and managed queue overflow separately, including both overflow policies and disabled queues. | Provide observability without generating additional messages during ingress saturation. | Unit test |
 
 
 ## 4. Design
@@ -68,7 +68,7 @@ The diagram below shows the `Svc::ComQueue` component.
 3. `m_state`: Instance of `Svc::ComQueue::SendState` representing the state of the component. See: 4.3.1 State Machine
 4. `m_throttle`: An array of flags that throttle the per-port queue overflow messages.
 5. `m_comIngressDrops` and `m_buffIngressDrops`: atomic per-port async ingress loss counters, updated in the caller's thread.
-6. `m_fifoDrops`: per-port managed FIFO loss counter, updated in the component dispatch thread.
+6. `m_managedDrops`: per-port managed queue loss counter, updated in the component dispatch thread.
 
 ### 4.2.1 State Machine
 
@@ -140,7 +140,7 @@ state. For a full description see [4.2.1 State Machine](#4.2.1-State-Machine).
 The `run` port handler does the following: 
 1. Report the high-water mark for each queue since last `run` invocation via telemetry
 2. Clear each queue's high-water mark
-3. Report cumulative per-port ingress and managed FIFO drop counters; counters are not reset by `run`
+3. Report cumulative per-port ingress and managed queue drop counters; counters are not reset by `run`
 
 ### 4.6 Telemetry
 
@@ -150,14 +150,14 @@ The `run` port handler does the following:
 | buffQueueDepth | Svc.BuffQueueDepth | High-water mark depths of queues handling `Fw::Buffer`    |
 | comIngressDropped | Svc.ComQueueIngressDrops | Cumulative drops at the async `Fw::ComBuffer` ingress, by port |
 | buffIngressDropped | Svc.BuffQueueIngressDrops | Cumulative drops at the async `Fw::Buffer` ingress, by port |
-| comFifoDropped | Svc.ComQueueFifoDrops | Cumulative drops in managed `Fw::ComBuffer` FIFOs, by port |
-| buffFifoDropped | Svc.BuffQueueFifoDrops | Cumulative drops in managed `Fw::Buffer` FIFOs, by port |
+| comManagedDropped | Svc.ComQueueManagedDrops | Cumulative drops in managed `Fw::ComBuffer` queues, by port |
+| buffManagedDropped | Svc.BuffQueueManagedDrops | Cumulative drops in managed `Fw::Buffer` queues, by port |
 
 The loss counters are unsigned 32-bit cumulative counts since component construction; they wrap modulo 2^32.
 They count drops caused by queue overflow only. Explicit `FLUSH_QUEUE` and `FLUSH_ALL_QUEUES` operations
 are excluded; returning a buffer during a commanded flush does not increment any drop counter.
-A managed FIFO `DROP_OLDEST` replacement counts as one lost message even though the new input is accepted.
-A configured FIFO depth of zero counts each rejected input as one managed FIFO loss.
+A managed queue `DROP_OLDEST` replacement counts as one lost message even though the new input is accepted.
+A configured FIFO depth of zero counts each rejected input as one managed queue loss.
 
 The `run` input is itself asynchronous with `drop` overflow behavior. If the async
 message queue is full, that telemetry invocation may be dropped too; the

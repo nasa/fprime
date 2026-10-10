@@ -40,7 +40,7 @@ ComQueue ::ComQueue(const char* const compName)
     // Initialize throttles to "off"
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
-        this->m_fifoDrops[i] = 0;
+        this->m_managedDrops[i] = 0;
     }
     for (FwIndexType i = 0; i < COM_PORT_COUNT; i++) {
         this->m_comIngressDrops[i].store(0, std::memory_order_relaxed);
@@ -316,17 +316,17 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
     }
     this->tlmWrite_buffIngressDropped(buffIngressDropped);
 
-    ComQueueFifoDrops comFifoDropped;
-    for (U32 i = 0; i < comFifoDropped.SIZE; i++) {
-        comFifoDropped[i] = this->m_fifoDrops[i];
+    ComQueueManagedDrops comManagedDropped;
+    for (U32 i = 0; i < comManagedDropped.SIZE; i++) {
+        comManagedDropped[i] = this->m_managedDrops[i];
     }
-    this->tlmWrite_comFifoDropped(comFifoDropped);
+    this->tlmWrite_comManagedDropped(comManagedDropped);
 
-    BuffQueueFifoDrops buffFifoDropped;
-    for (U32 i = 0; i < buffFifoDropped.SIZE; i++) {
-        buffFifoDropped[i] = this->m_fifoDrops[COM_PORT_COUNT + i];
+    BuffQueueManagedDrops buffManagedDropped;
+    for (U32 i = 0; i < buffManagedDropped.SIZE; i++) {
+        buffManagedDropped[i] = this->m_managedDrops[COM_PORT_COUNT + i];
     }
-    this->tlmWrite_buffFifoDropped(buffFifoDropped);
+    this->tlmWrite_buffManagedDropped(buffManagedDropped);
 }
 
 void ComQueue ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
@@ -426,7 +426,7 @@ bool ComQueue::handleEnqueueStatus(const FwIndexType queueNum,
                                    const Fw::SerializeStatus status) {
     if (preEmptiveOverflow || status == Fw::FW_SERIALIZE_NO_ROOM_LEFT ||
         status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
-        ++this->m_fifoDrops[queueNum];
+        ++this->m_managedDrops[queueNum];
         if (!this->m_throttle[queueNum]) {
             this->log_WARNING_HI_QueueOverflow(queueType, portNum);
             this->m_throttle[queueNum] = true;

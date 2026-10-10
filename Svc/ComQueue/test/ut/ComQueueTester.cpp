@@ -386,18 +386,18 @@ void ComQueueTester::testDepthZeroQueue() {
     ASSERT_TLM_comQueueDepth(0, expectedComDepth);
     ASSERT_TLM_buffQueueDepth(0, expectedBuffDepth);
 
-    ComQueueFifoDrops expectedComDrops;
+    ComQueueManagedDrops expectedComDrops;
     for (U32 i = 0; i < expectedComDrops.SIZE; i++) {
         expectedComDrops[i] = 0;
     }
     expectedComDrops[disabledComPort] = 2;
-    BuffQueueFifoDrops expectedBuffDrops;
+    BuffQueueManagedDrops expectedBuffDrops;
     for (U32 i = 0; i < expectedBuffDrops.SIZE; i++) {
         expectedBuffDrops[i] = 0;
     }
     expectedBuffDrops[disabledBuffPort] = 1;
-    ASSERT_TLM_comFifoDropped(0, expectedComDrops);
-    ASSERT_TLM_buffFifoDropped(0, expectedBuffDrops);
+    ASSERT_TLM_comManagedDropped(0, expectedComDrops);
+    ASSERT_TLM_buffManagedDropped(0, expectedBuffDrops);
     component.cleanup();
 }
 
@@ -635,20 +635,20 @@ void ComQueueTester::testFifoDropNewestAccounting() {
 
     invoke_to_run(0, 0);
     this->dispatchAll();
-    ComQueueFifoDrops expectedCom;
+    ComQueueManagedDrops expectedCom;
     for (U32 i = 0; i < expectedCom.SIZE; i++) {
         expectedCom[i] = 0;
     }
     expectedCom[0] = 2;
-    BuffQueueFifoDrops expectedBuff;
+    BuffQueueManagedDrops expectedBuff;
     for (U32 i = 0; i < expectedBuff.SIZE; i++) {
         expectedBuff[i] = 0;
     }
     expectedBuff[0] = 2;
-    ASSERT_TLM_comFifoDropped_SIZE(1);
-    ASSERT_TLM_comFifoDropped(0, expectedCom);
-    ASSERT_TLM_buffFifoDropped_SIZE(1);
-    ASSERT_TLM_buffFifoDropped(0, expectedBuff);
+    ASSERT_TLM_comManagedDropped_SIZE(1);
+    ASSERT_TLM_comManagedDropped(0, expectedCom);
+    ASSERT_TLM_buffManagedDropped_SIZE(1);
+    ASSERT_TLM_buffManagedDropped(0, expectedBuff);
 
     // Ingress accounting must not treat a managed FIFO drop as an ingress drop.
     ComQueueIngressDrops zeroCom;
@@ -697,20 +697,20 @@ void ComQueueTester::testFifoDropOldestAccounting() {
 
     invoke_to_run(0, 0);
     this->dispatchAll();
-    ComQueueFifoDrops expectedCom;
+    ComQueueManagedDrops expectedCom;
     for (U32 i = 0; i < expectedCom.SIZE; i++) {
         expectedCom[i] = 0;
     }
     expectedCom[0] = 1;
-    BuffQueueFifoDrops expectedBuff;
+    BuffQueueManagedDrops expectedBuff;
     for (U32 i = 0; i < expectedBuff.SIZE; i++) {
         expectedBuff[i] = 0;
     }
     expectedBuff[0] = 1;
-    ASSERT_TLM_comFifoDropped_SIZE(1);
-    ASSERT_TLM_comFifoDropped(0, expectedCom);
-    ASSERT_TLM_buffFifoDropped_SIZE(1);
-    ASSERT_TLM_buffFifoDropped(0, expectedBuff);
+    ASSERT_TLM_comManagedDropped_SIZE(1);
+    ASSERT_TLM_comManagedDropped(0, expectedCom);
+    ASSERT_TLM_buffManagedDropped_SIZE(1);
+    ASSERT_TLM_buffManagedDropped(0, expectedBuff);
     this->component.cleanup();
 }
 
