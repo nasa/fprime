@@ -11,5 +11,11 @@
     "Svc.DpCatalog": "DataProducts.dpCat",
     "Svc.DpManager": "DataProducts.dpMgr",
     "Svc.DpWriter": "DataProducts.dpWriter",
-    "Svc.Health": "CdhCore.health"
+    "Svc.Health": "CdhCore.health",
+    "Svc.DpCatalog.producer.command": "Ref.dpDemo.Dp",
+    "Svc.DpCatalog.producer.args": [
+        "IMMEDIATE",
+        10,
+        "PROC_TYPE_NONE"
+    ]
 }

@@ -112,6 +112,7 @@ During initialization, the configuration function takes a set of parameters:
 |`BUILD_CATALOG`|none|Builds the in-RAM catalog by scanning the directories provided during initialization. Downlink state file will be read in to set downlink state for products|Prerequisite for executing `START_XMIT_CATALOG` command
 |`START_XMIT_CATALOG`| |Start transmitting the catalog to the ground in priority order
 | |wait|Wait for the transmission to complete before sending command completion status. Used when a sequence wishes to wait for completion before issuing subsequent commands.
+| |remainActive|Keep the catalog active after this transmission completes or is stopped: a data product inserted at runtime via `addToCat` (3.6.7) is sent without a new command. Replaced only by the next `START_XMIT_CATALOG`.
 |`STOP_XMIT_CATALOG`|none|Stop existing catalog transmission. The command completes immediately and no further files are started; the file in flight completes normally and is recorded. Its bytes are counted in neither `CatalogXmitStopped` (emitted before that completion) nor a later `CatalogXmitCompleted` (a `START_XMIT_CATALOG` issued after the completion starts a fresh tally); reconstruct them from `ProductComplete`. A `START_XMIT_CATALOG` (or a runtime `addToCat` with `remainActive`) issued before that completion resumes the transmission without re-sending the file: no new send is started until its completion arrives, which then continues the catalog walk, and the session's byte tally reported by `CatalogXmitCompleted` is kept. As with any send, the resumed transmission stays in progress until FileDownlink delivers that completion; if it never arrives, `STOP_XMIT_CATALOG` (then `BUILD_CATALOG`) or `CLEAR_CATALOG` is the recovery, as for a stalled send started normally. A `BUILD_CATALOG` or `CLEAR_CATALOG` issued before that completion abandons the file: its late completion is reported as `StaleFileDone` and it is re-sent on the next `START_XMIT_CATALOG`.
 |`CLEAR_CATALOG`|none|Clears existing RAM catalog and resets downlink state, reporting the pending products and bytes dropped with `CatalogCleared`. A transmission in progress is aborted (a waited `START_XMIT_CATALOG` is answered with `EXECUTION_ERROR`). Should be followed by `BUILD_CATALOG`. Used for recovery if state file gets corrupted or out of sync with file system contents. |
 
@@ -139,7 +140,7 @@ The data products are sorted using a `Fw::RedBlackTreeSet` (a self-balancing bin
 
 #### 3.6.4 Tree Traversal for Downlink
 
-When data products are downlinked, entries are retrieved in priority order by calling `begin()` on the set, which always yields the highest priority entry. As each file completes downlink, its entry is removed from the set. Entries inserted while a downlink is in progress (e.g. via `addToCat`) are placed in priority order and picked up by subsequent `begin()` calls.
+When data products are downlinked, entries are retrieved in priority order by calling `begin()` on the set, which always yields the highest priority entry. As each file completes downlink, its entry is removed from the set. Entries inserted while a downlink is in progress (e.g. via `addToCat`) are placed in priority order and picked up by subsequent `begin()` calls: the file in flight is never preempted, and when its `fileDone` arrives the next send is the highest priority entry remaining in the set, whether it was there at `BUILD_CATALOG` or was inserted since. A new entry that sorts ahead of the remaining entries is therefore sent next; one that sorts behind them is sent in its turn.
 
 #### 3.6.5 State File
 
@@ -149,6 +150,24 @@ Entries whose state-file record is `TRANSMITTED` are skipped during catalog buil
 #### 3.6.6 FileDone Handling
 
 Every `sendFile` call returns a `SendFileResponse` whose `context` FileDownlink assigns to that send and echoes back in `fileDone`. `DpCatalog` keeps the context of the send in flight and applies a `fileDone` only while a send is in flight and the context matches. Anything else is a late callback from a send abandoned by `BUILD_CATALOG` or `CLEAR_CATALOG` (`STOP_XMIT_CATALOG` alone keeps the send in flight, so its completion is still recorded, and a `START_XMIT_CATALOG` issued before it arrives starts no new send until then, so the file is not sent twice): it is reported with `StaleFileDone` (`WARNING_LO`, id 50, an expected consequence of an operator command rather than a fault) and the transmit in flight, if any, is left untouched. `CLEAR_CATALOG` issued mid-transmit closes the transmit session itself, as `STOP_XMIT_CATALOG` does: a waited `START_XMIT_CATALOG` is answered with `EXECUTION_ERROR` at that point, so a later `BUILD_CATALOG` or `START_XMIT_CATALOG` is not refused as in progress and the late callback is only reported. This replaces the `FW_ASSERT` that made a late `fileDone` FATAL (#5777). The discrimination requires the provider to assign a distinct `context` to every send, as `Svc/FileDownlink` does; a provider that echoes a constant context (for example `Svc/Ccsds/CfdpManager`, which returns the port number) cannot distinguish a late callback from the current send and is not supported on this port. Note: `FileComplete` must not be shared with other `SendFile` clients on the same FileDownlink; foreign completions would be reported as `StaleFileDone`.
+
+#### 3.6.7 Runtime Insertion (`addToCat`)
+
+`Svc/DpWriter` reports every data product file it writes on its `dpWrittenOut` port (file name, priority, size); the `DataProducts` subtopology connects it to `addToCat`. The handler reads the header of the named file and inserts an entry exactly as `BUILD_CATALOG` does (`processFile`), so a product added at runtime sorts identically to one found by a build. The priority and size carried by the port are not used: the header is the authoritative source and is read anyway for the id and time tag, which the port does not carry. The cases are handled as follows:
+
+| Condition | Behavior |
+|---|---|
+| Component not configured (`ComponentNotInitialized`) or configured with no slots (`ComponentNoMemory`) | The file is not recorded; the corresponding warning is emitted, as for the commands. |
+| Catalog not built (no `BUILD_CATALOG` yet, or `CLEAR_CATALOG` since the last build) | The file is not recorded; `NotLoaded` is emitted. The file is on disk in a managed directory and is found by the next `BUILD_CATALOG`. |
+| File is not under a configured directory | `DirectoryNotManaged`; the file is ignored. |
+| File cannot be read or has a bad size, header, CRC, or name | The same `FileSizeError`/`FileOpenError`/`FileReadError`/`FileHdrError`/`FileHdrDesError`/`FileNameFormatError`/`InvalidFileName` events as at build time; nothing is inserted. |
+| Tree insert fails although a slot is free (not expected) | `DpInsertError`; nothing is inserted. |
+| Entry already in the catalog | `DpDuplicate` (diagnostic); pending counters are unchanged. |
+| Product recorded as `TRANSMITTED` in the state file loaded by the last `BUILD_CATALOG` | The file is not recorded; `DpFileSkipped` is emitted, as at build time. Records appended since that build (3.6.6) are applied at the next `BUILD_CATALOG`; `DpWriter` reports each file once, so this only arises if an identical product is rewritten. |
+| Catalog has no free slot (`DP_MAX_FILES`/configured slots in use) | `DpCatalogFull`; nothing is inserted. |
+| Otherwise | The entry is inserted in priority order, `DpFileAdded` is emitted, and the pending file/byte counts are updated. |
+
+After a successful insert: if a transmission is in progress, the entry is picked up as described in 3.6.4. Otherwise, if the most recent `START_XMIT_CATALOG` had `remainActive` set, the transmission is (re)started immediately and the highest priority pending entry is sent; this holds whether that transmission completed or was halted by `STOP_XMIT_CATALOG`, because `remainActive` is replaced only by the next `START_XMIT_CATALOG`, so a runtime insert resumes a stopped transmission. Otherwise the entry waits for the next `START_XMIT_CATALOG`. The state file is not rewritten on insert: a newly written product has no transmit state to record, and its `TRANSMITTED` record is appended when its downlink completes, as for any other entry.
 
 ## 4 Unit Testing
 

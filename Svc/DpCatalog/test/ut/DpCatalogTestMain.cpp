@@ -365,6 +365,41 @@ TEST(OffNominal, MalformedFile) {
     tester.test_MalformedFile();
 }
 
+TEST(NominalManual, InsertIntoEmptyBuiltCatalog) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertIntoEmptyBuiltCatalog();
+}
+
+TEST(NominalManual, InsertDuringTransmitInPriorityOrder) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertDuringTransmitInPriorityOrder();
+}
+
+TEST(OffNominal, InsertWhenFull) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertWhenFull();
+}
+
+TEST(OffNominal, InsertBeforeBuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertBeforeBuild();
+}
+
+TEST(OffNominal, InsertDuplicate) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertDuplicate();
+}
+
+TEST(NominalManual, InsertPreservesTransmittedState) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertPreservesTransmittedState();
+}
+
+TEST(NominalManual, InsertAlreadyTransmitted) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertAlreadyTransmitted();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
