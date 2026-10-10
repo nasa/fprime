@@ -8,6 +8,7 @@
 #define Svc_ComRetryTester_HPP
 
 #include "ComRetryGTestBase.hpp"
+#include "Fw/Test/UnitTestAssert.hpp"
 #include "Svc/ComRetry/ComRetry.hpp"
 
 #define BUFFER_LENGTH 3u
@@ -97,6 +98,17 @@ class ComRetryTester final : public ComRetryGTestBase {
 
     void testPingDroppedWhenFull();
 
+    //! Test that no retries are attempted when configured with zero retries
+    void testNoRetries();
+
+    //! Test that the thread preamble asserts on an undersized queue
+    void testQueueDepthCheck();
+
+  private:
+    //! Check that a queue-full FW_ASSERT was raised, then clear it
+    void checkQueueFullAssert(::Test::UnitTestAssert& assertHook);
+
+  public:
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports

@@ -66,6 +66,18 @@ TEST(OffNominal, PingDroppedWhenFull) {
     tester.testPingDroppedWhenFull();
 }
 
+// Requirement: SVC-COMRETRY-006, SVC-COMRETRY-007, SVC-COMRETRY-008
+TEST(Nominal, NoRetries) {
+    Svc::ComRetryTester tester;
+    tester.testNoRetries();
+}
+
+// Requirement: SVC-COMRETRY-012
+TEST(OffNominal, QueueDepthCheck) {
+    Svc::ComRetryTester tester;
+    tester.testQueueDepthCheck();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

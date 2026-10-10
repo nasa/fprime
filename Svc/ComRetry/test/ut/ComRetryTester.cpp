@@ -5,13 +5,15 @@
 // ======================================================================
 
 #include "ComRetryTester.hpp"
-#include "Fw/Test/UnitTestAssert.hpp"
 
 namespace Svc {
 
 // Definitions for constants that are ODR-used by gtest assertions
 const FwSizeType ComRetryTester::MAX_HISTORY_SIZE;
 const FwSizeType ComRetryTester::TEST_INSTANCE_QUEUE_DEPTH;
+
+static_assert(ComRetryTester::TEST_INSTANCE_QUEUE_DEPTH == ComRetry::MIN_QUEUE_DEPTH,
+              "Tests exercise the minimum queue depth documented in the SDD");
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -22,6 +24,7 @@ ComRetryTester ::ComRetryTester()
       component("ComRetry"),
       m_inlineCount(0),
       m_inlineIndex(0),
+      m_outputOrder(),
       m_outputCount(0) {
     this->initComponents();
     this->connectPorts();
@@ -231,6 +234,7 @@ void ComRetryTester ::testInputsQueued() {
     ASSERT_from_dataOut_SIZE(0);
     dispatchAll();
     ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataOut(0, buffer_a, nullContext);
 
     // Ownership return and status are queued and processed in arrival order
     invoke_to_dataReturnIn(0, buffer_a, nullContext);
@@ -260,13 +264,14 @@ void ComRetryTester ::testSynchronousAdapterRetry() {
     invoke_to_dataIn(0, buffer_a, context);
     ASSERT_EQ(this->component.doDispatch(), ComRetryComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);
     ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataOut(0, buffer_a, context);
     ASSERT_EQ(queuedMessages(), 2);
 
     // Worst-case backlog: a recovery SUCCESS from another thread and a health ping arrive before dispatch
     Fw::Success recovery = Fw::Success::SUCCESS;
     invoke_to_comStatusIn(0, recovery);
     invoke_to_pingIn(0, 0x1234);
-    ASSERT_EQ(queuedMessages(), TEST_INSTANCE_QUEUE_DEPTH);
+    ASSERT_EQ(queuedMessages(), ComRetry::MIN_QUEUE_DEPTH);
     ASSERT_FALSE(assertHook.assertFailed());
 
     dispatchAll();
@@ -288,23 +293,26 @@ void ComRetryTester ::testSynchronousAdapterRetry() {
 void ComRetryTester ::testSynchronousAdapterExhaustion() {
     U8 data_a[BUFFER_LENGTH] = DATA_A;
     Fw::Buffer buffer_a(&data_a[0], sizeof(data_a));
-    ComCfg::FrameContext nullContext;
+    ComCfg::FrameContext context;
+    context.set_apid(ComCfg::Apid::FW_PACKET_FILE);
     const Fw::Success answers[] = {Fw::Success::FAILURE, Fw::Success::FAILURE};
     setInlineAdapter(answers, FW_NUM_ARRAY_ELEMENTS(answers));
     configure(1);
 
-    invoke_to_dataIn(0, buffer_a, nullContext);
+    invoke_to_dataIn(0, buffer_a, context);
     dispatchAll();
     // First attempt failed: waiting for recovery, nothing returned upstream yet
     ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataOut(0, buffer_a, context);
     ASSERT_from_dataReturnOut_SIZE(0);
     ASSERT_from_comStatusOut_SIZE(0);
 
     // Recovery triggers the single retry, which also fails inline: retries are exhausted
     sendStatus(Fw::Success::SUCCESS);
     ASSERT_from_dataOut_SIZE(2);
+    ASSERT_from_dataOut(1, buffer_a, context);
     ASSERT_from_dataReturnOut_SIZE(1);
-    ASSERT_from_dataReturnOut(0, buffer_a, nullContext);
+    ASSERT_from_dataReturnOut(0, buffer_a, context);
     ASSERT_from_comStatusOut_SIZE(1);
     ASSERT_from_comStatusOut(0, Fw::Success::FAILURE);
     const OutputKind expected[] = {DATA_OUT, DATA_OUT, DATA_RETURN_OUT, COM_STATUS_OUT};
@@ -328,14 +336,31 @@ void ComRetryTester ::testPing() {
 
 void ComRetryTester ::testQueueFullAsserts() {
     ::Test::UnitTestAssert assertHook;
+    U8 data_a[BUFFER_LENGTH] = DATA_A;
+    Fw::Buffer buffer_a(&data_a[0], sizeof(data_a));
+    ComCfg::FrameContext nullContext;
     Fw::Success success = Fw::Success::SUCCESS;
     for (FwSizeType i = 0; i < TEST_INSTANCE_QUEUE_DEPTH; i++) {
         invoke_to_comStatusIn(0, success);
     }
     ASSERT_FALSE(assertHook.assertFailed());
 
-    // One message beyond the queue depth is a fatal assertion, not a silent drop
+    // One message beyond the queue depth on any protocol input is a fatal assertion, not a silent drop
     invoke_to_comStatusIn(0, success);
+    checkQueueFullAssert(assertHook);
+    invoke_to_dataIn(0, buffer_a, nullContext);
+    checkQueueFullAssert(assertHook);
+    invoke_to_dataReturnIn(0, buffer_a, nullContext);
+    checkQueueFullAssert(assertHook);
+
+    dispatchAll();
+    ASSERT_from_comStatusOut_SIZE(TEST_INSTANCE_QUEUE_DEPTH);
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(0);
+    ASSERT_FALSE(assertHook.assertFailed());
+}
+
+void ComRetryTester ::checkQueueFullAssert(::Test::UnitTestAssert& assertHook) {
     ASSERT_TRUE(assertHook.assertFailed());
     ::Test::UnitTestAssert::File file;
     FwSizeType lineNo = 0;
@@ -345,10 +370,6 @@ void ComRetryTester ::testQueueFullAsserts() {
     ASSERT_EQ(numArgs, 1);
     ASSERT_EQ(arg1, static_cast<FwAssertArgType>(Os::Queue::Status::FULL));
     assertHook.clearAssertFailure();
-
-    dispatchAll();
-    ASSERT_from_comStatusOut_SIZE(TEST_INSTANCE_QUEUE_DEPTH);
-    ASSERT_FALSE(assertHook.assertFailed());
 }
 
 void ComRetryTester ::testPingDroppedWhenFull() {
@@ -362,14 +383,59 @@ void ComRetryTester ::testPingDroppedWhenFull() {
     invoke_to_pingIn(0, 1);
     ASSERT_FALSE(assertHook.assertFailed());
     dispatchAll();
+    ASSERT_FALSE(assertHook.assertFailed());
     ASSERT_from_comStatusOut_SIZE(TEST_INSTANCE_QUEUE_DEPTH);
     ASSERT_from_pingOut_SIZE(0);
 
     // Pings are answered once space is available
     invoke_to_pingIn(0, 2);
     dispatchAll();
+    ASSERT_FALSE(assertHook.assertFailed());
     ASSERT_from_pingOut_SIZE(1);
     ASSERT_from_pingOut(0, 2);
+}
+
+void ComRetryTester ::testNoRetries() {
+    U8 data_a[BUFFER_LENGTH] = DATA_A;
+    Fw::Buffer buffer_a(&data_a[0], sizeof(data_a));
+    ComCfg::FrameContext nullContext;
+    const Fw::Success answers[] = {Fw::Success::FAILURE};
+    setInlineAdapter(answers, FW_NUM_ARRAY_ELEMENTS(answers));
+    configure(0);
+
+    // The first FAILURE exhausts zero retries: ownership and FAILURE go upstream with no resend
+    invoke_to_dataIn(0, buffer_a, nullContext);
+    dispatchAll();
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataOut(0, buffer_a, nullContext);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_dataReturnOut(0, buffer_a, nullContext);
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success::FAILURE);
+    const OutputKind expected[] = {DATA_OUT, DATA_RETURN_OUT, COM_STATUS_OUT};
+    checkOutputOrder(expected, FW_NUM_ARRAY_ELEMENTS(expected));
+}
+
+void ComRetryTester ::testQueueDepthCheck() {
+    ::Test::UnitTestAssert assertHook;
+
+    // The test instance uses the minimum depth, which passes
+    this->component.preamble();
+    ASSERT_FALSE(assertHook.assertFailed());
+
+    // An undersized queue fails at thread start rather than on the first link outage
+    ComRetry shallow("ShallowComRetry");
+    shallow.init(ComRetry::MIN_QUEUE_DEPTH - 1, 0);
+    shallow.preamble();
+    ASSERT_TRUE(assertHook.assertFailed());
+    ::Test::UnitTestAssert::File file;
+    FwSizeType lineNo = 0;
+    FwSizeType numArgs = 0;
+    FwAssertArgType arg1 = 0, arg2 = 0, arg3 = 0, arg4 = 0, arg5 = 0, arg6 = 0;
+    assertHook.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
+    ASSERT_EQ(numArgs, 1);
+    ASSERT_EQ(arg1, static_cast<FwAssertArgType>(ComRetry::MIN_QUEUE_DEPTH - 1));
+    shallow.deinit();
 }
 
 }  // namespace Svc

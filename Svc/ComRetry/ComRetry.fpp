@@ -1,5 +1,6 @@
 module Svc {
     @ A component for retrying message delivery on failure
+    @ Its ports mirror the Svc.Framer interface (Svc/Interfaces/Framer.fpp), with async inputs
     active component ComRetry {
         @ Port to receive data to send, in a Fw::Buffer with optional context
         async input port dataIn: Svc.ComDataWithContext

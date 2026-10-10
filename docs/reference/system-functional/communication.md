@@ -62,7 +62,7 @@ This protocol is designed for simplicity and is commonly used for development an
 
 ### Retry Mechanism
 
-[ComRetry](https://github.com/nasa/fprime/blob/devel/Svc/ComRetry/docs/sdd.md) sits in the downlink path before the communication adapter and resends failed transmissions up to a configurable maximum number of retries. After all retries are exhausted, it propagates the failure upstream. This provides resilience against transient communication failures.
+[ComRetry](https://github.com/nasa/fprime/blob/devel/Svc/ComRetry/docs/sdd.md) sits in the downlink path before the communication adapter and resends failed transmissions up to a configurable maximum number of retries. After all retries are exhausted, it propagates the failure upstream. This provides resilience against transient communication failures. ComRetry is an active component: all sends to the adapter, including retries, run on its own thread, and its instance queue must be at least 4 deep (see the SDD).
 
 ### Communication Logging
 

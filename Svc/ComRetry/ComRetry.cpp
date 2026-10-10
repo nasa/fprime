@@ -30,6 +30,13 @@ void ComRetry::configure(U32 num_retries) {
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
+constexpr FwSizeType ComRetry::MIN_QUEUE_DEPTH;
+
+void ComRetry ::preamble() {
+    const FwSizeType depth = this->m_queue.getDepth();
+    FW_ASSERT(depth >= MIN_QUEUE_DEPTH, static_cast<FwAssertArgType>(depth));
+}
+
 void ComRetry ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
     FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::OWNED);
 

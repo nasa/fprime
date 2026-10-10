@@ -12,10 +12,15 @@
 namespace Svc {
 
 class ComRetry final : public ComRetryComponentBase {
+    friend class ComRetryTester;
+
     //! State of buffer delivery
     enum RetryState { WAITING_FOR_STATUS, WAITING_FOR_SEND, RETRYING };
 
   public:
+    //! Minimum instance queue depth required by the communication adapter protocol (see SDD)
+    static constexpr FwSizeType MIN_QUEUE_DEPTH = 4;
+
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
@@ -36,9 +41,12 @@ class ComRetry final : public ComRetryComponentBase {
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
 
+    //! Verify the instance queue depth is at least MIN_QUEUE_DEPTH before processing messages
+    void preamble() override;
+
     //! Handler implementation for comStatusIn
     //!
-    //! Resend last delivered message on failure
+    //! Forward status upstream, or resend the stored message on recovery SUCCESS after a failure
     void comStatusIn_handler(FwIndexType portNum,    //!< The port number
                              Fw::Success& condition  //!< Condition success/failure
                              ) override;
@@ -52,7 +60,7 @@ class ComRetry final : public ComRetryComponentBase {
 
     //! Handler implementation for dataReturnIn
     //!
-    //! Buffer coming from a deallocate call in a ComDriver component
+    //! Receive ownership of the Fw::Buffer sent on dataOut
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
