@@ -14,6 +14,7 @@
 #include <Fw/DataStructures/RedBlackTreeSet.hpp>
 #include <Fw/Deprecate.hpp>
 #include <Fw/Types/MemAllocator.hpp>
+#include <limits>
 
 #include <Fw/Types/FileNameString.hpp>
 #include <config/DpCatalogCfg.hpp>
@@ -111,10 +112,12 @@ class DpCatalog final : public DpCatalogComponentBase {
     //!
     //! Start transmitting catalog
     void START_XMIT_CATALOG_cmdHandler(
-        FwOpcodeType opCode,   //!< The opcode
-        U32 cmdSeq,            //!< The command sequence number
-        const Fw::Wait& wait,  //!< have START_XMIT command wait for catalog to complete transmitting
-        bool remainActive      //!< should the catalog resume transmission when Dps are added at runtime
+        FwOpcodeType opCode,             //!< The opcode
+        U32 cmdSeq,                      //!< The command sequence number
+        const Fw::Wait& wait,            //!< have START_XMIT command wait for catalog to complete transmitting
+        bool remainActive,               //!< should the catalog resume transmission when Dps are added at runtime
+        FwDpPriorityType startPriority,  //!< lowest priority value (most urgent) to transmit, inclusive
+        FwDpPriorityType endPriority     //!< highest priority value (least urgent) to transmit, inclusive
         ) override;
 
     //! Handler implementation for command STOP_XMIT_CATALOG
@@ -212,9 +215,9 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief send the next entry to file downlink
     void sendNextEntry();
 
-    /// @brief find the next entry in the catalog using iterator
+    /// @brief find the next entry in the catalog inside the active priority range
     /// @param entry entry to return
-    /// @return true if an entry was found, false if no more entries
+    /// @return true if an in-range entry was found, false if no more entries are in range
     bool findNextEntry(DpStateEntry& entry);
 
     /// @brief check to see if component successfully initialized
@@ -226,8 +229,11 @@ class DpCatalog final : public DpCatalogComponentBase {
     Fw::CmdResponse doCatalogBuild();
 
     /// @brief start transmitting catalog. Shared between command and port
+    /// @param startPriority lowest priority value to transmit, inclusive
+    /// @param endPriority highest priority value to transmit, inclusive; callers must ensure
+    ///        startPriority <= endPriority (validated against ground input in START_XMIT_CATALOG_cmdHandler)
     /// @return command response for pass/fail
-    Fw::CmdResponse doCatalogXmit();
+    Fw::CmdResponse doCatalogXmit(FwDpPriorityType startPriority, FwDpPriorityType endPriority);
 
     /// @brief send a cmdResponse to the start xmit cmd if user waited
     /// @param response the command response for pass/fail
@@ -274,7 +280,12 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     bool m_remainActive = false;  //!< Does the DpCat resume transmission when
                                   //!< a runtime Dp is received after
-                                  //!< the full catalog is sent
+                                  //!< the in-range catalog is sent
+
+    FwDpPriorityType m_xmitStartPriority = 0;  //!< Lowest priority value sent by the active/last START_XMIT_CATALOG
+    FwDpPriorityType m_xmitEndPriority =
+        std::numeric_limits<FwDpPriorityType>::max();  //!< Highest priority value sent by the active/last
+                                                       //!< START_XMIT_CATALOG
 };
 
 }  // namespace Svc
