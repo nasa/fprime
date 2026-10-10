@@ -40,6 +40,13 @@ ComQueue ::ComQueue(const char* const compName)
     // Initialize throttles to "off"
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
+        this->m_managedDrops[i] = 0;
+    }
+    for (FwIndexType i = 0; i < COM_PORT_COUNT; i++) {
+        this->m_comIngressDrops[i].store(0, std::memory_order_relaxed);
+    }
+    for (FwIndexType i = 0; i < BUFFER_PORT_COUNT; i++) {
+        this->m_buffIngressDrops[i].store(0, std::memory_order_relaxed);
     }
 
     static_assert(TOTAL_PORT_COUNT >= 1, "ComQueue must have more than one port");
@@ -296,6 +303,30 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
         }
     }
     this->tlmWrite_buffQueueDepth(buffQueueDepth);
+
+    ComQueueIngressDrops comIngressDropped;
+    for (U32 i = 0; i < comIngressDropped.SIZE; i++) {
+        comIngressDropped[i] = this->m_comIngressDrops[i].load(std::memory_order_relaxed);
+    }
+    this->tlmWrite_comIngressDropped(comIngressDropped);
+
+    BuffQueueIngressDrops buffIngressDropped;
+    for (U32 i = 0; i < buffIngressDropped.SIZE; i++) {
+        buffIngressDropped[i] = this->m_buffIngressDrops[i].load(std::memory_order_relaxed);
+    }
+    this->tlmWrite_buffIngressDropped(buffIngressDropped);
+
+    ComQueueManagedDrops comManagedDropped;
+    for (U32 i = 0; i < comManagedDropped.SIZE; i++) {
+        comManagedDropped[i] = this->m_managedDrops[i];
+    }
+    this->tlmWrite_comManagedDropped(comManagedDropped);
+
+    BuffQueueManagedDrops buffManagedDropped;
+    for (U32 i = 0; i < buffManagedDropped.SIZE; i++) {
+        buffManagedDropped[i] = this->m_managedDrops[COM_PORT_COUNT + i];
+    }
+    this->tlmWrite_buffManagedDropped(buffManagedDropped);
 }
 
 void ComQueue ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
@@ -323,8 +354,16 @@ void ComQueue ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
 // Hook implementations for typed async input ports
 // ----------------------------------------------------------------------
 
+void ComQueue::comPacketQueueIn_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+    FW_ASSERT(portNum >= 0 && portNum < COM_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
+    (void)data;
+    (void)context;
+    this->m_comIngressDrops[portNum].fetch_add(1, std::memory_order_relaxed);
+}
+
 void ComQueue::bufferQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
+    this->m_buffIngressDrops[portNum].fetch_add(1, std::memory_order_relaxed);
     this->bufferReturnOut_out(portNum, fwBuffer);
 }
 
@@ -387,6 +426,7 @@ bool ComQueue::handleEnqueueStatus(const FwIndexType queueNum,
                                    const Fw::SerializeStatus status) {
     if (preEmptiveOverflow || status == Fw::FW_SERIALIZE_NO_ROOM_LEFT ||
         status == Fw::FW_SERIALIZE_DISCARDED_EXISTING) {
+        ++this->m_managedDrops[queueNum];
         if (!this->m_throttle[queueNum]) {
             this->log_WARNING_HI_QueueOverflow(queueType, portNum);
             this->m_throttle[queueNum] = true;

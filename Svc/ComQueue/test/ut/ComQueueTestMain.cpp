@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "ComQueueTester.hpp"
+#include "Fw/Test/UnitTest.hpp"
 
 TEST(Nominal, Send) {
     Svc::ComQueueTester tester;
@@ -42,6 +43,41 @@ TEST(Nominal, ExternalQueueOverflow) {
 TEST(Nominal, InternalQueueOverflow) {
     Svc::ComQueueTester tester;
     tester.testInternalQueueOverflow();
+}
+
+TEST(OffNominal, ComPacketAsyncIngressDrop) {
+    REQUIREMENT("SVC-COMQUEUE-013");
+    COMMENT("Count rejected ComBuffer ingress packets and report them after an async run drop.");
+    Svc::ComQueueTester tester;
+    tester.testComPacketAsyncIngressDrop();
+}
+
+TEST(OffNominal, BufferAsyncIngressDrop) {
+    REQUIREMENT("SVC-COMQUEUE-013");
+    COMMENT("Count rejected Buffer ingress messages and return rejected buffers to the sender.");
+    Svc::ComQueueTester tester;
+    tester.testBufferAsyncIngressDrop();
+}
+
+TEST(OffNominal, ConcurrentComAsyncIngressDrop) {
+    REQUIREMENT("SVC-COMQUEUE-013");
+    COMMENT("Verify concurrent ComBuffer ingress drop counts from multiple producer tasks.");
+    Svc::ComQueueTester tester;
+    tester.testConcurrentComAsyncIngressDrop();
+}
+
+TEST(OffNominal, FifoDropNewestAccounting) {
+    REQUIREMENT("SVC-COMQUEUE-013");
+    COMMENT("Count managed queue DROP_NEWEST overflows without inflating ingress counters.");
+    Svc::ComQueueTester tester;
+    tester.testFifoDropNewestAccounting();
+}
+
+TEST(OffNominal, FifoDropOldestAccounting) {
+    REQUIREMENT("SVC-COMQUEUE-013");
+    COMMENT("Count managed queue DROP_OLDEST replacements and return displaced buffers.");
+    Svc::ComQueueTester tester;
+    tester.testFifoDropOldestAccounting();
 }
 
 TEST(Nominal, DepthZeroQueue) {

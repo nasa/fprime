@@ -6,6 +6,7 @@
 
 #include "ComQueueTester.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
+#include "Os/Task.hpp"
 using namespace std;
 
 Fw::MallocAllocator mallocAllocator;
@@ -384,6 +385,19 @@ void ComQueueTester::testDepthZeroQueue() {
     ASSERT_TLM_buffQueueDepth_SIZE(1);
     ASSERT_TLM_comQueueDepth(0, expectedComDepth);
     ASSERT_TLM_buffQueueDepth(0, expectedBuffDepth);
+
+    ComQueueManagedDrops expectedComDrops;
+    for (U32 i = 0; i < expectedComDrops.SIZE; i++) {
+        expectedComDrops[i] = 0;
+    }
+    expectedComDrops[disabledComPort] = 2;
+    BuffQueueManagedDrops expectedBuffDrops;
+    for (U32 i = 0; i < expectedBuffDrops.SIZE; i++) {
+        expectedBuffDrops[i] = 0;
+    }
+    expectedBuffDrops[disabledBuffPort] = 1;
+    ASSERT_TLM_comManagedDropped(0, expectedComDrops);
+    ASSERT_TLM_buffManagedDropped(0, expectedBuffDrops);
     component.cleanup();
 }
 
@@ -423,6 +437,281 @@ void ComQueueTester::testInternalQueueOverflow() {
     ASSERT_from_bufferReturnOut(1, buffer);
 
     component.cleanup();
+}
+
+void ComQueueTester::testComPacketAsyncIngressDrop() {
+    this->clearHistory();
+
+    const FwSizeType asyncDepth = this->component.m_queue.getDepth();
+    ASSERT_GT(asyncDepth, 0);
+
+    // Keep the managed FIFOs larger than the async message queue
+    // so they cannot be responsible for the observed loss.
+    ComQueue::QueueConfigurationTable configurationTable;
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+        configurationTable.entries[i].priority = i;
+        configurationTable.entries[i].depth = asyncDepth + 2;
+    }
+    this->component.configure(configurationTable, 0, mallocAllocator);
+
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
+    Fw::ComBuffer packet(data, sizeof(data));
+
+    // Fill the async ingress queue, then force two additional drops.
+    for (FwSizeType i = 0; i < asyncDepth + 2; i++) {
+        invoke_to_comPacketQueueIn(0, packet, 0);
+    }
+
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), asyncDepth);
+    ASSERT_EVENTS_QueueOverflow_SIZE(0);
+
+    // `run` is also an async port with DROP: during saturation this
+    // telemetry request is discarded; the cumulative count persists.
+    invoke_to_run(0, 0);
+    ASSERT_TLM_comIngressDropped_SIZE(0);
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), asyncDepth);
+
+    // Only the messages accepted by the async queue reach the
+    // managed FIFO. Its larger capacity excludes FIFO overflow.
+    this->dispatchAll();
+
+    ASSERT_EQ(this->component.m_queues[0].getQueueSize(), asyncDepth);
+    ASSERT_EVENTS_QueueOverflow_SIZE(0);
+
+    ComQueueIngressDrops expectedComDrops;
+    for (U32 i = 0; i < expectedComDrops.SIZE; i++) {
+        expectedComDrops[i] = 0;
+    }
+    expectedComDrops[0] = 2;
+    invoke_to_run(0, 0);
+    this->dispatchAll();
+    ASSERT_TLM_comIngressDropped_SIZE(1);
+    ASSERT_TLM_comIngressDropped(0, expectedComDrops);
+    ASSERT_TLM_buffIngressDropped_SIZE(1);
+
+    this->component.cleanup();
+}
+
+void ComQueueTester::testBufferAsyncIngressDrop() {
+    this->clearHistory();
+    const FwSizeType asyncDepth = this->component.m_queue.getDepth();
+    ASSERT_GT(asyncDepth, 0);
+
+    // Prevent managed FIFO saturation from masking ingress drops.
+    ComQueue::QueueConfigurationTable configurationTable;
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+        configurationTable.entries[i].priority = i;
+        configurationTable.entries[i].depth = asyncDepth + 2;
+    }
+    this->component.configure(configurationTable, 0, mallocAllocator);
+
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
+    Fw::Buffer buffer(data, sizeof(data));
+    for (FwSizeType i = 0; i < asyncDepth + 2; i++) {
+        invoke_to_bufferQueueIn(0, buffer);
+    }
+
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), asyncDepth);
+    ASSERT_from_bufferReturnOut_SIZE(2);
+    ASSERT_from_bufferReturnOut(0, buffer);
+    ASSERT_from_bufferReturnOut(1, buffer);
+    ASSERT_EVENTS_QueueOverflow_SIZE(0);
+
+    this->dispatchAll();
+    ASSERT_EQ(this->component.m_queues[ComQueue::COM_PORT_COUNT].getQueueSize(), asyncDepth);
+    ASSERT_EVENTS_QueueOverflow_SIZE(0);
+
+    BuffQueueIngressDrops expectedBuffDrops;
+    for (U32 i = 0; i < expectedBuffDrops.SIZE; i++) {
+        expectedBuffDrops[i] = 0;
+    }
+    expectedBuffDrops[0] = 2;
+    invoke_to_run(0, 0);
+    this->dispatchAll();
+    ASSERT_TLM_buffIngressDropped_SIZE(1);
+    ASSERT_TLM_buffIngressDropped(0, expectedBuffDrops);
+    ASSERT_TLM_comIngressDropped_SIZE(1);
+
+    this->component.cleanup();
+}
+
+void ComQueueTester::concurrentComAsyncProducerTask(void* context) {
+    ComQueueTester* tester = static_cast<ComQueueTester*>(context);
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
+    Fw::ComBuffer packet(data, sizeof(data));
+    for (U32 i = 0; i < CONCURRENT_INGRESS_DROPS_PER_TASK; i++) {
+        tester->invoke_to_comPacketQueueIn(0, packet, 0);
+    }
+}
+
+void ComQueueTester::testConcurrentComAsyncIngressDrop() {
+    this->clearHistory();
+    const FwSizeType asyncDepth = this->component.m_queue.getDepth();
+    ASSERT_GT(asyncDepth, 0);
+
+    ComQueue::QueueConfigurationTable configurationTable;
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+        configurationTable.entries[i].priority = i;
+        configurationTable.entries[i].depth = asyncDepth + 1;
+    }
+    this->component.configure(configurationTable, 0, mallocAllocator);
+
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
+    Fw::ComBuffer packet(data, sizeof(data));
+    for (FwSizeType i = 0; i < asyncDepth; i++) {
+        invoke_to_comPacketQueueIn(0, packet, 0);
+    }
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), asyncDepth);
+    ASSERT_EQ(this->component.m_comIngressDrops[0].load(std::memory_order_relaxed), 0u);
+
+    // Stress the actual async ingress path from independent producer threads.
+    Os::Task tasks[CONCURRENT_INGRESS_TASKS];
+    for (U32 i = 0; i < CONCURRENT_INGRESS_TASKS; i++) {
+        Os::Task::Arguments args(Fw::String("ComIngressStress"), ComQueueTester::concurrentComAsyncProducerTask, this);
+        ASSERT_EQ(Os::Task::Status::OP_OK, tasks[i].start(args));
+    }
+    for (U32 i = 0; i < CONCURRENT_INGRESS_TASKS; i++) {
+        ASSERT_EQ(Os::Task::Status::OP_OK, tasks[i].join());
+    }
+
+    const U32 expectedDrops = CONCURRENT_INGRESS_TASKS * CONCURRENT_INGRESS_DROPS_PER_TASK;
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), asyncDepth);
+    ASSERT_EQ(this->component.m_comIngressDrops[0].load(std::memory_order_relaxed), expectedDrops);
+
+    // Validate per-port isolation if the configuration exposes another Com port.
+    if (ComQueue::COM_PORT_COUNT > 1) {
+        const FwIndexType otherPort = ComQueue::COM_PORT_COUNT - 1;
+        for (U32 i = 0; i < 3; i++) {
+            invoke_to_comPacketQueueIn(otherPort, packet, 0);
+        }
+        ASSERT_EQ(this->component.m_comIngressDrops[otherPort].load(std::memory_order_relaxed), 3u);
+    }
+    ASSERT_EVENTS_QueueOverflow_SIZE(0);
+
+    // Drain ingress and let the run handler publish the counters.
+    this->dispatchAll();
+    ASSERT_EQ(this->component.m_queues[0].getQueueSize(), asyncDepth);
+    ASSERT_EVENTS_QueueOverflow_SIZE(0);
+    invoke_to_run(0, 0);
+    this->dispatchAll();
+
+    ComQueueIngressDrops expectedCom;
+    for (U32 i = 0; i < expectedCom.SIZE; i++) {
+        expectedCom[i] = 0;
+    }
+    expectedCom[0] = expectedDrops;
+    if (ComQueue::COM_PORT_COUNT > 1) {
+        expectedCom[ComQueue::COM_PORT_COUNT - 1] = 3;
+    }
+    ASSERT_TLM_comIngressDropped_SIZE(1);
+    ASSERT_TLM_comIngressDropped(0, expectedCom);
+    ASSERT_TLM_buffIngressDropped_SIZE(1);
+    this->component.cleanup();
+}
+
+void ComQueueTester::testFifoDropNewestAccounting() {
+    this->clearHistory();
+    ComQueue::QueueConfigurationTable table;
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+        table.entries[i].priority = i;
+        table.entries[i].depth = 1;
+    }
+    this->component.configure(table, 0, mallocAllocator);
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
+    Fw::ComBuffer packet(data, sizeof(data));
+    Fw::Buffer buffer(data, sizeof(data));
+
+    // Dispatch after EVERY send: only managed FIFO depth, not ingress depth, may overflow.
+    for (U32 i = 0; i < 3; i++) {
+        invoke_to_comPacketQueueIn(0, packet, 0);
+        this->dispatchAll();
+        invoke_to_bufferQueueIn(0, buffer);
+        this->dispatchAll();
+    }
+    ASSERT_EVENTS_QueueOverflow_SIZE(2);  // one throttled warning for each FIFO
+    ASSERT_from_bufferReturnOut_SIZE(2);  // two rejected buffer sends return ownership
+    ASSERT_EQ(this->component.m_queues[0].getQueueSize(), 1);
+    ASSERT_EQ(this->component.m_queues[ComQueue::COM_PORT_COUNT].getQueueSize(), 1);
+
+    invoke_to_run(0, 0);
+    this->dispatchAll();
+    ComQueueManagedDrops expectedCom;
+    for (U32 i = 0; i < expectedCom.SIZE; i++) {
+        expectedCom[i] = 0;
+    }
+    expectedCom[0] = 2;
+    BuffQueueManagedDrops expectedBuff;
+    for (U32 i = 0; i < expectedBuff.SIZE; i++) {
+        expectedBuff[i] = 0;
+    }
+    expectedBuff[0] = 2;
+    ASSERT_TLM_comManagedDropped_SIZE(1);
+    ASSERT_TLM_comManagedDropped(0, expectedCom);
+    ASSERT_TLM_buffManagedDropped_SIZE(1);
+    ASSERT_TLM_buffManagedDropped(0, expectedBuff);
+
+    // Ingress accounting must not treat a managed FIFO drop as an ingress drop.
+    ComQueueIngressDrops zeroCom;
+    for (U32 i = 0; i < zeroCom.SIZE; i++) {
+        zeroCom[i] = 0;
+    }
+    BuffQueueIngressDrops zeroBuff;
+    for (U32 i = 0; i < zeroBuff.SIZE; i++) {
+        zeroBuff[i] = 0;
+    }
+    ASSERT_TLM_comIngressDropped(0, zeroCom);
+    ASSERT_TLM_buffIngressDropped(0, zeroBuff);
+    this->component.cleanup();
+}
+
+void ComQueueTester::testFifoDropOldestAccounting() {
+    this->clearHistory();
+    ComQueue::QueueConfigurationTable table;
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+        table.entries[i].priority = i;
+        table.entries[i].depth = 1;
+    }
+    table.entries[0].overflowMode = Types::QUEUE_DROP_OLDEST;
+    table.entries[ComQueue::COM_PORT_COUNT].overflowMode = Types::QUEUE_DROP_OLDEST;
+    this->component.configure(table, 0, mallocAllocator);
+    U8 firstData[BUFFER_LENGTH] = BUFFER_DATA;
+    U8 secondData[BUFFER_LENGTH] = BUFFER_DATA;
+    firstData[BUFFER_DATA_OFFSET] = 1;
+    secondData[BUFFER_DATA_OFFSET] = 2;
+    Fw::ComBuffer firstPacket(firstData, sizeof(firstData));
+    Fw::ComBuffer secondPacket(secondData, sizeof(secondData));
+    Fw::Buffer firstBuffer(firstData, sizeof(firstData));
+    Fw::Buffer secondBuffer(secondData, sizeof(secondData));
+
+    invoke_to_comPacketQueueIn(0, firstPacket, 0);
+    this->dispatchAll();
+    invoke_to_comPacketQueueIn(0, secondPacket, 0);
+    this->dispatchAll();
+    invoke_to_bufferQueueIn(0, firstBuffer);
+    this->dispatchAll();
+    invoke_to_bufferQueueIn(0, secondBuffer);
+    this->dispatchAll();
+    ASSERT_EVENTS_QueueOverflow_SIZE(2);
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, firstBuffer);
+
+    invoke_to_run(0, 0);
+    this->dispatchAll();
+    ComQueueManagedDrops expectedCom;
+    for (U32 i = 0; i < expectedCom.SIZE; i++) {
+        expectedCom[i] = 0;
+    }
+    expectedCom[0] = 1;
+    BuffQueueManagedDrops expectedBuff;
+    for (U32 i = 0; i < expectedBuff.SIZE; i++) {
+        expectedBuff[i] = 0;
+    }
+    expectedBuff[0] = 1;
+    ASSERT_TLM_comManagedDropped_SIZE(1);
+    ASSERT_TLM_comManagedDropped(0, expectedCom);
+    ASSERT_TLM_buffManagedDropped_SIZE(1);
+    ASSERT_TLM_buffManagedDropped(0, expectedBuff);
+    this->component.cleanup();
 }
 
 void ComQueueTester ::testReadyFirst() {
