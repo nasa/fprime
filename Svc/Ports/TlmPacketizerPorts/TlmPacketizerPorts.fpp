@@ -19,4 +19,25 @@ module Svc {
         minDelta: U32               @< Minimum Sched Ticks to send packets on updates when using ON_CHANGE logic
         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
     )
+
+    @ A single per-packet configuration record: which packet, which section, and its policy.
+    @ packetId matches the packet id used by the TlmPacketizer SEND_PKT command.
+    struct PacketConfigEntry {
+        packetId: U32                @< Packet identifier
+        section: TelemetrySection    @< Section the policy applies to
+        config: PacketConfig         @< Enable + rate policy for this packet/section
+        overridden: Fw.Enabled       @< Whether this entry is an active override (ENABLED) or a
+                                     @< cleared packet reverting to group-derived policy (DISABLED)
+    }
+
+    @ A fixed-capacity batch of per-packet config entries. Only the first `count` are valid.
+    array PacketConfigBatch = [MAX_TLM_PACKET_CONFIG_BATCH] PacketConfigEntry
+
+    @ Port pushing a batch of per-packet configuration from the config persistent-memory owner
+    @ to the packetizer (TlmPacketizer). Batching bounds the number of async messages required
+    @ to synchronize many packets (e.g. the full push at boot).
+    port TlmPacketConfigUpdate(
+        count: FwSizeType            @< Number of valid entries in `batch`, in [0, TLM_PACKET_CONFIG_BATCH_MAX]
+        batch: PacketConfigBatch     @< Batch of config entries; entries [0, count) are valid
+    )
 }

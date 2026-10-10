@@ -39,6 +39,15 @@ module Svc {
     @ Input configuration port
     async input port configureSectionGroupRate: ConfigureGroupRate
 
+    @ Per-packet configuration mirror to persistent storage managed by an external component
+    @ Each entry carries the full override for the addressed packet/section and is pushed
+    @ whenever an ENABLE_PACKET / FORCE_PACKET / CONFIGURE_PACKET_RATES command changes it.
+    output port configOut: TlmPacketConfigUpdate
+
+    @ Per-packet configuration reload from the persistence storage component
+    @ That storage component pushes it's config into this port when commanded to do so (usually at boot-up)
+    async input port configIn: TlmPacketConfigUpdate
+
     @ Telemetry input port
     sync input port TlmRecv: Fw.Tlm
 
@@ -125,6 +134,49 @@ module Svc {
                                         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
                                       ) \
       opcode 5
+
+    @ Query the effective per-packet configuration. The result is emitted on the
+    @ QueriedPacketConfig telemetry channel; unknown ids raise UnknownPacketId.
+    async command GET_PACKET_CONFIG(
+                                    packetId: U32               @< Packet identifier
+                                    section: TelemetrySection   @< Section to query
+                                  ) \
+      opcode 6
+
+    @ Enable / disable a single packet in a section (per-packet override)
+    async command ENABLE_PACKET(
+                                 packetId: U32               @< Packet identifier
+                                 section: TelemetrySection   @< Section to configure
+                                 enable: Fw.Enabled          @< Enable / disable this packet
+                               ) \
+      opcode 7
+
+    @ Force telemeter a single packet even when it (or its section) is disabled
+    async command FORCE_PACKET(
+                                packetId: U32               @< Packet identifier
+                                section: TelemetrySection   @< Section to configure
+                                enable: Fw.Enabled          @< Force enable / disable
+                              ) \
+      opcode 8
+
+    @ Configure the rate logic and thresholds for a single packet
+    async command CONFIGURE_PACKET_RATES(
+                                          packetId: U32               @< Packet identifier
+                                          section: TelemetrySection   @< Section to configure
+                                          rateLogic: RateLogic        @< Rate logic
+                                          minDelta: U32               @< Minimum Sched ticks between sends (ON_CHANGE_MIN logic)
+                                          maxDelta: U32               @< Maximum Sched ticks between sends (EVERY_MAX logic)
+                                        ) \
+      opcode 9
+
+    @ Clear a single packet's per-packet override, reverting it to group-derived behavior.
+    @ The cleared state is mirrored out configOut so persistent storage stays consistent.
+    async command CLEAR_PACKET_OVERRIDE(
+                                         packetId: U32               @< Packet identifier
+                                         section: TelemetrySection   @< Section to clear
+                                       ) \
+      opcode 10
+
     @ Parameter to control section enable flags
     external param SECTION_ENABLED: SectionEnabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
     @ Parameter to control section configuration
@@ -193,7 +245,25 @@ module Svc {
       id 6 \
       format "Telemetry ID 0x{x} update of size {} exceeds configured size {}" \
       throttle 10
-    
+
+    @ A configuration command or query referenced a packet id not present in this deployment
+    event UnknownPacketId(
+                          packetId: U32 @< The packet id
+                        ) \
+      severity warning low \
+      id 7 \
+      format "Packet id {} not found in packet list"
+
+    @ A configIn batch carried more entries than the packetizer can accept
+    event ConfigBatchTruncated(
+                                count: FwSizeType @< The number of entries offered
+                                cap: U32          @< The maximum number of entries accepted
+                              ) \
+      severity warning high \
+      id 8 \
+      format "configIn batch of {} entries exceeds cap {}; extra entries dropped" \
+      throttle 10
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
@@ -201,6 +271,9 @@ module Svc {
     @ Telemetry send level
     telemetry GroupConfigs: SectionConfigs id 0
     telemetry SectionEnabled: SectionEnabled id 1
+
+    @ Effective per-packet configuration, emitted in response to GET_PACKET_CONFIG
+    telemetry QueriedPacketConfig: PacketConfigEntry id 2
 
     array TelemetrySendSection = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] FwIndexType
     array TelemetrySendPortMap = [TelemetrySection.NUM_SECTIONS] TelemetrySendSection default TELEMETRY_SEND_PORT_MAPPING

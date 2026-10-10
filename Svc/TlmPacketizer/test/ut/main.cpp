@@ -126,6 +126,48 @@ TEST(TestNominal, sectionConfigParameterTest) {
     tester.sectionConfigParameterTest();
 }
 
+TEST(TestNominal, PerPacketOverrideTest) {
+    TEST_CASE(100.1.15, "Per-packet ENABLE_PACKET override disables a single packet/section");
+    Svc::TlmPacketizerTester tester;
+    tester.perPacketOverrideTest();
+}
+
+TEST(TestNominal, PerPacketCommandsTest) {
+    TEST_CASE(100.1.16, "Per-packet commands update overrides + mirror out configOut");
+    Svc::TlmPacketizerTester tester;
+    tester.perPacketCommandsTest();
+}
+
+TEST(TestNominal, ConfigInReloadTest) {
+    TEST_CASE(100.1.17, "configIn reload applies overrides to the volatile table without echo");
+    Svc::TlmPacketizerTester tester;
+    tester.configInReloadTest();
+}
+
+TEST(TestNominal, GetPacketConfigTest) {
+    TEST_CASE(100.1.18, "GET_PACKET_CONFIG reports effective config; unknown id warns");
+    Svc::TlmPacketizerTester tester;
+    tester.getPacketConfigTest();
+}
+
+TEST(TestNominal, SeedFromEffectiveConfigTest) {
+    TEST_CASE(100.1.19, "First per-packet override seeds from group-derived effective config");
+    Svc::TlmPacketizerTester tester;
+    tester.seedFromEffectiveConfigTest();
+}
+
+TEST(TestNominal, ClearPacketOverrideTest) {
+    TEST_CASE(100.1.20, "CLEAR_PACKET_OVERRIDE reverts to group behavior and mirrors the clear");
+    Svc::TlmPacketizerTester tester;
+    tester.clearPacketOverrideTest();
+}
+
+TEST(TestNominal, ConfigInBatchCapTest) {
+    TEST_CASE(100.1.21, "configIn batch exceeding the cap drops extras and warns");
+    Svc::TlmPacketizerTester tester;
+    tester.configInBatchCapTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
