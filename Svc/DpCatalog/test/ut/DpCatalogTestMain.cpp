@@ -365,6 +365,41 @@ TEST(OffNominal, MalformedFile) {
     tester.test_MalformedFile();
 }
 
+TEST(SetPriority, Raise) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityRaise();
+}
+
+TEST(SetPriority, Lower) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityLower();
+}
+
+TEST(SetPriority, NotFound) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNotFound();
+}
+
+TEST(SetPriority, SameNoOp) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPrioritySameNoOp();
+}
+
+TEST(SetPriority, DuringXmit) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityDuringXmit();
+}
+
+TEST(SetPriority, StateFileMatch) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityStateFileMatch();
+}
+
+TEST(SetPriority, SameIdByTime) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPrioritySameIdByTime();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
