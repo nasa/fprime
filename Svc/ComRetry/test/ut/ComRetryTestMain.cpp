@@ -72,7 +72,7 @@ TEST(Nominal, NoRetries) {
     tester.testNoRetries();
 }
 
-// Requirement: SVC-COMRETRY-012
+// Requirement: SVC-COMRETRY-014
 TEST(OffNominal, QueueDepthCheck) {
     Svc::ComRetryTester tester;
     tester.testQueueDepthCheck();

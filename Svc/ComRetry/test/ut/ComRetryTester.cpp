@@ -122,6 +122,11 @@ void ComRetryTester ::from_comStatusOut_handler(FwIndexType portNum, Fw::Success
     this->recordOutput(COM_STATUS_OUT);
 }
 
+void ComRetryTester ::from_pingOut_handler(FwIndexType portNum, U32 key) {
+    this->pushFromPortEntry_pingOut(key);
+    this->recordOutput(PING_OUT);
+}
+
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
@@ -187,6 +192,9 @@ void ComRetryTester ::testBufferRetry() {
     checkDataOut(0, buffer_a.getData(), buffer_a.getSize());
     checkDataOut(1, buffer_a.getData(), buffer_a.getSize());
     checkDataOut(2, buffer_b.getData(), buffer_b.getSize());
+    ASSERT_from_dataOut_SIZE(3);
+    ASSERT_from_dataReturnOut_SIZE(2);
+    ASSERT_from_comStatusOut_SIZE(2);
 }
 
 void ComRetryTester ::testBufferRetryTillFailure() {
@@ -220,6 +228,9 @@ void ComRetryTester ::testBufferRetryTillFailure() {
     ASSERT_from_dataReturnOut(1, buffer_b, nullContext);
     ASSERT_from_comStatusOut(1, success);
     checkDataOut(num_retries + 1, buffer_b.getData(), buffer_b.getSize());
+    ASSERT_from_dataOut_SIZE(num_retries + 2);
+    ASSERT_from_dataReturnOut_SIZE(2);
+    ASSERT_from_comStatusOut_SIZE(2);
 }
 
 void ComRetryTester ::testInputsQueued() {
@@ -287,7 +298,8 @@ void ComRetryTester ::testSynchronousAdapterRetry() {
     ASSERT_from_comStatusOut(0, Fw::Success::SUCCESS);
     ASSERT_from_pingOut_SIZE(1);
     ASSERT_from_pingOut(0, 0x1234);
-    const OutputKind expected[] = {DATA_OUT, DATA_OUT, DATA_RETURN_OUT, COM_STATUS_OUT};
+    // The ping is answered in arrival order, after the resend and before the queued answers to it
+    const OutputKind expected[] = {DATA_OUT, DATA_OUT, PING_OUT, DATA_RETURN_OUT, COM_STATUS_OUT};
     checkOutputOrder(expected, FW_NUM_ARRAY_ELEMENTS(expected));
 }
 
@@ -348,11 +360,11 @@ void ComRetryTester ::testQueueFullAsserts() {
 
     // One message beyond the queue depth on any protocol input is a fatal assertion, not a silent drop
     invoke_to_comStatusIn(0, success);
-    checkQueueFullAssert(assertHook);
+    checkAssert(assertHook, static_cast<FwAssertArgType>(Os::Queue::Status::FULL));
     invoke_to_dataIn(0, buffer_a, nullContext);
-    checkQueueFullAssert(assertHook);
+    checkAssert(assertHook, static_cast<FwAssertArgType>(Os::Queue::Status::FULL));
     invoke_to_dataReturnIn(0, buffer_a, nullContext);
-    checkQueueFullAssert(assertHook);
+    checkAssert(assertHook, static_cast<FwAssertArgType>(Os::Queue::Status::FULL));
 
     dispatchAll();
     ASSERT_from_comStatusOut_SIZE(TEST_INSTANCE_QUEUE_DEPTH);
@@ -361,7 +373,7 @@ void ComRetryTester ::testQueueFullAsserts() {
     ASSERT_FALSE(assertHook.assertFailed());
 }
 
-void ComRetryTester ::checkQueueFullAssert(::Test::UnitTestAssert& assertHook) {
+void ComRetryTester ::checkAssert(::Test::UnitTestAssert& assertHook, FwAssertArgType expectedArg1) {
     ASSERT_TRUE(assertHook.assertFailed());
     ::Test::UnitTestAssert::File file = ::Test::UnitTestAssert::fileInit;
     FwSizeType lineNo = 0;
@@ -369,7 +381,7 @@ void ComRetryTester ::checkQueueFullAssert(::Test::UnitTestAssert& assertHook) {
     FwAssertArgType arg1 = 0, arg2 = 0, arg3 = 0, arg4 = 0, arg5 = 0, arg6 = 0;
     assertHook.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
     ASSERT_EQ(numArgs, 1);
-    ASSERT_EQ(arg1, static_cast<FwAssertArgType>(Os::Queue::Status::FULL));
+    ASSERT_EQ(arg1, expectedArg1);
     assertHook.clearAssertFailure();
 }
 
@@ -428,14 +440,7 @@ void ComRetryTester ::testQueueDepthCheck() {
     ComRetry shallow("ShallowComRetry");
     shallow.init(ComRetry::MIN_QUEUE_DEPTH - 1, 0);
     shallow.preamble();
-    ASSERT_TRUE(assertHook.assertFailed());
-    ::Test::UnitTestAssert::File file = ::Test::UnitTestAssert::fileInit;
-    FwSizeType lineNo = 0;
-    FwSizeType numArgs = 0;
-    FwAssertArgType arg1 = 0, arg2 = 0, arg3 = 0, arg4 = 0, arg5 = 0, arg6 = 0;
-    assertHook.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
-    ASSERT_EQ(numArgs, 1);
-    ASSERT_EQ(arg1, static_cast<FwAssertArgType>(ComRetry::MIN_QUEUE_DEPTH - 1));
+    checkAssert(assertHook, static_cast<FwAssertArgType>(ComRetry::MIN_QUEUE_DEPTH - 1));
     shallow.deinit();
 }
 

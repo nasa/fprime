@@ -36,7 +36,7 @@ class ComRetryTester final : public ComRetryGTestBase {
     static const FwSizeType MAX_INLINE_STATUSES = 8;
 
     //! Kinds of output port invocations, used to check output ordering
-    enum OutputKind { DATA_OUT, DATA_RETURN_OUT, COM_STATUS_OUT };
+    enum OutputKind { DATA_OUT, DATA_RETURN_OUT, COM_STATUS_OUT, PING_OUT };
 
   public:
     // ----------------------------------------------------------------------
@@ -105,8 +105,8 @@ class ComRetryTester final : public ComRetryGTestBase {
     void testQueueDepthCheck();
 
   private:
-    //! Check that a queue-full FW_ASSERT was raised, then clear it
-    void checkQueueFullAssert(::Test::UnitTestAssert& assertHook);
+    //! Check that a one-argument FW_ASSERT with the expected argument was raised, then clear it
+    void checkAssert(::Test::UnitTestAssert& assertHook, FwAssertArgType expectedArg1);
 
   public:
   private:
@@ -121,6 +121,8 @@ class ComRetryTester final : public ComRetryGTestBase {
                                     const ComCfg::FrameContext& context) override;
 
     void from_comStatusOut_handler(FwIndexType portNum, Fw::Success& condition) override;
+
+    void from_pingOut_handler(FwIndexType portNum, U32 key) override;
 
   private:
     // ----------------------------------------------------------------------

@@ -17,7 +17,7 @@ All `Svc::ComRetry` inputs are asynchronous: callers only enqueue a message, and
 | SVC-COMRETRY-003 | `Svc::ComRetry` shall pause delivery on receiving `Fw::Success::FAILURE` | `Svc::ComRetry` should not send to a failing communication adapter.  | Unit test           |
 | SVC-COMRETRY-004 | `Svc::ComRetry` shall resend `Fw::Buffer` on receiving `Fw::Success::SUCCESS` after prior failure if retries are available | Retry delivery of buffer  | Unit test           |
 | SVC-COMRETRY-005 | `Svc::ComRetry` shall pass through the initial start-up `Fw::Success::SUCCESS` and any non-data statuses upstream when no buffer is pending  | The initial SUCCESS must reach `Svc::ComQueue` to initiate data flow per the [Communication Queue Protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol)  | Unit test           |
-| SVC-COMRETRY-006 | The maximum number of retries shall be configurable | The number of retries should be adaptable for projects  | Inspection           |
+| SVC-COMRETRY-006 | The maximum number of retries shall be configurable | The number of retries should be adaptable for projects  | Unit Test           |
 | SVC-COMRETRY-007 | `Svc::ComRetry` shall return buffer ownership to the upstream component on receiving `Fw::Success::SUCCESS` or after all retry attempts fail | Memory management       | Unit Test           |
 | SVC-COMRETRY-008 | `Svc::ComRetry` shall send `ComStatus` upstream on successful delivery or after all retry attempts fail                             | Status of message delivery must be passed up the stack      | Unit Test           |
 | SVC-COMRETRY-009 | `Svc::ComRetry` shall issue every send to the communication adapter, including resends, from its own thread, and its inputs shall not block the caller beyond enqueuing | Decouple the upstream and adapter threads from delivery and retry | Unit Test |
@@ -25,6 +25,7 @@ All `Svc::ComRetry` inputs are asynchronous: callers only enqueue a message, and
 | SVC-COMRETRY-011 | `Svc::ComRetry` shall support communication adapters that answer from within the send call and adapters that answer later from another thread | Adapters such as radios return status synchronously and recover asynchronously | Unit Test |
 | SVC-COMRETRY-012 | `Svc::ComRetry` shall bound its input queuing and treat overflow of the data and status inputs as a fatal error | Overflow indicates a protocol violation; silently dropping a status or buffer would stall data flow or leak a buffer | Unit Test |
 | SVC-COMRETRY-013 | `Svc::ComRetry` shall respond to health pings by returning the ping key, dropping pings when its queue is full | Health monitoring of the component thread | Unit Test |
+| SVC-COMRETRY-014 | `Svc::ComRetry` shall assert at thread start that its instance queue depth is at least `Svc::ComRetry::MIN_QUEUE_DEPTH` (4) | An undersized queue fails at start-up rather than during a link outage (see [Queue Depth](#33-queue-depth)) | Unit Test |
 
 ## 3. Design
 
