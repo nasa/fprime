@@ -57,6 +57,13 @@ class ComRetry final : public ComRetryComponentBase {
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
 
+    //! Handler implementation for pingIn
+    //!
+    //! Return the health ping key on pingOut
+    void pingIn_handler(FwIndexType portNum,  //!< The port number
+                        U32 key               //!< Value to return to pinger
+                        ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Member variables

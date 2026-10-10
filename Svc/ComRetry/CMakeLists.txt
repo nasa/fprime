@@ -27,6 +27,8 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComRetryTester.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/ComRetry.fpp"
+  DEPENDS
+    Fw_Test # For Test::UnitTestAssert (non-aborting FW_ASSERT hook)
   UT_AUTO_HELPERS
 )
 

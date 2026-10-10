@@ -6,24 +6,64 @@
 
 #include "ComRetryTester.hpp"
 
+// Requirement: SVC-COMRETRY-005
 TEST(Nominal, NullBuffer) {
     Svc::ComRetryTester tester;
     tester.testNullBuffer();
 }
 
+// Requirement: SVC-COMRETRY-001, SVC-COMRETRY-002, SVC-COMRETRY-007, SVC-COMRETRY-008
 TEST(Nominal, Send) {
     Svc::ComRetryTester tester;
     tester.testBufferSend();
 }
 
+// Requirement: SVC-COMRETRY-003, SVC-COMRETRY-004
 TEST(Nominal, Retry) {
     Svc::ComRetryTester tester;
     tester.testBufferRetry();
 }
 
+// Requirement: SVC-COMRETRY-004, SVC-COMRETRY-007, SVC-COMRETRY-008
 TEST(Nominal, RetryTillFailure) {
     Svc::ComRetryTester tester;
     tester.testBufferRetryTillFailure();
+}
+
+// Requirement: SVC-COMRETRY-009, SVC-COMRETRY-010
+TEST(Active, InputsQueued) {
+    Svc::ComRetryTester tester;
+    tester.testInputsQueued();
+}
+
+// Requirement: SVC-COMRETRY-004, SVC-COMRETRY-010, SVC-COMRETRY-011, SVC-COMRETRY-012
+TEST(Active, SynchronousAdapterRetry) {
+    Svc::ComRetryTester tester;
+    tester.testSynchronousAdapterRetry();
+}
+
+// Requirement: SVC-COMRETRY-007, SVC-COMRETRY-008, SVC-COMRETRY-011
+TEST(Active, SynchronousAdapterExhaustion) {
+    Svc::ComRetryTester tester;
+    tester.testSynchronousAdapterExhaustion();
+}
+
+// Requirement: SVC-COMRETRY-013
+TEST(Active, Ping) {
+    Svc::ComRetryTester tester;
+    tester.testPing();
+}
+
+// Requirement: SVC-COMRETRY-012
+TEST(OffNominal, QueueFullAsserts) {
+    Svc::ComRetryTester tester;
+    tester.testQueueFullAsserts();
+}
+
+// Requirement: SVC-COMRETRY-013
+TEST(OffNominal, PingDroppedWhenFull) {
+    Svc::ComRetryTester tester;
+    tester.testPingDroppedWhenFull();
 }
 
 int main(int argc, char** argv) {

@@ -89,4 +89,9 @@ void ComRetry ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& buffer, co
     this->m_context = context;
 }
 
+void ComRetry ::pingIn_handler(FwIndexType portNum, U32 key) {
+    static_assert(NUM_PINGIN_INPUT_PORTS == 1, "pingIn_handler expects exactly one input port");
+    this->pingOut_out(0, key);
+}
+
 }  // namespace Svc
