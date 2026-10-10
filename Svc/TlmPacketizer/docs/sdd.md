@@ -23,6 +23,12 @@ The requirements for `Svc::TlmPacketizer` are as follows:
 | TPK-005 | The `Svc::TlmPacketizer` component shall write packets upon fulfilling the rate send configurations for its group | Unit Test |
 | TPK-006 | The `Svc::TlmPacketizer` component shall determine output port index based on section and group | Unit Test |
 | TPK-007 | The `Svc::TlmPacketizer` component shall accept a packet specification containing no channels | Unit Test |
+| TPK-008 | The `Svc::TlmPacketizer` component shall, upon command, record the packets of a selected telemetry group as data products | Unit Test, Integration Test |
+| TPK-009 | The `Svc::TlmPacketizer` component shall record each packet as a data product record containing the packet exactly as sent on `PktSend` (descriptor, packet ID, time tag, channel values) | Unit Test |
+| TPK-010 | The `Svc::TlmPacketizer` component shall identify the telemetry group of each data product container in a record of that container | Unit Test |
+| TPK-011 | The `Svc::TlmPacketizer` component shall send a data product container when it holds the commanded number of packets, and shall send a partially filled container when recording of its group is stopped or restarted | Unit Test, Integration Test |
+| TPK-012 | The `Svc::TlmPacketizer` component shall not record data products unless commanded, and shall not alter packet output on `PktSend` when recording | Unit Test, Integration Test |
+| TPK-013 | The `Svc::TlmPacketizer` component shall reject data product recording commands with an invalid group, a zero or oversized packet count, or a group without packets, and shall report a dropped packet when a data product container cannot be obtained | Unit Test, Integration Test |
 
 
 ## 3. Design
@@ -45,6 +51,8 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | TlmRecv | Input | Synchronous Input | Update a telemetry channel\r
 [`Fw::Com`](../../../Fw/Com/docs/sdd.md) | PktSend | Output | n/a | Array of ports used to write packets with updated telemetry\r
 [`Svc::EnableSection`](../../Ports/TlmPacketizerPorts/sdd.md) | controlIn | Input | Asynchronous | Enable / Disable sections of telemetry groups\r
+[`Fw::DpGet`](../../../Fw/Dp/docs/sdd.md) | productGetOut | Output | n/a | Get an empty data product container from a data product manager
+[`Fw::DpSend`](../../../Fw/Dp/docs/sdd.md) | productSendOut | Output | n/a | Send a filled data product container to a data product manager
 
 #### 3.1.3 Terminology
 
@@ -72,6 +80,29 @@ When a call to the `Run()` interface is called, each packet is evaluated for out
 Each telemetry group, depending on section and group configurations, are sent out on the `pktSend` port array. Since each group is evaluated for each section, a packet with group 1 (and a configuration of 3 sections), will be sent up to 3 times based on the section/group configuration. Each of these sends (section/group) will run through a configurable map to determine which output port to use. Should the output port index be repeated for different section/group pairs, the packet will be sent to that port multiple times.
 
 Port invocations to `controlIn` or the command, `ENABLE_SECTION` are used to enable / disable each section, supporting downstream components that rely on different samplings of groups of telemetry. Each group instance is separately sampled from each other, allowing for individual rates per section and group.
+
+#### 3.2.1 Data Product Recording
+
+`Svc::TlmPacketizer` can record the packets of a telemetry group as data products, in addition to (and independent of) sending them on `PktSend`. Recording is disabled for every group at startup and is controlled per group by two commands:
+
+- `START_DP_RECORDING(tlmGroup, packetsPerContainer, priority)` starts recording the packets of `tlmGroup`. Each data product container holds `packetsPerContainer` packets and is sent with `priority`. Starting a group that is already being recorded sends its partially filled container and applies the new settings.
+- `STOP_DP_RECORDING(tlmGroup)` stops recording `tlmGroup`, sending any partially filled container. The `DpRecordingStopped` event reports whether a partial container was sent, and the number of packets recorded, containers sent, and packets dropped since the group was started.
+
+Both commands validate `tlmGroup` against `MAX_CONFIGURABLE_TLMPACKETIZER_GROUP`. `START_DP_RECORDING` also rejects a group without packets in the packet list, a `packetsPerContainer` of zero or large enough that the container would not fit an `Fw::Buffer`, and any request while `productGetOut` or `productSendOut` is unconnected. A rejected command emits `DpRecordingRejected` with the reason and responds with `VALIDATION_ERROR`.
+
+Data product recording is optional for deployments: the product ports may be left unconnected, in which case the component builds and runs as before and `START_DP_RECORDING` is rejected with `START_PORTS_NOT_CONNECTED`. The feature adds no telemetry channels, so existing telemetry packet sets need no change.
+
+While a group is recorded, every packet of that group that has new data on a `Run` cycle is recorded once, regardless of the section, group, and rate configuration that governs `PktSend`. Recording therefore captures telemetry whose downlink is disabled or rate limited, which is the operator flexibility sought by the feature. Downlink is unaffected: the packet copy that is recorded is the same copy that is sent on `PktSend`, and the `PktSend` decisions do not consider the recording state.
+
+Data products are modeled as follows:
+
+- `TlmPacketContainer` (container id 0): one container type, used for all groups. A container holds the packets of a single group.
+- `TlmGroupRecord` (record id 0, `FwChanIdType`): the first record of every container; the telemetry group of the packets in the container. This lets the ground separate containers by group even though they share a container id.
+- `TlmPacketRecord` (record id 1, `U8 array`): one packet, byte for byte as sent on `PktSend`: `FwPacketDescriptorType`, `FwTlmPacketizeIdType`, `Fw::Time` and the channel values. Ground tools can decode the record with the deployment's packet set definitions.
+
+Containers are obtained synchronously through `productGetOut` (`Fw::DpGet`) when the first packet of a container is recorded, so an idle group does not hold a container. The requested data size is the size of the group record plus `packetsPerContainer` records sized for the longest packet of the group, so every packet of the group fits. If no container can be obtained, the packet is dropped, `DpBufferError` is emitted (throttled), and the dropped count of the group is incremented; recording continues with the next packet. A container is sent through `productSendOut` (`Fw::DpSend`) when it holds `packetsPerContainer` packets, or when recording of its group is stopped or restarted.
+
+The recording state is only touched on the component's thread (the `Run` handler and the asynchronous command handlers), so it needs no lock. Each group counts the packets recorded, containers sent, and packets dropped since its last `START_DP_RECORDING`; the counts are reported by the `DpRecordingStopped` event, so operators observe them with `STOP_DP_RECORDING` (which is also accepted for a group that is not recording).
 
 ### 3.3 Scenarios
 
@@ -106,7 +137,7 @@ Updated groups using `ON_CHANGE_MIN` or `ON_CHANGE_MIN_OR_EVERY_MAX` while group
 
 ### 3.4 State
 
-`Svc::TlmPacketizer` has no state machines.
+`Svc::TlmPacketizer` has no state machines. The data product recording state of each telemetry group (recording enabled, packets per container, priority, the container being filled and its packet count) is held in the component and set only by the `START_DP_RECORDING` and `STOP_DP_RECORDING` commands and the `Run` handler. It is not persisted.
 
 ### 3.5 Algorithms
 
@@ -125,6 +156,8 @@ The `Svc::TlmPacketizer` component has the following configuration parameters:
 - `TELEMETRY_SEND_PORTS` (TlmPacketizerCfg.fpp): Number of output ports for telemetry packets
 - `TELEMETRY_SEND_PORT_MAPPING` (TlmPacketizerCfg.fpp): A mapping of each section/group pair to the output port index used.
 - `TELEMETRY_SECTION_DEFAULTS` (TlmPacketizerCfg.fpp): A mapping of each section/group pair to the default rate logic and parameters for that section/group pair.
+
+A deployment that records data products must connect `productGetOut` and `productSendOut` to a data product manager (see [`Svc::DpManager`](../../DpManager/docs/sdd.md)) whose buffer manager can supply containers of the requested size: `Fw::DpContainer::MIN_PACKET_SIZE` plus the size of the group record plus `packetsPerContainer` times the size of a `TlmPacketRecord` holding the longest packet of the group. A deployment that does not record data products may leave both ports unconnected.
 
 ### 4.1 Sizing
 
@@ -306,3 +339,4 @@ Date | Description
 01/23/2026 | Added group level rate logic
 02/23/2026 | Added section/group mapping logic
 03/30/2026 | Added configuration section
+10/04/2026 | Added data product recording of telemetry groups
