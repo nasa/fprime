@@ -293,7 +293,7 @@ void AosDeframerTester::testFhpNoPacketStart() {
     ASSERT_from_dataOut_SIZE(0);
     this->clearHistory();
 
-    // Now send continuation frame with FHP = 0x7FE (no packet start)
+    // Now send continuation frame with FHP = 0x7FF (no packet start)
     U8 payload2[256];
     FwSizeType remainingSize = sppSize - TEST_DATA_ZONE_SIZE;
     ::memcpy(payload2, payload1 + TEST_DATA_ZONE_SIZE, remainingSize);
@@ -308,13 +308,48 @@ void AosDeframerTester::testFhpNoPacketStart() {
     this->assertDataOutVcId(0);
 }
 
+void AosDeframerTester::testFhpReservedBitsIgnored() {
+    this->configureDefault();
+    ASSERT_EQ(M_PDUSubfields::FHP_NO_PACKET_START, 0x7FF);
+    ASSERT_EQ(M_PDUSubfields::FHP_IDLE_DATA_ONLY, 0x7FE);
+
+    // Scenario 1: spare bits set with a packet at offset 0 - packet is still extracted
+    {
+        U8 payload[64];
+        FwSizeType sppSize = this->createSppPacket(payload, 0x005, 20);
+        const U16 fhpWithSpares = static_cast<U16>(~M_PDUSubfields::fhpMask);  // 0xF800 | 0
+        Fw::Buffer buffer = this->assembleFrameBuffer(payload, sppSize, fhpWithSpares);
+        ComCfg::FrameContext context;
+        this->invoke_to_dataIn(0, buffer, context);
+        ASSERT_from_dataOut_SIZE(1);
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), sppSize);
+        ASSERT_EVENTS_InvalidFhp_SIZE(0);
+        this->clearHistory();
+    }
+
+    // Scenario 2: spare bits set with the idle special value - treated as an idle frame
+    {
+        U8 payload[32];
+        ::memset(payload, 0x55, sizeof(payload));
+        const U16 fhpWithSpares = static_cast<U16>(~M_PDUSubfields::fhpMask | M_PDUSubfields::FHP_IDLE_DATA_ONLY);
+        Fw::Buffer buffer =
+            this->assembleFrameBuffer(payload, sizeof(payload), fhpWithSpares, ComCfg::SpacecraftId, 0, 1);
+        ComCfg::FrameContext context;
+        this->invoke_to_dataIn(0, buffer, context);
+        ASSERT_from_dataOut_SIZE(0);
+        ASSERT_EVENTS_IdleFrame_SIZE(1);
+        ASSERT_EVENTS_IdleFrame(0, 0);  // vcId=0 (the configured VC)
+        ASSERT_EVENTS_InvalidFhp_SIZE(0);
+    }
+}
+
 void AosDeframerTester::testFhpIdleDataOnly() {
     this->configureDefault();
 
     U8 payload[100];
     ::memset(payload, 0x55, sizeof(payload));  // Idle pattern
 
-    // FHP = 0x7FF means idle data only
+    // FHP = 0x7FE means idle data only
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), M_PDUSubfields::FHP_IDLE_DATA_ONLY);
     ComCfg::FrameContext context;
 

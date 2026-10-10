@@ -12,6 +12,13 @@
 namespace Svc {
 
 namespace Ccsds {
+
+// The First Header Pointer is an 11 bit offset into the M_PDU packet zone; every offset the framer can
+// produce must fit in the field and stay below the special values (CCSDS 732.0-B-5 Section 4.1.4.2.2)
+static_assert(ComCfg::AosMaxFrameFixedSize - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE <
+                  M_PDUSubfields::FHP_IDLE_DATA_ONLY,
+              "AOS M_PDU packet zone exceeds the range of the 11 bit First Header Pointer");
+
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
@@ -208,8 +215,8 @@ void AosFramer ::setup_m_pdu_header(const ComCfg::FrameContext& context, bool no
 
     M_PDUHeader muxedPdu;
     if (no_fresh) {
-        // All Ones since no packets start in this frame (no fresh packets)
-        muxedPdu.set_firstHeaderPointer(0xFFFF);
+        // 11 bit all ones since no packets start in this frame (no fresh packets)
+        muxedPdu.set_firstHeaderPointer(M_PDUSubfields::FHP_NO_PACKET_START);
     } else {
         // Called at first fresh packet (not a packet tail)
         // So current payload offset is the pointer to first packet header
