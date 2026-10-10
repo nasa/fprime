@@ -84,6 +84,29 @@ void CfdpManagerTester::testParamRxCrcCalcBytesPerCycleSetGet() {
     ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
 }
 
+// ---- PostInactivitySendRetries ----
+
+void CfdpManagerTester::testParamPostInactivitySendRetriesDefault() {
+    this->clearHistory();
+    Fw::ParamValid valid = Fw::ParamValid::INVALID;
+    EXPECT_EQ(this->component.paramGet_PostInactivitySendRetries(valid), 3U);
+    EXPECT_EQ(valid.e, Fw::ParamValid::DEFAULT);
+    EXPECT_EQ(this->component.getPostInactivitySendRetriesParam(), 3U);
+}
+
+void CfdpManagerTester::testParamPostInactivitySendRetriesSetGet() {
+    const U8 values[] = {0, 1, 5, 255};
+    for (U8 value : values) {
+        this->clearHistory();
+        this->paramSet_PostInactivitySendRetries(value, Fw::ParamValid::VALID);
+        this->paramSend_PostInactivitySendRetries(0, 0);
+        Fw::ParamValid valid = Fw::ParamValid::INVALID;
+        EXPECT_EQ(this->component.paramGet_PostInactivitySendRetries(valid), value);
+        EXPECT_EQ(valid.e, Fw::ParamValid::VALID);
+        EXPECT_EQ(this->component.getPostInactivitySendRetriesParam(), value);
+    }
+}
+
 // ---- FileInDefaultChannel ----
 
 void CfdpManagerTester::testParamFileInDefaultChannelDefault() {

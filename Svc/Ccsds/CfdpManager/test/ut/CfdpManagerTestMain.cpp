@@ -262,6 +262,16 @@ TEST(Parameter, RxCrcCalcBytesPerCycleDefault) {
     tester.testParamRxCrcCalcBytesPerCycleDefault();
 }
 
+TEST(Parameter, PostInactivitySendRetriesSetGet) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testParamPostInactivitySendRetriesSetGet();
+}
+
+TEST(Parameter, PostInactivitySendRetriesDefault) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testParamPostInactivitySendRetriesDefault();
+}
+
 TEST(Parameter, FileInDefaultChannelSetGet) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testParamFileInDefaultChannelSetGet();
