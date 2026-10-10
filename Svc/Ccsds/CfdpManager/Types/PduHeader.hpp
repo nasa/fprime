@@ -86,6 +86,22 @@ class PduHeader {
     EntityId m_destEid;
 
   public:
+    //! Constructor
+    PduHeader()
+        : m_type(PduTypeEnum::NONE),
+          m_version(1),
+          m_pduType(PduType::PDU_TYPE_DIRECTIVE),
+          m_direction(PduDirection::DIRECTION_TOWARD_RECEIVER),
+          m_class(Cfdp::Class::CLASS_2),
+          m_crcFlag(CrcFlag::CRC_NOT_PRESENT),
+          m_largeFileFlag(LargeFileFlag::LARGE_FILE_32_BIT),
+          m_segmentationControl(0),
+          m_segmentMetadataFlag(0),
+          m_pduDataLength(0),
+          m_sourceEid(0),
+          m_transactionSeq(0),
+          m_destEid(0) {}
+
     //! Header size (variable due to EID/TSN lengths)
     enum { MIN_HEADERSIZE = 7 };  // Minimum fixed portion
 
