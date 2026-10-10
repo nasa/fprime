@@ -92,7 +92,7 @@ TEST(EventManagerTest, FilterIdTest) {
 }
 
 TEST(EventManagerTest, FilterDumpTest) {
-    TEST_CASE(100.1.3, "Dump filter values");
+    TEST_CASE(100.1.4, "Dump filter values");
 
     Svc::EventManager impl("EventManager");
 

@@ -20,7 +20,7 @@ TEST(TestNominal, PushTlm) {
 }
 
 TEST(TestNominal, SendPackets) {
-    TEST_CASE(100.1.2, "Send Packets");
+    TEST_CASE(100.1.3, "Send Packets");
     Svc::TlmPacketizerTester tester;
     tester.sendPacketsTest();
 }
@@ -51,7 +51,7 @@ TEST(TestNominal, SendPacketTest) {
 #if 0
 TEST(TestNominal,SetPacketLevelTest) {
 
-    TEST_CASE(100.1.78,"Set packet level");
+    TEST_CASE(100.1.8,"Set packet level");
     Svc::TlmPacketizerTester tester;
     tester.setPacketLevelTest();
 }
@@ -69,7 +69,7 @@ TEST(TestOffNominal, SetLevelInvalidTest) {
 }
 
 TEST(TestNominal, DuplicateChannelIdMatchingSizeTest) {
-    TEST_CASE(100.1.13, "Duplicate channel ID across packets with identical size");
+    TEST_CASE(100.1.9, "Duplicate channel ID across packets with identical size");
     Svc::TlmPacketizerTester tester;
     tester.duplicateChannelIdMatchingSizeTest();
 }
@@ -87,7 +87,7 @@ TEST(TestOffNominal, OversizedChannelTest) {
 }
 
 TEST(TestNominal, EmptyPacketTest) {
-    TEST_CASE(100.1.14, "Packet specification with no channels is accepted");
+    TEST_CASE(100.1.10, "Packet specification with no channels is accepted");
     Svc::TlmPacketizerTester tester;
     tester.emptyPacketTest();
 }
@@ -99,29 +99,29 @@ TEST(TestOffNominal, NullChannelListTest) {
 }
 
 TEST(TestNominal, TlmGetTest) {
-    TEST_CASE(100.1.8, "Get telemetry channel");
+    TEST_CASE(100.1.11, "Get telemetry channel");
     Svc::TlmPacketizerTester tester;
     tester.getChannelValueTest();
 }
 TEST(TestNominal, configuredTelemetryGroupsTests) {
-    TEST_CASE(100.1.9, "Configure Telem Send Levels and Rates");
+    TEST_CASE(100.1.12, "Configure Telem Send Levels and Rates");
     Svc::TlmPacketizerTester tester;
     tester.configuredTelemetryGroupsTests();
 }
 TEST(TestNominal, advancedControlGroupTests) {
-    TEST_CASE(100.1.10, "Control enable sections and groups");
+    TEST_CASE(100.1.13, "Control enable sections and groups");
     Svc::TlmPacketizerTester tester;
     tester.advancedControlGroupTests();
 }
 
 TEST(TestNominal, sectionEnabledParameterTest) {
-    TEST_CASE(100.1.11, "Test Section Enabled Parameter");
+    TEST_CASE(100.1.14, "Test Section Enabled Parameter");
     Svc::TlmPacketizerTester tester;
     tester.sectionEnabledParameterTest();
 }
 
 TEST(TestNominal, sectionConfigParameterTest) {
-    TEST_CASE(100.1.12, "Test Section Config Parameter");
+    TEST_CASE(100.1.15, "Test Section Config Parameter");
     Svc::TlmPacketizerTester tester;
     tester.sectionConfigParameterTest();
 }
