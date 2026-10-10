@@ -71,7 +71,7 @@ void CmdSequencerComponentImpl::Sequence ::setFileName(const Fw::ConstStringBase
     this->m_stringFileName = fileName;
 }
 
-Fw::CmdStringArg& CmdSequencerComponentImpl::Sequence ::getFileName() {
+Fw::FileNameString& CmdSequencerComponentImpl::Sequence ::getFileName() {
     return this->m_fileName;
 }
 
