@@ -77,13 +77,13 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             const FwSizeType channelSize = packetList.list[pktEntry]->list[tlmEntry].size;
             FwSizeType entryIndex = 0;
             if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
-                // New channel - allocate a slot and initialize offsets to -1 (not in any packet)
+                // New channel - allocate a slot and initialize offsets to NOT_IN_PACKET
                 entryIndex = this->m_numChannels++;
                 this->m_channels[entryIndex].id = id;
                 this->m_channels[entryIndex].hasValue = false;
                 this->m_channels[entryIndex].channelSize = channelSize;
                 for (FwChanIdType pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
-                    this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = -1;
+                    this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = NOT_IN_PACKET;
                 }
                 const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
                 FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
@@ -100,10 +100,9 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             entry.ignored = false;
             entry.channelSize = channelSize;
             // the offset into the buffer will be the current packet length
-            // the offset must fit within FwSignedSizeType to allow for negative values
-            FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()),
-                      static_cast<FwAssertArgType>(packetLen));
-            entry.packetOffset[pktEntry] = static_cast<FwSignedSizeType>(packetLen);
+            // the offset must fit within U16 and must not equal NOT_IN_PACKET
+            FW_ASSERT(packetLen < NOT_IN_PACKET, static_cast<FwAssertArgType>(packetLen));
+            entry.packetOffset[pktEntry] = static_cast<U16>(packetLen);
 
             packetLen += entry.channelSize;
 
@@ -140,12 +139,12 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         FwChanIdType id = ignoreList.list[channelEntry].id;
         FwSizeType entryIndex = 0;
         if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
-            // New channel - allocate a slot and initialize offsets to -1 (not in any packet)
+            // New channel - allocate a slot and initialize offsets to NOT_IN_PACKET
             entryIndex = this->m_numChannels++;
             this->m_channels[entryIndex].id = id;
             this->m_channels[entryIndex].hasValue = false;
             for (FwChanIdType pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
-                this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = -1;
+                this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = NOT_IN_PACKET;
             }
             const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
             FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
@@ -202,7 +201,7 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
     // copy telemetry value into active buffers; hasValue written in-place via reference
     for (FwChanIdType pkt = 0; pkt < MAX_PACKETIZER_PACKETS; pkt++) {
         // check if current packet has this channel
-        if (entry.packetOffset[pkt] != -1) {
+        if (entry.packetOffset[pkt] != NOT_IN_PACKET) {
             // get destination address
             this->m_lock.lock();
             this->m_fillBuffers[pkt].updated = true;
@@ -267,7 +266,7 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
 
     for (FwChanIdType pkt = 0; pkt < MAX_PACKETIZER_PACKETS; pkt++) {
         // check if current packet has this channel
-        if (entry.packetOffset[pkt] != -1) {
+        if (entry.packetOffset[pkt] != NOT_IN_PACKET) {
             // okay, it has the channel. copy chan val into the tlm buf
             this->m_lock.lock();
             timeTag = this->m_fillBuffers[pkt].latestTime;
