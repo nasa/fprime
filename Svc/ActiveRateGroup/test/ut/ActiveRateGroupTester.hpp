@@ -28,6 +28,7 @@ class ActiveRateGroupTester : public ActiveRateGroupGTestBase {
 
     void runNominal(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
     void runCycleOverrun(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
+    void runMultiCycleSlip();
     void runPingTest();
 
   private:
@@ -50,6 +51,7 @@ class ActiveRateGroupTester : public ActiveRateGroupGTestBase {
     } m_callLog[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
 
     bool m_causeOverrun;      //!< flag to cause an overrun during a rate group member port call
+    U32 m_extraCycles;        //!< cycles to inject during a rate group member port call, to build a backlog
     FwIndexType m_callOrder;  //!< tracks order of port call.
 };
 
