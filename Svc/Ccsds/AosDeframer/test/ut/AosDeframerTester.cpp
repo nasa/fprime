@@ -1019,13 +1019,14 @@ void AosDeframerTester::testUntrustedFhp() {
 }
 
 // ----------------------------------------------------------------------
-// Tests - Historical EPP size-overflow regressions
+// Tests - Security regression (CVE: EPP integer overflow and heap buffer overflow)
 // ----------------------------------------------------------------------
 
 void AosDeframerTester::testEppSizeOverflowRejected() {
-    // Historical overflow regression: the declared total 0xFFFFFFFC must not
-    // acquire an extra header length or wrap before reaching the allocator.
-    // The bounded test allocator rejects it on both 32- and 64-bit size types.
+    // Regression for the EPP integer overflow (CWE-190 / CWE-122).
+    // Adding the 8-byte header to 0xFFFFFFFC previously wrapped to a 4-byte
+    // allocation on 32-bit targets, allowing an 8-byte header copy past the end.
+    // The header-inclusive length must reach the allocator unchanged.
 
     this->configureDefault();
 
@@ -1056,8 +1057,8 @@ void AosDeframerTester::testEppSizeOverflowRejected() {
 }
 
 void AosDeframerTester::testEppSizeOverflowHeaderSpansFrame() {
-    // The same large declared total with the 8-byte header split across frames.
-    // No allocation is attempted before all length-field bytes have arrived.
+    // The same security regression with the malicious 8-byte EPP header split
+    // across two frames. No allocation may occur before the full length arrives.
 
     this->configureDefault();
 

@@ -5,7 +5,6 @@
 // ======================================================================
 
 #include "AosDeframerTester.hpp"
-#include "Fw/Test/UnitTest.hpp"
 
 // ----------------------------------------------------------------------
 // Tests - Basic Validation
@@ -212,16 +211,17 @@ TEST(AosDeframer, testUntrustedFhp) {
 }
 
 // ----------------------------------------------------------------------
-// Tests - Historical EPP size-overflow regressions
+// Tests - Security regression (CVE: EPP integer overflow and heap buffer overflow)
 // ----------------------------------------------------------------------
 
-// Verify that a large on-wire total reaches the allocator without header addition.
+// Security regression: the original 32-bit decoder could wrap an oversized
+// EPP packet length into a short allocation.
 TEST(AosDeframer, testEppSizeOverflowRejected) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppSizeOverflowRejected();
 }
 
-// Verify the same large total when its length field spans two frames.
+// Exercise the same overflow vector when the length field spans two frames.
 TEST(AosDeframer, testEppSizeOverflowHeaderSpansFrame) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppSizeOverflowHeaderSpansFrame();
@@ -231,39 +231,37 @@ TEST(AosDeframer, testEppSizeOverflowHeaderSpansFrame) {
 // Tests - EPP wire-length regressions
 // ----------------------------------------------------------------------
 
-
 TEST(AosDeframer, testEppConformantAdjacentLengths) {
-    COMMENT("Verify CCSDS 133.1-B-3 packet length semantics.");
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppConformantAdjacentLengths();
 }
 
 TEST(AosDeframer, testEppConformantLengthBoundaries) {
-    COMMENT("Verify CCSDS 133.1-B-3 packet length semantics.");
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppConformantLengthBoundaries();
 }
 
 TEST(AosDeframer, testEppConformantHeaderSplits) {
-    COMMENT("Verify CCSDS 133.1-B-3 packet length semantics.");
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppConformantHeaderSplits();
 }
 
+TEST(AosDeframer, testEppHeaderOnlyPackets) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppHeaderOnlyPackets();
+}
+
 TEST(AosDeframer, testEppInvalidDeclaredLengths) {
-    COMMENT("Verify CCSDS 133.1-B-3 packet length semantics.");
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppInvalidDeclaredLengths();
 }
 
 TEST(AosDeframer, testEppHelperEncodesTotalLength) {
-    COMMENT("Verify CCSDS 133.1-B-3 packet length semantics.");
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppHelperEncodesTotalLength();
 }
 
 TEST(AosDeframer, testEppConformantAllocationFailure) {
-    COMMENT("Verify CCSDS 133.1-B-3 packet length semantics.");
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppConformantAllocationFailure();
 }

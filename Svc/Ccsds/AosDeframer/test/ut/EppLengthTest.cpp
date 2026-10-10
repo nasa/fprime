@@ -110,13 +110,33 @@ void AosDeframerTester::testEppConformantHeaderSplits() {
     }
 }
 
+void AosDeframerTester::testEppHeaderOnlyPackets() {
+    this->configureDefault();
+    this->clearHistory();
+    // EPP PID=7, with no length field or with a declared header-only total.
+    U8 packets[] = {0xFC, 0xFD, 2, 0xFE, 0, 0, 4, 0xFF, 0, 0, 0, 0, 0, 0, 8};
+    const FwSizeType sizes[] = {1, 2, 4, 8};
+    this->m_expectedPacketBytes = packets;
+    this->m_expectedPacketSize = sizeof packets;
+    ComCfg::FrameContext context;
+    Fw::Buffer frame = this->assembleFrameBuffer(packets, sizeof packets, 0);
+    this->invoke_to_dataIn(0, frame, context);
+    ASSERT_from_dataOut_SIZE(4);
+    for (U32 i = 0; i < 4; ++i) {
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(i).data.getSize(), sizes[i]);
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(i).context.get_pvn(), ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL);
+    }
+    ASSERT_EQ(this->m_checkedPacketBytes, sizeof packets);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EVENTS_SIZE(0);
+}
+
 void AosDeframerTester::testEppInvalidDeclaredLengths() {
-    const U8 headerSizes[] = {1, 2, 4, 8};
-    const U8 firstBytes[] = {0xFC, 0xFD, 0xFE, 0xFF};
-    for (U32 variant = 0; variant < 4; ++variant) {
+    const U8 headerSizes[] = {2, 4, 8};
+    const U8 firstBytes[] = {0xFD, 0xFE, 0xFF};
+    for (U32 variant = 0; variant < 3; ++variant) {
         const FwSizeType headerSize = headerSizes[variant];
-        // Header-only non-idle packets are invalid per section 4.1.3.1.5.
-        const FwSizeType maxLength = variant == 0 ? 0 : headerSize;
+        const FwSizeType maxLength = headerSize - 1;
         for (FwSizeType declared = 0; declared <= maxLength; ++declared) {
             SCOPED_TRACE(::testing::Message() << "headerSize=" << headerSize << " declared=" << declared);
             this->configureDefault();
@@ -124,9 +144,7 @@ void AosDeframerTester::testEppInvalidDeclaredLengths() {
             this->m_allocationCalls = 0;
             U8 payload[8] = {};
             payload[0] = firstBytes[variant];
-            if (variant != 0) {
-                payload[headerSize - 1] = static_cast<U8>(declared);
-            }
+            payload[headerSize - 1] = static_cast<U8>(declared);
             ComCfg::FrameContext context;
             Fw::Buffer frame = this->assembleFrameBuffer(payload, headerSize, 0, ComCfg::SpacecraftId, 0, 0);
             this->invoke_to_dataIn(0, frame, context);
@@ -147,6 +165,12 @@ void AosDeframerTester::testEppInvalidDeclaredLengths() {
 }
 
 void AosDeframerTester::testEppHelperEncodesTotalLength() {
+    for (U8 protocolId = 0; protocolId < 8; ++protocolId) {
+        U8 packet[2] = {};
+        ASSERT_EQ(this->createEppPacket(packet, protocolId, EppLengthOfLength::One, 0), 2U);
+        ASSERT_EQ(packet[0], static_cast<U8>(0xE1 | (protocolId << 2)));
+        ASSERT_EQ(packet[1], 2U);
+    }
     const EppLengthOfLength variants[] = {EppLengthOfLength::One, EppLengthOfLength::Two, EppLengthOfLength::Four};
     const U8 headerSizes[] = {2, 4, 8};
     const U8 firstBytes[] = {0xFD, 0xFE, 0xFF};

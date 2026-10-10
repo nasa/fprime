@@ -24,7 +24,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosDeframerTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosDeframerTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AosDeframerTestSupport.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/EppLength.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/EppLengthTest.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/AosDeframer.fpp"
   DEPENDS
