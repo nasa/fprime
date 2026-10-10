@@ -73,7 +73,7 @@ types-python-dateutil==2.9.0.20241003
 typing-extensions==4.15.0
 urllib3==2.8.0
 websocket-client==1.9.2
-Werkzeug==3.1.6
+Werkzeug==3.1.9
 xmlschema==4.3.2
 yamcs-client==1.13.0
 zipp==3.19.1
