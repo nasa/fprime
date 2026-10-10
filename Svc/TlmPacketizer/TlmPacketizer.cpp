@@ -21,6 +21,9 @@ const TlmPacketizer_TelemetrySendPortMap TlmPacketizer::TELEMETRY_SEND_PORT_MAP 
 
 static_assert(Svc::TelemetrySection::NUM_SECTIONS >= 1, "At least one telemetry section is required");
 
+static_assert(FW_COM_BUFFER_MAX_SIZE <= std::numeric_limits<FwTlmPacketizeOffsetType>::max(),
+              "FwTlmPacktizeOffsetType must span an entire ComBuffer");
+
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
@@ -99,9 +102,10 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             entry.channelSize = channelSize;
             // append this packet to the channel's membership list (packed at front)
             FW_ASSERT(entry.numPackets < MAX_PACKETIZER_PACKETS, static_cast<FwAssertArgType>(entry.numPackets));
-            // the offset must fit within U16
-            FW_ASSERT(packetLen <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(packetLen));
-            entry.packets[entry.numPackets] = {pktEntry, static_cast<U16>(packetLen)};
+            // the offset must fit within FwTlmPacketizeOffsetType
+            FW_ASSERT(packetLen <= std::numeric_limits<FwTlmPacketizeOffsetType>::max(),
+                      static_cast<FwAssertArgType>(packetLen));
+            entry.packets[entry.numPackets] = {pktEntry, static_cast<FwTlmPacketizeOffsetType>(packetLen)};
             entry.numPackets++;
 
             packetLen += entry.channelSize;

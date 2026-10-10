@@ -182,16 +182,16 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
 
     //! One channel's membership in a single packet.
     struct PacketRef {
-        FwChanIdType packet;  //!< index into m_fillBuffers
-        U16 offset;    //!< byte offset of this channel within that packet's buffer
+        FwChanIdType packet;              //!< index into m_fillBuffers
+        FwTlmPacketizeOffsetType offset;  //!< byte offset of this channel within that packet's buffer
     };
 
     struct TlmEntry {
-        FwChanIdType id;  //!< telemetry id stored in slot
-        FwSizeType channelSize;  //!< max serialized size of the channel in bytes
-        bool ignored;            //!< ignored channel id
-        bool hasValue;           //!< if the entry has received a value at least once
-        FwChanIdType numPackets; //!< number of valid entries in packets[]
+        FwChanIdType id;          //!< telemetry id stored in slot
+        FwSizeType channelSize;   //!< max serialized size of the channel in bytes
+        bool ignored;             //!< ignored channel id
+        bool hasValue;            //!< if the entry has received a value at least once
+        FwChanIdType numPackets;  //!< number of valid entries in packets[]
         //! Packets containing this channel, first numPackets are valid.
         PacketRef packets[MAX_PACKETIZER_PACKETS];
     };
