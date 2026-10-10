@@ -181,6 +181,70 @@ TEST_F(FilePathUtilsResolveFromCwdTest, RelativePathResolvesAgainstCwd) {
     ASSERT_NE(nullptr, suffix);
 }
 
+// ======================================================================
+// resolveDirectoryFromCwd tests
+// ======================================================================
+
+class FilePathUtilsResolveDirectoryTest : public ::testing::Test {};
+
+TEST_F(FilePathUtilsResolveDirectoryTest, AbsoluteDirectoryGetsTrailingSlash) {
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    auto status = Os::FilePathUtils::resolveDirectoryFromCwd("/data/uplink", resolved, sizeof(resolved));
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+    ASSERT_STREQ("/data/uplink/", resolved);
+}
+
+TEST_F(FilePathUtilsResolveDirectoryTest, TrailingSlashPreserved) {
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    auto status = Os::FilePathUtils::resolveDirectoryFromCwd("/data/uplink/", resolved, sizeof(resolved));
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+    ASSERT_STREQ("/data/uplink/", resolved);
+}
+
+TEST_F(FilePathUtilsResolveDirectoryTest, RootDirectory) {
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    auto status = Os::FilePathUtils::resolveDirectoryFromCwd("/", resolved, sizeof(resolved));
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+    ASSERT_STREQ("/", resolved);
+}
+
+TEST_F(FilePathUtilsResolveDirectoryTest, DotDotCollapsedThenSlashAppended) {
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    auto status = Os::FilePathUtils::resolveDirectoryFromCwd("/data/tmp/../uplink", resolved, sizeof(resolved));
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+    ASSERT_STREQ("/data/uplink/", resolved);
+}
+
+TEST_F(FilePathUtilsResolveDirectoryTest, RelativeDirectoryResolvesAgainstCwd) {
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    auto status = Os::FilePathUtils::resolveDirectoryFromCwd("subdir/uplink", resolved, sizeof(resolved));
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+    ASSERT_EQ('/', resolved[0]);
+    const FwSizeType len = std::strlen(resolved);
+    ASSERT_GT(len, 0u);
+    ASSERT_EQ('/', resolved[len - 1]);
+    ASSERT_NE(nullptr, std::strstr(resolved, "subdir/uplink/"));
+}
+
+TEST_F(FilePathUtilsResolveDirectoryTest, ResultIsAcceptedByCheckContainment) {
+    char root[Os::FilePathUtils::MAX_PATH_LENGTH];
+    ASSERT_EQ(Os::FilePathUtils::VALID, Os::FilePathUtils::resolveDirectoryFromCwd("/data/uplink", root, sizeof(root)));
+    ASSERT_EQ(Os::FilePathUtils::VALID, Os::FilePathUtils::checkContainment("/data/uplink/file.bin", root));
+    ASSERT_EQ(Os::FilePathUtils::OUTSIDE_SANDBOX, Os::FilePathUtils::checkContainment("/data/uplink2/file.bin", root));
+}
+
+TEST_F(FilePathUtilsResolveDirectoryTest, NoRoomForTrailingSlash) {
+    // An absolute directory of MAX_PATH_LENGTH - 1 characters resolves (it fits with its
+    // terminator), but the trailing '/' no longer fits
+    char longDir[Os::FilePathUtils::MAX_PATH_LENGTH];
+    (void)std::memset(longDir, 'a', sizeof(longDir));
+    longDir[0] = '/';
+    longDir[sizeof(longDir) - 1] = '\0';
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    auto status = Os::FilePathUtils::resolveDirectoryFromCwd(longDir, resolved, sizeof(resolved));
+    ASSERT_EQ(Os::FilePathUtils::TOO_LONG, status);
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

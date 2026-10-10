@@ -40,6 +40,7 @@
 #include <new>
 
 #include <Fw/Types/StringUtils.hpp>
+#include <Os/FilePathUtils.hpp>
 #include <Os/FileSystem.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
@@ -397,16 +398,73 @@ Status::T Engine::sendFinAckStateless(Channel& chan,
     return this->serializeAndSendPduOnChannel(chan, ack);
 }
 
-void Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
+bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path, RxDestPathRejectReason& reason) {
+    Fw::String rxDir = this->m_manager->getRxDirParam(chan_num);
+    if (rxDir.length() == 0) {
+        // Sandbox not configured for this channel: accept path as-is (documented fail-open behavior)
+        return true;
+    }
+
+    // Canonicalize the receive directory (relative rx_dir resolves against CWD) into the
+    // trailing-'/' form that checkContainment requires; shared with Os::SandboxedFile
+    char root[Os::FilePathUtils::MAX_PATH_LENGTH];
+    if (Os::FilePathUtils::resolveDirectoryFromCwd(rxDir.toChar(), root, sizeof(root)) != Os::FilePathUtils::VALID) {
+        reason = RxDestPathRejectReason::RX_DIR_UNRESOLVABLE;
+        return false;
+    }
+
+    // Resolve the received path: relative paths land inside the receive directory, `..` segments
+    // are collapsed textually (symlinks are not followed; see Os::SandboxedFile threat model)
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    if (Os::FilePathUtils::resolvePath(path.toChar(), root, resolved, sizeof(resolved)) != Os::FilePathUtils::VALID) {
+        reason = RxDestPathRejectReason::PATH_UNRESOLVABLE;
+        return false;
+    }
+    if (Os::FilePathUtils::checkContainment(resolved, root) != Os::FilePathUtils::VALID) {
+        reason = RxDestPathRejectReason::OUTSIDE_RX_DIR;
+        return false;
+    }
+    // The canonical path is stored in the transaction and reported in events sized to
+    // MaxFilePathSize; reject rather than silently truncate a longer result
+    if (Fw::StringUtils::string_length(resolved, sizeof(resolved)) > Cfdp::MaxFilePathSize) {
+        reason = RxDestPathRejectReason::TOO_LONG;
+        return false;
+    }
+
+    path = resolved;
+    return true;
+}
+
+Status::T Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
+    /* the destination path comes from the remote entity: canonicalize it and confirm it lies within
+     * the configured receive directory BEFORE anything from this PDU is committed to the transaction.
+     * On rejection nothing from the PDU (file size, source name, destination) is stored; the only
+     * change to the transaction is its status, set below. */
+    Fw::String dst = md.getDestFilename();
+    RxDestPathRejectReason reason;
+    if (!this->validateRxDestPath(txn->m_chan_num, dst, reason)) {
+        this->m_manager->log_WARNING_HI_RxDestPathRejected(txn->m_chan_num, txn->m_history->src_eid,
+                                                           txn->m_history->seq_num, dst,
+                                                           this->m_manager->getRxDirParam(txn->m_chan_num), reason);
+        this->m_manager->incrementFaultFileOpen(txn->m_chan_num);
+        // A refused destination is a filestore rejection, not a completed reception: this makes
+        // finishTransaction report the failure. Whether the sender is told depends on the caller:
+        // the late-metadata path (r2RecvMd) carries it in the FIN; the metadata-first path
+        // (recvInit) finishes from INIT without a FIN, so a Class 2 sender only times out.
+        this->setTxnStatus(txn, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
+        return Status::PDU_METADATA_ERROR;
+    }
+
     /* store the expected file size in transaction */
     txn->m_fsize = md.getFileSize();
 
-    /* store the filenames in transaction - validation already done during deserialization */
+    /* structural validation (length, non-empty) already done during deserialization */
     txn->m_history->fnames.src_filename = md.getSourceFilename();
-    txn->m_history->fnames.dst_filename = md.getDestFilename();
+    txn->m_history->fnames.dst_filename = dst;
 
     this->m_manager->log_ACTIVITY_LO_MetadataReceived(txn->m_history->fnames.src_filename,
                                                       txn->m_history->fnames.dst_filename, txn->m_history->seq_num);
+    return Status::SUCCESS;
 }
 
 Status::T Engine::recvFd(Transaction* txn, const FileDataPdu& fd) {
@@ -566,13 +624,19 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
 
                 Fw::SerializeStatus deserStatus = md.deserializeFrom(sb2);
                 if (deserStatus == Fw::FW_SERIALIZE_OK) {
-                    this->recvMd(txn, md);
-
-                    // NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path
-                    txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? TxnState::TXN_STATE_R1 : TxnState::TXN_STATE_R2;
-                    txn->m_txn_class = txmMode;
-                    txn->m_flags.rx.md_recv = true;
-                    txn->rInit();  // initialize R
+                    if (this->recvMd(txn, md) == Status::SUCCESS) {
+                        // NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup
+                        // path
+                        txn->m_state =
+                            txmMode == Cfdp::Class::CLASS_1 ? TxnState::TXN_STATE_R1 : TxnState::TXN_STATE_R2;
+                        txn->m_txn_class = txmMode;
+                        txn->m_flags.rx.md_recv = true;
+                        txn->rInit();  // initialize R
+                    }
+                    // else: destination path rejected and the transaction marked FILESTORE_REJECTION.
+                    // State stays INIT so the transaction is finished below as a failed reception
+                    // (parked in HOLD until the inactivity timer recycles it) without any file
+                    // ever being opened.
                 } else {
                     m_manager->log_WARNING_LO_FailMetadataPduDeserialization(txn->getChannelId(),
                                                                              static_cast<I32>(deserStatus));
