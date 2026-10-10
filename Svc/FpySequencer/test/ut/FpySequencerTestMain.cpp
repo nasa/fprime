@@ -5347,6 +5347,81 @@ TEST_F(FpySequencerTester, IntegrationStackCmd) {
     ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
 }
 
+TEST_F(FpySequencerTester, CancelDropsQueuedDirective) {
+    allocMem();
+    add_CONST_CMD(123);
+    writeAndRun();
+    // the constCmd directive is queued but not yet executed
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_from_cmdOut_SIZE(0);
+
+    sendCmd_CANCEL(0, 0);
+    dispatchUntilState(State::IDLE);
+
+    // service the directive queued by the cancelled sequence
+    dispatchCurrentMessages(cmp);
+    ASSERT_EQ(tester_getState(), State::IDLE);
+    ASSERT_from_cmdOut_SIZE(0);
+    ASSERT_EVENTS_DirectiveWhileNotAwaiting_SIZE(1);
+    ASSERT_EVENTS_DirectiveWhileNotAwaiting(0, Fpy::DirectiveId::CONST_CMD, static_cast<I32>(State::IDLE));
+}
+
+TEST_F(FpySequencerTester, CancelledDirectiveDoesNotRunInNextSequence) {
+    allocMem();
+    add_ALLOCATE(8);
+    writeAndRun();
+    // the allocate directive is queued but not yet executed
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    sendCmd_CANCEL(0, 0);
+    dispatchUntilState(State::IDLE);
+
+    // start a new sequence before the cancelled sequence's directive is serviced
+    clearSeq();
+    add_NO_OP();
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
+
+    // service the directive queued by the cancelled sequence
+    tester_doDispatch();
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
+    ASSERT_EVENTS_DirectiveFromOldSequence_SIZE(1);
+    ASSERT_EVENTS_DirectiveFromOldSequence(0, Fpy::DirectiveId::ALLOCATE, 1, 2);
+
+    this->clearHistory();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, CancelledCmdDoesNotRunInNextSequence) {
+    allocMem();
+    add_CONST_CMD(123);
+    writeAndRun();
+    // the constCmd directive is queued but not yet executed
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    sendCmd_CANCEL(0, 0);
+    dispatchUntilState(State::IDLE);
+
+    // start a new sequence before the cancelled sequence's directive is serviced. the RUN cmd and the
+    // state machine signals it raises are higher priority than the queued directive, so the new sequence
+    // is awaiting its first statement response when the cancelled sequence's directive is serviced
+    clearSeq();
+    add_NO_OP();
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    this->clearHistory();
+    dispatchUntilState(State::IDLE);
+    ASSERT_from_cmdOut_SIZE(0);
+    ASSERT_EVENTS_DirectiveFromOldSequence_SIZE(1);
+    ASSERT_EVENTS_DirectiveFromOldSequence(0, Fpy::DirectiveId::CONST_CMD, 1, 2);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
 TEST_F(FpySequencerTester, popEvent) {
     const char* testMsg = "hello world";
     Fpy::StackSizeType msgLen = static_cast<Fpy::StackSizeType>(strlen(testMsg));

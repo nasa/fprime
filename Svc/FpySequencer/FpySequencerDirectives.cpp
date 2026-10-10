@@ -74,44 +74,84 @@ Fw::Success FpySequencer::sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeT
     return Fw::Success::SUCCESS;
 }
 
+// returns true if a directive can be executed. a directive is only ever dispatched in
+// RUNNING.DISPATCH_STATEMENT, after which the sequencer waits in RUNNING.AWAITING_STATEMENT_RESPONSE.
+// CANCEL and RUN are higher priority than directives, so a sequence can be cancelled while its directive is
+// still queued, and a new sequence can be started and dispatch its first statement before that directive is
+// serviced. neither of those directives may execute
+bool FpySequencer::checkDirectiveExpected(Fpy::DirectiveId directive, U64 sequenceIndex) {
+    if (this->sequencer_getState() != State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
+        this->log_WARNING_LO_DirectiveWhileNotAwaiting(directive, static_cast<I32>(this->sequencer_getState()));
+        return false;
+    }
+    if (sequenceIndex != this->m_sequencesStarted) {
+        this->log_WARNING_LO_DirectiveFromOldSequence(directive, sequenceIndex, this->m_sequencesStarted);
+        return false;
+    }
+    return true;
+}
+
 //! Internal interface handler for directive_waitRel
-void FpySequencer::directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) {
+void FpySequencer::directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive,
+                                                              U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::WAIT_REL, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->waitRel_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::WAIT_REL, error);
 }
 
 //! Internal interface handler for directive_waitAbs
-void FpySequencer::directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) {
+void FpySequencer::directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive,
+                                                              U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::WAIT_ABS, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->waitAbs_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::WAIT_ABS, error);
 }
 
 //! Internal interface handler for directive_goto
-void FpySequencer::directive_goto_internalInterfaceHandler(const Svc::FpySequencer_GotoDirective& directive) {
+void FpySequencer::directive_goto_internalInterfaceHandler(const Svc::FpySequencer_GotoDirective& directive,
+                                                           U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::GOTO, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->goto_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::GOTO, error);
 }
 
 //! Internal interface handler for directive_if
-void FpySequencer::directive_if_internalInterfaceHandler(const Svc::FpySequencer_IfDirective& directive) {
+void FpySequencer::directive_if_internalInterfaceHandler(const Svc::FpySequencer_IfDirective& directive,
+                                                         U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::IF, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->if_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::IF, error);
 }
 
 //! Internal interface handler for directive_noOp
-void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) {
+void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive,
+                                                           U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::NO_OP, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->noOp_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::NO_OP, error);
 }
 
 //! Internal interface handler for directive_pushTlmVal
-void FpySequencer::directive_pushTlmVal_internalInterfaceHandler(
-    const Svc::FpySequencer_PushTlmValDirective& directive) {
+void FpySequencer::directive_pushTlmVal_internalInterfaceHandler(const Svc::FpySequencer_PushTlmValDirective& directive,
+                                                                 U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::PUSH_TLM_VAL, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->pushTlmVal_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TLM_VAL, error);
@@ -119,42 +159,66 @@ void FpySequencer::directive_pushTlmVal_internalInterfaceHandler(
 
 //! Internal interface handler for directive_pushTlmValAndTime
 void FpySequencer::directive_pushTlmValAndTime_internalInterfaceHandler(
-    const Svc::FpySequencer_PushTlmValAndTimeDirective& directive) {
+    const Svc::FpySequencer_PushTlmValAndTimeDirective& directive,
+    U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->pushTlmValAndTime_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME, error);
 }
 
 //! Internal interface handler for directive_pushPrm
-void FpySequencer::directive_pushPrm_internalInterfaceHandler(const Svc::FpySequencer_PushPrmDirective& directive) {
+void FpySequencer::directive_pushPrm_internalInterfaceHandler(const Svc::FpySequencer_PushPrmDirective& directive,
+                                                              U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::PUSH_PRM, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->pushPrm_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_PRM, error);
 }
 
 //! Internal interface handler for directive_constCmd
-void FpySequencer::directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive) {
+void FpySequencer::directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive,
+                                                               U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::CONST_CMD, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->constCmd_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::CONST_CMD, error);
 }
 
 //! Internal interface handler for directive_stackOp
-void FpySequencer::directive_stackOp_internalInterfaceHandler(const Svc::FpySequencer_StackOpDirective& directive) {
+void FpySequencer::directive_stackOp_internalInterfaceHandler(const Svc::FpySequencer_StackOpDirective& directive,
+                                                              U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(directive.get__op(), sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->stackOp_directiveHandler(directive, error));
     handleDirectiveErrorCode(directive.get__op(), error);
 }
 
 //! Internal interface handler for directive_exit
-void FpySequencer::directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) {
+void FpySequencer::directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive,
+                                                           U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::EXIT, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->exit_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::EXIT, error);
 }
 
 //! Internal interface handler for directive_allocate
-void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) {
+void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive,
+                                                               U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::ALLOCATE, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->allocate_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::ALLOCATE, error);
@@ -162,112 +226,176 @@ void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySeq
 
 //! Internal interface handler for directive_storeRelConstOffset
 void FpySequencer::directive_storeRelConstOffset_internalInterfaceHandler(
-    const Svc::FpySequencer_StoreRelConstOffsetDirective& directive) {
+    const Svc::FpySequencer_StoreRelConstOffsetDirective& directive,
+    U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::STORE_REL_CONST_OFFSET, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeRelConstOffset_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::STORE_REL_CONST_OFFSET, error);
 }
 
 //! Internal interface handler for directive_pushVal
-void FpySequencer::directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive) {
+void FpySequencer::directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive,
+                                                              U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::PUSH_VAL, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->pushVal_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_VAL, error);
 }
 
 //! Internal interface handler for directive_loadRel
-void FpySequencer::directive_loadRel_internalInterfaceHandler(const Svc::FpySequencer_LoadRelDirective& directive) {
+void FpySequencer::directive_loadRel_internalInterfaceHandler(const Svc::FpySequencer_LoadRelDirective& directive,
+                                                              U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::LOAD_REL, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->loadRel_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::LOAD_REL, error);
 }
 
 //! Internal interface handler for directive_discard
-void FpySequencer::directive_discard_internalInterfaceHandler(const Svc::FpySequencer_DiscardDirective& directive) {
+void FpySequencer::directive_discard_internalInterfaceHandler(const Svc::FpySequencer_DiscardDirective& directive,
+                                                              U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::DISCARD, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->discard_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::DISCARD, error);
 }
 
 //! Internal interface handler for directive_memCmp
-void FpySequencer::directive_memCmp_internalInterfaceHandler(const Svc::FpySequencer_MemCmpDirective& directive) {
+void FpySequencer::directive_memCmp_internalInterfaceHandler(const Svc::FpySequencer_MemCmpDirective& directive,
+                                                             U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::MEMCMP, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->memCmp_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::MEMCMP, error);
 }
 
 //! Internal interface handler for directive_stackCmd
-void FpySequencer::directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive) {
+void FpySequencer::directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive,
+                                                               U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::STACK_CMD, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->stackCmd_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::STACK_CMD, error);
 }
 
 //! Internal interface handler for directive_pushTime
-void FpySequencer::directive_pushTime_internalInterfaceHandler(const Svc::FpySequencer_PushTimeDirective& directive) {
+void FpySequencer::directive_pushTime_internalInterfaceHandler(const Svc::FpySequencer_PushTimeDirective& directive,
+                                                               U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::PUSH_TIME, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->pushTime_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TIME, error);
 }
 
 //! Internal interface handler for directive_setSeed
-void FpySequencer::directive_setSeed_internalInterfaceHandler(const Svc::FpySequencer_SetSeedDirective& directive) {
+void FpySequencer::directive_setSeed_internalInterfaceHandler(const Svc::FpySequencer_SetSeedDirective& directive,
+                                                              U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::SET_SEED, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->setSeed_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::SET_SEED, error);
 }
 
 //! Internal interface handler for directive_pushRand
-void FpySequencer::directive_pushRand_internalInterfaceHandler(const Svc::FpySequencer_PushRandDirective& directive) {
+void FpySequencer::directive_pushRand_internalInterfaceHandler(const Svc::FpySequencer_PushRandDirective& directive,
+                                                               U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::PUSH_RAND, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->pushRand_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_RAND, error);
 }
 
 //! Internal interface handler for directive_getField
-void FpySequencer::directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) {
+void FpySequencer::directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive,
+                                                               U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::GET_FIELD, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->getField_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::GET_FIELD, error);
 }
 
 //! Internal interface handler for directive_peek
-void FpySequencer::directive_peek_internalInterfaceHandler(const Svc::FpySequencer_PeekDirective& directive) {
+void FpySequencer::directive_peek_internalInterfaceHandler(const Svc::FpySequencer_PeekDirective& directive,
+                                                           U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::PEEK, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->peek_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::PEEK, error);
 }
 
 //! Internal interface handler for directive_storeRel
-void FpySequencer::directive_storeRel_internalInterfaceHandler(const Svc::FpySequencer_StoreRelDirective& directive) {
+void FpySequencer::directive_storeRel_internalInterfaceHandler(const Svc::FpySequencer_StoreRelDirective& directive,
+                                                               U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::STORE_REL, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeRel_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::STORE_REL, error);
 }
 
 //! Internal interface handler for directive_call
-void FpySequencer::directive_call_internalInterfaceHandler(const Svc::FpySequencer_CallDirective& directive) {
+void FpySequencer::directive_call_internalInterfaceHandler(const Svc::FpySequencer_CallDirective& directive,
+                                                           U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::CALL, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->call_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::CALL, error);
 }
 
 //! Internal interface handler for directive_return
-void FpySequencer::directive_return_internalInterfaceHandler(const Svc::FpySequencer_ReturnDirective& directive) {
+void FpySequencer::directive_return_internalInterfaceHandler(const Svc::FpySequencer_ReturnDirective& directive,
+                                                             U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::RETURN, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->return_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::RETURN, error);
 }
 
 //! Internal interface handler for directive_loadAbs
-void FpySequencer::directive_loadAbs_internalInterfaceHandler(const Svc::FpySequencer_LoadAbsDirective& directive) {
+void FpySequencer::directive_loadAbs_internalInterfaceHandler(const Svc::FpySequencer_LoadAbsDirective& directive,
+                                                              U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::LOAD_ABS, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->loadAbs_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::LOAD_ABS, error);
 }
 
 //! Internal interface handler for directive_storeAbs
-void FpySequencer::directive_storeAbs_internalInterfaceHandler(const Svc::FpySequencer_StoreAbsDirective& directive) {
+void FpySequencer::directive_storeAbs_internalInterfaceHandler(const Svc::FpySequencer_StoreAbsDirective& directive,
+                                                               U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::STORE_ABS, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeAbs_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::STORE_ABS, error);
@@ -275,14 +403,22 @@ void FpySequencer::directive_storeAbs_internalInterfaceHandler(const Svc::FpySeq
 
 //! Internal interface handler for directive_storeAbsConstOffset
 void FpySequencer::directive_storeAbsConstOffset_internalInterfaceHandler(
-    const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive) {
+    const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive,
+    U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeAbsConstOffset_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, error);
 }
 
 //! Internal interface handler for directive_popEvent
-void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) {
+void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive,
+                                                               U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::POP_EVENT, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->popEvent_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::POP_EVENT, error);
@@ -290,7 +426,11 @@ void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySeq
 
 //! Internal interface handler for directive_popSerializable
 void FpySequencer::directive_popSerializable_internalInterfaceHandler(
-    const Svc::FpySequencer_PopSerializableDirective& directive) {
+    const Svc::FpySequencer_PopSerializableDirective& directive,
+    U64 sequenceIndex) {
+    if (!this->checkDirectiveExpected(Fpy::DirectiveId::POP_SERIALIZABLE, sequenceIndex)) {
+        return;
+    }
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->popSerializable_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::POP_SERIALIZABLE, error);
