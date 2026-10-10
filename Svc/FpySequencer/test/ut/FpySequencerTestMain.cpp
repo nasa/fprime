@@ -38,6 +38,19 @@ TEST_F(FpySequencerTester, waitRel) {
     ASSERT_EQ(tester_get_m_runtime_ptr()->wakeupTime, Fw::Time(105, 223));
 }
 
+TEST_F(FpySequencerTester, waitRel_invalidUSeconds) {
+    FpySequencer_WaitRelDirective directive{};
+    Fw::Time testTime(100, 100);
+    setTestTime(testTime);
+
+    tester_push<U32>(5);
+    tester_push<U32>(1000000);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_waitRel_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::INVALID_ARG);
+}
+
 TEST_F(FpySequencerTester, waitAbs) {
     FpySequencer_WaitAbsDirective directive{};
 
@@ -50,6 +63,19 @@ TEST_F(FpySequencerTester, waitAbs) {
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->wakeupTime, Fw::Time(5, 123));
+}
+
+TEST_F(FpySequencerTester, waitAbs_invalidUSeconds) {
+    FpySequencer_WaitAbsDirective directive{};
+
+    tester_push<FwTimeBaseStoreType>(0);
+    tester_push<U8>(0);
+    tester_push<U32>(5);
+    tester_push<U32>(1000000);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_waitAbs_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::INVALID_ARG);
 }
 
 TEST_F(FpySequencerTester, goto) {

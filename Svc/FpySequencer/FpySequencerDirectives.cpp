@@ -308,6 +308,11 @@ Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirectiv
     U32 uSeconds = this->m_runtime.stack.pop<U32>();
     U32 seconds = this->m_runtime.stack.pop<U32>();
 
+    if (uSeconds >= 1000000) {
+        error = DirectiveError::INVALID_ARG;
+        return Signal::stmtResponse_failure;
+    }
+
     wakeupTime.add(seconds, uSeconds);
     this->m_runtime.wakeupTime = wakeupTime;
     return Signal::stmtResponse_beginSleep;
@@ -324,6 +329,11 @@ Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirectiv
     U32 seconds = this->m_runtime.stack.pop<U32>();
     FwTimeContextStoreType ctx = this->m_runtime.stack.pop<FwTimeContextStoreType>();
     FwTimeBaseStoreType base = this->m_runtime.stack.pop<FwTimeBaseStoreType>();
+
+    if (uSeconds >= 1000000) {
+        error = DirectiveError::INVALID_ARG;
+        return Signal::stmtResponse_failure;
+    }
 
     this->m_runtime.wakeupTime = Fw::Time(static_cast<TimeBase::T>(base), ctx, seconds, uSeconds);
     return Signal::stmtResponse_beginSleep;

@@ -1,0 +1,266 @@
+<mxfile host="app.diagrams.net" modified="2026-09-04T00:00:00.000Z" agent="Claude" version="21.6.5">
+  <diagram name="ComLoggerDp" id="component">
+    <mxGraphModel dx="800" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Component Box -->
+        <mxCell id="component" value="ComLoggerDp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=3;verticalAlign=top;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="200" width="400" height="500" as="geometry"/>
+        </mxCell>
+
+        <!-- Top Port: schedIn -->
+        <mxCell id="port_schedIn" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#2196F3;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="485" y="185" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_schedIn" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#2196F3" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="170" as="sourcePoint"/>
+            <mxPoint x="500" y="185" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_schedIn" value="schedIn\n(Svc.Sched)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=bottom;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="460" y="145" width="80" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Left Ports: Async Inputs -->
+        <!-- comIn -->
+        <mxCell id="port_comIn" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="270" y="260" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_comIn" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#4CAF50" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="230" y="267.5" as="sourcePoint"/>
+            <mxPoint x="270" y="267.5" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_comIn" value="comIn\n(Fw.Com)" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=bottom;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="160" y="230" width="108" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- pingIn -->
+        <mxCell id="port_pingIn" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="270" y="310" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_pingIn" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#4CAF50" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="230" y="317.5" as="sourcePoint"/>
+            <mxPoint x="270" y="317.5" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_pingIn" value="pingIn\n(Svc.Ping)" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=bottom;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="160" y="280" width="108" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- startRecordingIn -->
+        <mxCell id="port_startRecordingIn" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="270" y="360" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_startRecordingIn" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#4CAF50" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="230" y="367.5" as="sourcePoint"/>
+            <mxPoint x="270" y="367.5" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_startRecordingIn" value="startRecordingIn\n(ComLoggerStart)" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=bottom;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="120" y="330" width="148" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- stopRecordingIn -->
+        <mxCell id="port_stopRecordingIn" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="270" y="410" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_stopRecordingIn" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#4CAF50" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="230" y="417.5" as="sourcePoint"/>
+            <mxPoint x="270" y="417.5" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_stopRecordingIn" value="stopRecordingIn\n(ComLoggerStop)" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=bottom;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="130" y="380" width="138" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Right Ports: Outputs -->
+        <!-- pingOut -->
+        <mxCell id="port_pingOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="700" y="310" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_pingOut" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#424242" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="730" y="317.5" as="sourcePoint"/>
+            <mxPoint x="770" y="317.5" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_pingOut" value="pingOut\n(Svc.Ping)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=bottom;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="732" y="280" width="88" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- productGetOut -->
+        <mxCell id="port_productGetOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="700" y="360" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_productGetOut" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#424242" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="730" y="367.5" as="sourcePoint"/>
+            <mxPoint x="770" y="367.5" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_productGetOut" value="productGetOut\n(DpGet)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=bottom;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="732" y="330" width="108" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- productSendOut -->
+        <mxCell id="port_productSendOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="700" y="410" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_productSendOut" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#424242" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="730" y="417.5" as="sourcePoint"/>
+            <mxPoint x="770" y="417.5" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_productSendOut" value="productSendOut\n(DpSend)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=bottom;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="732" y="380" width="118" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Bottom Ports: F Prime AC Ports -->
+        <!-- cmdIn (input) -->
+        <mxCell id="port_cmdIn" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EFEBE9;strokeColor=#6D4C41;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="340" y="700" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_cmdIn" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6D4C41" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="355" y="730" as="sourcePoint"/>
+            <mxPoint x="355" y="715" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_cmdIn" value="cmdIn" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="325" y="730" width="60" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- cmdRegOut (output) -->
+        <mxCell id="port_cmdRegOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EFEBE9;strokeColor=#6D4C41;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="390" y="700" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_cmdRegOut" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6D4C41" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="405" y="715" as="sourcePoint"/>
+            <mxPoint x="405" y="730" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_cmdRegOut" value="cmdRegOut" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="365" y="745" width="80" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- cmdResponseOut (output) -->
+        <mxCell id="port_cmdResponseOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EFEBE9;strokeColor=#6D4C41;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="440" y="700" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_cmdResponseOut" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6D4C41" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="455" y="715" as="sourcePoint"/>
+            <mxPoint x="455" y="730" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_cmdResponseOut" value="cmdResponseOut" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="400" y="730" width="110" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- logOut (output) -->
+        <mxCell id="port_logOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EFEBE9;strokeColor=#6D4C41;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="490" y="700" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_logOut" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6D4C41" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="505" y="715" as="sourcePoint"/>
+            <mxPoint x="505" y="730" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_logOut" value="logOut" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="475" y="745" width="60" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- LogText (output) -->
+        <mxCell id="port_LogText" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EFEBE9;strokeColor=#6D4C41;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="540" y="700" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_LogText" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6D4C41" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="555" y="715" as="sourcePoint"/>
+            <mxPoint x="555" y="730" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_LogText" value="LogText" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="525" y="730" width="60" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- timeCaller (output) -->
+        <mxCell id="port_timeCaller" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EFEBE9;strokeColor=#6D4C41;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="590" y="700" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_timeCaller" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6D4C41" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="605" y="715" as="sourcePoint"/>
+            <mxPoint x="605" y="730" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_timeCaller" value="timeCaller" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="565" y="745" width="80" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- tlmOut (output) -->
+        <mxCell id="port_tlmOut" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EFEBE9;strokeColor=#6D4C41;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="640" y="700" width="30" height="15" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow_tlmOut" value="" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6D4C41" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="655" y="715" as="sourcePoint"/>
+            <mxPoint x="655" y="730" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label_tlmOut" value="tlmOut" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;fontSize=9" vertex="1" parent="1">
+          <mxGeometry x="625" y="730" width="60" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend_box" value="Port Color Legend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;verticalAlign=top;fontSize=10;fontStyle=1;align=left" vertex="1" parent="1">
+          <mxGeometry x="100" y="600" width="160" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend_async" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="110" y="630" width="20" height="12" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend_async_label" value="Async Input" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=8" vertex="1" parent="1">
+          <mxGeometry x="135" y="625" width="115" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend_sync" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#2196F3;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="110" y="650" width="20" height="12" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend_sync_label" value="Sync Input" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=8" vertex="1" parent="1">
+          <mxGeometry x="135" y="645" width="115" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend_ac" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EFEBE9;strokeColor=#6D4C41;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="110" y="670" width="20" height="12" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend_ac_label" value="F Prime AC Ports" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=8" vertex="1" parent="1">
+          <mxGeometry x="135" y="665" width="115" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend_output" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="110" y="690" width="20" height="12" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend_output_label" value="Output Ports" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=8" vertex="1" parent="1">
+          <mxGeometry x="135" y="685" width="115" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend_note" value="(Direction indicated by arrows)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=7;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="100" y="702" width="160" height="15" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

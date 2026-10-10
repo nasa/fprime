@@ -109,6 +109,12 @@ TEST_F(Functionality, CopyFile) {
     move_rule.apply(*tester);
 }
 
+// CopyFileOverwrite
+TEST_F(Functionality, CopyFileOverwrite) {
+    Os::Test::FileSystem::Tester::CopyFileOverwrite copy_overwrite_rule;
+    copy_overwrite_rule.apply(*tester);
+}
+
 // AppendFile
 TEST_F(Functionality, AppendFile) {
     Os::Test::FileSystem::Tester::AppendFile append_rule;
@@ -153,6 +159,7 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::FileSystem::Tester::MoveFile move_rule;
     Os::Test::FileSystem::Tester::RenameFile rename_rule;
     Os::Test::FileSystem::Tester::CopyFile copyfile_rule;
+    Os::Test::FileSystem::Tester::CopyFileOverwrite copyfile_overwrite_rule;
     Os::Test::FileSystem::Tester::AppendFile append_rule;
     Os::Test::FileSystem::Tester::AppendToNewFile append_new_rule;
     Os::Test::FileSystem::Tester::GetFileSize file_size_rule;
@@ -160,21 +167,11 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::FileSystem::Tester::GetSetWorkingDirectory cwd_rule;
 
     // Place these rules into a list of rules
-    STest::Rule<Os::Test::FileSystem::Tester>* rules[] = {&directory_exists_rule,
-                                                          &file_exists_rule,
-                                                          &not_exists_rule,
-                                                          &remove_rule,
-                                                          &remove_directory_rule,
-                                                          &touch_rule,
-                                                          &create_directory_rule,
-                                                          &move_rule,
-                                                          &rename_rule,
-                                                          &copyfile_rule,
-                                                          &append_rule,
-                                                          &append_new_rule,
-                                                          &file_size_rule,
-                                                          &free_space_rule,
-                                                          &cwd_rule};
+    STest::Rule<Os::Test::FileSystem::Tester>* rules[] = {
+        &directory_exists_rule, &file_exists_rule, &not_exists_rule,         &remove_rule,
+        &remove_directory_rule, &touch_rule,       &create_directory_rule,   &move_rule,
+        &rename_rule,           &copyfile_rule,    &copyfile_overwrite_rule, &append_rule,
+        &append_new_rule,       &file_size_rule,   &free_space_rule,         &cwd_rule};
 
     // Take the rules and place them into a random scenario
     STest::RandomScenario<Os::Test::FileSystem::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));

@@ -7,8 +7,72 @@
 # point.
 #
 # Adding a new reviewer agent in the future is a matter of adding a
-# new entry here with `role: reviewer` plus the agent file. No code
-# changes elsewhere are required.
+# new entry here with `role: reviewer`, a `lens_kind`, a
+# `review_group`, plus the agent file. No code changes elsewhere are
+# required.
+#
+# Review groups (`review_group`) — session packing
+# ------------------------------------------------
+# Reviewers are lenses, not processes. The orchestrator packs the
+# reviewer set into one review session per `review_group` and runs
+# every lens in that group inside it, in registry order. Each lens
+# still posts its own inline comments and its own hidden-metadata
+# review exactly as before, so the GitHub-side artifacts, finding
+# keys, run ordinals and the aggregator's per-agent table are
+# unchanged by how lenses are packed. Grouping exists because session
+# startup, not prompt content, dominates review cost -- but sharing a
+# session is not free for every lens. Measured over 135 replicate
+# runs on small, medium and large PRs, lenses split into two kinds:
+#
+#   lens_kind: judgement  -- correctness, security, design,
+#      operational-consequences. These reason about behavior and kept
+#      most of their recall (0.6-1.0 of single-session recall) when
+#      sharing a session with one other judgement lens.
+#   lens_kind: checklist  -- C/C++ rules, maintainability, test
+#      quality, stale documentation, architecture, supply chain.
+#      These walk an enumerated list over every hunk and lost 50-95 %
+#      of their recall when sharing a session, the loss growing with
+#      diff size. A checklist lens always runs alone.
+#
+# Rules the orchestrator enforces (see review-orchestrator.agent.md
+# §Session assembly, review contract §13):
+#
+#   1. Every `role: reviewer` entry carries `lens_kind` and
+#      `review_group`. A missing or unrecognized value is not an error
+#      and never drops a lens: that reviewer runs in its own session.
+#      Adding a reviewer without touching this header is therefore
+#      always safe, just not maximally cheap.
+#   2. A `review_group` holds at most two lenses, both
+#      `lens_kind: judgement`. A `checklist` lens's `review_group`
+#      names only itself; a group that violates either constraint is
+#      split into single-lens sessions in registry order rather than
+#      run as written.
+#   3. Any reviewer with `contributes_to_ci_safety: true` is exempt
+#      from the review effort budget (contract §13d) whatever session
+#      it shares. The exemption is per lens, not per group: a
+#      non-safety lens sharing a session with a safety lens still
+#      carries the budget. Safety lenses read in full and trace
+#      untrusted input to exhaustion; the savings come from the other
+#      lenses.
+#   4. An optional `routing_skip_when` predicate lets the
+#      orchestrator skip a lens on a PR that touches nothing in its
+#      scope (review-orchestrator.agent.md §Routing). Predicates are
+#      evaluated against the changed-file list only, are conservative
+#      by construction, and default to absent — a lens without one
+#      always runs, and no predicate may be written for a safety
+#      lens. A skipped lens is reported as skipped, not as a lens
+#      that did not run, and forces no verdict.
+#   5. Sessions run in the order `security`, `supply-chain`,
+#      `system`, then the remaining groups in registry order. The two
+#      CI-safety contributors go first; the fixed order is what makes
+#      the first-poster-wins concurrence rule (contract §6a)
+#      deterministic.
+#
+# With today's entries this yields eight sessions: `security`
+# (security-review + correctness-review), `system` (design-review +
+# operational-consequences-review), and one each for supply-chain,
+# C/C++ design, stale-documentation, architecture, test-quality and
+# maintainability.
 
 agents:
 
@@ -18,9 +82,13 @@ agents:
     path: .github/agents/review-orchestrator.agent.md
     invocable_by_humans: true
     notes: >
-      Single human entry point. Drives the reviewer agents in
-      sequence, then the aggregator. Owns kickoff prompts (with the
-      orchestrator->agent thanks convention) and error handling.
+      Single human entry point. Packs the `role: reviewer` lenses
+      into one review session per `review_group`, drives those
+      sessions in fixed order, then performs the `role: aggregator`
+      work itself. Owns session assembly, routing, the effort-budget
+      blocks (contract 13), kickoff prompts (with the
+      orchestrator->agent thanks convention), severity reconciliation
+      (contract 14) and error handling.
 
   - name: F Prime Full-Codebase Review Orchestrator
     short_name: full-codebase-review
@@ -40,6 +108,8 @@ agents:
     short_name: security-review
     review_label: Security
     role: reviewer
+    lens_kind: judgement
+    review_group: security
     path: .github/agents/security-review.agent.md
     invocable_by_humans: true
     contributes_to_ci_safety: true
@@ -53,6 +123,8 @@ agents:
     short_name: supply-chain-review
     review_label: Supply Chain
     role: reviewer
+    lens_kind: checklist
+    review_group: supply-chain
     path: .github/agents/supply-chain-review.agent.md
     invocable_by_humans: true
     contributes_to_ci_safety: true
@@ -67,6 +139,11 @@ agents:
     short_name: fprime-code-review
     review_label: C++ Design
     role: reviewer
+    lens_kind: checklist
+    review_group: fprime-code
+    routing_skip_when: >
+      The PR's changed-file list contains no C or C++ source or
+      header file.
     path: .github/agents/fprime-code-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -82,6 +159,8 @@ agents:
     short_name: stale-documentation-review
     review_label: Documentation
     role: reviewer
+    lens_kind: checklist
+    review_group: stale-documentation
     path: .github/agents/stale-documentation-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -97,6 +176,8 @@ agents:
     short_name: design-review
     review_label: Design
     role: reviewer
+    lens_kind: judgement
+    review_group: system
     path: .github/agents/design-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -114,6 +195,11 @@ agents:
     short_name: architecture-review
     review_label: Architecture
     role: reviewer
+    lens_kind: checklist
+    review_group: architecture
+    routing_skip_when: >
+      The PR's changed-file list contains no `.fpp` model, no
+      topology or deployment file, and no component source or header.
     path: .github/agents/architecture-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -129,6 +215,11 @@ agents:
     short_name: test-quality-review
     review_label: Test Quality
     role: reviewer
+    lens_kind: checklist
+    review_group: test-quality
+    routing_skip_when: >
+      The PR's changed-file list contains no test file and no C/C++,
+      Python, or `.fpp` source whose behavior a test could cover.
     path: .github/agents/test-quality-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -147,6 +238,11 @@ agents:
     short_name: correctness-review
     review_label: Correctness
     role: reviewer
+    lens_kind: judgement
+    review_group: security
+    routing_skip_when: >
+      The PR's changed-file list contains no executable source of any
+      kind (C/C++, Python, CMake, shell).
     path: .github/agents/correctness-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -170,6 +266,8 @@ agents:
     short_name: operational-consequences-review
     review_label: Operational
     role: reviewer
+    lens_kind: judgement
+    review_group: system
     path: .github/agents/operational-consequences-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -196,6 +294,11 @@ agents:
     short_name: maintainability-review
     review_label: Maintainability
     role: reviewer
+    lens_kind: checklist
+    review_group: maintainability
+    routing_skip_when: >
+      The PR's changed-file list contains no executable source of any
+      kind (C/C++, Python, CMake, shell).
     path: .github/agents/maintainability-review.agent.md
     invocable_by_humans: true
     scope_summary: >
@@ -222,5 +325,11 @@ agents:
       status list) and submits ONE PR review (APPROVE or
       REQUEST_CHANGES) with the consolidated table, CI safety
       verdict, merge readiness verdict, optional Recommend Close
-      section, outstanding must-fix bullets, and a since-last-run
-      delta table.
+      section, outstanding must-fix bullets, a since-last-run delta
+      table, and the severity-reconciliation promotion log
+      (contract 14). The orchestrator executes this role itself once
+      the reviewer sessions have settled, rather than spawning a
+      further session for it (review-orchestrator.agent.md
+      Aggregation); this file remains the source of truth for what
+      the summary contains either way, and the agent stays
+      separately invocable for debugging.

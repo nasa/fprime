@@ -9,11 +9,12 @@
 //
 // The dependency constraints are:
 //
-//   1. config/OsDelegateRawTime.hpp (CFG) defines the Os::RawTime type alias by
+//   1. config/OsSelection.hpp (CFG) defines the Os::RawTime type alias by
 //      forward-declaring a link-time delegate (e.g. DelegateRawTime) or directly
 //      aliasing a concrete implementation (e.g. Va416x0Os::TimerRawTime).
 //      Must not include Os OSAL headers (they aren't yet defined).
-//      Should only be included in Os/RawTimeInterface.hpp.
+//      Should only be included in Os/RawTimeInterface.hpp,
+//      Os/MutexInterface.hpp, and Os/ConditionVariableInterface.hpp.
 //
 //   2. Os/RawTimeInterface.hpp (IF) needs the Os::RawTime alias in its
 //      method signatures, so it includes CFG first. It then defines
@@ -32,9 +33,9 @@
 
 #include "Os/RawTimeInterface.hpp"
 
-// Validate that OS_RAW_TIME_HEADER was defined by config/OsDelegateRawTime.hpp
+// Validate that OS_RAW_TIME_HEADER was defined by config/OsSelection.hpp
 #ifndef OS_RAW_TIME_HEADER
-#error "OS_RAW_TIME_HEADER must be defined in config/OsDelegateRawTime.hpp"
+#error "OS_RAW_TIME_HEADER must be defined in config/OsSelection.hpp"
 #endif
 
 #include OS_RAW_TIME_HEADER

@@ -111,6 +111,15 @@ struct CopyFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  CopyFileOverwrite: Copy a file onto an existing, longer file
+// ------------------------------------------------------------------------------------------------------
+struct CopyFileOverwrite : public STest::Rule<Os::Test::FileSystem::Tester> {
+    CopyFileOverwrite();
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
+};
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  AppendFile: Append a file to another existing file
 // ------------------------------------------------------------------------------------------------------
 struct AppendFile : public STest::Rule<Os::Test::FileSystem::Tester> {
