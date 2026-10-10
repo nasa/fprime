@@ -116,10 +116,34 @@ void AosFramer::compute_and_inject_fecf(AosVc& currentVc) {
 }
 
 void AosFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
-    // We just ask upstream for more packets
-    // comQueue decides to which VCs to allocate comStatus success
+    // A returned buffer does not mean the adapter is ready for another frame.
+    // Continue a spanning packet only after the previous frame's status arrives.
+    AosVc& currentVc = this->m_vcs[0];
+    if (currentVc.outstanding.packet.isValid()) {
+        FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED,
+                  static_cast<FwAssertArgType>(currentVc.frame.state));
+        if (condition == Fw::Success::SUCCESS) {
+            this->pack_pad_send(currentVc.outstanding.packet, currentVc.outstanding.context,
+                                currentVc.outstanding.offset);
+            // Either another frame now awaits its status, or packing the tail
+            // issued the one local credit needed to accept the next input.
+            return;
+        }
+
+        // A failed frame invalidates the unsent remainder. Return the original
+        // input before forwarding failure; an internal idle packet has no owner.
+        Fw::Buffer pending = currentVc.outstanding.packet;
+        const ComCfg::FrameContext context = currentVc.outstanding.context;
+        currentVc.outstanding.packet = {};
+        currentVc.outstanding.offset = 0;
+        currentVc.current_payload_offset = 0;
+        currentVc.past_first_fresh_packet = false;
+        if (!buffer_belongs(pending, currentVc.spp_idle.backer, sizeof(currentVc.spp_idle.backer))) {
+            this->dataReturnOut_out(0, pending, context);
+        }
+    }
+    // Forward startup, final-frame, failure and recovery statuses.
     if (this->isConnected_comStatusOut_OutputPort(portNum)) {
-        // Forward the comStatus upstream
         this->comStatusOut_out(portNum, condition);
     }
 }
@@ -133,11 +157,7 @@ void AosFramer ::dataReturnIn_handler(FwIndexType portNum,
     // Assert that the returned buffer is the member, and set ownership state
     FW_ASSERT(buffer_belongs(frameBuffer, currentVc.frame.backer, sizeof(currentVc.frame.backer)));
     currentVc.frame.state = BufferOwnershipState::OWNED;
-
-    // If we have an outstanding packet from the prior frame, pack it
-    if (currentVc.outstanding.packet.isValid()) {
-        this->pack_pad_send(currentVc.outstanding.packet, currentVc.outstanding.context, currentVc.outstanding.offset);
-    }
+    // comStatusIn advances any pending packet after the adapter reports readiness.
 }
 
 AosFramer::AosVc& AosFramer ::get_vc_struct(const ComCfg::FrameContext& context) {

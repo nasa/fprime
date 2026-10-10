@@ -273,12 +273,18 @@ void AosFramerTester ::testLongPacket() {
                 << " does not match expected idle pattern";
         }
 
-        // Return this buffer so the framer can reset
+        // Return ownership, then acknowledge the frame as required by the adapter protocol.
         this->invoke_to_dataReturnIn(0, outBuffer, outContext);
+        ASSERT_from_dataOut_SIZE(frame + 1);
+        ASSERT_from_comStatusOut_SIZE(0);
+        Fw::Success success = Fw::Success::SUCCESS;
+        this->invoke_to_comStatusIn(0, success);
     }
 
     // Make sure we don't send any extra frames (continue into null)
     ASSERT_from_dataOut_SIZE(3);
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success(Fw::Success::SUCCESS));
 }
 
 // Many Packets for one frame
