@@ -203,64 +203,65 @@ struct PopSerializableDirective {
     $size: Fpy.StackSizeType
 }
 
-internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
+# sequenceIndex is the value of m_sequencesStarted when the directive was dispatched
+internal port directive_waitRel(directive: WaitRelDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
+internal port directive_waitAbs(directive: WaitAbsDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_goto(directive: GotoDirective) priority 6 assert
+internal port directive_goto(directive: GotoDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_if(directive: IfDirective) priority 6 assert
+internal port directive_if(directive: IfDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_noOp(directive: NoOpDirective) priority 6 assert
+internal port directive_noOp(directive: NoOpDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_pushTlmVal(directive: PushTlmValDirective) priority 6 assert
+internal port directive_pushTlmVal(directive: PushTlmValDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_pushTlmValAndTime(directive: PushTlmValAndTimeDirective) priority 6 assert
+internal port directive_pushTlmValAndTime(directive: PushTlmValAndTimeDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_pushPrm(directive: PushPrmDirective) priority 6 assert
+internal port directive_pushPrm(directive: PushPrmDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_constCmd(directive: ConstCmdDirective) priority 6 assert
+internal port directive_constCmd(directive: ConstCmdDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_stackOp(directive: StackOpDirective) priority 6 assert
+internal port directive_stackOp(directive: StackOpDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_exit(directive: ExitDirective) priority 6 assert
+internal port directive_exit(directive: ExitDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_allocate(directive: AllocateDirective) priority 6 assert
+internal port directive_allocate(directive: AllocateDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_storeRelConstOffset(directive: StoreRelConstOffsetDirective) priority 6 assert
+internal port directive_storeRelConstOffset(directive: StoreRelConstOffsetDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_loadRel(directive: LoadRelDirective) priority 6 assert
+internal port directive_loadRel(directive: LoadRelDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_pushVal(directive: PushValDirective) priority 6 assert
+internal port directive_pushVal(directive: PushValDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_discard(directive: DiscardDirective) priority 6 assert
+internal port directive_discard(directive: DiscardDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_memCmp(directive: MemCmpDirective) priority 6 assert
+internal port directive_memCmp(directive: MemCmpDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_stackCmd(directive: StackCmdDirective) priority 6 assert
+internal port directive_stackCmd(directive: StackCmdDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_pushTime(directive: PushTimeDirective) priority 6 assert
+internal port directive_pushTime(directive: PushTimeDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_setSeed(directive: SetSeedDirective) priority 6 assert
+internal port directive_setSeed(directive: SetSeedDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_pushRand(directive: PushRandDirective) priority 6 assert
+internal port directive_pushRand(directive: PushRandDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_getField(directive: GetFieldDirective) priority 6 assert
+internal port directive_getField(directive: GetFieldDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_peek(directive: PeekDirective) priority 6 assert
+internal port directive_peek(directive: PeekDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_storeRel(directive: StoreRelDirective) priority 6 assert
+internal port directive_storeRel(directive: StoreRelDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_call(directive: CallDirective) priority 6 assert
+internal port directive_call(directive: CallDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_return(directive: ReturnDirective) priority 6 assert
+internal port directive_return(directive: ReturnDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_loadAbs(directive: LoadAbsDirective) priority 6 assert
+internal port directive_loadAbs(directive: LoadAbsDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_storeAbs(directive: StoreAbsDirective) priority 6 assert
+internal port directive_storeAbs(directive: StoreAbsDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_storeAbsConstOffset(directive: StoreAbsConstOffsetDirective) priority 6 assert
+internal port directive_storeAbsConstOffset(directive: StoreAbsConstOffsetDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_popEvent(directive: PopEventDirective) priority 6 assert
+internal port directive_popEvent(directive: PopEventDirective, sequenceIndex: U64) priority 6 assert
 
-internal port directive_popSerializable(directive: PopSerializableDirective) priority 6 assert
+internal port directive_popSerializable(directive: PopSerializableDirective, sequenceIndex: U64) priority 6 assert
