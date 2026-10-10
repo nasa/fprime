@@ -79,6 +79,7 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
                 // New channel - allocate a slot with an empty packet-membership list
                 entryIndex = this->m_numChannels++;
+                this->m_channels[entryIndex].id = id;
                 this->m_channels[entryIndex].hasValue = false;
                 this->m_channels[entryIndex].channelSize = channelSize;
                 this->m_channels[entryIndex].numPackets = 0;
@@ -98,7 +99,9 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             entry.channelSize = channelSize;
             // append this packet to the channel's membership list (packed at front)
             FW_ASSERT(entry.numPackets < MAX_PACKETIZER_PACKETS, static_cast<FwAssertArgType>(entry.numPackets));
-            entry.packets[entry.numPackets] = {pktEntry, packetLen};
+            // the offset must fit within U16
+            FW_ASSERT(packetLen <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(packetLen));
+            entry.packets[entry.numPackets] = {pktEntry, static_cast<U16>(packetLen)};
             entry.numPackets++;
 
             packetLen += entry.channelSize;
@@ -138,6 +141,7 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
             // New channel - allocate a slot with an empty packet-membership list
             entryIndex = this->m_numChannels++;
+            this->m_channels[entryIndex].id = id;
             this->m_channels[entryIndex].hasValue = false;
             this->m_channels[entryIndex].numPackets = 0;
             const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
@@ -281,10 +285,10 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
 
         // Lock only to capture the update status and reset the fill buffer flag.
         {
-          Os::ScopeLock lock(this->m_fillBuffers[pkt].lock);
-          isNewData = this->m_fillBuffers[pkt].updated;
-          entryGroup = this->m_fillBuffers[pkt].level;
-          this->m_fillBuffers[pkt].updated = false;
+            Os::ScopeLock lock(this->m_fillBuffers[pkt].lock);
+            isNewData = this->m_fillBuffers[pkt].updated;
+            entryGroup = this->m_fillBuffers[pkt].level;
+            this->m_fillBuffers[pkt].updated = false;
         }
 
         for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
@@ -362,8 +366,8 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
         // Only perform the buffer copy if at least one section needs to send.
         if (anySectionNeedsSend) {
             {
-              Os::ScopeLock lock(this->m_fillBuffers[pkt].lock);
-              sendBuffer = this->m_fillBuffers[pkt];
+                Os::ScopeLock lock(this->m_fillBuffers[pkt].lock);
+                sendBuffer = this->m_fillBuffers[pkt];
             }
 
             // serialize time into time offset in packet
