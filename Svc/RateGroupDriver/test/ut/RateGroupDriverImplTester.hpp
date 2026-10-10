@@ -20,6 +20,9 @@ class RateGroupDriverImplTester : public RateGroupDriverGTestBase {
 
     void runSchedNominal(Svc::RateGroupDriver::DividerSet dividersSet, FwIndexType numDividers);
 
+    //! Get the internal rollover value of the driver under test
+    FwSizeType getRollover() const;
+
   private:
     void from_CycleOut_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 
