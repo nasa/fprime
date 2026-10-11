@@ -76,6 +76,35 @@ void ComQueueTester ::emitOneAndCheck(FwIndexType expectedIndex, U8* expectedDat
     }
 }
 
+void ComQueueTester::assertZeroDropTelemetry() {
+    ComQueueIngressDrops zeroComIngress;
+    BuffQueueIngressDrops zeroBuffIngress;
+    ComQueueManagedDrops zeroComManaged;
+    BuffQueueManagedDrops zeroBuffManaged;
+    for (U32 i = 0; i < zeroComIngress.SIZE; i++) {
+        zeroComIngress[i] = 0;
+    }
+    for (U32 i = 0; i < zeroBuffIngress.SIZE; i++) {
+        zeroBuffIngress[i] = 0;
+    }
+    for (U32 i = 0; i < zeroComManaged.SIZE; i++) {
+        zeroComManaged[i] = 0;
+    }
+    for (U32 i = 0; i < zeroBuffManaged.SIZE; i++) {
+        zeroBuffManaged[i] = 0;
+    }
+    invoke_to_run(0, 0);
+    this->dispatchAll();
+    ASSERT_TLM_comIngressDropped_SIZE(1);
+    ASSERT_TLM_comIngressDropped(0, zeroComIngress);
+    ASSERT_TLM_buffIngressDropped_SIZE(1);
+    ASSERT_TLM_buffIngressDropped(0, zeroBuffIngress);
+    ASSERT_TLM_comManagedDropped_SIZE(1);
+    ASSERT_TLM_comManagedDropped(0, zeroComManaged);
+    ASSERT_TLM_buffManagedDropped_SIZE(1);
+    ASSERT_TLM_buffManagedDropped(0, zeroBuffManaged);
+}
+
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
@@ -126,6 +155,7 @@ void ComQueueTester ::testQueueFlush() {
     }
     this->emitOne();  // Ensure that nothing is emitted
     ASSERT_from_bufferReturnOut_SIZE(ComQueue::BUFFER_PORT_COUNT);
+    this->assertZeroDropTelemetry();
     clearFromPortHistory();
     component.cleanup();
 }
@@ -159,6 +189,7 @@ void ComQueueTester ::testQueueFlushAll() {
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
         ASSERT_from_bufferReturnOut(portNum, buffer);
     }
+    this->assertZeroDropTelemetry();
     clearFromPortHistory();
     component.cleanup();
 }
@@ -487,7 +518,12 @@ void ComQueueTester::testComPacketAsyncIngressDrop() {
     this->dispatchAll();
     ASSERT_TLM_comIngressDropped_SIZE(1);
     ASSERT_TLM_comIngressDropped(0, expectedComDrops);
+    BuffQueueIngressDrops zeroBuffDrops;
+    for (U32 i = 0; i < zeroBuffDrops.SIZE; i++) {
+        zeroBuffDrops[i] = 0;
+    }
     ASSERT_TLM_buffIngressDropped_SIZE(1);
+    ASSERT_TLM_buffIngressDropped(0, zeroBuffDrops);
 
     this->component.cleanup();
 }
@@ -530,7 +566,12 @@ void ComQueueTester::testBufferAsyncIngressDrop() {
     this->dispatchAll();
     ASSERT_TLM_buffIngressDropped_SIZE(1);
     ASSERT_TLM_buffIngressDropped(0, expectedBuffDrops);
+    ComQueueIngressDrops zeroComDrops;
+    for (U32 i = 0; i < zeroComDrops.SIZE; i++) {
+        zeroComDrops[i] = 0;
+    }
     ASSERT_TLM_comIngressDropped_SIZE(1);
+    ASSERT_TLM_comIngressDropped(0, zeroComDrops);
 
     this->component.cleanup();
 }
@@ -605,7 +646,12 @@ void ComQueueTester::testConcurrentComAsyncIngressDrop() {
     }
     ASSERT_TLM_comIngressDropped_SIZE(1);
     ASSERT_TLM_comIngressDropped(0, expectedCom);
+    BuffQueueIngressDrops zeroBuffDrops;
+    for (U32 i = 0; i < zeroBuffDrops.SIZE; i++) {
+        zeroBuffDrops[i] = 0;
+    }
     ASSERT_TLM_buffIngressDropped_SIZE(1);
+    ASSERT_TLM_buffIngressDropped(0, zeroBuffDrops);
     this->component.cleanup();
 }
 

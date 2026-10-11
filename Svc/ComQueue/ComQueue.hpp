@@ -272,14 +272,14 @@ class ComQueue final : public ComQueueComponentBase {
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
-    Fw::ComBuffer m_dequeued_com_buffer;                //!< Store a dequeued com buffer so it does not leave scope
-    Types::Queue m_queues[TOTAL_PORT_COUNT];            //!< Stores queued data waiting for transmission
-    QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
+    Fw::ComBuffer m_dequeued_com_buffer;                     //!< Store a dequeued com buffer so it does not leave scope
+    Types::Queue m_queues[TOTAL_PORT_COUNT];                 //!< Stores queued data waiting for transmission
+    QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];       //!< Priority sorted list of queue metadata
     std::atomic<U32> m_comIngressDrops[COM_PORT_COUNT];      //!< Async ingress drops per Com port
     std::atomic<U32> m_buffIngressDrops[BUFFER_PORT_COUNT];  //!< Async ingress drops per buffer port
-    U32 m_managedDrops[TOTAL_PORT_COUNT];                       //!< Managed queue overflow drops, single writer (dispatch thread)
-    bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles
-    SendState m_state;                                  //!< State of the component
+    U32 m_managedDrops[TOTAL_PORT_COUNT];     //!< Managed queue overflow drops, single writer (dispatch thread)
+    bool m_throttle[TOTAL_PORT_COUNT];        //!< Per-queue EVR throttles
+    SendState m_state;                        //!< State of the component
     std::atomic<BufferState> m_buffer_state;  //!< Ownership state of buffer, shared with the sync dataReturnIn caller
 
     // Storage for Fw::MemAllocator properties

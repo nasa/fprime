@@ -37,7 +37,7 @@ ComQueue ::ComQueue(const char* const compName)
       m_allocationId(static_cast<FwEnumStoreType>(-1)),
       m_allocator(nullptr),
       m_allocation(nullptr) {
-    // Initialize throttles to "off"
+    // Initialize throttles to "off" and managed-queue drop counters to zero
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
         this->m_managedDrops[i] = 0;
@@ -305,24 +305,29 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
     this->tlmWrite_buffQueueDepth(buffQueueDepth);
 
     ComQueueIngressDrops comIngressDropped;
+    FW_ASSERT(comIngressDropped.SIZE <= COM_PORT_COUNT, static_cast<FwAssertArgType>(comIngressDropped.SIZE));
     for (U32 i = 0; i < comIngressDropped.SIZE; i++) {
         comIngressDropped[i] = this->m_comIngressDrops[i].load(std::memory_order_relaxed);
     }
     this->tlmWrite_comIngressDropped(comIngressDropped);
 
     BuffQueueIngressDrops buffIngressDropped;
+    FW_ASSERT(buffIngressDropped.SIZE <= BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(buffIngressDropped.SIZE));
     for (U32 i = 0; i < buffIngressDropped.SIZE; i++) {
         buffIngressDropped[i] = this->m_buffIngressDrops[i].load(std::memory_order_relaxed);
     }
     this->tlmWrite_buffIngressDropped(buffIngressDropped);
 
     ComQueueManagedDrops comManagedDropped;
+    FW_ASSERT(comManagedDropped.SIZE <= COM_PORT_COUNT, static_cast<FwAssertArgType>(comManagedDropped.SIZE));
     for (U32 i = 0; i < comManagedDropped.SIZE; i++) {
         comManagedDropped[i] = this->m_managedDrops[i];
     }
     this->tlmWrite_comManagedDropped(comManagedDropped);
 
     BuffQueueManagedDrops buffManagedDropped;
+    FW_ASSERT((buffManagedDropped.SIZE + COM_PORT_COUNT) <= TOTAL_PORT_COUNT,
+              static_cast<FwAssertArgType>(buffManagedDropped.SIZE));
     for (U32 i = 0; i < buffManagedDropped.SIZE; i++) {
         buffManagedDropped[i] = this->m_managedDrops[COM_PORT_COUNT + i];
     }
