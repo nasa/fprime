@@ -548,7 +548,7 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
         return 0;
     }
 
-    // Encapsulation Idle Packet per CCSDS 133.1-B-3 Section 4.1.3.2
+    // A zero length-of-length denotes a non-idle one-byte EPP.
     U8 lengthOfLength = firstByte & EPPSubfields::lengthOfLengthMask;
     if (lengthOfLength == EppLengthOfLength::Zero) {
         return 1;  // Non-idle EPP with no length field has a one-byte header.

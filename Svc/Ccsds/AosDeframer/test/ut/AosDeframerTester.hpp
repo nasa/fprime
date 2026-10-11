@@ -157,8 +157,10 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test every EPP header split position across a frame boundary
     void testEppConformantHeaderSplits();
 
-    //! Test rejection of absent, short, and header-only EPP lengths, then recovery
+    //! Test acceptance of header-only EPP packets
     void testEppHeaderOnlyPackets();
+
+    //! Test rejection of EPP lengths shorter than their headers and subsequent recovery
     void testEppInvalidDeclaredLengths();
 
     //! Test that createEppPacket encodes the header-inclusive total length
