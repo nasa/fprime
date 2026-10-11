@@ -157,7 +157,18 @@ The loss counters are unsigned 32-bit cumulative counts since component construc
 They count drops caused by queue overflow only. Explicit `FLUSH_QUEUE` and `FLUSH_ALL_QUEUES` operations
 are excluded; returning a buffer during a commanded flush does not increment any drop counter.
 A managed queue `DROP_OLDEST` replacement counts as one lost message even though the new input is accepted.
-A configured FIFO depth of zero counts each rejected input as one managed queue loss.
+A configured managed queue depth of zero counts each rejected input as one managed queue loss.
+
+The ingress counters reflect overflow of the component instance's single shared asynchronous
+message queue, configured by the FPP instance `queue size` (for example,
+`ComCcsdsConfig.QueueSizes.comQueue`). This queue is shared by the async input ports,
+including `run`, and is distinct from the per-port managed queues. The managed drop
+counters reflect the corresponding `QueueConfigurationTable` entry's `depth` and
+`overflowMode` (for example, `ComCcsdsConfig.QueueDepths.events` and `.tlm`).
+Increasing a managed queue depth does not resolve saturation of the shared async queue.
+
+Deployments with an FPP telemetry packet set must include or explicitly omit the four
+new drop channels. The `Ref` deployment includes them in its `CDHErrors` packet.
 
 The `run` input is itself asynchronous with `drop` overflow behavior. If the async
 message queue is full, that telemetry invocation may be dropped too; the
@@ -204,7 +215,7 @@ the prioritized list.
 
 #### 4.9.4 enqueue
 
-Attempts to enqueue the buffer onto the queue index, logs a (throttled) warning if data is discarded, and immediately processes the queue if state is `READY`. A disabled (depth 0) queue never accepts data, so every message to it is discarded; because a disabled queue never drains, its overflow warning is logged once and then stays throttled.
+Attempts to enqueue a buffer into its per-port managed queue. A rejected input, including one sent to a disabled (depth 0) queue, increments the managed drop counter; a `DROP_OLDEST` replacement counts the displaced item as one drop even when the new input is accepted. The overflow warning is throttled per port. If the state is `READY`, processing resumes immediately. A disabled queue never drains, so its overflow warning remains throttled after the first rejection.
 
 #### 4.9.5 drainQueue
 

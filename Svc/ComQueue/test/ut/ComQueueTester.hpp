@@ -29,6 +29,9 @@ class ComQueueTester : public ComQueueGTestBase {
     // Queue depth supplied to the component instance under test
     static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
+    static const U32 CONCURRENT_INGRESS_TASKS = 4;
+    static const U32 CONCURRENT_INGRESS_DROPS_PER_TASK = 5000;
+
   private:
     // ----------------------------------------------------------------------
     // Construction and destruction
@@ -89,12 +92,6 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testFifoDropOldestAccounting();
 
-  private:
-    static const U32 CONCURRENT_INGRESS_TASKS = 4;
-    static const U32 CONCURRENT_INGRESS_DROPS_PER_TASK = 5000;
-    static void concurrentComAsyncProducerTask(void* context);
-
-  public:
     void testDepthZeroQueue();
 
     void testAllQueuesDisabled();
@@ -135,6 +132,12 @@ class ComQueueTester : public ComQueueGTestBase {
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------
+
+    //! Verify that neither flushing operation increments any drop counters
+    void assertZeroDropTelemetry();
+
+    //! Producer for the concurrent async ingress test
+    static void concurrentComAsyncProducerTask(void* context);
 
     //! Connect ports
     //!
