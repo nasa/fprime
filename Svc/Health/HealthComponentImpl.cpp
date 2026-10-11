@@ -76,7 +76,7 @@ void HealthImpl::PingReturn_handler(const FwIndexType portNum, U32 key) {
         Fw::LogStringArg _arg = this->m_pingTrackerEntries[portNum].entry.entryName;
         this->log_FATAL_HLTH_PING_WRONG_KEY(_arg, key);
     } else {
-        // reset the counter and clear the key
+        // reset the counter and FATAL reporting state, and clear the key
         this->m_pingTrackerEntries[portNum].cycleCount = 0;
         this->m_pingTrackerEntries[portNum].fatalReported = false;
         this->m_pingTrackerEntries[portNum].key = 0;
@@ -95,14 +95,15 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
 
     if (this->m_enabled == Fw::Enabled::ENABLED) {
         // cycle through ping table, pinging ports that are not awaiting a reply
-        // for ports that are awaiting a reply, decrement their counters
+        // for ports that are awaiting a reply, increment their counters
         // and check for violations
 
         for (FwIndexType entry = 0; entry < this->m_numPingEntries; entry++) {
             if (Fw::Enabled::ENABLED == this->m_pingTrackerEntries[entry].enabled) {
                 // If clear entry
                 if (0 == this->m_pingTrackerEntries[entry].cycleCount) {
-                    // start a ping
+                    // start a ping with a fresh timeout reporting state
+                    this->m_pingTrackerEntries[entry].fatalReported = false;
                     this->m_pingTrackerEntries[entry].key = this->m_key;
                     // send ping
                     this->PingSend_out(static_cast<FwIndexType>(entry), this->m_pingTrackerEntries[entry].key);
@@ -111,10 +112,12 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
                     // increment cycles for the entry
                     this->m_pingTrackerEntries[entry].cycleCount++;
                 } else {
-                    // check for FATAL timeout value first: warnCycles == fatalCycles is a legal
-                    // configuration, and the FATAL takes precedence over the warning
-                    if (this->m_pingTrackerEntries[entry].cycleCount >=
-                        this->m_pingTrackerEntries[entry].entry.fatalCycles) {
+                    // Check FATAL first: equal warning and FATAL thresholds are valid.
+                    // Once FATAL is reported, this ping must not emit another FATAL or
+                    // be downgraded to WARNING if the thresholds are raised.
+                    if (this->m_pingTrackerEntries[entry].entry.fatalCycles > 0 &&
+                        this->m_pingTrackerEntries[entry].cycleCount >=
+                            this->m_pingTrackerEntries[entry].entry.fatalCycles) {
                         if (!this->m_pingTrackerEntries[entry].fatalReported) {
                             Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
                             this->m_pingTrackerEntries[entry].fatalReported = true;

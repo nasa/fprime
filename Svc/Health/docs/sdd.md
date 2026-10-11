@@ -43,7 +43,7 @@ Port Data Type | Name | Direction | Kind | Usage
 
 #### 3.2.1 Pings
 
-The `Svc::Health` component monitors health by iterating through a table of port numbers and their maximum allowed timeout. The timeout is specified as the number of calls to the `SchedIn` port. The actual timeout value in wall time will be dependent on the rate at which the port is called. During each `SchedIn` port call, all the `PingSend` ports are called with a key. The key is simply a counter value maintained as a private data member. An active component with a `Svc::Ping` port is required to execute the port handler on the thread of the component. When the handler is invoked, it returns the value of the `Svc::Ping` port key argument as the argument to the output `Svc::Ping` port. When the health component receives the return port invocation on the `PingReturn` port, it sets a status in the tracking table indicating the response was received. In addition to dispatching pings to components, the `SchedIn` port call checks the status of all the dispatched pings to verify that they have not exceeded the specified timeout. If there is a call that is outstanding but has not timed out, a counter is decremented. The port is not pinged while there is an outstanding ping call. If an active component times out responding to a ping, the `Svc::Health` component sends a FATAL event. The component has commands to completely turn off monitoring, turn off monitoring for a specific port, or update the timeout values. The updated timeout values or monitoring updates are not stored through a software reset.
+The `Svc::Health` component monitors health by iterating through a table of port numbers and their maximum allowed timeout. The timeout is specified as the number of calls to the `SchedIn` port. The actual timeout value in wall time will be dependent on the rate at which the port is called. During each `SchedIn` port call, the enabled ping entries are checked. A `PingSend` port is called with a key only when its entry has no outstanding ping. The key is simply a counter value maintained as a private data member. An active component with a `Svc::Ping` port is required to execute the port handler on the thread of the component. When the handler is invoked, it returns the value of the `Svc::Ping` port key argument as the argument to the output `Svc::Ping` port. When the health component receives the return port invocation on the `PingReturn` port, it sets a status in the tracking table indicating the response was received. In addition to dispatching pings to components, the `SchedIn` port call checks the status of all the dispatched pings to verify that they have not exceeded the specified timeout. If there is an outstanding ping, its cycle counter is incremented. The port is not pinged again until a valid response resets the entry. A WARNING is emitted when the counter equals the warning threshold. For a nonzero FATAL threshold, a `HLTH_PING_LATE` event is emitted when the counter reaches or exceeds that threshold. This FATAL event is emitted only once per outstanding ping, and no subsequent WARNING is emitted after that FATAL. A valid ping response resets the reporting state. Changes made through `HLTH_CHNG_PING` take effect on the next health check for an outstanding ping: a lowered nonzero FATAL threshold can immediately trigger a FATAL event, while WARNING remains based on exact equality. A zero FATAL threshold does not trigger a timeout FATAL, preserving the previous behavior. Operators should exercise caution when lowering FATAL thresholds because a FATAL event can trigger software termination through the configured fatal handler. The component has commands to completely turn off monitoring, turn off monitoring for a specific port, or update the timeout values. The updated timeout values or monitoring updates are not stored through a software reset.
 
 ### 3.3 Scenarios
 
@@ -134,6 +134,21 @@ This test is similar to `6.1.8`, but it includes a nominal running of the SchedI
 ### 6.1.10 Miscellaneous 
 
 This set of test cases verifies the remaining off-nominal error cases. Each test case is simulated and validated individually.
+
+### 6.1.11 Update Timeout During Pending Ping Test
+
+This test verifies timeout handling when `HLTH_CHNG_PING` changes
+the thresholds of an outstanding ping. Lowering the nonzero FATAL
+threshold below the elapsed cycle count generates exactly one
+`HLTH_PING_LATE` event. Subsequent cycles do not repeat that FATAL,
+and raising the thresholds does not downgrade it to a WARNING.
+
+A valid ping response resets the reporting state, allowing a new
+ping to generate WARNING and FATAL events normally. The test also
+verifies that a zero FATAL threshold does not generate a timeout
+FATAL, preserving the previous behavior.
+
+Requirement verified: `HTH-003`, `HTH-006`
 
 ## 6.2 Unit Test Coverage
 

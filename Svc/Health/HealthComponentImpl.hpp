@@ -25,7 +25,7 @@ namespace Svc {
 //!  in its table and checks its status. If a ping entry
 //!  tracker is enabled, it will ping its corresponding port
 //!  with a provided key. If a ping return is outstanding,
-//!  a counter is decremented, and its value is checked
+//!  a counter is incremented, and its value is checked
 //!  against warning and fault thresholds. A watchdog is
 //!  always stroked in the run handler.
 
@@ -36,7 +36,7 @@ class HealthImpl final : public HealthComponentBase {
     //!  \brief struct for ping entry
     //!
     //!  struct for ping entry thresholds.
-    //!  Countdown is via calls to the run()
+    //!  Cycle counting is via calls to the run()
     //!  port. If no response by warnCycles,
     //!  an EVR will be generated and telemetry
     //!  count will be updated. If no response
@@ -138,7 +138,7 @@ class HealthImpl final : public HealthComponentBase {
     struct PingTracker {
         PingEntry entry;         //!< entry passed by user
         U32 cycleCount;          //!< current cycle count
-        bool fatalReported;      //!< whether FATAL was reported for this ping
+        bool fatalReported = false;  //!< whether FATAL was reported for this ping
         U32 key;                 //!< key passed to ping
         Fw::Enabled::t enabled;  //!< if current ping result is checked
     } m_pingTrackerEntries[NUM_PINGSEND_OUTPUT_PORTS];

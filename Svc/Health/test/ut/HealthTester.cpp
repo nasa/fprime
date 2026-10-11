@@ -518,8 +518,32 @@ void HealthTester::updateTimeoutDuringPendingPing() {
     for (U32 i = 0; i < 4; i++) {
         this->invoke_to_Run(0, 0);
     }
+    ASSERT_EVENTS_HLTH_PING_WARN_SIZE(1);
+    ASSERT_EVENTS_HLTH_PING_WARN(0, "task0");
     ASSERT_EVENTS_HLTH_PING_LATE_SIZE(1);
     ASSERT_EVENTS_HLTH_PING_LATE(0, "task0");
+
+    // A zero FATAL threshold must preserve the previous behavior:
+    // no FATAL timeout is reported for an outstanding ping.
+    this->sendCmd_HLTH_CHNG_PING(0, 13, task, 0, 0);
+    this->dispatchAll();
+
+    // Finish the previously timed-out ping so the next one starts clean.
+    const U32 zeroKey = this->component.m_pingTrackerEntries[0].key;
+    this->invoke_to_PingReturn(0, zeroKey);
+    this->dispatchAll();
+    ASSERT_FALSE(this->component.m_pingTrackerEntries[0].fatalReported);
+    ASSERT_EQ(0U, this->component.m_pingTrackerEntries[0].cycleCount);
+
+    this->clearEvents();
+
+    // Start a fresh unanswered ping with FATAL=0.
+    for (U32 i = 0; i < 3; i++) {
+        this->invoke_to_Run(0, 0);
+    }
+
+    ASSERT_EVENTS_HLTH_PING_LATE_SIZE(0);
+    ASSERT_EVENTS_HLTH_PING_WARN_SIZE(0);
 }
 
 void HealthTester ::watchdogCheck() {
