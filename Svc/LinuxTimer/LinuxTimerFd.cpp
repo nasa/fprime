@@ -32,7 +32,7 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
     }
     time_t seconds_value = static_cast<time_t>(interval.getSeconds());
     // Ensure an overflow did not occur
-    FW_ASSERT(seconds_value == interval.getSeconds());
+    FW_ASSERT(seconds_value >= 0 && static_cast<U32>(seconds_value) == interval.getSeconds());
     itval.it_interval.tv_sec = static_cast<time_t>(seconds_value);
     itval.it_interval.tv_nsec = static_cast<long>(interval.getUSeconds() * 1000);
     itval.it_value.tv_sec = static_cast<time_t>(seconds_value);
