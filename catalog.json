@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "d32863dd63952d1085890cc69c1b25ea6edb2257",
-  "generated_at": "2026-10-12T21:27:51Z",
+  "generated_at": "2026-10-12T22:14:07Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -23,14 +23,14 @@
     "tier": "silver"
   },
   "overall_int": {
-    "line_pct": 30.23,
-    "line_covered": 9628,
+    "line_pct": 30.24,
+    "line_covered": 9630,
     "line_total": 31847,
     "function_pct": 38.24,
     "function_covered": 1660,
     "function_total": 4341,
-    "branch_pct": 19.31,
-    "branch_covered": 3206,
+    "branch_pct": 19.33,
+    "branch_covered": 3209,
     "branch_total": 16601,
     "report": "int-coverage/coverage-all.html",
     "tier": "bronze"
@@ -3324,8 +3324,8 @@
         "function_pct": 78.12,
         "function_covered": 25,
         "function_total": 32,
-        "branch_pct": 60.98,
-        "branch_covered": 25,
+        "branch_pct": 63.41,
+        "branch_covered": 26,
         "branch_total": 41,
         "report": "Fw/Comp/int-coverage/index.html",
         "tier": "bronze"
@@ -4460,14 +4460,14 @@
         "tier": "silver"
       },
       "int": {
-        "line_pct": 41.13,
-        "line_covered": 102,
+        "line_pct": 41.53,
+        "line_covered": 103,
         "line_total": 248,
         "function_pct": 40.68,
         "function_covered": 24,
         "function_total": 59,
-        "branch_pct": 32.74,
-        "branch_covered": 37,
+        "branch_pct": 33.63,
+        "branch_covered": 38,
         "branch_total": 113,
         "report": "Fw/Time/int-coverage/index.html",
         "tier": "bronze"
@@ -7908,14 +7908,14 @@
         "tier": "gold"
       },
       "int": {
-        "line_pct": 38.87,
-        "line_covered": 330,
+        "line_pct": 38.99,
+        "line_covered": 331,
         "line_total": 849,
         "function_pct": 51.92,
         "function_covered": 54,
         "function_total": 104,
-        "branch_pct": 29.57,
-        "branch_covered": 157,
+        "branch_pct": 29.76,
+        "branch_covered": 158,
         "branch_total": 531,
         "report": "Svc/CmdSequencer/int-coverage/index.html",
         "tier": "bronze"
