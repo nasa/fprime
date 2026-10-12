@@ -160,11 +160,11 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
 
     //! Handler implementation for command GET_PACKET_CONFIG
     //!
-    //! Emits the effective per-packet configuration on QueriedPacketConfig.
-    void GET_PACKET_CONFIG_cmdHandler(FwOpcodeType opCode,                  //!< The opcode
-                                      U32 cmdSeq,                           //!< The command sequence number
-                                      U32 packetId,                         //!< Packet identifier
-                                      const Svc::TelemetrySection& section  //!< Section to query
+    //! Emits the effective per-packet configuration as the PacketConfigReport event.
+    void GET_PACKET_CONFIG_cmdHandler(FwOpcodeType opCode,                   //!< The opcode
+                                      U32 cmdSeq,                            //!< The command sequence number
+                                      const Svc::TelemetrySection& section,  //!< Section to query
+                                      U32 packetId                           //!< Packet identifier
                                       ) override;
 
     //! Handler implementation for command ENABLE_PACKET
@@ -172,8 +172,8 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //! Enable / disable a single packet as a per-packet override, then mirror to configOut.
     void ENABLE_PACKET_cmdHandler(FwOpcodeType opCode,                   //!< The opcode
                                   U32 cmdSeq,                            //!< The command sequence number
-                                  U32 packetId,                          //!< Packet identifier
                                   const Svc::TelemetrySection& section,  //!< Section to configure
+                                  U32 packetId,                          //!< Packet identifier
                                   const Fw::Enabled& enable              //!< Enable / disable this packet
                                   ) override;
 
@@ -182,8 +182,8 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //! Force / unforce a single packet as a per-packet override, then mirror to configOut.
     void FORCE_PACKET_cmdHandler(FwOpcodeType opCode,                   //!< The opcode
                                  U32 cmdSeq,                            //!< The command sequence number
-                                 U32 packetId,                          //!< Packet identifier
                                  const Svc::TelemetrySection& section,  //!< Section to configure
+                                 U32 packetId,                          //!< Packet identifier
                                  const Fw::Enabled& enable              //!< Force enable / disable
                                  ) override;
 
@@ -194,8 +194,8 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     void CONFIGURE_PACKET_RATES_cmdHandler(
         FwOpcodeType opCode,                   //!< The opcode
         U32 cmdSeq,                            //!< The command sequence number
-        U32 packetId,                          //!< Packet identifier
         const Svc::TelemetrySection& section,  //!< Section to configure
+        U32 packetId,                          //!< Packet identifier
         const Svc::RateLogic& rateLogic,       //!< Rate logic
         U32 minDelta,                          //!< Minimum Sched ticks between sends when using ON_CHANGE_MIN logic
         U32 maxDelta                           //!< Maximum Sched ticks between sends when using EVERY_MAX logic
@@ -205,10 +205,10 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //!
     //! Clear a single packet's per-packet override, reverting it to group-derived behavior,
     //! then mirror the cleared state to configOut.
-    void CLEAR_PACKET_OVERRIDE_cmdHandler(FwOpcodeType opCode,                  //!< The opcode
-                                          U32 cmdSeq,                           //!< The command sequence number
-                                          U32 packetId,                         //!< Packet identifier
-                                          const Svc::TelemetrySection& section  //!< Section to clear
+    void CLEAR_PACKET_OVERRIDE_cmdHandler(FwOpcodeType opCode,                   //!< The opcode
+                                          U32 cmdSeq,                            //!< The command sequence number
+                                          const Svc::TelemetrySection& section,  //!< Section to clear
+                                          U32 packetId                           //!< Packet identifier
                                           ) override;
 
     // number of packets to fill
@@ -252,12 +252,7 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
 
     TlmPacketizer_SectionConfigs m_groupConfigs{};
 
-    //! Per-packet policy overrides set by the ENABLE_PACKET / FORCE_PACKET /
-    //! CONFIGURE_PACKET_RATES commands. When m_packetOverridden is set, this value wins over
-    //! the group-derived policy for that packet/section. This is the per-packet control layer;
-    //! group config remains the base for non-overridden packets. Each change is mirrored out
-    //! configOut to the passive TlmPacketConfig for persistence.
-    Svc::PacketConfig m_packetOverride[TelemetrySection::NUM_SECTIONS][MAX_PACKETIZER_PACKETS]{};
+    Svc::TlmSendConfig m_packetOverride[TelemetrySection::NUM_SECTIONS][MAX_PACKETIZER_PACKETS]{};
     bool m_packetOverridden[TelemetrySection::NUM_SECTIONS][MAX_PACKETIZER_PACKETS]{};
 
     enum UpdateFlag : U8 {
@@ -307,32 +302,39 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
 
     //! \brief Compute the effective per-packet policy for a packet/section.
-    //!
-    //! Returns a reference to the pushed override if one is set for this packet/section;
-    //! otherwise fills \p scratch with the group-derived policy for the packet's level
-    //! and returns a reference to it.
-    const Svc::PacketConfig& effectiveConfig(FwIndexType section,
-                                             FwChanIdType pkt,
-                                             FwChanIdType group,
-                                             Svc::PacketConfig& scratch) const;
+    Svc::TlmSendConfig effectiveConfig(FwIndexType section, FwChanIdType pkt, FwChanIdType group) const;
 
     //! \brief Resolve a packet id to its index in the packet list.
-    //! \return true if found (index written to pkt), false otherwise.
     bool findPacketIndexById(U32 packetId, FwChanIdType& pkt) const;
 
-    //! \brief Validate a per-packet command's section, resolve packetId to a packet index, and
-    //! ensure an override slot exists for (section, pkt) seeded from the packet's current
-    //! effective config on first use. Returns true on success (s/pkt written); false on an invalid section or an
-    //! unknown packet id (UnknownPacketId logged) so the caller responds VALIDATION_ERROR.
-    bool resolveAndSeedOverride(const Svc::TelemetrySection& section, U32 packetId, FwSizeType& s, FwChanIdType& pkt);
+    //! \brief Validate a command's section and resolve packetId to a packet index.
+    //! \param section Section the command addresses
+    //! \param packetId External packet identifier to resolve
+    //! \param pkt Resolved packet index (written on success)
+    //! \return true on success; false on a bad section or unknown id (logs UnknownPacketId).
+    bool resolvePacket(const Svc::TelemetrySection& section, U32 packetId, FwChanIdType& pkt);
 
-    //! \brief Mirror the state for (section, pkt) out configOut so the passive TlmPacketConfig
-    //! can hold the same volatile state and persist it on save. \p overridden is ENABLED when an
-    //! override is active or DISABLED when the packet has been cleared to group-derived behavior.
-    void mirrorOverride(const Svc::TelemetrySection& section,
-                        FwChanIdType pkt,
-                        U32 packetId,
-                        const Fw::Enabled& overridden);
+    //! \brief Seed (section, pkt)'s override slot from its current effective config on first use,
+    //! so a command touching one field preserves the rest.
+    //! \param section Section the override applies to
+    //! \param pkt Resolved packet index
+    void seedOverride(const Svc::TelemetrySection& section, FwChanIdType pkt);
+
+    //! \brief Shared body for the override commands: validate, resolve, seed, mutate, mirror, respond.
+    //! \param mutate Callable applied to the packet's override policy (Svc::TlmSendConfig&)
+    template <typename Mutator>
+    void applyPacketOverride(FwOpcodeType opCode,
+                             U32 cmdSeq,
+                             const Svc::TelemetrySection& section,
+                             U32 packetId,
+                             bool argValid,
+                             Mutator mutate);
+
+    //! \brief Mirror (section, pkt)'s state out configOut for an external persistence component.
+    //! \param section Section the entry applies to
+    //! \param pkt Resolved packet index (packet id is derived from it)
+    //! \param source OVERRIDDEN when an override is active, GROUP_DEFAULT when cleared
+    void mirrorOverride(const Svc::TelemetrySection& section, FwChanIdType pkt, Svc::PacketConfigSource source);
 
   private:
     FwSizeType m_numChannels;  //!< number of channels being packetized

@@ -1,19 +1,17 @@
-# Svc::EnableSection Port
+# Svc/TlmPacketizerPorts SDD
 
-## 1. Introduction
+## 1 Introduction
 
-The `Svc::EnableSection ` port is used to enable / disable an output section of a `Svc::TlmPacketizer` 
+The `Svc/Ports/TlmPacketizerPorts` directory has ports and types for the `Svc::TlmPacketizer`.
 
-## 2. Design
+## 2 Port Descriptions
 
-### 2.1 Context
+Port Type | Purpose | Arguments
+---- | ---- | ----
+[EnableSection](../TlmPacketizerPorts.fpp) | Enable / disable an output section | `section`, `enabled`
+[ConfigureGroupRate](../TlmPacketizerPorts.fpp) | Configure a section/group's rate logic and thresholds | `section`, `tlmGroup`, `rateLogic`, `minDelta`, `maxDelta`
+[TlmPacketConfigUpdate](../TlmPacketizerPorts.fpp) | Mirror (`configOut`) or reload (`configIn`) per-packet overrides to/from an external persistence component | `count`, `batch`
 
-#### 2.1.1 TelemetrySection
+## 3 Example Usage
 
-[TelemetrySection](../../TlmPacketizer/config/TlmPacketizerConfig/TlmPacketizerCfg.fpp) is an enum used to choose which section of the `Svc::TlmPacketizer` to enable or disable. 
-
-## 3. Change Log
-
-Date | Description
----- | -----------
-2/17/2026 |  Initial Version
+[Svc/TlmPacketizer](../../TlmPacketizer/docs/sdd.md) uses these ports for its `controlIn`, `configureSectionGroupRate`, `configOut`, and `configIn` ports.

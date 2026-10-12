@@ -2003,7 +2003,7 @@ void TlmPacketizerTester ::perPacketOverrideTest() {
     // Override: disable packet 1 (id = 4) in PRIMARY only via the per-packet command. Its
     // SECONDARY copy and packet 2 remain group-enabled, so exactly one (packet, section) send
     // should drop out.
-    this->sendCmd_ENABLE_PACKET(0, 0, 4, Svc::TelemetrySection::REALTIME, Fw::Enabled::DISABLED);
+    this->sendCmd_ENABLE_PACKET(0, 0, Svc::TelemetrySection::REALTIME, 4, Fw::Enabled::DISABLED);
     this->component.doDispatch();
 
     // Populate both packets with data (same channels as sendPacketsTest)
@@ -2045,7 +2045,7 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     // changed. The stock group config is ON_CHANGE_MIN / not-forced, so those carry through.
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_ENABLE_PACKET(0, 10, 4, Svc::TelemetrySection::REALTIME, Fw::Enabled::DISABLED);
+    this->sendCmd_ENABLE_PACKET(0, 10, Svc::TelemetrySection::REALTIME, 4, Fw::Enabled::DISABLED);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_ENABLE_PACKET, 10, Fw::CmdResponse::OK);
@@ -2055,8 +2055,8 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
         const Svc::PacketConfigEntry& e = this->m_lastConfigBatch[0];
         ASSERT_EQ(e.get_packetId(), 4u);
         ASSERT_EQ(e.get_section(), Svc::TelemetrySection::REALTIME);
-        ASSERT_EQ(e.get_overridden(), Fw::Enabled::ENABLED);  // an active override
-        const Svc::PacketConfig c = e.get_config();
+        ASSERT_EQ(e.get_source(), Svc::PacketConfigSource::OVERRIDDEN);  // an active override
+        const Svc::TlmSendConfig c = e.get_config();
         ASSERT_EQ(c.get_enabled(), Fw::Enabled::DISABLED);            // set by the command
         ASSERT_EQ(c.get_forceEnabled(), Fw::Enabled::DISABLED);       // seeded from group config
         ASSERT_EQ(c.get_rateLogic(), Svc::RateLogic::ON_CHANGE_MIN);  // seeded from group config
@@ -2065,12 +2065,12 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     // FORCE_PACKET on the same id/section merges into the existing override.
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_FORCE_PACKET(0, 11, 4, Svc::TelemetrySection::REALTIME, Fw::Enabled::ENABLED);
+    this->sendCmd_FORCE_PACKET(0, 11, Svc::TelemetrySection::REALTIME, 4, Fw::Enabled::ENABLED);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_FORCE_PACKET, 11, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
     {
-        const Svc::PacketConfig c = this->m_lastConfigBatch[0].get_config();
+        const Svc::TlmSendConfig c = this->m_lastConfigBatch[0].get_config();
         ASSERT_EQ(c.get_enabled(), Fw::Enabled::DISABLED);      // preserved from ENABLE_PACKET
         ASSERT_EQ(c.get_forceEnabled(), Fw::Enabled::ENABLED);  // set by FORCE_PACKET
     }
@@ -2078,12 +2078,12 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     // CONFIGURE_PACKET_RATES sets the rate fields on the same override.
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_CONFIGURE_PACKET_RATES(0, 12, 4, Svc::TelemetrySection::REALTIME, Svc::RateLogic::EVERY_MAX, 5, 10);
+    this->sendCmd_CONFIGURE_PACKET_RATES(0, 12, Svc::TelemetrySection::REALTIME, 4, Svc::RateLogic::EVERY_MAX, 5, 10);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CONFIGURE_PACKET_RATES, 12, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
     {
-        const Svc::PacketConfig c = this->m_lastConfigBatch[0].get_config();
+        const Svc::TlmSendConfig c = this->m_lastConfigBatch[0].get_config();
         ASSERT_EQ(c.get_rateLogic(), Svc::RateLogic::EVERY_MAX);
         ASSERT_EQ(c.get_min(), 5u);
         ASSERT_EQ(c.get_max(), 10u);
@@ -2092,7 +2092,7 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     // Unknown packet id -> VALIDATION_ERROR + UnknownPacketId warning, and no mirror.
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_ENABLE_PACKET(0, 13, 9999, Svc::TelemetrySection::REALTIME, Fw::Enabled::ENABLED);
+    this->sendCmd_ENABLE_PACKET(0, 13, Svc::TelemetrySection::REALTIME, 9999, Fw::Enabled::ENABLED);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_ENABLE_PACKET, 13, Fw::CmdResponse::VALIDATION_ERROR);
     ASSERT_EVENTS_UnknownPacketId_SIZE(1);
@@ -2102,7 +2102,7 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     // Out-of-range section -> VALIDATION_ERROR, and no mirror.
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_FORCE_PACKET(0, 14, 4, Svc::TelemetrySection(Svc::TelemetrySection::NUM_SECTIONS),
+    this->sendCmd_FORCE_PACKET(0, 14, Svc::TelemetrySection(Svc::TelemetrySection::NUM_SECTIONS), 4,
                                Fw::Enabled::ENABLED);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_FORCE_PACKET, 14, Fw::CmdResponse::VALIDATION_ERROR);
@@ -2114,16 +2114,16 @@ void TlmPacketizerTester ::getPacketConfigTest() {
     this->component.setPacketList(packetList, ignore, 2);
     this->clearHistory();
 
-    // Known packet id (8) in SECONDARY -> OK + one QueriedPacketConfig report
-    this->sendCmd_GET_PACKET_CONFIG(0, 0, 8, Svc::TelemetrySection::RECORDED);
+    // Known packet id (8) in SECONDARY -> OK + one PacketConfigReport event
+    this->sendCmd_GET_PACKET_CONFIG(0, 0, Svc::TelemetrySection::RECORDED, 8);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_GET_PACKET_CONFIG, 0, Fw::CmdResponse::OK);
-    ASSERT_TLM_QueriedPacketConfig_SIZE(1);
+    ASSERT_EVENTS_PacketConfigReport_SIZE(1);
 
     // Unknown packet id -> VALIDATION_ERROR + UnknownPacketId warning
     this->clearHistory();
-    this->sendCmd_GET_PACKET_CONFIG(0, 1, 9999, Svc::TelemetrySection::REALTIME);
+    this->sendCmd_GET_PACKET_CONFIG(0, 1, Svc::TelemetrySection::REALTIME, 9999);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_GET_PACKET_CONFIG, 1, Fw::CmdResponse::VALIDATION_ERROR);
     ASSERT_EVENTS_UnknownPacketId_SIZE(1);
@@ -2136,7 +2136,7 @@ void TlmPacketizerTester ::configInReloadTest() {
 
     // Build a reload batch as TlmPacketConfig would on RELOAD_TO_PACKETIZER: disable packet
     // id 4 in REALTIME, plus an unknown id that must be warned and skipped (not applied).
-    Svc::PacketConfig disabled;
+    Svc::TlmSendConfig disabled;
     disabled.set_enabled(Fw::Enabled(Fw::Enabled::DISABLED));
     disabled.set_forceEnabled(Fw::Enabled(Fw::Enabled::DISABLED));
     disabled.set_rateLogic(Svc::RateLogic(Svc::RateLogic::ON_CHANGE_MIN));
@@ -2147,13 +2147,13 @@ void TlmPacketizerTester ::configInReloadTest() {
     known.set_packetId(4);
     known.set_section(Svc::TelemetrySection(Svc::TelemetrySection::REALTIME));
     known.set_config(disabled);
-    known.set_overridden(Fw::Enabled(Fw::Enabled::ENABLED));
+    known.set_source(Svc::PacketConfigSource(Svc::PacketConfigSource::OVERRIDDEN));
 
     Svc::PacketConfigEntry unknown;
     unknown.set_packetId(9999);
     unknown.set_section(Svc::TelemetrySection(Svc::TelemetrySection::REALTIME));
     unknown.set_config(disabled);
-    unknown.set_overridden(Fw::Enabled(Fw::Enabled::ENABLED));
+    unknown.set_source(Svc::PacketConfigSource(Svc::PacketConfigSource::OVERRIDDEN));
 
     Svc::PacketConfigBatch batch;
     batch[0] = known;
@@ -2234,11 +2234,11 @@ void TlmPacketizerTester ::seedFromEffectiveConfigTest() {
     // so the rate fields carry through instead of being reset to a fixed default.
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_ENABLE_PACKET(0, 20, 4, Svc::TelemetrySection::REALTIME, Fw::Enabled::DISABLED);
+    this->sendCmd_ENABLE_PACKET(0, 20, Svc::TelemetrySection::REALTIME, 4, Fw::Enabled::DISABLED);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_ENABLE_PACKET, 20, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
-    const Svc::PacketConfig c = this->m_lastConfigBatch[0].get_config();
+    const Svc::TlmSendConfig c = this->m_lastConfigBatch[0].get_config();
     ASSERT_EQ(c.get_enabled(), Fw::Enabled::DISABLED);        // set by the command
     ASSERT_EQ(c.get_rateLogic(), Svc::RateLogic::EVERY_MAX);  // seeded from the group, not reset
     ASSERT_EQ(c.get_min(), 7u);                               // seeded from the group
@@ -2251,7 +2251,7 @@ void TlmPacketizerTester ::clearPacketOverrideTest() {
 
     // Disable packet id 4 in REALTIME as a per-packet override.
     this->clearHistory();
-    this->sendCmd_ENABLE_PACKET(0, 30, 4, Svc::TelemetrySection::REALTIME, Fw::Enabled::DISABLED);
+    this->sendCmd_ENABLE_PACKET(0, 30, Svc::TelemetrySection::REALTIME, 4, Fw::Enabled::DISABLED);
     this->component.doDispatch();
 
     // With the override in place, packet 4 drops out of REALTIME: one fewer send than the baseline.
@@ -2265,12 +2265,12 @@ void TlmPacketizerTester ::clearPacketOverrideTest() {
     // CLEAR_PACKET_OVERRIDE reverts the packet to group behavior and mirrors the cleared state.
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_CLEAR_PACKET_OVERRIDE(0, 31, 4, Svc::TelemetrySection::REALTIME);
+    this->sendCmd_CLEAR_PACKET_OVERRIDE(0, 31, Svc::TelemetrySection::REALTIME, 4);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CLEAR_PACKET_OVERRIDE, 31, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
     ASSERT_EQ(this->m_lastConfigBatch[0].get_packetId(), 4u);
-    ASSERT_EQ(this->m_lastConfigBatch[0].get_overridden(), Fw::Enabled::DISABLED);  // cleared
+    ASSERT_EQ(this->m_lastConfigBatch[0].get_source(), Svc::PacketConfigSource::GROUP_DEFAULT);  // cleared
 
     // Behavior reverts: packet 4 sends again, back to the full baseline count.
     this->clearHistory();
@@ -2283,7 +2283,7 @@ void TlmPacketizerTester ::clearPacketOverrideTest() {
     // Unknown packet id -> VALIDATION_ERROR + UnknownPacketId warning, no mirror.
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_CLEAR_PACKET_OVERRIDE(0, 32, 9999, Svc::TelemetrySection::REALTIME);
+    this->sendCmd_CLEAR_PACKET_OVERRIDE(0, 32, Svc::TelemetrySection::REALTIME, 9999);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CLEAR_PACKET_OVERRIDE, 32, Fw::CmdResponse::VALIDATION_ERROR);
     ASSERT_EVENTS_UnknownPacketId_SIZE(1);
@@ -2296,7 +2296,7 @@ void TlmPacketizerTester ::configInBatchCapTest() {
     this->component.setPacketList(packetList, ignore, 2);
 
     // A valid override entry replicated across every batch slot (no spurious UnknownPacketId).
-    Svc::PacketConfig cfg;
+    Svc::TlmSendConfig cfg;
     cfg.set_enabled(Fw::Enabled(Fw::Enabled::DISABLED));
     cfg.set_forceEnabled(Fw::Enabled(Fw::Enabled::DISABLED));
     cfg.set_rateLogic(Svc::RateLogic(Svc::RateLogic::ON_CHANGE_MIN));
@@ -2306,7 +2306,7 @@ void TlmPacketizerTester ::configInBatchCapTest() {
     entry.set_packetId(4);
     entry.set_section(Svc::TelemetrySection(Svc::TelemetrySection::REALTIME));
     entry.set_config(cfg);
-    entry.set_overridden(Fw::Enabled(Fw::Enabled::ENABLED));
+    entry.set_source(Svc::PacketConfigSource(Svc::PacketConfigSource::OVERRIDDEN));
 
     Svc::PacketConfigBatch batch;
     const FwSizeType cap = static_cast<FwSizeType>(Svc::PacketConfigBatch::SIZE);

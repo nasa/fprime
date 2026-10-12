@@ -18,8 +18,7 @@ module Svc {
 
     constant NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS = MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1
 
-    @ Maximum number of per-packet config entries carried in a single push batch.
-    @ Sized so one fully-serialized batch stays well within FW_COM_BUFFER_MAX_SIZE.
+    @ Max per-packet config entries in one push batch; sizes PacketConfigBatch.
     constant MAX_TLM_PACKET_CONFIG_BATCH = 32
 
     @ Number of telemetry output (send) ports. These ports are all the outputs. Each section/group uses the configuration

@@ -120,18 +120,18 @@ Beyond the section/group controls above, `Svc::TlmPacketizer` supports fine-grai
 * `ENABLE_PACKET`: Enable / disable a single packet in a section.
 * `FORCE_PACKET`: Force a single packet to be emitted even when it or its section is disabled.
 * `CONFIGURE_PACKET_RATES`: Set the rate logic and MIN/MAX thresholds of a single packet.
-* `GET_PACKET_CONFIG`: Query a packet's effective configuration; the result is emitted on the `QueriedPacketConfig` telemetry channel. An unknown packet id raises the `UnknownPacketId` warning event.
+* `GET_PACKET_CONFIG`: Query a packet's effective configuration; the result is emitted as the `PacketConfigReport` event. An unknown packet id raises the `UnknownPacketId` warning event.
 * `CLEAR_PACKET_OVERRIDE`: Remove a packet's override, reverting it to group-derived behavior.
 
 **Authority / priority.** A per-packet override takes precedence over the section/group policy for that packet. Once a packet is overridden, its effective configuration is read entirely from the override and the group's `enabled` / `forceEnabled` / rate settings no longer apply to it. An overridden-disabled packet stays silent even in a group that is Force-Enabled. A packet remains overridden until `CLEAR_PACKET_OVERRIDE` (or a cleared `configIn` reload) restores group-derived behavior.
 
 **Seeding.** The first command that touches a packet seeds its override slot from the packet's *current effective* configuration (the group-derived policy for the packet's level). This preserves existing behavior: enabling a packet does not silently reset its rate logic or thresholds — untouched fields carry through from the group and only the commanded field changes.
 
-**Persistence (`configOut` / `configIn`).** Whenever a command changes or clears an override, the packetizer mirrors the resulting state out the `configOut` port to an external persistence component. Each mirrored `PacketConfigEntry` carries an `overridden` flag: `ENABLED` for an active override, `DISABLED` for a cleared packet. On boot (or on command) the persistence component pushes the stored overrides back in on the `configIn` port as one or more `TlmPacketConfigUpdate` batches; entries with `overridden == ENABLED` are re-applied and entries with `overridden == DISABLED` clear the corresponding slot. Entries referencing an unknown packet id are warned (`UnknownPacketId`) and skipped.
+**Persistence (`configOut` / `configIn`).** Whenever a command changes or clears an override, the packetizer mirrors the resulting state out the `configOut` port to an external persistence component. The persistence component pushes the stored overrides back in on the `configIn` port as one or more `TlmPacketConfigUpdate` batches. Entries with `source == OVERRIDDEN` are re-applied and entries with `source == GROUP_DEFAULT` clear the corresponding slot. Entries referencing an unknown packet id are warned (`UnknownPacketId`) and skipped.
 
 A single `configIn` batch is bounded by `MAX_TLM_PACKET_CONFIG_BATCH`. If a batch offers more entries than that capacity, the extra entries are dropped and the `ConfigBatchTruncated` warning event is emitted. Because a full reload may arrive as several back-to-back `configIn` messages, the packetizer's message queue must be sized to absorb that burst or reload messages may be dropped or assert on a full queue.
 
-**Telemetry timing caveat.** The `GET_PACKET_CONFIG` result is published asynchronously on the `QueriedPacketConfig` channel. Any consumer that reads that channel back after issuing the command (e.g. an FDIR response) must run the channel at `ON_CHANGE` and poll it *slower* than the TlmPacketizer's own rate group; otherwise it may observe a stale value from a previous query.
+**Query result.** The `GET_PACKET_CONFIG` result is emitted asynchronously as the `PacketConfigReport` event with the `PacketConfigEntry`.
 
 ### 3.4 State
 
@@ -326,9 +326,9 @@ constant TELEMETRY_SECTION_DEFAULTS = [
 
 ### 4.6 Per-Packet Configuration Batch Sizing and Queue Depth
 
-`MAX_TLM_PACKET_CONFIG_BATCH` (TlmPacketizerCfg.fpp) sets the maximum number of `PacketConfigEntry` records carried in a single `configOut` / `configIn` `TlmPacketConfigUpdate` message. It is sized so one fully-serialized batch stays well within `FW_COM_BUFFER_MAX_SIZE`.
+`MAX_TLM_PACKET_CONFIG_BATCH` (TlmPacketizerCfg.fpp) sets the maximum number of `PacketConfigEntry` records carried in a single `configOut` / `configIn` `TlmPacketConfigUpdate` message.
 
-When an external persistence component reloads overrides on `configIn`, a full push covering many packets may be split across several back-to-back messages of up to `MAX_TLM_PACKET_CONFIG_BATCH` entries each. The deployment must size the `Svc::TlmPacketizer` component's message queue deep enough to absorb this burst alongside its other async traffic (`Run`, `controlIn`, `configureSectionGroupRate`, commands); otherwise reload messages may be dropped or trigger a full-queue assert. A batch offering more than `MAX_TLM_PACKET_CONFIG_BATCH` entries has its extras dropped and raises the `ConfigBatchTruncated` warning event.
+When an external persistence component reloads overrides on `configIn`, a full push covering many packets may be split across several back-to-back messages. Because each message reserves a full `PacketConfigBatch` regardless of how many entries it carries, senders should pack each batch up to the full `MAX_TLM_PACKET_CONFIG_BATCH` capacity to minimize the number of messages. The deployment must size the `Svc::TlmPacketizer` component's message queue deep enough to absorb this burst alongside its other async traffic (`Run`, `controlIn`, `configureSectionGroupRate`, commands). Otherwise, reload messages may be dropped or trigger a full-queue assert. A batch offering more than `MAX_TLM_PACKET_CONFIG_BATCH` entries has its extras dropped and raises the `ConfigBatchTruncated` warning event.
 
 ## 5. Unit Testing
 

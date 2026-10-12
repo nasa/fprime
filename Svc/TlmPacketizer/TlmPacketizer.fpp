@@ -5,15 +5,7 @@ module Svc {
     # Types
     # ----------------------------------------------------------------------
     
-    struct GroupConfig {
-      enabled: Fw.Enabled       @< Enable / Disable Telemetry Output
-      forceEnabled: Fw.Enabled  @< Force Enable / Disable Telemetry Output
-      rateLogic: RateLogic      @< Rate Logic Configuration
-      min: U32                  @< Minimum Sched Ticks when in ON_CHANGE_MIN
-      max: U32                  @< Maximum Sched Ticks when in EVERY_MAX
-    }
-
-    array GroupConfigs = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] GroupConfig
+    array GroupConfigs = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] TlmSendConfig
     array SectionConfigs = [TelemetrySection.NUM_SECTIONS] GroupConfigs default TELEMETRY_SECTION_DEFAULTS
     array SectionEnabled = [TelemetrySection.NUM_SECTIONS] Fw.Enabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
 
@@ -135,45 +127,43 @@ module Svc {
                                       ) \
       opcode 5
 
-    @ Query the effective per-packet configuration. The result is emitted on the
-    @ QueriedPacketConfig telemetry channel; unknown ids raise UnknownPacketId.
+    @ Query the effective per-packet configuration.
     async command GET_PACKET_CONFIG(
-                                    packetId: U32               @< Packet identifier
                                     section: TelemetrySection   @< Section to query
+                                    packetId: U32               @< Packet identifier
                                   ) \
       opcode 6
 
     @ Enable / disable a single packet in a section (per-packet override)
     async command ENABLE_PACKET(
-                                 packetId: U32               @< Packet identifier
                                  section: TelemetrySection   @< Section to configure
+                                 packetId: U32               @< Packet identifier
                                  enable: Fw.Enabled          @< Enable / disable this packet
                                ) \
       opcode 7
 
     @ Force telemeter a single packet even when it (or its section) is disabled
     async command FORCE_PACKET(
-                                packetId: U32               @< Packet identifier
                                 section: TelemetrySection   @< Section to configure
+                                packetId: U32               @< Packet identifier
                                 enable: Fw.Enabled          @< Force enable / disable
                               ) \
       opcode 8
 
     @ Configure the rate logic and thresholds for a single packet
     async command CONFIGURE_PACKET_RATES(
-                                          packetId: U32               @< Packet identifier
                                           section: TelemetrySection   @< Section to configure
+                                          packetId: U32               @< Packet identifier
                                           rateLogic: RateLogic        @< Rate logic
                                           minDelta: U32               @< Minimum Sched ticks between sends (ON_CHANGE_MIN logic)
                                           maxDelta: U32               @< Maximum Sched ticks between sends (EVERY_MAX logic)
                                         ) \
       opcode 9
 
-    @ Clear a single packet's per-packet override, reverting it to group-derived behavior.
-    @ The cleared state is mirrored out configOut so persistent storage stays consistent.
+    @ Clear a single packet's per-packet override. Reverts to group-derived behavior.
     async command CLEAR_PACKET_OVERRIDE(
-                                         packetId: U32               @< Packet identifier
                                          section: TelemetrySection   @< Section to clear
+                                         packetId: U32               @< Packet identifier
                                        ) \
       opcode 10
 
@@ -264,6 +254,14 @@ module Svc {
       format "configIn batch of {} entries exceeds cap {}; extra entries dropped" \
       throttle 10
 
+    @ Effective per-packet configuration, emitted in response to GET_PACKET_CONFIG
+    event PacketConfigReport(
+                              packetConfig: PacketConfigEntry @< The effective per-packet configuration
+                            ) \
+      severity activity high \
+      id 9 \
+      format "Packet config: {}"
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
@@ -271,9 +269,6 @@ module Svc {
     @ Telemetry send level
     telemetry GroupConfigs: SectionConfigs id 0
     telemetry SectionEnabled: SectionEnabled id 1
-
-    @ Effective per-packet configuration, emitted in response to GET_PACKET_CONFIG
-    telemetry QueriedPacketConfig: PacketConfigEntry id 2
 
     array TelemetrySendSection = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] FwIndexType
     array TelemetrySendPortMap = [TelemetrySection.NUM_SECTIONS] TelemetrySendSection default TELEMETRY_SEND_PORT_MAPPING
