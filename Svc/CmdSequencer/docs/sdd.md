@@ -62,7 +62,7 @@ The `CS_Manual` command will put the sequencer in a manual stepping mode, where 
 ##### 3.2.2.5 CS_Start
 The `CS_Start` command will execute the first command in the sequence in manual mode.
 ##### 3.2.2.6 CS_Step
-The `CS_Step` command will execute subsequent commands after receiving the `CS_Start` command. If the previously stepped command is a timed command still waiting for its time tag, the command is rejected with an execution error and the `CS_InvalidMode` event; the pending command is kept and dispatched by `schedIn` when its time is reached.
+The `CS_Step` command will execute subsequent commands after receiving the `CS_Start` command. If the previously stepped command is a timed command still waiting for its time tag, the command is rejected with an execution error and the `CS_StepRecordPending` event, which reports the pending time tag; the pending command is kept and dispatched by `schedIn` when its time is reached, after which `CS_Step` is accepted again. Until then the sequence cannot be stepped past the pending record; the only way to abandon the wait is `CS_Cancel` (or `seqCancelIn`), which resets the sequence to its first record, so a subsequent `CS_Start` re-issues the commands already stepped.
 ##### 3.2.2.7 CS_Auto
 The `CS_Auto` command will change the sequencing mode from manual to automatic, which means that the sequencer will automatically execute commands upon loading. This command can only be run when there are no currently executing sequences. If a sequence is executing, a `CS_Cancel` followed by a `CS_Auto` will get the sequencer back to executing sequences automatically.
 ##### 3.2.2.8 CS_JOIN_WAIT
@@ -89,9 +89,10 @@ sequencer is in manual stepping mode (see `CS_Manual`), the request is
 rejected: the `CS_InvalidMode` event is emitted and `EXECUTION_ERROR` is
 returned on the `seqDone` port.
 
-Whenever a request on this port is rejected, `EXECUTION_ERROR` is returned on
-`seqDone` only if that port is connected, so a topology may drive `seqRunIn`
-without wiring `seqDone`.
+Whenever a request on this port (or on `seqDispatchIn`, which runs sequences the
+same way) is rejected, `EXECUTION_ERROR` is returned on `seqDone` only if that
+port is connected, so a topology may drive `seqRunIn` or `seqDispatchIn` without
+wiring `seqDone`.
 
 If `filename` is empty, then `CmdSequencer` runs the sequence stored in the
 sequence buffer, without loading a sequence first. In order for this to work:
@@ -352,3 +353,4 @@ Date | Change Description
 4/6/2017|Version for Unit test
 10/30/2017|Revise design to make sequence format configurable
 09/24/2026|Reject invalid time-tag microseconds and zero-record AMPCS files during validation (#5891)
+10/12/2026|Guard `seqDone` on rejected port runs; reject `CS_Step` with `CS_StepRecordPending` while a timed record is pending (#5899)

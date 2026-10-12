@@ -148,20 +148,16 @@ void CmdSequencerComponentImpl::CS_VALIDATE_cmdHandler(FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-//! Handler for input port seqRunIn
+//! Shared body of the seqRunIn and seqDispatchIn handlers
 void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     if (MANUAL == this->m_stepMode) {
         // In MANUAL mode nothing executes until CS_STEP, so a port-driven run would wedge
         this->log_WARNING_HI_CS_InvalidMode();
-        if (this->isConnected_seqDone_OutputPort(0)) {
-            this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
-        }
+        this->rejectSequenceRun();
         return;
     }
     if (!this->requireRunMode(STOPPED)) {
-        if (this->isConnected_seqDone_OutputPort(0)) {
-            this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
-        }
+        this->rejectSequenceRun();
         return;
     }
 
@@ -171,18 +167,14 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
         Fw::CmdStringArg cmdStr(filename);
         const bool status = this->loadFile(cmdStr);
         if (!status) {
-            if (this->isConnected_seqDone_OutputPort(0)) {
-                this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
-            }
+            this->rejectSequenceRun();
             return;
         }
     } else if (not this->m_sequence->hasMoreRecords()) {
         // No sequence loaded
         this->log_WARNING_LO_CS_NoSequenceActive();
         this->error();
-        if (this->isConnected_seqDone_OutputPort(0)) {
-            this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
-        }
+        this->rejectSequenceRun();
         return;
     }
 
@@ -202,6 +194,12 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     }
 
     this->log_ACTIVITY_HI_CS_PortSequenceStarted(this->m_sequence->getLogFileName());
+}
+
+void CmdSequencerComponentImpl::rejectSequenceRun() {
+    if (this->isConnected_seqDone_OutputPort(0)) {
+        this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    }
 }
 
 void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum,
@@ -396,7 +394,9 @@ void CmdSequencerComponentImpl ::CS_STEP_cmdHandler(FwOpcodeType opcode, U32 cmd
         if (this->m_cmdTimer.isSet()) {
             // The previously stepped record is still waiting for its time tag; stepping again
             // would overwrite it before it is dispatched
-            this->log_WARNING_HI_CS_InvalidMode();
+            const Fw::Time pendingTime = this->m_cmdTimer.getExpirationTime();
+            this->log_WARNING_LO_CS_StepRecordPending(this->m_sequence->getLogFileName(), pendingTime.getSeconds(),
+                                                      pendingTime.getUSeconds());
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }

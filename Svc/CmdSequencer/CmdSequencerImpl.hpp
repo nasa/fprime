@@ -445,6 +445,10 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
         //! \return Yes or no
         bool isSet() const { return this->m_state == SET; }
 
+        //! Get the expiration time
+        //! \return The time at which a set timer expires
+        Fw::Time getExpirationTime() const { return this->expirationTime; }
+
         //! Determine whether the timer is expired at a given time
         //! \return Yes or no
         bool isExpiredAt(Fw::Time time  //!< The time
@@ -654,8 +658,12 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     void setCmdTimeout(const Fw::Time& currentTime  //!< The current time
     );
 
-    //! Sequence run helper
+    //! Shared body of the seqRunIn and seqDispatchIn handlers
     void doSequenceRun(const Fw::StringBase& fileName);
+
+    //! Answer a rejected seqRunIn / seqDispatchIn request with EXECUTION_ERROR on seqDone,
+    //! if that port is connected
+    void rejectSequenceRun();
 
   private:
     // ----------------------------------------------------------------------

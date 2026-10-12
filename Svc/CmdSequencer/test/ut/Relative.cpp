@@ -66,7 +66,8 @@ void CmdSequencerTester ::StepWhileRecordPending() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_STEP, stepCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
+    ASSERT_EVENTS_CS_StepRecordPending_SIZE(1);
+    ASSERT_EVENTS_CS_StepRecordPending(0, fileName, pendingTime.getSeconds(), pendingTime.getUSeconds());
     ASSERT_from_comCmdOut_SIZE(0);
     ASSERT_EQ(CmdSequencerComponentImpl::Timer::SET, this->component.m_cmdTimer.m_state);
     ASSERT_EQ(Fw::TimeComparison::EQ, Fw::Time::compare(pendingTime, this->component.m_cmdTimer.expirationTime));
@@ -79,6 +80,10 @@ void CmdSequencerTester ::StepWhileRecordPending() {
     ASSERT_from_comCmdOut_SIZE(1);
     ASSERT_from_comCmdOut(0, comBuff, 0U);
     ASSERT_EQ(CmdSequencerComponentImpl::Timer::CLEAR, this->component.m_cmdTimer.m_state);
+    // With the timer cleared, the next step is accepted again and arms the timer for record 1
+    this->stepSequence(13);
+    ASSERT_EVENTS_CS_StepRecordPending_SIZE(0);
+    ASSERT_EQ(CmdSequencerComponentImpl::Timer::SET, this->component.m_cmdTimer.m_state);
 }
 
 // ----------------------------------------------------------------------
