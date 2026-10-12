@@ -441,6 +441,10 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
         //! Clear the timer
         void clear() { this->m_state = CLEAR; }
 
+        //! Determine whether the timer is set
+        //! \return Yes or no
+        bool isSet() const { return this->m_state == SET; }
+
         //! Determine whether the timer is expired at a given time
         //! \return Yes or no
         bool isExpiredAt(Fw::Time time  //!< The time

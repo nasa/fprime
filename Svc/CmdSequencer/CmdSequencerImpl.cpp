@@ -153,11 +153,15 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     if (MANUAL == this->m_stepMode) {
         // In MANUAL mode nothing executes until CS_STEP, so a port-driven run would wedge
         this->log_WARNING_HI_CS_InvalidMode();
-        this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+        if (this->isConnected_seqDone_OutputPort(0)) {
+            this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+        }
         return;
     }
     if (!this->requireRunMode(STOPPED)) {
-        this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+        if (this->isConnected_seqDone_OutputPort(0)) {
+            this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+        }
         return;
     }
 
@@ -167,14 +171,18 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
         Fw::CmdStringArg cmdStr(filename);
         const bool status = this->loadFile(cmdStr);
         if (!status) {
-            this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+            if (this->isConnected_seqDone_OutputPort(0)) {
+                this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+            }
             return;
         }
     } else if (not this->m_sequence->hasMoreRecords()) {
         // No sequence loaded
         this->log_WARNING_LO_CS_NoSequenceActive();
         this->error();
-        this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+        if (this->isConnected_seqDone_OutputPort(0)) {
+            this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+        }
         return;
     }
 
@@ -381,6 +389,13 @@ void CmdSequencerComponentImpl ::CS_STEP_cmdHandler(FwOpcodeType opcode, U32 cmd
     if (this->requireRunMode(RUNNING)) {
         if (MANUAL != this->m_stepMode) {
             // CS_STEP is valid only in MANUAL step mode
+            this->log_WARNING_HI_CS_InvalidMode();
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+        if (this->m_cmdTimer.isSet()) {
+            // The previously stepped record is still waiting for its time tag; stepping again
+            // would overwrite it before it is dispatched
             this->log_WARNING_HI_CS_InvalidMode();
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;

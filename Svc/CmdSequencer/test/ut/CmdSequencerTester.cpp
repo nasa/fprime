@@ -351,6 +351,29 @@ void CmdSequencerTester ::parameterizedValidate(SequenceFiles::File& file) {
     this->validateFile(0, fileName);
 }
 
+void CmdSequencerTester ::parameterizedRunWithoutSeqDone() {
+    // A topology may drive seqRunIn or seqDispatchIn without wiring seqDone
+    CmdSequencerComponentImpl unwired("CmdSequencerNoSeqDone");
+    unwired.init(QUEUE_DEPTH, INSTANCE);
+    unwired.allocateBuffer(ALLOCATOR_ID, this->mallocator, BUFFER_SIZE);
+    ASSERT_FALSE(unwired.isConnected_seqDone_OutputPort(0));
+    // No sequence loaded
+    unwired.doSequenceRun(Fw::String(""));
+    // File cannot be loaded
+    unwired.doSequenceRun(Fw::String("CmdSequencerNoSeqDone/missing.bin"));
+    // Sequencer already running
+    unwired.m_runMode = CmdSequencerComponentImpl::RUNNING;
+    unwired.doSequenceRun(Fw::String(""));
+    unwired.m_runMode = CmdSequencerComponentImpl::STOPPED;
+    // MANUAL step mode
+    unwired.m_stepMode = CmdSequencerComponentImpl::MANUAL;
+    unwired.doSequenceRun(Fw::String(""));
+    // Every rejection left the sequencer stopped
+    ASSERT_EQ(CmdSequencerComponentImpl::STOPPED, unwired.m_runMode);
+    unwired.deallocateBuffer(this->mallocator);
+    unwired.deinit();
+}
+
 // ----------------------------------------------------------------------
 // Instance helper methods
 // ----------------------------------------------------------------------
