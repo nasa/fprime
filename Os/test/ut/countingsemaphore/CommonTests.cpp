@@ -9,6 +9,26 @@
 #include "Os/test/ConcurrentRule.hpp"
 #include "Os/test/ut/countingsemaphore/RulesHeaders.hpp"
 
+namespace {
+
+//! Poll until the expected number of waiters are blocked, bounded by a generous deadline
+bool wait_for_waiters(Os::Test::CountingSemaphore::Tester& tester,
+                      AggregatedConcurrentRule<Os::Test::CountingSemaphore::Tester>& aggregator,
+                      U32 expected) {
+    for (U32 i = 0; i < 5000; i++) {
+        {
+            Os::ScopeLock lock(aggregator.getLock());
+            if (tester.waiters == expected) {
+                return true;
+            }
+        }
+        Os::Task::delay(Fw::TimeInterval(0, 1000));
+    }
+    return false;
+}
+
+}  // namespace
+
 TEST(CountingSemaphore, InitialCount) {
     Os::CountingSemaphore sem(5U);
     for (U32 i = 0; i < 5; i++) {
@@ -24,16 +44,14 @@ TEST(CountingSemaphore, PostWait) {
     Os::Test::CountingSemaphore::Tester::Post post_rule(aggregator);
 
     aggregator.apply(tester);
-    // Brief wait to ensure Wait blocks on semaphore before triggering Post
-    Fw::TimeInterval delay(0, 10000);  // 10ms
-    Os::Task::delay(delay);
+    const bool blocked = wait_for_waiters(tester, aggregator, 1U);
+    std::string to_post("Post");
     {
         Os::ScopeLock lock(aggregator.getLock());
-        ASSERT_EQ(tester.waiters, 1U) << "Waiter should be blocked before post";
+        aggregator.notify(to_post);
     }
-    std::string to_post("Post");
-    aggregator.notify(to_post);
     aggregator.join();
+    ASSERT_TRUE(blocked) << "Waiter should be blocked before post";
     ASSERT_EQ(tester.waiters, 0U) << "Waiter should have completed via post";
 }
 
@@ -63,17 +81,12 @@ TEST(CountingSemaphore, MultipleWaiters) {
     Os::Test::CountingSemaphore::Tester::Wait wait_rule2(aggregator);
 
     aggregator.apply(tester);
-    // Brief wait to ensure both Waits block on semaphore before posting
-    Fw::TimeInterval delay(0, 10000);  // 10ms
-    Os::Task::delay(delay);
-    {
-        Os::ScopeLock lock(aggregator.getLock());
-        ASSERT_EQ(tester.waiters, 2U) << "Both waiters should be blocked before posting";
-    }
+    const bool blocked = wait_for_waiters(tester, aggregator, 2U);
     // Post directly from main thread to release both waiters
-    ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
-    ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
+    EXPECT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
+    EXPECT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
     aggregator.join();
+    ASSERT_TRUE(blocked) << "Both waiters should be blocked before posting";
     ASSERT_EQ(tester.waiters, 0U) << "All waiters should have completed";
 }
 
@@ -118,16 +131,14 @@ TEST(CountingSemaphore, TimeoutSuccess) {
     Os::Test::CountingSemaphore::Tester::Post post_rule(aggregator);
 
     aggregator.apply(tester);
-    // Brief wait to allow WaitTimeout to block on semaphore before triggering Post
-    Fw::TimeInterval delay(0, 10000);  // 10ms
-    Os::Task::delay(delay);
+    const bool blocked = wait_for_waiters(tester, aggregator, 1U);
+    std::string to_post("Post");
     {
         Os::ScopeLock lock(aggregator.getLock());
-        ASSERT_EQ(tester.waiters, 1U) << "WaitTimeout should be blocked before post";
+        aggregator.notify(to_post);
     }
-    std::string to_post("Post");
-    aggregator.notify(to_post);
     aggregator.join();
+    ASSERT_TRUE(blocked) << "WaitTimeout should be blocked before post";
     ASSERT_EQ(tester.waiters, 0U) << "Waiter should have completed via post, not timeout";
 }
 
@@ -159,21 +170,16 @@ TEST(CountingSemaphore, FairnessVerification) {
     Os::Test::CountingSemaphore::Tester::Wait wait_rule3(aggregator);
 
     aggregator.apply(tester);
-    // Wait for waiters to block before posting
-    Fw::TimeInterval delay(0, 15000);  // 15ms
-    Os::Task::delay(delay);
-    {
-        Os::ScopeLock lock(aggregator.getLock());
-        ASSERT_EQ(tester.waiters, 3U) << "All waiters should be blocked before posting";
-    }
+    const bool blocked = wait_for_waiters(tester, aggregator, 3U);
 
     // Post directly from main thread to unblock 3 waiters
     for (U32 i = 0; i < 3; i++) {
-        ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
+        EXPECT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
     }
 
     // All threads should complete successfully
     aggregator.join();
+    ASSERT_TRUE(blocked) << "All waiters should be blocked before posting";
     ASSERT_EQ(tester.waiters, 0U) << "All waiters should have completed";
 }
 
@@ -195,21 +201,16 @@ TEST(CountingSemaphore, ManyThreadsStress) {
     Os::Test::CountingSemaphore::Tester::Wait wait8(aggregator);
 
     aggregator.apply(tester);
-    // Wait for waiters to block before posting
-    Fw::TimeInterval delay(0, 30000);  // 30ms for 8 threads
-    Os::Task::delay(delay);
-    {
-        Os::ScopeLock lock(aggregator.getLock());
-        ASSERT_EQ(tester.waiters, 8U) << "All waiters should be blocked before posting";
-    }
+    const bool blocked = wait_for_waiters(tester, aggregator, 8U);
 
     // Post directly from main thread to unblock 8 waiters
     for (U32 i = 0; i < 8; i++) {
-        ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
+        EXPECT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
     }
 
     // All threads should complete successfully
     aggregator.join();
+    ASSERT_TRUE(blocked) << "All waiters should be blocked before posting";
     ASSERT_EQ(tester.waiters, 0U) << "All waiters should have completed";
 }
 
