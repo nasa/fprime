@@ -609,6 +609,13 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testRxEofWithErrorEvent();
     void testRxEofMdSizeMismatchEvent();
     void testRxTransactionLimitReachedEvent();
+
+    //! Stray PDUs that cannot start a transaction release their slot immediately and emit no
+    //! completion event, so a stream of them cannot exhaust the pool
+    void testOrphanPdusDoNotHoldSlots();
+
+    //! Receive transactions are capped at MaxSimultaneousRx so commanded transmit still has slots
+    void testRxCapReservesTxCapacity();
     void testRxInvalidDirectiveCodeEvent();
     void testRxInactivityTimeoutEvent();
     void testRxAckLimitReachedEvent();

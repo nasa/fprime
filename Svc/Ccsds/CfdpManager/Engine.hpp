@@ -273,6 +273,11 @@ class Engine {
      */
     void finishTransaction(Transaction* txn, bool keep_history);
 
+    //! Release a transaction that was allocated for an inbound PDU but never left the INIT
+    //! state. No transfer occurred, so no completion event is emitted and the slot is returned
+    //! to the FREE queue immediately instead of being held on the inactivity timer.
+    void abandonInitTransaction(Transaction* txn);
+
     /**
      * @brief Helper function to store transaction status code only
      *

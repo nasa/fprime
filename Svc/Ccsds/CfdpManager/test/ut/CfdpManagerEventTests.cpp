@@ -339,10 +339,13 @@ void CfdpManagerTester::testFailMetadataPduDeserializationEvent() {
     this->invoke_to_dataIn(channelId, pduBuffer);
     this->component.doDispatch();
 
-    // Verify FailMetadataPduDeserialization event and its arguments (a second recovery event
-    // also fires). The status is the deserialize error code from parsing the truncated body.
-    ASSERT_EVENTS_SIZE(2);
+    // Verify FailMetadataPduDeserialization event and its arguments. The status is the
+    // deserialize error code from parsing the truncated body. No transfer started, so no
+    // completion event fires and the transaction slot is released.
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FailMetadataPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EQ(0u, this->component.m_engine->m_channels[channelId]->getNumRx());
     ASSERT_EVENTS_FailMetadataPduDeserialization(0,                                                  // index
                                                  channelId,                                          // channelId
                                                  static_cast<I32>(Fw::FW_DESERIALIZE_SIZE_MISMATCH)  // status
@@ -943,11 +946,11 @@ void CfdpManagerTester::testRxEofMdSizeMismatchEvent() {
 }
 
 void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
-    // RxTransactionLimitReached emitted when all transaction slots exhausted
-    // Strategy: Fill up all CFDP_NUM_TRANSACTIONS_PER_CHANNEL slots, then send one more PDU
+    // RxTransactionLimitReached emitted when the receive cap is reached
+    // Strategy: Fill MaxSimultaneousRx receive slots, then send one more Metadata PDU
     //
-    // Note: CFDP_NUM_TRANSACTIONS_PER_CHANNEL is the total pool size shared by TX and RX.
-    // From CfdpCfg.hpp:
+    // Note: CFDP_NUM_TRANSACTIONS_PER_CHANNEL is the total pool size shared by TX and RX,
+    // of which MaxSimultaneousRx are intended for receive. From CfdpCfg.hpp:
     //   = MaxCommandedPlaybackFilesPerChan (10)
     //   + MaxSimultaneousRx (5)
     //   + (MaxPollingDirPerChan + MaxCommandedPlaybackDirectoriesPerChan) *
@@ -962,20 +965,20 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
 
     this->clearHistory();
 
-    // Exhaust all transaction slots in the FREE pool
-    // Channel::findUnusedTransaction() pulls from the shared FREE pool regardless of direction
-    for (U32 i = 0; i < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; i++) {
+    // Fill every receive slot permitted by the cap
+    for (U32 i = 0; i < MaxSimultaneousRx; i++) {
         this->sendMetadataPdu(channelId, sourceEid, destEid,
                               1000 + i,  // Unique transaction sequence
                               fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1, 1);
         this->component.doDispatch();
     }
+    ASSERT_EQ(static_cast<U32>(MaxSimultaneousRx), this->component.m_engine->m_channels[channelId]->getNumRx());
 
     // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Send one more PDU - this should trigger RxTransactionLimitReached
-    // because all transaction slots (FREE pool) are exhausted
+    // because the receive cap is reached
     this->sendMetadataPdu(channelId, sourceEid, destEid,
                           9999,  // Different transaction sequence
                           fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1, 1);
@@ -991,6 +994,113 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
 
     // Cleanup
     Os::FileSystem::removeFile(dstFile);
+}
+
+void CfdpManagerTester::testOrphanPdusDoNotHoldSlots() {
+    // A PDU with an unknown transaction ID that cannot start a transaction (here, an EOF
+    // with no prior Metadata) must not hold a transaction slot or report a completed
+    // transfer. Send more of them than the whole pool holds and confirm the channel is
+    // untouched afterward.
+    const U8 channelId = 0;
+    const EntityId sourceEid = TEST_GROUND_EID;
+    const EntityId destEid = this->component.getLocalEidParam();
+    const TransactionSeq firstOrphanSeq = 25000;
+    const TransactionSeq victimSeq = 26000;
+    const U32 orphanCount = 2 * CFDP_NUM_TRANSACTIONS_PER_CHANNEL;
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+
+    this->clearHistory();
+
+    for (U32 i = 0; i < orphanCount; ++i) {
+        const TransactionSeq seq = firstOrphanSeq + i;
+        // Alternate classes: EOF is unexpected as a first PDU in either class
+        const Cfdp::Class::T txmMode = (i % 2 == 0) ? Cfdp::Class::CLASS_1 : Cfdp::Class::CLASS_2;
+        this->sendEofPdu(channelId, sourceEid, destEid, seq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, 0, 0,
+                         txmMode);
+        this->component.doDispatch();
+        ASSERT_EQ(nullptr, this->findTransaction(channelId, seq)) << "Orphan EOF " << i << " held a slot";
+        ASSERT_EQ(0u, chan->getNumRx()) << "Orphan EOF " << i << " left the RX count raised";
+    }
+
+    // Every orphan was reported, none was reported as a completed transfer, none was refused
+    ASSERT_EVENTS_UnhandledPduInIdleState_SIZE(orphanCount);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EVENTS_RxTransactionLimitReached_SIZE(0);
+
+    // The whole pool is back on the FREE queue
+    U32 freeCount = 0;
+    for (U32 i = 0; i < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; ++i) {
+        if (chan->m_transactions[i].m_flags.com.q_index == QueueId::FREE) {
+            ++freeCount;
+        }
+    }
+    ASSERT_EQ(static_cast<U32>(CFDP_NUM_TRANSACTIONS_PER_CHANNEL), freeCount);
+
+    // A legitimate transfer can still start
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, sourceEid, destEid, victimSeq, 1, "/ground/valid.bin",
+                          "test/ut/output/victim_valid.bin", Cfdp::Class::CLASS_1, 1);
+    this->component.doDispatch();
+
+    Transaction* txn = this->findTransaction(channelId, victimSeq);
+    ASSERT_NE(nullptr, txn);
+    ASSERT_EQ(TxnState::TXN_STATE_R1, txn->m_state);
+    ASSERT_EQ(1u, chan->getNumRx());
+    ASSERT_EVENTS_RxTransactionLimitReached_SIZE(0);
+
+    Os::FileSystem::removeFile("test/ut/output/victim_valid.bin");
+}
+
+void CfdpManagerTester::testRxCapReservesTxCapacity() {
+    // With every receive slot in use, a commanded transmit must still find a slot
+    const U8 channelId = 0;
+    const EntityId sourceEid = TEST_GROUND_EID;
+    const EntityId destEid = this->component.getLocalEidParam();
+    const char* rxDstFile = "test/ut/output/rx_cap_dst.bin";
+    const char* txSrcFile = "test/ut/output/rx_cap_tx_src.bin";
+    const char* txDstFile = "/ground/rx_cap_tx_dst.bin";
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+
+    // A small source file for the commanded transmit
+    {
+        Os::File file;
+        ASSERT_EQ(Os::File::OP_OK, file.open(txSrcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE));
+        U8 payload[16] = {0};
+        FwSizeType size = sizeof(payload);
+        ASSERT_EQ(Os::File::OP_OK, file.write(payload, size));
+        file.close();
+    }
+
+    this->clearHistory();
+
+    // Fill the receive cap with real transactions
+    for (U32 i = 0; i < MaxSimultaneousRx; ++i) {
+        this->sendMetadataPdu(channelId, sourceEid, destEid, 3000 + i, 100, "/ground/rx_cap.bin", rxDstFile,
+                              Cfdp::Class::CLASS_1, 1);
+        this->component.doDispatch();
+    }
+    ASSERT_EQ(static_cast<U32>(MaxSimultaneousRx), chan->getNumRx());
+    ASSERT_EVENTS_RxTransactionLimitReached_SIZE(0);
+
+    // One more receive is refused at the cap
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, sourceEid, destEid, 3999, 100, "/ground/rx_cap.bin", rxDstFile,
+                          Cfdp::Class::CLASS_1, 1);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxTransactionLimitReached_SIZE(1);
+    ASSERT_EQ(nullptr, this->findTransaction(channelId, 3999));
+
+    // A commanded transmit still gets a slot
+    this->clearEvents();
+    Fw::String srcFilename(txSrcFile);
+    Fw::String dstFilename(txDstFile);
+    this->sendCmd_SendFile(0, 0, channelId, 2, Cfdp::Class::CLASS_1, Cfdp::Keep::KEEP, 0, srcFilename, dstFilename);
+    this->component.doDispatch();
+    ASSERT_EVENTS_MaxTxTransactionsReached_SIZE(0);
+    ASSERT_EQ(1u, chan->getNumCmdTx());
+
+    Os::FileSystem::removeFile(rxDstFile);
+    Os::FileSystem::removeFile(txSrcFile);
 }
 
 void CfdpManagerTester::testRxInvalidDirectiveCodeEvent() {
@@ -1242,9 +1352,13 @@ void CfdpManagerTester::testUnhandledPduInIdleStateEvent() {
                      Cfdp::Class::CLASS_1);
     this->component.doDispatch();
 
-    // Verify UnhandledPduInIdleState event (a second event also fires for the orphan PDU)
-    ASSERT_EVENTS_SIZE(2);
+    // Verify UnhandledPduInIdleState is the only event. No transfer happened, so no
+    // completion event is emitted, and the slot is released rather than held.
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_UnhandledPduInIdleState_SIZE(1);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EQ(nullptr, this->findTransaction(channelId, transactionSeq));
+    ASSERT_EQ(0u, this->component.m_engine->m_channels[channelId]->getNumRx());
 }
 
 void CfdpManagerTester::testInvalidDestinationEidEvent() {
@@ -2558,17 +2672,16 @@ void CfdpManagerTester::testChunklistUnavailableEvent() {
                           sizeof(testData), testData, Cfdp::Class::CLASS_2);
     this->component.doDispatch();
 
-    // Verify ChunklistUnavailable event and its argument.
-    // Note: Two events are emitted:
-    // 1. ChunklistUnavailable (line 509 of Engine.cpp) - when chunklist allocation fails
-    // 2. RxFileTransferCompleted (from finishTransaction line 962) - transaction status is UNDEFINED
-    //    which TxnStatusIsError treats as non-error, so success path is taken
-    ASSERT_EVENTS_SIZE(2);
+    // Verify ChunklistUnavailable event and its argument. The transaction never left INIT,
+    // so no completion event is emitted and the slot is released immediately.
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_ChunklistUnavailable_SIZE(1);
     ASSERT_EVENTS_ChunklistUnavailable(0,    // index
                                        9999  // abandoned transaction sequence
     );
-    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(1);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EQ(nullptr, this->findTransaction(0, 9999));
+    ASSERT_EQ(0u, chan->getNumRx());
 
     // Note: No cleanup needed - chunklists remain allocated but test isolation
     // handles component teardown

@@ -55,6 +55,7 @@ Channel::Channel(Engine* engine,
                  FwEnumStoreType memId)
     : m_engine(engine),
       m_numCmdTx(0),
+      m_numRx(0),
       m_currentTxn(nullptr),
       m_cfdpManager(cfdpManager),
       m_tickType(0),
@@ -632,6 +633,12 @@ void Channel::recycleTransaction(Transaction* txn) {
 
     // this should always be
     if (txn->m_history != nullptr) {
+        if (txn->m_history->dir == Direction::DIRECTION_RX) {
+            // Every RX transaction is allocated through Engine::startRxTransaction(), which
+            // counts it; this is the single release point.
+            this->decrementRxCounter();
+        }
+
         if (txn->m_chunks != nullptr) {
             chunklist_head = this->getChunkListHead(static_cast<U8>(txn->m_history->dir));
             if (chunklist_head != nullptr) {
@@ -692,6 +699,11 @@ void Channel::insertSortPrio(Transaction* txn, QueueId::T queue) {
 void Channel::decrementCmdTxCounter() {
     FW_ASSERT(m_numCmdTx);  // sanity check
     --m_numCmdTx;
+}
+
+void Channel::decrementRxCounter() {
+    FW_ASSERT(m_numRx);  // sanity check
+    --m_numRx;
 }
 
 void Channel::clearCurrentIfMatch(Transaction* txn) {
