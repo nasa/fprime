@@ -13,7 +13,6 @@
 #include <Fw/Prm/ParamValid.hpp>
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
 #include <TlmPacketizerConfig/FppConstantsAc.hpp>
-#include <algorithm>
 #include <cstring>
 
 namespace Svc {
@@ -690,32 +689,31 @@ void TlmPacketizer::seedOverride(const Svc::TelemetrySection& section, FwChanIdT
     }
 }
 
-void TlmPacketizer ::configIn_handler(FwIndexType portNum, FwSizeType count, const Svc::PacketConfigBatch& batch) {
-    // Receive packet level overrides from an external component.
-    const FwSizeType cap = static_cast<FwSizeType>(Svc::PacketConfigBatch::SIZE);
-    const FwSizeType n = std::min(count, cap);
-    if (count > cap) {
-        // More entries than the batch can hold were offered; the extras are silently dropped, so warn.
-        this->log_WARNING_HI_ConfigBatchTruncated(count, static_cast<U32>(cap));
-    }
-    for (FwSizeType entryIndex = 0; entryIndex < n; entryIndex++) {
-        const Svc::PacketConfigEntry& entry = batch[entryIndex];
-        FwChanIdType pkt = 0;
-        if (not this->resolvePacket(entry.get_section(), entry.get_packetId(), pkt)) {
-            continue;
+void TlmPacketizer ::configIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // Receive packet level overrides from an external component
+    if (fwBuffer.isValid()) {
+        auto deserializer = fwBuffer.getDeserializer();
+        Svc::PacketConfigEntry entry;
+        while (deserializer.deserializeTo(entry) == Fw::FW_SERIALIZE_OK) {
+            FwChanIdType pkt = 0;
+            if (not this->resolvePacket(entry.get_section(), entry.get_packetId(), pkt)) {
+                continue;
+            }
+            const FwSizeType sectionIndex = static_cast<FwSizeType>(entry.get_section());
+            switch (entry.get_source()) {
+                case Svc::PacketConfigSource::OVERRIDDEN:
+                    this->m_packetOverride[sectionIndex][pkt] = entry.get_config();
+                    this->m_packetOverridden[sectionIndex][pkt] = true;
+                    break;
+                case Svc::PacketConfigSource::GROUP_DEFAULT:
+                default:
+                    // A cleared entry reloads as "not overridden", reverting the packet to group behavior.
+                    this->m_packetOverridden[sectionIndex][pkt] = false;
+                    break;
+            }
         }
-        const FwSizeType sectionIndex = static_cast<FwSizeType>(entry.get_section());
-        switch (entry.get_source()) {
-            case Svc::PacketConfigSource::OVERRIDDEN:
-                this->m_packetOverride[sectionIndex][pkt] = entry.get_config();
-                this->m_packetOverridden[sectionIndex][pkt] = true;
-                break;
-            case Svc::PacketConfigSource::GROUP_DEFAULT:
-            default:
-                // A cleared entry reloads as "not overridden", reverting the packet to group behavior.
-                this->m_packetOverridden[sectionIndex][pkt] = false;
-                break;
-        }
+        // Return the reload buffer to the pool it came from.
+        this->bufferDeallocate_out(0, fwBuffer);
     }
 }
 
@@ -729,9 +727,20 @@ void TlmPacketizer::mirrorOverride(const Svc::TelemetrySection& section,
     const FwSizeType sectionIndex = static_cast<FwSizeType>(section.e);
     const Svc::PacketConfigEntry entry{static_cast<U32>(this->m_fillBuffers[pkt].id), section,
                                        this->m_packetOverride[sectionIndex][pkt], source};
-    Svc::PacketConfigBatch batch;
-    batch[0] = entry;
-    this->configOut_out(0, 1, batch);
+    const FwSizeType entrySize = static_cast<FwSizeType>(Svc::PacketConfigEntry::SERIALIZED_SIZE);
+    Fw::Buffer buffer = this->bufferAllocate_out(0, entrySize);
+    if ((not buffer.isValid()) or (static_cast<FwSizeType>(buffer.getSize()) < entrySize)) {
+        this->log_WARNING_HI_ConfigMirrorAllocFailed();
+        if (buffer.isValid()) {
+            this->bufferDeallocate_out(0, buffer);
+        }
+        return;
+    }
+    auto serializer = buffer.getSerializer();
+    const Fw::SerializeStatus status = serializer.serializeFrom(entry);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    buffer.setSize(static_cast<Fw::Buffer::SizeType>(entrySize));
+    this->configOut_out(0, buffer);
 }
 
 void TlmPacketizer::missingChannel(FwChanIdType id) {

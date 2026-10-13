@@ -11,6 +11,7 @@
 #ifndef TlmPacketizer_HPP
 #define TlmPacketizer_HPP
 
+#include "Fw/Buffer/Buffer.hpp"
 #include "Fw/DataStructures/Array.hpp"
 #include "Fw/DataStructures/RedBlackTreeMap.hpp"
 #include "Fw/Prm/PrmExternalTypes.hpp"
@@ -93,10 +94,9 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
                         U32 key                    /*!< Value to return to pinger*/
                         ) override;
 
-    //! Handler for input port configIn: reload path. Applies a batch of persisted overrides
-    void configIn_handler(FwIndexType portNum,                 //!< The port number
-                          FwSizeType count,                    //!< Number of valid entries in batch
-                          const Svc::PacketConfigBatch& batch  //!< Overrides to apply
+    //! Handler for input port configIn
+    void configIn_handler(FwIndexType portNum,  //!< The port number
+                          Fw::Buffer& fwBuffer  //!< Serialized PacketConfigEntry records to apply
                           ) override;
 
     //! Handler for input port TlmGet

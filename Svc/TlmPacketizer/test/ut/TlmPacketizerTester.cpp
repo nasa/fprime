@@ -1984,12 +1984,16 @@ void TlmPacketizerTester ::from_pingOut_handler(const FwIndexType portNum, U32 k
     this->pushFromPortEntry_pingOut(key);
 }
 
-void TlmPacketizerTester ::from_configOut_handler(FwIndexType portNum,
-                                                  FwSizeType count,
-                                                  const Svc::PacketConfigBatch& batch) {
+void TlmPacketizerTester ::from_configOut_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->m_configOutInvokes++;
-    this->m_lastConfigCount = count;
-    this->m_lastConfigBatch = batch;
+    (void)fwBuffer.getDeserializer().deserializeTo(this->m_lastConfigEntry);
+}
+
+Fw::Buffer TlmPacketizerTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
+    // Stand in for a BufferManager
+    const FwSizeType n = (size <= CONFIG_BUF_SLOT_SIZE) ? size : CONFIG_BUF_SLOT_SIZE;
+    this->m_configBuf.set(this->m_configBufSlot, static_cast<Fw::Buffer::SizeType>(n));
+    return this->m_configBuf;
 }
 
 // ----------------------------------------------------------------------
@@ -2050,9 +2054,8 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_ENABLE_PACKET, 10, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
-    ASSERT_EQ(static_cast<U32>(this->m_lastConfigCount), 1u);
     {
-        const Svc::PacketConfigEntry& e = this->m_lastConfigBatch[0];
+        const Svc::PacketConfigEntry& e = this->m_lastConfigEntry;
         ASSERT_EQ(e.get_packetId(), 4u);
         ASSERT_EQ(e.get_section(), Svc::TelemetrySection::REALTIME);
         ASSERT_EQ(e.get_source(), Svc::PacketConfigSource::OVERRIDDEN);  // an active override
@@ -2070,7 +2073,7 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_FORCE_PACKET, 11, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
     {
-        const Svc::TlmSendConfig c = this->m_lastConfigBatch[0].get_config();
+        const Svc::TlmSendConfig c = this->m_lastConfigEntry.get_config();
         ASSERT_EQ(c.get_enabled(), Fw::Enabled::DISABLED);      // preserved from ENABLE_PACKET
         ASSERT_EQ(c.get_forceEnabled(), Fw::Enabled::ENABLED);  // set by FORCE_PACKET
     }
@@ -2083,7 +2086,7 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CONFIGURE_PACKET_RATES, 12, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
     {
-        const Svc::TlmSendConfig c = this->m_lastConfigBatch[0].get_config();
+        const Svc::TlmSendConfig c = this->m_lastConfigEntry.get_config();
         ASSERT_EQ(c.get_rateLogic(), Svc::RateLogic::EVERY_MAX);
         ASSERT_EQ(c.get_min(), 5u);
         ASSERT_EQ(c.get_max(), 10u);
@@ -2155,18 +2158,24 @@ void TlmPacketizerTester ::configInReloadTest() {
     unknown.set_config(disabled);
     unknown.set_source(Svc::PacketConfigSource(Svc::PacketConfigSource::OVERRIDDEN));
 
-    Svc::PacketConfigBatch batch;
-    batch[0] = known;
-    batch[1] = unknown;
+    // Pack both records back-to-back into a buffer, as the persistence component would.
+    U8 slot[2 * Svc::PacketConfigEntry::SERIALIZED_SIZE];
+    Fw::Buffer reloadBuffer(slot, static_cast<Fw::Buffer::SizeType>(sizeof(slot)));
+    auto serializer = reloadBuffer.getSerializer();
+    (void)serializer.serializeFrom(known);
+    (void)serializer.serializeFrom(unknown);
+    reloadBuffer.setSize(static_cast<Fw::Buffer::SizeType>(serializer.getSize()));
 
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->invoke_to_configIn(0, 2, batch);
+    this->invoke_to_configIn(0, reloadBuffer);
     this->component.doDispatch();
 
     // The unknown id is warned and skipped; the reload path never echoes back out configOut.
     ASSERT_EVENTS_UnknownPacketId_SIZE(1);
     ASSERT_EQ(this->m_configOutInvokes, 0u);
+    
+    ASSERT_from_bufferDeallocate_SIZE(1);
 
     // The known override took effect: populate both packets, Run, and confirm exactly one
     // (packet, section) send dropped out relative to the all-enabled baseline.
@@ -2238,7 +2247,7 @@ void TlmPacketizerTester ::seedFromEffectiveConfigTest() {
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_ENABLE_PACKET, 20, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
-    const Svc::TlmSendConfig c = this->m_lastConfigBatch[0].get_config();
+    const Svc::TlmSendConfig c = this->m_lastConfigEntry.get_config();
     ASSERT_EQ(c.get_enabled(), Fw::Enabled::DISABLED);        // set by the command
     ASSERT_EQ(c.get_rateLogic(), Svc::RateLogic::EVERY_MAX);  // seeded from the group, not reset
     ASSERT_EQ(c.get_min(), 7u);                               // seeded from the group
@@ -2269,8 +2278,8 @@ void TlmPacketizerTester ::clearPacketOverrideTest() {
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CLEAR_PACKET_OVERRIDE, 31, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
-    ASSERT_EQ(this->m_lastConfigBatch[0].get_packetId(), 4u);
-    ASSERT_EQ(this->m_lastConfigBatch[0].get_source(), Svc::PacketConfigSource::GROUP_DEFAULT);  // cleared
+    ASSERT_EQ(this->m_lastConfigEntry.get_packetId(), 4u);
+    ASSERT_EQ(this->m_lastConfigEntry.get_source(), Svc::PacketConfigSource::GROUP_DEFAULT);  // cleared
 
     // Behavior reverts: packet 4 sends again, back to the full baseline count.
     this->clearHistory();
@@ -2291,35 +2300,6 @@ void TlmPacketizerTester ::clearPacketOverrideTest() {
     ASSERT_EQ(this->m_configOutInvokes, 0u);
 }
 
-void TlmPacketizerTester ::configInBatchCapTest() {
-    this->stockConfiguration();
-    this->component.setPacketList(packetList, ignore, 2);
-
-    // A valid override entry replicated across every batch slot (no spurious UnknownPacketId).
-    Svc::TlmSendConfig cfg;
-    cfg.set_enabled(Fw::Enabled(Fw::Enabled::DISABLED));
-    cfg.set_forceEnabled(Fw::Enabled(Fw::Enabled::DISABLED));
-    cfg.set_rateLogic(Svc::RateLogic(Svc::RateLogic::ON_CHANGE_MIN));
-    cfg.set_min(0);
-    cfg.set_max(0);
-    Svc::PacketConfigEntry entry;
-    entry.set_packetId(4);
-    entry.set_section(Svc::TelemetrySection(Svc::TelemetrySection::REALTIME));
-    entry.set_config(cfg);
-    entry.set_source(Svc::PacketConfigSource(Svc::PacketConfigSource::OVERRIDDEN));
-
-    Svc::PacketConfigBatch batch;
-    const FwSizeType cap = static_cast<FwSizeType>(Svc::PacketConfigBatch::SIZE);
-    for (FwSizeType i = 0; i < cap; i++) {
-        batch[i] = entry;
-    }
-
-    // Offer more entries than the batch can hold: the extras are dropped and a warning fires.
-    this->clearHistory();
-    this->invoke_to_configIn(0, cap + 1, batch);
-    this->component.doDispatch();
-    ASSERT_EVENTS_ConfigBatchTruncated_SIZE(1);
-}
 
 void TlmPacketizerTester ::connectPorts() {
     // PktSend
@@ -2375,10 +2355,13 @@ void TlmPacketizerTester ::connectPorts() {
 
     this->connect_to_configureSectionGroupRate(0, this->component.get_configureSectionGroupRate_InputPort(0));
 
-    // configOut (per-packet override mirror to the passive TlmPacketConfig)
+    // configOut (per-packet override mirror to an external persistence component)
     this->component.set_configOut_OutputPort(0, this->get_from_configOut(0));
 
-    // configIn (reload path: TlmPacketConfig pushes its persisted table back)
+    // Buffer allocate/deallocate (stand in for a BufferManager pool)
+    this->component.set_bufferAllocate_OutputPort(0, this->get_from_bufferAllocate(0));
+    this->component.set_bufferDeallocate_OutputPort(0, this->get_from_bufferDeallocate(0));
+
     this->connect_to_configIn(0, this->component.get_configIn_InputPort(0));
 }
 

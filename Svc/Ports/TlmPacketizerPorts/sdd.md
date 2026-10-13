@@ -10,8 +10,9 @@ Port Type | Purpose | Arguments
 ---- | ---- | ----
 [EnableSection](../TlmPacketizerPorts.fpp) | Enable / disable an output section | `section`, `enabled`
 [ConfigureGroupRate](../TlmPacketizerPorts.fpp) | Configure a section/group's rate logic and thresholds | `section`, `tlmGroup`, `rateLogic`, `minDelta`, `maxDelta`
-[TlmPacketConfigUpdate](../TlmPacketizerPorts.fpp) | Mirror (`configOut`) or reload (`configIn`) per-packet overrides to/from an external persistence component | `count`, `batch`
+
+The `PacketConfigEntry` type (packetId, section, config, source) is also defined here. Per-packet overrides are exchanged with an external persistence component as `PacketConfigEntry` records serialized into an `Fw.Buffer` over the packetizer's `configOut`/`configIn` ports (`Fw.BufferSend`).
 
 ## 3 Example Usage
 
-[Svc/TlmPacketizer](../../TlmPacketizer/docs/sdd.md) uses these ports for its `controlIn`, `configureSectionGroupRate`, `configOut`, and `configIn` ports.
+[Svc/TlmPacketizer](../../TlmPacketizer/docs/sdd.md) uses `EnableSection` for its `controlIn` port and `ConfigureGroupRate` for its `configureSectionGroupRate` port.

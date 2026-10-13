@@ -51,8 +51,10 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Fw::Com`](../../../Fw/Com/docs/sdd.md) | PktSend | Output | n/a | Array of ports used to write packets with updated telemetry\r
 [`Svc::EnableSection`](../../Ports/TlmPacketizerPorts/sdd.md) | controlIn | Input | Asynchronous | Enable / Disable sections of telemetry groups\r
 [`Svc::ConfigureGroupRate`](../../Ports/TlmPacketizerPorts/sdd.md) | configureSectionGroupRate | Input | Asynchronous | Configure a section/group rate logic and thresholds\r
-[`Svc::TlmPacketConfigUpdate`](../../Ports/TlmPacketizerPorts/sdd.md) | configOut | Output | n/a | Mirror per-packet override changes to an external persistence component\r
-[`Svc::TlmPacketConfigUpdate`](../../Ports/TlmPacketizerPorts/sdd.md) | configIn | Input | Asynchronous | Reload per-packet overrides from the persistence component (e.g. at boot)\r
+[`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | configOut | Output | n/a | Mirror a per-packet override change to an external persistence component\r
+[`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | configIn | Input | Asynchronous | Reload per-packet overrides from the persistence component (e.g. at boot)
+[`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.md) | bufferAllocate | Output | n/a | Allocate a buffer for a configOut mirror
+[`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | bufferDeallocate | Output | n/a | Return a configIn reload buffer to the pool after it is applied\r
 [`Svc::Ping`](../../Ping/docs/sdd.md) | pingIn / pingOut | Input / Output | Asynchronous / n/a | Health ping request and response\r
 
 #### 3.1.3 Terminology
@@ -127,9 +129,7 @@ Beyond the section/group controls above, `Svc::TlmPacketizer` supports fine-grai
 
 **Seeding.** The first command that touches a packet seeds its override slot from the packet's *current effective* configuration (the group-derived policy for the packet's level). This preserves existing behavior: enabling a packet does not silently reset its rate logic or thresholds — untouched fields carry through from the group and only the commanded field changes.
 
-**Persistence (`configOut` / `configIn`).** Whenever a command changes or clears an override, the packetizer mirrors the resulting state out the `configOut` port to an external persistence component. The persistence component pushes the stored overrides back in on the `configIn` port as one or more `TlmPacketConfigUpdate` batches. Entries with `source == OVERRIDDEN` are re-applied and entries with `source == GROUP_DEFAULT` clear the corresponding slot. Entries referencing an unknown packet id are warned (`UnknownPacketId`) and skipped.
-
-A single `configIn` batch is bounded by `MAX_TLM_PACKET_CONFIG_BATCH`. If a batch offers more entries than that capacity, the extra entries are dropped and the `ConfigBatchTruncated` warning event is emitted. Because a full reload may arrive as several back-to-back `configIn` messages, the packetizer's message queue must be sized to absorb that burst or reload messages may be dropped or assert on a full queue.
+**Persistence (`configOut` / `configIn`).** Whenever a command changes or clears an override, the packetizer allocates a buffer, serializes the resulting `PacketConfigEntry`, and mirrors it out the `configOut` port to an external persistence component. The persistence component pushes stored overrides back in on the `configIn` port as a buffer holding one or more serialized `PacketConfigEntry` records. The packetizer applies each in turn (`source == OVERRIDDEN` re-applies, `source == GROUP_DEFAULT` clears the slot), returns the buffer via `bufferDeallocate`, and warns (`UnknownPacketId`) on any unknown packet id. Both `configOut` and `configIn` buffers are drawn from a shared BufferManager pool, so a deployment must wire `bufferAllocate`/`bufferDeallocate` to one.
 
 **Query result.** The `GET_PACKET_CONFIG` result is emitted asynchronously as the `PacketConfigReport` event with the `PacketConfigEntry`.
 
@@ -154,7 +154,6 @@ The `Svc::TlmPacketizer` component has the following configuration parameters:
 - `TELEMETRY_SEND_PORTS` (TlmPacketizerCfg.fpp): Number of output ports for telemetry packets
 - `TELEMETRY_SEND_PORT_MAPPING` (TlmPacketizerCfg.fpp): A mapping of each section/group pair to the output port index used.
 - `TELEMETRY_SECTION_DEFAULTS` (TlmPacketizerCfg.fpp): A mapping of each section/group pair to the default rate logic and parameters for that section/group pair.
-- `MAX_TLM_PACKET_CONFIG_BATCH` (TlmPacketizerCfg.fpp): Maximum number of per-packet config entries carried in a single `configOut` / `configIn` batch.
 
 ### 4.1 Sizing
 
@@ -324,12 +323,9 @@ constant TELEMETRY_SECTION_DEFAULTS = [
 ]
 ```
 
-### 4.6 Per-Packet Configuration Batch Sizing and Queue Depth
+### 4.6 Per-Packet Configuration Buffers
 
-`MAX_TLM_PACKET_CONFIG_BATCH` (TlmPacketizerCfg.fpp) sets the maximum number of `PacketConfigEntry` records carried in a single `configOut` / `configIn` `TlmPacketConfigUpdate` message.
-
-When an external persistence component reloads overrides on `configIn`, a full push covering many packets may be split across several back-to-back messages. Because each message reserves a full `PacketConfigBatch` regardless of how many entries it carries, senders should pack each batch up to the full `MAX_TLM_PACKET_CONFIG_BATCH` capacity to minimize the number of messages. The deployment must size the `Svc::TlmPacketizer` component's message queue deep enough to absorb this burst alongside its other async traffic (`Run`, `controlIn`, `configureSectionGroupRate`, commands). Otherwise, reload messages may be dropped or trigger a full-queue assert. A batch offering more than `MAX_TLM_PACKET_CONFIG_BATCH` entries has its extras dropped and raises the `ConfigBatchTruncated` warning event.
-
+Per-packet override mirror (`configOut`) and reload (`configIn`) exchange serialized `PacketConfigEntry` records inside an `Fw.Buffer` drawn from a BufferManager, rather than a fixed-size array. A `configOut` mirror carries a single record sized to `PacketConfigEntry::SERIALIZED_SIZE`; a `configIn` reload may carry many records packed back-to-back, and the packetizer applies each until the buffer is exhausted. The deployment must wire `bufferAllocate`/`bufferDeallocate` to a BufferManager whose pool is sized for these records, and size the component's message queue to absorb reload traffic alongside its other async ports (`Run`, `controlIn`, `configureSectionGroupRate`, commands). If a mirror buffer cannot be allocated, the override still takes effect locally and `ConfigMirrorAllocFailed` is emitted.
 ## 5. Unit Testing
 
 To see unit test coverage run fprime-util check --coverage

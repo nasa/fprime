@@ -137,7 +137,6 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     void clearPacketOverrideTest(void);
 
     //! configIn cap test: a batch offering more than the capacity drops the extras and warns
-    void configInBatchCapTest(void);
 
     //! Helper to set the component into a stock-configuration regardless of default config
     //!
@@ -165,10 +164,14 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
                               ) override;
 
     //! Handler for from_configOut: captures the per-packet override mirror sent to external component
-    void from_configOut_handler(FwIndexType portNum,                 //!< The port number
-                                FwSizeType count,                    //!< Number of valid entries
-                                const Svc::PacketConfigBatch& batch  //!< The mirrored overrides
+    void from_configOut_handler(FwIndexType portNum,  //!< The port number
+                                Fw::Buffer& fwBuffer   //!< The mirrored override (serialized)
                                 ) override;
+
+    //! Handler for from_bufferAllocate: hand back tester-owned storage (mocked BufferManager)
+    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum,  //!< The port number
+                                           FwSizeType size       //!< The requested size
+                                           ) override;
 
     virtual void textLogIn(const FwEventIdType id,         /*!< The event ID*/
                            const Fw::Time& timeTag,        /*!< The time*/
@@ -210,9 +213,13 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     FwSizeType m_portOutInvokes[Svc::TELEMETRY_SEND_PORTS]{};
 
     //! configOut mirror capture (per-packet override sent to an external component)
-    U32 m_configOutInvokes{0};                   //!< Number of configOut invocations
-    FwSizeType m_lastConfigCount{0};             //!< Count arg of the most recent configOut invocation
-    Svc::PacketConfigBatch m_lastConfigBatch{};  //!< Batch of the most recent configOut invocation
+    U32 m_configOutInvokes{0};                  //!< Number of configOut invocations
+    Svc::PacketConfigEntry m_lastConfigEntry{};  //!< Entry deserialized from the most recent configOut buffer
+
+    //! Backing storage for the mocked bufferAllocate port (stands in for a BufferManager pool)
+    static const FwSizeType CONFIG_BUF_SLOT_SIZE = 256;
+    U8 m_configBufSlot[CONFIG_BUF_SLOT_SIZE];
+    Fw::Buffer m_configBuf;
 };
 
 }  // end namespace Svc

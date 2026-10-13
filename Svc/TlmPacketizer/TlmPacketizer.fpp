@@ -31,14 +31,17 @@ module Svc {
     @ Input configuration port
     async input port configureSectionGroupRate: ConfigureGroupRate
 
-    @ Per-packet configuration mirror to persistent storage managed by an external component
-    @ Each entry carries the full override for the addressed packet/section and is pushed
-    @ whenever an ENABLE_PACKET / FORCE_PACKET / CONFIGURE_PACKET_RATES command changes it.
-    output port configOut: TlmPacketConfigUpdate
+    @ Per-packet override mirror to an external persistence component
+    output port configOut: Fw.BufferSend
 
-    @ Per-packet configuration reload from the persistence storage component
-    @ That storage component pushes it's config into this port when commanded to do so (usually at boot-up)
-    async input port configIn: TlmPacketConfigUpdate
+    @ Allocate buffers for configOut mirrors
+    output port bufferAllocate: Fw.BufferGet
+
+    @ Return buffers
+    output port bufferDeallocate: Fw.BufferSend
+
+    @ Per-packet override reload from the persistence component
+    async input port configIn: Fw.BufferSend
 
     @ Telemetry input port
     sync input port TlmRecv: Fw.Tlm
@@ -244,14 +247,11 @@ module Svc {
       id 7 \
       format "Packet id {} not found in packet list"
 
-    @ A configIn batch carried more entries than the packetizer can accept
-    event ConfigBatchTruncated(
-                                count: FwSizeType @< The number of entries offered
-                                cap: U32          @< The maximum number of entries accepted
-                              ) \
+    @ Could not allocate a buffer to mirror a per-packet override out configOut
+    event ConfigMirrorAllocFailed \
       severity warning high \
       id 8 \
-      format "configIn batch of {} entries exceeds cap {}; extra entries dropped" \
+      format "Could not allocate buffer to mirror packet config" \
       throttle 10
 
     @ Effective per-packet configuration, emitted in response to GET_PACKET_CONFIG
