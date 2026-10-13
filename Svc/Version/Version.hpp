@@ -105,14 +105,14 @@ class Version final : public VersionComponentBase {
     };
 
     // function to log framework version events and channels
-    void fwVersion_tlm();
+    void fwVersion_tlm(bool sendEvent);
     // function to log project version events and channels
-    void projectVersion_tlm();
+    void projectVersion_tlm(bool sendEvent);
     // function to log library version events and channels
-    void libraryVersion_tlm();
+    void libraryVersion_tlm(bool sendEvent);
     // function to log custom version events and channels
-    void customVersion_tlm(VersionSlot custom_slot);
-    void customVersion_tlm_all();
+    void customVersion_tlm(VersionSlot custom_slot, bool sendEvent);
+    void customVersion_tlm_all(bool sendEvent);
     bool m_enable;             /*!<Send TLM when true>*/
     U8 m_num_custom_elements;  // number of custom versions
 };
