@@ -371,6 +371,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 RX rejection of a FileData PDU whose offset and length overflow the offset space
     void testClass2RxFileDataOffsetOverflow();
 
+    //! Test Class 2 RX handling of a truncated FileData PDU followed by a scheduler tick
+    void testClass2RxTruncatedFileDataCrcSpin();
+
+    //! Test Class 2 RX CRC verification of a file shorter than the declared size
+    void testClass2RxCrcShortFile();
+
     //! Test Class 2 RX handling of a zero-length FileData segment (GHSA-mh5x-2m6h-8267)
     void testClass2RxZeroLengthFileData();
 
@@ -506,6 +512,47 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Test FileInDefaultPriority parameter default value
     void testParamFileInDefaultPriorityDefault();
+
+  public:
+    // ----------------------------------------------------------------------
+    // Parameter Telemetry Tests
+    // ----------------------------------------------------------------------
+    //
+    // Each verifies the parameter-mimic channel reports the FPP default after
+    // load and the updated value after a parameter change.
+
+    //! Test PRM_LOCAL_EID telemetry mirrors the LocalEid parameter
+    void testTlmLocalEid();
+
+    //! Test PRM_OUTGOING_FILE_CHUNK_SIZE telemetry mirrors the OutgoingFileChunkSize parameter
+    void testTlmOutgoingFileChunkSize();
+
+    //! Test PRM_RX_CRC_CALC_BYTES_PER_CYCLE telemetry mirrors the RxCrcCalcBytesPerCycle parameter
+    void testTlmRxCrcCalcBytesPerCycle();
+
+    //! Test PRM_POST_INACTIVITY_SEND_RETRIES telemetry mirrors the PostInactivitySendRetries parameter
+    void testTlmPostInactivitySendRetries();
+
+    //! Test PRM_FILE_IN_DEFAULT_CHANNEL telemetry mirrors the FileInDefaultChannel parameter
+    void testTlmFileInDefaultChannel();
+
+    //! Test PRM_FILE_IN_DEFAULT_DEST_ENTITY_ID telemetry mirrors the FileInDefaultDestEntityId parameter
+    void testTlmFileInDefaultDestEntityId();
+
+    //! Test PRM_FILE_IN_DEFAULT_CLASS telemetry mirrors the FileInDefaultClass parameter
+    void testTlmFileInDefaultClass();
+
+    //! Test PRM_FILE_IN_DEFAULT_KEEP telemetry mirrors the FileInDefaultKeep parameter
+    void testTlmFileInDefaultKeep();
+
+    //! Test PRM_FILE_IN_DEFAULT_PRIORITY telemetry mirrors the FileInDefaultPriority parameter
+    void testTlmFileInDefaultPriority();
+
+    //! Test PRM_CHANNEL_CONFIG telemetry mirrors the ChannelConfig parameter
+    void testTlmChannelConfig();
+
+    //! Test parameterUpdated() asserts on an unknown parameter id (default branch)
+    void testParameterUpdatedUnknownIdAsserts();
 
   public:
     // ----------------------------------------------------------------------

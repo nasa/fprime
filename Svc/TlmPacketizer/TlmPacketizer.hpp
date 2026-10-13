@@ -168,11 +168,13 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     // buffers for filling with telemetry
     BufferEntry m_fillBuffers[MAX_PACKETIZER_PACKETS];
 
+    static constexpr U16 NOT_IN_PACKET = std::numeric_limits<U16>::max();  //!< packetOffset value for no packet
+
     struct TlmEntry {
         FwChanIdType id;  //!< telemetry id stored in slot
         // Offsets into packet buffers.
-        // -1 means that channel is not in that packet
-        FwSignedSizeType packetOffset[MAX_PACKETIZER_PACKETS];
+        // NOT_IN_PACKET means that channel is not in that packet
+        U16 packetOffset[MAX_PACKETIZER_PACKETS];
         FwSizeType channelSize;  //!< max serialized size of the channel in bytes
         bool ignored;            //!< ignored channel id
         bool hasValue;           //!< if the entry has received a value at least once

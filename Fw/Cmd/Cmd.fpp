@@ -23,6 +23,7 @@ module Fw {
     EXECUTION_ERROR = 4 @< Command had execution error
     BUSY = 5 @< Component busy
     CLEARED = 6 @< Command tracking was cleared before the command completed
+    DISPATCHED_UNTRACKED = 7 @< Command was dispatched but the response tracking failed, indicating unknown state
   }
 
   @ Port for sending command responses

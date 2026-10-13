@@ -119,8 +119,10 @@ struct LocklessPriorityQueueHandle : public QueueHandle {
     std::atomic<U32> m_sequence;
     //! Occupancy count (claimed-or-queued slots) used only for the high-water mark.
     std::atomic<U32> m_count;
-    //! Receivable message count: incremented after a slot is published READY, decremented at
-    //! the successful READY->READING claim. Backs getMessagesAvailable().
+    //! Receivable message count: incremented *before* a slot is published READY (so that the
+    //! matching consumer decrement can never arrive before its increment), decremented at the
+    //! successful READY->READING claim. May briefly exceed the number of READY slots by at most
+    //! one per concurrent producer, but never underflows. Backs getMessagesAvailable().
     std::atomic<U32> m_available;
     //! Maximum value `m_count` has ever held. Updated by producers via a bounded CAS loop.
     std::atomic<U32> m_highMark;

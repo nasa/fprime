@@ -79,8 +79,6 @@ class PrmDbTester : public PrmDbGTestBase {
         static PrmDbTester* s_tester;
     };
 
-    void printDb(PrmDb_PrmDbType dbType);
-
     //! Expose PrmDbImpl::computeCrc for hardcoded CRC value testing
 };
 

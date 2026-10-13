@@ -215,6 +215,7 @@ event CS_JoinWaitingNotComplete() \
   id 24 \
   format "Still waiting for sequence file to complete"
 
+@ The sequence file contains no command records.
 event CS_NoRecords(
                       fileName: string size 60 @< The name of the sequence file
                     ) \

@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "ComStubTester.hpp"
+#include "STest/Random/Random.hpp"
 
 TEST(Common, Initial) {
     Svc::ComStubTester tester(Svc::ComStubTester::TestMode::UNSPECIFIED);
@@ -54,6 +55,7 @@ TEST(Async, RetryReset) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

@@ -264,7 +264,7 @@ void GenericHub::eventIn_handler(const FwIndexType portNum,
                                  Fw::LogBuffer& args) {
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     U8 buffer[sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + Fw::LogSeverity::SERIALIZED_SIZE +
-              FW_LOG_BUFFER_MAX_SIZE];
+              sizeof(FwSizeStoreType) + FW_LOG_BUFFER_MAX_SIZE]{};
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
     status = serializer.serializeFrom(id);
@@ -281,7 +281,7 @@ void GenericHub::eventIn_handler(const FwIndexType portNum,
 
 void GenericHub::tlmIn_handler(const FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
-    U8 buffer[sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + FW_TLM_BUFFER_MAX_SIZE];
+    U8 buffer[sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwSizeStoreType) + FW_TLM_BUFFER_MAX_SIZE]{};
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
     status = serializer.serializeFrom(id);

@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "CmdSplitterTester.hpp"
+#include "STest/Random/Random.hpp"
 
 TEST(Nominal, Local) {
     Svc::CmdSplitterTester tester;
@@ -25,6 +26,7 @@ TEST(Error, BadCommands) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

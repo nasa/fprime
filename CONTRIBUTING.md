@@ -97,6 +97,19 @@ Once a pull request has been submitted the following process will begin.
 We recommend users to use an [imperative-style phrasing](https://cbea.ms/git-commit/#imperative) when writing commit messages. F´ uses the "Squash & Merge" strategy, meaning that all commits made on a PR branch will be combined into one squashed commit when merged into F´. The commit message for the squashed commit defaults to use the title of the Pull Request, so we do ask contributors to please follow the imperative-style phrasing for the title of their Pull Requests.
 When opening a Pull Request, please fill in the given template, and link to any relevant issue on the repository.
 
+**Contributions using generative AI**
+
+Generative AI is welcome in F´ contributions under the [AI usage guidelines](./AI_POLICY.md). Submissions produced with
+AI must follow the F´ AI development skills in [`.github/skills/`](./.github/skills/), entered through
+[`AGENTS.md`](./AGENTS.md), which encode the project's conventions for developing, testing, and maintaining F´ code. AI
+agents opening a pull request must complete the AI checklist in the pull request template and sign the description with
+`IAMAI`.
+
+**Contributor checklist**
+
+Every pull request affirms, via the checklist in the template, that the contributor has the rights to contribute the
+change set under the [Apache-2.0 license](./LICENSE.txt) and agrees to be bound by these contributor guidelines.
+
 ### Submission Review
 
 The pull request changes will be reviewed by the team and community supporting F´. Often this means that a discussion on

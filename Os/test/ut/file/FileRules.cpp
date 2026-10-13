@@ -40,9 +40,12 @@ void Os::Test::FileTest::Tester::shadow_close() {
 std::vector<U8> Os::Test::FileTest::Tester::shadow_read(FwSizeType size) {
     std::vector<U8> output;
     output.resize(size);
-    Os::File::Status status = m_shadow.read(output.data(), size, Os::File::WaitType::WAIT);
-    output.resize(size);
-    EXPECT_EQ(status, Os::File::Status::OP_OK);
+    // Zero-size reads have no buffer to read into; the shadow file is unchanged
+    if (size > 0) {
+        Os::File::Status status = m_shadow.read(output.data(), size, Os::File::WaitType::WAIT);
+        output.resize(size);
+        EXPECT_EQ(status, Os::File::Status::OP_OK);
+    }
     return output;
 }
 

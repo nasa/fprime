@@ -86,6 +86,8 @@ relevant one instead of improvising:
   sequences `fprime-component-requirements`,
   `fprime-component-design-fpp`, `fprime-component-implementation`,
   `fprime-component-unit-test`, `fprime-component-integration-test`.
+- Modifying pre-existing code (bug fixes, small changes, cleanup):
+  `fprime-maintenance` — the doctrine of minimal effect.
 - Writing unit tests: `fprime-unit-testing`.
 - Driving development to convergence through local test-and-review
   iterations: `fprime-iterative-development` (requires explicit user

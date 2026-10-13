@@ -58,7 +58,8 @@ jobs:
           path: ${{ env.FPRIME_LOCATION }}
           fetch-depth: 0
           filter: blob:none
-      - uses: ./lib/fprime/.github/actions/setup
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
         with:
           location: ${{ env.FPRIME_LOCATION }}
       - name: "Download and Setup AArch64 Linux Toolchain"

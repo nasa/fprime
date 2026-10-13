@@ -146,8 +146,10 @@ void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode,
             this->dpInProgress = true;
             this->log_ACTIVITY_LO_DpStarted(numRecords);
             this->log_ACTIVITY_LO_DpMemReceived(this->dpContainer.getBuffer().getSize());
-            // override priority with requested priority
-            this->dpContainer.setPriority(priority);
+            // override priority with requested priority; zero means use FPP default
+            if (priority != 0) {
+                this->dpContainer.setPriority(priority);
+            }
             this->dpContainer.setProcTypes(proc);
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         }
@@ -171,8 +173,10 @@ void DpDemo ::dpRecv_DpDemoContainer_handler(DpContainer& container, Fw::Success
     if (Fw::Success::SUCCESS == status) {
         this->dpContainer = container;
         this->dpInProgress = true;
-        // set previously requested priority
-        this->dpContainer.setPriority(this->dpPriority);
+        // set previously requested priority; zero means use FPP default
+        if (this->dpPriority != 0) {
+            this->dpContainer.setPriority(this->dpPriority);
+        }
         this->dpContainer.setProcTypes(this->dpProc);
         this->log_ACTIVITY_LO_DpStarted(this->numRecords);
         this->cmdResponse_out(this->pendingOpCode, this->pendingCmdSeq, Fw::CmdResponse::OK);

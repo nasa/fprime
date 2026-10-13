@@ -91,6 +91,7 @@ plugins:
           imports: [
             docs/led-blinker.md,
             docs/hardware.md,
+            docs/timeliness.md,
             docs/img
           ]
         - name: tutorials-math-component

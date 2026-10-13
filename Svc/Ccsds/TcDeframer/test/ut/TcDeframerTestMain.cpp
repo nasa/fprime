@@ -4,6 +4,7 @@
 // \brief  cpp file for TcDeframer component test main function
 // ======================================================================
 
+#include "STest/Random/Random.hpp"
 #include "TcDeframerTester.hpp"
 
 TEST(TcDeframer, testDataReturn) {
@@ -37,6 +38,7 @@ TEST(TcDeframer, testInvalidCrc) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

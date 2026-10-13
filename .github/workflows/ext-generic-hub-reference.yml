@@ -53,7 +53,7 @@ jobs:
           filter: blob:none
 
       - name: "Setup F´ toolchain"
-        uses: ./lib/fprime/.github/actions/setup
+        uses: nasa/fprime-actions/setup@devel
         with:
           location: lib/fprime
 

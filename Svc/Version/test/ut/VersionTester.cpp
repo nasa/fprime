@@ -68,8 +68,7 @@ void VersionTester ::test_startup() {
     ASSERT_EVENTS_FrameworkVersion(0, Project::Version::FRAMEWORK_VERSION);
     ASSERT_EVENTS_ProjectVersion_SIZE(1);
     ASSERT_EVENTS_ProjectVersion(0, Project::Version::PROJECT_VERSION);
-    // Library versions currently set to a null pointer
-    // TODO: Need to figure out how to put in artificial sets to test them
+    // Library versions come from the test-local version.cpp table
     ASSERT_EVENTS_LibraryVersions_SIZE(12);
     ASSERT_EVENTS_LibraryVersions(0, "blah0 @ blah0");
 }
@@ -135,7 +134,6 @@ void VersionTester ::test_versions() {
     this->clear_all();
     this->sendCmd_VERSION(0, cmd_seq, Svc::VersionType::LIBRARY);
     ASSERT_CMD_RESPONSE(0, 1, 9, Fw::CmdResponse::OK);
-    // printf ("\nfirst lib element : %s\n\n", Project::Version::LIBRARY_VERSIONS[0]);
     ASSERT_EVENTS_LibraryVersions_SIZE(12);
 
     ASSERT_TLM_LibraryVersion01_SIZE(1);
@@ -316,12 +314,10 @@ void VersionTester ::test_setVer(bool is_enabled) {
 
     // Create a db to compare against set values
     Svc::CustomVersionDb custom_data_struct;
-    // printf("\nTesting the very first port invocation\n");
 
     // Start Clean
     this->clear_all();
 
-    // this->sendCmd_ENABLE(0,9,VersionEnabled::ENABLED);
     set_ver = "ver_0";
     this->invoke_to_setVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, set_ver, status);
     if (is_enabled == true) {

@@ -38,13 +38,19 @@ Port Data Type | Name | Direction | Kind | Usage
 
 The Svc::RateGroupDriver component has one input port that receives a system tick. 
 
-The `configure()` function is passed a divider set specifies the divisors and offsets for each output port. This should be called after the constructor but before any port calls are made. The contents of the structure are copied during the call, so the array can be a temporary variable.
+The `configure()` function is passed a divider set that specifies the divisors and offsets for each output port. This should be called after the constructor but before any port calls are made. The contents of the structure are copied during the call, so the array can be a temporary variable.
 
 ```
-    RateGroupDriverImpl::configure(const DividerSet& dividerSet);
+    RateGroupDriver::configure(const DividerSet& dividerSet);
 ```    
 
-The input rate for each output port will be divided down by the value in the `divider` field corresponding to the output port number.
+`DividerSet` holds one `Divider{divisor, offset}` entry per `CycleOut` port, indexed by output port number. The divider contract is:
+
+* The component keeps a tick counter that starts at zero and increments on every `CycleIn` call.
+* Output port `n` is called on a tick when `ticks % dividers[n].divisor == dividers[n].offset`, so the input rate is divided down by `divisor` and the output is shifted by `offset` ticks. Different offsets let rate groups with the same divisor run on different ticks.
+* A `divisor` of `0` disables the output port; it is never called. This is the default for an entry that is not set.
+* The `offset` must be `0` or less than the `divisor`; `configure()` asserts otherwise because such a port would never be called.
+* The tick counter rolls over at the product of all non-zero divisors, so every port keeps its cadence across the rollover. `configure()` asserts if this product would overflow.
 
 The implementation will be ISR compliant by avoiding the following:
 
@@ -55,15 +61,15 @@ The implementation will be ISR compliant by avoiding the following:
 
 For instance,
 
-`SchedIn` Rate | `divider[0]` | `SchedOut[0]` | `divider[1]` | `SchedOut[1]` | `divider[2]` | `SchedOut[2]`
--------------- | ------------ | ------------- | ------------ | ------------- | ------------ | -------------
-1Hz | 1 | 1Hz | 2 | 0.5Hz | 4 | 0.25Hz
+`CycleIn` Rate | `dividers[0]` | `CycleOut[0]` | `dividers[1]` | `CycleOut[1]` | `dividers[2]` | `CycleOut[2]`
+-------------- | ------------- | ------------- | ------------- | ------------- | ------------- | -------------
+1Hz | {1, 0} | 1Hz (every tick) | {2, 0} | 0.5Hz (ticks 0, 2, 4, ...) | {2, 1} | 0.5Hz (ticks 1, 3, 5, ...)
 
 ### 3.3 Scenarios
 
 #### 3.3.1 System Tick Port Call
 
-As described in the Functional Description section, the RateGroupDriver component accepts calls to the SchedIn and divides them down to the SchedOut ports:
+As described in the Functional Description section, the RateGroupDriver component accepts calls to `CycleIn` and divides them down to the `CycleOut` ports:
 
 ![System Tick Port Call](img/RateGroupDriverPortCallSequence.jpg) 
 

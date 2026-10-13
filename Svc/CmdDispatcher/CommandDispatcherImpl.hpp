@@ -49,6 +49,11 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  The destructor for this component is empty
     virtual ~CommandDispatcherImpl();
 
+    //!  \brief Configure behavior when the sequence tracker table is full
+    //!
+    //!  \param executeWhenSequenceTableFull dispatch (true) or reject (false) an untrackable command
+    void configure(bool executeWhenSequenceTableFull = CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT);
+
   protected:
   private:
     //!  \brief component command status handler
@@ -180,6 +185,8 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
 
     U32 m_seq;          //!< current command sequence number
     bool m_seqWrapped;  //!< set once m_seq has wrapped; enables tracker scan on allocation
+
+    bool m_executeWhenSequenceTableFull;  //!< dispatch untracked commands when the sequence tracker table is full
 
     U32 m_numCmdsDispatched;  //!< number of commands dispatched
     U32 m_numCmdErrors;       //!< number of commands with an error
