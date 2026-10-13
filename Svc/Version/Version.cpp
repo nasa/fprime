@@ -131,8 +131,8 @@ void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Svc::Ve
 // ----------------------------------------------------------------------
 // implementations for internal functions
 // ----------------------------------------------------------------------
-// Send tlm and/or events for framework version, set default to emit events
-void Version ::fwVersion_tlm(bool sendEvent=true) {
+// Send tlm and/or events for framework version, set default [sendEvent=TRUE] to emit events
+void Version ::fwVersion_tlm(bool sendEvent) {
     if (sendEvent){
         Fw::LogStringArg fw_event = (Project::Version::FRAMEWORK_VERSION);
         this->log_ACTIVITY_LO_FrameworkVersion(fw_event);
@@ -141,8 +141,8 @@ void Version ::fwVersion_tlm(bool sendEvent=true) {
     this->tlmWrite_FrameworkVersion(fw_tlm);
 }
 
-// Sendtlm and/or events for project version, set default to emit events
-void Version ::projectVersion_tlm(bool sendEvent=true) {
+// Send tlm and/or events for project version, set default [sendEvent=TRUE] to emit events
+void Version ::projectVersion_tlm(bool sendEvent) {
     if (sendEvent){
         Fw::LogStringArg proj_event = Project::Version::PROJECT_VERSION;
         this->log_ACTIVITY_LO_ProjectVersion(proj_event);
@@ -151,8 +151,8 @@ void Version ::projectVersion_tlm(bool sendEvent=true) {
     this->tlmWrite_ProjectVersion(proj_tlm);
 }
 
-// Sendtlm and/or events for library version, set default to emit events
-void Version ::libraryVersion_tlm(bool sendEvent=true) {
+// Send tlm and/or events for library version, set default [sendEvent=TRUE] to emit events
+void Version ::libraryVersion_tlm(bool sendEvent) {
     // Process libraries array
     for (U8 i = 0; i < Project::Version::LIBRARY_VERSIONS_COUNT; i++) {
         FW_ASSERT(Project::Version::LIBRARY_VERSIONS[i] != nullptr, static_cast<FwAssertArgType>(i));
@@ -202,15 +202,15 @@ void Version ::libraryVersion_tlm(bool sendEvent=true) {
     }
 }
 
-// Send all events and tlm (if verbosity is enabled) for custom versions
-void Version ::customVersion_tlm_all(bool sendEvent=true) {
+// Send tlm (if verbosity is enabled) and/or events for custom versions, set default [sendEvent=TRUE] to emit events
+void Version ::customVersion_tlm_all(bool sendEvent) {
     for (U8 i = 0; (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS); i++) {
         Version::customVersion_tlm(VersionSlot(i), sendEvent);
     }
 }
 
-// Send events and tlm (if verbosity is enabled) for custom versions
-void Version ::customVersion_tlm(VersionSlot custom_slot, bool sendEvent=true) {
+// Send tlm (if verbosity is enabled) and/or events for custom versions, set default [sendEvent=TRUE] to emit events
+void Version ::customVersion_tlm(VersionSlot custom_slot, bool sendEvent) {
     // Process custom version TLM only if verbosity is enabled and there are any valid writes to it;
     //  it doesn't necessarily have to be consecutive
     if ((this->verId_db[custom_slot].get_version_value() != "no_ver") &&
