@@ -688,6 +688,11 @@ TEST(Event, RxDirPerChannel) {
     tester.testRxDirPerChannel();
 }
 
+TEST(Event, RxDirUnresolvable) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDirUnresolvable();
+}
+
 TEST(Miscellaneous, Ping) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testPing();

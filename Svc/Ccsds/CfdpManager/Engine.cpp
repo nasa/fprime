@@ -447,10 +447,8 @@ Status::T Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
                                                            txn->m_history->seq_num, dst,
                                                            this->m_manager->getRxDirParam(txn->m_chan_num), reason);
         this->m_manager->incrementFaultFileOpen(txn->m_chan_num);
-        // A refused destination is a filestore rejection, not a completed reception: this makes
-        // finishTransaction report the failure. Whether the sender is told depends on the caller:
-        // the late-metadata path (r2RecvMd) carries it in the FIN; the metadata-first path
-        // (recvInit) finishes from INIT without a FIN, so a Class 2 sender only times out.
+        // Refused destination = filestore rejection, so finishTransaction reports a failed reception.
+        // Whether the sender learns of it depends on the caller; see the recvMd doc in Engine.hpp.
         this->setTxnStatus(txn, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
         return Status::PDU_METADATA_ERROR;
     }

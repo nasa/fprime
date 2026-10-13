@@ -596,6 +596,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testRxDestPathRejectedLateMetadata();
     //! rx_dir applies per channel: the same path is refused on a confined channel and accepted on an unrestricted one
     void testRxDirPerChannel();
+    //! An rx_dir that cannot be resolved rejects every reception on the channel with RX_DIR_UNRESOLVABLE
+    void testRxDirUnresolvable();
     //! Run one 1 Hz cycle and return the channel's latest faultFileOpen telemetry value
     U32 latestFaultFileOpen(U8 channelId);
 
