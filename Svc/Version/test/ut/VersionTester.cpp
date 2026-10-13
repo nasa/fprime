@@ -438,9 +438,69 @@ void VersionTester ::test_getVer() {
     ASSERT_EQ(status, Svc::VersionStatus::FAILURE);
 }
 
+
+void VersionTester ::test_schedIn() {
+    Svc::CustomVersionDb custom_data_struct;
+
+    // Empty state: a tick with no slots set emits nothing
+    this->sendCmd_ENABLE(0, 9, VersionEnabled::ENABLED);
+    this->clear_all();
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_CustomVersions_SIZE(0);
+    ASSERT_TLM_CustomVersion01_SIZE(0);
+    ASSERT_TLM_CustomVersion10_SIZE(0);
+
+    // Populate all 10 slots (mixed OK/FAILURE) via setVersion
+    this->test_setVer(true);
+
+    // Enabled: a tick re-emits all 10 populated slots as TELEMETRY ONLY (no events),
+    // because the periodic path is channel-only to avoid event-log spam.
+    this->clear_all();
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_CustomVersions_SIZE(0);
+
+    // Spot-check channel value and status propagation across the range (no event asserts: tick is silent)
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum:PROJECT_VERSION_00:, Fw::String("ver_0"),
+                           Svc::VersionStatus::OK);
+    ASSERT_TLM_CustomVersion01_SIZE(1);
+    ASSERT_TLM_CustomVersion01(0, custom_data_struct);
+
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, Fw::String("ver_3"),
+                           Svc::VersionStatus::FAILURE);
+    ASSERT_TLM_CustomVersion04_SIZE(1);
+    ASSERT_TLM_CustomVersion04(0, custom_data_struct);
+
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, Fw::String("ver_9"),
+                           Svc::VersionStatus::OK);
+    ASSERT_TLM_CustomVersion10_SIZE(1);
+    ASSERT_TLM_CustomVersion10(0, custom_data_struct);
+
+    // Periodic: a second tick re-emits channels again (not one-shot), still silent on events
+    this->clear_all();
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_CustomVersions_SIZE(0);
+    ASSERT_TLM_CustomVersion01_SIZE(1);
+    ASSERT_TLM_CustomVersion10_SIZE(1);
+
+    // Contrast: the on-demand VERSION command STILL produces events (events are reserved for explicit requests)
+    this->clear_all();
+    this->sendCmd_VERSION(0, 9, Svc::VersionType::CUSTOM);
+    ASSERT_CMD_RESPONSE(0, 1, 9, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_CustomVersions_SIZE(10);
+
+    // Disabled: a tick suppresses channels (gated on verbosity) and remains silent on events
+    this->sendCmd_ENABLE(0, 9, VersionEnabled::DISABLED);
+    this->clear_all();
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_CustomVersions_SIZE(0);
+    ASSERT_TLM_CustomVersion01_SIZE(0);
+    ASSERT_TLM_CustomVersion10_SIZE(0);
+}
+
 void VersionTester::test_ports() {
     this->sendCmd_ENABLE(0, 9, VersionEnabled::ENABLED);
     this->test_setVer(true);
     this->test_getVer();
+    this->test_schedIn();
 }
 }  // namespace Svc

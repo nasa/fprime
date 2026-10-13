@@ -31,6 +31,11 @@ TEST(Nominal, test_ports) {
     tester.test_ports();
 }
 
+TEST(Nominal, test_schedIn) {
+    Svc::VersionTester tester;
+    tester.test_schedIn();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
