@@ -76,6 +76,14 @@ void Version ::setVersion_handler(FwIndexType portNum,
     this->customVersion_tlm(ver_slot);
 }
 
+// Scheduled handler to periodically re-emit all version information
+void Version ::schedIn_handler(FwIndexType portNum, U32 context) {
+    this->projectVersion_tlm();
+    this->fwVersion_tlm();
+    this->libraryVersion_tlm();
+    this->customVersion_tlm_all();
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for commands
 // ----------------------------------------------------------------------

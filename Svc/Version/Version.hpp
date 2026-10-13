@@ -52,6 +52,13 @@ class Version final : public VersionComponentBase {
                             Fw::StringBase& version_string,                  //!< The value to be passed
                             Svc::VersionStatus& status                       //!< The command response argument
                             ) override;
+                                     
+    //! Handler implementation for schedIn
+    //!
+    //! Scheduled port to periodically re-emit all version information
+    void schedIn_handler(FwIndexType portNum,  //!< The port number
+                         U32 context           //!< The call order
+                         ) override;
 
     //! \struct verId_db
     //! \brief Custom Version database structure
