@@ -527,8 +527,6 @@ topology AwesomeTopology {
 }
 ```
 
-Each `configObjects` block is emitted at namespace scope in the generated topology, in `ConfigObjects::<Topology>_<instance>` (here `ConfigObjects::AwesomeTopology_voSeq` and `ConfigObjects::AwesomeTopology_fpSeq`), so it can only hold declarations. The field assignments therefore live in `configComponents`, which is an ordinary function body; the braces give each instance its own scope so they can all use the same local name without colliding in that shared function.
-
 This lengthy example show-cases three serial port patterns:
 
 1. Asynchronous send/reply using output and input serial ports
@@ -585,7 +583,7 @@ struct Config {
 };
 ```
 
-For example, in the `instances.fpp` of a topology named `MyTopology`. The `Config` object is declared in the `configObjects` phase, which FPP emits at namespace scope as `ConfigObjects::<Topology>_<instance>`, and is populated in `configComponents`, which is a function body:
+For example, in an `instances.fpp`:
 
 ```fpp
 instance wasmSeq: Svc.WasmSequencer base id 0x10007000 \
