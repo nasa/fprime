@@ -113,6 +113,7 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
                     this->m_pingTrackerEntries[entry].cycleCount++;
                 } else {
                     // Check FATAL first: equal warning and FATAL thresholds are valid.
+                    // A zero FATAL threshold disables timeout detection (legacy behavior).
                     // Once FATAL is reported, this ping must not emit another FATAL or
                     // be downgraded to WARNING if the thresholds are raised.
                     if (this->m_pingTrackerEntries[entry].entry.fatalCycles > 0 &&

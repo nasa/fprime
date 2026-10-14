@@ -45,7 +45,7 @@ class HealthImpl final : public HealthComponentBase {
     //!  for events.
     struct PingEntry {
         FwSizeType warnCycles;   //!< number of cycles before WARNING
-        FwSizeType fatalCycles;  //!< number of cycles before FATAL
+        FwSizeType fatalCycles;  //!< number of cycles before FATAL; 0 disables timeout FATAL
         Fw::String entryName;    //!< the name of the entry
     };
 
@@ -125,7 +125,7 @@ class HealthImpl final : public HealthComponentBase {
     //!  \param cmdSeq Command sequence
     //!  \param entry Ping entry number
     //!  \param warningValue Warning threshold value
-    //!  \param fatalValue Fatal threshold value
+    //!  \param fatalValue Fatal threshold value; 0 disables timeout FATAL
     void HLTH_CHNG_PING_cmdHandler(const FwOpcodeType opCode,
                                    U32 cmdSeq,
                                    const Fw::CmdStringArg& entry,
@@ -136,11 +136,11 @@ class HealthImpl final : public HealthComponentBase {
     //!
     //!  Array for storing ping table entries
     struct PingTracker {
-        PingEntry entry;         //!< entry passed by user
-        U32 cycleCount;          //!< current cycle count
+        PingEntry entry;             //!< entry passed by user
+        U32 cycleCount;              //!< current cycle count
         bool fatalReported = false;  //!< whether FATAL was reported for this ping
-        U32 key;                 //!< key passed to ping
-        Fw::Enabled::t enabled;  //!< if current ping result is checked
+        U32 key;                     //!< key passed to ping
+        Fw::Enabled::t enabled;      //!< if current ping result is checked
     } m_pingTrackerEntries[NUM_PINGSEND_OUTPUT_PORTS];
 
     FwIndexType findEntry(const Fw::CmdStringArg& entry);
