@@ -384,6 +384,8 @@ void CfdpManagerTester::testRxDirUnresolvable() {
     ASSERT_EVENTS_MetadataReceived_SIZE(0);
     ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
     ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
+    EXPECT_EQ(static_cast<U8>(TxnStatus::TXN_STATUS_FILESTORE_REJECTION),
+              this->eventHistory_RxFileTransferFailed->at(0).conditionCode);
     Transaction* txn = this->findTransaction(channelId, transactionSeq);
     ASSERT_NE(nullptr, txn);
     EXPECT_EQ(TxnState::TXN_STATE_HOLD, txn->m_state);
