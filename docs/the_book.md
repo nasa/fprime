@@ -113,8 +113,9 @@ and `fprime-util --help` lists the rest. Toolchains and platforms come later (Ch
 
 ### Chapter 8: Topologies and Subtopologies
 
-A real deployment has dozens of component instances. F´ ships **subtopologies**, pre-wired groups of standard
-components, for command and data handling (CdhCore), communications (ComFprime / ComCcsds), and file handling.
+A real deployment often has close to a hundred component instances, and F´ places no limit on the number. F´ ships
+**subtopologies**, pre-wired groups of standard components, for command and data handling (CdhCore), communications
+(ComFprime / ComCcsds), and file handling.
 Most projects import these and connect their own components to them. Learn how instances and topologies are
 defined in FPP, then how to use and create subtopologies. Each standard component has a Software Design Document
 (SDD) describing its ports, commands, events, and behavior. Find SDDs under Reference → Software Design Documents in
