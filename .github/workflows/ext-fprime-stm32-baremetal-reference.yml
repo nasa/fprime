@@ -78,10 +78,15 @@ jobs:
       - name: "Host-Native Unit Tests (GTest)"
         run: |
           fprime-util generate --ut 2>&1 | output-cleaner
-          cd FprimeStm32BaremetalReference/Components/Led && fprime-util check --coverage 2>&1 | output-cleaner
-          cd "${GITHUB_WORKSPACE}"/lib/fprime-stm32/fprime-stm32/Drv/STM32I2cDriver && fprime-util check --coverage 2>&1 | output-cleaner
-          cd "${GITHUB_WORKSPACE}"/lib/fprime-stm32/fprime-stm32/Drv/STM32SpiDriver && fprime-util check --coverage 2>&1 | output-cleaner
-          cd "${GITHUB_WORKSPACE}"/lib/fprime-stm32/fprime-stm32/Drv/STM32UartDriver && fprime-util check --coverage 2>&1 | output-cleaner
+          for module in \
+            FprimeStm32BaremetalReference/Components/Led \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32GpioDriver \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32I2cDriver \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32SpiDriver \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32Timer \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32UartDriver; do
+            (cd "${GITHUB_WORKSPACE}/${module}" && fprime-util check --coverage 2>&1 | output-cleaner)
+          done
         shell: bash
       - name: "Report resource margin"
         run: |
@@ -105,16 +110,15 @@ jobs:
     name: "HIL Integration Tests (STM32H753XI-EVAL2)"
     runs-on: [self-hosted, baremetal]
     needs: cross-compilation
-    # Only one run at a time may own the physical board/flashing session.
-    concurrency:
-      group: stm32h753xi-eval2-hil
-      cancel-in-progress: false
+    timeout-minutes: 30
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           sparse-checkout: "requirements.txt"
           sparse-checkout-cone-mode: false
+          persist-credentials: false
       - name: "Setup environment"
         run: |
           python -m venv venv
@@ -150,8 +154,9 @@ jobs:
             --uart-device /dev/ttyACM0 --uart-baud 115200 \
             -d ./build-artifacts/stm32h7/${DEPLOYMENT} --logs ./ci-logs &
           sleep 10
-          pytest --dictionary ./build-artifacts/stm32h7/${DEPLOYMENT}/dict/${DEPLOYMENT}TopologyDictionary.json \
-            --junit-xml-file ./ci-logs/hil-results.xml --gen-junitxml \
+          pytest -o python_files="*_integration_tests.py" \
+            --dictionary ./build-artifacts/stm32h7/${DEPLOYMENT}/dict/${DEPLOYMENT}TopologyDictionary.json \
+            --logs ./ci-logs --junit-xml-file hil-results.xml --gen-junitxml \
             ./int/
         shell: bash
       - name: "Archive logs"
