@@ -449,7 +449,12 @@ class Engine {
      *         sender learns of the refusal depends on the caller: the late
      *         metadata path (Transaction::r2RecvMd) carries it in the FIN; the
      *         metadata-first path (recvInit) finishes the transaction from INIT
-     *         without sending a FIN, so a Class 2 sender only times out.
+     *         without sending a FIN and parks it in HOLD for 2 x ack_timer, a
+     *         hold that every further PDU from the sender re-arms. A Class 2
+     *         sender that keeps retransmitting inside that window is never told
+     *         and fails on its own ACK limit; only if its traffic pauses longer
+     *         than the hold does its next PDU start a fresh transaction whose
+     *         FIN carries the rejection. See the SDD, Security Considerations.
      */
     Status::T recvMd(Transaction* txn, const MetadataPdu& pdu);
 
