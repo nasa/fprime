@@ -16,16 +16,18 @@
 
 #include <Fw/Com/ComPacket.hpp>
 #include <algorithm>
+#include <cstring>
+#include <limits>
 namespace Svc {
 
 // ----------------------------------------------------------------------
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-TlmPacketizerTester ::TlmPacketizerTester()
+TlmPacketizerTester ::TlmPacketizerTester(bool connectProductPorts)
     : TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmPacketizer") {
     this->initComponents();
-    this->connectPorts();
+    this->connectPorts(connectProductPorts);
     this->component.loadParameters();
 }
 
@@ -1972,12 +1974,432 @@ void TlmPacketizerTester::oversizedChannelTest() {
 }
 
 // ----------------------------------------------------------------------
+// Data product tests
+// ----------------------------------------------------------------------
+
+namespace {
+// Sizes of the pieces of a TlmPacketContainer, as serialized by the generated serializeRecord_* functions
+const FwSizeType PACKET_HEADER_SIZE =
+    sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType) + Fw::Time::SERIALIZED_SIZE;
+const FwSizeType GROUP_RECORD_SIZE = sizeof(FwDpIdType) + sizeof(FwChanIdType);
+FwSizeType packetRecordSize(FwSizeType packetSize) {
+    return sizeof(FwDpIdType) + sizeof(FwSizeStoreType) + packetSize;
+}
+const FwDpIdType TLM_PACKET_CONTAINER_ID = 0;  // TlmPacketContainer, base id 0
+const FwDpIdType TLM_GROUP_RECORD_ID = 0;
+const FwDpIdType TLM_PACKET_RECORD_ID = 1;
+// Sizes of the test packets: header plus channel sizes from the packetNList tables above
+const FwSizeType PACKET1_SIZE = PACKET_HEADER_SIZE + 4 + 2 + 1;      // id 4, group 1
+const FwSizeType PACKET2_SIZE = PACKET_HEADER_SIZE + 4 + 8 + 2 + 1;  // id 8, group 2
+const FwSizeType PACKET3_SIZE = PACKET_HEADER_SIZE + 4;              // id 12, group 2
+const FwSizeType PACKET4_SIZE = PACKET_HEADER_SIZE + 4 + 4;          // id 16, group 3
+}  // namespace
+
+void TlmPacketizerTester ::pushU32Channel(FwChanIdType id, U32 value) {
+    Fw::Time ts;
+    Fw::TlmBuffer buff;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(value));
+    this->invoke_to_TlmRecv(0, id, ts, buff);
+}
+
+void TlmPacketizerTester ::checkDpContainer(const Fw::Buffer& buffer,
+                                            FwChanIdType tlmGroup,
+                                            FwDpPriorityType priority,
+                                            FwSizeType packetCount,
+                                            const Fw::ComBuffer* const packets) {
+    Fw::DpContainer sent(TLM_PACKET_CONTAINER_ID, buffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, sent.deserializeHeader());
+    ASSERT_EQ(TLM_PACKET_CONTAINER_ID, sent.getId());
+    ASSERT_EQ(priority, sent.getPriority());
+    ASSERT_EQ(Fw::DpState::UNTRANSMITTED, sent.getState());
+
+    Fw::ExternalSerializeBuffer data(buffer.getData() + Fw::DpContainer::DATA_OFFSET, sent.getDataSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, data.setBuffLen(sent.getDataSize()));
+
+    // The group record comes first
+    FwDpIdType recordId = 0;
+    FwChanIdType group = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, data.deserializeTo(recordId));
+    ASSERT_EQ(TLM_GROUP_RECORD_ID, recordId);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, data.deserializeTo(group));
+    ASSERT_EQ(tlmGroup, group);
+
+    // Then one record per packet, each holding the packet bytes as sent on PktSend
+    for (FwSizeType index = 0; index < packetCount; index++) {
+        FwSizeType size = 0;
+        U8 bytes[FW_COM_BUFFER_MAX_SIZE] = {};
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, data.deserializeTo(recordId)) << "packet record " << index;
+        ASSERT_EQ(TLM_PACKET_RECORD_ID, recordId);
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, data.deserializeSize(size));
+        ASSERT_LE(size, sizeof(bytes));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, data.deserializeTo(bytes, size, Fw::Serialization::OMIT_LENGTH));
+        if (packets != nullptr) {
+            ASSERT_EQ(packets[index].getSize(), size) << "packet record " << index;
+            ASSERT_EQ(0, memcmp(packets[index].getBuffAddr(), bytes, size)) << "packet record " << index;
+        }
+    }
+    ASSERT_EQ(0, data.getDeserializeSizeLeft());
+}
+
+void TlmPacketizerTester ::dpDisabledByDefaultTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList2, ignore, 3);
+
+    this->pushU32Channel(10, 20);
+    this->pushU32Channel(67, 5);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+
+    // Every packet is downlinked, none is recorded
+    ASSERT_from_PktSend_SIZE(4 * Svc::TelemetrySection::NUM_SECTIONS);
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    ASSERT_EVENTS_SIZE(0);
+
+    // Stopping a group that was never started reports that nothing was recorded
+    this->clearHistory();
+    for (FwChanIdType group = 0; group < NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS; group++) {
+        this->sendCmd_STOP_DP_RECORDING(0, 0, group);
+        this->component.doDispatch();
+        ASSERT_EVENTS_DpRecordingStopped(group, group, TlmPacketizer_DpStopStatus::NOT_RECORDING, 0, 0, 0);
+    }
+    ASSERT_EVENTS_SIZE(NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS);
+    this->pushU32Channel(10, 21);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(0);
+}
+
+void TlmPacketizerTester ::dpRecordGroupTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList2, ignore, 3);
+
+    // Record group 2 (packets 8 and 12), two packets per container
+    this->sendCmd_START_DP_RECORDING(0, 0, 2, 2, 7);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_START_DP_RECORDING, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpRecordingStarted(0, 2, 2, 7);
+    // Starting does not touch any container
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    this->clearHistory();
+
+    // Update all four packets and run
+    this->pushU32Channel(10, 20);
+    this->pushU32Channel(67, 5);
+    this->setTestTime(this->m_testTime);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+
+    // Downlink is unchanged: all four packets on every section
+    ASSERT_from_PktSend_SIZE(4 * Svc::TelemetrySection::NUM_SECTIONS);
+
+    // One container sized for two of the largest packet of group 2 was requested, filled and sent
+    const FwSizeType dataSize = GROUP_RECORD_SIZE + 2 * packetRecordSize(PACKET2_SIZE);
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_GET(0, TLM_PACKET_CONTAINER_ID, Fw::DpContainer::getPacketSizeForDataSize(dataSize));
+    ASSERT_PRODUCT_SEND_SIZE(1);
+    ASSERT_EQ(TLM_PACKET_CONTAINER_ID, this->productSendHistory->at(0).id);
+    const Fw::ComBuffer packets[] = {this->fromPortHistory_PktSend->at(1 * Svc::TelemetrySection::NUM_SECTIONS).data,
+                                     this->fromPortHistory_PktSend->at(2 * Svc::TelemetrySection::NUM_SECTIONS).data};
+    ASSERT_EQ(PACKET2_SIZE, packets[0].getSize());
+    ASSERT_EQ(PACKET3_SIZE, packets[1].getSize());
+    this->checkDpContainer(this->productSendHistory->at(0).buffer, 2, 7, 2, packets);
+    // The records hold less than the container was sized for (packet 12 is shorter than packet 8)
+    Fw::DpContainer sent(TLM_PACKET_CONTAINER_ID, this->productSendHistory->at(0).buffer);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, sent.deserializeHeader());
+    ASSERT_EQ(GROUP_RECORD_SIZE + packetRecordSize(PACKET2_SIZE) + packetRecordSize(PACKET3_SIZE), sent.getDataSize());
+    ASSERT_EVENTS_SIZE(0);
+
+    // A run without new data records nothing
+    this->clearHistory();
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+
+    // Stop with an empty container: the event reports the counts of the recording, then nothing further is recorded
+    this->sendCmd_STOP_DP_RECORDING(0, 0, 2);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_STOP_DP_RECORDING, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpRecordingStopped(0, 2, TlmPacketizer_DpStopStatus::PARTIAL_NOT_SENT, 2, 1, 0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    this->clearHistory();
+
+    this->pushU32Channel(67, 6);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+}
+
+void TlmPacketizerTester ::dpStopAndRestartTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList2, ignore, 3);
+
+    // Record group 1 (packet 4 only), three packets per container
+    this->sendCmd_START_DP_RECORDING(0, 0, 1, 3, 5);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // Two runs with new data: the container is requested once and not yet sent
+    this->pushU32Channel(10, 1);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    this->pushU32Channel(10, 2);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_GET(
+        0, TLM_PACKET_CONTAINER_ID,
+        Fw::DpContainer::getPacketSizeForDataSize(GROUP_RECORD_SIZE + 3 * packetRecordSize(PACKET1_SIZE)));
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    // Channel 10 updates packets 4, 8 and 16, so each run sends three packets per section; packet 4 comes first
+    const Fw::ComBuffer packets[] = {this->fromPortHistory_PktSend->at(0).data,
+                                     this->fromPortHistory_PktSend->at(3 * Svc::TelemetrySection::NUM_SECTIONS).data};
+    this->clearHistory();
+
+    // Restarting sends the partial container with the old priority and applies the new settings
+    this->sendCmd_START_DP_RECORDING(0, 0, 1, 1, 9);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_START_DP_RECORDING, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpRecordingStarted_SIZE(1);
+    ASSERT_EVENTS_DpRecordingStarted(0, 1, 1, 9);
+    ASSERT_PRODUCT_SEND_SIZE(1);
+    this->checkDpContainer(this->productSendHistory->at(0).buffer, 1, 5, 2, packets);
+    this->clearHistory();
+
+    // One packet per container now: each run sends a container with the new priority
+    this->pushU32Channel(10, 3);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_GET(0, TLM_PACKET_CONTAINER_ID,
+                       Fw::DpContainer::getPacketSizeForDataSize(GROUP_RECORD_SIZE + packetRecordSize(PACKET1_SIZE)));
+    ASSERT_PRODUCT_SEND_SIZE(1);
+    this->checkDpContainer(this->productSendHistory->at(0).buffer, 1, 9, 1, &this->fromPortHistory_PktSend->at(0).data);
+    this->clearHistory();
+
+    // Stopping with a partially filled container sends it
+    this->sendCmd_START_DP_RECORDING(0, 0, 1, 3, 5);
+    this->component.doDispatch();
+    this->pushU32Channel(10, 4);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    this->clearHistory();
+    this->sendCmd_STOP_DP_RECORDING(0, 0, 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_STOP_DP_RECORDING, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpRecordingStopped_SIZE(1);
+    // The counts cover the last start only: one packet, sent in the partial container
+    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::PARTIAL_SENT, 1, 1, 0);
+    ASSERT_PRODUCT_SEND_SIZE(1);
+    this->checkDpContainer(this->productSendHistory->at(0).buffer, 1, 5, 1, nullptr);
+    this->clearHistory();
+
+    // Stopping a group that is not recording is accepted and reported with the counts of the last recording
+    this->sendCmd_STOP_DP_RECORDING(0, 0, 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_STOP_DP_RECORDING, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpRecordingStopped_SIZE(1);
+    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::NOT_RECORDING, 1, 1, 0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+}
+
+void TlmPacketizerTester ::dpRecordWhenDownlinkDisabledTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList2, ignore, 3);
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        this->sendCmd_ENABLE_SECTION(0, 0, static_cast<Svc::TelemetrySection::T>(section), Fw::Enabled::DISABLED);
+        this->component.doDispatch();
+    }
+    // Record group 3 (packet 16), one packet per container
+    this->sendCmd_START_DP_RECORDING(0, 0, 3, 1, 1);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    this->pushU32Channel(10, 9);
+    this->pushU32Channel(60, 7);
+    this->setTestTime(this->m_testTime);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+
+    // Nothing is downlinked, but the packet is recorded with the content it would have had on PktSend
+    ASSERT_from_PktSend_SIZE(0);
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_SEND_SIZE(1);
+    Fw::ComBuffer expected;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
+              expected.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, expected.serializeFrom(static_cast<FwTlmPacketizeIdType>(16)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, expected.serializeFrom(this->m_testTime));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, expected.serializeFrom(static_cast<U32>(9)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, expected.serializeFrom(static_cast<U32>(7)));
+    ASSERT_EQ(PACKET4_SIZE, expected.getSize());
+    this->checkDpContainer(this->productSendHistory->at(0).buffer, 3, 1, 1, &expected);
+
+    // Without new data the packet is not recorded again
+    this->clearHistory();
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(0);
+}
+
+void TlmPacketizerTester ::dpCommandRejectTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList2, ignore, 3);
+    const FwChanIdType invalidGroup = MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1;
+
+    // Group out of range
+    this->sendCmd_START_DP_RECORDING(0, 0, invalidGroup, 1, 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_START_DP_RECORDING, 0, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpRecordingRejected(0, invalidGroup, TlmPacketizer_DpRejectReason::START_INVALID_GROUP);
+    this->clearHistory();
+
+    // Group without packets (packetList2 has no group 0 packet)
+    this->sendCmd_START_DP_RECORDING(0, 0, 0, 1, 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_START_DP_RECORDING, 0, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpRecordingRejected(0, 0, TlmPacketizer_DpRejectReason::START_NO_PACKETS_IN_GROUP);
+    this->clearHistory();
+
+    // Zero packets per container
+    this->sendCmd_START_DP_RECORDING(0, 0, 1, 0, 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_START_DP_RECORDING, 0, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpRecordingRejected(0, 1, TlmPacketizer_DpRejectReason::START_INVALID_PACKET_COUNT);
+    this->clearHistory();
+
+    // Too many packets per container for a data product
+    this->sendCmd_START_DP_RECORDING(0, 0, 1, std::numeric_limits<FwSizeType>::max(), 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_START_DP_RECORDING, 0, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpRecordingRejected(0, 1, TlmPacketizer_DpRejectReason::START_INVALID_PACKET_COUNT);
+    this->clearHistory();
+
+    // Stop with group out of range
+    this->sendCmd_STOP_DP_RECORDING(0, 0, invalidGroup);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_STOP_DP_RECORDING, 0, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpRecordingRejected(0, invalidGroup, TlmPacketizer_DpRejectReason::STOP_INVALID_GROUP);
+    this->clearHistory();
+
+    // No rejected command changed the recording state
+    this->pushU32Channel(10, 1);
+    this->pushU32Channel(67, 1);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_EVENTS_SIZE(0);
+}
+
+void TlmPacketizerTester ::dpAllocationFailureTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList2, ignore, 3);
+    this->sendCmd_START_DP_RECORDING(0, 0, 1, 2, 3);
+    this->component.doDispatch();
+    this->clearHistory();
+
+    // The container cannot be obtained: the packet is dropped and reported, downlink unaffected
+    this->m_dpAllocationFailure = true;
+    this->pushU32Channel(10, 1);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_from_PktSend_SIZE(3 * Svc::TelemetrySection::NUM_SECTIONS);
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpBufferError(0, 1, GROUP_RECORD_SIZE + 2 * packetRecordSize(PACKET1_SIZE));
+    this->clearHistory();
+
+    // Every further drop is counted, but the event is throttled after 10 in total
+    const U32 furtherDrops = 12;
+    for (U32 drop = 0; drop < furtherDrops; drop++) {
+        this->pushU32Channel(10, drop + 2);
+        this->invoke_to_Run(0, 0);
+        this->component.doDispatch();
+    }
+    ASSERT_PRODUCT_GET_SIZE(furtherDrops);
+    ASSERT_EVENTS_DpBufferError_SIZE(9);
+    this->clearHistory();
+
+    // Recording resumes with the next packet once containers are available again
+    this->m_dpAllocationFailure = false;
+    this->pushU32Channel(10, furtherDrops + 2);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_GET_SIZE(1);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    ASSERT_EVENTS_SIZE(0);
+
+    this->pushU32Channel(10, furtherDrops + 3);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_PRODUCT_SEND_SIZE(1);
+    this->checkDpContainer(this->productSendHistory->at(0).buffer, 1, 3, 2, nullptr);
+
+    // Stopping reports every drop and every recorded packet of the recording
+    this->clearHistory();
+    this->sendCmd_STOP_DP_RECORDING(0, 0, 1);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpRecordingStopped_SIZE(1);
+    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::PARTIAL_NOT_SENT, 2, 1, 1 + furtherDrops);
+}
+
+void TlmPacketizerTester ::dpPortsNotConnectedTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList2, ignore, 3);
+
+    // A deployment without data products never reaches the product ports
+    this->sendCmd_START_DP_RECORDING(0, 0, 1, 2, 3);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_START_DP_RECORDING, 0, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DpRecordingRejected(0, 1, TlmPacketizer_DpRejectReason::START_PORTS_NOT_CONNECTED);
+    this->clearHistory();
+
+    // Packets are downlinked as usual and nothing is recorded
+    this->pushU32Channel(10, 1);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_from_PktSend_SIZE(3 * Svc::TelemetrySection::NUM_SECTIONS);
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    this->sendCmd_STOP_DP_RECORDING(0, 0, 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_STOP_DP_RECORDING, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpRecordingStopped(0, 1, TlmPacketizer_DpStopStatus::NOT_RECORDING, 0, 0, 0);
+}
+
+// ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
 void TlmPacketizerTester ::from_PktSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     this->m_portOutInvokes[portNum]++;
     this->pushFromPortEntry_PktSend(data, context);
+}
+
+Fw::Success::T TlmPacketizerTester ::productGet_handler(FwDpIdType id, FwSizeType dataSize, Fw::Buffer& buffer) {
+    this->pushProductGetEntry(id, dataSize);
+    if (this->m_dpAllocationFailure or dataSize > DP_BUFFER_SIZE) {
+        return Fw::Success::FAILURE;
+    }
+    buffer.set(this->m_dpBuffer, dataSize);
+    return Fw::Success::SUCCESS;
 }
 
 void TlmPacketizerTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
@@ -1988,7 +2410,7 @@ void TlmPacketizerTester ::from_pingOut_handler(const FwIndexType portNum, U32 k
 // Helper methods
 // ----------------------------------------------------------------------
 
-void TlmPacketizerTester ::connectPorts() {
+void TlmPacketizerTester ::connectPorts(bool connectProductPorts) {
     // PktSend
     // this->component.set_PktSend_OutputPort(0, this->get_from_PktSend(0));
     // this->component.set_PktSend_OutputPort(1, this->get_from_PktSend(1));
@@ -2035,6 +2457,12 @@ void TlmPacketizerTester ::connectPorts() {
 
     for (FwIndexType index = 0; index < Svc::TELEMETRY_SEND_PORTS; index++) {
         this->component.set_PktSend_OutputPort(index, this->get_from_PktSend(index));
+    }
+
+    // data products
+    if (connectProductPorts) {
+        this->component.set_productGetOut_OutputPort(0, this->get_from_productGetOut(0));
+        this->component.set_productSendOut_OutputPort(0, this->get_from_productSendOut(0));
     }
 
     // controlIn

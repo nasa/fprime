@@ -51,6 +51,10 @@ Each telemetry group can be configured with a rate logic mode that controls when
 
 The MIN and MAX delta parameters are configured via the CONFIGURE_GROUP_RATES command. If MAX is less than MIN in the combined mode, MAX takes priority.
 
+### Data Product Recording
+
+Operators can record the packets of a telemetry group as data products, independent of downlink. The START_DP_RECORDING command selects a group, the number of packets per data product container, and the container priority; STOP_DP_RECORDING stops recording and sends any partially filled container. Every packet of a recorded group that has new data on a downlink cycle is recorded exactly as it would be sent, including packets whose downlink is disabled or rate limited, which makes rarely needed telemetry available for later retrieval without downlinking it continuously. Recording is disabled for all groups at startup, and downlink behavior is unchanged whether or not a group is recorded.
+
 ### Telemetry Limits
 
 As with channel-based telemetry, channels can have limit ranges defined in the dictionary. Limit checking is performed by the ground system.

@@ -246,6 +246,61 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     Fw::RedBlackTreeMap<FwChanIdType, FwSizeType, MAX_PACKETIZER_CHANNELS> m_channelIndices;
     Fw::Array<TlmEntry, MAX_PACKETIZER_CHANNELS>
         m_channels;  //!< flat storage for channel entries indexed by m_channelIndices
+
+    // ----------------------------------------------------------------------
+    // Data product recording. All state below is touched only on the
+    // component thread (Run and async command handlers), so no lock is taken.
+    // ----------------------------------------------------------------------
+
+    //! Handler implementation for command START_DP_RECORDING
+    //!
+    //! Start recording the packets of a telemetry group as data products
+    void START_DP_RECORDING_cmdHandler(FwOpcodeType opCode,             //!< The opcode
+                                       U32 cmdSeq,                      //!< The command sequence number
+                                       FwChanIdType tlmGroup,           //!< Group Identifier
+                                       FwSizeType packetsPerContainer,  //!< Number of packets per container
+                                       FwDpPriorityType priority        //!< Data product priority
+                                       ) override;
+
+    //! Handler implementation for command STOP_DP_RECORDING
+    //!
+    //! Stop recording the packets of a telemetry group as data products, sending any partial container
+    void STOP_DP_RECORDING_cmdHandler(FwOpcodeType opCode,   //!< The opcode
+                                      U32 cmdSeq,            //!< The command sequence number
+                                      FwChanIdType tlmGroup  //!< Group Identifier
+                                      ) override;
+
+    //! Largest packet length of any packet in a group
+    //! \return the length, or 0 if the group has no packets
+    FwSizeType maxPacketLengthOfGroup(FwChanIdType tlmGroup) const;
+
+    //! Record a finished packet into the container of its group, sending the container when full
+    void recordPacket(FwChanIdType tlmGroup,       //!< Group Identifier of the packet
+                      const Fw::ComBuffer& packet  //!< The packet as sent on PktSend
+    );
+
+    //! Get an empty container for a group and write the TlmGroupRecord into it
+    //! \return SUCCESS if the container was obtained
+    Fw::Success allocateDpContainer(FwChanIdType tlmGroup);
+
+    //! Send the container of a group if it holds any packets
+    //! \return true if a container was sent
+    bool sendDpContainer(FwChanIdType tlmGroup);
+
+    //! Data product recording state of one telemetry group
+    struct DpGroupState {
+        DpContainer container;           //!< the container being filled
+        FwSizeType packetsPerContainer;  //!< packets per container
+        FwSizeType containerDataSize;    //!< data size requested for each container
+        FwSizeType packetCount;          //!< packets in the current container
+        FwDpPriorityType priority;       //!< priority of the containers
+        U32 packetsRecorded;             //!< packets recorded since the group was started
+        U32 containersSent;              //!< containers sent since the group was started
+        U32 packetsDropped;              //!< packets dropped for lack of a container since the group was started
+        bool recording;                  //!< recording enabled for the group
+    };
+
+    DpGroupState m_dpGroups[NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS];  //!< recording state per group
 };
 
 }  // end namespace Svc

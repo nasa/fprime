@@ -19,4 +19,6 @@ find_package(FPrime REQUIRED PATHS "${CMAKE_CURRENT_LIST_DIR}/..")
 # order to build arrive with the framework targets themselves.
 fprime_add_validation_flags()
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/.." "F-Prime")
+# Project configuration overrides must follow the framework defaults they replace
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config-overrides/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ref/")
