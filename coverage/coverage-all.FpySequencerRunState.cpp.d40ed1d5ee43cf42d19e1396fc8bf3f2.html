@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-15 21:15:09</td>
+      <td>2026-10-16 21:11:40</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>369</td>
-      <td>431</td>
-      <td class="coverage-medium">85.6%</td>
+      <td>372</td>
+      <td>435</td>
+      <td class="coverage-medium">85.5%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -70,12 +70,12 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l687">Svc::FpySequencer::checkShouldWake() (line 687)</a></td><td>called 8 times</td><td>75.0%</td></tr>
-    <tr><td><a href="#l709">Svc::FpySequencer::checkStatementTimeout() (line 709)</a></td><td>called 12 times</td><td>71.0%</td></tr>
+    <tr><td><a href="#l691">Svc::FpySequencer::checkShouldWake() (line 691)</a></td><td>called 8 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l713">Svc::FpySequencer::checkStatementTimeout() (line 713)</a></td><td>called 12 times</td><td>71.0%</td></tr>
     <tr><td><a href="#l10">Svc::FpySequencer::currentStatementIdx() (line 10)</a></td><td>called 39 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l59">Svc::FpySequencer::deserializeDirective(Svc::Fpy::Statement const&amp;, Svc::FpySequencer::DirectiveUnion&amp;) (line 59)</a></td><td>called 2246 times</td><td>68.0%</td></tr>
-    <tr><td><a href="#l500">Svc::FpySequencer::dispatchDirective(Svc::FpySequencer::DirectiveUnion const&amp;, Svc::Fpy::DirectiveId const&amp;) (line 500)</a></td><td>called 2186 times</td><td>91.0%</td></tr>
-    <tr><td><a href="#l18">Svc::FpySequencer::dispatchStatement() (line 18)</a></td><td>called 2224 times</td><td>85.0%</td></tr>
+    <tr><td><a href="#l59">Svc::FpySequencer::deserializeDirective(Svc::Fpy::Statement const&amp;, Svc::FpySequencer::DirectiveUnion&amp;) (line 59)</a></td><td>called 2251 times</td><td>68.0%</td></tr>
+    <tr><td><a href="#l500">Svc::FpySequencer::dispatchDirective(Svc::FpySequencer::DirectiveUnion const&amp;, Svc::Fpy::DirectiveId const&amp;) (line 500)</a></td><td>called 2191 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l18">Svc::FpySequencer::dispatchStatement() (line 18)</a></td><td>called 2231 times</td><td>85.0%</td></tr>
   </table>
 </details>
 
@@ -219,7 +219,7 @@
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2224</td>
+      <td class="linecount coveredLine">2231</td>
       <td class="src coveredLine"><span class="n">Signal</span><span class="w"> </span><span class="nf">FpySequencer::dispatchStatement</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -240,7 +240,7 @@
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2224</td>
+      <td class="linecount coveredLine">2231</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">nextStatementIndex</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceObj</span><span class="p">.</span><span class="n">get_header</span><span class="p">().</span><span class="n">get_statementCount</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
@@ -256,19 +256,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 14 taken 38 times.</div>
-            <div class="takenBranch">&check; Branch 15 taken 2186 times.</div>
+            <div class="takenBranch">&check; Branch 14 taken 40 times.</div>
+            <div class="takenBranch">&check; Branch 15 taken 2191 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2224</td>
+      <td class="linecount coveredLine">2231</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">nextStatementIndex</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceObj</span><span class="p">.</span><span class="n">get_header</span><span class="p">().</span><span class="n">get_statementCount</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">38</td>
+      <td class="linecount coveredLine">40</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_dispatchStatement_noMoreStatements</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -289,28 +289,28 @@
       <td class="lineno"><a id="l27" href="#l27">27</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">Statement</span><span class="o">&amp;</span><span class="w"> </span><span class="n">nextStatement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceObj</span><span class="p">.</span><span class="n">get_statements</span><span class="p">()[</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">nextStatementIndex</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">nextStatementIndex</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementOpcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nextStatement</span><span class="p">.</span><span class="n">get_opCode</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentCmdOpcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// we haven&#39;t deserialized the directive yet, so we don&#39;t know if it&#39;s a cmd</span></td>
     </tr>
     <tr class="source-line">
@@ -326,18 +326,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 2186 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2191 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="w"> </span><span class="n">result</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">DirectiveUnion</span><span class="w"> </span><span class="n">directiveUnion</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -353,12 +353,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 2186 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 2186 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2191 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 2191 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">deserializeDirective</span><span class="p">(</span><span class="n">nextStatement</span><span class="p">,</span><span class="w"> </span><span class="n">directiveUnion</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -375,11 +375,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 2186 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 2191 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2186</td>
+      <td class="linecount partialCoveredLine">2191</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -409,12 +409,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 2181 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 7 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 2184 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementOpcode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">DirectiveId</span><span class="o">::</span><span class="n">CONST_CMD</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -428,7 +428,7 @@
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentCmdOpcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">directiveUnion</span><span class="p">.</span><span class="n">constCmd</span><span class="p">.</span><span class="n">get_opCode</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -451,11 +451,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 2186 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 2191 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4372</td>
+      <td class="linecount coveredLine">4382</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dispatchDirective</span><span class="p">(</span><span class="n">directiveUnion</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -464,18 +464,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 2186 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 2191 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4372</td>
+      <td class="linecount coveredLine">4382</td>
       <td class="src coveredLine"><span class="w">                            </span><span class="n">Fpy</span><span class="o">::</span><span class="n">DirectiveId</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Fpy</span><span class="o">::</span><span class="n">DirectiveId</span><span class="o">::</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">nextStatement</span><span class="p">.</span><span class="n">get_opCode</span><span class="p">())));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementDispatchTime</span><span class="w"> </span><span class="o">=</span></td>
     </tr>
     <tr class="source-line">
@@ -484,12 +484,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 2186 times.</div>
-            <div class="takenBranch">&check; Branch 10 taken 2186 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 2191 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2191 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4372</td>
+      <td class="linecount coveredLine">4382</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">getTime</span><span class="p">();</span><span class="w">  </span><span class="c1">// set dispatch time right after we have successfully dispatched</span></td>
     </tr>
     <tr class="source-line">
@@ -503,7 +503,7 @@
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_statementsDispatched</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -517,14 +517,14 @@
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_dispatchStatement_success</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -559,7 +559,7 @@
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2246</td>
+      <td class="linecount coveredLine">2251</td>
       <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="w"> </span><span class="nf">FpySequencer::deserializeDirective</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">Statement</span><span class="o">&amp;</span><span class="w"> </span><span class="n">stmt</span><span class="p">,</span><span class="w"> </span><span class="n">DirectiveUnion</span><span class="o">&amp;</span><span class="w"> </span><span class="n">deserializedDirective</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -582,12 +582,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 13 taken 2246 times.</div>
-            <div class="takenBranch">&check; Branch 25 taken 2246 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 2251 times.</div>
+            <div class="takenBranch">&check; Branch 25 taken 2251 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2246</td>
+      <td class="linecount coveredLine">2251</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">ExternalSerializeBuffer</span><span class="w"> </span><span class="n">argBuf</span><span class="p">(</span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">stmt</span><span class="p">.</span><span class="n">get_argBuf</span><span class="p">().</span><span class="n">getBuffAddr</span><span class="p">()),</span><span class="w"> </span><span class="n">stmt</span><span class="p">.</span><span class="n">get_argBuf</span><span class="p">().</span><span class="n">getSize</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
@@ -596,19 +596,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 13 taken 2246 times.</div>
-            <div class="takenBranch">&check; Branch 16 taken 2246 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 2251 times.</div>
+            <div class="takenBranch">&check; Branch 16 taken 2251 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2246</td>
+      <td class="linecount coveredLine">2251</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argBuf</span><span class="p">.</span><span class="n">setBuffLen</span><span class="p">(</span><span class="n">stmt</span><span class="p">.</span><span class="n">get_argBuf</span><span class="p">().</span><span class="n">getSize</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2246</td>
+      <td class="linecount coveredLine">2251</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -628,14 +628,14 @@
             <div class="takenBranch">&check; Branch 5 taken 4 times.</div>
             <div class="takenBranch">&check; Branch 6 taken 5 times.</div>
             <div class="takenBranch">&check; Branch 7 taken 10 times.</div>
-            <div class="takenBranch">&check; Branch 8 taken 2059 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 2061 times.</div>
             <div class="takenBranch">&check; Branch 9 taken 9 times.</div>
             <div class="takenBranch">&check; Branch 10 taken 4 times.</div>
             <div class="takenBranch">&check; Branch 11 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 12 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 12 taken 7 times.</div>
             <div class="takenBranch">&check; Branch 13 taken 8 times.</div>
             <div class="takenBranch">&check; Branch 14 taken 10 times.</div>
-            <div class="takenBranch">&check; Branch 15 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 15 taken 6 times.</div>
             <div class="takenBranch">&check; Branch 16 taken 1 times.</div>
             <div class="takenBranch">&check; Branch 17 taken 9 times.</div>
             <div class="takenBranch">&check; Branch 18 taken 45 times.</div>
@@ -660,7 +660,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2246</td>
+      <td class="linecount partialCoveredLine">2251</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">stmt</span><span class="p">.</span><span class="n">get_opCode</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1132,7 +1132,7 @@
       <td class="lineno"><a id="l110" href="#l110">110</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2059</td>
+      <td class="linecount coveredLine">2061</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">NO_OP</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1141,13 +1141,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 2059 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 2061 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2059</td>
+      <td class="linecount partialCoveredLine">2061</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">deserializedDirective</span><span class="p">.</span><span class="n">noOp</span><span class="p">)</span><span class="w"> </span><span class="n">FpySequencer_NoOpDirective</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1163,13 +1163,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 2059 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2061 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 2058 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 2060 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2059</td>
+      <td class="linecount coveredLine">2061</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">argBuf</span><span class="p">.</span><span class="n">getDeserializeSizeLeft</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1227,11 +1227,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2058 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2060 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2058</td>
+      <td class="linecount coveredLine">2060</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1593,7 +1593,7 @@
       <td class="lineno"><a id="l151" href="#l151">151</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">CONST_CMD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1602,13 +1602,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 7 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5</td>
+      <td class="linecount partialCoveredLine">7</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">deserializedDirective</span><span class="p">.</span><span class="n">constCmd</span><span class="p">)</span><span class="w"> </span><span class="n">FpySequencer_ConstCmdDirective</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1629,7 +1629,7 @@
       <td class="lineno"><a id="l155" href="#l155">155</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opcode</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1638,11 +1638,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 7 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argBuf</span><span class="p">.</span><span class="n">deserializeTo</span><span class="p">(</span><span class="n">opcode</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1652,11 +1652,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 7 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5</td>
+      <td class="linecount partialCoveredLine">7</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1700,11 +1700,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 7 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">deserializedDirective</span><span class="p">.</span><span class="n">constCmd</span><span class="p">.</span><span class="n">set_opCode</span><span class="p">(</span><span class="n">opcode</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1720,11 +1720,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 7 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">cmdArgBufSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argBuf</span><span class="p">.</span><span class="n">getDeserializeSizeLeft</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1748,11 +1748,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 7 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5</td>
+      <td class="linecount partialCoveredLine">7</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cmdArgBufSize</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">MAX_DIRECTIVE_SIZE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1810,11 +1810,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 7 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 7 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argBuf</span><span class="p">.</span><span class="n">deserializeTo</span><span class="p">(</span><span class="n">deserializedDirective</span><span class="p">.</span><span class="n">constCmd</span><span class="p">.</span><span class="n">get_argBuf</span><span class="p">(),</span><span class="w"> </span><span class="n">cmdArgBufSize</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -1838,11 +1838,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 7 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5</td>
+      <td class="linecount partialCoveredLine">7</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1891,7 +1891,7 @@
       <td class="lineno"><a id="l186" href="#l186">186</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">argBuf</span><span class="p">.</span><span class="n">getDeserializeSizeLeft</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -1921,11 +1921,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 7 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">deserializedDirective</span><span class="p">.</span><span class="n">constCmd</span><span class="p">.</span><span class="n">set__argBufSize</span><span class="p">(</span><span class="n">cmdArgBufSize</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1934,11 +1934,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 7 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -2534,7 +2534,7 @@
       <td class="lineno"><a id="l265" href="#l265">265</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ALLOCATE</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -2543,13 +2543,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 6 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5</td>
+      <td class="linecount partialCoveredLine">6</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">deserializedDirective</span><span class="p">.</span><span class="n">allocate</span><span class="p">)</span><span class="w"> </span><span class="n">FpySequencer_AllocateDirective</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -2558,11 +2558,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 6 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argBuf</span><span class="p">.</span><span class="n">deserializeTo</span><span class="p">(</span><span class="n">deserializedDirective</span><span class="p">.</span><span class="n">allocate</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2571,17 +2571,17 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/7</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 6 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 6 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 6 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 9 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 9 taken 6 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5</td>
+      <td class="linecount partialCoveredLine">6</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">argBuf</span><span class="p">.</span><span class="n">getDeserializeSizeLeft</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -2618,11 +2618,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 6 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -4892,7 +4892,7 @@
       <td class="lineno"><a id="l497" href="#l497">497</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2246</td>
+      <td class="linecount coveredLine">2251</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -4913,7 +4913,7 @@
       <td class="lineno"><a id="l500" href="#l500">500</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2186</td>
+      <td class="linecount coveredLine">2191</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">FpySequencer::dispatchDirective</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DirectiveUnion</span><span class="o">&amp;</span><span class="w"> </span><span class="n">directive</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">DirectiveId</span><span class="o">&amp;</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -4927,14 +4927,14 @@
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
             <div class="takenBranch">&check; Branch 7 taken 2 times.</div>
             <div class="takenBranch">&check; Branch 8 taken 7 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2056 times.</div>
+            <div class="takenBranch">&check; Branch 9 taken 2058 times.</div>
             <div class="takenBranch">&check; Branch 10 taken 6 times.</div>
             <div class="takenBranch">&check; Branch 11 taken 1 times.</div>
             <div class="takenBranch">&check; Branch 12 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 13 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 7 times.</div>
             <div class="takenBranch">&check; Branch 14 taken 5 times.</div>
             <div class="takenBranch">&check; Branch 15 taken 7 times.</div>
-            <div class="takenBranch">&check; Branch 16 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 16 taken 6 times.</div>
             <div class="takenBranch">&check; Branch 17 taken 1 times.</div>
             <div class="takenBranch">&check; Branch 18 taken 9 times.</div>
             <div class="takenBranch">&check; Branch 19 taken 45 times.</div>
@@ -4958,7 +4958,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2186</td>
+      <td class="linecount partialCoveredLine">2191</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -5008,7 +5008,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_waitRel_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">waitRel</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_waitRel_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">waitRel</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l509" href="#l509">509</a></td>
@@ -5036,7 +5036,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_waitAbs_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">waitAbs</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_waitAbs_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">waitAbs</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l513" href="#l513">513</a></td>
@@ -5064,7 +5064,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_goto_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">gotoDirective</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_goto_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">gotoDirective</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l517" href="#l517">517</a></td>
@@ -5092,7 +5092,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">7</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_if_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">ifDirective</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_if_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">ifDirective</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l521" href="#l521">521</a></td>
@@ -5112,21 +5112,21 @@
       <td class="lineno"><a id="l523" href="#l523">523</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2056</td>
+      <td class="linecount coveredLine">2058</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">NO_OP</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l524" href="#l524">524</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2056</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_noOp_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">noOp</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">2058</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_noOp_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">noOp</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l525" href="#l525">525</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2056</td>
+      <td class="linecount coveredLine">2058</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5148,7 +5148,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushTlmVal_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushTlmVal</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushTlmVal_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushTlmVal</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l529" href="#l529">529</a></td>
@@ -5175,1096 +5175,1124 @@
       <td class="lineno"><a id="l532" href="#l532">532</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushTlmValAndTime_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushTlmValAndTime</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushTlmValAndTime_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushTlmValAndTime</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l533" href="#l533">533</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">                                                                      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l534" href="#l534">534</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l535" href="#l535">535</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PUSH_PRM</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l536" href="#l536">536</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushPrm_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushPrm</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PUSH_PRM</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l537" href="#l537">537</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushPrm_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushPrm</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l538" href="#l538">538</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l539" href="#l539">539</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">CONST_CMD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l540" href="#l540">540</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_constCmd_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">constCmd</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">7</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">CONST_CMD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l541" href="#l541">541</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">7</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_constCmd_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">constCmd</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l542" href="#l542">542</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">7</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l543" href="#l543">543</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">// fallthrough on purpose</span></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l544" href="#l544">544</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="c1">// fallthrough on purpose</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l545" href="#l545">545</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">OR</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l545" href="#l545">545</a></td>
+      <td class="lineno"><a id="l546" href="#l546">546</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">AND</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l546" href="#l546">546</a></td>
+      <td class="lineno"><a id="l547" href="#l547">547</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">IEQ</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l547" href="#l547">547</a></td>
+      <td class="lineno"><a id="l548" href="#l548">548</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">INE</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l548" href="#l548">548</a></td>
+      <td class="lineno"><a id="l549" href="#l549">549</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">UGT</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l549" href="#l549">549</a></td>
+      <td class="lineno"><a id="l550" href="#l550">550</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ULT</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l550" href="#l550">550</a></td>
+      <td class="lineno"><a id="l551" href="#l551">551</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ULE</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l551" href="#l551">551</a></td>
+      <td class="lineno"><a id="l552" href="#l552">552</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">UGE</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l552" href="#l552">552</a></td>
+      <td class="lineno"><a id="l553" href="#l553">553</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SGT</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l553" href="#l553">553</a></td>
+      <td class="lineno"><a id="l554" href="#l554">554</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SLT</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l554" href="#l554">554</a></td>
+      <td class="lineno"><a id="l555" href="#l555">555</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SLE</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l555" href="#l555">555</a></td>
+      <td class="lineno"><a id="l556" href="#l556">556</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SGE</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l556" href="#l556">556</a></td>
+      <td class="lineno"><a id="l557" href="#l557">557</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FEQ</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l557" href="#l557">557</a></td>
+      <td class="lineno"><a id="l558" href="#l558">558</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FNE</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l558" href="#l558">558</a></td>
+      <td class="lineno"><a id="l559" href="#l559">559</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FLT</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l559" href="#l559">559</a></td>
+      <td class="lineno"><a id="l560" href="#l560">560</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FLE</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l560" href="#l560">560</a></td>
+      <td class="lineno"><a id="l561" href="#l561">561</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FGT</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l561" href="#l561">561</a></td>
+      <td class="lineno"><a id="l562" href="#l562">562</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FGE</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l562" href="#l562">562</a></td>
+      <td class="lineno"><a id="l563" href="#l563">563</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">NOT</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l563" href="#l563">563</a></td>
+      <td class="lineno"><a id="l564" href="#l564">564</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FPEXT</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l564" href="#l564">564</a></td>
+      <td class="lineno"><a id="l565" href="#l565">565</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FPTRUNC</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l565" href="#l565">565</a></td>
+      <td class="lineno"><a id="l566" href="#l566">566</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FPTOSI</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l566" href="#l566">566</a></td>
+      <td class="lineno"><a id="l567" href="#l567">567</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FPTOUI</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l567" href="#l567">567</a></td>
+      <td class="lineno"><a id="l568" href="#l568">568</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SITOFP</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l568" href="#l568">568</a></td>
+      <td class="lineno"><a id="l569" href="#l569">569</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">UITOFP</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l569" href="#l569">569</a></td>
+      <td class="lineno"><a id="l570" href="#l570">570</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ADD</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l570" href="#l570">570</a></td>
+      <td class="lineno"><a id="l571" href="#l571">571</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SUB</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l571" href="#l571">571</a></td>
+      <td class="lineno"><a id="l572" href="#l572">572</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">MUL</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l572" href="#l572">572</a></td>
+      <td class="lineno"><a id="l573" href="#l573">573</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">UDIV</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l573" href="#l573">573</a></td>
+      <td class="lineno"><a id="l574" href="#l574">574</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SDIV</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l574" href="#l574">574</a></td>
+      <td class="lineno"><a id="l575" href="#l575">575</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">UMOD</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l575" href="#l575">575</a></td>
+      <td class="lineno"><a id="l576" href="#l576">576</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SMOD</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l576" href="#l576">576</a></td>
+      <td class="lineno"><a id="l577" href="#l577">577</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FADD</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l577" href="#l577">577</a></td>
+      <td class="lineno"><a id="l578" href="#l578">578</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FSUB</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l578" href="#l578">578</a></td>
+      <td class="lineno"><a id="l579" href="#l579">579</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FMUL</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l579" href="#l579">579</a></td>
+      <td class="lineno"><a id="l580" href="#l580">580</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FDIV</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l580" href="#l580">580</a></td>
+      <td class="lineno"><a id="l581" href="#l581">581</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FPOW</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l581" href="#l581">581</a></td>
+      <td class="lineno"><a id="l582" href="#l582">582</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FLOG</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l582" href="#l582">582</a></td>
+      <td class="lineno"><a id="l583" href="#l583">583</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FMOD</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l583" href="#l583">583</a></td>
+      <td class="lineno"><a id="l584" href="#l584">584</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SIEXT_8_64</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l584" href="#l584">584</a></td>
+      <td class="lineno"><a id="l585" href="#l585">585</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SIEXT_16_64</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l585" href="#l585">585</a></td>
+      <td class="lineno"><a id="l586" href="#l586">586</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SIEXT_32_64</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l586" href="#l586">586</a></td>
+      <td class="lineno"><a id="l587" href="#l587">587</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ZIEXT_8_64</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l587" href="#l587">587</a></td>
+      <td class="lineno"><a id="l588" href="#l588">588</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ZIEXT_16_64</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l588" href="#l588">588</a></td>
+      <td class="lineno"><a id="l589" href="#l589">589</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ZIEXT_32_64</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l589" href="#l589">589</a></td>
+      <td class="lineno"><a id="l590" href="#l590">590</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ITRUNC_64_8</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l590" href="#l590">590</a></td>
+      <td class="lineno"><a id="l591" href="#l591">591</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ITRUNC_64_16</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l591" href="#l591">591</a></td>
+      <td class="lineno"><a id="l592" href="#l592">592</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ITRUNC_64_32</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l592" href="#l592">592</a></td>
+      <td class="lineno"><a id="l593" href="#l593">593</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FFLOOR</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l593" href="#l593">593</a></td>
+      <td class="lineno"><a id="l594" href="#l594">594</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">IABS</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l594" href="#l594">594</a></td>
+      <td class="lineno"><a id="l595" href="#l595">595</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">FABS</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l595" href="#l595">595</a></td>
+      <td class="lineno"><a id="l596" href="#l596">596</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_stackOp_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">stackOp</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_stackOp_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">stackOp</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l596" href="#l596">596</a></td>
+      <td class="lineno"><a id="l597" href="#l597">597</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l597" href="#l597">597</a></td>
+      <td class="lineno"><a id="l598" href="#l598">598</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l598" href="#l598">598</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">7</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">EXIT</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l599" href="#l599">599</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">7</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_exit_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">exit</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">EXIT</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l600" href="#l600">600</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">7</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_exit_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">exit</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l601" href="#l601">601</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">7</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l602" href="#l602">602</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ALLOCATE</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l603" href="#l603">603</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_allocate_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">allocate</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">ALLOCATE</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l604" href="#l604">604</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_allocate_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">allocate</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l605" href="#l605">605</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l606" href="#l606">606</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STORE_REL_CONST_OFFSET</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l607" href="#l607">607</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_storeRelConstOffset_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">storeRelConstOffset</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STORE_REL_CONST_OFFSET</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l608" href="#l608">608</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_storeRelConstOffset_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">storeRelConstOffset</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l609" href="#l609">609</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">                                                                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l610" href="#l610">610</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l609" href="#l609">609</a></td>
+      <td class="lineno"><a id="l611" href="#l611">611</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l610" href="#l610">610</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">LOAD_REL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l611" href="#l611">611</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_loadRel_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">loadRel</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l612" href="#l612">612</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">LOAD_REL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l613" href="#l613">613</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_loadRel_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">loadRel</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l614" href="#l614">614</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">45</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PUSH_VAL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l615" href="#l615">615</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">45</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushVal_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushVal</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l616" href="#l616">616</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">45</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PUSH_VAL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l617" href="#l617">617</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">45</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushVal_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushVal</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l618" href="#l618">618</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">18</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">DISCARD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">45</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l619" href="#l619">619</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">18</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_discard_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">discard</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l620" href="#l620">620</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">18</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">DISCARD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l621" href="#l621">621</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">18</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_discard_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">discard</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l622" href="#l622">622</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">MEMCMP</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">18</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l623" href="#l623">623</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_memCmp_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">memCmp</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l624" href="#l624">624</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">MEMCMP</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l625" href="#l625">625</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_memCmp_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">memCmp</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l626" href="#l626">626</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STACK_CMD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l627" href="#l627">627</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_stackCmd_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">stackCmd</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l628" href="#l628">628</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STACK_CMD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l629" href="#l629">629</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_stackCmd_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">stackCmd</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l630" href="#l630">630</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PUSH_TIME</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l631" href="#l631">631</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushTime_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushTime</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l632" href="#l632">632</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PUSH_TIME</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l633" href="#l633">633</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushTime_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushTime</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l634" href="#l634">634</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SET_SEED</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l635" href="#l635">635</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_setSeed_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">setSeed</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l636" href="#l636">636</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">SET_SEED</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l637" href="#l637">637</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_setSeed_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">setSeed</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l638" href="#l638">638</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PUSH_RAND</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l639" href="#l639">639</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushRand_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushRand</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l640" href="#l640">640</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PUSH_RAND</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l641" href="#l641">641</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_pushRand_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">pushRand</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l642" href="#l642">642</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">GET_FIELD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l643" href="#l643">643</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_getField_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">getField</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l644" href="#l644">644</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">GET_FIELD</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l645" href="#l645">645</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_getField_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">getField</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l646" href="#l646">646</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PEEK</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l647" href="#l647">647</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_peek_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">peek</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l648" href="#l648">648</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">PEEK</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l649" href="#l649">649</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_peek_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">peek</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l650" href="#l650">650</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STORE_REL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l651" href="#l651">651</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_storeRel_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">storeRel</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l652" href="#l652">652</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STORE_REL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l653" href="#l653">653</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_storeRel_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">storeRel</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l654" href="#l654">654</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">CALL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l655" href="#l655">655</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_call_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">call</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l656" href="#l656">656</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">CALL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l657" href="#l657">657</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_call_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">call</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l658" href="#l658">658</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">RETURN</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l659" href="#l659">659</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_return_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">returnDirective</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l660" href="#l660">660</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">RETURN</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l661" href="#l661">661</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_return_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">returnDirective</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l662" href="#l662">662</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">LOAD_ABS</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l663" href="#l663">663</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_loadAbs_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">loadAbs</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l664" href="#l664">664</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">LOAD_ABS</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l665" href="#l665">665</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_loadAbs_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">loadAbs</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l666" href="#l666">666</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STORE_ABS</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l667" href="#l667">667</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_storeAbs_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">storeAbs</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l668" href="#l668">668</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STORE_ABS</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l669" href="#l669">669</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_storeAbs_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">storeAbs</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l670" href="#l670">670</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STORE_ABS_CONST_OFFSET</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l671" href="#l671">671</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_storeAbsConstOffset_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">storeAbsConstOffset</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l672" href="#l672">672</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">STORE_ABS_CONST_OFFSET</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l673" href="#l673">673</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_storeAbsConstOffset_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">storeAbsConstOffset</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l674" href="#l674">674</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">                                                                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l675" href="#l675">675</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l676" href="#l676">676</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l674" href="#l674">674</a></td>
+      <td class="lineno"><a id="l677" href="#l677">677</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">POP_EVENT</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l675" href="#l675">675</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_popEvent_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">popEvent</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l676" href="#l676">676</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l677" href="#l677">677</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l678" href="#l678">678</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">POP_SERIALIZABLE</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_popEvent_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">popEvent</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l679" href="#l679">679</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_popSerializable_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">popSerializable</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l680" href="#l680">680</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l681" href="#l681">681</a></td>
+      <td class="lineno"><a id="l680" href="#l680">680</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
+      <td class="lineno"><a id="l681" href="#l681">681</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fpy</span><span class="o">::</span><span class="no">DirectiveId</span><span class="o">::</span><span class="no">POP_SERIALIZABLE</span><span class="p">:</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
       <td class="lineno"><a id="l682" href="#l682">682</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">directive_popSerializable_internalInterfaceInvoke</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">popSerializable</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l683" href="#l683">683</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// coding err</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                                                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequencesStarted</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l684" href="#l684">684</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">id</span><span class="p">));</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l685" href="#l685">685</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l686" href="#l686">686</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l687" href="#l687">687</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// coding err</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l688" href="#l688">688</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">id</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l689" href="#l689">689</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l690" href="#l690">690</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l691" href="#l691">691</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="n">Signal</span><span class="w"> </span><span class="nf">FpySequencer::checkShouldWake</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l688" href="#l688">688</a></td>
+      <td class="lineno"><a id="l692" href="#l692">692</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -6277,14 +6305,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Time</span><span class="w"> </span><span class="n">currentTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getTime</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l689" href="#l689">689</a></td>
+      <td class="lineno"><a id="l693" href="#l693">693</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l690" href="#l690">690</a></td>
+      <td class="lineno"><a id="l694" href="#l694">694</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/4</summary>
@@ -6300,14 +6328,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">currentTime</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">wakeupTime</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l691" href="#l691">691</a></td>
+      <td class="lineno"><a id="l695" href="#l695">695</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// cannot compare these times.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l692" href="#l692">692</a></td>
+      <td class="lineno"><a id="l696" href="#l696">696</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
@@ -6322,49 +6350,49 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_MismatchedTimeBase</span><span class="p">(</span><span class="n">currentTime</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">wakeupTime</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l693" href="#l693">693</a></td>
+      <td class="lineno"><a id="l697" href="#l697">697</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l694" href="#l694">694</a></td>
+      <td class="lineno"><a id="l698" href="#l698">698</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_timeOpFailed</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l695" href="#l695">695</a></td>
+      <td class="lineno"><a id="l699" href="#l699">699</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l696" href="#l696">696</a></td>
+      <td class="lineno"><a id="l700" href="#l700">700</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l697" href="#l697">697</a></td>
+      <td class="lineno"><a id="l701" href="#l701">701</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Do not compare time context</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l698" href="#l698">698</a></td>
+      <td class="lineno"><a id="l702" href="#l702">702</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l699" href="#l699">699</a></td>
+      <td class="lineno"><a id="l703" href="#l703">703</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
@@ -6379,53 +6407,25 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">currentTime</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">wakeupTime</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l700" href="#l700">700</a></td>
+      <td class="lineno"><a id="l704" href="#l704">704</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// not time to wake up!</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l701" href="#l701">701</a></td>
+      <td class="lineno"><a id="l705" href="#l705">705</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_checkShouldWake_keepSleeping</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l702" href="#l702">702</a></td>
+      <td class="lineno"><a id="l706" href="#l706">706</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l703" href="#l703">703</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l704" href="#l704">704</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// say we&#39;ve finished our sleep</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l705" href="#l705">705</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">4</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_checkShouldWake_wakeup</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l706" href="#l706">706</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">8</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l707" href="#l707">707</a></td>
@@ -6439,17 +6439,45 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// checks whether the currently executing statement timed out</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// say we&#39;ve finished our sleep</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l709" href="#l709">709</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">4</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_checkShouldWake_wakeup</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l710" href="#l710">710</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">8</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l711" href="#l711">711</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l712" href="#l712">712</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// checks whether the currently executing statement timed out</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l713" href="#l713">713</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="n">Signal</span><span class="w"> </span><span class="nf">FpySequencer::checkStatementTimeout</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l710" href="#l710">710</a></td>
+      <td class="lineno"><a id="l714" href="#l714">714</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -6462,7 +6490,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">ParamValid</span><span class="w"> </span><span class="n">valid</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l711" href="#l711">711</a></td>
+      <td class="lineno"><a id="l715" href="#l715">715</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -6475,7 +6503,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">F32</span><span class="w"> </span><span class="n">timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">paramGet_STATEMENT_TIMEOUT_SECS</span><span class="p">(</span><span class="n">valid</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l712" href="#l712">712</a></td>
+      <td class="lineno"><a id="l716" href="#l716">716</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">5/6</summary>
@@ -6493,35 +6521,35 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">timeout</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">timeout</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">F32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l713" href="#l713">713</a></td>
+      <td class="lineno"><a id="l717" href="#l717">717</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// no timeout</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l714" href="#l714">714</a></td>
+      <td class="lineno"><a id="l718" href="#l718">718</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_checkStatementTimeout_noTimeout</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l715" href="#l715">715</a></td>
+      <td class="lineno"><a id="l719" href="#l719">719</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l716" href="#l716">716</a></td>
+      <td class="lineno"><a id="l720" href="#l720">720</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l717" href="#l717">717</a></td>
+      <td class="lineno"><a id="l721" href="#l721">721</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -6534,14 +6562,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Time</span><span class="w"> </span><span class="n">currentTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getTime</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l718" href="#l718">718</a></td>
+      <td class="lineno"><a id="l722" href="#l722">722</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l719" href="#l719">719</a></td>
+      <td class="lineno"><a id="l723" href="#l723">723</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/4</summary>
@@ -6557,14 +6585,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">currentTime</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementDispatchTime</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l720" href="#l720">720</a></td>
+      <td class="lineno"><a id="l724" href="#l724">724</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// can&#39;t compare time base. must have changed</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l721" href="#l721">721</a></td>
+      <td class="lineno"><a id="l725" href="#l725">725</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -6578,7 +6606,7 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_MismatchedTimeBase</span><span class="p">(</span><span class="n">currentTime</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">(),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l722" href="#l722">722</a></td>
+      <td class="lineno"><a id="l726" href="#l726">726</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -6591,42 +6619,42 @@
       <td class="src coveredLine"><span class="w">                                                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementDispatchTime</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l723" href="#l723">723</a></td>
+      <td class="lineno"><a id="l727" href="#l727">727</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_timeOpFailed</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l724" href="#l724">724</a></td>
+      <td class="lineno"><a id="l728" href="#l728">728</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l725" href="#l725">725</a></td>
+      <td class="lineno"><a id="l729" href="#l729">729</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l726" href="#l726">726</a></td>
+      <td class="lineno"><a id="l730" href="#l730">730</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Do not compare time context</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l727" href="#l727">727</a></td>
+      <td class="lineno"><a id="l731" href="#l731">731</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l728" href="#l728">728</a></td>
+      <td class="lineno"><a id="l732" href="#l732">732</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
@@ -6642,42 +6670,42 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementDispatchTime</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">currentTime</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l729" href="#l729">729</a></td>
+      <td class="lineno"><a id="l733" href="#l733">733</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// somehow we&#39;ve gone back in time... just ignore it and move on. should get fixed</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l730" href="#l730">730</a></td>
+      <td class="lineno"><a id="l734" href="#l734">734</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// if we wait I guess</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l731" href="#l731">731</a></td>
+      <td class="lineno"><a id="l735" href="#l735">735</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_checkStatementTimeout_noTimeout</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l732" href="#l732">732</a></td>
+      <td class="lineno"><a id="l736" href="#l736">736</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l733" href="#l733">733</a></td>
+      <td class="lineno"><a id="l737" href="#l737">737</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l734" href="#l734">734</a></td>
+      <td class="lineno"><a id="l738" href="#l738">738</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/6</summary>
@@ -6695,42 +6723,42 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementDispatchTime</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">currentTime</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l735" href="#l735">735</a></td>
+      <td class="lineno"><a id="l739" href="#l739">739</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementDispatchTime</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">currentTime</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l736" href="#l736">736</a></td>
+      <td class="lineno"><a id="l740" href="#l740">740</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// same as above</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l737" href="#l737">737</a></td>
+      <td class="lineno"><a id="l741" href="#l741">741</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_checkStatementTimeout_noTimeout</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l738" href="#l738">738</a></td>
+      <td class="lineno"><a id="l742" href="#l742">742</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l739" href="#l739">739</a></td>
+      <td class="lineno"><a id="l743" href="#l743">743</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l740" href="#l740">740</a></td>
+      <td class="lineno"><a id="l744" href="#l744">744</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -6744,7 +6772,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">U64</span><span class="w"> </span><span class="n">currentUSeconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U64</span><span class="o">&gt;</span><span class="p">(</span><span class="n">currentTime</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">())</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000000</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">currentTime</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l741" href="#l741">741</a></td>
+      <td class="lineno"><a id="l745" href="#l745">745</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -6757,7 +6785,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">U64</span><span class="w"> </span><span class="n">dispatchUSeconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U64</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementDispatchTime</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">())</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000000</span><span class="w"> </span><span class="o">+</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l742" href="#l742">742</a></td>
+      <td class="lineno"><a id="l746" href="#l746">746</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -6770,28 +6798,28 @@
       <td class="src coveredLine"><span class="w">                           </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementDispatchTime</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l743" href="#l743">743</a></td>
+      <td class="lineno"><a id="l747" href="#l747">747</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l744" href="#l744">744</a></td>
+      <td class="lineno"><a id="l748" href="#l748">748</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U64</span><span class="w"> </span><span class="n">timeoutUSeconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U64</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeout</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">1000000.0f</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l745" href="#l745">745</a></td>
+      <td class="lineno"><a id="l749" href="#l749">749</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l746" href="#l746">746</a></td>
+      <td class="lineno"><a id="l750" href="#l750">750</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -6805,42 +6833,42 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">currentUSeconds</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dispatchUSeconds</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">timeoutUSeconds</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l747" href="#l747">747</a></td>
+      <td class="lineno"><a id="l751" href="#l751">751</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// not over timeout</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l748" href="#l748">748</a></td>
+      <td class="lineno"><a id="l752" href="#l752">752</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_checkStatementTimeout_noTimeout</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l749" href="#l749">749</a></td>
+      <td class="lineno"><a id="l753" href="#l753">753</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l750" href="#l750">750</a></td>
+      <td class="lineno"><a id="l754" href="#l754">754</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l751" href="#l751">751</a></td>
+      <td class="lineno"><a id="l755" href="#l755">755</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// we timed out</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l752" href="#l752">752</a></td>
+      <td class="lineno"><a id="l756" href="#l756">756</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -6854,7 +6882,7 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementOpcode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">DirectiveId</span><span class="o">::</span><span class="n">CONST_CMD</span><span class="w"> </span><span class="o">||</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l753" href="#l753">753</a></td>
+      <td class="lineno"><a id="l757" href="#l757">757</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -6868,35 +6896,35 @@
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementOpcode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">DirectiveId</span><span class="o">::</span><span class="n">STACK_CMD</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l754" href="#l754">754</a></td>
+      <td class="lineno"><a id="l758" href="#l758">758</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// if we were executing a command, warn that the cmd timed out with its opcode</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l755" href="#l755">755</a></td>
+      <td class="lineno"><a id="l759" href="#l759">759</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_CommandTimedOut</span><span class="p">(</span><span class="n">CmdDispatcherCfg</span><span class="o">::</span><span class="n">getEventOpcode</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentCmdOpcode</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l756" href="#l756">756</a></td>
+      <td class="lineno"><a id="l760" href="#l760">760</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">                                             </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">currentStatementIdx</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceFilePath</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l757" href="#l757">757</a></td>
+      <td class="lineno"><a id="l761" href="#l761">761</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l758" href="#l758">758</a></td>
+      <td class="lineno"><a id="l762" href="#l762">762</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -6909,56 +6937,56 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_DirectiveTimedOut</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentStatementOpcode</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">currentStatementIdx</span><span class="p">(),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l759" href="#l759">759</a></td>
+      <td class="lineno"><a id="l763" href="#l763">763</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                                               </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceFilePath</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l760" href="#l760">760</a></td>
+      <td class="lineno"><a id="l764" href="#l764">764</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l761" href="#l761">761</a></td>
+      <td class="lineno"><a id="l765" href="#l765">765</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l762" href="#l762">762</a></td>
+      <td class="lineno"><a id="l766" href="#l766">766</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">result_checkStatementTimeout_statementTimeout</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l763" href="#l763">763</a></td>
+      <td class="lineno"><a id="l767" href="#l767">767</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l764" href="#l764">764</a></td>
+      <td class="lineno"><a id="l768" href="#l768">768</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l765" href="#l765">765</a></td>
+      <td class="lineno"><a id="l769" href="#l769">769</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l766" href="#l766">766</a></td>
+      <td class="lineno"><a id="l770" href="#l770">770</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
