@@ -110,7 +110,9 @@ agents opening a pull request must complete the AI checklist in the pull request
 Every pull request affirms, via the checklist in the template, that the contributor has the rights to contribute the
 change set under the [Apache-2.0 license](./LICENSE.txt) and agrees to be bound by these contributor guidelines.
 
-### Helping Maintainers Triage and Review Your PR
+### Recommendations for Opening a PR
+
+These recommendations help maintainers triage pull requests quickly and expedite their review.
 
 - **Title**: `<Component>: <imperative summary>`, using the component name rather than its full path
   (e.g. `CmdSequencer: Reject sequences with zero records`, not `Svc/CmdSequencer: ...`). For changes outside a
