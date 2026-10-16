@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-10-16T20:31:01Z",
+  "ref": "release/v4.4.x",
+  "commit": "558b7ef48edd5d25f3bdddcbbe7afddb9cc22d09",
+  "tier": "silver",
+  "has_sdd": true,
+  "sections": 6,
+  "filled_sections": 3,
+  "prose_words": 152,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "ports"
+  ],
+  "declared_kinds": [
+    "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/release/v4.4.x/Svc/ComSplitter/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::ComSplitter",
+      "url": "https://fprime.jpl.nasa.gov/release/v4.4.x/docs/reference/api/cpp/html/class_svc_1_1_com_splitter.html"
+    }
+  ]
+}
