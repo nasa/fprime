@@ -447,6 +447,16 @@ TEST(Event, RxTransactionLimitReached) {
     tester.testRxTransactionLimitReachedEvent();
 }
 
+TEST(Event, OrphanPdusDoNotHoldSlots) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testOrphanPdusDoNotHoldSlots();
+}
+
+TEST(Event, RxCapReservesTxCapacity) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxCapReservesTxCapacity();
+}
+
 TEST(Event, InvalidDestinationEid) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testInvalidDestinationEidEvent();
