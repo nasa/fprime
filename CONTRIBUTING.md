@@ -121,7 +121,6 @@ These recommendations help maintainers triage pull requests quickly and expedite
   on merge. Use `Part of #nnnn` when the PR only partially addresses an issue.
 - **Description**: keep it short. A few bullets on what changed and a sentence or two on why. Do not list every changed
   file or restate the diff; reviewers read the diff. Link specifications or docs rather than explaining them.
-- **Testing**: list the commands you ran and their result, not full logs.
 - **Breaking changes**: state them at the top of the description, along with any `pr-<PR_NUMBER>` branches opened on
   external repositories (see [Automated Checks on Reference Repositories](#automated-checks-on-reference-repositories)).
 - Remove the template's `<!-- -->` instruction comments once you have filled in the template.
