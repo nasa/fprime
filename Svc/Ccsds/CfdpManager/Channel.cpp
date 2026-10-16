@@ -780,6 +780,17 @@ void Channel::processPlaybackDirectory(Playback* pb) {
                 break;
             }
 
+            // Skip entries whose combined "<dir>/<entry>" path would not fit the
+            // MaxFilePathSize limit enforced by the metadata PDU, reporting the
+            // entry instead of initiating a transfer that would assert.
+            const FwSizeType srcPathLen = pb->fnames.src_filename.length() + 1 + pb->pending_file.length();
+            const FwSizeType dstPathLen = pb->fnames.dst_filename.length() + 1 + pb->pending_file.length();
+            if ((srcPathLen > MaxFilePathSize) || (dstPathLen > MaxFilePathSize)) {
+                this->m_cfdpManager->log_WARNING_LO_SendFileInitiateFail(pb->pending_file);
+                pb->pending_file = "";  // continue reading dir
+                continue;
+            }
+
             // Append file name to source/destination folders
             txn->m_history->fnames.src_filename = pb->fnames.src_filename;
             txn->m_history->fnames.src_filename += "/";
