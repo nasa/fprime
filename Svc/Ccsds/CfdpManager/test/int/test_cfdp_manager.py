@@ -11,7 +11,6 @@ import json
 import os
 import shutil
 import tempfile
-import time
 
 import pytest
 
@@ -62,6 +61,9 @@ def test_playback_directory_skips_overlong_entry(fprime_test_api, cfdp, playback
 
 def test_zero_timer_parameters_do_not_assert(fprime_test_api, cfdp):
     """A Class 2 transfer with ack_timer = inactivity_timer = 0 times out instead of asserting.
+
+    Note: this sets the ChannelConfig parameter on the running deployment (not saved to
+    the parameter file); restart the deployment to return to its configured defaults.
 
     Covers: CFDP-5890-3, CFDP-5890-4.
     """

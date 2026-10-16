@@ -772,23 +772,24 @@ void Channel::processPlaybackDirectory(Playback* pb) {
 
             pb->pending_file = path;
         } else {
-            txn = this->findUnusedTransaction(Direction::DIRECTION_TX);
-            if (txn == nullptr) {
-                // while not expected this can certainly happen, because
-                // rx transactions consume in these as well.
-                // should not need to do anything special, will come back next tick
-                break;
-            }
-
             // Skip entries whose combined "<dir>/<entry>" path would not fit the
             // MaxFilePathSize limit enforced by the metadata PDU, reporting the
-            // entry instead of initiating a transfer that would assert.
+            // entry instead of initiating a transfer that would assert. Checked
+            // before a transaction is acquired so no slot is consumed for it.
             const FwSizeType srcPathLen = pb->fnames.src_filename.length() + 1 + pb->pending_file.length();
             const FwSizeType dstPathLen = pb->fnames.dst_filename.length() + 1 + pb->pending_file.length();
             if ((srcPathLen > MaxFilePathSize) || (dstPathLen > MaxFilePathSize)) {
                 this->m_cfdpManager->log_WARNING_LO_SendFileInitiateFail(pb->pending_file);
                 pb->pending_file = "";  // continue reading dir
                 continue;
+            }
+
+            txn = this->findUnusedTransaction(Direction::DIRECTION_TX);
+            if (txn == nullptr) {
+                // while not expected this can certainly happen, because
+                // rx transactions consume in these as well.
+                // should not need to do anything special, will come back next tick
+                break;
             }
 
             // Append file name to source/destination folders

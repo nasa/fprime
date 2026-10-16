@@ -3138,6 +3138,20 @@ void CfdpManagerTester::testPlaybackDirEntryPathTooLong() {
     }
     ASSERT_NE(pb, nullptr);
 
+    // Count free transaction slots so the skipped entry can be shown not to consume one
+    auto countQueue = [](CListNode* head) {
+        U32 count = 0;
+        for (CListNode* node = head; node != nullptr; node = node->next) {
+            ++count;
+            if (node->next == head) {
+                break;
+            }
+        }
+        return count;
+    };
+    const U32 freeBefore = countQueue(chan->m_qs[QueueId::FREE]);
+    ASSERT_GE(freeBefore, 2U);
+
     this->clearEvents();
 
     // One 1Hz cycle scans the directory: the long entry is skipped, the short one starts a transaction.
@@ -3149,6 +3163,8 @@ void CfdpManagerTester::testPlaybackDirEntryPathTooLong() {
     ASSERT_EVENTS_PlaybackDirReadFailed_SIZE(0);
     ASSERT_EQ(pb->num_ts, 1) << "Only the short entry should have started a transaction";
     ASSERT_FALSE(pb->diropen) << "Directory scan should have run to completion";
+    ASSERT_EQ(countQueue(chan->m_qs[QueueId::FREE]), freeBefore - 1)
+        << "The skipped entry must not consume a transaction slot";
 
     Os::FileSystem::removeFile(longPath.toChar());
     Os::FileSystem::removeFile(shortPath.toChar());
