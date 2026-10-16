@@ -10,6 +10,8 @@
 #include <unistd.h>
 #endif
 
+#include <cstring>
+
 #include "CfdpManagerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
@@ -3080,6 +3082,153 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
     // Cleanup: rename succeeded, so the source no longer exists; the dest is now the directory.
     Os::FileSystem::removeDirectory(moveDest);
     Os::FileSystem::removeDirectory(moveSourceDir);
+}
+
+void CfdpManagerTester::testPlaybackDirEntryPathTooLong() {
+    // A playback entry whose "<dir>/<entry>" path exceeds MaxFilePathSize is skipped and
+    // reported with SendFileInitiateFail instead of reaching the MetadataPdu length assert.
+    // A second, short entry in the same directory verifies the playback keeps going.
+
+    const char* srcDir = "test/ut/output/playback_long";
+    Fw::String dstDir("/dest");
+    U8 channelId = TEST_CHANNEL_ID_0;
+
+    Os::FileSystem::Status dirStatus = Os::FileSystem::createDirectory(srcDir);
+    ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
+
+    // Entry name sized so that strlen(srcDir) + 1 + strlen(entry) > MaxFilePathSize while the
+    // entry itself still fits in pending_file (StringTemplate<MaxFilePathSize>).
+    char longName[MaxFilePathSize];
+    (void)::memset(longName, 'a', sizeof(longName) - 1);
+    longName[sizeof(longName) - 1] = '\0';
+    ASSERT_GT(::strlen(srcDir) + 1 + ::strlen(longName), static_cast<size_t>(MaxFilePathSize));
+
+    Fw::String longPath(srcDir);
+    longPath += "/";
+    longPath += longName;
+    Fw::String shortPath(srcDir);
+    shortPath += "/short.bin";
+
+    const char* files[] = {longPath.toChar(), shortPath.toChar()};
+    for (const char* path : files) {
+        Os::File file;
+        ASSERT_EQ(Os::File::OP_OK, file.open(path, Os::File::OPEN_CREATE, Os::File::OVERWRITE)) << path;
+        U8 data[16] = {0};
+        FwSizeType size = sizeof(data);
+        ASSERT_EQ(Os::File::OP_OK, file.write(data, size));
+        file.close();
+    }
+
+    this->clearHistory();
+
+    Fw::String srcDirStr(srcDir);
+    Cfdp::Status::T status = this->component.m_engine->playbackDir(srcDirStr, dstDir, Cfdp::Class::CLASS_1,
+                                                                   Cfdp::Keep::KEEP, channelId, 0, TEST_GROUND_EID);
+    ASSERT_EQ(status, Cfdp::Status::SUCCESS);
+
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+    ASSERT_NE(chan, nullptr);
+    Playback* pb = nullptr;
+    for (U32 i = 0; i < MaxCommandedPlaybackDirectoriesPerChan; ++i) {
+        Playback* candidate = chan->getPlayback(i);
+        if (candidate->busy && candidate->diropen) {
+            pb = candidate;
+            break;
+        }
+    }
+    ASSERT_NE(pb, nullptr);
+
+    // Count free transaction slots so the skipped entry can be shown not to consume one
+    auto countQueue = [](CListNode* head) {
+        U32 count = 0;
+        for (CListNode* node = head; node != nullptr; node = node->next) {
+            ++count;
+            if (node->next == head) {
+                break;
+            }
+        }
+        return count;
+    };
+    const U32 freeBefore = countQueue(chan->m_qs[QueueId::FREE]);
+    ASSERT_GE(freeBefore, 2U);
+
+    this->clearEvents();
+
+    // One 1Hz cycle scans the directory: the long entry is skipped, the short one starts a transaction.
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_SendFileInitiateFail_SIZE(1);
+    ASSERT_EVENTS_SendFileInitiateFail(0, longName);
+    ASSERT_EVENTS_PlaybackDirReadFailed_SIZE(0);
+    ASSERT_EQ(pb->num_ts, 1) << "Only the short entry should have started a transaction";
+    ASSERT_FALSE(pb->diropen) << "Directory scan should have run to completion";
+    ASSERT_EQ(countQueue(chan->m_qs[QueueId::FREE]), freeBefore - 1)
+        << "The skipped entry must not consume a transaction slot";
+
+    Os::FileSystem::removeFile(longPath.toChar());
+    Os::FileSystem::removeFile(shortPath.toChar());
+    Os::FileSystem::removeDirectory(srcDir);
+}
+
+void CfdpManagerTester::testTimerZeroDurationExpiresOnFirstTick() {
+    // setTimer(0) must not assert in run(); it expires on the first tick.
+    Timer timer;
+    ASSERT_EQ(timer.getStatus(), Timer::UNINITIALIZED);
+
+    timer.setTimer(0);
+    ASSERT_EQ(timer.getStatus(), Timer::RUNNING);
+
+    timer.run();
+    ASSERT_EQ(timer.getStatus(), Timer::EXPIRED);
+
+    // Further ticks are harmless
+    timer.run();
+    ASSERT_EQ(timer.getStatus(), Timer::EXPIRED);
+
+    // Non-zero durations are unchanged: expire after exactly N ticks
+    timer.setTimer(2);
+    timer.run();
+    ASSERT_EQ(timer.getStatus(), Timer::RUNNING);
+    timer.run();
+    ASSERT_EQ(timer.getStatus(), Timer::EXPIRED);
+}
+
+void CfdpManagerTester::testZeroInactivityTimerExpiresOnFirstTick() {
+    // An inactivity timer armed with a zero duration (ChannelConfig.inactivity_timer = 0)
+    // fires the inactivity timeout on the first sTick() instead of asserting.
+    U8 channelId = 0;
+    const char* srcFile = "test/ut/output/tx_inactivity_zero.bin";
+    const char* dstFile = "/ground/tx_inactivity_zero.bin";
+    U32 fileSize = 500;
+    U32 sequenceId = 3001;
+    U32 peerId = TEST_GROUND_EID;
+    U32 localEid = this->component.getLocalEidParam();
+
+    this->clearHistory();
+
+    Transaction* txn =
+        setupTestTransaction(TxnState::TXN_STATE_S2, channelId, srcFile, dstFile, fileSize, sequenceId, peerId);
+    ASSERT_NE(txn, nullptr);
+    txn->m_history->src_eid = localEid;
+    txn->m_engine = this->component.m_engine;
+    txn->m_flags.com.inactivity_fired = false;
+    txn->m_flags.com.canceled = false;
+    txn->m_flags.com.suspended = false;
+    txn->m_flags.tx.send_eof = true;
+
+    txn->m_inactivity_timer.setTimer(0);
+    ASSERT_EQ(txn->m_inactivity_timer.getStatus(), Timer::RUNNING);
+
+    this->clearEvents();
+
+    I32 cont = 0;
+    txn->sTick(&cont);
+
+    ASSERT_EQ(txn->m_inactivity_timer.getStatus(), Timer::EXPIRED);
+    ASSERT_TRUE(txn->m_flags.com.inactivity_fired);
+    ASSERT_EVENTS_TxInactivityTimeout_SIZE(1);
+    ASSERT_EVENTS_TxInactivityTimeout(0, Cfdp::Class::CLASS_2, localEid, sequenceId);
 }
 
 }  // namespace Cfdp
