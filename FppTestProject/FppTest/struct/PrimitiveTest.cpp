@@ -233,10 +233,17 @@ REGISTER_TYPED_TEST_SUITE_P(PrimitiveTest,
 using PrimitiveTestImplementations = ::testing::Types<C_Primitive, SM_SMPrimitive>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, PrimitiveTest, PrimitiveTestImplementations);
 
-// Verify LinearBufferBase invariant: buffAddr is null iff capacity is zero.
-TEST(SerialBufferInvariant, NonNullAddrZeroCapacityAborts) {
+// Verify LinearBufferBase invariant: a null buffAddr requires zero capacity. A valid
+// buffAddr with zero capacity is an empty buffer, as when wrapping the tail of a packet
+// that carries a descriptor but no body.
+TEST(SerialBufferInvariant, NonNullAddrZeroCapacityIsEmpty) {
     U8 data[1];
-    EXPECT_DEATH(Fw::SerialBuffer(data, 0), "Assert");
+    Fw::SerialBuffer sb(data, 0);
+    sb.fill();
+    EXPECT_EQ(sb.getCapacity(), 0);
+    EXPECT_EQ(sb.getSize(), 0);
+    U8 out = 0;
+    EXPECT_EQ(sb.deserializeTo(out), Fw::FW_DESERIALIZE_BUFFER_EMPTY);
 }
 
 TEST(SerialBufferInvariant, NullAddrNonZeroCapacityAborts) {

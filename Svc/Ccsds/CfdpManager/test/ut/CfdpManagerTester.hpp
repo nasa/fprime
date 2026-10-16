@@ -668,6 +668,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! dataIn_handler: packet descriptor is not FW_PACKET_FILE
     void testDataInWrongDescriptor();
 
+    //! dataIn_handler: FW_PACKET_FILE descriptor with no PDU bytes after it
+    void testDataInDescriptorOnly();
+
+    //! dataIn_handler: FW_PACKET_FILE descriptor plus one PDU byte (truncated header)
+    void testDataInDescriptorPlusOneByte();
+
     //! getPduBuffer: max outgoing PDUs per cycle reached
     void testGetPduBufferMaxOutgoing();
 
