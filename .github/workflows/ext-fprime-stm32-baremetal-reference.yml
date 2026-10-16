@@ -1,0 +1,168 @@
+# Cross-compile https://github.com/fprime-community/fprime-stm32-baremetal-reference
+# for the STM32H753XI-EVAL2 target (ARM Cortex-M7, Os::Baremetal single-threaded
+# cyclic executive) and run HIL integration tests on a self-hosted Raspberry Pi
+# runner wired to the physical board over UART/ST-Link.
+
+name: "External Repo: STM32 Baremetal Reference"
+
+on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
+  push:
+    branches: [ release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+env:
+  FPRIME_LOCATION: ./lib/fprime
+  DEPLOYMENT: ReferenceDeployment
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-stm32-baremetal-reference
+
+  cross-compilation:
+    name: "Cross-Compile (stm32h7) + Host Unit Tests"
+    runs-on: ubuntu-22.04
+    needs: get-branch
+    steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          repository: fprime-community/fprime-stm32-baremetal-reference
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ${{ env.FPRIME_LOCATION }}
+          fetch-depth: 0
+          filter: blob:none
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ env.FPRIME_LOCATION }}
+      - name: "Install ARM GNU Toolchain"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-dev
+        shell: bash
+      - name: "Generate stm32h7 Build Cache"
+        run: |
+          fprime-util generate stm32h7 2>&1 | output-cleaner
+        shell: bash
+      - name: "Cross-Compile Binary"
+        run: |
+          fprime-util build stm32h7 -j"$(nproc)" 2>&1 | output-cleaner
+        shell: bash
+      - name: "Host-Native Unit Tests (GTest)"
+        run: |
+          fprime-util generate --ut 2>&1 | output-cleaner
+          for module in \
+            FprimeStm32BaremetalReference/Components/Led \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32GpioDriver \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32I2cDriver \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32SpiDriver \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32Timer \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32UartDriver; do
+            (cd "${GITHUB_WORKSPACE}/${module}" && fprime-util check --coverage 2>&1 | output-cleaner)
+          done
+        shell: bash
+      - name: "Report resource margin"
+        run: |
+          arm-none-eabi-size -A ./build-artifacts/stm32h7/${DEPLOYMENT}/bin/${DEPLOYMENT} | tee resource-margin.txt
+        shell: bash
+      - name: "Prepare artifacts"
+        run: |
+          mkdir -p stm32-artifacts
+          cp -r ./build-artifacts stm32-artifacts
+          cp -r FprimeStm32BaremetalReference/Deployments/ReferenceDeployment/test/int stm32-artifacts
+          cp resource-margin.txt stm32-artifacts
+        shell: bash
+      - name: "Archive Build Artifacts"
+        uses: actions/upload-artifact@v7
+        with:
+          name: stm32-artifacts
+          path: stm32-artifacts
+          retention-days: 5
+
+  HIL-integration:
+    name: "HIL Integration Tests (STM32H753XI-EVAL2)"
+    runs-on: [self-hosted, baremetal]
+    needs: cross-compilation
+    timeout-minutes: 30
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: "requirements.txt"
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: "Setup environment"
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
+        shell: bash
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+      - name: "Artifacts Download"
+        uses: actions/download-artifact@v8
+        with:
+          name: stm32-artifacts
+      # OpenOCD and the ST-Link udev rules are expected to be pre-provisioned on
+      # this runner (hardware-specific setup, not reinstalled every run).
+      - name: "Flash board via OpenOCD/ST-Link"
+        run: |
+          . venv/bin/activate
+          openocd -f interface/stlink.cfg -f target/stm32h7x.cfg \
+            -c "program ./build-artifacts/stm32h7/${DEPLOYMENT}/bin/${DEPLOYMENT} verify reset exit"
+        shell: bash
+      - name: "Run Integration Tests"
+        run: |
+          . venv/bin/activate
+          mkdir -p ci-logs
+          fprime-gds --no-app --communication-selection uart \
+            --uart-device /dev/ttyACM0 --uart-baud 115200 \
+            -d ./build-artifacts/stm32h7/${DEPLOYMENT} --logs ./ci-logs &
+          sleep 10
+          pytest -o python_files="*_integration_tests.py" \
+            --dictionary ./build-artifacts/stm32h7/${DEPLOYMENT}/dict/${DEPLOYMENT}TopologyDictionary.json \
+            --logs ./ci-logs --junit-xml-file hil-results.xml --gen-junitxml \
+            ./int/
+        shell: bash
+      - name: "Archive logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: stm32-hil-logs
+          path: ci-logs
+          retention-days: 5
