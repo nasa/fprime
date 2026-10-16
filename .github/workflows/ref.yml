@@ -41,7 +41,7 @@ jobs:
           - runner: ubuntu-22.04
             jobs: "random"
           - runner: macos-latest
-            jobs: "2"
+            jobs: "4"
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
@@ -131,7 +131,7 @@ jobs:
           - runner: ubuntu-22.04
             jobs: "random"
           - runner: macos-latest
-            jobs: "2"
+            jobs: "4"
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
