@@ -579,6 +579,8 @@ void VersionTester ::test_sendEventParam() {
     ASSERT_EVENTS_ProjectVersion_SIZE(1);
     ASSERT_EVENTS_LibraryVersions_SIZE(12);
     ASSERT_EVENTS_CustomVersions_SIZE(2);  // one event per populated slot
+    ASSERT_EVENTS_CustomVersions(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, "ver_x");
+    ASSERT_EVENTS_CustomVersions(1, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, "ver_y");
     ASSERT_TLM_FrameworkVersion(0, Project::Version::FRAMEWORK_VERSION);
     ASSERT_TLM_CustomVersion01_SIZE(1);
     ASSERT_TLM_CustomVersion06_SIZE(1);

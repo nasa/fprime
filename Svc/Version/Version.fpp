@@ -35,8 +35,8 @@ module Svc {
         @ Mutexed Port to set values
         guarded input port setVersion: Svc.Version
 
-        @ Scheduled port to periodically re-emit all versions
-        sync input port schedIn: Svc.Sched
+        @ Scheduled port to periodically re-emit version telemetry
+        guarded input port schedIn: Svc.Sched
         
         @ A command to enable or disable Event verbosity and Telemetry
         guarded command ENABLE(

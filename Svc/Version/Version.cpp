@@ -78,10 +78,10 @@ void Version ::setVersion_handler(FwIndexType portNum,
 
 // Scheduled handler to periodically re-emit all version information (without event spamming)
 void Version ::schedIn_handler(FwIndexType portNum, U32 context) {
-    this->projectVersion_tlm(false);
-    this->fwVersion_tlm(false);
-    this->libraryVersion_tlm(false);
-    this->customVersion_tlm_all(false);
+    this->projectVersion_tlm(/* sendEvent = */ false);
+    this->fwVersion_tlm(/* sendEvent = */ false);
+    this->libraryVersion_tlm(/* sendEvent = */ false);
+    this->customVersion_tlm_all(/* sendEvent = */ false);
 }
 
 // ----------------------------------------------------------------------
@@ -131,34 +131,31 @@ void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Svc::Ve
 // ----------------------------------------------------------------------
 // implementations for internal functions
 // ----------------------------------------------------------------------
-// Send tlm and/or events for framework version, set default [sendEvent=TRUE] to emit events
+// Write framework version tlm; also emit the event when sendEvent is true (default in Version.hpp)
 void Version ::fwVersion_tlm(bool sendEvent) {
-    if (sendEvent){
+    if (sendEvent) {
         Fw::LogStringArg fw_event = (Project::Version::FRAMEWORK_VERSION);
         this->log_ACTIVITY_LO_FrameworkVersion(fw_event);
     }
     Fw::TlmString fw_tlm = (Project::Version::FRAMEWORK_VERSION);
     this->tlmWrite_FrameworkVersion(fw_tlm);
 }
-
-// Send tlm and/or events for project version, set default [sendEvent=TRUE] to emit events
+// Write project version tlm; also emit the event when sendEvent is true (default in Version.hpp)
 void Version ::projectVersion_tlm(bool sendEvent) {
-    if (sendEvent){
+    if (sendEvent) {
         Fw::LogStringArg proj_event = Project::Version::PROJECT_VERSION;
         this->log_ACTIVITY_LO_ProjectVersion(proj_event);
     }
     Fw::TlmString proj_tlm = Project::Version::PROJECT_VERSION;
     this->tlmWrite_ProjectVersion(proj_tlm);
 }
-
-// Send tlm and/or events for library version, set default [sendEvent=TRUE] to emit events
+// Write library version tlm; also emit the event when sendEvent is true (default in Version.hpp)
 void Version ::libraryVersion_tlm(bool sendEvent) {
     // Process libraries array
-    for (U8 i = 0; i < Project::Version::LIBRARY_VERSIONS_COUNT; i++) {
+    for (FwIndexType i = 0; i < Project::Version::LIBRARY_VERSIONS_COUNT; i++) {
         FW_ASSERT(Project::Version::LIBRARY_VERSIONS[i] != nullptr, static_cast<FwAssertArgType>(i));
-       
-         // Write to Events, if enabled via sendEvent param
-        if (sendEvent){
+        // Write to Events, if enabled via sendEvent param
+        if (sendEvent) {
             this->log_ACTIVITY_LO_LibraryVersions(Fw::LogStringArg(Project::Version::LIBRARY_VERSIONS[i]));
         }
 
@@ -201,15 +198,15 @@ void Version ::libraryVersion_tlm(bool sendEvent) {
         }
     }
 }
-
-// Send tlm (if verbosity is enabled) and/or events for custom versions, set default [sendEvent=TRUE] to emit events
+// Write all custom version tlm; also emit the event when sendEvent is true (default in Version.hpp)
 void Version ::customVersion_tlm_all(bool sendEvent) {
+    //projects may define a maximum of 10 custom slots
+    static_assert(Svc::VersionCfg::VersionEnum::NUM_CONSTANTS <= VER_SLOT_09 + 1, "Svc::Version supports at most 10 custom version slots");
     for (U8 i = 0; (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS); i++) {
-        Version::customVersion_tlm(VersionSlot(i), sendEvent);
+        this->customVersion_tlm(static_cast<VersionSlot>(i), sendEvent);
     }
 }
-
-// Send tlm (if verbosity is enabled) and/or events for custom versions, set default [sendEvent=TRUE] to emit events
+// Write custom version tlm; also emit the event when sendEvent is true (default in Version.hpp)
 void Version ::customVersion_tlm(VersionSlot custom_slot, bool sendEvent) {
     // Process custom version TLM only if verbosity is enabled and there are any valid writes to it;
     //  it doesn't necessarily have to be consecutive
@@ -217,7 +214,7 @@ void Version ::customVersion_tlm(VersionSlot custom_slot, bool sendEvent) {
         (this->m_num_custom_elements > 0)) {  // Write TLM for valid writes
 
         // Write to Events, if enabled via sendEvent param
-        if (sendEvent){
+        if (sendEvent) {
             this->log_ACTIVITY_LO_CustomVersions(this->verId_db[custom_slot].get_version_enum(),
                                                  this->verId_db[custom_slot].get_version_value());
         }
