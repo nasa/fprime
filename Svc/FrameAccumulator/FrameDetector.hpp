@@ -6,6 +6,7 @@
 #ifndef SVC_FPRIME_FRAME_DETECTOR_HPP
 #define SVC_FPRIME_FRAME_DETECTOR_HPP
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Svc/FrameAccumulator/FrameDetectorStatusEnumAc.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
 namespace Svc {
@@ -14,11 +15,12 @@ namespace Svc {
 class FrameDetector {
   public:
     //! \brief status returned from the detection step
-    enum Status {
-        FRAME_DETECTED,     //!< Frame detected. Extract frame and return with new data.
-        NO_FRAME_DETECTED,  //!< No frame detected. Discard data and return with new data.
-        MORE_DATA_NEEDED    //!< More data is needed to detect a frame. Keep current data and return with more.
-    };
+    using Status = FrameDetectorStatus::T;
+
+    static constexpr Status FRAME_DETECTED = FrameDetectorStatus::FRAME_DETECTED;
+    static constexpr Status NO_FRAME_DETECTED = FrameDetectorStatus::NO_FRAME_DETECTED;
+    static constexpr Status MORE_DATA_NEEDED = FrameDetectorStatus::MORE_DATA_NEEDED;
+    static constexpr Status CRC_FAILURE = FrameDetectorStatus::CRC_FAILURE;
 
     //! \brief virtual destructor
     virtual ~FrameDetector() = default;
@@ -39,8 +41,11 @@ class FrameDetector {
     //!     determination is possible. size_out must be set to the total amount of data needed.
     //!
     //!     For example, if a frame start word is 4 bytes, and 3 bytes are available in the circular buffer then the
-    //!     return status would be NO_FRAME_DETECTED and size_out must be set to 4 to ensure that at least the start
+    //!     return status would be MORE_DATA_NEEDED and size_out must be set to 4 to ensure that at least the start
     //!     word is available.
+    //!
+    //!  4. CRC_FAILURE implies that a complete candidate was checked and rejected for a CRC mismatch.
+    //!     size_out must be zero. Discard one byte and resume detection, not the entire candidate.
     //!
     //! \param data: circular buffer with read-only access
     //! \param size_out: set as output to caller indicating size when appropriate

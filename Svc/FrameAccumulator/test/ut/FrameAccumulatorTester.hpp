@@ -11,6 +11,7 @@
 #include "Svc/FrameAccumulator/FrameAccumulator.hpp"
 #include "Svc/FrameAccumulator/FrameAccumulatorGTestBase.hpp"
 #include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
+#include "TestUtils/RuleBasedTesting.hpp"
 
 namespace Svc {
 
@@ -32,7 +33,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     // ----------------------------------------------------------------------
 
     //! Construct object FrameAccumulatorTester
-    FrameAccumulatorTester();
+    explicit FrameAccumulatorTester(bool crcWarningsEnabled = true);
 
     //! Destroy object FrameAccumulatorTester
     ~FrameAccumulatorTester();
@@ -75,6 +76,17 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Test that the most recent context is forwarded when a frame is detected
     void testContextForwarded();
 
+    void testCrcWarningThrottle();
+    void testCrcWarningsDisabled();
+    void testCrcRecovery(bool embedded);
+    void testCrcAccounting();
+    void testCrcCounterSaturation();
+
+    FW_RBT_DEFINE_RULE(FrameAccumulatorTester, Crc, Failure);
+    FW_RBT_DEFINE_RULE(FrameAccumulatorTester, Crc, Noise);
+    FW_RBT_DEFINE_RULE(FrameAccumulatorTester, Crc, Valid);
+    FW_RBT_DEFINE_RULE(FrameAccumulatorTester, Crc, AdvanceTime);
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -84,6 +96,16 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! will be detected as a full frame by the MockDetector
     //! (output) frame_size and buffer_count are updated with the size of the frame and the number of buffers sent
     void mockAccumulateFullFrame(U32& frame_size, U32& buffer_count);
+
+    void sendDiagnosticInput(U8* data, FwSizeType size);
+    void checkDiagnosticCounts(U64 failures, U64 discarded);
+    void stepDiagnosticMock(FrameDetector::Status status, FwSizeType size);
+
+    U64 m_shadowCrcFailures = 0;
+    U64 m_shadowResyncBytes = 0;
+    U32 m_shadowTime = 100;
+    U32 m_shadowPeriodStart = 0;
+    U32 m_shadowWarnings = 0;
 
     //! Connect ports
     void connectPorts();
