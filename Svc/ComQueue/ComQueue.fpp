@@ -8,6 +8,18 @@ module Svc {
     @ Array of queue depths for Fw::Buffer types
     array BuffQueueDepth = [ComQueueBufferPorts] U32
 
+    @ Per-port counts of async ingress drops for Fw::ComBuffer
+    array ComQueueIngressDrops = [ComQueueComPorts] U32
+
+    @ Per-port counts of async ingress drops for Fw::Buffer
+    array BuffQueueIngressDrops = [ComQueueBufferPorts] U32
+
+    @ Per-port counts of managed queue overflow drops for Fw::ComBuffer
+    array ComQueueManagedDrops = [ComQueueComPorts] U32
+
+    @ Per-port counts of managed queue overflow drops for Fw::Buffer
+    array BuffQueueManagedDrops = [ComQueueBufferPorts] U32
+
     @ Component used to queue buffer types
     active component ComQueue {
 
@@ -22,7 +34,7 @@ module Svc {
       async input port comStatusIn: Fw.SuccessCondition
 
       @ Port array for receiving Fw::ComBuffers
-      async input port comPacketQueueIn: [ComQueueComPorts] Fw.Com drop
+      async input port comPacketQueueIn: [ComQueueComPorts] Fw.Com hook
 
       @ Port array for receiving Fw::Buffers
       async input port bufferQueueIn: [ComQueueBufferPorts] Fw.BufferSend hook
