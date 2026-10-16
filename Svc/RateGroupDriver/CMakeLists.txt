@@ -15,6 +15,8 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/RateGroupDriver.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/RateGroupDriver.hpp"
+  DEPENDS
+    Utils
 )
 
 ### UTs ###
