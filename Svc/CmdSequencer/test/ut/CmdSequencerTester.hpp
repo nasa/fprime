@@ -345,6 +345,11 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
     //! Set the component sequence format
     void setComponentSequenceFormat();
 
+    //! Set the base name of a sequence file so that its full name has the given length
+    void setFileNameLength(SequenceFiles::File& file,  //!< The file
+                           const FwSizeType length     //!< The length of the full name
+    );
+
     //! Start a new sequence while checking command buffers
     void startNewSequence(const char* const fileName  //!< The file name
     );
