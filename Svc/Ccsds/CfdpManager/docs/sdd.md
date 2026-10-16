@@ -117,7 +117,7 @@ The design of `CfdpManager` assumes the following:
 
 6. For Class 2 transfers, the remote entity implements the CFDP protocol correctly and responds to PDUs according to the specification.
 
-7. Received files are written to a temporary directory (`ChannelConfig.tmp_dir` per-channel parameter) during transfer and moved to their final destination upon successful completion.
+7. Received files are written directly to their final destination once the metadata PDU supplies the destination path. The temporary directory (`ChannelConfig.tmp_dir` per-channel parameter) is used only when a Class 2 receive starts with file data before the metadata PDU arrives: the partial file is staged in `tmp_dir` and moved to the final destination when the metadata arrives.
 
 8. Port-initiated file transfers (via `fileIn`) use default configuration parameters (`FileInDefaultChannel`, `FileInDefaultDestEntityId`, `FileInDefaultClass`, `FileInDefaultKeep`, and `FileInDefaultPriority`).
 
@@ -618,14 +618,14 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | ChannelConfig.dequeue_enabled | Enable or disable transaction dequeuing and processing for this channel. Can be used to pause channel activity |
 | ChannelConfig.move_dir | Directory path to move source files after successful TX (transmit) transactions when keep is set to DELETE. If set, provides an archive mechanism to preserve files instead of deleting them. If empty or if the move fails, source files are deleted from the filesystem. Only applies to sending files, not receiving |
 | ChannelConfig.max_outgoing_pdus_per_cycle | Maximum number of outgoing PDUs to transmit per execution cycle. Throttles transmission rate to prevent overwhelming downstream components |
-| ChannelConfig.tmp_dir | Directory path for storing temporary files during receive (RX) transactions. Files are written here during transfer and moved to their final destination upon successful completion |
+| ChannelConfig.tmp_dir | Directory path for staging temporary files during receive (RX) transactions that begin with file data before the metadata PDU arrives (Class 2 only). The staged file is moved to the final destination once the metadata arrives. Transactions that receive the metadata first write directly to the final destination |
 | ChannelConfig.fail_dir | Directory path for storing files from polling operations that failed to transfer successfully. If empty or if the move fails, files are deleted from the filesystem |
 
 ### Deep Space Timer Configuration
 
 The timer parameters (`ack_timer`, `inactivity_timer`, `ack_limit`, `nack_limit`) must be configured appropriately for the communication delay environment:
 
-- **Near-Earth Operations**: Default values (ack_timer=3s, inactivity_timer=30s) are appropriate for round-trip light times of 1-2 seconds
+- **Near-Earth Operations**: Default values (ack_timer=2s, inactivity_timer=120s) are appropriate for round-trip light times of 1-2 seconds
 - **Lunar Operations**: Modest increases recommended (ack_timer=5-10s, inactivity_timer=60-120s) for ~2.5 second round-trip light times
 - **Deep Space Operations**: Significant increases required (ack_timer and inactivity_timer scaled to mission-specific round-trip light times, which can range from minutes to hours)
 

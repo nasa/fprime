@@ -80,20 +80,22 @@ topology Flight {
 
   # Wire CFDP PDU data flow to/from communication stack
   connections ComCcsds_FileHandlingCfdp {
-    # CFDP Downlink -> ComQueue (PDU egress)
-    FileHandlingCfdp.Subtopology.cfdpManager.dataOut[0] -> ComCcsds.Subtopology.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.CFDP]
-    ComCcsds.Subtopology.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.CFDP] -> FileHandlingCfdp.Subtopology.cfdpManager.dataReturnIn[0]
-    
+    # CFDP Downlink -> ComQueue (PDU egress, uses the FILE queue slot)
+    FileHandlingCfdp.Subtopology.cfdpManager.dataOut[0] -> ComCcsds.Subtopology.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+    ComCcsds.Subtopology.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandlingCfdp.Subtopology.cfdpManager.dataReturnIn[0]
+
     # FprimeRouter -> CFDP Uplink (PDU ingress)
-    ComCcsds.Subtopology.cfdpUplinkOut -> FileHandlingCfdp.Subtopology.cfdpManager.dataIn[0]
-    FileHandlingCfdp.Subtopology.cfdpManager.dataInReturn[0] -> ComCcsds.Subtopology.cfdpUplinkReturnIn
-    
-    # Buffer allocation for CFDP PDU construction
-    FileHandlingCfdp.Subtopology.cfdpManager.bufferAllocate[0] -> ComCcsds.Subtopology.bufferGetIn[ComCcsds.Ports_ComBufferGet.CFDP]
-    ComCcsds.Subtopology.bufferDeallocateOut[ComCcsds.Ports_ComBufferGet.CFDP] -> FileHandlingCfdp.Subtopology.cfdpManager.bufferDeallocate[0]
+    ComCcsds.Subtopology.fileUplinkOut -> FileHandlingCfdp.Subtopology.cfdpManager.dataIn[0]
+    FileHandlingCfdp.Subtopology.cfdpManager.dataInReturn[0] -> ComCcsds.Subtopology.fileUplinkReturnIn
+
+    # Buffer allocation for CFDP PDU construction (ComCcsds comms buffer pool)
+    FileHandlingCfdp.Subtopology.cfdpManager.bufferAllocate[0] -> ComCcsds.Subtopology.commsBufferGetCallee
+    FileHandlingCfdp.Subtopology.cfdpManager.bufferDeallocate[0] -> ComCcsds.Subtopology.commsBufferSendIn
   }
 }
 ```
+
+The connections above use the only buffer queue slot the stock `ComCcsds` subtopology provides (`Ports_ComBufferQueue.FILE`) plus the router file uplink ports and the comms buffer pool boundary. These are the same ports the non-CFDP `FileHandling` subtopology wires to (see the `ComCcsds_FileHandling` connections in `TestDeploymentsProject/Ref/Top/topology.fpp`). A deployment that imports both `FileHandling` and `FileHandlingCfdp` therefore needs to extend `ComCcsds`, for example with a second buffer queue entry, or provide CFDP with its own buffer manager and router arrangement.
 
 ### 3.2 CFDP Configuration
 
