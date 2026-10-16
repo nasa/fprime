@@ -84,7 +84,7 @@ The Wasm host refers to the context that surrounds the Wasm engine and provides 
 
 ## Build Dependencies
 
-The [spacewasm](https://github.com/nasa/spacewasm) engine is written in Rust and compiled into a static library at build time, so building this component requires a [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) on the `PATH`. This is the framework's only Rust dependency, so it is treated as optional: `cmake/required.cmake` detects `cargo`, and `Svc/CMakeLists.txt` skips `Svc::WasmSequencer`.
+The [spacewasm](https://github.com/nasa/spacewasm) engine is written in Rust and compiled into a static library at build time, so building this component requires a [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) on the `PATH`. This is the framework's only Rust dependency, so it is treated as optional: `cmake/required.cmake` detects `cargo`, and `Svc/WasmSequencer/CMakeLists.txt` skips `Svc::WasmSequencer`, recording the reason in the `WASM_SEQ_DISABLED_REASON` global property. A deployment that instantiates the component can fail at generate time with that reason, as `TestDeploymentsProject/Ref/CMakeLists.txt` does.
 
 SpaceWasm uses Rust `1.87` therefore `Svc::WasmSequencer` depends on Rust `>= 1.87` using the 2024 Edition of Rust.
 

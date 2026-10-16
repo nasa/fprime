@@ -6,6 +6,15 @@
 # components.
 ####
 
+# Ref instantiates Svc.WasmSequencer, which is disabled without a usable Rust toolchain
+if (NOT TARGET Svc_WasmSequencer)
+    get_property(WASM_SEQ_DISABLED_REASON GLOBAL PROPERTY WASM_SEQ_DISABLED_REASON)
+    fprime_cmake_fatal_error(
+        "Ref requires the Rust toolchain for Svc_WasmSequencer, which is disabled: ${WASM_SEQ_DISABLED_REASON}\n"
+        "Install or update Rust: https://www.rust-lang.org/tools/install\n"
+    )
+endif()
+
 # Add subdirectories for the Ref project specific components
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")

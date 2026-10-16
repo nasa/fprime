@@ -29,7 +29,7 @@ The following system requirements apply to your workstation for developing F´ a
 
 4. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
 
-5. *(Optional)* A [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) — required only to build components that depend on Rust. Components that require `cargo` are skipped when it is not found, and the rest of the framework builds normally.
+5. *(Optional)* A [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) 1.87 or newer — required only to build components that depend on Rust. Components that require `cargo` are skipped when it is not found, and the rest of the framework builds normally. The `Ref` deployment uses `Svc::WasmSequencer` and requires Rust. Distribution packages may be older than 1.87.
 
 <details>
 <summary>Click to Expand: How to Verify System Requirements</summary>
@@ -55,7 +55,7 @@ The following system requirements apply to your workstation for developing F´ a
     Hello, World!
     ```
 
-5. *(Optional)* `cargo --version` and `rustc --version`. Only needed to build components that depend on Rust.
+5. *(Optional)* `cargo --version` and `rustc --version` show 1.87 or newer. Only needed to build components that depend on Rust and the `Ref` deployment.
 
 </details>
 
