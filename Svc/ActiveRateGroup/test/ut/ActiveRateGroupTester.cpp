@@ -18,12 +18,17 @@
 #include <Svc/ActiveRateGroup/test/ut/ActiveRateGroupTester.hpp>
 #include <config/ActiveRateGroupCfg.hpp>
 
+#include <atomic>
 #include <cstdio>
 #include <cstring>
 
 namespace Svc {
 ActiveRateGroupTester::ActiveRateGroupTester(Svc::ActiveRateGroup& inst)
-    : ActiveRateGroupGTestBase("testerbase", 100), m_impl(inst), m_causeOverrun(false), m_callOrder(0) {
+    : ActiveRateGroupGTestBase("testerbase", 100),
+      m_impl(inst),
+      m_causeOverrun(false),
+      m_extraCycles(0),
+      m_callOrder(0) {
     this->clearPortCalls();
 }
 
@@ -48,6 +53,12 @@ void ActiveRateGroupTester::from_RateGroupMemberOut_handler(FwIndexType portNum,
         this->invoke_to_CycleIn(0, zero);
         this->m_causeOverrun = false;
     }
+    // several cycles arriving while this one is still executing, to build a backlog
+    for (U32 extra = 0; extra < this->m_extraCycles; extra++) {
+        Os::RawTime zero;
+        this->invoke_to_CycleIn(0, zero);
+    }
+    this->m_extraCycles = 0;
 }
 
 void ActiveRateGroupTester ::from_PingOut_handler(const FwIndexType portNum, U32 key) {
@@ -71,17 +82,17 @@ void ActiveRateGroupTester::runNominal(U32 contexts[], FwIndexType numContexts, 
 
     // clear port call log
     this->clearPortCalls();
-    // verify cycle start flag is NOT set
-    ASSERT_FALSE(this->m_impl.m_cycleStarted);
+    // verify no cycle is pending
+    ASSERT_EQ(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // call active rate group with time val
     this->invoke_to_CycleIn(0, time);
-    // verify cycle started flag is set
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    // verify a cycle is pending
+    ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // call doDispatch() for ActiveRateGroup
     REQUIREMENT("ARG-001");
     this->m_impl.doDispatch();
-    // verify cycle started flag is reset
-    ASSERT_FALSE(this->m_impl.m_cycleStarted);
+    // verify the pending count was cleared
+    ASSERT_EQ(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // check calls
     REQUIREMENT("ARG-002");
     for (FwIndexType portNum = 0;
@@ -121,22 +132,22 @@ void ActiveRateGroupTester::runCycleOverrun(U32 contexts[], FwIndexType numConte
         this->clearPortCalls();
         // clear telemetry log
         this->clearTlm();
-        // verify cycle start flag is NOT set on first cycle
+        // no cycle is pending on the first iteration; a slipped one still is afterwards
         if (0 == cycle) {
-            ASSERT_FALSE(this->m_impl.m_cycleStarted);
+            ASSERT_EQ(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
         } else {
-            ASSERT_TRUE(this->m_impl.m_cycleStarted);
+            ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
         }
         // set flag to cause overrun
         this->m_causeOverrun = true;
         // call active rate group with timer val
         this->invoke_to_CycleIn(0, zero_time);
-        // verify cycle started flag is set
-        ASSERT_TRUE(this->m_impl.m_cycleStarted);
+        // verify a cycle is pending
+        ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
         // call doDispatch() for ActiveRateGroup
         this->m_impl.doDispatch();
-        // verify cycle started flag is still set
-        ASSERT_TRUE(this->m_impl.m_cycleStarted);
+        // verify the overrun left a cycle pending
+        ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
         // verify cycle count
         ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(cycle) + 1);
 
@@ -172,18 +183,18 @@ void ActiveRateGroupTester::runCycleOverrun(U32 contexts[], FwIndexType numConte
     this->clearPortCalls();
     // clear telemetry log
     this->clearTlm();
-    // verify cycle start flag is NOT set on first cycle
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    // a cycle is still pending from the previous slip
+    ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // set flag to cause overrun
     this->m_causeOverrun = true;
     // call active rate group with timer val
     this->invoke_to_CycleIn(0, zero_time);
-    // verify cycle started flag is set from previous cycle slip
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    // verify a cycle is pending
+    ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // call doDispatch() for ActiveRateGroup
     this->m_impl.doDispatch();
-    // verify cycle started flag is still set
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    // verify the overrun left a cycle pending
+    ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // verify cycle count
     ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) + 1);
     // check calls
@@ -217,18 +228,18 @@ void ActiveRateGroupTester::runCycleOverrun(U32 contexts[], FwIndexType numConte
     this->clearPortCalls();
     // clear telemetry log
     this->clearTlm();
-    // verify cycle start flag is NOT set on first cycle
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    // a cycle is still pending from the previous slip
+    ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // set flag to prevent overrun
     this->m_causeOverrun = false;
     // call active rate group with timer val
     this->invoke_to_CycleIn(0, zero_time);
-    // verify cycle started flag is set from previous cycle slip
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    // verify a cycle is pending
+    ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // call doDispatch() for ActiveRateGroup
     this->m_impl.doDispatch();
-    // verify cycle started flag is not set
-    ASSERT_FALSE(this->m_impl.m_cycleStarted);
+    // verify no cycle is pending after a clean cycle
+    ASSERT_EQ(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // verify cycle count
     ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) + 2);
     // check calls
@@ -256,18 +267,18 @@ void ActiveRateGroupTester::runCycleOverrun(U32 contexts[], FwIndexType numConte
     this->clearPortCalls();
     // clear telemetry log
     this->clearTlm();
-    // verify cycle start flag is set on cycle
-    ASSERT_FALSE(this->m_impl.m_cycleStarted);
+    // verify no cycle is pending
+    ASSERT_EQ(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // set flag to cause overrun
     this->m_causeOverrun = true;
     // call active rate group with timer val
     this->invoke_to_CycleIn(0, zero_time);
-    // verify cycle started flag is set from port call
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    // verify the port call left a cycle pending
+    ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // call doDispatch() for ActiveRateGroup
     this->m_impl.doDispatch();
-    // verify cycle started flag is still set
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    // verify the overrun left a cycle pending
+    ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
     // verify cycle count
     ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) + 3);
     // check calls
@@ -291,6 +302,61 @@ void ActiveRateGroupTester::runCycleOverrun(U32 contexts[], FwIndexType numConte
     }
     ASSERT_TLM_RgCycleSlips_SIZE(1);
     ASSERT_TLM_RgCycleSlips(0, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) + 2);
+}
+
+void ActiveRateGroupTester::runMultiCycleSlip() {
+    TEST_CASE(101.3.1, "Count every cycle that arrives during a single overrun");
+
+    const U32 backlog = 3;
+
+    // call the preamble
+    this->m_impl.preamble();
+    // verify "task started" event
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_RateGroupStarted_SIZE(1);
+
+    // NOTE: The value of the timestamp is not relevant to this test ?
+    Os::RawTime zero_time;
+
+    // clear events
+    this->clearEvents();
+    // clear port call log
+    this->clearPortCalls();
+    // clear telemetry log
+    this->clearTlm();
+    // no cycle is pending at start
+    ASSERT_EQ(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
+
+    // call active rate group with timer val
+    this->invoke_to_CycleIn(0, zero_time);
+    // verify a cycle is pending
+    ASSERT_NE(0u, this->m_impl.m_pending.load(std::memory_order_relaxed));
+
+    // causing overflow of pending cycles
+    this->m_extraCycles = backlog;
+
+    REQUIREMENT("ARG-004");
+    this->m_impl.doDispatch();
+
+    // verify cycle count
+    ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(1));
+
+    // verify the dispatch only left backlogs on pending counter
+    ASSERT_EQ(backlog, this->m_impl.m_pending.load(std::memory_order_relaxed));
+    // verify cycle slips count
+    ASSERT_EQ(backlog, this->m_impl.m_cycleSlips);
+    for (FwIndexType portNum = 0;
+         portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort));
+         portNum++) {
+        ASSERT_TRUE(this->m_callLog[portNum].portCalled == true);
+    }
+
+    // verify overrun event is sent
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_RateGroupCycleSlip_SIZE(1);
+
+    ASSERT_TLM_RgCycleSlips_SIZE(1);
+    ASSERT_TLM_RgCycleSlips(0, backlog);
 }
 
 void ActiveRateGroupTester::runPingTest() {

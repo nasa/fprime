@@ -18,6 +18,7 @@
 #include <Fw/DataStructures/Array.hpp>
 #include <Fw/Deprecate.hpp>
 #include <Svc/ActiveRateGroup/ActiveRateGroupComponentAc.hpp>
+#include <atomic>
 
 namespace Svc {
 
@@ -41,7 +42,7 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
 
     //!  \brief ActiveRateGroup constructor
     //!
-    //!  The constructor of the class clears all the flags and copies the
+    //!  The constructor of the class clears all the counters and copies the
     //!  contents of the context array to private storage.
     //!
     //!  \param compName Name of the component
@@ -91,7 +92,7 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
     //!  \brief Input cycle port pre message hook
     //!
     //!  The input cycle port pre message hook is called on the thread of the calling
-    //!  cycle port. It sets flag to indicate that the cycle has started.
+    //!  cycle port. It increases a counter to indicate that the cycle has started.
     //!
     //!  \param portNum incoming port call. For this class, should always be zero
     //!  \param cycleStart value stored by the cycle driver, used to compute execution time.
@@ -117,7 +118,7 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
 
     U32 m_cycles;                          //!< cycles executed
     U32 m_maxTime;                         //!< maximum execution time in microseconds
-    volatile bool m_cycleStarted;          //!< indicate that cycle has started. Used to detect overruns.
+    std::atomic<U32> m_pending;            //!< counts the cycles that are actually happening. Used to detect overruns.
     U32 m_contexts[CONNECTION_COUNT_MAX];  //!< Must match number of output ports
     FwIndexType m_numContexts;             //!< Number of contexts passed in by user
     FwIndexType m_overrunThrottle;         //!< throttle value for overrun events

@@ -50,10 +50,10 @@ A context value can be used by a component to discriminate between more than one
 
 The task of the component calls the output ports in order, passing the context from the context list as the port argument. 
 
-The component sets a flag when the cycle port is invoked. At the beginning of the rate group execution, the component clears 
-the flag. 
-If it detects that it has been set again at the end of the rate group cycle, it will declare a cycle slip, send an 
-event, and increase the cycle slip counters. 
+The component increases an atomic counter when the cycle port is invoked. At the beginning of the rate group execution, the component clears 
+the atomic counter. 
+If it detects that it has been increased again at the end of the rate group cycle, it will declare a cycle slip, send an 
+event, and increase the cycle slip counters by the number of cycles that arrived during the execution. 
 
 ### 3.3 Scenarios
 
