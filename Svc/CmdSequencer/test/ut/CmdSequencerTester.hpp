@@ -271,6 +271,9 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
     //! Don't load any sequence, then try to run a sequence
     void parameterizedNeverLoaded();
 
+    //! Reject port-driven runs on an instance whose seqDone port is not connected
+    void parameterizedRunWithoutSeqDone();
+
     //! Sequence timeout
     void parameterizedSequenceTimeout(SequenceFiles::File& file  //!< The file
     );

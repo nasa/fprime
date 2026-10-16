@@ -222,3 +222,14 @@ event CS_NoRecords(
   severity warning low \
   id 25 \
   format "Sequence file {} has no records. Ignoring."
+
+@ CS_STEP was rejected because the previously stepped command is still waiting for its
+@ time tag; the step can be retried once schedIn has dispatched that command
+event CS_StepRecordPending(
+                            fileName: string size 60 @< The sequence file
+                            seconds: U32 @< Seconds of the pending command's time tag
+                            useconds: U32 @< Microseconds of the pending command's time tag
+                          ) \
+  severity warning low \
+  id 26 \
+  format "Sequence {}: step rejected, previous command pending until {} s {} us"

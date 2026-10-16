@@ -369,6 +369,11 @@ TEST(NoFiles, NoSequenceActiveAMPCS) {
     tester.NoSequenceActive();
 }
 
+TEST(NoFiles, RunWithoutSeqDone) {
+    Svc::NoFiles::CmdSequencerTester tester;
+    tester.RunWithoutSeqDone();
+}
+
 TEST(Relative, AutoByCommand) {
     TEST_CASE(103.1.3, "Nominal Relative Commands");
     Svc::Relative::CmdSequencerTester tester;
@@ -378,6 +383,11 @@ TEST(Relative, AutoByCommand) {
 TEST(Relative, AutoByCommandAMPCS) {
     Svc::Relative::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
     tester.AutoByCommand();
+}
+
+TEST(Relative, StepWhileRecordPending) {
+    Svc::Relative::CmdSequencerTester tester;
+    tester.StepWhileRecordPending();
 }
 
 TEST(Relative, Validate) {
