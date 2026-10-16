@@ -14,7 +14,7 @@ Please follow the [install guide for F´](../../docs/getting-started/installing-
 
 **Installing Rust**
 
-Ref uses `Svc::WasmSequencer`, which requires a [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) 1.87 or newer. Distribution packages may be older. Without a usable toolchain, `fprime-util generate` stops with an error.
+Ref uses `Svc::WasmSequencer`, which requires a [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) 1.87 or newer.
 
 ## Building and Running the Ref Application
 
