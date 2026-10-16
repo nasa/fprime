@@ -110,6 +110,9 @@ topologies, build system) is entered through
   before implementation. Keep changes focused; large cross-cutting PRs are
   declined. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and
   [`GOVERNANCE.md`](GOVERNANCE.md).
+- When opening a pull request, follow "Recommendations for Opening a PR"
+  in [`CONTRIBUTING.md`](CONTRIBUTING.md) for the title, linked issues,
+  and description.
 - **Generative-AI usage must be disclosed** in the pull request, per
   [`AI_POLICY.md`](AI_POLICY.md): fill in the "AI Used (y/n)" entry and describe
   the assistance in the "AI Usage" section of the PR template.
