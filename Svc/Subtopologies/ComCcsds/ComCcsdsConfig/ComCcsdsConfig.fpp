@@ -35,6 +35,13 @@ module ComCcsdsConfig {
         constant file        = 1
     }
 
+    @ Drop the oldest queued entry instead of the newest when a queue overflows
+    module QueueDropOldest {
+        constant events = false
+        constant tlm = false
+        constant file = false
+    }
+
     # Aggregator configuration constants
     module Aggregator {
         @ Size in bytes of every aggregate emitted by the aggregator instance: the TM Transfer Frame Data Field.

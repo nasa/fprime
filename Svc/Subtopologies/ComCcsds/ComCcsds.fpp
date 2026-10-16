@@ -26,14 +26,17 @@ module ComCcsds {
         // Events (highest-priority)
         configurationTable.entries[Ports_ComPacketQueue::EVENTS].depth = ComCcsdsConfig::QueueDepths::events;
         configurationTable.entries[Ports_ComPacketQueue::EVENTS].priority = ComCcsdsConfig::QueuePriorities::events;
+        configurationTable.entries[Ports_ComPacketQueue::EVENTS].overflowMode = ComCcsdsConfig::QueueDropOldest::events ? Types::QUEUE_DROP_OLDEST : Types::QUEUE_DROP_NEWEST;
 
         // Telemetry
         configurationTable.entries[Ports_ComPacketQueue::TELEMETRY].depth = ComCcsdsConfig::QueueDepths::tlm;
         configurationTable.entries[Ports_ComPacketQueue::TELEMETRY].priority = ComCcsdsConfig::QueuePriorities::tlm;
+        configurationTable.entries[Ports_ComPacketQueue::TELEMETRY].overflowMode = ComCcsdsConfig::QueueDropOldest::tlm ? Types::QUEUE_DROP_OLDEST : Types::QUEUE_DROP_NEWEST;
 
         // File Downlink Queue (buffer queue using NUM_CONSTANTS offset)
         configurationTable.entries[Ports_ComPacketQueue::NUM_CONSTANTS + Ports_ComBufferQueue::FILE].depth = ComCcsdsConfig::QueueDepths::file;
         configurationTable.entries[Ports_ComPacketQueue::NUM_CONSTANTS + Ports_ComBufferQueue::FILE].priority = ComCcsdsConfig::QueuePriorities::file;
+        configurationTable.entries[Ports_ComPacketQueue::NUM_CONSTANTS + Ports_ComBufferQueue::FILE].overflowMode = ComCcsdsConfig::QueueDropOldest::file ? Types::QUEUE_DROP_OLDEST : Types::QUEUE_DROP_NEWEST;
 
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComCcsds::comQueue.configure(configurationTable, 0, ComCcsds::Allocation::memAllocator);
