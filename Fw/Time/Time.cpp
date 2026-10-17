@@ -251,6 +251,11 @@ void Time::add(U32 seconds, U32 useconds) {
 void Time::add(F64 seconds) {
     U32 parsedSeconds = this->parseSeconds(seconds);
     U32 parsedUseconds = this->parseUSeconds(seconds);
+    // parseUSeconds rounds up to a whole second at 999999.5 or above; carry it before adding
+    if (parsedUseconds >= 1000000) {
+        parsedSeconds++;
+        parsedUseconds -= 1000000;
+    }
     // Add parsed seconds and useconds
     this->add(parsedSeconds, parsedUseconds);
 }

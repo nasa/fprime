@@ -50,6 +50,11 @@ TEST(TimeTestOffNominal, InstantiateFromFloatCarry) {
     tester.test_InstantiateFromFloatCarry();
 }
 
+TEST(TimeTestOffNominal, AddFloatCarry) {
+    Fw::TimeTester tester;
+    tester.test_AddFloatCarry();
+}
+
 TEST(TimeTestOffNominal, DeserializeRejectsOutOfRangeUSeconds) {
     Fw::TimeTester tester;
     tester.test_DeserializeRejectsOutOfRangeUSeconds();
