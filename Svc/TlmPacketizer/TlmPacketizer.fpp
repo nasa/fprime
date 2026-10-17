@@ -5,15 +5,7 @@ module Svc {
     # Types
     # ----------------------------------------------------------------------
     
-    struct GroupConfig {
-      enabled: Fw.Enabled       @< Enable / Disable Telemetry Output
-      forceEnabled: Fw.Enabled  @< Force Enable / Disable Telemetry Output
-      rateLogic: RateLogic      @< Rate Logic Configuration
-      min: U32                  @< Minimum Sched Ticks when in ON_CHANGE_MIN
-      max: U32                  @< Maximum Sched Ticks when in EVERY_MAX
-    }
-
-    array GroupConfigs = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] GroupConfig
+    array GroupConfigs = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] TlmSendConfig
     array SectionConfigs = [TelemetrySection.NUM_SECTIONS] GroupConfigs default TELEMETRY_SECTION_DEFAULTS
     array SectionEnabled = [TelemetrySection.NUM_SECTIONS] Fw.Enabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
 
@@ -38,6 +30,18 @@ module Svc {
 
     @ Input configuration port
     async input port configureSectionGroupRate: ConfigureGroupRate
+
+    @ Per-packet override mirror to an external persistence component
+    output port configOut: Fw.BufferSend
+
+    @ Allocate buffers for configOut mirrors
+    output port bufferAllocate: Fw.BufferGet
+
+    @ Return buffers
+    output port bufferDeallocate: Fw.BufferSend
+
+    @ Per-packet override reload from the persistence component
+    async input port configIn: Fw.BufferSend
 
     @ Telemetry input port
     sync input port TlmRecv: Fw.Tlm
@@ -125,6 +129,47 @@ module Svc {
                                         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
                                       ) \
       opcode 5
+
+    @ Query the effective per-packet configuration.
+    async command GET_PACKET_CONFIG(
+                                    section: TelemetrySection   @< Section to query
+                                    packetId: U32               @< Packet identifier
+                                  ) \
+      opcode 6
+
+    @ Enable / disable a single packet in a section (per-packet override)
+    async command ENABLE_PACKET(
+                                 section: TelemetrySection   @< Section to configure
+                                 packetId: U32               @< Packet identifier
+                                 enable: Fw.Enabled          @< Enable / disable this packet
+                               ) \
+      opcode 7
+
+    @ Force telemeter a single packet even when it (or its section) is disabled
+    async command FORCE_PACKET(
+                                section: TelemetrySection   @< Section to configure
+                                packetId: U32               @< Packet identifier
+                                enable: Fw.Enabled          @< Force enable / disable
+                              ) \
+      opcode 8
+
+    @ Configure the rate logic and thresholds for a single packet
+    async command CONFIGURE_PACKET_RATES(
+                                          section: TelemetrySection   @< Section to configure
+                                          packetId: U32               @< Packet identifier
+                                          rateLogic: RateLogic        @< Rate logic
+                                          minDelta: U32               @< Minimum Sched ticks between sends (ON_CHANGE_MIN logic)
+                                          maxDelta: U32               @< Maximum Sched ticks between sends (EVERY_MAX logic)
+                                        ) \
+      opcode 9
+
+    @ Clear a single packet's per-packet override. Reverts to group-derived behavior.
+    async command CLEAR_PACKET_OVERRIDE(
+                                         section: TelemetrySection   @< Section to clear
+                                         packetId: U32               @< Packet identifier
+                                       ) \
+      opcode 10
+
     @ Parameter to control section enable flags
     external param SECTION_ENABLED: SectionEnabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
     @ Parameter to control section configuration
@@ -193,7 +238,30 @@ module Svc {
       id 6 \
       format "Telemetry ID 0x{x} update of size {} exceeds configured size {}" \
       throttle 10
-    
+
+    @ A configuration command or query referenced a packet id not present in this deployment
+    event UnknownPacketId(
+                          packetId: U32 @< The packet id
+                        ) \
+      severity warning low \
+      id 7 \
+      format "Packet id {} not found in packet list"
+
+    @ Could not allocate a buffer to mirror a per-packet override out configOut
+    event ConfigMirrorAllocFailed \
+      severity warning high \
+      id 8 \
+      format "Could not allocate buffer to mirror packet config" \
+      throttle 10
+
+    @ Effective per-packet configuration, emitted in response to GET_PACKET_CONFIG
+    event PacketConfigReport(
+                              packetConfig: PacketConfigEntry @< The effective per-packet configuration
+                            ) \
+      severity activity high \
+      id 9 \
+      format "Packet config: {}"
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
