@@ -7,6 +7,7 @@
 #ifndef Svc_FrameAccumulator_HPP
 #define Svc_FrameAccumulator_HPP
 
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Svc/FrameAccumulator/FrameAccumulatorComponentAc.hpp"
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
@@ -36,7 +37,8 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     void configure(const FrameDetector& detector,  //!< Frame detector helper instance
                    FwEnumStoreType allocationId,   //!< Identifier used  when dealing with the Fw::MemAllocator
                    Fw::MemAllocator& allocator,    //!< Fw::MemAllocator used to acquire memory
-                   FwSizeType store_size           //!< Size to request for circular buffer
+                   FwSizeType store_size,          //!< Size to request for circular buffer
+                   bool crcWarningsEnabled = true  //!< Enable CRC warnings; set only during startup
     );
 
     //! \brief Deallocate internal resources (set up by configure() call)
@@ -69,6 +71,9 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     //! \brief process circular buffer
     void processRing(const ComCfg::FrameContext& context);
 
+    //! Remove one byte during resynchronization and update the saturating discard count
+    void discardResyncByte();
+
     //! Circular buffer for storing data
     Types::CircularBuffer m_inRing;
 
@@ -83,6 +88,15 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
 
     //! Identification used with the memory allocator
     FwEnumStoreType m_allocatorId;
+
+    //! Whether CRC warnings are enabled for this instance
+    bool m_crcWarningsEnabled;
+
+    //! Saturating cumulative number of complete candidates rejected for CRC mismatch
+    U64 m_crcFailures;
+
+    //! Saturating cumulative number of bytes removed during resynchronization
+    U64 m_resyncBytesDiscarded;
 };
 
 }  // namespace Svc

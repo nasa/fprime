@@ -122,10 +122,8 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
 
     // Compare the transmitted CRC with the computed one
     if (trailer.get_crcField() != hashBuffer.asBigEndianU32()) {
-        // CRC mismatch - there likely was data corruption. The F Prime protocol
-        // being very simple, we don't have a way to recover from this.
-        // So we report NO_FRAME_DETECTED and drop the frame
-        return Status::NO_FRAME_DETECTED;
+        size_out = 0;
+        return Status::CRC_FAILURE;
     }
     // All checks passed - we have detected a frame of size expected_frame_size
     size_out = expected_frame_size;

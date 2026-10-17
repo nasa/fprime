@@ -5,10 +5,22 @@
 // ======================================================================
 
 #include "Svc/FrameAccumulator/FrameAccumulator.hpp"
+#include <limits>
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "config/FppConstantsAc.hpp"
 
 namespace Svc {
+
+static_assert(FrameAccumulatorCfg::CrcFailureWarningThrottle > 0, "CRC warning quota must be positive");
+static_assert(FrameAccumulatorCfg::CrcFailureWarningPeriodSeconds > 0, "CRC warning period must be positive");
+
+// C++14 requires out-of-line definitions for ODR-used status constants.
+// Code taking these constants by reference must link Svc_FrameAccumulator.
+constexpr FrameDetector::Status FrameDetector::FRAME_DETECTED;
+constexpr FrameDetector::Status FrameDetector::NO_FRAME_DETECTED;
+constexpr FrameDetector::Status FrameDetector::MORE_DATA_NEEDED;
+constexpr FrameDetector::Status FrameDetector::CRC_FAILURE;
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
@@ -19,14 +31,18 @@ FrameAccumulator ::FrameAccumulator(const char* const compName)
       m_detector(nullptr),
       m_memoryAllocator(nullptr),
       m_memory(nullptr),
-      m_allocatorId(0) {}
+      m_allocatorId(0),
+      m_crcWarningsEnabled(true),
+      m_crcFailures(0),
+      m_resyncBytesDiscarded(0) {}
 
 FrameAccumulator ::~FrameAccumulator() {}
 
 void FrameAccumulator ::configure(const FrameDetector& detector,
                                   FwEnumStoreType allocationId,
                                   Fw::MemAllocator& allocator,
-                                  FwSizeType store_size) {
+                                  FwSizeType store_size,
+                                  bool crcWarningsEnabled) {
     bool recoverable = false;
     U8* const data = static_cast<U8*>(allocator.allocate(allocationId, store_size, recoverable));
     FW_ASSERT(data != nullptr);
@@ -36,6 +52,7 @@ void FrameAccumulator ::configure(const FrameDetector& detector,
     this->m_allocatorId = allocationId;
     this->m_memoryAllocator = &allocator;
     this->m_memory = data;
+    this->m_crcWarningsEnabled = crcWarningsEnabled;
 }
 
 void FrameAccumulator ::cleanup() {
@@ -122,10 +139,7 @@ void FrameAccumulator ::processRing(const ComCfg::FrameContext& context) {
             // to process it. Log a warning and discard a byte, then keep iterating to look for a new frame
             this->log_WARNING_HI_FrameDetectionSizeError(size_out);
             // Discard a single byte of data and start again
-            (void)this->m_inRing.rotate(1);
-            FW_ASSERT(m_inRing.get_allocated_size() == remaining - 1,
-                      static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
-                      static_cast<FwAssertArgType>(remaining));
+            this->discardResyncByte();
             continue;
         }
 
@@ -174,14 +188,31 @@ void FrameAccumulator ::processRing(const ComCfg::FrameContext& context) {
             // Break out of loop: suspend detection until we receive another buffer
             break;
         }
-        // No frame was detected or an unknown status was received
+        // No frame was detected, the candidate failed its CRC, or an unknown status was received
         else {
-            // Discard a single byte of data and start again
-            (void)this->m_inRing.rotate(1);
-            FW_ASSERT(m_inRing.get_allocated_size() == remaining - 1,
-                      static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
-                      static_cast<FwAssertArgType>(remaining));
+            // Discard first so a CRC warning's snapshot includes this byte
+            this->discardResyncByte();
+            if (status == FrameDetector::CRC_FAILURE) {
+                if (this->m_crcFailures < std::numeric_limits<U64>::max()) {
+                    ++this->m_crcFailures;
+                }
+                if (this->m_crcWarningsEnabled) {
+                    this->log_WARNING_LO_FrameCrcFailure(this->m_crcFailures, this->m_resyncBytesDiscarded);
+                }
+            }
         }
+    }
+}
+
+void FrameAccumulator::discardResyncByte() {
+    const FwSizeType remaining = this->m_inRing.get_allocated_size();
+    const Fw::SerializeStatus status = this->m_inRing.rotate(1);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    FW_ASSERT(this->m_inRing.get_allocated_size() == remaining - 1,
+              static_cast<FwAssertArgType>(this->m_inRing.get_allocated_size()),
+              static_cast<FwAssertArgType>(remaining));
+    if (this->m_resyncBytesDiscarded < std::numeric_limits<U64>::max()) {
+        ++this->m_resyncBytesDiscarded;
     }
 }
 
