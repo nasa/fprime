@@ -625,8 +625,8 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 
 The timer parameters (`ack_timer`, `inactivity_timer`, `ack_limit`, `nack_limit`) must be configured appropriately for the communication delay environment:
 
-- **Near-Earth Operations**: Default values (ack_timer=2s, inactivity_timer=120s) are appropriate for round-trip light times of 1-2 seconds
-- **Lunar Operations**: Modest increases recommended (ack_timer=5-10s, inactivity_timer=60-120s) for ~2.5 second round-trip light times
+- **Near-Earth Operations**: Default values (ack_timer=2s, inactivity_timer=120s) are appropriate for round-trip light times well under 2 seconds. The timer counts 1 Hz scheduler ticks, so `ack_timer=2` expires 1-2 seconds of wall-clock time after arming, and the configured value must stay clearly longer than the expected round-trip light time (see the Critical Relationship below)
+- **Lunar Operations**: Increases recommended (ack_timer=5-10s, inactivity_timer=300s) for ~2.5 second round-trip light times. The inactivity value leaves room for a full `ack_limit`=10 retry sequence plus NAK retransmission gaps before the transaction is abandoned
 - **Deep Space Operations**: Significant increases required (ack_timer and inactivity_timer scaled to mission-specific round-trip light times, which can range from minutes to hours)
 
 **Critical Relationship**: The `ack_timer` must be **longer than the round-trip light time** to avoid premature retransmissions. The `inactivity_timer` should be **several times larger than ack_timer** to account for file segmentation and processing delays.
