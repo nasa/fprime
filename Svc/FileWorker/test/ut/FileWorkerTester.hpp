@@ -59,6 +59,8 @@ class FileWorkerTester final : public FileWorkerGTestBase {
     void testWriteReadRoundTrip();
     void testWriteTruncatesExisting();
     void testTimeout();
+    //! A clock that moves backward during a read or write must not abort the transfer
+    void testTimeMovesBackward();
     //! Paths that leave no room for the hash extension are rejected as invalid input, not asserted
     void testPathTooLong();
 
@@ -75,6 +77,9 @@ class FileWorkerTester final : public FileWorkerGTestBase {
 
     Fw::Time getTestTime(void) const;
 
+    //! Time source that steps the clock back one second on every call
+    static void backwardTime_handler(Fw::PassiveComponentBase* callComp, FwIndexType portNum, Fw::Time& time);
+
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -82,6 +87,12 @@ class FileWorkerTester final : public FileWorkerGTestBase {
 
     //! The component under test
     FileWorker component;
+
+    //! Time port that replaces the tester time source in testTimeMovesBackward
+    Fw::InputTimePort m_backwardTimePort;
+
+    //! Seconds returned by the next call to backwardTime_handler
+    U32 m_backwardTimeSeconds;
 };
 
 }  // namespace Svc

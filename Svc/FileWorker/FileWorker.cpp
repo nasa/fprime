@@ -353,10 +353,16 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer,
         if (timeout > 0) {
             // Only check timeout if > 0
             Fw::Time now = this->getTime();
-            Fw::Time diff = Fw::Time::sub(now, start);
-            U64 elapsed = (diff.getSeconds() * 1000000) + diff.getUSeconds();
-            if (elapsed >= timeout) {
-                return FileWorkerReadStatus::FW_READ_TIMEOUT;
+            if (now >= start) {
+                Fw::Time diff = Fw::Time::sub(now, start);
+                U64 elapsed = (diff.getSeconds() * 1000000) + diff.getUSeconds();
+                if (elapsed >= timeout) {
+                    return FileWorkerReadStatus::FW_READ_TIMEOUT;
+                }
+            } else {
+                // The clock stepped back or changed time base, so no elapsed time can be measured:
+                // restart the timeout from the new time
+                start = now;
             }
         }
 
@@ -576,13 +582,19 @@ FwSizeType FileWorker ::writeToFile(const U8* data, FwSizeType size, Os::File& f
         if (timeout > 0) {
             // Only check timeout if > 0
             Fw::Time now = this->getTime();
-            Fw::Time diff = Fw::Time::sub(now, start);
-            U64 elapsed = (diff.getSeconds() * 1000000) + diff.getUSeconds();
+            if (now >= start) {
+                Fw::Time diff = Fw::Time::sub(now, start);
+                U64 elapsed = (diff.getSeconds() * 1000000) + diff.getUSeconds();
 
-            if (elapsed >= timeout) {
-                Fw::LogStringArg logStringArg(fileName);
-                this->log_WARNING_HI_WriteTimeout(bytesWritten, size, logStringArg, timeout);
-                break;
+                if (elapsed >= timeout) {
+                    Fw::LogStringArg logStringArg(fileName);
+                    this->log_WARNING_HI_WriteTimeout(bytesWritten, size, logStringArg, timeout);
+                    break;
+                }
+            } else {
+                // The clock stepped back or changed time base, so no elapsed time can be measured:
+                // restart the timeout from the new time
+                start = now;
             }
         }
 

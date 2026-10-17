@@ -18,7 +18,9 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 FileWorkerTester ::FileWorkerTester()
-    : FileWorkerGTestBase("FileWorkerTester", FileWorkerTester::MAX_HISTORY_SIZE), component("FileWorker") {
+    : FileWorkerGTestBase("FileWorkerTester", FileWorkerTester::MAX_HISTORY_SIZE),
+      component("FileWorker"),
+      m_backwardTimeSeconds(0) {
     this->initComponents();
     this->connectPorts();
 
@@ -506,6 +508,49 @@ void FileWorkerTester ::testTimeout() {
     rStat = this->component.readFileBytes(buf, size, f, readBytes);
     ASSERT_EQ(0, rStat);
     f.close();
+}
+
+void FileWorkerTester ::testTimeMovesBackward() {
+    const char* fnameChar = "testtimebackward.bin";
+    const FwSizeType size = 300;  // three chunks at the configured chunk size of 100
+    U8 written[size];
+    for (FwSizeType i = 0; i < size; i++) {
+        written[i] = static_cast<U8>(i);
+    }
+
+    // Every getTime() call returns a time one second earlier than the previous one
+    this->m_backwardTimeSeconds = 100;
+    this->m_backwardTimePort.init();
+    this->m_backwardTimePort.addCallComp(this, backwardTime_handler);
+    this->component.set_timeCaller_OutputPort(0, &this->m_backwardTimePort);
+
+    Os::File out;
+    ASSERT_EQ(out.open(fnameChar, Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
+    const FwSizeType bytesWritten = this->component.writeToFile(written, size, out, fnameChar);
+    out.close();
+    ASSERT_EQ(bytesWritten, size);
+    ASSERT_EVENTS_WriteTimeout_SIZE(0);
+
+    U8 data[size];
+    Fw::Buffer buf(data, size);
+    FwSizeType readBytes = 0;
+    Os::File f;
+    ASSERT_EQ(f.open(fnameChar, Os::File::OPEN_READ), Os::File::OP_OK);
+    const FileWorkerReadStatus rStat = this->component.readFileBytes(buf, size, f, readBytes);
+    f.close();
+
+    ASSERT_EQ(rStat, FileWorkerReadStatus::FW_READ_DONE);
+    ASSERT_EQ(readBytes, size);
+    ASSERT_EQ(memcmp(data, written, size), 0);
+
+    (void)::remove(fnameChar);
+}
+
+void FileWorkerTester ::backwardTime_handler(Fw::PassiveComponentBase* callComp, FwIndexType portNum, Fw::Time& time) {
+    FileWorkerTester* tester = static_cast<FileWorkerTester*>(callComp);
+    FW_ASSERT(tester->m_backwardTimeSeconds > 0);
+    time.set(TimeBase::TB_NONE, 0, tester->m_backwardTimeSeconds, 0);
+    tester->m_backwardTimeSeconds--;
 }
 
 void FileWorkerTester ::testWriteZeroLength() {
