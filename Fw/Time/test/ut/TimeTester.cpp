@@ -232,6 +232,18 @@ void TimeTester::test_InstantiateFromFloatCarry() {
     ASSERT_EQ(time.getUSeconds(), 0);
 }
 
+void TimeTester::test_AddFloatCarry() {
+    // The added fraction rounds up to a whole second while the time already holds 999999 microseconds
+    Fw::Time time(TimeBase::TB_NONE, 0, 1, 999999);
+    time.add(static_cast<F64>(0.9999999));
+    ASSERT_EQ(time.getSeconds(), 2);
+    ASSERT_EQ(time.getUSeconds(), 999999);
+
+    time += static_cast<F64>(0.9999999);
+    ASSERT_EQ(time.getSeconds(), 3);
+    ASSERT_EQ(time.getUSeconds(), 999999);
+}
+
 void TimeTester::test_DeserializeRejectsOutOfRangeUSeconds() {
     U8 data[Fw::Time::SERIALIZED_SIZE];
     Fw::SerialBuffer buffer(data, sizeof(data));

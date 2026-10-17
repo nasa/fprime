@@ -24,6 +24,7 @@ class TimeTester {
     void test_ZeroTimeEquality();
     void test_TimeToTimeValue();
     void test_InstantiateFromFloatCarry();
+    void test_AddFloatCarry();
     void test_DeserializeRejectsOutOfRangeUSeconds();
 };
 }  // namespace Fw
