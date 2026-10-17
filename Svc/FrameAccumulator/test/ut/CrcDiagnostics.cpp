@@ -34,6 +34,8 @@ void FrameAccumulatorTester::stepDiagnosticMock(FrameDetector::Status status, Fw
     const bool valid = status == FrameDetector::FRAME_DETECTED;
     this->mockDetector.set_next_result(status, valid ? size : 0);
     this->setTestTime(Fw::Time(TimeBase::TB_WORKSTATION_TIME, this->m_shadowTime, 0));
+    const U64 initialFailures = this->m_shadowCrcFailures;
+    const U64 initialDiscarded = this->m_shadowResyncBytes;
     U32 expectedWarnings = 0;
     if (status == FrameDetector::CRC_FAILURE) {
         for (FwSizeType i = 0; i < size; ++i) {
@@ -57,6 +59,9 @@ void FrameAccumulatorTester::stepDiagnosticMock(FrameDetector::Status status, Fw
     this->sendDiagnosticInput(data, size);
     this->checkDiagnosticCounts(this->m_shadowCrcFailures, this->m_shadowResyncBytes);
     ASSERT_EVENTS_FrameCrcFailure_SIZE(expectedWarnings);
+    for (U32 i = 0; i < expectedWarnings; ++i) {
+        ASSERT_EVENTS_FrameCrcFailure(i, initialFailures + i + 1, initialDiscarded + i + 1);
+    }
     ASSERT_from_dataOut_SIZE(valid ? 1 : 0);
     ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);
 }
@@ -75,6 +80,11 @@ void FrameAccumulatorTester::testCrcWarningThrottle() {
     ++this->m_shadowTime;
     this->stepDiagnosticMock(FrameDetector::CRC_FAILURE, 1);
     ASSERT_EVENTS_FrameCrcFailure(0, WARNING_LIMIT + 6, WARNING_LIMIT + 6);
+}
+
+void FrameAccumulatorTester::testCrcWarningPayload() {
+    this->stepDiagnosticMock(FrameDetector::NO_FRAME_DETECTED, 3);
+    this->stepDiagnosticMock(FrameDetector::CRC_FAILURE, 8);
 }
 
 void FrameAccumulatorTester::testCrcWarningsDisabled() {
@@ -195,6 +205,13 @@ TEST(FrameAccumulatorCrc, WarningThrottle) {
     COMMENT("Bound warnings, retain cumulative counts, and re-arm without resetting on valid frames.");
     FrameAccumulatorTester tester;
     tester.testCrcWarningThrottle();
+}
+TEST(FrameAccumulatorCrc, WarningPayloadAfterNoise) {
+    REQUIREMENT("SVC-FRAME-ACCUMULATOR-006");
+    REQUIREMENT("SVC-FRAME-ACCUMULATOR-008");
+    COMMENT("Verify every warning snapshot when CRC-failure and discard counts differ.");
+    FrameAccumulatorTester tester;
+    tester.testCrcWarningPayload();
 }
 TEST(FrameAccumulatorCrc, WarningsDisabled) {
     REQUIREMENT("SVC-FRAME-ACCUMULATOR-007");

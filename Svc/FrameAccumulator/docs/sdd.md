@@ -25,6 +25,8 @@ The `Svc::FrameAccumulator` receives `Fw::Buffer` objects on its `dataIn` input 
 - `MORE_DATA_NEEDED`: indicates that more data is needed to determine whether there is a valid frame. The `Svc::FrameAccumulator` deallocates the original `Fw::Buffer` that was received on the `dataIn` input port and halts execution, effectively waiting for the next `Fw::Buffer` to be received on the `dataIn` input port.
 - `CRC_FAILURE`: a complete candidate has failed its CRC check. The detector sets `size_out` to zero. The accumulator rotates only one byte, increments its CRC-failure counter, and requests a throttled `FrameCrcFailure` warning if enabled. Searching then continues, allowing a valid frame embedded within or following the rejected candidate to be recovered. Ordinary non-frame data, invalid lengths and incomplete candidates are not counted as CRC failures. Existing detectors may continue to return only the original three results; their names and numeric values are preserved.
 
+`FprimeFrameDetector` reports `CRC_FAILURE`. The CCSDS `CcsdsTcFrameDetector` continues to return `NO_FRAME_DETECTED` for a CRC mismatch, so it does not increment the CRC-failure counter or emit `FrameCrcFailure`. Its actual resynchronization-byte removals still contribute to the byte counter.
+
 ### CRC diagnostics and accounting
 
 `FrameCrcFailure` is a `WARNING_LO` event with two cumulative `U64` arguments:
@@ -32,9 +34,11 @@ The `Svc::FrameAccumulator` receives `Fw::Buffer` objects on its `dataIn` input 
 - `crcFailures`: number of complete candidates rejected specifically for a CRC mismatch, not a count of presumed unique physical packets. Overlapping candidates at different offsets are separate checks.
 - `resyncBytesDiscarded`: bytes actually rotated out while searching after non-frame, CRC-failed or oversized detections. A CRC failure initially adds one byte, not the candidate's length. Successfully forwarded frames and whole valid frames dropped for lack of an output buffer are excluded; the latter already produce `FrameDetectionValidFrameDropped`.
 
+The byte argument is a total resynchronization count, not a count of bytes proven to have failed a CRC. It includes search discards before and after a CRC rejection.
+
 Both counters start at zero in each component instance, saturate at the maximum `U64` value, and keep counting when warnings are disabled or throttled. Valid frames and throttle re-arming do not clear them. No reset command or continuous telemetry channel is provided. A warning reports a snapshot immediately after the CRC-rejection byte is removed; later resynchronization bytes are reflected in subsequent warnings, not retroactively in that snapshot.
 
-Deployment-overridable constants in `FrameAccumulatorCfg.fpp` set the positive warning quota `Svc.FrameAccumulatorCfg.CrcFailureWarningThrottle` (default `1`) and positive period `Svc.FrameAccumulatorCfg.CrcFailureWarningPeriodSeconds` (default `60` seconds). The FPP-generated time-based throttle starts its period at the first emission and re-arms an exhausted quota when a later failure occurs at or after the period has elapsed. Connect the existing time port to a progressing time source. Successful frames do not re-arm the quota. Counter updates and buffer handling do not depend on event emission.
+Deployment-overridable constants in `FrameAccumulatorCfg.fpp` set the positive warning quota `Svc.FrameAccumulatorCfg.CrcFailureWarningThrottle` (default `1`) and positive period `Svc.FrameAccumulatorCfg.CrcFailureWarningPeriodSeconds` (default `60` seconds). The FPP-generated time-based throttle starts its period at the first emission and re-arms an exhausted quota when a later failure occurs at or after the period has elapsed. Connect the existing time port to a progressing time source. If it is unconnected or does not advance, an exhausted quota does not re-arm while that condition persists, even though both counters continue to accrue. Successful frames do not re-arm the quota. Counter updates and buffer handling do not depend on event emission.
 
 Diagnostic state uses fixed-size members and adds no dynamic allocation after initialization. Existing output-buffer pool requests for valid frames are unchanged. Detection remains bounded by circular-buffer capacity; each rejection advances the ring by one byte.
 

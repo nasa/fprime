@@ -76,10 +76,22 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Test that the most recent context is forwarded when a frame is detected
     void testContextForwarded();
 
+    //! Test warning quota/period behavior and persistent counts across valid frames
     void testCrcWarningThrottle();
+
+    //! Test warning payloads after unrelated resynchronization discards
+    void testCrcWarningPayload();
+
+    //! Test that disabled warnings still count CRC failures and discards
     void testCrcWarningsDisabled();
+
+    //! Test recovery of a valid frame following or embedded within a rejected candidate
     void testCrcRecovery(bool embedded);
+
+    //! Test that resynchronization counts exclude valid-frame allocation drops
     void testCrcAccounting();
+
+    //! Test saturation of both diagnostic counters
     void testCrcCounterSaturation();
 
     FW_RBT_DEFINE_RULE(FrameAccumulatorTester, Crc, Failure);
@@ -97,14 +109,22 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! (output) frame_size and buffer_count are updated with the size of the frame and the number of buffers sent
     void mockAccumulateFullFrame(U32& frame_size, U32& buffer_count);
 
+    //! Send input and verify that its ownership is returned
     void sendDiagnosticInput(U8* data, FwSizeType size);
+    //! Check the component's cumulative diagnostic counters
     void checkDiagnosticCounts(U64 failures, U64 discarded);
+    //! Apply one modeled detection action and verify counts, warnings and output
     void stepDiagnosticMock(FrameDetector::Status status, FwSizeType size);
 
+    //! Modeled cumulative CRC-failed candidates
     U64 m_shadowCrcFailures = 0;
+    //! Modeled cumulative bytes removed during resynchronization
     U64 m_shadowResyncBytes = 0;
+    //! Modeled current time in seconds
     U32 m_shadowTime = 100;
+    //! Time of the first warning in the modeled throttle period
     U32 m_shadowPeriodStart = 0;
+    //! Warnings emitted in the modeled throttle period
     U32 m_shadowWarnings = 0;
 
     //! Connect ports

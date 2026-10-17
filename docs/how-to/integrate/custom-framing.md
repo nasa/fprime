@@ -181,7 +181,7 @@ Before implementing, consider these best practices:
    To use the `Svc.FrameAccumulator`, you need to configure it with a FrameDetector that detects when a frame is present:
    **MyCustomFrameDetector.hpp**
    ```cpp
-    #include <Svc/FrameDetector/FrameDetector.hpp>
+    #include <Svc/FrameAccumulator/FrameDetector.hpp>
 
     class MyCustomFrameDetector : public Svc::FrameDetector {
       public:
@@ -196,7 +196,10 @@ Before implementing, consider these best practices:
        // TODO: Implement frame boundary detection
        // This can include searching for start words, validating headers, checking lengths, checking CRC and hashes, etc.
        // Utilities exist for CRC under Utils/Hash, and examples are shown in Svc/Ccsds/Utils or in fprime-examples repo
-       // Refer to the Svc.FrameDetector documentation for details on how to implement this
+       // Return CRC_FAILURE with size_out = 0 only after a complete candidate fails its CRC check.
+       // The accumulator then counts the rejection and requests a throttled warning if enabled.
+       // Return MORE_DATA_NEEDED for incomplete candidates, not CRC_FAILURE.
+       // Refer to Svc/FrameAccumulator/FrameDetector.hpp for the complete status contract.
        return Svc::FrameDetector::NO_FRAME_DETECTED;
    }
    // ...existing code...

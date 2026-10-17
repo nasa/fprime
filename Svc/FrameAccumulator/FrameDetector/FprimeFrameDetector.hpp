@@ -37,8 +37,11 @@ class FprimeFrameDetector : public FrameDetector {
     //!     determination is possible. size_out must be set to the total amount of data needed.
     //!
     //!     For example, if a frame start word is 4 bytes, and 3 bytes are available in the circular buffer then the
-    //!     return status would be NO_FRAME_DETECTED and size_out must be set to 4 to ensure that at least the start
+    //!     return status would be MORE_DATA_NEEDED and size_out must be set to 4 to ensure that at least the start
     //!     word is available.
+    //!
+    //!  4. CRC_FAILURE implies that a complete candidate was checked and rejected for a CRC mismatch.
+    //!     size_out must be zero. Discard one byte and resume detection, not the entire candidate.
     //!
     //! \param data: circular buffer with read-only access
     //! \param size_out: set as output to caller indicating size when appropriate

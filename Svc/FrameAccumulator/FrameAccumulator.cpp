@@ -15,6 +15,8 @@ namespace Svc {
 static_assert(FrameAccumulatorCfg::CrcFailureWarningThrottle > 0, "CRC warning quota must be positive");
 static_assert(FrameAccumulatorCfg::CrcFailureWarningPeriodSeconds > 0, "CRC warning period must be positive");
 
+// C++14 requires out-of-line definitions for ODR-used status constants.
+// Code taking these constants by reference must link Svc_FrameAccumulator.
 constexpr FrameDetector::Status FrameDetector::FRAME_DETECTED;
 constexpr FrameDetector::Status FrameDetector::NO_FRAME_DETECTED;
 constexpr FrameDetector::Status FrameDetector::MORE_DATA_NEEDED;
@@ -186,9 +188,9 @@ void FrameAccumulator ::processRing(const ComCfg::FrameContext& context) {
             // Break out of loop: suspend detection until we receive another buffer
             break;
         }
-        // No frame was detected or an unknown status was received
+        // No frame was detected, the candidate failed its CRC, or an unknown status was received
         else {
-            // Discard a single byte of data and start again
+            // Discard first so a CRC warning's snapshot includes this byte
             this->discardResyncByte();
             if (status == FrameDetector::CRC_FAILURE) {
                 if (this->m_crcFailures < std::numeric_limits<U64>::max()) {
