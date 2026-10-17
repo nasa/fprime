@@ -66,6 +66,11 @@ TEST(Nominal, testTimeout) {
     tester.testTimeout();
 }
 
+TEST(Nominal, testTimeMovesBackward) {
+    Svc::FileWorkerTester tester;
+    tester.testTimeMovesBackward();
+}
+
 TEST(Nominal, testPathTooLong) {
     Svc::FileWorkerTester tester;
     tester.testPathTooLong();
