@@ -28,17 +28,18 @@ void FrameAccumulatorTester::checkDiagnosticCounts(U64 failures, U64 discarded) 
     ASSERT_EQ(this->component.m_resyncBytesDiscarded, discarded);
 }
 
-void FrameAccumulatorTester::stepDiagnosticMock(FrameDetector::Status status, FwSizeType size) {
+void FrameAccumulatorTester::stepDiagnosticMock(FrameDetector::Status status, FwSizeType inputSize) {
     U8 data[8] = {};
-    ASSERT_LE(size, sizeof(data));
+    ASSERT_LE(inputSize, sizeof(data));
     const bool valid = status == FrameDetector::FRAME_DETECTED;
-    this->mockDetector.set_next_result(status, valid ? size : 0);
+    // A rejecting mock reports the same status at each byte offset.
+    this->mockDetector.set_next_result(status, valid ? inputSize : 0);
     this->setTestTime(Fw::Time(TimeBase::TB_WORKSTATION_TIME, this->m_shadowTime, 0));
     const U64 initialFailures = this->m_shadowCrcFailures;
     const U64 initialDiscarded = this->m_shadowResyncBytes;
     U32 expectedWarnings = 0;
     if (status == FrameDetector::CRC_FAILURE) {
-        for (FwSizeType i = 0; i < size; ++i) {
+        for (FwSizeType i = 0; i < inputSize; ++i) {
             ++this->m_shadowCrcFailures;
             if ((this->m_shadowWarnings == WARNING_LIMIT) &&
                 (this->m_shadowTime - this->m_shadowPeriodStart >= WARNING_PERIOD)) {
@@ -54,9 +55,9 @@ void FrameAccumulatorTester::stepDiagnosticMock(FrameDetector::Status status, Fw
         }
     }
     if (!valid) {
-        this->m_shadowResyncBytes += size;
+        this->m_shadowResyncBytes += inputSize;
     }
-    this->sendDiagnosticInput(data, size);
+    this->sendDiagnosticInput(data, inputSize);
     this->checkDiagnosticCounts(this->m_shadowCrcFailures, this->m_shadowResyncBytes);
     ASSERT_EVENTS_FrameCrcFailure_SIZE(expectedWarnings);
     for (U32 i = 0; i < expectedWarnings; ++i) {

@@ -37,7 +37,7 @@ module Svc {
             severity warning high \
             format "A valid frame was detected but dropped"
 
-        @ A complete F Prime candidate failed its CRC check; counts saturate at U64 maximum
+        @ A complete candidate failed the configured detector's CRC check; counts saturate at U64 maximum
         @ Byte count covers all actual resynchronization discards, including non-CRC search discards
         event FrameCrcFailure(crcFailures: U64, resyncBytesDiscarded: U64) \
             severity warning low \

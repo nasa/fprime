@@ -114,7 +114,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Check the component's cumulative diagnostic counters
     void checkDiagnosticCounts(U64 failures, U64 discarded);
     //! Apply one modeled detection action and verify counts, warnings and output
-    void stepDiagnosticMock(FrameDetector::Status status, FwSizeType size);
+    void stepDiagnosticMock(FrameDetector::Status status, FwSizeType inputSize);
 
     //! Modeled cumulative CRC-failed candidates
     U64 m_shadowCrcFailures = 0;
