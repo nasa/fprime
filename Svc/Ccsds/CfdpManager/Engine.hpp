@@ -453,8 +453,11 @@ class Engine {
      *         hold that every further PDU from the sender re-arms. A Class 2
      *         sender that keeps retransmitting inside that window is never told
      *         and fails on its own ACK limit; only if its traffic pauses longer
-     *         than the hold does its next PDU start a fresh transaction whose
-     *         FIN carries the rejection. See the SDD, Security Considerations.
+     *         than the hold does its next PDU start a fresh transaction: File
+     *         Data reopens the Metadata NAK path and that FIN carries the
+     *         rejection, while an EOF-only retransmission is logged as
+     *         UnhandledPduInIdleState and still gets no FIN. See the SDD,
+     *         Security Considerations.
      */
     Status::T recvMd(Transaction* txn, const MetadataPdu& pdu);
 
