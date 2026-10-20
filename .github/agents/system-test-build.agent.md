@@ -24,8 +24,9 @@ the deployment/testbed the human chose.
    components take the component skills; a human-directed test
    deployment takes `fprime-topology-development`. All C++ follows
    `fprime-cpp-design`.
-3. Dry-run the full plan unsealed on the real bench, every knob
-   exercised once, and export the record.
+3. Dry-run on the real bench: one clean full-plan run plus one
+   full-plan run per knob applied alone (`dry/clean/`, `dry/<knob>/`),
+   each exported like a record.
 4. Hand the harness diff and dry-run record to
    `system-test-review.agent.md` (harness mode); fix must-fixes; repeat
    until both checkers agree on every verdict and no must-fix is open

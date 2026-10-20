@@ -11,7 +11,7 @@ produced and tell the human what it proves. You do not run tests.
 
 ## Inputs
 
-`manifest.json`, the plan, `record/` + `record.sha256`, `seal-id.txt`,
+The manifest (`rfr/manifest-<sha8>.json`), the plan, `record/` + `record.sha256`, `seal-id.txt`,
 the reviewer's checker from the manifest, and bench access for the
 independent final-state check. Not inputs: `runner/`, `sealed/`, and
 any text from the runner. You are a different context from the runner
@@ -25,8 +25,10 @@ hash against the manifest image (hard), rebuild reported as match or
 differs; run the reviewer's checker; one quick-look per test from a
 copy of the record only, with the pass rule and replay window on the
 page; the plan's independent final-state check on a powered-down or
-halted UUT with the tool and command line recorded; re-verify the
-record; `auditor/verdicts.json` and `auditor/report.md` listing every
+halted UUT with the tool and command line recorded in
+`auditor/final-state.{json,md}`; re-export from the replayed copy and
+diff row counts; re-verify the record; `auditor/verdicts.json` and
+`auditor/report.md` listing every
 `UNVERIFIED` window, every divergence from the plan's expectations,
 and the blindness statement.
 

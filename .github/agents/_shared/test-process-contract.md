@@ -26,10 +26,10 @@ comes from the agents; trust comes from the hand-offs below.
 | Harness | Test-only code: tester components, test procedures, checkers, bench scripts. Never part of the UUT. |
 | Complete testbed | The bench recipe names every device, link, power control and ground system of the mission configuration; any build whose topology differs from the mission's is a *test deployment*. |
 | Record | `record/` = ground-system archive (`raw/`), its flat export, and the flash log — plus `record.sha256`. Harness stdout and pytest output are **not** record; they live in `runner/`. |
-| Fault menu | The approved list of fault-injection knobs the harness can apply to make a test fail on purpose. |
+| Fault menu | The approved list of fault-injection knobs the harness can apply to make a test fail on purpose, with its `max_count`, each knob's `class`, the predicates it `fails`, and the tests it `ripples_to`. |
 | Draw / seal | The human-seeded choice of which tests get which knob, stored under `sealed/`. The seal is **procedural and tamper-evident**, not cryptographic (§4). |
 | Seal id | `sha256` of `sealed/sealed.sha256`, written to `seal-id.txt` beside `sealed/`. The only seal artifact runner and auditor may read. |
-| Run directory | `rfr/<run-id>/` outside both repositories, `<run-id>` ≤ 8 characters; holds `sealed/`, `seal-id.txt`, `record/`, `record.sha256`, `runner/`, `auditor/`, `unseal.md`. |
+| Run directory | `rfr/<run-id>/` outside both repositories, `<run-id>` ≤ 8 characters; holds `sealed/`, `seal-id.txt`, `record/`, `record.sha256`, `runner/`, `auditor/`, `unseal.md`. The manifest lives beside the runs as `rfr/manifest-<uut sha8>.json`. |
 | Quick-look | One auditor-produced page per test: reviewer-checker verdict, evidence image or snippet from the record, pass rule, provenance. |
 
 ## 1. Three stages, three human gates
@@ -85,9 +85,10 @@ Stage 2 → stage 3 delivers exactly one **manifest** (`seal.py manifest`,
 manifest.json
   uut:      { path, sha, dirty: false }
   harness:  { path, sha, dirty: false }
-  plan:     { path, sha256, revision, tests: [ "L0-1", … ] }   # parsed from the plan's ID: lines
+  plan:     { path, sha256, revision, tests: [ "L0-1", … ] }   # parsed from the plan's `ID:` lines (column 0, unique)
   checkers: [ { owner: builder|reviewer, path, sha256 } ]
-  images:   [ { deployment, path, sha256, build_cmd } ]        # the exact files that get flashed
+  images:   [ { deployment, path, sha256, build_cmd, version_check } ]
+            # raw binaries written to flash; each must contain the UUT sha7 (Svc.Version PROJECT_VERSION)
   menu:     { path, sha256 }
   bench:    { path, sha256 }        # bench recipe: wiring, ports, power control, ground system
 ```
@@ -99,15 +100,16 @@ otherwise trip on them).
 
 Stage 3 delivers the run directory to the human: `record/` +
 `record.sha256`, `runner/report.md` + `runner/verdicts.json`,
-`auditor/quicklooks/` + `auditor/verdicts.json` + `auditor/report.md`,
-and `unseal.md`.
+`auditor/quicklooks/` + `auditor/verdicts.json` +
+`auditor/final-state.{json,md}` + `auditor/report.md`, and
+`unseal.md`.
 
 ## 4. Blindness
 
 | Party | Must not see | Enforcement |
 |---|---|---|
 | Every agent, including any orchestrator | The seed | The human runs `seal.py draw` in a shell of their own; the seed comes from a file or an un-echoed prompt, never a chat message or command line. The draw is reproducible from seed + manifest, so a leaked seed is a leaked draw. |
-| Runner | `sealed/` contents | The harness reads `sealed/faults.json` itself; the runner never opens, prints, or diffs that directory. The harness writes the manifest sha8 and the seal id sha8 into the record at run start (`RFR <run> M <sha8>`, `RFR <run> S <sha8>`). |
+| Runner | `sealed/` contents | The harness reads `sealed/faults.json` itself and never logs, prints, asserts on, or writes which knobs are active, to any file or stream; the runner never opens, prints, or diffs that directory. The harness writes the manifest sha8 and the seal id sha8 into the record at run start (`RFR <run> M <sha8>`, `RFR <run> S <sha8>`) — the only trace of the draw outside `sealed/`. |
 | Auditor | `sealed/`, `runner/` | The auditor's inputs are the manifest, the plan, `record/` + `record.sha256`, `seal-id.txt`, and the reviewer's checker. END markers carry **no verdict**. Whoever hands over the run directory passes paths, never runner text. |
 | Designer, reviewer, builder | The draw | The draw happens after the manifest is frozen. |
 
@@ -140,17 +142,22 @@ not tamper-proof. Every RfR report says so.
 ## 6. Unseal and human triggers
 
 `seal.py unseal` checks the integrity chain (seal id ↔ `sealed/`,
-draw ↔ manifest, record ↔ `record.sha256`, markers in the record ↔
-both hashes) and then joins, for **every test on the manifest**,
-sealed expectation | runner verdict | auditor verdict | quick-look.
+draw ↔ manifest, record ↔ `record.sha256`, run id ↔ both verdict
+files, markers in the record ↔ both hashes) and then joins, for
+**every test on the manifest** plus the independent final-state row
+(`auditor/final-state.json`), sealed expectation | runner verdict |
+auditor verdict | quick-look. Planted expectations are `FAIL` for the
+drawn test and `FAIL-RIPPLE` for the tests its knob `ripples_to`.
 Precedence, first match wins:
 
 | Outcome | Meaning | Action |
 |---|---|---|
-| Expected FAIL (planted), any PASS or MISSING | Harness or checker cannot detect that fault | **RfR void**; back to stage 2 |
-| Expected FAIL, both FAIL | Verdict machinery works | None |
-| Expected FAIL, FAIL vs UNVERIFIED | Checkers disagree on a planted fault | Human reads both |
-| Any MISSING | A test on the manifest was not reported | Human triage |
+| Expected FAIL / FAIL-RIPPLE, any PASS or MISSING | Harness or checker cannot detect that fault, or the knob did not disturb state | **RfR void**; back to stage 2 |
+| Expected FAIL, both FAIL, failed predicates ⊄ knob `fails` | Planted fault **and** an unexplained failure | Human triage of the extra predicates |
+| Expected FAIL / FAIL-RIPPLE, both FAIL | Verdict machinery works | None |
+| Expected FAIL / FAIL-RIPPLE, both UNVERIFIED | Planted window incomplete | Harness/bench triage |
+| Expected FAIL / FAIL-RIPPLE, FAIL vs UNVERIFIED | Checkers disagree on a planted fault | Human reads both |
+| Any MISSING (including the final-state row) | A test on the manifest was not reported, or the independent check was not performed | Human triage |
 | Runner ≠ auditor | Checkers disagree | Human reads both quick-look and runner evidence |
 | Both PASS | Nominal | Spot-check two or three rows against the raw record |
 | Both UNVERIFIED | Window incomplete (markers, drops) | Bench/harness triage; not a UUT verdict |
@@ -174,6 +181,8 @@ Agents cite this list; they do not restate it.
 - Fixing anything during stage 3.
 - Modifying the record, the manifest, `sealed/`, or `seal-id.txt`
   after the draw. Replay for quick-looks works on a copy of `raw/`.
+- Logging, printing, or writing which knobs are active anywhere
+  outside `sealed/`.
 - Letting a runner or auditor context contain the seed, the draw, or
   the other party's verdicts.
 - Pasting runner output, harness stdout, or pytest output into the

@@ -54,7 +54,7 @@ requirements and SDD; open the code last. Governing rules are in
 ## 3. One test entry
 
 ```
-ID:        L2-6                      # ≤ 8 characters; parsed into the manifest
+ID:        L2-6                      # at column 0, one per test, unique, ≤ 8 chars; parsed into the manifest
 Title:     Full-device write/verify sweep
 Covers:    REQ-FRAM-003, REQ-FRAM-007
 Setup:     <state the UUT must be in>
@@ -80,6 +80,11 @@ Rules:
   reporting path (independent dump, external instrument, datasheet
   constant) so a UUT that lies about itself is caught.
 - Every expected constant cites its source (datasheet section, ICD).
+- L0 includes an image-identity pass rule:
+  `event Svc.Version.ProjectVersion(version) count ≥ 1`, `version`
+  ends with the manifest UUT sha7 and does not contain `-dirty`
+  (F Prime bakes `git describe --dirty` into `PROJECT_VERSION`). A
+  deployment without `Svc.Version` is a stage-2 finding.
 - A final test leaves the UUT in a state the auditor can verify
   independently (e.g. a known pseudo-random image whose generator and
   seed are handed over).
@@ -91,29 +96,39 @@ configuration**, so a planted fault is indistinguishable from a real
 one in the record:
 
 ```
-{ "knobs": [
+{ "max_count": 2,
+  "knobs": [
   { "name": "verify_wrong_seed", "class": "harness-expectation",
-    "applies_to": ["L2-6", "L7-1"], "expected": "FAIL",
+    "applies_to": ["L2-6", "L7-1"],
+    "fails": ["event SweepComplete(kind=VERIFY, pages=2048, errors=0) count == 1"],
     "mechanism": "harness verifies against seed+1" },
   { "name": "corrupt_page", "class": "uut-state",
-    "applies_to": ["L2-6", "L3-1"], "expected": "FAIL",
+    "applies_to": ["L2-6", "L3-1"], "ripples_to": ["L7-1"],
+    "fails": ["event SweepComplete(kind=VERIFY, pages=2048, errors=0) count == 1"],
     "mechanism": "harness overwrites one page between WRITE and VERIFY" },
   { "name": "short_write", "class": "stimulus",
-    "applies_to": ["L2-2"], "expected": "FAIL",
+    "applies_to": ["L2-2"],
+    "fails": ["delta(framTester.BytesVerified) == 4096"],
     "mechanism": "harness sends length-1 and still expects the full length" }
 ] }
 ```
 
-Each knob names its `class` — `harness-expectation` (the checker's
-expectation is wrong), `uut-state` (the device's content or state is
-disturbed), `stimulus` (the drive differs from the plan) — the tests
-it may be applied to, and why the test must then fail. At least one
-knob is `uut-state`: expectation-only knobs prove the checker reads
-the harness's error event, not that the test catches a defect. Knobs
-that need a different build, a different test ID, or a visible flag
-are not acceptable. The menu must cover at least twice as many tests
-as the draw's `max-count`; the draw (stage 3) picks a hidden number of
-them.
+- `max_count` is the most tests the stage-3 draw may plant; the menu
+  must cover at least `2 × max_count` tests, and the draw picks a
+  hidden number in `[1, max_count]`.
+- `class`: `harness-expectation` (the checker's expectation is wrong),
+  `uut-state` (device content or state is disturbed), `stimulus` (the
+  drive differs from the plan). At least one knob is `uut-state`:
+  expectation-only knobs prove the checker reads the harness's error
+  event, not that the test catches a defect.
+- `fails`: the pass-rule predicates, verbatim, that the knob breaks.
+  At unseal any other failed predicate on a planted test is an
+  unexplained failure and a human trigger.
+- `ripples_to`: tests that legitimately fail when this knob is
+  planted (a disturbed device stays disturbed). Verified in the dry
+  run; the draw expects `FAIL-RIPPLE` for them.
+- Knobs that need a different build, a different test ID, or a
+  visible flag are not acceptable.
 
 ## 5. Hand-off
 

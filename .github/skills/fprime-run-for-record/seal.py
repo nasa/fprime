@@ -6,7 +6,9 @@ import argparse
 import getpass
 import hashlib
 import json
+import os
 import re
+import stat
 import subprocess
 import sys
 import tempfile
@@ -14,6 +16,8 @@ from pathlib import Path
 
 VERDICTS = ("PASS", "FAIL", "UNVERIFIED")
 EXPORTS = ("events.jsonl", "channels.jsonl", "commands.jsonl")
+KNOB_CLASSES = ("harness-expectation", "uut-state", "stimulus")
+MAX_ID = 8
 
 
 def sha256_file(path):
@@ -26,6 +30,16 @@ def sha256_file(path):
 
 def sha256_text(text):
     return hashlib.sha256(text.encode()).hexdigest()
+
+
+def read_json(path, what):
+    p = Path(path)
+    if not p.is_file():
+        sys.exit(f"missing {what}: {p}")
+    try:
+        return json.loads(p.read_text())
+    except json.JSONDecodeError as e:
+        sys.exit(f"{what} is not valid JSON: {p}: {e}")
 
 
 def git(path, *args):
@@ -51,13 +65,75 @@ def file_entry(path):
 
 
 def plan_tests(plan_path):
-    ids = re.findall(r"^ID:\s+(\S+)", Path(plan_path).read_text(), re.MULTILINE)
+    ids = re.findall(r"^ID:[ \t]+(\S+)", Path(plan_path).read_text(), re.MULTILINE)
     if not ids:
-        sys.exit("plan has no 'ID: <test>' lines (fprime-system-test-design §3)")
-    long = [i for i in ids if len(i) > 8]
+        sys.exit("plan has no 'ID: <test>' lines at column 0 (design skill §3)")
+    long = [i for i in ids if len(i) > MAX_ID]
     if long:
-        sys.exit(f"test IDs longer than 8 chars do not fit a marker: {long}")
+        sys.exit(f"test IDs longer than {MAX_ID} chars do not fit a marker: {long}")
+    dup = sorted({i for i in ids if ids.count(i) > 1})
+    if dup:
+        sys.exit(f"duplicate test IDs in plan: {dup}")
     return ids
+
+
+def image_entry(spec, uut_sha, skip_reason):
+    dep, _, rest = spec.partition("=")
+    p, _, build = rest.partition(":")
+    if not dep or not p:
+        sys.exit("--image takes <deployment>=<path.bin>[:<build command>]")
+    if Path(p).suffix.lower() in (".elf", ".hex", ".axf"):
+        sys.exit(
+            f"{p}: the manifest image is the raw binary written to flash, not ELF/hex"
+        )
+    entry = {"deployment": dep, **file_entry(p), "build_cmd": build}
+    if uut_sha[:7].encode() in Path(p).read_bytes():
+        entry["version_check"] = "sha7 found in image"
+    elif skip_reason:
+        entry["version_check"] = f"SKIPPED: {skip_reason}"
+    else:
+        sys.exit(
+            f"{p}: UUT sha7 {uut_sha[:7]} not found in the image (Svc.Version "
+            "PROJECT_VERSION); rebuild from the manifest tree or give "
+            "--no-version-check <reason>"
+        )
+    return entry
+
+
+def load_menu(path, tests):
+    menu = read_json(path, "fault menu")
+    if not isinstance(menu.get("max_count"), int) or menu["max_count"] < 1:
+        sys.exit("fault menu needs an integer max_count >= 1")
+    knobs = menu.get("knobs", [])
+    if not any(k.get("class") == "uut-state" for k in knobs):
+        sys.exit("fault menu needs at least one knob of class uut-state")
+    pairs, by_name = [], {}
+    for k in knobs:
+        name = k.get("name")
+        if not name or name in by_name:
+            sys.exit(f"knob without a unique name: {k}")
+        if k.get("expected", "FAIL") != "FAIL":
+            sys.exit(f"knob {name}: planted faults must expect FAIL")
+        if k.get("class") not in KNOB_CLASSES:
+            sys.exit(f"knob {name}: class must be one of {KNOB_CLASSES}")
+        if not k.get("fails"):
+            sys.exit(f"knob {name}: needs 'fails': [<pass-rule predicates it breaks>]")
+        for t in [*k["applies_to"], *k.get("ripples_to", [])]:
+            if t not in tests:
+                sys.exit(f"knob {name}: {t} is not a plan test")
+        for t in k["applies_to"]:
+            if t in k.get("ripples_to", []):
+                sys.exit(f"knob {name}: {t} cannot be both target and ripple")
+            pairs.append((t, name))
+        by_name[name] = k
+    if not pairs:
+        sys.exit("fault menu has no (test, knob) pairs")
+    if len({t for t, _ in pairs}) < 2 * menu["max_count"]:
+        sys.exit(
+            f"menu covers {len({t for t, _ in pairs})} tests; need at least "
+            f"{2 * menu['max_count']} for max_count {menu['max_count']}"
+        )
+    return menu, pairs, by_name
 
 
 def cmd_manifest(a):
@@ -69,37 +145,29 @@ def cmd_manifest(a):
         checkers.append({"owner": owner, **file_entry(p)})
     if {c["owner"] for c in checkers} != {"builder", "reviewer"}:
         sys.exit("manifest needs one builder and one reviewer checker")
-    images = []
-    for spec in a.image:
-        dep, _, rest = spec.partition("=")
-        p, _, build = rest.partition(":")
-        if not dep or not p:
-            sys.exit("--image takes <deployment>=<path>[:<build command>]")
-        images.append({"deployment": dep, **file_entry(p), "build_cmd": build})
+    uut = repo_entry(a.uut)
+    images = [image_entry(s, uut["sha"], a.no_version_check) for s in a.image]
     if not images:
         sys.exit("manifest needs at least one --image")
+    tests = plan_tests(a.plan)
+    load_menu(a.menu, tests)
     m = {
-        "uut": repo_entry(a.uut),
+        "uut": uut,
         "harness": repo_entry(a.harness),
-        "plan": {
-            **file_entry(a.plan),
-            "revision": a.plan_revision,
-            "tests": plan_tests(a.plan),
-        },
+        "plan": {**file_entry(a.plan), "revision": a.plan_revision, "tests": tests},
         "checkers": checkers,
         "images": images,
         "menu": file_entry(a.menu),
         "bench": file_entry(a.bench),
     }
-    Path(a.output).write_text(json.dumps(m, indent=2) + "\n")
-    print(
-        f"manifest {sha256_file(a.output)[:8]} ({len(m['plan']['tests'])} tests) "
-        f"-> {a.output}"
-    )
+    out = Path(a.output or f"rfr/manifest-{uut['sha'][:8]}.json")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(m, indent=2) + "\n")
+    print(f"manifest {sha256_file(out)[:8]} ({len(tests)} tests) -> {out}")
 
 
 def verify_manifest(path):
-    m = json.loads(Path(path).read_text())
+    m = read_json(path, "manifest")
     bad = []
     for key in ("uut", "harness"):
         e = m[key]
@@ -110,7 +178,10 @@ def verify_manifest(path):
     for e in [m["plan"], m["menu"], m["bench"], *m["checkers"], *m["images"]]:
         if not Path(e["path"]).is_file() or sha256_file(e["path"]) != e["sha256"]:
             bad.append(f"{e['path']}: hash moved or missing")
-    if plan_tests(m["plan"]["path"]) != m["plan"]["tests"]:
+    if (
+        Path(m["plan"]["path"]).is_file()
+        and plan_tests(m["plan"]["path"]) != m["plan"]["tests"]
+    ):
         bad.append("plan: test list changed")
     return m, bad
 
@@ -122,29 +193,16 @@ def cmd_verify(a):
     print("manifest verified")
 
 
-def load_menu(path, tests):
-    menu = json.loads(Path(path).read_text())
-    pairs = []
-    for knob in menu["knobs"]:
-        if knob.get("expected", "FAIL") != "FAIL":
-            sys.exit(f"knob {knob['name']}: planted faults must expect FAIL")
-        if knob.get("class") not in ("harness-expectation", "uut-state", "stimulus"):
-            sys.exit(
-                f"knob {knob['name']}: class must be harness-expectation, "
-                "uut-state or stimulus"
-            )
-        for test in knob["applies_to"]:
-            if test not in tests:
-                sys.exit(f"knob {knob['name']}: {test} is not a plan test")
-            pairs.append((test, knob["name"]))
-    if not pairs:
-        sys.exit("fault menu has no (test, knob) pairs")
-    return pairs
-
-
 def read_seed(a):
     if a.seed_file:
-        seed = Path(a.seed_file).read_text().strip()
+        p = Path(a.seed_file)
+        if not p.is_file():
+            sys.exit(f"missing seed file: {p}")
+        if p.stat().st_mode & (stat.S_IRGRP | stat.S_IROTH):
+            sys.exit(f"{p} is readable by others; chmod 600 it")
+        seed = p.read_text().strip()
+        os.remove(p)
+        print(f"seed file {p} read and deleted")
     else:
         seed = getpass.getpass("seal seed (not echoed): ").strip()
     if len(seed) < 8:
@@ -156,26 +214,28 @@ def cmd_draw(a):
     m, bad = verify_manifest(a.manifest)
     if bad:
         sys.exit("\n".join(bad))
+    run = Path(a.run_dir)
+    if len(run.name) > MAX_ID or not run.name:
+        sys.exit(f"run id (directory name) must be 1..{MAX_ID} characters")
     tests = m["plan"]["tests"]
-    pairs = load_menu(m["menu"]["path"], tests)
-    candidates = {t for t, _ in pairs}
-    if len(candidates) < 2 * a.max_count:
-        sys.exit(
-            f"menu covers {len(candidates)} tests; need at least "
-            f"{2 * a.max_count} for --max-count {a.max_count}"
-        )
+    menu, pairs, by_name = load_menu(m["menu"]["path"], tests)
     seed = read_seed(a)
     msha = sha256_file(a.manifest)
-    key = lambda tk: sha256_text(f"{seed}:{msha}:{tk[0]}:{tk[1]}")  # noqa: E731
-    count = 1 + int(sha256_text(f"{seed}:{msha}:count"), 16) % a.max_count
+    count = 1 + int(sha256_text(f"{seed}:{msha}:count"), 16) % menu["max_count"]
     chosen, used = {}, set()
-    for test, knob in sorted(pairs, key=key):
+    for test, knob in sorted(pairs, key=lambda tk: sha256_text(f"{seed}:{msha}:{tk}")):
         if test not in used:
             chosen[test] = knob
             used.add(test)
         if len(chosen) == count:
             break
-    run = Path(a.run_dir)
+    expectations = {t: "PASS" for t in tests}
+    for test, knob in chosen.items():
+        for r in by_name[knob].get("ripples_to", []):
+            if expectations[r] == "PASS":
+                expectations[r] = "FAIL-RIPPLE"
+    for test in chosen:
+        expectations[test] = "FAIL"
     sealed = run / "sealed"
     sealed.mkdir(parents=True, exist_ok=True)
     (sealed / "faults.json").write_text(
@@ -184,10 +244,7 @@ def cmd_draw(a):
         )
         + "\n"
     )
-    (sealed / "expectations.json").write_text(
-        json.dumps({t: ("FAIL" if t in used else "PASS") for t in tests}, indent=2)
-        + "\n"
-    )
+    (sealed / "expectations.json").write_text(json.dumps(expectations, indent=2) + "\n")
     lines = [
         f"{sha256_file(sealed / n)}  {n}" for n in ("faults.json", "expectations.json")
     ]
@@ -196,12 +253,15 @@ def cmd_draw(a):
     (run / "seal-id.txt").write_text(seal_id + "\n")
     print(
         f"seal-id {seal_id[:8]} manifest {msha[:8]} -> {run}/sealed/ "
-        f"(planted count hidden; keep the seed)"
+        "(planted count hidden; keep the seed)"
     )
 
 
 def seal_id_of(run_dir):
-    return (Path(run_dir) / "seal-id.txt").read_text().strip()
+    p = Path(run_dir) / "seal-id.txt"
+    if not p.is_file():
+        sys.exit(f"missing {p}")
+    return p.read_text().strip()
 
 
 def cmd_seal_id(a):
@@ -227,22 +287,23 @@ def verify_record(run_dir):
     run = Path(run_dir)
     rec = run / "record"
     bad = []
-    expected = (run / "record.sha256").read_text().splitlines()
-    if record_lines(rec) != expected:
+    digest = run / "record.sha256"
+    if not digest.is_file():
+        return [f"missing {digest}"]
+    if record_lines(rec) != digest.read_text().splitlines():
         bad.append("record/ differs from record.sha256")
     counts_file = rec / "export-counts.json"
-    if counts_file.is_file():
-        counts = json.loads(counts_file.read_text())
-        for name in EXPORTS:
-            p = rec / name
-            if name in counts and p.is_file():
-                n = sum(1 for _ in open(p, "rb"))
-                if n != counts[name]:
-                    bad.append(
-                        f"{name}: {n} rows exported, archive reports {counts[name]}"
-                    )
-    else:
-        bad.append("record/export-counts.json missing (fprime-test-oracle §2)")
+    if not counts_file.is_file():
+        return bad + ["record/export-counts.json missing (fprime-test-oracle §2)"]
+    counts = json.loads(counts_file.read_text())
+    for name in EXPORTS:
+        p = rec / name
+        if not p.is_file() or name not in counts:
+            bad.append(f"{name}: export or its archive count missing")
+            continue
+        n = sum(1 for _ in open(p, "rb"))
+        if n != counts[name]:
+            bad.append(f"{name}: {n} rows exported, archive reports {counts[name]}")
     return bad
 
 
@@ -255,12 +316,15 @@ def cmd_verify_record(a):
 
 def outcome(expected, runner, auditor):
     verdicts = {runner, auditor}
-    if expected == "FAIL":
+    if expected in ("FAIL", "FAIL-RIPPLE"):
+        label = "planted fault" if expected == "FAIL" else "planted ripple"
         if "PASS" in verdicts or "MISSING" in verdicts:
-            return "RFR VOID: planted fault not detected"
+            return f"RFR VOID: {label} not detected"
         if verdicts == {"FAIL"}:
-            return "planted fault detected"
-        return "DIVERGENCE on planted fault: human reads both"
+            return f"{label} detected"
+        if verdicts == {"UNVERIFIED"}:
+            return f"UNVERIFIED on {label}: harness/bench triage"
+        return f"DIVERGENCE on {label}: human reads both"
     if "MISSING" in verdicts:
         return "MISSING: test not reported"
     if runner != auditor:
@@ -272,56 +336,100 @@ def outcome(expected, runner, auditor):
     return "REAL FAIL: human triage"
 
 
+def final_state_row(run, expectations):
+    fs = run / "auditor" / "final-state.json"
+    if not fs.is_file():
+        return None, "MISSING: independent final-state check not performed"
+    f = json.loads(fs.read_text())
+    test, verdict = f.get("test", "?"), f.get("verdict", "MISSING")
+    exp = expectations.get(test, "PASS")
+    o = outcome(exp, verdict, verdict)
+    if verdict == "PASS" and f.get("expected_sha256") != f.get("observed_sha256"):
+        o = "INCONSISTENT: final-state PASS with differing hashes"
+    return (test, exp, verdict), o
+
+
 def cmd_unseal(a):
     run = Path(a.run_dir)
     sealed = run / "sealed"
-    for line in (sealed / "sealed.sha256").read_text().splitlines():
-        digest, name = line.split("  ", 1)
-        if sha256_file(sealed / name) != digest:
-            sys.exit(f"sealed/{name} was modified after the seal")
-    seal_id = sha256_file(sealed / "sealed.sha256")
+    digest = sealed / "sealed.sha256"
+    if not digest.is_file():
+        sys.exit(f"missing {digest}")
+    for line in digest.read_text().splitlines():
+        d, name = line.split("  ", 1)
+        if sha256_file(sealed / name) != d:
+            sys.exit(f"sealed/{name} was modified after the draw")
+    seal_id = sha256_file(digest)
     if seal_id != seal_id_of(run):
         sys.exit("seal-id.txt does not match sealed/")
-    faults = json.loads((sealed / "faults.json").read_text())
+    faults = read_json(sealed / "faults.json", "sealed draw")
     msha = sha256_file(a.manifest)
     if faults["manifest_sha256"] != msha:
         sys.exit("sealed draw was made for a different manifest")
-    m = json.loads(Path(a.manifest).read_text())
+    m = read_json(a.manifest, "manifest")
+    _, _, by_name = load_menu(m["menu"]["path"], m["plan"]["tests"])
     bad = verify_record(run)
     if bad:
         sys.exit("\n".join(bad))
     rsha = sha256_file(run / "record.sha256")
-    runner = json.loads((run / "runner" / "verdicts.json").read_text())
-    auditor = json.loads((run / "auditor" / "verdicts.json").read_text())
+    runner = read_json(run / "runner" / "verdicts.json", "runner verdicts")
+    auditor = read_json(run / "auditor" / "verdicts.json", "auditor verdicts")
     for who, v in (("runner", runner), ("auditor", auditor)):
         if v.get("record_sha256") != rsha:
             sys.exit(f"{who} verdicts are not about this record")
+        if v.get("run") != run.name:
+            sys.exit(
+                f"{who} verdicts name run {v.get('run')!r}, directory is {run.name!r}"
+            )
     events = (run / "record" / "events.jsonl").read_text()
-    if f"RFR {runner['run']} M {msha[:8]}" not in events:
+    if f"RFR {run.name} M {msha[:8]}" not in events:
         sys.exit("record has no manifest marker for this manifest")
-    if f"RFR {runner['run']} S {seal_id[:8]}" not in events:
+    if f"RFR {run.name} S {seal_id[:8]}" not in events:
         sys.exit("record has no seal marker for this draw")
-    expectations = json.loads((sealed / "expectations.json").read_text())
+    expectations = read_json(sealed / "expectations.json", "sealed expectations")
     rows, triggers = [], []
+
+    def add(test, exp, r, u, link, o):
+        rows.append(f"| ☐ | {test} | {exp} | {r} | {u} | {link} | {o} |")
+        if not o.startswith(("nominal", "planted")) or "UNEXPLAINED" in o:
+            triggers.append(f"- {test}: {o}")
+
     for test in m["plan"]["tests"]:
         exp = expectations.get(test, "PASS")
-        r = runner["tests"].get(test, {}).get("verdict", "MISSING")
-        u = auditor["tests"].get(test, {}).get("verdict", "MISSING")
+        rv, uv = runner["tests"].get(test, {}), auditor["tests"].get(test, {})
+        r, u = rv.get("verdict", "MISSING"), uv.get("verdict", "MISSING")
         o = outcome(exp, r, u)
+        if exp == "FAIL" and o.endswith("detected"):
+            allowed = set(by_name[faults["faults"][test]]["fails"])
+            extra = sorted(
+                (set(rv.get("failed", [])) | set(uv.get("failed", []))) - allowed
+            )
+            if extra:
+                o += f" + UNEXPLAINED FAIL ({'; '.join(extra)}): human triage"
         ql = run / "auditor" / "quicklooks" / f"{test}.md"
         link = (
             f"[{test}.md](auditor/quicklooks/{test}.md)" if ql.is_file() else "MISSING"
         )
         if link == "MISSING" and not o.startswith("MISSING"):
             o += "; quick-look missing"
-        rows.append(f"| ☐ | {test} | {exp} | {r} | {u} | {link} | {o} |")
-        if not o.startswith(("nominal", "planted")):
-            triggers.append(f"- {test}: {o}")
+        add(test, exp, r, u, link, o)
+    fs, o = final_state_row(run, expectations)
+    if fs:
+        add(
+            f"{fs[0]}/dump",
+            fs[1],
+            "—",
+            fs[2],
+            "[final-state.md](auditor/final-state.md)",
+            o,
+        )
+    else:
+        add("final-state", "—", "—", "MISSING", "MISSING", o)
     text = [
         "# Unseal",
         "",
         f"Manifest `{msha[:8]}` · seal-id `{seal_id[:8]}` (compare with the value "
-        f"printed by `draw`) · record `{rsha[:8]}` · run `{runner['run']}`",
+        f"printed by `draw`) · record `{rsha[:8]}` · run `{run.name}`",
         "",
         "## Human triggers",
         *(triggers or ["- none"]),
@@ -350,25 +458,37 @@ def cmd_selftest(_a):
         d = Path(tmp)
         _git_repo(d / "uut", "uut")
         _git_repo(d / "harness", "harness")
+        uut_sha = git(d / "uut", "rev-parse", "HEAD")
         tests = ["L0-1", "L2-1", "L2-2", "L2-3", "L2-4", "L7-1"]
         (d / "plan.md").write_text(
             "".join(f"ID:        {t}\nTitle: t\n" for t in tests)
         )
-        for name in ("a.py", "b.py", "bench.md", "image.bin"):
+        for name in ("a.py", "b.py", "bench.md"):
             (d / name).write_text(name)
+        (d / "image.bin").write_bytes(b"\0\0PROJECT " + uut_sha[:7].encode() + b"\0")
         menu = {
+            "max_count": 2,
             "knobs": [
                 {
                     "name": "k1",
                     "class": "harness-expectation",
                     "applies_to": ["L2-1", "L2-2"],
+                    "fails": ["p1"],
                 },
-                {"name": "k2", "class": "uut-state", "applies_to": ["L2-3", "L7-1"]},
-            ]
+                {
+                    "name": "k2",
+                    "class": "uut-state",
+                    "applies_to": ["L2-3", "L7-1"],
+                    "ripples_to": ["L2-4"],
+                    "fails": ["p2"],
+                },
+            ],
         }
         (d / "menu.json").write_text(json.dumps(menu))
-        (d / "seed").write_text("captain-picard-1701\n")
-        mf = str(d / "manifest.json")
+        seed = d / "seed"
+        seed.write_text("captain-picard-1701\n")
+        seed.chmod(0o600)
+        mf = str(d / "rfr" / "manifest.json")
         main(
             [
                 "manifest",
@@ -395,34 +515,19 @@ def cmd_selftest(_a):
         main(["verify", mf])
         run = d / "rfr" / "run1"
         main(
-            [
-                "draw",
-                "--manifest",
-                mf,
-                "--seed-file",
-                str(d / "seed"),
-                "--max-count",
-                "2",
-                "--run-dir",
-                str(run),
-            ]
+            ["draw", "--manifest", mf, "--seed-file", str(seed), "--run-dir", str(run)]
         )
+        assert not seed.exists(), "seed file must be deleted after the draw"
         exp = json.loads((run / "sealed" / "expectations.json").read_text())
-        planted = [t for t, v in exp.items() if v == "FAIL"]
-        assert 1 <= len(planted) <= 2 and set(exp) == set(tests), exp
+        faults = json.loads((run / "sealed" / "faults.json").read_text())["faults"]
+        assert 1 <= len(faults) <= 2 and set(exp) == set(tests), (faults, exp)
+        if "k2" in faults.values():
+            assert exp["L2-4"] in ("FAIL-RIPPLE", "FAIL"), exp
+        seed.write_text("captain-picard-1701\n")
+        seed.chmod(0o600)
         run2 = d / "rfr" / "run2"
         main(
-            [
-                "draw",
-                "--manifest",
-                mf,
-                "--seed-file",
-                str(d / "seed"),
-                "--max-count",
-                "2",
-                "--run-dir",
-                str(run2),
-            ]
+            ["draw", "--manifest", mf, "--seed-file", str(seed), "--run-dir", str(run2)]
         )
         assert (run / "sealed" / "faults.json").read_text() == (
             run2 / "sealed" / "faults.json"
@@ -436,19 +541,44 @@ def cmd_selftest(_a):
             for s in (f"RFR run1 M {msha[:8]}", f"RFR run1 S {seal_id[:8]}")
         ]
         (rec / "events.jsonl").write_text("\n".join(ev) + "\n")
-        (rec / "export-counts.json").write_text(json.dumps({"events.jsonl": 2}))
+        (rec / "channels.jsonl").write_text("{}\n")
+        (rec / "commands.jsonl").write_text("{}\n{}\n")
+        (rec / "export-counts.json").write_text(
+            json.dumps({"events.jsonl": 2, "channels.jsonl": 1, "commands.jsonl": 2})
+        )
         main(["hash-record", "--run-dir", str(run)])
         main(["verify-record", "--run-dir", str(run)])
         rsha = sha256_file(run / "record.sha256")
-        verd = {t: {"verdict": exp[t]} for t in tests}
-        for who, v in (
-            ("runner", verd),
-            ("auditor", {**verd, "L0-1": {"verdict": "FAIL"}}),
-        ):
+
+        def verd(t):
+            v = {"verdict": exp[t].replace("-RIPPLE", "")}
+            if t in faults:
+                v["failed"] = menu["knobs"][0 if faults[t] == "k1" else 1]["fails"]
+            return v
+
+        rv = {t: verd(t) for t in tests}
+        uv = {t: dict(verd(t)) for t in tests}
+        uv["L0-1"] = {"verdict": "FAIL", "failed": ["version"]}
+        planted = next(iter(faults))
+        uv[planted] = {
+            "verdict": "FAIL",
+            "failed": uv[planted]["failed"] + ["SpiError == 0"],
+        }
+        for who, v in (("runner", rv), ("auditor", uv)):
             (run / who).mkdir()
             (run / who / "verdicts.json").write_text(
                 json.dumps({"run": "run1", "record_sha256": rsha, "tests": v})
             )
+        (run / "auditor" / "final-state.json").write_text(
+            json.dumps(
+                {
+                    "test": "L7-1",
+                    "verdict": exp["L7-1"].replace("-RIPPLE", ""),
+                    "expected_sha256": "x",
+                    "observed_sha256": "x" if exp["L7-1"] == "PASS" else "y",
+                }
+            )
+        )
         main(
             [
                 "unseal",
@@ -461,9 +591,9 @@ def cmd_selftest(_a):
             ]
         )
         text = (d / "unseal.md").read_text()
-        assert "DIVERGENCE" in text and "RFR VOID" not in text, text
-        assert text.count("planted fault detected") == len(planted), text
-        assert "nominal: spot-check" in text, text
+        assert "DIVERGENCE: human reads both" in text and "RFR VOID" not in text, text
+        assert "UNEXPLAINED FAIL (SpiError == 0)" in text, text
+        assert "L7-1/dump" in text and "nominal: spot-check" in text, text
         (rec / "events.jsonl").write_text("tampered\n")
         assert verify_record(run), "verify-record must detect a modified record"
         (d / "plan.md").write_text("ID:        L0-1\n")
@@ -484,22 +614,28 @@ def main(argv=None):
     s.add_argument("--plan-revision", default="")
     s.add_argument("--checker", action="append", default=[], metavar="OWNER=PATH")
     s.add_argument(
-        "--image", action="append", default=[], metavar="DEPLOYMENT=PATH[:BUILD]"
+        "--image", action="append", default=[], metavar="DEPLOYMENT=PATH.bin[:BUILD]"
+    )
+    s.add_argument(
+        "--no-version-check", metavar="REASON", help="skip the sha7-in-image check"
     )
     s.add_argument("--menu", required=True)
     s.add_argument("--bench", required=True)
-    s.add_argument("-o", "--output", default="manifest.json")
+    s.add_argument("-o", "--output", help="default rfr/manifest-<uut sha8>.json")
     s.set_defaults(fn=cmd_manifest)
     s = sub.add_parser("verify", help="refuse if anything on the manifest moved")
     s.add_argument("manifest")
     s.set_defaults(fn=cmd_verify)
-    s = sub.add_parser("draw", help="human-seeded draw of planted faults")
+    s = sub.add_parser(
+        "draw", help="human-seeded draw of planted faults (count from menu)"
+    )
     s.add_argument("--manifest", required=True)
     s.add_argument(
-        "--seed-file", help="file holding the seed; omitted = prompt, no echo"
+        "--seed-file",
+        help="chmod-600 file holding the seed, deleted after use; "
+        "omitted = prompt without echo",
     )
-    s.add_argument("--max-count", type=int, default=3)
-    s.add_argument("--run-dir", required=True, help="rfr/<run-id>, outside both repos")
+    s.add_argument("--run-dir", required=True, help="rfr/<run-id>, run id <= 8 chars")
     s.set_defaults(fn=cmd_draw)
     s = sub.add_parser("seal-id", help="print the seal id (readable by everyone)")
     s.add_argument("--run-dir", required=True)

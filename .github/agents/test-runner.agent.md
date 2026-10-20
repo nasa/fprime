@@ -11,7 +11,7 @@ fix, tune, or judge beyond running the builder's checker.
 
 ## Inputs
 
-`manifest.json`, the plan, the harness and UUT at their manifest SHAs,
+The manifest (`rfr/manifest-<sha8>.json`), the plan, the harness and UUT at their manifest SHAs,
 the bench recipe, and the run directory `rfr/<run-id>/` whose
 `sealed/` you pass to the harness and **never open**. You are a
 different context from the shell that performed the draw and from the
@@ -38,6 +38,7 @@ that `runner/` and `sealed/` are not to be read.
 ## Forbidden
 
 Contract §7, plus: opening, printing, or diffing anything under
-`sealed/`; supplying screenshots or snippets as evidence (the auditor
-derives evidence from the record); writing harness or pytest output
-under `record/`.
+`sealed/`; letting any file or stream you write name an active knob;
+supplying screenshots or snippets as evidence (the auditor derives
+evidence from the record); writing harness or pytest output under
+`record/`.

@@ -97,10 +97,13 @@ Implement every knob on the approved menu as harness **configuration**
 (`rfr/<run-id>/sealed/faults.json`, read by the harness at start). A
 knob may change a seed, an expected constant, a length, a stimulus, or
 disturb device state through the harness — never the test ID, the log
-text, or the marker. Verify in the dry run that each knob, applied
-alone, makes its target test fail; record which other tests it
-ripples into (a `uut-state` knob legitimately may) so the reviewer can
-confirm the ripple is also a FAIL, not an `UNVERIFIED`.
+text, or the marker. The harness **never logs, prints, asserts on, or
+writes which knobs are active**, to any file or stream, including its
+own stdout in `runner/`; the only trace of `faults.json` outside
+`sealed/` is the `S` marker. Verify in the dry run that each knob,
+applied alone, makes its target test fail with exactly the predicates
+in its `fails` list, and that every test in its `ripples_to` fails
+(FAIL, not UNVERIFIED) while all others pass.
 
 ## 5. Checker
 
@@ -120,11 +123,13 @@ plan, and the dry run.
 
 ## 7. Dry run
 
-Stage 2 closes with an unsealed run of the full plan on the real
-bench, every knob exercised once, both checkers agreeing on every
-verdict, followed by `seal.py manifest` with the built image files.
-Dry-run output is labelled and is not a record; it lives outside both
-repositories like every RfR artifact.
+Stage 2 closes with the dry run on the real bench: one clean
+full-plan run (all PASS expected) plus one full-plan run per knob
+applied alone, outputs under `dry/clean/` and `dry/<knob>/` outside
+both repositories, both checkers agreeing on every verdict of every
+run. Then `seal.py manifest` with the raw image binaries that were
+flashed (each must contain the UUT sha7). Dry-run output is labelled
+and is not a record.
 
 ## Anti-patterns
 

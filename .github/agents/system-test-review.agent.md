@@ -24,8 +24,10 @@ Input: the designer's plan and fault menu. For each test ask:
 3. Is at least one test's evidence outside the UUT's own reporting
    path? Does every constant cite a source?
 4. Could a planted fault from the menu be told apart in the record?
-   Does the menu have a `uut-state` knob and cover ≥ 2 × max-count
-   tests? Is any knob impossible to apply through configuration?
+   Does the menu carry `max_count`, a `uut-state` knob, coverage of
+   ≥ 2 × `max_count` tests, verbatim `fails` predicates and honest
+   `ripples_to` per knob? Is any knob impossible to apply through
+   configuration?
 5. Is the deployment the system deployment, or a human-approved
    reduction with the constraint stated?
 
@@ -48,10 +50,13 @@ Do **not** read the builder's checker. Procedure:
 3. Review the harness against `fprime-system-test-harness`: UUT
    untouched, markers fit 40 characters and round-trip, END sent in
    `finally` and carries no verdict, no pytest or harness verdict under
-   `record/`, knobs invisible in the record, each knob fails its target
-   test in the dry run and every ripple is a FAIL not an UNVERIFIED,
-   completeness built from infrastructure counters only, commands
-   paced, exporter writes `export-counts.json`, size reviewable in one
+   `record/`, knobs invisible in the record, each `dry/<knob>/` run
+   fails its target with exactly the knob's `fails` predicates and its
+   `ripples_to` with FAIL not UNVERIFIED while everything else passes,
+   no knob name or test/knob pair anywhere in the dry-run `runner/`
+   output (grep for every knob name), completeness built from
+   infrastructure counters only, commands paced, exporter writes all
+   three exports plus `export-counts.json`, size reviewable in one
    sitting.
 4. Output `review-harness-round-N.md` with the same tags. Five rounds
    maximum.

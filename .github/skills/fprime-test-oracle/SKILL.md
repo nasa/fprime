@@ -51,6 +51,8 @@ Rules:
   (dispatcher, event manager, downlink drop counters). UUT events
   belong in `all_of`. A missing UUT completion event in a complete
   window is `FAIL`; a failed `complete` is `UNVERIFIED`.
+- `commands_sent` is a record quantity: the rows of `commands.jsonl`
+  whose `sent` time lies inside the window, markers included.
 - Predicates are counts, sequences, equalities, and deltas over
   events, telemetry, and command completions inside the window.
 - Absence predicates (`count == 0`) are valid only when `complete`
@@ -75,9 +77,12 @@ record.sha256      one line per file, produced by seal.py hash-record
 ```
 
 The exporter pages through the archive completely (fprime-yamcs REST
-pages at 1000 rows with a continuation token) and writes the
-archive-reported totals to `export-counts.json`; `seal.py
-verify-record` fails when a file's row count differs. `completion` is
+pages at 1000 rows with a continuation token) and writes the totals
+it saw to `export-counts.json`; all three files are mandatory and
+`seal.py verify-record` fails when any is absent or its row count
+differs. Because those totals come from the same exporter, the
+auditor re-exports from the replayed copy of `raw/` and diffs row
+counts with `record/*.jsonl` — that is the independent count. `completion` is
 the dispatcher's response (`OK`, `EXECUTION_ERROR`, …) or `NONE`.
 Slice windows by `NoOpStringReceived` marker events ordered by
 reception time; generation time may be uptime-based.
