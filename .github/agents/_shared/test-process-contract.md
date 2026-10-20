@@ -70,13 +70,13 @@ concurrently on the same UUT SHA.
 - **Stage 2 never edits the UUT.** A UUT defect found while building
   or dry-running is reported with the record lines that show it and
   goes back through stage 1 as a minimal iteration; harness work waits.
-- **Bounded loops.** Plan review: bounded by `phase-review-loop.md` (the only
-  place that bound is defined), then escalate with the disagreement log.
-  Harness review: five rounds, then escalate. Agreement reached by softening a
-  must-fix is recorded as a disagreement, not a resolution. - **Never weaken a
-  test to make it pass.** Changing a pass rule, threshold, metric, or the test
-  list after plan approval is a plan change and returns to the human gate with
-  a diff.
+- **Bounded loops.** Plan review: bounded by `phase-review-loop.md` (the
+  only place that bound is defined), then escalate with the disagreement
+  log. Harness review: five rounds, then escalate. Agreement reached by
+  softening a must-fix is recorded as a disagreement, not a resolution.
+- **Never weaken a test to make it pass.** Changing a pass rule,
+  threshold, metric, or the test list after plan approval is a plan
+  change and returns to the human gate with a diff.
 
 ## 3. Hand-off artifacts
 
