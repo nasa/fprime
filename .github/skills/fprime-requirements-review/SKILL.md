@@ -78,9 +78,11 @@ can observe RQ-1's outcome, further entries may follow:
 Missing, "TBD", unqualified "Test", or a method that cannot observe
 the outcome (unit test for a timing or cross-component behaviour;
 inspection for a run-time behaviour) → `req-no-verification`: the
-requirement stands, the method must change. A method weaker than the
-behaviour allows ("inspection" on a unit-testable behaviour) →
-`req-weak-verification`. Absence of a written test is never a reason
+requirement stands, the method must change. A method that can observe the
+outcome when a stronger one in the table also can ("integration test"
+for an outcome observable at the component boundary alone) →
+`req-weak-verification`. Inspection of a run-time behaviour is never
+"weak": it cannot observe it and is `req-no-verification`. Absence of a written test is never a reason
 to accept a weaker method.
 
 ---
@@ -111,8 +113,10 @@ return from a driver or OS call; full queue or buffer; re-entry or
 concurrent invocation; unexpected state at startup or after reset;
 loss of the dependency. Each scenario has a requirement, or a waiver
 line in the set that names either the owner of the scenario
-(component or mechanism, with its REQ-ID) or why it cannot arise
-("input is a compile-time constant"). A waiver that names neither
+(component or mechanism, with its REQ-ID) or why it cannot arise, citing the
+request constraint or parent requirement that guarantees it ("input is
+a compile-time constant per REQ-SYS-012") — a design claim ("the
+driver is synchronous") is not a reason before design exists. A waiver that names neither
 ("out of scope", "handled elsewhere") is a gap.
 
 **Finding-class:** `req-set-no-fault-coverage`.
@@ -142,14 +146,18 @@ requirement is not verified.
 When the input is a PR, apply `pr-diff-scoping`: rows the PR adds or
 edits take the tags above; unchanged pre-existing rows that fail take
 `**future work**`. RS-1..3 run over the whole set, but a gap is must
-fix only when the PR's request introduces the element or dependency.
+fix only when the PR's request introduces the element or dependency;
+otherwise `**future work**`.
 
 ---
 
 ## 4. Output
 
-`review-req-round-N.md`. Cells read `pass`, `fail → <key>`, or `n/a`;
-`Key = <class>:<REQ-ID or quoted element>`, stable across rounds.
+`review-req-round-N.md`. Per-requirement cells read `pass` or
+`fail → <key>`; RS-1/RS-2 `Covered?` cells read `pass`, `pass (waived)`,
+or `fail → <key>`. Keys are stable across rounds:
+RQ `<class>:<REQ-ID>`, RS-1 `<class>:"<quoted element>"`,
+RS-2 `<class>:<interface>/<scenario>`, RS-3 `<class>:<REQ-ID>+<REQ-ID>`.
 
 ```md
 ## Per-requirement

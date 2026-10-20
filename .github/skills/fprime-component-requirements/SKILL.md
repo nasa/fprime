@@ -107,12 +107,12 @@ requirement):
 
 ### Step 4 — Confirm with User
 
-Review the table with `fprime-requirements-review` (verifiable,
-understood, rationale, strongest verification method; breadth and
-fault coverage of the request) and close its must-fixes, then present
-the full requirements table to the user and **wait for confirmation**
-before proceeding to design. Requirements are the
-contract — everything downstream is verified against them.
+Have the table reviewed per `fprime-requirements-review` by a separate
+reviewer session (`requirements-review.agent.md`) — not the session
+that drafted it — and close its must-fixes. Then present the full
+requirements table to the user and **wait for confirmation** before
+proceeding to design. Requirements are the contract — everything
+downstream is verified against them.
 
 ---
 
