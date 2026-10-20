@@ -82,13 +82,16 @@ Rules:
 - Every expected constant cites its source (datasheet section, ICD).
 - L0 includes an image-identity test: its procedure sends
   `version.VERSION ALL`; its pass rule is that the
-  `Svc.Version` `ProjectVersion`, `FrameworkVersion` and
-  `LibraryVersions` payloads in the window equal the manifest's
-  `repos[].describe` strings (F Prime bakes
-  `git describe --tags --always --dirty --broken` of the project,
-  framework and each library into the image; a tagged commit
-  describes as the bare tag). A deployment without `Svc.Version` is a
-  stage-2 finding.
+  `Svc.Version` payloads in the window match the manifest's
+  `repos[].describe` strings: `ProjectVersion` and `FrameworkVersion`
+  equal the project and framework describe; each `LibraryVersions`
+  entry is `<library>@<describe>` (F Prime bakes
+  `git describe --tags --always --dirty --broken` of each repository
+  into the image; a tagged commit describes as the bare tag; payloads
+  are 40-character strings, so the harness repo and every library
+  must describe in ≤ 40 characters or the comparison is on the
+  truncated prefix and the plan says so). A deployment without
+  `Svc.Version` is a stage-2 finding.
 - A final test leaves the UUT in a state the auditor can verify
   independently (e.g. a known pseudo-random image whose generator and
   seed are handed over).

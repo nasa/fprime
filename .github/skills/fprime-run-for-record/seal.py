@@ -166,7 +166,7 @@ def cmd_manifest(a):
     if {c["owner"] for c in checkers} != {"builder", "reviewer"}:
         sys.exit("manifest needs one builder and one reviewer checker")
     uut = repo_entry(a.uut)
-    repos = [repo_entry(a.uut, "uut")]
+    repos = [repo_entry(a.uut, "uut"), repo_entry(a.harness, "harness")]
     for spec in a.repo:
         name, _, path = spec.partition("=")
         if not name or not path or name in {r["name"] for r in repos}:
@@ -188,7 +188,11 @@ def cmd_manifest(a):
         "images": images,
         "menu": file_entry(a.menu),
         "bench": file_entry(a.bench),
-        "no_version_check": a.no_version_check or "",
+        "no_version_check": (
+            a.no_version_check
+            if any(i["version_check"].startswith("SKIPPED") for i in images)
+            else ""
+        ),
     }
     out = Path(a.output or f"rfr/manifest-{uut['sha'][:8]}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -363,17 +367,17 @@ def outcome(expected, runner, auditor):
 
 def allowed_failures(test, expected, faults, by_name):
     """Predicates a planted (or ripple) test is allowed to fail; None = no check."""
-    if expected == "FAIL":
-        return set(by_name[faults[test]]["fails"])
-    if expected == "FAIL-RIPPLE":
-        preds = [
-            by_name[n]["ripples_to"].get(test)
-            for n in faults.values()
-            if test in by_name[n]["ripples_to"]
-        ]
-        if preds and all(p is not None for p in preds):
-            return set().union(*preds)
-    return None
+    if expected not in ("FAIL", "FAIL-RIPPLE"):
+        return None
+    allowed = set(by_name[faults[test]]["fails"]) if expected == "FAIL" else set()
+    preds = [
+        by_name[n]["ripples_to"].get(test)
+        for n in faults.values()
+        if test in by_name[n]["ripples_to"]
+    ]
+    if any(p is None for p in preds):
+        return None
+    return allowed.union(*preds) if preds else (allowed or None)
 
 
 def dump_expectation(test, faults, by_name):
@@ -400,6 +404,8 @@ def final_state_rows(run, faults, by_name):
         verdict = f.get("verdict") if f.get("verdict") in VERDICTS else "MISSING"
         exp = dump_expectation(test, faults, by_name)
         o = outcome(exp, verdict, verdict)
+        if verdict == "MISSING":
+            o = "MISSING: final-state verdict absent"
         if verdict == "PASS" and f.get("expected_sha256") != f.get("observed_sha256"):
             o = "INCONSISTENT: final-state PASS with differing hashes"
         rows.append(((test, exp, verdict), o))

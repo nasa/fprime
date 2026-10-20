@@ -32,8 +32,10 @@ python3 seal.py manifest --uut <path> --harness <path> \
     --menu <faults-menu.json> --bench <bench.md>        # -> rfr/manifest-<uut sha8>.json
 ```
 
-Records, for the UUT, the harness and every repository the image is
-built from, the SHA and `git describe --tags --always --dirty --broken`
+Records, for the UUT, the harness (both listed in `repos`
+automatically — tester components and test deployments compile into
+the image) and every other repository the image is built from, the
+SHA and `git describe --tags --always --dirty --broken`
 string (dirty or broken trees are refused); file hashes; the plan's
 test list (parsed from its `ID:` lines at column 0, unique, ≤ 8
 characters); the validated fault menu; and the exact raw binaries that
