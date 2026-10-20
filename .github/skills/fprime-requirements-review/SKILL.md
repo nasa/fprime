@@ -75,15 +75,15 @@ can observe RQ-1's outcome, further entries may follow:
 | **Integration test** (system test) | The outcome needs more than one component, a deployment, real timing, or real hardware. |
 | **Inspection** | The outcome is not observable at run time (coding constraints, documentation, build-time budgets). Last resort. |
 
-Missing, "TBD", unqualified "Test", or a method that cannot observe
-the outcome (unit test for a timing or cross-component behaviour;
-inspection for a run-time behaviour) → `req-no-verification`: the
-requirement stands, the method must change. A method that can observe the
-outcome when a stronger one in the table also can ("integration test"
-for an outcome observable at the component boundary alone) →
-`req-weak-verification`. Inspection of a run-time behaviour is never
-"weak": it cannot observe it and is `req-no-verification`. Absence of a written test is never a reason
-to accept a weaker method.
+Missing, "TBD", unqualified "Test", or a method that cannot observe the
+outcome (unit test for a timing or cross-component behaviour; inspection
+for a run-time behaviour) → `req-no-verification`: the requirement
+stands, the method must change. A method that can observe the outcome
+when a stronger one in the table also can ("integration test" for an
+outcome observable at the component boundary alone) → `req-weak-
+verification`. Inspection of a run-time behaviour is never "weak": it
+cannot observe it and is `req-no-verification`. Absence of a written
+test is never a reason to accept a weaker method.
 
 ---
 
@@ -112,12 +112,14 @@ mode/state that does not accept it; no response or timeout; error
 return from a driver or OS call; full queue or buffer; re-entry or
 concurrent invocation; unexpected state at startup or after reset;
 loss of the dependency. Each scenario has a requirement, or a waiver
-line in the set that names either the owner of the scenario
-(component or mechanism, with its REQ-ID) or why it cannot arise, citing the
-request constraint or parent requirement that guarantees it ("input is
-a compile-time constant per REQ-SYS-012") — a design claim ("the
-driver is synchronous") is not a reason before design exists. A waiver that names neither
-("out of scope", "handled elsewhere") is a gap.
+line in the set that names either the owner of the scenario — another
+component with its REQ-ID, or a framework mechanism with the document
+section that specifies it ("owned by `Svc::Health`, ping timeout,
+`docs/sdd.md` §Ping") — or why it cannot arise, citing the request
+constraint or parent requirement that guarantees it ("input is a
+compile-time constant per REQ-SYS-012"); a design claim ("the driver
+is synchronous") is not a reason before design exists. A waiver that
+names neither ("out of scope", "handled elsewhere") is a gap.
 
 **Finding-class:** `req-set-no-fault-coverage`.
 
