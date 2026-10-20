@@ -86,6 +86,9 @@ relevant one instead of improvising:
   sequences `fprime-component-requirements`,
   `fprime-component-design-fpp`, `fprime-component-implementation`,
   `fprime-component-unit-test`, `fprime-component-integration-test`.
+- Reviewing a requirements set before design (verifiable, rationale,
+  verification method, breadth and fault coverage):
+  `fprime-requirements-review`, applied by `requirements-review.agent.md`.
 - Modifying pre-existing code (bug fixes, small changes, cleanup):
   `fprime-maintenance` — the doctrine of minimal effect.
 - Writing unit tests: `fprime-unit-testing`.

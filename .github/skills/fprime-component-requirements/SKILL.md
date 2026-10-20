@@ -71,9 +71,9 @@ Each requirement must be something that can be
 
 Requirements are typically shipped as a table:
 
-| ID | Shall Statement | Description / Context | Test Method |
+| ID | Shall Statement | Rationale | Verification Method |
 |---|---|---|---|
-| REQ-\<Component\>-001 | The component shall \<behavior\>. | \<Human-readable context\> | \<Unit test / integration test / inspection\> |
+| REQ-\<Component\>-001 | The component shall \<behavior\>. | \<Why: request element, parent requirement, or fault scenario\> | \<Unit test / integration test / inspection — strongest feasible, in that order\> |
 | REQ-\<Component\>-002 | ... | ... | ... |
 
 Categories to cover:
@@ -106,8 +106,11 @@ requirement):
 
 ### Step 4 — Confirm with User
 
-Present the full requirements table to the user and **wait for
-confirmation** before proceeding to design. Requirements are the
+Review the table with `fprime-requirements-review` (verifiable,
+understood, rationale, strongest verification method; breadth and
+fault coverage of the request) and close its must-fixes, then present
+the full requirements table to the user and **wait for confirmation**
+before proceeding to design. Requirements are the
 contract — everything downstream is verified against them.
 
 ---
@@ -118,7 +121,7 @@ A requirements document (typically captured in the component's
 `docs/sdd.md` or as a structured list in the PR description) with:
 
 - Component name, module, and work type
-- Requirements table (ID, shall statement, description, test method)
+- Requirements table (ID, shall statement, rationale, verification method)
 - Interface summary (data exchanged, not port types)
 - Any constraints or assumptions noted
 
