@@ -255,16 +255,18 @@ async function dispatchOne(manifest, entry, target, state) {
     check_run_id: null, remote_run_id: null, remote_run_url: null, remote_started_at: null, remote_conclusion: null, conclusion: null,
   };
   try {
-    s.ext_ref = await resolveExtRef(entry, target);
+    // Check Run first, so a credential or API problem on the ext side still ends in a visible
+    // failed check rather than a required check that never appears.
     const check = await own.post(`/repos/${repo}/check-runs`, {
       name, head_sha: target.headSha, status: 'queued', external_id: ourExternalId(entry.id), details_url: orchestratorUrl,
       output: {
-        title: `Dispatching ${entry.repository} @ ${s.ext_ref}`,
-        summary: `Dispatching ${code(entry.workflow)} on ${code(entry.repository)} @ ${code(s.ext_ref)} with F´ ${code(`${target.headRepo}@${short(target.headSha)}`)}.\n\nOrchestrator: ${orchestratorUrl}`,
+        title: `Dispatching ${entry.repository}`,
+        summary: `Dispatching ${code(entry.workflow)} on ${code(entry.repository)} with F´ ${code(`${target.headRepo}@${short(target.headSha)}`)}.\n\nOrchestrator: ${orchestratorUrl}`,
       },
     });
     s.check_run_id = check.id;
     saveState(state);
+    s.ext_ref = await resolveExtRef(entry, target);
     const r = await ext.post(`/repos/${entry.repository}/actions/workflows/${entry.workflow}/dispatches`, {
       ref: s.ext_ref,
       inputs: {
