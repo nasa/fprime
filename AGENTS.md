@@ -86,6 +86,7 @@ relevant one instead of improvising:
   sequences `fprime-component-requirements`,
   `fprime-component-design-fpp`, `fprime-component-implementation`,
   `fprime-component-unit-test`, `fprime-component-integration-test`.
+- Reviewing a requirements set before design: `fprime-requirements-review`.
 - Modifying pre-existing code (bug fixes, small changes, cleanup):
   `fprime-maintenance` — the doctrine of minimal effect.
 - Writing unit tests: `fprime-unit-testing`.
@@ -102,7 +103,9 @@ Pull-request review is performed by the multi-agent flow in
 [`.github/agents/`](.github/agents/), entered through
 `review-orchestrator.agent.md`. Development work (components,
 topologies, build system) is entered through
-`fprime-development.agent.md`, which sequences the skills above.
+`fprime-development.agent.md`, which sequences the skills above. A
+requirements set is reviewed before design through
+`requirements-review.agent.md`.
 
 ## Contributing
 
