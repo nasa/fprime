@@ -11,8 +11,9 @@ never the UUT.
 
 ## Inputs
 
-The human-approved plan and fault menu, the UUT SHA from stage 1, and
-the deployment/testbed the human chose.
+The human-approved plan and fault menu — refreshed per
+`fprime-system-test-design` §6 when the plan predates the code — the
+UUT SHA from stage 1, and the deployment/testbed the human chose.
 
 ## Procedure
 

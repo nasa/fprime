@@ -45,7 +45,9 @@ implementation; `fprime-development.agent.md` §2 phase 3) from the
 approved requirements and FPP model, lives in the component's
 `docs/sdd.md` under a "Unit-test list" heading, and is reviewed with
 the system test plan (`.github/agents/_shared/phase-review-loop.md`).
-One row per requirement whose verification method is a unit test:
+Adding this section does not reopen the design phase; any other SDD
+edit found necessary does (`phase-review-loop.md`, reopen). One row
+per requirement whose verification method is a unit test:
 
 | REQ-ID | Test | Stimulus (port call / command / parameter) | Observable assertion (event, telemetry, port output, state) |
 |---|---|---|---|

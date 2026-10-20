@@ -19,7 +19,8 @@ you do not build or run tests.
 4. The FPP model — observables and the fault-injection surface. The
    UUT code, when it exists, is read **last**, to find observable
    counters, never to decide what to test; in the development
-   lifecycle the plan precedes implementation and there is none.
+   lifecycle the plan precedes implementation and there is usually
+   none.
 
 Before drafting, run the L0 feasibility check of
 `fprime-system-test-design` §1 (marker round-trip, event budget) on

@@ -39,11 +39,10 @@ Governing rules are in
 - The FPP model: ports, commands, events, telemetry and parameters
   are the observables and the fault-injection surface (knobs are
   harness configuration, §4).
-- UUT code, when it exists, read after the plan's test entries (§3)
-  exist, to
-  locate observable counters. In the development lifecycle the plan is
-  written before implementation (`phase-review-loop.md`, test-design
-  phase) and this input is absent.
+- UUT code, when it exists, read after the plan's test entries (§3) exist, to
+  locate observable counters. In the development lifecycle the plan is written
+  before implementation (`phase-review-loop.md`, test-design phase) and this
+  input is absent.
 
 ## 2. Plan structure
 
@@ -172,9 +171,11 @@ A plan approved in stage 1 (before code) is refreshed when stage 2
 starts on the UUT SHA: confirm L0 on the bench and replace the
 desk-checked line; read the UUT code — last — for observable counters
 and update §3 evidence paths where a counter is better than a
-report; re-check every fault-menu knob is still applicable. Present
-the diff to the human for re-approval (contract §2, plan change);
-an empty diff is reported as such. No test is added, removed or
+report; re-check every fault-menu knob is still applicable. The
+reviewer sees the diff once (`system-test-review` Mode A on the
+changed entries, one review; an empty diff needs none), then the
+human re-approves it (contract §2, plan change); an empty diff is
+reported as such. No test is added, removed or
 weakened here without the human's decision.
 
 ## Anti-patterns

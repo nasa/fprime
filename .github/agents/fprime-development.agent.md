@@ -38,7 +38,7 @@ see below):
 3. **Test design** — `fprime-system-test-design` (system test plan and
    fault menu) and the unit-test list (`fprime-component-unit-test`,
    "Test list", kept in `docs/sdd.md`), from the approved
-   requirements, SDD and FPP model — no code yet
+   requirements, SDD and FPP model — code, if any, read last
 4. **Implementation (C++)** — `fprime-component-implementation`
 5. **Unit test** — `fprime-component-unit-test` (with `fprime-unit-testing`)
 6. **Integration test** — `fprime-component-integration-test`
