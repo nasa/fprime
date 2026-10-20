@@ -1,0 +1,43 @@
+{
+  "upstream_repository": "nasa/fprime",
+  "check_prefix": "ext-ci",
+  "paths_ignore": [
+    "docs/**",
+    "**.md",
+    ".github/actions/spelling/**",
+    ".github/ISSUE_TEMPLATE/**",
+    ".github/agents/**"
+  ],
+  "repos": [
+    {
+      "id": "led-blinker",
+      "repository": "fprime-community/fprime-workshop-led-blinker",
+      "workflow": "ci.yml",
+      "default_ref": "devel",
+      "timeout_minutes": 60,
+      "failure_policy": "notify",
+      "owners": ["thomas-bc"],
+      "on_pr": true
+    },
+    {
+      "id": "zephyr-reference",
+      "repository": "fprime-community/fprime-zephyr-reference",
+      "workflow": "ci.yml",
+      "default_ref": "devel",
+      "timeout_minutes": 90,
+      "failure_policy": "notify",
+      "owners": ["thomas-bc"],
+      "on_pr": true
+    },
+    {
+      "id": "generic-hub-reference",
+      "repository": "fprime-community/fprime-generic-hub-reference",
+      "workflow": "ci.yml",
+      "default_ref": "devel",
+      "timeout_minutes": 60,
+      "failure_policy": "notify",
+      "owners": ["thomas-bc"],
+      "on_pr": true
+    }
+  ]
+}

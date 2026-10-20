@@ -1,0 +1,21 @@
+name: ext-ci-trigger
+
+# Deliberately trivial. This workflow runs under the repository's normal `pull_request`
+# rules (including "require approval for workflows from forks"), and its completion is what
+# starts the privileged orchestrator in ext-ci.yml via `workflow_run`. It must never need
+# secrets and must never produce anything the orchestrator trusts. No paths filter here: the
+# orchestrator applies the manifest's paths_ignore itself and emits skipped Check Runs, so
+# docs-only PRs still satisfy required checks.
+on:
+  pull_request:
+    branches: [ devel, release/** ]
+  merge_group:
+
+permissions: {}
+
+jobs:
+  approved:
+    name: "Gate passed"
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "${GITHUB_EVENT_NAME} workflow ran for ${GITHUB_SHA}; ext-ci may proceed"
