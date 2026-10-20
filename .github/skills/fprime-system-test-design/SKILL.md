@@ -80,11 +80,15 @@ Rules:
   reporting path (independent dump, external instrument, datasheet
   constant) so a UUT that lies about itself is caught.
 - Every expected constant cites its source (datasheet section, ICD).
-- L0 includes an image-identity pass rule:
-  `event Svc.Version.ProjectVersion(version) count ≥ 1`, `version`
-  ends with the manifest UUT sha7 and does not contain `-dirty`
-  (F Prime bakes `git describe --dirty` into `PROJECT_VERSION`). A
-  deployment without `Svc.Version` is a stage-2 finding.
+- L0 includes an image-identity test: its procedure sends
+  `version.VERSION ALL`; its pass rule is that the
+  `Svc.Version` `ProjectVersion`, `FrameworkVersion` and
+  `LibraryVersions` payloads in the window equal the manifest's
+  `repos[].describe` strings (F Prime bakes
+  `git describe --tags --always --dirty --broken` of the project,
+  framework and each library into the image; a tagged commit
+  describes as the bare tag). A deployment without `Svc.Version` is a
+  stage-2 finding.
 - A final test leaves the UUT in a state the auditor can verify
   independently (e.g. a known pseudo-random image whose generator and
   seed are handed over).
@@ -92,8 +96,10 @@ Rules:
 ## 4. Fault menu
 
 The menu lists knobs the harness applies **through its own
-configuration**, so a planted fault is indistinguishable from a real
-one in the record:
+configuration**, so a planted fault is invisible to the checkers and
+absent from harness output. A `uut-state` knob's disturbing command
+does appear in `commands.jsonl`; the auditor is forbidden to reason
+from it (contract §5):
 
 ```
 { "max_count": 2,
@@ -125,8 +131,14 @@ one in the record:
   At unseal any other failed predicate on a planted test is an
   unexplained failure and a human trigger.
 - `ripples_to`: tests that legitimately fail when this knob is
-  planted (a disturbed device stays disturbed). Verified in the dry
-  run; the draw expects `FAIL-RIPPLE` for them.
+  planted (a disturbed device stays disturbed), as a list or as a map
+  `{"L7-1": ["<predicate>"]}` naming the predicates that fail there
+  (map form enables the unexplained-failure check on ripples).
+  Verified in the dry run; the draw expects `FAIL-RIPPLE` for them.
+- Only a `uut-state` knob changes what the independent final-state
+  dump should find; a `harness-expectation` or `stimulus` knob drawn
+  on the final test leaves the device correct and the dump is
+  expected to PASS.
 - Knobs that need a different build, a different test ID, or a
   visible flag are not acceptable.
 

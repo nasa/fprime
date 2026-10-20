@@ -53,6 +53,7 @@ Do **not** read the builder's checker. Procedure:
    `record/`, knobs invisible in the record, each `dry/<knob>/` run
    fails its target with exactly the knob's `fails` predicates and its
    `ripples_to` with FAIL not UNVERIFIED while everything else passes,
+   both checkers' `failed` lists byte-equal on every dry run,
    no knob name or test/knob pair anywhere in the dry-run `runner/`
    output (grep for every knob name), completeness built from
    infrastructure counters only, commands paced, exporter writes all

@@ -17,6 +17,7 @@ from pathlib import Path
 VERDICTS = ("PASS", "FAIL", "UNVERIFIED")
 EXPORTS = ("events.jsonl", "channels.jsonl", "commands.jsonl")
 KNOB_CLASSES = ("harness-expectation", "uut-state", "stimulus")
+REFUSED_IMAGES = (".elf", ".hex", ".axf", ".uf2")
 MAX_ID = 8
 
 
@@ -52,10 +53,23 @@ def git(path, *args):
     return out.stdout.strip()
 
 
-def repo_entry(path):
+def describe(path):
+    d = git(path, "describe", "--tags", "--always", "--dirty", "--broken")
+    if "-dirty" in d or "-broken" in d:
+        sys.exit(f"refusing: {path} describes as {d}")
+    return d
+
+
+def repo_entry(path, name=None):
     if git(path, "status", "--porcelain"):
         sys.exit(f"refusing: {path} has uncommitted or untracked files")
-    return {"path": str(path), "sha": git(path, "rev-parse", "HEAD"), "dirty": False}
+    e = {
+        "path": str(path),
+        "sha": git(path, "rev-parse", "HEAD"),
+        "describe": describe(path),
+    }
+    e["dirty"] = False
+    return {"name": name, **e} if name else e
 
 
 def file_entry(path):
@@ -77,25 +91,27 @@ def plan_tests(plan_path):
     return ids
 
 
-def image_entry(spec, uut_sha, skip_reason):
+def image_entry(spec, repos, skip_reason):
     dep, _, rest = spec.partition("=")
     p, _, build = rest.partition(":")
     if not dep or not p:
         sys.exit("--image takes <deployment>=<path.bin>[:<build command>]")
-    if Path(p).suffix.lower() in (".elf", ".hex", ".axf"):
-        sys.exit(
-            f"{p}: the manifest image is the raw binary written to flash, not ELF/hex"
-        )
+    if Path(p).suffix.lower() in REFUSED_IMAGES:
+        sys.exit(f"{p}: the manifest image is the raw binary written to flash (.bin)")
     entry = {"deployment": dep, **file_entry(p), "build_cmd": build}
-    if uut_sha[:7].encode() in Path(p).read_bytes():
-        entry["version_check"] = "sha7 found in image"
+    data = Path(p).read_bytes()
+    missing = [r["name"] for r in repos if r["describe"].encode() not in data]
+    if not missing:
+        entry["version_check"] = "all repo describe strings found in image"
     elif skip_reason:
-        entry["version_check"] = f"SKIPPED: {skip_reason}"
+        entry["version_check"] = (
+            f"SKIPPED ({', '.join(missing)} not found): {skip_reason}"
+        )
     else:
         sys.exit(
-            f"{p}: UUT sha7 {uut_sha[:7]} not found in the image (Svc.Version "
-            "PROJECT_VERSION); rebuild from the manifest tree or give "
-            "--no-version-check <reason>"
+            f"{p}: describe string of {missing} not found in the image (Svc.Version "
+            "PROJECT/FRAMEWORK/LIBRARY versions); rebuild from the manifest trees or "
+            "give --no-version-check <reason>"
         )
     return entry
 
@@ -118,11 +134,15 @@ def load_menu(path, tests):
             sys.exit(f"knob {name}: class must be one of {KNOB_CLASSES}")
         if not k.get("fails"):
             sys.exit(f"knob {name}: needs 'fails': [<pass-rule predicates it breaks>]")
-        for t in [*k["applies_to"], *k.get("ripples_to", [])]:
+        ripples = k.get("ripples_to", [])
+        k["ripples_to"] = (
+            ripples if isinstance(ripples, dict) else {t: None for t in ripples}
+        )
+        for t in [*k["applies_to"], *k["ripples_to"]]:
             if t not in tests:
                 sys.exit(f"knob {name}: {t} is not a plan test")
         for t in k["applies_to"]:
-            if t in k.get("ripples_to", []):
+            if t in k["ripples_to"]:
                 sys.exit(f"knob {name}: {t} cannot be both target and ripple")
             pairs.append((t, name))
         by_name[name] = k
@@ -146,7 +166,15 @@ def cmd_manifest(a):
     if {c["owner"] for c in checkers} != {"builder", "reviewer"}:
         sys.exit("manifest needs one builder and one reviewer checker")
     uut = repo_entry(a.uut)
-    images = [image_entry(s, uut["sha"], a.no_version_check) for s in a.image]
+    repos = [repo_entry(a.uut, "uut")]
+    for spec in a.repo:
+        name, _, path = spec.partition("=")
+        if not name or not path or name in {r["name"] for r in repos}:
+            sys.exit(
+                "--repo takes a unique <name>=<path> (project, fprime, each library)"
+            )
+        repos.append(repo_entry(path, name))
+    images = [image_entry(s, repos, a.no_version_check) for s in a.image]
     if not images:
         sys.exit("manifest needs at least one --image")
     tests = plan_tests(a.plan)
@@ -154,11 +182,13 @@ def cmd_manifest(a):
     m = {
         "uut": uut,
         "harness": repo_entry(a.harness),
+        "repos": repos,
         "plan": {**file_entry(a.plan), "revision": a.plan_revision, "tests": tests},
         "checkers": checkers,
         "images": images,
         "menu": file_entry(a.menu),
         "bench": file_entry(a.bench),
+        "no_version_check": a.no_version_check or "",
     }
     out = Path(a.output or f"rfr/manifest-{uut['sha'][:8]}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -169,8 +199,9 @@ def cmd_manifest(a):
 def verify_manifest(path):
     m = read_json(path, "manifest")
     bad = []
-    for key in ("uut", "harness"):
-        e = m[key]
+    repos = [("uut", m["uut"]), ("harness", m["harness"])]
+    repos += [(r["name"], r) for r in m.get("repos", [])]
+    for key, e in repos:
         if git(e["path"], "rev-parse", "HEAD") != e["sha"]:
             bad.append(f"{key}: HEAD moved")
         if git(e["path"], "status", "--porcelain"):
@@ -178,10 +209,8 @@ def verify_manifest(path):
     for e in [m["plan"], m["menu"], m["bench"], *m["checkers"], *m["images"]]:
         if not Path(e["path"]).is_file() or sha256_file(e["path"]) != e["sha256"]:
             bad.append(f"{e['path']}: hash moved or missing")
-    if (
-        Path(m["plan"]["path"]).is_file()
-        and plan_tests(m["plan"]["path"]) != m["plan"]["tests"]
-    ):
+    plan = Path(m["plan"]["path"])
+    if plan.is_file() and plan_tests(plan) != m["plan"]["tests"]:
         bad.append("plan: test list changed")
     return m, bad
 
@@ -230,20 +259,16 @@ def cmd_draw(a):
         if len(chosen) == count:
             break
     expectations = {t: "PASS" for t in tests}
-    for test, knob in chosen.items():
-        for r in by_name[knob].get("ripples_to", []):
+    for knob in chosen.values():
+        for r in by_name[knob]["ripples_to"]:
             if expectations[r] == "PASS":
                 expectations[r] = "FAIL-RIPPLE"
     for test in chosen:
         expectations[test] = "FAIL"
     sealed = run / "sealed"
     sealed.mkdir(parents=True, exist_ok=True)
-    (sealed / "faults.json").write_text(
-        json.dumps(
-            {"manifest_sha256": msha, "faults": dict(sorted(chosen.items()))}, indent=2
-        )
-        + "\n"
-    )
+    faults = {"manifest_sha256": msha, "faults": dict(sorted(chosen.items()))}
+    (sealed / "faults.json").write_text(json.dumps(faults, indent=2) + "\n")
     (sealed / "expectations.json").write_text(json.dumps(expectations, indent=2) + "\n")
     lines = [
         f"{sha256_file(sealed / n)}  {n}" for n in ("faults.json", "expectations.json")
@@ -336,17 +361,49 @@ def outcome(expected, runner, auditor):
     return "REAL FAIL: human triage"
 
 
-def final_state_row(run, expectations):
+def allowed_failures(test, expected, faults, by_name):
+    """Predicates a planted (or ripple) test is allowed to fail; None = no check."""
+    if expected == "FAIL":
+        return set(by_name[faults[test]]["fails"])
+    if expected == "FAIL-RIPPLE":
+        preds = [
+            by_name[n]["ripples_to"].get(test)
+            for n in faults.values()
+            if test in by_name[n]["ripples_to"]
+        ]
+        if preds and all(p is not None for p in preds):
+            return set().union(*preds)
+    return None
+
+
+def dump_expectation(test, faults, by_name):
+    """Only a uut-state knob changes what an independent dump should find."""
+    knob = by_name.get(faults.get(test))
+    if knob and knob["class"] == "uut-state":
+        return "FAIL"
+    for name in faults.values():
+        k = by_name[name]
+        if k["class"] == "uut-state" and test in k["ripples_to"]:
+            return "FAIL-RIPPLE"
+    return "PASS"
+
+
+def final_state_rows(run, faults, by_name):
     fs = run / "auditor" / "final-state.json"
     if not fs.is_file():
-        return None, "MISSING: independent final-state check not performed"
-    f = json.loads(fs.read_text())
-    test, verdict = f.get("test", "?"), f.get("verdict", "MISSING")
-    exp = expectations.get(test, "PASS")
-    o = outcome(exp, verdict, verdict)
-    if verdict == "PASS" and f.get("expected_sha256") != f.get("observed_sha256"):
-        o = "INCONSISTENT: final-state PASS with differing hashes"
-    return (test, exp, verdict), o
+        missing = "MISSING: independent final-state check not performed"
+        return [(("final-state", "—", "MISSING"), missing)]
+    entries = read_json(fs, "final-state")
+    rows = []
+    for f in entries if isinstance(entries, list) else [entries]:
+        test = f.get("test", "?")
+        verdict = f.get("verdict") if f.get("verdict") in VERDICTS else "MISSING"
+        exp = dump_expectation(test, faults, by_name)
+        o = outcome(exp, verdict, verdict)
+        if verdict == "PASS" and f.get("expected_sha256") != f.get("observed_sha256"):
+            o = "INCONSISTENT: final-state PASS with differing hashes"
+        rows.append(((test, exp, verdict), o))
+    return rows
 
 
 def cmd_unseal(a):
@@ -387,6 +444,7 @@ def cmd_unseal(a):
     if f"RFR {run.name} S {seal_id[:8]}" not in events:
         sys.exit("record has no seal marker for this draw")
     expectations = read_json(sealed / "expectations.json", "sealed expectations")
+    drawn = faults["faults"]
     rows, triggers = [], []
 
     def add(test, exp, r, u, link, o):
@@ -399,11 +457,10 @@ def cmd_unseal(a):
         rv, uv = runner["tests"].get(test, {}), auditor["tests"].get(test, {})
         r, u = rv.get("verdict", "MISSING"), uv.get("verdict", "MISSING")
         o = outcome(exp, r, u)
-        if exp == "FAIL" and o.endswith("detected"):
-            allowed = set(by_name[faults["faults"][test]]["fails"])
-            extra = sorted(
-                (set(rv.get("failed", [])) | set(uv.get("failed", []))) - allowed
-            )
+        allowed = allowed_failures(test, exp, drawn, by_name)
+        if allowed is not None and o.endswith("detected"):
+            failed = set(rv.get("failed", [])) | set(uv.get("failed", []))
+            extra = sorted(failed - allowed)
             if extra:
                 o += f" + UNEXPLAINED FAIL ({'; '.join(extra)}): human triage"
         ql = run / "auditor" / "quicklooks" / f"{test}.md"
@@ -413,23 +470,24 @@ def cmd_unseal(a):
         if link == "MISSING" and not o.startswith("MISSING"):
             o += "; quick-look missing"
         add(test, exp, r, u, link, o)
-    fs, o = final_state_row(run, expectations)
-    if fs:
-        add(
-            f"{fs[0]}/dump",
-            fs[1],
-            "—",
-            fs[2],
-            "[final-state.md](auditor/final-state.md)",
-            o,
+    for (test, exp, verdict), o in final_state_rows(run, drawn, by_name):
+        link = (
+            "[final-state.md](auditor/final-state.md)"
+            if verdict != "MISSING"
+            else "MISSING"
         )
-    else:
-        add("final-state", "—", "—", "MISSING", "MISSING", o)
+        add(f"{test}/dump", exp, "—", verdict, link, o)
+    header = [
+        f"Manifest `{msha[:8]}` · seal-id `{seal_id[:8]}` (compare with the value "
+        f"printed by `draw`) · record `{rsha[:8]}` · run `{run.name}`"
+    ]
+    if m.get("no_version_check"):
+        header.append(f"**Image version check skipped:** {m['no_version_check']}")
+        triggers.insert(0, "- image provenance check was skipped at manifest time")
     text = [
         "# Unseal",
         "",
-        f"Manifest `{msha[:8]}` · seal-id `{seal_id[:8]}` (compare with the value "
-        f"printed by `draw`) · record `{rsha[:8]}` · run `{run.name}`",
+        *header,
         "",
         "## Human triggers",
         *(triggers or ["- none"]),
@@ -456,16 +514,20 @@ def _git_repo(path, content):
 def cmd_selftest(_a):
     with tempfile.TemporaryDirectory() as tmp:
         d = Path(tmp)
-        _git_repo(d / "uut", "uut")
-        _git_repo(d / "harness", "harness")
-        uut_sha = git(d / "uut", "rev-parse", "HEAD")
+        for name in ("uut", "harness", "proj"):
+            _git_repo(d / name, name)
         tests = ["L0-1", "L2-1", "L2-2", "L2-3", "L2-4", "L7-1"]
         (d / "plan.md").write_text(
             "".join(f"ID:        {t}\nTitle: t\n" for t in tests)
         )
         for name in ("a.py", "b.py", "bench.md"):
             (d / name).write_text(name)
-        (d / "image.bin").write_bytes(b"\0\0PROJECT " + uut_sha[:7].encode() + b"\0")
+        (d / "image.bin").write_bytes(
+            b"\0LIB "
+            + describe(d / "uut").encode()
+            + b"\0PROJ "
+            + describe(d / "proj").encode()
+        )
         menu = {
             "max_count": 2,
             "knobs": [
@@ -479,7 +541,7 @@ def cmd_selftest(_a):
                     "name": "k2",
                     "class": "uut-state",
                     "applies_to": ["L2-3", "L7-1"],
-                    "ripples_to": ["L2-4"],
+                    "ripples_to": {"L2-4": ["p2"]},
                     "fails": ["p2"],
                 },
             ],
@@ -489,30 +551,24 @@ def cmd_selftest(_a):
         seed.write_text("captain-picard-1701\n")
         seed.chmod(0o600)
         mf = str(d / "rfr" / "manifest.json")
-        main(
-            [
-                "manifest",
-                "--uut",
-                str(d / "uut"),
-                "--harness",
-                str(d / "harness"),
-                "--plan",
-                str(d / "plan.md"),
-                "--checker",
-                f"builder={d / 'a.py'}",
-                "--checker",
-                f"reviewer={d / 'b.py'}",
-                "--menu",
-                str(d / "menu.json"),
-                "--bench",
-                str(d / "bench.md"),
-                "--image",
-                f"Ref={d / 'image.bin'}:make",
-                "-o",
-                mf,
-            ]
-        )
+        base = ["manifest", "--uut", str(d / "uut"), "--harness", str(d / "harness")]
+        base += ["--repo", f"project={d / 'proj'}", "--plan", str(d / "plan.md")]
+        base += [
+            "--checker",
+            f"builder={d / 'a.py'}",
+            "--checker",
+            f"reviewer={d / 'b.py'}",
+        ]
+        base += ["--menu", str(d / "menu.json"), "--bench", str(d / "bench.md")]
+        main(base + ["--image", f"Ref={d / 'image.bin'}:make", "-o", mf])
         main(["verify", mf])
+        by = {
+            "k1": {"class": "harness-expectation", "ripples_to": {}},
+            "k2": {"class": "uut-state", "ripples_to": {"L2-4": None}},
+        }
+        assert dump_expectation("L7-1", {"L7-1": "k1"}, by) == "PASS"
+        assert dump_expectation("L7-1", {"L7-1": "k2"}, by) == "FAIL"
+        assert dump_expectation("L2-4", {"L7-1": "k2"}, by) == "FAIL-RIPPLE"
         run = d / "rfr" / "run1"
         main(
             ["draw", "--manifest", mf, "--seed-file", str(seed), "--run-dir", str(run)]
@@ -536,24 +592,27 @@ def cmd_selftest(_a):
         rec = run / "record"
         rec.mkdir()
         msha = sha256_file(mf)
+        markers = (f"RFR run1 M {msha[:8]}", f"RFR run1 S {seal_id[:8]}")
         ev = [
             json.dumps({"name": "NoOpStringReceived", "args": {"message": s}})
-            for s in (f"RFR run1 M {msha[:8]}", f"RFR run1 S {seal_id[:8]}")
+            for s in markers
         ]
         (rec / "events.jsonl").write_text("\n".join(ev) + "\n")
         (rec / "channels.jsonl").write_text("{}\n")
         (rec / "commands.jsonl").write_text("{}\n{}\n")
-        (rec / "export-counts.json").write_text(
-            json.dumps({"events.jsonl": 2, "channels.jsonl": 1, "commands.jsonl": 2})
-        )
+        counts = {"events.jsonl": 2, "channels.jsonl": 1, "commands.jsonl": 2}
+        (rec / "export-counts.json").write_text(json.dumps(counts))
         main(["hash-record", "--run-dir", str(run)])
         main(["verify-record", "--run-dir", str(run)])
         rsha = sha256_file(run / "record.sha256")
+        knobs = {k["name"]: k for k in menu["knobs"]}
 
         def verd(t):
             v = {"verdict": exp[t].replace("-RIPPLE", "")}
             if t in faults:
-                v["failed"] = menu["knobs"][0 if faults[t] == "k1" else 1]["fails"]
+                v["failed"] = knobs[faults[t]]["fails"]
+            elif exp[t] == "FAIL-RIPPLE":
+                v["failed"] = ["p2"]
             return v
 
         rv = {t: verd(t) for t in tests}
@@ -569,14 +628,17 @@ def cmd_selftest(_a):
             (run / who / "verdicts.json").write_text(
                 json.dumps({"run": "run1", "record_sha256": rsha, "tests": v})
             )
+        dump_v = "FAIL" if dump_expectation("L7-1", faults, knobs) != "PASS" else "PASS"
         (run / "auditor" / "final-state.json").write_text(
             json.dumps(
-                {
-                    "test": "L7-1",
-                    "verdict": exp["L7-1"].replace("-RIPPLE", ""),
-                    "expected_sha256": "x",
-                    "observed_sha256": "x" if exp["L7-1"] == "PASS" else "y",
-                }
+                [
+                    {
+                        "test": "L7-1",
+                        "verdict": dump_v,
+                        "expected_sha256": "x",
+                        "observed_sha256": "x" if dump_v == "PASS" else "y",
+                    }
+                ]
             )
         )
         main(
@@ -606,10 +668,17 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser(
-        "manifest", help="freeze UUT, harness, plan, checkers, images, menu"
+        "manifest", help="freeze UUT, harness, repos, plan, checkers, images"
     )
     s.add_argument("--uut", required=True)
     s.add_argument("--harness", required=True)
+    s.add_argument(
+        "--repo",
+        action="append",
+        default=[],
+        metavar="NAME=PATH",
+        help="every other repository the image is built from (project, fprime, libraries)",
+    )
     s.add_argument("--plan", required=True)
     s.add_argument("--plan-revision", default="")
     s.add_argument("--checker", action="append", default=[], metavar="OWNER=PATH")
@@ -617,7 +686,9 @@ def main(argv=None):
         "--image", action="append", default=[], metavar="DEPLOYMENT=PATH.bin[:BUILD]"
     )
     s.add_argument(
-        "--no-version-check", metavar="REASON", help="skip the sha7-in-image check"
+        "--no-version-check",
+        metavar="REASON",
+        help="skip the describe-string-in-image check (recorded, shown at unseal)",
     )
     s.add_argument("--menu", required=True)
     s.add_argument("--bench", required=True)
@@ -632,8 +703,7 @@ def main(argv=None):
     s.add_argument("--manifest", required=True)
     s.add_argument(
         "--seed-file",
-        help="chmod-600 file holding the seed, deleted after use; "
-        "omitted = prompt without echo",
+        help="chmod-600 file holding the seed, deleted after use; omitted = prompt, no echo",
     )
     s.add_argument("--run-dir", required=True, help="rfr/<run-id>, run id <= 8 chars")
     s.set_defaults(fn=cmd_draw)

@@ -25,18 +25,24 @@ this file implements the mechanics (Python 3 stdlib only; run
 ## 1. Manifest (closes stage 2)
 
 ```bash
-python3 seal.py manifest --uut <path> --harness <path> --plan <plan.md> \
-    --checker builder=<path> --checker reviewer=<path> \
+python3 seal.py manifest --uut <path> --harness <path> \
+    --repo project=<path> --repo fprime=<path> [--repo <lib>=<path> …] \
+    --plan <plan.md> --checker builder=<path> --checker reviewer=<path> \
     --image <Deployment>=<flashed>.bin:"<build command>" \
     --menu <faults-menu.json> --bench <bench.md>        # -> rfr/manifest-<uut sha8>.json
 ```
 
-Records repo SHAs (refuses dirty trees), file hashes, the plan's test
-list (parsed from its `ID:` lines at column 0, unique, ≤ 8 characters),
-the validated fault menu, and the exact raw binaries that will be
-flashed — each must contain the UUT sha7 that `Svc.Version` reports as
-`PROJECT_VERSION`, or `--no-version-check <reason>` is recorded on the
-manifest. ELF/hex files are refused. The manifest lives beside the
+Records, for the UUT, the harness and every repository the image is
+built from, the SHA and `git describe --tags --always --dirty --broken`
+string (dirty or broken trees are refused); file hashes; the plan's
+test list (parsed from its `ID:` lines at column 0, unique, ≤ 8
+characters); the validated fault menu; and the exact raw binaries that
+will be flashed — each must contain every repository's describe
+string, which is what `Svc.Version` reports, or
+`--no-version-check <reason>` is recorded on the manifest and printed
+at unseal. ELF, hex and UF2 files are refused (flash the `.bin`, e.g.
+`picotool load`, and read back the range with `picotool save -r` or
+OpenOCD `dump_image`). The manifest lives beside the
 runs, outside both repositories; `python3 seal.py verify <manifest>`
 must pass before every later step.
 
@@ -89,9 +95,9 @@ and auditor.
    the audit with `RECORD INVALID`.
 2. Image identity: device read-back hash in `record/raw/flash.log`
    must equal the manifest image hash — mismatch is
-   `RECORD INVALID (image)`. The L0 pass rule ties the image to the
-   UUT SHA (`Svc.Version.ProjectVersion` ends with the manifest sha7,
-   no `-dirty`). Rebuild from the manifest SHAs with the recorded
+   `RECORD INVALID (image)`. The L0 test ties the image to the
+   manifest's `repos[].describe` strings through the `Svc.Version`
+   events. Rebuild from the manifest SHAs with the recorded
    `build_cmd` and report `REBUILD MATCH` or
    `REBUILD DIFFERS (<reason>)` — cross-compiled images often embed
    paths; a differing rebuild is reported, not `RECORD INVALID`.
@@ -143,11 +149,12 @@ python3 seal.py unseal --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.jso
 
 Verifies the integrity chain (contract §6), then writes the check-off
 table `☐ | test | expected | runner | auditor | quick-look | outcome`
-for every test on the manifest plus the `<test>/dump` row from
-`auditor/final-state.json`, flags planted tests whose failed
-predicates exceed the knob's `fails` list, and lists the human
-triggers first with the seal id to compare with the value printed by
-`draw`. The human
+for every test on the manifest plus one `<test>/dump` row per entry
+in `auditor/final-state.json` (expected from the drawn knob's class,
+not the test's expectation), flags planted or ripple tests whose
+failed predicates exceed the knob's `fails` list, shows any skipped
+image version check, and lists the human triggers first with the seal
+id to compare with the value printed by `draw`. The human
 reads trigger rows, spot-checks two or three nominal rows against the
 raw record, ticks the boxes, and records the decision in the plan's
 decision log.

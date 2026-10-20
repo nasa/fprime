@@ -83,12 +83,16 @@ Stage 2 → stage 3 delivers exactly one **manifest** (`seal.py manifest`,
 
 ```
 manifest.json
-  uut:      { path, sha, dirty: false }
-  harness:  { path, sha, dirty: false }
+  uut:      { path, sha, describe, dirty: false }
+  harness:  { path, sha, describe, dirty: false }
+  repos:    [ { name, path, sha, describe } ]     # uut + every repository the image is built from
+                                                  # (project, fprime, libraries); clean trees only
   plan:     { path, sha256, revision, tests: [ "L0-1", … ] }   # parsed from the plan's `ID:` lines (column 0, unique)
   checkers: [ { owner: builder|reviewer, path, sha256 } ]
   images:   [ { deployment, path, sha256, build_cmd, version_check } ]
-            # raw binaries written to flash; each must contain the UUT sha7 (Svc.Version PROJECT_VERSION)
+            # raw .bin written to flash; each must contain every repos[].describe string
+            # (what Svc.Version reports as PROJECT / FRAMEWORK / LIBRARY versions)
+  no_version_check: ""                            # reason, if the image check was skipped; shown at unseal
   menu:     { path, sha256 }
   bench:    { path, sha256 }        # bench recipe: wiring, ports, power control, ground system
 ```
@@ -153,6 +157,7 @@ Precedence, first match wins:
 | Outcome | Meaning | Action |
 |---|---|---|
 | Expected FAIL / FAIL-RIPPLE, any PASS or MISSING | Harness or checker cannot detect that fault, or the knob did not disturb state | **RfR void**; back to stage 2 |
+| `<test>/dump` row (independent final-state check) | Expectation comes from the knob **class**: FAIL only for a drawn `uut-state` knob on that test, FAIL-RIPPLE for its ripples, else PASS — a harness-expectation or stimulus knob leaves the device correct | Same precedence as above |
 | Expected FAIL, both FAIL, failed predicates ⊄ knob `fails` | Planted fault **and** an unexplained failure | Human triage of the extra predicates |
 | Expected FAIL / FAIL-RIPPLE, both FAIL | Verdict machinery works | None |
 | Expected FAIL / FAIL-RIPPLE, both UNVERIFIED | Planted window incomplete | Harness/bench triage |

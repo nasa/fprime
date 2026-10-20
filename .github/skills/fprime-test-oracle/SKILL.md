@@ -102,6 +102,11 @@ verdicts.json
 
 - Every test on the manifest gets an entry; a test with no window in
   the record is `UNVERIFIED` with `failed: ["window missing"]`.
+- `failed` holds the plan's predicate strings **verbatim** — the
+  string is the key `seal.py unseal` matches against a knob's `fails`;
+  a paraphrase turns every planted test into an unexplained failure.
+  The reviewer compares both checkers' dry-run `failed` lists for
+  byte-equality.
 - `evidence` points into the export so a quick-look can be built from
   it without re-deriving anything.
 - The checker is deterministic and has no bench or network access.
