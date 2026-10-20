@@ -98,6 +98,11 @@ relevant one instead of improvising:
   `fprime-hardware-input-tracing`.
 - Writing a subsystem reference page: `write-system-functional-doc`.
 - Adding or changing a skill or agent: `agent-skill-authoring`.
+- System-level / hardware-in-the-loop qualification, run and audited by
+  agents under `.github/agents/_shared/test-process-contract.md`:
+  `fprime-system-test-design` (plan), `fprime-system-test-harness`
+  (harness), `fprime-test-oracle` (pass rules and checkers),
+  `fprime-run-for-record` (seal, run, audit, unseal).
 
 Pull-request review is performed by the multi-agent flow in
 [`.github/agents/`](.github/agents/), entered through
@@ -105,8 +110,13 @@ Pull-request review is performed by the multi-agent flow in
 topologies, build system) is entered through
 `fprime-development.agent.md`, which sequences the skills above. A
 requirements set is reviewed before design through
-`requirements-review.agent.md`, and an FPP design through the
-reviewers named in `.github/agents/_shared/phase-review-loop.md`.
+`requirements-review.agent.md`, an FPP design and a test design
+through the reviewers named in
+`.github/agents/_shared/phase-review-loop.md`. System testing of an
+existing unit is entered through `system-test-design.agent.md`
+(plan), `system-test-build.agent.md` (harness), and
+`test-runner.agent.md` / `test-auditor.agent.md` (run-for-record),
+with `system-test-review.agent.md` as the adversarial reviewer.
 
 ## Contributing
 
