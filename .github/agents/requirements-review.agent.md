@@ -46,7 +46,8 @@ Finding classes: `req-not-verifiable`, `req-unclear`,
 
 Skill §4: changed rows for RQ-1..4, the whole set for RS-1..3; a
 finding closes only on verified pass; "won't fix" is a disagreement.
-Three rounds maximum, then hand the disagreement log to the human.
+Three rounds by default; a `review rounds: N` given at kickoff
+overrides. Then hand the disagreement log to the human.
 Do not soften a must-fix to reach agreement.
 
 ## Output

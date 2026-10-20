@@ -187,8 +187,9 @@ Rounds: re-run RQ-1..4 on changed rows only; re-run RS-1..3 on the
 whole set (a deleted or rewritten row can open a gap elsewhere). A
 finding closes only when the reviewer verifies the rewritten row
 passes the check that raised it; "won't fix" goes to the disagreement
-log (the file-based analogue of contract §11). Three rounds maximum,
-then hand the log to the human.
+log (the file-based analogue of contract §11). Three rounds by
+default; a `review rounds: N` given at kickoff overrides. Then hand
+the log to the human.
 
 ---
 
