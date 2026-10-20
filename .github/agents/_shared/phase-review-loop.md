@@ -32,14 +32,13 @@ not apply §2, §4 pings, §6a, §7, §9–§11. Write
 `review-design-<reviewer>-round-N.md` in the shape of
 `fprime-requirements-review` §4 (Findings table `Key | Tag | Class |
 Site | Finding | Rewrite`, totals, disagreement log); Key =
-`<finding-class>:<FPP element or SDD section>`, stable across rounds. Low-
-confidence findings go in the Findings
-table tagged `low-confidence`, no ping; the author treats them as
-could-fix unless it agrees. Do not edit the artifact.* For the architecture
-reviewer add: *the
-baseline is the new model as a whole (classify it; Step 2 erosion is
-n/a for a new component); heuristic 5 (`.cpp`/`.hpp`) is n/a;
-category 4 (topology wiring) is deferred to the topology phase.*
+`<finding-class>:<FPP element or SDD section>`, stable across rounds.
+Low-confidence findings go in the Findings table tagged `low-confidence`, no
+ping; the author treats them as could-fix unless it agrees. Do not edit the
+artifact.* For the architecture reviewer add: *the baseline is the new model
+as a whole (classify it; Step 2 erosion is n/a for a new component); heuristic
+5 (`.cpp`/`.hpp`) is n/a; category 4 (topology wiring) is deferred to the
+topology phase.*
 
 `design-needs-human-adjudication` (raised by design-review for every
 new component) is routed, not closed: the reviewer records it without

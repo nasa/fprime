@@ -53,7 +53,8 @@ Each phase has a dedicated skill with detailed guidance:
    `.github/agents/_shared/phase-review-loop.md`; the writing skills
    themselves do not iterate. Present the requirements (with their
    review record, when the loop ran) to the user and obtain approval
-   before starting design. Present the design (FPP model, port layout, behavior, and any
+   before starting design. Present the design (FPP model, port layout,
+   behavior, and any
    configuration) to the user and obtain **explicit confirmation before
    writing any implementation or unit-test code**. This applies even to
    trivial or pass-through components; simplicity does not waive the
