@@ -677,7 +677,7 @@ def main(argv=None):
         action="append",
         default=[],
         metavar="NAME=PATH",
-        help="every other repository the image is built from (project, fprime, libraries)",
+        help="other repository the image is built from (project, fprime, library)",
     )
     s.add_argument("--plan", required=True)
     s.add_argument("--plan-revision", default="")
@@ -703,7 +703,7 @@ def main(argv=None):
     s.add_argument("--manifest", required=True)
     s.add_argument(
         "--seed-file",
-        help="chmod-600 file holding the seed, deleted after use; omitted = prompt, no echo",
+        help="chmod-600 seed file, deleted after use; omitted = un-echoed prompt",
     )
     s.add_argument("--run-dir", required=True, help="rfr/<run-id>, run id <= 8 chars")
     s.set_defaults(fn=cmd_draw)
