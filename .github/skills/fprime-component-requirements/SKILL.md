@@ -65,9 +65,10 @@ Ask the user for:
 
 ### Step 2 — Define Behavioral Requirements
 
-Requirements are written as **"shall"** or **"should"** statements.
-Each requirement must be something that can be
-**validated/verified/tested**.
+Requirements are written as **"shall"** statements; each must be
+something that can be **verified** (a pass/fail observable). Goals
+that are not pass/fail ("should") go in the SDD narrative, not the
+table.
 
 Requirements are typically shipped as a table:
 
