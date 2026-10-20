@@ -529,10 +529,7 @@ def cmd_selftest(_a):
         for name in ("a.py", "b.py", "bench.md"):
             (d / name).write_text(name)
         (d / "image.bin").write_bytes(
-            b"\0LIB "
-            + describe(d / "uut").encode()
-            + b"\0PROJ "
-            + describe(d / "proj").encode()
+            b" ".join(describe(d / n).encode() for n in ("uut", "harness", "proj"))
         )
         menu = {
             "max_count": 2,
