@@ -7,7 +7,9 @@ on:
     workflows: [ ext-ci-trigger ]
     types: [ completed ]
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT), as the ext-*.yml workflows today
   workflow_dispatch:
     inputs:
       repos:
@@ -27,11 +29,11 @@ on:
         type: boolean
         default: false
 
-# One orchestrator per F´ head (repo + branch), whatever started it; a newer push cancels the
-# older fan-out and the finalize step below propagates that to the remote runs.
+# One orchestrator per F´ head (repo + branch); a newer PR push cancels the older PR fan-out and
+# the finalize step below propagates that to the remote runs. Branch/nightly runs are never cancelled.
 concurrency:
   group: ext-ci-${{ github.event.workflow_run.head_repository.full_name || github.repository }}-${{ github.event.workflow_run.head_branch || inputs.pr_number || inputs.fprime_ref || github.ref_name }}
-  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
+  cancel-in-progress: ${{ github.event_name == 'workflow_run' }}
 
 permissions:
   contents: read        # manifest
