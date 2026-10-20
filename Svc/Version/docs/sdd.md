@@ -31,7 +31,7 @@ The version component can emit versions on startup by calling `version.start();`
 
 The version component exposes an optional scheduled input port, `schedIn` (`Svc.Sched`), that can be connected to a rate group or other scheduler. On each invocation, `schedIn_handler` re-emits all version telemetry channels (framework, project, library and custom) **without** generating events, so operators can confirm version telemetry on a periodic basis without flooding the event log. Each invocation re-writes up to 22 channels (2 + 10 library + 10 custom) even though their values rarely change, which adds to downlink bandwidth and to `TlmChan`'s `TLMCHAN_MAX_ENTRIES_PER_RUN` budget; connect `schedIn` to a slow rate group (e.g. 1 Hz or slower) sized for the link.
 
-This is achieved via a `sendEvent` parameter (default `true`) on the internal version-emit helpers, which decouples telemetry writes from event emission. The scheduled handler calls each helper with `sendEvent = false`:
+This is achieved via a `sendEvent` function argument (default `true`) on the internal version-emit helpers, which decouples telemetry writes from event emission. The scheduled handler calls each helper with `sendEvent = false`:
 
 - Framework, project and library telemetry are always re-emitted.
 - Custom-version telemetry remains gated by the existing `ENABLE` verbosity configuration (see SVC-VERSION-013).

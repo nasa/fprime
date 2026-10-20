@@ -509,7 +509,7 @@ void VersionTester ::test_schedIn() {
     ASSERT_TLM_CustomVersion10_SIZE(0);
 
     // Framework/project/library telemetry is NOT gated on verbosity: a disabled tick still writes
-    // their channels (sendEvent=false) and still emits no events. This isolates the event parameter
+    // their channels (sendEvent=false) and still emits no events. This isolates the event function argument
     // from the verbosity flag.
     ASSERT_EVENTS_FrameworkVersion_SIZE(0);
     ASSERT_TLM_FrameworkVersion_SIZE(1);
@@ -532,7 +532,7 @@ void VersionTester ::test_sendEventParam() {
     this->invoke_to_setVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, v5, status);
     this->clear_all();
 
-    // One scheduled tick: every parameterized tlm method runs with sendEvent=false
+    // One scheduled tick: every tlm method that takes the sendEvent function argument runs with sendEvent=false
     this->invoke_to_schedIn(0, 0);
 
     // customVersion_tlm (sendEvent=false): only POPULATED slots re-emit as telemetry; empty slots stay
@@ -571,7 +571,7 @@ void VersionTester ::test_sendEventParam() {
     ASSERT_TLM_LibraryVersion10(0, "blah9 @ blah9");
 
     // Contrast the SAME methods on a sendEvent=true entry point: VERSION ALL re-emits WITH events,
-    // confirming the parameter is what gates events (channels identical to the silent tick above).
+    // confirming the function argument is what gates events (channels identical to the silent tick above).
     this->clear_all();
     this->sendCmd_VERSION(0, 9, Svc::VersionType::ALL);
     ASSERT_CMD_RESPONSE(0, 1, 9, Fw::CmdResponse::OK);

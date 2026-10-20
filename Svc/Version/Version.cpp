@@ -154,7 +154,7 @@ void Version ::libraryVersion_tlm(bool sendEvent) {
     // Process libraries array
     for (FwIndexType i = 0; i < Project::Version::LIBRARY_VERSIONS_COUNT; i++) {
         FW_ASSERT(Project::Version::LIBRARY_VERSIONS[i] != nullptr, static_cast<FwAssertArgType>(i));
-        // Write to Events, if enabled via sendEvent param
+        // Write to Events, if enabled via sendEvent function argument
         if (sendEvent) {
             this->log_ACTIVITY_LO_LibraryVersions(Fw::LogStringArg(Project::Version::LIBRARY_VERSIONS[i]));
         }
@@ -213,7 +213,7 @@ void Version ::customVersion_tlm(VersionSlot custom_slot, bool sendEvent) {
     if ((this->verId_db[custom_slot].get_version_value() != "no_ver") &&
         (this->m_num_custom_elements > 0)) {  // Write TLM for valid writes
 
-        // Write to Events, if enabled via sendEvent param
+        // Write to Events, if enabled via sendEvent function argument
         if (sendEvent) {
             this->log_ACTIVITY_LO_CustomVersions(this->verId_db[custom_slot].get_version_enum(),
                                                  this->verId_db[custom_slot].get_version_value());
