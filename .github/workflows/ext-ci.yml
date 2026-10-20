@@ -1,0 +1,74 @@
+name: ext-ci
+
+on:
+  # PR path: fires after ext-ci-trigger completed, i.e. after GitHub's own approval gate.
+  # The workflow file and the checked-out scripts come from the default branch, never from the PR.
+  workflow_run:
+    workflows: [ ext-ci-trigger ]
+    types: [ completed ]
+  push:
+    branches: [ devel, release/** ]
+  workflow_dispatch:
+    inputs:
+      repos:
+        description: "Comma-separated manifest ids to run, or 'all'"
+        type: string
+        default: all
+      pr_number:
+        description: "PR to test and report on (takes precedence over fprime_ref)"
+        type: string
+        default: ""
+      fprime_ref:
+        description: "Branch/SHA to test when no PR is given (default: the branch this run was started from)"
+        type: string
+        default: ""
+      force_all:
+        description: "On a re-run, re-dispatch every selected repo instead of only the failed ones"
+        type: boolean
+        default: false
+
+# One orchestrator per F´ head (repo + branch), whatever started it; a newer push cancels the
+# older fan-out and the finalize step below propagates that to the remote runs.
+concurrency:
+  group: ext-ci-${{ github.event.workflow_run.head_repository.full_name || github.repository }}-${{ github.event.workflow_run.head_branch || inputs.pr_number || inputs.fprime_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
+
+permissions:
+  contents: read        # manifest
+  checks: write         # per-repo Check Runs
+  pull-requests: write  # notify-policy PR comments
+  issues: write         # notify-policy tracking issues
+
+jobs:
+  orchestrate:
+    name: "External CI"
+    # Only chain from a trigger that actually ran (not skipped/cancelled) for a PR or merge group.
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["pull_request","merge_group"]'), github.event.workflow_run.event))
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      DISPATCH_TOKEN: ${{ secrets.EXT_CI_DISPATCH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Dispatch, poll and report"
+        env:
+          INPUT_REPOS: ${{ inputs.repos }}
+          INPUT_PR_NUMBER: ${{ inputs.pr_number }}
+          INPUT_FPRIME_REF: ${{ inputs.fprime_ref }}
+          INPUT_FORCE_ALL: ${{ inputs.force_all }}
+          POLL_INTERVAL_SECONDS: 60
+        run: node .github/scripts/ext-ci-orchestrator.mjs run
+      - name: "Finalize (close open checks, cancel orphaned remote runs)"
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: node .github/scripts/ext-ci-orchestrator.mjs finalize
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ext-ci-results-attempt-${{ github.run_attempt }}
+          path: |
+            ext-ci-results.json
+            ext-ci-state.json
+          if-no-files-found: ignore
