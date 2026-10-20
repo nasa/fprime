@@ -37,9 +37,9 @@ const code = (s) => '`' + String(s).replace(/[`\r\n]/g, ' ') + '`';
 class ApiError extends Error { constructor(msg, status) { super(msg); this.status = status; } }
 
 function client(token, label) {
-  if (!token) throw new Error(`${label} token missing`);
   const etags = new Map();
   async function request(method, url, body, { conditional = false } = {}) {
+    if (!token) throw new ApiError(`${label} token missing (secret not configured?)`, 0);
     const full = url.startsWith('http') ? url : API + url;
     const headers = {
       authorization: `Bearer ${token}`,
