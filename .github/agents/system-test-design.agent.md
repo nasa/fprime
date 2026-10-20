@@ -16,8 +16,10 @@ you do not build or run tests.
 3. The deployment and testbed. Default to the project's full system
    deployment; a reduced or sibling deployment is proposed only with
    the testbed constraint that forces it, and the human decides.
-4. The UUT code — read **last**, to find fault-injection points and
-   observable counters, never to decide what to test.
+4. The FPP model — observables and the fault-injection surface. The
+   UUT code, when it exists, is read **last**, to find observable
+   counters, never to decide what to test; in the development
+   lifecycle the plan precedes implementation and there is none.
 
 Before drafting, run the L0 feasibility check of
 `fprime-system-test-design` §1 (marker round-trip, event budget) on
@@ -32,12 +34,16 @@ Follow `.github/skills/fprime-system-test-design/SKILL.md` for the
 plan structure, the per-test entry, the fault menu, and the hand-off.
 Pass rules follow `.github/skills/fprime-test-oracle/SKILL.md`.
 
-Then hand the plan to `system-test-review.agent.md` (plan mode) and
-iterate: close every must-fix with a diff to the plan, answer every
-could-fix with a disposition, append the disagreement log to the
-plan's decision log. Stop after the reviewer reports zero open
-must-fixes or after three rounds (contract §2) — then present the plan
-to the human with the open items listed first.
+Then run the review loop of `_shared/phase-review-loop.md` with
+`system-test-review.agent.md` (plan mode) as the reviewer — when
+`fprime-development.agent.md` orchestrates (test-design phase) it
+runs the loop; standalone, for an existing UUT, this agent does.
+Close every must-fix with a diff to the plan, answer every could-fix
+with a disposition, append the disagreement log to the plan's
+decision log. Stop per the loop's stop rule (zero open must-fix,
+plateau, or the bound: three reviews by default, `review rounds: N`
+overrides) — then present the plan to the human with the open items
+listed first.
 
 ## Output
 

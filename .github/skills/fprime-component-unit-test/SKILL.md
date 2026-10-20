@@ -37,6 +37,25 @@ implementation procedure, see `fprime-unit-testing` and the
 
 ---
 
+## Test list
+
+The unit-test list is written in the test-design phase (before any
+implementation; `fprime-development.agent.md` §2 phase 3) from the
+approved requirements and FPP model, and is reviewed with the system
+test plan (`.github/agents/_shared/phase-review-loop.md`). One row per
+requirement whose verification method is a unit test:
+
+| REQ-ID | Test | Stimulus (port call / command / parameter) | Observable assertion (event, telemetry, port output, state) |
+|---|---|---|---|
+
+Add rows for every interface element (port, command, event, telemetry
+channel, parameter) not already exercised, and for the failure paths
+the requirements name. Each row states what is asserted, with values —
+not "verify it works". The test suite implements the list; a test with
+no row, or a row with no test, is a gap recorded in the SDD.
+
+---
+
 ## Process
 
 Follow `fprime-unit-testing` for the step-by-step procedure:
@@ -49,8 +68,8 @@ Key decisions within the lifecycle:
 1. **Traditional vs. rule-based**: Use the criteria table in
    `fprime-unit-testing` §3. Default to rule-based for
    components with multiple ports or stateful behavior.
-2. **TDD**: If following test-driven development (tests before
-   implementation), see
+2. **TDD**: Implement the test list before the component (tests before
+   implementation); see
    [TDD guide](https://github.com/nasa/fprime/blob/devel/docs/how-to/test-driven-development.md).
    The FPP model is sufficient to write tests — implementation is not
    required.

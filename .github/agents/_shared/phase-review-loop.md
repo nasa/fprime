@@ -1,13 +1,15 @@
-# Phase review loop (requirements and design)
+# Phase review loop (requirements, design and test design)
 
-The requirements and FPP-design phases of component development each
-end in an adversarial review loop before the human gate. This file is
+The requirements, FPP-design and test-design phases of component
+development each end in an adversarial review loop before the human
+gate. This file is
 the only place that names the reviewers, the bound and the round
 rules; `fprime-development.agent.md` §2 runs it (and
 `fprime-component-development` cardinal rule 2 points here). The
-writing skills `fprime-component-requirements` and
-`fprime-component-design-fpp` do not iterate; the orchestrating agent
-loops them.
+writing skills (`fprime-component-requirements`,
+`fprime-component-design-fpp`, `fprime-system-test-design`, the test
+list of `fprime-component-unit-test`) do not iterate; the
+orchestrating agent loops them.
 
 ## Reviewers per phase
 
@@ -15,6 +17,7 @@ loops them.
 |---|---|---|---|
 | Requirements | Requirements table (`fprime-component-requirements` Step 2 form) | `requirements-review.agent.md` | The request (issue / human goals, quoted) |
 | Design | The `.fpp` model, the `docs/sdd.md` draft (`fprime-component-design-fpp` Step 5), any new port definitions — as a design-only diff | `design-review.agent.md` (categories 1, 3, 4, 6, 7, 9; categories 2, 5, 8 need an implementation and are n/a); `architecture-review.agent.md` (whole model); `design-principles-review.agent.md` | The approved requirements table and the request |
+| Test design | The system test plan and `faults-menu.json` (`fprime-system-test-design` §2–§4) and the unit-test list (`fprime-component-unit-test`, "Test list") — written from the approved requirements, SDD and FPP model; no implementation exists yet | `system-test-review.agent.md` Mode A | The approved requirements table, the SDD draft, the FPP model and the request |
 
 Reviewer agent files are read fresh from `nasa/fprime` `devel`, not
 from the branch being worked on; a reviewer not yet on `devel` is read
@@ -50,7 +53,7 @@ rule's must-fix total. Every other must-fix counts.
 
 Default **3 reviews** per phase. Any unambiguous round count in the
 invoking prompt overrides it (canonical form `review rounds: N`,
-N ≥ 1); it applies to both phases unless given per phase; two
+N ≥ 1); it applies to every phase unless given per phase; two
 conflicting counts → ask (cardinal rule 1). A prompt asking for no
 review gets 1 and a note that 1 is the minimum. The bound in use and
 its source (`default` | `prompt`) go in the message to the user when
@@ -122,7 +125,10 @@ A design finding that invalidates a requirement reopens the
 requirements phase: run the requirements loop on the changed rows
 (a fresh bound of N, set-level checks on the whole set), present the delta to
 the user and obtain approval again, then resume design. The
-requirement is never edited silently.
+requirement is never edited silently. A test-design finding that
+invalidates a requirement or the FPP design reopens that phase the
+same way; the approved test design is the baseline for everything
+after it (`test-process-contract.md` §2, "never weaken a test").
 
 ## Record and gate
 

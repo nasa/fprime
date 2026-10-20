@@ -14,7 +14,8 @@ description: >-
 
 Write the plan a human approves before any test code is built, and
 that the runner, auditor, and human all read later. Design from the
-requirements and SDD; open the code last. Governing rules are in
+requirements, SDD and FPP model; open the code — if any exists — last.
+Governing rules are in
 `.github/agents/_shared/test-process-contract.md`.
 
 ---
@@ -30,8 +31,13 @@ requirements and SDD; open the code last. Governing rules are in
   the downlink; if either fails on the system deployment, present a
   one-line test-deployment decision with that constraint, and wait
   for the human.
-- UUT code, read after the test list exists, to locate fault-injection
-  points and observable counters.
+- The FPP model: ports, commands, events, telemetry and parameters
+  are the observables and the fault-injection surface (knobs are
+  harness configuration, §4).
+- UUT code, when it exists, read after the test list exists, to
+  locate observable counters. In the development lifecycle the plan is
+  written before implementation (`phase-review-loop.md`, test-design
+  phase) and this input is absent.
 
 ## 2. Plan structure
 
@@ -151,7 +157,8 @@ Deliver the plan as a single markdown file plus the fault menu as
 JSON. The reviewer's must-fix / could-fix findings and the
 disagreement log are appended to §8 of the plan, not kept elsewhere.
 The plan goes to the human only when the reviewer has no open
-must-fix or the round limit (contract §2) is reached.
+must-fix or the round limit is reached (contract §2: three reviews by
+default, `review rounds: N` at kickoff overrides).
 
 ## Anti-patterns
 

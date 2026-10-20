@@ -36,8 +36,8 @@ comes from the agents; trust comes from the hand-offs below.
 
 | Stage | Who iterates | Human gate | Close condition | Hand-off |
 |---|---|---|---|---|
-| 1. Base development | `fprime-development.agent` with review and unit-test skills (`fprime-iterative-development` when approved) | Requirements + FPP design approval **before** iteration | No must-fix findings; unit and component integration tests pass | UUT SHA |
-| 2. System-test development | `system-test-design` ↔ `system-test-review` on the plan; then `system-test-build` ↔ `system-test-review` on the harness, closing with an unsealed dry run | Test-plan approval **before** building; harness review (local files; a PR only if the human asks) **before** the manifest is frozen | Plan has no open must-fix; dry run of the full plan on the real bench with every knob exercised once; both checkers agree on every verdict | Manifest (§3) |
+| 1. Base development | `fprime-development.agent` with review and unit-test skills (`fprime-iterative-development` when approved); requirements, FPP design and test design (system test plan, fault menu, unit-test list) each pass the loop of `phase-review-loop.md` | Requirements, FPP design and test-design approval **before** iteration | No must-fix findings; unit and component integration tests pass | UUT SHA |
+| 2. System-test development | `system-test-design` ↔ `system-test-review` on the plan (standalone, when stage 1 produced no plan); then `system-test-build` ↔ `system-test-review` on the harness, closing with an unsealed dry run | Test-plan approval **before** building; harness review (local files; a PR only if the human asks) **before** the manifest is frozen | Plan has no open must-fix; dry run of the full plan on the real bench with every knob exercised once; both checkers agree on every verdict | Manifest (§3) |
 | 3. Run-for-record (RfR) | `test-runner` then `test-auditor`, both blind | Human seeds the draw at start; human reviews `unseal.md` and the quick-looks at the end | `unseal.md` produced | Run directory |
 
 Each stage is a separate human-driven prompt. Stages never run
@@ -68,8 +68,9 @@ concurrently on the same UUT SHA.
 - **Stage 2 never edits the UUT.** A UUT defect found while building
   or dry-running is reported with the record lines that show it and
   goes back through stage 1 as a minimal iteration; harness work waits.
-- **Bounded loops.** Plan review: at most three designer/reviewer
-  rounds, then escalate with the disagreement log. Harness review:
+- **Bounded loops.** Plan review: three designer/reviewer rounds by
+  default, `review rounds: N` at kickoff overrides
+  (`phase-review-loop.md`), then escalate with the disagreement log. Harness review:
   five rounds, then escalate. Agreement reached by softening a
   must-fix is recorded as a disagreement, not a resolution.
 - **Never weaken a test to make it pass.** Changing a pass rule,

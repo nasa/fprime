@@ -34,22 +34,29 @@ order**, each producing the input to the next:
 
 1. **Requirements** — `fprime-component-requirements`
 2. **Design (FPP)** — `fprime-component-design-fpp`
-3. **Implementation (C++)** — `fprime-component-implementation`
-4. **Unit test** — `fprime-component-unit-test` (with `fprime-unit-testing`)
-5. **Integration test** — `fprime-component-integration-test`
+3. **Test design** — `fprime-system-test-design` (system test plan and
+   fault menu) and the test list of `fprime-component-unit-test`, from
+   the approved requirements, SDD and FPP model — no code yet
+4. **Implementation (C++)** — `fprime-component-implementation`
+5. **Unit test** — `fprime-component-unit-test` (with `fprime-unit-testing`)
+6. **Integration test** — `fprime-component-integration-test`
 
 This agent — not the writing skills — runs the review loop of
-`.github/agents/_shared/phase-review-loop.md` after phase 1 and after
-phase 2 (reviewers, bound, prompt override and fallback are defined
+`.github/agents/_shared/phase-review-loop.md` after phases 1, 2 and
+3 (reviewers, bound, prompt override and fallback are defined
 there; local only): draft with the skill, loop, then the skill's
 confirmation step with the review record. Then respect the phase
 gates: present requirements with the review record
-and obtain user approval before design, and present the FPP model
-with its review record and obtain explicit user confirmation before
-writing implementation or test code. Once the
-model is confirmed, tests may precede implementation (TDD). For
+and obtain user approval before design; present the FPP model with
+its review record and obtain explicit user confirmation before test
+design; present the test design (plan, fault menu, unit-test list)
+with its review record and obtain approval before writing
+implementation or test code. The approved test design is the
+baseline: a later change to it is a plan change and returns to the
+user with a diff (`test-process-contract.md` §2). Phase 5 implements
+the unit-test list, tests before implementation (TDD). For
 implementation-only fixes that do not alter the interface, entering at
-phase 3 is permitted — confirm with the user first.
+phase 4 is permitted — confirm with the user first.
 
 ## 3. Topology work
 

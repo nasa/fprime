@@ -14,7 +14,9 @@ builder and, at the end, to the human.
 
 ## Mode A — plan review
 
-Input: the designer's plan and fault menu. For each test ask:
+Input: the designer's plan and fault menu and, in the development
+lifecycle, the unit-test list (`fprime-component-unit-test`, "Test
+list"). For each test ask:
 
 1. Does the pass rule follow `fprime-test-oracle` §1, and would it
    pass by construction (counts without payload, no completion
@@ -30,11 +32,17 @@ Input: the designer's plan and fault menu. For each test ask:
    configuration?
 5. Is the deployment the system deployment, or a human-approved
    reduction with the constraint stated?
+6. Unit-test list, when given: does every REQ-ID whose verification
+   method is a unit test have a row whose assertion names values, and
+   does every interface element and named failure path have one? Is
+   any row a restatement of the implementation rather than the
+   requirement?
 
 Output `review-plan-round-N.md`: `must fix` (plan would mislead the
 human) / `could fix` (weaker than it should be) with a concrete
-rewrite each, and the running disagreement log. Three rounds maximum,
-then escalate with the log.
+rewrite each, and the running disagreement log. Three rounds by
+default; a `review rounds: N` given at kickoff overrides. Then
+escalate with the log.
 
 ## Mode B — harness review
 
