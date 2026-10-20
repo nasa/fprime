@@ -84,8 +84,10 @@ relevant one instead of improvising:
 
 - Building a component end to end: `fprime-component-development`, which
   sequences `fprime-component-requirements`,
-  `fprime-component-design-fpp`, `fprime-component-implementation`,
-  `fprime-component-unit-test`, `fprime-component-integration-test`.
+  `fprime-component-design-fpp`, `fprime-system-test-design` (with the
+  unit-test list of `fprime-component-unit-test`),
+  `fprime-component-implementation`, `fprime-component-unit-test`,
+  `fprime-component-integration-test`.
 - Reviewing a requirements set before design: `fprime-requirements-review`.
 - Modifying pre-existing code (bug fixes, small changes, cleanup):
   `fprime-maintenance` — the doctrine of minimal effect.

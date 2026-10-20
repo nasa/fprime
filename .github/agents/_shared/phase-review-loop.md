@@ -17,7 +17,7 @@ orchestrating agent loops them.
 |---|---|---|---|
 | Requirements | Requirements table (`fprime-component-requirements` Step 2 form) | `requirements-review.agent.md` | The request (issue / human goals, quoted) |
 | Design | The `.fpp` model, the `docs/sdd.md` draft (`fprime-component-design-fpp` Step 5), any new port definitions — as a design-only diff | `design-review.agent.md` (categories 1, 3, 4, 6, 7, 9; categories 2, 5, 8 need an implementation and are n/a); `architecture-review.agent.md` (whole model); `design-principles-review.agent.md` | The approved requirements table and the request |
-| Test design | The system test plan and `faults-menu.json` (`fprime-system-test-design` §2–§4) and the unit-test list (`fprime-component-unit-test`, "Test list") — written from the approved requirements, SDD and FPP model; no implementation exists yet | `system-test-review.agent.md` Mode A | The approved requirements table, the SDD draft, the FPP model and the request |
+| Test design | The system test plan and `faults-menu.json` (`fprime-system-test-design` §2–§4) and the unit-test list (`fprime-component-unit-test`, "Test list", in `docs/sdd.md`) — written from the approved requirements, SDD and FPP model; no implementation exists yet | `system-test-review.agent.md` Mode A | The approved requirements table, SDD and FPP model, and the request |
 
 Reviewer agent files are read fresh from `nasa/fprime` `devel`, not
 from the branch being worked on; a reviewer not yet on `devel` is read
@@ -101,7 +101,8 @@ per step 2, then one close by the author. Review k is the k-th such review.
    declined-with-reason. Deleting a row or removing a design element
    never closes a must-fix by itself: record the deletion, and the
    reviewer re-runs its set-level checks (RS-1..3; for design, the
-   whole-model classification) and decides whether the finding is
+   whole-model classification; for test design, traceability and
+   `system-test-review` questions 2 and 6) and decides whether the finding is
    closed, reopened as a gap, or logged as a disagreement. Where the
    author disagrees, record both positions in the disagreement log;
    agreement reached by softening is a disagreement, not a close.

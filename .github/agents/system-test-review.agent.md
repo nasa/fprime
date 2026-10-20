@@ -1,5 +1,5 @@
 ---
-description: "Use when an F Prime system test plan or test harness needs an adversarial review (stage 2 of the system test process): finds what the plan would not catch, what the harness would pass by construction, and writes the independent checker that the auditor later runs. Produces must-fix / could-fix findings and a disagreement log, locally only. Keywords: F Prime, test review, adversarial, test plan, harness, independent checker, must fix."
+description: "Use when an F Prime system test plan or test harness needs an adversarial review (stage 2 of the system test process, or the test-design phase of component development): finds what the plan would not catch, what the harness would pass by construction, and writes the independent checker that the auditor later runs. Produces must-fix / could-fix findings and a disagreement log, locally only. Keywords: F Prime, test review, adversarial, test plan, harness, independent checker, must fix."
 name: "F Prime System Test Reviewer"
 tools: [read, search, edit, execute]
 user-invocable: true
@@ -15,8 +15,8 @@ builder and, at the end, to the human.
 ## Mode A — plan review
 
 Input: the designer's plan and fault menu and, in the development
-lifecycle, the unit-test list (`fprime-component-unit-test`, "Test
-list"). For each test ask:
+lifecycle, the unit-test list (`docs/sdd.md` "Unit-test list", form in
+`fprime-component-unit-test`). For each test ask:
 
 1. Does the pass rule follow `fprime-test-oracle` §1, and would it
    pass by construction (counts without payload, no completion
@@ -32,11 +32,14 @@ list"). For each test ask:
    configuration?
 5. Is the deployment the system deployment, or a human-approved
    reduction with the constraint stated?
-6. Unit-test list, when given: does every REQ-ID whose verification
-   method is a unit test have a row whose assertion names values, and
-   does every interface element and named failure path have one? Is
-   any row a restatement of the implementation rather than the
-   requirement?
+
+Over the unit-test list, when given:
+
+6. Does every REQ-ID whose verification method is a unit test have a
+   row whose assertion names values, and does every interface element
+   and named failure path have one? Is any row a restatement of the
+   model's mechanics (a port exists, a command dispatches) rather than
+   of the requirement's observable outcome?
 
 Output `review-plan-round-N.md`: `must fix` (plan would mislead the
 human) / `could fix` (weaker than it should be) with a concrete

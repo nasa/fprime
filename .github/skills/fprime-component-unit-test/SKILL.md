@@ -4,8 +4,9 @@ description: >-
   Unit testing phase of F Prime component development. Provides
   lifecycle context, goals, and decision criteria for the unit testing
   phase. Defers to fprime-unit-testing for implementation details.
-  Trigger when implementation is ready for testing or when following
-  TDD (tests before implementation). Keywords: F Prime, unit test,
+  Trigger when writing the unit-test list in the test-design phase,
+  when implementation is ready for testing, or when following TDD
+  (tests before implementation). Keywords: F Prime, unit test,
   GTest, TesterBase, GTestBase, Tester, fprime-util check, STest,
   rule-based testing.
 ---
@@ -41,9 +42,10 @@ implementation procedure, see `fprime-unit-testing` and the
 
 The unit-test list is written in the test-design phase (before any
 implementation; `fprime-development.agent.md` §2 phase 3) from the
-approved requirements and FPP model, and is reviewed with the system
-test plan (`.github/agents/_shared/phase-review-loop.md`). One row per
-requirement whose verification method is a unit test:
+approved requirements and FPP model, lives in the component's
+`docs/sdd.md` under a "Unit-test list" heading, and is reviewed with
+the system test plan (`.github/agents/_shared/phase-review-loop.md`).
+One row per requirement whose verification method is a unit test:
 
 | REQ-ID | Test | Stimulus (port call / command / parameter) | Observable assertion (event, telemetry, port output, state) |
 |---|---|---|---|

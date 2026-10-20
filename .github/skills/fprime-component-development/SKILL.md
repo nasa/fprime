@@ -25,7 +25,7 @@ For the canonical process description, see the
 ## Process Overview
 
 ```
-1. Requirements  →  2. Design (FPP)  →  3. Implementation (C++)  →  4. Unit Test  →  5. Integration Test
+1. Requirements  →  2. Design (FPP)  →  3. Test Design  →  4. Implementation (C++)  →  5. Unit Test  →  6. Integration Test
 ```
 
 Each phase has a dedicated skill with detailed guidance:
@@ -70,9 +70,10 @@ Each phase has a dedicated skill with detailed guidance:
    with `fprime-cpp-design` (CPP-1 through CPP-37). Consult
    it before writing any C++ code.
 
-4. **Follow Test-Driven Development when possible.** The recommended
-   F Prime workflow is: design in FPP → design tests → write tests →
-   implement to pass tests. See the
+4. **Follow Test-Driven Development.** The workflow is: design in FPP
+   → design tests (phase 3) → write the listed unit tests → implement
+   to pass them; phases 4 and 5 interleave this way, the rest of the
+   sequence is strict. See the
    [TDD guide](https://github.com/nasa/fprime/blob/devel/docs/how-to/test-driven-development.md).
 
 5. **Document as you go.** Each component should have an SDD

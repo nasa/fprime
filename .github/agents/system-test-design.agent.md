@@ -1,5 +1,5 @@
 ---
-description: "Use when a human asks for a system-level or hardware-in-the-loop test plan for an F Prime component, driver, or subsystem (stage 2 of the system test process). Reads the goals, requirements, and SDD, and produces a requirements-traced plan with a machine-evaluable pass rule per test, metrics, and a fault-injection menu, then iterates with the system-test reviewer. Keywords: F Prime, system test, HIL, test plan, test designer, traceability, qualification."
+description: "Use when a human asks for a system-level or hardware-in-the-loop test plan for an F Prime component, driver, or subsystem (stage 2 of the system test process, or the test-design phase of component development). Reads the goals, requirements, and SDD, and produces a requirements-traced plan with a machine-evaluable pass rule per test, metrics, and a fault-injection menu, then iterates with the system-test reviewer. Keywords: F Prime, system test, HIL, test plan, test designer, traceability, qualification."
 name: "F Prime System Test Designer"
 tools: [read, search, edit, execute]
 user-invocable: true
@@ -23,7 +23,11 @@ you do not build or run tests.
 
 Before drafting, run the L0 feasibility check of
 `fprime-system-test-design` §1 (marker round-trip, event budget) on
-the default deployment; its result is the first line of the plan.
+the default deployment; its result is the first line of the plan. In
+the development lifecycle (plan before code) do it from configuration
+and documentation and write `L0: desk-checked; bench confirmation
+pending`; the stage-2 refresh (`fprime-system-test-design` §6)
+confirms it on the bench.
 
 If goals, requirements, or the testbed are unclear, ask before
 drafting. A plan drafted from guessed requirements is discarded.
@@ -40,10 +44,10 @@ Then run the review loop of `_shared/phase-review-loop.md` with
 runs the loop; standalone, for an existing UUT, this agent does.
 Close every must-fix with a diff to the plan, answer every could-fix
 with a disposition, append the disagreement log to the plan's
-decision log. Stop per the loop's stop rule (zero open must-fix,
-plateau, or the bound: three reviews by default, `review rounds: N`
-overrides) — then present the plan to the human with the open items
-listed first.
+decision log. Stop per the loop's stop rule — then present the plan
+to the human with the open items listed first. At stage 2 entry for a
+plan approved before the code existed, run the refresh of
+`fprime-system-test-design` §6 and present its diff.
 
 ## Output
 

@@ -29,14 +29,16 @@ the user before starting.
 ## 2. Component work
 
 Follow `.github/skills/fprime-component-development/SKILL.md`, which
-governs this sequence and its gates. The phases run **strictly in
-order**, each producing the input to the next:
+governs this sequence and its gates. The phases run in order, each
+producing the input to the next (phases 4 and 5 interleave per TDD,
+see below):
 
 1. **Requirements** — `fprime-component-requirements`
 2. **Design (FPP)** — `fprime-component-design-fpp`
 3. **Test design** — `fprime-system-test-design` (system test plan and
-   fault menu) and the test list of `fprime-component-unit-test`, from
-   the approved requirements, SDD and FPP model — no code yet
+   fault menu) and the unit-test list (`fprime-component-unit-test`,
+   "Test list", kept in `docs/sdd.md`), from the approved
+   requirements, SDD and FPP model — no code yet
 4. **Implementation (C++)** — `fprime-component-implementation`
 5. **Unit test** — `fprime-component-unit-test` (with `fprime-unit-testing`)
 6. **Integration test** — `fprime-component-integration-test`
@@ -53,8 +55,9 @@ design; present the test design (plan, fault menu, unit-test list)
 with its review record and obtain approval before writing
 implementation or test code. The approved test design is the
 baseline: a later change to it is a plan change and returns to the
-user with a diff (`test-process-contract.md` §2). Phase 5 implements
-the unit-test list, tests before implementation (TDD). For
+user with a diff (`test-process-contract.md` §2). Phases 4 and 5
+interleave: each unit test in the list is written before the code it
+exercises (TDD); the rest of the sequence is strict. For
 implementation-only fixes that do not alter the interface, entering at
 phase 4 is permitted — confirm with the user first.
 

@@ -3,7 +3,8 @@ name: fprime-system-test-design
 description: >-
   Use when designing a system-level or hardware-in-the-loop test plan
   for an F Prime component, driver, or subsystem that will be run and
-  audited by agents (stage 2 of the system test process). Produces a
+  audited by agents (stage 2 of the system test process, or the
+  test-design phase of component development). Produces a
   requirements-traced plan with a machine-evaluable pass rule per test,
   numeric metrics, a fault-injection menu, and an honest not-covered
   list. Keywords: F Prime, system test, HIL, test plan, traceability,
@@ -30,11 +31,16 @@ Governing rules are in
   byte-exact through the archive and the plan's event rate must fit
   the downlink; if either fails on the system deployment, present a
   one-line test-deployment decision with that constraint, and wait
-  for the human.
+  for the human. When the plan is written before the code exists
+  (test-design phase), do the check from the deployment's
+  configuration and ground-system documentation and write the plan's
+  first line as `L0: desk-checked; bench confirmation pending` — the
+  stage-2 refresh (§6) confirms it on the bench.
 - The FPP model: ports, commands, events, telemetry and parameters
   are the observables and the fault-injection surface (knobs are
   harness configuration, §4).
-- UUT code, when it exists, read after the test list exists, to
+- UUT code, when it exists, read after the plan's test entries (§3)
+  exist, to
   locate observable counters. In the development lifecycle the plan is
   written before implementation (`phase-review-loop.md`, test-design
   phase) and this input is absent.
@@ -154,11 +160,22 @@ from it (contract §5):
 ## 5. Hand-off
 
 Deliver the plan as a single markdown file plus the fault menu as
-JSON. The reviewer's must-fix / could-fix findings and the
-disagreement log are appended to §8 of the plan, not kept elsewhere.
-The plan goes to the human only when the reviewer has no open
-must-fix or the round limit is reached (contract §2: three reviews by
-default, `review rounds: N` at kickoff overrides).
+JSON. Reviewer findings are recorded per the loop's record rule
+(`phase-review-loop.md`, "Record and gate"); the dispositions and the
+disagreement log are appended to §8 of the plan. The plan goes to the
+human only when the loop's stop rule is met (`phase-review-loop.md`,
+Bound and Rounds).
+
+## 6. Refresh at stage 2
+
+A plan approved in stage 1 (before code) is refreshed when stage 2
+starts on the UUT SHA: confirm L0 on the bench and replace the
+desk-checked line; read the UUT code — last — for observable counters
+and update §3 evidence paths where a counter is better than a
+report; re-check every fault-menu knob is still applicable. Present
+the diff to the human for re-approval (contract §2, plan change);
+an empty diff is reported as such. No test is added, removed or
+weakened here without the human's decision.
 
 ## Anti-patterns
 
