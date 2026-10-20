@@ -49,37 +49,58 @@ leave the system deployment's diff empty.
 
 Every test is bracketed in the record by command markers so the
 auditor can slice it without timestamps (F Prime generation time may
-be uptime-based):
+be uptime-based). `NO_OP_STRING` and `NoOpStringReceived` are 40-char
+strings (`Svc/CmdDispatcher/CmdDispatcher.fpp`), so `<run>` and `<id>`
+are each ≤ 8 characters:
 
 ```
+cmdDisp.NO_OP_STRING "RFR <run> M <manifest sha8>"     # once, at run start
+cmdDisp.NO_OP_STRING "RFR <run> S <seal-id sha8>"      # once, at run start
 cmdDisp.NO_OP_STRING "QUAL <run> <id> START"
 … test procedure …
-cmdDisp.NO_OP_STRING "QUAL <run> <id> END"
+cmdDisp.NO_OP_STRING "QUAL <run> <id> END"             # always sent, in a finally block
 ```
 
-END carries **no verdict** (contract §4). At run start the harness
-emits `NO_OP_STRING "RFR <run> MANIFEST <sha8> SEALED <sha8>"` so the
-record proves which manifest and draw ran.
+END carries **no verdict** (contract §4). The L0 feasibility gate
+sends one marker and checks the archive shows the text byte-exact —
+a project that shortens `FW_LOG_STRING_MAX_SIZE` truncates it, and
+nothing is sliceable until the deployment decision is revisited.
+
+The procedure **drives and records; it never decides**. Reused
+`test/int/` tests assert inline, so run them under a wrapper that
+catches `AssertionError`, continues to the next step, discards the
+pytest verdict, and sends END in `finally`. Harness stdout and pytest
+output go to `runner/`, never into `record/`.
 
 Record requirements the harness must make possible:
 
 - Ground system with a persistent archive (fprime-yamcs preferred; GDS
-  logs acceptable), one instance and data directory per run ID.
-- Completeness check per window: commands sent by the harness equal
-  the dispatcher's completed count delta, and every expected
-  completion event is present. The checker marks a window whose check
-  fails `UNVERIFIED`, not `FAIL`.
+  logs acceptable), one instance and data directory per run ID, and an
+  exporter that pages the whole archive and writes
+  `export-counts.json` (`fprime-test-oracle` §2).
+- Completeness per window from infrastructure facts only: both
+  markers; `commands_sent` (markers included) equals
+  `delta(cmdDisp.CommandsDispatched)`; `CommandErrors`,
+  `CommandsDropped` and `eventLogger.EventsDropped` unchanged unless
+  the test expects a rejection. UUT completion events are pass-rule
+  facts, not completeness facts.
+- Pacing: wait for each command's completion before sending the next;
+  never more commands in flight than the dispatcher queue depth — a
+  flooded dispatcher asserts, and that is a harness defect, not a UUT
+  one.
 - Downlink budget: estimate event rate against link capacity
   beforehand; a harness that loses events cannot prove an absence.
 
 ## 4. Fault knobs
 
 Implement every knob on the approved menu as harness **configuration**
-(`sealed/faults.json`, read by the harness at start). A knob may change
-a seed, an expected constant, a length, an opcode in a tester
-component — never the test ID, the log text, or the marker. Verify in
-the dry run that each knob, applied alone, makes exactly its target
-test fail and nothing else.
+(`rfr/<run-id>/sealed/faults.json`, read by the harness at start). A
+knob may change a seed, an expected constant, a length, a stimulus, or
+disturb device state through the harness — never the test ID, the log
+text, or the marker. Verify in the dry run that each knob, applied
+alone, makes its target test fail; record which other tests it
+ripples into (a `uut-state` knob legitimately may) so the reviewer can
+confirm the ripple is also a FAIL, not an `UNVERIFIED`.
 
 ## 5. Checker
 
@@ -93,7 +114,7 @@ Target: a human reads the harness in one sitting. Put pass rules and
 knob handling in one small file each; isolate bench scripts (power
 control, flashing, ground-system start) from test logic. Harness code
 is reviewed by the system-test reviewer and, if the human requests,
-the local multi-agent review (`fprime-iterative-development` §2.4).
+the local multi-agent review (`fprime-iterative-development` §2, step 4).
 Document the harness in a short README: how to run one test, the whole
 plan, and the dry run.
 
@@ -101,7 +122,9 @@ plan, and the dry run.
 
 Stage 2 closes with an unsealed run of the full plan on the real
 bench, every knob exercised once, both checkers agreeing on every
-verdict. Dry-run output is labelled and is not a record.
+verdict, followed by `seal.py manifest` with the built image files.
+Dry-run output is labelled and is not a record; it lives outside both
+repositories like every RfR artifact.
 
 ## Anti-patterns
 
@@ -111,3 +134,4 @@ verdict. Dry-run output is labelled and is not a record.
 - Verdicts printed by the harness instead of computed by a checker
   from the record.
 - Knobs that are visible in the record.
+- pytest or harness verdicts anywhere under `record/`.

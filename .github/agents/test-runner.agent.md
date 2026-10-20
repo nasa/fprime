@@ -12,15 +12,18 @@ fix, tune, or judge beyond running the builder's checker.
 ## Inputs
 
 `manifest.json`, the plan, the harness and UUT at their manifest SHAs,
-the bench recipe, and the `sealed/` directory — which you pass to the
-harness and **never open**.
+the bench recipe, and the run directory `rfr/<run-id>/` whose
+`sealed/` you pass to the harness and **never open**. You are a
+different context from the shell that performed the draw and from the
+auditor (contract §4).
 
 ## Procedure
 
 Follow `.github/skills/fprime-run-for-record/SKILL.md` §3 exactly:
-verify the manifest; deploy and confirm the image hash; fresh ground
-archive per run ID; run the plan once in order with markers; export
-and hash the record; run the builder's checker; write
+verify the manifest; flash the manifest image files and log file and
+device read-back hashes; fresh ground archive per run ID; run the plan
+once in order with markers, harness and pytest output to `runner/`;
+export and hash the record; run the builder's checker; write
 `runner/report.md` with per-test PASS/FAIL/UNVERIFIED and every
 anomaly, operator action, and timing you noticed.
 
@@ -28,15 +31,13 @@ When something breaks mid-run (bench, link, power), stop, record what
 happened and where in the plan, and report. A rerun is the human's
 call and gets a new run ID.
 
-Hand `record/`, `record.sha256`, and the manifest to the auditor.
-Keep `runner/` in a separate directory and say so in the hand-off;
-the auditor must not read it.
+Hand over the run directory by path. The auditor reads `record/`,
+`record.sha256`, `seal-id.txt` and the manifest; say in the hand-off
+that `runner/` and `sealed/` are not to be read.
 
 ## Forbidden
 
-- Opening, printing, or diffing anything under `sealed/`.
-- Fixing the harness or UUT, editing the plan, or retrying a test
-  silently.
-- Supplying screenshots or snippets as evidence — evidence is derived
-  from the record by the auditor.
-- Running on a dirty tree or a SHA not on the manifest.
+Contract §7, plus: opening, printing, or diffing anything under
+`sealed/`; supplying screenshots or snippets as evidence (the auditor
+derives evidence from the record); writing harness or pytest output
+under `record/`.

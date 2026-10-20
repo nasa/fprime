@@ -24,7 +24,8 @@ Input: the designer's plan and fault menu. For each test ask:
 3. Is at least one test's evidence outside the UUT's own reporting
    path? Does every constant cite a source?
 4. Could a planted fault from the menu be told apart in the record?
-   Is any menu knob impossible to apply through configuration?
+   Does the menu have a `uut-state` knob and cover ≥ 2 × max-count
+   tests? Is any knob impossible to apply through configuration?
 5. Is the deployment the system deployment, or a human-approved
    reduction with the constraint stated?
 
@@ -45,9 +46,12 @@ Do **not** read the builder's checker. Procedure:
    whichever side is wrong — decide from the record, not from the
    code.
 3. Review the harness against `fprime-system-test-harness`: UUT
-   untouched, markers present, END carries no verdict, knobs invisible
-   in the record, each knob fails exactly its target test in the dry
-   run, completeness check implemented, size reviewable in one
+   untouched, markers fit 40 characters and round-trip, END sent in
+   `finally` and carries no verdict, no pytest or harness verdict under
+   `record/`, knobs invisible in the record, each knob fails its target
+   test in the dry run and every ripple is a FAIL not an UNVERIFIED,
+   completeness built from infrastructure counters only, commands
+   paced, exporter writes `export-counts.json`, size reviewable in one
    sitting.
 4. Output `review-harness-round-N.md` with the same tags. Five rounds
    maximum.
@@ -57,8 +61,6 @@ manifest and the auditor runs it in stage 3.
 
 ## Forbidden
 
-- Softening a must-fix to reach agreement; record it as a
-  disagreement instead.
-- Reading the builder's checker before writing your own.
-- Editing the plan, the harness, or the UUT yourself.
-- Posting anything to GitHub.
+Contract §7, plus: softening a must-fix to reach agreement (record it
+as a disagreement); reading the builder's checker before writing your
+own; editing the plan, the harness, or the UUT yourself.

@@ -30,9 +30,10 @@ the deployment/testbed the human chose.
    `system-test-review.agent.md` (harness mode); fix must-fixes; repeat
    until both checkers agree on every verdict and no must-fix is open
    (five rounds maximum, then escalate).
-5. Close stage 2 with `seal.py manifest` (`fprime-run-for-record` §1)
-   and present the harness to the human for review. Whether harness
-   code becomes a PR is the human's call.
+5. Close stage 2 with `seal.py manifest` (`fprime-run-for-record` §1),
+   listing the built image files, and present the harness to the human
+   for review as local files. Whether harness code becomes a PR is the
+   human's call.
 
 A UUT defect found on the way is reported to the human with the
 record lines that show it and stops the harness work until stage 1
@@ -40,9 +41,9 @@ has fixed it on a new UUT SHA.
 
 ## Forbidden
 
-- Editing the UUT, or wiring a tester component into the mission
-  topology without the human's deployment decision.
-- Changing a pass rule, threshold, or metric to make the dry run pass.
-- Printing verdicts from the harness instead of computing them in the
-  checker from the record.
-- Knobs that need a different build, test ID, or visible flag.
+Contract §7, plus: editing the UUT, or wiring a tester component into
+the mission topology without the human's deployment decision; changing
+a pass rule, threshold, or metric to make the dry run pass; printing
+verdicts from the harness instead of computing them in the checker
+from the record; knobs that need a different build, test ID, or
+visible flag.

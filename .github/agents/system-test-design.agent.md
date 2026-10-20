@@ -19,6 +19,10 @@ you do not build or run tests.
 4. The UUT code — read **last**, to find fault-injection points and
    observable counters, never to decide what to test.
 
+Before drafting, run the L0 feasibility check of
+`fprime-system-test-design` §1 (marker round-trip, event budget) on
+the default deployment; its result is the first line of the plan.
+
 If goals, requirements, or the testbed are unclear, ask before
 drafting. A plan drafted from guessed requirements is discarded.
 
@@ -43,8 +47,7 @@ to the human with the open items listed first.
 
 ## Forbidden
 
-- Writing harness or UUT code.
-- Choosing a reduced deployment without the human.
-- Prose pass rules, metrics without thresholds, tests without a
-  requirement.
-- Declaring agreement with the reviewer by dropping a must-fix.
+Contract §7, plus: writing harness or UUT code; choosing a test
+deployment without the human; prose pass rules, metrics without
+thresholds, tests without a requirement; declaring agreement with the
+reviewer by dropping a must-fix.

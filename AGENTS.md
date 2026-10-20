@@ -98,8 +98,7 @@ relevant one instead of improvising:
   `fprime-hardware-input-tracing`.
 - Writing a subsystem reference page: `write-system-functional-doc`.
 - Adding or changing a skill or agent: `agent-skill-authoring`.
-- System-level / hardware-in-the-loop qualification, run and audited by
-  agents under `.github/agents/_shared/test-process-contract.md`:
+- System-level / hardware-in-the-loop qualification:
   `fprime-system-test-design` (plan), `fprime-system-test-harness`
   (harness), `fprime-test-oracle` (pass rules and checkers),
   `fprime-run-for-record` (seal, run, audit, unseal).
@@ -116,7 +115,8 @@ through the reviewers named in
 existing unit is entered through `system-test-design.agent.md`
 (plan), `system-test-build.agent.md` (harness), and
 `test-runner.agent.md` / `test-auditor.agent.md` (run-for-record),
-with `system-test-review.agent.md` as the adversarial reviewer.
+with `system-test-review.agent.md` as the adversarial reviewer; all five
+follow `.github/agents/_shared/test-process-contract.md`.
 
 ## Contributing
 

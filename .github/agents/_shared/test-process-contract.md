@@ -20,22 +20,25 @@ comes from the agents; trust comes from the hand-offs below.
 | Term | Meaning |
 |---|---|
 | UUT | Unit under test: the component, driver, or subsystem being qualified, identified by a git SHA. |
-| Plan | The approved system test plan (`fprime-system-test-design`). |
+| Plan | The approved system test plan (`fprime-system-test-design`). Each test has an `ID:` of ≤ 8 characters. |
 | Pass rule | The success condition of one test, written so a program can evaluate it over the record (`fprime-test-oracle`). |
-| Checker | A program that evaluates pass rules over a record and emits verdicts. Two independent checkers exist: the builder's and the reviewer's. |
-| Harness | Test-only code: tester components, integration tests, checkers, bench scripts. Never part of the UUT. |
-| Record | The run-for-record archive (fprime-yamcs database, GDS logs, pytest output) plus its hash. |
+| Checker | A program that evaluates pass rules over the record and emits verdicts. Two exist, written independently: the builder's and the reviewer's. |
+| Harness | Test-only code: tester components, test procedures, checkers, bench scripts. Never part of the UUT. |
+| Complete testbed | The bench recipe names every device, link, power control and ground system of the mission configuration; any build whose topology differs from the mission's is a *test deployment*. |
+| Record | `record/` = ground-system archive (`raw/`), its flat export, and the flash log — plus `record.sha256`. Harness stdout and pytest output are **not** record; they live in `runner/`. |
 | Fault menu | The approved list of fault-injection knobs the harness can apply to make a test fail on purpose. |
-| Seal | The human-seeded draw of which tests get which fault, hidden from runner and auditor until unseal. |
-| Quick-look | One auditor-produced page per test: verdict, evidence image or snippet from the record, pass rule, notes. |
+| Draw / seal | The human-seeded choice of which tests get which knob, stored under `sealed/`. The seal is **procedural and tamper-evident**, not cryptographic (§4). |
+| Seal id | `sha256` of `sealed/sealed.sha256`, written to `seal-id.txt` beside `sealed/`. The only seal artifact runner and auditor may read. |
+| Run directory | `rfr/<run-id>/` outside both repositories, `<run-id>` ≤ 8 characters; holds `sealed/`, `seal-id.txt`, `record/`, `record.sha256`, `runner/`, `auditor/`, `unseal.md`. |
+| Quick-look | One auditor-produced page per test: reviewer-checker verdict, evidence image or snippet from the record, pass rule, provenance. |
 
 ## 1. Three stages, three human gates
 
 | Stage | Who iterates | Human gate | Close condition | Hand-off |
 |---|---|---|---|---|
-| 1. Base development | `fprime-development.agent` with review and unit-test skills (`fprime-iterative-development` when approved) | Requirements + FPP design approval **before** iteration | No must-fix findings, unit and component integration tests pass | UUT SHA |
-| 2. System-test development | `system-test-design` ↔ `system-test-review` on the plan; then `system-test-build` ↔ `system-test-review` on the harness, with a dry run | Test-plan approval **before** building; harness PR review **before** the seal | Plan has no must-fix, both checkers agree on an unsealed dry run of the full plan (every fault knob exercised) | Manifest (§3) |
-| 3. Run-for-record (RfR) | `test-runner` then `test-auditor`, both blind | Human seeds the seal at start; human reviews the unseal table and quick-looks at the end | Unseal table produced | Record + runner report + auditor quick-looks |
+| 1. Base development | `fprime-development.agent` with review and unit-test skills (`fprime-iterative-development` when approved) | Requirements + FPP design approval **before** iteration | No must-fix findings; unit and component integration tests pass | UUT SHA |
+| 2. System-test development | `system-test-design` ↔ `system-test-review` on the plan; then `system-test-build` ↔ `system-test-review` on the harness, closing with an unsealed dry run | Test-plan approval **before** building; harness review (local files; a PR only if the human asks) **before** the manifest is frozen | Plan has no open must-fix; dry run of the full plan on the real bench with every knob exercised once; both checkers agree on every verdict | Manifest (§3) |
+| 3. Run-for-record (RfR) | `test-runner` then `test-auditor`, both blind | Human seeds the draw at start; human reviews `unseal.md` and the quick-looks at the end | `unseal.md` produced | Run directory |
 
 Each stage is a separate human-driven prompt. Stages never run
 concurrently on the same UUT SHA.
@@ -43,72 +46,82 @@ concurrently on the same UUT SHA.
 ## 2. Standing rules
 
 - **Requirements first.** Tests derive from requirements and the SDD;
-  the UUT code is read afterwards, to find fault-injection points, not
-  to decide what to test.
-- **Default to the system deployment.** Tests run against the
-  project's full deployment on a complete testbed. A reduced or
-  sibling test deployment is a **human call** — propose it with the
-  testbed constraint that forces it and wait for the decision.
-- **Pass rules are code, not judgment.** Every test in the plan has a
+  the UUT code is read afterwards, to find fault-injection points and
+  observable counters, not to decide what to test.
+- **Default to the system deployment** on the complete testbed. A
+  test deployment is a **human call**: the designer runs the L0
+  feasibility check (markers round-trip byte-exact, event budget fits
+  the downlink) and presents a one-line decision with the constraint
+  that forces it.
+- **Pass rules are code, not judgment.** Every test has a
   machine-evaluable pass rule before anything is built. "The tester
-  verified it" is never a verdict.
+  verified it" is never a verdict. Completeness facts (markers,
+  dispatcher and event-drop counters) and UUT facts (completion
+  events) are separate: a missing UUT event in a complete window is
+  `FAIL`, never `UNVERIFIED`.
 - **Two independent checkers.** The builder implements the pass rules;
   the reviewer implements them again without reading the builder's
-  code. A verdict is only reportable when both exist.
-- **The record is the evidence.** Screenshots, snippets and tables are
-  derived from the hashed record by the auditor, never supplied by the
-  runner.
+  code. A verdict is reportable only when both exist.
+- **The record is the evidence.** Quick-looks are derived from the
+  hashed record by the auditor, never supplied by the runner. The
+  procedure drives and records; it never decides.
 - **Stage 2 never edits the UUT.** A UUT defect found while building
-  or dry-running tests is reported and goes back through stage 1 as a
-  minimal iteration on the fix; the harness stage waits.
+  or dry-running is reported with the record lines that show it and
+  goes back through stage 1 as a minimal iteration; harness work waits.
 - **Bounded loops.** Plan review: at most three designer/reviewer
   rounds, then escalate with the disagreement log. Harness review:
-  five rounds, then escalate (as `fprime-iterative-development` §3).
-  Agreement reached by softening a must-fix is recorded as a
-  disagreement, not a resolution.
+  five rounds, then escalate. Agreement reached by softening a
+  must-fix is recorded as a disagreement, not a resolution.
 - **Never weaken a test to make it pass.** Changing a pass rule,
-  threshold, or metric after plan approval is a plan change and
-  returns to the human gate with a diff.
+  threshold, metric, or the test list after plan approval is a plan
+  change and returns to the human gate with a diff.
 
 ## 3. Hand-off artifacts
 
 Stage 2 → stage 3 delivers exactly one **manifest** (`seal.py manifest`,
-see `fprime-run-for-record`):
+`fprime-run-for-record` §1):
 
 ```
 manifest.json
-  uut:      { repo, sha, dirty: false }
-  harness:  { repo, sha, dirty: false }
-  plan:     { path, sha256, revision }
+  uut:      { path, sha, dirty: false }
+  harness:  { path, sha, dirty: false }
+  plan:     { path, sha256, revision, tests: [ "L0-1", … ] }   # parsed from the plan's ID: lines
   checkers: [ { owner: builder|reviewer, path, sha256 } ]
+  images:   [ { deployment, path, sha256, build_cmd } ]        # the exact files that get flashed
   menu:     { path, sha256 }
   bench:    { path, sha256 }        # bench recipe: wiring, ports, power control, ground system
 ```
 
-RfR refuses to start if any entry fails `seal.py verify`. Anything
-not on the manifest is not under test.
+RfR refuses to start if `seal.py verify` fails. Anything not on the
+manifest is not under test. All RfR artifacts live in the run
+directory, never inside either repository (the dirty-tree check would
+otherwise trip on them).
 
-Stage 3 delivers to the human: `record/` + `record.sha256`,
-`runner/report.md` + `runner/verdicts.json`, `auditor/quicklooks/` +
-`auditor/verdicts.json`, and `unseal.md`.
+Stage 3 delivers the run directory to the human: `record/` +
+`record.sha256`, `runner/report.md` + `runner/verdicts.json`,
+`auditor/quicklooks/` + `auditor/verdicts.json` + `auditor/report.md`,
+and `unseal.md`.
 
 ## 4. Blindness
 
 | Party | Must not see | Enforcement |
 |---|---|---|
-| Runner | `sealed/` contents (the draw and expectations) | Procedural: the harness reads `sealed/faults.json` itself; the runner never opens, prints, or diffs that directory. The harness writes the sealed hash into the record at run start so the auditor can prove which draw ran. |
-| Auditor | `sealed/`, `runner/verdicts.json`, `runner/report.md` | Procedural: the auditor's inputs are the manifest, the plan, the record, and the reviewer's checker. END markers in the record carry **no verdict**. |
-| Designer, reviewer, builder | The draw | The draw happens after their work is frozen, from a seed only the human knows. |
+| Every agent, including any orchestrator | The seed | The human runs `seal.py draw` in a shell of their own; the seed comes from a file or an un-echoed prompt, never a chat message or command line. The draw is reproducible from seed + manifest, so a leaked seed is a leaked draw. |
+| Runner | `sealed/` contents | The harness reads `sealed/faults.json` itself; the runner never opens, prints, or diffs that directory. The harness writes the manifest sha8 and the seal id sha8 into the record at run start (`RFR <run> M <sha8>`, `RFR <run> S <sha8>`). |
+| Auditor | `sealed/`, `runner/` | The auditor's inputs are the manifest, the plan, `record/` + `record.sha256`, `seal-id.txt`, and the reviewer's checker. END markers carry **no verdict**. Whoever hands over the run directory passes paths, never runner text. |
+| Designer, reviewer, builder | The draw | The draw happens after the manifest is frozen. |
 
-Blindness here is procedural, not cryptographic: every agent shares a
-model lineage and a machine. The seal is tamper-evident (hashes in
-the record and manifest), not tamper-proof. State this in every RfR
-report.
+Runner, auditor, and the shell that performed the draw are **three
+distinct contexts**; one session never plays two of these roles for
+the same run. Blindness is procedural: every agent shares a model
+lineage and `faults.json` is plain text on the bench host. The seal is
+tamper-evident (hashes in the record, the manifest, and `seal-id.txt`),
+not tamper-proof. Every RfR report says so.
 
 ## 5. Role conduct
 
 - **Designer** writes the plan per `fprime-system-test-design`; owns
-  traceability and the fault menu.
+  traceability, the L0 feasibility check, and the fault menu.
 - **Reviewer** is adversarial: finds what the plan would miss and what
   the harness would pass by construction; writes the independent
   checker; keeps the disagreement log.
@@ -117,36 +130,51 @@ report.
   components before writing new code.
 - **Runner** verifies the manifest, runs the plan exactly once per run
   ID, fixes nothing, retries nothing silently, hashes the record, and
-  reports per-test PASS/FAIL from the builder's checker plus every
-  anomaly it noticed.
+  reports per-test PASS/FAIL/UNVERIFIED from the builder's checker
+  plus every anomaly it noticed.
 - **Auditor** verifies hashes first, runs the reviewer's checker,
-  builds one quick-look per test from the record, marks tests whose
-  window is incomplete `UNVERIFIED`, and reports divergences from the
+  builds one quick-look per test from the record, performs the plan's
+  independent final-state check, and reports divergences from the
   plan's expectations without knowing the runner's verdicts.
 
 ## 6. Unseal and human triggers
 
-`seal.py unseal` joins sealed expectation | runner verdict | auditor
-verdict per test. The human reads disagreeing rows first, then
-spot-checks two or three agreeing rows against the raw record.
+`seal.py unseal` checks the integrity chain (seal id ↔ `sealed/`,
+draw ↔ manifest, record ↔ `record.sha256`, markers in the record ↔
+both hashes) and then joins, for **every test on the manifest**,
+sealed expectation | runner verdict | auditor verdict | quick-look.
+Precedence, first match wins:
 
 | Outcome | Meaning | Action |
 |---|---|---|
-| Expected PASS, both PASS | Nominal | Spot-check |
-| Expected FAIL (planted), both FAIL | Verdict machinery works | None |
-| Expected FAIL, any PASS | Harness or checker cannot detect that fault | RfR void; back to stage 2 |
-| Expected PASS, any FAIL | Real UUT or bench defect, or checker bug | Human triage; UUT fixes go to stage 1 |
+| Expected FAIL (planted), any PASS or MISSING | Harness or checker cannot detect that fault | **RfR void**; back to stage 2 |
+| Expected FAIL, both FAIL | Verdict machinery works | None |
+| Expected FAIL, FAIL vs UNVERIFIED | Checkers disagree on a planted fault | Human reads both |
+| Any MISSING | A test on the manifest was not reported | Human triage |
 | Runner ≠ auditor | Checkers disagree | Human reads both quick-look and runner evidence |
+| Both PASS | Nominal | Spot-check two or three rows against the raw record |
+| Both UNVERIFIED | Window incomplete (markers, drops) | Bench/harness triage; not a UUT verdict |
+| Both FAIL | Real UUT or bench defect, or shared checker bug | Human triage; UUT fixes go to stage 1 |
+
+A rerun before unseal may reuse `sealed/` only with fresh runner and
+auditor contexts and a new run ID; after unseal a rerun needs a new
+draw.
 
 ## 7. Forbidden actions
+
+Agents cite this list; they do not restate it.
 
 - Posting any stage-2 or stage-3 output to GitHub as reviews, comments
   or statuses. Plans, findings, reports and quick-looks are files
   delivered to the human (a PR for harness code is a human decision).
-- Running RfR on a UUT, harness, or plan whose SHA is not on the
-  manifest or whose tree is dirty.
+- Running RfR on a UUT, harness, plan, or image whose hash is not on
+  the manifest, or from a dirty tree.
 - Rerunning a failed RfR test "to see if it passes". A rerun is a new
-  run ID with its own record and a stated reason.
+  run ID with its own record and a stated reason (§6).
 - Fixing anything during stage 3.
-- Modifying the record, the manifest, or `sealed/` after the seal.
-- Letting a runner or auditor context contain the draw.
+- Modifying the record, the manifest, `sealed/`, or `seal-id.txt`
+  after the draw. Replay for quick-looks works on a copy of `raw/`.
+- Letting a runner or auditor context contain the seed, the draw, or
+  the other party's verdicts.
+- Pasting runner output, harness stdout, or pytest output into the
+  record or to the auditor.

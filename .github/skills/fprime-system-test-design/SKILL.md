@@ -24,9 +24,12 @@ requirements and SDD; open the code last. Governing rules are in
 - Human goals for the qualification (one paragraph, quoted verbatim).
 - Requirements list (REQ-IDs) and `docs/sdd.md` of the UUT.
 - The deployment the tests run in. **Default: the project's full
-  system deployment on the complete testbed.** Propose a reduced or
-  sibling deployment only when a testbed constraint forces it, state
-  the constraint, and wait for the human's decision.
+  system deployment on the complete testbed** (contract §0). Run the
+  L0 feasibility check first — a `NO_OP_STRING` marker must round-trip
+  byte-exact through the archive and the plan's event rate must fit
+  the downlink; if either fails on the system deployment, present a
+  one-line test-deployment decision with that constraint, and wait
+  for the human.
 - UUT code, read after the test list exists, to locate fault-injection
   points and observable counters.
 
@@ -34,10 +37,12 @@ requirements and SDD; open the code last. Governing rules are in
 
 ```
 0  Scope        UUT, deployment, bench, ground system, out of scope
-1  Entry gates  what must be true before a run (SHAs, downlink health, bench)
-2  Test levels  L0 provenance · L1 unit/int tests run and pass · L2 functional
-                L3 persistence/reset · L4 endurance/performance · L5 fault paths
-                L6 negative controls · L7 final state for independent verification
+1  Entry gates  what must be true before a run (SHAs, marker round-trip, downlink
+                budget, bench recipe); stage-1 close (unit and component integration
+                tests pass) is an entry gate, not an RfR test
+2  Test levels  L0 provenance and feasibility · L2 functional · L3 persistence/reset
+                L4 endurance/performance · L5 fault paths · L6 negative controls
+                L7 final state for independent verification
 3  Test entries one block per test (§3)
 4  Traceability REQ-ID → test IDs; every REQ has ≥ 1 test or a stated waiver
 5  Metrics      numeric thresholds with units, decided here, never relaxed later
@@ -49,7 +54,7 @@ requirements and SDD; open the code last. Governing rules are in
 ## 3. One test entry
 
 ```
-ID:        L2-6
+ID:        L2-6                      # ≤ 8 characters; parsed into the manifest
 Title:     Full-device write/verify sweep
 Covers:    REQ-FRAM-003, REQ-FRAM-007
 Setup:     <state the UUT must be in>
@@ -63,6 +68,8 @@ Fault knobs: <menu entries that may be applied to this test>
 Rules:
 
 - One pass rule per test; no "verify visually", no "as expected".
+  Completeness facts and UUT facts are separate blocks
+  (`fprime-test-oracle` §1).
 - Prefer EVR sequences a human can check off (start → progress →
   complete with counts); telemetry strips when counters are the
   evidence; never prose from the runner.
@@ -85,18 +92,28 @@ one in the record:
 
 ```
 { "knobs": [
-  { "name": "verify_wrong_seed", "applies_to": ["L2-6", "L7-1"],
-    "expected": "FAIL", "mechanism": "harness verifies against seed+1" },
-  { "name": "expected_id_wrong", "applies_to": ["L0-6"],
-    "expected": "FAIL", "mechanism": "harness loads an off-by-one device ID" }
+  { "name": "verify_wrong_seed", "class": "harness-expectation",
+    "applies_to": ["L2-6", "L7-1"], "expected": "FAIL",
+    "mechanism": "harness verifies against seed+1" },
+  { "name": "corrupt_page", "class": "uut-state",
+    "applies_to": ["L2-6", "L3-1"], "expected": "FAIL",
+    "mechanism": "harness overwrites one page between WRITE and VERIFY" },
+  { "name": "short_write", "class": "stimulus",
+    "applies_to": ["L2-2"], "expected": "FAIL",
+    "mechanism": "harness sends length-1 and still expects the full length" }
 ] }
 ```
 
-Each knob names the tests it may be applied to and why the test must
-then fail. Knobs that need a different build, a different test ID, or
-a visible flag are not acceptable. Three to five knobs covering
-different failure classes is usually enough; the draw (stage 3) picks
-a subset.
+Each knob names its `class` — `harness-expectation` (the checker's
+expectation is wrong), `uut-state` (the device's content or state is
+disturbed), `stimulus` (the drive differs from the plan) — the tests
+it may be applied to, and why the test must then fail. At least one
+knob is `uut-state`: expectation-only knobs prove the checker reads
+the harness's error event, not that the test catches a defect. Knobs
+that need a different build, a different test ID, or a visible flag
+are not acceptable. The menu must cover at least twice as many tests
+as the draw's `max-count`; the draw (stage 3) picks a hidden number of
+them.
 
 ## 5. Hand-off
 
