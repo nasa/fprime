@@ -105,7 +105,8 @@ Pull-request review is performed by the multi-agent flow in
 topologies, build system) is entered through
 `fprime-development.agent.md`, which sequences the skills above. A
 requirements set is reviewed before design through
-`requirements-review.agent.md`.
+`requirements-review.agent.md`, and an FPP design through the
+reviewers named in `.github/agents/_shared/phase-review-loop.md`.
 
 ## Contributing
 

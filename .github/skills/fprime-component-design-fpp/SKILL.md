@@ -135,11 +135,24 @@ fprime-util build
 The FPP model should compile and generate the base class. Fix any FPP
 errors before proceeding.
 
-### Step 5 — Confirm Design with User
+### Step 5 — Draft the SDD
 
-Present the FPP model to the user and **wait for confirmation**. The
-model is the interface contract — implementation and tests are written
-against it.
+Draft `docs/sdd.md`: the approved requirements table, the component
+kind and a port table with the rationale for each kind choice, and the
+command, event, telemetry and parameter tables.
+
+### Step 6 — Confirm Design with User
+
+Present the FPP model and SDD draft to the user and **wait for
+confirmation**. The model is the interface contract —
+implementation and tests are written against it.
+
+---
+
+## Output Artifact
+
+- The `.fpp` model (and any new port definitions) that builds.
+- The `docs/sdd.md` draft of Step 5.
 
 ---
 
