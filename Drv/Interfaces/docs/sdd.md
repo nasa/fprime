@@ -24,18 +24,18 @@ The [`Drv.AsyncSpi`](../AsyncSpi.fpp) and [`Drv.AsyncGuardedSpi`](../AsyncGuarde
 
 The two variants differ only in the kind of the request port, so that a driver can pick the one matching its execution model:
 
-| Interface | `SpiWriteRead` port kind | Request port type | Implementing component |
-|---|---|---|---|
-| `Drv.AsyncSpi` | `async input` | `Drv.SpiWriteReadQueuedRequest` (no return value) | queued or active |
-| `Drv.AsyncGuardedSpi` | `guarded input` | `Drv.SpiWriteReadRequest` (returns `Drv.SpiStatus`) | any, including passive no-RTOS drivers |
+| Interface | `SpiWriteRead` port kind | Implementing component |
+|---|---|---|
+| `Drv.AsyncSpi` | `async input` | queued or active |
+| `Drv.AsyncGuardedSpi` | `guarded input` | any, including passive no-RTOS drivers |
+
+Both use the same port types: `Drv.SpiWriteReadRequest` for the request and `Drv.SpiWriteReadCallback` for the completion.
 
 **Port indexing.** Both ports are arrays of size `Drv.AsyncSpiCfg.SpiDriverPorts` (default 10, configurable in `config/AsyncSpiCfg.fpp`). The index is the device slot, i.e. the chip select the transaction targets, and the completion for a request received on index `n` is always sent on `SpiWriteReadComplete[n]`. Each client reserves one index and connects its request output and its completion input to that same index.
 
-**Acceptance status (guarded variant).** `Drv.SpiWriteReadRequest` returns the *acceptance* status of the request, not the outcome of the transfer. `SPI_OK` means the transfer was started and exactly one `SpiWriteReadComplete` call will follow for these buffers. Any other status (e.g. `SPI_BUSY_ERR` while a transfer is in flight, `SPI_CONFIG_ERR` before the driver is configured) means the request was refused synchronously, no completion call follows, and the caller keeps ownership of both buffers. The synchronous return lets a passive client learn of a refusal inside its own call rather than through a re-entrant completion callback. There is deliberately no `sync input` variant: a passive component may import `Drv.AsyncGuardedSpi`, and on no-RTOS targets the guard reduces to the platform `Os::Mutex` implementation (typically a flag).
+**Every request is completed.** Like `Drv.I2cRequest`, `Drv.SpiWriteReadRequest` has no return value: the driver answers every request with exactly one `SpiWriteReadComplete` call carrying the outcome in `status` (`SPI_OK` on success). A request the driver cannot take, e.g. `SPI_BUSY_ERR` while another transaction is in flight or `SPI_CONFIG_ERR` before the driver is configured, is reported the same way, and both buffers are handed back unchanged. With the guarded variant such a refusal may be delivered re-entrantly, from inside the client's own request call, so a client must be prepared for the completion before the request port returns. There is deliberately no `sync input` variant: a passive component may import `Drv.AsyncGuardedSpi`, and on no-RTOS targets the guard reduces to the platform `Os::Mutex` implementation (typically a flag).
 
-**Queued variant.** FPP does not allow an `async input` port to return a value, so `Drv.AsyncSpi` uses `Drv.SpiWriteReadQueuedRequest` instead. Because the request is dispatched later on the driver's own thread, a refusal cannot be reported synchronously: the driver must complete *every* request through `SpiWriteReadComplete`, reporting a refusal through the callback `status`.
-
-**Completion context.** `Drv.SpiWriteReadCallback` carries the outcome of the transfer in `status` (`SPI_OK` on success). An implementing driver must invoke `SpiWriteReadComplete` from a non-interrupt context: it is the driver's responsibility to leave ISR context (e.g. by deferring to a scheduled or queued handler) before calling downstream components. In the normal asynchronous flow the request handler has long returned when the transfer finishes, so the completion is naturally outside the driver's guard; a driver must not fire it from inside another guarded handler of its own (e.g. a guarded `run` that polls for DMA completion), because the component mutex is not recursive and a client issuing its next request from inside the completion handler would assert.
+**Completion context.** An implementing driver must invoke `SpiWriteReadComplete` from a non-interrupt context: it is the driver's responsibility to leave ISR context (e.g. by deferring to a scheduled or queued handler) before calling downstream components. In the normal asynchronous flow the request handler has long returned when the transfer finishes, so the completion is naturally outside the driver's guard; a driver must not fire it from inside another guarded handler of its own (e.g. a guarded `run` that polls for DMA completion), because the component mutex is not recursive and a client issuing its next request from inside the completion handler would assert.
 
 ## Drv.Tick
 

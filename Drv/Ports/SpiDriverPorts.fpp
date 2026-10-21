@@ -29,23 +29,14 @@ module Drv {
 
 module Drv {
 
-  @ Request an asynchronous SPI write/read transaction (guarded variant)
-  @ The return value is the acceptance status: SPI_OK means the transfer was started and
-  @ exactly one Drv.SpiWriteReadCallback invocation will follow for these buffers. Any other
-  @ status means the request was refused synchronously (e.g. SPI_BUSY_ERR, SPI_CONFIG_ERR)
-  @ and no callback follows; the caller keeps ownership of both buffers.
+  @ Request an asynchronous SPI write/read transaction (no return value, like Drv.I2cRequest)
+  @ Exactly one Drv.SpiWriteReadCallback invocation follows every request, carrying the
+  @ outcome in its status; a request the driver cannot take (e.g. SPI_BUSY_ERR while another
+  @ transaction is in flight, SPI_CONFIG_ERR before configuration) is reported the same way.
   port SpiWriteReadRequest(
                             ref writeBuffer: Fw.Buffer @< Buffer with data to write
                             ref readBuffer:  Fw.Buffer @< Buffer to read into, size set by the caller
-                          ) -> Drv.SpiStatus
-
-  @ Request an asynchronous SPI write/read transaction (queued variant, no return value)
-  @ Exactly one Drv.SpiWriteReadCallback invocation follows every request; a refused
-  @ request is reported through the callback status.
-  port SpiWriteReadQueuedRequest(
-                                  ref writeBuffer: Fw.Buffer @< Buffer with data to write
-                                  ref readBuffer:  Fw.Buffer @< Buffer to read into, size set by the caller
-                                )
+                          )
 
   @ Completion callback for an asynchronous SPI write/read transaction
   @ Both buffers are handed back with the data pointer and size they had in the request.

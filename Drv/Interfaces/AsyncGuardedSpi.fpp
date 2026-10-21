@@ -6,10 +6,10 @@ module Drv {
         # same index the request arrived on.
         # ----------------------------------------------------------------------
 
-        @ Port for asynchronous write/read transaction (returns the acceptance status)
+        @ Port for asynchronous write/read transaction (guarded)
         guarded input port SpiWriteRead: [Drv.AsyncSpiCfg.SpiDriverPorts] Drv.SpiWriteReadRequest
 
-        ###### Port below must be connected: every accepted request is completed through it ######
+        ###### Port below must be connected: every request is completed through it ######
 
         @ Port invoked when the write/read transaction completes
         output port SpiWriteReadComplete: [Drv.AsyncSpiCfg.SpiDriverPorts] Drv.SpiWriteReadCallback

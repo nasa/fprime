@@ -6,8 +6,8 @@ module Drv {
         # same index the request arrived on.
         # ----------------------------------------------------------------------
 
-        @ Port for asynchronous write/read transaction (queued; no acceptance status, see callback)
-        async input port SpiWriteRead: [Drv.AsyncSpiCfg.SpiDriverPorts] Drv.SpiWriteReadQueuedRequest
+        @ Port for asynchronous write/read transaction (queued)
+        async input port SpiWriteRead: [Drv.AsyncSpiCfg.SpiDriverPorts] Drv.SpiWriteReadRequest
 
         ###### Port below must be connected: every request is completed through it ######
 
