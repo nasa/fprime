@@ -125,11 +125,14 @@ is in use, its §0 approval precedes all of it, Phase 1 included; the
 - **Succinct over complete** in everything the user reads: verdict
   first, one line per item, long material attached. A gate message is
   ≤ 10 lines plus the SDD; a requirement is one sentence of ≤ 15
-  words; a test is one line. Hard budgets for the SDD sections the user
-  reads: §Requirements ≤ 60 lines with no request, intent or Terms
-  subsection; §Design ≤ 80 lines; §Tests one line per test — and no
-  paragraphs in any of the three: tables, one-line lists and the two
-  diagrams only. A paragraph or an over-budget section in those three
-  is a must-fix before the gate. If a reviewer or skill asks for more
+  words; a test is one table row. Hard budgets for the SDD the user
+  reads: an Introduction of a few sentences (no links); §Requirements
+  = the table, ≤ 60 lines with the introduction, no request, intent,
+  Terms or Waivers subsection; §Design ≤ 80 lines — block diagram,
+  tables, a Configure subsection (constants + code snippets, brief
+  exposition allowed) and a Behavior paragraph followed by the timing
+  diagram; §Tests = one three-column table (Test, Description,
+  Requirements). Prose only where those rules allow it; an over-budget
+  section or stray paragraph is a must-fix before the gate. If a reviewer or skill asks for more
   detail, it goes into the artifact for the builder (plan, design
   notes, review record), not into the user's quick-look.

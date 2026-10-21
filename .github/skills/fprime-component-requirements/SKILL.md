@@ -70,8 +70,10 @@ something that can be **verified** (a pass/fail observable). Goals
 that are not pass/fail ("should") go in the SDD narrative, not the
 table.
 
-The section opens with the table — no request or intent prose, no
-Terms or glossary subsection, no paragraphs anywhere in it. Ship the
+The SDD opens with a short **Introduction** — a few sentences on what
+the component is and does, self-contained, with no links or pointers
+to further context — and §Requirements is then the table alone: no
+request or intent prose, no Terms or glossary subsection. Ship the
 requirements as a three-column table — ID, requirement, verification
 method — with no rationale or review column and no rationale clauses
 in the rows ("… so that …" is deleted; the reviewer and the
@@ -90,8 +92,9 @@ Keep the fault-scenario rows (invalid input, concurrent request, host
 error, wrong device) — they are the rows reviewers find missing.
 When a requirement is retired or merged, delete the row and renumber
 nothing; no "retired" rows and no change history in the table. Fault
-scenarios the component does not own are listed, one line each, in a
-separate **Waivers** subsection (scenario → owner), not in the table.
+scenarios the component does not own are not listed in the SDD at all
+(no Waivers subsection); record them, with their owner, in the review
+record or the plan's decision log.
 
 Categories to cover:
 
@@ -123,8 +126,8 @@ requirement):
 
 ### Step 4 — Confirm with User
 
-Present the requirements section (table, waivers) to the user — it is
-SDD §Requirements, and that is all the user reads —
+Present the introduction and the requirements table to the user — that
+is all the user reads —
 and **wait for confirmation** before proceeding to design. Requirements are the
 contract — everything downstream is verified against them.
 
@@ -135,11 +138,12 @@ contract — everything downstream is verified against them.
 The **Requirements** section of the component's `docs/sdd.md`, and
 nothing longer:
 
+- an **Introduction** of a few sentences (what the component is and
+  does; no links or references to further context)
 - the requirements table (ID, requirement, verification) — one line
   per row of ≤ 15 words, no retired rows, no rationale or review column
-- **Waivers**: fault scenarios owned elsewhere, one line each
-- nothing else: no request, intent, Terms or glossary subsection, no
-  paragraphs; the whole section fits in 60 lines
+- nothing else: no request, intent, Terms, glossary or Waivers
+  subsection; introduction plus table fit in 60 lines
 
 Interface data and constraints go into the shall statements; review
 records, dispositions and elicitation answers stay outside the SDD.
@@ -151,9 +155,10 @@ Succinct beats complete: the reader has minutes, not hours.
 
 - Transcribing the datasheet into requirements (opcodes, frame bytes,
   timings) instead of one compliance row.
-- A request, intent, Terms or glossary subsection, or any paragraph,
-  in §Requirements; keeping retired rows; adding rationale /
-  review-disposition columns or "so that" clauses to the table.
+- A request, intent, Terms, glossary or Waivers subsection, links in
+  the introduction, or any paragraph in §Requirements; keeping retired
+  rows; adding rationale / review-disposition columns or "so that"
+  clauses to the table.
 
 - Guessing at what telemetry channels to add
 - Assuming command arguments without asking

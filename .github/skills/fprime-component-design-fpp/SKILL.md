@@ -154,15 +154,21 @@ section already exists), in this order and nothing more:
    when it is not obvious, as one clause.
 3. **Command / Event / Telemetry / Parameter tables** — one row each;
    omit a table that is empty with one sentence saying so.
-4. **Types and constants** — one table: name, type, value, meaning;
-   not prose, not an inline list.
-5. **Behavior** — a state table or at most 8 one-line steps, and
-   for any asynchronous or multi-context flow a **timing / sequence
-   diagram** (Mermaid `sequenceDiagram` or equivalent) showing the
-   request, the hardware completion and the reply on their contexts.
+4. **Configure** — the constants and configuration the integrator
+   sets (sizes, timeouts, speeds, instance arguments): what each one
+   means and a fenced code snippet showing how it is set (FPP
+   constant, `config/` header, or topology instance line). A little
+   exposition is welcome here; no separate "types" or "used types"
+   table — a type appears only where a snippet uses it.
+5. **Behavior** — a short paragraph (3–6 sentences) explaining how
+   the component behaves end to end — request, hardware completion,
+   reply, error paths — followed by the **timing / sequence diagram**
+   (Mermaid `sequenceDiagram` or equivalent) for any asynchronous or
+   multi-context flow. No state table and no step list.
 
-Budget: §Design is at most 80 lines and contains no paragraphs — every
-subsection is a diagram, a table or a list of one-liners. Keep each
+Budget: §Design is at most 80 lines; prose only where this list allows
+it (Configure exposition, the Behavior paragraph) — the rest is the
+diagram and tables. Keep each
 subsection to what a reviewer needs to check the FPP against the
 requirements; the SDD is the quick-look the user reads at the design
 gate, so brevity is part of the design quality. Anything longer (design

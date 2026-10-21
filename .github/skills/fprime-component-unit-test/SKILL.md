@@ -49,13 +49,15 @@ Adding this section does not reopen the design phase; any other SDD
 edit found necessary does (`phase-review-loop.md`, reopen). One row
 per requirement whose verification method is a unit test:
 
-| REQ-ID | Test | Stimulus (port call / command / parameter) | Observable assertion (event, telemetry, port output, state) |
-|---|---|---|---|
+| Test | Description | Requirements |
+|---|---|---|
 
-Add rows for every interface element (port, command, event, telemetry
-channel, parameter) not already exercised, and for the failure paths
-the requirements name. Each row states what is asserted, with values —
-not "verify it works". The test suite implements the list; a test with
+(the same three-column table as the system tests in SDD §Tests: name,
+one sentence of ≤ 15 words on what the test proves, REQ-IDs). Add rows
+for every interface element (port, command, event, telemetry channel,
+parameter) not already exercised, and for the failure paths the
+requirements name. Stimulus and asserted values belong in the test
+code and the plan, not in the SDD row. The test suite implements the list; a test with
 no row, or a row with no test, is a gap recorded in the SDD.
 
 ---
