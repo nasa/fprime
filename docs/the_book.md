@@ -68,7 +68,19 @@ types: fixed-width primitives plus enums, arrays, and structs defined in FPP.
 - [Data Structures and Types](user-manual/overview/05-enum-arr-ser.md)
 - [F´ Numerical Types](reference/numerical-types.md)
 
-### Chapter 5: Modeling with FPP
+### Chapter 5: Projects, Deployments, and the Development Process
+
+You have now built components; this chapter zooms out. A **project** holds your code and configuration, and a
+**deployment** is one executable built from a topology. F´ has a recommended development process: requirements, then
+FPP design, implementation, unit testing, topology integration, and integration testing. The LED Blinker tutorial
+follows that process end to end on a more realistic component. For now, do Steps 1–7 and 9 on your development
+machine; Step 8 (running on hardware) is covered in Chapter 12.
+
+- [Projects and Deployments](user-manual/overview/proj-dep.md)
+- [F´ Development Process](user-manual/overview/development-practice.md)
+- [LED Blinker Tutorial](../tutorials-led-blinker/docs/led-blinker.md)
+
+### Chapter 6: Modeling with FPP
 
 FPP (F Prime Prime) is the language used to describe types, ports, components, and topologies. The FPP compiler
 generates the C++ base classes, the ground dictionary, and the topology setup code, so you only write the component
@@ -82,18 +94,6 @@ User's Guide to learn the language in depth and keep the spec for reference.
   [Defining Topologies](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Topologies))
 - [FPP Language Specification](https://nasa.github.io/fpp/fpp-spec.html) *(reference)*
 - [Autocoded Functions and Component Classes](user-manual/framework/autocoded-functions.md): what the generated C++ gives you
-
-### Chapter 6: Projects, Deployments, and the Development Process
-
-You have now built components; this chapter zooms out. A **project** holds your code and configuration, and a
-**deployment** is one executable built from a topology. F´ has a recommended development process: requirements, then
-FPP design, implementation, unit testing, topology integration, and integration testing. The LED Blinker tutorial
-follows that process end to end on a more realistic component. For now, do Steps 1–7 and 9 on your development
-machine; Step 8 (running on hardware) is covered in Chapter 12.
-
-- [Projects and Deployments](user-manual/overview/proj-dep.md)
-- [F´ Development Process](user-manual/overview/development-practice.md)
-- [LED Blinker Tutorial](../tutorials-led-blinker/docs/led-blinker.md)
 
 ---
 
@@ -113,8 +113,9 @@ and `fprime-util --help` lists the rest. Toolchains and platforms come later (Ch
 
 ### Chapter 8: Topologies and Subtopologies
 
-A real deployment has dozens of component instances. F´ ships **subtopologies**, pre-wired groups of standard
-components, for command and data handling (CdhCore), communications (ComFprime / ComCcsds), and file handling.
+A real deployment typically has dozens to low hundreds of component instances; F´ places no limit on the number. F´
+ships **subtopologies**, pre-wired groups of standard components, for command and data handling (CdhCore),
+communications (ComFprime / ComCcsds), and file handling.
 Most projects import these and connect their own components to them. Learn how instances and topologies are
 defined in FPP, then how to use and create subtopologies. Each standard component has a Software Design Document
 (SDD) describing its ports, commands, events, and behavior. Find SDDs under Reference → Software Design Documents in
