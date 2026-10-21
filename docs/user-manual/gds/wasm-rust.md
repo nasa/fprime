@@ -128,7 +128,7 @@ fprime-wasm verify
 
 > [!TIP]
 > For what a sequence costs for uplink and on board see
-> [Advanced Sequence Size In F´](./wasm-size.md).
+> [Rust Advanced Sequence Size In F´](./wasm-size.md).
 
 ## Running The Sequence
 
