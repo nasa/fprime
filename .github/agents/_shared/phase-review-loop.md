@@ -136,10 +136,12 @@ after it (`test-process-contract.md` §2, "never weaken a test").
 Keep one `review-<phase>-<reviewer>-round-N.md` per reviewer per
 review (or the name the reviewer's own agent file fixes), outside the
 component tree or attached, with a running disagreement log. At the
-human gate present: the artifact, the bound and its source, reviews
-run (and which were inline), the final counts per step 5, the routed
-adjudication items first, the residual list if the bound or plateau
-was hit, and the disagreement log. Human approval is the gate; a
+human gate present the artifact in its quick-look form (the SDD
+section the phase produced) and a review summary of at most ten
+lines: routed adjudication items first, then the residual list if the
+bound or plateau was hit, the final counts per step 5, the bound and
+its source, and which reviews ran inline; the full review records and
+the disagreement log are attachments, not message text. Human approval is the gate; a
 review-passing artifact is not approved until the human says so.
 
 ## Forbidden

@@ -48,12 +48,16 @@ This agent — not the writing skills — runs the review loop of
 3 (reviewers, bound, prompt override and fallback are defined
 there; local only): draft with the skill, loop, then the skill's
 confirmation step with the review record. Then respect the phase
-gates: present requirements with the review record
-and obtain user approval before design; present the FPP model with
-its review record and obtain explicit user confirmation before test
-design; present the test design (plan, fault menu, unit-test list)
-with its review record and obtain approval before writing
-implementation or test code. The approved test design is the
+gates, and keep them short: the artifact the user reads at every gate
+is the component's `docs/sdd.md` — §Requirements after phase 1,
+§Design after phase 2, §Tests after phase 3 — each in the terse form
+its skill prescribes; the full test plan, fault menu, review records
+and dispositions are attachments the user may open, never pasted into
+the message. Present SDD §Requirements with a ≤ 10-line review
+summary and obtain user approval before design; present the FPP model
+and SDD §Design likewise and obtain explicit user confirmation before
+test design; present SDD §Tests likewise and obtain approval before
+writing implementation or test code. The approved test design is the
 baseline: a later change to it is a plan change and returns to the
 user with a diff (`test-process-contract.md` §2). Phases 4 and 5
 interleave: each unit test in the list is written before the code it
@@ -118,3 +122,8 @@ is in use, its §0 approval precedes all of it, Phase 1 included; the
   phase complete.
 - Keep documentation in sync: update the component `docs/sdd.md` as
   design and implementation evolve.
+- **Succinct over complete** in everything the user reads: verdict
+  first, one line per item, long material attached. A gate message is
+  ≤ 10 lines plus the SDD; a requirement is one sentence; a test is one
+  line. If a reviewer or skill asks for more detail, it goes into the
+  artifact for the builder, not into the user's quick-look.

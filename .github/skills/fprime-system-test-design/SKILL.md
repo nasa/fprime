@@ -158,8 +158,20 @@ from it (contract §5):
 
 ## 5. Hand-off
 
-Deliver the plan as a single markdown file plus the fault menu as
-JSON. Reviewer findings are recorded per the loop's record rule
+Two audiences, two artifacts:
+
+- **The human reads the SDD only.** Add a **Tests** section to
+  `docs/sdd.md` that is a list — one line per test: `ID — one
+  sentence on what it proves — REQ-IDs` — covering the system tests
+  of this plan and the unit-test list rows (`fprime-component-unit-test`).
+  No procedures, pass rules, metrics, menus or decision logs there;
+  a REQ-ID with no test gets one line naming the waiver. That section
+  is the test-design gate's quick-look.
+- **The builder and the reviewer read the plan.** Deliver the full plan
+  (§2 structure, one entry per test) as a single markdown file plus
+  the fault menu as JSON, outside the component tree; it is the
+  baseline the harness implements and the checkers evaluate, and it
+  is not pasted into the SDD or into chat. Reviewer findings are recorded per the loop's record rule
 (`phase-review-loop.md`, "Record and gate"); the dispositions and the
 disagreement log are appended to §8 of the plan. The plan goes to the
 human only when the loop's stop rule is met (`phase-review-loop.md`,

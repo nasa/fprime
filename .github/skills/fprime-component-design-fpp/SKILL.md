@@ -137,9 +137,32 @@ errors before proceeding.
 
 ### Step 5 — Draft the SDD
 
-Draft `docs/sdd.md`: the approved requirements table, the component
-kind and a port table with the rationale for each kind choice, and the
-command, event, telemetry and parameter tables.
+Draft the **Design** section of `docs/sdd.md` (the requirements
+section already exists), in this order and nothing more:
+
+1. **Block diagram** — one box for the component; input ports drawn
+   as small squares on the **left** edge, output ports as small
+   squares on the **right** edge, each annotated `name : PortType`
+   with `[N]` when it is a port array (special ports — command,
+   event, telemetry, time, parameter — are a single note under the
+   box, not squares). Generate it from the FPP model (an SVG or a
+   fenced ASCII box); do not use a flowchart of peer components and
+   do not include the topology — a topology delta belongs to the
+   topology PR, not to the component SDD.
+2. **Port table** — name, kind (sync/async/guarded, array size),
+   type, one-line purpose and the reason for the kind choice.
+3. **Command / Event / Telemetry / Parameter tables** — one row each;
+   omit a table that is empty with one sentence saying so.
+4. **Types and constants** — one table: name, type, value, meaning;
+   not prose, not an inline list.
+5. **Behavior** — the state machine or sequence as a short list, and
+   for any asynchronous or multi-context flow a **timing / sequence
+   diagram** (Mermaid `sequenceDiagram` or equivalent) showing the
+   request, the hardware completion and the reply on their contexts.
+
+Keep each subsection to what a reviewer needs to check the FPP against
+the requirements; the SDD is the quick-look the user reads at the
+design gate, so brevity is part of the design quality.
 
 ### Step 6 — Confirm Design with User
 
@@ -152,7 +175,10 @@ implementation and tests are written against it.
 ## Output Artifact
 
 - The `.fpp` model (and any new port definitions) that builds.
-- The `docs/sdd.md` draft of Step 5.
+- The `docs/sdd.md` **Design** section of Step 5 (block diagram with
+  ports on the left/right edges, tables, types and constants, behavior
+  with a sequence diagram where contexts interleave) — no topology
+  delta, no review material.
 
 ---
 
