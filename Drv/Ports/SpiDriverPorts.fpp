@@ -29,7 +29,7 @@ module Drv {
 
 module Drv {
 
-  @ Request an asynchronous SPI write/read transaction (guarded and sync variants)
+  @ Request an asynchronous SPI write/read transaction (guarded variant)
   @ The return value is the acceptance status: SPI_OK means the transfer was started and
   @ exactly one Drv.SpiWriteReadCallback invocation will follow for these buffers. Any other
   @ status means the request was refused synchronously (e.g. SPI_BUSY_ERR, SPI_CONFIG_ERR)

@@ -17,7 +17,6 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/Gpio.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/I2c.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PassiveAsyncByteStreamDriverClient.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/PassiveAsyncSpi.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PassiveBufferDriver.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PassiveBufferDriverClient.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/PassiveByteStreamDriverClient.fpp"
