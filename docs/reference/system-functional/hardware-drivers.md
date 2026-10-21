@@ -67,6 +67,8 @@ The I2C interface provides read, write, and combined write-then-read operations 
 
 The SPI interface provides read and write operations for Serial Peripheral Interface bus communication. The Linux SPI Driver implements this interface using the Linux SPI device interface.
 
+Asynchronous SPI interfaces (`Drv.AsyncSpi`, `Drv.AsyncGuardedSpi`, `Drv.PassiveAsyncSpi`) are also defined for drivers that complete transfers by DMA or interrupt: the request returns immediately and the result is delivered on a completion port, indexed by device slot. The core framework defines these interfaces but does not ship an implementation; see the [Driver Interfaces SDD](https://github.com/nasa/fprime/blob/devel/Drv/Interfaces/docs/sdd.md).
+
 ### Off Nominal
 
 - Network drivers report connection failures and reconnect automatically when configured to do so.
