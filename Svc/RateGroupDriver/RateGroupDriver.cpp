@@ -4,7 +4,6 @@
 #include <Utils/Algorithms.hpp>
 #include <cstdio>
 #include <cstring>
-#include <limits>
 
 namespace Svc {
 
@@ -25,8 +24,8 @@ void RateGroupDriver::configure(const DividerSet& dividerSet) {
                   static_cast<FwAssertArgType>(dividerSet.dividers[entry].offset),
                   static_cast<FwAssertArgType>(dividerSet.dividers[entry].divisor));
         this->m_dividers[entry] = dividerSet.dividers[entry];
-        // rollover value should be the least common multiple of all dividers to make sure integer rollover doesn't jump cycles
-        // only use non-zero dividers
+        // Rollover value should be the least common multiple of all dividers to make sure integer rollover doesn't jump
+        // cycles. Only use non-zero dividers:
         if (dividerSet.dividers[entry].divisor != 0) {
             this->m_rollover = Utils::lcm(this->m_rollover, dividerSet.dividers[entry].divisor);
         }
