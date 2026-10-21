@@ -161,9 +161,11 @@ from it (contract §5):
 Two audiences, two artifacts:
 
 - **The human reads the SDD only.** Add a **Tests** section to
-  `docs/sdd.md` that is a list — one line per test: `ID — one
-  sentence on what it proves — REQ-IDs` — covering the system tests
-  of this plan and the unit-test list rows (`fprime-component-unit-test`).
+  `docs/sdd.md` that is a list and nothing else — no preamble, no
+  paragraphs — one line per test: `ID — one sentence (≤ 15 words) on
+  what it proves — REQ-IDs` — covering the system tests of this plan
+  and the unit-test list rows (`fprime-component-unit-test`), which
+  take the same one-line form (no procedure or expected-result columns).
   No procedures, pass rules, metrics, menus or decision logs there;
   a REQ-ID with no test gets one line naming the waiver. That section
   is the test-design gate's quick-look.

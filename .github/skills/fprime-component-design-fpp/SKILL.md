@@ -150,19 +150,24 @@ section already exists), in this order and nothing more:
    do not include the topology — a topology delta belongs to the
    topology PR, not to the component SDD.
 2. **Port table** — name, kind (sync/async/guarded, array size),
-   type, one-line purpose and the reason for the kind choice.
+   type, purpose in ≤ 8 words; the reason for the kind choice only
+   when it is not obvious, as one clause.
 3. **Command / Event / Telemetry / Parameter tables** — one row each;
    omit a table that is empty with one sentence saying so.
 4. **Types and constants** — one table: name, type, value, meaning;
    not prose, not an inline list.
-5. **Behavior** — the state machine or sequence as a short list, and
+5. **Behavior** — a state table or at most 8 one-line steps, and
    for any asynchronous or multi-context flow a **timing / sequence
    diagram** (Mermaid `sequenceDiagram` or equivalent) showing the
    request, the hardware completion and the reply on their contexts.
 
-Keep each subsection to what a reviewer needs to check the FPP against
-the requirements; the SDD is the quick-look the user reads at the
-design gate, so brevity is part of the design quality.
+Budget: §Design is at most 80 lines and contains no paragraphs — every
+subsection is a diagram, a table or a list of one-liners. Keep each
+subsection to what a reviewer needs to check the FPP against the
+requirements; the SDD is the quick-look the user reads at the design
+gate, so brevity is part of the design quality. Anything longer (design
+notes, alternatives, rationale) goes in a separate `docs/design-notes.md`
+the user is not asked to read.
 
 ### Step 6 — Confirm Design with User
 

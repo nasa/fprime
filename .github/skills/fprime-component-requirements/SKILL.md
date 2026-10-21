@@ -70,18 +70,18 @@ something that can be **verified** (a pass/fail observable). Goals
 that are not pass/fail ("should") go in the SDD narrative, not the
 table.
 
-Write the request and its intent as a short prose paragraph (quote the
-user where it matters); do not tabulate the request. Then ship the
+The section opens with the table — no request or intent prose, no
+Terms or glossary subsection, no paragraphs anywhere in it. Ship the
 requirements as a three-column table — ID, requirement, verification
-method — with no rationale or review column (rationale that matters
-goes into the shall statement itself, e.g. "… so that a stray
-completion is detected"):
+method — with no rationale or review column and no rationale clauses
+in the rows ("… so that …" is deleted; the reviewer and the
+verification column carry the why):
 
 | ID | Requirement | Verification |
 |---|---|---|
 | REQ-\<Component\>-001 | The component shall \<behavior\>. | Unit test / integration test / inspection — strongest feasible |
 
-Keep every row to one sentence. For a device driver, do not restate
+Keep every row to one sentence of at most 15 words. For a device driver, do not restate
 the datasheet: "shall read N bytes at an offset", "shall write N
 bytes at an offset" and one row "reads and writes shall be compliant
 with \<datasheet, revision\>" are sufficient; frame bytes, opcodes and
@@ -123,8 +123,8 @@ requirement):
 
 ### Step 4 — Confirm with User
 
-Present the requirements section (prose request, table, waivers) to
-the user — it is SDD §Requirements, and that is all the user reads —
+Present the requirements section (table, waivers) to the user — it is
+SDD §Requirements, and that is all the user reads —
 and **wait for confirmation** before proceeding to design. Requirements are the
 contract — everything downstream is verified against them.
 
@@ -135,10 +135,11 @@ contract — everything downstream is verified against them.
 The **Requirements** section of the component's `docs/sdd.md`, and
 nothing longer:
 
-- the request and its intent as prose (a paragraph, not a table)
 - the requirements table (ID, requirement, verification) — one line
-  per row, no retired rows, no rationale or review column
+  per row of ≤ 15 words, no retired rows, no rationale or review column
 - **Waivers**: fault scenarios owned elsewhere, one line each
+- nothing else: no request, intent, Terms or glossary subsection, no
+  paragraphs; the whole section fits in 60 lines
 
 Interface data and constraints go into the shall statements; review
 records, dispositions and elicitation answers stay outside the SDD.
@@ -150,8 +151,9 @@ Succinct beats complete: the reader has minutes, not hours.
 
 - Transcribing the datasheet into requirements (opcodes, frame bytes,
   timings) instead of one compliance row.
-- Tabulating the request, keeping retired rows, or adding rationale /
-  review-disposition columns to the table.
+- A request, intent, Terms or glossary subsection, or any paragraph,
+  in §Requirements; keeping retired rows; adding rationale /
+  review-disposition columns or "so that" clauses to the table.
 
 - Guessing at what telemetry channels to add
 - Assuming command arguments without asking
