@@ -199,7 +199,7 @@ Here is an example with 2 sections and 4 groups (max group identifier of 3). In 
 
 ### 4.3 Default Output Rate Limits 
 
-Default rate limits for each section/group pair is set by the `TELEMETRY_SECTION_DEFAULTS` constant. It must be a constant array of type `TlmPacketizer::SectionGroupConfig[NUM_SECTIONS][MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1]`. Each field at `TELEMETRY_SECTION_DEFAULTS[section][group]` is set to a struct containing the default `RateLogic`, `MinDelta`, and `MaxDelta` for that section/group pair. These defaults are used to initialize the section/group pair's configuration upon component initialization, but can be changed at runtime using the `CONFIGURE_GROUP_RATES` command.
+Default rate limits for each section/group pair is set by the `TELEMETRY_SECTION_DEFAULTS` constant. It must be a constant of the `SectionConfigs` array type. Each field at `TELEMETRY_SECTION_DEFAULTS[section][group]` is a `Svc::TlmSendConfig` carrying the default `enabled`, `forceEnabled`, `rateLogic`, `min`, and `max` for that section/group pair. These defaults are used to initialize the section/group pair's configuration upon component initialization, but can be changed at runtime using the `CONFIGURE_GROUP_RATES` command.
 
 Here is an example with 2 sections and 4 groups that sets all section/group pairs to update-on-change with no min nor max.
 

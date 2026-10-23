@@ -1,7 +1,7 @@
 #####
 # TlmPacketizer Ports:
 #
-# A port enabling sections of the TlmPacketizer
+# Ports and types for Svc::TlmPacketizer
 #####
 
 module Svc {
