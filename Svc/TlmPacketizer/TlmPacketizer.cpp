@@ -784,6 +784,8 @@ bool TlmPacketizer::mirrorOverride(const Svc::TelemetrySection& section,
         return true;
     }
     const FwSizeType sectionIndex = static_cast<FwSizeType>(section.e);
+    // A cleared slot has no policy of its own: GROUP_DEFAULT records carry a default-constructed placeholder
+    // that packetOverrideIn_handler ignores; only `source` is meaningful for them.
     const Svc::TlmSendConfig config = (source == Svc::PacketConfigSource::OVERRIDDEN)
                                           ? this->m_packetOverride[sectionIndex][pkt]
                                           : Svc::TlmSendConfig();

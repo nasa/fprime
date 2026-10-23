@@ -118,11 +118,11 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     void perPacketOverrideTest(void);
 
     //! Per-packet command test: ENABLE_PACKET / FORCE_PACKET / CONFIGURE_PACKET_RATES update
-    //! the override table + mirror one entry out configOut; bad args/id -> VALIDATION_ERROR
+    //! the override table + mirror one entry out packetOverrideOut; bad args/id -> VALIDATION_ERROR
     void perPacketCommandsTest(void);
 
-    //! configIn reload test: a batch pushed over configIn is applied to the volatile table
-    //! (unknown ids warned + skipped) and is not echoed back out configOut
+    //! packetOverrideIn reload test: a batch pushed over packetOverrideIn is applied to the volatile table
+    //! (unknown ids warned + skipped) and is not echoed back out packetOverrideOut
     void configInReloadTest(void);
 
     //! GET_PACKET_CONFIG test: effective config reported for a known id; unknown id warns
@@ -133,17 +133,17 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     void seedFromEffectiveConfigTest(void);
 
     //! CLEAR_PACKET_OVERRIDE test: an override is cleared back to group behavior and the cleared
-    //! state is mirrored out configOut; unknown id -> VALIDATION_ERROR + warning
+    //! state is mirrored out packetOverrideOut; unknown id -> VALIDATION_ERROR + warning
     void clearPacketOverrideTest(void);
 
     //! Mirror allocation failure test: when bufferAllocate yields no buffer, the command answers
     //! EXECUTION_ERROR, ConfigMirrorAllocFailed is emitted, and the override is NOT applied locally
     void mirrorAllocFailTest(void);
 
-    //! configIn clear reload test: a GROUP_DEFAULT record reverts an overridden packet to group behavior
+    //! packetOverrideIn clear reload test: a GROUP_DEFAULT record reverts an overridden packet to group behavior
     void configInClearReloadTest(void);
 
-    //! configIn malformed reload test: a truncated/invalid record ends the reload with ConfigReloadFailed,
+    //! packetOverrideIn malformed reload test: a truncated/invalid record ends the reload with ConfigReloadFailed,
     //! records before it still apply, and an invalid buffer is still returned via bufferDeallocate
     void configInMalformedReloadTest(void);
 
