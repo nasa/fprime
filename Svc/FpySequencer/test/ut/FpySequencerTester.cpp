@@ -690,6 +690,184 @@ Signal FpySequencerTester::tester_popSerializable_directiveHandler(
     return this->cmp.popSerializable_directiveHandler(directive, err);
 }
 
+void FpySequencerTester::tester_directive_waitRel_internalInterfaceHandler(
+    const FpySequencer_WaitRelDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_waitRel_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_waitAbs_internalInterfaceHandler(
+    const FpySequencer_WaitAbsDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_waitAbs_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_goto_internalInterfaceHandler(const FpySequencer_GotoDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_goto_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_if_internalInterfaceHandler(const FpySequencer_IfDirective& directive,
+                                                                      U64 sequenceIndex) {
+    this->cmp.directive_if_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_noOp_internalInterfaceHandler(const FpySequencer_NoOpDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_noOp_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushTlmVal_internalInterfaceHandler(
+    const FpySequencer_PushTlmValDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushTlmVal_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushTlmValAndTime_internalInterfaceHandler(
+    const FpySequencer_PushTlmValAndTimeDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushTlmValAndTime_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushPrm_internalInterfaceHandler(
+    const FpySequencer_PushPrmDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushPrm_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_constCmd_internalInterfaceHandler(
+    const FpySequencer_ConstCmdDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_constCmd_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_stackOp_internalInterfaceHandler(
+    const FpySequencer_StackOpDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_stackOp_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_exit_internalInterfaceHandler(const FpySequencer_ExitDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_exit_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_allocate_internalInterfaceHandler(
+    const FpySequencer_AllocateDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_allocate_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_storeRelConstOffset_internalInterfaceHandler(
+    const FpySequencer_StoreRelConstOffsetDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_storeRelConstOffset_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushVal_internalInterfaceHandler(
+    const FpySequencer_PushValDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushVal_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_loadRel_internalInterfaceHandler(
+    const FpySequencer_LoadRelDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_loadRel_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_discard_internalInterfaceHandler(
+    const FpySequencer_DiscardDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_discard_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_memCmp_internalInterfaceHandler(const FpySequencer_MemCmpDirective& directive,
+                                                                          U64 sequenceIndex) {
+    this->cmp.directive_memCmp_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_stackCmd_internalInterfaceHandler(
+    const FpySequencer_StackCmdDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_stackCmd_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushTime_internalInterfaceHandler(
+    const FpySequencer_PushTimeDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushTime_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_setSeed_internalInterfaceHandler(
+    const FpySequencer_SetSeedDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_setSeed_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushRand_internalInterfaceHandler(
+    const FpySequencer_PushRandDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushRand_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_getField_internalInterfaceHandler(
+    const FpySequencer_GetFieldDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_getField_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_peek_internalInterfaceHandler(const FpySequencer_PeekDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_peek_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_storeRel_internalInterfaceHandler(
+    const FpySequencer_StoreRelDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_storeRel_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_call_internalInterfaceHandler(const FpySequencer_CallDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_call_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_return_internalInterfaceHandler(const FpySequencer_ReturnDirective& directive,
+                                                                          U64 sequenceIndex) {
+    this->cmp.directive_return_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_loadAbs_internalInterfaceHandler(
+    const FpySequencer_LoadAbsDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_loadAbs_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_storeAbs_internalInterfaceHandler(
+    const FpySequencer_StoreAbsDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_storeAbs_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_storeAbsConstOffset_internalInterfaceHandler(
+    const FpySequencer_StoreAbsConstOffsetDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_storeAbsConstOffset_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_popEvent_internalInterfaceHandler(
+    const FpySequencer_PopEventDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_popEvent_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_popSerializable_internalInterfaceHandler(
+    const FpySequencer_PopSerializableDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_popSerializable_internalInterfaceHandler(directive, sequenceIndex);
+}
+
 Svc::Signal FpySequencerTester::tester_dispatchStatement() {
     return this->cmp.dispatchStatement();
 }

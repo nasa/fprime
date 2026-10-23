@@ -86,6 +86,7 @@ relevant one instead of improvising:
   sequences `fprime-component-requirements`,
   `fprime-component-design-fpp`, `fprime-component-implementation`,
   `fprime-component-unit-test`, `fprime-component-integration-test`.
+- Reviewing a requirements set before design: `fprime-requirements-review`.
 - Modifying pre-existing code (bug fixes, small changes, cleanup):
   `fprime-maintenance` — the doctrine of minimal effect.
 - Writing unit tests: `fprime-unit-testing`.
@@ -102,7 +103,10 @@ Pull-request review is performed by the multi-agent flow in
 [`.github/agents/`](.github/agents/), entered through
 `review-orchestrator.agent.md`. Development work (components,
 topologies, build system) is entered through
-`fprime-development.agent.md`, which sequences the skills above.
+`fprime-development.agent.md`, which sequences the skills above. A
+requirements set is reviewed before design through
+`requirements-review.agent.md`, and an FPP design through the
+reviewers named in `.github/agents/_shared/phase-review-loop.md`.
 
 ## Contributing
 
@@ -110,6 +114,9 @@ topologies, build system) is entered through
   before implementation. Keep changes focused; large cross-cutting PRs are
   declined. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and
   [`GOVERNANCE.md`](GOVERNANCE.md).
+- When opening a pull request, follow "Recommendations for Opening a PR"
+  in [`CONTRIBUTING.md`](CONTRIBUTING.md) for the title, linked issues,
+  and description.
 - **Generative-AI usage must be disclosed** in the pull request, per
   [`AI_POLICY.md`](AI_POLICY.md): fill in the "AI Used (y/n)" entry and describe
   the assistance in the "AI Usage" section of the PR template.

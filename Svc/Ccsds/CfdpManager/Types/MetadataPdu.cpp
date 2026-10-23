@@ -114,13 +114,14 @@ Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuff
         return status;
     }
 
-    // Segmentation control byte
-    // bit 7: closure_requested
-    // bits 6-4: reserved (000b)
+    // Parameter field byte (CCSDS 727.0-B-5 Table 5-9)
+    // bit 7: reserved (0)
+    // bit 6: closure_requested
+    // bits 5-4: reserved (00b)
     // bits 3-0: checksum_type
     U8 segmentationControl = 0;
     segmentationControl =
-        static_cast<U8>(segmentationControl | static_cast<U8>((this->m_closureRequested & 0x01U) << 7));
+        static_cast<U8>(segmentationControl | static_cast<U8>((this->m_closureRequested & 0x01U) << 6));
     segmentationControl = static_cast<U8>(segmentationControl | (static_cast<U8>(this->m_checksumType) & 0x0FU));
 
     status = serialBuffer.serializeFrom(segmentationControl);
@@ -177,7 +178,7 @@ Fw::SerializeStatus MetadataPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBu
         return status;
     }
 
-    this->m_closureRequested = (segmentationControl >> 7) & 0x01;
+    this->m_closureRequested = (segmentationControl >> 6) & 0x01;
     U8 checksumTypeVal = segmentationControl & 0x0F;
     this->m_checksumType = static_cast<ChecksumType>(checksumTypeVal);
 

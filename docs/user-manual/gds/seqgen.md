@@ -13,7 +13,7 @@ For more information on the underlying F' standard components, reference the [Sv
 > Users may create multiple Command Sequencer components and manage them using a single [Svc::SeqDispatcher](../../../Svc/SeqDispatcher/docs/sdd.md) component. This is useful for running sequences in parallel or organizing sequences by subsystem.
 
 > [!TIP]
-> F´ also supports [advanced sequencing](./wasm-rust.md) for non-linear sequences.
+> F´ also supports advanced sequencing in [Fpy](./fpy.md) and [Rust](./wasm-rust.md) for non-linear sequences.
 
 ## Writing an F´ Sequence File
 
