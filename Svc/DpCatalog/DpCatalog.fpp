@@ -79,10 +79,13 @@ module Svc {
     async command BUILD_CATALOG \
       opcode 0
 
-    @ Start transmitting catalog
+    @ Start transmitting catalog. Only products whose priority is within [startPriority, endPriority] are sent;
+    @ use 0 and the maximum FwDpPriorityType value to transmit the whole catalog
     async command START_XMIT_CATALOG (
                                     wait: Fw.Wait, @< have START_XMIT command complete wait for catalog to complete transmitting
-                                    remainActive: bool @< should the catalog resume transmission when Dps are added at runtime
+                                    remainActive: bool, @< should the catalog resume transmission when Dps are added at runtime
+                                    startPriority: FwDpPriorityType, @< lowest priority value (most urgent) to transmit, inclusive
+                                    endPriority: FwDpPriorityType @< highest priority value (least urgent) to transmit, inclusive
                                   ) \
       opcode 1
 
@@ -450,6 +453,25 @@ module Svc {
       id 50 \
       format "Stale fileDone context {} status {}, no matching transmit in flight" \
       throttle 10
+
+    @ START_XMIT_CATALOG rejected because the start priority exceeds the end priority
+    event XmitPriorityRangeInvalid(
+                            startPriority: FwDpPriorityType @< requested start of the priority range
+                            endPriority: FwDpPriorityType @< requested end of the priority range
+                          ) \
+      severity warning low \
+      id 51 \
+      format "Invalid priority range: start {} exceeds end {}. Transmit not started."
+
+    @ Catalog transmission started for a priority range (emitted on every accepted START_XMIT_CATALOG;
+    @ the legacy CatalogXmitStarted event is not emitted)
+    event CatalogXmitRangeStarted(
+                            startPriority: FwDpPriorityType @< start of the priority range, inclusive
+                            endPriority: FwDpPriorityType @< end of the priority range, inclusive
+                          ) \
+      severity activity high \
+      id 52 \
+      format "Catalog transmission started for priorities {} through {}"
 
 
     # ----------------------------------------------------------------------
