@@ -1,4 +1,12 @@
 module Svc {
+    @ Result of inspecting the candidate at the current circular-buffer offset
+    enum FrameDetectorStatus {
+        FRAME_DETECTED = 0
+        NO_FRAME_DETECTED = 1
+        MORE_DATA_NEEDED = 2
+        CRC_FAILURE = 3
+    }
+
     @ Accumulates data into frames
     passive component FrameAccumulator {
 
@@ -28,6 +36,14 @@ module Svc {
         event FrameDetectionValidFrameDropped \
             severity warning high \
             format "A valid frame was detected but dropped"
+
+        @ A complete candidate failed the configured detector's CRC check; counts saturate at U64 maximum
+        @ Byte count covers all actual resynchronization discards, including non-CRC search discards
+        event FrameCrcFailure(crcFailures: U64, resyncBytesDiscarded: U64) \
+            severity warning low \
+            format "CRC failures={}, resynchronization bytes discarded={}" \
+            throttle FrameAccumulatorCfg.CrcFailureWarningThrottle \
+                every { seconds = FrameAccumulatorCfg.CrcFailureWarningPeriodSeconds }
 
         ###############################################################################
         # Standard AC Ports for Events 

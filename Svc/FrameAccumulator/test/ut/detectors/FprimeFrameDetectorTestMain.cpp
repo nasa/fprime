@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include <limits>
+#include "Fw/Test/UnitTest.hpp"
 #include "STest/Random/Random.hpp"
 #include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
 #include "Utils/Hash/Hash.hpp"
@@ -215,6 +216,103 @@ TEST(FprimeFrameDetector, TestHandlesMaximumLengthField) {
     status = fprime_detector.detect(circular_buffer, size_out);
     EXPECT_EQ(status, Svc::FrameDetector::Status::NO_FRAME_DETECTED);
 }
+
+namespace {
+// Independently encoded frame, with CRC32 checked using Python zlib.
+constexpr U8 GOLDEN_FRAME[] = {0xDE, 0xAD, 0xBE, 0xEF, 0, 0, 0, 4, 1, 2, 3, 4, 0xE3, 0xF9, 0xA0, 0x73};
+}  // namespace
+
+TEST(FprimeFrameDetector, GoldenFrameCrc) {
+    REQUIREMENT("SVC-FRAME-ACCUMULATOR-005");
+    COMMENT("Accept the independent golden frame without consuming the input ring.");
+    const Svc::FrameDetectors::FprimeFrameDetector detector;
+    U8 storage[sizeof(GOLDEN_FRAME)] = {};
+    Types::CircularBuffer ring(storage, sizeof(storage));
+    ASSERT_EQ(ring.serialize(GOLDEN_FRAME, sizeof(GOLDEN_FRAME)), Fw::FW_SERIALIZE_OK);
+    FwSizeType size = 0;
+    EXPECT_EQ(detector.detect(ring, size), Svc::FrameDetector::FRAME_DETECTED);
+    EXPECT_EQ(size, sizeof(GOLDEN_FRAME));
+    EXPECT_EQ(ring.get_allocated_size(), sizeof(GOLDEN_FRAME));
+}
+
+TEST(FprimeFrameDetector, PayloadAndTrailerCrcFailures) {
+    REQUIREMENT("SVC-FRAME-ACCUMULATOR-005");
+    COMMENT("Report a complete CRC-rejected candidate distinctly, with no discard length or ring mutation.");
+    const Svc::FrameDetectors::FprimeFrameDetector detector;
+    constexpr FwSizeType corruptOffsets[] = {8, 15};
+    for (const FwSizeType corruptOffset : corruptOffsets) {
+        U8 storage[sizeof(GOLDEN_FRAME)] = {};
+        U8 frame[sizeof(GOLDEN_FRAME)] = {};
+        ::memcpy(frame, GOLDEN_FRAME, sizeof(frame));
+        frame[corruptOffset] ^= 1;
+        Types::CircularBuffer ring(storage, sizeof(storage));
+        ASSERT_EQ(ring.serialize(frame, sizeof(frame)), Fw::FW_SERIALIZE_OK);
+        FwSizeType size = 99;
+        EXPECT_EQ(detector.detect(ring, size), Svc::FrameDetector::CRC_FAILURE);
+        EXPECT_EQ(size, 0);
+        EXPECT_EQ(ring.get_allocated_size(), sizeof(frame));
+    }
+}
+
+TEST(FprimeFrameDetector, FragmentedCrcCandidate) {
+    REQUIREMENT("SVC-FRAME-ACCUMULATOR-005");
+    COMMENT("Never signal a CRC failure until the entire candidate including its trailer is available.");
+    const Svc::FrameDetectors::FprimeFrameDetector detector;
+    for (FwSizeType length = 0; length < sizeof(GOLDEN_FRAME); ++length) {
+        U8 storage[sizeof(GOLDEN_FRAME)] = {};
+        Types::CircularBuffer ring(storage, sizeof(storage));
+        ASSERT_EQ(ring.serialize(GOLDEN_FRAME, length), Fw::FW_SERIALIZE_OK);
+        FwSizeType size = 0;
+        EXPECT_EQ(detector.detect(ring, size), Svc::FrameDetector::MORE_DATA_NEEDED);
+        EXPECT_GT(size, length);
+        EXPECT_EQ(ring.get_allocated_size(), length);
+    }
+}
+
+TEST(FprimeFrameDetector, EmptyPayloadCrc) {
+    REQUIREMENT("SVC-FRAME-ACCUMULATOR-005");
+    COMMENT("Check valid and corrupt CRCs at the minimum header-plus-trailer frame size.");
+    const Svc::FrameDetectors::FprimeFrameDetector detector;
+    for (U32 corrupt = 0; corrupt < 2; ++corrupt) {
+        U8 frame[] = {0xDE, 0xAD, 0xBE, 0xEF, 0, 0, 0, 0, 0xDA, 0x8D, 0x2B, 0xE2};
+        frame[sizeof(frame) - 1] ^= static_cast<U8>(corrupt);
+        U8 storage[sizeof(frame)] = {};
+        Types::CircularBuffer ring(storage, sizeof(storage));
+        ASSERT_EQ(ring.serialize(frame, sizeof(frame)), Fw::FW_SERIALIZE_OK);
+        FwSizeType size = 0;
+        EXPECT_EQ(detector.detect(ring, size),
+                  corrupt ? Svc::FrameDetector::CRC_FAILURE : Svc::FrameDetector::FRAME_DETECTED);
+        EXPECT_EQ(size, corrupt ? 0 : sizeof(frame));
+        EXPECT_EQ(ring.get_allocated_size(), sizeof(frame));
+    }
+}
+
+TEST(FprimeFrameDetector, WrappedCrcCandidate) {
+    REQUIREMENT("SVC-FRAME-ACCUMULATOR-005");
+    COMMENT("Check valid and corrupt candidates crossing every physical ring boundary.");
+    const Svc::FrameDetectors::FprimeFrameDetector detector;
+    for (FwSizeType offset = 0; offset < sizeof(GOLDEN_FRAME); ++offset) {
+        for (U32 corrupt = 0; corrupt < 2; ++corrupt) {
+            U8 storage[sizeof(GOLDEN_FRAME)] = {};
+            U8 frame[sizeof(GOLDEN_FRAME)] = {};
+            ::memcpy(frame, GOLDEN_FRAME, sizeof(frame));
+            frame[8] ^= static_cast<U8>(corrupt);
+            Types::CircularBuffer ring(storage, sizeof(storage));
+            ASSERT_EQ(ring.serialize(GOLDEN_FRAME, offset), Fw::FW_SERIALIZE_OK);
+            ASSERT_EQ(ring.rotate(offset), Fw::FW_SERIALIZE_OK);
+            ASSERT_EQ(ring.serialize(frame, sizeof(frame)), Fw::FW_SERIALIZE_OK);
+            FwSizeType size = 0;
+            EXPECT_EQ(detector.detect(ring, size),
+                      corrupt ? Svc::FrameDetector::CRC_FAILURE : Svc::FrameDetector::FRAME_DETECTED);
+            EXPECT_EQ(size, corrupt ? 0 : sizeof(frame));
+            EXPECT_EQ(ring.get_allocated_size(), sizeof(frame));
+        }
+    }
+}
+
+static_assert(Svc::FrameDetector::FRAME_DETECTED == 0, "Preserve detector status values");
+static_assert(Svc::FrameDetector::NO_FRAME_DETECTED == 1, "Preserve detector status values");
+static_assert(Svc::FrameDetector::MORE_DATA_NEEDED == 2, "Preserve detector status values");
 
 int main(int argc, char** argv) {
     STest::Random::seed();

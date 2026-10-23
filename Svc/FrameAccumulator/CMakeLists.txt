@@ -25,6 +25,7 @@ target_compile_options(${FPRIME_CURRENT_MODULE} PRIVATE -Wno-tautological-consta
 register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FrameAccumulatorTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/CrcDiagnostics.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FrameAccumulatorTestMain.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"

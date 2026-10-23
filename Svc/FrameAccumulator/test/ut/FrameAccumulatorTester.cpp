@@ -14,11 +14,11 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-FrameAccumulatorTester ::FrameAccumulatorTester()
+FrameAccumulatorTester ::FrameAccumulatorTester(bool crcWarningsEnabled)
     : FrameAccumulatorGTestBase("FrameAccumulatorTester", FrameAccumulatorTester::MAX_HISTORY_SIZE),
       component("FrameAccumulator"),
       m_failBufferAllocate(false) {
-    component.configure(this->mockDetector, 1, this->mallocator, 2048);
+    component.configure(this->mockDetector, 1, this->mallocator, 2048, crcWarningsEnabled);
     this->initComponents();
     this->connectPorts();
 }

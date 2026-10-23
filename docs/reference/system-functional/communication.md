@@ -85,7 +85,7 @@ For missions requiring standards-compliant space communication, the F Prime and 
 
 ### Off Nominal
 
-- Frame validation failures (bad CRC, malformed frames) cause the frame to be dropped with a warning event.
+- With `FprimeFrameDetector`, a complete candidate that fails its CRC check is rejected by [FrameAccumulator](../../../Svc/FrameAccumulator/docs/sdd.md), which discards one byte and resumes searching. It counts CRC-failed candidates and all actual resynchronization-byte removals, and emits a throttled `FrameCrcFailure` warning when CRC warnings are enabled. The CCSDS detector does not report this diagnostic. Non-frame search discards are not counted as CRC failures.
 - Queue overflow causes data to be dropped according to the queue's configured overflow behavior.
 - Communication adapter failures are reported upstream, and the retry mechanism (if present) attempts retransmission.
 - If the communication path is down, the communication queue will fill and begin dropping lower-priority data.
