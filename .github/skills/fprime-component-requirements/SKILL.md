@@ -70,12 +70,31 @@ something that can be **verified** (a pass/fail observable). Goals
 that are not pass/fail ("should") go in the SDD narrative, not the
 table.
 
-Requirements are typically shipped as a table:
+The SDD opens with a short **Introduction** — a few sentences on what
+the component is and does, self-contained, with no links or pointers
+to further context — and §Requirements is then the table alone: no
+request or intent prose, no Terms or glossary subsection. Ship the
+requirements as a three-column table — ID, requirement, verification
+method — with no rationale or review column and no rationale clauses
+in the rows ("… so that …" is deleted; the reviewer and the
+verification column carry the why):
 
-| ID | Shall Statement | Rationale | Verification Method |
-|---|---|---|---|
-| REQ-\<Component\>-001 | The component shall \<behavior\>. | \<Why: request element, parent requirement, or fault scenario\> | \<Unit test / integration test / inspection — strongest feasible, in that order\> |
-| REQ-\<Component\>-002 | ... | ... | ... |
+| ID | Requirement | Verification |
+|---|---|---|
+| REQ-\<Component\>-001 | The component shall \<behavior\>. | Unit test / integration test / inspection — strongest feasible |
+
+Keep every row to one sentence of at most 15 words. For a device driver, do not restate
+the datasheet: "shall read N bytes at an offset", "shall write N
+bytes at an offset" and one row "reads and writes shall be compliant
+with \<datasheet, revision\>" are sufficient; frame bytes, opcodes and
+timings are design facts verified by unit test against the datasheet.
+Keep the fault-scenario rows (invalid input, concurrent request, host
+error, wrong device) — they are the rows reviewers find missing.
+When a requirement is retired or merged, delete the row and renumber
+nothing; no "retired" rows and no change history in the table. Fault
+scenarios the component does not own are not listed in the SDD at all
+(no Waivers subsection); record them, with their owner, in the review
+record or the plan's decision log.
 
 Categories to cover:
 
@@ -107,25 +126,39 @@ requirement):
 
 ### Step 4 — Confirm with User
 
-Present the full requirements table to the user and **wait for
-confirmation** before proceeding to design. Requirements are the
+Present the introduction and the requirements table to the user — that
+is all the user reads —
+and **wait for confirmation** before proceeding to design. Requirements are the
 contract — everything downstream is verified against them.
 
 ---
 
 ## Output Artifact
 
-A requirements document (typically captured in the component's
-`docs/sdd.md` or as a structured list in the PR description) with:
+The **Requirements** section of the component's `docs/sdd.md`, and
+nothing longer:
 
-- Component name, module, and work type
-- Requirements table (ID, shall statement, rationale, verification method)
-- Interface summary (data exchanged, not port types)
-- Any constraints or assumptions noted
+- an **Introduction** of a few sentences (what the component is and
+  does; no links or references to further context)
+- the requirements table (ID, requirement, verification) — one line
+  per row of ≤ 15 words, no retired rows, no rationale or review column
+- nothing else: no request, intent, Terms, glossary or Waivers
+  subsection; introduction plus table fit in 60 lines
+
+Interface data and constraints go into the shall statements; review
+records, dispositions and elicitation answers stay outside the SDD.
+Succinct beats complete: the reader has minutes, not hours.
 
 ---
 
 ## Anti-Patterns
+
+- Transcribing the datasheet into requirements (opcodes, frame bytes,
+  timings) instead of one compliance row.
+- A request, intent, Terms, glossary or Waivers subsection, links in
+  the introduction, or any paragraph in §Requirements; keeping retired
+  rows; adding rationale / review-disposition columns or "so that"
+  clauses to the table.
 
 - Guessing at what telemetry channels to add
 - Assuming command arguments without asking

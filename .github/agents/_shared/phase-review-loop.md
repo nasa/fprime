@@ -1,13 +1,15 @@
-# Phase review loop (requirements and design)
+# Phase review loop (requirements, design and test design)
 
-The requirements and FPP-design phases of component development each
-end in an adversarial review loop before the human gate. This file is
+The requirements, FPP-design and test-design phases of component
+development each end in an adversarial review loop before the human
+gate. This file is
 the only place that names the reviewers, the bound and the round
 rules; `fprime-development.agent.md` §2 runs it (and
 `fprime-component-development` cardinal rule 2 points here). The
-writing skills `fprime-component-requirements` and
-`fprime-component-design-fpp` do not iterate; the orchestrating agent
-loops them.
+writing skills (`fprime-component-requirements`,
+`fprime-component-design-fpp`, `fprime-system-test-design`, the test
+list of `fprime-component-unit-test`) do not iterate; the
+orchestrating agent loops them.
 
 ## Reviewers per phase
 
@@ -15,6 +17,7 @@ loops them.
 |---|---|---|---|
 | Requirements | Requirements table (`fprime-component-requirements` Step 2 form) | `requirements-review.agent.md` | The request (issue / human goals, quoted) |
 | Design | The `.fpp` model, the `docs/sdd.md` draft (`fprime-component-design-fpp` Step 5), any new port definitions — as a design-only diff | `design-review.agent.md` (categories 1, 3, 4, 6, 7, 9; categories 2, 5, 8 need an implementation and are n/a); `architecture-review.agent.md` (whole model); `design-principles-review.agent.md` | The approved requirements table and the request |
+| Test design | The system test plan and `faults-menu.json` (`fprime-system-test-design` §2–§4) and the unit-test list (`fprime-component-unit-test`, "Test list", in `docs/sdd.md`) — written from the approved requirements, SDD and FPP model; normally no implementation exists yet — where one does, `fprime-system-test-design` §1 code-read-last applies | `system-test-review.agent.md` Mode A | The approved requirements table, SDD and FPP model, and the request |
 
 Reviewer agent files are read fresh from `nasa/fprime` `devel`, not
 from the branch being worked on; a reviewer not yet on `devel` is read
@@ -50,7 +53,7 @@ rule's must-fix total. Every other must-fix counts.
 
 Default **3 reviews** per phase. Any unambiguous round count in the
 invoking prompt overrides it (canonical form `review rounds: N`,
-N ≥ 1); it applies to both phases unless given per phase; two
+N ≥ 1); it applies to every phase unless given per phase; two
 conflicting counts → ask (cardinal rule 1). A prompt asking for no
 review gets 1 and a note that 1 is the minimum. The bound in use and
 its source (`default` | `prompt`) go in the message to the user when
@@ -98,7 +101,8 @@ per step 2, then one close by the author. Review k is the k-th such review.
    declined-with-reason. Deleting a row or removing a design element
    never closes a must-fix by itself: record the deletion, and the
    reviewer re-runs its set-level checks (RS-1..3; for design, the
-   whole-model classification) and decides whether the finding is
+   whole-model classification; for test design, traceability and
+   `system-test-review` questions 2 and 6) and decides whether the finding is
    closed, reopened as a gap, or logged as a disagreement. Where the
    author disagrees, record both positions in the disagreement log;
    agreement reached by softening is a disagreement, not a close.
@@ -122,17 +126,22 @@ A design finding that invalidates a requirement reopens the
 requirements phase: run the requirements loop on the changed rows
 (a fresh bound of N, set-level checks on the whole set), present the delta to
 the user and obtain approval again, then resume design. The
-requirement is never edited silently.
+requirement is never edited silently. A test-design finding that
+invalidates a requirement or the FPP design reopens that phase the
+same way; the approved test design is the baseline for everything
+after it (`test-process-contract.md` §2, "never weaken a test").
 
 ## Record and gate
 
 Keep one `review-<phase>-<reviewer>-round-N.md` per reviewer per
 review (or the name the reviewer's own agent file fixes), outside the
 component tree or attached, with a running disagreement log. At the
-human gate present: the artifact, the bound and its source, reviews
-run (and which were inline), the final counts per step 5, the routed
-adjudication items first, the residual list if the bound or plateau
-was hit, and the disagreement log. Human approval is the gate; a
+human gate present the artifact in its quick-look form (the SDD
+section the phase produced) and a review summary of at most ten
+lines: routed adjudication items first, then the residual list if the
+bound or plateau was hit, the final counts per step 5, the bound and
+its source, and which reviews ran inline; the full review records and
+the disagreement log are attachments, not message text. Human approval is the gate; a
 review-passing artifact is not approved until the human says so.
 
 ## Forbidden

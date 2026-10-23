@@ -25,7 +25,7 @@ For the canonical process description, see the
 ## Process Overview
 
 ```
-1. Requirements  →  2. Design (FPP)  →  3. Implementation (C++)  →  4. Unit Test  →  5. Integration Test
+1. Requirements  →  2. Design (FPP)  →  3. Test Design  →  4. Implementation (C++)  →  5. Unit Test  →  6. Integration Test
 ```
 
 Each phase has a dedicated skill with detailed guidance:
@@ -34,9 +34,10 @@ Each phase has a dedicated skill with detailed guidance:
 |---|---|---|
 | 1. Requirements | `fprime-component-requirements` | Written requirements list |
 | 2. Design | `fprime-component-design-fpp` | `.fpp` model file |
-| 3. Implementation | `fprime-component-implementation` | `.cpp` / `.hpp` files |
-| 4. Unit Test | `fprime-component-unit-test` | `test/ut/` test suite |
-| 5. Integration Test | `fprime-component-integration-test` | `test/int/` pytest suite |
+| 3. Test Design | `fprime-system-test-design` + `fprime-component-unit-test` (test list) | System test plan, fault menu, unit-test list |
+| 4. Implementation | `fprime-component-implementation` | `.cpp` / `.hpp` files |
+| 5. Unit Test | `fprime-component-unit-test` | `test/ut/` test suite |
+| 6. Integration Test | `fprime-component-integration-test` | `test/int/` pytest suite |
 
 ---
 
@@ -48,27 +49,31 @@ Each phase has a dedicated skill with detailed guidance:
    costly.
 
 2. **Each phase gates the next — with explicit user approval.** When
-   an agent orchestrates this skill, the requirements and design
-   phases first pass the review loop of
+   an agent orchestrates this skill, the requirements, design and
+   test-design phases first pass the review loop of
    `.github/agents/_shared/phase-review-loop.md`; the writing skills
    themselves do not iterate. Present the requirements (with their
    review record, when the loop ran) to the user and obtain approval
    before starting design. Present the design (FPP model, port layout,
    behavior, and any
-   configuration) to the user and obtain **explicit confirmation before
-   writing any implementation or unit-test code**. This applies even to
-   trivial or pass-through components; simplicity does not waive the
-   gate. Once the model is confirmed, you may write tests against it
-   following the test-driven development pattern
+   configuration) to the user and obtain explicit confirmation before
+   test design. Present the test design (system test plan, fault menu,
+   unit-test list — written from requirements and model, not code) and
+   obtain **explicit confirmation before writing any implementation or
+   unit-test code**. This applies even to trivial or pass-through
+   components; simplicity does not waive the gate. Once the test design
+   is confirmed, write the unit tests it lists before the
+   implementation, following the test-driven development pattern
    (see `docs/how-to/test-driven-development.md`).
 
 3. **Reference the C++ design skill.** All implementation must comply
    with `fprime-cpp-design` (CPP-1 through CPP-37). Consult
    it before writing any C++ code.
 
-4. **Follow Test-Driven Development when possible.** The recommended
-   F Prime workflow is: design in FPP → write tests → implement to
-   pass tests. See the
+4. **Follow Test-Driven Development.** The workflow is: design in FPP
+   → design tests (phase 3) → write the listed unit tests → implement
+   to pass them; phases 4 and 5 interleave this way, the rest of the
+   sequence is strict. See the
    [TDD guide](https://github.com/nasa/fprime/blob/devel/docs/how-to/test-driven-development.md).
 
 5. **Document as you go.** Each component should have an SDD
