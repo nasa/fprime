@@ -9,38 +9,17 @@
 // acknowledged.
 //
 // ======================================================================
-#include <sys/time.h>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <cerrno>
 #include <cstring>
 
 // This implementation has primarily implemented to isolate
 // the socket interface from the F' Fw::Buffer class.
 // There is a macro in VxWorks (m_data) that collides with
 // the m_data member in Fw::Buffer.
-
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <errnoLib.h>
-#include <fioLib.h>
-#include <hostLib.h>
-#include <inetLib.h>
-#include <ioLib.h>
-#include <sockLib.h>
-#include <socket.h>
-#include <sysLib.h>
-#include <taskLib.h>
-#include <vxWorks.h>
-#include <cstring>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <cerrno>
-#else
-#error OS not supported for IP Socket Communications
-#endif
 
 namespace Drv {
 
