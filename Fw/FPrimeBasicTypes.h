@@ -51,6 +51,7 @@ extern "C" {
 #include <config/FwTimeBaseStoreTypeAliasAc.h>
 #include <config/FwTimeContextStoreTypeAliasAc.h>
 #include <config/FwTlmPacketizeIdTypeAliasAc.h>
+#include <config/FwTlmPacketizeOffsetTypeAliasAc.h>
 #include <config/FwTraceIdTypeAliasAc.h>
 
 // Backwards naming compatibility.

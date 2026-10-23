@@ -77,6 +77,9 @@ dictionary type FwTimeContextStoreType = U8
 @ The type of a telemetry packet identifier
 type FwTlmPacketizeIdType = U16
 
+@ The type of an offset within a telemetry packet buffer
+type FwTlmPacketizeOffsetType = U16
+
 @ The type of a trace identifier
 type FwTraceIdType = U32
 
