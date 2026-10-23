@@ -20,7 +20,7 @@ module Svc {
         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
     )
 
-    @ A single per-packet config record..
+    @ A single per-packet config record
     struct PacketConfigEntry {
         packetId: U32                 @< Packet identifier
         section: TelemetrySection     @< Section the policy applies to

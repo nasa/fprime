@@ -1984,7 +1984,7 @@ void TlmPacketizerTester ::from_pingOut_handler(const FwIndexType portNum, U32 k
     this->pushFromPortEntry_pingOut(key);
 }
 
-void TlmPacketizerTester ::from_configOut_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void TlmPacketizerTester ::from_packetOverrideOut_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->m_configOutInvokes++;
     (void)fwBuffer.getDeserializer().deserializeTo(this->m_lastConfigEntry);
 }
@@ -2014,26 +2014,7 @@ void TlmPacketizerTester ::perPacketOverrideTest() {
     this->component.doDispatch();
 
     // Populate both packets with data (same channels as sendPacketsTest)
-    Fw::Time ts;
-    Fw::TlmBuffer buff;
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U32>(20));
-    this->invoke_to_TlmRecv(0, 10, ts, buff);  // first channel
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U16>(15));
-    this->invoke_to_TlmRecv(0, 100, ts, buff);  // second channel
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U8>(14));
-    this->invoke_to_TlmRecv(0, 333, ts, buff);  // third channel
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U64>(1000000));
-    this->invoke_to_TlmRecv(0, 13, ts, buff);  // fifth channel
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U16>(1010));
-    this->invoke_to_TlmRecv(0, 250, ts, buff);  // sixth channel
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U8>(15));
-    this->invoke_to_TlmRecv(0, 22, ts, buff);  // seventh channel
+    this->fillPacketChannels();
 
     this->setTestTime(this->m_testTime);
     this->resetCounter();
@@ -2107,24 +2088,40 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
         ASSERT_EQ(c.get_max(), 10u);
     }
 
-    // Unknown packet id -> VALIDATION_ERROR + UnknownPacketId warning, and no mirror.
+    // CONFIGURE_PACKET_RATES on an unknown packet id -> VALIDATION_ERROR + PacketNotFound, no mirror.
+    // (An out-of-range RateLogic cannot be constructed - the enum asserts - so the unknown-id / bad-section
+    // path is the reachable VALIDATION_ERROR response for this command.)
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_ENABLE_PACKET(0, 13, Svc::TelemetrySection::REALTIME, 9999, Fw::Enabled::ENABLED);
+    this->sendCmd_CONFIGURE_PACKET_RATES(0, 13, Svc::TelemetrySection::REALTIME, 9999, Svc::RateLogic::EVERY_MAX, 5,
+                                         10);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_ENABLE_PACKET, 13, Fw::CmdResponse::VALIDATION_ERROR);
-    ASSERT_EVENTS_UnknownPacketId_SIZE(1);
-    ASSERT_EVENTS_UnknownPacketId(0, 9999);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CONFIGURE_PACKET_RATES, 13, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_PacketNotFound_SIZE(1);
+    ASSERT_EVENTS_PacketNotFound(0, 9999);
     ASSERT_EQ(this->m_configOutInvokes, 0u);
     ASSERT_EVENTS_PacketOverrideSet_SIZE(0);
 
-    // Out-of-range section -> VALIDATION_ERROR, and no mirror.
+    // Unknown packet id on ENABLE_PACKET -> VALIDATION_ERROR + PacketNotFound warning, and no mirror.
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->sendCmd_FORCE_PACKET(0, 14, Svc::TelemetrySection(Svc::TelemetrySection::NUM_SECTIONS), 4,
+    this->sendCmd_ENABLE_PACKET(0, 14, Svc::TelemetrySection::REALTIME, 9999, Fw::Enabled::ENABLED);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_ENABLE_PACKET, 14, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_PacketNotFound_SIZE(1);
+    ASSERT_EVENTS_PacketNotFound(0, 9999);
+    ASSERT_EQ(this->m_configOutInvokes, 0u);
+    ASSERT_EVENTS_PacketOverrideSet_SIZE(0);
+
+    // Out-of-range section -> VALIDATION_ERROR + InvalidPacketConfig warning, and no mirror.
+    this->clearHistory();
+    this->m_configOutInvokes = 0;
+    this->sendCmd_FORCE_PACKET(0, 15, Svc::TelemetrySection(Svc::TelemetrySection::NUM_SECTIONS), 4,
                                Fw::Enabled::ENABLED);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_FORCE_PACKET, 14, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_FORCE_PACKET, 15, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_InvalidPacketConfig_SIZE(1);
+    ASSERT_EVENTS_InvalidPacketConfig(0, 4);
     ASSERT_EQ(this->m_configOutInvokes, 0u);
 }
 
@@ -2165,13 +2162,13 @@ void TlmPacketizerTester ::getPacketConfigTest() {
     ASSERT_EVENTS_PacketConfigReport_SIZE(1);
     ASSERT_EVENTS_PacketConfigReport(0, overrideReport);
 
-    // Unknown packet id -> VALIDATION_ERROR + UnknownPacketId warning
+    // Unknown packet id -> VALIDATION_ERROR + PacketNotFound warning
     this->clearHistory();
     this->sendCmd_GET_PACKET_CONFIG(0, 1, Svc::TelemetrySection::REALTIME, 9999);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_GET_PACKET_CONFIG, 1, Fw::CmdResponse::VALIDATION_ERROR);
-    ASSERT_EVENTS_UnknownPacketId_SIZE(1);
-    ASSERT_EVENTS_UnknownPacketId(0, 9999);
+    ASSERT_EVENTS_PacketNotFound_SIZE(1);
+    ASSERT_EVENTS_PacketNotFound(0, 9999);
 }
 
 void TlmPacketizerTester ::configInReloadTest() {
@@ -2209,16 +2206,21 @@ void TlmPacketizerTester ::configInReloadTest() {
 
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->invoke_to_configIn(0, reloadBuffer);
+    this->invoke_to_packetOverrideIn(0, reloadBuffer);
     this->component.doDispatch();
 
-    // The unknown id is warned and skipped; the reload path never echoes back out configOut.
-    ASSERT_EVENTS_UnknownPacketId_SIZE(1);
+    // The unknown id is tallied into one summary (1 unknown, 0 invalid), not a per-record flood, and the
+    // reload path never echoes back out packetOverrideOut.
+    ASSERT_EVENTS_ConfigReloadRejected_SIZE(1);
+    ASSERT_EVENTS_ConfigReloadRejected(0, 1, 0);
     ASSERT_EQ(this->m_configOutInvokes, 0u);
     // A well-formed batch consumed to the end is not a failed reload
     ASSERT_EVENTS_ConfigReloadFailed_SIZE(0);
     ASSERT_EVENTS_InvalidPacketConfig_SIZE(0);
+    // The exact buffer handed in is the one returned to the pool (same backing storage and size).
     ASSERT_from_bufferDeallocate_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getData(), reloadBuffer.getData());
+    ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getSize(), reloadBuffer.getSize());
 
     // The known override took effect: populate both packets, Run, and confirm exactly one
     // (packet, section) send dropped out relative to the all-enabled baseline.
@@ -2337,14 +2339,14 @@ void TlmPacketizerTester ::clearPacketOverrideTest() {
     this->component.doDispatch();
     ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
 
-    // Unknown packet id -> VALIDATION_ERROR + UnknownPacketId warning, no mirror.
+    // Unknown packet id -> VALIDATION_ERROR + PacketNotFound warning, no mirror.
     this->clearHistory();
     this->m_configOutInvokes = 0;
     this->sendCmd_CLEAR_PACKET_OVERRIDE(0, 32, Svc::TelemetrySection::REALTIME, 9999);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CLEAR_PACKET_OVERRIDE, 32, Fw::CmdResponse::VALIDATION_ERROR);
-    ASSERT_EVENTS_UnknownPacketId_SIZE(1);
-    ASSERT_EVENTS_UnknownPacketId(0, 9999);
+    ASSERT_EVENTS_PacketNotFound_SIZE(1);
+    ASSERT_EVENTS_PacketNotFound(0, 9999);
     ASSERT_EQ(this->m_configOutInvokes, 0u);
     ASSERT_EVENTS_PacketOverrideCleared_SIZE(0);
 }
@@ -2439,7 +2441,7 @@ void TlmPacketizerTester ::configInClearReloadTest() {
 
     this->clearHistory();
     this->m_configOutInvokes = 0;
-    this->invoke_to_configIn(0, reloadBuffer);
+    this->invoke_to_packetOverrideIn(0, reloadBuffer);
     this->component.doDispatch();
     ASSERT_EQ(this->m_configOutInvokes, 0u);
     ASSERT_EVENTS_ConfigReloadFailed_SIZE(0);
@@ -2470,7 +2472,7 @@ void TlmPacketizerTester ::configInMalformedReloadTest() {
     // An invalid buffer carries nothing to apply but is still returned to the pool
     this->clearHistory();
     Fw::Buffer invalid;
-    this->invoke_to_configIn(0, invalid);
+    this->invoke_to_packetOverrideIn(0, invalid);
     this->component.doDispatch();
     ASSERT_from_bufferDeallocate_SIZE(1);
     ASSERT_EVENTS_ConfigReloadFailed_SIZE(0);
@@ -2490,12 +2492,12 @@ void TlmPacketizerTester ::configInMalformedReloadTest() {
     reloadBuffer.setSize(static_cast<Fw::Buffer::SizeType>(Svc::PacketConfigEntry::SERIALIZED_SIZE + truncatedBytes));
 
     this->clearHistory();
-    this->invoke_to_configIn(0, reloadBuffer);
+    this->invoke_to_packetOverrideIn(0, reloadBuffer);
     this->component.doDispatch();
     ASSERT_from_bufferDeallocate_SIZE(1);
     ASSERT_EVENTS_ConfigReloadFailed_SIZE(1);
     ASSERT_EVENTS_ConfigReloadFailed(0, Fw::DeserialStatus::SIZE_MISMATCH, truncatedBytes);
-    ASSERT_EVENTS_UnknownPacketId_SIZE(0);
+    ASSERT_EVENTS_ConfigReloadRejected_SIZE(0);
 
     this->clearHistory();
     this->sendCmd_GET_PACKET_CONFIG(0, 60, Svc::TelemetrySection::REALTIME, 4);
@@ -2516,11 +2518,12 @@ void TlmPacketizerTester ::configInMalformedReloadTest() {
     ASSERT_EQ(badSerializer.serializeFrom(badSection), Fw::FW_SERIALIZE_OK);
     badBuffer.setSize(static_cast<Fw::Buffer::SizeType>(badSerializer.getSize()));
     this->clearHistory();
-    this->invoke_to_configIn(0, badBuffer);
+    this->invoke_to_packetOverrideIn(0, badBuffer);
     this->component.doDispatch();
     ASSERT_from_bufferDeallocate_SIZE(1);
-    ASSERT_EVENTS_InvalidPacketConfig_SIZE(1);
-    ASSERT_EVENTS_InvalidPacketConfig(0, 8);
+    // The invalid record is tallied into the per-buffer summary (0 unknown, 1 invalid), not applied.
+    ASSERT_EVENTS_ConfigReloadRejected_SIZE(1);
+    ASSERT_EVENTS_ConfigReloadRejected(0, 0, 1);
     ASSERT_EVENTS_ConfigReloadFailed_SIZE(0);
     this->clearHistory();
     this->sendCmd_GET_PACKET_CONFIG(0, 62, Svc::TelemetrySection::REALTIME, 8);
@@ -2610,14 +2613,14 @@ void TlmPacketizerTester ::connectPorts() {
 
     this->connect_to_configureSectionGroupRate(0, this->component.get_configureSectionGroupRate_InputPort(0));
 
-    // configOut (per-packet override mirror to an external persistence component)
-    this->component.set_configOut_OutputPort(0, this->get_from_configOut(0));
+    // packetOverrideOut (per-packet override mirror to an external persistence component)
+    this->component.set_packetOverrideOut_OutputPort(0, this->get_from_packetOverrideOut(0));
 
     // Buffer allocate/deallocate (stand in for a BufferManager pool)
     this->component.set_bufferAllocate_OutputPort(0, this->get_from_bufferAllocate(0));
     this->component.set_bufferDeallocate_OutputPort(0, this->get_from_bufferDeallocate(0));
 
-    this->connect_to_configIn(0, this->component.get_configIn_InputPort(0));
+    this->connect_to_packetOverrideIn(0, this->component.get_packetOverrideIn_InputPort(0));
 }
 
 void TlmPacketizerTester::textLogIn(const FwEventIdType id,          //!< The event ID

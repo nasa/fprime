@@ -133,13 +133,13 @@ TEST(TestNominal, PerPacketOverrideTest) {
 }
 
 TEST(TestNominal, PerPacketCommandsTest) {
-    TEST_CASE(100.1.16, "Per-packet commands update overrides + mirror out configOut");
+    TEST_CASE(100.1.16, "Per-packet commands update overrides + mirror out packetOverrideOut");
     Svc::TlmPacketizerTester tester;
     tester.perPacketCommandsTest();
 }
 
 TEST(TestNominal, ConfigInReloadTest) {
-    TEST_CASE(100.1.17, "configIn reload applies overrides to the volatile table without echo");
+    TEST_CASE(100.1.17, "packetOverrideIn reload applies overrides to the volatile table without echo");
     Svc::TlmPacketizerTester tester;
     tester.configInReloadTest();
 }
@@ -169,13 +169,13 @@ TEST(TestNominal, MirrorAllocFailTest) {
 }
 
 TEST(TestNominal, ConfigInClearReloadTest) {
-    TEST_CASE(100.1.22, "configIn GROUP_DEFAULT reload reverts a packet to group behavior");
+    TEST_CASE(100.1.22, "packetOverrideIn GROUP_DEFAULT reload reverts a packet to group behavior");
     Svc::TlmPacketizerTester tester;
     tester.configInClearReloadTest();
 }
 
 TEST(TestNominal, ConfigInMalformedReloadTest) {
-    TEST_CASE(100.1.23, "Malformed configIn reload emits ConfigReloadFailed; invalid buffer is deallocated");
+    TEST_CASE(100.1.23, "Malformed packetOverrideIn reload emits ConfigReloadFailed; invalid buffer is deallocated");
     Svc::TlmPacketizerTester tester;
     tester.configInMalformedReloadTest();
 }

@@ -175,10 +175,10 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
                               U32 key                    /*!< Value to return to pinger*/
                               ) override;
 
-    //! Handler for from_configOut: captures the per-packet override mirror sent to external component
-    void from_configOut_handler(FwIndexType portNum,  //!< The port number
-                                Fw::Buffer& fwBuffer  //!< The mirrored override (serialized)
-                                ) override;
+    //! Handler for from_packetOverrideOut: captures the per-packet override mirror sent to external component
+    void from_packetOverrideOut_handler(FwIndexType portNum,  //!< The port number
+                                        Fw::Buffer& fwBuffer  //!< The mirrored override (serialized)
+                                        ) override;
 
     //! Handler for from_bufferAllocate: hand back tester-owned storage (mocked BufferManager)
     Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum,  //!< The port number
@@ -224,13 +224,13 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     // bool m_primaryTestLock{true};  //! Lock limited to entries from port 0 PktSend
     FwSizeType m_portOutInvokes[Svc::TELEMETRY_SEND_PORTS]{};
 
-    //! configOut mirror capture (per-packet override sent to an external component)
-    U32 m_configOutInvokes{0};                   //!< Number of configOut invocations
-    Svc::PacketConfigEntry m_lastConfigEntry{};  //!< Entry deserialized from the most recent configOut buffer
+    //! packetOverrideOut mirror capture (per-packet override sent to an external component)
+    U32 m_configOutInvokes{0};                   //!< Number of packetOverrideOut invocations
+    Svc::PacketConfigEntry m_lastConfigEntry{};  //!< Entry deserialized from the most recent mirror buffer
 
     //! Backing storage for the mocked bufferAllocate port (stands in for a BufferManager pool)
     static const FwSizeType CONFIG_BUF_SLOT_SIZE = 256;
-    U8 m_configBufSlot[CONFIG_BUF_SLOT_SIZE];
+    U8 m_configBufSlot[CONFIG_BUF_SLOT_SIZE]{};
     Fw::Buffer m_configBuf;
     bool m_allocFail{false};  //!< When set, bufferAllocate returns an invalid buffer (pool exhausted)
 };

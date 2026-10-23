@@ -32,16 +32,17 @@ module Svc {
     async input port configureSectionGroupRate: ConfigureGroupRate
 
     @ Per-packet override mirror to an external persistence component
-    output port configOut: Fw.BufferSend
+    output port packetOverrideOut: Fw.BufferSend
 
-    @ Allocate buffers for configOut mirrors
+    @ Allocate buffers for packetOverrideOut mirrors
     output port bufferAllocate: Fw.BufferGet
 
     @ Return buffers
     output port bufferDeallocate: Fw.BufferSend
 
-    @ Per-packet override reload from the persistence component
-    async input port configIn: Fw.BufferSend
+    @ Per-packet override reload from the persistence component. Each buffer is one queue message and the
+    @ queue asserts when full: batch a reload into one buffer (or fewer buffers than the queue depth).
+    async input port packetOverrideIn: Fw.BufferSend
 
     @ Telemetry input port
     sync input port TlmRecv: Fw.Tlm
@@ -239,15 +240,16 @@ module Svc {
       format "Telemetry ID 0x{x} update of size {} exceeds configured size {}" \
       throttle 10
 
-    @ A configuration command or query referenced a packet id not present in this deployment
-    event UnknownPacketId(
-                          packetId: U32 @< The packet id
-                        ) \
+    @ Summary of records rejected while applying one packetOverrideIn reload buffer (one event per buffer, not per record)
+    event ConfigReloadRejected(
+                                unknownCount: U32 @< Records referencing a packet id not in this deployment
+                                invalidCount: U32 @< Records carrying an invalid section, source, or config value
+                              ) \
       severity warning low \
       id 7 \
-      format "Packet id {} not found in packet list"
+      format "packetOverrideIn reload rejected {} records for unknown packet id and {} for invalid content"
 
-    @ Could not allocate a buffer to mirror a per-packet override out configOut
+    @ Could not allocate a buffer to mirror a per-packet override out packetOverrideOut
     event ConfigMirrorAllocFailed \
       severity warning high \
       id 8 \
@@ -279,22 +281,22 @@ module Svc {
       id 11 \
       format "Packet override cleared: section {} packet id {} reverts to group policy"
 
-    @ A configIn reload buffer was malformed: deserialization failed or bytes remain; later records were not applied
+    @ A packetOverrideIn reload buffer was malformed: deserialization failed or bytes remain; later records were not applied
     event ConfigReloadFailed(
                               status: Fw.DeserialStatus @< The deserialization status that ended the reload
                               bytesLeft: FwSizeType @< Bytes remaining unconsumed in the reload buffer
                             ) \
       severity warning high \
       id 12 \
-      format "configIn reload failed with status {} with {} bytes left unapplied"
+      format "packetOverrideIn reload failed with status {} with {} bytes left unapplied"
 
-    @ A configIn record carried an invalid section, source, or config value and was rejected
+    @ A packet config (from a command or a packetOverrideIn record) carried an invalid section, source, or config value
     event InvalidPacketConfig(
-                               packetId: U32 @< The packet id in the rejected record
+                               packetId: U32 @< The packet id in the rejected config
                              ) \
       severity warning low \
       id 13 \
-      format "configIn record for packet id {} rejected: invalid section, source, or config value"
+      format "Packet config for packet id {} rejected: invalid section, source, or config value"
 
     # ----------------------------------------------------------------------
     # Telemetry
