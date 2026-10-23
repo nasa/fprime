@@ -2197,7 +2197,7 @@ void TlmPacketizerTester ::configInReloadTest() {
     unknown.set_source(Svc::PacketConfigSource(Svc::PacketConfigSource::OVERRIDDEN));
 
     // Pack both records back-to-back into a buffer, as the persistence component would.
-    U8 slot[2 * Svc::PacketConfigEntry::SERIALIZED_SIZE];
+    U8 slot[2 * Svc::PacketConfigEntry::SERIALIZED_SIZE]{};
     Fw::Buffer reloadBuffer(slot, static_cast<Fw::Buffer::SizeType>(sizeof(slot)));
     auto serializer = reloadBuffer.getSerializer();
     (void)serializer.serializeFrom(known);
@@ -2224,26 +2224,7 @@ void TlmPacketizerTester ::configInReloadTest() {
 
     // The known override took effect: populate both packets, Run, and confirm exactly one
     // (packet, section) send dropped out relative to the all-enabled baseline.
-    Fw::Time ts;
-    Fw::TlmBuffer buff;
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U32>(20));
-    this->invoke_to_TlmRecv(0, 10, ts, buff);
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U16>(15));
-    this->invoke_to_TlmRecv(0, 100, ts, buff);
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U8>(14));
-    this->invoke_to_TlmRecv(0, 333, ts, buff);
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U64>(1000000));
-    this->invoke_to_TlmRecv(0, 13, ts, buff);
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U16>(1010));
-    this->invoke_to_TlmRecv(0, 250, ts, buff);
-    buff.resetSer();
-    (void)buff.serializeFrom(static_cast<U8>(15));
-    this->invoke_to_TlmRecv(0, 22, ts, buff);
+    this->fillPacketChannels();
 
     this->setTestTime(this->m_testTime);
     this->resetCounter();
@@ -2433,7 +2414,7 @@ void TlmPacketizerTester ::configInClearReloadTest() {
 
     const Svc::PacketConfigEntry cleared =
         makeEntry(4, Svc::TelemetrySection::REALTIME, Fw::Enabled::DISABLED, Svc::PacketConfigSource::GROUP_DEFAULT);
-    U8 slot[Svc::PacketConfigEntry::SERIALIZED_SIZE];
+    U8 slot[Svc::PacketConfigEntry::SERIALIZED_SIZE]{};
     Fw::Buffer reloadBuffer(slot, static_cast<Fw::Buffer::SizeType>(sizeof(slot)));
     auto serializer = reloadBuffer.getSerializer();
     ASSERT_EQ(serializer.serializeFrom(cleared), Fw::FW_SERIALIZE_OK);
@@ -2484,7 +2465,7 @@ void TlmPacketizerTester ::configInMalformedReloadTest() {
     const Svc::PacketConfigEntry second =
         makeEntry(8, Svc::TelemetrySection::REALTIME, Fw::Enabled::DISABLED, Svc::PacketConfigSource::OVERRIDDEN);
     const FwSizeType truncatedBytes = Svc::PacketConfigEntry::SERIALIZED_SIZE - 3;
-    U8 slot[2 * Svc::PacketConfigEntry::SERIALIZED_SIZE];
+    U8 slot[2 * Svc::PacketConfigEntry::SERIALIZED_SIZE]{};
     Fw::Buffer reloadBuffer(slot, static_cast<Fw::Buffer::SizeType>(sizeof(slot)));
     auto serializer = reloadBuffer.getSerializer();
     ASSERT_EQ(serializer.serializeFrom(whole), Fw::FW_SERIALIZE_OK);
