@@ -783,7 +783,8 @@ void TlmPacketizer ::packetOverrideIn_handler(FwIndexType portNum, Fw::Buffer& f
 bool TlmPacketizer::mirrorOverride(const Svc::TelemetrySection& section,
                                    FwChanIdType pkt,
                                    Svc::PacketConfigSource source) {
-    // persistent storage component should mirror this state
+    // persistent storage component should mirror this state; skip if not wired
+    if ((not this->isConnected_packetOverrideOut_OutputPort(0)) or
         (not this->isConnected_bufferAllocate_OutputPort(0)) or
         (not this->isConnected_bufferDeallocate_OutputPort(0))) {
         return true;
