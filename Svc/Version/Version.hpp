@@ -52,7 +52,7 @@ class Version final : public VersionComponentBase {
                             Fw::StringBase& version_string,                  //!< The value to be passed
                             Svc::VersionStatus& status                       //!< The command response argument
                             ) override;
-                                     
+
     //! Handler implementation for schedIn
     //!
     //! Scheduled port to periodically re-emit all version information
@@ -103,7 +103,6 @@ class Version final : public VersionComponentBase {
         VER_SLOT_08 = 8,
         VER_SLOT_09 = 9
     };
-
 
     // function to log framework version channel, and event when sendEvent is true
     void fwVersion_tlm(bool sendEvent = true);

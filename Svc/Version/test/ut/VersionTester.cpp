@@ -438,7 +438,6 @@ void VersionTester ::test_getVer() {
     ASSERT_EQ(status, Svc::VersionStatus::FAILURE);
 }
 
-
 void VersionTester ::test_schedIn() {
     Svc::CustomVersionDb custom_data_struct;
 

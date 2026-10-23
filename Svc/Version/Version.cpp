@@ -200,8 +200,9 @@ void Version ::libraryVersion_tlm(bool sendEvent) {
 }
 // Write all custom version tlm; also emit the event when sendEvent is true (default in Version.hpp)
 void Version ::customVersion_tlm_all(bool sendEvent) {
-    //projects may define a maximum of 10 custom slots
-    static_assert(Svc::VersionCfg::VersionEnum::NUM_CONSTANTS <= VER_SLOT_09 + 1, "Svc::Version supports at most 10 custom version slots");
+    // projects may define a maximum of 10 custom slots
+    static_assert(Svc::VersionCfg::VersionEnum::NUM_CONSTANTS <= VER_SLOT_09 + 1,
+                  "Svc::Version supports at most 10 custom version slots");
     for (U8 i = 0; (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS); i++) {
         this->customVersion_tlm(static_cast<VersionSlot>(i), sendEvent);
     }
