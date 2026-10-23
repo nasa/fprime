@@ -23,3 +23,8 @@ register_fprime_config(
     GLOBAL_IMPLICIT_DEPENDENCY
 )
 ```
+
+The platform's configuration directory must not sit directly under an include root, and platform-wide compile
+definitions (e.g. `-DTGT_OS_TYPE_LINUX`) are attached to the configuration target with `target_compile_definitions`.
+See `cmake/platform/Linux.cmake` and `cmake/platform/unix/Platform/CMakeLists.txt` for the reference implementation, and
+[Configuration Modules](./configuration.md) for how configuration modules are assembled and overridden.

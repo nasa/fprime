@@ -28,34 +28,40 @@ extern "C" {
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define FILE_NAME_ARG U32
+#ifdef ASSERT_FILE_ID
+#define FW_CASSERT_FILE_ID ASSERT_FILE_ID
+#else
+#define FW_CASSERT_FILE_ID ((U32)0)
+#endif
 
-#define FW_CASSERT(cond) ((void)((cond) ? (0) : (CAssert0(ASSERT_FILE_ID, __LINE__))))
+#define FW_CASSERT(cond) ((void)((cond) ? (0) : (CAssert0(FW_CASSERT_FILE_ID, __LINE__))))
 
-#define FW_CASSERT_1(cond, arg1) ((void)((cond) ? (0) : (CAssert1(ASSERT_FILE_ID, (FwAssertArgType)(arg1), __LINE__))))
+#define FW_CASSERT_1(cond, arg1) \
+    ((void)((cond) ? (0) : (CAssert1(FW_CASSERT_FILE_ID, (FwAssertArgType)(arg1), __LINE__))))
 
 #define FW_CASSERT_2(cond, arg1, arg2) \
-    ((void)((cond) ? (0) : (CAssert2(ASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2), __LINE__))))
+    ((void)((cond) ? (0) : (CAssert2(FW_CASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2), __LINE__))))
 
-#define FW_CASSERT_3(cond, arg1, arg2, arg3)                                                     \
-    ((void)((cond) ? (0)                                                                         \
-                   : (CAssert3(ASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2), \
+#define FW_CASSERT_3(cond, arg1, arg2, arg3)                                                         \
+    ((void)((cond) ? (0)                                                                             \
+                   : (CAssert3(FW_CASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2), \
                                (FwAssertArgType)(arg3), __LINE__))))
 
-#define FW_CASSERT_4(cond, arg1, arg2, arg3, arg4)                                               \
-    ((void)((cond) ? (0)                                                                         \
-                   : (CAssert4(ASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2), \
+#define FW_CASSERT_4(cond, arg1, arg2, arg3, arg4)                                                   \
+    ((void)((cond) ? (0)                                                                             \
+                   : (CAssert4(FW_CASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2), \
                                (FwAssertArgType)(arg3), (FwAssertArgType)(arg4), __LINE__))))
 
-#define FW_CASSERT_5(cond, arg1, arg2, arg3, arg4, arg5)                                         \
-    ((void)((cond) ? (0)                                                                         \
-                   : (CAssert5(ASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2), \
+#define FW_CASSERT_5(cond, arg1, arg2, arg3, arg4, arg5)                                             \
+    ((void)((cond) ? (0)                                                                             \
+                   : (CAssert5(FW_CASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2), \
                                (FwAssertArgType)(arg3), (FwAssertArgType)(arg4), (FwAssertArgType)(arg5), __LINE__))))
 
-#define FW_CASSERT_6(cond, arg1, arg2, arg3, arg4, arg5, arg6)                                                         \
-    ((void)((cond)                                                                                                     \
-                ? (0)                                                                                                  \
-                : (CAssert6(ASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2), (FwAssertArgType)(arg3), \
-                            (FwAssertArgType)(arg4), (FwAssertArgType)(arg5), (FwAssertArgType)(arg6), __LINE__))))
+#define FW_CASSERT_6(cond, arg1, arg2, arg3, arg4, arg5, arg6)                                            \
+    ((void)((cond) ? (0)                                                                                  \
+                   : (CAssert6(FW_CASSERT_FILE_ID, (FwAssertArgType)(arg1), (FwAssertArgType)(arg2),      \
+                               (FwAssertArgType)(arg3), (FwAssertArgType)(arg4), (FwAssertArgType)(arg5), \
+                               (FwAssertArgType)(arg6), __LINE__))))
 
 #else  // FW_ASSERT_LEVEL != FW_FILEID_ASSERT
 #define FILE_NAME_ARG const CHAR*

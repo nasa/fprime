@@ -83,7 +83,10 @@ The assert can be configured in the following ways:
 
       - FW\_FILEID\_ASSERT Identifies an integer value for the file
         where the assert occurs (as opposed to \_\_FILE\_\_). It saves
-        code space since no file name is stored.
+        code space since no file name is stored. The F´ build defines
+        ASSERT\_FILE\_ID for every source it compiles; sources built
+        outside of it (where ASSERT\_FILE\_ID is undefined) report file
+        ID 0. This applies to both `FW_ASSERT` and `FW_CASSERT`.
 
       - FW\_RELATIVE\_PATH\_ASSERT Identifies which file the assert
         occurred in using a project-relative path (requires the build to

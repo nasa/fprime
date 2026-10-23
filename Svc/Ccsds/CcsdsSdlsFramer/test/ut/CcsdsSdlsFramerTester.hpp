@@ -24,6 +24,12 @@ class CcsdsSdlsFramerTester : public CcsdsSdlsFramerGTestBase {
     //! Maximum size of histories storing events, telemetry, and port outputs
     static const FwSizeType MAX_HISTORY_SIZE = 10;
 
+    //! Expected per-event quota, independent of the generated throttle implementation
+    static const U32 FAILURE_EVENT_LIMIT = 5;
+
+    //! Expected throttle period after which an exhausted quota re-arms
+    static const U32 FAILURE_EVENT_PERIOD_SECONDS = 60;
+
     //! Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
@@ -74,6 +80,23 @@ class CcsdsSdlsFramerTester : public CcsdsSdlsFramerGTestBase {
 
   public:
     // ----------------------------------------------------------------------
+    // Throttle helpers
+    // ----------------------------------------------------------------------
+
+    //! Advance the time reported to the component
+    void advanceTestTime(U32 seconds);
+
+    //! Assert the number of EncryptionFailed events in the current history
+    void assertEncryptionFailedEvents(U32 count);
+
+    //! Assert the number of BufferAllocationFailed events in the current history
+    void assertBufferAllocationFailedEvents(U32 count);
+
+    //! Update a shadow throttle for one failure at the current test time; true when an event is expected
+    bool expectFailureEvent(U32& emissions, Fw::Time& periodStart);
+
+  public:
+    // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
 
@@ -85,6 +108,15 @@ class CcsdsSdlsFramerTester : public CcsdsSdlsFramerGTestBase {
 
     //! Whether the allocation stub returns an invalid buffer
     bool m_allocateInvalid = false;
+
+    //! Time currently reported to the component
+    Fw::Time m_currentTime;
+
+    //! Shadow emission counts and period starts for the independently throttled failure events
+    U32 m_encryptionFailureEvents = 0;
+    Fw::Time m_encryptionFailurePeriodStart;
+    U32 m_allocationFailureEvents = 0;
+    Fw::Time m_allocationFailurePeriodStart;
 
     //! Storage backing the allocation stub
     U8 m_allocationStorage[TEST_ALLOCATION_SIZE] = {};

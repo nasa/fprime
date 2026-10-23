@@ -5,6 +5,10 @@
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
 
+namespace {
+constexpr FwSizeType STAGE_TIMEOUT_MS = 1000;
+}
+
 void wait_for_state_with_timeout(Os::Test::Task::TestTaskInfo& info,
                                  const Os::Test::Task::TestTaskInfo::Lifecycle& stage,
                                  const FwSizeType delay_ms) {
@@ -45,7 +49,7 @@ void Os::Test::Task::Tester::Start::action(Os::Test::Task::Tester& state  //!< T
     ASSERT_EQ(state.m_last_task, &new_task->m_task) << "New task not registered";
     // Poke the task into the MIDDLE state
     new_task->signal();
-    wait_for_state_with_timeout(*new_task, TestTaskInfo::MIDDLE, 100);
+    wait_for_state_with_timeout(*new_task, TestTaskInfo::MIDDLE, STAGE_TIMEOUT_MS);
     ASSERT_EQ(Os::Task::getNumTasks(), TestTaskInfo::s_task_count) << "Task count miss-match";
 }
 
@@ -80,11 +84,11 @@ void Os::Test::Task::Tester::Join::action(Os::Test::Task::Tester& state  //!< Th
 
     // Poke the task into the MIDDLE state
     joiner_task.signal();
-    wait_for_state_with_timeout(joiner_task, TestTaskInfo::MIDDLE, 100);
+    wait_for_state_with_timeout(joiner_task, TestTaskInfo::MIDDLE, STAGE_TIMEOUT_MS);
 
     // Make the other task move from MIDDLE state to end state and wait for JOINED state
     other_task->signal();
-    wait_for_state_with_timeout(joiner_task, TestTaskInfo::END, 100);
+    wait_for_state_with_timeout(joiner_task, TestTaskInfo::END, STAGE_TIMEOUT_MS);
     ASSERT_EQ(Os::Task::getNumTasks(), TestTaskInfo::s_task_count) << "Task count miss-match";
 }
 

@@ -379,7 +379,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
         );
 
         //! Deserialize a time tag
-        //! \return Serialize status
+        //! \return Serialize status; FW_DESERIALIZE_FORMAT_ERROR if microseconds >= 1000000
         Fw::SerializeStatus deserializeTimeTag(Fw::Time& timeTag  //!< The time tag
         );
 

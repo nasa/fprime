@@ -56,9 +56,17 @@ class GenericHubTester : public GenericHubGTestBase {
     //!
     void test_telemetry();
 
+    //! Test of telemetry in-out for a specified buffer size
+    //!
+    void test_telemetry_size(U32 size);
+
     //! Test of event in-out
     //!
     void test_events();
+
+    //! Test of event in-out for a specified buffer size
+    //!
+    void test_events_size(U32 size);
 
     //! Test of commands in-out
     //!
@@ -151,6 +159,10 @@ class GenericHubTester : public GenericHubGTestBase {
     void send_random_buffer(U32 port);
 
     void random_fill(Fw::SerialBufferBase& buffer, U32 max_size);
+
+    //! Fill a buffer with a specified number of bytes
+    //!
+    void fill(Fw::SerialBufferBase& buffer, U32 size);
 
     void test_command_dispatch();
 

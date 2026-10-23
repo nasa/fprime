@@ -57,12 +57,14 @@ constant FileNameStringSize = 240
 @ The size of an assert text string
 constant FwAssertTextSize = 256
 
-@ The size of a file name in an AssertFatalAdapter event (leading-truncation)
-@ Note: File names in assertion failures are also truncated by
-@ the constants FwAssertTextSize (in this file) and FW_LOG_STRING_MAX_SIZE (set
-@ in FW_LOG_STRING_MAX_SIZE)
-@ Set much smaller than FwAssertTextSize so there's space for time stamp/assert 
-@ arguments in log message
+@ The size of a file name in an AssertFatalAdapter event (leading-truncation:
+@ the tail of the path is kept)
+@ Note: Svc::AssertFatalAdapter truncates to the smaller of this constant and
+@ FW_LOG_STRING_MAX_SIZE (set in FpConstants.fpp), so raising this alone has no
+@ effect once it exceeds that bound. With the defaults (240 here, 200 there)
+@ FW_LOG_STRING_MAX_SIZE is what governs.
+@ FwAssertTextSize (in this file) is a separate bound on the console assert
+@ text, which also carries the timestamp and assert arguments.
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
 @ The maximum size in bytes of the argument blob carried in a Svc::SeqArgs buffer

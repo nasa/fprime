@@ -12,7 +12,11 @@
 #include "FppTest/sizeof/TestStruct1SerializableAc.hpp"
 #include "FppTest/sizeof/TestStruct2SerializableAc.hpp"
 #include "FppTest/sizeof/U64AliasAliasAc.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "gtest/gtest.h"
+
+// Serialized size of the length prefix on every string
+static constexpr FwSizeType STRING_LENGTH_SIZE = sizeof(FwSizeStoreType);
 
 TEST(SizeofTest, Primitives) {
     ASSERT_EQ(SizeofU8, sizeof(U8));
@@ -29,8 +33,8 @@ TEST(SizeofTest, Primitives) {
 }
 
 TEST(SizeofTest, AliasType) {
-    ASSERT_EQ(SizeofStringAlias, 102);
-    ASSERT_EQ(SizeofStringDefaultAlias, 258);
+    ASSERT_EQ(SizeofStringAlias, 100 + STRING_LENGTH_SIZE);
+    ASSERT_EQ(SizeofStringDefaultAlias, 256 + STRING_LENGTH_SIZE);
     ASSERT_EQ(SizeofU64Alias, sizeof(U64Alias));
     ASSERT_EQ(SizeofEnumAlias, EnumAlias::SERIALIZED_SIZE);
     ASSERT_EQ(SizeofEnumAlias, 2);
@@ -50,7 +54,9 @@ TEST(SizeofTest, Enum) {
 
 TEST(SizeofTest, Struct) {
     ASSERT_EQ(SizeofStruct, TestStruct1::SERIALIZED_SIZE);
-    ASSERT_EQ(SizeofStruct, 100);
+    // m1: 2 * 24, m2: 8, m3: 2, m4: 3 * (10 + prefix), m5: 3 * prefix
+    ASSERT_EQ(SizeofStruct, 88 + 6 * STRING_LENGTH_SIZE);
     ASSERT_EQ(SizeofStruct2, TestStruct2::SERIALIZED_SIZE);
-    ASSERT_EQ(SizeofStruct2, 350);
+    // m1: 48, m2: 100 + prefix, m3: 2 * SizeofStruct
+    ASSERT_EQ(SizeofStruct2, 324 + 13 * STRING_LENGTH_SIZE);
 }

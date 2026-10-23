@@ -10,6 +10,7 @@ nav:
   - Getting Started: 
     - 'Getting Started': docs/getting-started/index.md
     - 'Installation and Troubleshooting': docs/getting-started/installing-fprime.md
+    - 'The F Prime Book': docs/the_book.md
   - Documentation:
     - docs/index.md
     - Tutorials:
@@ -21,6 +22,7 @@ nav:
       - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
     - User Manual: 
       - User Manual Index: docs/user-manual/index.md
+      - 'The F Prime Book': docs/the_book.md
       - Overview: docs/user-manual/overview/
       - Framework: docs/user-manual/framework/
       - FPP: 'https://nasa.github.io/fpp/fpp-users-guide.html'

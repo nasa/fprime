@@ -6,6 +6,14 @@
 # components.
 ####
 
+# Ref instantiates Svc.WasmSequencer, which is disabled without a usable Rust toolchain
+if (NOT TARGET Svc_WasmSequencer)
+    fprime_cmake_fatal_error(
+        "Ref requires Rust 1.87 or newer (cargo and rustc on PATH) for Svc_WasmSequencer.\n"
+        "Install or update Rust: https://www.rust-lang.org/tools/install\n"
+    )
+endif()
+
 # Add subdirectories for the Ref project specific components
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")

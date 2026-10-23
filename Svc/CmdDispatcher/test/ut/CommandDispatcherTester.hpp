@@ -23,7 +23,7 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
     void runCommandReregister();
     void runFailedCommand();
     void runInvalidCommand();
-    void runOverflowCommands();
+    void runOverflowCommands(bool executeWhenSequenceTableFull);
     void runNopCommands();
     void runClearCommandTracking();
     void runCommandQueueOverflow();

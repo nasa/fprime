@@ -9,7 +9,10 @@
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Os/Console.hpp>
+#include <Os/Task.hpp>
+#include <STest/Random/Random.hpp>
 #include <cerrno>
+#include <csignal>
 
 Os::Console logger;
 
@@ -48,6 +51,73 @@ TEST(ErrorHandling, TestRecvRetriesEintr) {
     EXPECT_EQ(socket.recv_calls, 2u);
     EXPECT_EQ(size, 1u);
     EXPECT_EQ(data[0], 0xA5);
+}
+
+// Fails every send with the given errno (a send timeout is -1/EAGAIN), optionally accepting a partial write first
+class SendTimeoutSocket final : public Drv::IpSocket {
+  public:
+    explicit SendTimeoutSocket(FwSizeType partial_write, int timeout_errno = EAGAIN)
+        : m_partial_write(partial_write), m_timeout_errno(timeout_errno) {}
+    U32 send_calls = 0;
+
+  private:
+    Drv::SocketIpStatus openProtocol(Drv::SocketDescriptor& fd) override {
+        fd.fd = 0;
+        return Drv::SOCK_SUCCESS;
+    }
+
+    FwSignedSizeType sendProtocol(const Drv::SocketDescriptor&, const U8* const, const FwSizeType size) override {
+        this->send_calls++;
+        if ((this->send_calls == 1) && (this->m_partial_write > 0)) {
+            return static_cast<FwSignedSizeType>(FW_MIN(this->m_partial_write, size));
+        }
+        errno = this->m_timeout_errno;
+        return -1;
+    }
+
+    FwSignedSizeType recvProtocol(const Drv::SocketDescriptor&, U8* const, const FwSizeType) override {
+        errno = EBADF;
+        return -1;
+    }
+
+    FwSizeType m_partial_write;
+    int m_timeout_errno;
+};
+
+TEST(ErrorHandling, TestSendTimeoutIsRetryable) {
+    SendTimeoutSocket socket(0);
+    Drv::SocketDescriptor fd;
+    U8 data[4] = {1, 2, 3, 4};
+
+    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_INTERRUPTED_TRY_AGAIN);
+    EXPECT_EQ(socket.send_calls, 1u);
+}
+
+TEST(ErrorHandling, TestSendTimeoutAfterPartialWriteIsRetryable) {
+    SendTimeoutSocket socket(2);
+    Drv::SocketDescriptor fd;
+    U8 data[4] = {1, 2, 3, 4};
+
+    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_INTERRUPTED_TRY_AGAIN);
+    EXPECT_EQ(socket.send_calls, 2u);
+}
+
+TEST(ErrorHandling, TestSendOtherErrorIsStillFatal) {
+    SendTimeoutSocket socket(0, EACCES);
+    Drv::SocketDescriptor fd;
+    U8 data[4] = {1, 2, 3, 4};
+
+    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_SEND_ERROR);
+    EXPECT_EQ(socket.send_calls, 1u);
+}
+
+TEST(ErrorHandling, TestSendBrokenPipeIsDisconnected) {
+    SendTimeoutSocket socket(0, EPIPE);
+    Drv::SocketDescriptor fd;
+    U8 data[1] = {0};
+
+    EXPECT_EQ(socket.send(fd, data, sizeof data), Drv::SOCK_DISCONNECTED);
+    EXPECT_EQ(socket.send_calls, 1u);
 }
 
 void test_with_loop(U32 iterations) {
@@ -91,6 +161,63 @@ void test_with_loop(U32 iterations) {
     server.terminate(server_fd);
 }
 
+//! Send on a connection whose peer has closed until a send fails, returning the failing status
+//!
+//! The first sends after the peer closes are usually buffered and succeed; the peer's reset makes a later send fail.
+Drv::SocketIpStatus send_until_failure(Drv::IpSocket& sender, const Drv::SocketDescriptor& fd) {
+    constexpr U32 MAX_SENDS = 100;
+    U8 data[64] = {};
+    Drv::SocketIpStatus status = Drv::SOCK_SUCCESS;
+    for (U32 i = 0; (i < MAX_SENDS) && (status == Drv::SOCK_SUCCESS); i++) {
+        status = sender.send(fd, data, sizeof data);
+        if (status == Drv::SOCK_SUCCESS) {
+            (void)Os::Task::delay(Fw::TimeInterval(0, 1000));
+        }
+    }
+    return status;
+}
+
+//! Which end of the connected TCP pair sends after the other end has closed
+enum class Sender { SERVER, CLIENT };
+
+//! Close one end of a connected TCP pair, then send from the other end
+//!
+//! SIGPIPE is left at its default action, which terminates the process. A send that raised it would end this test
+//! executable rather than return a status.
+void test_send_after_peer_closes(Sender sender) {
+    (void)std::signal(SIGPIPE, SIG_DFL);
+
+    U16 port = 0;  // Choose a port
+    Drv::TcpServerSocket server;
+    Drv::TcpClientSocket client;
+    Drv::SocketDescriptor server_fd;
+    Drv::SocketDescriptor client_fd;
+    server.configure("127.0.0.1", port, 0, 100);
+    ASSERT_EQ(server.startup(server_fd), Drv::SOCK_SUCCESS);
+    client.configure("127.0.0.1", server.getListenPort(), 0, 100);
+    ASSERT_EQ(client.open(client_fd), Drv::SOCK_SUCCESS) << "With errno: " << errno;
+    ASSERT_EQ(server.open(server_fd), Drv::SOCK_SUCCESS);
+
+    if (sender == Sender::SERVER) {
+        client.close(client_fd);
+        EXPECT_EQ(send_until_failure(server, server_fd), Drv::SOCK_DISCONNECTED);
+        server.close(server_fd);
+    } else {
+        server.close(server_fd);
+        EXPECT_EQ(send_until_failure(client, client_fd), Drv::SOCK_DISCONNECTED);
+        client.close(client_fd);
+    }
+    server.terminate(server_fd);
+}
+
+TEST(ErrorHandling, TestServerSendAfterClientClosesIsDisconnected) {
+    test_send_after_peer_closes(Sender::SERVER);
+}
+
+TEST(ErrorHandling, TestClientSendAfterServerClosesIsDisconnected) {
+    test_send_after_peer_closes(Sender::CLIENT);
+}
+
 TEST(Nominal, TestNominalTcp) {
     test_with_loop(1);
 }
@@ -100,6 +227,7 @@ TEST(Nominal, TestMultipleTcp) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

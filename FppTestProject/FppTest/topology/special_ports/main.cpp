@@ -8,7 +8,9 @@
 
 #include "FppTest/topology/special_ports/SpecialPortsTopologyAc.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include "Fw/Dp/DpContainer.hpp"
 #include "SpecialPortsTopologyDefs.hpp"
+#include "Utils/Hash/Hash.hpp"
 
 #include "Os/Os.hpp"
 
@@ -233,10 +235,17 @@ TEST_F(FrameworkTester, CmdDp) {
         {0, comp2.getIdBase() + OPCODE_END, 0, Fw::CmdResponse::BUSY},
     });
 
+    // Both Start commands requested room for two fixed-size records
+    const FwSizeType requestSize = Fw::DpContainer::getPacketSizeForDataSize(2 * FixedSizeData::SERIALIZED_SIZE);
     check_dp_request({
-        {0, comp1.getIdBase(), 121},
-        {1, comp2.getIdBase(), 121},
+        {0, comp1.getIdBase(), requestSize},
+        {1, comp2.getIdBase(), requestSize},
     });
+
+    // Records serialize strings at their actual length, so compute the data size the same way
+    const FixedSizeData record1(0xA, 12.5, Fw::String("c"));
+    const FixedSizeData record2(0xB, 15.125, Fw::String("cc"));
+    const FwSizeType dataSize = 2 * sizeof(FwDpIdType) + record1.serializedSize() + record2.serializedSize();
 
     Fw::TlmBuffer buf1;
     // Serialize the packet type
@@ -254,17 +263,19 @@ TEST_F(FrameworkTester, CmdDp) {
     // Serialize the data product state
     buf1.serializeFrom(Fw::DpState(Fw::DpState::UNTRANSMITTED));
     // Serialize the data size
-    buf1.serializeSize(47);
+    buf1.serializeSize(dataSize);
     // Serialize the header CRC
-    buf1.serializeFrom(static_cast<U32>(0x06B77648));
+    Utils::HashBuffer hash1;
+    Utils::Hash::hash(buf1.getBuffAddr(), Fw::DpContainer::Header::SIZE, hash1);
+    buf1.serializeFrom(hash1.asBigEndianU32());
 
     // Serialize the first record
     buf1.serializeFrom(static_cast<FwDpIdType>(comp1.getIdBase() + 0));
-    buf1.serializeFrom(FixedSizeData(0xA, 12.5, Fw::String("c")));
+    buf1.serializeFrom(record1);
 
     // Serialize the second record
     buf1.serializeFrom(static_cast<FwDpIdType>(comp1.getIdBase() + 0));
-    buf1.serializeFrom(FixedSizeData(0xB, 15.125, Fw::String("cc")));
+    buf1.serializeFrom(record2);
     // Empty data hash
     buf1.serializeFrom(static_cast<U32>(0));
 
@@ -287,7 +298,9 @@ TEST_F(FrameworkTester, CmdDp) {
     // Serialize the data size
     buf2.serializeSize(0);
     // Serialize the CRC
-    buf2.serializeFrom(static_cast<U32>(0xC0082b9f));
+    Utils::HashBuffer hash2;
+    Utils::Hash::hash(buf2.getBuffAddr(), Fw::DpContainer::Header::SIZE, hash2);
+    buf2.serializeFrom(hash2.asBigEndianU32());
     // Empty data hash
     buf2.serializeFrom(static_cast<U32>(0));
 

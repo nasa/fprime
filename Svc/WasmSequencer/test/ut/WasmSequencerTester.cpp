@@ -34,7 +34,6 @@ WasmSequencerTester ::WasmSequencerTester(bool autoConfigure)
       lastSerialOutSize(0),
       seqStartOutCount(0),
       lastSeqStartFilename(""),
-      lastSeqStartArgs(),
       seqDoneOutCount(0),
       lastSeqDoneResponse(Fw::CmdResponse::OK),
       component("WasmSequencer") {
@@ -167,16 +166,18 @@ void WasmSequencerTester ::disconnectCmdOut(FwIndexType portNum) {
     port.init();
 }
 
-Svc::SeqArgs WasmSequencerTester ::makeSeqArgs(const U8* bytes, FwSizeType size) {
-    Svc::SeqArgs args;
-    Svc::SeqArgs::Type_of_buffer buffer = {};
-    FW_ASSERT(size <= sizeof buffer, static_cast<FwAssertArgType>(size));
-    for (FwSizeType i = 0; i < size; i++) {
-        buffer[i] = bytes[i];
-    }
-    args.set_size(size);
-    args.set_buffer(buffer);
-    return args;
+void WasmSequencerTester ::disconnectSeqStartOut(FwIndexType portNum) {
+    Svc::OutputCmdSeqInPort& port = this->component.m_seqStartOut_OutputPort[portNum];
+    port.~OutputCmdSeqInPort();
+    new (&port) Svc::OutputCmdSeqInPort();
+    port.init();
+}
+
+void WasmSequencerTester ::disconnectSeqDoneOut(FwIndexType portNum) {
+    Fw::OutputCmdResponsePort& port = this->component.m_seqDoneOut_OutputPort[portNum];
+    port.~OutputCmdResponsePort();
+    new (&port) Fw::OutputCmdResponsePort();
+    port.init();
 }
 
 // ----------------------------------------------------------------------
@@ -282,7 +283,6 @@ void WasmSequencerTester ::from_seqStartOut_handler(FwIndexType portNum,
                                                     const Svc::SeqArgs& args) {
     this->seqStartOutCount++;
     this->lastSeqStartFilename = filename;
-    this->lastSeqStartArgs = args;
 }
 
 void WasmSequencerTester ::from_seqDoneOut_handler(FwIndexType portNum,

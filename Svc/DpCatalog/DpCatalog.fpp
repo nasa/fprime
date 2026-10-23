@@ -191,6 +191,15 @@ module Svc {
       id 14 \
       format "Product {} complete. Pending products: {} Pending bytes: {}"
 
+    @ Catalog cleared by CLEAR_CATALOG; any transmit in progress was aborted
+    event CatalogCleared (
+                            pending: U32 @< pending data products dropped from the catalog
+                            pending_bytes: U64 @< pending data product volume dropped
+                          ) \
+      severity activity high \
+      id 15 \
+      format "Catalog cleared. Dropped pending products: {} Pending bytes: {}"
+
     @ Component not initialized error
     event ComponentNotInitialized \
       severity warning high \
@@ -430,6 +439,16 @@ module Svc {
       severity warning high \
       id 49 \
       format "Failed to format DP file name for {} with status {}" \
+      throttle 10
+
+    @ fileDone that does not match the send in flight, or arrives with no send in flight
+    event StaleFileDone(
+                            context: U32 @< FileDownlink context carried by the fileDone
+                            status: Svc.SendFileStatus @< Downlink status
+                          ) \
+      severity warning low \
+      id 50 \
+      format "Stale fileDone context {} status {}, no matching transmit in flight" \
       throttle 10
 
 

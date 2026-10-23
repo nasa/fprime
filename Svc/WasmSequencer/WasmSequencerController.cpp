@@ -35,9 +35,6 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_processInvo
         this->log_WARNING_LO_ModuleNotFound(value.get_moduleName());
         this->controller_sendSignal_invokeFailed(value.get_context());
     } else {
-        // Store the arguments for the ARGS host function round trip and carry the
-        // resolved module index forward in the request context.
-        this->m_args = value.get_args();
         Svc::WasmSequencer_RequestContext context = value.get_context();
         context.set_moduleIdx(static_cast<WasmSequencer_ModuleIdx>(moduleIdx));
         this->controller_sendSignal_invoked(context);
@@ -53,11 +50,6 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_nob
         // Respond to this request!
         this->respondToRequest(value, Fw::CmdResponse::OK);
     }
-
-    // Clear any pending waits that locked during load
-    if (value.get_source() == Svc::WasmSequencer_SignalSource::COMMAND_LOAD) {
-        this->respondToWaiting(Fw::CmdResponse::OK);
-    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_ERROR(
@@ -68,6 +60,9 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_ERR
 
     // Respond to all wait requests
     this->respondToWaiting(Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Respond to port requests
+    this->reportSeqAborted(value, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_incrementSequenceFailure(
@@ -95,6 +90,9 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_cancelPendi
     this->m_tlm.sequencesCancelled++;
     this->respondToRequest(value, Fw::CmdResponse::EXECUTION_ERROR);
     this->respondToWaiting(Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Respond to port requests
+    this->reportSeqAborted(value, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respondInvoke_BUSY(
@@ -119,6 +117,9 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respondLoad
     const Svc::WasmSequencer_LoadRequest& value) {
     this->log_WARNING_LO_ControllerBusy(value.get_context().get_source(), this->controller_getState());
     this->respondToRequest(value.get_context(), Fw::CmdResponse::BUSY);
+
+    // Respond to port requests
+    this->reportSeqAborted(value.get_context(), Fw::CmdResponse::BUSY);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_block_OK(
@@ -240,8 +241,6 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     FW_ASSERT(this->m_wasm != nullptr);
     FW_ASSERT(this->m_guest_allocator != nullptr);
 
-    this->m_args = value.get_args();
-
     // Resolve the sequence file path against SEQ_BASE_DIR
     Fw::String filePath;
     if (!this->resolveSequencePath(value.get_fileName(), filePath)) {
@@ -346,7 +345,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     if (value.get_source() == Svc::WasmSequencer_SignalSource::COMMAND_RUN ||
         value.get_source() == Svc::WasmSequencer_SignalSource::PORT_RUN) {
         if (this->isConnected_seqStartOut_OutputPort(0)) {
-            this->seqStartOut_out(0, this->m_lastLoadFileName, this->m_args);
+            this->seqStartOut_out(0, this->m_lastLoadFileName, Svc::SeqArgs{});
         }
     }
 }

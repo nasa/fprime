@@ -9,7 +9,7 @@ developed to run on a new platform:
     location of compilers and other build tools for compiling F´ for a
     given platform.
 
-2.  Fw::Types and configuration. A Fw::Types header may be needed along with appropriate configuration if the hardware needs settings that are different from the default.
+2.  Fw::Types and configuration. A Fw::Types header may be needed along with appropriate configuration if the hardware needs settings that are different from the default. Platform types and settings are supplied through a platform configuration module; see [CMake Platforms](../../user-manual/build-system/cmake-platforms.md) and [Configuration Modules](../../user-manual/build-system/configuration.md).
 
 3.  Hardware drivers. Any drivers that are outside the provided Linux
     Driver package would need to be developed for the hardware-specific

@@ -28,6 +28,10 @@ constexpr FwOpcodeType getEventOpcode(const FwOpcodeType opcode) {
     return IncludeCommandOpcodesInEvents ? opcode : std::numeric_limits<FwOpcodeType>::max();
 }
 
+//! Default for whether a sequence command is dispatched when the sequence tracker table is full.
+//! Per-instance override: CommandDispatcherImpl::configure(bool).
+constexpr bool EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT = false;
+
 }  // namespace CmdDispatcherCfg
 }  // namespace Svc
 

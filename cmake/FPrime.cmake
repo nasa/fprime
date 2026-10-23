@@ -152,6 +152,12 @@ macro(fprime_initialize_build_system)
         if (NOT FPRIME_IS_SUB_BUILD)
             set(SUB_BUILD_TARGETS target/sub-build/fpp_locs target/sub-build/fpp_depend)
             if (FPRIME_ENABLE_JSON_MODEL_GENERATION)
+                fprime_cmake_warning(
+                    "FPRIME_ENABLE_JSON_MODEL_GENERATION is deprecated and will be removed in a future release.\n"
+                    "The FPP JSON model is superseded by the native FPP Python bindings (fprime-fpp-python).\n"
+                    "FPP 3.4.0, shipped with F Prime 4.4.0, is the last version to support the JSON model.\n"
+                    "Migration guide: https://github.com/fprime-community/fprime-python-model/blob/main/MIGRATION.md\n"
+                )
                 list(APPEND SUB_BUILD_TARGETS target/sub-build/fpp_to_json)
             endif()
             list(APPEND SUB_BUILD_TARGETS target/sub-build/module_info)

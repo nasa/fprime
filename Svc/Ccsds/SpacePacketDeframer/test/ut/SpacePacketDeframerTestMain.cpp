@@ -4,6 +4,7 @@
 // \brief  cpp file for SpacePacketDeframer component test main function
 // ======================================================================
 
+#include "STest/Random/Random.hpp"
 #include "SpacePacketDeframerTester.hpp"
 
 TEST(SpacePacketDeframer, testDataReturnPassthrough) {
@@ -66,6 +67,7 @@ TEST(SpacePacketDeframer, testSequenceFlagsAccepted) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

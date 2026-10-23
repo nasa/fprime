@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Test outputs
+*.json
+*.txt
+test_*.bin
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

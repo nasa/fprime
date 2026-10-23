@@ -230,7 +230,7 @@ event SequenceHostFailure(
     hostFunction: HostFunction
 ) \
     severity warning high \
-    format "Sequence at index {} failed during {} awaiting host function {} (reason {})"
+    format "Sequence at index {} failed during {}: {} while awaiting host function {}"
 
 @ Execution was paused at a breakpoint
 event SequencePaused() severity activity high format "Sequence execution paused"

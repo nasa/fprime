@@ -44,7 +44,11 @@ jobs:
         fetch-depth: 0
         filter: blob:none
         submodules: true
-    - uses: ./.github/actions/setup
+    - name: "Setup F' Tools"
+      uses: nasa/fprime-actions/setup@devel
+      with:
+        location: ${{ github.workspace }}
+        ccache: "false"
     - name: Build Framework
       run: |
         fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
@@ -68,7 +72,11 @@ jobs:
         fetch-depth: 0
         filter: blob:none
         submodules: true
-    - uses: ./.github/actions/setup
+    - name: "Setup F' Tools"
+      uses: nasa/fprime-actions/setup@devel
+      with:
+        location: ${{ github.workspace }}
+        ccache: "false"
     - name: Build Ref
       run: |
         cd TestDeploymentsProject
@@ -93,7 +101,11 @@ jobs:
         fetch-depth: 0
         filter: blob:none
         submodules: true
-    - uses: ./.github/actions/setup
+    - name: "Setup F' Tools"
+      uses: nasa/fprime-actions/setup@devel
+      with:
+        location: ${{ github.workspace }}
+        ccache: "false"
     # Some UTs require a non-root user to run properly due to using file permissions in tests
     # This issue shows up on RHEL8 containers
     - name: Setup test environment for permission tests

@@ -44,6 +44,16 @@ jobs:
       # space-packet-fprime plugin at ./gds-plugin).
       - name: "Stage GDS requirements"
         run: cp FprimeSoakTestReference/FprimeSoakTestReferenceDeployment/gds-requirements.txt requirements.txt
+      # The space-packet-fprime plugin lives with the RFM69 Feather ground radio firmware.
+      - name: "Checkout RFM69 Feather groundstation"
+        uses: actions/checkout@v4
+        with:
+          repository: fprime-community/fprime-rfm69-feather-groundstation
+          path: fprime-rfm69-feather-groundstation
+          sparse-checkout: gds-plugin
+          persist-credentials: false
+      - name: "Stage GDS plugin"
+        run: cp -r fprime-rfm69-feather-groundstation/gds-plugin gds-plugin
       - name: "Archive soak artifact"
         uses: actions/upload-artifact@v7
         with:

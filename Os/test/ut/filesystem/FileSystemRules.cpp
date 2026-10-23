@@ -254,6 +254,59 @@ void Os::Test::FileSystem::Tester::CopyFile::action(Os::Test::FileSystem::Tester
 }
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  CopyFileOverwrite
+// ------------------------------------------------------------------------------------------------------
+Os::Test::FileSystem::Tester::CopyFileOverwrite::CopyFileOverwrite()
+    : STest::Rule<Os::Test::FileSystem::Tester>("CopyFileOverwrite") {}
+
+bool Os::Test::FileSystem::Tester::CopyFileOverwrite::precondition(const Os::Test::FileSystem::Tester& state) {
+    return state.m_test_files.size() >= 2;
+}
+
+void Os::Test::FileSystem::Tester::CopyFileOverwrite::action(Os::Test::FileSystem::Tester& state) {
+    Os::FileSystem::Status status;
+
+    TestFile& source = state.get_random_file();
+    TestFile* dest = &state.get_random_file();
+    while (dest->path == source.path) {
+        dest = &state.get_random_file();
+    }
+    std::string source_path = source.path;
+    std::string dest_path = dest->path;
+
+    ASSERT_TRUE(Os::FileSystem::getSingleton().exists(source_path.c_str()));
+    ASSERT_TRUE(Os::FileSystem::getSingleton().exists(dest_path.c_str()));
+
+    // Make the destination strictly longer than the source
+    if (dest->contents.size() <= source.contents.size()) {
+        TestFile extra("", std::string(source.contents.size() - dest->contents.size() + 1, 'X'));
+        Os::File file;
+        ASSERT_EQ(file.open(dest_path.c_str(), Os::File::OPEN_APPEND), Os::File::OP_OK);
+        FwSizeType size = static_cast<FwSizeType>(extra.contents.size());
+        ASSERT_EQ(file.write(reinterpret_cast<const U8*>(extra.contents.c_str()), size), Os::File::OP_OK);
+        file.close();
+        state.append_file(extra, *dest, false);
+    }
+    ASSERT_TRUE(state.validate_contents_on_disk(*dest));
+    ASSERT_GT(dest->contents.size(), source.contents.size());
+
+    status = Os::FileSystem::getSingleton().copyFile(source_path.c_str(), dest_path.c_str());
+    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to copy file";
+
+    // Replace the destination entry in the model with a copy of the source
+    TestFile source_copy = source;
+    state.remove_file(dest_path);
+    state.copy_file(source_copy, dest_path);
+
+    ASSERT_TRUE(compare_file_contents_on_disk(source_path, dest_path));
+    FwSizeType source_size = 0;
+    FwSizeType dest_size = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(source_path.c_str(), source_size), Os::FileSystem::Status::OP_OK);
+    ASSERT_EQ(Os::FileSystem::getFileSize(dest_path.c_str(), dest_size), Os::FileSystem::Status::OP_OK);
+    ASSERT_EQ(dest_size, source_size);
+}
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  AppendFile
 // ------------------------------------------------------------------------------------------------------
 Os::Test::FileSystem::Tester::AppendFile::AppendFile() : STest::Rule<Os::Test::FileSystem::Tester>("AppendFile") {}

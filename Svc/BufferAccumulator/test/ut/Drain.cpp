@@ -199,6 +199,59 @@ void BufferAccumulatorTester ::PartialDrainOK() {
     delete[] data;
 }
 
+void BufferAccumulatorTester ::PartialDrainNoBlock() {
+    this->sendCmd_BA_SetMode(0, 0, BufferAccumulator_OpState::ACCUMULATE);
+    this->doDispatch();
+    ASSERT_CMD_RESPONSE(0, BufferAccumulator::OPCODE_BA_SETMODE, 0, Fw::CmdResponse::OK);
+
+    // With nothing queued, NOBLOCK completes immediately instead of waiting for buffers
+    this->clearHistory();
+    this->sendCmd_BA_DrainBuffers(0, 0, 3, BufferAccumulator_BlockMode::NOBLOCK);
+    this->doDispatch();
+    ASSERT_EVENTS_BA_NonBlockDrain_SIZE(1);
+    ASSERT_EVENTS_BA_NonBlockDrain(0, 0u, 3u);
+    ASSERT_EVENTS_BA_PartialDrainDone_SIZE(1);
+    ASSERT_EVENTS_BA_PartialDrainDone(0, 0u);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, BufferAccumulator::OPCODE_BA_DRAINBUFFERS, 0, Fw::CmdResponse::OK);
+    ASSERT_from_bufferSendOutDrain_SIZE(0);
+
+    // Queue fewer buffers than will be requested; the queue depth is reported as it grows
+    const U32 numQueued = 2;
+    const U32 numRequested = 5;
+    U8 data[10];
+    Fw::Buffer buffers[numQueued];
+    this->clearHistory();
+    for (U32 i = 0; i < numQueued; ++i) {
+        buffers[i] = Fw::Buffer(data, sizeof(data), i);
+        this->invoke_to_bufferSendInFill(0, buffers[i]);
+        this->doDispatch();
+        ASSERT_TLM_BA_NumQueuedBuffers_SIZE(i + 1);
+        ASSERT_TLM_BA_NumQueuedBuffers(i, i + 1);
+    }
+
+    // NOBLOCK clamps the request to what is queued, drains that, then completes
+    this->clearHistory();
+    this->sendCmd_BA_DrainBuffers(0, 0, numRequested, BufferAccumulator_BlockMode::NOBLOCK);
+    this->doDispatch();
+    ASSERT_EVENTS_BA_NonBlockDrain_SIZE(1);
+    ASSERT_EVENTS_BA_NonBlockDrain(0, numQueued, numRequested);
+    for (U32 i = 0; i < numQueued; ++i) {
+        ASSERT_from_bufferSendOutDrain_SIZE(i + 1);
+        ASSERT_from_bufferSendOutDrain(i, buffers[i]);
+        this->invoke_to_bufferSendInReturn(0, buffers[i]);
+        this->doDispatch();
+    }
+    ASSERT_from_bufferSendOutDrain_SIZE(numQueued);
+    ASSERT_EVENTS_BA_PartialDrainDone_SIZE(1);
+    ASSERT_EVENTS_BA_PartialDrainDone(0, numQueued);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, BufferAccumulator::OPCODE_BA_DRAINBUFFERS, 0, Fw::CmdResponse::OK);
+    // The last reported queue depth reflects the now-empty queue
+    const U32 lastTlm = static_cast<U32>(this->tlmHistory_BA_NumQueuedBuffers->size() - 1);
+    ASSERT_TLM_BA_NumQueuedBuffers(lastTlm, 0u);
+}
+
 }  // namespace Drain
 
 }  // namespace Svc

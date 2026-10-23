@@ -36,7 +36,10 @@ jobs:
           fetch-depth: 0
           filter: blob:none
           submodules: true
-      - uses: ./.github/actions/setup
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
       - name: CMake Tests
         working-directory: ./cmake/test
         shell: bash

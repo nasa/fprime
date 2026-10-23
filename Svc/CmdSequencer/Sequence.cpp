@@ -47,9 +47,13 @@ void CmdSequencerComponentImpl::Sequence ::allocateBuffer(FwEnumStoreType identi
                                                           FwSizeType bytes) {
     // has to be at least as big as a header
     FW_ASSERT(bytes >= Sequence::Header::SERIALIZED_SIZE);
-    bool recoverable;
+    bool recoverable = false;
     this->m_allocatorId = identifier;
-    this->m_buffer.setExtBuffer(static_cast<U8*>(allocator.allocate(identifier, bytes, recoverable)), bytes);
+    // Allocation may change bytes. Finish it before using the granted capacity.
+    U8* const buffer = static_cast<U8*>(allocator.allocate(identifier, bytes, recoverable));
+    FW_ASSERT(buffer != nullptr);
+    FW_ASSERT(bytes >= Sequence::Header::SERIALIZED_SIZE, static_cast<FwAssertArgType>(bytes));
+    this->m_buffer.setExtBuffer(buffer, bytes);
 }
 
 void CmdSequencerComponentImpl::Sequence ::deallocateBuffer(Fw::MemAllocator& allocator) {

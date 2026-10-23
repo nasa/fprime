@@ -84,8 +84,8 @@
     "DataSize": {
       "format": "{}",
       "description": "Size of data payload in bytes",
-      "value": 1212,
-      "type": "U16"
+      "value": 1464,
+      "type": "U64"
     },
     "Checksum": {
       "format": "{}",

@@ -90,6 +90,12 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
+      # Runner images pre-set JAVA_HOME to a system JDK; clear it so fpp resolves
+      # the fprime-jre java from the bootstrapped venv. No other setup is done here
+      # on purpose: this job validates an unassisted fprime-bootstrap.
+      - name: "Clear JAVA_HOME"
+        run: echo "JAVA_HOME=" >> "${GITHUB_ENV}"
+
       - name: "Update dependencies and install fprime-tools"
         run: |
              cd my-project

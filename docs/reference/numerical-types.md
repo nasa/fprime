@@ -131,7 +131,7 @@ systems. These GDS types have defaults based on configurable platform independen
 
 | GDS Type               | Logical Usage              | Default               | Format Specifier           |
 |------------------------|----------------------------|-----------------------|----------------------------|
-| FwBuffSizeType         | `Fw::Buffer` sizes         | U16                   | PRI_FwBuffSizeType         |
+| FwSizeStoreType        | Serialized sizes and string lengths | FwSizeType   | PRI_FwSizeStoreType        |
 | FwEnumStoreType        | Enumeration values         | I32                   | PRI_FwEnumStoreType        |
 | FwTimeBaseStoreType    | Time base                  | U16                   | PRI_FwTimeBaseStoreType    |
 | FwTimeContextStoreType | Time context               | U8                    | PRI_FwTimeContextStoreType |
@@ -144,6 +144,18 @@ systems. These GDS types have defaults based on configurable platform independen
 
 > [!NOTE]
 > the F´ GDS expects the above types to use their default setting. Users intending to use the F´ GDS should not stray from the above definitions.
+
+> [!WARNING]
+> `FwSizeStoreType` **must be kept in sync with `FwSizeType`**. It defaults to `FwSizeType` so that any in-memory
+> size can be serialized without truncation; its width therefore follows the platform (e.g. 8 bytes on 64-bit hosts),
+> and it prefixes every serialized string, `Fw::Buffer`, and data product size field. Framework components
+> (`Fw::DpContainer`, `Svc::GenericHub`, the data product services, string serialization) are built on the assumption
+> that every `FwSizeType` value is representable as `FwSizeStoreType`. Projects that set the two types differently
+> (e.g. narrowing `FwSizeStoreType` to `U16`) risk failures in these components: any size exceeding the narrowed range
+> fails to serialize with `FW_SERIALIZE_FORMAT_ERROR`, and data products, buffers, or strings of that size are lost.
+> Do not diverge from the default without understanding these consequences. Changing the type also changes the
+> serialized format: data products, parameter databases, and binary sequences produced under a different setting must
+> be regenerated. `FwBuffSizeType` is retained as a backwards-compatible alias of `FwSizeStoreType`.
 
 All defaults can be overridden via project specific configuration supplying a custom `FpConfig.h`. A complete
 definition of a framework/GDS type in `FpConfig.h` would look like:

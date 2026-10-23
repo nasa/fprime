@@ -20,6 +20,7 @@
 #include <Svc/PrmDb/PrmDbComponentAc.hpp>
 #include <Svc/PrmDb/PrmDb_PrmDbFileLoadStateEnumAc.hpp>
 #include <Svc/PrmDb/PrmDb_PrmDbTypeEnumAc.hpp>
+#include <Utils/Hash/Hash.hpp>
 #include <config/PrmDbImplCfg.hpp>
 #include <cstring>
 
@@ -131,6 +132,18 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!
     //!  \param file sandboxed file to configure
     void applySandbox(Os::SandboxedFile& file) const;
+
+    //! Write one chunk of the parameter file while locked; on failure unlocks, emits PrmFileWriteError, responds
+    //! EXECUTION_ERROR
+    bool writeSaveFileChunk(Os::SandboxedFile& paramFile,
+                            const U8* data,
+                            FwSizeType size,
+                            PrmWriteError::T statusStage,
+                            PrmWriteError::T sizeStage,
+                            U32 numRecords,
+                            FwOpcodeType opCode,
+                            U32 cmdSeq,
+                            Utils::Hash& crc);
 
     //!  \brief PrmDb parameter get handler
     //!
