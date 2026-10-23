@@ -442,14 +442,8 @@ void TlmPacketizer ::SEND_PKT_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const U32 id,
                                          const Svc::TelemetrySection& section) {
-    FW_ASSERT(section.isValid());
-    if (section < 0 or section >= TelemetrySection::NUM_SECTIONS) {
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
-        return;
-    }
     FwChanIdType pkt = 0;
-    if (not this->findPacketIndexById(id, pkt)) {
-        log_WARNING_LO_PacketNotFound(id);
+    if (not this->resolvePacket(section, id, pkt)) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
