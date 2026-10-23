@@ -336,7 +336,13 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //! \param section Section the entry applies to
     //! \param pkt Resolved packet index (packet id is derived from it)
     //! \param source OVERRIDDEN when an override is active, GROUP_DEFAULT when cleared
-    void mirrorOverride(const Svc::TelemetrySection& section, FwChanIdType pkt, Svc::PacketConfigSource source);
+    //! \return true when the mirror was sent or no persistence component is wired, false on allocation failure
+    bool mirrorOverride(const Svc::TelemetrySection& section, FwChanIdType pkt, Svc::PacketConfigSource source);
+
+    //! Apply the command-path argument validity checks to a reloaded configIn record
+    //! \param entry Deserialized record
+    //! \return true when every enumerated field of the record holds a valid value
+    bool validPacketConfig(const Svc::PacketConfigEntry& entry) const;
 
   private:
     FwSizeType m_numChannels;  //!< number of channels being packetized

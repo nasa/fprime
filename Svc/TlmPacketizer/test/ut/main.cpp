@@ -162,6 +162,30 @@ TEST(TestNominal, ClearPacketOverrideTest) {
     tester.clearPacketOverrideTest();
 }
 
+TEST(TestNominal, MirrorAllocFailTest) {
+    TEST_CASE(100.1.21, "Mirror allocation failure answers EXECUTION_ERROR and leaves the override untouched");
+    Svc::TlmPacketizerTester tester;
+    tester.mirrorAllocFailTest();
+}
+
+TEST(TestNominal, ConfigInClearReloadTest) {
+    TEST_CASE(100.1.22, "configIn GROUP_DEFAULT reload reverts a packet to group behavior");
+    Svc::TlmPacketizerTester tester;
+    tester.configInClearReloadTest();
+}
+
+TEST(TestNominal, ConfigInMalformedReloadTest) {
+    TEST_CASE(100.1.23, "Malformed configIn reload emits ConfigReloadFailed; invalid buffer is deallocated");
+    Svc::TlmPacketizerTester tester;
+    tester.configInMalformedReloadTest();
+}
+
+TEST(TestNominal, OverrideDisabledInForcedGroupTest) {
+    TEST_CASE(100.1.24, "Overridden-disabled packet stays silent in a Force-Enabled group");
+    Svc::TlmPacketizerTester tester;
+    tester.overrideDisabledInForcedGroupTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -262,6 +262,40 @@ module Svc {
       id 9 \
       format "Packet config: {}"
 
+    @ A per-packet override was applied by command; carries the resulting override
+    event PacketOverrideSet(
+                             packetConfig: PacketConfigEntry @< The override now in effect
+                           ) \
+      severity activity high \
+      id 10 \
+      format "Packet override set: {}"
+
+    @ A per-packet override was cleared by command; the packet reverts to its group policy
+    event PacketOverrideCleared(
+                                 section: TelemetrySection @< The section the override was cleared in
+                                 packetId: U32 @< The packet id
+                               ) \
+      severity activity high \
+      id 11 \
+      format "Packet override cleared: section {} packet id {} reverts to group policy"
+
+    @ A configIn reload buffer was malformed: deserialization failed or bytes remain; later records were not applied
+    event ConfigReloadFailed(
+                              status: Fw.DeserialStatus @< The deserialization status that ended the reload
+                              bytesLeft: FwSizeType @< Bytes remaining unconsumed in the reload buffer
+                            ) \
+      severity warning high \
+      id 12 \
+      format "configIn reload failed with status {} with {} bytes left unapplied"
+
+    @ A configIn record carried an invalid section, source, or config value and was rejected
+    event InvalidPacketConfig(
+                               packetId: U32 @< The packet id in the rejected record
+                             ) \
+      severity warning low \
+      id 13 \
+      format "configIn record for packet id {} rejected: invalid section, source, or config value"
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
