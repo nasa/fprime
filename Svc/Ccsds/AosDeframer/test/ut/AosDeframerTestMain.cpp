@@ -211,25 +211,59 @@ TEST(AosDeframer, testUntrustedFhp) {
 }
 
 // ----------------------------------------------------------------------
-// Tests - Security regression (CVE: EPP integer overflow → heap buffer overflow)
+// Tests - Security regression (CVE: EPP integer overflow and heap buffer overflow)
 // ----------------------------------------------------------------------
 
-// Regression test: single-frame delivery of the CVE PoC payload.
-// Verifies that the integer overflow guard in sizeEppPacket prevents the
-// heap buffer overflow on 32-bit targets and that the component handles
-// the resulting ~4 GB size gracefully on 64-bit hosts.
+// Security regression: the original 32-bit decoder could wrap an oversized
+// EPP packet length into a short allocation.
 TEST(AosDeframer, testEppSizeOverflowRejected) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppSizeOverflowRejected();
 }
 
-// Regression test: same CVE attack with the EPP header split across two frames.
-// Exercises the header accumulation path in appendToSpanningPacket together with
-// the overflow guard so that neither the direct nor the spanning delivery vector
-// can bypass the fix.
+// Exercise the same overflow vector when the length field spans two frames.
 TEST(AosDeframer, testEppSizeOverflowHeaderSpansFrame) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppSizeOverflowHeaderSpansFrame();
+}
+
+// ----------------------------------------------------------------------
+// Tests - EPP wire-length regressions
+// ----------------------------------------------------------------------
+
+TEST(AosDeframer, testEppConformantAdjacentLengths) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppConformantAdjacentLengths();
+}
+
+TEST(AosDeframer, testEppConformantLengthBoundaries) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppConformantLengthBoundaries();
+}
+
+TEST(AosDeframer, testEppConformantHeaderSplits) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppConformantHeaderSplits();
+}
+
+TEST(AosDeframer, testEppHeaderOnlyPackets) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppHeaderOnlyPackets();
+}
+
+TEST(AosDeframer, testEppInvalidDeclaredLengths) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppInvalidDeclaredLengths();
+}
+
+TEST(AosDeframer, testEppHelperEncodesTotalLength) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppHelperEncodesTotalLength();
+}
+
+TEST(AosDeframer, testEppConformantAllocationFailure) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppConformantAllocationFailure();
 }
 
 int main(int argc, char** argv) {
