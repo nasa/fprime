@@ -64,7 +64,7 @@ void CmdSequencerTester ::StepWhileRecordPending() {
     this->sendCmd_CS_STEP(0, stepCmdSeq);
     this->clearAndDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_STEP, stepCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentImpl::OPCODE_CS_STEP, stepCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_StepRecordPending_SIZE(1);
     ASSERT_EVENTS_CS_StepRecordPending(0, fileName, pendingTime.getSeconds(), pendingTime.getUSeconds());
