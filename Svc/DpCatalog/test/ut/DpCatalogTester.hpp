@@ -172,6 +172,16 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_NonCanonicalDpRejected();
     void test_BadHeaderHashRejected();
     void test_NonDpFilesDoNotConsumeSlots();
+    void test_InsertIntoEmptyBuiltCatalog();
+    void test_InsertDuringTransmitInPriorityOrder();
+    void test_InsertWhenFull();
+    void test_InsertBeforeBuild();
+    void test_InsertDuplicate();
+    void test_InsertPreservesTransmittedState();
+    void test_InsertAlreadyTransmitted();
+
+    //! configure the component on one directory and build the catalog as the first command
+    void configureAndBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq, Fw::MemAllocator& alloc);
 };
 
 }  // namespace Svc

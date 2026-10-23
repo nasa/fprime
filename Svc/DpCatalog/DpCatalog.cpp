@@ -598,8 +598,15 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
 
     // a duplicate insert updates the tree in place; skip it so pending counters are not double-counted
     if (this->m_dpCatalog.find(entry) == Fw::Success::SUCCESS) {
-        this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
+        this->log_DIAGNOSTIC_DpDuplicate(entry.record);
         return ProcessFileStatus::FAILED;
+    }
+
+    // make sure there is a free slot before inserting, so a full catalog is reported as such
+    // and the entry is not left in the tree uncounted
+    if (this->m_dpCatalog.getSize() >= this->m_numDpSlots) {
+        this->log_WARNING_HI_DpCatalogFull(entry.record);
+        return ProcessFileStatus::QUIT;
     }
 
     // insert entry into sorted catalog. if can't insert, quit
@@ -613,12 +620,6 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
     // increment our counters
     this->m_pendingFiles++;
     this->m_pendingDpBytes += entry.record.get_size();
-
-    // make sure we haven't exceeded the limit
-    if (this->m_pendingFiles > this->m_numDpSlots) {
-        this->log_WARNING_HI_DpCatalogFull(entry.record);
-        return ProcessFileStatus::QUIT;
-    }
 
     this->log_ACTIVITY_HI_DpFileAdded(canonicalFileName);
 
@@ -873,8 +874,9 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         // Otherwise, Current File finishing will invoke sendNextFile & find the right file
         // Or will be manually tx-ed at next command
 
-        // prune and rewrite the state file
-        this->pruneAndWriteStateFile();
+        // The state file is not rewritten here: a newly written product has no transmit state to
+        // record, and pruneAndWriteStateFile() would discard the TRANSMITTED records appended by
+        // fileDone since the catalog was built.
     }
 }
 
