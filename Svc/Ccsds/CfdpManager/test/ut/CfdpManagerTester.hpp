@@ -68,6 +68,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test generating a NAK PDU
     void testNakPdu();
 
+    //! Test parsing NAK PDUs whose segment request count is at or above NakMaxSegments
+    void testNakPduSegmentCountLimit();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
