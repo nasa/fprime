@@ -126,6 +126,66 @@ TEST(TestNominal, sectionConfigParameterTest) {
     tester.sectionConfigParameterTest();
 }
 
+TEST(TestNominal, PerPacketOverrideTest) {
+    TEST_CASE(100.1.15, "Per-packet ENABLE_PACKET override disables a single packet/section");
+    Svc::TlmPacketizerTester tester;
+    tester.perPacketOverrideTest();
+}
+
+TEST(TestNominal, PerPacketCommandsTest) {
+    TEST_CASE(100.1.16, "Per-packet commands update overrides + mirror out packetOverrideOut");
+    Svc::TlmPacketizerTester tester;
+    tester.perPacketCommandsTest();
+}
+
+TEST(TestNominal, ConfigInReloadTest) {
+    TEST_CASE(100.1.17, "packetOverrideIn reload applies overrides to the volatile table without echo");
+    Svc::TlmPacketizerTester tester;
+    tester.configInReloadTest();
+}
+
+TEST(TestNominal, GetPacketConfigTest) {
+    TEST_CASE(100.1.18, "GET_PACKET_CONFIG reports effective config; unknown id warns");
+    Svc::TlmPacketizerTester tester;
+    tester.getPacketConfigTest();
+}
+
+TEST(TestNominal, SeedFromEffectiveConfigTest) {
+    TEST_CASE(100.1.19, "First per-packet override seeds from group-derived effective config");
+    Svc::TlmPacketizerTester tester;
+    tester.seedFromEffectiveConfigTest();
+}
+
+TEST(TestNominal, ClearPacketOverrideTest) {
+    TEST_CASE(100.1.20, "CLEAR_PACKET_OVERRIDE reverts to group behavior and mirrors the clear");
+    Svc::TlmPacketizerTester tester;
+    tester.clearPacketOverrideTest();
+}
+
+TEST(TestNominal, MirrorAllocFailTest) {
+    TEST_CASE(100.1.21, "Mirror allocation failure answers EXECUTION_ERROR and leaves the override untouched");
+    Svc::TlmPacketizerTester tester;
+    tester.mirrorAllocFailTest();
+}
+
+TEST(TestNominal, ConfigInClearReloadTest) {
+    TEST_CASE(100.1.22, "packetOverrideIn GROUP_DEFAULT reload reverts a packet to group behavior");
+    Svc::TlmPacketizerTester tester;
+    tester.configInClearReloadTest();
+}
+
+TEST(TestNominal, ConfigInMalformedReloadTest) {
+    TEST_CASE(100.1.23, "Malformed packetOverrideIn reload emits ConfigReloadFailed; invalid buffer is deallocated");
+    Svc::TlmPacketizerTester tester;
+    tester.configInMalformedReloadTest();
+}
+
+TEST(TestNominal, OverrideDisabledInForcedGroupTest) {
+    TEST_CASE(100.1.24, "Overridden-disabled packet stays silent in a Force-Enabled group");
+    Svc::TlmPacketizerTester tester;
+    tester.overrideDisabledInForcedGroupTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
