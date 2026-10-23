@@ -1,4 +1,27 @@
 module Svc {
+  @ Telemetry send policy (enable + rate), shared by the per-group config and per-packet override.
+  struct TlmSendConfig {
+    enabled: Fw.Enabled       @< Enable / disable telemetry output
+    forceEnabled: Fw.Enabled  @< Force telemetry output even if disabled
+    rateLogic: RateLogic      @< Rate logic configuration
+    min: U32                  @< Minimum Sched ticks between sends when using ON_CHANGE_MIN logic
+    max: U32                  @< Maximum Sched ticks between sends when using EVERY_MAX logic
+  }
+
+  @ Source of a packet's effective policy
+  enum PacketConfigSource {
+    GROUP_DEFAULT,  @< Packet follows its group-derived policy
+    OVERRIDDEN,     @< Packet has an active per-packet override
+  }
+
+  @ A single per-packet config record
+  struct PacketConfigEntry {
+    packetId: U32                 @< Packet identifier
+    section: TelemetrySection     @< Section the policy applies to
+    config: TlmSendConfig         @< Enable + rate policy for this packet/section
+    source: PacketConfigSource    @< Active override or cleared (group-derived)
+  }
+
   @ A component for storing telemetry
   active component TlmPacketizer {
     # ----------------------------------------------------------------------

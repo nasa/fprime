@@ -2,7 +2,7 @@
 
 ## 1 Introduction
 
-The `Svc/Ports/TlmPacketizerPorts` directory has ports and types for the `Svc::TlmPacketizer`.
+The `Svc/Ports/TlmPacketizerPorts` directory has ports for the `Svc::TlmPacketizer`.
 
 ## 2 Port Descriptions
 
@@ -11,7 +11,7 @@ Port Type | Purpose | Arguments
 [EnableSection](../TlmPacketizerPorts.fpp) | Enable / disable an output section | `section`, `enabled`
 [ConfigureGroupRate](../TlmPacketizerPorts.fpp) | Configure a section/group's rate logic and thresholds | `section`, `tlmGroup`, `rateLogic`, `minDelta`, `maxDelta`
 
-The `PacketConfigEntry` type (packetId, section, config, source) is also defined here. Per-packet overrides are exchanged with an external persistence component as `PacketConfigEntry` records serialized into an `Fw.Buffer` over the packetizer's `configOut`/`configIn` ports (`Fw.BufferSend`).
+The per-packet override record type `PacketConfigEntry` is defined with the component in [Svc/TlmPacketizer](../../TlmPacketizer/TlmPacketizer.fpp); see its [SDD](../../TlmPacketizer/docs/sdd.md) for the `packetOverrideOut`/`packetOverrideIn` exchange.
 
 ## 3 Example Usage
 
