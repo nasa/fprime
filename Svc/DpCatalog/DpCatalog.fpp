@@ -94,6 +94,15 @@ module Svc {
     async command CLEAR_CATALOG \
       opcode 3
 
+    @ Set the transmit priority of one data product in the in-memory catalog (lower is higher priority)
+    async command SET_DP_PRIORITY (
+                                    $id: FwDpIdType @< Container ID of the data product
+                                    tSec: U32 @< Seconds of the data product time tag
+                                    tSub: U32 @< Microseconds of the data product time tag
+                                    $priority: FwDpPriorityType @< New transmit priority
+                                  ) \
+      opcode 4
+
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
@@ -450,6 +459,28 @@ module Svc {
       id 50 \
       format "Stale fileDone context {} status {}, no matching transmit in flight" \
       throttle 10
+
+    @ Data product transmit priority changed by SET_DP_PRIORITY; equal values report a no-op
+    event DpPrioritySet(
+                            $id: FwDpIdType @< Container ID of the data product
+                            tSec: U32 @< Seconds of the data product time tag
+                            tSub: U32 @< Microseconds of the data product time tag
+                            oldPriority: FwDpPriorityType @< Priority before the command
+                            newPriority: FwDpPriorityType @< Priority after the command
+                          ) \
+      severity activity high \
+      id 51 \
+      format "Priority of DP id {} time {}.{} set from {} to {}"
+
+    @ SET_DP_PRIORITY named a data product that is not in the catalog
+    event DpNotFound(
+                            $id: FwDpIdType @< Container ID of the data product
+                            tSec: U32 @< Seconds of the data product time tag
+                            tSub: U32 @< Microseconds of the data product time tag
+                          ) \
+      severity warning low \
+      id 52 \
+      format "DP id {} time {}.{} not found in catalog"
 
 
     # ----------------------------------------------------------------------

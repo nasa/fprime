@@ -168,10 +168,39 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_StopThenErrorCompletion();
     void test_ProcessFileInvalidDir();
     void test_MalformedFile();
+
     void test_TruncatedDpRejected();
     void test_NonCanonicalDpRejected();
     void test_BadHeaderHashRejected();
     void test_NonDpFilesDoNotConsumeSlots();
+
+    //! SET_DP_PRIORITY to a lower number moves the product earlier in the transmit order
+    void test_SetPriorityRaise();
+
+    //! SET_DP_PRIORITY to a higher number moves the product later in the transmit order
+    void test_SetPriorityLower();
+
+    //! SET_DP_PRIORITY for a product not in the catalog is rejected with DpNotFound
+    void test_SetPriorityNotFound();
+
+    //! SET_DP_PRIORITY to the current priority is a reported no-op
+    void test_SetPrioritySameNoOp();
+
+    //! SET_DP_PRIORITY during a transmit reorders the pending products and leaves the send in flight intact
+    void test_SetPriorityDuringXmit();
+
+    //! A reprioritized product is still recorded as transmitted in the state file under its header priority
+    void test_SetPriorityStateFileMatch();
+
+    //! SET_DP_PRIORITY tells apart products of one container (same ID) by their time tags
+    void test_SetPrioritySameIdByTime();
+
+  private:
+    //! Generate three DPs with priorities 10, 20, 30 in dir, configure the component, and build the catalog
+    void setPriorityBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, Fw::String (&dpFiles)[3]);
+
+    //! Size of a generated DP file, as reported by SendingProduct
+    U32 setPriorityFileSize(const Fw::String& dpFile);
 };
 
 }  // namespace Svc

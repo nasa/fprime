@@ -292,7 +292,11 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     Fw::SerializeStatus serStat = entryBuffer.serializeFrom(entry.dir);
     // should fit
     FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK, serStat);
-    serStat = entryBuffer.serializeFrom(entry.record);
+    // record the priority in the file header, not a SET_DP_PRIORITY override, so the record
+    // matches the file when the catalog is next built
+    DpRecord record = entry.record;
+    record.set_priority(entry.filePriority);
+    serStat = entryBuffer.serializeFrom(record);
     // should fit
     FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK, serStat);
     // write the entry
@@ -582,6 +586,7 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
     entry.dir = static_cast<FwIndexType>(dir);
     entry.record.set_id(container.getId());
     entry.record.set_priority(container.getPriority());
+    entry.filePriority = container.getPriority();
     entry.record.set_state(container.getState());
     entry.record.set_tSec(container.getTimeTag().getSeconds());
     entry.record.set_tSub(container.getTimeTag().getUSeconds());
@@ -996,6 +1001,58 @@ void DpCatalog ::abortXmit(Fw::CmdResponse response) {
     this->m_hasCurrentXmit = false;
     this->m_xmitInProgress = false;
     this->dispatchWaitedResponse(response);
+}
+
+void DpCatalog ::SET_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,
+                                            U32 cmdSeq,
+                                            FwDpIdType id,
+                                            U32 tSec,
+                                            U32 tSub,
+                                            FwDpPriorityType priority) {
+    if (not this->checkInit()) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    DpStateEntry entry;
+    if (not this->findEntryByIdentity(id, tSec, tSub, entry)) {
+        this->log_WARNING_LO_DpNotFound(id, tSec, tSub);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    const FwDpPriorityType oldPriority = entry.record.get_priority();
+    if (priority != oldPriority) {
+        // Priority is part of the sort key, so the entry is re-linked by removing and re-inserting it.
+        // Only this entry moves, and every send restarts the walk at begin(), so a transmit in
+        // progress follows the new order from its next send
+        Fw::Success status = this->m_dpCatalog.remove(entry);
+        FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
+        entry.record.set_priority(priority);
+        status = this->m_dpCatalog.insert(entry);
+        FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
+        // The send in flight is not affected, but its copy must keep matching the catalog entry so
+        // that fileDone can remove it
+        if (this->m_hasCurrentXmit && this->m_currentXmitEntry.record.get_id() == id &&
+            this->m_currentXmitEntry.record.get_tSec() == tSec && this->m_currentXmitEntry.record.get_tSub() == tSub) {
+            this->m_currentXmitEntry.record.set_priority(priority);
+        }
+    }
+    this->log_ACTIVITY_HI_DpPrioritySet(id, tSec, tSub, oldPriority, priority);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+bool DpCatalog ::findEntryByIdentity(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const {
+    // The sort key includes the priority, which is what is being changed, so the lookup is by the
+    // identity fields alone; the walk is bounded by the catalog capacity
+    for (Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
+         iter != this->m_dpCatalog.end(); ++iter) {
+        if ((*iter).record.get_id() == id && (*iter).record.get_tSec() == tSec && (*iter).record.get_tSub() == tSub) {
+            entry = *iter;
+            return true;
+        }
+    }
+    return false;
 }
 
 }  // namespace Svc
