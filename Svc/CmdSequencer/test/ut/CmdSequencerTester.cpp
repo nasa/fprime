@@ -432,6 +432,22 @@ void CmdSequencerTester ::setComponentSequenceFormat() {
     }
 }
 
+void CmdSequencerTester ::setFileNameLength(SequenceFiles::File& file, const FwSizeType length) {
+    // The full name is a fixed prefix and suffix around the base name
+    file.setName("");
+    const FwSizeType fixedLength = file.getName().length();
+    char baseName[FileNameStringSize + 1];
+    ASSERT_GT(length, fixedLength);
+    const FwSizeType baseLength = length - fixedLength;
+    ASSERT_LT(baseLength, static_cast<FwSizeType>(sizeof baseName));
+    for (FwSizeType i = 0; i < baseLength; i++) {
+        baseName[i] = 'x';
+    }
+    baseName[baseLength] = 0;
+    file.setName(baseName);
+    ASSERT_EQ(length, file.getName().length());
+}
+
 void CmdSequencerTester ::clearAndDispatch() {
     this->clearHistory();
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->component.doDispatch());
