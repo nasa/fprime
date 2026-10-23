@@ -131,6 +131,16 @@ class DpCatalog final : public DpCatalogComponentBase {
                                   U32 cmdSeq            //!< The command sequence number
                                   ) override;
 
+    //! Handler implementation for command DELETE_DP
+    //!
+    //! Delete a single data product: remove its file and drop it from the catalog and state file
+    void DELETE_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                              U32 cmdSeq,           //!< The command sequence number
+                              FwDpIdType id,        //!< Container ID of the data product
+                              U32 tSec,             //!< Time stamp seconds of the data product
+                              U32 tSub              //!< Time stamp subseconds of the data product
+                              ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -200,7 +210,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     void getFileState(DpStateEntry& entry);
 
     /// @brief prune the state file data and write the remaining entries back
-    void pruneAndWriteStateFile();
+    /// @return true if the state file was written or none is configured, false if an error was reported
+    bool pruneAndWriteStateFile();
 
     /// @brief load state data from file
     Fw::CmdResponse loadStateFile();
@@ -236,6 +247,43 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief abandon the transmit: clear both transmit flags and answer a waited START_XMIT_CATALOG
     /// @param response the command response for the waited command
     void abortXmit(Fw::CmdResponse response);
+
+    /// @brief keep a transmitted entry in the in-memory state data (not the file) so it survives the next
+    /// prune; when the data is full, a loaded record whose file was not found is reused, else the entry is
+    /// dropped and DpStateRecordDropped is emitted
+    /// @param entry entry to keep
+    void cacheFileState(const DpStateEntry& entry);
+
+    /// @brief find a data product in the catalog by identity
+    /// @param id container ID
+    /// @param tSec time stamp seconds
+    /// @param tSub time stamp subseconds
+    /// @param entry the matching entry, valid if true is returned
+    /// @return true if found
+    bool findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
+
+    /// @brief find a data product in the in-memory state file data by identity
+    /// @param id container ID
+    /// @param tSec time stamp seconds
+    /// @param tSub time stamp subseconds
+    /// @param slot the matching index into m_stateFileData, valid if true is returned
+    /// @return true if found
+    bool findStateFileEntry(FwDpIdType id, U32 tSec, U32 tSub, FwSizeType& slot) const;
+
+    /// @brief check whether a record is the data product identified by container ID and time stamp
+    /// @param record record to check
+    /// @param id container ID
+    /// @param tSec time stamp seconds
+    /// @param tSub time stamp subseconds
+    /// @return true if the record has that identity
+    static bool matchesIdentity(const DpRecord& record, FwDpIdType id, U32 tSec, U32 tSub);
+
+    /// @brief delete a data product: the file, its catalog entry and its state file record
+    /// @param id container ID
+    /// @param tSec time stamp seconds
+    /// @param tSub time stamp subseconds
+    /// @return the command response
+    Fw::CmdResponse doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub);
 
     // ----------------------------------
     // Private data

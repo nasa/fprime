@@ -172,6 +172,23 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_NonCanonicalDpRejected();
     void test_BadHeaderHashRejected();
     void test_NonDpFilesDoNotConsumeSlots();
+    void test_DeleteDp();
+    void test_DeleteDpNotFound();
+    void test_DeleteDpInFlight();
+    void test_DeleteDpStateFileReload();
+    void test_DeleteDpRemoveError();
+    void test_DeleteDpNameError();
+    void test_DeleteDpStateTableRecycle();
+    void test_DeleteDpStateTableFull();
+    void test_DeleteDpStateFileWriteError();
+
+    //! Configure the component and build the catalog, expecting a fresh command history
+    void configureAndBuild(Fw::FileNameString* dirs,
+                           FwSizeType numDirs,
+                           Fw::FileNameString& stateFile,
+                           Fw::MemAllocator& alloc,
+                           U32 cmdSeq,
+                           FwSizeType expectedAdded);
 };
 
 }  // namespace Svc
