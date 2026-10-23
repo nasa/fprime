@@ -351,6 +351,45 @@ void CmdSequencerTester ::parameterizedValidate(SequenceFiles::File& file) {
     this->validateFile(0, fileName);
 }
 
+void CmdSequencerTester ::parameterizedRunWithoutSeqDone() {
+    // A topology may drive seqRunIn or seqDispatchIn without wiring seqDone
+    CmdSequencerComponentImpl unwired("CmdSequencerNoSeqDone");
+    unwired.init(QUEUE_DEPTH, INSTANCE);
+    unwired.allocateBuffer(ALLOCATOR_ID, this->mallocator, BUFFER_SIZE);
+    ASSERT_FALSE(unwired.isConnected_seqDone_OutputPort(0));
+    // Route the instance's events to this tester so each rejection path is observed
+    unwired.set_logOut_OutputPort(0, this->get_from_logOut(0));
+    // No sequence loaded
+    this->clearHistory();
+    unwired.doSequenceRun(Fw::String(""));
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_NoSequenceActive_SIZE(1);
+    ASSERT_EQ(1U, unwired.m_errorCount);
+    // File cannot be loaded
+    this->clearHistory();
+    unwired.doSequenceRun(Fw::String("CmdSequencerNoSeqDone/missing.bin"));
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_FileNotFound_SIZE(1);
+    ASSERT_EVENTS_CS_FileNotFound(0, "CmdSequencerNoSeqDone/missing.bin");
+    // Sequencer already running
+    unwired.m_runMode = CmdSequencerComponentImpl::RUNNING;
+    this->clearHistory();
+    unwired.doSequenceRun(Fw::String(""));
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
+    unwired.m_runMode = CmdSequencerComponentImpl::STOPPED;
+    // MANUAL step mode
+    unwired.m_stepMode = CmdSequencerComponentImpl::MANUAL;
+    this->clearHistory();
+    unwired.doSequenceRun(Fw::String(""));
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
+    // Every rejection left the sequencer stopped
+    ASSERT_EQ(CmdSequencerComponentImpl::STOPPED, unwired.m_runMode);
+    unwired.deallocateBuffer(this->mallocator);
+    unwired.deinit();
+}
+
 // ----------------------------------------------------------------------
 // Instance helper methods
 // ----------------------------------------------------------------------
