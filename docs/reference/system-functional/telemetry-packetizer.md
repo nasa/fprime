@@ -53,7 +53,7 @@ The MIN and MAX delta parameters are configured via the CONFIGURE_GROUP_RATES co
 
 ### Per-Packet Overrides
 
-Beyond the group/section controls above, individual packets can be overridden so a single packet no longer follows its group's policy. A per-packet override takes precedence over the section/group configuration for that packet and persists until explicitly cleared:
+Beyond the group/section controls above, individual packets can be overridden so a single packet no longer follows its group's policy. A per-packet override takes precedence over the group configuration for that packet (the section enable still applies unless the packet is force-enabled) and persists until explicitly cleared:
 
 - **ENABLE_PACKET** — Enable or disable a single packet in a section.
 - **FORCE_PACKET** — Force a single packet to emit even when its section or group is disabled.

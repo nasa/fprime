@@ -313,7 +313,7 @@ module Svc {
       id 12 \
       format "packetOverrideIn reload failed with status {} with {} bytes left unapplied"
 
-    @ A packet config (from a command or a packetOverrideIn record) carried an invalid section, source, or config value
+    @ A command's packet config carried an invalid section (packetOverrideIn records with invalid values are tallied in ConfigReloadRejected)
     event InvalidPacketConfig(
                                packetId: U32 @< The packet id in the rejected config
                              ) \
