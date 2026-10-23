@@ -1,0 +1,47 @@
+# Approves held ("Approve and run") workflow runs on fork PRs whose current
+# head the autobot review summary cleared with CI safety: Go.
+#
+# Every 20 minutes the gatekeeper first checks the Actions queue and exits
+# immediately when it is busy; only when calm does it scan open PRs for
+# action_required runs, and it approves the held runs of at most one PR
+# (oldest first) per run.  Deterministic parse of the summary review; no
+# LLM.  See nasa/fprime-actions/ci-gatekeeper/README.md for the rules.
+#
+# GITHUB_TOKEN with actions: write may call the approve-run endpoint (the
+# REST docs list GitHub App installation access tokens with Actions: write
+# for "Approve a workflow run for a fork pull request"), so no PAT is
+# required.  Scheduled runs act; a manual run defaults to a dry-run that
+# only reports the candidate table in the step summary.
+
+name: "CI Gatekeeper"
+
+on:
+  schedule:
+    - cron: '*/20 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only report what would be approved"
+        type: boolean
+        default: true
+
+permissions:
+  actions: write
+  pull-requests: read
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  gatekeeper:
+    name: "Approve held runs of one cleared PR"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: "Run CI gatekeeper"
+        uses: nasa/fprime-actions/ci-gatekeeper@devel
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          dry-run: ${{ github.event_name != 'schedule' && inputs.dry_run }}
