@@ -225,7 +225,7 @@ Unlike transmit operations that are driven by the periodic `run1Hz` scheduler po
 
 CfdpManager supports two related mechanisms for transferring the contents of a directory:
 
-- **Directory playback** (`PlaybackDirectory` command): a one-shot operation that sends every file currently in the source directory as individual CFDP transactions and completes when the directory has been fully processed.
+- **Directory playback** (`PlaybackDirectory` command): a one-shot operation that sends every file currently in the source directory as individual CFDP transactions and completes when the directory has been fully processed. An entry whose combined `<directory>/<entry>` source or destination path would exceed `MaxFilePathSize` is skipped and reported with `SendFileInitiateFail`; the playback continues with the remaining entries.
 - **Directory polling** (`PollDirectory` command): a recurring operation that re-checks the source directory on a fixed interval and automatically sends any new files found. Each channel supports up to `MaxPollingDirPerChan` independent polling slots, identified by a poll index. The file is deleted from the directory after a successful transfer.
 
 **Poll cycle behavior:**
@@ -478,7 +478,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | Event Name | Severity | Description |
 |------------|----------|-------------|
 | TxFileQueued | activity low | TX file queued for source file (transaction sequence number) |
-| SendFileInitiateFail | warning low | Failed to initiate file send transfer for source file |
+| SendFileInitiateFail | warning low | Failed to initiate file send transfer for source file (invalid request, queue full, or a playback entry whose full path exceeds `MaxFilePathSize`) |
 | UnsupportedSendFileArguments | warning low | Invalid send file port request with offset and length |
 | InvalidChannel | warning low | Invalid channel ID, maximum channel ID is specified |
 | PlaybackInitiated | activity low | Successfully initiated directory playback for source directory |
@@ -613,8 +613,8 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | FileInDefaultPriority | Priority (0-255, where 0 is highest) for file transfers initiated via the `fileIn` port interface |
 | ChannelConfig.ack_limit | Maximum number of ACK retransmission attempts before abandoning a transaction. Applies when waiting for ACK(EOF) or ACK(FIN) acknowledgments |
 | ChannelConfig.nack_limit | Maximum number of NAK retransmission attempts before abandoning a transaction. Applies when waiting for retransmitted file data after sending NAK |
-| ChannelConfig.ack_timer | ACK timeout duration in seconds. Determines how long to wait for ACK(EOF) or ACK(FIN) before retransmitting |
-| ChannelConfig.inactivity_timer | Inactivity timeout duration in seconds. Transaction is abandoned if no PDUs are received within this period |
+| ChannelConfig.ack_timer | ACK timeout duration in seconds. Determines how long to wait for ACK(EOF) or ACK(FIN) before retransmitting. A value of 0 expires on the first 1 Hz cycle after the timer is armed |
+| ChannelConfig.inactivity_timer | Inactivity timeout duration in seconds. Transaction is abandoned if no PDUs are received within this period. A value of 0 expires on the first 1 Hz cycle after the timer is armed |
 | ChannelConfig.dequeue_enabled | Enable or disable transaction dequeuing and processing for this channel. Can be used to pause channel activity |
 | ChannelConfig.move_dir | Directory path to move source files after successful TX (transmit) transactions when keep is set to DELETE. If set, provides an archive mechanism to preserve files instead of deleting them. If empty or if the move fails, source files are deleted from the filesystem. Only applies to sending files, not receiving |
 | ChannelConfig.max_outgoing_pdus_per_cycle | Maximum number of outgoing PDUs to transmit per execution cycle. Throttles transmission rate to prevent overwhelming downstream components |

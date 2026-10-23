@@ -40,8 +40,11 @@ Timer::Status Timer ::getStatus(void) {
 
 void Timer ::run(void) {
     if (this->timerStatus == RUNNING) {
-        FW_ASSERT(this->secondsRemaining > 0);
-        this->secondsRemaining--;
+        // A zero duration (e.g. a ground-set timer parameter of 0) is treated as
+        // immediately expired on the first tick rather than asserting.
+        if (this->secondsRemaining > 0) {
+            this->secondsRemaining--;
+        }
 
         if (this->secondsRemaining == 0) {
             this->timerStatus = EXPIRED;
