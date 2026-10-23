@@ -1,7 +1,7 @@
 #####
 # TlmPacketizer Ports:
 #
-# A port enabling sections of the TlmPacketizer
+# Ports and types for Svc::TlmPacketizer
 #####
 
 module Svc {
@@ -19,4 +19,12 @@ module Svc {
         minDelta: U32               @< Minimum Sched Ticks to send packets on updates when using ON_CHANGE logic
         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
     )
+
+    @ A single per-packet config record
+    struct PacketConfigEntry {
+        packetId: U32                 @< Packet identifier
+        section: TelemetrySection     @< Section the policy applies to
+        config: TlmSendConfig         @< Enable + rate policy for this packet/section
+        source: PacketConfigSource    @< Active override or cleared (group-derived)
+    }
 }

@@ -51,6 +51,18 @@ Each telemetry group can be configured with a rate logic mode that controls when
 
 The MIN and MAX delta parameters are configured via the CONFIGURE_GROUP_RATES command. If MAX is less than MIN in the combined mode, MAX takes priority.
 
+### Per-Packet Overrides
+
+Beyond the group/section controls above, individual packets can be overridden so a single packet no longer follows its group's policy. A per-packet override takes precedence over the section/group configuration for that packet and persists until explicitly cleared:
+
+- **ENABLE_PACKET** — Enable or disable a single packet in a section.
+- **FORCE_PACKET** — Force a single packet to emit even when its section or group is disabled.
+- **CONFIGURE_PACKET_RATES** — Set a single packet's rate logic and MIN/MAX thresholds.
+- **GET_PACKET_CONFIG** — Report a packet's effective configuration as the `PacketConfigReport` event.
+- **CLEAR_PACKET_OVERRIDE** — Remove an override, reverting the packet to its group-derived behavior.
+
+Each applied override is reported with the `PacketOverrideSet` event and each clear with `PacketOverrideCleared`. Overrides can be mirrored to, and reloaded from, an external persistence component so they survive reboot. See the [SDD](https://github.com/nasa/fprime/blob/devel/Svc/TlmPacketizer/docs/sdd.md) for the full override, priority, and persistence rules.
+
 ### Telemetry Limits
 
 As with channel-based telemetry, channels can have limit ranges defined in the dictionary. Limit checking is performed by the ground system.
