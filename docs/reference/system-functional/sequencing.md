@@ -1,5 +1,5 @@
 
-# Sequencing Functionality
+# Standard Sequencing Functionality
 
 ## References
 
@@ -11,11 +11,11 @@
 
 ## Overview
 
+This document provides an overview of standard, simple sequencing in Fprime. For more complex sequencing, see [advanced sequencing](./advanced-sequencing.md).
+
 A Spacecraft Sequence is an ordered list of commands that are executed together. Sequences store a series of commands in a specific order and with specific timing to be dispatched later in that order and with that timing. Any software command can be executed in a sequence.
 
 In Fprime this capability is handled by the Sequence Dispatcher and Command Sequencer components. The Sequence Dispatcher component is responsible for coordinating the execution of multiple sequences while the Command Sequencer component is instantiated for each sequence to be executed.
-
-Fprime also supports [advanced sequencing](./advanced-sequencing.md) for writing system-level behaviors.
 
 ### Sequence Management
 
