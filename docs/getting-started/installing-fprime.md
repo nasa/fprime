@@ -24,7 +24,7 @@ Requirements:
 1. Linux, macOS, or WSL on Windows
 2. git
 3. CLang or GNU C and C++ compilers (e.g. gcc and g++)
-4. [Python 3.10+](https://www.python.org/downloads/), virtual environments, and PIP
+4. [Python 3.10 through 3.14](https://www.python.org/downloads/), virtual environments, and PIP. See [Newer Python Versions](#newer-python-versions)
 5. *(Optional)* A [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) 1.87 or newer, required only to build components that depend on Rust. Components that require `cargo` are automatically skipped when it is not on the `PATH`, and the rest of the framework builds normally.
 
 > [!NOTE]
@@ -106,6 +106,7 @@ This section will add some known hints to trouble-shooting with the installation
 
 ### General
 * [Recommended PIP Versions](#recommended-pip-versions)
+* [Newer Python Versions](#newer-python-versions)
 * [fprime-util: command not found](#fprime-util-command-not-found)
 * [Helper script fpp-redirect-helper exited with reason: Permission denied](#helper-script-fpp-redirect-helper-exited-with-reason-permission-denied)
 ### Windows
@@ -124,6 +125,12 @@ Some of the F´ Python packages are built in a way that it is recommended to ins
 |macOS (10.9+)| >= 21.0.1|
 |x86_64|>= 19.3|
 |aarch64|>= 20.3|
+
+### Newer Python Versions
+F´ is tested with Python 3.10 through 3.14. Python versions newer than that may not have pre-built packages for all of the F´ dependencies yet, and `pip install` can fail while building them (e.g. `Failed building wheel for pydantic_core`). If this happens, create the virtual environment with a tested version of Python instead:
+```
+python3.14 -m venv fprime-venv
+```
 
 ### fprime-util: command not found
 
