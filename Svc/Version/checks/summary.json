@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-23T21:13:18Z",
+  "generated_at": "2026-10-24T21:11:46Z",
   "ref": "devel",
-  "commit": "64e4426d331ac1f58efd41b69fecf00736d79554",
+  "commit": "67cf695e30f4a32514cf6ed02c30bf37e1923bc6",
   "passed": 4,
   "failed": 4,
   "skipped": 8,
@@ -14,7 +14,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Version",
       "status": "pass",
       "failures": [],
-      "detail": "2 input port(s) checked"
+      "detail": "3 input port(s) checked"
     },
     {
       "id": "D2",
@@ -128,9 +128,9 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Version",
       "status": "fail",
       "failures": [
-        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/Version/docs/sdd.md); cannot trace 2 port(s)"
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/Version/docs/sdd.md); cannot trace 3 port(s)"
       ],
-      "detail": "2 port(s) traced against 0 requirement(s)"
+      "detail": "3 port(s) traced against 0 requirement(s)"
     },
     {
       "id": "R7",
