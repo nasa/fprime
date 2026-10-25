@@ -53,7 +53,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Fw/Comp/PassiveComponentBase.cpp
                                               24      14    58%   12-13,16-20,27-28,30
 /home/runner/work/fprime/fprime/Fw/Comp/QueuedComponentBase.cpp
-                                              28      15    53%   23-24,43-45,47-53,56
+                                              28      18    64%   23-24,47-53,56
 /home/runner/work/fprime/fprime/Fw/DataStructures/Array.hpp
                                               15      11    73%   41,77,79-80
 /home/runner/work/fprime/fprime/Fw/DataStructures/ArrayMap.hpp
@@ -221,7 +221,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Os/Cpu.hpp
                                                2       2   100%
 /home/runner/work/fprime/fprime/Os/Delegate.hpp
-                                              20      19    95%   100
+                                              20      18    90%   100,130
 /home/runner/work/fprime/fprime/Os/DelegateConditionVariable.cpp
                                               22      14    63%   19,28-31,33-35
 /home/runner/work/fprime/fprime/Os/DelegateMutex.cpp
@@ -257,7 +257,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Os/Generic/PriorityMemQueue.hpp
                                                7       0     0%   63,65-66,68,98,100-101
 /home/runner/work/fprime/fprime/Os/Generic/PriorityQueue.cpp
-                                             163     129    79%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,199,204,226,256,258-260,262-263
+                                             163     130    79%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,204,226,256,258-260,262-263
 /home/runner/work/fprime/fprime/Os/Generic/PriorityQueue.hpp
                                                1       1   100%
 /home/runner/work/fprime/fprime/Os/Generic/Types/AtomicQueue.cpp
@@ -722,5 +722,5 @@ Ref/TypeDemo/TypeDemo.hpp                      1       1   100%
 /home/runner/work/fprime/fprime/Utils/Types/Queue.cpp
                                              104      35    33%   36-38,40-41,44,46-48,52-54,57,61,72-74,78-80,83,90-91,98-100,102,105,107-109,111,114-116,118-121,123,136,141-143,145-148,150,154-155,162-165,167-169,171,175-176,178-180,182,185-186,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      31932    9629    30%
+TOTAL                                      31932    9632    30%
 ------------------------------------------------------------------------------
