@@ -30,6 +30,8 @@ FpySequencer ::FpySequencer(const char* const compName)
       m_goalState(),
       m_sequencesStarted(0),
       m_statementsDispatched(0),
+      m_checkTimersQueued(false),
+      m_tlmWriteQueued(false),
       m_runtime(),
       m_breakpoint(),
       m_debug(),
@@ -275,6 +277,17 @@ void FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,           
 void FpySequencer::checkTimers_handler(FwIndexType portNum,  //!< The port number
                                        U32 context           //!< The call order
 ) {
+    // only enqueue if a checkTimersInternal message is not already on the queue
+    bool expected = false;
+    if (this->m_checkTimersQueued.compare_exchange_strong(expected, true)) {
+        this->checkTimersInternal_internalInterfaceInvoke();
+    }
+}
+
+//! Internal interface handler for checkTimersInternal
+void FpySequencer::checkTimersInternal_internalInterfaceHandler() {
+    FW_ASSERT(this->m_checkTimersQueued);
+    this->m_checkTimersQueued = false;
     this->sequencer_sendSignal_checkTimersIn();
 }
 
@@ -411,6 +424,17 @@ void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& f
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
+    // only enqueue if a tlmWriteInternal message is not already on the queue
+    bool expected = false;
+    if (this->m_tlmWriteQueued.compare_exchange_strong(expected, true)) {
+        this->tlmWriteInternal_internalInterfaceInvoke();
+    }
+}
+
+//! Internal interface handler for tlmWriteInternal
+void FpySequencer::tlmWriteInternal_internalInterfaceHandler() {
+    FW_ASSERT(this->m_tlmWriteQueued);
+    this->m_tlmWriteQueued = false;
     this->tlmWrite_State(static_cast<FwEnumStoreType>(this->sequencer_getState()));
     this->tlmWrite_StatementsDispatched(this->m_statementsDispatched);
     this->tlmWrite_StatementsFailed(this->m_tlm.statementsFailed);

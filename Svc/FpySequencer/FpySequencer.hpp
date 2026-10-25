@@ -7,6 +7,7 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
+#include <atomic>
 #include <random>
 #include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
@@ -537,6 +538,12 @@ class FpySequencer : public FpySequencerComponentBase {
                           U32 context           //!< The call order
                           ) override;
 
+    //! Internal interface handler for checkTimersInternal
+    void checkTimersInternal_internalInterfaceHandler() override;
+
+    //! Internal interface handler for tlmWriteInternal
+    void tlmWriteInternal_internalInterfaceHandler() override;
+
     //! Internal interface handler for directive_waitAbs
     void directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) override;
 
@@ -685,6 +692,13 @@ class FpySequencer : public FpySequencerComponentBase {
     U64 m_statementsDispatched;
 
     const Fw::String NO_SEQ{"<no seq>"};
+
+    // true while a checkTimersInternal message is on the queue. set by the
+    // sync checkTimers handler, cleared by the internal handler
+    std::atomic<bool> m_checkTimersQueued;
+    // true while a tlmWriteInternal message is on the queue. set by the
+    // sync tlmWrite handler, cleared by the internal handler
+    std::atomic<bool> m_tlmWriteQueued;
 
     // the runtime state of the sequence. encapsulates all state
     // needed to run the sequence.
