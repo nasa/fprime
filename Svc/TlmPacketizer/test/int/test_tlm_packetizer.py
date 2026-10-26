@@ -115,7 +115,8 @@ def test_packet_send_never_override(packetizer):
     Covers: SVC-TLMPACKETIZER-PACKET-SEND-OVERRIDE, SVC-TLMPACKETIZER-CLEAR-OVERRIDE
     """
     packetizer.command(
-        "CONFIGURE_PACKET_SEND", [packetizer.section, packetizer.packet_id, "SEND_NEVER"]
+        "CONFIGURE_PACKET_SEND",
+        [packetizer.section, packetizer.packet_id, "SEND_NEVER"],
     )
     packetizer.event("PacketOverrideSet")
     packetizer.packet_silent()
@@ -124,7 +125,9 @@ def test_packet_send_never_override(packetizer):
     report = packetizer.event("PacketConfigReport")
     assert "OVERRIDE_SEND" in report.get_display_text()
     assert "SEND_NEVER" in report.get_display_text()
-    packetizer.command("CLEAR_PACKET_OVERRIDE", [packetizer.section, packetizer.packet_id])
+    packetizer.command(
+        "CLEAR_PACKET_OVERRIDE", [packetizer.section, packetizer.packet_id]
+    )
     packetizer.event("PacketOverrideCleared")
     packetizer.packet_flows()
 
@@ -139,7 +142,8 @@ def test_packet_send_always_beats_group(packetizer):
     )
     packetizer.packet_silent()
     packetizer.command(
-        "CONFIGURE_PACKET_SEND", [packetizer.section, packetizer.packet_id, "SEND_ALWAYS"]
+        "CONFIGURE_PACKET_SEND",
+        [packetizer.section, packetizer.packet_id, "SEND_ALWAYS"],
     )
     packetizer.event("PacketOverrideSet")
     packetizer.packet_flows()
@@ -156,12 +160,15 @@ def test_packet_send_always_beats_section_disable(packetizer):
     packetizer.command("ENABLE_SECTION", [packetizer.section, "DISABLED"])
     packetizer.packet_silent()
     packetizer.command(
-        "CONFIGURE_PACKET_SEND", [packetizer.section, packetizer.packet_id, "SEND_ALWAYS"]
+        "CONFIGURE_PACKET_SEND",
+        [packetizer.section, packetizer.packet_id, "SEND_ALWAYS"],
     )
     packetizer.event("PacketOverrideSet")
     packetizer.packet_flows()
     packetizer.command("ENABLE_SECTION", [packetizer.section, "ENABLED"])
-    packetizer.command("CLEAR_PACKET_OVERRIDE", [packetizer.section, packetizer.packet_id])
+    packetizer.command(
+        "CLEAR_PACKET_OVERRIDE", [packetizer.section, packetizer.packet_id]
+    )
     packetizer.event("PacketOverrideCleared")
 
 
@@ -200,10 +207,15 @@ def test_packet_rates_override(packetizer):
     packetizer.api.clear_histories()
     time.sleep(window_ticks * packetizer.tick)
     updates = packetizer.api.assert_telemetry_count(
-        predicates.within_range(1, window_ticks // min_ticks + 1), channels=packetizer.channel
+        predicates.within_range(1, window_ticks // min_ticks + 1),
+        channels=packetizer.channel,
     )
-    print(f"TLM {packetizer.channel}: {len(updates)} updates in {window_ticks} ticks with min={min_ticks}")
-    packetizer.command("CLEAR_PACKET_OVERRIDE", [packetizer.section, packetizer.packet_id])
+    print(
+        f"TLM {packetizer.channel}: {len(updates)} updates in {window_ticks} ticks with min={min_ticks}"
+    )
+    packetizer.command(
+        "CLEAR_PACKET_OVERRIDE", [packetizer.section, packetizer.packet_id]
+    )
     packetizer.event("PacketOverrideCleared")
 
 
@@ -225,13 +237,17 @@ def test_unknown_packet_rejected(packetizer):
 
     Covers: SVC-TLMPACKETIZER-PACKET-NOT-FOUND
     """
-    packetizer.failed_command("GET_PACKET_CONFIG", [packetizer.section, UNKNOWN_PACKET_ID])
+    packetizer.failed_command(
+        "GET_PACKET_CONFIG", [packetizer.section, UNKNOWN_PACKET_ID]
+    )
     packetizer.event("PacketNotFound", [UNKNOWN_PACKET_ID])
     packetizer.failed_command(
         "CONFIGURE_PACKET_SEND", [packetizer.section, UNKNOWN_PACKET_ID, "SEND_NEVER"]
     )
     packetizer.event("PacketNotFound", [UNKNOWN_PACKET_ID])
-    packetizer.failed_command("CLEAR_PACKET_OVERRIDE", [packetizer.section, UNKNOWN_PACKET_ID])
+    packetizer.failed_command(
+        "CLEAR_PACKET_OVERRIDE", [packetizer.section, UNKNOWN_PACKET_ID]
+    )
     packetizer.event("PacketNotFound", [UNKNOWN_PACKET_ID])
 
 
@@ -244,7 +260,9 @@ def test_invalid_section_rejected(packetizer):
         "CONFIGURE_PACKET_SEND", ["NUM_SECTIONS", packetizer.packet_id, "SEND_NEVER"]
     )
     packetizer.event("InvalidPacketConfig", [packetizer.packet_id])
-    packetizer.failed_command("GET_PACKET_CONFIG", ["NUM_SECTIONS", packetizer.packet_id])
+    packetizer.failed_command(
+        "GET_PACKET_CONFIG", ["NUM_SECTIONS", packetizer.packet_id]
+    )
     packetizer.event("InvalidPacketConfig", [packetizer.packet_id])
 
 
