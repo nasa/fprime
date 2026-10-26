@@ -63,8 +63,7 @@ module Svc {
     @ Return buffers
     output port bufferDeallocate: Fw.BufferSend
 
-    @ Per-packet override reload from the persistence component. Each buffer is one queue message and the
-    @ queue asserts when full: batch a reload into one buffer (or fewer buffers than the queue depth).
+    @ Per-packet override reload from the persistence component.
     async input port packetOverrideIn: Fw.BufferSend
 
     @ Telemetry input port
