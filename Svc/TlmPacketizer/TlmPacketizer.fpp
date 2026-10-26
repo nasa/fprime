@@ -70,7 +70,8 @@ module Svc {
     @ Per-packet override mirror to an external persistence component
     output port packetOverrideOut: Fw.BufferSend
 
-    @ Allocate / return the buffers used for packetOverrideOut mirrors
+    @ Allocate the buffers used for packetOverrideOut mirrors (the receiver returns them to the pool;
+    @ deallocate is part of the imported interface and is not invoked by this component)
     import Svc.BufferAllocation
 
     @ Return packetOverrideIn reload buffers to the persistence component that sent them
@@ -165,7 +166,7 @@ module Svc {
                                   ) \
       opcode 5
 
-    @ Override the send state of a single packet in a section (rates keep following the group)
+    @ Override the send state of a single packet in a section (rates follow the group unless also overridden)
     async command CONFIGURE_PACKET_SEND(
                                          section: TelemetrySection   @< Section to configure
                                          packetId: U32               @< Packet identifier
@@ -173,7 +174,7 @@ module Svc {
                                        ) \
       opcode 6
 
-    @ Override the rate logic and thresholds of a single packet (send state keeps following the group)
+    @ Override the rate logic and thresholds of a single packet (send state follows the group unless also overridden)
     async command CONFIGURE_PACKET_RATES(
                                           section: TelemetrySection   @< Section to configure
                                           packetId: U32               @< Packet identifier
@@ -327,6 +328,16 @@ module Svc {
       severity warning low \
       id 13 \
       format "Packet config for packet id {} rejected: invalid section"
+
+    @ A group's send state was set by CONFIGURE_GROUP_SEND
+    event GroupSendStateSet(
+                             section: TelemetrySection   @< Section grouping
+                             tlmGroup: FwChanIdType      @< Group identifier
+                             sendState: TlmSendState     @< New send state
+                           ) \
+      severity activity high \
+      id 15 \
+      format "Section {} group {} send state set to {}"
 
     # ----------------------------------------------------------------------
     # Telemetry

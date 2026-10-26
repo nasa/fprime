@@ -6,7 +6,7 @@
 
 module Svc {
 
-    @ Send policy of a section, group or packet. Resolution: packet -> group -> section enable.
+    @ Send policy of a group or packet. Resolution: packet -> group -> section enable.
     enum TlmSendState : U8 {
       INHERIT_FROM_PARENT,          @< Packet: use the group's state; group: use the section enable (default)
       SEND_WHEN_SECTION_ENABLED,    @< Send only while the section is enabled

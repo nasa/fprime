@@ -306,7 +306,7 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
 
         for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
             PktSendCounters& pktEntryFlags = this->m_packetFlags[static_cast<FwSizeType>(section)][pkt];
-            // Per-packet override if one is set, else the group-derived policy.
+            // Group policy with the packet's overridden fields copied in
             const Svc::TlmSendConfig effectiveEntryConfig = this->effectiveConfig(section, pkt);
 
             // Packet is updated and not REQUESTED (Keep REQUESTED marking to bypass disable checks)
@@ -480,6 +480,7 @@ void TlmPacketizer ::CONFIGURE_GROUP_SEND_cmdHandler(FwOpcodeType opCode,
     }
     this->m_groupConfigs[section][tlmGroup].set_sendState(sendState);
     this->tlmWrite_GroupConfigs(this->m_groupConfigs);
+    this->log_ACTIVITY_HI_GroupSendStateSet(section, tlmGroup, sendState);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
@@ -592,18 +593,18 @@ Svc::TlmSendConfig TlmPacketizer::effectiveConfig(FwIndexType section, FwChanIdT
     const FwSizeType sectionIndex = static_cast<FwSizeType>(section);
     // Start from the group policy, then copy in the fields the packet overrides
     Svc::TlmSendConfig effective = this->m_groupConfigs[sectionIndex][this->m_fillBuffers[pkt].level];
-    const Svc::PacketOverrideConfig& override = this->m_packetOverrides[sectionIndex][pkt];
-    const Svc::PacketOverrideType overrideType = override.get_overrideType();
+    const Svc::PacketOverrideConfig& packetOverride = this->m_packetOverrides[sectionIndex][pkt];
+    const Svc::PacketOverrideType overrideType = packetOverride.get_overrideType();
     const bool overridesSend = (overrideType == Svc::PacketOverrideType::OVERRIDE_SEND) or
                                (overrideType == Svc::PacketOverrideType::OVERRIDE_SEND_AND_RATES);
     const bool overridesRates = (overrideType == Svc::PacketOverrideType::OVERRIDE_RATES) or
                                 (overrideType == Svc::PacketOverrideType::OVERRIDE_SEND_AND_RATES);
     // A packet-level INHERIT_FROM_PARENT means "use the group's state", so it is not copied
-    if (overridesSend and override.get_sendConfig().get_sendState() != Svc::TlmSendState::INHERIT_FROM_PARENT) {
-        effective.set_sendState(override.get_sendConfig().get_sendState());
+    if (overridesSend and packetOverride.get_sendConfig().get_sendState() != Svc::TlmSendState::INHERIT_FROM_PARENT) {
+        effective.set_sendState(packetOverride.get_sendConfig().get_sendState());
     }
     if (overridesRates) {
-        effective.set_rates(override.get_sendConfig().get_rates());
+        effective.set_rates(packetOverride.get_sendConfig().get_rates());
     }
     return effective;
 }
@@ -740,23 +741,29 @@ void TlmPacketizer ::packetOverrideIn_handler(FwIndexType portNum, Fw::Buffer& f
             status = Fw::FW_DESERIALIZE_FORMAT_ERROR;
         }
         if (status != Fw::FW_SERIALIZE_OK) {
+            static_assert(static_cast<U8>(Fw::FW_DESERIALIZE_BUFFER_EMPTY) == Fw::DeserialStatus::BUFFER_EMPTY and
+                              static_cast<U8>(Fw::FW_DESERIALIZE_FORMAT_ERROR) == Fw::DeserialStatus::FORMAT_ERROR and
+                              static_cast<U8>(Fw::FW_DESERIALIZE_SIZE_MISMATCH) == Fw::DeserialStatus::SIZE_MISMATCH and
+                              static_cast<U8>(Fw::FW_DESERIALIZE_TYPE_MISMATCH) == Fw::DeserialStatus::TYPE_MISMATCH,
+                          "Fw::DeserialStatus must mirror Fw::SerializeStatus values");
             Fw::DeserialStatus reported(static_cast<Fw::DeserialStatus::T>(status));
             if (not reported.isValid()) {
                 reported = Fw::DeserialStatus::FORMAT_ERROR;
             }
             this->log_WARNING_HI_ConfigReloadFailed(reported);
         }
+    } else {
+        this->log_WARNING_HI_ConfigReloadFailed(Fw::DeserialStatus::BUFFER_EMPTY);
     }
-    // Return the reload buffer to the component that sent it, valid or not
-    if (this->isConnected_packetOverrideReturnOut_OutputPort(0)) {
-        this->packetOverrideReturnOut_out(0, fwBuffer);
-    }
+    // Return the reload buffer to the component that sent it, valid or not; a reload path without a return
+    // port would leak the sender's buffer, so the port is a wiring invariant
+    FW_ASSERT(this->isConnected_packetOverrideReturnOut_OutputPort(0));
+    this->packetOverrideReturnOut_out(0, fwBuffer);
 }
 
 Fw::Success TlmPacketizer::mirrorOverride(const Svc::TelemetrySection& section, FwChanIdType pkt) {
     // persistent storage component should mirror this state; skip if not wired
-    if ((not this->isConnected_packetOverrideOut_OutputPort(0)) or (not this->isConnected_allocate_OutputPort(0)) or
-        (not this->isConnected_deallocate_OutputPort(0))) {
+    if ((not this->isConnected_packetOverrideOut_OutputPort(0)) or (not this->isConnected_allocate_OutputPort(0))) {
         return Fw::Success::SUCCESS;
     }
     const FwSizeType sectionIndex = static_cast<FwSizeType>(section.e);
@@ -799,10 +806,30 @@ Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id,
                                                     Fw::SerialBufferBase& buff) {
     if (FW_PARAM_OK(prmStat)) {
         switch (local_id) {
-            case PARAMID_SECTION_ENABLED:
-                return buff.deserializeTo(this->m_sectionEnabled);
-            case PARAMID_SECTION_CONFIGS:
-                return buff.deserializeTo(this->m_groupConfigs);
+            // A stored value of a different shape (e.g. saved by a previous FSW load) must not load as a scrambled
+            // table
+            case PARAMID_SECTION_ENABLED: {
+                Svc::TlmPacketizer_SectionEnabled loaded;
+                Fw::SerializeStatus status = buff.deserializeTo(loaded);
+                if ((status == Fw::FW_SERIALIZE_OK) and (buff.getDeserializeSizeLeft() != 0)) {
+                    status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+                }
+                if (status == Fw::FW_SERIALIZE_OK) {
+                    this->m_sectionEnabled = loaded;
+                }
+                return status;
+            }
+            case PARAMID_SECTION_CONFIGS: {
+                Svc::TlmPacketizer_SectionConfigs loaded;
+                Fw::SerializeStatus status = buff.deserializeTo(loaded);
+                if ((status == Fw::FW_SERIALIZE_OK) and (buff.getDeserializeSizeLeft() != 0)) {
+                    status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+                }
+                if (status == Fw::FW_SERIALIZE_OK) {
+                    this->m_groupConfigs = loaded;
+                }
+                return status;
+            }
             default:
                 FW_ASSERT(false, static_cast<FwAssertArgType>(local_id));
         }

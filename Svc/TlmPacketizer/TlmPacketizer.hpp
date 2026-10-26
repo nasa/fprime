@@ -131,9 +131,9 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
                                    const Fw::Enabled& enable              //!< Section enabled or disabled
                                    ) override;
 
-    //! Handler implementation for command ENABLE_GROUP
+    //! Handler implementation for command CONFIGURE_GROUP_SEND
     //!
-    //! Enable / disable telemetry of a group on a section
+    //! Set the send state of a group on a section
     void CONFIGURE_GROUP_SEND_cmdHandler(FwOpcodeType opCode,                   //!< The opcode
                                          U32 cmdSeq,                            //!< The command sequence number
                                          const Svc::TelemetrySection& section,  //!< Section grouping
@@ -160,9 +160,9 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
                                       U32 packetId                           //!< Packet identifier
                                       ) override;
 
-    //! Handler implementation for command ENABLE_PACKET
+    //! Handler implementation for command CONFIGURE_PACKET_SEND
     //!
-    //! Enable / disable a single packet as a per-packet override, then mirror to packetOverrideOut.
+    //! Override the send state of a single packet in a section, then mirror to packetOverrideOut.
     void CONFIGURE_PACKET_SEND_cmdHandler(FwOpcodeType opCode,                   //!< The opcode
                                           U32 cmdSeq,                            //!< The command sequence number
                                           const Svc::TelemetrySection& section,  //!< Section to configure
@@ -282,9 +282,6 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //! \return The output port index to send telemetry for the given section and group
     static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
 
-    //! \brief Compute the effective per-packet policy for a packet/section
-    //! \param section Section index
-    //! \param pkt Packet index
     //! Outcome of a per-packet operation; mapped to a command response by the command handlers
     enum class PacketStatus : U8 {
         OK,               //!< Operation applied

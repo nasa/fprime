@@ -2440,12 +2440,70 @@ void TlmPacketizerTester ::configInMalformedReloadTest() {
     ASSERT_EQ(this->component.m_packetOverrides[0][0], Svc::PacketOverrideConfig());
     this->clearHistory();
 
-    // An invalid buffer is returned untouched with no events
+    // An invalid buffer is reported as an empty reload and still returned
     Fw::Buffer invalid;
     this->invoke_to_packetOverrideIn(0, invalid);
     this->component.doDispatch();
-    ASSERT_EVENTS_SIZE(0);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ConfigReloadFailed(0, Fw::DeserialStatus::BUFFER_EMPTY);
     ASSERT_from_packetOverrideReturnOut_SIZE(1);
+    ASSERT_from_deallocate_SIZE(0);
+}
+
+void TlmPacketizerTester ::staleParameterShapeTest() {
+    this->stockConfiguration();
+    const Svc::TlmPacketizer_SectionConfigs before = this->component.m_groupConfigs;
+
+    // A stored value longer than the current serialized shape (e.g. saved by a previous FSW load) is rejected
+    Fw::ParamBuffer stale;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stale.serializeFrom(before));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stale.serializeFrom(static_cast<U32>(0xDEADBEEF)));
+    ASSERT_EQ(
+        Fw::FW_DESERIALIZE_SIZE_MISMATCH,
+        this->component.deserializeParam(0, TlmPacketizer::PARAMID_SECTION_CONFIGS, Fw::ParamValid::VALID, stale));
+    ASSERT_EQ(before, this->component.m_groupConfigs);
+
+    // A stored value shorter than the current shape is rejected by deserialization itself
+    Fw::ParamBuffer truncated;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, truncated.serializeFrom(static_cast<U8>(0)));
+    ASSERT_NE(Fw::FW_SERIALIZE_OK, this->component.deserializeParam(0, TlmPacketizer::PARAMID_SECTION_CONFIGS,
+                                                                    Fw::ParamValid::VALID, truncated));
+    ASSERT_EQ(before, this->component.m_groupConfigs);
+
+    // A value of the current shape loads
+    Fw::ParamBuffer current;
+    Svc::TlmPacketizer_SectionConfigs silenced = before;
+    silenced[0][0].set_sendState(Svc::TlmSendState::SEND_NEVER);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, current.serializeFrom(silenced));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, this->component.deserializeParam(0, TlmPacketizer::PARAMID_SECTION_CONFIGS,
+                                                                    Fw::ParamValid::VALID, current));
+    ASSERT_EQ(silenced, this->component.m_groupConfigs);
+}
+
+void TlmPacketizerTester ::groupSendCommandTest() {
+    this->stockConfiguration();
+    this->clearHistory();
+
+    // Nominal: state stored, telemetered, evented, OK
+    this->sendCmd_CONFIGURE_GROUP_SEND(0, 10, static_cast<TelemetrySection::T>(0), 1, Svc::TlmSendState::SEND_ALWAYS);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CONFIGURE_GROUP_SEND, 10, Fw::CmdResponse::OK);
+    ASSERT_EQ(Svc::TlmSendState::SEND_ALWAYS, this->component.m_groupConfigs[0][1].get_sendState());
+    ASSERT_EVENTS_GroupSendStateSet_SIZE(1);
+    ASSERT_EVENTS_GroupSendStateSet(0, static_cast<TelemetrySection::T>(0), 1, Svc::TlmSendState::SEND_ALWAYS);
+    ASSERT_TLM_GroupConfigs_SIZE(1);
+    this->clearHistory();
+
+    // Group out of range: rejected, nothing changes
+    this->sendCmd_CONFIGURE_GROUP_SEND(0, 11, static_cast<TelemetrySection::T>(0),
+                                       MAX_CONFIGURABLE_TLMPACKETIZER_GROUP + 1, Svc::TlmSendState::SEND_NEVER);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_CONFIGURE_GROUP_SEND, 11, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_TLM_SIZE(0);
+    ASSERT_EQ(Svc::TlmSendState::SEND_ALWAYS, this->component.m_groupConfigs[0][1].get_sendState());
 }
 
 void TlmPacketizerTester ::connectPorts() {

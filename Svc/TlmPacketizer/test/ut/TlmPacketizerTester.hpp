@@ -113,11 +113,11 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Non-empty packet with a nullptr channel list is still rejected by the configuration assert
     void nullChannelListTest(void);
 
-    //! Per-packet override test: an ENABLE_PACKET override disables one packet/section while
-    //! the group-enabled remainder still sends (per-packet control)
+    //! Per-packet override test: a CONFIGURE_PACKET_SEND(SEND_NEVER) override silences one packet/section
+    //! while the rest of its group still sends (per-packet control)
     void perPacketOverrideTest(void);
 
-    //! Per-packet command test: ENABLE_PACKET / FORCE_PACKET / CONFIGURE_PACKET_RATES update
+    //! Per-packet command test: CONFIGURE_PACKET_SEND / CONFIGURE_PACKET_RATES update
     //! the override table + mirror one entry out packetOverrideOut; bad args/id -> VALIDATION_ERROR
     void perPacketCommandsTest(void);
 
@@ -128,10 +128,19 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! GET_PACKET_CONFIG test: effective config reported for a known id; unknown id warns
     void getPacketConfigTest(void);
 
-    //! Seeding test: the first per-packet command seeds the override from the packet's current
-    //! effective (group-derived) config, so untouched rate fields carry through
+    //! Follow-through test: a send-state override leaves the rate fields following the group, so a later
+    //! CONFIGURE_GROUP_RATES still reaches the overridden packet (no seeding)
     void groupRatesFollowThroughSendOverrideTest(void);
+
+    //! Send-state resolution test: packet -> group -> section enable for every TlmSendState combination
     void sendStateResolutionTest(void);
+
+    //! Stored-parameter shape test: a SECTION_CONFIGS value of a different serialized size is rejected
+    //! rather than loaded as a scrambled table
+    void staleParameterShapeTest(void);
+
+    //! CONFIGURE_GROUP_SEND test: nominal response/event/telemetry and the out-of-range group rejection
+    void groupSendCommandTest(void);
 
     //! CLEAR_PACKET_OVERRIDE test: an override is cleared back to group behavior and the cleared
     //! state is mirrored out packetOverrideOut; unknown id -> VALIDATION_ERROR + warning
@@ -235,7 +244,7 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     Svc::PacketConfigEntry m_lastConfigEntry{};  //!< Entry deserialized from the most recent mirror buffer
 
     //! Backing storage for the mocked allocate port (stands in for a BufferManager pool)
-    static const FwSizeType CONFIG_BUF_SLOT_SIZE = 256;
+    static constexpr FwSizeType CONFIG_BUF_SLOT_SIZE = 256;
     U8 m_configBufSlot[CONFIG_BUF_SLOT_SIZE]{};
     Fw::Buffer m_configBuf;
     bool m_allocFail{false};  //!< When set, allocate returns an invalid buffer (pool exhausted)

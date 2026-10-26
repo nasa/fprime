@@ -127,7 +127,7 @@ TEST(TestNominal, sectionConfigParameterTest) {
 }
 
 TEST(TestNominal, PerPacketOverrideTest) {
-    TEST_CASE(100.1.15, "Per-packet ENABLE_PACKET override disables a single packet/section");
+    TEST_CASE(100.1.15, "Per-packet CONFIGURE_PACKET_SEND(SEND_NEVER) override silences a single packet/section");
     Svc::TlmPacketizerTester tester;
     tester.perPacketOverrideTest();
 }
@@ -151,7 +151,7 @@ TEST(TestNominal, GetPacketConfigTest) {
 }
 
 TEST(TestNominal, GroupRatesFollowThroughSendOverrideTest) {
-    TEST_CASE(100.1.19, "First per-packet override seeds from group-derived effective config");
+    TEST_CASE(100.1.19, "Send-state override leaves rates following the group (no seeding)");
     Svc::TlmPacketizerTester tester;
     tester.groupRatesFollowThroughSendOverrideTest();
 }
@@ -175,15 +175,29 @@ TEST(TestNominal, ConfigInClearReloadTest) {
 }
 
 TEST(TestNominal, ConfigInMalformedReloadTest) {
-    TEST_CASE(100.1.23, "Malformed packetOverrideIn reload emits ConfigReloadFailed; invalid buffer is deallocated");
+    TEST_CASE(
+        100.1.23,
+        "Malformed packetOverrideIn reload emits ConfigReloadFailed; buffer is returned on packetOverrideReturnOut");
     Svc::TlmPacketizerTester tester;
     tester.configInMalformedReloadTest();
 }
 
 TEST(TestNominal, SendStateResolutionTest) {
-    TEST_CASE(100.1.24, "Overridden-disabled packet stays silent in a Force-Enabled group");
+    TEST_CASE(100.1.24, "SEND_NEVER packet override stays silent in a SEND_ALWAYS group");
     Svc::TlmPacketizerTester tester;
     tester.sendStateResolutionTest();
+}
+
+TEST(TestNominal, StaleParameterShapeTest) {
+    TEST_CASE(100.1.25, "SECTION_CONFIGS value of a different serialized shape is rejected at load");
+    Svc::TlmPacketizerTester tester;
+    tester.staleParameterShapeTest();
+}
+
+TEST(TestNominal, GroupSendCommandTest) {
+    TEST_CASE(100.1.26, "CONFIGURE_GROUP_SEND responds, events and telemeters; out-of-range group is rejected");
+    Svc::TlmPacketizerTester tester;
+    tester.groupSendCommandTest();
 }
 
 int main(int argc, char* argv[]) {
