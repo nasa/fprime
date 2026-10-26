@@ -2328,6 +2328,7 @@ void TlmPacketizerTester ::mirrorReturnTest() {
     Fw::Buffer returned = this->m_configBuf;
     this->invoke_to_packetOverrideReturnIn(0, returned);
     ASSERT_from_deallocate_SIZE(1);
+    ASSERT_EQ(this->m_configOutInvokes, 1u);
     ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), this->m_configBufSlot);
     ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(),
               static_cast<Fw::Buffer::SizeType>(Svc::PacketConfigEntry::SERIALIZED_SIZE));

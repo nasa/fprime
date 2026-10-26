@@ -149,6 +149,8 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Mirror allocation failure test: when allocate yields no buffer, the command answers
     //! EXECUTION_ERROR, ConfigMirrorAllocFailed is emitted, and the override is NOT applied locally
     void mirrorAllocFailTest(void);
+    //! Mirror return test: a packetOverrideOut buffer handed back on packetOverrideReturnIn is freed
+    //! through deallocate without touching the override table or packetOverrideReturnOut
     void mirrorReturnTest(void);
 
     //! packetOverrideIn clear reload test: a GROUP_DEFAULT record reverts an overridden packet to group behavior

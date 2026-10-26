@@ -175,6 +175,7 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
                                          const Svc::TlmSendState& sendState     //!< Send state
                                          ) override;
 
+    //! Override the rate logic and thresholds of a single packet, then mirror to packetOverrideOut.
     void OVERRIDE_PACKET_RATES_cmdHandler(
         FwOpcodeType opCode,                   //!< The opcode
         U32 cmdSeq,                            //!< The command sequence number

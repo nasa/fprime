@@ -46,19 +46,19 @@ The `Svc::TlmPacketizer` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
-[`Svc::Sched`](../../Sched/docs/sdd.md) | Run | Input | Asynchronous | Execute a cycle to write changed telemetry channels\r
-[`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | TlmRecv | Input | Synchronous Input | Update a telemetry channel\r
-[`Fw::TlmGet`](../../../Fw/Tlm/docs/sdd.md) | TlmGet | Input | Synchronous | Read back the latest stored value of a channel\r
-[`Fw::Com`](../../../Fw/Com/docs/sdd.md) | PktSend | Output | n/a | Array of ports used to write packets with updated telemetry\r
-[`Svc::EnableSection`](../../Ports/TlmPacketizerPorts/sdd.md) | controlIn | Input | Asynchronous | Enable / Disable sections of telemetry groups\r
-[`Svc::ConfigureGroupRate`](../../Ports/TlmPacketizerPorts/sdd.md) | configureSectionGroupRate | Input | Asynchronous | Configure a section/group rate logic and thresholds\r
-[`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | packetOverrideOut | Output | n/a | Mirror a per-packet override change to an external persistence component\r
+[`Svc::Sched`](../../Sched/docs/sdd.md) | Run | Input | Asynchronous | Execute a cycle to write changed telemetry channels
+[`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | TlmRecv | Input | Synchronous Input | Update a telemetry channel
+[`Fw::TlmGet`](../../../Fw/Tlm/docs/sdd.md) | TlmGet | Input | Synchronous | Read back the latest stored value of a channel
+[`Fw::Com`](../../../Fw/Com/docs/sdd.md) | PktSend | Output | n/a | Array of ports used to write packets with updated telemetry
+[`Svc::EnableSection`](../../Ports/TlmPacketizerPorts/sdd.md) | controlIn | Input | Asynchronous | Enable / Disable sections of telemetry groups
+[`Svc::ConfigureGroupRate`](../../Ports/TlmPacketizerPorts/sdd.md) | configureSectionGroupRate | Input | Asynchronous | Configure a section/group rate logic and thresholds
+[`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | packetOverrideOut | Output | n/a | Mirror a per-packet override change to an external persistence component
 [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | packetOverrideIn | Input | Asynchronous | Reload per-packet overrides from the persistence component (e.g. at boot)
 [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | packetOverrideReturnOut | Output | n/a | Return a packetOverrideIn reload buffer to the persistence component after it is applied
 [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.md) | allocate | Output | n/a | Allocate a buffer for a packetOverrideOut mirror (`Svc.BufferAllocation` interface)
 [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | packetOverrideReturnIn | Input | Synchronous | Return a packetOverrideOut mirror buffer from the persistence component once it has been consumed
 [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | deallocate | Output | n/a | Free a returned packetOverrideOut mirror buffer (`Svc.BufferAllocation` interface)
-[`Svc::Ping`](../../Ping/docs/sdd.md) | pingIn / pingOut | Input / Output | Asynchronous / n/a | Health ping request and response\r
+[`Svc::Ping`](../../Ping/docs/sdd.md) | pingIn / pingOut | Input / Output | Asynchronous / n/a | Health ping request and response
 
 #### 3.1.3 Terminology
 
@@ -356,3 +356,4 @@ Date | Description
 09/30/2026 | Added per-packet configuration
 10/23/2026 | Review follow-ups: override/clear/reload events, reload validation, mirror-failure rollback
 10/26/2026 | `TlmSendState` replaces enabled/force/SILENCED; per-field packet overrides (`PacketOverrideType`); `CONFIGURE_*_SEND` commands; reload buffers returned on `packetOverrideReturnOut`. **Migration:** the serialized shape of `SECTION_CONFIGS` changed (`GroupConfig` → `TlmSendConfig`); a saved value of the old shape is rejected at load (`FW_DESERIALIZE_SIZE_MISMATCH`) and the defaults apply, so regenerate or re-save the parameter database
+10/26/2026 | Renamed CONFIGURE_PACKET_SEND/RATES to OVERRIDE_PACKET_SEND/RATES; added packetOverrideReturnIn for mirror buffers
