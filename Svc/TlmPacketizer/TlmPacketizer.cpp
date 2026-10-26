@@ -521,24 +521,24 @@ void TlmPacketizer ::GET_PACKET_CONFIG_cmdHandler(FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, TlmPacketizer::toCmdResponse(status));
 }
 
-void TlmPacketizer ::CONFIGURE_PACKET_SEND_cmdHandler(FwOpcodeType opCode,
-                                                      U32 cmdSeq,
-                                                      const Svc::TelemetrySection& section,
-                                                      U32 packetId,
-                                                      const Svc::TlmSendState& sendState) {
+void TlmPacketizer ::OVERRIDE_PACKET_SEND_cmdHandler(FwOpcodeType opCode,
+                                                     U32 cmdSeq,
+                                                     const Svc::TelemetrySection& section,
+                                                     U32 packetId,
+                                                     const Svc::TlmSendState& sendState) {
     const Svc::PacketOverrideConfig requested(Svc::PacketOverrideType::OVERRIDE_SEND,
                                               Svc::TlmSendConfig(sendState, Svc::RateConfig()));
     this->cmdResponse_out(opCode, cmdSeq,
                           TlmPacketizer::toCmdResponse(this->overridePacket(section, packetId, requested)));
 }
 
-void TlmPacketizer ::CONFIGURE_PACKET_RATES_cmdHandler(FwOpcodeType opCode,
-                                                       U32 cmdSeq,
-                                                       const Svc::TelemetrySection& section,
-                                                       U32 packetId,
-                                                       const Svc::RateLogic& rateLogic,
-                                                       U32 minDelta,
-                                                       U32 maxDelta) {
+void TlmPacketizer ::OVERRIDE_PACKET_RATES_cmdHandler(FwOpcodeType opCode,
+                                                      U32 cmdSeq,
+                                                      const Svc::TelemetrySection& section,
+                                                      U32 packetId,
+                                                      const Svc::RateLogic& rateLogic,
+                                                      U32 minDelta,
+                                                      U32 maxDelta) {
     const Svc::PacketOverrideConfig requested(
         Svc::PacketOverrideType::OVERRIDE_RATES,
         Svc::TlmSendConfig(Svc::TlmSendState::INHERIT_FROM_PARENT, Svc::RateConfig(rateLogic, minDelta, maxDelta)));
@@ -762,13 +762,22 @@ void TlmPacketizer ::packetOverrideIn_handler(FwIndexType portNum, Fw::Buffer& f
     this->packetOverrideReturnOut_out(0, fwBuffer);
 }
 
+void TlmPacketizer ::packetOverrideReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // Mirror buffers come from allocate and go back to the same pool; the SDD requires the whole
+    // mirror path (packetOverrideOut, allocate, deallocate, packetOverrideReturnIn) wired or none of it
+    FW_ASSERT(this->isConnected_deallocate_OutputPort(0));
+    this->deallocate_out(0, fwBuffer);
+}
+
 Fw::Success TlmPacketizer::mirrorOverride(const Svc::TelemetrySection& section, FwChanIdType pkt) {
     // persistent storage component should mirror this state; skip if not wired
     if (not this->isConnected_packetOverrideOut_OutputPort(0)) {
         return Fw::Success::SUCCESS;
     }
-    // A mirror port without an allocator cannot persist anything; the SDD requires both or neither
+    // A mirror port without an allocator cannot persist anything, and without a deallocator the returned
+    // mirror buffers could never be freed; the SDD requires the whole mirror path wired or none of it
     FW_ASSERT(this->isConnected_allocate_OutputPort(0));
+    FW_ASSERT(this->isConnected_deallocate_OutputPort(0));
     const FwSizeType sectionIndex = static_cast<FwSizeType>(section.e);
     const Svc::PacketConfigEntry entry(static_cast<U32>(this->m_fillBuffers[pkt].id), section,
                                        this->m_packetOverrides[sectionIndex][pkt]);

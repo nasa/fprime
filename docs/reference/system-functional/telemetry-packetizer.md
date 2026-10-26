@@ -56,8 +56,8 @@ The MIN and MAX delta parameters are configured via the CONFIGURE_GROUP_RATES co
 
 Beyond the group/section controls above, individual packets can be overridden. An override replaces only the fields it names — the send state, the rates, or both — and the packet keeps following its group for everything else, until the override is cleared:
 
-- **CONFIGURE_PACKET_SEND** — Override a single packet's send state (`SEND_ALWAYS` emits even in a disabled section; `SEND_WHEN_SECTION_ENABLED` still honours it; `SEND_NEVER` silences the packet).
-- **CONFIGURE_PACKET_RATES** — Override a single packet's rate logic and MIN/MAX thresholds.
+- **OVERRIDE_PACKET_SEND** — Override a single packet's send state (`SEND_ALWAYS` emits even in a disabled section; `SEND_WHEN_SECTION_ENABLED` still honours it; `SEND_NEVER` silences the packet).
+- **OVERRIDE_PACKET_RATES** — Override a single packet's rate logic and MIN/MAX thresholds.
 - **GET_PACKET_CONFIG** — Report a packet's stored override and effective configuration as the `PacketConfigReport` event.
 - **CLEAR_PACKET_OVERRIDE** — Remove an override, reverting the packet to its group.
 

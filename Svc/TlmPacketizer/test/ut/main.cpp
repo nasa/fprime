@@ -127,7 +127,7 @@ TEST(TestNominal, sectionConfigParameterTest) {
 }
 
 TEST(TestNominal, PerPacketOverrideTest) {
-    TEST_CASE(100.1.15, "Per-packet CONFIGURE_PACKET_SEND(SEND_NEVER) override silences a single packet/section");
+    TEST_CASE(100.1.15, "Per-packet OVERRIDE_PACKET_SEND(SEND_NEVER) override silences a single packet/section");
     Svc::TlmPacketizerTester tester;
     tester.perPacketOverrideTest();
 }
@@ -166,6 +166,12 @@ TEST(TestNominal, MirrorAllocFailTest) {
     TEST_CASE(100.1.21, "Mirror allocation failure answers EXECUTION_ERROR and leaves the override untouched");
     Svc::TlmPacketizerTester tester;
     tester.mirrorAllocFailTest();
+}
+
+TEST(TestNominal, MirrorReturnTest) {
+    TEST_CASE(100.2.6, "A packetOverrideOut mirror buffer returned on packetOverrideReturnIn is deallocated");
+    Svc::TlmPacketizerTester tester;
+    tester.mirrorReturnTest();
 }
 
 TEST(TestNominal, ConfigInClearReloadTest) {

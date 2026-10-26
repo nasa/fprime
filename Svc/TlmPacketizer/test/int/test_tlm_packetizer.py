@@ -110,12 +110,12 @@ def test_packet_config_report_default(packetizer):
 
 
 def test_packet_send_never_override(packetizer):
-    """CONFIGURE_PACKET_SEND SEND_NEVER stops one packet; CLEAR restores it.
+    """OVERRIDE_PACKET_SEND SEND_NEVER stops one packet; CLEAR restores it.
 
     Covers: SVC-TLMPACKETIZER-PACKET-SEND-OVERRIDE, SVC-TLMPACKETIZER-CLEAR-OVERRIDE
     """
     packetizer.command(
-        "CONFIGURE_PACKET_SEND",
+        "OVERRIDE_PACKET_SEND",
         [packetizer.section, packetizer.packet_id, "SEND_NEVER"],
     )
     packetizer.event("PacketOverrideSet")
@@ -142,7 +142,7 @@ def test_packet_send_always_beats_group(packetizer):
     )
     packetizer.packet_silent()
     packetizer.command(
-        "CONFIGURE_PACKET_SEND",
+        "OVERRIDE_PACKET_SEND",
         [packetizer.section, packetizer.packet_id, "SEND_ALWAYS"],
     )
     packetizer.event("PacketOverrideSet")
@@ -160,7 +160,7 @@ def test_packet_send_always_beats_section_disable(packetizer):
     packetizer.command("ENABLE_SECTION", [packetizer.section, "DISABLED"])
     packetizer.packet_silent()
     packetizer.command(
-        "CONFIGURE_PACKET_SEND",
+        "OVERRIDE_PACKET_SEND",
         [packetizer.section, packetizer.packet_id, "SEND_ALWAYS"],
     )
     packetizer.event("PacketOverrideSet")
@@ -178,7 +178,7 @@ def test_packet_inherit_follows_group(packetizer):
     Covers: SVC-TLMPACKETIZER-SEND-RESOLUTION
     """
     packetizer.command(
-        "CONFIGURE_PACKET_SEND",
+        "OVERRIDE_PACKET_SEND",
         [packetizer.section, packetizer.packet_id, "INHERIT_FROM_PARENT"],
     )
     packetizer.event("PacketOverrideSet")
@@ -190,13 +190,13 @@ def test_packet_inherit_follows_group(packetizer):
 
 
 def test_packet_rates_override(packetizer):
-    """CONFIGURE_PACKET_RATES throttles one packet without touching its send state.
+    """OVERRIDE_PACKET_RATES throttles one packet without touching its send state.
 
     Covers: SVC-TLMPACKETIZER-PACKET-RATES-OVERRIDE
     """
     min_ticks = 5
     packetizer.command(
-        "CONFIGURE_PACKET_RATES",
+        "OVERRIDE_PACKET_RATES",
         [packetizer.section, packetizer.packet_id, "ON_CHANGE_MIN", min_ticks, 0],
     )
     packetizer.event("PacketOverrideSet")
@@ -242,7 +242,7 @@ def test_unknown_packet_rejected(packetizer):
     )
     packetizer.event("PacketNotFound", [UNKNOWN_PACKET_ID])
     packetizer.failed_command(
-        "CONFIGURE_PACKET_SEND", [packetizer.section, UNKNOWN_PACKET_ID, "SEND_NEVER"]
+        "OVERRIDE_PACKET_SEND", [packetizer.section, UNKNOWN_PACKET_ID, "SEND_NEVER"]
     )
     packetizer.event("PacketNotFound", [UNKNOWN_PACKET_ID])
     packetizer.failed_command(
@@ -257,7 +257,7 @@ def test_invalid_section_rejected(packetizer):
     Covers: SVC-TLMPACKETIZER-INVALID-SECTION
     """
     packetizer.failed_command(
-        "CONFIGURE_PACKET_SEND", ["NUM_SECTIONS", packetizer.packet_id, "SEND_NEVER"]
+        "OVERRIDE_PACKET_SEND", ["NUM_SECTIONS", packetizer.packet_id, "SEND_NEVER"]
     )
     packetizer.event("InvalidPacketConfig", [packetizer.packet_id])
     packetizer.failed_command(

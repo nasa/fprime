@@ -2046,7 +2046,7 @@ void TlmPacketizerTester ::perPacketOverrideTest() {
 
     // Override: never send packet id 4 in REALTIME via the per-packet command. Its RECORDED copy and
     // packet id 8 remain group-driven, so exactly one (packet, section) send should drop out.
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
 
     this->fillPacketChannels();
@@ -2067,12 +2067,12 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     const Svc::RateConfig noRates;
     const Svc::RateConfig rates(Svc::RateLogic::EVERY_MAX, 1, 2);
 
-    // CONFIGURE_PACKET_SEND stores a send-only override and mirrors it
+    // OVERRIDE_PACKET_SEND stores a send-only override and mirrors it
     this->m_configOutInvokes = 0;
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 10, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 10, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_CONFIGURE_PACKET_SEND, 10, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_OVERRIDE_PACKET_SEND, 10, Fw::CmdResponse::OK);
     const Svc::PacketOverrideConfig sendOnly =
         this->sendOverride(Svc::PacketOverrideType::OVERRIDE_SEND, Svc::TlmSendState::SEND_NEVER, noRates);
     ASSERT_EVENTS_PacketOverrideSet_SIZE(1);
@@ -2084,10 +2084,10 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     ASSERT_EQ(this->m_lastConfigEntry.get_override(), sendOnly);
     this->clearHistory();
 
-    // CONFIGURE_PACKET_RATES on the same packet keeps the send override: both fields now override
-    this->sendCmd_CONFIGURE_PACKET_RATES(0, 11, Svc::TelemetrySection::REALTIME, 4, Svc::RateLogic::EVERY_MAX, 1, 2);
+    // OVERRIDE_PACKET_RATES on the same packet keeps the send override: both fields now override
+    this->sendCmd_OVERRIDE_PACKET_RATES(0, 11, Svc::TelemetrySection::REALTIME, 4, Svc::RateLogic::EVERY_MAX, 1, 2);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_CONFIGURE_PACKET_RATES, 11, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_OVERRIDE_PACKET_RATES, 11, Fw::CmdResponse::OK);
     const Svc::PacketOverrideConfig both =
         this->sendOverride(Svc::PacketOverrideType::OVERRIDE_SEND_AND_RATES, Svc::TlmSendState::SEND_NEVER, rates);
     ASSERT_EVENTS_PacketOverrideSet(0, Svc::TelemetrySection::REALTIME, 4, both);
@@ -2097,9 +2097,9 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     this->clearHistory();
 
     // Rates first on another packet/section: a rates-only override
-    this->sendCmd_CONFIGURE_PACKET_RATES(0, 12, Svc::TelemetrySection::RECORDED, 8, Svc::RateLogic::EVERY_MAX, 1, 2);
+    this->sendCmd_OVERRIDE_PACKET_RATES(0, 12, Svc::TelemetrySection::RECORDED, 8, Svc::RateLogic::EVERY_MAX, 1, 2);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_CONFIGURE_PACKET_RATES, 12, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_OVERRIDE_PACKET_RATES, 12, Fw::CmdResponse::OK);
     ASSERT_EQ(
         this->component.m_packetOverrides[1][1],
         this->sendOverride(Svc::PacketOverrideType::OVERRIDE_RATES, Svc::TlmSendState::INHERIT_FROM_PARENT, rates));
@@ -2107,11 +2107,11 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
 
     // Invalid section: rejected with InvalidPacketConfig, nothing stored or mirrored
     this->m_configOutInvokes = 0;
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 13,
-                                        static_cast<Svc::TelemetrySection::T>(Svc::TelemetrySection::NUM_SECTIONS), 8,
-                                        Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 13,
+                                       static_cast<Svc::TelemetrySection::T>(Svc::TelemetrySection::NUM_SECTIONS), 8,
+                                       Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_CONFIGURE_PACKET_SEND, 13,
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_OVERRIDE_PACKET_SEND, 13,
                         Fw::CmdResponse::VALIDATION_ERROR);
     ASSERT_EVENTS_InvalidPacketConfig_SIZE(1);
     ASSERT_EVENTS_InvalidPacketConfig(0, 8);
@@ -2119,9 +2119,9 @@ void TlmPacketizerTester ::perPacketCommandsTest() {
     this->clearHistory();
 
     // Unknown packet id: rejected with PacketNotFound
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 14, Svc::TelemetrySection::REALTIME, 9999, Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 14, Svc::TelemetrySection::REALTIME, 9999, Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_CONFIGURE_PACKET_SEND, 14,
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_OVERRIDE_PACKET_SEND, 14,
                         Fw::CmdResponse::VALIDATION_ERROR);
     ASSERT_EVENTS_PacketNotFound_SIZE(1);
     ASSERT_EVENTS_PacketNotFound(0, 9999);
@@ -2143,7 +2143,7 @@ void TlmPacketizerTester ::getPacketConfigTest() {
 
     // Rates override: effective keeps the group's send state and takes the override's rates
     const Svc::RateConfig rates(Svc::RateLogic::EVERY_MAX, 1, 2);
-    this->sendCmd_CONFIGURE_PACKET_RATES(0, 21, Svc::TelemetrySection::REALTIME, 4, Svc::RateLogic::EVERY_MAX, 1, 2);
+    this->sendCmd_OVERRIDE_PACKET_RATES(0, 21, Svc::TelemetrySection::REALTIME, 4, Svc::RateLogic::EVERY_MAX, 1, 2);
     this->component.doDispatch();
     this->clearHistory();
     this->sendCmd_GET_PACKET_CONFIG(0, 22, Svc::TelemetrySection::REALTIME, 4);
@@ -2171,7 +2171,7 @@ void TlmPacketizerTester ::groupRatesFollowThroughSendOverrideTest() {
     this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
     // A send-only override must not freeze the rates: later group rate changes still reach the packet
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_ALWAYS);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_ALWAYS);
     this->component.doDispatch();
     this->sendCmd_CONFIGURE_GROUP_RATES(0, 0, Svc::TelemetrySection::REALTIME, 1, Svc::RateLogic::EVERY_MAX, 3, 7);
     this->component.doDispatch();
@@ -2188,7 +2188,7 @@ void TlmPacketizerTester ::sendStateResolutionTest() {
     this->stockConfiguration();  // sections enabled, groups INHERIT_FROM_PARENT
     this->component.setPacketList(packetList, ignore, 2);
     // Silence packet id 8 so the REALTIME level-1 port counts packet id 4 alone
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 8, Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 8, Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
     ASSERT_EQ(this->runAndCountRealtime(), 1u);  // packet INHERIT -> group INHERIT -> section enabled
 
@@ -2197,23 +2197,23 @@ void TlmPacketizerTester ::sendStateResolutionTest() {
     this->component.doDispatch();
     ASSERT_EQ(this->runAndCountRealtime(), 0u);
     // Packet SEND_WHEN_SECTION_ENABLED still respects the section
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4,
-                                        Svc::TlmSendState::SEND_WHEN_SECTION_ENABLED);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4,
+                                       Svc::TlmSendState::SEND_WHEN_SECTION_ENABLED);
     this->component.doDispatch();
     ASSERT_EQ(this->runAndCountRealtime(), 0u);
     // Packet SEND_ALWAYS ignores the section
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_ALWAYS);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_ALWAYS);
     this->component.doDispatch();
     ASSERT_EQ(this->runAndCountRealtime(), 1u);
     // Packet INHERIT -> group SEND_ALWAYS ignores the section
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4,
-                                        Svc::TlmSendState::INHERIT_FROM_PARENT);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4,
+                                       Svc::TlmSendState::INHERIT_FROM_PARENT);
     this->component.doDispatch();
     this->sendCmd_CONFIGURE_GROUP_SEND(0, 0, Svc::TelemetrySection::REALTIME, 1, Svc::TlmSendState::SEND_ALWAYS);
     this->component.doDispatch();
     ASSERT_EQ(this->runAndCountRealtime(), 1u);
     // Packet SEND_NEVER beats a group that sends always
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
     ASSERT_EQ(this->runAndCountRealtime(), 0u);
 
@@ -2225,8 +2225,8 @@ void TlmPacketizerTester ::sendStateResolutionTest() {
     this->sendCmd_CLEAR_PACKET_OVERRIDE(0, 0, Svc::TelemetrySection::REALTIME, 4);
     this->component.doDispatch();
     ASSERT_EQ(this->runAndCountRealtime(), 0u);
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4,
-                                        Svc::TlmSendState::SEND_WHEN_SECTION_ENABLED);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4,
+                                       Svc::TlmSendState::SEND_WHEN_SECTION_ENABLED);
     this->component.doDispatch();
     ASSERT_EQ(this->runAndCountRealtime(), 1u);
     // Group SEND_WHEN_SECTION_ENABLED behaves like INHERIT at group level
@@ -2241,7 +2241,7 @@ void TlmPacketizerTester ::sendStateResolutionTest() {
 void TlmPacketizerTester ::clearPacketOverrideTest() {
     this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
     ASSERT_from_PktSend_SIZE(0);
     this->fillPacketChannels();
@@ -2288,9 +2288,9 @@ void TlmPacketizerTester ::mirrorAllocFailTest() {
     // Pool exhausted: the override is rolled back and the command fails, so RAM and the mirror never diverge
     this->m_allocFail = true;
     this->m_configOutInvokes = 0;
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 40, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 40, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_CONFIGURE_PACKET_SEND, 40,
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_OVERRIDE_PACKET_SEND, 40,
                         Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_ConfigMirrorAllocFailed_SIZE(1);
     ASSERT_EVENTS_PacketOverrideSet_SIZE(0);
@@ -2308,10 +2308,32 @@ void TlmPacketizerTester ::mirrorAllocFailTest() {
 
     // Pool recovered: the same command succeeds
     this->m_allocFail = false;
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 41, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 41, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_CONFIGURE_PACKET_SEND, 41, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_OVERRIDE_PACKET_SEND, 41, Fw::CmdResponse::OK);
     ASSERT_EQ(this->m_configOutInvokes, 1u);
+}
+
+void TlmPacketizerTester ::mirrorReturnTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList, ignore, 2);
+    this->m_configOutInvokes = 0;
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 42, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizerComponentBase::OPCODE_OVERRIDE_PACKET_SEND, 42, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->m_configOutInvokes, 1u);
+    ASSERT_from_deallocate_SIZE(0);
+
+    // The persistence component hands the mirror buffer back; it goes to the pool it was allocated from
+    Fw::Buffer returned = this->m_configBuf;
+    this->invoke_to_packetOverrideReturnIn(0, returned);
+    ASSERT_from_deallocate_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), this->m_configBufSlot);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(),
+              static_cast<Fw::Buffer::SizeType>(Svc::PacketConfigEntry::SERIALIZED_SIZE));
+    // Returning a mirror buffer is not a reload: the override table and the reload return port are untouched
+    ASSERT_from_packetOverrideReturnOut_SIZE(0);
+    ASSERT_EQ(this->component.m_packetOverrides[0][0].get_overrideType(), Svc::PacketOverrideType::OVERRIDE_SEND);
 }
 
 // Serialize the given records back-to-back into the tester's reload slot, as the persistence component would.
@@ -2368,7 +2390,7 @@ void TlmPacketizerTester ::configInReloadTest() {
 void TlmPacketizerTester ::configInClearReloadTest() {
     this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 2);
-    this->sendCmd_CONFIGURE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
+    this->sendCmd_OVERRIDE_PACKET_SEND(0, 0, Svc::TelemetrySection::REALTIME, 4, Svc::TlmSendState::SEND_NEVER);
     this->component.doDispatch();
     // A GROUP_DEFAULT record reloads as "no override"
     const Svc::PacketConfigEntry record(4, Svc::TelemetrySection::REALTIME, Svc::PacketOverrideConfig());
@@ -2579,6 +2601,7 @@ void TlmPacketizerTester ::connectPorts() {
     this->component.set_packetOverrideReturnOut_OutputPort(0, this->get_from_packetOverrideReturnOut(0));
 
     this->connect_to_packetOverrideIn(0, this->component.get_packetOverrideIn_InputPort(0));
+    this->connect_to_packetOverrideReturnIn(0, this->component.get_packetOverrideReturnIn_InputPort(0));
 }
 
 void TlmPacketizerTester::textLogIn(const FwEventIdType id,          //!< The event ID

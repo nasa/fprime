@@ -70,9 +70,11 @@ module Svc {
     @ Per-packet override mirror to an external persistence component
     output port packetOverrideOut: Fw.BufferSend
 
-    @ Allocate the buffers used for packetOverrideOut mirrors (the receiver returns them to the pool;
-    @ deallocate is part of the imported interface and is not invoked by this component)
+    @ Allocate the buffers sent on packetOverrideOut and deallocate them when they come back on packetOverrideReturnIn
     import Svc.BufferAllocation
+
+    @ Return of a packetOverrideOut mirror buffer from the persistence component; handed back to deallocate
+    sync input port packetOverrideReturnIn: Fw.BufferSend
 
     @ Return packetOverrideIn reload buffers to the persistence component that sent them
     output port packetOverrideReturnOut: Fw.BufferSend
@@ -167,21 +169,21 @@ module Svc {
       opcode 5
 
     @ Override the send state of a single packet in a section (rates follow the group unless also overridden)
-    async command CONFIGURE_PACKET_SEND(
-                                         section: TelemetrySection   @< Section to configure
-                                         packetId: U32               @< Packet identifier
-                                         sendState: TlmSendState     @< Send state (INHERIT_FROM_PARENT follows the group)
-                                       ) \
+    async command OVERRIDE_PACKET_SEND(
+                                        section: TelemetrySection   @< Section to configure
+                                        packetId: U32               @< Packet identifier
+                                        sendState: TlmSendState     @< Send state (INHERIT_FROM_PARENT follows the group)
+                                      ) \
       opcode 6
 
     @ Override the rate logic and thresholds of a single packet (send state follows the group unless also overridden)
-    async command CONFIGURE_PACKET_RATES(
-                                          section: TelemetrySection   @< Section to configure
-                                          packetId: U32               @< Packet identifier
-                                          rateLogic: RateLogic        @< Rate logic
-                                          minDelta: U32               @< Minimum Sched ticks between sends (ON_CHANGE_MIN logic)
-                                          maxDelta: U32               @< Maximum Sched ticks between sends (EVERY_MAX logic)
-                                        ) \
+    async command OVERRIDE_PACKET_RATES(
+                                         section: TelemetrySection   @< Section to configure
+                                         packetId: U32               @< Packet identifier
+                                         rateLogic: RateLogic        @< Rate logic
+                                         minDelta: U32               @< Minimum Sched ticks between sends (ON_CHANGE_MIN logic)
+                                         maxDelta: U32               @< Maximum Sched ticks between sends (EVERY_MAX logic)
+                                       ) \
       opcode 7
 
     @ Clear a single packet's override. The packet follows its group again.

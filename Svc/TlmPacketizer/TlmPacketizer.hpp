@@ -101,6 +101,11 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
                                   Fw::Buffer& fwBuffer  //!< Serialized PacketConfigEntry records to apply
                                   ) override;
 
+    //! Handler for input port packetOverrideReturnIn
+    void packetOverrideReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                        Fw::Buffer& fwBuffer  //!< packetOverrideOut mirror buffer being returned
+                                        ) override;
+
     //! Handler for input port TlmGet
     Fw::TlmValid TlmGet_handler(FwIndexType portNum,  //!< The port number
                                 FwChanIdType id,      //!< Telemetry Channel ID
@@ -160,17 +165,17 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
                                       U32 packetId                           //!< Packet identifier
                                       ) override;
 
-    //! Handler implementation for command CONFIGURE_PACKET_SEND
+    //! Handler implementation for command OVERRIDE_PACKET_SEND
     //!
     //! Override the send state of a single packet in a section, then mirror to packetOverrideOut.
-    void CONFIGURE_PACKET_SEND_cmdHandler(FwOpcodeType opCode,                   //!< The opcode
-                                          U32 cmdSeq,                            //!< The command sequence number
-                                          const Svc::TelemetrySection& section,  //!< Section to configure
-                                          U32 packetId,                          //!< Packet identifier
-                                          const Svc::TlmSendState& sendState     //!< Send state
-                                          ) override;
+    void OVERRIDE_PACKET_SEND_cmdHandler(FwOpcodeType opCode,                   //!< The opcode
+                                         U32 cmdSeq,                            //!< The command sequence number
+                                         const Svc::TelemetrySection& section,  //!< Section to configure
+                                         U32 packetId,                          //!< Packet identifier
+                                         const Svc::TlmSendState& sendState     //!< Send state
+                                         ) override;
 
-    void CONFIGURE_PACKET_RATES_cmdHandler(
+    void OVERRIDE_PACKET_RATES_cmdHandler(
         FwOpcodeType opCode,                   //!< The opcode
         U32 cmdSeq,                            //!< The command sequence number
         const Svc::TelemetrySection& section,  //!< Section to configure

@@ -113,11 +113,11 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Non-empty packet with a nullptr channel list is still rejected by the configuration assert
     void nullChannelListTest(void);
 
-    //! Per-packet override test: a CONFIGURE_PACKET_SEND(SEND_NEVER) override silences one packet/section
+    //! Per-packet override test: a OVERRIDE_PACKET_SEND(SEND_NEVER) override silences one packet/section
     //! while the rest of its group still sends (per-packet control)
     void perPacketOverrideTest(void);
 
-    //! Per-packet command test: CONFIGURE_PACKET_SEND / CONFIGURE_PACKET_RATES update
+    //! Per-packet command test: OVERRIDE_PACKET_SEND / OVERRIDE_PACKET_RATES update
     //! the override table + mirror one entry out packetOverrideOut; bad args/id -> VALIDATION_ERROR
     void perPacketCommandsTest(void);
 
@@ -149,6 +149,7 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Mirror allocation failure test: when allocate yields no buffer, the command answers
     //! EXECUTION_ERROR, ConfigMirrorAllocFailed is emitted, and the override is NOT applied locally
     void mirrorAllocFailTest(void);
+    void mirrorReturnTest(void);
 
     //! packetOverrideIn clear reload test: a GROUP_DEFAULT record reverts an overridden packet to group behavior
     void configInClearReloadTest(void);
