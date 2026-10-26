@@ -21,6 +21,12 @@ const TlmPacketizer_TelemetrySendPortMap TlmPacketizer::TELEMETRY_SEND_PORT_MAP 
 
 static_assert(Svc::TelemetrySection::NUM_SECTIONS >= 1, "At least one telemetry section is required");
 
+static_assert(static_cast<U8>(Fw::FW_DESERIALIZE_BUFFER_EMPTY) == Fw::DeserialStatus::BUFFER_EMPTY and
+                  static_cast<U8>(Fw::FW_DESERIALIZE_FORMAT_ERROR) == Fw::DeserialStatus::FORMAT_ERROR and
+                  static_cast<U8>(Fw::FW_DESERIALIZE_SIZE_MISMATCH) == Fw::DeserialStatus::SIZE_MISMATCH and
+                  static_cast<U8>(Fw::FW_DESERIALIZE_TYPE_MISMATCH) == Fw::DeserialStatus::TYPE_MISMATCH,
+              "Fw::DeserialStatus must mirror Fw::SerializeStatus values");
+
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
@@ -741,11 +747,6 @@ void TlmPacketizer ::packetOverrideIn_handler(FwIndexType portNum, Fw::Buffer& f
             status = Fw::FW_DESERIALIZE_FORMAT_ERROR;
         }
         if (status != Fw::FW_SERIALIZE_OK) {
-            static_assert(static_cast<U8>(Fw::FW_DESERIALIZE_BUFFER_EMPTY) == Fw::DeserialStatus::BUFFER_EMPTY and
-                              static_cast<U8>(Fw::FW_DESERIALIZE_FORMAT_ERROR) == Fw::DeserialStatus::FORMAT_ERROR and
-                              static_cast<U8>(Fw::FW_DESERIALIZE_SIZE_MISMATCH) == Fw::DeserialStatus::SIZE_MISMATCH and
-                              static_cast<U8>(Fw::FW_DESERIALIZE_TYPE_MISMATCH) == Fw::DeserialStatus::TYPE_MISMATCH,
-                          "Fw::DeserialStatus must mirror Fw::SerializeStatus values");
             Fw::DeserialStatus reported(static_cast<Fw::DeserialStatus::T>(status));
             if (not reported.isValid()) {
                 reported = Fw::DeserialStatus::FORMAT_ERROR;
@@ -763,9 +764,11 @@ void TlmPacketizer ::packetOverrideIn_handler(FwIndexType portNum, Fw::Buffer& f
 
 Fw::Success TlmPacketizer::mirrorOverride(const Svc::TelemetrySection& section, FwChanIdType pkt) {
     // persistent storage component should mirror this state; skip if not wired
-    if ((not this->isConnected_packetOverrideOut_OutputPort(0)) or (not this->isConnected_allocate_OutputPort(0))) {
+    if (not this->isConnected_packetOverrideOut_OutputPort(0)) {
         return Fw::Success::SUCCESS;
     }
+    // A mirror port without an allocator cannot persist anything; the SDD requires both or neither
+    FW_ASSERT(this->isConnected_allocate_OutputPort(0));
     const FwSizeType sectionIndex = static_cast<FwSizeType>(section.e);
     const Svc::PacketConfigEntry entry(static_cast<U32>(this->m_fillBuffers[pkt].id), section,
                                        this->m_packetOverrides[sectionIndex][pkt]);

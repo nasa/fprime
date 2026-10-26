@@ -2478,6 +2478,16 @@ void TlmPacketizerTester ::staleParameterShapeTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, this->component.deserializeParam(0, TlmPacketizer::PARAMID_SECTION_CONFIGS,
                                                                     Fw::ParamValid::VALID, current));
     ASSERT_EQ(silenced, this->component.m_groupConfigs);
+
+    // SECTION_ENABLED is guarded the same way
+    const Svc::TlmPacketizer_SectionEnabled enabledBefore = this->component.m_sectionEnabled;
+    Fw::ParamBuffer staleEnabled;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, staleEnabled.serializeFrom(enabledBefore));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, staleEnabled.serializeFrom(static_cast<U8>(0)));
+    ASSERT_EQ(Fw::FW_DESERIALIZE_SIZE_MISMATCH,
+              this->component.deserializeParam(0, TlmPacketizer::PARAMID_SECTION_ENABLED, Fw::ParamValid::VALID,
+                                               staleEnabled));
+    ASSERT_EQ(enabledBefore, this->component.m_sectionEnabled);
 }
 
 void TlmPacketizerTester ::groupSendCommandTest() {

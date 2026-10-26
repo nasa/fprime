@@ -26,7 +26,7 @@ module Svc {
     sendConfig: TlmSendConfig         @< Override values (only the fields selected by overrideType apply)
   }
 
-  @ A single per-packet override record (persistence and reporting)
+  @ A single per-packet override record: mirrored on packetOverrideOut, reloaded from packetOverrideIn, reported by GET_PACKET_CONFIG
   struct PacketConfigEntry {
     packetId: U32                      @< Packet identifier
     section: TelemetrySection          @< Section the override applies to

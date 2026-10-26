@@ -208,7 +208,7 @@ def test_packet_rates_override(packetizer):
 
 
 def test_set_level_gates_group(packetizer):
-    """SET_LEVEL below the packet's group stops the packet; a packet override does not bypass it.
+    """SET_LEVEL below the packet's group stops an un-overridden packet; raising the level restores it.
 
     Covers: SVC-TLMPACKETIZER-SET-LEVEL
     """
