@@ -23,10 +23,10 @@ The requirements for `Svc::TlmPacketizer` are as follows:
 | TPK-005 | The `Svc::TlmPacketizer` component shall write packets upon fulfilling the rate send configurations for its group | Unit Test |
 | TPK-006 | The `Svc::TlmPacketizer` component shall determine output port index based on section and group | Unit Test |
 | TPK-007 | The `Svc::TlmPacketizer` component shall accept a packet specification containing no channels | Unit Test |
-| TPK-008 | The `Svc::TlmPacketizer` component shall provide per-packet enable, force, and rate overrides that take precedence over the packet's group configuration | Unit Test |
+| TPK-008 | The `Svc::TlmPacketizer` component shall provide per-packet send-state and rate overrides; a packet's effective configuration shall be its group's configuration with only the overridden fields replaced | Unit Test |
 | TPK-009 | The `Svc::TlmPacketizer` component shall provide a command to clear a per-packet override, reverting the packet to its group-derived configuration | Unit Test |
 | TPK-010 | The `Svc::TlmPacketizer` component shall mirror per-packet override changes out `packetOverrideOut` and accept a reload of overrides on `packetOverrideIn` for persistence across reboot | Unit Test |
-| TPK-011 | The `Svc::TlmPacketizer` component shall event on a configuration referencing an unknown packet id, on a `packetOverrideIn` record carrying an invalid value, and on a `packetOverrideIn` buffer that could not be fully applied | Unit Test |
+| TPK-011 | The `Svc::TlmPacketizer` component shall event on a configuration referencing an unknown packet id, on a `packetOverrideIn` record carrying a section out of range, and on a `packetOverrideIn` buffer that could not be fully applied | Unit Test |
 | TPK-012 | The `Svc::TlmPacketizer` component shall event each per-packet override applied or cleared by command, and shall reject the command when the override could not be mirrored out `packetOverrideOut` | Unit Test |
 
 
@@ -54,8 +54,9 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Svc::ConfigureGroupRate`](../../Ports/TlmPacketizerPorts/sdd.md) | configureSectionGroupRate | Input | Asynchronous | Configure a section/group rate logic and thresholds\r
 [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | packetOverrideOut | Output | n/a | Mirror a per-packet override change to an external persistence component\r
 [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | packetOverrideIn | Input | Asynchronous | Reload per-packet overrides from the persistence component (e.g. at boot)
-[`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.md) | bufferAllocate | Output | n/a | Allocate a buffer for a packetOverrideOut mirror
-[`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | bufferDeallocate | Output | n/a | Return a packetOverrideIn reload buffer to the pool after it is applied\r
+[`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | packetOverrideReturnOut | Output | n/a | Return a packetOverrideIn reload buffer to the persistence component after it is applied
+[`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.md) | allocate | Output | n/a | Allocate a buffer for a packetOverrideOut mirror (`Svc.BufferAllocation` interface)
+[`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | deallocate | Output | n/a | Return a packetOverrideOut mirror buffer that could not be sent (`Svc.BufferAllocation` interface)
 [`Svc::Ping`](../../Ping/docs/sdd.md) | pingIn / pingOut | Input / Output | Asynchronous / n/a | Health ping request and response\r
 
 #### 3.1.3 Terminology
@@ -95,8 +96,7 @@ Each group within each section are separately sampled, and have their own config
 
 Each group is configured with min/max delta parameters, as well as a logic gate determining its output rate behavior. Deltas are counters of schedule ticks invoked through the `run()` port. Min Delta is the least number of `Run()` invocations between successive packets before a packet with an updated channel is allowed to be sent. Updated packets will not be sent until their counter reaches Min Delta. This mitigates against telemetry spam while allowing users to benefit from asynchronously updating channels (e.g. those that don't occupy a set schedule). Max Delta is the maximum number of `Run()` invocations between successive packets. Upon reaching this counter, the packet would be sent, regardless of change.
 
-Each telemetry group per section is configured with a `RateLogic` parameter:
-* `SILENCED`: Packet will never be sent
+Each telemetry group per section is configured with a `RateLogic` parameter (to silence a group, set its send state to `SEND_NEVER`, see Section 3.3.3):
 * `EVERY_MAX`: Packet will be sent every Max Delta intervals
 * `ON_CHANGE_MIN`: Packet will only be sent on updates at at least Min Delta intervals.
 * `ON_CHANGE_MIN_OR_EVERY_MAX`: Packet will be sent on updates at at least Min Delta intervals, or at most Max Delta intervals.
@@ -108,37 +108,40 @@ Groups are configured using the `CONFIGURE_GROUP_RATES` command.
 #### 3.3.3 Switching Telemetry Sections
 `Svc::TlmPacketizer` also has a configurable constant `TelemetrySection::NUM_SECTIONS` that allows separately streamed outputs of packets of the same group. This is useful for downstream components that would handle different telemetry groups at different rates. Examples of this configuration includes live telemetry throughput, detailed sim reconstruction, or critical data operations.
 
-Telemetry sections are enabled and disabled upon spacecraft state transitions through `controlIn()` port invocations or via operator commands. For a packet without a per-packet override, a section and group pair must be both enabled to emit the packet (or the group must be Force-Enabled); an overridden packet instead follows its override as described in Section 3.3.4.
+Telemetry sections are enabled and disabled upon spacecraft state transitions through `controlIn()` port invocations or via operator commands. Every group (and every packet override, Section 3.3.4) carries a `TlmSendState`, which is resolved packet -> group -> section:
+
+* `INHERIT_FROM_PARENT`: use the state of the level above. For a group the parent is the section enable: the group sends while its section is enabled. This is the default.
+* `SEND_WHEN_SECTION_ENABLED`: send while the section is enabled (at group level this behaves like `INHERIT_FROM_PARENT`).
+* `SEND_ALWAYS`: send regardless of the section enable.
+* `SEND_NEVER`: never send.
+
 * `ENABLE_SECTION` / `controlIn()`: Enable / Disable telemetry sections.
-* `ENABLE_GROUP`: Within a section, Enable / Disable a telemetry group.
-* `FORCE_GROUP`: If set to Enabled, telemetry of the chosen group in a section will be emitted regardless if the section or group within the section is disabled.
+* `CONFIGURE_GROUP_SEND`: Set the send state of a group within a section.
+* `SET_LEVEL`: Groups at or below the level are set to `INHERIT_FROM_PARENT`, groups above it to `SEND_NEVER`.
 
 Disabling groups / sections will freeze the group's counter between sent output.
 Updated groups using `ON_CHANGE_MIN` or `ON_CHANGE_MIN_OR_EVERY_MAX` while group disabled / section disabled will be marked "NEW" but not sent. The group counter resumes once the group / section is re-enabled and will be sent upon reaching their MIN counter.
 
 #### 3.3.4 Per-Packet Configuration Overrides
 
-Beyond the section/group controls above, `Svc::TlmPacketizer` supports fine-grained *per-packet* overrides. An override targets a single (packet id, section) pair and carries the same policy fields as a group configuration (`enabled`, `forceEnabled`, `rateLogic`, `min`, `max`). The following commands manage overrides:
+Beyond the section/group controls above, `Svc::TlmPacketizer` supports fine-grained *per-packet* overrides. An override targets a single (packet id, section) pair and is a `PacketOverrideConfig`: a `PacketOverrideType` saying which fields override the group (`GROUP_DEFAULT`, `OVERRIDE_SEND`, `OVERRIDE_RATES`, `OVERRIDE_SEND_AND_RATES`) plus a `TlmSendConfig` holding the override values. The following commands manage overrides:
 
-* `ENABLE_PACKET`: Enable / disable a single packet in a section.
-* `FORCE_PACKET`: Force a single packet to be emitted even when it or its section is disabled.
-* `CONFIGURE_PACKET_RATES`: Set the rate logic and MIN/MAX thresholds of a single packet.
-* `GET_PACKET_CONFIG`: Query a packet's effective configuration; the result is emitted as the `PacketConfigReport` event. An unknown packet id raises the `PacketNotFound` warning event.
-* `CLEAR_PACKET_OVERRIDE`: Remove a packet's override, reverting it to group-derived behavior.
+* `CONFIGURE_PACKET_SEND`: Override the send state of a single packet in a section (`INHERIT_FROM_PARENT` at packet level means "use the group's state").
+* `CONFIGURE_PACKET_RATES`: Override the rate logic and MIN/MAX thresholds of a single packet.
+* `GET_PACKET_CONFIG`: Query a packet; the stored override and the resulting effective configuration are emitted as the `PacketConfigReport` event.
+* `CLEAR_PACKET_OVERRIDE`: Remove a packet's override (`GROUP_DEFAULT`), reverting it to its group.
 
-Each successful `ENABLE_PACKET`, `FORCE_PACKET`, or `CONFIGURE_PACKET_RATES` emits `PacketOverrideSet` carrying the resulting override; a successful `CLEAR_PACKET_OVERRIDE` emits `PacketOverrideCleared`. An invalid section, enumerated argument, or unknown packet id answers `VALIDATION_ERROR` and changes nothing: an unknown packet id raises `PacketNotFound`, and an out-of-range section raises `InvalidPacketConfig`.
+Each successful `CONFIGURE_PACKET_SEND` or `CONFIGURE_PACKET_RATES` emits `PacketOverrideSet` carrying the stored override; a successful `CLEAR_PACKET_OVERRIDE` emits `PacketOverrideCleared`. An out-of-range section answers `VALIDATION_ERROR` with `InvalidPacketConfig`, an unknown packet id with `PacketNotFound`; invalid enumerated arguments are rejected by command deserialization with `FORMAT_ERROR`.
 
-**Authority / priority.** A per-packet override takes precedence over the section/group policy for that packet. Once a packet is overridden, its effective configuration is read entirely from the override and the group's `enabled` / `forceEnabled` / rate settings no longer apply to it. An overridden-disabled packet stays silent even in a group that is Force-Enabled. A packet remains overridden until `CLEAR_PACKET_OVERRIDE` (or a cleared `packetOverrideIn` reload) restores group-derived behavior.
+**Effective configuration.** On every `Run` cycle a packet's effective `TlmSendConfig` is assembled by reading its group's configuration and copying in only the fields selected by its `PacketOverrideType`. Fields that are not overridden keep following the group, so a packet whose send state is overridden still picks up later `CONFIGURE_GROUP_RATES` changes. The send command on a packet that already overrides its rates (or vice versa) yields `OVERRIDE_SEND_AND_RATES`; repeating a command replaces that field's value. The effective send state is then resolved against the section enable as described in Section 3.3.3: a packet `SEND_ALWAYS` emits even in a disabled section, `SEND_WHEN_SECTION_ENABLED` still honours the section, `SEND_NEVER` is silent even in a `SEND_ALWAYS` group.
 
-**Seeding.** The first command that touches a packet seeds its override slot from the packet's *current effective* configuration (the group-derived policy for the packet's level), except that `forceEnabled` is seeded `DISABLED`. This preserves existing behavior: enabling a packet does not silently reset its rate logic or thresholds — untouched fields carry through from the group and only the commanded field changes. The group's force flag is deliberately not inherited: the override is authoritative, so `ENABLE_PACKET DISABLED` silences the packet even when its group is Force-Enabled; a forced packet requires an explicit `FORCE_PACKET`.
+**Persistence (`packetOverrideOut` / `packetOverrideIn`).** Whenever a command changes or clears an override, the packetizer allocates a buffer, serializes the resulting `PacketConfigEntry` (packet id, section, `PacketOverrideConfig`), and mirrors it out the `packetOverrideOut` port to an external persistence component. The persistence component pushes stored overrides back in on the `packetOverrideIn` port as a buffer holding one or more serialized `PacketConfigEntry` records. The packetizer applies each whole record in turn (a `GROUP_DEFAULT` record clears the slot) with a bounded loop over `size / PacketConfigEntry::SERIALIZED_SIZE` records: a record for an unknown packet id raises `ReloadRecordUnknownPacket` and a record whose section is out of range raises `ReloadRecordInvalid`; both are skipped. Enumerated values are validated by deserialization, so a record carrying an invalid enum value ends the reload: `ConfigReloadFailed` is emitted with the deserialization status, as it is when trailing bytes do not form a whole record, so a truncated or corrupted store is never silently partially applied. The reload buffer is always handed back on `packetOverrideReturnOut`, even when it is invalid or malformed. The reload path never echoes back out `packetOverrideOut`.
 
-**Persistence (`packetOverrideOut` / `packetOverrideIn`).** Whenever a command changes or clears an override, the packetizer allocates a buffer, serializes the resulting `PacketConfigEntry`, and mirrors it out the `packetOverrideOut` port to an external persistence component. The persistence component pushes stored overrides back in on the `packetOverrideIn` port as a buffer holding one or more serialized `PacketConfigEntry` records. The packetizer applies each in turn (`source == OVERRIDDEN` re-applies, `source == GROUP_DEFAULT` clears the slot) under the same validity checks as the command path: a record for an unknown packet id, and a record whose section, source, or config enumerations are out of range, are both skipped. To avoid flooding the event log when a stale store is reloaded at boot, these rejects are tallied and summarized in a single `ConfigReloadRejected(unknownCount, invalidCount)` event per buffer rather than one event per record. Reload stops at the first record that fails to deserialize; if that happens, or bytes remain in the buffer after the last whole record, `ConfigReloadFailed` is emitted with the deserialization status and the number of bytes left unapplied, so a truncated or corrupted store is never silently partially applied. The reload buffer is always returned via `bufferDeallocate`, even when it is invalid or malformed. The reload path never echoes back out `packetOverrideOut`.
-
-**Buffer ownership and pool sizing.** Both `packetOverrideOut` and `packetOverrideIn` buffers are drawn from a single shared BufferManager pool, so a deployment must wire `bufferAllocate`/`bufferDeallocate` to one BufferManager (all three of `packetOverrideOut`, `bufferAllocate`, and `bufferDeallocate` must be wired together, or none — a partially wired mirror path applies overrides locally without persisting). The packetizer returns every `packetOverrideIn` buffer to its own `bufferDeallocate` port: a reload buffer sourced from any other pool or from static storage fails `Svc::BufferManager`'s manager-id / address asserts and aborts flight software, so the persistence component must draw reload buffers from the same BufferManager. Buffers sent out `packetOverrideOut` are owned by the receiver, which must return them to that same pool. Size the pool for at least one `PacketConfigEntry::SERIALIZED_SIZE`-byte buffer per override command that can be in flight before the receiver frees it; when the pool is dry a command answers `EXECUTION_ERROR` after rolling back, so the volatile and persisted copies never diverge (see Section 4.6).
+**Buffer ownership.** `packetOverrideOut` mirror buffers are allocated through the `Svc.BufferAllocation` interface (`allocate`/`deallocate`) and are owned by the receiver once sent, which must return them to that pool. `packetOverrideIn` reload buffers are owned by their sender and are handed back on `packetOverrideReturnOut` after they are applied (valid or not), so the persistence component may draw them from any pool. All three of `packetOverrideOut`, `allocate`, and `deallocate` must be wired together, or none — a partially wired mirror path applies overrides locally without persisting. Size the mirror pool for at least one `PacketConfigEntry::SERIALIZED_SIZE`-byte buffer per override command that can be in flight before the receiver frees it; when the pool is dry a command answers `EXECUTION_ERROR` after rolling back, so the volatile and persisted copies never diverge (see Section 4.6).
 
 **Persistence mechanism rationale.** Overrides are mirrored as serialized records over a buffer port pair rather than stored as an `Fw::Prm` external parameter because the dense override table (`TelemetrySection::NUM_SECTIONS × MAX_PACKETIZER_PACKETS` records) can exceed the default `FW_PARAM_BUFFER_MAX_SIZE`, and the buffer path lets the integrator choose a persistence component sized to the deployment.
 
-**Query result.** The `GET_PACKET_CONFIG` result is emitted asynchronously as the `PacketConfigReport` event with the `PacketConfigEntry`.
+**Query result.** The `GET_PACKET_CONFIG` result is emitted asynchronously as the `PacketConfigReport` event carrying the section, packet id, stored `PacketOverrideConfig`, and effective `TlmSendConfig`.
 
 ### 3.4 State
 
@@ -166,7 +169,7 @@ The `Svc::TlmPacketizer` component has the following configuration parameters:
 
 Overall memory usage of the `Svc::TlmPacketizer` is determined by the following configuration parameters: `MAX_PACKETIZER_PACKETS`, `MAX_PACKETIZER_CHANNELS`, `TLMPACKETIZER_MAX_MISSING_TLM_CHECK`, and `TelemetrySection::NUM_SECTIONS`.
 
-The per-packet override tables add a dense static block of `TelemetrySection::NUM_SECTIONS × MAX_PACKETIZER_PACKETS × (sizeof(Svc::TlmSendConfig) + 1)` bytes (the override policy plus its one-byte "overridden" flag per packet/section). At the sample defaults (2 sections × 50 packets) this is only a few kilobytes, but a project with many sections and packets (e.g. 8 × 1000) should budget for it explicitly. The five per-packet commands also add to the component's command dispatch table.
+The per-packet override table adds a dense static block of `TelemetrySection::NUM_SECTIONS × MAX_PACKETIZER_PACKETS` `PacketOverrideConfig` entries. All enumerations use `U8` storage so a record serializes to a few bytes; in RAM each entry is an FPP struct (roughly 40 bytes on a 32-bit target). At the sample defaults (2 sections × 50 packets) this is about 4 kB; a project with many sections and packets should budget for it, since the table scales with the configured maximum packet count, not with the number of overrides in use.
 
 `MAX_PACKETIZER_PACKETS` determines the size of storage for the telemetry packets registered by components. It should be set to at least the number of packets defined in the system, but may be larger to allow for a project's packet growth over time without incurring additional memory usage.
 
@@ -174,7 +177,7 @@ The per-packet override tables add a dense static block of `TelemetrySection::NU
 
 `TLMPACKETIZER_MAX_MISSING_TLM_CHECK` determines the size of the data structure used to track and event on missing telemetry channels. Most projects should set this to a low number since missing channels are a rarity with FPP defined telemetry channels.
 
-Both of these parameters are set in [`TlmPacketizerImplCfg.hpp`](http://github.com/nasa/fprime/blob/devel/Svc/TlmPacketizer/config/TlmPacketizerConfig/TlmPacketizerCfg.hpp).
+`MAX_PACKETIZER_PACKETS` is set in [`TlmPacketizerCfg.fpp`](http://github.com/nasa/fprime/blob/devel/Svc/TlmPacketizer/config/TlmPacketizerConfig/TlmPacketizerCfg.fpp) (it sizes FPP array types); the other two are set in [`TlmPacketizerCfg.hpp`](http://github.com/nasa/fprime/blob/devel/Svc/TlmPacketizer/config/TlmPacketizerConfig/TlmPacketizerCfg.hpp).
 
 The number of sections is determined by the `TelemetrySection` enum. A project may enumerate any number of sections and must end the enum with `NUM_SECTIONS`.
 
@@ -199,7 +202,7 @@ Here is an example with 2 sections and 4 groups (max group identifier of 3). In 
 
 ### 4.3 Default Output Rate Limits 
 
-Default rate limits for each section/group pair is set by the `TELEMETRY_SECTION_DEFAULTS` constant. It must be a constant of the `SectionConfigs` array type. Each field at `TELEMETRY_SECTION_DEFAULTS[section][group]` is a `Svc::TlmSendConfig` carrying the default `enabled`, `forceEnabled`, `rateLogic`, `min`, and `max` for that section/group pair. These defaults are used to initialize the section/group pair's configuration upon component initialization, but can be changed at runtime using the `CONFIGURE_GROUP_RATES` command.
+Default rate limits for each section/group pair is set by the `TELEMETRY_SECTION_DEFAULTS` constant. It must be a constant of the `SectionConfigs` array type. Each field at `TELEMETRY_SECTION_DEFAULTS[section][group]` is a `Svc::TlmSendConfig` carrying the default `sendState` and `rates` (`rateLogic`, `min`, `max`) for that section/group pair. These defaults are used to initialize the section/group pair's configuration upon component initialization, but can be changed at runtime using the `CONFIGURE_GROUP_SEND` and `CONFIGURE_GROUP_RATES` commands.
 
 Here is an example with 2 sections and 4 groups that sets all section/group pairs to update-on-change with no min nor max.
 
@@ -208,24 +211,24 @@ Here is an example with 2 sections and 4 groups that sets all section/group pair
         # REALTIME section
         [
             # Group 0
-            { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+            { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
             # Group 1
-            { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+            { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
             # Group 2
-            { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+            { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
             # Group 3
-            { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+            { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         ],
         # RECORDED section
         [
             # Group 0
-            { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+            { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
             # Group 1
-            { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+            { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
             # Group 2
-            { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+            { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
             # Group 3
-            { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+            { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         ]
     ]
 ```
@@ -258,24 +261,24 @@ constant TELEMETRY_SECTION_DEFAULTS = [
     # LIVE section
     [
         # Group 0
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         # Group 1
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         # Group 2
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         # Group 3
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
     ],
     # RECORDED section
     [
         # Group 0
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         # Group 1
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         # Group 2
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         # Group 3
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
     ]
 ]
 ```
@@ -311,30 +314,30 @@ constant TELEMETRY_SECTION_DEFAULTS = [
     # LIVE section
     [
         # Group 0
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN_OR_EVERY_MAX, min = 3, max = 10 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN_OR_EVERY_MAX, min = 3, max = 10 } },
         # Group 1
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN_OR_EVERY_MAX, min = 3, max = 10 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN_OR_EVERY_MAX, min = 3, max = 10 } },
     ],
     # RECORDED section
     [
         # Group 0
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         # Group 1
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
     ],
     # EXTRA section
     [
         # Group 0
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
         # Group 1
-        { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 },
+        { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } },
     ]
 ]
 ```
 
 ### 4.6 Per-Packet Configuration Buffers
 
-Per-packet override mirror (`packetOverrideOut`) and reload (`packetOverrideIn`) exchange serialized `PacketConfigEntry` records inside an `Fw.Buffer` drawn from a BufferManager, rather than a fixed-size array. A `packetOverrideOut` mirror carries a single record sized to `PacketConfigEntry::SERIALIZED_SIZE`; a `packetOverrideIn` reload may carry many records packed back-to-back, and the packetizer applies each until the buffer is exhausted. The deployment must wire `bufferAllocate`/`bufferDeallocate` to a BufferManager whose pool is sized for these records, and size the component's message queue to absorb reload traffic alongside its other async ports (`Run`, `controlIn`, `configureSectionGroupRate`, commands). If a mirror buffer cannot be allocated, `ConfigMirrorAllocFailed` is emitted, the override (or clear) is rolled back so the volatile table never diverges from the persisted copy, and the command answers `EXECUTION_ERROR`; the operator may retry once the pool has free buffers. When `packetOverrideOut` is not connected there is no persisted copy to keep in step and commands apply locally without a mirror.
+Per-packet override mirror (`packetOverrideOut`) and reload (`packetOverrideIn`) exchange serialized `PacketConfigEntry` records inside an `Fw.Buffer`, rather than a fixed-size array. A `packetOverrideOut` mirror carries a single record sized to `PacketConfigEntry::SERIALIZED_SIZE`, drawn through the `allocate` port; a `packetOverrideIn` reload may carry many records packed back-to-back, and the packetizer applies each whole record before returning the buffer on `packetOverrideReturnOut`. The deployment must wire `allocate`/`deallocate` to a BufferManager whose pool is sized for these records, and size the component's message queue to absorb reload traffic alongside its other async ports (`Run`, `controlIn`, `configureSectionGroupRate`, commands). If a mirror buffer cannot be allocated, `ConfigMirrorAllocFailed` is emitted, the override (or clear) is rolled back so the volatile table never diverges from the persisted copy, and the command answers `EXECUTION_ERROR`; the operator may retry once the pool has free buffers. When `packetOverrideOut` is not connected there is no persisted copy to keep in step and commands apply locally without a mirror.
 
 `packetOverrideIn` is an asynchronous port, so each reload buffer becomes one message on the component's queue, and the queue asserts when full. A persistence component that replays stored overrides at boot must therefore batch them into no more buffers than the component's configured queue depth — ideally a single buffer holding all records, since one buffer may carry many records back-to-back. Dropping a reload buffer is not an option (a dropped buffer is never returned to the pool), so sizing the reload into the queue is the integrator's responsibility. See the "Buffer ownership and pool sizing" note in Section 3.3.4 for the pool and ownership contract.
 ## 5. Unit Testing
@@ -351,3 +354,4 @@ Date | Description
 03/30/2026 | Added configuration section
 09/30/2026 | Added per-packet configuration
 10/23/2026 | Review follow-ups: override/clear/reload events, reload validation, mirror-failure rollback
+10/26/2026 | `TlmSendState` replaces enabled/force/SILENCED; per-field packet overrides (`PacketOverrideType`); `CONFIGURE_*_SEND` commands; reload buffers returned on `packetOverrideReturnOut`
