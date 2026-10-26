@@ -32,6 +32,11 @@ TEST(AMPCS, MissingFile) {
     tester.MissingFile();
 }
 
+TEST(AMPCS, CRCFileNameLimit) {
+    Svc::AMPCS::CmdSequencerTester tester;
+    tester.CRCFileNameLimit();
+}
+
 TEST(Health, Ping) {
     TEST_CASE(103.1.9, "Nominal ping test");
     Svc::Health::CmdSequencerTester tester;
@@ -48,6 +53,11 @@ TEST(Immediate, AutoByCommandAMPCS) {
     tester.AutoByCommand();
 }
 
+TEST(Immediate, AutoByCommandMaxFileNameAMPCS) {
+    Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
+    tester.AutoByCommandMaxFileName();
+}
+
 TEST(Immediate, AutoByPort) {
     Svc::Immediate::CmdSequencerTester tester;
     tester.AutoByPort();
@@ -58,9 +68,24 @@ TEST(Immediate, AutoByFileDispatcherPort) {
     tester.AutoByFileDispatcherPort();
 }
 
+TEST(Immediate, AutoByFileDispatcherPortMaxFileName) {
+    Svc::Immediate::CmdSequencerTester tester;
+    tester.AutoByFileDispatcherPortMaxFileName();
+}
+
 TEST(Immediate, AutoByPortAMPCS) {
     Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
     tester.AutoByPort();
+}
+
+TEST(Immediate, AutoByPortLongFileName) {
+    Svc::Immediate::CmdSequencerTester tester;
+    tester.AutoByPortLongFileName();
+}
+
+TEST(Immediate, AutoByPortLongFileNameAMPCS) {
+    Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
+    tester.AutoByPortLongFileName();
 }
 
 TEST(Immediate, Cancel) {
