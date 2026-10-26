@@ -150,10 +150,10 @@ TEST(TestNominal, GetPacketConfigTest) {
     tester.getPacketConfigTest();
 }
 
-TEST(TestNominal, SeedFromEffectiveConfigTest) {
+TEST(TestNominal, GroupRatesFollowThroughSendOverrideTest) {
     TEST_CASE(100.1.19, "First per-packet override seeds from group-derived effective config");
     Svc::TlmPacketizerTester tester;
-    tester.seedFromEffectiveConfigTest();
+    tester.groupRatesFollowThroughSendOverrideTest();
 }
 
 TEST(TestNominal, ClearPacketOverrideTest) {
@@ -180,10 +180,10 @@ TEST(TestNominal, ConfigInMalformedReloadTest) {
     tester.configInMalformedReloadTest();
 }
 
-TEST(TestNominal, OverrideDisabledInForcedGroupTest) {
+TEST(TestNominal, SendStateResolutionTest) {
     TEST_CASE(100.1.24, "Overridden-disabled packet stays silent in a Force-Enabled group");
     Svc::TlmPacketizerTester tester;
-    tester.overrideDisabledInForcedGroupTest();
+    tester.sendStateResolutionTest();
 }
 
 int main(int argc, char* argv[]) {
