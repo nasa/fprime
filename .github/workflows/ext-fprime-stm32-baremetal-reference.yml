@@ -19,9 +19,21 @@ on:
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/agents/**'
+  # Manual/remote trigger: fork PRs on fprime-community/fprime-stm32-baremetal-reference
+  workflow_dispatch:
+    inputs:
+      target_ref:
+        description: "Exact ref/SHA on fprime-community/fprime-stm32-baremetal-reference to build and test"
+        required: true
+      callback_repo:
+        description: "owner/repo to post the hil-tests commit status back to (optional)"
+        required: false
+      callback_sha:
+        description: "commit SHA on callback_repo to post the hil-tests commit status to (optional)"
+        required: false
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.event.inputs.target_ref || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
 
 env:
@@ -34,6 +46,7 @@ permissions:
 jobs:
   get-branch:
     name: "Get target branch"
+    if: github.event_name != 'workflow_dispatch'
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
       target_repository: fprime-community/fprime-stm32-baremetal-reference
@@ -50,7 +63,7 @@ jobs:
         with:
           submodules: recursive
           repository: fprime-community/fprime-stm32-baremetal-reference
-          ref: ${{ needs.get-branch.outputs.target-branch }}
+          ref: ${{ github.event.inputs.target_ref || needs.get-branch.outputs.target-branch }}
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v4
         with:
@@ -138,6 +151,17 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: stm32-artifacts
+      - name: "Reset GPIO fault-injection rig to baseline"
+        run: |
+          pinctrl set 25 op dh  # SCL connected
+          pinctrl set 8  op dh  # SDA connected
+          pinctrl set 7  op dh  # MOSI connected
+          pinctrl set 12 op dh  # MISO connected
+          pinctrl set 16 op dh  # CS connected
+          pinctrl set 20 op dh  # SCK connected
+          pinctrl set 21 op dl  # sensor 3V3 rail on (active-low)
+          pinctrl set 24 op dl  # heater off
+        shell: bash
       # OpenOCD and the ST-Link udev rules are expected to be pre-provisioned on
       # this runner (hardware-specific setup, not reinstalled every run).
       - name: "Flash board via OpenOCD/ST-Link"
@@ -166,3 +190,21 @@ jobs:
           name: stm32-hil-logs
           path: ci-logs
           retention-days: 5
+      - name: "Report HIL result back to callback_repo"
+        if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.callback_repo != '' && github.event.inputs.callback_sha != ''
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.HIL_CALLBACK_TOKEN }}
+          script: |
+            const [owner, repo] = '${{ github.event.inputs.callback_repo }}'.split('/');
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha: '${{ github.event.inputs.callback_sha }}',
+              state: '${{ job.status }}' === 'success' ? 'success' : 'failure',
+              context: 'hil-tests',
+              description: '${{ job.status }}' === 'success'
+                ? 'HIL suite passed on real hardware'
+                : 'HIL suite failed - see workflow run for details',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
