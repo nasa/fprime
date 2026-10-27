@@ -55,6 +55,7 @@ jobs:
     name: "Cross-Compile (stm32h7) + Host Unit Tests"
     runs-on: ubuntu-22.04
     needs: get-branch
+    if: ${{ !cancelled() && (needs.get-branch.result == 'success' || needs.get-branch.result == 'skipped') }}
     steps:
       - name: "Setup output-cleaner"
         uses: nasa/fprime-actions/output-cleaner@devel
@@ -124,6 +125,7 @@ jobs:
     runs-on: [self-hosted, baremetal]
     needs: cross-compilation
     timeout-minutes: 30
+    environment: hil-hardware
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: "Checkout F´ Repository"
@@ -183,6 +185,18 @@ jobs:
             --logs ./ci-logs --junit-xml-file hil-results.xml --gen-junitxml \
             ./int/
         shell: bash
+      - name: "Return GPIO fault-injection rig to baseline"
+        if: always()
+        run: |
+          pinctrl set 25 op dh  # SCL connected
+          pinctrl set 8  op dh  # SDA connected
+          pinctrl set 7  op dh  # MOSI connected
+          pinctrl set 12 op dh  # MISO connected
+          pinctrl set 16 op dh  # CS connected
+          pinctrl set 20 op dh  # SCK connected
+          pinctrl set 21 op dl  # sensor 3V3 rail on (active-low)
+          pinctrl set 24 op dl  # heater off
+        shell: bash
       - name: "Archive logs"
         uses: actions/upload-artifact@v7
         if: always()
@@ -190,20 +204,47 @@ jobs:
           name: stm32-hil-logs
           path: ci-logs
           retention-days: 5
+
+  report-callback-status:
+    name: "Report hil-tests status to callback_repo"
+    needs: [cross-compilation, HIL-integration]
+    if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.callback_repo != '' && github.event.inputs.callback_sha != ''
+    runs-on: ubuntu-22.04
+    steps:
       - name: "Report HIL result back to callback_repo"
-        if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.callback_repo != '' && github.event.inputs.callback_sha != ''
         uses: actions/github-script@v7
+        env:
+          CALLBACK_REPO: ${{ github.event.inputs.callback_repo }}
+          CALLBACK_SHA: ${{ github.event.inputs.callback_sha }}
+          CROSS_COMPILATION_RESULT: ${{ needs.cross-compilation.result }}
+          HIL_INTEGRATION_RESULT: ${{ needs.HIL-integration.result }}
         with:
           github-token: ${{ secrets.HIL_CALLBACK_TOKEN }}
           script: |
-            const [owner, repo] = '${{ github.event.inputs.callback_repo }}'.split('/');
+            const ALLOWED_CALLBACK_REPO = 'fprime-community/fprime-stm32-baremetal-reference';
+            const callbackRepo = process.env.CALLBACK_REPO;
+            const callbackSha = process.env.CALLBACK_SHA;
+
+            if (callbackRepo !== ALLOWED_CALLBACK_REPO) {
+              core.setFailed(`callback_repo '${callbackRepo}' is not the allow-listed '${ALLOWED_CALLBACK_REPO}'`);
+              return;
+            }
+            if (!/^[0-9a-f]{40}$/.test(callbackSha)) {
+              core.setFailed(`callback_sha '${callbackSha}' is not a well-formed 40-char hex commit SHA`);
+              return;
+            }
+
+            const passed = process.env.CROSS_COMPILATION_RESULT === 'success'
+              && process.env.HIL_INTEGRATION_RESULT === 'success';
+
+            const [owner, repo] = callbackRepo.split('/');
             await github.rest.repos.createCommitStatus({
               owner,
               repo,
-              sha: '${{ github.event.inputs.callback_sha }}',
-              state: '${{ job.status }}' === 'success' ? 'success' : 'failure',
+              sha: callbackSha,
+              state: passed ? 'success' : 'failure',
               context: 'hil-tests',
-              description: '${{ job.status }}' === 'success'
+              description: passed
                 ? 'HIL suite passed on real hardware'
                 : 'HIL suite failed - see workflow run for details',
               target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
