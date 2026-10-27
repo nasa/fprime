@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-26 22:12:32</td>
+      <td>2026-10-27 22:30:42</td>
     </tr>
   </table>
 </div>
@@ -41,7 +41,7 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>0</td>
-      <td>537</td>
+      <td>539</td>
       <td class="coverage-none">0.0%</td>
     </tr>
     <tr>
@@ -53,7 +53,7 @@
     <tr>
       <th scope="row">Branches:</th>
       <td>0</td>
-      <td>465</td>
+      <td>468</td>
       <td class="coverage-none">0.0%</td>
     </tr>
   </table>
@@ -90,10 +90,10 @@
     <tr><td><a href="#l197">Svc::Ccsds::Cfdp::Transaction::rAckTimerTick() (line 197)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l332">Svc::Ccsds::Cfdp::Transaction::rCancel() (line 332)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l405">Svc::Ccsds::Cfdp::Transaction::rCheckCrc(unsigned int) (line 405)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l1139">Svc::Ccsds::Cfdp::Transaction::rDispatchRecv(Fw::Buffer const&amp;, Svc::Ccsds::Cfdp::RSubstateDispatchTable const*, void (Svc::Ccsds::Cfdp::Transaction::*)(Fw::Buffer const&amp;)) (line 1139)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l1146">Svc::Ccsds::Cfdp::Transaction::rDispatchRecv(Fw::Buffer const&amp;, Svc::Ccsds::Cfdp::RSubstateDispatchTable const*, void (Svc::Ccsds::Cfdp::Transaction::*)(Fw::Buffer const&amp;)) (line 1146)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l342">Svc::Ccsds::Cfdp::Transaction::rInit() (line 342)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l485">Svc::Ccsds::Cfdp::Transaction::rProcessFd(Fw::Buffer const&amp;) (line 485)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l1129">Svc::Ccsds::Cfdp::Transaction::rSendInactivityEvent() (line 1129)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l1136">Svc::Ccsds::Cfdp::Transaction::rSendInactivityEvent() (line 1136)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l567">Svc::Ccsds::Cfdp::Transaction::rSubstateRecvEof(Fw::Buffer const&amp;) (line 567)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l826">Svc::Ccsds::Cfdp::Transaction::rSubstateSendNak() (line 826)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l240">Svc::Ccsds::Cfdp::Transaction::rTick(int*) (line 240)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -7656,322 +7656,322 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">// PDU validation already done during deserialization</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">// Structural PDU validation already done during deserialization; recvMd validates the</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1079" href="#l1079">1079</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_engine</span><span class="o">-&gt;</span><span class="n">recvMd</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">md</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="c1">// destination path against the channel rx_dir before committing anything, so on rejection</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1080" href="#l1080">1080</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">        </span><span class="c1">// dst_filename still names the temp file.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1081" href="#l1081">1081</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="cm">/* successfully obtained md PDU */</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_engine</span><span class="o">-&gt;</span><span class="n">recvMd</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">md</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Status</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1082" href="#l1082">1082</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_flags</span><span class="p">.</span><span class="n">rx</span><span class="p">.</span><span class="n">eof_recv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="c1">// Destination rejected: keep writing/cleaning up against the temp file only and fail the</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1083" href="#l1083">1083</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="cm">/* EOF was received, so check that md and EOF sizes match */</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// transaction with a filestore rejection so the sender is told in the FIN.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1084" href="#l1084">1084</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">r2</span><span class="p">.</span><span class="n">eof_size</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fsize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">r2SetFinTxnStatus</span><span class="p">(</span><span class="n">TxnStatus</span><span class="o">::</span><span class="n">TXN_STATUS_FILESTORE_REJECTION</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1085" href="#l1085">1085</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxEofMdSizeMismatch</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1086" href="#l1086">1086</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                                                                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fsize</span><span class="p">,</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1087" href="#l1087">1087</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                                                                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">r2</span><span class="p">.</span><span class="n">eof_size</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1088" href="#l1088">1088</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementFaultFileSizeMismatch</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1089" href="#l1089">1089</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">r2SetFinTxnStatus</span><span class="p">(</span><span class="n">TxnStatus</span><span class="o">::</span><span class="n">TXN_STATUS_FILE_SIZE_ERROR</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1090" href="#l1090">1090</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1091" href="#l1091">1091</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1092" href="#l1092">1092</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1093" href="#l1093">1093</a></td>
+      <td class="lineno"><a id="l1087" href="#l1087">1087</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1094" href="#l1094">1094</a></td>
+      <td class="lineno"><a id="l1088" href="#l1088">1088</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="cm">/* successfully obtained md PDU */</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1089" href="#l1089">1089</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_flags</span><span class="p">.</span><span class="n">rx</span><span class="p">.</span><span class="n">eof_recv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1090" href="#l1090">1090</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="cm">/* EOF was received, so check that md and EOF sizes match */</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1091" href="#l1091">1091</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">r2</span><span class="p">.</span><span class="n">eof_size</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fsize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1092" href="#l1092">1092</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxEofMdSizeMismatch</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1093" href="#l1093">1093</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                                                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fsize</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1094" href="#l1094">1094</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                                                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">r2</span><span class="p">.</span><span class="n">eof_size</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1095" href="#l1095">1095</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="cm">/* close and rename file */</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementFaultFileSizeMismatch</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1096" href="#l1096">1096</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fd</span><span class="p">.</span><span class="n">close</span><span class="p">();</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">r2SetFinTxnStatus</span><span class="p">(</span><span class="n">TxnStatus</span><span class="o">::</span><span class="n">TXN_STATUS_FILE_SIZE_ERROR</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1097" href="#l1097">1097</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1098" href="#l1098">1098</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="n">fileSysStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">FileSystem</span><span class="o">::</span><span class="n">moveFile</span><span class="p">(</span><span class="n">fname</span><span class="p">.</span><span class="n">toChar</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">fnames</span><span class="p">.</span><span class="n">dst_filename</span><span class="p">.</span><span class="n">toChar</span><span class="p">());</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1099" href="#l1099">1099</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fileSysStatus</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">FileSystem</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1100" href="#l1100">1100</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxFileRenameFailed</span><span class="p">(</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1101" href="#l1101">1101</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">,</span><span class="w"> </span><span class="n">fname</span><span class="p">,</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1102" href="#l1102">1102</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">fnames</span><span class="p">.</span><span class="n">dst_filename</span><span class="p">,</span><span class="w"> </span><span class="n">fileSysStatus</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1103" href="#l1103">1103</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">r2SetFinTxnStatus</span><span class="p">(</span><span class="n">TxnStatus</span><span class="o">::</span><span class="n">TXN_STATUS_FILESTORE_REJECTION</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1104" href="#l1104">1104</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementFaultFileRename</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1105" href="#l1105">1105</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">                </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1106" href="#l1106">1106</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1107" href="#l1107">1107</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="c1">// File was successfully renamed, open for writing</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1108" href="#l1108">1108</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">fileStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fd</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">fnames</span><span class="p">.</span><span class="n">dst_filename</span><span class="p">.</span><span class="n">toChar</span><span class="p">(),</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">OPEN_WRITE</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1109" href="#l1109">1109</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fileStatus</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1110" href="#l1110">1110</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxFileReopenFailed</span><span class="p">(</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1111" href="#l1111">1111</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">,</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1112" href="#l1112">1112</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">fnames</span><span class="p">.</span><span class="n">dst_filename</span><span class="p">,</span><span class="w"> </span><span class="n">fileStatus</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1113" href="#l1113">1113</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">r2SetFinTxnStatus</span><span class="p">(</span><span class="n">TxnStatus</span><span class="o">::</span><span class="n">TXN_STATUS_FILESTORE_REJECTION</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1114" href="#l1114">1114</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementFaultFileOpen</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1115" href="#l1115">1115</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1116" href="#l1116">1116</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1117" href="#l1117">1117</a></td>
+      <td class="lineno"><a id="l1098" href="#l1098">1098</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">            </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1118" href="#l1118">1118</a></td>
+      <td class="lineno"><a id="l1099" href="#l1099">1099</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1100" href="#l1100">1100</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
+      <td class="lineno"><a id="l1101" href="#l1101">1101</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1102" href="#l1102">1102</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="cm">/* close and rename file */</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1103" href="#l1103">1103</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fd</span><span class="p">.</span><span class="n">close</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1104" href="#l1104">1104</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1105" href="#l1105">1105</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">fileSysStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">FileSystem</span><span class="o">::</span><span class="n">moveFile</span><span class="p">(</span><span class="n">fname</span><span class="p">.</span><span class="n">toChar</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">fnames</span><span class="p">.</span><span class="n">dst_filename</span><span class="p">.</span><span class="n">toChar</span><span class="p">());</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1106" href="#l1106">1106</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fileSysStatus</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">FileSystem</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1107" href="#l1107">1107</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxFileRenameFailed</span><span class="p">(</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1108" href="#l1108">1108</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">,</span><span class="w"> </span><span class="n">fname</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1109" href="#l1109">1109</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">fnames</span><span class="p">.</span><span class="n">dst_filename</span><span class="p">,</span><span class="w"> </span><span class="n">fileSysStatus</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1110" href="#l1110">1110</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">r2SetFinTxnStatus</span><span class="p">(</span><span class="n">TxnStatus</span><span class="o">::</span><span class="n">TXN_STATUS_FILESTORE_REJECTION</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1111" href="#l1111">1111</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementFaultFileRename</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1112" href="#l1112">1112</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1113" href="#l1113">1113</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1114" href="#l1114">1114</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                </span><span class="c1">// File was successfully renamed, open for writing</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1115" href="#l1115">1115</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">fileStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_fd</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">fnames</span><span class="p">.</span><span class="n">dst_filename</span><span class="p">.</span><span class="n">toChar</span><span class="p">(),</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">OPEN_WRITE</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1116" href="#l1116">1116</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fileStatus</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1117" href="#l1117">1117</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxFileReopenFailed</span><span class="p">(</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1118" href="#l1118">1118</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
       <td class="lineno"><a id="l1119" href="#l1119">1119</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">fnames</span><span class="p">.</span><span class="n">dst_filename</span><span class="p">,</span><span class="w"> </span><span class="n">fileStatus</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1120" href="#l1120">1120</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">cached_pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="cm">/* reset psn due to open */</span></td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">r2SetFinTxnStatus</span><span class="p">(</span><span class="n">TxnStatus</span><span class="o">::</span><span class="n">TXN_STATUS_FILESTORE_REJECTION</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1121" href="#l1121">1121</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_flags</span><span class="p">.</span><span class="n">rx</span><span class="p">.</span><span class="n">md_recv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementFaultFileOpen</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1122" href="#l1122">1122</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">r2</span><span class="p">.</span><span class="n">acknak_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="cm">/* in case part of NAK */</span></td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1123" href="#l1123">1123</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">r2Complete</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span><span class="w">                         </span><span class="cm">/* check for completion now that md is received */</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1124" href="#l1124">1124</a></td>
@@ -7985,112 +7985,112 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1126" href="#l1126">1126</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="p">}</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1127" href="#l1127">1127</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">cached_pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="cm">/* reset psn due to open */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1128" href="#l1128">1128</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_flags</span><span class="p">.</span><span class="n">rx</span><span class="p">.</span><span class="n">md_recv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1129" href="#l1129">1129</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Transaction</span><span class="o">::</span><span class="n">rSendInactivityEvent</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">r2</span><span class="p">.</span><span class="n">acknak_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="cm">/* in case part of NAK */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1130" href="#l1130">1130</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxInactivityTimeout</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">r2Complete</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span><span class="w">                         </span><span class="cm">/* check for completion now that md is received */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1131" href="#l1131">1131</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                                                            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1132" href="#l1132">1132</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementFaultInactivityTimer</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1133" href="#l1133">1133</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1134" href="#l1134">1134</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1135" href="#l1135">1135</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// ======================================================================</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1136" href="#l1136">1136</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">// Dispatch Methods</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Transaction</span><span class="o">::</span><span class="n">rSendInactivityEvent</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1137" href="#l1137">1137</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">// ======================================================================</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxInactivityTimeout</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1138" href="#l1138">1138</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                                            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1139" href="#l1139">1139</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Transaction</span><span class="o">::</span><span class="n">rDispatchRecv</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">RSubstateDispatchTable</span><span class="o">*</span><span class="w"> </span><span class="n">dispatch</span><span class="p">,</span><span class="w"> </span><span class="n">StateRecvFunc</span><span class="w"> </span><span class="n">fd_fn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementFaultInactivityTimer</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1140" href="#l1140">1140</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">StateRecvFunc</span><span class="w"> </span><span class="n">selected_handler</span><span class="p">;</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1141" href="#l1141">1141</a></td>
@@ -8103,22 +8103,22 @@
       <td class="lineno"><a id="l1142" href="#l1142">1142</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">RxSubState</span><span class="o">::</span><span class="n">RX_SUB_STATE_NUM_STATES</span><span class="p">,</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// ======================================================================</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1143" href="#l1143">1143</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="p">),</span></td>
+      <td class="src "><span class="c1">// Dispatch Methods</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1144" href="#l1144">1144</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">RxSubState</span><span class="o">::</span><span class="n">RX_SUB_STATE_NUM_STATES</span><span class="p">));</span></td>
+      <td class="src "><span class="c1">// ======================================================================</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1145" href="#l1145">1145</a></td>
@@ -8132,161 +8132,161 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">selected_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Transaction</span><span class="o">::</span><span class="n">rDispatchRecv</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">RSubstateDispatchTable</span><span class="o">*</span><span class="w"> </span><span class="n">dispatch</span><span class="p">,</span><span class="w"> </span><span class="n">StateRecvFunc</span><span class="w"> </span><span class="n">fd_fn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1147" href="#l1147">1147</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">StateRecvFunc</span><span class="w"> </span><span class="n">selected_handler</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1148" href="#l1148">1148</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Peek at PDU type from buffer</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1149" href="#l1149">1149</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">pduType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">peekPduType</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">RxSubState</span><span class="o">::</span><span class="n">RX_SUB_STATE_NUM_STATES</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1150" href="#l1150">1150</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1151" href="#l1151">1151</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Special handling for file data PDU</span></td>
+      <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">RxSubState</span><span class="o">::</span><span class="n">RX_SUB_STATE_NUM_STATES</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1152" href="#l1152">1152</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pduType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">FILE_DATA</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1153" href="#l1153">1153</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="cm">/* For file data PDU, use the provided fd_fn */</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1154" href="#l1154">1154</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">TxnStatusIsError</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">txn_stat</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1155" href="#l1155">1155</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="n">selected_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fd_fn</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1156" href="#l1156">1156</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1157" href="#l1157">1157</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1158" href="#l1158">1158</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">// Not a file-data PDU - parse as a directive PDU to get the directive code.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1159" href="#l1159">1159</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">// const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1160" href="#l1160">1160</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBuffer</span><span class="w"> </span><span class="nf">sb</span><span class="p">(</span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getData</span><span class="p">()),</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">());</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1161" href="#l1161">1161</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">sb</span><span class="p">.</span><span class="n">setBuffLen</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">());</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1162" href="#l1162">1162</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
+      <td class="lineno"><a id="l1153" href="#l1153">1153</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">selected_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1154" href="#l1154">1154</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1155" href="#l1155">1155</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Peek at PDU type from buffer</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1156" href="#l1156">1156</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">pduType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">peekPduType</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1157" href="#l1157">1157</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1158" href="#l1158">1158</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Special handling for file data PDU</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1159" href="#l1159">1159</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pduType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">FILE_DATA</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1160" href="#l1160">1160</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="cm">/* For file data PDU, use the provided fd_fn */</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1161" href="#l1161">1161</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">TxnStatusIsError</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">txn_stat</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1162" href="#l1162">1162</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">selected_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fd_fn</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
       <td class="lineno"><a id="l1163" href="#l1163">1163</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">PduHeader</span><span class="w"> </span><span class="n">header</span><span class="p">;</span></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1164" href="#l1164">1164</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="n">fromSerialBuffer</span><span class="p">(</span><span class="n">sb</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1165" href="#l1165">1165</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// Read directive code (first byte after header for directive PDUs)</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">// Not a file-data PDU - parse as a directive PDU to get the directive code.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1166" href="#l1166">1166</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="n">U8</span><span class="w"> </span><span class="n">directiveCodeByte</span><span class="p">;</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">// const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1167" href="#l1167">1167</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sb</span><span class="p">.</span><span class="n">deserializeTo</span><span class="p">(</span><span class="n">directiveCodeByte</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBuffer</span><span class="w"> </span><span class="nf">sb</span><span class="p">(</span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getData</span><span class="p">()),</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1168" href="#l1168">1168</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">FileDirective</span><span class="w"> </span><span class="n">directiveCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FileDirective</span><span class="o">&gt;</span><span class="p">(</span><span class="n">directiveCodeByte</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">sb</span><span class="p">.</span><span class="n">setBuffLen</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1169" href="#l1169">1169</a></td>
@@ -8299,207 +8299,256 @@
       <td class="lineno"><a id="l1170" href="#l1170">1170</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">directiveCode</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">FileDirective</span><span class="o">::</span><span class="n">FILE_DIRECTIVE_INVALID_MAX</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">PduHeader</span><span class="w"> </span><span class="n">header</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1171" href="#l1171">1171</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                    </span><span class="cm">/* The CFDP_R_SubstateDispatchTable_t is only used with file directive PDU */</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="n">fromSerialBuffer</span><span class="p">(</span><span class="n">sb</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1172" href="#l1172">1172</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dispatch</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">[</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="p">)]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="c1">// Read directive code (first byte after header for directive PDUs)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1173" href="#l1173">1173</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                        </span><span class="n">selected_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dispatch</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">[</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="p">)]</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="n">U8</span><span class="w"> </span><span class="n">directiveCodeByte</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1174" href="#l1174">1174</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                                               </span><span class="o">-&gt;</span><span class="n">fdirective</span><span class="p">[</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">directiveCode</span><span class="p">)];</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sb</span><span class="p">.</span><span class="n">deserializeTo</span><span class="p">(</span><span class="n">directiveCodeByte</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1175" href="#l1175">1175</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                    </span><span class="p">}</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">FileDirective</span><span class="w"> </span><span class="n">directiveCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FileDirective</span><span class="o">&gt;</span><span class="p">(</span><span class="n">directiveCodeByte</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1176" href="#l1176">1176</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1177" href="#l1177">1177</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementRecvSpurious</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">directiveCode</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">FileDirective</span><span class="o">::</span><span class="n">FILE_DIRECTIVE_INVALID_MAX</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1178" href="#l1178">1178</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxInvalidDirectiveCode</span><span class="p">(</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                    </span><span class="cm">/* The CFDP_R_SubstateDispatchTable_t is only used with file directive PDU */</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1179" href="#l1179">1179</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">,</span><span class="w"> </span><span class="n">directiveCodeByte</span><span class="p">,</span></td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dispatch</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">[</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="p">)]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1180" href="#l1180">1180</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                        </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="p">));</span></td>
+      <td class="src uncoveredLine"><span class="w">                        </span><span class="n">selected_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dispatch</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">[</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="p">)]</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1181" href="#l1181">1181</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                </span><span class="p">}</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                               </span><span class="o">-&gt;</span><span class="n">fdirective</span><span class="p">[</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">directiveCode</span><span class="p">)];</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1182" href="#l1182">1182</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span></td>
+      <td class="src "><span class="w">                    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1183" href="#l1183">1183</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="src "><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1184" href="#l1184">1184</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="p">}</span></td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementRecvSpurious</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1185" href="#l1185">1185</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_RxInvalidDirectiveCode</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1186" href="#l1186">1186</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/*</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="p">,</span><span class="w"> </span><span class="n">directiveCodeByte</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1187" href="#l1187">1187</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">     * NOTE: if no handler is selected, this will drop packets on the floor here.</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                        </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state_data</span><span class="p">.</span><span class="n">receive</span><span class="p">.</span><span class="n">sub_state</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1188" href="#l1188">1188</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">     */</span></td>
+      <td class="src "><span class="w">                </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1189" href="#l1189">1189</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">selected_handler</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1190" href="#l1190">1190</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;*</span><span class="n">selected_handler</span><span class="p">)(</span><span class="n">buffer</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1191" href="#l1191">1191</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1192" href="#l1192">1192</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementRecvDropped</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1193" href="#l1193">1193</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1194" href="#l1194">1194</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1195" href="#l1195">1195</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1196" href="#l1196">1196</a></td>
+      <td class="lineno"><a id="l1193" href="#l1193">1193</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Cfdp</span></td>
+      <td class="src "><span class="w">    </span><span class="cm">/*</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1194" href="#l1194">1194</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cm">     * NOTE: if no handler is selected, this will drop packets on the floor here.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1195" href="#l1195">1195</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cm">     */</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1196" href="#l1196">1196</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">selected_handler</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1197" href="#l1197">1197</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;*</span><span class="n">selected_handler</span><span class="p">)(</span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1198" href="#l1198">1198</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1199" href="#l1199">1199</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cfdpManager</span><span class="o">-&gt;</span><span class="n">incrementRecvDropped</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_chan_num</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1200" href="#l1200">1200</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1201" href="#l1201">1201</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1202" href="#l1202">1202</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1203" href="#l1203">1203</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Cfdp</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1204" href="#l1204">1204</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1205" href="#l1205">1205</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1206" href="#l1206">1206</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
