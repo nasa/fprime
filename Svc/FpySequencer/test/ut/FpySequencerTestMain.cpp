@@ -4298,6 +4298,59 @@ TEST_F(FpySequencerTester, tlmWrite) {
     ASSERT_TLM_SIZE(20);
 }
 
+TEST_F(FpySequencerTester, tlmWriteSingleMessageOnQueue) {
+    // repeated calls before the queue is serviced collapse into one message
+    invoke_to_tlmWrite(0, 0);
+    invoke_to_tlmWrite(0, 0);
+    invoke_to_tlmWrite(0, 0);
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    this->tester_doDispatch();
+    ASSERT_EQ(tester_getMessagesAvailable(), 0);
+    ASSERT_TLM_SIZE(20);
+    // once serviced, the next call enqueues again
+    tester_get_m_tlm_ptr()->statementsFailed++;
+    invoke_to_tlmWrite(0, 0);
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    this->tester_doDispatch();
+    ASSERT_EQ(tester_getMessagesAvailable(), 0);
+    ASSERT_TLM_StatementsFailed_SIZE(2);
+}
+
+TEST_F(FpySequencerTester, checkTimersSingleMessageOnQueue) {
+    allocMem();
+    add_PUSH_VAL<U32>(10);
+    add_PUSH_VAL<U32>(0);
+    add_WAIT_REL();
+    writeToFile("test.bin");
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), BlockState::BLOCK);
+    Fw::Time time(0, 0);
+    setTestTime(time);
+    dispatchUntilState(State::RUNNING_SLEEPING);
+    tester_dispatchAllMessages();
+    ASSERT_EQ(this->tester_getState(), State::RUNNING_SLEEPING);
+
+    // repeated calls before the queue is serviced collapse into one message
+    invoke_to_checkTimers(0, 0);
+    invoke_to_checkTimers(0, 0);
+    invoke_to_checkTimers(0, 0);
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    // servicing it sends a single checkTimersIn signal to the state machine
+    this->tester_doDispatch();
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    tester_dispatchAllMessages();
+    // should not leave sleep
+    ASSERT_EQ(this->tester_getState(), State::RUNNING_SLEEPING);
+
+    // once serviced, the next call enqueues again and is acted on
+    time = Fw::Time(10, 0);
+    setTestTime(time);
+    invoke_to_checkTimers(0, 0);
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
 TEST_F(FpySequencerTester, seqRunIn) {
     allocMem();
     add_NO_OP();

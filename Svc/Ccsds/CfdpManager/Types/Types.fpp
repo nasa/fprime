@@ -31,6 +31,14 @@ module Cfdp {
         FROZEN @< CFDP channel operations are frozen
     }
 
+    @ Why a received Metadata PDU destination path was rejected by the channel rx_dir check
+    enum RxDestPathRejectReason: U8 {
+        RX_DIR_UNRESOLVABLE = 0 @< The configured rx_dir could not be resolved (for example, CWD unavailable) or is too long
+        PATH_UNRESOLVABLE = 1 @< The received path could not be resolved against rx_dir, or the joined path is too long to resolve
+        OUTSIDE_RX_DIR = 2 @< The resolved path lies outside rx_dir
+        TOO_LONG = 3 @< The resolved path exceeds MaxFilePathSize
+    }
+
     @ Values for CFDP file transfer class
     @
     @ The CFDP specification prescribes two classes/modes of file
@@ -78,6 +86,7 @@ module Cfdp {
         max_outgoing_pdus_per_cycle: U32 @< Maximum number of PDUs to send per cycle per channel for throttling
         tmp_dir: string size MaxFilePathSize @< Temporary directory for uplink file reception
         fail_dir: string size MaxFilePathSize @< Directory for failed poll files
+        rx_dir: string size MaxFilePathSize @< If non-empty, received file destinations must resolve inside this directory
     }
 
     @< Structure for the configured array of CFDP channels
