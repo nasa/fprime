@@ -738,6 +738,9 @@ void DpCatalog::sendNextEntry() {
     this->m_currXmitContext = resp.get_context();
 }  // end sendNextEntry()
 
+static_assert(sizeof(FwDpPriorityType) <= sizeof(U32),
+              "DpRecord stores priority as U32; a wider FwDpPriorityType would be truncated in the catalog");
+
 bool DpCatalog::findNextEntry(DpStateEntry& entry) {
     // Entries are ordered by ascending priority value (begin() returns the most urgent) and are removed
     // as they are transmitted, so the next entry to send is the first one at or after m_xmitStartPriority.
@@ -867,18 +870,18 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     const ProcessFileStatus ret = processFile(fileName, dir);
 
     if (ret == ProcessFileStatus::SUCCESS) {
-        // If we already finished (or were stopped), resume only if remainingActive and some pending entry
-        // (the new product or one left behind) is inside the active priority range; otherwise the
-        // product stays pending for a later START_XMIT_CATALOG
+        // If we already finished (or were stopped), resume only if m_remainActive and findNextEntry sees a
+        // pending entry (the new product or one left behind) inside the active priority range. Probing first
+        // avoids the CatalogXmitCompleted that sendNextEntry would report for an empty range.
         if (!this->m_xmitInProgress && this->m_remainActive) {
-            DpStateEntry nextEntry;
+            DpStateEntry nextEntry{};
             if (this->findNextEntry(nextEntry)) {
                 this->m_xmitInProgress = true;
                 this->sendNextEntry();
             }
         }
-        // Otherwise, Current File finishing will invoke sendNextFile & find the right file
-        // Or will be manually tx-ed at next command
+        // Otherwise, the fileDone of the file in flight invokes sendNextEntry, which finds the right file,
+        // or the product is transmitted by the next transmit command
 
         // prune and rewrite the state file
         this->pruneAndWriteStateFile();
@@ -897,9 +900,25 @@ void DpCatalog ::BUILD_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
                                                U32 cmdSeq,
                                                const Fw::Wait& wait,
-                                               bool remainActive,
-                                               FwDpPriorityType startPriority,
-                                               FwDpPriorityType endPriority) {
+                                               bool remainActive) {
+    this->startXmitCmd(opCode, cmdSeq, wait, remainActive, 0, std::numeric_limits<FwDpPriorityType>::max());
+}
+
+void DpCatalog ::START_XMIT_CATALOG_WITH_PRIORITY_cmdHandler(FwOpcodeType opCode,
+                                                             U32 cmdSeq,
+                                                             const Fw::Wait& wait,
+                                                             bool remainActive,
+                                                             FwDpPriorityType startPriority,
+                                                             FwDpPriorityType endPriority) {
+    this->startXmitCmd(opCode, cmdSeq, wait, remainActive, startPriority, endPriority);
+}
+
+void DpCatalog::startXmitCmd(FwOpcodeType opCode,
+                             U32 cmdSeq,
+                             const Fw::Wait& wait,
+                             bool remainActive,
+                             FwDpPriorityType startPriority,
+                             FwDpPriorityType endPriority) {
     if (startPriority > endPriority) {
         this->log_WARNING_LO_XmitPriorityRangeInvalid(startPriority, endPriority);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
@@ -929,6 +948,8 @@ void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
 }
 
 Fw::CmdResponse DpCatalog::doCatalogXmit(FwDpPriorityType startPriority, FwDpPriorityType endPriority) {
+    FW_ASSERT(startPriority <= endPriority, static_cast<FwAssertArgType>(startPriority),
+              static_cast<FwAssertArgType>(endPriority));
     // check initialization
     if (not this->checkInit()) {
         return Fw::CmdResponse::EXECUTION_ERROR;

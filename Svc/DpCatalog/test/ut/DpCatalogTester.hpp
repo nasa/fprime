@@ -182,6 +182,8 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_XmitPriorityRangeInverted();
     void test_XmitPriorityRangeRuntimeAdd();
     void test_XmitPriorityRangeStopThenRuntimeAdd();
+    void test_XmitPriorityRangeStartAfterStopAppliesRangeToNextFile();
+    void test_XmitLegacyCommandSendsFullRange();
 
   private:
     //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog
@@ -199,6 +201,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void cleanPriorityCatalog(const char* dir, FwSizeType numPrios);
 
     static const Fw::Time PRIORITY_RANGE_TIME;
+    static constexpr FwSizeType PRIORITY_RANGE_DATA_SIZE = 100;  //!< data size of each priority-range test DP
 
     //! Allocator handed to configure() by buildPriorityCatalog; the component keeps a pointer to it until shutdown()
     Fw::MallocAllocator m_priorityRangeAlloc;

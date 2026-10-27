@@ -34,7 +34,7 @@ PRIORITY_MAX = 4294967295
 
 
 def test_start_xmit_catalog_inverted_range_rejected(fprime_test_api):
-    """START_XMIT_CATALOG with start > end is rejected with VALIDATION_ERROR and an event
+    """START_XMIT_CATALOG_WITH_PRIORITY with start > end is rejected with VALIDATION_ERROR and an event
 
     No transmission starts, so the catalog is left as-is for a later command.
     """
@@ -43,7 +43,7 @@ def test_start_xmit_catalog_inverted_range_rejected(fprime_test_api):
 
     fprime_test_api.clear_histories()
     fprime_test_api.send_command(
-        dp_catalog + ".START_XMIT_CATALOG", ["NO_WAIT", "false", 10, 5]
+        dp_catalog + ".START_XMIT_CATALOG_WITH_PRIORITY", ["NO_WAIT", "false", 10, 5]
     )
     assert fprime_test_api.await_event(
         dp_catalog + ".XmitPriorityRangeInvalid", args=[10, 5], start=0, timeout=10
@@ -66,14 +66,37 @@ def test_start_xmit_catalog_inverted_range_rejected(fprime_test_api):
 
 
 def test_start_xmit_catalog_full_range(fprime_test_api):
-    """START_XMIT_CATALOG over [0, PRIORITY_MAX] transmits the whole catalog and completes"""
+    """START_XMIT_CATALOG_WITH_PRIORITY over [0, PRIORITY_MAX] transmits the whole catalog and completes"""
+    dp_catalog = fprime_test_api.get_mnemonic("Svc.DpCatalog")
+    fprime_test_api.send_and_assert_command(dp_catalog + ".BUILD_CATALOG", max_delay=10)
+
+    fprime_test_api.clear_histories()
+    fprime_test_api.send_and_assert_command(
+        dp_catalog + ".START_XMIT_CATALOG_WITH_PRIORITY",
+        ["WAIT", "false", 0, PRIORITY_MAX],
+        max_delay=120,
+        timeout=120,
+    )
+    assert fprime_test_api.await_event(
+        dp_catalog + ".CatalogXmitRangeStarted",
+        args=[0, PRIORITY_MAX],
+        start=0,
+        timeout=10,
+    )
+    assert fprime_test_api.await_event(
+        dp_catalog + ".CatalogXmitCompleted", start=0, timeout=10
+    )
+
+
+def test_start_xmit_catalog_legacy_full_range(fprime_test_api):
+    """START_XMIT_CATALOG keeps its original arguments and transmits the full priority range"""
     dp_catalog = fprime_test_api.get_mnemonic("Svc.DpCatalog")
     fprime_test_api.send_and_assert_command(dp_catalog + ".BUILD_CATALOG", max_delay=10)
 
     fprime_test_api.clear_histories()
     fprime_test_api.send_and_assert_command(
         dp_catalog + ".START_XMIT_CATALOG",
-        ["WAIT", "false", 0, PRIORITY_MAX],
+        ["WAIT", "false"],
         max_delay=120,
         timeout=120,
     )

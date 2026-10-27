@@ -390,6 +390,16 @@ TEST(NominalManual, XmitPriorityRangeStopThenRuntimeAdd) {
     tester.test_XmitPriorityRangeStopThenRuntimeAdd();
 }
 
+TEST(NominalManual, XmitPriorityRangeStartAfterStopAppliesRangeToNextFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeStartAfterStopAppliesRangeToNextFile();
+}
+
+TEST(NominalManual, XmitLegacyCommandSendsFullRange) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitLegacyCommandSendsFullRange();
+}
+
 TEST(OffNominal, MalformedFile) {
     Svc::DpCatalogTester tester;
     tester.test_MalformedFile();

@@ -1,6 +1,6 @@
 """test_dp_catalog_priority_range.py:
 
-Exercise the START_XMIT_CATALOG priority range against the Ref deployment, using
+Exercise the START_XMIT_CATALOG_WITH_PRIORITY priority range against the Ref deployment, using
 Ref.dpDemo to produce data products of known priorities.
 """
 
@@ -19,10 +19,10 @@ def _sent_priorities(fprime_test_api, dp_catalog):
 
 
 def _xmit_range(fprime_test_api, dp_catalog, start, end):
-    """Run a waited START_XMIT_CATALOG over [start, end] and return the priorities sent"""
+    """Run a waited START_XMIT_CATALOG_WITH_PRIORITY over [start, end] and return the priorities sent"""
     fprime_test_api.clear_histories()
     fprime_test_api.send_and_assert_command(
-        dp_catalog + ".START_XMIT_CATALOG",
+        dp_catalog + ".START_XMIT_CATALOG_WITH_PRIORITY",
         ["WAIT", "false", start, end],
         max_delay=120,
         timeout=120,
@@ -70,7 +70,7 @@ def test_xmit_catalog_inverted_range_rejected(fprime_test_api):
 
     fprime_test_api.clear_histories()
     fprime_test_api.send_command(
-        dp_catalog + ".START_XMIT_CATALOG", ["NO_WAIT", "false", 25, 15]
+        dp_catalog + ".START_XMIT_CATALOG_WITH_PRIORITY", ["NO_WAIT", "false", 25, 15]
     )
     assert fprime_test_api.await_event(
         dp_catalog + ".XmitPriorityRangeInvalid", args=[25, 15], start=0, timeout=10
