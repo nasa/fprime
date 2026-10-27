@@ -45,6 +45,13 @@ If any of the following are unclear, **ask before proceeding**:
 - Are there fault-handling or off-nominal requirements?
 - What existing F Prime components (Svc/*, Drv/*) can be built on top
   of?
+- **Which exact device is on the bench** (manufacturer, model, firmware,
+  electrical interface) and does the datasheet in hand name it? A manual
+  supplied with the request is a claim; the device's identification
+  reply (version / ping command decoded per that datasheet) is the
+  evidence. Requirements written against the wrong datasheet pass every
+  unit and simulator test and fail on the bench (SunCamMgr: SC30MPA
+  manual, KissCAM V2 on the bench).
 
 ---
 
@@ -62,6 +69,10 @@ Ask the user for:
    `docs/user-manual/framework/component-and-port-selection.md`.
 3. **High-level purpose**: One-paragraph description of what this
    component does.
+4. **Device identity** (hardware managers): datasheet title + revision,
+   and — when a bench exists — the identification probe and its decoded
+   reply, run before any requirement is written. Record both in the
+   requirements Introduction; a later mismatch reopens requirements.
 
 ### Step 2 — Define Behavioral Requirements
 

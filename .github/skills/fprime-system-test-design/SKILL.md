@@ -43,6 +43,10 @@ Governing rules are in
   exist, to locate observable counters. In the development lifecycle the
   plan is written before implementation (`phase-review-loop.md`,
   test-design phase) and this input is absent.
+- The device datasheet named in the requirements Introduction, with
+  the bench identification reply beside it. If the bench device is not
+  the datasheet's device, the plan is not written: the designer sends
+  the mismatch back as a requirements reopen.
 
 ## 2. Plan structure
 

@@ -118,7 +118,12 @@ is in use, its §0 approval precedes all of it, Phase 1 included; the
   comment that explains the change, the previous behavior, or why the
   new code differs from the old; put that in the PR description.
 - **Ask, don't guess.** Uncertainty about a requirement, interface,
-  or deployment context stops work until the user answers.
+  or deployment context stops work until the user answers. Hardware
+  identity is part of this: before requirements for a device manager,
+  confirm the bench device against the datasheet with a live
+  identification command, and when the user offers a hypothesis about
+  the device, check it against the datasheet section and test it in
+  the same pass — cite both in the answer.
 - Never edit autocoded outputs (`*Ac.hpp` / `*Ac.cpp`, files under
   `build-fprime-*/`); change the model and rebuild.
 - Verify each phase's artifact builds and its tests pass

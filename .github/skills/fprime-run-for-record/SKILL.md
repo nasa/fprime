@@ -73,7 +73,11 @@ and auditor.
    binaries; read back the same flash range (same offset and length,
    e.g. OpenOCD `dump_image`) and store `sha256sum` of file and
    read-back in `record/raw/flash.log`.
-2. Start the ground system with a fresh archive for this run ID.
+2. Start the ground system with a fresh archive for this run ID. Run
+   the bench entry probe from the recipe and record the decoded
+   identification reply in `runner/report.md`; a reply that does not
+   decode per the manifest's datasheet stops the run (wrong device or
+   firmware is a requirements matter, not a runner retry).
 3. Run the plan in order, once. At start the harness emits
    `NO_OP_STRING "RFR <run> M <manifest sha8>"` and
    `"RFR <run> S <seal-id sha8>"`; every test is bracketed per

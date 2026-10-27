@@ -131,7 +131,19 @@ run. Then `seal.py manifest` with the raw image binaries that were
 flashed (each must contain the UUT sha7). Dry-run output is labelled
 and is not a record.
 
-Dry-run traps (SunCamMgr simulator runs sim1–sim9):
+Bench entry (before the first dry run on hardware): prove the link in
+order and say which layer is proven — **host** (your own heartbeat log
+line `sent=N`; a TX LED or `flush()` corroborates), **wire** (loopback,
+or one direction already proven by received bytes), **device** (a reply
+that decodes per the datasheet). Unsolicited device text is an identity
+clue: search the literal string and vendor word before hypothesising
+wiring faults (`MVP Camera V2 RS422` was a different camera, not a
+reversed pair). For an externally powered device, listen first: hold
+the port open with TX silent across a power cycle, capture the boot
+text, then transmit; bytes emitted while nothing holds the port are
+lost and look like "no response".
+
+Dry-run traps (SunCamMgr simulator runs sim1–sim9 and the bench):
 
 - Run the **checker on the simulator dry run** before any record; most
   first-run failures are predicate or harness defects, and each one is
@@ -142,7 +154,14 @@ Dry-run traps (SunCamMgr simulator runs sim1–sim9):
   reports `OTHER_ERROR`). Give it a per-chunk delay so captures take
   seconds, or mid-readout tests (BUSY, status during readout) cannot run.
 - `pkill -f <pattern>` kills the calling shell when the pattern is in its
-  own command line — anchor the pattern (`^python3 run_plan.py`).
+  own command line — anchor the pattern (`^python3 run_plan.py`) or
+  bracket a character (`strea[m].py`); to free a serial port use
+  `fuser -k /dev/<tty>`.
+- A background stream is running when **its own output** says so, never
+  because `pgrep` found something (it matched the agent's own ssh/bash
+  wrappers while the stream had never started, and the human watched a
+  dead TX LED). Every bench stream prints a heartbeat; the report to the
+  human quotes it.
 - Write the manifest in `finally` so a failed run still has one; archive
   `git diff` of an uncommitted tree next to the run.
 - Check harness values against the device manual before blaming the UUT

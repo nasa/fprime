@@ -32,6 +32,10 @@ for it and stop; do not infer intent from the requirements themselves.
    rationale, RQ-4 strongest feasible method (unit test → integration
    test → inspection). One finding per failed check, with a concrete
    rewrite.
+   For a hardware manager: the Introduction names the datasheet
+   (title, revision) and the bench device's identification reply; a
+   missing or unverified identity is a must-fix (RQ-2) — every row
+   downstream inherits the doubt.
 3. Build the request trace (RS-1) and the fault-scenario table (RS-2);
    check consistency (RS-3). On a PR, scope per skill §3.
 4. Tag per skill §3 and write `review-req-round-N.md` per skill §4,
