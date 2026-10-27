@@ -621,9 +621,12 @@ bool TlmPacketizer::sendAllowed(const Svc::TlmSendState& sendState, FwIndexType 
             return true;
         case Svc::TlmSendState::SEND_NEVER:
             return false;
+        // SEND_WHEN_SECTION_ENABLED, and INHERIT_FROM_PARENT whose parent at group level is the section. Fall-through intended.
+        case Svc::TlmSendState::SEND_WHEN_SECTION_ENABLED:
+        case Svc::TlmSendState::INHERIT_FROM_PARENT:
+            return this->m_sectionEnabled[static_cast<FwSizeType>(section)] == Fw::Enabled::ENABLED;      
         default:
-            // SEND_WHEN_SECTION_ENABLED, and INHERIT_FROM_PARENT whose parent at group level is the section
-            return this->m_sectionEnabled[static_cast<FwSizeType>(section)] == Fw::Enabled::ENABLED;
+            FW_ASSERT(0);
     }
 }
 
