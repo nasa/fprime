@@ -17,13 +17,28 @@ SEV, LIK, PRI = "Bug Severity", "Bug Likelihood", "Priority"
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("--owner", required=True)
     ap.add_argument("--project", type=int, required=True)
     ap.add_argument("--repo", help="only items from this owner/repo")
-    ap.add_argument("--query", action="append", default=[], help="GitHub issue search; union of all --query, restricts items")
-    ap.add_argument("--issues", type=int, nargs="*", default=[], help="explicit issue numbers (with --repo)")
-    ap.add_argument("--apply", action="store_true", help="write changes (default: dry run)")
+    ap.add_argument(
+        "--query",
+        action="append",
+        default=[],
+        help="GitHub issue search; union of all --query, restricts items",
+    )
+    ap.add_argument(
+        "--issues",
+        type=int,
+        nargs="*",
+        default=[],
+        help="explicit issue numbers (with --repo)",
+    )
+    ap.add_argument(
+        "--apply", action="store_true", help="write changes (default: dry run)"
+    )
     a = ap.parse_args()
 
     proj = pf.project(a.owner, a.project)
@@ -60,16 +75,22 @@ def main():
             skipped += 1
             print(f"skip  #{c['number']}: severity={s} likelihood={l}")
             continue
-        want = pf.LEVELS[(pf.LEVELS.index(s) + 1 + pf.LIKELIHOOD.index(l) + 1 + 1) // 2 - 1]
+        want = pf.LEVELS[
+            (pf.LEVELS.index(s) + 1 + pf.LIKELIHOOD.index(l) + 1 + 1) // 2 - 1
+        ]
         cur = vals.get(PRI)
         if cur == want:
             kept += 1
             continue
-        print(f"{'set ' if a.apply else 'would'} #{c['number']}: {s} + {l} -> {PRI}={want} (was {cur})")
+        print(
+            f"{'set ' if a.apply else 'would'} #{c['number']}: {s} + {l} -> {PRI}={want} (was {cur})"
+        )
         if a.apply:
             pf.set_option(proj["id"], item_id, f[PRI], want)
         changed += 1
-    print(f"{'applied' if a.apply else 'dry-run'}: {changed} changed, {kept} already correct, {skipped} skipped (missing severity/likelihood)")
+    print(
+        f"{'applied' if a.apply else 'dry-run'}: {changed} changed, {kept} already correct, {skipped} skipped (missing severity/likelihood)"
+    )
 
 
 if __name__ == "__main__":

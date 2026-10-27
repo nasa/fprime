@@ -21,7 +21,10 @@ def gql(query, variables=None):
     req = urllib.request.Request(
         API,
         data=json.dumps({"query": query, "variables": variables or {}}).encode(),
-        headers={"Authorization": "bearer " + token(), "Content-Type": "application/json"},
+        headers={
+            "Authorization": "bearer " + token(),
+            "Content-Type": "application/json",
+        },
     )
     body = json.load(urllib.request.urlopen(req))
     if "errors" in body:
@@ -79,7 +82,9 @@ def items(project_id, field_names):
 def set_option(project_id, item_id, field, option_name):
     opt = field["options"].get(option_name)
     if not opt:
-        raise KeyError(f"option {option_name!r} not in field; have {list(field['options'])}")
+        raise KeyError(
+            f"option {option_name!r} not in field; have {list(field['options'])}"
+        )
     m = """mutation($p:ID!,$i:ID!,$f:ID!,$o:String!){ updateProjectV2ItemFieldValue(
         input:{projectId:$p,itemId:$i,fieldId:$f,value:{singleSelectOptionId:$o}}){ projectV2Item{ id } } }"""
     gql(m, {"p": project_id, "i": item_id, "f": field["id"], "o": opt["id"]})
@@ -93,7 +98,9 @@ def search_issue_numbers(query):
     out, after = set(), None
     while True:
         page = gql(q, {"q": query, "after": after})["search"]
-        out |= {(n["repository"]["nameWithOwner"], n["number"]) for n in page["nodes"] if n}
+        out |= {
+            (n["repository"]["nameWithOwner"], n["number"]) for n in page["nodes"] if n
+        }
         if not page["pageInfo"]["hasNextPage"]:
             break
         after = page["pageInfo"]["endCursor"]

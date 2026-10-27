@@ -24,7 +24,9 @@ def add_item(project_id, repo, number):
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("--owner", required=True)
     ap.add_argument("--project", type=int, required=True)
     ap.add_argument("--repo", required=True)
@@ -36,7 +38,10 @@ def main():
     proj = pf.project(a.owner, a.project)
     f = proj["fields"]
     for n, r in ratings.items():
-        if r["severity"] not in f[SEV]["options"] or r["likelihood"] not in f[LIK]["options"]:
+        if (
+            r["severity"] not in f[SEV]["options"]
+            or r["likelihood"] not in f[LIK]["options"]
+        ):
             sys.exit(f"#{n}: bad option {r}")
 
     existing = {}
@@ -54,11 +59,15 @@ def main():
             item_id, vals = (add_item(proj["id"], a.repo, n) if a.apply else None), {}
         for field, key in ((SEV, "severity"), (LIK, "likelihood")):
             if vals.get(field) != r[key]:
-                print(f"{'set ' if a.apply else 'would'} #{n}: {field}={r[key]} (was {vals.get(field)})")
+                print(
+                    f"{'set ' if a.apply else 'would'} #{n}: {field}={r[key]} (was {vals.get(field)})"
+                )
                 if a.apply:
                     pf.set_option(proj["id"], item_id, f[field], r[key])
                 changes += 1
-    print(f"{'applied' if a.apply else 'dry-run'}: {changes} field changes over {len(ratings)} issues")
+    print(
+        f"{'applied' if a.apply else 'dry-run'}: {changes} field changes over {len(ratings)} issues"
+    )
 
 
 if __name__ == "__main__":
