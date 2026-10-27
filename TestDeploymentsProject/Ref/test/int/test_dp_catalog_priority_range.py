@@ -83,5 +83,7 @@ def test_xmit_catalog_inverted_range_rejected(fprime_test_api):
     assert op_code_error.get_args()[1].val == "VALIDATION_ERROR"
     started = fprime_test_api.get_event_pred(dp_catalog + ".CatalogXmitRangeStarted")
     assert not [
-        event for event in fprime_test_api.get_event_test_history().retrieve() if started(event)
+        event
+        for event in fprime_test_api.get_event_test_history().retrieve()
+        if started(event)
     ]

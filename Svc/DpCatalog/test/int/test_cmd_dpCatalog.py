@@ -59,7 +59,9 @@ def test_start_xmit_catalog_inverted_range_rejected(fprime_test_api):
     ), "Inverted range must fail with VALIDATION_ERROR"
     started = fprime_test_api.get_event_pred(dp_catalog + ".CatalogXmitRangeStarted")
     assert not [
-        event for event in fprime_test_api.get_event_test_history().retrieve() if started(event)
+        event
+        for event in fprime_test_api.get_event_test_history().retrieve()
+        if started(event)
     ], "Inverted range must not start transmission"
 
 
