@@ -74,11 +74,13 @@ def test_xmit_catalog_inverted_range_rejected(fprime_test_api):
     assert fprime_test_api.await_event(
         dp_catalog + ".XmitPriorityRangeInvalid", args=[25, 15], start=0, timeout=10
     )
-    assert fprime_test_api.await_event(
+    op_code_error = fprime_test_api.await_event(
         fprime_test_api.get_mnemonic("Svc.CommandDispatcher") + ".OpCodeError",
         start=0,
         timeout=10,
     )
+    assert op_code_error, "Inverted range must fail the command"
+    assert op_code_error.get_args()[1].val == "VALIDATION_ERROR"
     started = fprime_test_api.get_event_pred(dp_catalog + ".CatalogXmitRangeStarted")
     assert not [
         event for event in fprime_test_api.get_event_test_history().retrieve() if started(event)
