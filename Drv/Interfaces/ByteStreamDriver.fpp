@@ -4,7 +4,8 @@ module Drv {
 
     @ Synchronous ByteStreamDriver interface
     interface ByteStreamDriver {
-        @ Port invoked when the driver is ready to send/receive data
+        @ Port invoked when the driver is ready to send/receive data. Clients such
+        @ as Svc::ComStub wait for it before sending again after an OTHER_ERROR
         output port ready: Drv.ByteStreamReady
 
         @ Port invoked by the driver when it receives data
