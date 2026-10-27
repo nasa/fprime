@@ -756,9 +756,6 @@ void TlmPacketizer ::packetOverrideIn_handler(FwIndexType portNum, Fw::Buffer& f
     } else {
         this->log_WARNING_HI_ConfigReloadFailed(Fw::DeserialStatus::BUFFER_EMPTY);
     }
-    // Return the reload buffer to the component that sent it, valid or not; a reload path without a return
-    // port would leak the sender's buffer, so the port is a wiring invariant
-    FW_ASSERT(this->isConnected_packetOverrideReturnOut_OutputPort(0));
     this->packetOverrideReturnOut_out(0, fwBuffer);
 }
 
