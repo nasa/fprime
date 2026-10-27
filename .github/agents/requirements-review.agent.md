@@ -42,6 +42,13 @@ Finding classes: `req-not-verifiable`, `req-unclear`,
 `req-weak-verification`, `req-set-gap`, `req-set-no-fault-coverage`,
 `req-set-inconsistent`.
 
+Also check (F Prime lead's standing directives): no Definitions/Terms,
+no Waivers, no rationale text; verification ∈ {`Unit Test`, `Integration
+Test`, `Inspection`}; repeated settings/commands/channels/constants in
+tables after the list with one pointing requirement each; no
+implementation-choice, negative-scope or test-as-requirement rows;
+numbered rows only; tick-count timeouts; `UPPER_SNAKE_CASE` parameters.
+
 ## Rounds
 
 Skill §4: changed rows for RQ-1..4, the whole set for RS-1..3; a

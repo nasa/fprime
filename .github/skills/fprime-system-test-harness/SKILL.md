@@ -131,6 +131,26 @@ run. Then `seal.py manifest` with the raw image binaries that were
 flashed (each must contain the UUT sha7). Dry-run output is labelled
 and is not a record.
 
+Dry-run traps (SunCamMgr simulator runs sim1–sim9):
+
+- Run the **checker on the simulator dry run** before any record; most
+  first-run failures are predicate or harness defects, and each one is
+  either a plan amendment (reviewer confirms) or a UUT defect — write
+  down which.
+- Start the simulator with the interpreter that has its image library,
+  never through `head`/`tail` (SIGPIPE kills it mid-run → the UART driver
+  reports `OTHER_ERROR`). Give it a per-chunk delay so captures take
+  seconds, or mid-readout tests (BUSY, status during readout) cannot run.
+- `pkill -f <pattern>` kills the calling shell when the pattern is in its
+  own command line — anchor the pattern (`^python3 run_plan.py`).
+- Write the manifest in `finally` so a failed run still has one; archive
+  `git diff` of an uncommitted tree next to the run.
+- Check harness values against the device manual before blaming the UUT
+  (an ISP backlight of 0x80 against a 0–10 range was the harness).
+- Parse data-product containers from the record layout
+  (`FwDpIdType` + `FwSizeStoreType` header before the image), not by
+  guessing bytes before the JPEG SOI.
+
 ## Anti-patterns
 
 - Fixing the UUT from the harness branch.

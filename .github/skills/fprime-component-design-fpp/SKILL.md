@@ -126,6 +126,22 @@ every site. Ask the user if:
 - The event severity level is unclear
 - Parameter defaults or valid ranges are unspecified
 
+Lessons from SunCamMgr (externally powered device):
+
+- Hardware powered up by *another* component after FSW boot gets an
+  explicit **setup command** (probe → settle → apply parameters); do not
+  probe on `drvConnected`, and a power-up banner arriving during the
+  probe acknowledges the setup, it does not fail it.
+- A parameter changed while the device is ready is pushed as soon as the
+  transaction slot is free; before readiness it is stored for the next
+  settings apply. Setting channels change only from device replies
+  (acknowledgements only where the device has no readback).
+- `parameterUpdated(id)` receives the **local** `PARAMID_*`; command
+  opcodes carry the base id. Unit-test the hooks with a non-zero base id —
+  base-id-0 tests hide the confusion.
+- A setting whose push re-settles the device (resolution) must be
+  handled in every activity that can push it (setup, apply, dirty push).
+
 ### Step 4 — Build and Verify
 
 ```bash
@@ -174,6 +190,13 @@ requirements; the SDD is the quick-look the user reads at the design
 gate, so brevity is part of the design quality. Anything longer (design
 notes, alternatives, rationale) goes in a separate `docs/design-notes.md`
 the user is not asked to read.
+
+SDD shape agreed with the F Prime lead: requirements → tables; a
+**port-box diagram** (input ports boxed on the left, output ports boxed
+on the right — `fpp-to-layout` + fprime-visual or the generator in
+`tools/`); telemetry and constants as tables; a **system-test table**
+(ID, title, requirements, pass rule) in its own section; no subtopology
+write-up in a component SDD — that goes in `Subtopology/docs/sdd.md`.
 
 ### Step 6 — Confirm Design with User
 

@@ -107,6 +107,24 @@ Rules:
   independently (e.g. a known pseudo-random image whose generator and
   seed are handed over).
 
+Observability rules for pass-rule predicates (found by running the checker):
+
+- `Svc.TlmChan` reports one value per channel per flush, so a
+  false→true→false→true within one tick coalesces. Judge **transitions by
+  events**, **channels by last value**; never predicate on a channel
+  *sequence* across a tick.
+- Count commands with `cmdDisp.OpCodeDispatched` events from the START
+  marker row to the END event, not with `CommandsDispatched` deltas (the
+  END-marker sample lands on either side of the window with flush phase).
+- A write-on-change counter never emitted since boot has delta 0; a
+  boot-zero counter first seen inside a window has baseline 0. Say which
+  channels are which in the plan.
+- Telemetry you predicate on must be *scheduled*: a `BufferManager`
+  without `schedIn` wired emits nothing.
+- A setup/re-apply that re-acknowledges settings doubles acknowledgement
+  counts — bound counts "before t(SETUP.sent)" when the procedure ends
+  with a restoring setup.
+
 ## 4. Fault menu
 
 The menu lists knobs the harness applies **through its own

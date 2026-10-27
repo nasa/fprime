@@ -65,6 +65,10 @@ exercises (TDD); the rest of the sequence is strict. For
 implementation-only fixes that do not alter the interface, entering at
 phase 4 is permitted — confirm with the user first.
 
+Device powered after FSW boot by another component → the component gets a
+setup command (probe, settle, apply parameters) and never probes on
+connect; see `fprime-component-design-fpp` "externally powered device".
+
 ## 3. Topology work
 
 Follow `.github/skills/fprime-topology-development/SKILL.md`.

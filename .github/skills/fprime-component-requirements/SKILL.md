@@ -149,6 +149,24 @@ Interface data and constraints go into the shall statements; review
 records, dispositions and elicitation answers stay outside the SDD.
 Succinct beats complete: the reader has minutes, not hours.
 
+Tables, not rows, for the repeated things (learned on SunCamMgr):
+
+- Persisted device settings go in a **parameter table**, non-persisted
+  device operations in a **command table**, channels in a **telemetry
+  table**, sizes/limits in a **constants table**; one requirement points
+  at each table ("shall push every Table 1 setting") instead of a row per
+  setting or command. Tables follow the requirements list.
+- Verification column uses exactly `Unit Test`, `Integration Test` or
+  `Inspection` — nothing else, no qualifiers.
+- One row per requirement, numbered; never `054-a/b/c`. No rows that are
+  implementation choices ("shall be active"), negative scope ("shall not
+  implement §13–19") or tests ("five consecutive captures deliver a
+  product" is a system test, not a requirement).
+- Timeouts and settle windows are **tick counts** of the component's
+  `run` port; the deployment chooses the rate-group period.
+- Parameter names are `UPPER_SNAKE_CASE`; event severities are written as
+  the F Prime enumerators (`WARNING_HI`), not prose.
+
 ---
 
 ## Anti-Patterns

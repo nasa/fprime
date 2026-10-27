@@ -47,6 +47,13 @@ rewrite each, and the running disagreement log. Three rounds by
 default; a `review rounds: N` given at kickoff overrides. Then
 escalate with the log.
 
+Predicate observability (reject or amend): channel *sequences* across a
+tick (TlmChan coalesces — use events), `CommandsDispatched` deltas for
+command counts (use `OpCodeDispatched` from the START marker row),
+counters never emitted (state the delta-0 rule), telemetry from
+unscheduled components, acknowledgement counts that a restoring setup
+doubles.
+
 ## Mode B — harness review
 
 Input: the approved plan, the harness diff, and the dry-run record.

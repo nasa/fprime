@@ -161,6 +161,10 @@ reads trigger rows, spot-checks two or three nominal rows against the
 raw record, ticks the boxes, and records the decision in the plan's
 decision log.
 
+Simulator evidence is labelled `SIMULATED` in the manifest and the
+quick-look and is never a record; the record requires the device to pass
+the bench entry gate (answers a probe at the configured baud) first.
+
 ## Anti-patterns
 
 - A second run "to confirm" without a new run ID and a stated reason.
