@@ -189,8 +189,17 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! SET_DP_PRIORITY during a transmit reorders the pending products and leaves the send in flight intact
     void test_SetPriorityDuringXmit();
 
-    //! A reprioritized product is still recorded as transmitted in the state file under its header priority
-    void test_SetPriorityStateFileMatch();
+    //! SET_DP_PRIORITY change is kept across restart, rebuild and CLEAR_CATALOG
+    void test_SetPriorityPersisted();
+
+    //! Runtime addToCat after SET_DP_PRIORITY and after transmit keeps the state file consistent
+    void test_SetPriorityRuntimeAdd();
+
+    //! SET_DP_PRIORITY with full state file data
+    void test_SetPriorityStateFileFull();
+
+    //! SET_DP_PRIORITY before configure
+    void test_SetPriorityNotInit();
 
     //! SET_DP_PRIORITY tells apart products of one container (same ID) by their time tags
     void test_SetPrioritySameIdByTime();
@@ -200,6 +209,12 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void setPriorityBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, Fw::String (&dpFiles)[3]);
 
     //! Size of a generated DP file, as reported by SendingProduct
+    //! Restart the component and rebuild the catalog
+    void setPriorityRebuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq);
+
+    //! Transmit the whole catalog
+    void setPriorityXmitAll(U32 cmdSeq);
+
     U32 setPriorityFileSize(const Fw::String& dpFile);
 };
 

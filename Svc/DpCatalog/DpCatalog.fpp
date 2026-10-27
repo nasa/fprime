@@ -482,6 +482,16 @@ module Svc {
       id 52 \
       format "DP id {} time {}.{} not found in catalog"
 
+    @ State file data is full, so the state of a data product could not be recorded
+    event StateFileFull(
+                         $id: FwDpIdType @< Container ID of the data product
+                         tSec: U32 @< Seconds of the data product time tag
+                         tSub: U32 @< Microseconds of the data product time tag
+                       ) \
+      severity warning high \
+      id 53 \
+      format "State file data full; state of DP {} time {}.{} not recorded"
+
 
     # ----------------------------------------------------------------------
     # Telemetry

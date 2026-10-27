@@ -4,6 +4,7 @@ Test the command dpWriter with basic integration tests.
 """
 
 import re
+from collections import namedtuple
 
 import pytest
 
@@ -44,6 +45,9 @@ DP_FILE_NAME = re.compile(r"Dp_([0-9]{8,})_([0-9]{8,})_([0-9]{8,})\.fdp$")
 # Command of the Ref DpDemo component that generates a data product, if the deployment has one
 DP_DEMO_COMMAND = "Ref.dpDemo.Dp"
 
+# A generated data product: its catalog identity and file name
+GeneratedDp = namedtuple("GeneratedDp", ["id", "tSec", "tSub", "file_name"])
+
 
 def _dp_identity(file_name):
     """Return (id, tSec, tSub) of a data product from its file name"""
@@ -62,7 +66,7 @@ def _build_catalog(fprime_test_api):
 
 
 def _generate_dp(fprime_test_api, priority):
-    """Generate a data product with DpDemo and return its (id, tSec, tSub, file name) from DpFileAdded
+    """Generate a data product with DpDemo and return it as a GeneratedDp from DpFileAdded
 
     DpDemo fills the product on its next rate group tick and DpWriter notifies DpCatalog, which adds it
     to the built catalog and reports the file name.
@@ -82,7 +86,7 @@ def _generate_dp(fprime_test_api, priority):
         added is not None
     ), "DpFileAdded was not received for the generated data product"
     file_name = added.get_args()[0].val
-    return _dp_identity(file_name) + (file_name,)
+    return GeneratedDp(*_dp_identity(file_name), file_name)
 
 
 def test_set_dp_priority_not_found(fprime_test_api):
@@ -126,11 +130,11 @@ def test_set_dp_priority_reorders_transmit(fprime_test_api):
     # Same priority: reported with equal old and new values, command succeeds
     fprime_test_api.send_and_assert_command(
         dp_cat + ".SET_DP_PRIORITY",
-        [first[0], first[1], first[2], 20],
+        [first.id, first.tSec, first.tSub, 20],
         max_delay=10,
         events=[
             fprime_test_api.get_event_pred(
-                dp_cat + ".DpPrioritySet", [first[0], first[1], first[2], 20, 20]
+                dp_cat + ".DpPrioritySet", [first.id, first.tSec, first.tSub, 20, 20]
             )
         ],
     )
@@ -138,21 +142,21 @@ def test_set_dp_priority_reorders_transmit(fprime_test_api):
     # Raise the second product above the first
     fprime_test_api.send_and_assert_command(
         dp_cat + ".SET_DP_PRIORITY",
-        [second[0], second[1], second[2], 5],
+        [second.id, second.tSec, second.tSub, 5],
         max_delay=10,
         events=[
             fprime_test_api.get_event_pred(
-                dp_cat + ".DpPrioritySet", [second[0], second[1], second[2], 30, 5]
+                dp_cat + ".DpPrioritySet", [second.id, second.tSec, second.tSub, 30, 5]
             )
         ],
     )
 
     # The second product is sent before the first, each with its transmit priority
     sending_second = fprime_test_api.get_event_pred(
-        dp_cat + ".SendingProduct", [second[3], None, 5]
+        dp_cat + ".SendingProduct", [second.file_name, None, 5]
     )
     sending_first = fprime_test_api.get_event_pred(
-        dp_cat + ".SendingProduct", [first[3], None, 20]
+        dp_cat + ".SendingProduct", [first.file_name, None, 20]
     )
     results = fprime_test_api.send_and_await_event(
         dp_cat + ".START_XMIT_CATALOG",

@@ -150,8 +150,13 @@ class DpCatalog final : public DpCatalogComponentBase {
         friend class DpCatalogTester;
         FwIndexType dir;  //!< index to m_directories entry that has directory name where DP exists
         DpRecord record;  //!< data product metadata
-        //! priority in the DP file header; record priority is the transmit priority, which SET_DP_PRIORITY may change
-        FwDpPriorityType filePriority;
+
+        /// @brief check whether the entry is the data product with the given identity (id and time tag)
+        /// @param id container ID
+        /// @param tSec seconds of the time tag
+        /// @param tSub microseconds of the time tag
+        /// @return true if the entry has that identity
+        bool hasIdentity(FwDpIdType id, U32 tSec, U32 tSub) const;
 
         /// @brief insert an entry into the sorted list; if it exists, update the metadata
         /// @param left an entry to compare
@@ -213,7 +218,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     void getFileState(DpStateEntry& entry);
 
     /// @brief prune the state file data and write the remaining entries back
-    void pruneAndWriteStateFile();
+    /// @return true if the state file was written, false on an error (reported by event)
+    bool pruneAndWriteStateFile();
 
     /// @brief load state data from file
     Fw::CmdResponse loadStateFile();
@@ -257,6 +263,16 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param entry the entry found
     /// @return true if an entry was found
     bool findEntryByIdentity(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
+
+    /// @brief find the state file data slot for an entry's product (same directory, id and time tag)
+    /// @param entry the entry to look up
+    /// @return the slot index, or m_stateFileEntries if the product has no slot
+    FwSizeType findStateFileSlot(const DpStateEntry& entry) const;
+
+    /// @brief record an entry's state in the state file data, reusing the product's slot or a stale one
+    /// @param entry the entry to record
+    /// @return true if recorded, false if the state file data is full
+    bool updateStateFileData(const DpStateEntry& entry);
 
     // ----------------------------------
     // Private data

@@ -390,9 +390,24 @@ TEST(SetPriority, DuringXmit) {
     tester.test_SetPriorityDuringXmit();
 }
 
-TEST(SetPriority, StateFileMatch) {
+TEST(SetPriority, Persisted) {
     Svc::DpCatalogTester tester;
-    tester.test_SetPriorityStateFileMatch();
+    tester.test_SetPriorityPersisted();
+}
+
+TEST(SetPriority, RuntimeAdd) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityRuntimeAdd();
+}
+
+TEST(SetPriority, StateFileFull) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityStateFileFull();
+}
+
+TEST(SetPriority, NotInit) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNotInit();
 }
 
 TEST(SetPriority, SameIdByTime) {

@@ -735,8 +735,8 @@ void DpCatalogTester ::test_StopWarn() {
 }
 
 void DpCatalogTester ::test_CompareEntries() {
-    DpCatalog::DpStateEntry left = {0, {1, 1, 1, 1, 1, 1, Fw::DpState::UNTRANSMITTED}, 1};
-    DpCatalog::DpStateEntry right = {0, {1, 1, 2, 1, 1, 1, Fw::DpState::UNTRANSMITTED}, 1};
+    DpCatalog::DpStateEntry left = {0, {1, 1, 1, 1, 1, 1, Fw::DpState::UNTRANSMITTED}};
+    DpCatalog::DpStateEntry right = {0, {1, 1, 2, 1, 1, 1, Fw::DpState::UNTRANSMITTED}};
     FW_ASSERT(right == right);
     FW_ASSERT(left != right);
     FW_ASSERT(left < right);
@@ -1590,34 +1590,68 @@ void DpCatalogTester ::test_SetPriorityDuringXmit() {
     this->component.shutdown();
 }
 
-void DpCatalogTester ::test_SetPriorityStateFileMatch() {
+void DpCatalogTester ::setPriorityRebuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq) {
+    this->component.shutdown();
+    this->clearHistory();
+    static Fw::MallocAllocator alloc;
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, cmdSeq);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void DpCatalogTester ::setPriorityXmitAll(U32 cmdSeq) {
+    this->sendCmd_START_XMIT_CATALOG(0, cmdSeq, Fw::Wait::NO_WAIT, false);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+}
+
+void DpCatalogTester ::test_SetPriorityPersisted() {
     Fw::FileNameString dir("./DpTest_SetPrioState");
     Fw::FileNameString stateFile("./DpTest_SetPrioState/dpState.dat");
     Fw::String dpFiles[3];
     this->setPriorityBuild(dir, stateFile, dpFiles);
 
-    // Reprioritize and transmit the whole catalog
-    this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[1], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
+    // Raise the lowest priority product; the change is recorded in the state file
+    this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[2], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
     this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::OK);
     ASSERT_EVENTS_DpPrioritySet_SIZE(1);
-    this->sendCmd_START_XMIT_CATALOG(0, 12, Fw::Wait::NO_WAIT, false);
-    while (this->component.m_queue.getMessagesAvailable() > 0) {
-        this->component.doDispatch();
-    }
-    ASSERT_from_fileOut_SIZE(3);
-    ASSERT_from_fileOut(0, dpFiles[1], dpFiles[1], 0, 0);
-    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
-    this->component.shutdown();
+    ASSERT_EVENTS_StateFileFull_SIZE(0);
+    FwSizeType stateSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), stateSize), Os::FileSystem::Status::OP_OK);
+    ASSERT_GT(stateSize, 0U);
 
-    // The state file records are matched to the files on rebuild: all three are skipped, including the
-    // reprioritized one, whose record carries the header priority rather than the override
-    this->clearHistory();
-    Fw::MallocAllocator alloc;
-    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
-    this->sendCmd_BUILD_CATALOG(0, 20);
+    // The new priority survives a restart and rebuild, and CLEAR_CATALOG, which keeps the state file
+    this->setPriorityRebuild(dir, stateFile, 20);
+    ASSERT_EVENTS_DpFileAdded_SIZE(3);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(0);
+    this->sendCmd_CLEAR_CATALOG(0, 21);
     this->component.doDispatch();
-    ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 20, Fw::CmdResponse::OK);
+    this->sendCmd_BUILD_CATALOG(0, 22);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_BUILD_CATALOG, 22, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->component.m_pendingFiles, 3);
+
+    this->setPriorityXmitAll(23);
+    ASSERT_from_fileOut_SIZE(3);
+    ASSERT_from_fileOut(0, dpFiles[2], dpFiles[2], 0, 0);
+    ASSERT_from_fileOut(1, dpFiles[0], dpFiles[0], 0, 0);
+    ASSERT_from_fileOut(2, dpFiles[1], dpFiles[1], 0, 0);
+    ASSERT_EVENTS_SendingProduct(0, dpFiles[2].toChar(), this->setPriorityFileSize(dpFiles[2]), 1);
+
+    // A transmitted product has left the catalog
+    this->sendCmd_SET_DP_PRIORITY(0, 24, SET_PRIO_IDS[2], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 2);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpNotFound_SIZE(1);
+    ASSERT_EVENTS_DpNotFound(0, SET_PRIO_IDS[2], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds());
+    ASSERT_CMD_RESPONSE(4, DpCatalog::OPCODE_SET_DP_PRIORITY, 24, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // On the next build the state file records all three as transmitted, the reprioritized one included
+    this->setPriorityRebuild(dir, stateFile, 30);
     ASSERT_EVENTS_DpFileSkipped_SIZE(3);
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     ASSERT_EQ(this->component.m_pendingFiles, 0);
@@ -1627,6 +1661,92 @@ void DpCatalogTester ::test_SetPriorityStateFileMatch() {
         this->delDp(SET_PRIO_IDS[dp], SET_PRIO_TIME, dir.toChar());
     }
     ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+}
+
+void DpCatalogTester ::test_SetPriorityRuntimeAdd() {
+    Fw::FileNameString dir("./DpTest_SetPrioRuntimeAdd");
+    Fw::FileNameString stateFile("./DpTest_SetPrioRuntimeAdd/dpState.dat");
+    Fw::String dpFiles[3];
+    this->setPriorityBuild(dir, stateFile, dpFiles);
+
+    this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[1], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::OK);
+
+    // A runtime add of the reprioritized file is recognized as a duplicate
+    this->invoke_to_addToCat(0, dpFiles[1], 0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EQ(this->component.m_pendingFiles, 3);
+
+    this->setPriorityXmitAll(12);
+    ASSERT_from_fileOut_SIZE(3);
+    ASSERT_from_fileOut(0, dpFiles[1], dpFiles[1], 0, 0);
+
+    // A runtime add rewrites the state file, which must keep the records of the products just sent
+    const FwDpIdType newId = 0x44;
+    this->delDp(newId, SET_PRIO_TIME, dir.toChar());
+    const Fw::String newFile =
+        this->genDP(newId, 15, SET_PRIO_TIME, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(newFile.toChar(), "");
+    this->invoke_to_addToCat(0, newFile, 0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileAdded_SIZE(4);
+
+    this->setPriorityRebuild(dir, stateFile, 20);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(3);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+    this->component.shutdown();
+
+    for (FwIndexType dp = 0; dp < 3; dp++) {
+        this->delDp(SET_PRIO_IDS[dp], SET_PRIO_TIME, dir.toChar());
+    }
+    this->delDp(newId, SET_PRIO_TIME, dir.toChar());
+    ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+}
+
+void DpCatalogTester ::test_SetPriorityStateFileFull() {
+    Fw::FileNameString dir("./DpTest_SetPrioStateFull");
+    Fw::FileNameString stateFile("./DpTest_SetPrioStateFull/dpState.dat");
+    Fw::String dpFiles[3];
+    this->setPriorityBuild(dir, stateFile, dpFiles);
+
+    // With no free state file slot, the new priority applies in memory but cannot be recorded
+    const FwSizeType numDpSlots = this->component.m_numDpSlots;
+    for (FwSizeType slot = 0; slot < numDpSlots; slot++) {
+        this->component.m_stateFileData[slot].used = true;
+        this->component.m_stateFileData[slot].visited = true;
+    }
+    this->component.m_stateFileEntries = numDpSlots;
+    this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[2], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
+    this->component.doDispatch();
+    this->component.resetStateFileData();
+    ASSERT_EVENTS_DpPrioritySet_SIZE(1);
+    ASSERT_EVENTS_StateFileFull_SIZE(1);
+    ASSERT_EVENTS_StateFileFull(0, SET_PRIO_IDS[2], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds());
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    this->setPriorityXmitAll(12);
+    ASSERT_from_fileOut_SIZE(3);
+    ASSERT_from_fileOut(0, dpFiles[2], dpFiles[2], 0, 0);
+    this->component.shutdown();
+
+    for (FwIndexType dp = 0; dp < 3; dp++) {
+        this->delDp(SET_PRIO_IDS[dp], SET_PRIO_TIME, dir.toChar());
+    }
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+}
+
+void DpCatalogTester ::test_SetPriorityNotInit() {
+    // Before configure, the command is rejected without looking for the product
+    this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[0], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
+    this->component.doDispatch();
+    ASSERT_EVENTS_ComponentNotInitialized_SIZE(1);
+    ASSERT_EVENTS_DpNotFound_SIZE(0);
+    ASSERT_EVENTS_DpPrioritySet_SIZE(0);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 void DpCatalogTester ::test_SetPrioritySameIdByTime() {
