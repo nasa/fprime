@@ -4,8 +4,10 @@ module Drv {
 
     @ Asynchronous ByteStreamDriver interface
     interface AsyncByteStreamDriver {
-        @ Port invoked when the driver is ready to send/receive data. Clients such
-        @ as Svc::ComStub wait for it before sending again after an OTHER_ERROR
+        @ Port invoked when the driver is ready to send/receive data. Invoke it on
+        @ (re)connection, and again once sending is possible after returning
+        @ OTHER_ERROR, or SEND_RETRY past the client's retry limit: clients wait
+        @ for it before sending again
         output port ready: Drv.ByteStreamReady
 
         @ Port invoked by the driver when it receives data

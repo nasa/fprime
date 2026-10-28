@@ -100,6 +100,9 @@ is connected to the output of the `Svc::Framer` component. In this `Svc::ComStub
 `Fw::Buffer` directly to the `drvSendOut` port. It will retry when that port responds with a `RETRY` request. Otherwise, 
  the `comStatusOut` port will be invoked to indicate success or failure. Retry attempts are limited; when the limit is
 exceeded, a message is logged via `Fw::Logger` and `Fw::Success::FAILURE` is emitted on `comStatusOut`.
+On `OTHER_ERROR` or retry exhaustion the buffer is returned on `dataReturnOut` without retransmission and no further
+sends occur until `drvConnected` is invoked (see the [Ready](../../../Drv/ByteStreamDriverModel/docs/sdd.md#ready) section
+of the byte stream driver model).
 
 #### 4.3.2 drvConnected
 
