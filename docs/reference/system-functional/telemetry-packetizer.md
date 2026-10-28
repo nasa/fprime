@@ -42,14 +42,26 @@ The packet definition table supports different send levels, allowing packets to 
 
 ### Rate Logic
 
-Each telemetry group can be configured with a rate logic mode that controls when packets are sent:
+Each group (and each packet override) carries a send state, resolved packet → group → section: **INHERIT_FROM_PARENT** (follow the level above; the default), **SEND_WHEN_SECTION_ENABLED**, **SEND_ALWAYS** (ignore the section enable), or **SEND_NEVER**. Group send states are set with the CONFIGURE_GROUP_SEND command.
 
-- **SILENCED** — Packet is never sent.
+Each telemetry group can also be configured with a rate logic mode that controls when packets are sent:
+
 - **EVERY_MAX** — Packet is sent every MAX delta schedule ticks, regardless of whether channels have been updated.
 - **ON_CHANGE_MIN** — Packet is sent only when a channel value changes, at a minimum interval of MIN delta schedule ticks.
 - **ON_CHANGE_MIN_OR_EVERY_MAX** — Packet is sent on change (at MIN intervals) or at most every MAX intervals, whichever comes first.
 
 The MIN and MAX delta parameters are configured via the CONFIGURE_GROUP_RATES command. If MAX is less than MIN in the combined mode, MAX takes priority.
+
+### Per-Packet Overrides
+
+Beyond the group/section controls above, individual packets can be overridden. An override replaces only the fields it names — the send state, the rates, or both — and the packet keeps following its group for everything else, until the override is cleared:
+
+- **OVERRIDE_PACKET_SEND** — Override a single packet's send state (`SEND_ALWAYS` emits even in a disabled section; `SEND_WHEN_SECTION_ENABLED` still honours it; `SEND_NEVER` silences the packet).
+- **OVERRIDE_PACKET_RATES** — Override a single packet's rate logic and MIN/MAX thresholds.
+- **GET_PACKET_CONFIG** — Report a packet's stored override and effective configuration as the `PacketConfigReport` event.
+- **CLEAR_PACKET_OVERRIDE** — Remove an override, reverting the packet to its group.
+
+Each applied override is reported with the `PacketOverrideSet` event and each clear with `PacketOverrideCleared`. Overrides can be mirrored to, and reloaded from, an external persistence component so they survive reboot. See the [SDD](https://github.com/nasa/fprime/blob/devel/Svc/TlmPacketizer/docs/sdd.md) for the full override, priority, and persistence rules.
 
 ### Telemetry Limits
 

@@ -126,6 +126,86 @@ TEST(TestNominal, sectionConfigParameterTest) {
     tester.sectionConfigParameterTest();
 }
 
+TEST(TestNominal, PerPacketOverrideTest) {
+    TEST_CASE(100.1.15, "Per-packet OVERRIDE_PACKET_SEND(SEND_NEVER) override silences a single packet/section");
+    Svc::TlmPacketizerTester tester;
+    tester.perPacketOverrideTest();
+}
+
+TEST(TestNominal, PerPacketCommandsTest) {
+    TEST_CASE(100.1.16, "Per-packet commands update overrides + mirror out packetOverrideOut");
+    Svc::TlmPacketizerTester tester;
+    tester.perPacketCommandsTest();
+}
+
+TEST(TestNominal, ConfigInReloadTest) {
+    TEST_CASE(100.1.17, "packetOverrideIn reload applies overrides to the volatile table without echo");
+    Svc::TlmPacketizerTester tester;
+    tester.configInReloadTest();
+}
+
+TEST(TestNominal, GetPacketConfigTest) {
+    TEST_CASE(100.1.18, "GET_PACKET_CONFIG reports effective config; unknown id warns");
+    Svc::TlmPacketizerTester tester;
+    tester.getPacketConfigTest();
+}
+
+TEST(TestNominal, GroupRatesFollowThroughSendOverrideTest) {
+    TEST_CASE(100.1.19, "Send-state override leaves rates following the group (no seeding)");
+    Svc::TlmPacketizerTester tester;
+    tester.groupRatesFollowThroughSendOverrideTest();
+}
+
+TEST(TestNominal, ClearPacketOverrideTest) {
+    TEST_CASE(100.1.20, "CLEAR_PACKET_OVERRIDE reverts to group behavior and mirrors the clear");
+    Svc::TlmPacketizerTester tester;
+    tester.clearPacketOverrideTest();
+}
+
+TEST(TestNominal, MirrorAllocFailTest) {
+    TEST_CASE(100.1.21, "Mirror allocation failure answers EXECUTION_ERROR and leaves the override untouched");
+    Svc::TlmPacketizerTester tester;
+    tester.mirrorAllocFailTest();
+}
+
+TEST(TestNominal, MirrorReturnTest) {
+    TEST_CASE(100.2.6, "A packetOverrideOut mirror buffer returned on packetOverrideReturnIn is deallocated");
+    Svc::TlmPacketizerTester tester;
+    tester.mirrorReturnTest();
+}
+
+TEST(TestNominal, ConfigInClearReloadTest) {
+    TEST_CASE(100.1.22, "packetOverrideIn GROUP_DEFAULT reload reverts a packet to group behavior");
+    Svc::TlmPacketizerTester tester;
+    tester.configInClearReloadTest();
+}
+
+TEST(TestNominal, ConfigInMalformedReloadTest) {
+    TEST_CASE(
+        100.1.23,
+        "Malformed packetOverrideIn reload emits ConfigReloadFailed; buffer is returned on packetOverrideReturnOut");
+    Svc::TlmPacketizerTester tester;
+    tester.configInMalformedReloadTest();
+}
+
+TEST(TestNominal, SendStateResolutionTest) {
+    TEST_CASE(100.1.24, "SEND_NEVER packet override stays silent in a SEND_ALWAYS group");
+    Svc::TlmPacketizerTester tester;
+    tester.sendStateResolutionTest();
+}
+
+TEST(TestNominal, StaleParameterShapeTest) {
+    TEST_CASE(100.1.25, "SECTION_CONFIGS value of a different serialized shape is rejected at load");
+    Svc::TlmPacketizerTester tester;
+    tester.staleParameterShapeTest();
+}
+
+TEST(TestNominal, GroupSendCommandTest) {
+    TEST_CASE(100.1.26, "CONFIGURE_GROUP_SEND responds, events and telemeters; out-of-range group is rejected");
+    Svc::TlmPacketizerTester tester;
+    tester.groupSendCommandTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
