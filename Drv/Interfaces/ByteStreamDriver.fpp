@@ -5,9 +5,9 @@ module Drv {
     @ Synchronous ByteStreamDriver interface
     interface ByteStreamDriver {
         @ Port invoked when the driver is ready to send/receive data. Invoke it on
-        @ (re)connection, and again once sending is possible after returning
-        @ OTHER_ERROR, or SEND_RETRY past the client's retry limit: clients wait
-        @ for it before sending again
+        @ (re)connection, and again whenever sending becomes possible after the
+        @ driver has returned OTHER_ERROR or a run of SEND_RETRY: a client may have
+        @ stopped sending on either status and waits for it before sending again
         output port ready: Drv.ByteStreamReady
 
         @ Port invoked by the driver when it receives data

@@ -106,7 +106,7 @@ other F´ constructs as needed. The synchronous interface defines the following 
     guarded input port recvReturnIn: Fw.BufferSend
 ```
 
-1. **ready**: (output) drivers call this port without arguments to signal they are ready to send and receive data. Call it on (re)connection, and again after returning `OTHER_ERROR` once sending is possible: `Svc::ComStub` does not send again until then (see the [Ready](../../../Drv/ByteStreamDriverModel/docs/sdd.md#ready) section of the driver model).
+1. **ready**: (output) drivers call this port without arguments to signal they are ready to send and receive data. Call it on (re)connection, and again whenever sending becomes possible after returning `OTHER_ERROR` or a run of `SEND_RETRY`: `Svc::ComStub` does not send again until then (see the [Ready](../../../Drv/ByteStreamDriverModel/docs/sdd.md#ready) section of the driver model).
 2. **recv**: (output) drivers call this port with a `Drv.ByteStreamStatus` and an `Fw::Buffer` to provide received
    data.
 3. **send**: (input) clients call this port passing in an `Fw::Buffer` to send data; the status is returned
