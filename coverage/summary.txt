@@ -42,7 +42,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
+Fw/DataStructures/CircularIndex.hpp           38      38   100%
 Fw/DataStructures/ExternalArray.hpp           57      57   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -132,10 +132,12 @@ googletest/googletest/include/gtest/gtest-param-test.h
                                                6       6   100%
 googletest/googletest/include/gtest/gtest-printers.h
                                               84      24    28%   133-142,145,148-149,152-153,155-156,182-184,189,191,213,216-217,332-333,341-342,358-359,412,414,450,454-455,458-460,501-506,554-556,593,606,623-625,627-629,631,639-641
+googletest/googletest/include/gtest/gtest-test-part.h
+                                               1       1   100%
 googletest/googletest/include/gtest/gtest.h
-                                              43      22    51%   244,252,257-258,339,1338,1343,1362,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
+                                              43      23    53%   244,252,257-258,339,1338,1343,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
 googletest/googletest/include/gtest/internal/gtest-death-test-internal.h
-                                               4       2    50%   95-96
+                                               6       4    66%   95-96
 googletest/googletest/include/gtest/internal/gtest-internal.h
                                               47      44    93%   320,529,550
 googletest/googletest/include/gtest/internal/gtest-param-util.h
@@ -153,11 +155,11 @@ Os/Delegate.hpp                               20      20   100%
 Os/DelegateConditionVariable.cpp              22      21    95%   19
 Os/DelegateMutex.cpp                          16      16   100%
 Os/DelegateRawTime.cpp                        66      64    97%   102-103
-Os/Directory.cpp                              92      77    83%   26-28,86,90,103,109,118,122,135,141,147,150-152
+Os/Directory.cpp                              92      76    82%   26-28,86,90,103,109,118,122,133,135,141,147,150-152
 Os/Directory.hpp                               2       2   100%
 Os/File.cpp                                  211     182    86%   59-60,88-90,115,137,169-173,175-176,290-291,293-294,299-301,312-314,318-319,337-339
 Os/File.hpp                                    1       1   100%
-Os/FilePathUtils.cpp                         104      96    92%   33,36,40,44,83,168,186,192
+Os/FilePathUtils.cpp                         119     111    93%   33,36,40,83,168,185,209,215
 Os/FileSystem.cpp                            203     169    83%   133,159,163,169,184,193,201,217-219,221,235,248-253,267-272,276-280,307,311,316,320,327
 Os/FileSystem.hpp                              2       2   100%
 Os/Generic/DefaultLocklessPriorityQueue.cpp
@@ -170,7 +172,7 @@ Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 166     139    83%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,262-263
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     157    92%   21-26,28,248-249,253,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,248-249,253,318,343,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -211,7 +213,7 @@ Os/Queue.cpp                                  77      71    92%   84,121,139-142
 Os/Queue.hpp                                   4       4   100%
 Os/QueueString.hpp                            11      11   100%
 Os/RawTimeInterface.hpp                        2       2   100%
-Os/SandboxedFile.cpp                          60      54    90%   87-88,95-96,111-112
+Os/SandboxedFile.cpp                          54      48    88%   78-79,86-87,102-103
 Os/Stub/ConditionVariable.cpp                  8       0     0%   12,15,17,20-21,24,26-27
 Os/Stub/ConditionVariable.hpp                  2       2   100%
 Os/Stub/Console.cpp                            3       0     0%   11,13-14
@@ -278,7 +280,7 @@ Svc/Ccsds/CcsdsSdlsDeframer/CcsdsSdlsDeframer.cpp
                                               29      29   100%
 Svc/Ccsds/CcsdsSdlsFramer/CcsdsSdlsFramer.cpp
                                               55      55   100%
-Svc/Ccsds/CfdpManager/CfdpManager.cpp        389     378    97%   31,117-119,219-221,234-235,630-631
+Svc/Ccsds/CfdpManager/CfdpManager.cpp        396     385    97%   31,117-119,219-221,234-235,630-631
 Svc/Ccsds/CfdpManager/CfdpManager.hpp         99      99   100%
 Svc/Ccsds/CfdpManager/Channel.cpp            419     313    74%   254,313-314,317,326,343,381,411-412,476-477,484,486-487,490,493-496,509,511-512,525,527-529,532-534,545,547-549,551-553,555-557,559-561,563-564,569-570,577-579,583-592,595-597,673-676,678,700,704-706,718,760-762,773,775-776,780,784-786,788-790,792,794-795,797,808-809,811,813-814,816-817,820,828,861-862,901,907-911
 Svc/Ccsds/CfdpManager/Channel.hpp             23      20    87%   524-526
@@ -286,10 +288,10 @@ Svc/Ccsds/CfdpManager/Chunk.cpp              141     115    81%   91,98,122-125,
 Svc/Ccsds/CfdpManager/Chunk.hpp                6       5    83%   65
 Svc/Ccsds/CfdpManager/Clist.cpp               95      94    98%   204
 Svc/Ccsds/CfdpManager/Clist.hpp                5       5   100%
-Svc/Ccsds/CfdpManager/Engine.cpp             543     511    94%   145-147,154-156,160,162,232,436-437,453-454,469-470,472,498-500,502-503,505-506,510,552,592,642,1045,1059-1060,1146,1167
+Svc/Ccsds/CfdpManager/Engine.cpp             575     543    94%   146-148,155-157,161,163,233,492-493,509-510,525-526,528,554-556,558-559,561-562,566,608,654,704,1107,1121-1122,1208,1229
 Svc/Ccsds/CfdpManager/Timer.cpp               19      19   100%
 Svc/Ccsds/CfdpManager/Transaction.hpp          5       4    80%   232
-Svc/Ccsds/CfdpManager/TransactionRx.cpp      544     487    89%   108,211,259,262-263,282,285-286,310-312,314,332,334-336,338,340,375,401,435,497,499,578,580,679,681-682,705-707,711-712,715,762,860-861,873-877,883,885,917-918,995,1021,1039,1041-1042,1073,1075,1120-1123
+Svc/Ccsds/CfdpManager/TransactionRx.cpp      546     489    89%   108,211,259,262-263,282,285-286,310-312,314,332,334-336,338,340,375,401,435,497,499,578,580,679,681-682,705-707,711-712,715,762,860-861,873-877,883,885,917-918,995,1021,1039,1041-1042,1073,1075,1127-1130
 Svc/Ccsds/CfdpManager/TransactionTx.cpp      356     325    91%   76,79-80,167,177,216-218,224-226,251,289,359,368,377,429,432-433,458-460,462-463,467,476,493-496,715
 Svc/Ccsds/CfdpManager/Types/AckPdu.cpp        72      63    87%   56,63,66,89,96,109,122,137,153
 Svc/Ccsds/CfdpManager/Types/AckPdu.hpp        10      10   100%
@@ -336,8 +338,8 @@ Svc/Ccsds/Utils/SdlsAuthMask.hpp              12      12   100%
 Svc/ChronoTime/ChronoTime.cpp                  8       8   100%
 Svc/CmdDispatcher/CommandDispatcherImpl.cpp
                                              143     140    97%   222,224-225
-Svc/CmdSequencer/CmdSequencerImpl.cpp        312     277    88%   59,80,88-90,117-119,155-157,189-191,209-214,216,218,297-298,372-374,383-385,390-392,463-464
-Svc/CmdSequencer/CmdSequencerImpl.hpp         13      13   100%
+Svc/CmdSequencer/CmdSequencerImpl.cpp        323     291    90%   59,80,88-90,117-119,189-191,215-220,222,224,303-304,378-380,389-391,405-407,478-479
+Svc/CmdSequencer/CmdSequencerImpl.hpp         15      15   100%
 Svc/CmdSequencer/Events.cpp                   60      60   100%
 Svc/CmdSequencer/formats/AMPCSSequence.cpp
                                              220     207    94%   89-91,93-94,171-172,182-183,220-221,311,321
@@ -351,7 +353,7 @@ Svc/ComQueue/ComQueue.cpp                    273     268    98%   266-268,538-53
 Svc/ComRetry/ComRetry.cpp                     50      50   100%
 Svc/ComSplitter/ComSplitter.cpp               12      12   100%
 Svc/ComStub/ComStub.cpp                       70      69    98%   34
-Svc/DpCatalog/DpCatalog.cpp                  501     415    82%   62,77,82-85,132-133,145-147,159,161-162,178-180,257-259,302-304,314,319-320,325-326,347-349,377-378,385-386,394,397-398,414,421,423,428,467,485,504-505,515-516,524-526,531-533,555-556,562-563,571,573,601-602,608,610,619-620,720,724-725,731,734-735,753,767-768,836,841-842,847-848,861-862,925-926,931-932
+Svc/DpCatalog/DpCatalog.cpp                  521     442    84%   62,77,82-85,132-133,145-147,159,161-162,178-180,257-259,302-304,314,319-320,325-326,347-349,377-378,385-386,394,397-398,414,421,423,428,467,485,504-505,515-516,524-526,531-533,555-556,562-563,571,573,616-617,721,725-726,732,735-736,773-774,842,847-848,867-868,962-963,968-969
 Svc/DpCatalog/DpCatalog.hpp                    1       1   100%
 Svc/DpCompressProc/DpCompressProc.cpp        173     153    88%   54,67-68,79-81,88,95,207-209,213,317-319,355-357,399-400
 Svc/DpManager/DpManager.cpp                   39      38    97%   91
@@ -379,7 +381,7 @@ Svc/FileWorker/FileWorker.cpp                342     306    89%   85-88,191-194,
 Svc/FprimeDeframer/FprimeDeframer.cpp         54      54   100%
 Svc/FprimeFramer/FprimeFramer.cpp             41      41   100%
 Svc/FprimeRouter/FprimeRouter.cpp             57      55    96%   48,68
-Svc/FpySequencer/FpySequencer.cpp            250     201    80%   267-269,339-342,442,444-450,453,455-457,459-466,469,471-477,480-487,497-500,513-514
+Svc/FpySequencer/FpySequencer.cpp            266     217    81%   269-271,352-355,466,468-474,477,479-481,483-490,493,495-501,504-511,521-524,537-538
 Svc/FpySequencer/FpySequencer.hpp              2       2   100%
 Svc/FpySequencer/FpySequencerDirectives.cpp
                                             1216    1057    86%   29-30,51,55,59,422-425,434-437,442-443,464-465,522-523,546-547,613,1231-1233,1243-1257,1261-1266,1273-1371,1381-1382,1543-1544,1549,1673-1674,1766-1767,1802-1803,1864-1865,1867
@@ -398,9 +400,9 @@ Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.cpp
 Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.cpp
                                               55      49    89%   37,45,68,91,98,128
 Svc/GenericHub/GenericHub.cpp                179     179   100%
-Svc/Health/HealthComponentImpl.cpp           112     112   100%
+Svc/Health/HealthComponentImpl.cpp           120     120   100%
 Svc/LinuxTimer/LinuxTimerCommon.cpp            7       7   100%
-Svc/LinuxTimer/LinuxTimerFd.cpp               38      30    78%   30-31,43,51-53,71-72
+Svc/LinuxTimer/LinuxTimerFd.cpp               38      30    78%   31-32,45,53-55,73-74
 Svc/OsTime/OsTime.cpp                         50      48    96%   74,80
 Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImplCommon.cpp
                                               56      32    57%   23-25,28-30,32,50-51,66-80
@@ -411,7 +413,7 @@ Svc/PassThroughRouter/PassThroughRouter.cpp
 Svc/PolyDb/PolyDb.cpp                         17      17   100%
 Svc/PosixTime/PosixTime.cpp                   13      11    84%   28-29
 Svc/PrmDb/PrmDbImpl.cpp                      330     305    92%   96-98,122,124-125,226-228,234-236,249-251,257-259,427-428,552-553,560,588-589
-Svc/RateGroupDriver/RateGroupDriver.cpp       23      23   100%
+Svc/RateGroupDriver/RateGroupDriver.cpp       22      22   100%
 Svc/RateGroupDriver/RateGroupDriver.hpp        1       1   100%
 Svc/SeqDispatcher/SeqDispatcher.cpp          106      82    77%   56,61-63,65,69-71,78,81-84,86,104,106-108,133-134,136-138,141
 Svc/StaticMemory/StaticMemoryComponentImpl.cpp
@@ -419,7 +421,7 @@ Svc/StaticMemory/StaticMemoryComponentImpl.cpp
 Svc/SystemResources/SystemResources.cpp       79      76    96%   37,107-108
 Svc/TimeConverter/TimeConverter.cpp          114     113    99%   208
 Svc/TlmChan/TlmChan.cpp                      182     145    79%   100,130,132,134,137-141,143,146,150-151,156,159-160,198-200,206-209,211-213,221-223,268-269,290,339-340,356,375-376
-Svc/TlmPacketizer/TlmPacketizer.cpp          299     276    92%   153,286,288-289,327,339,411,447-448,482-483,498-499,514-515,532-533,596-597,600,611-612,614
+Svc/TlmPacketizer/TlmPacketizer.cpp          472     448    94%   165,296,298-299,339,424,483-484,517-518,642-644,698-700,770,790,860-861,864,875-876,878
 Svc/Types/EventSeverityFilter/EventSeverityFilter.cpp
                                               46      45    97%   41
 Svc/Version/Version.cpp                      172     166    96%   124-126,256,258-259
@@ -433,6 +435,7 @@ Svc/WasmSequencer/WasmSequencerHost.cpp      253     253   100%
 Svc/WasmSequencer/WasmSequencerInterpreter.cpp
                                              419     409    97%   57,82-84,194,196-197,583,602-603
 TestUtils/OnChangeChannel.hpp                  6       6   100%
+Utils/Algorithms.cpp                          15      15   100%
 Utils/CRCChecker.cpp                         119     106    89%   47,56-57,68-69,90,103-104,173,182-183,194-195
 Utils/Hash/Crc32/Crc32.cpp                    18      18   100%
 Utils/Hash/Crc32/HashImpl.cpp                 33      33   100%
@@ -444,5 +447,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      26001   22192    85%
+TOTAL                                      26298   22498    85%
 ------------------------------------------------------------------------------
