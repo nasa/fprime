@@ -651,12 +651,19 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
     }
 
     if (txn->m_state == TxnState::TXN_STATE_INIT) {
-        // The PDU could not start a transaction, so nothing was transferred. Release the
-        // slot now rather than routing through finishTransaction(), which would report a
-        // completed transfer and park the slot in HOLD until the inactivity timer expires.
-        // Holding slots for PDUs that never start a transaction lets a stream of stray
-        // PDUs exhaust the pool shared with commanded transmit transactions.
-        this->abandonInitTransaction(txn);
+        if (TxnStatusIsError(txn->m_history->txn_stat)) {
+            // A transfer was identified and refused (e.g. destination path rejected). Report
+            // it as a failed reception and park the slot in HOLD so the inactivity timer
+            // recycles it, as for any other failed transaction.
+            this->finishTransaction(txn, false);
+        } else {
+            // The PDU could not start a transaction, so nothing was transferred. Release the
+            // slot now rather than routing through finishTransaction(), which would report a
+            // completed transfer and park the slot in HOLD until the inactivity timer expires.
+            // Holding slots for PDUs that never start a transaction lets a stream of stray
+            // PDUs exhaust the pool shared with commanded transmit transactions.
+            this->abandonInitTransaction(txn);
+        }
     }
     return false;  // No re-dispatch needed
 }
