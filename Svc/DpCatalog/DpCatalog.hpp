@@ -171,7 +171,7 @@ class DpCatalog final : public DpCatalogComponentBase {
         /// @return true if the entry has that identity
         bool hasIdentity(FwDpIdType id, U32 tSec, U32 tSub) const;
 
-        /// @brief insert an entry into the sorted list; if it exists, update the metadata
+        /// @brief compare two entries by transmit priority, then time tag, then id (the catalog sort order)
         /// @param left an entry to compare
         /// @param right other entry to compare
         /// @return -1 if left is higher priority, 0 if equal, and 1 if right is higher priority

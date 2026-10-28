@@ -1856,19 +1856,9 @@ void DpCatalogTester ::test_SetPriorityNotFound() {
     ASSERT_EVENTS_DpPrioritySet_SIZE(0);
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), 3);
 
-    // A cleared catalog holds nothing to reprioritize
-    this->sendCmd_CLEAR_CATALOG(0, 13);
-    this->component.doDispatch();
-    this->sendCmd_SET_DP_PRIORITY(0, 14, SET_PRIO_IDS[0], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
-    this->component.doDispatch();
-    ASSERT_CMD_RESPONSE_SIZE(5);
-    ASSERT_CMD_RESPONSE(4, DpCatalog::OPCODE_SET_DP_PRIORITY, 14, Fw::CmdResponse::EXECUTION_ERROR);
-    ASSERT_EVENTS_DpNotFound_SIZE(3);
-
-    // The original order is unchanged
-    this->sendCmd_BUILD_CATALOG(0, 15);
-    this->component.doDispatch();
-    this->sendCmd_START_XMIT_CATALOG(0, 16, Fw::Wait::NO_WAIT, false);
+    // The rejected commands left the transmit order unchanged
+    this->clearHistory();
+    this->sendCmd_START_XMIT_CATALOG(0, 13, Fw::Wait::NO_WAIT, false);
     while (this->component.m_queue.getMessagesAvailable() > 0) {
         this->component.doDispatch();
     }
@@ -1876,6 +1866,29 @@ void DpCatalogTester ::test_SetPriorityNotFound() {
     ASSERT_from_fileOut(0, dpFiles[0], dpFiles[0], 0, 0);
     ASSERT_from_fileOut(1, dpFiles[1], dpFiles[1], 0, 0);
     ASSERT_from_fileOut(2, dpFiles[2], dpFiles[2], 0, 0);
+
+    // A transmitted product has left the catalog
+    this->clearHistory();
+    this->sendCmd_SET_DP_PRIORITY(0, 14, SET_PRIO_IDS[0], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_SET_DP_PRIORITY, 14, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_DpNotFound_SIZE(1);
+    ASSERT_EVENTS_DpNotFound(0, SET_PRIO_IDS[0], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds());
+
+    // A cleared catalog holds nothing to reprioritize
+    this->sendCmd_BUILD_CATALOG(0, 15);
+    this->component.doDispatch();
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 3);
+    this->sendCmd_CLEAR_CATALOG(0, 16);
+    this->component.doDispatch();
+    this->clearHistory();
+    this->sendCmd_SET_DP_PRIORITY(0, 17, SET_PRIO_IDS[1], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_SET_DP_PRIORITY, 17, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_DpNotFound_SIZE(1);
+    ASSERT_EVENTS_DpPrioritySet_SIZE(0);
 
     for (FwIndexType dp = 0; dp < 3; dp++) {
         this->delDp(SET_PRIO_IDS[dp], SET_PRIO_TIME, dir.toChar());
