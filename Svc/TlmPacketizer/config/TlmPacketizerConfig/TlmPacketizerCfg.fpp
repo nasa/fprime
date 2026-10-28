@@ -2,7 +2,9 @@
 # TlmPacketizerCfg.fpp
 # Constants for configuring TlmPacketizer Send Logic Levels
 # ======================================================================
-@ The type of an offset within a telemetry packet buffer
+@ The type of an offset within a telemetry packet buffer.
+@ Deliberately defined here (global scope) rather than in FpConfig.fpp so that
+@ projects which override FpConfig.fpp continue to build without adding it.
 type FwTlmPacketizeOffsetType = U16
 
 module Svc {

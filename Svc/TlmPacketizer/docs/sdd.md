@@ -81,7 +81,7 @@ The `Svc::TlmPacketizer` component has an input port `TlmRecv` that receives cha
 
 A packet may be specified with no channels (FPP autocodes such a packet with an empty channel list). It is accepted by `setPacketList`, is never marked updated by channel traffic, and is emitted as a header-only packet (descriptor, packet ID, time tag) when explicitly requested with `SEND_PKT`.
 
-When a call to the `Run()` interface is called, each packet is evaluated for output, one at a time. The packet is locked, determined to contain update data, and then unlocked. For each section the packet's effective configuration is assembled from its group's configuration with only the fields selected by its per-packet override copied in, and its send state is resolved packet → group → section enable (`SEND_ALWAYS` ignores the section enable, `SEND_NEVER` silences, `INHERIT_FROM_PARENT` follows the section; see Section 3.3.4). If a packet meets the criteria for output in any section/group, the packet is locked again, copied, unlocked, and then sent on each section requiring output. The actual output port is determined by a configurable map of section/group to output port index. 
+When a call to the `Run()` interface is called, each packet is evaluated for output, one at a time. Each packet buffer is protected by its own mutex (so an update to one packet does not contend with the fill, read-back, or send of another); the packet is locked, determined to contain update data, and then unlocked. For each section the packet's effective configuration is assembled from its group's configuration with only the fields selected by its per-packet override copied in, and its send state is resolved packet → group → section enable (`SEND_ALWAYS` ignores the section enable, `SEND_NEVER` silences, `INHERIT_FROM_PARENT` follows the section; see Section 3.3.4). If a packet meets the criteria for output in any section/group, the packet is locked again, copied, unlocked, and then sent on each section requiring output. The actual output port is determined by a configurable map of section/group to output port index. 
 
 Each telemetry group, depending on section and group configurations, are sent out on the `pktSend` port array. Since each group is evaluated for each section, a packet with group 1 (and a configuration of 3 sections), will be sent up to 3 times based on the section/group configuration. Each of these sends (section/group) will run through a configurable map to determine which output port to use. Should the output port index be repeated for different section/group pairs, the packet will be sent to that port multiple times.
 
@@ -165,6 +165,7 @@ The `Svc::TlmPacketizer` component has the following configuration parameters:
 - `TELEMETRY_SEND_PORTS` (TlmPacketizerCfg.fpp): Number of output ports for telemetry packets
 - `TELEMETRY_SEND_PORT_MAPPING` (TlmPacketizerCfg.fpp): A mapping of each section/group pair to the output port index used.
 - `TELEMETRY_SECTION_DEFAULTS` (TlmPacketizerCfg.fpp): A mapping of each section/group pair to the default rate logic and parameters for that section/group pair.
+- `FwTlmPacketizeOffsetType` (TlmPacketizerCfg.fpp): Integer type used to store a channel's byte offset within a packet buffer (default `U16`). It must be able to represent `FW_COM_BUFFER_MAX_SIZE` (enforced by a `static_assert` in `TlmPacketizer.cpp`); a project with a larger com buffer widens it here.
 
 ### 4.1 Sizing
 
@@ -175,6 +176,8 @@ The per-packet override table adds a dense static block of `TelemetrySection::NU
 `MAX_PACKETIZER_PACKETS` determines the size of storage for the telemetry packets registered by components. It should be set to at least the number of packets defined in the system, but may be larger to allow for a project's packet growth over time without incurring additional memory usage.
 
 `MAX_PACKETIZER_CHANNELS` determines the size of storage for the telemetry channels registered by components. It should be set to at least the number of non-omitted channels defined in the system, but may be larger to allow for a project's channel growth over time without incurring additional memory usage.
+
+Each channel slot holds a `MAX_PACKETIZER_PACKETS`-entry packet-membership list of (`FwChanIdType` packet index, `FwTlmPacketizeOffsetType` offset) pairs, so the channel table scales as `MAX_PACKETIZER_CHANNELS × MAX_PACKETIZER_PACKETS × sizeof(PacketRef)` (about 65 kB at the default 200 channels × 50 packets). Each of the `MAX_PACKETIZER_PACKETS` packet buffers also owns an `Os::Mutex`; platforms with a bounded mutex pool must provision at least that many.
 
 `TLMPACKETIZER_MAX_MISSING_TLM_CHECK` determines the size of the data structure used to track and event on missing telemetry channels. Most projects should set this to a low number since missing channels are a rarity with FPP defined telemetry channels.
 

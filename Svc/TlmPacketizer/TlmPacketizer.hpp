@@ -210,7 +210,10 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         bool updated;          //!< if packet had any updates during last cycle
         Os::Mutex lock;        //!< used to lock access to this particular packet buffer
 
-        // Re-Implement the copy the sans lock version got for free
+        BufferEntry() = default;
+        //! Not copy-constructible: the mutex guards this slot and is never copied
+        BufferEntry(const BufferEntry& other) = delete;
+        //! Copies the packet data only (keep in sync with the fields above); the mutex is intentionally not copied
         BufferEntry& operator=(const BufferEntry& other) {
             this->buffer = other.buffer;
             this->latestTime = other.latestTime;

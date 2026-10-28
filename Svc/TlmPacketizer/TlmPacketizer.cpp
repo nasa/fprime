@@ -22,7 +22,7 @@ const TlmPacketizer_TelemetrySendPortMap TlmPacketizer::TELEMETRY_SEND_PORT_MAP 
 static_assert(Svc::TelemetrySection::NUM_SECTIONS >= 1, "At least one telemetry section is required");
 
 static_assert(FW_COM_BUFFER_MAX_SIZE <= std::numeric_limits<FwTlmPacketizeOffsetType>::max(),
-              "FwTlmPacktizeOffsetType must span an entire ComBuffer");
+              "FwTlmPacketizeOffsetType must span an entire ComBuffer");
 
 static_assert(static_cast<U8>(Fw::FW_DESERIALIZE_BUFFER_EMPTY) == Fw::DeserialStatus::BUFFER_EMPTY and
                   static_cast<U8>(Fw::FW_DESERIALIZE_FORMAT_ERROR) == Fw::DeserialStatus::FORMAT_ERROR and
@@ -216,7 +216,8 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
         U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entry.packets[i].offset];
 
         (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getSize()));
-        // set under the lock, after the copy, so TlmGet cannot see a value-less VALID entry
+        // set under the lock, after the copy, so TlmGet cannot see a value-less VALID entry.
+        // Relies on TlmGet reading packets[0], which this loop fills first.
         entry.hasValue = true;
     }
 }
@@ -268,7 +269,13 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
 
     // A non-ignored, tracked channel must be in at least one packet; read the first
     // one (lowest packet index, since memberships are appended in packet order).
-    FW_ASSERT(entry.numPackets > 0, static_cast<FwAssertArgType>(id));
+    if (entry.numPackets == 0) {
+        // coding error: setPacketList always appends at least one membership for a non-ignored channel
+        FW_ASSERT(false, static_cast<FwAssertArgType>(id));
+        // TPP (tim paranoia principle)
+        val.resetSer();
+        return Fw::TlmValid::INVALID;
+    }
     const PacketRef& ref = entry.packets[0];
 
     Os::ScopeLock lock(this->m_fillBuffers[ref.packet].lock);
@@ -289,9 +296,8 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
         // Local flags to track which sections require a packet dispatch
         bool sectionNeedsSend[TelemetrySection::NUM_SECTIONS] = {false};
         bool anySectionNeedsSend = false;
-        // Initialized w/in the ScopeLock
-        bool isNewData;
-        FwChanIdType entryGroup;
+        bool isNewData = false;
+        FwChanIdType entryGroup = 0;
 
         // Lock only to capture the update status and reset the fill buffer flag.
         {
@@ -364,28 +370,29 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
             }
         }
 
-        // Initialized w/in the ScopeLock
-        BufferEntry sendBuffer;
-
         // Only perform the buffer copy if at least one section needs to send.
         if (anySectionNeedsSend) {
+            // Snapshot only the packet data under the lock; a BufferEntry copy would construct a mutex per tick
+            Fw::ComBuffer sendBuffer;
+            Fw::Time sendTime;
             {
                 Os::ScopeLock lock(this->m_fillBuffers[pkt].lock);
-                sendBuffer = this->m_fillBuffers[pkt];
+                sendBuffer = this->m_fillBuffers[pkt].buffer;
+                sendTime = this->m_fillBuffers[pkt].latestTime;
             }
 
             // serialize time into time offset in packet
             Fw::ExternalSerializeBuffer buff(
-                &sendBuffer.buffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
+                &sendBuffer.getBuffAddr()[sizeof(FwPacketDescriptorType) + sizeof(FwTlmPacketizeIdType)],
                 Fw::Time::SERIALIZED_SIZE);
-            (void)buff.serializeFrom(sendBuffer.latestTime);
+            (void)buff.serializeFrom(sendTime);
 
             for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
                 if (sectionNeedsSend[section]) {
                     PktSendCounters& pktEntryFlags = this->m_packetFlags[section][pkt];
                     FwIndexType outIndex = this->sectionGroupToPort(section, entryGroup);
 
-                    this->PktSend_out(outIndex, sendBuffer.buffer, pktEntryFlags.prevSentCounter);
+                    this->PktSend_out(outIndex, sendBuffer, pktEntryFlags.prevSentCounter);
 
                     pktEntryFlags.prevSentCounter = 0;
                     pktEntryFlags.updateFlag = UpdateFlag::PAST;
