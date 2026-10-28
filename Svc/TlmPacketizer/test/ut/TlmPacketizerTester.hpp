@@ -104,6 +104,9 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Duplicate channel ID across packets with conflicting size asserts
     void duplicateChannelIdConflictingSizeTest(void);
 
+    //! One channel present in MAX_PACKETIZER_PACKETS packets fills every packet and reads back
+    void channelInMaxPacketsTest(void);
+
     //! Oversized channel value is rejected with a warning event
     void oversizedChannelTest(void);
 

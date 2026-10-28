@@ -74,6 +74,12 @@ TEST(TestNominal, DuplicateChannelIdMatchingSizeTest) {
     tester.duplicateChannelIdMatchingSizeTest();
 }
 
+TEST(TestNominal, ChannelInMaxPacketsTest) {
+    TEST_CASE(100.1.79, "Channel present in MAX_PACKETIZER_PACKETS packets fills every packet and reads back");
+    Svc::TlmPacketizerTester tester;
+    tester.channelInMaxPacketsTest();
+}
+
 TEST(TestOffNominal, DuplicateChannelIdConflictingSizeTest) {
     TEST_CASE(100.2.3, "Duplicate channel ID across packets with conflicting size");
     Svc::TlmPacketizerTester tester;

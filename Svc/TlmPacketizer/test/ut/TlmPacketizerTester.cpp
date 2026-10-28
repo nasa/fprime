@@ -1003,6 +1003,23 @@ void TlmPacketizerTester ::getChannelValueTest() {
     ASSERT_EQ(val.getSize(), 4);
     ASSERT_EQ(time, timeIn);
     ASSERT_EQ(valid, Fw::TlmValid::VALID);
+    I32 readBack = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, val.deserializeTo(readBack));
+    ASSERT_EQ(readBack, 789);
+
+    // channel 250 is only in packet 8 and is not its first channel: the read must come from that packet/offset
+    Fw::Time timeIn2(321, 654);
+    Fw::TlmBuffer valIn2;
+    valIn2.serializeFrom(static_cast<U16>(1010));
+    this->invoke_to_TlmRecv(0, 250, timeIn2, valIn2);
+
+    valid = this->invoke_to_TlmGet(0, 250, time, val);
+    ASSERT_EQ(valid, Fw::TlmValid::VALID);
+    ASSERT_EQ(val.getSize(), 2);
+    ASSERT_EQ(time, timeIn2);
+    U16 readBack2 = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, val.deserializeTo(readBack2));
+    ASSERT_EQ(readBack2, 1010);
 
     // grab an ignored chan
     valid = this->invoke_to_TlmGet(0, 25, time, val);
@@ -1885,12 +1902,71 @@ void TlmPacketizerTester::duplicateChannelIdMatchingSizeTest() {
     // Push the shared channel and confirm it lands in both packets without overflow.
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(7)));
+    this->invoke_to_TlmRecv(0, 200, ts, buff);
 
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 
     // Both packets carry channel 10, so both are emitted once per section.
     ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
+
+    // The shared channel must land at its own offset in the second packet, not just the first
+    Fw::ComBuffer comBuff;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(7)));
+    ASSERT_from_PktSend(1 * Svc::TelemetrySection::NUM_SECTIONS, comBuff,
+                        static_cast<U32>(std::numeric_limits<U32>::max()));
+}
+
+void TlmPacketizerTester::channelInMaxPacketsTest() {
+    this->stockConfiguration();
+    // One channel that is a member of every one of MAX_PACKETIZER_PACKETS packets fills its membership list exactly
+    TlmPacketizerChannelEntry sharedList[] = {{10, 4}};
+    TlmPacketizerPacket packets[MAX_PACKETIZER_PACKETS];
+    TlmPacketizerPacketList maxPacketList;
+    for (FwChanIdType i = 0; i < MAX_PACKETIZER_PACKETS; i++) {
+        packets[i] = {sharedList, static_cast<FwTlmPacketizeIdType>(100 + i), 1, FW_NUM_ARRAY_ELEMENTS(sharedList)};
+        maxPacketList.list[i] = &packets[i];
+    }
+    maxPacketList.numEntries = MAX_PACKETIZER_PACKETS;
+    this->component.setPacketList(maxPacketList, IGNORE_OMIT_LIST, 1);
+
+    Fw::Time ts(11, 22);
+    Fw::TlmBuffer buff;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
+    this->invoke_to_TlmRecv(0, 10, ts, buff);
+
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+
+    // Every packet was updated by the single channel write and is emitted once per section
+    ASSERT_from_PktSend_SIZE(MAX_PACKETIZER_PACKETS * Svc::TelemetrySection::NUM_SECTIONS);
+    for (FwChanIdType i = 0; i < MAX_PACKETIZER_PACKETS; i++) {
+        Fw::ComBuffer comBuff;
+        ASSERT_EQ(
+            Fw::FW_SERIALIZE_OK,
+            comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(100 + i)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+        ASSERT_from_PktSend(i * Svc::TelemetrySection::NUM_SECTIONS, comBuff,
+                            static_cast<U32>(std::numeric_limits<U32>::max()));
+    }
+
+    // TlmGet reads the value back from the first packet containing the channel
+    Fw::Time time;
+    Fw::TlmBuffer val;
+    ASSERT_EQ(Fw::TlmValid::VALID, this->invoke_to_TlmGet(0, 10, time, val));
+    ASSERT_EQ(time, ts);
+    U32 readBack = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, val.deserializeTo(readBack));
+    ASSERT_EQ(readBack, 20U);
 }
 
 void TlmPacketizerTester::duplicateChannelIdConflictingSizeTest() {
