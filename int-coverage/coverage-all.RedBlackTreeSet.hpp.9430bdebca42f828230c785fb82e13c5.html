@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-27 22:30:42</td>
+      <td>2026-10-28 22:10:56</td>
     </tr>
   </table>
 </div>
@@ -40,15 +40,15 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>3</td>
+      <td>12</td>
       <td>13</td>
-      <td class="coverage-low">23.1%</td>
+      <td class="coverage-high">92.3%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
-      <td>3</td>
+      <td>9</td>
       <td>10</td>
-      <td class="coverage-low">30.0%</td>
+      <td class="coverage-high">90.0%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
@@ -71,14 +71,14 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l55">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::RedBlackTreeSet() (line 55)</a></td><td>called 1 time</td><td>42.0%</td></tr>
-    <tr><td><a href="#l76">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::begin() const (line 76)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l79">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::clear() (line 79)</a></td><td>called 1 time</td><td>100.0%</td></tr>
-    <tr><td><a href="#l83">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::end() const (line 83)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l87">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::find(Svc::DpCatalog::DpStateEntry const&amp;) const (line 87)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l76">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::begin() const (line 76)</a></td><td>called 9 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l79">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::clear() (line 79)</a></td><td>called 4 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l83">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::end() const (line 83)</a></td><td>called 10 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l87">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::find(Svc::DpCatalog::DpStateEntry const&amp;) const (line 87)</a></td><td>called 5 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l94">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::getCapacity() const (line 94)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l98">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::getSize() const (line 98)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l102">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::insert(Svc::DpCatalog::DpStateEntry const&amp;) (line 102)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l109">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::remove(Svc::DpCatalog::DpStateEntry const&amp;) (line 109)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l98">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::getSize() const (line 98)</a></td><td>called 14 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l102">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::insert(Svc::DpCatalog::DpStateEntry const&amp;) (line 102)</a></td><td>called 5 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l109">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::remove(Svc::DpCatalog::DpStateEntry const&amp;) (line 109)</a></td><td>called 5 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l61">Fw::RedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry, 127ul&gt;::~RedBlackTreeSet() (line 61)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -648,8 +648,8 @@
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">ConstIterator</span><span class="w"> </span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">ConstIterator</span><span class="w"> </span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
@@ -669,7 +669,7 @@
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">clear</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -697,8 +697,8 @@
       <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">ConstIterator</span><span class="w"> </span><span class="n">end</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">10</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">ConstIterator</span><span class="w"> </span><span class="n">end</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l84" href="#l84">84</a></td>
@@ -725,8 +725,8 @@
       <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element</span><span class="w">  </span><span class="c1">//!&lt; The element</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element</span><span class="w">  </span><span class="c1">//!&lt; The element</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l88" href="#l88">88</a></td>
@@ -739,8 +739,8 @@
       <td class="lineno"><a id="l89" href="#l89">89</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">element</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">element</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
@@ -802,8 +802,8 @@
       <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">getSize</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">14</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">getSize</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l99" href="#l99">99</a></td>
@@ -830,8 +830,8 @@
       <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="n">insert</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element</span><span class="w">  </span><span class="c1">//!&lt; The element</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="n">insert</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element</span><span class="w">  </span><span class="c1">//!&lt; The element</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l103" href="#l103">103</a></td>
@@ -844,8 +844,8 @@
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">element</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">element</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l105" href="#l105">105</a></td>
@@ -879,8 +879,8 @@
       <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="n">remove</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element</span><span class="w">  </span><span class="c1">//!&lt; The element</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="n">remove</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element</span><span class="w">  </span><span class="c1">//!&lt; The element</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l110" href="#l110">110</a></td>
@@ -893,8 +893,8 @@
       <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">element</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extSet</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">element</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l112" href="#l112">112</a></td>

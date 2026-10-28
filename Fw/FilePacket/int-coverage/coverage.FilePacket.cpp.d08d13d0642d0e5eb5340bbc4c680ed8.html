@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-27 22:31:17</td>
+      <td>2026-10-28 22:11:30</td>
     </tr>
   </table>
 </div>
@@ -40,21 +40,21 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>31</td>
+      <td>59</td>
       <td>88</td>
-      <td class="coverage-low">35.2%</td>
+      <td class="coverage-low">67.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
-      <td>6</td>
+      <td>11</td>
       <td>13</td>
-      <td class="coverage-low">46.2%</td>
+      <td class="coverage-medium">84.6%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>9</td>
+      <td>15</td>
       <td>24</td>
-      <td class="coverage-low">37.5%</td>
+      <td class="coverage-low">62.5%</td>
     </tr>
   </table>
 </div>
@@ -75,14 +75,14 @@
     <tr><td><a href="#l43">Fw::FilePacket::asEndPacket() const (line 43)</a></td><td>called 2 times</td><td>75.0%</td></tr>
     <tr><td><a href="#l29">Fw::FilePacket::asHeader() const (line 29)</a></td><td>called 6 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l33">Fw::FilePacket::asStartPacket() const (line 33)</a></td><td>called 2 times</td><td>75.0%</td></tr>
-    <tr><td><a href="#l73">Fw::FilePacket::bufferSize() const (line 73)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l73">Fw::FilePacket::bufferSize() const (line 73)</a></td><td>called 30 times</td><td>62.0%</td></tr>
     <tr><td><a href="#l22">Fw::FilePacket::fromBuffer(Fw::Buffer const&amp;) (line 22)</a></td><td>called 6 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l68">Fw::FilePacket::fromCancelPacket(Fw::FilePacket::CancelPacket const&amp;) (line 68)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l58">Fw::FilePacket::fromDataPacket(Fw::FilePacket::DataPacket const&amp;) (line 58)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l63">Fw::FilePacket::fromEndPacket(Fw::FilePacket::EndPacket const&amp;) (line 63)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l58">Fw::FilePacket::fromDataPacket(Fw::FilePacket::DataPacket const&amp;) (line 58)</a></td><td>called 20 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l63">Fw::FilePacket::fromEndPacket(Fw::FilePacket::EndPacket const&amp;) (line 63)</a></td><td>called 5 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l111">Fw::FilePacket::fromSerialBuffer(Fw::SerialBuffer&amp;) (line 111)</a></td><td>called 6 times</td><td>69.0%</td></tr>
-    <tr><td><a href="#l53">Fw::FilePacket::fromStartPacket(Fw::FilePacket::StartPacket const&amp;) (line 53)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l91">Fw::FilePacket::toBuffer(Fw::Buffer&amp;) const (line 91)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l53">Fw::FilePacket::fromStartPacket(Fw::FilePacket::StartPacket const&amp;) (line 53)</a></td><td>called 5 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l91">Fw::FilePacket::toBuffer(Fw::Buffer&amp;) const (line 91)</a></td><td>called 30 times</td><td>67.0%</td></tr>
   </table>
 </details>
 
@@ -484,29 +484,29 @@
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">fromStartPacket</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StartPacket</span><span class="o">&amp;</span><span class="w"> </span><span class="n">startPacket</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">fromStartPacket</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StartPacket</span><span class="o">&amp;</span><span class="w"> </span><span class="n">startPacket</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_startPacket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">startPacket</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_startPacket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">startPacket</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">T_START</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">T_START</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
@@ -519,29 +519,29 @@
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">fromDataPacket</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DataPacket</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dataPacket</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">20</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">fromDataPacket</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DataPacket</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dataPacket</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dataPacket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dataPacket</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">20</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dataPacket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dataPacket</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l60" href="#l60">60</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">T_DATA</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">20</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">T_DATA</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="linecount coveredLine">20</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
@@ -554,29 +554,29 @@
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">fromEndPacket</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">EndPacket</span><span class="o">&amp;</span><span class="w"> </span><span class="n">endPacket</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">fromEndPacket</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">EndPacket</span><span class="o">&amp;</span><span class="w"> </span><span class="n">endPacket</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_endPacket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">endPacket</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_endPacket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">endPacket</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">T_END</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">T_END</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
@@ -624,57 +624,68 @@
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">U32</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">bufferSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">30</td>
+      <td class="src coveredLine"><span class="n">U32</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">bufferSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">3/6</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 0 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 20 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount partialCoveredLine">30</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_START</span><span class="p">:</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_START</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_startPacket</span><span class="p">.</span><span class="n">bufferSize</span><span class="p">();</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_startPacket</span><span class="p">.</span><span class="n">bufferSize</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_DATA</span><span class="p">:</span></td>
+      <td class="linecount coveredLine">20</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_DATA</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dataPacket</span><span class="p">.</span><span class="n">bufferSize</span><span class="p">();</span></td>
+      <td class="linecount coveredLine">20</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dataPacket</span><span class="p">.</span><span class="n">bufferSize</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_END</span><span class="p">:</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_END</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_endPacket</span><span class="p">.</span><span class="n">bufferSize</span><span class="p">();</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_endPacket</span><span class="p">.</span><span class="n">bufferSize</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l81" href="#l81">81</a></td>
@@ -750,57 +761,67 @@
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">toBuffer</span><span class="p">(</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">30</td>
+      <td class="src coveredLine"><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">toBuffer</span><span class="p">(</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">3/5</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 0 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 20 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount partialCoveredLine">30</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_START</span><span class="p">:</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_START</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_startPacket</span><span class="p">.</span><span class="n">toBuffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_startPacket</span><span class="p">.</span><span class="n">toBuffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_DATA</span><span class="p">:</span></td>
+      <td class="linecount coveredLine">20</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_DATA</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dataPacket</span><span class="p">.</span><span class="n">toBuffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">20</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dataPacket</span><span class="p">.</span><span class="n">toBuffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l97" href="#l97">97</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_END</span><span class="p">:</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_END</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_endPacket</span><span class="p">.</span><span class="n">toBuffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_endPacket</span><span class="p">.</span><span class="n">toBuffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l99" href="#l99">99</a></td>

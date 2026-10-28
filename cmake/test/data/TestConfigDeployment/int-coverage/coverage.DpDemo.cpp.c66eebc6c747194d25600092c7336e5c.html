@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-27 22:32:40</td>
+      <td>2026-10-28 22:12:50</td>
     </tr>
   </table>
 </div>
@@ -71,11 +71,11 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l15">Ref::DpDemo::DpDemo(char const*) (line 15)</a></td><td>called 1 time</td><td>50.0%</td></tr>
-    <tr><td><a href="#l106">Ref::DpDemo::Dp_cmdHandler(unsigned int, unsigned int, Ref::DpDemo_DpReqType const&amp;, unsigned int, Fw::DpCfg::ProcType const&amp;) (line 106)</a></td><td>called 2 times</td><td>52.0%</td></tr>
+    <tr><td><a href="#l106">Ref::DpDemo::Dp_cmdHandler(unsigned int, unsigned int, Ref::DpDemo_DpReqType const&amp;, unsigned int, Fw::DpCfg::ProcType const&amp;) (line 106)</a></td><td>called 5 times</td><td>52.0%</td></tr>
     <tr><td><a href="#l100">Ref::DpDemo::SelectColor_cmdHandler(unsigned int, unsigned int, Ref::DpDemo_ColorEnum const&amp;) (line 100)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l192">Ref::DpDemo::cleanupAndSendDp() (line 192)</a></td><td>called 2 times</td><td>71.0%</td></tr>
+    <tr><td><a href="#l192">Ref::DpDemo::cleanupAndSendDp() (line 192)</a></td><td>called 5 times</td><td>71.0%</td></tr>
     <tr><td><a href="#l171">Ref::DpDemo::dpRecv_DpDemoContainer_handler(Ref::DpDemoComponentBase::DpContainer&amp;, Fw::Success::T) (line 171)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l28">Ref::DpDemo::run_handler(short, unsigned int) (line 28)</a></td><td>called 121 times</td><td>37.0%</td></tr>
+    <tr><td><a href="#l28">Ref::DpDemo::run_handler(short, unsigned int) (line 28)</a></td><td>called 132 times</td><td>37.0%</td></tr>
     <tr><td><a href="#l22">Ref::DpDemo::~DpDemo() (line 22)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -297,7 +297,7 @@
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">132</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">DpDemo</span><span class="w"> </span><span class="o">::</span><span class="n">run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -313,12 +313,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 119 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 127 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">121</td>
+      <td class="linecount coveredLine">132</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpInProgress</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -327,12 +327,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_StringRecord</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;Test string&quot;</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -341,11 +341,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_BooleanRecord</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -354,11 +354,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_I32Record</span><span class="p">(</span><span class="mi">-100</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -367,11 +367,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_F64Record</span><span class="p">(</span><span class="mf">1.25</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -380,12 +380,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_U32ArrayRecord</span><span class="p">(</span><span class="n">DpDemo_U32Array</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">}));</span></td>
     </tr>
     <tr class="source-line">
@@ -394,12 +394,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_F32ArrayRecord</span><span class="p">(</span><span class="n">DpDemo_F32Array</span><span class="p">({</span><span class="mf">1.1f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.2f</span><span class="p">,</span><span class="w"> </span><span class="mf">3.3f</span><span class="p">}));</span></td>
     </tr>
     <tr class="source-line">
@@ -408,12 +408,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_BooleanArrayRecord</span><span class="p">(</span><span class="n">DpDemo_BooleanArray</span><span class="p">({</span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">}));</span></td>
     </tr>
     <tr class="source-line">
@@ -436,11 +436,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="n">str0</span><span class="p">(</span><span class="s">&quot;String array element 0&quot;</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -449,11 +449,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="n">str1</span><span class="p">(</span><span class="s">&quot;String array element 1&quot;</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -462,18 +462,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="n">str2</span><span class="p">(</span><span class="s">&quot;String array element 2&quot;</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringBase</span><span class="o">*</span><span class="w"> </span><span class="n">strings</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="o">&amp;</span><span class="n">str0</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">str1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">str2</span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
@@ -482,11 +482,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_StringArrayRecord</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -509,8 +509,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
@@ -520,7 +520,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">10</td>
+      <td class="linecount partialCoveredLine">25</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">{</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array record element 0&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array record element 1&quot;</span><span class="p">)})};</span></td>
     </tr>
     <tr class="source-line">
@@ -529,11 +529,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_ArrayArrayRecord</span><span class="p">(</span><span class="n">arrayArray</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -556,11 +556,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">DpDemo_StructWithStringMembers</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String member&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -569,21 +569,21 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8</td>
+      <td class="linecount partialCoveredLine">20</td>
       <td class="src partialCoveredLine"><span class="w">                                           </span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array element 0&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6</td>
+      <td class="linecount coveredLine">15</td>
       <td class="src coveredLine"><span class="w">                                                               </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array element 1&quot;</span><span class="p">)})),</span></td>
     </tr>
     <tr class="source-line">
@@ -592,11 +592,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">DpDemo_StructWithStringMembers</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;1 - String member&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -605,14 +605,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8</td>
+      <td class="linecount partialCoveredLine">20</td>
       <td class="src partialCoveredLine"><span class="w">                                           </span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;1 - String array element 0&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -621,8 +621,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 10 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
@@ -630,7 +630,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">16</td>
+      <td class="linecount partialCoveredLine">40</td>
       <td class="src partialCoveredLine"><span class="w">                                                               </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;1 - String array element 1&quot;</span><span class="p">)}))};</span></td>
     </tr>
     <tr class="source-line">
@@ -639,11 +639,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_StructArrayRecord</span><span class="p">(</span><span class="n">structArray</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -652,29 +652,29 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/5</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 15 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">10</td>
+      <td class="linecount partialCoveredLine">25</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_ArrayOfStringArrayRecord</span><span class="p">(</span><span class="n">DpDemo_ArrayOfStringArray</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">            </span><span class="p">{</span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array element 0&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array element 1&quot;</span><span class="p">)}),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l60" href="#l60">60</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">             </span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;1 - String array element 0&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;1 - String array element 1&quot;</span><span class="p">)}),</span></td>
     </tr>
     <tr class="source-line">
@@ -688,7 +688,7 @@
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">14</td>
+      <td class="linecount coveredLine">35</td>
       <td class="src coveredLine"><span class="w">                 </span><span class="p">{</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;2 - String array element 0&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;2 - String array element 1&quot;</span><span class="p">)})}));</span></td>
     </tr>
     <tr class="source-line">
@@ -697,15 +697,15 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/5</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 15 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">10</td>
+      <td class="linecount partialCoveredLine">25</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_ArrayOfStructsRecord</span><span class="p">(</span><span class="n">DpDemo_ArrayOfStructs</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
@@ -714,11 +714,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="p">{</span><span class="n">DpDemo_StructWithStringMembers</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String member&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -727,21 +727,21 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8</td>
+      <td class="linecount partialCoveredLine">20</td>
       <td class="src partialCoveredLine"><span class="w">                                            </span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array element 0&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6</td>
+      <td class="linecount coveredLine">15</td>
       <td class="src coveredLine"><span class="w">                                                                </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array element 1&quot;</span><span class="p">)})),</span></td>
     </tr>
     <tr class="source-line">
@@ -750,11 +750,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">             </span><span class="n">DpDemo_StructWithStringMembers</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;1 - String member&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -763,21 +763,21 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8</td>
+      <td class="linecount partialCoveredLine">20</td>
       <td class="src partialCoveredLine"><span class="w">                                            </span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;1 - String array element 0&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6</td>
+      <td class="linecount coveredLine">15</td>
       <td class="src coveredLine"><span class="w">                                                                </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;1 - String array element 1&quot;</span><span class="p">)})),</span></td>
     </tr>
     <tr class="source-line">
@@ -786,11 +786,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">             </span><span class="n">DpDemo_StructWithStringMembers</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;2 - String member&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -799,21 +799,21 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8</td>
+      <td class="linecount partialCoveredLine">20</td>
       <td class="src partialCoveredLine"><span class="w">                                            </span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;2 - String array element 0&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l72" href="#l72">72</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">14</td>
+      <td class="linecount coveredLine">35</td>
       <td class="src coveredLine"><span class="w">                                                                </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;2 - String array element 1&quot;</span><span class="p">)}))}));</span></td>
     </tr>
     <tr class="source-line">
@@ -822,11 +822,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_EnumArrayRecord</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
@@ -835,14 +835,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 15 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8</td>
+      <td class="linecount partialCoveredLine">20</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">DpDemo_EnumArray</span><span class="p">({</span><span class="n">DpDemo_ColorEnum</span><span class="o">::</span><span class="n">RED</span><span class="p">,</span><span class="w"> </span><span class="n">DpDemo_ColorEnum</span><span class="o">::</span><span class="n">GREEN</span><span class="p">,</span><span class="w"> </span><span class="n">DpDemo_ColorEnum</span><span class="o">::</span><span class="n">BLUE</span><span class="p">}));</span></td>
     </tr>
     <tr class="source-line">
@@ -851,16 +851,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 8 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 10 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8</td>
+      <td class="linecount partialCoveredLine">20</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">serializeRecord_StructWithEverythingRecord</span><span class="p">(</span><span class="n">DpDemo_StructWithEverything</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
@@ -869,11 +869,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">            </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;String Member&quot;</span><span class="p">),</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">selectedColor</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -882,11 +882,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="p">{</span><span class="n">DpDemo_U32Array</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">}),</span><span class="w"> </span><span class="n">DpDemo_U32Array</span><span class="p">({</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">})},</span><span class="w"> </span><span class="n">DpDemo_F32Array</span><span class="p">({</span><span class="mf">4.4f</span><span class="p">,</span><span class="w"> </span><span class="mf">5.5f</span><span class="p">,</span><span class="w"> </span><span class="mf">6.6f</span><span class="p">}),</span></td>
     </tr>
     <tr class="source-line">
@@ -895,11 +895,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">DpDemo_U32Array</span><span class="p">({</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">}),</span></td>
     </tr>
     <tr class="source-line">
@@ -908,14 +908,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 15 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8</td>
+      <td class="linecount partialCoveredLine">20</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">DpDemo_EnumArray</span><span class="p">({</span><span class="n">DpDemo_ColorEnum</span><span class="o">::</span><span class="n">RED</span><span class="p">,</span><span class="w"> </span><span class="n">DpDemo_ColorEnum</span><span class="o">::</span><span class="n">GREEN</span><span class="p">,</span><span class="w"> </span><span class="n">DpDemo_ColorEnum</span><span class="o">::</span><span class="n">BLUE</span><span class="p">}),</span></td>
     </tr>
     <tr class="source-line">
@@ -924,14 +924,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">6</td>
+      <td class="linecount partialCoveredLine">15</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;String array element 0&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;String array element 1&quot;</span><span class="p">)}),</span></td>
     </tr>
     <tr class="source-line">
@@ -940,11 +940,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">DpDemo_BooleanArray</span><span class="p">({</span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">}),</span></td>
     </tr>
     <tr class="source-line">
@@ -953,11 +953,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">DpDemo_StructWithStringMembers</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
@@ -966,11 +966,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">                </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;String member&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -979,14 +979,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">6</td>
+      <td class="linecount partialCoveredLine">15</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;String array element 0&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;String array element 1&quot;</span><span class="p">)})),</span></td>
     </tr>
     <tr class="source-line">
@@ -995,21 +995,21 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 15 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">10</td>
+      <td class="linecount partialCoveredLine">25</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">DpDemo_ArrayOfStringArray</span><span class="p">({</span><span class="n">DpDemo_StringArray</span><span class="p">({</span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array element 0&quot;</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">                                                           </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;0 - String array element 1&quot;</span><span class="p">)}),</span></td>
     </tr>
     <tr class="source-line">
@@ -1023,7 +1023,7 @@
       <td class="lineno"><a id="l88" href="#l88">88</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">                                                           </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;1 - String array element 1&quot;</span><span class="p">)}),</span></td>
     </tr>
     <tr class="source-line">
@@ -1037,14 +1037,14 @@
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">20</td>
+      <td class="linecount coveredLine">50</td>
       <td class="src coveredLine"><span class="w">                                                           </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="p">(</span><span class="s">&quot;2 - String array element 1&quot;</span><span class="p">)})})));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_LO_DpComplete</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">numRecords</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1053,25 +1053,25 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cleanupAndSendDp</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">12</td>
+      <td class="linecount coveredLine">30</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">173</td>
+      <td class="linecount coveredLine">262</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1155,7 +1155,7 @@
       <td class="lineno"><a id="l106" href="#l106">106</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">DpDemo</span><span class="w"> </span><span class="o">::</span><span class="n">Dp_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -1199,16 +1199,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2</td>
+      <td class="linecount partialCoveredLine">5</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">isConnected_productGetOut_OutputPort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">isConnected_productRequestOut_OutputPort</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1250,7 +1250,7 @@
       <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">numRecords</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">14</span><span class="p">;</span><span class="w">  </span><span class="c1">// 14 records in current demo</span></td>
     </tr>
     <tr class="source-line">
@@ -1271,21 +1271,21 @@
       <td class="lineno"><a id="l121" href="#l121">121</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">stringArrayElements</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l122" href="#l122">122</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">arrayArrayElements</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l123" href="#l123">123</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">structArrayElements</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1320,7 +1320,7 @@
       <td class="lineno"><a id="l128" href="#l128">128</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">dpSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SIZE_OF_StringRecord_RECORD</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SIZE_OF_BooleanRecord_RECORD</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SIZE_OF_I32Record_RECORD</span><span class="w"> </span><span class="o">+</span></td>
     </tr>
     <tr class="source-line">
@@ -1376,21 +1376,21 @@
       <td class="lineno"><a id="l136" href="#l136">136</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpPriority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwDpPriorityType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">priority</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l137" href="#l137">137</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpProc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">proc</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l138" href="#l138">138</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_LO_DpMemRequested</span><span class="p">(</span><span class="n">dpSize</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1399,12 +1399,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2</td>
+      <td class="linecount partialCoveredLine">5</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reqType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">DpDemo_DpReqType</span><span class="o">::</span><span class="n">IMMEDIATE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1413,12 +1413,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpGet_DpDemoContainer</span><span class="p">(</span><span class="n">dpSize</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1435,11 +1435,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2</td>
+      <td class="linecount partialCoveredLine">5</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">Success</span><span class="o">::</span><span class="n">FAILURE</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">stat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1467,7 +1467,7 @@
       <td class="lineno"><a id="l146" href="#l146">146</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpInProgress</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1476,11 +1476,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_LO_DpStarted</span><span class="p">(</span><span class="n">numRecords</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1489,13 +1489,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_LO_DpMemReceived</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">getBuffer</span><span class="p">().</span><span class="n">getSize</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
@@ -1511,19 +1511,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 5 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2</td>
+      <td class="linecount partialCoveredLine">5</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">priority</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l151" href="#l151">151</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">setPriority</span><span class="p">(</span><span class="n">priority</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1537,7 +1537,7 @@
       <td class="lineno"><a id="l153" href="#l153">153</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">.</span><span class="n">setProcTypes</span><span class="p">(</span><span class="n">proc</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1546,12 +1546,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1572,7 +1572,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2</td>
+      <td class="linecount partialCoveredLine">5</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reqType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">DpDemo_DpReqType</span><span class="o">::</span><span class="n">ASYNC</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1824,7 +1824,7 @@
       <td class="lineno"><a id="l192" href="#l192">192</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">DpDemo</span><span class="w"> </span><span class="o">::</span><span class="n">cleanupAndSendDp</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1833,33 +1833,33 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpSend</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpContainer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dpInProgress</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">numRecords</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l196" href="#l196">196</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

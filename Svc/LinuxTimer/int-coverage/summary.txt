@@ -7,7 +7,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Svc/LinuxTimer/LinuxTimerCommon.cpp
                                                7       7   100%
 /home/runner/work/fprime/fprime/Svc/LinuxTimer/LinuxTimerFd.cpp
-                                              36      29    80%   30-31,43,51-52,71-72
+                                              36      29    80%   31-32,45,53-54,73-74
 ------------------------------------------------------------------------------
 TOTAL                                         43      36    83%
 ------------------------------------------------------------------------------
