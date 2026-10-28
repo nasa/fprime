@@ -40,6 +40,10 @@ void CmdSequencerTester ::NoSequenceActive() {
     ASSERT_EVENTS_CS_NoSequenceActive_SIZE(1);
 }
 
+void CmdSequencerTester ::RunWithoutSeqDone() {
+    this->parameterizedRunWithoutSeqDone();
+}
+
 }  // namespace NoFiles
 
 }  // namespace Svc
