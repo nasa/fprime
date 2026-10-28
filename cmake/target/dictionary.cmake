@@ -19,6 +19,23 @@ function(dictionary_add_global_target TARGET_NAME)
 endfunction(dictionary_add_global_target)
 
 ####
+# Function `dictionary_installable_files`:
+#
+# Selects, from the dictionary autocoder outputs of a module, the files that are installed to `dict/` and recorded in
+# the `FPRIME_DICTIONARIES` property: only the `<Deployment>TopologyDictionary.json` files. fpp-to-dict also writes
+# `<System>SystemDictionary.json`; it stays a build output of the dictionary step but is not installed, since
+# fprime-gds and other tools locate the dictionary by globbing `dict/*Dictionary.json` and refuse several matches.
+#
+# - **DICTIONARY_OUTPUTS:** list of files produced by the dictionary autocoder
+# - **OUTPUT_VAR:** variable to set with the installable subset
+####
+function(dictionary_installable_files DICTIONARY_OUTPUTS OUTPUT_VAR)
+    set(INSTALLABLE "${DICTIONARY_OUTPUTS}")
+    list(FILTER INSTALLABLE INCLUDE REGEX ".*TopologyDictionary\\.json$")
+    set(${OUTPUT_VAR} "${INSTALLABLE}" PARENT_SCOPE)
+endfunction(dictionary_installable_files)
+
+####
 # Function `dictionary_add_deployment_target`:
 #
 # Creates a deployment-level dictionary target. Currently empty implementation.
@@ -37,14 +54,15 @@ function(dictionary_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FUL
     set(INSTALL_COMMANDS)
     set(INSTALL_INPUTS)
     set(DICTIONARY_TARGETS)
-    if(AUTOCODER_GENERATED_OTHER)
-        install(FILES ${AUTOCODER_GENERATED_OTHER} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT "${MODULE}_${TARGET}")
+    dictionary_installable_files("${AUTOCODER_GENERATED_OTHER}" INSTALLABLE_DICTIONARIES)
+    if(INSTALLABLE_DICTIONARIES)
+        install(FILES ${INSTALLABLE_DICTIONARIES} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT "${MODULE}_${TARGET}")
         list(APPEND INSTALL_COMMANDS COMMAND "${CMAKE_COMMAND}"
             -DCMAKE_INSTALL_COMPONENT=${MODULE}_${TARGET}
             -DFPRIME_INSTALL_DEST=${FPRIME_INSTALL_DEST}
             -DFPRIME_BUILD_DIR=${CMAKE_BINARY_DIR}
             -P ${FPRIME_FRAMEWORK_PATH}/cmake/target/fprime_install.cmake)
-        list(APPEND INSTALL_INPUTS ${AUTOCODER_GENERATED_OTHER})
+        list(APPEND INSTALL_INPUTS ${INSTALLABLE_DICTIONARIES})
     endif()
 
     # Loop through all recursive dependencies and find dictionary targets
@@ -102,7 +120,8 @@ function(dictionary_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPEN
     
     # Create a custom target with _dictionary suffix that depends on the generated files
     if(AUTOCODER_GENERATED_OTHER)
-        append_list_property("${AUTOCODER_GENERATED_OTHER}" TARGET "${MODULE_NAME}" PROPERTY FPRIME_DICTIONARIES)
+        dictionary_installable_files("${AUTOCODER_GENERATED_OTHER}" INSTALLABLE_DICTIONARIES)
+        append_list_property("${INSTALLABLE_DICTIONARIES}" TARGET "${MODULE_NAME}" PROPERTY FPRIME_DICTIONARIES)
         add_custom_target("${MODULE_NAME}_${TARGET_NAME}" DEPENDS ${AUTOCODER_GENERATED_OTHER})
     endif()
 endfunction(dictionary_add_module_target)
