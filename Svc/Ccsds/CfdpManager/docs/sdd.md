@@ -476,7 +476,7 @@ These types define the size of CFDP protocol fields:
 
 ### Sizing PDUs for the Downlink
 
-Each outgoing PDU leaves `CfdpManager` with a 2-byte packet descriptor (`FwPacketDescriptorType`) in front of it, and `Svc.Ccsds.SpacePacketFramer` in `Svc.Subtopologies.ComCcsds` adds a 6-byte Space Packet primary header. With packet spanning disabled (`ComCcsdsConfig.Aggregator.enablePacketSpanning`, `false` by default), `Svc.ComAggregator` asserts when a packet does not fit an empty aggregate next to a minimum idle packet (`Svc::Ccsds::Utils::IdlePacket::MIN_SIZE`, 7 bytes). The largest PDU the stock downlink accepts is therefore the following. Other stacks use their own `aggregationSize` in the same formula; for example `ComCcsdsSdls` reduces it by the SDLS overhead, so its limit is lower.
+Each outgoing PDU leaves `CfdpManager` with a 2-byte packet descriptor (`FwPacketDescriptorType`) in front of it, and `Svc.Ccsds.SpacePacketFramer` in `Svc.Subtopologies.ComCcsds` adds a 6-byte Space Packet primary header. With packet spanning disabled (`ComCcsdsConfig.Aggregator.enablePacketSpanning`, `false` by default), `Svc.ComAggregator` asserts when a packet does not fit an empty aggregate next to a minimum idle packet (`Svc::Ccsds::Utils::IdlePacket::MIN_SIZE`, 7 bytes). The largest PDU the stock downlink accepts is therefore as follows. Other stacks use their own `aggregationSize` in the same formula; for example `ComCcsdsSdls` reduces it by the SDLS overhead, so its limit is lower.
 
 ```
 largest PDU = ComCcsdsConfig.Aggregator.aggregationSize - 7 - 6 - 2
@@ -490,7 +490,7 @@ A File Data PDU consists of the PDU header (4 bytes, plus the source and destina
 - Enlarge the aggregate (`ComCfg.TmFrameFixedSize`, which sets `Svc.Ccsds.TmDataFieldSize`) so that a full PDU fits. The ground system must use the same frame size, and every aggregate is idle-filled to it.
 - Enable packet spanning, so that a packet that does not fit continues in the next aggregate. This requires `Svc.Ccsds.TmFramer` and a ground deframer that reassembles spanned packets.
 
-Whichever option is used, `SpacePacketFramer` allocates the PDU plus the descriptor and the Space Packet header from the comms buffer manager (`ComCcsdsConfig.BuffMgr.commsBuffSize` is 2048 by default) and drops the packet with a `NoBufferAvailable` event if that fails.
+Whichever option is used, `SpacePacketFramer` allocates the PDU plus the descriptor and the Space Packet header from the comms buffer manager (sized by `ComCcsdsConfig.BuffMgr`) and drops the packet with a `NoBufferAvailable` event if that fails.
 
 ## Events
 
