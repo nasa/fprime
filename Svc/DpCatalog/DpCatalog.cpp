@@ -609,11 +609,11 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
         return ProcessFileStatus::QUIT;
     }
 
-    // insert entry into sorted catalog. if can't insert, quit
+    // insert into the sorted catalog. A free slot was verified above, so a failure here is a tree
+    // error, not a full catalog
     bool inserted = this->insertEntry(entry);
     if (!inserted) {
         this->log_WARNING_HI_DpInsertError(entry.record);
-        // return and hope new slots open up later
         return ProcessFileStatus::QUIT;
     }
 
@@ -871,7 +871,7 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
             this->m_xmitInProgress = true;
             this->sendNextEntry();
         }
-        // Otherwise, Current File finishing will invoke sendNextFile & find the right file
+        // Otherwise, Current File finishing will invoke sendNextEntry & find the right file
         // Or will be manually tx-ed at next command
 
         // The state file is not rewritten here: a newly written product has no transmit state to

@@ -1569,6 +1569,7 @@ void DpCatalogTester::test_InsertBeforeBuild() {
     this->invoke_to_addToCat(0, dpFile, 10, 0);
     this->component.doDispatch();
     ASSERT_EVENTS_NotLoaded_SIZE(2);
+    ASSERT_EVENTS_NotLoaded(1, dpFile.toChar());
     ASSERT_EVENTS_DpFileAdded_SIZE(1);
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
 

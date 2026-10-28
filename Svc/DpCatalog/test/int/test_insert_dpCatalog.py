@@ -51,7 +51,7 @@ def write_product(fprime_test_api):
     written = fprime_test_api.assert_event(
         dp_writer(fprime_test_api, "FileWritten"), start=start, timeout=WRITE_TIMEOUT
     )
-    return written.get_args()[1].val
+    return written.get_args()[1].val  # FileWritten(bytes, file): the file name
 
 
 def send_dp_catalog_command(fprime_test_api, name, args=None):

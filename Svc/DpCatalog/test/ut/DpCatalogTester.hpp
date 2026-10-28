@@ -73,6 +73,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! Verify transmitted state is preserved across catalog rebuilds
     void stateFileSkipsTransmitted();
 
+    //! configure the component on one directory and build the catalog as the first command
+    void configureAndBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq, Fw::MemAllocator& alloc);
+
     //! Generate some data product files
     Fw::String genDP(FwDpIdType id,
                      FwDpPriorityType prio,
@@ -179,9 +182,6 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_InsertDuplicate();
     void test_InsertPreservesTransmittedState();
     void test_InsertAlreadyTransmitted();
-
-    //! configure the component on one directory and build the catalog as the first command
-    void configureAndBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq, Fw::MemAllocator& alloc);
 };
 
 }  // namespace Svc
