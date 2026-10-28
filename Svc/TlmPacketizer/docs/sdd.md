@@ -177,7 +177,7 @@ The per-packet override table adds a dense static block of `TelemetrySection::NU
 
 `MAX_PACKETIZER_CHANNELS` determines the size of storage for the telemetry channels registered by components. It should be set to at least the number of non-omitted channels defined in the system, but may be larger to allow for a project's channel growth over time without incurring additional memory usage.
 
-Each channel slot holds a `MAX_PACKETIZER_PACKETS`-entry packet-membership list of (`FwChanIdType` packet index, `FwTlmPacketizeOffsetType` offset) pairs, so the channel table scales as `MAX_PACKETIZER_CHANNELS × MAX_PACKETIZER_PACKETS × sizeof(PacketRef)` (about 65 kB at the default 200 channels × 50 packets). Each of the `MAX_PACKETIZER_PACKETS` packet buffers also owns an `Os::Mutex`; platforms with a bounded mutex pool must provision at least that many.
+Each channel slot holds a `MAX_PACKETIZER_PACKETS`-entry packet-membership list of (`FwChanIdType` packet index, `FwTlmPacketizeOffsetType` offset) pairs, so the channel table scales as `MAX_PACKETIZER_CHANNELS × MAX_PACKETIZER_PACKETS × sizeof(PacketRef)` (80 kB at the default 200 channels × 50 packets with `sizeof(PacketRef)` = 8 B, i.e. a `U32` `FwChanIdType` padded alongside the `U16` offset). Each of the `MAX_PACKETIZER_PACKETS` packet buffers also owns an `Os::Mutex`; platforms with a bounded mutex pool must provision at least that many.
 
 `TLMPACKETIZER_MAX_MISSING_TLM_CHECK` determines the size of the data structure used to track and event on missing telemetry channels. Most projects should set this to a low number since missing channels are a rarity with FPP defined telemetry channels.
 
