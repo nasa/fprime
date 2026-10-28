@@ -102,6 +102,9 @@ module Svc {
 
     include "PrmDbCmdDict.fppi"
 
+    @ Reload all component parameter caches from the active database. Requires an idle database and a configured deployment callback.
+    async command PRM_REFRESH_ALL opcode 0x03
+
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------

@@ -40,6 +40,10 @@ module Svc {
     # ----------------------------------------------------------------------
     
     array GroupConfigs = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] TlmSendConfig
+    struct GroupConfigSnapshot {
+      section: TelemetrySection
+      groups: GroupConfigs
+    }
     array SectionConfigs = [TelemetrySection.NUM_SECTIONS] GroupConfigs default TELEMETRY_SECTION_DEFAULTS
     array SectionEnabled = [TelemetrySection.NUM_SECTIONS] Fw.Enabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
     array PacketOverrides = [MAX_PACKETIZER_PACKETS] PacketOverrideConfig
@@ -62,7 +66,7 @@ module Svc {
     output port pingOut: Svc.Ping
 
     @ Run port for starting packet send cycle
-    async input port Run: Svc.Sched
+    async input port Run: Svc.Sched drop
 
     @ Input configuration port
     async input port configureSectionGroupRate: ConfigureGroupRate
@@ -346,7 +350,11 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Telemetry send level
-    telemetry GroupConfigs: SectionConfigs id 0
+    @ Total queue drops observed on the next packetizer cycle.
+    event QueueMessagesDropped(count: FwSizeType) severity warning high id 16 \
+      format "TlmPacketizer queue full: {} message(s) dropped since boot" throttle 10
+
+    telemetry GroupConfigs: GroupConfigSnapshot id 0
     telemetry SectionEnabled: SectionEnabled id 1
 
     array TelemetrySendSection = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] FwIndexType

@@ -24,7 +24,8 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-GenericHub::GenericHub(const char* const compName) : GenericHubComponentBase(compName) {}
+GenericHub::GenericHub(const char* const compName)
+    : GenericHubComponentBase(compName), m_pendingBuffers(), m_pendingBufferTicks(), m_pendingBufferValid() {}
 
 GenericHub::~GenericHub() {}
 
@@ -45,18 +46,38 @@ void GenericHub::send_data(const HubType type, const FwIndexType port, const U8*
     toBufferDriver_out(0, outgoing);
 }
 
+void GenericHub::send_buffer_ack(FwIndexType port) {
+    const U8 empty = 0U;
+    this->send_data(HUB_TYPE_BUFFER_ACK, port, &empty, 0U);
+}
+
+void GenericHub::clear_pending_buffer(FwIndexType port) {
+    this->m_pendingBuffers[port] = Fw::Buffer();
+    this->m_pendingBufferTicks[port] = 0U;
+    this->m_pendingBufferValid[port] = false;
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
 void GenericHub::bufferIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    if (this->m_pendingBufferValid[portNum]) {
+        bufferInReturn_out(portNum, fwBuffer);
+        return;
+    }
+
+    this->m_pendingBuffers[portNum] = fwBuffer;
+    this->m_pendingBufferTicks[portNum] = 0U;
+    this->m_pendingBufferValid[portNum] = true;
     this->send_data(HUB_TYPE_BUFFER, portNum, fwBuffer.getData(), fwBuffer.getSize());
-    bufferInReturn_out(portNum, fwBuffer);
 }
 
 void GenericHub::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // Return the buffer
     fromBufferDriverReturn_out(0, fwBuffer);
+    // Release the sender only after downstream relinquishes this buffer.
+    this->send_buffer_ack(portNum);
 }
 
 void GenericHub ::cmdDispIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
@@ -95,6 +116,22 @@ void GenericHub ::cmdRespIn_handler(FwIndexType portNum,
     FwSizeType size = serializer.getSize();
 
     this->send_data(HUB_TYPE_CMD_RESP, portNum, buffer, size);
+}
+
+void GenericHub::run_handler(FwIndexType portNum, U32 context) {
+    static_cast<void>(portNum);
+    static_cast<void>(context);
+
+    for (FwIndexType port = 0; port < NUM_BUFFERIN_INPUT_PORTS; ++port) {
+        if (!this->m_pendingBufferValid[port]) {
+            continue;
+        }
+        ++this->m_pendingBufferTicks[port];
+        if (this->m_pendingBufferTicks[port] >= BUFFER_ACK_TIMEOUT_TICKS) {
+            bufferInReturn_out(port, this->m_pendingBuffers[port]);
+            this->clear_pending_buffer(port);
+        }
+    }
 }
 
 void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
@@ -245,6 +282,12 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
             }
             // Return the received buffer
             fromBufferDriverReturn_out(0, fwBuffer);
+        } else if (type == HUB_TYPE_BUFFER_ACK) {
+            fromBufferDriverReturn_out(0, fwBuffer);
+            if ((port < NUM_BUFFERIN_INPUT_PORTS) && this->m_pendingBufferValid[port]) {
+                bufferInReturn_out(static_cast<FwIndexType>(port), this->m_pendingBuffers[port]);
+                this->clear_pending_buffer(static_cast<FwIndexType>(port));
+            }
         }
     } else {
         // On deserialization failure, return the buffer to avoid leaks
@@ -304,4 +347,4 @@ void GenericHub::serialIn_handler(FwIndexType portNum,         /*!< The port num
     send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getSize());
 }
 
-}  // end namespace Svc
+}  // namespace Svc

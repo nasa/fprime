@@ -62,6 +62,10 @@ void PrmDbImpl::applySandbox(Os::SandboxedFile& file) const {
     }
 }
 
+void PrmDbImpl::configureRefreshCallback(RefreshCallback callback) {
+    this->m_refreshCallback = callback;
+}
+
 void PrmDbImpl::readParamFile() {
     // Assumed to run at initialization time
     // State should be IDLE upon entry
@@ -337,6 +341,21 @@ void PrmDbImpl::PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode,
         m_state = PrmDbFileLoadState::IDLE;
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
+}
+
+void PrmDbImpl::PRM_REFRESH_ALL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    if (this->m_state != PrmDbFileLoadState::IDLE) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
+        return;
+    }
+    if (this->m_refreshCallback == nullptr) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Do not hold the database lock: loadParameters() calls guarded getPrm.
+    this->m_refreshCallback();
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 void PrmDbImpl::PRM_COMMIT_STAGED_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {

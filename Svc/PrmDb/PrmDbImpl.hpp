@@ -67,6 +67,10 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param directory directory that all parameter file accesses are restricted to.
     void configureSandbox(const char* directory);
 
+    //! Configure before task startup; callback reloads deployment component caches.
+    using RefreshCallback = void (*)();
+    void configureRefreshCallback(RefreshCallback callback);
+
     //!  \brief PrmDb file read function
     //!
     //!  The readFile function reads the set of parameters from the file passed in to
@@ -94,6 +98,8 @@ class PrmDbImpl final : public PrmDbComponentBase {
 
   protected:
   private:
+    RefreshCallback m_refreshCallback = nullptr;
+
     Fw::String m_fileName;    //!< filename for parameter storage
     Fw::String m_sandboxDir;  //!< directory restriction for all file access (empty = all opens rejected)
 
@@ -222,6 +228,9 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param opCode The opcode of this commands
     //!  \param cmdSeq The sequence number of the command
     void PRM_COMMIT_STAGED_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
+
+    //! Reload component caches from the active database through the deployment callback.
+    void PRM_REFRESH_ALL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
 
     //! ----------------------------------------------------------------------
     //! Helpers for database management

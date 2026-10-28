@@ -27,6 +27,7 @@ HealthImpl::HealthImpl(const char* const compName)
       m_watchDogCode(0),
       m_warnings(0),
       m_enabled(Fw::Enabled::ENABLED),
+      m_watchdogFaultLatched(false),
       queue_depth(0) {
     static_assert((HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS >= 0) &&
                       (HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS <= std::numeric_limits<FwIndexType>::max()),
@@ -35,6 +36,7 @@ HealthImpl::HealthImpl(const char* const compName)
     for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_pingTrackerEntries));
          entry++) {
         this->m_pingTrackerEntries[entry].enabled = Fw::Enabled::DISABLED;
+        this->m_pingTrackerEntries[entry].hasResponded = false;
     }
 }
 
@@ -50,6 +52,7 @@ void HealthImpl::setPingEntries(PingEntry* pingEntries, FwIndexType numPingEntri
 
     this->m_numPingEntries = numPingEntries;
     this->m_watchDogCode = watchDogCode;
+    this->m_watchdogFaultLatched = false;
 
     // copy entries to private data
     for (FwIndexType entry = 0; entry < numPingEntries; entry++) {
@@ -60,6 +63,15 @@ void HealthImpl::setPingEntries(PingEntry* pingEntries, FwIndexType numPingEntri
         this->m_pingTrackerEntries[entry].cycleCount = 0;
         this->m_pingTrackerEntries[entry].enabled = Fw::Enabled::ENABLED;
         this->m_pingTrackerEntries[entry].key = 0;
+        this->m_pingTrackerEntries[entry].hasResponded = false;
+    }
+
+    for (FwIndexType entry = numPingEntries;
+         entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_pingTrackerEntries)); ++entry) {
+        this->m_pingTrackerEntries[entry].cycleCount = 0;
+        this->m_pingTrackerEntries[entry].enabled = Fw::Enabled::DISABLED;
+        this->m_pingTrackerEntries[entry].key = 0;
+        this->m_pingTrackerEntries[entry].hasResponded = false;
     }
 }
 
@@ -74,10 +86,12 @@ void HealthImpl::PingReturn_handler(const FwIndexType portNum, U32 key) {
     if (key != this->m_pingTrackerEntries[portNum].key) {
         Fw::LogStringArg _arg = this->m_pingTrackerEntries[portNum].entry.entryName;
         this->log_FATAL_HLTH_PING_WRONG_KEY(_arg, key);
+        this->m_watchdogFaultLatched = true;
     } else {
         // reset the counter and clear the key
         this->m_pingTrackerEntries[portNum].cycleCount = 0;
         this->m_pingTrackerEntries[portNum].key = 0;
+        this->m_pingTrackerEntries[portNum].hasResponded = true;
     }
 }
 
@@ -115,6 +129,7 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
                         this->m_pingTrackerEntries[entry].cycleCount) {
                         Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
                         this->log_FATAL_HLTH_PING_LATE(_arg);
+                        this->m_watchdogFaultLatched = true;
                     } else if (this->m_pingTrackerEntries[entry].cycleCount ==
                                this->m_pingTrackerEntries[entry].entry.warnCycles) {
                         Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
@@ -129,7 +144,8 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
     }  // If health checking is enabled
 
     // stroke watchdog.
-    if (this->isConnected_WdogStroke_OutputPort(0)) {
+    if (!this->m_watchdogFaultLatched && this->allEnabledPingEntriesHaveResponded() &&
+        this->isConnected_WdogStroke_OutputPort(0)) {
         this->WdogStroke_out(0, this->m_watchDogCode);
     }
 }
@@ -200,6 +216,19 @@ void HealthImpl::HLTH_CHNG_PING_cmdHandler(const FwOpcodeType opCode,
     Fw::LogStringArg arg = entry;
     this->log_ACTIVITY_HI_HLTH_PING_UPDATED(arg, warningValue, fatalValue);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+bool HealthImpl::allEnabledPingEntriesHaveResponded() const {
+    if (this->m_enabled != Fw::Enabled::ENABLED) {
+        return false;
+    }
+    for (FwIndexType entry = 0; entry < this->m_numPingEntries; ++entry) {
+        if (this->m_pingTrackerEntries[entry].enabled == Fw::Enabled::ENABLED &&
+            !this->m_pingTrackerEntries[entry].hasResponded) {
+            return false;
+        }
+    }
+    return true;
 }
 
 FwIndexType HealthImpl::findEntry(const Fw::CmdStringArg& entry) {

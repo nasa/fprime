@@ -19,6 +19,7 @@
 #include <Os/Queue.hpp>
 #include <Os/SandboxedFile.hpp>
 #include <Svc/FileDownlink/FileDownlinkComponentAc.hpp>
+#include <atomic>
 #include <config/FileDownlinkCfg.hpp>
 
 namespace Svc {
@@ -262,7 +263,10 @@ class FileDownlink final : public FileDownlinkComponentBase {
     //!
     void Run_handler(const FwIndexType portNum,  //!< The port number
                      U32 context                 //!< The call order
-    );
+                     ) override;
+
+    void runWork_internalInterfaceHandler() override;
+    void runWork_overflowHook() override;
 
     //! Handler implementation for SendFile
     //!
@@ -387,8 +391,14 @@ class FileDownlink final : public FileDownlinkComponentBase {
     //! Cooldown (in ms) between finishing a downlink and starting the next file.
     U32 m_cooldown;
 
-    //! current time residing in WAIT state
-    U32 m_curTimer;
+    //! Scheduler tick count when the current cooldown began
+    U32 m_cooldownStartTick;
+
+    //! Scheduler ticks advance independently of queued state-machine work
+    std::atomic<U32> m_runTicks{0U};
+
+    //! At most one internal work request is queued
+    std::atomic<bool> m_runPending{false};
 
     //! rate (milliseconds) at which we are running
     U32 m_cycleTime;

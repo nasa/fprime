@@ -212,19 +212,24 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     // buffers for filling with telemetry
     BufferEntry m_fillBuffers[MAX_PACKETIZER_PACKETS];
 
-    static constexpr U16 NOT_IN_PACKET = std::numeric_limits<U16>::max();  //!< packetOffset value for no packet
+    struct PacketMembership {
+        U16 packetIndex;
+        U16 packetOffset;
+    };
 
     struct TlmEntry {
         FwChanIdType id;  //!< telemetry id stored in slot
         // Offsets into packet buffers.
-        // NOT_IN_PACKET means that channel is not in that packet
-        U16 packetOffset[MAX_PACKETIZER_PACKETS];
+        PacketMembership memberships[MAX_PACKETIZER_PACKETS_PER_CHANNEL];
+        U8 numPacketMemberships;
         FwSizeType channelSize;  //!< max serialized size of the channel in bytes
         bool ignored;            //!< ignored channel id
         bool hasValue;           //!< if the entry has received a value at least once
     };
 
     Os::Mutex m_lock;  //!< used to lock access to packet buffers
+
+    FwSizeType m_lastQueueMsgsDropped = 0;
 
     bool m_configured;  //!< indicates a table has been passed and packets configured
 
@@ -286,6 +291,8 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //! \param section The telemetry section (e.g., PRIMARY, SECONDARY, etc.)
     //! \param group The telemetry group number
     //! \return The output port index to send telemetry for the given section and group
+    void writeGroupConfigs(const TelemetrySection& section);
+
     static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
 
     //! Outcome of a per-packet operation; mapped to a command response by the command handlers

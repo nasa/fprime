@@ -30,7 +30,7 @@ FileDownlink ::FileDownlink(const char* const name)
       m_packetsSent(this),
       m_warnings(this),
       m_sequenceIndex(0),
-      m_curTimer(0),
+      m_cooldownStartTick(0),
       m_bufferSize(0),
       m_byteOffset(0),
       m_endOffset(0),
@@ -70,6 +70,22 @@ FileDownlink ::~FileDownlink() {}
 // ----------------------------------------------------------------------
 
 void FileDownlink ::Run_handler(const FwIndexType portNum, U32 context) {
+    static_cast<void>(portNum);
+    static_cast<void>(context);
+    this->m_runTicks.fetch_add(1U);
+    if (!this->m_runPending.exchange(true)) {
+        this->runWork_internalInterfaceInvoke();
+    }
+}
+
+void FileDownlink ::runWork_overflowHook() {
+    this->incNumMsgDropped();
+    this->m_runPending.store(false);
+}
+
+void FileDownlink ::runWork_internalInterfaceHandler() {
+    // Rearm first so ticks arriving during processing can queue one follow-up.
+    this->m_runPending.store(false);
     switch (this->m_mode.get()) {
         case Mode::IDLE: {
             FwSizeType real_size = 0;
@@ -87,16 +103,10 @@ void FileDownlink ::Run_handler(const FwIndexType portNum, U32 context) {
             break;
         }
         case Mode::COOLDOWN: {
-            if (this->m_curTimer >= this->m_cooldown) {
-                this->m_curTimer = 0;
+            const U32 elapsedTicks = this->m_runTicks.load() - this->m_cooldownStartTick;
+            if (static_cast<U64>(elapsedTicks) * this->m_cycleTime >= this->m_cooldown) {
                 this->m_mode.set(Mode::IDLE);
-            } else {
-                this->m_curTimer += m_cycleTime;
             }
-            break;
-        }
-        case Mode::WAIT: {
-            this->m_curTimer += m_cycleTime;
             break;
         }
         default:
@@ -333,7 +343,6 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
     this->sendStartPacket();
     this->m_mode.set(Mode::WAIT);
     this->m_sequenceIndex = 1;
-    this->m_curTimer = 0;
     this->m_byteOffset = startOffset;
     this->m_lastCompletedType = Fw::FilePacket::T_START;
 
@@ -459,10 +468,10 @@ void FileDownlink ::sendFilePacket(const Fw::FilePacket& filePacket) {
 }
 
 void FileDownlink ::enterCooldown() {
+    this->m_cooldownStartTick = this->m_runTicks.load();
     this->m_file.getOsFile().close();
     this->m_mode.set(Mode::COOLDOWN);
     this->m_lastCompletedType = Fw::FilePacket::T_NONE;
-    this->m_curTimer = 0;
 }
 
 void FileDownlink ::downlinkPacket() {
@@ -494,7 +503,6 @@ void FileDownlink ::downlinkPacket() {
         this->m_lastCompletedType = Fw::FilePacket::T_END;
     }
     this->m_mode.set(Mode::WAIT);
-    this->m_curTimer = 0;
 }
 
 void FileDownlink ::finishHelper(bool cancel) {

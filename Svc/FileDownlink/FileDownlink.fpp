@@ -7,8 +7,11 @@ module Svc {
     # General ports
     # ----------------------------------------------------------------------
 
-    @ Run input port
-    async input port Run: Svc.Sched
+    @ Count scheduler ticks and coalesce state-machine work.
+    sync input port Run: Svc.Sched
+
+    @ Process state-machine work in the component task; retry on a later tick if full.
+    internal port runWork hook
 
     @ Mutexed Sendfile input port
     guarded input port SendFile: Svc.SendFileRequest

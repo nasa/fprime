@@ -1,5 +1,8 @@
 module Svc {
 
+  @ Number of mode change fanout ports
+  constant GenericHubModeOutputPorts = 8
+
   @| ----------------------------------------------------------------------
   @| A generic hub component
   @| ----------------------------------------------------------------------
@@ -87,18 +90,19 @@ module Svc {
     @ store pointers to data that is not serialized across the port
     @ interface. To connect output ports that emit buffers, use
     @ buffersIn below.
-    sync input port serialIn: [GenericHubCfg.NumSerialInputPorts] serial
+    sync input port serialIn: [Svc.GenericHubCfg.NumSerialInputPorts] serial
 
-    @ Ports for sending buffer data to the hub
+    @ Ports for sending reliable buffer data to the hub
     @ Output ports connected to these ports must emit Fw.Buffer objects.
-    @ On invocation, each of these ports allocates a new buffer B, copies the
-    @ data from the incoming buffer to B, and returns the incoming
-    @ buffer to the sender for deallocation.
+    @ On invocation, each port holds the incoming source buffer, allocates a
+    @ driver buffer, copies the source payload into it, and sends it to the
+    @ remote hub. The source buffer is returned after the remote hub returns a
+    @ buffer ACK, or after the run timeout expires.
     @
-    sync input port bufferIn: [GenericHubCfg.NumBufferInputPorts] Fw.BufferSend
+    sync input port bufferIn: [Svc.GenericHubCfg.NumBufferInputPorts] Fw.BufferSend
 
     @ Ports for returning buffers arriving on buffersIn
-    output port bufferInReturn: [GenericHubCfg.NumBufferInputPorts] Fw.BufferSend
+    output port bufferInReturn: [Svc.GenericHubCfg.NumBufferInputPorts] Fw.BufferSend
 
     @ bufferIn and bufferInReturn ports must match
     match bufferIn with bufferInReturn
@@ -108,6 +112,7 @@ module Svc {
 
     @ Command response back from remote hub
     output port cmdRespOut: [CmdDispatcherSequencePorts] Fw.CmdResponse
+
 
     # ----------------------------------------------------------------------
     # Ports for sending data from the hub to a buffer driver
@@ -134,12 +139,14 @@ module Svc {
     # These ports establish the "receive" interface from a driver to the hub.
     # Each of these ports has the following behavior:
     # 1. Unpack the incoming buffer into hub message type, port number, and data.
-    # 2. If the hub message type is event, telemetry, or serial,
+    # 2. If the hub message type is event, telemetry, serial, command,
+    #    command response, or buffer ACK,
     #    then pass the data by value to the receiver and invoke fromBufferDriverReturn
     #    to return the incoming buffer for deallocation.
     # 3. Otherwise adjust the metadata of the incoming buffer to point
-    #    to the data, and emit the same buffer on bufferOut. When the
-    #    buffer is returned on bufferOutReturn, invoke fromBufferDriverReturn to return it.
+    #    to the data. For valid connected buffer outputs, emit the same buffer on bufferOut.
+    #    When the buffer is returned on bufferOutReturn, invoke
+    #    fromBufferDriverReturn to return it, then send a buffer ACK to the remote hub.
     #
     # Sample connections:
     #
@@ -190,15 +197,15 @@ module Svc {
     @ You can connect each of these output ports to any typed input port.
     @ Data emitted on one of these ports is copied from a buffer received on fromBufferDriver,
     @ and the buffer is returned.
-    output port serialOut: [GenericHubCfg.NumSerialOutputPorts] serial
+    output port serialOut: [Svc.GenericHubCfg.NumSerialOutputPorts] serial
 
     @ Ports for receiving buffer data
     @ A buffer emitted on one of these ports is a buffer received on fromBufferDriver,
     @ With adjusted metadata to point to the data stored in the buffer.
-    output port bufferOut: [GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
+    output port bufferOut: [Svc.GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
 
     @ Ports for receiving buffers sent on bufferOut and then returned
-    sync input port bufferOutReturn: [GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
+    sync input port bufferOutReturn: [Svc.GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend
 
     @ bufferOut and bufferOutReturn ports must match
     match bufferOut with bufferOutReturn
@@ -208,6 +215,10 @@ module Svc {
 
     @ remote command response 
     sync input port cmdRespIn: [CmdDispatcherSequencePorts] Fw.CmdResponse
+
+
+    @ Timeout tick for pending reliable buffer sends.
+    sync input port run: Svc.Sched
 
   }
 

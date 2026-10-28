@@ -26,8 +26,8 @@ namespace Svc {
 //!  tracker is enabled, it will ping its corresponding port
 //!  with a provided key. If a ping return is outstanding,
 //!  a counter is decremented, and its value is checked
-//!  against warning and fault thresholds. A watchdog is
-//!  always stroked in the run handler.
+//!  against warning and fault thresholds. The watchdog is stroked
+//!  after all enabled targets have responded, unless a fatal fault has latched.
 
 class HealthImpl final : public HealthComponentBase {
     friend class HealthTester;
@@ -140,9 +140,11 @@ class HealthImpl final : public HealthComponentBase {
         U32 cycleCount;          //!< current cycle count
         U32 key;                 //!< key passed to ping
         Fw::Enabled::t enabled;  //!< if current ping result is checked
+        bool hasResponded;       //!< whether a valid ping response has been received
     } m_pingTrackerEntries[NUM_PINGSEND_OUTPUT_PORTS];
 
     FwIndexType findEntry(const Fw::CmdStringArg& entry);
+    bool allEnabledPingEntriesHaveResponded() const;
 
     //!  Private member data
     FwIndexType m_numPingEntries;  //!< stores number of entries passed to constructor
@@ -150,6 +152,7 @@ class HealthImpl final : public HealthComponentBase {
     U32 m_watchDogCode;            //!< stores code used for watchdog stroking
     U32 m_warnings;                //!< number of slip warnings issued
     Fw::Enabled m_enabled;         //!< if the pinger is enabled
+    bool m_watchdogFaultLatched;   //!< fatal ping fault prevents watchdog stroking
     FwSizeType queue_depth;        //!< queue depth passed by user
 };
 

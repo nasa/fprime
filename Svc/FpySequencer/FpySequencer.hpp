@@ -819,9 +819,13 @@ class FpySequencer : public FpySequencerComponentBase {
     // reads and validates the header from the m_sequenceBuffer
     // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readHeader();
-    // reads and validates the body from the m_sequenceBuffer
+    // reads and validates the body from the file, or m_sequenceBuffer when file is null
     // return SUCCESS if sequence is valid, FAILURE otherwise
-    Fw::Success readBody();
+    Fw::Success readBody(Os::File* file = nullptr);
+    // reads one variable-length argument specification into m_sequenceBuffer
+    Fw::Success readArgumentSpec(Os::File& file);
+    // reads one statement into m_sequenceBuffer
+    Fw::Success readStatement(Os::File& file);
     // reads and validates the footer from the m_sequenceBuffer
     // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readFooter();
@@ -833,7 +837,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Fw::Success readBytes(Os::File& file,
                           FwSizeType readLen,
                           const FpySequencer_FileReadStage& readStage,
-                          bool updateCrc = true);
+                          bool updateCrc = true,
+                          FwSizeType offset = 0);
 
     // ----------------------------------------------------------------------
     // Run state

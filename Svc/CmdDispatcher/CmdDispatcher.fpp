@@ -38,8 +38,6 @@ module Svc {
 
     match compCmdSend with compCmdReg
 
-    match seqCmdStatus with seqCmdBuff
-
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------

@@ -25,12 +25,13 @@ class GenericHub final : public GenericHubComponentBase {
      * Type of serialized data on the wire. Allows for expanding them on the opposing end.
      */
     enum HubType {
-        HUB_TYPE_PORT,      //!< Port type transmission
-        HUB_TYPE_BUFFER,    //!< Buffer type transmission
-        HUB_TYPE_EVENT,     //!< Event transmission
-        HUB_TYPE_CHANNEL,   //!< Telemetry channel type
-        HUB_TYPE_CMD_DISP,  //!< Command dispatch type
-        HUB_TYPE_CMD_RESP,  //!< Command response type
+        HUB_TYPE_PORT,        //!< Port type transmission
+        HUB_TYPE_BUFFER,      //!< Buffer type transmission
+        HUB_TYPE_EVENT,       //!< Event transmission
+        HUB_TYPE_CHANNEL,     //!< Telemetry channel type
+        HUB_TYPE_CMD_DISP,    //!< Command dispatch type
+        HUB_TYPE_CMD_RESP,    //!< Command response type
+        HUB_TYPE_BUFFER_ACK,  //!< Buffer receipt acknowledgement type
         HUB_TYPE_MAX
     };
 
@@ -48,6 +49,10 @@ class GenericHub final : public GenericHubComponentBase {
     ~GenericHub();
 
   private:
+    enum : U32 {
+        BUFFER_ACK_TIMEOUT_TICKS = 5U,
+    };
+
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -80,6 +85,12 @@ class GenericHub final : public GenericHubComponentBase {
                            U32 cmdSeq,                      //!< Command Sequence
                            const Fw::CmdResponse& response  //!< The command response argument
                            ) override;
+
+    //! Handler implementation for run
+    //!
+    void run_handler(FwIndexType portNum,  //!< The port number
+                     U32 context           //!< The call order
+                     ) override;
 
     //! Handler implementation for fromBufferDriver
     //!
@@ -122,8 +133,14 @@ class GenericHub final : public GenericHubComponentBase {
 
     // Helpers and members
     void send_data(const HubType type, const FwIndexType port, const U8* data, const FwSizeType size);
+    void send_buffer_ack(FwIndexType port);
+    void clear_pending_buffer(FwIndexType port);
+
+    Fw::Buffer m_pendingBuffers[NUM_BUFFERIN_INPUT_PORTS];
+    U32 m_pendingBufferTicks[NUM_BUFFERIN_INPUT_PORTS];
+    bool m_pendingBufferValid[NUM_BUFFERIN_INPUT_PORTS];
 };
 
-}  // end namespace Svc
+}  // namespace Svc
 
 #endif
