@@ -438,9 +438,158 @@ void VersionTester ::test_getVer() {
     ASSERT_EQ(status, Svc::VersionStatus::FAILURE);
 }
 
+void VersionTester ::test_schedIn() {
+    Svc::CustomVersionDb custom_data_struct;
+
+    // Empty state: a tick with no slots set emits nothing
+    this->sendCmd_ENABLE(0, 9, VersionEnabled::ENABLED);
+    this->clear_all();
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_CustomVersions_SIZE(0);
+    ASSERT_TLM_CustomVersion01_SIZE(0);
+    ASSERT_TLM_CustomVersion10_SIZE(0);
+
+    // Populate all 10 slots (mixed OK/FAILURE) via setVersion
+    this->test_setVer(true);
+
+    // Enabled: a tick re-emits all 10 populated slots as TELEMETRY ONLY (no events),
+    // because the periodic path is channel-only to avoid event-log spam.
+    this->clear_all();
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_CustomVersions_SIZE(0);
+
+    // sendEvent=false also suppresses framework/project/library events on a tick, while their
+    // telemetry channels are still written (their telemetry is ungated by the verbosity flag).
+    ASSERT_EVENTS_FrameworkVersion_SIZE(0);
+    ASSERT_TLM_FrameworkVersion_SIZE(1);
+    ASSERT_TLM_FrameworkVersion(0, Project::Version::FRAMEWORK_VERSION);
+    ASSERT_EVENTS_ProjectVersion_SIZE(0);
+    ASSERT_TLM_ProjectVersion_SIZE(1);
+    ASSERT_TLM_ProjectVersion(0, Project::Version::PROJECT_VERSION);
+    ASSERT_EVENTS_LibraryVersions_SIZE(0);
+    ASSERT_TLM_LibraryVersion01_SIZE(1);
+    ASSERT_TLM_LibraryVersion10_SIZE(1);
+
+    // Spot-check channel value and status propagation across the range (no event asserts: tick is silent)
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, Fw::String("ver_0"),
+                           Svc::VersionStatus::OK);
+    ASSERT_TLM_CustomVersion01_SIZE(1);
+    ASSERT_TLM_CustomVersion01(0, custom_data_struct);
+
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_03, Fw::String("ver_3"),
+                           Svc::VersionStatus::FAILURE);
+    ASSERT_TLM_CustomVersion04_SIZE(1);
+    ASSERT_TLM_CustomVersion04(0, custom_data_struct);
+
+    custom_data_struct.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_09, Fw::String("ver_9"),
+                           Svc::VersionStatus::OK);
+    ASSERT_TLM_CustomVersion10_SIZE(1);
+    ASSERT_TLM_CustomVersion10(0, custom_data_struct);
+
+    // Periodic: a second tick re-emits channels again (not one-shot), still silent on events
+    this->clear_all();
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_CustomVersions_SIZE(0);
+    ASSERT_TLM_CustomVersion01_SIZE(1);
+    ASSERT_TLM_CustomVersion10_SIZE(1);
+
+    // Contrast: the on-demand VERSION command STILL produces events (events are reserved for explicit requests)
+    this->clear_all();
+    this->sendCmd_VERSION(0, 9, Svc::VersionType::CUSTOM);
+    ASSERT_CMD_RESPONSE(0, 1, 9, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_CustomVersions_SIZE(10);
+
+    // Disabled: a tick suppresses CUSTOM channels (gated on verbosity) and remains silent on events
+    this->sendCmd_ENABLE(0, 9, VersionEnabled::DISABLED);
+    this->clear_all();
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_CustomVersions_SIZE(0);
+    ASSERT_TLM_CustomVersion01_SIZE(0);
+    ASSERT_TLM_CustomVersion10_SIZE(0);
+
+    // Framework/project/library telemetry is NOT gated on verbosity: a disabled tick still writes
+    // their channels (sendEvent=false) and still emits no events. This isolates the event function argument
+    // from the verbosity flag.
+    ASSERT_EVENTS_FrameworkVersion_SIZE(0);
+    ASSERT_TLM_FrameworkVersion_SIZE(1);
+    ASSERT_EVENTS_ProjectVersion_SIZE(0);
+    ASSERT_TLM_ProjectVersion_SIZE(1);
+    ASSERT_EVENTS_LibraryVersions_SIZE(0);
+    ASSERT_TLM_LibraryVersion01_SIZE(1);
+}
+
+void VersionTester ::test_sendEventParam() {
+    Svc::VersionStatus status = Svc::VersionStatus::OK;
+    Svc::CustomVersionDb expect;
+
+    // Populate only two custom slots (00 -> CustomVersion01, 05 -> CustomVersion06); leave the rest empty
+    this->sendCmd_ENABLE(0, 9, VersionEnabled::ENABLED);
+    this->clear_all();
+    Fw::String v0 = "ver_x";
+    Fw::String v5 = "ver_y";
+    this->invoke_to_setVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, v0, status);
+    this->invoke_to_setVersion(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, v5, status);
+    this->clear_all();
+
+    // One scheduled tick: every tlm method that takes the sendEvent function argument runs with sendEvent=false
+    this->invoke_to_schedIn(0, 0);
+
+    // customVersion_tlm (sendEvent=false): only POPULATED slots re-emit as telemetry; empty slots stay
+    // silent (the no_ver skip); no custom events at all.
+    ASSERT_EVENTS_CustomVersions_SIZE(0);
+    expect.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, v0, Svc::VersionStatus::OK);
+    ASSERT_TLM_CustomVersion01_SIZE(1);
+    ASSERT_TLM_CustomVersion01(0, expect);
+    expect.set(Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, v5, Svc::VersionStatus::OK);
+    ASSERT_TLM_CustomVersion06_SIZE(1);
+    ASSERT_TLM_CustomVersion06(0, expect);
+    // Unpopulated slots emit nothing
+    ASSERT_TLM_CustomVersion02_SIZE(0);
+    ASSERT_TLM_CustomVersion05_SIZE(0);
+    ASSERT_TLM_CustomVersion10_SIZE(0);
+
+    // fwVersion_tlm / projectVersion_tlm (sendEvent=false): correct channel VALUE, no event
+    ASSERT_EVENTS_FrameworkVersion_SIZE(0);
+    ASSERT_TLM_FrameworkVersion_SIZE(1);
+    ASSERT_TLM_FrameworkVersion(0, Project::Version::FRAMEWORK_VERSION);
+    ASSERT_EVENTS_ProjectVersion_SIZE(0);
+    ASSERT_TLM_ProjectVersion_SIZE(1);
+    ASSERT_TLM_ProjectVersion(0, Project::Version::PROJECT_VERSION);
+
+    // libraryVersion_tlm (sendEvent=false): every channel carries its correct VALUE, no events
+    ASSERT_EVENTS_LibraryVersions_SIZE(0);
+    ASSERT_TLM_LibraryVersion01(0, "blah0 @ blah0");
+    ASSERT_TLM_LibraryVersion02(0, "blah1 @ blah1");
+    ASSERT_TLM_LibraryVersion03(0, "blah2 @ blah2");
+    ASSERT_TLM_LibraryVersion04(0, "blah3 @ blah3");
+    ASSERT_TLM_LibraryVersion05(0, "blah4 @ blah4");
+    ASSERT_TLM_LibraryVersion06(0, "blah5 @ blah5");
+    ASSERT_TLM_LibraryVersion07(0, "blah6 @ blah6");
+    ASSERT_TLM_LibraryVersion08(0, "blah7 @ blah7");
+    ASSERT_TLM_LibraryVersion09(0, "blah8 @ blah8");
+    ASSERT_TLM_LibraryVersion10(0, "blah9 @ blah9");
+
+    // Contrast the SAME methods on a sendEvent=true entry point: VERSION ALL re-emits WITH events,
+    // confirming the function argument is what gates events (channels identical to the silent tick above).
+    this->clear_all();
+    this->sendCmd_VERSION(0, 9, Svc::VersionType::ALL);
+    ASSERT_CMD_RESPONSE(0, 1, 9, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_FrameworkVersion_SIZE(1);
+    ASSERT_EVENTS_ProjectVersion_SIZE(1);
+    ASSERT_EVENTS_LibraryVersions_SIZE(12);
+    ASSERT_EVENTS_CustomVersions_SIZE(2);  // one event per populated slot
+    ASSERT_EVENTS_CustomVersions(0, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_00, "ver_x");
+    ASSERT_EVENTS_CustomVersions(1, Svc::VersionCfg::VersionEnum::PROJECT_VERSION_05, "ver_y");
+    ASSERT_TLM_FrameworkVersion(0, Project::Version::FRAMEWORK_VERSION);
+    ASSERT_TLM_CustomVersion01_SIZE(1);
+    ASSERT_TLM_CustomVersion06_SIZE(1);
+}
+
 void VersionTester::test_ports() {
     this->sendCmd_ENABLE(0, 9, VersionEnabled::ENABLED);
     this->test_setVer(true);
     this->test_getVer();
+    // schedIn is covered by the standalone test_schedIn case, whose empty-state check requires a
+    // fresh (unpopulated) component; do not re-run it here after test_setVer has populated slots.
 }
 }  // namespace Svc

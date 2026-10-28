@@ -143,6 +143,10 @@ is absent (metadata written before this field existed).
 - The **outstanding** count = currently-unresolved findings (sum
   across tag tiers). On run 1 it equals the sum of the four tag
   counts; on later runs it drops as the author fixes things.
+- These are metadata semantics. The aggregator's visible per-agent
+  table renders currently-open counts per tag computed from thread
+  state, and carries the cumulative sum as `raised (all runs)` in its
+  Since last run block (`review-summary.agent.md` §5b).
 
 ### Verdict (Go / No-Go)
 

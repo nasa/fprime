@@ -3,7 +3,7 @@
 ## References
 
 - [F Prime Wasm Sequencing SDD](https://github.com/nasa/fprime/blob/devel/Svc/WasmSequencer/docs/sdd.md)
-- [F Prime Sequencing Functionality](./sequencing.md)
+- [F Prime Standard Sequencing Functionality](./sequencing.md)
 - [F Prime Sequence Dispatcher SDD](https://github.com/nasa/fprime/blob/devel/Svc/SeqDispatcher/docs/sdd.md)
 - [Wasm Core Specification](https://www.w3.org/TR/wasm-core-1/)
 - [F Prime Command Dispatcher SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdDispatcher/docs/sdd.md)
@@ -21,7 +21,7 @@ Advanced sequencing in F Prime is based on the WebAssembly (Wasm) standard. F Pr
 
 Prior to execution, advanced sequences are Wasm module files stored in the file system and managed with the same file system functionality as any other on-board file. Sequence file names are resolved against a base directory that is configurable at runtime.
 
-Advanced sequences are authored and compiled on the ground rather than on board. A sequence is written in a general-purpose programming language, compiled to a Wasm module, and uplinked as a file. See the [user manual](../../user-manual/gds/wasm-rust.md) for the ground authoring, test, and build workflow, and [Advanced Sequence Size In F´](../../user-manual/gds/wasm-size.md) for what a sequence costs on the wire and on board relative to a standard sequence.
+Advanced sequences are authored and compiled on the ground rather than on board. A sequence is written in a sequencing language, compiled to a Wasm module, and uplinked as a file. See the [Fpy user manual](../../user-manual/gds/fpy.md) and [Rust sequencing user manual](../../user-manual/gds/wasm-rust.md) for the ground authoring, test, and build workflow, and [Rust Advanced Sequence Size In F´](../../user-manual/gds/wasm-size.md) for what a sequence costs on the wire and on board relative to a standard sequence.
 
 Each sequencing engine reserves its memory up front at deployment configuration time: a fixed pool for the interpreter and its compiled program, a fixed pool for sequence working memory, and a fixed limit on the number of modules that may be resident at once. Nothing is allocated dynamically once the system is running, so the maximum size and working set of a sequence are bounded by these configured limits.
 

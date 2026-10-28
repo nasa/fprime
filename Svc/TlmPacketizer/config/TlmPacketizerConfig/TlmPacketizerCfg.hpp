@@ -16,8 +16,6 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
-//! Maximum number of packets that the packetizer can handle.
-static const FwChanIdType MAX_PACKETIZER_PACKETS = 50;
 
 //! Maximum number of channels that the packetizer can handle. Must be >= number of non-omitted channels
 static const FwChanIdType MAX_PACKETIZER_CHANNELS = 200;

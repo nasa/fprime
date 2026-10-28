@@ -46,6 +46,11 @@ the buffer lifecycle described later. A pointer must never be passed through
 the hub: a pointer is meaningful only in the address space that allocated the
 pointed-to object.
 
+GenericHub is passive and keeps no state between calls. Each handler runs on
+its caller's thread, and several producers may be in the send path at once, so
+the component connected to `toBufferDriver` must accept concurrent calls (for
+example, the asynchronous inputs of `Svc::ComQueue`).
+
 ## Port catalog
 
 ### 1. FSW to hub: send interface
@@ -197,6 +202,18 @@ command dispatcher B
 The command arrays are sized by the framework constant
 `CmdDispatcherSequencePorts`, which is `5` in the default configuration.
 
+The command port arrays are not declared as matched, and the hub carries only
+the port index. A response reaches its originator only if the indices are wired
+consistently: `cmdDispIn[k]` and `cmdRespOut[k]` on hub A must pair with
+`cmdDispOut[k]` and `cmdRespIn[k]` on hub B. `Svc::CmdDispatcher` declares
+`match seqCmdStatus with seqCmdBuff`, so connecting more than one of its slots
+to the same hub requires `unmatched` connections:
+
+```text
+unmatched hub.cmdDispOut[0] -> cmdDisp.seqCmdBuff[2]
+unmatched cmdDisp.seqCmdStatus[2] -> hub.cmdRespIn[0]
+```
+
 ### Known limitation
 
 Although GenericHub serializes and forwards command responses, the standard
@@ -253,6 +270,11 @@ A must match the outputs on hub B, and the outputs on hub A must match the
 inputs on hub B. The port index is part of the serialized message, so the
 corresponding arrays must be wired in parallel.
 
+The serialized message carries no version field. Both deployments must also use
+the same serialized framework types and limits, including `FwBuffSizeType`,
+`FwOpcodeType`, `FwEventIdType`, `FwChanIdType`, the `Fw::Time` fields, and
+`FW_COM_BUFFER_MAX_SIZE`. GenericHub requires `FW_PORT_SERIALIZATION`.
+
 To use the event and telemetry pattern connections, include the hub in the
 corresponding topology specifiers:
 
@@ -265,7 +287,16 @@ telemetry connections instance hub
 
 The buffer driver can report send and receive errors, but GenericHub currently
 drops those errors. Projects that need to monitor transport failures must add
-that handling around or within the component.
+that handling around or within the component. Received messages with an
+invalid type, size, or port index, or for an unconnected output port, are
+dropped without an event or telemetry.
+
+GenericHub does not check the buffer returned by `allocate`. If the allocator
+returns an invalid buffer (for example, `Svc::BufferManager` with no free
+buffer of sufficient size), serialization fails a `FW_ASSERT`. Size the pool for
+the worst case: the capacity of every queue downstream of `toBufferDriver`,
+plus buffers held by the driver, plus one per thread that can call the hub's
+input ports concurrently.
 
 The hub is not itself an event source or telemetry database. Its `eventOut`
 and `tlmOut` ports still need to be wired to the deployment's event manager and
@@ -301,3 +332,4 @@ The following diagrams show progressively more detail:
 | 2021-01-29 | Updated |
 | 2023-06-09 | Added telemetry and event helpers |
 | 2026-07-09 | Documented command routing, current configuration constants, buffer-driver interfaces, framing, and buffer lifecycle |
+| 2026-09-29 | Documented threading, command index pairing, cross-deployment type agreement, silent receive drops, and allocation failure |
