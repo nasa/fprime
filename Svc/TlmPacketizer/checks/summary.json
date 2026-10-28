@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-27T21:18:29Z",
+  "generated_at": "2026-10-28T21:09:46Z",
   "ref": "devel",
-  "commit": "67cf695e30f4a32514cf6ed02c30bf37e1923bc6",
+  "commit": "c7d1527e41c88aa5028ed4002bc4164df537670c",
   "passed": 3,
   "failed": 9,
   "skipped": 4,
@@ -14,7 +14,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
       "status": "pass",
       "failures": [],
-      "detail": "6 input port(s) checked"
+      "detail": "8 input port(s) checked"
     },
     {
       "id": "D2",
@@ -23,7 +23,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
       "status": "pass",
       "failures": [],
-      "detail": "6 command(s) checked"
+      "detail": "9 command(s) checked"
     },
     {
       "id": "D3",
@@ -56,9 +56,14 @@
         "requirement 'TPK-004' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:22) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'TPK-005' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:23) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'TPK-006' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:24) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'TPK-007' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:25) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+        "requirement 'TPK-007' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:25) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-008' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:26) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-009' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:27) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-010' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:28) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-011' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:29) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-012' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:30) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "7 requirement(s) checked"
+      "detail": "12 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -67,13 +72,14 @@
       "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
       "status": "fail",
       "failures": [
+        "dependency 'Fw/Buffer' (from #include \"Fw/Buffer/Buffer.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Buffer)",
         "dependency 'Fw/Com' (from #include \"Fw/Com/ComPacket.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Com)",
         "dependency 'Fw/DataStructures' (from #include \"Fw/DataStructures/Array.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_DataStructures)",
         "dependency 'Fw/Prm' (from #include \"Fw/Prm/ParamValid.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Prm)",
         "dependency 'Os' (from #include \"Os/Mutex.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Os)",
         "dependency 'TlmPacketizerConfig' (from #include \"TlmPacketizerConfig/TlmPacketizerCfg.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as TlmPacketizerConfig)"
       ],
-      "detail": "5 dependency module(s) checked"
+      "detail": "6 dependency module(s) checked"
     },
     {
       "id": "I3",
@@ -94,11 +100,14 @@
         "command 'SET_LEVEL' has no requirement referencing it (add a requirement mentioning 'SET_LEVEL')",
         "command 'SEND_PKT' has no requirement referencing it (add a requirement mentioning 'SEND_PKT')",
         "command 'ENABLE_SECTION' has no requirement referencing it (add a requirement mentioning 'ENABLE_SECTION')",
-        "command 'ENABLE_GROUP' has no requirement referencing it (add a requirement mentioning 'ENABLE_GROUP')",
-        "command 'FORCE_GROUP' has no requirement referencing it (add a requirement mentioning 'FORCE_GROUP')",
-        "command 'CONFIGURE_GROUP_RATES' has no requirement referencing it (add a requirement mentioning 'CONFIGURE_GROUP_RATES')"
+        "command 'CONFIGURE_GROUP_SEND' has no requirement referencing it (add a requirement mentioning 'CONFIGURE_GROUP_SEND')",
+        "command 'CONFIGURE_GROUP_RATES' has no requirement referencing it (add a requirement mentioning 'CONFIGURE_GROUP_RATES')",
+        "command 'GET_PACKET_CONFIG' has no requirement referencing it (add a requirement mentioning 'GET_PACKET_CONFIG')",
+        "command 'OVERRIDE_PACKET_SEND' has no requirement referencing it (add a requirement mentioning 'OVERRIDE_PACKET_SEND')",
+        "command 'OVERRIDE_PACKET_RATES' has no requirement referencing it (add a requirement mentioning 'OVERRIDE_PACKET_RATES')",
+        "command 'CLEAR_PACKET_OVERRIDE' has no requirement referencing it (add a requirement mentioning 'CLEAR_PACKET_OVERRIDE')"
       ],
-      "detail": "6 command(s) traced against 7 requirement(s)"
+      "detail": "9 command(s) traced against 12 requirement(s)"
     },
     {
       "id": "R2",
@@ -110,7 +119,7 @@
         "telemetry channel 'GroupConfigs' has no requirement referencing it (add a requirement mentioning 'GroupConfigs')",
         "telemetry channel 'SectionEnabled' has no requirement referencing it (add a requirement mentioning 'SectionEnabled')"
       ],
-      "detail": "2 telemetry channel(s) traced against 7 requirement(s)"
+      "detail": "2 telemetry channel(s) traced against 12 requirement(s)"
     },
     {
       "id": "R3",
@@ -125,9 +134,17 @@
         "event 'PacketSent' has no requirement referencing it (add a requirement mentioning 'PacketSent')",
         "event 'PacketNotFound' has no requirement referencing it (add a requirement mentioning 'PacketNotFound')",
         "event 'SectionUnconfigurable' has no requirement referencing it (add a requirement mentioning 'SectionUnconfigurable')",
-        "event 'OversizedChannel' has no requirement referencing it (add a requirement mentioning 'OversizedChannel')"
+        "event 'OversizedChannel' has no requirement referencing it (add a requirement mentioning 'OversizedChannel')",
+        "event 'ReloadRecordUnknownPacket' has no requirement referencing it (add a requirement mentioning 'ReloadRecordUnknownPacket')",
+        "event 'ReloadRecordInvalid' has no requirement referencing it (add a requirement mentioning 'ReloadRecordInvalid')",
+        "event 'PacketConfigReport' has no requirement referencing it (add a requirement mentioning 'PacketConfigReport')",
+        "event 'PacketOverrideSet' has no requirement referencing it (add a requirement mentioning 'PacketOverrideSet')",
+        "event 'PacketOverrideCleared' has no requirement referencing it (add a requirement mentioning 'PacketOverrideCleared')",
+        "event 'ConfigReloadFailed' has no requirement referencing it (add a requirement mentioning 'ConfigReloadFailed')",
+        "event 'InvalidPacketConfig' has no requirement referencing it (add a requirement mentioning 'InvalidPacketConfig')",
+        "event 'GroupSendStateSet' has no requirement referencing it (add a requirement mentioning 'GroupSendStateSet')"
       ],
-      "detail": "7 event(s) traced against 7 requirement(s)"
+      "detail": "15 event(s) traced against 12 requirement(s)"
     },
     {
       "id": "R4",
@@ -139,7 +156,7 @@
         "parameter 'SECTION_ENABLED' has no requirement referencing it (add a requirement mentioning 'SECTION_ENABLED')",
         "parameter 'SECTION_CONFIGS' has no requirement referencing it (add a requirement mentioning 'SECTION_CONFIGS')"
       ],
-      "detail": "2 parameter(s) traced against 7 requirement(s)"
+      "detail": "2 parameter(s) traced against 12 requirement(s)"
     },
     {
       "id": "R5",
@@ -161,12 +178,14 @@
         "port 'pingIn' has no requirement referencing it (add a requirement mentioning 'pingIn')",
         "port 'Run' has no requirement referencing it (add a requirement mentioning 'Run')",
         "port 'configureSectionGroupRate' has no requirement referencing it (add a requirement mentioning 'configureSectionGroupRate')",
+        "port 'packetOverrideReturnIn' has no requirement referencing it (add a requirement mentioning 'packetOverrideReturnIn')",
         "port 'TlmRecv' has no requirement referencing it (add a requirement mentioning 'TlmRecv')",
         "port 'TlmGet' has no requirement referencing it (add a requirement mentioning 'TlmGet')",
         "port 'PktSend' has no requirement referencing it (add a requirement mentioning 'PktSend')",
-        "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')"
+        "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')",
+        "port 'packetOverrideReturnOut' has no requirement referencing it (add a requirement mentioning 'packetOverrideReturnOut')"
       ],
-      "detail": "8 port(s) traced against 7 requirement(s)"
+      "detail": "12 port(s) traced against 12 requirement(s)"
     },
     {
       "id": "R7",
@@ -181,9 +200,14 @@
         "requirement 'TPK-004' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:22) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'TPK-005' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:23) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'TPK-006' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:24) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'TPK-007' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:25) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'TPK-007' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:25) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-008' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:26) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-009' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:27) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-010' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:28) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-011' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:29) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-012' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:30) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "7 requirement(s) checked"
+      "detail": "12 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -192,7 +216,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
       "status": "pass",
       "failures": [],
-      "detail": "7 requirement(s) checked"
+      "detail": "12 requirement(s) checked"
     },
     {
       "id": "U3",
