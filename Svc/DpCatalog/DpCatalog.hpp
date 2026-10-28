@@ -214,7 +214,7 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// @brief insert an entry into the sorted catalog; if it exists, update the metadata
     /// @param entry new entry
-    /// @return true if inserted successfully, false if catalog is full
+    /// @return true if inserted successfully, false if the tree insert failed
     bool insertEntry(DpStateEntry& entry);
 
     /// @brief reset the catalog

@@ -77,6 +77,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! Verify transmitted state is preserved across catalog rebuilds
     void stateFileSkipsTransmitted();
 
+    //! configure the component on one directory and build the catalog as the first command
+    void configureAndBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq, Fw::MemAllocator& alloc);
+
     //! Generate some data product files
     Fw::String genDP(FwDpIdType id,
                      FwDpPriorityType prio,
@@ -177,6 +180,13 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_NonCanonicalDpRejected();
     void test_BadHeaderHashRejected();
     void test_NonDpFilesDoNotConsumeSlots();
+    void test_InsertIntoEmptyBuiltCatalog();
+    void test_InsertDuringTransmitInPriorityOrder();
+    void test_InsertWhenFull();
+    void test_InsertBeforeBuild();
+    void test_InsertDuplicate();
+    void test_InsertPreservesTransmittedState();
+    void test_InsertAlreadyTransmitted();
     void test_XmitPriorityRangeAll();
     void test_XmitPriorityRangeSubset();
     void test_XmitPriorityRangeBoundary();

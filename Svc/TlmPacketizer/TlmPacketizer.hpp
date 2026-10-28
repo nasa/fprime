@@ -23,7 +23,10 @@
 #include "Svc/TlmPacketizer/TlmPacketizer_SectionPacketOverridesArrayAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizer_TelemetrySendPortMapArrayAc.hpp"
 #include "TlmPacketizerConfig/FppConstantsAc.hpp"
+#include "TlmPacketizerConfig/FwTlmPacketizeOffsetTypeAliasAc.h"
 #include "TlmPacketizerConfig/TlmPacketizerCfg.hpp"
+
+#include <limits>
 
 namespace Svc {
 
@@ -212,13 +215,15 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     // buffers for filling with telemetry
     BufferEntry m_fillBuffers[MAX_PACKETIZER_PACKETS];
 
-    static constexpr U16 NOT_IN_PACKET = std::numeric_limits<U16>::max();  //!< packetOffset value for no packet
+    //! packetOffset value for no packet. Never a valid offset: the static_assert in TlmPacketizer.cpp keeps
+    //! FW_COM_BUFFER_MAX_SIZE within this type, and setPacketList asserts every offset is below this sentinel
+    static constexpr FwTlmPacketizeOffsetType NOT_IN_PACKET = std::numeric_limits<FwTlmPacketizeOffsetType>::max();
 
     struct TlmEntry {
         FwChanIdType id;  //!< telemetry id stored in slot
         // Offsets into packet buffers.
         // NOT_IN_PACKET means that channel is not in that packet
-        U16 packetOffset[MAX_PACKETIZER_PACKETS];
+        FwTlmPacketizeOffsetType packetOffset[MAX_PACKETIZER_PACKETS];
         FwSizeType channelSize;  //!< max serialized size of the channel in bytes
         bool ignored;            //!< ignored channel id
         bool hasValue;           //!< if the entry has received a value at least once
