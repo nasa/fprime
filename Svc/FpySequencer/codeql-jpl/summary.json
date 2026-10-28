@@ -7,6 +7,6 @@
   },
   "worst": "low",
   "tier": "silver",
-  "dismissed": 14,
+  "dismissed": 13,
   "label": "Static Analysis (JPL) [CodeQL]"
 }
