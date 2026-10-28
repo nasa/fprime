@@ -1,0 +1,339 @@
+# test_fpy.fpy
+#
+# Fpy integration test sequence for the Ref deployment. test_fpy.py compiles it
+# to WebAssembly and runs it on Ref.wasmSeq (a Svc.WasmSequencer). It exercises
+# the language end to end on the real sequencer and fails itself through its
+# own asserts, so the test only has to check that the sequence completes.
+#
+# To keep unrelated Ref changes from breaking this test, the sequence depends on
+# as little of the dictionary as possible: the sequencer instance itself, the
+# command dispatcher, and framework types that every F Prime dictionary carries.
+#
+# Notes on the wasm backend and the WasmSequencer:
+# * The sequencer's checkTimers port runs at 0.5 Hz in Ref, so every sleep and
+#   check below tolerates a two-second tick.
+# * Floating-point `**`, `%` and ln() are left out on purpose: the wasm backend
+#   lowers them to libm imports (env.pow, env.fmod, env.log) that the
+#   WasmSequencer does not provide, so a module using them fails to load.
+# * Each section lives in its own function. Every assert, command and branch
+#   nests a wasm block around the rest of the function, and the sequencer's
+#   engine rejects a function nested more than 64 blocks deep (reporting
+#   ERR_OUT_OF_MEMORY at load), so keep each function to a few dozen asserts.
+
+from .test_fpy_lib import square, clamp as clamp_i64
+import .test_fpy_lib as lib
+
+# Globals a function assigns to must be declared before the function
+side_effects: I64 = 0
+greet_count: I64 = 0
+persist_calls: I64 = 0
+
+# ---------------------------------------------------------------------------
+# Variables, arithmetic and casting
+# ---------------------------------------------------------------------------
+def test_arithmetic_and_casting():
+    pemdas: F32 = 1 - 2 + 3 * 4 + 10 / 5 * 2
+    assert pemdas == 15.0
+
+    int_value: U8 = 123
+    float_value: F32 = int_value
+    int_value = U8(float_value)
+    assert int_value == 123
+
+    unsigned: U32 = 123123
+    signed: I32 = I32(unsigned)
+    assert signed == 123123
+
+    wide: U32 = 16383
+    narrow: U8 = U8(wide)
+    assert narrow == 255
+
+    widened: U64 = narrow
+    assert widened == 255
+    widened_float: F64 = float_value
+    assert widened_float == 123.0
+
+    assert 17 % 5 == 2
+    assert 17 // 5 == 3
+    assert 5 / 2 == 2.5
+    assert 2 ** 10 == 1024
+    assert iabs(-5) == 5
+    assert fabs(-2.5) == 2.5
+
+    runtime_a: I64 = 17
+    runtime_b: I64 = 5
+    assert runtime_a % runtime_b == 2
+    assert runtime_a // runtime_b == 3
+    assert runtime_a / runtime_b == 3.4
+
+    aug: I64 = 7
+    aug += 3
+    assert aug == 10
+    aug -= 4
+    assert aug == 6
+    aug *= 5
+    assert aug == 30
+    aug %= 7
+    assert aug == 2
+    aug //= 2
+    assert aug == 1
+    aug_f: F64 = 9.0
+    aug_f /= 2.0
+    assert aug_f == 4.5
+    aug_f -= 0.5
+    assert aug_f == 4.0
+
+# ---------------------------------------------------------------------------
+# Booleans and comparisons
+# ---------------------------------------------------------------------------
+def side_effect() -> bool:
+    side_effects = side_effects + 1
+    return True
+
+def test_booleans():
+    value: bool = 1 > 2 and (3 + 4) != 5
+    assert not value
+    assert (1 < 2) or (3 > 4)
+    assert 1 <= 1 and 2 >= 2 and 1 != 2 and 3 == 3
+
+    # and/or short-circuit: the right-hand side only runs when it has to
+    if False and side_effect():
+        assert False, 2
+    if True or side_effect():
+        pass
+    assert side_effects == 0
+    assert (False or side_effect()) and side_effects == 1
+
+# ---------------------------------------------------------------------------
+# Control flow
+# ---------------------------------------------------------------------------
+def test_control_flow():
+    counter: U64 = 0
+    while counter < 100:
+        counter = counter + 1
+    assert counter == 100
+
+    total: I64 = 0
+    for i in 0 .. 5:
+        total = total + i
+    assert total == 10
+
+    counter = 0
+    while True:
+        counter = counter + 1
+        if counter == 100:
+            break
+    assert counter == 100
+
+    odd_sum: I64 = 0
+    for i in 0 .. 10:
+        if i % 2 == 0:
+            continue
+        odd_sum = odd_sum + i
+    assert odd_sum == 25
+
+    branch: I8 = 4
+    if branch < 0:
+        assert False, 3
+    elif branch > 0 and branch <= 6:
+        log("elif branch taken")
+    else:
+        assert False, 4
+
+# ---------------------------------------------------------------------------
+# Structs, arrays and enums (framework types only)
+# ---------------------------------------------------------------------------
+def test_structs_arrays_and_enums():
+    interval: Fw.TimeInterval = {seconds: 15, useconds: 1000}
+    assert interval.seconds == 15
+    assert interval.useconds == 1000
+    interval.useconds = 2000
+    assert interval.useconds == 2000
+    interval_copy: Fw.TimeInterval = Fw.TimeInterval(15, 2000)
+    assert interval == interval_copy
+    partial: Fw.TimeInterval = {seconds: 3}
+    assert partial.useconds == 0
+    assert partial != interval
+
+    # Svc.ComQueueDepth is the array type of the standard com stack's queue depth
+    # channel; elements an array literal leaves out take their defaults
+    depths: Svc.ComQueueDepth = [7]
+    assert depths[0] == 7
+    depths[0] = U32(depths[0] + 2)
+    assert depths[0] == 9
+    depths_copy: Svc.ComQueueDepth = depths
+    assert depths_copy == depths
+
+    response: Fw.CmdResponse = Fw.CmdResponse.OK
+    assert response == Fw.CmdResponse.OK
+    assert response != Fw.CmdResponse.EXECUTION_ERROR
+    severity: Fw.LogSeverity = Fw.LogSeverity.WARNING_LO
+    assert severity == Fw.LogSeverity.WARNING_LO
+
+# ---------------------------------------------------------------------------
+# Functions
+# ---------------------------------------------------------------------------
+def add_vals(a: U64, b: U64) -> U64:
+    return a + b
+
+def greet(times: I64 = 3):
+    for i in 0 .. times:
+        greet_count = greet_count + 1
+
+def recursion_depth(limit: U64) -> U64:
+    if limit == 0:
+        return 0
+    return 1 + recursion_depth(limit - 1)
+
+def make_interval(secs: U32) -> Fw.TimeInterval:
+    return {seconds: secs, useconds: 0}
+
+def test_functions():
+    assert add_vals(1, 2) == 3
+    assert add_vals(b=2, a=40) == 42
+
+    greet()
+    greet(1)
+    assert greet_count == 4
+
+    assert recursion_depth(5) == 5
+    assert make_interval(7).seconds == 7
+
+# ---------------------------------------------------------------------------
+# Imports
+# ---------------------------------------------------------------------------
+def test_imports():
+    assert square(12) == 144
+    assert clamp_i64(50, 0, 10) == 10
+    assert clamp_i64(-5, 0, 10) == 0
+    assert lib.is_even(4)
+    assert not lib.is_even(7)
+
+# ---------------------------------------------------------------------------
+# Commands
+# ---------------------------------------------------------------------------
+def test_commands():
+    CdhCore.cmdDisp.CMD_NO_OP()
+    CdhCore.cmdDisp.CMD_NO_OP_STRING("Hello from Fpy!")
+    CdhCore.cmdDisp.CMD_NO_OP_STRING(arg1="Named argument from Fpy")
+
+    # Reading a global that does not exist fails the command: with
+    # assert_cmd_success off the sequence carries on regardless ...
+    flags.assert_cmd_success = False
+    Ref.wasmSeq.GLOBAL_GET("", "no_such_global")
+    flags.assert_cmd_success = True
+
+    # ... and handling the response yourself also suppresses the automatic assert
+    rejected: Fw.CmdResponse = Ref.wasmSeq.GLOBAL_GET("", "no_such_global")
+    assert rejected == Fw.CmdResponse.EXECUTION_ERROR
+
+    accepted: Fw.CmdResponse = CdhCore.cmdDisp.CMD_NO_OP()
+    assert accepted == Fw.CmdResponse.OK
+
+# ---------------------------------------------------------------------------
+# Telemetry and parameters
+# ---------------------------------------------------------------------------
+def test_telemetry_and_parameters():
+    dispatched_before: U32 = CdhCore.cmdDisp.CommandsDispatched
+    CdhCore.cmdDisp.CMD_NO_OP()
+    CdhCore.cmdDisp.CMD_NO_OP()
+    # The dispatcher writes this channel once a second; wait for it to catch up
+    check CdhCore.cmdDisp.CommandsDispatched > dispatched_before timeout {seconds: 20} period {seconds: 1}:
+        log("telemetry check body ran")
+    timeout:
+        assert False, 5
+
+    # The sequencer's own telemetry is readable too
+    check Ref.wasmSeq.CommandsDispatched > 0 timeout {seconds: 20} period {seconds: 1}
+
+    # Parameters are read back from the parameter database, so save after setting
+    Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS_PRM_SET(120.0)
+    Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS_PRM_SAVE()
+    timeout_prm: F32 = Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS
+    assert timeout_prm == 120.0
+    # Restore the default
+    Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS_PRM_SET(60.0)
+    Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS_PRM_SAVE()
+    assert Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS == 60.0
+
+# ---------------------------------------------------------------------------
+# Check statements
+# ---------------------------------------------------------------------------
+def count_calls() -> bool:
+    persist_calls = persist_calls + 1
+    return True
+
+def test_checks():
+    check False timeout {seconds: 1}:
+        assert False, 6
+    timeout:
+        log("check timed out as expected")
+
+    check count_calls() timeout {seconds: 20} persist {seconds: 2} period {seconds: 1}:
+        pass
+    timeout:
+        assert False, 7
+    assert persist_calls >= 2
+
+# ---------------------------------------------------------------------------
+# Sleeping and time
+# ---------------------------------------------------------------------------
+def test_sleeping_and_time():
+    t1: Fw.Time = now()
+    assert t1.timeBase == TimeBase.TB_WORKSTATION_TIME
+    log("sleeping")
+    sleep(1)
+    sleep(useconds=500_000)
+    # sleep until the next checkTimers call
+    sleep()
+    t2: Fw.Time = now()
+    assert t1 <= t2
+    assert t2 > t1
+    elapsed: Fw.TimeInterval = t2 - t1
+    assert elapsed.seconds >= 1
+    one_minute: Fw.TimeInterval = {seconds: 60}
+    assert elapsed < one_minute
+
+    later: Fw.Time = t1 + one_minute
+    assert (later - t1).seconds == 60
+    assert later > t1
+
+    sleep_until(now() + {seconds: 1})
+
+    # Fw.Time values default to TB_WORKSTATION_TIME, which is what Ref's clock uses
+    default_tb: Fw.Time = {timeContext: 0, seconds: 100, useconds: 0}
+    assert default_tb.timeBase == TimeBase.TB_WORKSTATION_TIME
+    parsed: Fw.Time = time("2025-12-19T14:30:00.123456Z")
+    assert parsed.useconds == 123456
+    assert parsed.timeBase == TimeBase.TB_WORKSTATION_TIME
+    parsed_sc: Fw.Time = time("2025-12-19T14:30:00Z", timeBase=TimeBase.TB_SC_TIME, timeContext=1)
+    assert parsed_sc.timeBase == TimeBase.TB_SC_TIME
+    assert parsed_sc.timeContext == 1
+
+# ---------------------------------------------------------------------------
+# Logging (the sequencer forwards guest events at these severities)
+# ---------------------------------------------------------------------------
+def test_logging():
+    log("activity lo from Fpy", Fw.LogSeverity.ACTIVITY_LO)
+    log("warning lo from Fpy", Fw.LogSeverity.WARNING_LO)
+    log("warning hi from Fpy", Fw.LogSeverity.WARNING_HI)
+
+# ---------------------------------------------------------------------------
+# Main sequence
+# ---------------------------------------------------------------------------
+test_arithmetic_and_casting()
+test_booleans()
+test_control_flow()
+test_structs_arrays_and_enums()
+test_functions()
+test_imports()
+test_commands()
+test_telemetry_and_parameters()
+test_checks()
+test_sleeping_and_time()
+test_logging()
+
+log("fpy integration sequence complete")
+exit(0)
+# Nothing after exit(0) runs; this would fail the sequence if it did
+assert False, 99
