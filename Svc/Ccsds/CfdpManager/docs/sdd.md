@@ -476,11 +476,13 @@ These types define the size of CFDP protocol fields:
 
 ### Sizing PDUs for the Downlink
 
-Each outgoing PDU leaves `CfdpManager` with a 2-byte packet descriptor (`FwPacketDescriptorType`) in front of it, and `Svc.Ccsds.SpacePacketFramer` in `Svc.Subtopologies.ComCcsds` adds a 6-byte Space Packet primary header. With packet spanning disabled (`ComCcsdsConfig.Aggregator.enablePacketSpanning`, `false` by default), `Svc.ComAggregator` asserts when a packet does not fit an empty aggregate next to a minimum idle packet (`Svc::Ccsds::Utils::IdlePacket::MIN_SIZE`, 7 bytes). The largest PDU the stock downlink accepts is therefore as follows. Other stacks use their own `aggregationSize` in the same formula; for example `ComCcsdsSdls` reduces it by the SDLS overhead, so its limit is lower.
+Each outgoing PDU leaves `CfdpManager` with a 2-byte packet descriptor (`FwPacketDescriptorType`) in front of it, and `Svc.Ccsds.SpacePacketFramer` in `Svc.Subtopologies.ComCcsds` adds a 6-byte Space Packet primary header. With packet spanning disabled (`ComCcsdsConfig.Aggregator.enablePacketSpanning`, `false` by default), `Svc.ComAggregator` asserts when a packet does not fit an empty aggregate next to a minimum idle packet (`Svc::Ccsds::Utils::IdlePacket::MIN_SIZE`, 7 bytes). The largest PDU the stock downlink accepts is therefore:
 
 ```
 largest PDU = ComCcsdsConfig.Aggregator.aggregationSize - 7 - 6 - 2
 ```
+
+Other stacks use their own `aggregationSize` in the same formula; for example `ComCcsdsSdls` reduces it by the SDLS overhead, so its limit is lower.
 
 With the default `ComCfg.TmFrameFixedSize` of 1024, `aggregationSize` is `Svc.Ccsds.TmDataFieldSize` = 1016 bytes, so the largest PDU is 1001 bytes. The defaults `MaxPduSize` = 1024 and `OutgoingFileChunkSize` = 992 exceed this, and a full File Data PDU asserts in `Svc.ComAggregator`. Its startup check (`MIN_NON_SPANNING_AGGREGATION_SIZE`) covers `FW_COM_BUFFER_MAX_SIZE` and `FW_FILE_BUFFER_MAX_SIZE`, not `MaxPduSize`, so the mismatch is not caught at build or startup.
 
