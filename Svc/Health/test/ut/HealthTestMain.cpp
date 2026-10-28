@@ -39,6 +39,11 @@ TEST(Test, UpdatePingTimeout) {
     tester.updatePingTimeout();
 }
 
+TEST(Test, UpdateTimeoutDuringPendingPing) {
+    Svc::HealthTester tester;
+    tester.updateTimeoutDuringPendingPing();
+}
+
 TEST(Test, WatchdogCheck) {
     Svc::HealthTester tester;
     tester.watchdogCheck();
