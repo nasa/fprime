@@ -37,12 +37,20 @@ module Svc {
 
         @ port to trigger a wakeup or timeout check. increase frequency
         @ to increase temporal resolution of sequencer
+        sync input port checkTimers: Svc.Sched
+
+        @ internal port that performs the checkTimers work on the component thread.
+        @ at most one message from this port is on the queue at a time
         # timer check has lower prio than sm sigs, cmds, cmd resp and ping
-        async input port checkTimers: Svc.Sched priority 4 assert
+        internal port checkTimersInternal priority 4 assert
 
         @ port to write all telemetry
+        sync input port tlmWrite: Svc.Sched
+
+        @ internal port that performs the tlmWrite work on the component thread.
+        @ at most one message from this port is on the queue at a time
         # least important, lowest prio
-        async input port tlmWrite: Svc.Sched priority 1 assert
+        internal port tlmWriteInternal priority 1 assert
 
         @ port for requests to run sequences
         # same priority as RUN cmd

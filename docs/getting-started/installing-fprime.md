@@ -19,16 +19,19 @@ This installation guide is specifically designed to enable individuals and resea
 
 F´ depends on several items before the user should attempt to install it. These requirements are listed below and the user should ensure they are installed before proceeding with this guide.
 
-Requirements:
+Requirements (tested with):
 
 1. Linux, macOS, or WSL on Windows
 2. git
 3. CLang or GNU C and C++ compilers (e.g. gcc and g++)
-4. [Python 3.10+](https://www.python.org/downloads/), virtual environments, and PIP
-5. *(Optional)* A [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`), required only to build components that depend on Rust. Components that require `cargo` are automatically skipped when it is not on the `PATH`, and the rest of the framework builds normally.
+4. [Python](https://www.python.org/downloads/) 3.10 through 3.14 (the versions exercised in CI), virtual environments, and PIP
+5. *(Optional)* A [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) 1.87 or newer, required only to build components that depend on Rust. Components that require `cargo` are automatically skipped when it is not on the `PATH`, and the rest of the framework builds normally.
 
 > [!NOTE]
 > Latest versions of PIP are strongly recommended. See [Recommended PIP Versions](#recommended-pip-versions)
+>
+> A Python release newer than the tested range may not work yet: some dependencies ship prebuilt wheels for a new
+> Python version weeks or months after it is released. See [Python version too new](#python-version-too-new)
 >
 > For build host architectures other than x86_64 or aarch64, and systems with older PIP versions, Java is required
 >
@@ -106,6 +109,7 @@ This section will add some known hints to trouble-shooting with the installation
 
 ### General
 * [Recommended PIP Versions](#recommended-pip-versions)
+* [Python version too new](#python-version-too-new)
 * [fprime-util: command not found](#fprime-util-command-not-found)
 * [Helper script fpp-redirect-helper exited with reason: Permission denied](#helper-script-fpp-redirect-helper-exited-with-reason-permission-denied)
 ### Windows
@@ -124,6 +128,29 @@ Some of the F´ Python packages are built in a way that it is recommended to ins
 |macOS (10.9+)| >= 21.0.1|
 |x86_64|>= 19.3|
 |aarch64|>= 20.3|
+
+### Python version too new
+
+F´ is tested with the Python versions listed under [System Requirements](#system-requirements). A Python release
+newer than that range can fail during `pip install` while building dependencies from source, because their prebuilt
+wheels for the new version are not published yet. The failure looks like this:
+
+```
+  ERROR: Failed building wheel for fastcrc
+  ...
+  ERROR: Failed building wheel for pydantic_core
+```
+
+Create the virtual environment with a tested Python version instead, for example:
+
+```
+python3.13 -m venv fprime-venv
+. fprime-venv/bin/activate
+pip install -U pip
+pip install -r requirements.txt
+```
+
+The same applies to Python versions older than the tested range.
 
 ### fprime-util: command not found
 

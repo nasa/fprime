@@ -164,8 +164,7 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     // If file name is non-empty, load a file.
     // Empty file name means don't load.
     if (filename != "") {
-        Fw::CmdStringArg cmdStr(filename);
-        const bool status = this->loadFile(cmdStr);
+        const bool status = this->loadFile(filename);
         if (!status) {
             this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
             return;
