@@ -60,9 +60,9 @@ paths first.
 in the case that the socket is interrupted without data, it will retry a configurable number of times. Users must call
 `close` and `open` to recover from other errors.
 
-A call to `Drv::IpSocket::close` will specifically shutdown and close the client connection. This has the effect of
-stopping any blocking reads on the socket, issuing a formal disconnect, and cleaning up the allocated resources. Once
-called, the Drv::IpSocket should be ready for another call to `Drv::IpSocket::open`.
+A call to `Drv::IpSocket::close` will close the client connection and clean up the allocated resources. Once called,
+the Drv::IpSocket should be ready for another call to `Drv::IpSocket::open`. `close` does not shut the connection down,
+and on Linux it does not stop a read blocked in another thread. `Drv::IpSocket::shutdown` does.
 
 ### Example Usage of Drv::IpSocket
 

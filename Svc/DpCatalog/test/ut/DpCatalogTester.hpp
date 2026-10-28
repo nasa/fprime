@@ -8,6 +8,7 @@
 #define Svc_DpCatalogTester_HPP
 
 #include <STest/Pick/Pick.hpp>
+#include "Fw/Types/MallocAllocator.hpp"
 #include "Svc/DpCatalog/DpCatalog.hpp"
 #include "Svc/DpCatalog/DpCatalogGTestBase.hpp"
 
@@ -27,6 +28,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
 
     // Queue depth supplied to the component instance under test
     static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
+
+    // Highest priority value; with a start of 0 this requests the whole catalog
+    static const FwDpPriorityType PRIORITY_MAX = std::numeric_limits<FwDpPriorityType>::max();
 
   public:
     // ----------------------------------------------------------------------
@@ -173,6 +177,14 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_NonCanonicalDpRejected();
     void test_BadHeaderHashRejected();
     void test_NonDpFilesDoNotConsumeSlots();
+    void test_XmitPriorityRangeAll();
+    void test_XmitPriorityRangeSubset();
+    void test_XmitPriorityRangeBoundary();
+    void test_XmitPriorityRangeInverted();
+    void test_XmitPriorityRangeRuntimeAdd();
+    void test_XmitPriorityRangeStopThenRuntimeAdd();
+    void test_XmitPriorityRangeStartAfterStopAppliesRangeToNextFile();
+    void test_XmitLegacyCommandSendsFullRange();
 
     //! SET_DP_PRIORITY to a lower number moves the product earlier in the transmit order
     void test_SetPriorityRaise();
@@ -204,7 +216,30 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! SET_DP_PRIORITY tells apart products of one container (same ID) by their time tags
     void test_SetPrioritySameIdByTime();
 
+    //! SET_DP_PRIORITY moves products into and out of a START_XMIT_CATALOG_WITH_PRIORITY range
+    void test_SetPriorityWithXmitRange();
+
   private:
+    //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog
+    void buildPriorityCatalog(const char* dir, const FwDpPriorityType* prios, FwSizeType numPrios);
+
+    //! Send a waited START_XMIT_CATALOG over [startPriority, endPriority], drain the queue, and check that
+    //! exactly the products with expectedPrios were sent, in order
+    void xmitPriorityRange(U32 cmdSeq,
+                           FwDpPriorityType startPriority,
+                           FwDpPriorityType endPriority,
+                           const FwDpPriorityType* expectedPrios,
+                           FwSizeType numExpected);
+
+    //! Shut the component down and remove the DPs and state file created by buildPriorityCatalog
+    void cleanPriorityCatalog(const char* dir, FwSizeType numPrios);
+
+    static const Fw::Time PRIORITY_RANGE_TIME;
+    static constexpr FwSizeType PRIORITY_RANGE_DATA_SIZE = 100;  //!< data size of each priority-range test DP
+
+    //! Allocator handed to configure() by buildPriorityCatalog; the component keeps a pointer to it until shutdown()
+    Fw::MallocAllocator m_priorityRangeAlloc;
+
     //! Generate three DPs with priorities 10, 20, 30 in dir, configure the component, and build the catalog
     void setPriorityBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, Fw::String (&dpFiles)[3]);
 

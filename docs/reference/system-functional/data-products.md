@@ -37,6 +37,7 @@ The Data Product Writer receives filled data product buffers and writes them to 
 The Data Product Catalog manages the inventory and downlink of stored data products. Upon command, it scans the data product directories and builds a catalog of available products. It then initiates downlink of the cataloged products, ordered by the priority stored in each product file and by generation time. Additional commands allow operators to:
 
 - Reprioritize data products for downlink
+- Restrict a transmission to an inclusive priority range (`START_XMIT_CATALOG_WITH_PRIORITY`); products outside the range stay cataloged for a later pass
 - Delete data products from storage
 - Query the catalog status
 

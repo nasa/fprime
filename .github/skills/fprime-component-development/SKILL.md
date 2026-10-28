@@ -47,9 +47,14 @@ Each phase has a dedicated skill with detailed guidance:
    **stop and ask the user**. Wrong assumptions in flight software are
    costly.
 
-2. **Each phase gates the next — with explicit user approval.** Present
-   the requirements to the user and obtain approval before starting
-   design. Present the design (FPP model, port layout, behavior, and any
+2. **Each phase gates the next — with explicit user approval.** When
+   an agent orchestrates this skill, the requirements and design
+   phases first pass the review loop of
+   `.github/agents/_shared/phase-review-loop.md`; the writing skills
+   themselves do not iterate. Present the requirements (with their
+   review record, when the loop ran) to the user and obtain approval
+   before starting design. Present the design (FPP model, port layout,
+   behavior, and any
    configuration) to the user and obtain **explicit confirmation before
    writing any implementation or unit-test code**. This applies even to
    trivial or pass-through components; simplicity does not waive the

@@ -360,6 +360,46 @@ TEST(NominalManual, NonDpFilesDoNotConsumeSlots) {
     tester.test_NonDpFilesDoNotConsumeSlots();
 }
 
+TEST(NominalManual, XmitPriorityRangeAll) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeAll();
+}
+
+TEST(NominalManual, XmitPriorityRangeSubset) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeSubset();
+}
+
+TEST(NominalManual, XmitPriorityRangeBoundary) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeBoundary();
+}
+
+TEST(OffNominal, XmitPriorityRangeInverted) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeInverted();
+}
+
+TEST(NominalManual, XmitPriorityRangeRuntimeAdd) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeRuntimeAdd();
+}
+
+TEST(NominalManual, XmitPriorityRangeStopThenRuntimeAdd) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeStopThenRuntimeAdd();
+}
+
+TEST(NominalManual, XmitPriorityRangeStartAfterStopAppliesRangeToNextFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeStartAfterStopAppliesRangeToNextFile();
+}
+
+TEST(NominalManual, XmitLegacyCommandSendsFullRange) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitLegacyCommandSendsFullRange();
+}
+
 TEST(OffNominal, MalformedFile) {
     Svc::DpCatalogTester tester;
     tester.test_MalformedFile();
@@ -413,6 +453,11 @@ TEST(SetPriority, NotInit) {
 TEST(SetPriority, SameIdByTime) {
     Svc::DpCatalogTester tester;
     tester.test_SetPrioritySameIdByTime();
+}
+
+TEST(SetPriority, WithXmitRange) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityWithXmitRange();
 }
 
 int main(int argc, char** argv) {
