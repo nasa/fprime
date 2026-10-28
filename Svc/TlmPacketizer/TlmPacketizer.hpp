@@ -211,18 +211,9 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         Os::Mutex lock;        //!< used to lock access to this particular packet buffer
 
         BufferEntry() = default;
-        //! Not copy-constructible: the mutex guards this slot and is never copied
+        //! Not copyable: the mutex guards this slot; Run_handler snapshots buffer and latestTime individually
         BufferEntry(const BufferEntry& other) = delete;
-        //! Copies the packet data only (keep in sync with the fields above); the mutex is intentionally not copied
-        BufferEntry& operator=(const BufferEntry& other) {
-            this->buffer = other.buffer;
-            this->latestTime = other.latestTime;
-            this->id = other.id;
-            this->level = other.level;
-            this->updated = other.updated;
-
-            return *this;
-        }
+        BufferEntry& operator=(const BufferEntry& other) = delete;
     };
 
     // buffers for filling with telemetry
