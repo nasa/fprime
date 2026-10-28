@@ -439,7 +439,7 @@ These constants are defined in the `Svc.Ccsds.Cfdp` module and must be configure
 |----------|---------|
 | `NumChannels` | Number of CFDP channels to instantiate. Determines the size of channel-specific port arrays and the number of independent CFDP channel instances. Each channel has its own transaction pool, configuration, and state. |
 | `MaxFilePathSize` | Maximum length for file path strings. Used to size string parameters (`ChannelConfig.tmp_dir`, `ChannelConfig.fail_dir`, `ChannelConfig.move_dir`, `ChannelConfig.rx_dir`) and internal file path buffers. |
-| `MaxPduSize` | Maximum PDU size in bytes. Limits the maximum possible TX PDU size. Must respect any CCSDS packet size limits on the system. |
+| `MaxPduSize` | Maximum PDU size in bytes. Limits the maximum possible TX PDU size. Must respect any CCSDS packet size limits on the system; the default does not fit the stock `Svc.Subtopologies.ComCcsds` downlink (see [Sizing PDUs for the Downlink](#sizing-pdus-for-the-downlink)). |
 
 ### FPP Types (CfdpCfg.fpp)
 
@@ -473,6 +473,22 @@ These types define the size of CFDP protocol fields:
 | `MaxPollingDirPerChan` | Maximum polling directories per channel. Determines the size of the per-channel polling directory array. |
 | `NumTransactionsPerPlayback` | Number of transactions per playback directory. Each playback/polling directory operation can have this many active transfers pending or active at once. |
 | `NumHistoriesPerChannel` | Number of history entries per channel. Each channel maintains a circular buffer of completed transaction records for debugging and reference. Maximum value is 65536. |
+
+### Sizing PDUs for the Downlink
+
+Each outgoing PDU leaves `CfdpManager` with a 2-byte packet descriptor (`FwPacketDescriptorType`) in front of it, and `Svc.Ccsds.SpacePacketFramer` in `Svc.Subtopologies.ComCcsds` adds a 6-byte Space Packet primary header. With packet spanning disabled (`ComCcsdsConfig.Aggregator.enablePacketSpanning`, `false` by default), `Svc.ComAggregator` asserts when a packet does not fit an empty aggregate next to a minimum idle packet (`Svc::Ccsds::Utils::IdlePacket::MIN_SIZE`, 7 bytes). The largest PDU the stock downlink accepts is therefore:
+
+```
+largest PDU = ComCcsdsConfig.Aggregator.aggregationSize - 7 - 6 - 2
+```
+
+With the default `ComCfg.TmFrameFixedSize` of 1024, `aggregationSize` is `Svc.Ccsds.TmDataFieldSize` = 1016 bytes, so the largest PDU is 1001 bytes. The defaults `MaxPduSize` = 1024 and `OutgoingFileChunkSize` = 992 exceed this, and a full File Data PDU asserts in `Svc.ComAggregator`. Its startup check (`MIN_NON_SPANNING_AGGREGATION_SIZE`) covers `FW_COM_BUFFER_MAX_SIZE` and `FW_FILE_BUFFER_MAX_SIZE`, not `MaxPduSize`, so the mismatch is not caught at build or startup.
+
+A File Data PDU consists of the PDU header (4 bytes, plus the source and destination entity IDs and the transaction sequence number, each encoded in as few bytes as its value needs, the two entity IDs at the same width), a 4-byte file offset, and up to `OutgoingFileChunkSize` bytes of file data. To use CFDP over the stock `ComCcsds` stack, do one of the following:
+
+- Reduce `MaxPduSize` to the largest PDU above, and set `OutgoingFileChunkSize` so that header, offset and data fit in it for the largest entity ID and sequence number values in use. For example, `MaxPduSize` = 1001 and `OutgoingFileChunkSize` = 981 fit 4-byte entity IDs and sequence numbers.
+- Enlarge the aggregate (`ComCfg.TmFrameFixedSize`, which sets `Svc.Ccsds.TmDataFieldSize`) so that a full PDU fits.
+- Enable packet spanning, so that a packet that does not fit continues in the next aggregate.
 
 ## Events
 
@@ -609,7 +625,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | Name | Description |
 |---|---|
 | LocalEid | Local CFDP entity ID used in PDU headers to identify this node in the CFDP network |
-| OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission |
+| OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission (see [Sizing PDUs for the Downlink](#sizing-pdus-for-the-downlink)) |
 | RxCrcCalcBytesPerCycle | Maximum number of received file bytes to process for CRC calculation in a single scheduler cycle. Prevents blocking during large file verification |
 | PostInactivitySendRetries | Extra scheduler cycles a pending terminal send (EOF or FIN-ACK) is retried after the inactivity timer fires before the transaction is recycled regardless |
 | FileInDefaultChannel | CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
