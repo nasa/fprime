@@ -80,6 +80,29 @@ module Svc {
     telemetry port Tlm
 
     # ----------------------------------------------------------------------
+    # Types
+    # ----------------------------------------------------------------------
+
+    @ Outcome of rewriting the state file from the state file data
+    enum StateFileWriteStatus : U8 {
+      WRITTEN = 0 @< The state file was rewritten
+      OPEN_ERROR = 1 @< The state file could not be opened (StateFileOpenError reported)
+      WRITE_ERROR = 2 @< A record could not be written (StateFileWriteError reported)
+    }
+
+    @ Outcome of recording an entry in the state file data
+    enum StateFileUpdateStatus : U8 {
+      RECORDED = 0 @< The entry was recorded in its own slot or a reused stale slot
+      FULL = 1 @< The state file data has no free slot
+    }
+
+    @ Outcome of looking up a catalog entry by data product identity
+    enum EntryLookupStatus : U8 {
+      FOUND = 0 @< An entry with the identity is in the catalog
+      NOT_FOUND = 1 @< No entry with the identity is in the catalog
+    }
+
+    # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------
 

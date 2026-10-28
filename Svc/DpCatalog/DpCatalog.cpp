@@ -212,7 +212,7 @@ void DpCatalog::getFileState(DpStateEntry& entry) {
     }
 }
 
-bool DpCatalog::pruneAndWriteStateFile() {
+DpCatalog_StateFileWriteStatus DpCatalog::pruneAndWriteStateFile() {
     FW_ASSERT(this->m_stateFileData != nullptr);
 
     // There is a chance that a data product file can disappear after
@@ -223,7 +223,7 @@ bool DpCatalog::pruneAndWriteStateFile() {
 
     // nothing to write when no state file was specified; loadStateFile already reported it
     if (this->m_stateFile.length() == 0) {
-        return true;
+        return DpCatalog_StateFileWriteStatus::WRITTEN;
     }
 
     // open the state file
@@ -234,7 +234,7 @@ bool DpCatalog::pruneAndWriteStateFile() {
 
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
-        return false;
+        return DpCatalog_StateFileWriteStatus::OPEN_ERROR;
     }
 
     // buffer for writing entries
@@ -261,14 +261,14 @@ bool DpCatalog::pruneAndWriteStateFile() {
             if (stat != Os::File::OP_OK) {
                 this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
                 stateFile.close();
-                return false;
+                return DpCatalog_StateFileWriteStatus::WRITE_ERROR;
             }
         }
     }
 
     // close the state file
     stateFile.close();
-    return true;
+    return DpCatalog_StateFileWriteStatus::WRITTEN;
 }
 
 void DpCatalog::appendFileState(const DpStateEntry& entry) {
@@ -823,7 +823,7 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     this->m_currentXmitEntry.record.set_state(Fw::DpState::TRANSMITTED);
     // update the transmitted state in the state file
     this->appendFileState(this->m_currentXmitEntry);
-    this->cacheFileState(this->m_currentXmitEntry);
+    (void)this->cacheFileState(this->m_currentXmitEntry);
     // add the size
     this->m_xmitBytes += this->m_currentXmitEntry.record.get_size();
 
@@ -1014,7 +1014,7 @@ void DpCatalog ::abortXmit(Fw::CmdResponse response) {
     this->dispatchWaitedResponse(response);
 }
 
-void DpCatalog ::cacheFileState(const DpStateEntry& entry) {
+DpCatalog_StateFileUpdateStatus DpCatalog ::cacheFileState(const DpStateEntry& entry) {
     FW_ASSERT(this->m_stateFileData != nullptr);
     // Slots [0, m_stateFileEntries) hold the used entries
     const bool append = (this->m_stateFileEntries < this->m_numDpSlots);
@@ -1033,7 +1033,7 @@ void DpCatalog ::cacheFileState(const DpStateEntry& entry) {
             // The record is on disk but not here; the next build catalogs the product as pending again
             this->log_WARNING_HI_DpStateRecordDropped(entry.record.get_id(), entry.record.get_tSec(),
                                                       entry.record.get_tSub());
-            return;
+            return DpCatalog_StateFileUpdateStatus::FULL;
         }
     }
     DpDstateFileEntry& slot = this->m_stateFileData[slotIndex];
@@ -1043,35 +1043,36 @@ void DpCatalog ::cacheFileState(const DpStateEntry& entry) {
     if (append) {
         this->m_stateFileEntries++;
     }
+    return DpCatalog_StateFileUpdateStatus::RECORDED;
 }
 
 bool DpCatalog ::matchesIdentity(const DpRecord& record, FwDpIdType id, U32 tSec, U32 tSub) {
     return (record.get_id() == id) and (record.get_tSec() == tSec) and (record.get_tSub() == tSub);
 }
 
-bool DpCatalog ::findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const {
+DpCatalog_EntryLookupStatus DpCatalog ::findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const {
     const FwSizeType size = this->m_dpCatalog.getSize();
     typename Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
     for (FwSizeType count = 0; (count < size) and (iter != this->m_dpCatalog.end()); count++, ++iter) {
         const DpStateEntry& candidate = *iter;
         if (DpCatalog::matchesIdentity(candidate.record, id, tSec, tSub)) {
             entry = candidate;
-            return true;
+            return DpCatalog_EntryLookupStatus::FOUND;
         }
     }
-    return false;
+    return DpCatalog_EntryLookupStatus::NOT_FOUND;
 }
 
-bool DpCatalog ::findStateFileEntry(FwDpIdType id, U32 tSec, U32 tSub, FwSizeType& slot) const {
+DpCatalog_EntryLookupStatus DpCatalog ::findStateFileEntry(FwDpIdType id, U32 tSec, U32 tSub, FwSizeType& slot) const {
     FW_ASSERT(this->m_stateFileData != nullptr);
     for (FwSizeType index = 0; index < this->m_stateFileEntries; index++) {
         const DpDstateFileEntry& candidate = this->m_stateFileData[index];
         if (candidate.used and DpCatalog::matchesIdentity(candidate.entry.record, id, tSec, tSub)) {
             slot = index;
-            return true;
+            return DpCatalog_EntryLookupStatus::FOUND;
         }
     }
-    return false;
+    return DpCatalog_EntryLookupStatus::NOT_FOUND;
 }
 
 void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub) {
@@ -1093,9 +1094,10 @@ Fw::CmdResponse DpCatalog ::doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub) {
     }
 
     DpStateEntry catalogEntry{};
-    const bool inCatalog = this->findCatalogEntry(id, tSec, tSub, catalogEntry);
+    const bool inCatalog = (this->findCatalogEntry(id, tSec, tSub, catalogEntry) == DpCatalog_EntryLookupStatus::FOUND);
     FwSizeType stateSlot = 0;
-    const bool inStateFile = this->findStateFileEntry(id, tSec, tSub, stateSlot);
+    const bool inStateFile =
+        (this->findStateFileEntry(id, tSec, tSub, stateSlot) == DpCatalog_EntryLookupStatus::FOUND);
     if (!inCatalog and !inStateFile) {
         this->log_WARNING_HI_DpDeleteError(id, tSec, tSub, DpDeleteReason::NOT_FOUND);
         return Fw::CmdResponse::EXECUTION_ERROR;
@@ -1136,7 +1138,7 @@ Fw::CmdResponse DpCatalog ::doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub) {
         this->m_stateFileData[last].used = false;
         this->m_stateFileData[last].visited = false;
         this->m_stateFileEntries = last;
-        stateFileWritten = this->pruneAndWriteStateFile();
+        stateFileWritten = (this->pruneAndWriteStateFile() == DpCatalog_StateFileWriteStatus::WRITTEN);
     }
 
     // The file is gone and the loaded state updated either way; a failed rewrite was reported by
