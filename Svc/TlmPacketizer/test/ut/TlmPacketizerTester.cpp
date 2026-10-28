@@ -1003,6 +1003,23 @@ void TlmPacketizerTester ::getChannelValueTest() {
     ASSERT_EQ(val.getSize(), 4);
     ASSERT_EQ(time, timeIn);
     ASSERT_EQ(valid, Fw::TlmValid::VALID);
+    I32 readBack = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, val.deserializeTo(readBack));
+    ASSERT_EQ(readBack, 789);
+
+    // channel 250 is only in packet 8 and is not its first channel: the read must come from that packet/offset
+    Fw::Time timeIn2(321, 654);
+    Fw::TlmBuffer valIn2;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, valIn2.serializeFrom(static_cast<U16>(1010)));
+    this->invoke_to_TlmRecv(0, 250, timeIn2, valIn2);
+
+    valid = this->invoke_to_TlmGet(0, 250, time, val);
+    ASSERT_EQ(valid, Fw::TlmValid::VALID);
+    ASSERT_EQ(val.getSize(), 2);
+    ASSERT_EQ(time, timeIn2);
+    U16 readBack2 = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, val.deserializeTo(readBack2));
+    ASSERT_EQ(readBack2, 1010);
 
     // grab an ignored chan
     valid = this->invoke_to_TlmGet(0, 25, time, val);
@@ -1885,12 +1902,132 @@ void TlmPacketizerTester::duplicateChannelIdMatchingSizeTest() {
     // Push the shared channel and confirm it lands in both packets without overflow.
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
     this->invoke_to_TlmRecv(0, 10, ts, buff);
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U16>(7)));
+    this->invoke_to_TlmRecv(0, 200, ts, buff);
 
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 
     // Both packets carry channel 10, so both are emitted once per section.
     ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
+
+    // The first packet carries the shared channel at its own offset; channel 100 was never written and stays zero
+    Fw::ComBuffer comBuffA;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
+              comBuffA.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuffA.serializeFrom(static_cast<FwTlmPacketizeIdType>(4)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuffA.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuffA.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuffA.serializeFrom(static_cast<U16>(0)));
+    ASSERT_from_PktSend(0, comBuffA, static_cast<U32>(std::numeric_limits<U32>::max()));
+
+    // The shared channel must land at its own offset in the second packet, not just the first
+    Fw::ComBuffer comBuff;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
+              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(7)));
+    ASSERT_from_PktSend(1 * Svc::TelemetrySection::NUM_SECTIONS, comBuff,
+                        static_cast<U32>(std::numeric_limits<U32>::max()));
+}
+
+void TlmPacketizerTester::channelInMaxPacketsTest() {
+    this->stockConfiguration();
+    // One channel present in every one of MAX_PACKETIZER_PACKETS packets sets every packetOffset slot of its entry
+    TlmPacketizerChannelEntry sharedList[] = {{10, 4}};
+    TlmPacketizerPacket packets[MAX_PACKETIZER_PACKETS]{};
+    TlmPacketizerPacketList maxPacketList{};
+    for (FwChanIdType i = 0; i < MAX_PACKETIZER_PACKETS; i++) {
+        packets[i] = {sharedList, static_cast<FwTlmPacketizeIdType>(100 + i), 1, FW_NUM_ARRAY_ELEMENTS(sharedList)};
+        maxPacketList.list[i] = &packets[i];
+    }
+    maxPacketList.numEntries = MAX_PACKETIZER_PACKETS;
+    this->component.setPacketList(maxPacketList, IGNORE_OMIT_LIST, 1);
+
+    Fw::Time ts(11, 22);
+    Fw::TlmBuffer buff;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
+    this->invoke_to_TlmRecv(0, 10, ts, buff);
+
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+
+    // Every packet was updated by the single channel write and is emitted once per section
+    static_assert(MAX_PACKETIZER_PACKETS * Svc::TelemetrySection::NUM_SECTIONS <= MAX_HISTORY_SIZE,
+                  "channelInMaxPacketsTest needs MAX_HISTORY_SIZE >= MAX_PACKETIZER_PACKETS * NUM_SECTIONS");
+    ASSERT_from_PktSend_SIZE(MAX_PACKETIZER_PACKETS * Svc::TelemetrySection::NUM_SECTIONS);
+    for (FwChanIdType i = 0; i < MAX_PACKETIZER_PACKETS; i++) {
+        Fw::ComBuffer comBuff;
+        ASSERT_EQ(
+            Fw::FW_SERIALIZE_OK,
+            comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(100 + i)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(ts));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
+        ASSERT_from_PktSend(i * Svc::TelemetrySection::NUM_SECTIONS, comBuff,
+                            static_cast<U32>(std::numeric_limits<U32>::max()));
+    }
+
+    // TlmGet reads the value back from the first packet containing the channel
+    Fw::Time time;
+    Fw::TlmBuffer val;
+    ASSERT_EQ(Fw::TlmValid::VALID, this->invoke_to_TlmGet(0, 10, time, val));
+    ASSERT_EQ(time, ts);
+    U32 readBack = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, val.deserializeTo(readBack));
+    ASSERT_EQ(readBack, 20U);
+}
+
+void TlmPacketizerTester::fullComBufferPacketTest() {
+    this->stockConfiguration();
+    constexpr FwSizeType HEADER =
+        sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
+    constexpr FwSizeType LAST_OFFSET = FW_COM_BUFFER_MAX_SIZE - 1;
+    // Two channels fill the packet to exactly FW_COM_BUFFER_MAX_SIZE; channel 11 sits at the last valid offset
+    TlmPacketizerChannelEntry fullList[] = {{10, LAST_OFFSET - HEADER}, {11, 1}};
+    TlmPacketizerPacket fullPacket = {fullList, 30, 1, FW_NUM_ARRAY_ELEMENTS(fullList)};
+    TlmPacketizerPacketList fullPacketList = {{&fullPacket}, 1};
+    this->component.setPacketList(fullPacketList, IGNORE_OMIT_LIST, 1);
+    ASSERT_EQ(this->component.m_channels[1].packetOffset[0], LAST_OFFSET);
+    // local copy: ASSERT_NE binds its arguments by reference, which would ODR-use the static constexpr member
+    constexpr FwTlmPacketizeOffsetType notInPacket = TlmPacketizer::NOT_IN_PACKET;
+    ASSERT_NE(this->component.m_channels[1].packetOffset[0], notInPacket);
+
+    Fw::Time ts(5, 6);
+    Fw::TlmBuffer buff;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U8>(0xA5)));
+    this->invoke_to_TlmRecv(0, 11, ts, buff);
+
+    Fw::Time time;
+    Fw::TlmBuffer val;
+    ASSERT_EQ(Fw::TlmValid::VALID, this->invoke_to_TlmGet(0, 11, time, val));
+    ASSERT_EQ(time, ts);
+    U8 readBack = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, val.deserializeTo(readBack));
+    ASSERT_EQ(readBack, 0xA5);
+
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+    ASSERT_from_PktSend_SIZE(Svc::TelemetrySection::NUM_SECTIONS);
+    const Fw::ComBuffer& sent = this->fromPortHistory_PktSend->at(0).data;
+    ASSERT_EQ(sent.getSize(), FW_COM_BUFFER_MAX_SIZE);
+    ASSERT_EQ(sent.getBuffAddr()[LAST_OFFSET], 0xA5);
+}
+
+void TlmPacketizerTester::oversizedPacketTest() {
+    this->stockConfiguration();
+    constexpr FwSizeType HEADER =
+        sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
+    // One byte more than the com buffer can hold must trip the configuration-time assert
+    TlmPacketizerChannelEntry overList[] = {{10, FW_COM_BUFFER_MAX_SIZE - HEADER}, {11, 1}};
+    TlmPacketizerPacket overPacket = {overList, 31, 1, FW_NUM_ARRAY_ELEMENTS(overList)};
+    TlmPacketizerPacketList overPacketList = {{&overPacket}, 1};
+    // Match the bound check's own arguments (packetLen, pktEntry) so a later assert in the same file cannot satisfy it
+    ASSERT_DEATH_IF_SUPPORTED(this->component.setPacketList(overPacketList, IGNORE_OMIT_LIST, 1),
+                              "TlmPacketizer\\.cpp:[0-9]+\" " + std::to_string(FW_COM_BUFFER_MAX_SIZE + 1) + " 0");
 }
 
 void TlmPacketizerTester::duplicateChannelIdConflictingSizeTest() {

@@ -79,12 +79,22 @@ module Svc {
     async command BUILD_CATALOG \
       opcode 0
 
-    @ Start transmitting catalog
+    @ Start transmitting the whole catalog in priority order
+    @ (same as START_XMIT_CATALOG_WITH_PRIORITY over 0 through the maximum FwDpPriorityType value)
     async command START_XMIT_CATALOG (
                                     wait: Fw.Wait, @< have START_XMIT command complete wait for catalog to complete transmitting
                                     remainActive: bool @< should the catalog resume transmission when Dps are added at runtime
                                   ) \
       opcode 1
+
+    @ Start transmitting only the catalog products whose priority is within [startPriority, endPriority]
+    async command START_XMIT_CATALOG_WITH_PRIORITY (
+                                    wait: Fw.Wait, @< have the command complete wait for the in-range products to finish transmitting
+                                    remainActive: bool, @< resume transmission when a DP inside the active priority range is added at runtime
+                                    startPriority: FwDpPriorityType, @< lowest priority value (most urgent) to transmit, inclusive
+                                    endPriority: FwDpPriorityType @< highest priority value (least urgent) to transmit, inclusive
+                                  ) \
+      opcode 4
 
     @ Stop transmitting catalog
     async command STOP_XMIT_CATALOG \
@@ -274,7 +284,7 @@ module Svc {
       format "Error deserializing DP {}" \
       throttle 10
 
-    @ Error inserting entry into list
+    @ Data product already in the catalog; the insert is ignored
     event DpDuplicate(
                             dp: DpRecord @< The DP
                           ) \
@@ -450,6 +460,25 @@ module Svc {
       id 50 \
       format "Stale fileDone context {} status {}, no matching transmit in flight" \
       throttle 10
+
+    @ START_XMIT_CATALOG_WITH_PRIORITY rejected because the start priority exceeds the end priority
+    event XmitPriorityRangeInvalid(
+                            startPriority: FwDpPriorityType @< requested start of the priority range
+                            endPriority: FwDpPriorityType @< requested end of the priority range
+                          ) \
+      severity warning low \
+      id 51 \
+      format "Invalid priority range: start {} exceeds end {}. Transmit not started."
+
+    @ Catalog transmission started for a priority range (emitted on every accepted START_XMIT_CATALOG and
+    @ START_XMIT_CATALOG_WITH_PRIORITY; START_XMIT_CATALOG reports the full range)
+    event CatalogXmitRangeStarted(
+                            startPriority: FwDpPriorityType @< start of the priority range, inclusive
+                            endPriority: FwDpPriorityType @< end of the priority range, inclusive
+                          ) \
+      severity activity high \
+      id 52 \
+      format "Catalog transmission started for priorities {} through {}"
 
 
     # ----------------------------------------------------------------------

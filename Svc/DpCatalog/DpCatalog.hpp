@@ -14,6 +14,7 @@
 #include <Fw/DataStructures/RedBlackTreeSet.hpp>
 #include <Fw/Deprecate.hpp>
 #include <Fw/Types/MemAllocator.hpp>
+#include <limits>
 
 #include <Fw/Types/FileNameString.hpp>
 #include <config/DpCatalogCfg.hpp>
@@ -117,6 +118,18 @@ class DpCatalog final : public DpCatalogComponentBase {
         bool remainActive      //!< should the catalog resume transmission when Dps are added at runtime
         ) override;
 
+    //! Handler implementation for command START_XMIT_CATALOG_WITH_PRIORITY
+    //!
+    //! Start transmitting the catalog products inside a priority range
+    void START_XMIT_CATALOG_WITH_PRIORITY_cmdHandler(
+        FwOpcodeType opCode,             //!< The opcode
+        U32 cmdSeq,                      //!< The command sequence number
+        const Fw::Wait& wait,            //!< have the command wait for the in-range products to finish transmitting
+        bool remainActive,               //!< resume transmission when an in-range DP is added at runtime
+        FwDpPriorityType startPriority,  //!< lowest priority value (most urgent) to transmit, inclusive
+        FwDpPriorityType endPriority     //!< highest priority value (least urgent) to transmit, inclusive
+        ) override;
+
     //! Handler implementation for command STOP_XMIT_CATALOG
     //!
     //! Stop transmitting catalog
@@ -183,7 +196,7 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// @brief insert an entry into the sorted catalog; if it exists, update the metadata
     /// @param entry new entry
-    /// @return true if inserted successfully, false if catalog is full
+    /// @return true if inserted successfully, false if the tree insert failed
     bool insertEntry(DpStateEntry& entry);
 
     /// @brief reset the catalog
@@ -212,9 +225,9 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief send the next entry to file downlink
     void sendNextEntry();
 
-    /// @brief find the next entry in the catalog using iterator
+    /// @brief find the next entry in the catalog inside the active priority range
     /// @param entry entry to return
-    /// @return true if an entry was found, false if no more entries
+    /// @return true if an in-range entry was found, false if no more entries are in range
     bool findNextEntry(DpStateEntry& entry);
 
     /// @brief check to see if component successfully initialized
@@ -225,9 +238,26 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return command response for pass/fail
     Fw::CmdResponse doCatalogBuild();
 
-    /// @brief start transmitting catalog. Shared between command and port
+    /// @brief handle a START_XMIT_CATALOG or START_XMIT_CATALOG_WITH_PRIORITY command: validate the range,
+    ///        then start transmitting and send (or arm, for a waited command) the command response
+    /// @param opCode the command opcode
+    /// @param cmdSeq the command sequence number
+    /// @param wait whether the command response waits for the transmission to complete
+    /// @param remainActive whether runtime additions resume transmission
+    /// @param startPriority lowest priority value to transmit, inclusive
+    /// @param endPriority highest priority value to transmit, inclusive
+    void startXmitCmd(FwOpcodeType opCode,
+                      U32 cmdSeq,
+                      const Fw::Wait& wait,
+                      bool remainActive,
+                      FwDpPriorityType startPriority,
+                      FwDpPriorityType endPriority);
+
+    /// @brief start transmitting catalog. Called only by startXmitCmd, which validates the range
+    /// @param startPriority lowest priority value to transmit, inclusive
+    /// @param endPriority highest priority value to transmit, inclusive; must be >= startPriority
     /// @return command response for pass/fail
-    Fw::CmdResponse doCatalogXmit();
+    Fw::CmdResponse doCatalogXmit(FwDpPriorityType startPriority, FwDpPriorityType endPriority);
 
     /// @brief send a cmdResponse to the start xmit cmd if user waited
     /// @param response the command response for pass/fail
@@ -274,7 +304,12 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     bool m_remainActive = false;  //!< Does the DpCat resume transmission when
                                   //!< a runtime Dp is received after
-                                  //!< the full catalog is sent
+                                  //!< the in-range catalog is sent
+
+    FwDpPriorityType m_xmitStartPriority = 0;  //!< Lowest priority value sent by the active/last transmit command
+    FwDpPriorityType m_xmitEndPriority =
+        std::numeric_limits<FwDpPriorityType>::max();  //!< Highest priority value sent by the active/last
+                                                       //!< transmit command
 };
 
 }  // namespace Svc

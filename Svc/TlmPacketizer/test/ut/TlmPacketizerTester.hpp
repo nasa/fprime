@@ -104,6 +104,15 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Duplicate channel ID across packets with conflicting size asserts
     void duplicateChannelIdConflictingSizeTest(void);
 
+    //! One channel present in MAX_PACKETIZER_PACKETS packets fills every packet and reads back
+    void channelInMaxPacketsTest(void);
+
+    //! A packet filling the com buffer exactly: last-offset channel round-trips through TlmRecv/TlmGet/Run
+    void fullComBufferPacketTest(void);
+
+    //! A packet one byte larger than the com buffer trips the configuration-time assert
+    void oversizedPacketTest(void);
+
     //! Oversized channel value is rejected with a warning event
     void oversizedChannelTest(void);
 

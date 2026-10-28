@@ -124,7 +124,8 @@ Projects may configure the framework types that the framework and components use
 | FwIdType         | Identifiers (base type for the GDS id types below) | U32 | PRI_FwIdType    | No     | 4 Bytes         |
 
 This list is not exhaustive; see `default/config/FpConfig.fpp` for the complete set of configurable
-types (e.g. `FwDpPriorityType`, `FwTraceIdType`).
+types (e.g. `FwDpPriorityType`, `FwTraceIdType`). Component configuration modules may add more, e.g.
+`FwTlmPacketizeOffsetType` in `Svc/TlmPacketizer/config/TlmPacketizerConfig/TlmPacketizerCfg.fpp`.
 
 There is also a set of framework types that are used across F´ deployments and specifically interact with ground data
 systems. These GDS types have defaults based on configurable platform independent fixed-widths as shown below:
