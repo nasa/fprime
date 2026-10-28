@@ -247,7 +247,7 @@ jobs:
               description = 'HIL suite passed on real hardware';
             } else if (cancelled) {
               state = 'error';
-              description = 'HIL run was cancelled - not a hardware failure';
+              description = 'HIL run was cancelled or hit the 30-min job timeout - see workflow run for details';
             } else {
               state = 'failure';
               description = 'HIL suite failed - see workflow run for details';
