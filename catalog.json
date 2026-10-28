@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "c7d1527e41c88aa5028ed4002bc4164df537670c",
-  "generated_at": "2026-10-28T21:09:52Z",
+  "generated_at": "2026-10-28T21:10:45Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -36,10 +36,10 @@
     "tier": "bronze"
   },
   "overall_codeql": {
-    "findings": 476,
+    "findings": 477,
     "by_severity": {
       "error": 0,
-      "medium": 207,
+      "medium": 208,
       "low": 269
     },
     "worst": "medium",
@@ -49,10 +49,10 @@
   },
   "overall_codeql_checks": {
     "codeql": {
-      "findings": 5,
+      "findings": 6,
       "by_severity": {
         "error": 0,
-        "medium": 1,
+        "medium": 2,
         "low": 4
       },
       "worst": "medium",
