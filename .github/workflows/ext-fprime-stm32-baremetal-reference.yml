@@ -11,7 +11,6 @@ on:
   push:
     branches: [ release/** ]
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
     paths-ignore:
       - 'docs/**'
@@ -26,10 +25,10 @@ on:
         description: "Exact ref/SHA on fprime-community/fprime-stm32-baremetal-reference to build and test"
         required: true
       callback_repo:
-        description: "owner/repo to post the hil-tests commit status back to (optional)"
+        description: "Repository to post the hil-tests commit status back to; only fprime-community/fprime-stm32-baremetal-reference is accepted (optional)"
         required: false
       callback_sha:
-        description: "commit SHA on callback_repo to post the hil-tests commit status to (optional)"
+        description: "Full 40-char commit SHA on callback_repo to post the hil-tests commit status to (optional)"
         required: false
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
@@ -125,8 +124,26 @@ jobs:
     runs-on: [self-hosted, baremetal]
     needs: cross-compilation
     timeout-minutes: 30
+    # `hil-hardware` must be configured (repo Settings > Environments) with required
+    # reviewers: it is the approval gate for dispatched fork refs. The key alone
+    # enforces nothing - GitHub auto-creates an unprotected environment on first
+    # use if it doesn't already exist with that rule configured. The gate applies
+    # to EVERY trigger of this job, so nightly, release/** push and in-repo PR
+    # runs wait for approval too, not just workflow_dispatch.
     environment: hil-hardware
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      # Single source of truth for the rig baseline, run both before and after
+      # the test steps - a changed pin wiring only needs updating here.
+      RIG_BASELINE_CMD: |
+        pinctrl set 25 op dh  # SCL connected
+        pinctrl set 8  op dh  # SDA connected
+        pinctrl set 7  op dh  # MOSI connected
+        pinctrl set 12 op dh  # MISO connected
+        pinctrl set 16 op dh  # CS connected
+        pinctrl set 20 op dh  # SCK connected
+        pinctrl set 21 op dl  # sensor 3V3 rail on (active-low)
+        pinctrl set 24 op dl  # heater off
     steps:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
@@ -154,15 +171,7 @@ jobs:
         with:
           name: stm32-artifacts
       - name: "Reset GPIO fault-injection rig to baseline"
-        run: |
-          pinctrl set 25 op dh  # SCL connected
-          pinctrl set 8  op dh  # SDA connected
-          pinctrl set 7  op dh  # MOSI connected
-          pinctrl set 12 op dh  # MISO connected
-          pinctrl set 16 op dh  # CS connected
-          pinctrl set 20 op dh  # SCK connected
-          pinctrl set 21 op dl  # sensor 3V3 rail on (active-low)
-          pinctrl set 24 op dl  # heater off
+        run: eval "$RIG_BASELINE_CMD"
         shell: bash
       # OpenOCD and the ST-Link udev rules are expected to be pre-provisioned on
       # this runner (hardware-specific setup, not reinstalled every run).
@@ -187,15 +196,7 @@ jobs:
         shell: bash
       - name: "Return GPIO fault-injection rig to baseline"
         if: always()
-        run: |
-          pinctrl set 25 op dh  # SCL connected
-          pinctrl set 8  op dh  # SDA connected
-          pinctrl set 7  op dh  # MOSI connected
-          pinctrl set 12 op dh  # MISO connected
-          pinctrl set 16 op dh  # CS connected
-          pinctrl set 20 op dh  # SCK connected
-          pinctrl set 21 op dl  # sensor 3V3 rail on (active-low)
-          pinctrl set 24 op dl  # heater off
+        run: eval "$RIG_BASELINE_CMD"
         shell: bash
       - name: "Archive logs"
         uses: actions/upload-artifact@v7
@@ -208,6 +209,7 @@ jobs:
   report-callback-status:
     name: "Report hil-tests status to callback_repo"
     needs: [cross-compilation, HIL-integration]
+    # always(), not !cancelled(): a dispatched callback SHA must always receive a terminal hil-tests status.
     if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.callback_repo != '' && github.event.inputs.callback_sha != ''
     runs-on: ubuntu-22.04
     steps:
@@ -234,18 +236,30 @@ jobs:
               return;
             }
 
-            const passed = process.env.CROSS_COMPILATION_RESULT === 'success'
-              && process.env.HIL_INTEGRATION_RESULT === 'success';
+            const crossCompilationResult = process.env.CROSS_COMPILATION_RESULT;
+            const hilIntegrationResult = process.env.HIL_INTEGRATION_RESULT;
+            const passed = crossCompilationResult === 'success' && hilIntegrationResult === 'success';
+            const cancelled = [crossCompilationResult, hilIntegrationResult].includes('cancelled');
+
+            let state, description;
+            if (passed) {
+              state = 'success';
+              description = 'HIL suite passed on real hardware';
+            } else if (cancelled) {
+              state = 'error';
+              description = 'HIL run was cancelled - not a hardware failure';
+            } else {
+              state = 'failure';
+              description = 'HIL suite failed - see workflow run for details';
+            }
 
             const [owner, repo] = callbackRepo.split('/');
             await github.rest.repos.createCommitStatus({
               owner,
               repo,
               sha: callbackSha,
-              state: passed ? 'success' : 'failure',
+              state,
               context: 'hil-tests',
-              description: passed
-                ? 'HIL suite passed on real hardware'
-                : 'HIL suite failed - see workflow run for details',
+              description,
               target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
             });
