@@ -350,6 +350,14 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test stateless FIN-ACK for a retransmitted FIN on an already-recycled TX transaction
     void testClass2TxLateFinAck();
 
+    //! Regression: an early FIN for a Class 2 downlink still waiting on
+    //! PEND must not leave a HOLD transaction on PEND and hang cycleTxFirstActive.
+    void testClass2TxQueuedEarlyFinNoHang();
+
+    //! Regression: ABANDON_TRANSACTION of a downlink still waiting on
+    //! PEND must not leave a HOLD transaction on PEND and hang cycleTxFirstActive.
+    void testClass2TxQueuedAbandonNoHang();
+
     //! Test nominal Class 1 RX file transfer
     void testClass1RxNominal();
 
@@ -845,6 +853,10 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Clean up test file (remove and verify)
     void cleanupTestFile(const char* filePath);
+
+    //! Shared body for the queued-downlink finish regression tests
+    //! @param viaAbandon true to finish via ABANDON_TRANSACTION, false via an uplinked early FIN
+    void queuedTxFinishedNoHang(bool viaAbandon);
 
     //! Verify received file matches expected data
     void verifyReceivedFile(const char* filePath, const U8* expectedData, FwSizeType expectedSize);

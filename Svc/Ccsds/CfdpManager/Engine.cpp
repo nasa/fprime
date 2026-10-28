@@ -987,10 +987,16 @@ void Engine::finishTransaction(Transaction* txn, bool keep_history) {
     // so the tick processor will stop trying to actively transmit something -
     // it should move on to the next transaction.
     //
+    // A TX transaction still waiting on PEND (queued behind another downlink, or held
+    // because dequeue is disabled) must also be moved to TXW. PEND is never ticked, so
+    // the inactivity timer armed below could never recycle it, and cycleTx would later
+    // promote the HOLD transaction to TXA where dispatchTx has no handler for it and
+    // cycleTxFirstActive would never leave its dispatch loop.
+    //
     // RX transactions can stay on the RX queue, that does not hurt anything
     // because they are only triggered when a PDU comes in matching that seq_num
     // (RX queue is not separated into A/W parts)
-    if (txn->m_flags.com.q_index == QueueId::TXA) {
+    if (txn->m_flags.com.q_index == QueueId::TXA || txn->m_flags.com.q_index == QueueId::PEND) {
         txn->m_chan->dequeueTransaction(txn);
         txn->m_chan->insertSortPrio(txn, QueueId::TXW);
     }

@@ -829,6 +829,17 @@ CListTraverseStatus Channel::cycleTxFirstActive(CListNode* node, void* context) 
     } else {
         FW_ASSERT(txn->m_flags.com.q_index == QueueId::TXA);  // huh?
 
+        // Only S1 and S2 transactions have a dispatchTx handler. Anything else on TXA
+        // (e.g. a finished transaction in HOLD) can never satisfy the loop exit conditions
+        // below, so park it on TXW where the tick processor's inactivity timer recycles it,
+        // and let cycleTx pull the next pending transaction instead.
+        if (txn->m_state != TxnState::TXN_STATE_S1 && txn->m_state != TxnState::TXN_STATE_S2) {
+            this->dequeueTransaction(txn);
+            this->insertSortPrio(txn, QueueId::TXW);
+            m_engine->armInactTimer(txn);
+            return ret;  // ran_one stays clear so cycleTx moves on to the next PEND entry
+        }
+
         // if no more messages, then chan->m_currentTxn will be set.
         // If the transaction sent the last filedata PDU and EOF, it will move itself
         // off the active queue. Run until either of these occur.

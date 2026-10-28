@@ -56,6 +56,16 @@ TEST(Transaction, Class2TxLateFinAck) {
     tester.testClass2TxLateFinAck();
 }
 
+TEST(Transaction, Class2TxQueuedEarlyFinNoHang) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxQueuedEarlyFinNoHang();
+}
+
+TEST(Transaction, Class2TxQueuedAbandonNoHang) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxQueuedAbandonNoHang();
+}
+
 TEST(Transaction, Class1RxNominal) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass1RxNominal();
