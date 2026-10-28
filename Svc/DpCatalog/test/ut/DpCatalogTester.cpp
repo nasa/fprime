@@ -2476,6 +2476,34 @@ void DpCatalogTester ::test_SetPriorityRuntimeAdd() {
     ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
 }
 
+void DpCatalogTester ::test_SetPriorityStateFileOpenError() {
+    Fw::FileNameString dir("./DpTest_SetPrioStateOpenErr");
+    Fw::FileNameString stateFile("./DpTest_SetPrioStateOpenErr/dpState.dat");
+    Fw::String dpFiles[3];
+    this->setPriorityBuild(dir, stateFile, dpFiles);
+
+    // A directory in place of the state file cannot be opened for writing, even by root
+    ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+    ASSERT_EQ(Os::FileSystem::createDirectory(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+
+    // The new priority applies in memory, but the command fails because it cannot be recorded
+    this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[2], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpPrioritySet_SIZE(1);
+    ASSERT_EVENTS_StateFileOpenError_SIZE(1);
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::EXECUTION_ERROR);
+
+    this->setPriorityXmitAll(12);
+    ASSERT_from_fileOut_SIZE(3);
+    ASSERT_from_fileOut(0, dpFiles[2], dpFiles[2], 0, 0);
+    this->component.shutdown();
+
+    for (FwIndexType dp = 0; dp < 3; dp++) {
+        this->delDp(SET_PRIO_IDS[dp], SET_PRIO_TIME, dir.toChar());
+    }
+    ASSERT_EQ(Os::FileSystem::removeDirectory(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+}
+
 void DpCatalogTester ::test_SetPriorityStateFileFull() {
     Fw::FileNameString dir("./DpTest_SetPrioStateFull");
     Fw::FileNameString stateFile("./DpTest_SetPrioStateFull/dpState.dat");

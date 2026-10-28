@@ -475,6 +475,11 @@ TEST(SetPriority, RuntimeAdd) {
     tester.test_SetPriorityRuntimeAdd();
 }
 
+TEST(SetPriority, StateFileOpenError) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityStateFileOpenError();
+}
+
 TEST(SetPriority, StateFileFull) {
     Svc::DpCatalogTester tester;
     tester.test_SetPriorityStateFileFull();

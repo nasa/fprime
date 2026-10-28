@@ -217,6 +217,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! Runtime addToCat after SET_DP_PRIORITY and after transmit keeps the state file consistent
     void test_SetPriorityRuntimeAdd();
 
+    //! SET_DP_PRIORITY with a state file that cannot be opened for writing
+    void test_SetPriorityStateFileOpenError();
+
     //! SET_DP_PRIORITY with full state file data
     void test_SetPriorityStateFileFull();
 

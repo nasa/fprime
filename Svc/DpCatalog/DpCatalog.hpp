@@ -8,6 +8,9 @@
 #define Svc_DpCatalog_HPP
 
 #include "Svc/DpCatalog/DpCatalogComponentAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_EntryLookupStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_StateFileUpdateStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_StateFileWriteStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpRecordSerializableAc.hpp"
 
 #include <Fw/DataStructures/ExternalArray.hpp>
@@ -231,8 +234,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     void getFileState(DpStateEntry& entry);
 
     /// @brief prune the state file data and write the remaining entries back
-    /// @return true if the state file was written, false on an error (reported by event)
-    bool pruneAndWriteStateFile();
+    /// @return WRITTEN, or the error (also reported by event)
+    DpCatalog_StateFileWriteStatus pruneAndWriteStateFile();
 
     /// @brief load state data from file
     Fw::CmdResponse loadStateFile();
@@ -291,8 +294,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param tSec seconds of the time tag
     /// @param tSub microseconds of the time tag
     /// @param entry the entry found
-    /// @return true if an entry was found
-    bool findEntryByIdentity(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
+    /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
+    DpCatalog_EntryLookupStatus findEntryByIdentity(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
 
     /// @brief find the state file data slot for an entry's product (same directory, id and time tag)
     /// @param entry the entry to look up
@@ -301,8 +304,8 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// @brief record an entry's state in the state file data, reusing the product's slot or a stale one
     /// @param entry the entry to record
-    /// @return true if recorded, false if the state file data is full
-    bool updateStateFileData(const DpStateEntry& entry);
+    /// @return RECORDED, or FULL if the state file data has no free slot
+    DpCatalog_StateFileUpdateStatus updateStateFileData(const DpStateEntry& entry);
 
     // ----------------------------------
     // Private data
