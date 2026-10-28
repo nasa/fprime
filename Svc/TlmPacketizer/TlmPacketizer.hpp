@@ -26,6 +26,8 @@
 #include "TlmPacketizerConfig/FwTlmPacketizeOffsetTypeAliasAc.h"
 #include "TlmPacketizerConfig/TlmPacketizerCfg.hpp"
 
+#include <limits>
+
 namespace Svc {
 
 //! Constant allowing users to ignore the omit list allowing a reduction in required buckets and thus storage
@@ -208,32 +210,26 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         FwChanIdType id;       //!< channel id
         FwChanIdType level;    //!< channel level
         bool updated;          //!< if packet had any updates during last cycle
-        Os::Mutex lock;        //!< used to lock access to this particular packet buffer
-
-        BufferEntry() = default;
-        //! Not copyable: the mutex guards this slot; Run_handler snapshots buffer and latestTime individually
-        BufferEntry(const BufferEntry& other) = delete;
-        BufferEntry& operator=(const BufferEntry& other) = delete;
     };
 
     // buffers for filling with telemetry
     BufferEntry m_fillBuffers[MAX_PACKETIZER_PACKETS];
 
-    //! One channel's membership in a single packet.
-    struct PacketRef {
-        FwChanIdType packet;              //!< index into m_fillBuffers
-        FwTlmPacketizeOffsetType offset;  //!< byte offset of this channel within that packet's buffer
-    };
+    //! packetOffset value for no packet. Never a valid offset: the static_assert in TlmPacketizer.cpp keeps
+    //! FW_COM_BUFFER_MAX_SIZE within this type, and setPacketList asserts every offset is below this sentinel
+    static constexpr FwTlmPacketizeOffsetType NOT_IN_PACKET = std::numeric_limits<FwTlmPacketizeOffsetType>::max();
 
     struct TlmEntry {
-        FwChanIdType id;          //!< telemetry id stored in slot
-        FwSizeType channelSize;   //!< max serialized size of the channel in bytes
-        bool ignored;             //!< ignored channel id
-        bool hasValue;            //!< if the entry has received a value at least once
-        FwChanIdType numPackets;  //!< number of valid entries in packets[]
-        //! Packets containing this channel, first numPackets are valid.
-        PacketRef packets[MAX_PACKETIZER_PACKETS];
+        FwChanIdType id;  //!< telemetry id stored in slot
+        // Offsets into packet buffers.
+        // NOT_IN_PACKET means that channel is not in that packet
+        FwTlmPacketizeOffsetType packetOffset[MAX_PACKETIZER_PACKETS];
+        FwSizeType channelSize;  //!< max serialized size of the channel in bytes
+        bool ignored;            //!< ignored channel id
+        bool hasValue;           //!< if the entry has received a value at least once
     };
+
+    Os::Mutex m_lock;  //!< used to lock access to packet buffers
 
     bool m_configured;  //!< indicates a table has been passed and packets configured
 

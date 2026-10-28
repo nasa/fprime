@@ -80,6 +80,18 @@ TEST(TestNominal, ChannelInMaxPacketsTest) {
     tester.channelInMaxPacketsTest();
 }
 
+TEST(TestNominal, FullComBufferPacketTest) {
+    TEST_CASE(100.1.80, "Packet filling the com buffer exactly round-trips its last-offset channel");
+    Svc::TlmPacketizerTester tester;
+    tester.fullComBufferPacketTest();
+}
+
+TEST(TestOffNominal, OversizedPacketTest) {
+    TEST_CASE(100.2.7, "Packet one byte larger than the com buffer asserts at setPacketList");
+    Svc::TlmPacketizerTester tester;
+    tester.oversizedPacketTest();
+}
+
 TEST(TestOffNominal, DuplicateChannelIdConflictingSizeTest) {
     TEST_CASE(100.2.3, "Duplicate channel ID across packets with conflicting size");
     Svc::TlmPacketizerTester tester;
