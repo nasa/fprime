@@ -23,6 +23,7 @@
 #include "Svc/TlmPacketizer/TlmPacketizer_SectionPacketOverridesArrayAc.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizer_TelemetrySendPortMapArrayAc.hpp"
 #include "TlmPacketizerConfig/FppConstantsAc.hpp"
+#include "TlmPacketizerConfig/FwTlmPacketizeOffsetTypeAliasAc.h"
 #include "TlmPacketizerConfig/TlmPacketizerCfg.hpp"
 
 namespace Svc {
