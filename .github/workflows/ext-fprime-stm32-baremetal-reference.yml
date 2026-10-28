@@ -250,7 +250,9 @@ jobs:
               description = 'HIL run was cancelled or hit the 30-min job timeout - see workflow run for details';
             } else {
               state = 'failure';
-              description = 'HIL suite failed - see workflow run for details';
+              description = crossCompilationResult !== 'success'
+                ? 'Cross-compile / host unit tests failed - HIL suite did not run'
+                : 'HIL suite failed - see workflow run for details';
             }
 
             const [owner, repo] = callbackRepo.split('/');
