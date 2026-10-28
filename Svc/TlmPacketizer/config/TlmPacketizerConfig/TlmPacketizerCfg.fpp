@@ -1,7 +1,12 @@
 # ======================================================================
 # TlmPacketizerCfg.fpp
-# Constants for configuring TlmPacketizer Send Logic Levels
+# Constants and types for configuring TlmPacketizer (sections, groups, send ports, packet offset type)
 # ======================================================================
+@ The type of an offset within a telemetry packet buffer.
+@ Deliberately defined here (global scope) rather than in FpConfig.fpp so that
+@ projects which override FpConfig.fpp continue to build without adding it.
+type FwTlmPacketizeOffsetType = U16
+
 module Svc {
     @ Configurable enum supporting multiple resampled telemetry sections
     @ Each section creates output indices for each telemetry group
