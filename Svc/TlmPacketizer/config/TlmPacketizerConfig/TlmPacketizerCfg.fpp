@@ -1,6 +1,6 @@
 # ======================================================================
 # TlmPacketizerCfg.fpp
-# Constants for configuring TlmPacketizer Send Logic Levels
+# Constants and types for configuring TlmPacketizer (sections, groups, send ports, packet offset type)
 # ======================================================================
 @ The type of an offset within a telemetry packet buffer.
 @ Deliberately defined here (global scope) rather than in FpConfig.fpp so that
