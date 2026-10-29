@@ -123,7 +123,8 @@ FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
 
     buffer[0] = static_cast<U8>(
         static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset) |
-        static_cast<U8>((protocolId << EPPSubfields::protocolIdOffset) & EPPSubfields::protocolIdMask) |
+        static_cast<U8>((protocolId & (EPPSubfields::protocolIdMask >> EPPSubfields::protocolIdOffset))
+                        << EPPSubfields::protocolIdOffset) |
         static_cast<U8>(lengthOfLength & EPPSubfields::lengthOfLengthMask));
 
     if (lengthOfLength == EppLengthOfLength::Zero) {
