@@ -154,7 +154,7 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test acceptance of header-only EPP packets
     void testEppHeaderOnlyPackets();
 
-    //! Test rejection of EPP lengths shorter than their headers and subsequent recovery
+    //! Test rejection of EPP lengths shorter than their headers
     void testEppInvalidDeclaredLengths();
 
     //! Test that createEppPacket encodes every protocol ID and the header-inclusive length
