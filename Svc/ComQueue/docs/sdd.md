@@ -168,7 +168,7 @@ counters reflect the corresponding `QueueConfigurationTable` entry's `depth` and
 Increasing a managed queue depth does not resolve saturation of the shared async queue.
 
 Deployments with an FPP telemetry packet set must include or explicitly omit the four
-new drop channels. The `Ref` deployment includes them in its `CDHErrors` packet.
+drop channels. The `Ref` deployment includes them in its `CDHErrors` packet.
 
 The `run` input is itself asynchronous with `drop` overflow behavior. If the async
 message queue is full, that telemetry invocation may be dropped too; the
