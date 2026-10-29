@@ -23,7 +23,13 @@
 
 namespace Svc {
 ActiveRateGroupTester::ActiveRateGroupTester(Svc::ActiveRateGroup& inst)
-    : ActiveRateGroupGTestBase("testerbase", 100), m_impl(inst), m_causeOverrun(false), m_callOrder(0) {
+    : ActiveRateGroupGTestBase("testerbase", 100),
+      m_impl(inst),
+      m_causeOverrun(false),
+      m_callOrder(0),
+      m_tickRequested(false),
+      m_tickDelivered(false),
+      m_concurrent(false) {
     this->clearPortCalls();
 }
 
@@ -48,6 +54,62 @@ void ActiveRateGroupTester::from_RateGroupMemberOut_handler(FwIndexType portNum,
         this->invoke_to_CycleIn(0, zero);
         this->m_causeOverrun = false;
     }
+    // cross-thread variant: hand off to the caller task mid-cycle. Relaxed so the handshake
+    // itself adds no happens-before edge between the caller's set and the handler's clear/check.
+    if (this->m_concurrent && (portNum == 0)) {
+        this->m_tickRequested.store(true, std::memory_order_relaxed);
+        while (!this->m_tickDelivered.load(std::memory_order_relaxed)) {
+        }
+        this->m_concurrent = false;
+    }
+}
+
+void ActiveRateGroupTester::cycleCallerTask(void* ptr) {
+    ActiveRateGroupTester* tester = static_cast<ActiveRateGroupTester*>(ptr);
+    while (!tester->m_tickRequested.load(std::memory_order_relaxed)) {
+    }
+    Os::RawTime zero;
+    tester->invoke_to_CycleIn(0, zero);
+    tester->m_tickDelivered.store(true, std::memory_order_relaxed);
+}
+
+void ActiveRateGroupTester::runConcurrentCycleSlip() {
+    TEST_CASE(101.2.3, "Run cross-thread cycle slip scenario");
+    this->clearEvents();
+    this->clearTlm();
+    this->clearPortCalls();
+    ASSERT_FALSE(this->m_impl.m_cycleStarted.load());
+
+    this->m_concurrent = true;
+    Os::Task task;
+    Os::Task::Arguments arguments(Fw::String("ArgCycleCaller"), ActiveRateGroupTester::cycleCallerTask, this);
+    ASSERT_EQ(Os::Task::Status::OP_OK, task.start(arguments));
+
+    // first tick from this thread; while its cycle runs, the caller task delivers the second tick
+    Os::RawTime zero;
+    this->invoke_to_CycleIn(0, zero);
+    this->m_impl.doDispatch();
+    ASSERT_EQ(Os::Task::Status::OP_OK, task.join());
+
+    // the tick set on the caller thread was seen on the component thread
+    REQUIREMENT("ARG-004");
+    ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
+    ASSERT_EQ(this->m_impl.m_cycles, 1u);
+    ASSERT_EQ(this->m_impl.m_cycleSlips, 1u);
+    ASSERT_EVENTS_RateGroupCycleSlip_SIZE(1);
+    ASSERT_EVENTS_RateGroupCycleSlip(0, 0u);
+    ASSERT_TLM_RgCycleSlips_SIZE(1);
+    ASSERT_TLM_RgCycleSlips(0, 1u);
+
+    // the second tick is still queued and runs as a clean cycle
+    this->clearEvents();
+    this->clearTlm();
+    this->m_impl.doDispatch();
+    ASSERT_FALSE(this->m_impl.m_cycleStarted.load());
+    ASSERT_EQ(this->m_impl.m_cycles, 2u);
+    ASSERT_EQ(this->m_impl.m_cycleSlips, 1u);
+    ASSERT_EVENTS_RateGroupCycleSlip_SIZE(0);
+    ASSERT_TLM_RgCycleSlips_SIZE(0);
 }
 
 void ActiveRateGroupTester ::from_PingOut_handler(const FwIndexType portNum, U32 key) {

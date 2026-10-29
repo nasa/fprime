@@ -20,6 +20,10 @@
 
 namespace Svc {
 
+// The cycle-started flag is stored from the cycle caller's thread, which may be interrupt context;
+// a std::atomic implemented with a hidden lock would not be safe there.
+static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "std::atomic<bool> must be lock-free for the cycle-started flag");
+
 ActiveRateGroup::ActiveRateGroup(const char* compName)
     : ActiveRateGroupComponentBase(compName),
       m_cycles(0),
@@ -64,6 +68,8 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
 
     Os::RawTime endTime;
 
+    // Clear the flag set by this cycle's CycleIn_preMsgHook. A cycle message whose hook ran
+    // between the dequeue and this store is coalesced with this cycle: one slip per delay.
     this->m_cycleStarted.store(false, std::memory_order_relaxed);
 
     // invoke any members of the rate group

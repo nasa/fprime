@@ -111,6 +111,7 @@ Date | Description
 7/22/2015 | Design review actions
 8/10/2015 | Updated to cycle input port 
 8/31/2015 | Unit test review updates
+10/29/2026 | Cycle-started flag made atomic (nasa/fprime#6040 items 1 and 3)
 
 
 
