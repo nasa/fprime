@@ -17,7 +17,10 @@ module Svc {
     output port pingOut: Svc.Ping
 
     @ Sched input port for writing telemetry
-    async input port schedIn: Svc.Sched
+    sync input port schedIn: Svc.Sched
+
+    @ Internal port that performs the schedIn work on the component thread
+    internal port schedInInternal hook
 
     @ Port to start recording
     async input port startRecordingIn: Svc.ComLoggerStart

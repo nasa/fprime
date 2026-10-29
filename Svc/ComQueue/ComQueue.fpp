@@ -46,7 +46,10 @@ module Svc {
       sync input port dataReturnIn: Svc.ComDataWithContext
 
       @ Port for scheduling telemetry output
-      async input port run: Svc.Sched drop
+      sync input port run: Svc.Sched
+
+      @ Internal port that performs the run work on the component thread
+      internal port runInternal hook
 
       # ----------------------------------------------------------------------
       # Special ports

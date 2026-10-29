@@ -41,7 +41,8 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | compCmdReg | Input | Guarded | Command Registration
 [`Svc::Ping`](../../Ping/docs/sdd.md) | pingIn | Input | Asynchronous | Ping input from health checker
 [`Svc::Ping`](../../Ping/docs/sdd.md) | pingOut | Output | n/a | Ping response to health checker
-[`Svc::Sched`](../../Sched/docs/sdd.md) | run | Input | Asynchronous | Report telemetry
+[`Svc::Sched`](../../Sched/docs/sdd.md) | run | Input | Synchronous | Report telemetry
+n/a | runInternal | Internal | Asynchronous (`hook` overflow behavior) | Performs the `run` work on the component thread; at most one message queued
 
 ### 3.2 Functional Description
 

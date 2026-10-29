@@ -38,7 +38,7 @@ The component uses a stateful design that:
 |---|---|---|
 | `comIn` | `Fw.Com` | Async port receiving Com buffers to be logged. Queue-full policy is `drop`: when the component queue is full, incoming buffers are discarded with no event; the cumulative count is reported in `NumQueueDrops` on the next `schedIn` cycle and is not reset by `CLEAR_COUNTERS`. Size the instance queue depth for the largest expected com burst between component task executions |
 | `pingIn` | `Svc.Ping` | Async port for health ping requests |
-| `schedIn` | `Svc.Sched` | Async port for periodic telemetry updates |
+| `schedIn` | `Svc.Sched` | Sync port for periodic telemetry updates; delegates to the `schedInInternal` internal port (`hook` on overflow, at most one message queued) |
 | `startRecordingIn` | `Svc.ComLoggerStart` | Async port to start recording via port interface. Parameters: `packetsPerContainer` (FwSizeType), `priority` (FwDpPriorityType). Logs `StartRecordingFailed` event on validation failure. |
 | `stopRecordingIn` | `Svc.ComLoggerStop` | Async port to stop recording via port interface |
 | `cmdIn` | Command receive | Standard command receive port |

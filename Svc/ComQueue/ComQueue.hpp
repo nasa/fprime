@@ -197,6 +197,12 @@ class ComQueue final : public ComQueueComponentBase {
                      U32 context                /*!<The call order*/
                      ) override;
 
+    //! Internal interface handler for runInternal
+    void runInternal_internalInterfaceHandler() override;
+
+    //! Overflow hook for runInternal
+    void runInternal_overflowHook() override;
+
     //! Handler implementation for dataReturnIn
     //!
     //! Port for returning ownership of Fw::Buffer to its sender
@@ -281,6 +287,7 @@ class ComQueue final : public ComQueueComponentBase {
     bool m_throttle[TOTAL_PORT_COUNT];        //!< Per-queue EVR throttles
     SendState m_state;                        //!< State of the component
     std::atomic<BufferState> m_buffer_state;  //!< Ownership state of buffer, shared with the sync dataReturnIn caller
+    std::atomic<bool> m_runQueued;            //!< True while a runInternal message is on the queue
 
     // Storage for Fw::MemAllocator properties
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID

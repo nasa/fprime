@@ -117,6 +117,18 @@ void DpWriter::schedIn_handler(const FwIndexType portNum, U32 context) {
     // portNum and context are not used
     (void)portNum;
     (void)context;
+    bool expected = false;
+    if (this->m_schedInQueued.compare_exchange_strong(expected, true)) {
+        this->schedInInternal_internalInterfaceInvoke();
+    }
+}
+
+void DpWriter::schedInInternal_overflowHook() {
+    this->m_schedInQueued = false;
+}
+
+void DpWriter::schedInInternal_internalInterfaceHandler() {
+    this->m_schedInQueued = false;
     // Write telemetry
     this->tlmWrite_NumBuffersReceived(this->m_numBuffersReceived);
     this->tlmWrite_NumBytesWritten(this->m_numBytesWritten);

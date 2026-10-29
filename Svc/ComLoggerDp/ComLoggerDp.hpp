@@ -7,6 +7,8 @@
 #ifndef Svc_ComLoggerDp_HPP
 #define Svc_ComLoggerDp_HPP
 
+#include <atomic>
+
 #include "Fw/Dp/DpContainer.hpp"
 #include "Svc/ComLoggerDp/ComLoggerDpComponentAc.hpp"
 #include "config/ComLoggerDpCfg.hpp"
@@ -107,6 +109,12 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
     void schedIn_handler(FwIndexType portNum,  //!< The port number
                          U32 context           //!< The call order
                          ) override;
+
+    //! Internal interface handler for schedInInternal
+    void schedInInternal_internalInterfaceHandler() override;
+
+    //! Overflow hook for schedInInternal
+    void schedInInternal_overflowHook() override;
 
     //! Handler implementation for startRecordingIn
     //!
@@ -220,6 +228,9 @@ class ComLoggerDp final : public ComLoggerDpComponentBase {
 
     //! Number of schedIn calls without packets before auto-flush (0 = disabled)
     U32 m_flushTimeout{0};
+
+    //! True while a schedInInternal message is on the queue
+    std::atomic<bool> m_schedInQueued{false};
 
     //! Priority for data products
     FwDpPriorityType m_priority{ContainerPriority::ComBuffContainer};  // Default priority from FPP

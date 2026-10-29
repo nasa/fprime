@@ -34,6 +34,7 @@ ComQueue ::ComQueue(const char* const compName)
     : ComQueueComponentBase(compName),
       m_state(WAITING),
       m_buffer_state(OWNED),
+      m_runQueued(false),
       m_allocationId(static_cast<FwEnumStoreType>(-1)),
       m_allocator(nullptr),
       m_allocation(nullptr) {
@@ -277,6 +278,18 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
 }
 
 void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
+    bool expected = false;
+    if (this->m_runQueued.compare_exchange_strong(expected, true)) {
+        this->runInternal_internalInterfaceInvoke();
+    }
+}
+
+void ComQueue::runInternal_overflowHook() {
+    this->m_runQueued = false;
+}
+
+void ComQueue::runInternal_internalInterfaceHandler() {
+    this->m_runQueued = false;
     // Downlink the high-water marks for the Fw::ComBuffer array types. Disabled (depth 0) queues report 0.
     ComQueueDepth comQueueDepth;
     FW_ASSERT(comQueueDepth.SIZE <= COM_PORT_COUNT, static_cast<FwAssertArgType>(comQueueDepth.SIZE));
