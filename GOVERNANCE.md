@@ -66,7 +66,7 @@ Community managers are also members of the CCB and are thus involved in decision
 
 F Prime has to support a number of community members both inside and outside of NASA. This means the Project must maintain high technical and quality standards, cybersecurity standard, and must be developed ensuring that the needs of the community are met.  The Change Control Board (CCB) is charged with making these decisions.
 
-First, a Contributor comes up with an idea for F Prime. Ideas must be submitted as [Issues](https://github.com/nasa/fprime/issues). These issues are automatically placed in the "CCB" state waiting CCB approval. Contributors should take caution when developing changes that have not been approved by the CCB as they may be reworked or rejected.
+First, a Contributor comes up with an idea for F Prime. Ideas must be submitted as [Issues](https://github.com/nasa/fprime/issues). These issues are automatically placed in the "CCB" state waiting CCB approval. Issues in the "CCB", "Backlog - Deferred", or "No Status" states are not open for development; contributors should not develop changes for them as they may be reworked or rejected.
 
 Next, the CCB answers the question "How does this idea fit within the F Prime ecosystem?". For simple ideas (e.g. a bug report) this is often a quick decision to place this work within the core F Prime products.  For larger, or more breaking changes this decision can have a number of different outcomes:
 
