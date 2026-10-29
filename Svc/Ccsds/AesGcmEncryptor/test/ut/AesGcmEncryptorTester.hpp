@@ -9,6 +9,7 @@
 
 #include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptor.hpp"
 #include "Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptorGTestBase.hpp"
+#include "Svc/Ccsds/Utils/AesGcm/AesGcmCipher.hpp"
 
 namespace Svc {
 
@@ -27,13 +28,13 @@ class AesGcmEncryptorTester final : public AesGcmEncryptorGTestBase {
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
     //! Length of an AES-256 key, in bytes
-    static const FwSizeType AES_256_KEY_LEN = 32;
+    static const FwSizeType AES_256_KEY_LEN = Svc::Ccsds::Utils::AesGcmCipher::KEY_LEN;
 
     //! Length of the AES-GCM initialization vector, in bytes
-    static const FwSizeType GCM_IV_LEN = 12;
+    static const FwSizeType GCM_IV_LEN = Svc::Ccsds::Utils::AesGcmCipher::IV_LEN;
 
     //! Length of the AES-GCM authentication tag, in bytes
-    static const FwSizeType GCM_TAG_LEN = 16;
+    static const FwSizeType GCM_TAG_LEN = Svc::Ccsds::Utils::AesGcmCipher::TAG_LEN;
 
     //! Virtual channel for tests
     static const U8 TEST_VC_ID = 3;
@@ -69,9 +70,9 @@ class AesGcmEncryptorTester final : public AesGcmEncryptorGTestBase {
     //! Covers SVC-CCSDS-AES-ENCRYPTOR-001 and SVC-CCSDS-AES-ENCRYPTOR-002.
     void testCiphertextAndMacMatch();
 
-    //! Svc::Ccsds::Utils::SdlsTmAuthMask agrees with the mask this harness
+    //! Svc::Ccsds::Utils::SdlsTmAad agrees with the mask this harness
     //! builds from the ground segment's contract. Covers SVC-CCSDS-AES-ENCRYPTOR-002.
-    void testAuthMaskLayout();
+    void testAadLayout();
 
     //! The virtual channel bound into the AAD is the one on the frame context, which is
     //! also the one Svc::Ccsds::TmFramer writes into the header. Covers SVC-CCSDS-AES-ENCRYPTOR-008.
