@@ -313,7 +313,8 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             seekForward += toHeader;
         }
 
-        // A zero size indicates idle, incomplete, or invalid packet data.
+        // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
+        // packet)
         const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
         if (packetSize == 0) {
             return 0;
@@ -460,7 +461,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
         FwSizeType packetSize = this->appendToSpanningPacket(vc, packetStart, remainingBytes);
 
         if (packetSize == 0) {
-            // No complete packet starts at this offset.
+            // Break out of loop since we ran out of data
             return;
         }
 
@@ -513,7 +514,10 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
     }
 
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
-    // The maximum SPP length must fit in FwSizeType.
+    // packetDataLength is a 16-bit field (max 65535); SERIALIZED_SIZE is a small constant.
+    // Guarantee at compile time that the maximum possible sum fits in FwSizeType. If
+    // FwSizeType is ever narrowed below 17 bits, this fails to build and the addition
+    // below must be guarded against overflow.
     constexpr FwSizeType MAX_LENGTH = std::numeric_limits<FwSizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE;
     static_assert(MAX_LENGTH >= std::numeric_limits<U16>::max() + 1,
                   "FwSizeType must be wide enough to hold the maximum SPP packet size without overflow");
@@ -543,15 +547,19 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
     U8 firstByte = payloadStart[0];
     U8 protocolId = static_cast<U8>((firstByte & EPPSubfields::protocolIdMask) >> EPPSubfields::protocolIdOffset);
 
+    FwSizeType totalPacketSize = 0;
+
     // Idle means this is the last packet in the frame
     if (protocolId == static_cast<U8>(EppProtocolId::Idle)) {
         return 0;
     }
 
-    // A zero length-of-length denotes a non-idle one-byte EPP.
+    // Encapsulation Idle Packet per CCSDS 133.1-B-3 Section 4.1.3.2
     U8 lengthOfLength = firstByte & EPPSubfields::lengthOfLengthMask;
+
+    // No Packet Length field: the packet is one octet (CCSDS 133.1-B-3 Section 4.1.2.8.2)
     if (lengthOfLength == EppLengthOfLength::Zero) {
-        return 1;  // Non-idle EPP with no length field has a one-byte header.
+        return 1;
     }
 
     U8 lengthOffset = 1U;
@@ -576,18 +584,19 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
         return 0;  // Incomplete
     }
 
-    // CCSDS 133.1-B-3 section 4.1.2.8.2: the length includes the header.
+    // Read length field (big-endian); it includes the header (CCSDS 133.1-B-3 Section 4.1.2.8.2)
     U32 packetLength = 0;
     for (U8 i = 0; i < lengthOfLength; i++) {
         packetLength = (packetLength << 8) | payloadStart[lengthOffset + i];
     }
 
-    const FwSizeType packetSize = static_cast<FwSizeType>(packetLength);
-    // A valid declared total can equal the header length (no data field).
-    if ((static_cast<U32>(packetSize) != packetLength) || (packetSize < headerLength)) {
+    // Reject a length FwSizeType cannot hold or one shorter than the header
+    totalPacketSize = static_cast<FwSizeType>(packetLength);
+    if ((static_cast<U32>(totalPacketSize) != packetLength) || (totalPacketSize < headerLength)) {
         return 0;
     }
-    return packetSize;
+
+    return totalPacketSize;
 }
 
 U8 AosDeframer::getPacketVersion(U8 firstByte) {
