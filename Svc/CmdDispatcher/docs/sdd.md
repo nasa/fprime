@@ -120,6 +120,7 @@ Constant | Description
 `CMD_DISPATCHER_DISPATCH_TABLE_SIZE` | The size of the table holding opcodes to dispatch.
 `CMD_DISPATCHER_SEQUENCER_TABLE_SIZE` | The size of the pending command table holding commands in progress.
 `Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents` | When `false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum `FwOpcodeType` value. Default: `true`.
+`Svc::CmdDispatcherCfg::getEventOpcode(FwOpcodeType)` | Maps a command opcode to the value reported in events. Every command opcode emitted in an event by `Svc::CmdDispatcher`, `Svc::CmdSequencer`, `Svc::FpySequencer`, and `Svc::WasmSequencer` passes through it. The default honors `IncludeCommandOpcodesInEvents`; projects may supply a more elaborate mapping (e.g. a lookup table) in their copy of the header.
 `Svc::CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT` | Default behavior when a command cannot be tracked because the pending sequence command table is full; overridden per instance by `CommandDispatcherImpl::configure(bool)`. See Note #5 in section 3.2.2. Default: `false`.
 
 ## 4. Module Checklists

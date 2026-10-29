@@ -377,7 +377,10 @@ Users are encouraged to look through the header for the component of interest as
 
 `CommandDispatcherImplCfg.hpp` provides `Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents`. When this setting is
 `false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum
-`FwOpcodeType` value before downlink.
+`FwOpcodeType` value before downlink. The mapping is performed by `Svc::CmdDispatcherCfg::getEventOpcode()`, which
+every command opcode emitted in an event by the command dispatcher and the sequencers passes through. Projects needing
+more than the on/off behavior (e.g. an opcode lookup table) may replace that function's body in their copy of the
+header.
 
 The same header provides `Svc::CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT`, the default for what
 happens when a command arrives and the dispatcher's pending command table is full. Each dispatcher instance may
