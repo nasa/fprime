@@ -440,6 +440,66 @@ TEST(NominalManual, InsertAlreadyTransmitted) {
     tester.test_InsertAlreadyTransmitted();
 }
 
+TEST(SetPriority, Raise) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityRaise();
+}
+
+TEST(SetPriority, Lower) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityLower();
+}
+
+TEST(SetPriority, NotFound) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNotFound();
+}
+
+TEST(SetPriority, SameNoOp) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPrioritySameNoOp();
+}
+
+TEST(SetPriority, DuringXmit) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityDuringXmit();
+}
+
+TEST(SetPriority, Persisted) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityPersisted();
+}
+
+TEST(SetPriority, RuntimeAdd) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityRuntimeAdd();
+}
+
+TEST(SetPriority, StateFileOpenError) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityStateFileOpenError();
+}
+
+TEST(SetPriority, StateFileFull) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityStateFileFull();
+}
+
+TEST(SetPriority, NotInit) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNotInit();
+}
+
+TEST(SetPriority, SameIdByTime) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPrioritySameIdByTime();
+}
+
+TEST(SetPriority, WithXmitRange) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityWithXmitRange();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

@@ -175,6 +175,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_StopThenErrorCompletion();
     void test_ProcessFileInvalidDir();
     void test_MalformedFile();
+
     void test_TruncatedDpRejected();
     void test_NonCanonicalDpRejected();
     void test_BadHeaderHashRejected();
@@ -194,6 +195,42 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_XmitPriorityRangeStopThenRuntimeAdd();
     void test_XmitPriorityRangeStartAfterStopAppliesRangeToNextFile();
     void test_XmitLegacyCommandSendsFullRange();
+
+    //! SET_DP_PRIORITY to a lower number moves the product earlier in the transmit order
+    void test_SetPriorityRaise();
+
+    //! SET_DP_PRIORITY to a higher number moves the product later in the transmit order
+    void test_SetPriorityLower();
+
+    //! SET_DP_PRIORITY for a product not in the catalog is rejected with DpNotFound
+    void test_SetPriorityNotFound();
+
+    //! SET_DP_PRIORITY to the current priority is a reported no-op
+    void test_SetPrioritySameNoOp();
+
+    //! SET_DP_PRIORITY during a transmit reorders the pending products and leaves the send in flight intact
+    void test_SetPriorityDuringXmit();
+
+    //! SET_DP_PRIORITY change is kept across restart, rebuild and CLEAR_CATALOG
+    void test_SetPriorityPersisted();
+
+    //! Runtime addToCat after SET_DP_PRIORITY and after transmit keeps the state file consistent
+    void test_SetPriorityRuntimeAdd();
+
+    //! SET_DP_PRIORITY with a state file that cannot be opened for writing
+    void test_SetPriorityStateFileOpenError();
+
+    //! SET_DP_PRIORITY with full state file data
+    void test_SetPriorityStateFileFull();
+
+    //! SET_DP_PRIORITY before configure
+    void test_SetPriorityNotInit();
+
+    //! SET_DP_PRIORITY tells apart products of one container (same ID) by their time tags
+    void test_SetPrioritySameIdByTime();
+
+    //! SET_DP_PRIORITY moves products into and out of a START_XMIT_CATALOG_WITH_PRIORITY range
+    void test_SetPriorityWithXmitRange();
 
   private:
     //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog
@@ -215,6 +252,18 @@ class DpCatalogTester : public DpCatalogGTestBase {
 
     //! Allocator handed to configure() by buildPriorityCatalog; the component keeps a pointer to it until shutdown()
     Fw::MallocAllocator m_priorityRangeAlloc;
+
+    //! Generate three DPs with priorities 10, 20, 30 in dir, configure the component, and build the catalog
+    void setPriorityBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, Fw::String (&dpFiles)[3]);
+
+    //! Size of a generated DP file, as reported by SendingProduct
+    //! Restart the component and rebuild the catalog
+    void setPriorityRebuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq);
+
+    //! Transmit the whole catalog
+    void setPriorityXmitAll(U32 cmdSeq);
+
+    U32 setPriorityFileSize(const Fw::String& dpFile);
 };
 
 }  // namespace Svc

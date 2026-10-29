@@ -72,6 +72,29 @@ module Svc {
     telemetry port Tlm
 
     # ----------------------------------------------------------------------
+    # Types
+    # ----------------------------------------------------------------------
+
+    @ Outcome of rewriting the state file from the state file data
+    enum StateFileWriteStatus : U8 {
+      WRITTEN = 0 @< The state file was rewritten
+      OPEN_ERROR = 1 @< The state file could not be opened (StateFileOpenError reported)
+      WRITE_ERROR = 2 @< A record could not be written (StateFileWriteError reported)
+    }
+
+    @ Outcome of recording an entry in the state file data
+    enum StateFileUpdateStatus : U8 {
+      RECORDED = 0 @< The entry was recorded in its own slot or a reused stale slot
+      FULL = 1 @< The state file data has no free slot
+    }
+
+    @ Outcome of looking up a catalog entry by data product identity
+    enum EntryLookupStatus : U8 {
+      FOUND = 0 @< An entry with the identity is in the catalog
+      NOT_FOUND = 1 @< No entry with the identity is in the catalog
+    }
+
+    # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------
 
@@ -103,6 +126,15 @@ module Svc {
     @ clear existing catalog
     async command CLEAR_CATALOG \
       opcode 3
+
+    @ Set the transmit priority of one data product in the in-memory catalog (lower is higher priority)
+    async command SET_DP_PRIORITY (
+                                    $id: FwDpIdType @< Container ID of the data product
+                                    tSec: U32 @< Seconds of the data product time tag
+                                    tSub: U32 @< Microseconds of the data product time tag
+                                    $priority: FwDpPriorityType @< New transmit priority
+                                  ) \
+      opcode 5
 
     # ----------------------------------------------------------------------
     # Events
@@ -479,6 +511,38 @@ module Svc {
       severity activity high \
       id 52 \
       format "Catalog transmission started for priorities {} through {}"
+
+    @ Data product transmit priority changed by SET_DP_PRIORITY; equal values report a no-op
+    event DpPrioritySet(
+                            $id: FwDpIdType @< Container ID of the data product
+                            tSec: U32 @< Seconds of the data product time tag
+                            tSub: U32 @< Microseconds of the data product time tag
+                            oldPriority: FwDpPriorityType @< Priority before the command
+                            newPriority: FwDpPriorityType @< Priority after the command
+                          ) \
+      severity activity high \
+      id 53 \
+      format "Priority of DP id {} time {}.{} set from {} to {}"
+
+    @ SET_DP_PRIORITY named a data product that is not in the catalog
+    event DpNotFound(
+                            $id: FwDpIdType @< Container ID of the data product
+                            tSec: U32 @< Seconds of the data product time tag
+                            tSub: U32 @< Microseconds of the data product time tag
+                          ) \
+      severity warning low \
+      id 54 \
+      format "DP id {} time {}.{} not found in catalog"
+
+    @ State file data is full, so the state of a data product could not be recorded
+    event StateFileFull(
+                         $id: FwDpIdType @< Container ID of the data product
+                         tSec: U32 @< Seconds of the data product time tag
+                         tSub: U32 @< Microseconds of the data product time tag
+                       ) \
+      severity warning high \
+      id 55 \
+      format "State file data full; state of DP {} time {}.{} not recorded"
 
 
     # ----------------------------------------------------------------------
