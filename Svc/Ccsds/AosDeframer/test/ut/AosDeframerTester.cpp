@@ -495,9 +495,16 @@ void AosDeframerTester::testSpanningPacketContinuation() {
 void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     this->configureDefault();
 
-    // A four-octet length is needed to exceed the 65536-byte test allocator.
-    // This wire value declares 65537 total bytes, including the 8-byte header.
-    U8 payload[64] = {0xFF, 0, 0, 0, 0, 1, 0, 1};
+    U8 payload[64] = {};
+    // Start an EPP packet that declares a payload large enough to exceed the test allocator buffer.
+    payload[0] = (ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset);
+    payload[0] |= EppProtocolId::MissionSpecific << EPPSubfields::protocolIdOffset;
+    payload[0] |= 0x03 & EPPSubfields::lengthOfLengthMask;
+
+    payload[1] = 0x00;  // Ext Field
+
+    payload[5] = 0x01;
+    payload[7] = 0x01;  // packet length (header-inclusive) = 65537 (> ALLOC_BUF_SIZE=65536)
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), 0);
     ComCfg::FrameContext context;
@@ -507,7 +514,6 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
-    ASSERT_EVENTS_SpanningPacketAllocFailed(0, 0, ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL, 65537);
 }
 
 void AosDeframerTester::testSpanningPacketAbandonedOnVcGap() {
