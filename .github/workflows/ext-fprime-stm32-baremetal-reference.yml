@@ -1,0 +1,268 @@
+# Cross-compile https://github.com/fprime-community/fprime-stm32-baremetal-reference
+# for the STM32H753XI-EVAL2 target (ARM Cortex-M7, Os::Baremetal single-threaded
+# cyclic executive) and run HIL integration tests on a self-hosted Raspberry Pi
+# runner wired to the physical board over UART/ST-Link.
+
+name: "External Repo: STM32 Baremetal Reference"
+
+on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
+  push:
+    branches: [ release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+  # Manual/remote trigger: fork PRs on fprime-community/fprime-stm32-baremetal-reference
+  workflow_dispatch:
+    inputs:
+      target_ref:
+        description: "Exact ref/SHA on fprime-community/fprime-stm32-baremetal-reference to build and test"
+        required: true
+      callback_repo:
+        description: "Repository to post the hil-tests commit status back to; only fprime-community/fprime-stm32-baremetal-reference is accepted (optional)"
+        required: false
+      callback_sha:
+        description: "Full 40-char commit SHA on callback_repo to post the hil-tests commit status to (optional)"
+        required: false
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.event.inputs.target_ref || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+env:
+  FPRIME_LOCATION: ./lib/fprime
+  DEPLOYMENT: ReferenceDeployment
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    if: github.event_name != 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-stm32-baremetal-reference
+
+  cross-compilation:
+    name: "Cross-Compile (stm32h7) + Host Unit Tests"
+    runs-on: ubuntu-22.04
+    needs: get-branch
+    if: ${{ !cancelled() && (needs.get-branch.result == 'success' || needs.get-branch.result == 'skipped') }}
+    steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          repository: fprime-community/fprime-stm32-baremetal-reference
+          ref: ${{ github.event.inputs.target_ref || needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ${{ env.FPRIME_LOCATION }}
+          fetch-depth: 0
+          filter: blob:none
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ env.FPRIME_LOCATION }}
+      - name: "Install ARM GNU Toolchain"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-dev
+        shell: bash
+      - name: "Generate stm32h7 Build Cache"
+        run: |
+          fprime-util generate stm32h7 2>&1 | output-cleaner
+        shell: bash
+      - name: "Cross-Compile Binary"
+        run: |
+          fprime-util build stm32h7 -j"$(nproc)" 2>&1 | output-cleaner
+        shell: bash
+      - name: "Host-Native Unit Tests (GTest)"
+        run: |
+          fprime-util generate --ut 2>&1 | output-cleaner
+          for module in \
+            FprimeStm32BaremetalReference/Components/Led \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32GpioDriver \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32I2cDriver \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32SpiDriver \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32Timer \
+            lib/fprime-stm32/fprime-stm32/Drv/STM32UartDriver; do
+            (cd "${GITHUB_WORKSPACE}/${module}" && fprime-util check --coverage 2>&1 | output-cleaner)
+          done
+        shell: bash
+      - name: "Report resource margin"
+        run: |
+          arm-none-eabi-size -A ./build-artifacts/stm32h7/${DEPLOYMENT}/bin/${DEPLOYMENT} | tee resource-margin.txt
+        shell: bash
+      - name: "Prepare artifacts"
+        run: |
+          mkdir -p stm32-artifacts
+          cp -r ./build-artifacts stm32-artifacts
+          cp -r FprimeStm32BaremetalReference/Deployments/ReferenceDeployment/test/int stm32-artifacts
+          cp resource-margin.txt stm32-artifacts
+        shell: bash
+      - name: "Archive Build Artifacts"
+        uses: actions/upload-artifact@v7
+        with:
+          name: stm32-artifacts
+          path: stm32-artifacts
+          retention-days: 5
+
+  HIL-integration:
+    name: "HIL Integration Tests (STM32H753XI-EVAL2)"
+    runs-on: [self-hosted, baremetal]
+    needs: cross-compilation
+    timeout-minutes: 30
+    # `hil-hardware` must be configured (repo Settings > Environments) with required
+    # reviewers: it is the approval gate for dispatched (fork) refs. The key alone
+    # enforces nothing - GitHub auto-creates an unprotected environment on first
+    # use if it doesn't already exist with that rule configured. Scoped to
+    # workflow_dispatch only (empty string = no environment) so the nightly,
+    # release/** push, and in-repo same-repo-head PR runs - already-trusted,
+    # non-fork code paths - aren't blocked waiting on human approval too.
+    environment: ${{ github.event_name == 'workflow_dispatch' && 'hil-hardware' || '' }}
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      # Single source of truth for the rig baseline, run both before and after
+      # the test steps - a changed pin wiring only needs updating here.
+      RIG_BASELINE_CMD: |
+        pinctrl set 25 op dh  # SCL connected
+        pinctrl set 8  op dh  # SDA connected
+        pinctrl set 7  op dh  # MOSI connected
+        pinctrl set 12 op dh  # MISO connected
+        pinctrl set 16 op dh  # CS connected
+        pinctrl set 20 op dh  # SCK connected
+        pinctrl set 21 op dl  # sensor 3V3 rail on (active-low)
+        pinctrl set 24 op dl  # heater off
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: "requirements.txt"
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: "Setup environment"
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
+        shell: bash
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+      - name: "Artifacts Download"
+        uses: actions/download-artifact@v8
+        with:
+          name: stm32-artifacts
+      - name: "Reset GPIO fault-injection rig to baseline"
+        run: eval "$RIG_BASELINE_CMD"
+        shell: bash
+      # OpenOCD and the ST-Link udev rules are expected to be pre-provisioned on
+      # this runner (hardware-specific setup, not reinstalled every run).
+      - name: "Flash board via OpenOCD/ST-Link"
+        run: |
+          . venv/bin/activate
+          openocd -f interface/stlink.cfg -f target/stm32h7x.cfg \
+            -c "program ./build-artifacts/stm32h7/${DEPLOYMENT}/bin/${DEPLOYMENT} verify reset exit"
+        shell: bash
+      - name: "Run Integration Tests"
+        run: |
+          . venv/bin/activate
+          mkdir -p ci-logs
+          fprime-gds --no-app --communication-selection uart \
+            --uart-device /dev/ttyACM0 --uart-baud 115200 \
+            -d ./build-artifacts/stm32h7/${DEPLOYMENT} --logs ./ci-logs &
+          sleep 10
+          pytest -o python_files="*_integration_tests.py" \
+            --dictionary ./build-artifacts/stm32h7/${DEPLOYMENT}/dict/${DEPLOYMENT}TopologyDictionary.json \
+            --logs ./ci-logs --junit-xml-file hil-results.xml --gen-junitxml \
+            ./int/
+        shell: bash
+      - name: "Return GPIO fault-injection rig to baseline"
+        if: always()
+        run: eval "$RIG_BASELINE_CMD"
+        shell: bash
+      - name: "Archive logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: stm32-hil-logs
+          path: ci-logs
+          retention-days: 5
+
+  report-callback-status:
+    name: "Report hil-tests status to callback_repo"
+    needs: [cross-compilation, HIL-integration]
+    # always(), not !cancelled(): a dispatched callback SHA must always receive a terminal hil-tests status.
+    if: always() && github.event_name == 'workflow_dispatch' && github.event.inputs.callback_repo != '' && github.event.inputs.callback_sha != ''
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Report HIL result back to callback_repo"
+        uses: actions/github-script@v7
+        env:
+          CALLBACK_REPO: ${{ github.event.inputs.callback_repo }}
+          CALLBACK_SHA: ${{ github.event.inputs.callback_sha }}
+          CROSS_COMPILATION_RESULT: ${{ needs.cross-compilation.result }}
+          HIL_INTEGRATION_RESULT: ${{ needs.HIL-integration.result }}
+        with:
+          github-token: ${{ secrets.HIL_CALLBACK_TOKEN }}
+          script: |
+            const ALLOWED_CALLBACK_REPO = 'fprime-community/fprime-stm32-baremetal-reference';
+            const callbackRepo = process.env.CALLBACK_REPO;
+            const callbackSha = process.env.CALLBACK_SHA;
+
+            if (callbackRepo !== ALLOWED_CALLBACK_REPO) {
+              core.setFailed(`callback_repo '${callbackRepo}' is not the allow-listed '${ALLOWED_CALLBACK_REPO}'`);
+              return;
+            }
+            if (!/^[0-9a-f]{40}$/.test(callbackSha)) {
+              core.setFailed(`callback_sha '${callbackSha}' is not a well-formed 40-char hex commit SHA`);
+              return;
+            }
+
+            const crossCompilationResult = process.env.CROSS_COMPILATION_RESULT;
+            const hilIntegrationResult = process.env.HIL_INTEGRATION_RESULT;
+            const passed = crossCompilationResult === 'success' && hilIntegrationResult === 'success';
+            const cancelled = [crossCompilationResult, hilIntegrationResult].includes('cancelled');
+
+            let state, description;
+            if (passed) {
+              state = 'success';
+              description = 'HIL suite passed on real hardware';
+            } else if (cancelled) {
+              state = 'error';
+              description = 'HIL run was cancelled or hit the job timeout - see workflow run for details';
+            } else {
+              state = 'failure';
+              description = crossCompilationResult !== 'success'
+                ? 'Cross-compile / host unit tests failed - HIL suite did not run'
+                : 'HIL suite failed - see workflow run for details';
+            }
+
+            const [owner, repo] = callbackRepo.split('/');
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha: callbackSha,
+              state,
+              context: 'hil-tests',
+              description,
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
