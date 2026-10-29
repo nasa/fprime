@@ -126,6 +126,22 @@ every site. Ask the user if:
 - The event severity level is unclear
 - Parameter defaults or valid ranges are unspecified
 
+Lessons from SunCamMgr (externally powered device):
+
+- Hardware powered up by *another* component after FSW boot gets an
+  explicit **setup command** (probe → settle → apply parameters); do not
+  probe on `drvConnected`, and a power-up banner arriving during the
+  probe acknowledges the setup, it does not fail it.
+- A parameter changed while the device is ready is pushed as soon as the
+  transaction slot is free; before readiness it is stored for the next
+  settings apply. Setting channels change only from device replies
+  (acknowledgements only where the device has no readback).
+- `parameterUpdated(id)` receives the **local** `PARAMID_*`; command
+  opcodes carry the base id. Unit-test the hooks with a non-zero base id —
+  base-id-0 tests hide the confusion.
+- A setting whose push re-settles the device (resolution) must be
+  handled in every activity that can push it (setup, apply, dirty push).
+
 ### Step 4 — Build and Verify
 
 ```bash
@@ -137,22 +153,66 @@ errors before proceeding.
 
 ### Step 5 — Draft the SDD
 
-Draft `docs/sdd.md`: the approved requirements table, the component
-kind and a port table with the rationale for each kind choice, and the
-command, event, telemetry and parameter tables.
+Draft the **Design** section of `docs/sdd.md` (the requirements
+section already exists), in this order and nothing more:
+
+1. **Block diagram** — one box for the component; input ports drawn
+   as small squares on the **left** edge, output ports as small
+   squares on the **right** edge, each annotated `name : PortType`
+   with `[N]` when it is a port array (special ports — command,
+   event, telemetry, time, parameter — are a single note under the
+   box, not squares). Generate it from the FPP model (an SVG or a
+   fenced ASCII box); do not use a flowchart of peer components and
+   do not include the topology — a topology delta belongs to the
+   topology PR, not to the component SDD.
+2. **Port table** — name, kind (sync/async/guarded, array size),
+   type, purpose in ≤ 8 words; the reason for the kind choice only
+   when it is not obvious, as one clause.
+3. **Command / Event / Telemetry / Parameter tables** — one row each;
+   omit a table that is empty with one sentence saying so.
+4. **Configure** — the constants and configuration the integrator
+   sets (sizes, timeouts, speeds, instance arguments): what each one
+   means and a fenced code snippet showing how it is set (FPP
+   constant, `config/` header, or topology instance line). A little
+   exposition is welcome here; no separate "types" or "used types"
+   table — a type appears only where a snippet uses it.
+5. **Behavior** — a short paragraph (3–6 sentences) explaining how
+   the component behaves end to end — request, hardware completion,
+   reply, error paths — followed by the **timing / sequence diagram**
+   (Mermaid `sequenceDiagram` or equivalent) for any asynchronous or
+   multi-context flow. No state table and no step list.
+
+Budget: §Design is at most 80 lines; prose only where this list allows
+it (Configure exposition, the Behavior paragraph) — the rest is the
+diagram and tables. Keep each
+subsection to what a reviewer needs to check the FPP against the
+requirements; the SDD is the quick-look the user reads at the design
+gate, so brevity is part of the design quality. Anything longer (design
+notes, alternatives, rationale) goes in a separate `docs/design-notes.md`
+the user is not asked to read.
+
+SDD shape agreed with the F Prime lead: requirements → tables; a
+**port-box diagram** (input ports boxed on the left, output ports boxed
+on the right — `fpp-to-layout` + fprime-visual or the generator in
+`tools/`); telemetry and constants as tables; a **system-test table**
+(ID, title, requirements, pass rule) in its own section; no subtopology
+write-up in a component SDD — that goes in `Subtopology/docs/sdd.md`.
 
 ### Step 6 — Confirm Design with User
 
-Present the FPP model and SDD draft to the user and **wait for
-confirmation**. The model is the interface contract —
-implementation and tests are written against it.
+Present the SDD draft — the one document the user reads, with the
+FPP model attached — and **wait for confirmation**. The model is the
+interface contract — implementation and tests are written against it.
 
 ---
 
 ## Output Artifact
 
 - The `.fpp` model (and any new port definitions) that builds.
-- The `docs/sdd.md` draft of Step 5.
+- The `docs/sdd.md` **Design** section of Step 5 (block diagram with
+  ports on the left/right edges, tables, types and constants, behavior
+  with a sequence diagram where contexts interleave) — no topology
+  delta, no review material.
 
 ---
 

@@ -29,27 +29,45 @@ the user before starting.
 ## 2. Component work
 
 Follow `.github/skills/fprime-component-development/SKILL.md`, which
-governs this sequence and its gates. The phases run **strictly in
-order**, each producing the input to the next:
+governs this sequence and its gates. The phases run in order, each
+producing the input to the next (phases 4 and 5 interleave per TDD,
+see below):
 
 1. **Requirements** — `fprime-component-requirements`
 2. **Design (FPP)** — `fprime-component-design-fpp`
-3. **Implementation (C++)** — `fprime-component-implementation`
-4. **Unit test** — `fprime-component-unit-test` (with `fprime-unit-testing`)
-5. **Integration test** — `fprime-component-integration-test`
+3. **Test design** — `fprime-system-test-design` (system test plan and
+   fault menu) and the unit-test list (`fprime-component-unit-test`,
+   "Test list", kept in `docs/sdd.md`), from the approved
+   requirements, SDD and FPP model — code, if any, read last
+4. **Implementation (C++)** — `fprime-component-implementation`
+5. **Unit test** — `fprime-component-unit-test` (with `fprime-unit-testing`)
+6. **Integration test** — `fprime-component-integration-test`
 
 This agent — not the writing skills — runs the review loop of
-`.github/agents/_shared/phase-review-loop.md` after phase 1 and after
-phase 2 (reviewers, bound, prompt override and fallback are defined
+`.github/agents/_shared/phase-review-loop.md` after phases 1, 2 and
+3 (reviewers, bound, prompt override and fallback are defined
 there; local only): draft with the skill, loop, then the skill's
 confirmation step with the review record. Then respect the phase
-gates: present requirements with the review record
-and obtain user approval before design, and present the FPP model
-with its review record and obtain explicit user confirmation before
-writing implementation or test code. Once the
-model is confirmed, tests may precede implementation (TDD). For
+gates, and keep them short: the artifact the user reads at every gate
+is the component's `docs/sdd.md` — §Requirements after phase 1,
+§Design after phase 2, §Tests after phase 3 — each in the terse form
+its skill prescribes; the full test plan, fault menu, review records
+and dispositions are attachments the user may open, never pasted into
+the message. Present SDD §Requirements with a ≤ 10-line review
+summary and obtain user approval before design; present the FPP model
+and SDD §Design likewise and obtain explicit user confirmation before
+test design; present SDD §Tests likewise and obtain approval before
+writing implementation or test code. The approved test design is the
+baseline: a later change to it is a plan change and returns to the
+user with a diff (`test-process-contract.md` §2). Phases 4 and 5
+interleave: each unit test in the list is written before the code it
+exercises (TDD); the rest of the sequence is strict. For
 implementation-only fixes that do not alter the interface, entering at
-phase 3 is permitted — confirm with the user first.
+phase 4 is permitted — confirm with the user first.
+
+Device powered after FSW boot by another component → the component gets a
+setup command (probe, settle, apply parameters) and never probes on
+connect; see `fprime-component-design-fpp` "externally powered device".
 
 ## 3. Topology work
 
@@ -100,7 +118,12 @@ is in use, its §0 approval precedes all of it, Phase 1 included; the
   comment that explains the change, the previous behavior, or why the
   new code differs from the old; put that in the PR description.
 - **Ask, don't guess.** Uncertainty about a requirement, interface,
-  or deployment context stops work until the user answers.
+  or deployment context stops work until the user answers. Hardware
+  identity is part of this: before requirements for a device manager,
+  confirm the bench device against the datasheet with a live
+  identification command, and when the user offers a hypothesis about
+  the device, check it against the datasheet section and test it in
+  the same pass — cite both in the answer.
 - Never edit autocoded outputs (`*Ac.hpp` / `*Ac.cpp`, files under
   `build-fprime-*/`); change the model and rebuild.
 - Verify each phase's artifact builds and its tests pass
@@ -108,3 +131,20 @@ is in use, its §0 approval precedes all of it, Phase 1 included; the
   phase complete.
 - Keep documentation in sync: update the component `docs/sdd.md` as
   design and implementation evolve.
+- **Succinct over complete** in everything the user reads: verdict
+  first, one line per item, long material attached. A gate message is
+  ≤ 10 lines plus the SDD — the single document the human is handed
+  at every gate; everything else (review records, plan, design notes)
+  is a supporting attachment named as such, never a pack or zip in
+  its place; a requirement is one sentence of ≤ 15
+  words; a test is one table row. Hard budgets for the SDD the user
+  reads: an Introduction of a few sentences (no links); §Requirements
+  = the table, ≤ 60 lines with the introduction, no request, intent,
+  Terms or Waivers subsection; §Design ≤ 80 lines — block diagram,
+  tables, a Configure subsection (constants + code snippets, brief
+  exposition allowed) and a Behavior paragraph followed by the timing
+  diagram; §Tests = one three-column table (Test, Description,
+  Requirements). Prose only where those rules allow it; an over-budget
+  section or stray paragraph is a must-fix before the gate. If a reviewer or skill asks for more
+  detail, it goes into the artifact for the builder (plan, design
+  notes, review record), not into the user's quick-look.

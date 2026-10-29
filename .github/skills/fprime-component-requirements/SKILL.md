@@ -45,6 +45,13 @@ If any of the following are unclear, **ask before proceeding**:
 - Are there fault-handling or off-nominal requirements?
 - What existing F Prime components (Svc/*, Drv/*) can be built on top
   of?
+- **Which exact device is on the bench** (manufacturer, model, firmware,
+  electrical interface) and does the datasheet in hand name it? A manual
+  supplied with the request is a claim; the device's identification
+  reply (version / ping command decoded per that datasheet) is the
+  evidence. Requirements written against the wrong datasheet pass every
+  unit and simulator test and fail on the bench (SunCamMgr: SC30MPA
+  manual, KissCAM V2 on the bench).
 
 ---
 
@@ -62,6 +69,10 @@ Ask the user for:
    `docs/user-manual/framework/component-and-port-selection.md`.
 3. **High-level purpose**: One-paragraph description of what this
    component does.
+4. **Device identity** (hardware managers): datasheet title + revision,
+   and — when a bench exists — the identification probe and its decoded
+   reply, run before any requirement is written. Record both in the
+   requirements Introduction; a later mismatch reopens requirements.
 
 ### Step 2 — Define Behavioral Requirements
 
@@ -70,12 +81,31 @@ something that can be **verified** (a pass/fail observable). Goals
 that are not pass/fail ("should") go in the SDD narrative, not the
 table.
 
-Requirements are typically shipped as a table:
+The SDD opens with a short **Introduction** — a few sentences on what
+the component is and does, self-contained, with no links or pointers
+to further context — and §Requirements is then the table alone: no
+request or intent prose, no Terms or glossary subsection. Ship the
+requirements as a three-column table — ID, requirement, verification
+method — with no rationale or review column and no rationale clauses
+in the rows ("… so that …" is deleted; the reviewer and the
+verification column carry the why):
 
-| ID | Shall Statement | Rationale | Verification Method |
-|---|---|---|---|
-| REQ-\<Component\>-001 | The component shall \<behavior\>. | \<Why: request element, parent requirement, or fault scenario\> | \<Unit test / integration test / inspection — strongest feasible, in that order\> |
-| REQ-\<Component\>-002 | ... | ... | ... |
+| ID | Requirement | Verification |
+|---|---|---|
+| REQ-\<Component\>-001 | The component shall \<behavior\>. | Unit test / integration test / inspection — strongest feasible |
+
+Keep every row to one sentence of at most 15 words. For a device driver, do not restate
+the datasheet: "shall read N bytes at an offset", "shall write N
+bytes at an offset" and one row "reads and writes shall be compliant
+with \<datasheet, revision\>" are sufficient; frame bytes, opcodes and
+timings are design facts verified by unit test against the datasheet.
+Keep the fault-scenario rows (invalid input, concurrent request, host
+error, wrong device) — they are the rows reviewers find missing.
+When a requirement is retired or merged, delete the row and renumber
+nothing; no "retired" rows and no change history in the table. Fault
+scenarios the component does not own are not listed in the SDD at all
+(no Waivers subsection); record them, with their owner, in the review
+record or the plan's decision log.
 
 Categories to cover:
 
@@ -107,25 +137,57 @@ requirement):
 
 ### Step 4 — Confirm with User
 
-Present the full requirements table to the user and **wait for
-confirmation** before proceeding to design. Requirements are the
+Present the introduction and the requirements table to the user — that
+is all the user reads —
+and **wait for confirmation** before proceeding to design. Requirements are the
 contract — everything downstream is verified against them.
 
 ---
 
 ## Output Artifact
 
-A requirements document (typically captured in the component's
-`docs/sdd.md` or as a structured list in the PR description) with:
+The **Requirements** section of the component's `docs/sdd.md`, and
+nothing longer:
 
-- Component name, module, and work type
-- Requirements table (ID, shall statement, rationale, verification method)
-- Interface summary (data exchanged, not port types)
-- Any constraints or assumptions noted
+- an **Introduction** of a few sentences (what the component is and
+  does; no links or references to further context)
+- the requirements table (ID, requirement, verification) — one line
+  per row of ≤ 15 words, no retired rows, no rationale or review column
+- nothing else: no request, intent, Terms, glossary or Waivers
+  subsection; introduction plus table fit in 60 lines
+
+Interface data and constraints go into the shall statements; review
+records, dispositions and elicitation answers stay outside the SDD.
+Succinct beats complete: the reader has minutes, not hours.
+
+Tables, not rows, for the repeated things (learned on SunCamMgr):
+
+- Persisted device settings go in a **parameter table**, non-persisted
+  device operations in a **command table**, channels in a **telemetry
+  table**, sizes/limits in a **constants table**; one requirement points
+  at each table ("shall push every Table 1 setting") instead of a row per
+  setting or command. Tables follow the requirements list.
+- Verification column uses exactly `Unit Test`, `Integration Test` or
+  `Inspection` — nothing else, no qualifiers.
+- One row per requirement, numbered; never `054-a/b/c`. No rows that are
+  implementation choices ("shall be active"), negative scope ("shall not
+  implement §13–19") or tests ("five consecutive captures deliver a
+  product" is a system test, not a requirement).
+- Timeouts and settle windows are **tick counts** of the component's
+  `run` port; the deployment chooses the rate-group period.
+- Parameter names are `UPPER_SNAKE_CASE`; event severities are written as
+  the F Prime enumerators (`WARNING_HI`), not prose.
 
 ---
 
 ## Anti-Patterns
+
+- Transcribing the datasheet into requirements (opcodes, frame bytes,
+  timings) instead of one compliance row.
+- A request, intent, Terms, glossary or Waivers subsection, links in
+  the introduction, or any paragraph in §Requirements; keeping retired
+  rows; adding rationale / review-disposition columns or "so that"
+  clauses to the table.
 
 - Guessing at what telemetry channels to add
 - Assuming command arguments without asking
