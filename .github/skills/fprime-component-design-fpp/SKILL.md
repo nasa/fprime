@@ -200,9 +200,9 @@ write-up in a component SDD — that goes in `Subtopology/docs/sdd.md`.
 
 ### Step 6 — Confirm Design with User
 
-Present the FPP model and SDD draft to the user and **wait for
-confirmation**. The model is the interface contract —
-implementation and tests are written against it.
+Present the SDD draft — the one document the user reads, with the
+FPP model attached — and **wait for confirmation**. The model is the
+interface contract — implementation and tests are written against it.
 
 ---
 

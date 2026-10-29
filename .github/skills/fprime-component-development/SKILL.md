@@ -61,7 +61,11 @@ Each phase has a dedicated skill with detailed guidance:
    unit-test list — written from requirements and model, not code) and
    obtain **explicit confirmation before writing any implementation or
    unit-test code**. This applies even to trivial or pass-through
-   components; simplicity does not waive the gate. Once the test design
+   components; simplicity does not waive the gate. At every gate the
+   SDD (`docs/sdd.md`) is the one document the user reads —
+   requirements, design and tests are its sections; review records and
+   the plan are attachments, never a second document or a pack in its
+   place. Once the test design
    is confirmed, write the unit tests it lists before the
    implementation, following the test-driven development pattern
    (see `docs/how-to/test-driven-development.md`).

@@ -184,7 +184,8 @@ from it (contract §5):
 
 Two audiences, two artifacts:
 
-- **The human reads the SDD only.** Add a **Tests** section to
+- **The human reads the SDD only** — one document, never a separate
+  pack or zip. Add a **Tests** section to
   `docs/sdd.md` that is one table and nothing else — no preamble, no
   paragraphs — with three columns: `Test` (name or ID), `Description`
   (one sentence, ≤ 15 words, on what it proves), `Requirements`

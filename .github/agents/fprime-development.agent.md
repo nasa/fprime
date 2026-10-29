@@ -133,7 +133,10 @@ is in use, its §0 approval precedes all of it, Phase 1 included; the
   design and implementation evolve.
 - **Succinct over complete** in everything the user reads: verdict
   first, one line per item, long material attached. A gate message is
-  ≤ 10 lines plus the SDD; a requirement is one sentence of ≤ 15
+  ≤ 10 lines plus the SDD — the single document the human is handed
+  at every gate; everything else (review records, plan, design notes)
+  is a supporting attachment named as such, never a pack or zip in
+  its place; a requirement is one sentence of ≤ 15
   words; a test is one table row. Hard budgets for the SDD the user
   reads: an Introduction of a few sentences (no links); §Requirements
   = the table, ≤ 60 lines with the introduction, no request, intent,
