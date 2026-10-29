@@ -28,30 +28,30 @@ class EventManager final : public EventManagerComponentBase {
                          FwEventIdType id,
                          Fw::Time& timeTag,
                          const Fw::LogSeverity& severity,
-                         Fw::LogBuffer& args);
+                         Fw::LogBuffer& args) override;
 
     void loqQueue_internalInterfaceHandler(FwEventIdType id,
                                            const Fw::Time& timeTag,
                                            const Fw::LogSeverity& severity,
-                                           const Fw::LogBuffer& args);
+                                           const Fw::LogBuffer& args) override;
 
     void SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
                                      U32 cmdSeq,
                                      const EventManager_FilterSeverity& filterLevel,
-                                     const EventManager_Enabled& filterEnabled);
+                                     const EventManager_Enabled& filterEnabled) override;
 
     void SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                   U32 cmdSeq,           //!< The command sequence number
                                   FwEventIdType ID,
                                   const EventManager_Enabled& idFilterEnabled  //!< ID filter state
-    );
+                                  ) override;
 
     void DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                       U32 cmdSeq            //!< The command sequence number
-    );
+                                      ) override;
 
     //! Handler for rate group port — writes dropped-event telemetry
-    void run_handler(FwIndexType portNum, U32 context);
+    void run_handler(FwIndexType portNum, U32 context) override;
 
     //! Internal interface handler for runInternal
     void runInternal_internalInterfaceHandler() override;
@@ -63,7 +63,7 @@ class EventManager final : public EventManagerComponentBase {
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                    /*!< Value to return to pinger*/
-    );
+                        ) override;
 
     // Severity filter state (shared implementation)
     EventSeverityFilter m_severityFilter;
