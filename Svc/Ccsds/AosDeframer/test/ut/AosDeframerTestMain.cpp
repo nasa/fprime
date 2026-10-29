@@ -231,17 +231,22 @@ TEST(AosDeframer, testUntrustedFhp) {
 }
 
 // ----------------------------------------------------------------------
-// Tests - Security regression (CVE: EPP integer overflow and heap buffer overflow)
+// Tests - Security regression (CVE: EPP integer overflow → heap buffer overflow)
 // ----------------------------------------------------------------------
 
-// Security regression: the original 32-bit decoder could wrap an oversized
-// EPP packet length into a short allocation.
+// Regression test: single-frame delivery of the CVE PoC payload.
+// Verifies that the integer overflow guard in sizeEppPacket prevents the
+// heap buffer overflow on 32-bit targets and that the component handles
+// the resulting ~4 GB size gracefully on 64-bit hosts.
 TEST(AosDeframer, testEppSizeOverflowRejected) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppSizeOverflowRejected();
 }
 
-// Exercise the same overflow vector when the length field spans two frames.
+// Regression test: same CVE attack with the EPP header split across two frames.
+// Exercises the header accumulation path in appendToSpanningPacket together with
+// the overflow guard so that neither the direct nor the spanning delivery vector
+// can bypass the fix.
 TEST(AosDeframer, testEppSizeOverflowHeaderSpansFrame) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppSizeOverflowHeaderSpansFrame();

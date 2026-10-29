@@ -196,10 +196,13 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test untrusted inputs
     void testUntrustedFhp();
 
-    //! Preserve the on-wire total when rejecting a large EPP allocation request.
+    //! Regression test: EPP lol=4 integer overflow in sizeEppPacket must not reach memcpy
+    //! (CWE-190 / CWE-122). Single-frame delivery of the malicious header.
     void testEppSizeOverflowRejected();
 
-    //! Preserve the same large total with the header split across two frames.
+    //! Regression test: same integer overflow as testEppSizeOverflowRejected, but with
+    //! the 8-byte EPP header split across two AOS frames to exercise the header
+    //! accumulation path in appendToSpanningPacket.
     void testEppSizeOverflowHeaderSpansFrame();
 
   private:
