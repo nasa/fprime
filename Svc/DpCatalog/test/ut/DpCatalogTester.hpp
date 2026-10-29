@@ -194,8 +194,21 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_XmitPriorityRangeStopThenRuntimeAdd();
     void test_XmitPriorityRangeStartAfterStopAppliesRangeToNextFile();
     void test_XmitLegacyCommandSendsFullRange();
+    void test_RetransmitAfterRebuild();
+    void test_RetransmitPersistsAcrossRebuild();
+    void test_RetransmitSameSession();
+    void test_RetransmitDuringTransmit();
+    void test_RetransmitRemainActiveResumes();
+    void test_RetransmitRejected();
+    void test_RetransmitFileError();
 
   private:
+    //! Send RETRANSMIT_DP for one product and dispatch it; the command response is at index 0 of a cleared history
+    void retransmit(U32 cmdSeq, FwDpIdType id, const Fw::Time& time, Fw::CmdResponse expected);
+
+    //! Send START_XMIT_CATALOG (no wait) and drain the queue so every auto-completed send is processed
+    void xmitAll(U32 cmdSeq, bool remainActive);
+
     //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog
     void buildPriorityCatalog(const char* dir, const FwDpPriorityType* prios, FwSizeType numPrios);
 

@@ -14,6 +14,16 @@ module Svc {
     CRC
   }
 
+  @ Reason a data product retransmission request was rejected
+  enum DpRetransmitReason : U8 {
+    NOT_BUILT @< Catalog has not been built
+    IN_FLIGHT @< Data product is currently being transmitted
+    PENDING @< Data product is already pending in the catalog
+    NOT_FOUND @< No data product file with this identity exists in a managed directory
+    NAME_ERROR @< Data product file name could not be formatted
+    FILE_ERROR @< Data product file could not be cataloged (see the preceding file event)
+  }
+
   @ Data structure representing a data product.
   struct DpRecord {
     $id: FwDpIdType # The ID of the data product
@@ -103,6 +113,14 @@ module Svc {
     @ clear existing catalog
     async command CLEAR_CATALOG \
       opcode 3
+
+    @ Reschedule a transmitted data product for downlink at its header priority
+    async command RETRANSMIT_DP (
+                                  $id: FwDpIdType, @< Container ID of the data product
+                                  tSec: U32, @< Time stamp seconds of the data product
+                                  tSub: U32 @< Time stamp subseconds of the data product
+                                ) \
+      opcode 6
 
     # ----------------------------------------------------------------------
     # Events
@@ -479,6 +497,26 @@ module Svc {
       severity activity high \
       id 52 \
       format "Catalog transmission started for priorities {} through {}"
+
+    @ RETRANSMIT_DP rejected
+    event DpRetransmitError(
+                            $id: FwDpIdType @< Container ID requested
+                            tSec: U32 @< Time stamp seconds requested
+                            tSub: U32 @< Time stamp subseconds requested
+                            reason: DpRetransmitReason @< Reason the retransmission was rejected
+                          ) \
+      severity warning high \
+      id 56 \
+      format "Retransmit of DP id {} time {}:{} rejected: {}"
+
+    @ Data product rescheduled for transmission by RETRANSMIT_DP
+    event DpRetransmitScheduled(
+                            file: string size FileNameStringSize @< The data product file
+                            prio: U32 @< priority the product is transmitted at (from its header)
+                          ) \
+      severity activity high \
+      id 57 \
+      format "DP file {} rescheduled for transmission at priority {}"
 
 
     # ----------------------------------------------------------------------

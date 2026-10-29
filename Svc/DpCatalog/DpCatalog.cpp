@@ -198,7 +198,8 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
 
 void DpCatalog::getFileState(DpStateEntry& entry) {
     FW_ASSERT(this->m_stateFileData != nullptr);
-    // search the file state data for the entry
+    // search the file state data for the entry; records are appended in the order the state changed
+    // (transmitted, then possibly reset by RETRANSMIT_DP), so the last matching record is the current state
     for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
         // check for a match (compare dir, then id, priority, & time)
         if (this->m_stateFileData[line].entry.dir == entry.dir && this->m_stateFileData[line].entry == entry) {
@@ -207,7 +208,6 @@ void DpCatalog::getFileState(DpStateEntry& entry) {
             entry.record.set_blocks(this->m_stateFileData[line].entry.record.get_blocks());
             // mark it as visited for later pruning if necessary
             this->m_stateFileData[line].visited = true;
-            return;
         }
     }
 }
@@ -765,6 +765,34 @@ bool DpCatalog::findNextEntry(DpStateEntry& entry) {
     return false;
 }
 
+bool DpCatalog::hasIdentity(const DpRecord& record, FwDpIdType id, U32 tSec, U32 tSub) {
+    return (record.get_id() == id) && (record.get_tSec() == tSec) && (record.get_tSub() == tSub);
+}
+
+bool DpCatalog::findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) {
+    const FwSizeType size = this->m_dpCatalog.getSize();
+    typename Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
+    // index gives the walk a fixed upper bound (catalog size); the iterator check is the real end condition
+    for (FwSizeType index = 0; (index < size) && (iter != this->m_dpCatalog.end()); index++, ++iter) {
+        if (DpCatalog::hasIdentity((*iter).record, id, tSec, tSub)) {
+            entry = *iter;
+            return true;
+        }
+    }
+    return false;
+}
+
+void DpCatalog::resetStateRecords(FwIndexType dir, FwDpIdType id, U32 tSec, U32 tSub) {
+    FW_ASSERT(this->m_stateFileData != nullptr);
+    for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
+        DpStateEntry& stateEntry = this->m_stateFileData[line].entry;
+        if ((stateEntry.dir == dir) && DpCatalog::hasIdentity(stateEntry.record, id, tSec, tSub)) {
+            stateEntry.record.set_state(Fw::DpState::UNTRANSMITTED);
+            stateEntry.record.set_blocks(0);
+        }
+    }
+}
+
 bool DpCatalog::checkInit() {
     if (not this->m_initialized) {
         this->log_WARNING_HI_ComponentNotInitialized();
@@ -1018,6 +1046,83 @@ void DpCatalog ::CLEAR_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->resetCatalog();
     this->resetStateFileData();
 
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub) {
+    if (not this->checkInit()) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    if (not this->m_catalogBuilt) {
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpRetransmitReason::NOT_BUILT);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    // The product in flight is still cataloged; report it as in flight rather than pending
+    if (this->m_hasCurrentXmit && DpCatalog::hasIdentity(this->m_currentXmitEntry.record, id, tSec, tSub)) {
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpRetransmitReason::IN_FLIGHT);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    DpStateEntry entry{};
+    if (this->findCatalogEntry(id, tSec, tSub, entry)) {
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpRetransmitReason::PENDING);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // A transmitted product is no longer cataloged, so locate its file by its canonical name in the
+    // managed directories; the first directory holding the file is used
+    Fw::String fullFile;
+    FwSizeType dir = this->m_numDirectories;
+    for (FwSizeType index = 0; index < this->m_numDirectories; index++) {
+        Fw::String candidate;
+        const Fw::FormatStatus formatStatus =
+            candidate.format(DP_FILENAME_FORMAT, this->m_directories[index].toChar(), id, tSec, tSub);
+        if (formatStatus != Fw::FormatStatus::SUCCESS) {
+            this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpRetransmitReason::NAME_ERROR);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+        if (Os::FileSystem::exists(candidate.toChar())) {
+            fullFile = candidate;
+            dir = index;
+            break;
+        }
+    }
+    if (dir == this->m_numDirectories) {
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpRetransmitReason::NOT_FOUND);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Reset the loaded TRANSMITTED record (if any) so processFile catalogs the product again from its header,
+    // which supplies the priority it is rescheduled at. On failure the in-memory records are left reset: the
+    // state file is untouched and the next BUILD_CATALOG reloads it.
+    this->resetStateRecords(static_cast<FwIndexType>(dir), id, tSec, tSub);
+    const ProcessFileStatus ret = this->processFile(fullFile, dir);
+    if (ret != ProcessFileStatus::SUCCESS) {
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpRetransmitReason::FILE_ERROR);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    const bool found = this->findCatalogEntry(id, tSec, tSub, entry);
+    FW_ASSERT(found);
+    // Persist the reset as a newer record so a rebuild after a reboot does not skip the product again
+    this->appendFileState(entry);
+    this->log_ACTIVITY_HI_DpRetransmitScheduled(fullFile, entry.record.get_priority());
+
+    // Resume as a runtime insert does: only if the transmit session is idle but remains active and the
+    // product is inside the active priority range; otherwise the walk after the file in flight or the
+    // next transmit command picks it up
+    if (!this->m_xmitInProgress && this->m_remainActive) {
+        DpStateEntry nextEntry{};
+        if (this->findNextEntry(nextEntry)) {
+            this->m_xmitInProgress = true;
+            this->sendNextEntry();
+        }
+    }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

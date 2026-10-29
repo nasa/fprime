@@ -144,6 +144,16 @@ class DpCatalog final : public DpCatalogComponentBase {
                                   U32 cmdSeq            //!< The command sequence number
                                   ) override;
 
+    //! Handler implementation for command RETRANSMIT_DP
+    //!
+    //! Reschedule a transmitted data product for downlink at its header priority
+    void RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                  U32 cmdSeq,           //!< The command sequence number
+                                  FwDpIdType id,        //!< Container ID of the data product
+                                  U32 tSec,             //!< Time stamp seconds of the data product
+                                  U32 tSub              //!< Time stamp subseconds of the data product
+                                  ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -233,6 +243,19 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief check to see if component successfully initialized
     /// @return bool if it was initialized
     bool checkInit();
+
+    /// @brief check whether a record has the given data product identity (id and generation time)
+    /// @return true if the identity matches
+    static bool hasIdentity(const DpRecord& record, FwDpIdType id, U32 tSec, U32 tSub);
+
+    /// @brief find the pending catalog entry with the given data product identity
+    /// @param entry set to the catalog entry when found
+    /// @return true if the catalog holds a pending entry for the identity
+    bool findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry);
+
+    /// @brief reset the loaded state records of a data product to UNTRANSMITTED so it is cataloged again
+    /// @param dir directory index in m_directories of the data product
+    void resetStateRecords(FwIndexType dir, FwDpIdType id, U32 tSec, U32 tSub);
 
     /// @brief build catalog. Shared between command and port
     /// @return command response for pass/fail

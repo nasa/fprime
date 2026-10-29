@@ -440,6 +440,41 @@ TEST(NominalManual, InsertAlreadyTransmitted) {
     tester.test_InsertAlreadyTransmitted();
 }
 
+TEST(NominalManual, RetransmitAfterRebuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterRebuild();
+}
+
+TEST(NominalManual, RetransmitPersistsAcrossRebuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitPersistsAcrossRebuild();
+}
+
+TEST(NominalManual, RetransmitSameSession) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitSameSession();
+}
+
+TEST(NominalManual, RetransmitDuringTransmit) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDuringTransmit();
+}
+
+TEST(NominalManual, RetransmitRemainActiveResumes) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitRemainActiveResumes();
+}
+
+TEST(OffNominal, RetransmitRejected) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitRejected();
+}
+
+TEST(OffNominal, RetransmitFileError) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitFileError();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
