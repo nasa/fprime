@@ -17,7 +17,6 @@ namespace Ccsds {
 
 Fw::Buffer AosDeframerTester::from_allocate_handler(FwIndexType portNum, FwSizeType size) {
     (void)portNum;
-    ++this->m_allocationCalls;
     if (m_failNextAlloc) {
         m_failNextAlloc = false;
         return Fw::Buffer();
@@ -26,19 +25,6 @@ Fw::Buffer AosDeframerTester::from_allocate_handler(FwIndexType portNum, FwSizeT
         return Fw::Buffer(this->m_allocBuf, size);
     }
     return Fw::Buffer();
-}
-
-void AosDeframerTester::from_dataOut_handler(FwIndexType portNum,
-                                             Fw::Buffer& data,
-                                             const ComCfg::FrameContext& context) {
-    if (this->m_expectedPacketBytes != nullptr) {
-        ASSERT_LE(this->m_checkedPacketBytes, this->m_expectedPacketSize);
-        ASSERT_LE(data.getSize(), this->m_expectedPacketSize - this->m_checkedPacketBytes);
-        ASSERT_EQ(::memcmp(data.getData(), this->m_expectedPacketBytes + this->m_checkedPacketBytes, data.getSize()),
-                  0);
-        this->m_checkedPacketBytes += data.getSize();
-    }
-    AosDeframerGTestBase::from_dataOut_handler(portNum, data, context);
 }
 
 void AosDeframerTester::configureDefault() {

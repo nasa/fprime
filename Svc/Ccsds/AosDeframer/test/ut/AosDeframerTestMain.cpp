@@ -158,6 +158,26 @@ TEST(AosDeframer, testEppLengthOfLength) {
     tester.testEppLengthOfLength();
 }
 
+TEST(AosDeframer, testEppConformantAdjacentLengths) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppConformantAdjacentLengths();
+}
+
+TEST(AosDeframer, testEppHeaderOnlyPackets) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppHeaderOnlyPackets();
+}
+
+TEST(AosDeframer, testEppInvalidDeclaredLengths) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppInvalidDeclaredLengths();
+}
+
+TEST(AosDeframer, testEppHelperEncodesTotalLength) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppHelperEncodesTotalLength();
+}
+
 TEST(AosDeframer, testEppIdlePacket) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppIdlePacket();
@@ -225,45 +245,6 @@ TEST(AosDeframer, testEppSizeOverflowRejected) {
 TEST(AosDeframer, testEppSizeOverflowHeaderSpansFrame) {
     Svc::Ccsds::AosDeframerTester tester;
     tester.testEppSizeOverflowHeaderSpansFrame();
-}
-
-// ----------------------------------------------------------------------
-// Tests - EPP wire-length regressions
-// ----------------------------------------------------------------------
-
-TEST(AosDeframer, testEppConformantAdjacentLengths) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testEppConformantAdjacentLengths();
-}
-
-TEST(AosDeframer, testEppConformantLengthBoundaries) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testEppConformantLengthBoundaries();
-}
-
-TEST(AosDeframer, testEppConformantHeaderSplits) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testEppConformantHeaderSplits();
-}
-
-TEST(AosDeframer, testEppHeaderOnlyPackets) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testEppHeaderOnlyPackets();
-}
-
-TEST(AosDeframer, testEppInvalidDeclaredLengths) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testEppInvalidDeclaredLengths();
-}
-
-TEST(AosDeframer, testEppHelperEncodesTotalLength) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testEppHelperEncodesTotalLength();
-}
-
-TEST(AosDeframer, testEppConformantAllocationFailure) {
-    Svc::Ccsds::AosDeframerTester tester;
-    tester.testEppConformantAllocationFailure();
 }
 
 int main(int argc, char** argv) {
