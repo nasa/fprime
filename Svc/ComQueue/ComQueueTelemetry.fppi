@@ -5,13 +5,13 @@ telemetry comQueueDepth: ComQueueDepth id 0
 telemetry buffQueueDepth: BuffQueueDepth id 1
 
 @ Total number of async ingress drops per Fw::ComBuffer port
-telemetry comIngressDropped: ComQueueIngressDrops id 2
+telemetry comIngressDropped: ComQueueIngressDrops id 2 update on change
 
 @ Total number of async ingress drops per Fw::Buffer port
-telemetry buffIngressDropped: BuffQueueIngressDrops id 3
+telemetry buffIngressDropped: BuffQueueIngressDrops id 3 update on change
 
 @ Cumulative drops at the managed Fw::ComBuffer queues (including DROP_OLDEST)
-telemetry comManagedDropped: ComQueueManagedDrops id 4
+telemetry comManagedDropped: ComQueueManagedDrops id 4 update on change
 
 @ Cumulative drops at the managed Fw::Buffer queues (including DROP_OLDEST)
-telemetry buffManagedDropped: BuffQueueManagedDrops id 5
+telemetry buffManagedDropped: BuffQueueManagedDrops id 5 update on change
