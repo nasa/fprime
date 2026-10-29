@@ -64,7 +64,7 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
 
     Os::RawTime endTime;
 
-    this->m_cycleStarted = false;
+    this->m_cycleStarted.store(false, std::memory_order_relaxed);
 
     // invoke any members of the rate group
     for (FwIndexType port = 0; port < this->m_numContexts; port++) {
@@ -95,7 +95,7 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
 
     // check for cycle slip. That will happen if new cycle message has been received
     // which will cause flag will be set again.
-    if (this->m_cycleStarted) {
+    if (this->m_cycleStarted.load(std::memory_order_relaxed)) {
         this->m_cycleSlips++;
         if (this->m_overrunThrottle < ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) {
             this->log_WARNING_HI_RateGroupCycleSlip(this->m_cycles);
@@ -115,7 +115,7 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
 
 void ActiveRateGroup::CycleIn_preMsgHook(FwIndexType portNum, Os::RawTime& cycleStart) {
     // set flag to indicate cycle has started. Check in thread for overflow.
-    this->m_cycleStarted = true;
+    this->m_cycleStarted.store(true, std::memory_order_relaxed);
 }
 
 void ActiveRateGroup::PingIn_handler(FwIndexType portNum, U32 key) {

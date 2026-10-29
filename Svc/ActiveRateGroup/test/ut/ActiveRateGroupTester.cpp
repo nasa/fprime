@@ -72,16 +72,16 @@ void ActiveRateGroupTester::runNominal(U32 contexts[], FwIndexType numContexts, 
     // clear port call log
     this->clearPortCalls();
     // verify cycle start flag is NOT set
-    ASSERT_FALSE(this->m_impl.m_cycleStarted);
+    ASSERT_FALSE(this->m_impl.m_cycleStarted.load());
     // call active rate group with time val
     this->invoke_to_CycleIn(0, time);
     // verify cycle started flag is set
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
     // call doDispatch() for ActiveRateGroup
     REQUIREMENT("ARG-001");
     this->m_impl.doDispatch();
     // verify cycle started flag is reset
-    ASSERT_FALSE(this->m_impl.m_cycleStarted);
+    ASSERT_FALSE(this->m_impl.m_cycleStarted.load());
     // check calls
     REQUIREMENT("ARG-002");
     for (FwIndexType portNum = 0;
@@ -123,20 +123,20 @@ void ActiveRateGroupTester::runCycleOverrun(U32 contexts[], FwIndexType numConte
         this->clearTlm();
         // verify cycle start flag is NOT set on first cycle
         if (0 == cycle) {
-            ASSERT_FALSE(this->m_impl.m_cycleStarted);
+            ASSERT_FALSE(this->m_impl.m_cycleStarted.load());
         } else {
-            ASSERT_TRUE(this->m_impl.m_cycleStarted);
+            ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
         }
         // set flag to cause overrun
         this->m_causeOverrun = true;
         // call active rate group with timer val
         this->invoke_to_CycleIn(0, zero_time);
         // verify cycle started flag is set
-        ASSERT_TRUE(this->m_impl.m_cycleStarted);
+        ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
         // call doDispatch() for ActiveRateGroup
         this->m_impl.doDispatch();
         // verify cycle started flag is still set
-        ASSERT_TRUE(this->m_impl.m_cycleStarted);
+        ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
         // verify cycle count
         ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(cycle) + 1);
 
@@ -173,17 +173,17 @@ void ActiveRateGroupTester::runCycleOverrun(U32 contexts[], FwIndexType numConte
     // clear telemetry log
     this->clearTlm();
     // verify cycle start flag is NOT set on first cycle
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
     // set flag to cause overrun
     this->m_causeOverrun = true;
     // call active rate group with timer val
     this->invoke_to_CycleIn(0, zero_time);
     // verify cycle started flag is set from previous cycle slip
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
     // call doDispatch() for ActiveRateGroup
     this->m_impl.doDispatch();
     // verify cycle started flag is still set
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
     // verify cycle count
     ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) + 1);
     // check calls
@@ -218,17 +218,17 @@ void ActiveRateGroupTester::runCycleOverrun(U32 contexts[], FwIndexType numConte
     // clear telemetry log
     this->clearTlm();
     // verify cycle start flag is NOT set on first cycle
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
     // set flag to prevent overrun
     this->m_causeOverrun = false;
     // call active rate group with timer val
     this->invoke_to_CycleIn(0, zero_time);
     // verify cycle started flag is set from previous cycle slip
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
     // call doDispatch() for ActiveRateGroup
     this->m_impl.doDispatch();
     // verify cycle started flag is not set
-    ASSERT_FALSE(this->m_impl.m_cycleStarted);
+    ASSERT_FALSE(this->m_impl.m_cycleStarted.load());
     // verify cycle count
     ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) + 2);
     // check calls
@@ -257,17 +257,17 @@ void ActiveRateGroupTester::runCycleOverrun(U32 contexts[], FwIndexType numConte
     // clear telemetry log
     this->clearTlm();
     // verify cycle start flag is set on cycle
-    ASSERT_FALSE(this->m_impl.m_cycleStarted);
+    ASSERT_FALSE(this->m_impl.m_cycleStarted.load());
     // set flag to cause overrun
     this->m_causeOverrun = true;
     // call active rate group with timer val
     this->invoke_to_CycleIn(0, zero_time);
     // verify cycle started flag is set from port call
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
     // call doDispatch() for ActiveRateGroup
     this->m_impl.doDispatch();
     // verify cycle started flag is still set
-    ASSERT_TRUE(this->m_impl.m_cycleStarted);
+    ASSERT_TRUE(this->m_impl.m_cycleStarted.load());
     // verify cycle count
     ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) + 3);
     // check calls
