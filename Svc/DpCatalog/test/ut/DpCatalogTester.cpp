@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "DpCatalogTester.hpp"
+#include <sys/stat.h>
 #include <cstdlib>
 #include <cstring>
 #include <set>
@@ -2346,6 +2347,116 @@ void DpCatalogTester::test_RetransmitFullStateFile() {
     for (FwDpIdType id = 1; id <= DP_MAX_FILES; id++) {
         this->delDp(id, time, dirName);
     }
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitAfterPrune() {
+    // A record pruned at build shifts the following records down in the file; the in-memory copy must shift too,
+    // or the retransmit's in-place rewrite misses (or hits another product's record)
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_RetransmitPrune");
+    Fw::FileNameString stateFile("./DpTest_RetransmitPrune/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const Fw::Time time(4013, 0);
+    const FwDpIdType ids[2] = {0x1, 0x2};
+    Fw::String files[2];
+    for (FwIndexType i = 0; i < 2; i++) {
+        this->delDp(ids[i], time, dir.toChar());
+        files[i] = this->genDP(ids[i], static_cast<FwDpPriorityType>(10 * (i + 1)), time, 16,
+                               Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(files[i].toChar(), "");
+    }
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(11, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(2);
+    ASSERT_EQ(this->component.m_stateFileEntries, 2);
+    this->component.shutdown();
+
+    // the first product is gone: its record is pruned by the rebuild and the second record moves to position 0
+    this->delDp(ids[0], time, dir.toChar());
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, files[1].toChar());
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+    ASSERT_EQ(this->component.m_stateFileData[0].entry.record.get_id(), ids[1]);
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, DpCatalog::STATE_RECORD_SIZE);
+
+    // the retransmit rewrites record 0 in place and the reset survives a rebuild
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, ids[1], time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_StateFileOpenError_SIZE(0);
+    ASSERT_EVENTS_StateFileWriteError_SIZE(0);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, files[1].toChar(), 20);
+    this->component.shutdown();
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 30, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(0);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, files[1].toChar());
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, DpCatalog::STATE_RECORD_SIZE);
+
+    this->delDp(ids[1], time, dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_BuildFailsOnUnreadableStateFile() {
+    // A build whose state-file load fails leaves no catalog behind: the in-memory copy is empty and no longer
+    // mirrors the file, so nothing may append to or rewrite the file until a build succeeds
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir;
+    Fw::FileNameString stateFile;
+    const FwDpIdType id = 0x50A;
+    const Fw::Time time(4014, 0);
+    Fw::String dpFile =
+        this->transmitOneProduct("./DpTest_RetransmitLoadFail", id, time, 10, false, dir, stateFile, alloc);
+    ASSERT_FALSE(::testing::Test::HasFailure());
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+
+    // the state file cannot be opened: the rebuild fails and the catalog built above is cleared
+    ASSERT_EQ(::chmod(stateFile.toChar(), 0), 0);
+    this->clearHistory();
+    this->sendCmd_BUILD_CATALOG(0, 20);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 20, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_StateFileOpenError_SIZE(1);
+    ASSERT_FALSE(this->component.m_catalogBuilt);
+    ASSERT_EQ(this->component.m_stateFileEntries, 0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    // neither a runtime insert nor a retransmit touches the state file while the catalog is not built
+    const FwDpIdType otherId = 0x50B;
+    this->delDp(otherId, time, dir.toChar());
+    Fw::String otherFile = this->genDP(otherId, 20, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(otherFile.toChar(), "");
+    this->invoke_to_addToCat(0, otherFile, 20, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_NotLoaded_SIZE(1);
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, id, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_DpRetransmitError(0, id, 4014, 0, DpRetransmitReason::NOT_BUILT);
+    ASSERT_EQ(::chmod(stateFile.toChar(), S_IRUSR | S_IWUSR), 0);
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, DpCatalog::STATE_RECORD_SIZE);
+    this->component.shutdown();
+
+    // the next successful build reads the intact record: the transmitted product is skipped, the other is added
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 30, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, otherFile.toChar());
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+
+    this->delDp(id, time, dir.toChar());
+    this->delDp(otherId, time, dir.toChar());
     (void)Os::FileSystem::removeFile(stateFile.toChar());
     this->component.shutdown();
 }

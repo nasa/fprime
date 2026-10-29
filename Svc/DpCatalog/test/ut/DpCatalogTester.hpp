@@ -206,6 +206,8 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_RetransmitAfterStop();
     void test_RetransmitSecondDirectory();
     void test_RetransmitFullStateFile();
+    void test_RetransmitAfterPrune();
+    void test_BuildFailsOnUnreadableStateFile();
 
   private:
     //! Send RETRANSMIT_DP for one product and dispatch it; the command response is at index 0 of a cleared history

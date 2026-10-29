@@ -330,7 +330,7 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     stateFile.close();
 
     // Mirror the record in memory at its file position so it can be found and rewritten in place later.
-    // Past the slot budget the record is on file only; the next load ignores it (see the SDD, 3.6.5)
+    // Past the slot budget the record is on file only; the next load ignores it (see the SDD, 3.6.7)
     if (this->m_stateFileEntries < this->m_numDpSlots) {
         DpDstateFileEntry& slot = this->m_stateFileData[this->m_stateFileEntries];
         slot.used = true;
@@ -414,6 +414,8 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // overwrite the state file and destroy the transmit state it records
     Fw::CmdResponse response = this->loadStateFile();
     if (response != Fw::CmdResponse::OK) {
+        // the previous catalog no longer matches the (now empty) state copy
+        this->resetCatalog();
         this->resetStateFileData();
         return response;
     }
@@ -972,8 +974,8 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         this->resumeIfRemainActive();
 
         // The state file is not rewritten here: a newly written product has no transmit state to
-        // record, and pruneAndWriteStateFile() would discard the TRANSMITTED records appended by
-        // fileDone since the catalog was built.
+        // record; its TRANSMITTED record is written in place or appended when its downlink completes
+        // (recordFileState).
     }
 }
 

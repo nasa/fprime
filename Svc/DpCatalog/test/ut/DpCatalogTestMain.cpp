@@ -500,6 +500,16 @@ TEST(NominalManual, RetransmitFullStateFile) {
     tester.test_RetransmitFullStateFile();
 }
 
+TEST(NominalManual, RetransmitAfterPrune) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterPrune();
+}
+
+TEST(NominalManual, BuildFailsOnUnreadableStateFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_BuildFailsOnUnreadableStateFile();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
