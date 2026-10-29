@@ -35,7 +35,9 @@ Governing rules are in
   (test-design phase), do the check from the deployment's
   configuration and ground-system documentation and write the plan's
   first line as `L0: desk-checked; bench confirmation pending` — the
-  stage-2 refresh (§6) confirms it on the bench.
+  stage-2 refresh (§6) confirms it on the bench. A project with no
+  deployment is the same human call (contract §2): ask first; without
+  one, test in a temporary uncommitted deployment.
 - The FPP model: ports, commands, events, telemetry and parameters
   are the observables and the fault-injection surface (knobs are
   harness configuration, §4).

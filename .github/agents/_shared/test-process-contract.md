@@ -54,7 +54,10 @@ concurrently on the same UUT SHA.
   the downlink; desk-checked from configuration when the plan precedes
   the code, `fprime-system-test-design` §1, confirmed at the §6
   refresh) and presents a one-line decision with the constraint
-  that forces it.
+  that forces it. When the project has no deployment, ask for
+  guidance first; absent a human call, never add a deployment to any
+  repository — build a temporary, uncommitted one outside the
+  repositories.
 - **Pass rules are code, not judgment.** Every test has a
   machine-evaluable pass rule before anything is built. "The tester
   verified it" is never a verdict. Completeness facts (markers,

@@ -30,8 +30,9 @@ lifecycle, the unit-test list (`docs/sdd.md` "Unit-test list", form in
    ≥ 2 × `max_count` tests, verbatim `fails` predicates and honest
    `ripples_to` per knob? Is any knob impossible to apply through
    configuration?
-5. Is the deployment the system deployment, or a human-approved
-   reduction with the constraint stated?
+5. Is the deployment the system deployment, a human-approved
+   reduction with the constraint stated, or — where the project has
+   none — a temporary uncommitted one (contract §2)?
 
 Over the unit-test list, when given:
 

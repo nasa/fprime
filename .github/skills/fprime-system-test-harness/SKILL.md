@@ -43,7 +43,10 @@ Default is the project's full system deployment on the complete
 testbed. When the human has directed a reduced or sibling deployment
 (`fprime-topology-development`), keep it a copy of the system
 deployment minus what the human excluded, in its own directory, and
-leave the system deployment's diff empty.
+leave the system deployment's diff empty. When the project has no
+deployment, check for guidance first; without a human call, build a
+temporary uncommitted one outside the repositories (contract §2) —
+never add one to a repository.
 
 ## 3. Record and markers
 
