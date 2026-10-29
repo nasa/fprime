@@ -104,6 +104,12 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
                      U32 context           //!< The call order
                      ) override;
 
+    //! Internal interface handler for runInternal
+    void runInternal_internalInterfaceHandler() override;
+
+    //! Overflow hook for runInternal
+    void runInternal_overflowHook() override;
+
     //!  \brief NO_OP command handler
     //!
     //!  A test command that does nothing
@@ -192,6 +198,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     U32 m_numCmdErrors;       //!< number of commands with an error
     std::atomic<U32>
         m_numCmdsDropped;  //!< number of commands dropped due to queue overflow (incremented on caller threads)
+    std::atomic<bool> m_runQueued;  //!< true while a runInternal message is on the queue
 };
 }  // namespace Svc
 

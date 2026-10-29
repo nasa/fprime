@@ -28,7 +28,10 @@ module Svc {
         async input port checkTimers: Svc.Sched assert
 
         @ Port to periodically write telemetry channels (optional)
-        async input port writeTelemetry: Svc.Sched drop
+        sync input port writeTelemetry: Svc.Sched
+
+        @ Internal port that performs the writeTelemetry work on the component thread
+        internal port writeTelemetryInternal hook
 
         @ Port for sending a serial port invocation
         @ This is invoked by calling serial_out inside the wasm module

@@ -50,7 +50,7 @@ module Svc {
         @ internal port that performs the tlmWrite work on the component thread.
         @ at most one message from this port is on the queue at a time
         # least important, lowest prio
-        internal port tlmWriteInternal priority 1 assert
+        internal port tlmWriteInternal priority 1 hook
 
         @ port for requests to run sequences
         # same priority as RUN cmd

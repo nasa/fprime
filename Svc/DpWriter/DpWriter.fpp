@@ -8,7 +8,10 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Schedule in port
-    async input port schedIn: Svc.Sched
+    sync input port schedIn: Svc.Sched
+
+    @ Internal port that performs the schedIn work on the component thread
+    internal port schedInInternal hook
 
     # ----------------------------------------------------------------------
     # Ports for handling data products

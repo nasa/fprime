@@ -64,6 +64,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_invokeStatus(SPACEWASM_OK),
       m_pendingPause(false),
       m_cancelRequested(false),
+      m_writeTelemetryQueued(false),
       m_sequencesStarted(0) {}
 
 void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) {
@@ -242,6 +243,18 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 }
 
 void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
+    bool expected = false;
+    if (this->m_writeTelemetryQueued.compare_exchange_strong(expected, true)) {
+        this->writeTelemetryInternal_internalInterfaceInvoke();
+    }
+}
+
+void WasmSequencer ::writeTelemetryInternal_overflowHook() {
+    this->m_writeTelemetryQueued = false;
+}
+
+void WasmSequencer ::writeTelemetryInternal_internalInterfaceHandler() {
+    this->m_writeTelemetryQueued = false;
     FW_ASSERT(this->m_wasm != nullptr);
 
     auto now = this->getTime();

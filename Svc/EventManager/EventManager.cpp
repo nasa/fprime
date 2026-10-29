@@ -16,7 +16,7 @@ static_assert(std::numeric_limits<FwSizeType>::max() >= TELEM_ID_FILTER_SIZE,
 typedef EventManager_Enabled Enabled;
 typedef EventManager_FilterSeverity FilterSeverity;
 
-EventManager::EventManager(const char* name) : EventManagerComponentBase(name), m_severityFilter() {
+EventManager::EventManager(const char* name) : EventManagerComponentBase(name), m_severityFilter(), m_runQueued(false) {
     // set filter defaults
     this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_HI, FILTER_WARNING_HI_DEFAULT);
     this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_LO, FILTER_WARNING_LO_DEFAULT);
@@ -174,6 +174,18 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
 }
 
 void EventManager::run_handler(FwIndexType portNum, U32 context) {
+    bool expected = false;
+    if (this->m_runQueued.compare_exchange_strong(expected, true)) {
+        this->runInternal_internalInterfaceInvoke();
+    }
+}
+
+void EventManager::runInternal_overflowHook() {
+    this->m_runQueued = false;
+}
+
+void EventManager::runInternal_internalInterfaceHandler() {
+    this->m_runQueued = false;
     this->tlmWrite_EventsDropped(this->getNumMsgsDropped());
 }
 

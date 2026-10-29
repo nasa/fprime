@@ -105,7 +105,7 @@ void WasmSequencerTester ::removeFile(const char* name) {
 }
 
 void WasmSequencerTester ::flushTelemetry() {
-    // The writeTelemetry port is an async scheduler tick; drive it and dispatch so the
+    // The writeTelemetry port delegates to an internal message; drive it and dispatch so the
     // handler runs and every tlmWrite_* lands in the tester history.
     this->clearTlm();
     this->invoke_to_writeTelemetry(0, 0);

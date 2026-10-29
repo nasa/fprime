@@ -7,6 +7,8 @@
 #ifndef Svc_WasmSequencer_HPP
 #define Svc_WasmSequencer_HPP
 
+#include <atomic>
+
 #include "Fw/Cmd/CmdResponseEnumAc.hpp"
 #include "Fw/DataStructures/FifoQueue.hpp"
 #include "Fw/Types/FileNameString.hpp"
@@ -172,6 +174,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void writeTelemetry_handler(FwIndexType portNum,  //!< The port number
                                 U32 context           //!< The call order
                                 ) override;
+
+    //! Internal interface handler for writeTelemetryInternal
+    void writeTelemetryInternal_internalInterfaceHandler() override;
+
+    //! Overflow hook for writeTelemetryInternal
+    void writeTelemetryInternal_overflowHook() override;
 
   private:
     // ----------------------------------------------------------------------
@@ -999,6 +1007,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     };
 
     Telemetry m_tlm;
+
+    //! True while a writeTelemetryInternal message is on the queue
+    std::atomic<bool> m_writeTelemetryQueued;
 
     //! Sequences started counter (bumped whenever the interpreter
     //! begins spinning a freshly-invoked program). The low 16 bits form the

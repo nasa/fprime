@@ -431,6 +431,11 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     }
 }
 
+//! Overflow hook for tlmWriteInternal
+void FpySequencer::tlmWriteInternal_overflowHook() {
+    this->m_tlmWriteQueued = false;
+}
+
 //! Internal interface handler for tlmWriteInternal
 void FpySequencer::tlmWriteInternal_internalInterfaceHandler() {
     FW_ASSERT(this->m_tlmWriteQueued);

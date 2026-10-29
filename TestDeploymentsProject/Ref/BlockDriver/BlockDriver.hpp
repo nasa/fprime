@@ -3,6 +3,8 @@
 
 #include <Ref/BlockDriver/BlockDriverComponentAc.hpp>
 
+#include <atomic>
+
 namespace Ref {
 
 class BlockDriver final : public BlockDriverComponentBase {
@@ -16,6 +18,8 @@ class BlockDriver final : public BlockDriverComponentBase {
     // downcalls for input ports
     void BufferIn_handler(FwIndexType portNum, Drv::DataBuffer& buffer);
     void Sched_handler(FwIndexType portNum, U32 context);
+    void SchedInternal_internalInterfaceHandler() override;
+    void SchedInternal_overflowHook() override;
     //! Handler implementation for PingIn
     //!
     void PingIn_handler(const FwIndexType portNum, /*!< The port number*/
@@ -24,6 +28,8 @@ class BlockDriver final : public BlockDriverComponentBase {
 
     // cycle count
     U32 m_cycles;
+    // true while a SchedInternal message is on the queue
+    std::atomic<bool> m_schedQueued;
 };
 }  // namespace Ref
 

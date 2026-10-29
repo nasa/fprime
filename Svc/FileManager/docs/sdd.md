@@ -76,7 +76,7 @@ Name | Type | Kind | Purpose
 `schedIn` | `Svc.Sched` | sync input | Rate group input used to pace long-running operations
 `pingIn` | `Svc.Ping` | async input | Ping input from health checker
 `pingOut` | `Svc.Ping` | output | Ping response to health checker
-`run` | n/a | internal (drop) | Internal port for delegating `schedIn` calls in a controlled fashion
+`schedInInternal` | n/a | internal (hook) | Internal port for delegating `schedIn` calls in a controlled fashion
 
 The component also has the standard command, event, telemetry, time, and data
 product ports.
@@ -85,7 +85,7 @@ product ports.
 
 `ListDirectory` runs asynchronously: the command handler opens the directory
 and defers the command response. The `schedIn` handler enqueues at most one
-internal `run` call at a time (guarded by an atomic flag); the internal handler
+internal `schedInInternal` call at a time (guarded by an atomic flag); the internal handler
 then processes up to `FileManagerConfig::FILES_PER_RATE_TICK` directory entries
 per rate tick to prevent event flooding, sending the command response when the
 listing completes. Paced (`PACED` mode) data product generation is metered the

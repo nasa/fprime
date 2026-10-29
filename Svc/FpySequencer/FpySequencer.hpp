@@ -544,6 +544,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for tlmWriteInternal
     void tlmWriteInternal_internalInterfaceHandler() override;
 
+    //! Overflow hook for tlmWriteInternal
+    void tlmWriteInternal_overflowHook() override;
+
     //! Internal interface handler for directive_waitAbs
     void directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive,
                                                     U64 sequenceIndex) override;

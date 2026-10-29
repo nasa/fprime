@@ -13,6 +13,7 @@
 #include <Os/Mutex.hpp>
 #include <Svc/EventManager/EventManagerComponentAc.hpp>
 #include <Svc/Types/EventSeverityFilter/EventSeverityFilter.hpp>
+#include <atomic>
 #include <config/EventManagerCfg.hpp>
 
 namespace Svc {
@@ -52,6 +53,12 @@ class EventManager final : public EventManagerComponentBase {
     //! Handler for rate group port — writes dropped-event telemetry
     void run_handler(FwIndexType portNum, U32 context);
 
+    //! Internal interface handler for runInternal
+    void runInternal_internalInterfaceHandler() override;
+
+    //! Overflow hook for runInternal
+    void runInternal_overflowHook() override;
+
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
@@ -70,6 +77,9 @@ class EventManager final : public EventManagerComponentBase {
 
     // Guards m_filteredIDs: read on the sync LogRecv path, mutated on the command thread
     Os::Mutex m_idFilterLock;
+
+    // True while a runInternal message is on the queue
+    std::atomic<bool> m_runQueued;
 };
 
 }  // namespace Svc
