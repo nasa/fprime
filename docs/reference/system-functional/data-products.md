@@ -38,6 +38,7 @@ The Data Product Catalog manages the inventory and downlink of stored data produ
 
 - Reprioritize data products for downlink
 - Restrict a transmission to an inclusive priority range (`START_XMIT_CATALOG_WITH_PRIORITY`); products outside the range stay cataloged for a later pass
+- Reschedule one already-transmitted product for downlink at its header priority (`RETRANSMIT_DP`), identified by container ID and generation time
 - Delete data products from storage
 - Query the catalog status
 

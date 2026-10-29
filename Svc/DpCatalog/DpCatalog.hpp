@@ -175,12 +175,18 @@ class DpCatalog final : public DpCatalogComponentBase {
         bool operator<(const DpStateEntry& other) const;
     };
 
+    //! In-memory copy of a state file record. Entry i of m_stateFileData mirrors record i of the state file
+    //! (loadStateFile reads them in order, pruneAndWriteStateFile compacts both, appendFileState adds to both),
+    //! so a record can be rewritten in place by writeStateRecord
     struct DpDstateFileEntry {
         bool used;     //!< if the entry is used
         bool visited;  //!< used for state file state; indicates that the entry was found in the search of current data
                        //!< products
         DpStateEntry entry;  //!< state entry from file
     };
+
+    //! Size of one serialized state file record: directory index followed by the DpRecord
+    static constexpr FwSizeType STATE_RECORD_SIZE = sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE;
 
     // ----------------------------------
     // Private helpers
@@ -222,15 +228,34 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param entry entry to update from file state
     void getFileState(DpStateEntry& entry);
 
-    /// @brief prune the state file data and write the remaining entries back
+    /// @brief prune the state file data and write the remaining entries back, compacting the in-memory copy to match
     void pruneAndWriteStateFile();
 
     /// @brief load state data from file
     Fw::CmdResponse loadStateFile();
 
-    /// @brief get file state from the stored state file
+    /// @brief serialize a state record into a buffer
+    /// @param entry entry to serialize
+    /// @param buffer buffer of at least STATE_RECORD_SIZE bytes
+    static void serializeStateEntry(const DpStateEntry& entry, Fw::ExternalSerializeBuffer& buffer);
+
+    /// @brief append a new record to the state file and mirror it in memory while a slot is free
     /// @param entry entry to add to state file
     void appendFileState(const DpStateEntry& entry);
+
+    /// @brief rewrite a loaded state record in place in the state file after updating it in memory
+    /// @param line index in m_stateFileData, which is also the record position in the file
+    void writeStateRecord(FwSizeType line);
+
+    /// @brief record the transmit state of a product: rewrite its loaded record, or append one
+    /// @param entry entry whose state to record
+    void recordFileState(const DpStateEntry& entry);
+
+    /// @brief find the loaded state record of a data product
+    /// @param dir directory index in m_directories of the data product
+    /// @param line set to the index in m_stateFileData when found
+    /// @return true if a record for the product is loaded
+    bool findStateRecord(FwIndexType dir, FwDpIdType id, U32 tSec, U32 tSub, FwSizeType& line) const;
 
     /// @brief send the next entry to file downlink
     void sendNextEntry();
@@ -253,9 +278,16 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return true if the catalog holds a pending entry for the identity
     bool findCatalogEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry);
 
-    /// @brief reset the loaded state records of a data product to UNTRANSMITTED so it is cataloged again
-    /// @param dir directory index in m_directories of the data product
-    void resetStateRecords(FwIndexType dir, FwDpIdType id, U32 tSec, U32 tSub);
+    /// @brief resume a finished or stopped transmission if remainActive is set and an in-range entry is pending
+    void resumeIfRemainActive();
+
+    /// @brief reject a RETRANSMIT_DP request: emit DpRetransmitError and answer EXECUTION_ERROR
+    void rejectRetransmit(FwOpcodeType opCode,
+                          U32 cmdSeq,
+                          FwDpIdType id,
+                          U32 tSec,
+                          U32 tSub,
+                          DpRetransmitReason::T reason);
 
     /// @brief build catalog. Shared between command and port
     /// @return command response for pass/fail

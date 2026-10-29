@@ -201,6 +201,11 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_RetransmitRemainActiveResumes();
     void test_RetransmitRejected();
     void test_RetransmitFileError();
+    void test_RetransmitNameError();
+    void test_RetransmitNoStateFileDir();
+    void test_RetransmitAfterStop();
+    void test_RetransmitSecondDirectory();
+    void test_RetransmitFullStateFile();
 
   private:
     //! Send RETRANSMIT_DP for one product and dispatch it; the command response is at index 0 of a cleared history
@@ -208,6 +213,17 @@ class DpCatalogTester : public DpCatalogGTestBase {
 
     //! Send START_XMIT_CATALOG (no wait) and drain the queue so every auto-completed send is processed
     void xmitAll(U32 cmdSeq, bool remainActive);
+
+    //! Create dirName with one product (id, time, prio, 16 data bytes), configure with its dpState.dat state file,
+    //! build the catalog (cmdSeq 10) and transmit it (cmdSeq 11); returns the product file name
+    Fw::String transmitOneProduct(const char* dirName,
+                                  FwDpIdType id,
+                                  const Fw::Time& time,
+                                  FwDpPriorityType prio,
+                                  bool remainActive,
+                                  Fw::FileNameString& dir,
+                                  Fw::FileNameString& stateFile,
+                                  Fw::MemAllocator& alloc);
 
     //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog
     void buildPriorityCatalog(const char* dir, const FwDpPriorityType* prios, FwSizeType numPrios);

@@ -475,6 +475,31 @@ TEST(OffNominal, RetransmitFileError) {
     tester.test_RetransmitFileError();
 }
 
+TEST(OffNominal, RetransmitNameError) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitNameError();
+}
+
+TEST(OffNominal, RetransmitNoStateFileDir) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitNoStateFileDir();
+}
+
+TEST(NominalManual, RetransmitAfterStop) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterStop();
+}
+
+TEST(NominalManual, RetransmitSecondDirectory) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitSecondDirectory();
+}
+
+TEST(NominalManual, RetransmitFullStateFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitFullStateFile();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
