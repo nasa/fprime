@@ -133,7 +133,7 @@ class ComQueueTester : public ComQueueGTestBase {
     // Helper methods
     // ----------------------------------------------------------------------
 
-    //! Verify that neither flushing operation increments any drop counters
+    //! Invoke run once and assert that every drop-counter channel reports all zeros
     void assertZeroDropTelemetry();
 
     //! Producer for the concurrent async ingress test
