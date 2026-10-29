@@ -123,7 +123,8 @@ FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
 
     buffer[0] = static_cast<U8>(
         static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset) |
-        static_cast<U8>((protocolId & EPPSubfields::protocolIdMask) << EPPSubfields::protocolIdOffset) |
+        static_cast<U8>((protocolId & (EPPSubfields::protocolIdMask >> EPPSubfields::protocolIdOffset))
+                        << EPPSubfields::protocolIdOffset) |
         static_cast<U8>(lengthOfLength & EPPSubfields::lengthOfLengthMask));
 
     if (lengthOfLength == EppLengthOfLength::Zero) {
@@ -149,9 +150,10 @@ FwSizeType AosDeframerTester::createEppPacket(U8* buffer,
         lol = 4;
     }
 
-    // Length field (big-endian)
+    // CCSDS 133.1-B-3 section 4.1.2.8.2 includes the header in the wire length.
+    const FwSizeType packetLength = offset + lol + dataLength;
     for (U8 i = 0; i < lol; i++) {
-        buffer[offset++] = static_cast<U8>(dataLength >> (8 * (lol - i - 1)) & 0xFF);
+        buffer[offset++] = static_cast<U8>(packetLength >> (8 * (lol - i - 1)) & 0xFF);
     }
 
     // Fill data
