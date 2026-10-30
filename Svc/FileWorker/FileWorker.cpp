@@ -198,10 +198,9 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
     fileName[sizeof(fileName) - 1] = 0;  // guarantee termination
 
     // Write
-    const bool isWrite = this->writeBufferToFile(buffer, fileName, offsetBytes, append);
-    if (isWrite) {
-        this->writeBufferHashToFile(buffer, fileName, offsetBytes, append);
-    }
+    const bool isFileWrite = this->writeBufferToFile(buffer, fileName, offsetBytes, append);
+    const bool isHashWrite = isFileWrite && this->writeBufferHashToFile(buffer, fileName, offsetBytes, append);
+    const bool isWrite = isFileWrite && isHashWrite;
 
     // Report the actual outcome of the write. A failed writeBufferToFile (open
     // failure, permission denied, disk full, partial write) must not be reported
@@ -464,7 +463,7 @@ bool FileWorker ::writeBufferToFile(Fw::Buffer& buffer, const char* fileName, Fw
     return true;
 }
 
-void FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName, FwSizeType offset, bool append) {
+bool FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName, FwSizeType offset, bool append) {
     FW_ASSERT(buffer.getData() != nullptr);
     FW_ASSERT(fileName != nullptr);
 
@@ -477,7 +476,7 @@ void FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     if (status != Fw::FormatStatus::SUCCESS) {
         // writeIn_handler rejects such paths up front; report rather than assert if one gets here
         this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("path too long"));
-        return;
+        return false;
     }
     const char* const hashFileName = hashFileNameString.toChar();
 
@@ -496,7 +495,7 @@ void FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     // getHash(), and on the non-append path it would silently overwrite a valid hash file with
     // the hash of zero bytes.
     if (size == 0) {
-        return;
+        return true;
     }
 
     U8* const dataFromOffset = reinterpret_cast<U8*>(data + offset);
@@ -509,7 +508,7 @@ void FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     } else {
         bool isHash = this->getHash(hashFileName, hash, hashBuffer, dataFromOffset, size);
         if (!isHash) {
-            return;
+            return false;
         }
     }
 
@@ -519,7 +518,7 @@ void FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     if (stat != Os::File::OP_OK) {
         Fw::LogStringArg logStringArg(hashFileName);
         this->log_WARNING_HI_OpenFileError(logStringArg, stat);
-        return;
+        return false;
     }
 
     // Write hash
@@ -530,12 +529,11 @@ void FileWorker ::writeBufferHashToFile(Fw::Buffer& buffer, const char* fileName
     if (writtenSize != hashSize) {
         Fw::LogStringArg logStringArg(hashFileName);
         this->log_WARNING_LO_WriteValidationError(logStringArg, writtenSize, hashSize);
-        return;
+        return false;
     }
 
-    return;
+    return true;
 }
-
 FwSizeType FileWorker ::writeToFile(const U8* data, FwSizeType size, Os::File& file, const char* fileName) {
     FW_ASSERT(data != nullptr);
     FW_ASSERT(size > 0);
