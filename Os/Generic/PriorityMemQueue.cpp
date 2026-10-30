@@ -530,9 +530,11 @@ QueueInterface::Status PriorityMemQueue::createPriorityQueue(FwQueuePriorityType
     const U32 maxTracked = static_cast<U32>(~static_cast<U32>(0));
     FwSizeType configuredCapacity = 0;
     for (FwSizeType i = 0; i < this->m_handle.m_numActivePriorities; ++i) {
-        configuredCapacity += this->m_handle.m_atomicQueues[i].getCapacity();
+        const FwSizeType capacity = this->m_handle.m_atomicQueues[i].getCapacity();
+        FW_ASSERT(configuredCapacity <= static_cast<FwSizeType>(maxTracked), this->m_handle.m_id);
+        FW_ASSERT(capacity <= static_cast<FwSizeType>(maxTracked) - configuredCapacity, this->m_handle.m_id);
+        configuredCapacity += capacity;
     }
-    FW_ASSERT(configuredCapacity <= static_cast<FwSizeType>(maxTracked), this->m_handle.m_id);
     FW_ASSERT(numMsgs <= static_cast<FwSizeType>(maxTracked) - configuredCapacity, this->m_handle.m_id);
 
     // Create the AtomicQueue with the specified parameters
