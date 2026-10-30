@@ -58,6 +58,7 @@ struct PriorityMemQueueHandle : public QueueHandle {
     FwEnumStoreType m_allocatorId = 0;               // Allocator ID for memory operations
     std::atomic<U32> m_priorityMask{0};              // Bit mask of enabled priorities
     std::atomic<U32>* m_highWaterMarks = nullptr;    // Array indexed by priority map
+    std::atomic<U32> m_totalOccupancy{0};           // Shared across configured queues
 
     //! \brief Constructor
     PriorityMemQueueHandle() {

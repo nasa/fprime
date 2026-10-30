@@ -67,6 +67,8 @@ void PriorityMemQueueHandle::init() {
         }
     }
 
+    this->m_totalOccupancy.store(0, std::memory_order_relaxed);
+
     // Initialize high water marks to zero if array is allocated
     if (this->m_highWaterMarks != nullptr) {
         for (FwSizeType i = 0; i < this->m_numActivePriorities; ++i) {
@@ -523,8 +525,21 @@ QueueInterface::Status PriorityMemQueue::createPriorityQueue(FwQueuePriorityType
     // Get pointer to the AtomicQueue at mapped index (already constructed in allocateArrays)
     Types::AtomicQueue* atomicQueue = &this->m_handle.m_atomicQueues[index];
 
+    // Aggregate tracking uses U32. Keep the sum of configured slot capacities
+    // representable, so occupancy and the monotonic peak cannot wrap.
+    const U32 maxTracked = static_cast<U32>(~static_cast<U32>(0));
+    FwSizeType configuredCapacity = 0;
+    for (FwSizeType i = 0; i < this->m_handle.m_numActivePriorities; ++i) {
+        const FwSizeType capacity = this->m_handle.m_atomicQueues[i].getCapacity();
+        FW_ASSERT(configuredCapacity <= static_cast<FwSizeType>(maxTracked), this->m_handle.m_id);
+        FW_ASSERT(capacity <= static_cast<FwSizeType>(maxTracked) - configuredCapacity, this->m_handle.m_id);
+        configuredCapacity += capacity;
+    }
+    FW_ASSERT(numMsgs <= static_cast<FwSizeType>(maxTracked) - configuredCapacity, this->m_handle.m_id);
+
     // Create the AtomicQueue with the specified parameters
     atomicQueue->create(numMsgs, maxMsgSize, allocator, allocatorId);
+    atomicQueue->setOccupancyTracking(&this->m_handle.m_totalOccupancy, &this->m_handle.m_highWaterMarks[0]);
 
     // Check if creation was successful (both capacity and slots must be initialized)
     if (!atomicQueue->isCreated()) {
@@ -618,25 +633,6 @@ static Types::AtomicQueue* resolvePriorityQueue(PriorityMemQueueHandle& handle,
 //! \param index: array index (not priority value)
 //! \param currentDepth: current queue depth
 //! \param queueId: queue ID for assertions
-static void updateHighWaterMark(std::atomic<U32>* highWaterMarks,
-                                FwSizeType index,
-                                U32 currentDepth,
-                                FwEnumStoreType queueId) {
-    FW_ASSERT(highWaterMarks != nullptr, queueId, static_cast<FwAssertArgType>(index));
-    U32 prevMax = highWaterMarks[index].load(std::memory_order_acquire);
-    // This is best effort, debug data only. So if retry count is exceeded, just give up
-    constexpr U32 MAX_CAS_RETRIES = 100;
-    for (U32 casRetries = 0; casRetries < MAX_CAS_RETRIES; ++casRetries) {
-        if (currentDepth <= prevMax) {
-            return;  // No update needed
-        }
-        if (highWaterMarks[index].compare_exchange_weak(prevMax, currentDepth, std::memory_order_release,
-                                                        std::memory_order_acquire)) {
-            return;  // Update succeeded
-        }
-    }
-}
-
 QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
                                               FwSizeType size,
                                               FwQueuePriorityType priority,
@@ -675,13 +671,6 @@ QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
     if (!success) {
         return QueueInterface::Status::FULL;
     }
-
-    // Update per-priority high water mark (use array index, not priority value)
-    I8 index = this->m_handle.getPriorityIndex(priority);
-    FW_ASSERT(index >= 0, this->m_handle.m_id, priority);
-    U32 currentDepth = static_cast<U32>(atomicQueue->getSize());
-    updateHighWaterMark(this->m_handle.m_highWaterMarks, static_cast<FwSizeType>(index), currentDepth,
-                        this->m_handle.m_id);
 
     // Post semaphore to wake up receiver (if any)
     FW_ASSERT(this->m_handle.m_notEmptySem != nullptr, this->m_handle.m_id, priority);
@@ -785,20 +774,11 @@ FwSizeType PriorityMemQueue::getMessagesAvailable() const {
 }
 
 FwSizeType PriorityMemQueue::getMessageHighWaterMark() const {
-    // Return the maximum high water mark across all priorities
-    // MEMORY ORDERING: Use acquire to ensure visibility of latest HWM updates
-    U32 maxHwm = 0;
-    if (this->m_handle.m_highWaterMarks != nullptr) {
-        FW_ASSERT(this->m_handle.m_numActivePriorities <= Os::Generic::Queue::MAX_PRIORITIES,
-                  static_cast<FwAssertArgType>(this->m_handle.m_numActivePriorities));
-        for (FwSizeType i = 0; i < this->m_handle.m_numActivePriorities; ++i) {
-            U32 hwm = this->m_handle.m_highWaterMarks[i].load(std::memory_order_acquire);
-            if (hwm > maxHwm) {
-                maxHwm = hwm;
-            }
-        }
+    // Aggregate occupancy is accounted before enqueue publication and before dequeue slot release.
+    if (this->m_handle.m_highWaterMarks == nullptr) {
+        return 0;
     }
-    return static_cast<FwSizeType>(maxHwm);
+    return static_cast<FwSizeType>(this->m_handle.m_highWaterMarks[0].load(std::memory_order_acquire));
 }
 
 QueueHandle* PriorityMemQueue::getHandle() {

@@ -368,14 +368,7 @@ class Tester {
     void verify() const {
         EXPECT_EQ(m_shadow.messageCount, m_queue.getMessagesAvailable());
 
-        // Compute max of per-priority high water marks to match implementation
-        U32 maxHwm = 0;
-        for (U32 i = 0; i < Os::Generic::Queue::MAX_PRIORITIES; ++i) {
-            if (m_shadow.priorityHighWaterMark[i] > maxHwm) {
-                maxHwm = m_shadow.priorityHighWaterMark[i];
-            }
-        }
-        EXPECT_EQ(maxHwm, m_queue.getMessageHighWaterMark());
+        EXPECT_EQ(m_shadow.highWaterMark, m_queue.getMessageHighWaterMark());
     }
 
     // Check if the queue is created
@@ -2205,5 +2198,65 @@ TEST_F(PriorityMemQueueTestFixture, HighWaterMarkConcurrent) {
     FwSizeType hwm = queue.getMessageHighWaterMark();
     EXPECT_LE(hwm, 384) << "HWM should not exceed total capacity (3 priorities * 128 depth)";
 
+    queue.teardown();
+}
+
+// Concurrent producers with no consumers must retain the exact aggregate peak.
+// Every successful enqueue remains resident, so the final total is an exact oracle.
+TEST_F(PriorityMemQueueTestFixture, AggregateHighWaterMarkConcurrentProducers) {
+    Os::Generic::PriorityMemQueue::QueuePriorityConfig priorities[] = {{0, 64, 32}, {1, 64, 32}, {2, 64, 32}};
+    Os::Generic::PriorityMemQueue::QueueConfig config = {205, 3, priorities};
+    Os::Generic::PriorityMemQueue::configure(&config, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue queue;
+    Fw::String name("AggregateConcurrentQueue");
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(205, name, 96, 64));
+
+    std::atomic<U32> successfulSends{0};
+    auto producer = [&](FwQueuePriorityType priority) {
+        U8 data[8] = {};
+        for (U32 i = 0; i < 32; ++i) {
+            if (queue.send(data, sizeof(data), priority, Os::QueueInterface::BlockingType::NONBLOCKING) ==
+                Os::QueueInterface::Status::OP_OK) {
+                successfulSends.fetch_add(1, std::memory_order_relaxed);
+            }
+        }
+    };
+    std::vector<std::thread> threads;
+    for (FwQueuePriorityType p = 0; p < 3; ++p) {
+        threads.emplace_back(producer, p);
+    }
+    for (auto& thread : threads) {
+        thread.join();
+    }
+    ASSERT_EQ(96, successfulSends.load());
+    EXPECT_EQ(96, queue.getMessagesAvailable());
+    EXPECT_EQ(96, queue.getMessageHighWaterMark());
+    queue.teardown();
+}
+
+// HWM must reflect the peak total occupancy, not the maximum of the per-priority peaks.
+TEST_F(PriorityMemQueueTestFixture, AggregateHighWaterMarkAcrossPriorities) {
+    Os::Generic::PriorityMemQueue::QueuePriorityConfig priorities[] = {{0, 64, 4}, {1, 64, 4}};
+    Os::Generic::PriorityMemQueue::QueueConfig config = {203, 2, priorities};
+    Os::Generic::PriorityMemQueue::configure(&config, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+
+    Os::Generic::PriorityMemQueue queue;
+    Fw::String name("AggregateHighWaterMarkQueue");
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(203, name, 8, 64));
+
+    U8 data[16] = {};
+    for (FwSizeType i = 0; i < 3; ++i) {
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK,
+                  queue.send(data, sizeof(data), 0, Os::QueueInterface::BlockingType::NONBLOCKING));
+    }
+    for (FwSizeType i = 0; i < 4; ++i) {
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK,
+                  queue.send(data, sizeof(data), 1, Os::QueueInterface::BlockingType::NONBLOCKING));
+    }
+
+    ASSERT_EQ(7, queue.getMessagesAvailable());
+    EXPECT_EQ(7, queue.getMessageHighWaterMark());
     queue.teardown();
 }

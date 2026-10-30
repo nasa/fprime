@@ -40,6 +40,12 @@ AtomicQueue::AtomicQueue()
       m_allocatorId(0),
       m_notFullSem(nullptr) {}
 
+void AtomicQueue::setOccupancyTracking(std::atomic<U32>* current, std::atomic<U32>* highWaterMark) {
+    FW_ASSERT(current != nullptr && highWaterMark != nullptr);
+    this->m_sharedOccupancy = current;
+    this->m_sharedHighWaterMark = highWaterMark;
+}
+
 AtomicQueue::~AtomicQueue() {
     this->teardown();
 }
@@ -187,6 +193,21 @@ bool AtomicQueue::enqueueInternal(const U8* buffer, FwSizeType size) {
                 (void)std::memcpy(slot->buffer, buffer, size);
                 slot->size = size;
 
+                // Account for the message before it can become visible to consumers.
+                // The accounting point is the logical insertion for HWM purposes.
+                if (this->m_sharedOccupancy != nullptr) {
+                    const U32 depth = this->m_sharedOccupancy->fetch_add(1, std::memory_order_seq_cst) + 1;
+                    U32 peak = this->m_sharedHighWaterMark->load(std::memory_order_seq_cst);
+                    // Strong CAS cannot fail spuriously. Every failed attempt implies
+                    // another successful increase of this monotonic peak. Because
+                    // the peak is bounded by the configured queue capacity, the
+                    // number of failed attempts is bounded by that capacity.
+                    while (peak < depth &&
+                           !this->m_sharedHighWaterMark->compare_exchange_strong(
+                               peak, depth, std::memory_order_seq_cst, std::memory_order_seq_cst)) {
+                    }
+                }
+
                 // Mark slot as ready for read
                 slot->sequence.store(pos + 1, std::memory_order_release);
                 return true;
@@ -286,6 +307,12 @@ bool AtomicQueue::dequeue(U8* buffer, FwSizeType capacity, FwSizeType& actualSiz
 
                 actualSize = slot->size;
                 (void)std::memcpy(buffer, slot->buffer, actualSize);
+
+                // Account for the removal after copying, before slot reuse becomes possible.
+                if (this->m_sharedOccupancy != nullptr) {
+                    const U32 previous = this->m_sharedOccupancy->fetch_sub(1, std::memory_order_seq_cst);
+                    FW_ASSERT(previous > 0);
+                }
 
                 // Mark slot as available for next cycle (pos + capacity)
                 slot->sequence.store(pos + this->m_capacity, std::memory_order_release);
