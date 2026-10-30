@@ -74,6 +74,9 @@ class AtomicQueue {
     //! \param allocatorId allocator identifier for tracking
     void create(FwSizeType numBuffers, FwSizeType bufferSize, Fw::MemAllocator& allocator, FwEnumStoreType allocatorId);
 
+    // Opt-in shared aggregate occupancy tracking (owner keeps both atomics alive).
+    void setOccupancyTracking(std::atomic<U32>* current, std::atomic<U32>* highWaterMark);
+
     //! \brief Teardown the queue and free allocated memory
     void teardown();
 
@@ -213,6 +216,8 @@ class AtomicQueue {
     Fw::MemAllocator* m_allocator;         // Memory allocator (nullptr if not using allocator)
     FwEnumStoreType m_allocatorId;         // Allocator identifier for deallocation (also used to identify asserts)
     Os::CountingSemaphore* m_notFullSem;   // Semaphore for blocking enqueue (all platforms)
+    std::atomic<U32>* m_sharedOccupancy = nullptr;
+    std::atomic<U32>* m_sharedHighWaterMark = nullptr;
 };
 
 }  // namespace Types
