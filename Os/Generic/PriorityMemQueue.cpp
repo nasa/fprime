@@ -525,6 +525,16 @@ QueueInterface::Status PriorityMemQueue::createPriorityQueue(FwQueuePriorityType
     // Get pointer to the AtomicQueue at mapped index (already constructed in allocateArrays)
     Types::AtomicQueue* atomicQueue = &this->m_handle.m_atomicQueues[index];
 
+    // Aggregate tracking uses U32. Keep the sum of configured slot capacities
+    // representable, so occupancy and the monotonic peak cannot wrap.
+    const U32 maxTracked = static_cast<U32>(~static_cast<U32>(0));
+    FwSizeType configuredCapacity = 0;
+    for (FwSizeType i = 0; i < this->m_handle.m_numActivePriorities; ++i) {
+        configuredCapacity += this->m_handle.m_atomicQueues[i].getCapacity();
+    }
+    FW_ASSERT(configuredCapacity <= static_cast<FwSizeType>(maxTracked), this->m_handle.m_id);
+    FW_ASSERT(numMsgs <= static_cast<FwSizeType>(maxTracked) - configuredCapacity, this->m_handle.m_id);
+
     // Create the AtomicQueue with the specified parameters
     atomicQueue->create(numMsgs, maxMsgSize, allocator, allocatorId);
     atomicQueue->setOccupancyTracking(&this->m_handle.m_totalOccupancy, &this->m_handle.m_highWaterMarks[0]);
