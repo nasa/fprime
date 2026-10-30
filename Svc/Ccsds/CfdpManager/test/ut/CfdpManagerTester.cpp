@@ -1452,6 +1452,178 @@ void CfdpManagerTester::testClass2TxQueuedAbandonNoHang() {
     this->queuedTxFinishedNoHang(true);
 }
 
+void CfdpManagerTester::startActiveClass2Tx(const char* srcFile, TransactionSetup& setup) {
+    // Start a Class 2 downlink and leave it mid-transfer on TXA in FILEDATA: allow exactly two
+    // PDUs this cycle (Metadata and the first FileData) so the second FileData is throttled.
+    const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
+    const FwSizeType expectedFileSize = 3 * dataPerPdu;
+    const char* dstFile = "/dest/c2_active.dat";
+    const U8 channelId = TEST_CHANNEL_ID_0;
+
+    FwSizeType fileSize;
+    createAndVerifyTestFile(srcFile, expectedFileSize, fileSize);
+    setupTxTransaction(srcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, TEST_PRIORITY,
+                       TxnState::TXN_STATE_S2, setup);
+
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+    chan->m_outgoingCounter = this->component.getMaxOutgoingPdusPerCycleParam(channelId) - 2;
+    chan->cycleTx();
+
+    ASSERT_EQ(TxnState::TXN_STATE_S2, setup.txn->m_state);
+    ASSERT_EQ(QueueId::TXA, setup.txn->m_flags.com.q_index) << "Downlink should be active";
+    ASSERT_EQ(TxSubState::TX_SUB_STATE_FILEDATA, setup.txn->m_state_data.send.sub_state);
+    ASSERT_EQ(static_cast<FileSize>(dataPerPdu), setup.txn->m_foffs) << "Exactly one FileData PDU should be sent";
+}
+
+void CfdpManagerTester::testClass2TxMalformedEarlyFinNoSpin() {
+    // Regression test: a FIN that fails deserialization while a Class 2 downlink is still
+    // transmitting must not move the transaction to CLOSEOUT_SYNC. That sub-state has no S2
+    // transmit handler, so a transaction left on TXA in it made cycleTxFirstActive spin forever.
+    const char* srcFile = "test/ut/output/c2_malformed_fin.bin";
+    TransactionSetup setup;
+    startActiveClass2Tx(srcFile, setup);
+    this->clearHistory();
+
+    // Packet descriptor, a file-directive PDU header toward the sender declaring a one-octet data
+    // field, then only the FIN directive code: the FIN body is missing so deserialization fails.
+    U8 pdu[] = {0x00, 0x03, 0x28, 0x00, 0x01, 0x00, 0x2A, 0x01, 0x64, 0x05};
+    pdu[6] = static_cast<U8>(component.getLocalEidParam());
+    pdu[7] = static_cast<U8>(setup.expectedSeqNum);
+    pdu[8] = static_cast<U8>(TEST_GROUND_EID);
+    Fw::Buffer finBuffer(pdu, sizeof(pdu));
+    this->invoke_to_dataIn(TEST_CHANNEL_ID_0, finBuffer);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_FailFinPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_TxEarlyFinReceived_SIZE(0);
+    EXPECT_EQ(TxSubState::TX_SUB_STATE_FILEDATA, setup.txn->m_state_data.send.sub_state)
+        << "A malformed FIN must not change the sub-state";
+    EXPECT_NE(TxnStatus::TXN_STATUS_EARLY_FIN, setup.txn->m_history->txn_stat);
+
+    // This cycle used to never return. The downlink carries on sending file data.
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    EXPECT_EQ(TxnState::TXN_STATE_S2, setup.txn->m_state) << "Downlink should continue";
+    EXPECT_EQ(setup.txn->m_fsize, setup.txn->m_foffs) << "Remaining file data should be sent";
+
+    cleanupTestFile(srcFile);
+}
+
+void CfdpManagerTester::testClass2TxThrottledNakMetadataYields() {
+    // Regression test: a NAK requesting Metadata retransmission whose resend is throttled must
+    // yield the cycle and retry, not spin in cycleTxFirstActive.
+    const char* srcFile = "test/ut/output/c2_nak_md_throttle.bin";
+    TransactionSetup setup;
+    startActiveClass2Tx(srcFile, setup);
+
+    Channel* chan = this->component.m_engine->m_channels[TEST_CHANNEL_ID_0];
+    const U32 maxPdus = this->component.getMaxOutgoingPdusPerCycleParam(TEST_CHANNEL_ID_0);
+    setup.txn->m_flags.tx.md_need_send = true;
+
+    // Throttled cycle: used to never return. The transaction must not be failed by the
+    // no-progress guard either; it is waiting for a buffer, not stuck.
+    chan->m_outgoingCounter = maxPdus;
+    chan->cycleTx();
+    EXPECT_TRUE(setup.txn->m_flags.tx.md_need_send) << "Metadata resend should still be pending";
+    EXPECT_EQ(TxnState::TXN_STATE_S2, setup.txn->m_state);
+    EXPECT_EQ(QueueId::TXA, setup.txn->m_flags.com.q_index);
+
+    // Unthrottled cycle: the Metadata PDU goes out.
+    this->clearHistory();
+    chan->m_outgoingCounter = maxPdus - 1;
+    chan->cycleTx();
+    EXPECT_FALSE(setup.txn->m_flags.tx.md_need_send) << "Metadata should be resent";
+    EXPECT_EQ(1U, this->fromPortHistory_dataOut->size());
+    EXPECT_EQ(TxnState::TXN_STATE_S2, setup.txn->m_state);
+
+    cleanupTestFile(srcFile);
+}
+
+void CfdpManagerTester::testClass2TxThrottledNakChunkRetries() {
+    // Regression test: a throttled FileData resend in response to a NAK is transient. It must be
+    // retried next cycle instead of failing the transaction with NAK_RESPONSE_ERROR.
+    const char* srcFile = "test/ut/output/c2_nak_chunk_throttle.bin";
+    TransactionSetup setup;
+    startActiveClass2Tx(srcFile, setup);
+
+    Channel* chan = this->component.m_engine->m_channels[TEST_CHANNEL_ID_0];
+    const U32 maxPdus = this->component.getMaxOutgoingPdusPerCycleParam(TEST_CHANNEL_ID_0);
+    const FileSize gapSize = 16;
+    setup.txn->m_chunks->chunks.add(0, gapSize);
+
+    // Throttled cycle: the gap stays pending and the transaction stays live.
+    chan->m_outgoingCounter = maxPdus;
+    chan->cycleTx();
+    EXPECT_EQ(TxnState::TXN_STATE_S2, setup.txn->m_state) << "Throttled NAK response must not fail the downlink";
+    EXPECT_NE(TxnStatus::TXN_STATUS_NAK_RESPONSE_ERROR, setup.txn->m_history->txn_stat);
+    ASSERT_NE(nullptr, setup.txn->m_chunks->chunks.getFirstChunk()) << "Gap should still be pending";
+
+    // Unthrottled cycle: the gap is resent.
+    this->clearHistory();
+    chan->m_outgoingCounter = maxPdus - 1;
+    chan->cycleTx();
+    EXPECT_EQ(nullptr, setup.txn->m_chunks->chunks.getFirstChunk()) << "Gap should be resent";
+    EXPECT_EQ(1U, this->fromPortHistory_dataOut->size());
+    EXPECT_EQ(TxnState::TXN_STATE_S2, setup.txn->m_state);
+
+    cleanupTestFile(srcFile);
+}
+
+void CfdpManagerTester::testClass2TxThrottledInitialMetadataYields() {
+    // Regression test: a new downlink whose first Metadata PDU is throttled must yield the cycle
+    // and stay in METADATA, not spin in cycleTxFirstActive.
+    const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
+    const char* srcFile = "test/ut/output/c2_md_throttle.bin";
+    const U8 channelId = TEST_CHANNEL_ID_0;
+
+    FwSizeType fileSize;
+    createAndVerifyTestFile(srcFile, dataPerPdu, fileSize);
+    TransactionSetup setup;
+    setupTxTransaction(srcFile, "/dest/c2_md_throttle.dat", channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2,
+                       TEST_PRIORITY, TxnState::TXN_STATE_S2, setup);
+
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+    const U32 maxPdus = this->component.getMaxOutgoingPdusPerCycleParam(channelId);
+
+    // Throttled cycle: used to never return.
+    chan->m_outgoingCounter = maxPdus;
+    chan->cycleTx();
+    EXPECT_EQ(TxnState::TXN_STATE_S2, setup.txn->m_state);
+    EXPECT_EQ(QueueId::TXA, setup.txn->m_flags.com.q_index);
+    EXPECT_EQ(TxSubState::TX_SUB_STATE_METADATA, setup.txn->m_state_data.send.sub_state);
+
+    // Unthrottled cycle: Metadata goes out and the transfer proceeds.
+    chan->m_outgoingCounter = maxPdus - 1;
+    chan->cycleTx();
+    EXPECT_EQ(TxSubState::TX_SUB_STATE_FILEDATA, setup.txn->m_state_data.send.sub_state);
+
+    cleanupTestFile(srcFile);
+}
+
+void CfdpManagerTester::testTxCycleNoProgressFailsTransaction() {
+    // Defense in depth: a transaction on TXA whose dispatch makes no progress (here, an S2
+    // transaction forced into CLOSEOUT_SYNC, which has no transmit handler) must be failed
+    // rather than dispatched forever.
+    const char* srcFile = "test/ut/output/c2_no_progress.bin";
+    TransactionSetup setup;
+    startActiveClass2Tx(srcFile, setup);
+
+    Channel* chan = this->component.m_engine->m_channels[TEST_CHANNEL_ID_0];
+    setup.txn->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC;
+    chan->resetOutgoingCounter();
+    chan->cycleTx();
+
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, setup.txn->m_state) << "Stuck transaction should be finished";
+    EXPECT_EQ(QueueId::TXW, setup.txn->m_flags.com.q_index) << "Finished transaction should leave TXA";
+    EXPECT_EQ(TxnStatus::TXN_STATUS_PROTOCOL_ERROR, setup.txn->m_history->txn_stat);
+
+    // The inactivity timer recycles it like any other finished downlink.
+    waitForTransactionRecycle(TEST_CHANNEL_ID_0, setup.expectedSeqNum);
+
+    cleanupTestFile(srcFile);
+}
+
 }  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

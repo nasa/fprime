@@ -844,7 +844,23 @@ CListTraverseStatus Channel::cycleTxFirstActive(CListNode* node, void* context) 
         // If the transaction sent the last filedata PDU and EOF, it will move itself
         // off the active queue. Run until either of these occur.
         while (!this->m_currentTxn && txn->m_flags.com.q_index == QueueId::TXA) {
+            const U32 prevOutgoing = this->m_outgoingCounter;
+            const TxnState prevState = txn->m_state;
+            const TxSubState prevSubState = txn->m_state_data.send.sub_state;
+
             m_engine->dispatchTx(txn);
+
+            // Every productive dispatch either sends a PDU, changes the transaction's state or
+            // sub-state, or satisfies an exit condition above. A dispatch that does none of these
+            // will do the same on every later iteration, so this loop would never exit. Fail the
+            // transaction instead: finishTransaction moves it to TXW, where the tick processor's
+            // inactivity timer recycles it and reports the failure.
+            if (!this->m_currentTxn && txn->m_flags.com.q_index == QueueId::TXA &&
+                this->m_outgoingCounter == prevOutgoing && txn->m_state == prevState &&
+                txn->m_state_data.send.sub_state == prevSubState) {
+                m_engine->setTxnStatus(txn, TxnStatus::TXN_STATUS_PROTOCOL_ERROR);
+                m_engine->finishTransaction(txn, true);
+            }
         }
 
         args->ran_one = 1;
