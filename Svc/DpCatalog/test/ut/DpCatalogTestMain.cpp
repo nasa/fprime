@@ -440,6 +440,76 @@ TEST(NominalManual, InsertAlreadyTransmitted) {
     tester.test_InsertAlreadyTransmitted();
 }
 
+TEST(NominalManual, RetransmitAfterRebuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterRebuild();
+}
+
+TEST(NominalManual, RetransmitPersistsAcrossRebuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitPersistsAcrossRebuild();
+}
+
+TEST(NominalManual, RetransmitSameSession) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitSameSession();
+}
+
+TEST(NominalManual, RetransmitDuringTransmit) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDuringTransmit();
+}
+
+TEST(NominalManual, RetransmitRemainActiveResumes) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitRemainActiveResumes();
+}
+
+TEST(OffNominal, RetransmitRejected) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitRejected();
+}
+
+TEST(OffNominal, RetransmitFileError) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitFileError();
+}
+
+TEST(OffNominal, RetransmitNameError) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitNameError();
+}
+
+TEST(OffNominal, RetransmitNoStateFileDir) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitNoStateFileDir();
+}
+
+TEST(NominalManual, RetransmitAfterStop) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterStop();
+}
+
+TEST(NominalManual, RetransmitSecondDirectory) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitSecondDirectory();
+}
+
+TEST(NominalManual, RetransmitFullStateFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitFullStateFile();
+}
+
+TEST(NominalManual, RetransmitAfterPrune) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterPrune();
+}
+
+TEST(NominalManual, BuildFailsOnUnreadableStateFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_BuildFailsOnUnreadableStateFile();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

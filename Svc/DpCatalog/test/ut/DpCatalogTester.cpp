@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "DpCatalogTester.hpp"
+#include <sys/stat.h>
 #include <cstdlib>
 #include <cstring>
 #include <set>
@@ -1739,6 +1740,723 @@ void DpCatalogTester::test_InsertAlreadyTransmitted() {
     ASSERT_from_fileOut_SIZE(0);
 
     this->delDp(id, time, dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+// ----------------------------------------------------------------------
+// RETRANSMIT_DP
+// ----------------------------------------------------------------------
+
+void DpCatalogTester::retransmit(U32 cmdSeq, FwDpIdType id, const Fw::Time& time, Fw::CmdResponse expected) {
+    this->clearHistory();
+    this->sendCmd_RETRANSMIT_DP(0, cmdSeq, id, time.getSeconds(), time.getUSeconds());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_RETRANSMIT_DP, cmdSeq, expected);
+}
+
+void DpCatalogTester::xmitAll(U32 cmdSeq, bool remainActive) {
+    this->clearHistory();
+    this->sendCmd_START_XMIT_CATALOG(0, cmdSeq, Fw::Wait::NO_WAIT, remainActive);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_START_XMIT_CATALOG, cmdSeq, Fw::CmdResponse::OK);
+}
+
+Fw::String DpCatalogTester::transmitOneProduct(const char* dirName,
+                                               FwDpIdType id,
+                                               const Fw::Time& time,
+                                               FwDpPriorityType prio,
+                                               bool remainActive,
+                                               Fw::FileNameString& dir,
+                                               Fw::FileNameString& stateFile,
+                                               Fw::MemAllocator& alloc) {
+    dir = dirName;
+    stateFile.format("%s/dpState.dat", dirName);
+    this->makeDpDir(dirName);
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->delDp(id, time, dirName);
+    Fw::String dpFile = this->genDP(id, prio, time, 16, Fw::DpState::UNTRANSMITTED, false, dirName);
+    EXPECT_STRNE(dpFile.toChar(), "");
+    this->configureAndBuild(dir, stateFile, 10, alloc);
+    this->xmitAll(11, remainActive);
+    EXPECT_EQ(this->eventHistory_ProductComplete->size(), 1u);
+    EXPECT_EQ(this->component.m_dpCatalog.getSize(), 0u);
+    return dpFile;
+}
+
+void DpCatalogTester::test_RetransmitAfterRebuild() {
+    // A product transmitted in an earlier session (TRANSMITTED record loaded by the rebuild) is rescheduled at
+    // its header priority, sent again by the next transmit command, and skipped again by a later rebuild
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir;
+    Fw::FileNameString stateFile;
+    const FwDpIdType id = 0x500;
+    const FwDpPriorityType prio = 10;
+    const Fw::Time time(4000, 40);
+    Fw::String dpFile =
+        this->transmitOneProduct("./DpTest_RetransmitRebuild", id, time, prio, false, dir, stateFile, alloc);
+    ASSERT_FALSE(::testing::Test::HasFailure());
+    this->component.shutdown();
+
+    // the rebuild skips the transmitted product
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    // retransmit: cataloged again from the header, nothing sent without a transmit command
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitError_SIZE(0);
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), prio);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, dpFile.toChar());
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+    ASSERT_from_fileOut_SIZE(0);
+
+    // the next transmit command sends it
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(22, false));
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, dpFile, dpFile, 0, 0);
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EQ(this->component.m_pendingFiles, 0);
+    this->component.shutdown();
+
+    // the record was rewritten TRANSMITTED in place, so the rebuild skips it again and the file holds one record
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 30, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EQ(this->component.m_pendingFiles, 0);
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, DpCatalog::STATE_RECORD_SIZE);
+
+    this->delDp(id, time, dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitPersistsAcrossRebuild() {
+    // The reset is recorded in the state file: a rebuild before the product is sent again catalogs it, and so
+    // does a further rebuild after that one rewrote the file
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir;
+    Fw::FileNameString stateFile;
+    const FwDpIdType id = 0x501;
+    const Fw::Time time(4001, 0);
+    Fw::String dpFile =
+        this->transmitOneProduct("./DpTest_RetransmitPersist", id, time, 10, false, dir, stateFile, alloc);
+    ASSERT_FALSE(::testing::Test::HasFailure());
+    this->component.shutdown();
+
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 10);
+    this->component.shutdown();
+
+    // rebuild without sending: the product is pending, not skipped
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 30, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(0);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, dpFile.toChar());
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+    this->component.shutdown();
+
+    // that build rewrote the state file: the UNTRANSMITTED record survives the rewrite
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 40, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(0);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+
+    this->delDp(id, time, dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitSameSession() {
+    // A product transmitted since the build (record appended and mirrored in memory) is rescheduled and resent
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir;
+    Fw::FileNameString stateFile;
+    const FwDpIdType id = 0x502;
+    const Fw::Time time(4002, 0);
+    Fw::String dpFile = this->transmitOneProduct("./DpTest_RetransmitSame", id, time, 20, false, dir, stateFile, alloc);
+    ASSERT_FALSE(::testing::Test::HasFailure());
+
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(12, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 20);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    ASSERT_from_fileOut_SIZE(0);
+
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(13, false));
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, dpFile, dpFile, 0, 0);
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    this->component.shutdown();
+
+    // transmitted twice: the single record reads TRANSMITTED, so the rebuild skips it
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, DpCatalog::STATE_RECORD_SIZE);
+
+    this->delDp(id, time, dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitDuringTransmit() {
+    // Priorities 10, 20, 30 are cataloged. After 10 completes and 20 is in flight, 10 is retransmitted: the
+    // file in flight is not disturbed and 10 is sent before 30, in priority order
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_RetransmitDuring");
+    Fw::FileNameString stateFile("./DpTest_RetransmitDuring/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const Fw::Time time(4003, 0);
+    const FwDpIdType ids[3] = {0x1, 0x2, 0x3};
+    const FwDpPriorityType prios[3] = {10, 20, 30};
+    Fw::String files[3];
+    for (FwIndexType i = 0; i < 3; i++) {
+        this->delDp(ids[i], time, dir.toChar());
+        files[i] = this->genDP(ids[i], prios[i], time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(files[i].toChar(), "");
+    }
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+    ASSERT_EVENTS_DpFileAdded_SIZE(3);
+
+    this->m_autoFileDone = false;
+    this->clearHistory();
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, files[0], files[0], 0, 0);
+    // complete 10; 20 goes in flight
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, this->m_lastContext));
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_from_fileOut(1, files[1], files[1], 0, 0);
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    const U32 inFlight = this->m_lastContext;
+
+    // retransmit 10 while 20 is in flight: rescheduled, nothing new sent
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(12, ids[0], time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, files[0].toChar(), prios[0]);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 3);
+    ASSERT_EQ(this->component.m_pendingFiles, 3);
+    ASSERT_from_fileOut_SIZE(0);
+
+    // completing 20 sends 10 again before 30
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, inFlight));
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, files[0], files[0], 0, 0);
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, this->m_lastContext));
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_from_fileOut(1, files[2], files[2], 0, 0);
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, this->m_lastContext));
+    this->component.doDispatch();
+    ASSERT_EVENTS_ProductComplete_SIZE(3);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+    ASSERT_EQ(this->component.m_pendingFiles, 0);
+
+    for (FwIndexType i = 0; i < 3; i++) {
+        this->delDp(ids[i], time, dir.toChar());
+    }
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitRemainActiveResumes() {
+    // With remainActive set, a retransmit after the transmission finished resumes it immediately, as a runtime
+    // insert does, continuing the session's byte tally; without remainActive it waits for the next transmit
+    // command (test_RetransmitSameSession)
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir;
+    Fw::FileNameString stateFile;
+    const FwDpIdType id = 0x503;
+    const Fw::Time time(4004, 0);
+    Fw::String dpFile =
+        this->transmitOneProduct("./DpTest_RetransmitResume", id, time, 10, true, dir, stateFile, alloc);
+    ASSERT_FALSE(::testing::Test::HasFailure());
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_FALSE(this->component.m_xmitInProgress);
+
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(12, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 10);
+    // the send is started by the command itself; its (auto) fileDone is queued, so drain the queue
+    ASSERT_from_fileOut_SIZE(1);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_from_fileOut(0, dpFile, dpFile, 0, 0);
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    // the resumed session reports the bytes of the first transmission plus the resend
+    ASSERT_EVENTS_CatalogXmitCompleted(0, 2 * Fw::DpContainer::getPacketSizeForDataSize(16));
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+    ASSERT_FALSE(this->component.m_xmitInProgress);
+
+    this->delDp(id, time, dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitRejected() {
+    // Every rejection answers EXECUTION_ERROR with DpRetransmitError naming the reason and changes nothing
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_RetransmitReject");
+    Fw::FileNameString stateFile("./DpTest_RetransmitReject/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const FwDpIdType id = 0x504;
+    const Fw::Time time(4005, 0);
+    this->delDp(id, time, dir.toChar());
+    Fw::String dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+
+    // not configured
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(1, id, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_ComponentNotInitialized_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError_SIZE(0);
+
+    // configured, catalog not built
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(2, id, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_DpRetransmitError_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError(0, id, time.getSeconds(), time.getUSeconds(), DpRetransmitReason::NOT_BUILT);
+
+    // built: the product is pending
+    this->clearHistory();
+    this->sendCmd_BUILD_CATALOG(0, 3);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 3, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(4, id, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_DpRetransmitError_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError(0, id, time.getSeconds(), time.getUSeconds(), DpRetransmitReason::PENDING);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+
+    // no such product
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(5, id + 1, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_DpRetransmitError_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError(0, id + 1, time.getSeconds(), time.getUSeconds(), DpRetransmitReason::NOT_FOUND);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+
+    // in flight
+    this->m_autoFileDone = false;
+    this->clearHistory();
+    this->sendCmd_START_XMIT_CATALOG(0, 6, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    const U32 inFlight = this->m_lastContext;
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(7, id, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_DpRetransmitError_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError(0, id, time.getSeconds(), time.getUSeconds(), DpRetransmitReason::IN_FLIGHT);
+    ASSERT_from_fileOut_SIZE(0);
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, inFlight));
+    this->component.doDispatch();
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    // transmitted, then deleted from disk
+    this->delDp(id, time, dir.toChar());
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(8, id, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_DpRetransmitError_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError(0, id, time.getSeconds(), time.getUSeconds(), DpRetransmitReason::NOT_FOUND);
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitFileError() {
+    // A transmitted product whose file has since been truncated is reported by the file event and FILE_ERROR,
+    // the state record is left alone, and a rebuild still skips the product
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir;
+    Fw::FileNameString stateFile;
+    const FwDpIdType id = 0x505;
+    const Fw::Time time(4006, 0);
+    Fw::String dpFile =
+        this->transmitOneProduct("./DpTest_RetransmitFileErr", id, time, 10, false, dir, stateFile, alloc);
+    ASSERT_FALSE(::testing::Test::HasFailure());
+
+    // truncate the file below the header size
+    Os::File file;
+    ASSERT_EQ(file.open(dpFile.toChar(), Os::File::Mode::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE),
+              Os::File::Status::OP_OK);
+    const U8 junk[4] = {0, 1, 2, 3};
+    FwSizeType size = sizeof(junk);
+    ASSERT_EQ(file.write(junk, size), Os::File::Status::OP_OK);
+    file.close();
+
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(12, id, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_FileReadError_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError(0, id, time.getSeconds(), time.getUSeconds(), DpRetransmitReason::FILE_ERROR);
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+    ASSERT_EQ(this->component.m_pendingFiles, 0);
+    // the in-memory record was restored
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+    ASSERT_EQ(this->component.m_stateFileData[0].entry.record.get_state(), Fw::DpState::TRANSMITTED);
+
+    // restore the file: the state file was not touched, so the rebuild skips the transmitted product
+    this->component.shutdown();
+    this->delDp(id, time, dir.toChar());
+    dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+
+    this->delDp(id, time, dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitNameError() {
+    // A managed directory long enough that the canonical name overflows Fw::String is answered NAME_ERROR
+    Fw::MallocAllocator alloc;
+    char longName[232];
+    memset(longName, 'd', sizeof(longName) - 1);
+    longName[0] = '.';
+    longName[1] = '/';
+    longName[sizeof(longName) - 1] = 0;
+    Fw::FileNameString dir(longName);
+    Fw::FileNameString stateFile("./DpTest_RetransmitNameErr.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+    const Fw::Time time(4007, 0);
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(11, 0x506, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_DpRetransmitError_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError(0, 0x506, 4007, 0, DpRetransmitReason::NAME_ERROR);
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    (void)Os::FileSystem::removeDirectory(dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitNoStateFileDir() {
+    // With a state file that cannot be written (missing directory) nothing is persisted, but the product is
+    // still rescheduled in memory and the command succeeds
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_RetransmitNoState");
+    Fw::FileNameString stateFile("./DpTest_NoSuchDir/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    const FwDpIdType id = 0x507;
+    const Fw::Time time(4008, 0);
+    this->delDp(id, time, dir.toChar());
+    Fw::String dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+    ASSERT_EVENTS_NoStateFile_SIZE(1);
+    ASSERT_EVENTS_StateFileOpenError_SIZE(1);
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(11, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_EVENTS_StateFileOpenError_SIZE(1);
+    ASSERT_EQ(this->component.m_stateFileEntries, 0);
+
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(12, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_StateFileOpenError_SIZE(0);
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 10);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+
+    this->delDp(id, time, dir.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitAfterStop() {
+    // Retransmit after STOP_XMIT_CATALOG with a file still in flight (remainActive): the stopped transmission
+    // resumes without re-sending the file in flight, and the retransmitted product is sent exactly once after it
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_RetransmitStop");
+    Fw::FileNameString stateFile("./DpTest_RetransmitStop/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const Fw::Time time(4009, 0);
+    const FwDpIdType ids[2] = {0x1, 0x2};
+    Fw::String files[2];
+    for (FwIndexType i = 0; i < 2; i++) {
+        this->delDp(ids[i], time, dir.toChar());
+        files[i] = this->genDP(ids[i], static_cast<FwDpPriorityType>(10 * (i + 1)), time, 16,
+                               Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(files[i].toChar(), "");
+    }
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+
+    this->m_autoFileDone = false;
+    this->clearHistory();
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, true);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, files[0], files[0], 0, 0);
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, this->m_lastContext));
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_from_fileOut(1, files[1], files[1], 0, 0);
+    const U32 inFlight = this->m_lastContext;
+
+    // stop with the second file in flight, then retransmit the first: nothing new is sent yet
+    this->clearHistory();
+    this->sendCmd_STOP_XMIT_CATALOG(0, 12);
+    this->component.doDispatch();
+    ASSERT_EVENTS_CatalogXmitStopped_SIZE(1);
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(13, ids[0], time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_from_fileOut_SIZE(0);
+
+    // the completion of the file in flight continues the walk: the first file is sent once more, then done
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, inFlight));
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, files[0], files[0], 0, 0);
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, this->m_lastContext));
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_EVENTS_ProductComplete_SIZE(2);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    for (FwIndexType i = 0; i < 2; i++) {
+        this->delDp(ids[i], time, dir.toChar());
+    }
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitSecondDirectory() {
+    // The product file is searched in every managed directory: a product in the second one is found, its
+    // record (directory index 1) is rewritten, and the rebuild after the resend skips it
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dirs[2] = {Fw::FileNameString("./DpTest_RetransmitDir0"),
+                                  Fw::FileNameString("./DpTest_RetransmitDir1")};
+    Fw::FileNameString stateFile("./DpTest_RetransmitDir0/dpState.dat");
+    this->makeDpDir(dirs[0].toChar());
+    this->makeDpDir(dirs[1].toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const FwDpIdType id = 0x508;
+    const Fw::Time time(4010, 0);
+    this->delDp(id, time, dirs[1].toChar());
+    Fw::String dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dirs[1].toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 2), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(11, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(12, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitError_SIZE(0);
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 10);
+    ASSERT_EQ(this->component.m_stateFileData[0].entry.dir, 1);
+    ASSERT_EQ(this->component.m_stateFileData[0].entry.record.get_state(), Fw::DpState::UNTRANSMITTED);
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(13, false));
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, dpFile, dpFile, 0, 0);
+    this->component.shutdown();
+
+    this->clearHistory();
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 2), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 20);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 20, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+
+    this->delDp(id, time, dirs[1].toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitFullStateFile() {
+    // With every slot holding a TRANSMITTED record (a full, fully downlinked catalog) a retransmit still
+    // survives a rebuild: the record is rewritten in place, so the file never exceeds one record per product
+    Fw::MallocAllocator alloc;
+    const char* dirName = "./DpTest_RetransmitFull";
+    Fw::FileNameString dir(dirName);
+    Fw::FileNameString stateFile("./DpTest_RetransmitFull/dpState.dat");
+    this->makeDpDir(dirName);
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const Fw::Time time(4011, 0);
+    Fw::String firstFile;
+    for (FwDpIdType id = 1; id <= DP_MAX_FILES; id++) {
+        this->delDp(id, time, dirName);
+        Fw::String dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dirName);
+        ASSERT_STRNE(dpFile.toChar(), "");
+        if (id == 1) {
+            firstFile = dpFile;
+        }
+    }
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(11, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(DP_MAX_FILES);
+    this->component.shutdown();
+
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(DP_MAX_FILES);
+    ASSERT_EQ(this->component.m_stateFileEntries, static_cast<FwSizeType>(DP_MAX_FILES));
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, 1, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, firstFile.toChar(), 10);
+    this->component.shutdown();
+
+    // the reset survives the reboot and the file still holds exactly one record per product
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 30, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(DP_MAX_FILES - 1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, firstFile.toChar());
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(31, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, static_cast<FwSizeType>(DP_MAX_FILES) * DpCatalog::STATE_RECORD_SIZE);
+
+    for (FwDpIdType id = 1; id <= DP_MAX_FILES; id++) {
+        this->delDp(id, time, dirName);
+    }
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_RetransmitAfterPrune() {
+    // A record pruned at build shifts the following records down in the file; the in-memory copy must shift too,
+    // or the retransmit's in-place rewrite misses (or hits another product's record)
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_RetransmitPrune");
+    Fw::FileNameString stateFile("./DpTest_RetransmitPrune/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const Fw::Time time(4013, 0);
+    const FwDpIdType ids[2] = {0x1, 0x2};
+    Fw::String files[2];
+    for (FwIndexType i = 0; i < 2; i++) {
+        this->delDp(ids[i], time, dir.toChar());
+        files[i] = this->genDP(ids[i], static_cast<FwDpPriorityType>(10 * (i + 1)), time, 16,
+                               Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(files[i].toChar(), "");
+    }
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(11, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(2);
+    ASSERT_EQ(this->component.m_stateFileEntries, 2);
+    this->component.shutdown();
+
+    // the first product is gone: its record is pruned by the rebuild and the second record moves to position 0
+    this->delDp(ids[0], time, dir.toChar());
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, files[1].toChar());
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+    ASSERT_EQ(this->component.m_stateFileData[0].entry.record.get_id(), ids[1]);
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, DpCatalog::STATE_RECORD_SIZE);
+
+    // the retransmit rewrites record 0 in place and the reset survives a rebuild
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, ids[1], time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_StateFileOpenError_SIZE(0);
+    ASSERT_EVENTS_StateFileWriteError_SIZE(0);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, files[1].toChar(), 20);
+    this->component.shutdown();
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 30, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(0);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, files[1].toChar());
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, DpCatalog::STATE_RECORD_SIZE);
+
+    this->delDp(ids[1], time, dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester::test_BuildFailsOnUnreadableStateFile() {
+    // A build whose state-file load fails leaves no catalog behind: the in-memory copy is empty and no longer
+    // mirrors the file, so nothing may append to or rewrite the file until a build succeeds
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir;
+    Fw::FileNameString stateFile;
+    const FwDpIdType id = 0x50A;
+    const Fw::Time time(4014, 0);
+    Fw::String dpFile =
+        this->transmitOneProduct("./DpTest_RetransmitLoadFail", id, time, 10, false, dir, stateFile, alloc);
+    ASSERT_FALSE(::testing::Test::HasFailure());
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+
+    // the state file cannot be opened: the rebuild fails and the catalog built above is cleared
+    ASSERT_EQ(::chmod(stateFile.toChar(), 0), 0);
+    this->clearHistory();
+    this->sendCmd_BUILD_CATALOG(0, 20);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 20, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_StateFileOpenError_SIZE(1);
+    ASSERT_FALSE(this->component.m_catalogBuilt);
+    ASSERT_EQ(this->component.m_stateFileEntries, 0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+
+    // neither a runtime insert nor a retransmit touches the state file while the catalog is not built
+    const FwDpIdType otherId = 0x50B;
+    this->delDp(otherId, time, dir.toChar());
+    Fw::String otherFile = this->genDP(otherId, 20, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(otherFile.toChar(), "");
+    this->invoke_to_addToCat(0, otherFile, 20, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_NotLoaded_SIZE(1);
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, id, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_DpRetransmitError(0, id, 4014, 0, DpRetransmitReason::NOT_BUILT);
+    ASSERT_EQ(::chmod(stateFile.toChar(), S_IRUSR | S_IWUSR), 0);
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
+    ASSERT_EQ(fileSize, DpCatalog::STATE_RECORD_SIZE);
+    this->component.shutdown();
+
+    // the next successful build reads the intact record: the transmitted product is skipped, the other is added
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 30, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded(0, otherFile.toChar());
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+
+    this->delDp(id, time, dir.toChar());
+    this->delDp(otherId, time, dir.toChar());
     (void)Os::FileSystem::removeFile(stateFile.toChar());
     this->component.shutdown();
 }
