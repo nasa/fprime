@@ -135,7 +135,7 @@ googletest/googletest/include/gtest/gtest-printers.h
 googletest/googletest/include/gtest/gtest-test-part.h
                                                1       1   100%
 googletest/googletest/include/gtest/gtest.h
-                                              43      23    53%   244,252,257-258,339,1338,1343,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
+                                              43      22    51%   244,252,257-258,339,1338,1343,1362,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
 googletest/googletest/include/gtest/internal/gtest-death-test-internal.h
                                                6       4    66%   95-96
 googletest/googletest/include/gtest/internal/gtest-internal.h
@@ -172,7 +172,7 @@ Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 166     139    83%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,262-263
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,194,248-249,253,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     157    92%   21-26,28,248-249,253,318,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -207,7 +207,7 @@ Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
 Os/Posix/RawTime.cpp                          44      41    93%   64,76,80
 Os/Posix/RawTime.hpp                           1       1   100%
-Os/Posix/Task.cpp                            156     106    67%   45-47,51,55-58,60-61,63-64,68-69,71-72,75-77,87-89,93-95,135-136,141,143-146,149-150,155,184,196,243,251,265-267,269-271,291-292,296-297,299
+Os/Posix/Task.cpp                            156     105    67%   45-47,51,55-58,60-61,63-64,68-69,71-72,75-77,87-89,93-95,135-136,141,143-146,149-150,155,184,196,243,251,265-267,269-271,290-292,296-297,299
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      71    92%   84,121,139-142
 Os/Queue.hpp                                   4       4   100%
@@ -253,7 +253,7 @@ Os/TaskString.hpp                             16      16   100%
 Os/ValidatedFile.cpp                          21      13    61%   31-34,44-45,52-53
 Os/ValidateFileCommon.cpp                    139     100    71%   23,38,53,71,79,82,106,109,123-124,127-137,140,145-146,149-150,153-159,162,165-166,169,186,193
 Svc/ActivePhaser/ActivePhaser.cpp             97      97   100%
-Svc/ActiveRateGroup/ActiveRateGroup.cpp       55      46    83%   43-45,48-50,52-53,79
+Svc/ActiveRateGroup/ActiveRateGroup.cpp       55      46    83%   47-49,52-54,56-57,85
 Svc/ActiveTextLogger/ActiveTextLogger.cpp
                                               65      47    72%   32-34,37-39,41,63-64,81-83,90-95
 Svc/ActiveTextLogger/LogFile.cpp              51      50    98%   115
@@ -337,7 +337,7 @@ Svc/Ccsds/Utils/IdlePacket.cpp                13      13   100%
 Svc/Ccsds/Utils/SdlsAuthMask.hpp              12      12   100%
 Svc/ChronoTime/ChronoTime.cpp                  8       8   100%
 Svc/CmdDispatcher/CommandDispatcherImpl.cpp
-                                             143     140    97%   222,224-225
+                                             153     147    96%   179-181,235,237-238
 Svc/CmdSequencer/CmdSequencerImpl.cpp        323     291    90%   59,80,88-90,117-119,189-191,215-220,222,224,303-304,378-380,389-391,405-407,478-479
 Svc/CmdSequencer/CmdSequencerImpl.hpp         15      15   100%
 Svc/CmdSequencer/Events.cpp                   60      60   100%
@@ -348,21 +348,21 @@ Svc/CmdSequencer/Sequence.cpp                 46      44    95%   74-75
 Svc/CmdSplitter/CmdSplitter.cpp               20      20   100%
 Svc/ComAggregator/ComAggregator.cpp          200     197    98%   223,225-226
 Svc/ComLogger/ComLogger.cpp                  117     114    97%   119,121-122
-Svc/ComLoggerDp/ComLoggerDp.cpp              123     122    99%   183
-Svc/ComQueue/ComQueue.cpp                    273     268    98%   266-268,538-539
+Svc/ComLoggerDp/ComLoggerDp.cpp              132     128    97%   96-98,195
+Svc/ComQueue/ComQueue.cpp                    310     305    98%   274-276,596-597
 Svc/ComRetry/ComRetry.cpp                     50      50   100%
 Svc/ComSplitter/ComSplitter.cpp               12      12   100%
 Svc/ComStub/ComStub.cpp                       70      69    98%   34
 Svc/DpCatalog/DpCatalog.cpp                  521     442    84%   62,77,82-85,132-133,145-147,159,161-162,178-180,257-259,302-304,314,319-320,325-326,347-349,377-378,385-386,394,397-398,414,421,423,428,467,485,504-505,515-516,524-526,531-533,555-556,562-563,571,573,616-617,721,725-726,732,735-736,773-774,842,847-848,867-868,962-963,968-969
 Svc/DpCatalog/DpCatalog.hpp                    1       1   100%
 Svc/DpCompressProc/DpCompressProc.cpp        173     153    88%   54,67-68,79-81,88,95,207-209,213,317-319,355-357,399-400
-Svc/DpManager/DpManager.cpp                   39      38    97%   91
-Svc/DpWriter/DpWriter.cpp                    127     127   100%
+Svc/DpManager/DpManager.cpp                   49      45    91%   63-65,104
+Svc/DpWriter/DpWriter.cpp                    136     133    97%   126-128
 Svc/DpZLibCompressor/DpZLibCompressor.cpp
                                               79      74    93%   104-106,127-128
 Svc/DpZLibCompressor/DpZLibCompressor.hpp
                                                2       2   100%
-Svc/EventManager/EventManager.cpp             94      84    89%   39-41,82,84,107-108,180,182-183
+Svc/EventManager/EventManager.cpp            103      90    87%   39-41,82,84,107-108,183-185,192,194-195
 Svc/FatalHandler/FatalHandlerComponentCommonImpl.cpp
                                                3       0     0%   22-23,25
 Svc/FatalHandler/FatalHandlerComponentLinuxImpl.cpp
@@ -372,7 +372,7 @@ Svc/FileDownlink/File.cpp                     33      26    78%   43-44,48-49,59
 Svc/FileDownlink/FileDownlink.cpp            303     259    85%   62-64,102-103,123-124,126-127,137,143-145,151,187-188,190-191,201,222-223,225-226,236,257-263,265,269,307-310,312,372-373,483-485,488
 Svc/FileDownlink/FileDownlink.hpp             33      33   100%
 Svc/FileDownlink/Warnings.cpp                 16       8    50%   20-23,25-28
-Svc/FileManager/FileManager.cpp              350     315    90%   143-146,247-250,301-302,326-328,352-355,379-380,382-383,438,440-441,494,496-497,547,561,568-569,571-574
+Svc/FileManager/FileManager.cpp              352     314    89%   143-146,247-250,301-302,326-328,352-355,379-380,382-383,438,440-441,494,496-497,506-508,547,561,568-569,571-574
 Svc/FileUplink/File.cpp                       26      23    88%   25,48,53
 Svc/FileUplink/FileUplink.cpp                135     122    90%   47-49,59-61,70,86-88,94,96-97
 Svc/FileUplink/FileUplink.hpp                 21      21   100%
@@ -381,7 +381,7 @@ Svc/FileWorker/FileWorker.cpp                342     306    89%   85-88,191-194,
 Svc/FprimeDeframer/FprimeDeframer.cpp         54      54   100%
 Svc/FprimeFramer/FprimeFramer.cpp             41      41   100%
 Svc/FprimeRouter/FprimeRouter.cpp             57      55    96%   48,68
-Svc/FpySequencer/FpySequencer.cpp            266     217    81%   269-271,352-355,466,468-474,477,479-481,483-490,493,495-501,504-511,521-524,537-538
+Svc/FpySequencer/FpySequencer.cpp            269     217    80%   269-271,352-355,435-437,471,473-479,482,484-486,488-495,498,500-506,509-516,526-529,542-543
 Svc/FpySequencer/FpySequencer.hpp              2       2   100%
 Svc/FpySequencer/FpySequencerDirectives.cpp
                                             1216    1057    86%   29-30,51,55,59,422-425,434-437,442-443,464-465,522-523,546-547,613,1231-1233,1243-1257,1261-1266,1273-1371,1381-1382,1543-1544,1549,1673-1674,1766-1767,1802-1803,1864-1865,1867
@@ -425,7 +425,7 @@ Svc/TlmPacketizer/TlmPacketizer.cpp          472     448    94%   165,296,298-29
 Svc/Types/EventSeverityFilter/EventSeverityFilter.cpp
                                               46      45    97%   41
 Svc/Version/Version.cpp                      172     166    96%   124-126,256,258-259
-Svc/WasmSequencer/WasmSequencer.cpp          303     295    97%   33,334-335,337,456-457,563-564
+Svc/WasmSequencer/WasmSequencer.cpp          313     302    96%   34,255-257,350-351,353,472-473,579-580
 Svc/WasmSequencer/WasmSequencer.hpp            7       7   100%
 Svc/WasmSequencer/WasmSequencerController.cpp
                                              222     217    97%   207-208,454,456-457
@@ -447,5 +447,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      26298   22501    85%
+TOTAL                                      26397   22575    85%
 ------------------------------------------------------------------------------
