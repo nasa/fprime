@@ -53,6 +53,7 @@ class CfdpManager;
 class Engine;
 class Channel;
 class Transaction;
+class FinPdu;
 
 // ======================================================================
 // Dispatch Table Type Definitions
@@ -362,6 +363,24 @@ class Transaction {
      * @param pdu Buffer containing the FIN PDU to process
      */
     void s2Fin(const Fw::Buffer& pdu);
+
+    /************************************************************************/
+    /** @brief Deserialize a received FIN PDU.
+     *
+     * Emits FailFinPduDeserialization on failure.
+     *
+     * @param pdu Buffer containing the FIN PDU
+     * @param fin Output FIN PDU
+     * @returns true if the FIN deserialized successfully
+     */
+    bool s2DeserializeFin(const Fw::Buffer& pdu, FinPdu& fin);
+
+    /************************************************************************/
+    /** @brief S2 handling of a successfully deserialized FIN.
+     *
+     * @param fin The FIN PDU to process
+     */
+    void s2HandleFin(const FinPdu& fin);
 
     /************************************************************************/
     /** @brief S2 NAK PDU received handling.
