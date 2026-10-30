@@ -429,6 +429,36 @@ void FileWorkerTester ::testWriteReadRoundTrip() {
     (void)::remove(hashFileChar);
 }
 
+void FileWorkerTester ::testWriteHashFailure() {
+    const char* fnameChar = "testhashfailure.bin";
+    const char* hashFileChar = "testhashfailure.bin.CRC32";
+    const FwSizeType dataSize = 32;
+    U8 data[dataSize] = {};
+    for (FwSizeType i = 0; i < dataSize; ++i) {
+        data[i] = static_cast<U8>(i);
+    }
+
+    (void)Os::FileSystem::removeFile(fnameChar);
+    (void)Os::FileSystem::removeFile(hashFileChar);
+    (void)Os::FileSystem::removeDirectory(hashFileChar);
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::createDirectory(hashFileChar, true));
+
+    Fw::Buffer buffer(data, dataSize);
+    Fw::String fname = fnameChar;
+    this->invoke_to_writeIn(0, fname, buffer, 0, false);
+    this->component.doDispatch();
+
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_FAILED_TO_WRITE, 0);
+    ASSERT_EVENTS_OpenFileError_SIZE(1);
+
+    FwSizeType fileSize = 0;
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::getFileSize(fnameChar, fileSize));
+    ASSERT_EQ(dataSize, fileSize);
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::removeFile(fnameChar));
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::removeDirectory(hashFileChar));
+}
+
 void FileWorkerTester ::testWriteTruncatesExisting() {
     const char* fnameChar = "testtruncate.txt";
     const char* hashFileChar = "testtruncate.txt.CRC32";
