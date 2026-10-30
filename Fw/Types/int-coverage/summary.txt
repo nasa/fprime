@@ -27,7 +27,7 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Fw/Types/Serializable.hpp
                                                6       2    33%   1164,1201,1210,1440
 /home/runner/work/fprime/fprime/Fw/Types/snprintf_format.cpp
-                                              21      12    57%   10,12-15,25,31,35,41
+                                              21      13    61%   10,12-15,31,35,41
 /home/runner/work/fprime/fprime/Fw/Types/sscanf_scan.cpp
                                               19       0     0%   11,17-20,23,28-29,31-32,35-36,39-40,42-44,46,49
 /home/runner/work/fprime/fprime/Fw/Types/StringBase.cpp
@@ -39,5 +39,5 @@ File                                       Lines    Exec  Cover   Missing
 /home/runner/work/fprime/fprime/Fw/Types/StringUtils.cpp
                                               60      48    80%   10,24-26,29,52,57,73,82,96,101,106
 ------------------------------------------------------------------------------
-TOTAL                                       1468     539    36%
+TOTAL                                       1468     540    36%
 ------------------------------------------------------------------------------

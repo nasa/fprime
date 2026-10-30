@@ -18,7 +18,7 @@ build-fprime-automatic-native/sub-build-info-cache/CMakeFiles/3.26.0/CompilerIdC
                                                9       0     0%   839,842-845,847,861-862,864
 build-fprime-automatic-native/sub-build-info-cache/CMakeFiles/3.26.0/CompilerIdCXX/CMakeCXXCompilerId.cpp
                                                9       0     0%   830,832-835,837,851-852,854
-Ref/BlockDriver/BlockDriver.cpp               11       8    72%   11,13-14
+Ref/BlockDriver/BlockDriver.cpp               21      15    71%   12,14-15,24-26
 Ref/DpDemo/DpDemo.cpp                        118      90    76%   100-104,113-115,143-144,158-160,163,171,173-175,177-178,180-182,184,186-188,190
 Ref/Main.cpp                                  32      26    81%   31-33,75,80-81
 Ref/PingReceiver/PingReceiverComponentImpl.cpp
@@ -32,5 +32,5 @@ Ref/Top/RefTopology.cpp                       42      42   100%
 Ref/TypeDemo/TypeDemo.cpp                     91      16    17%   23-27,35,40-41,43-45,47,50-53,55,60-61,63-65,73,78-79,81-83,93,98-99,101-103,105-106,108-109,111-112,114-115,117-118,120-121,123-124,126-137,139,142-155
 Ref/TypeDemo/TypeDemo.hpp                      1       1   100%
 ------------------------------------------------------------------------------
-TOTAL                                       7800    3595    46%
+TOTAL                                       7810    3602    46%
 ------------------------------------------------------------------------------

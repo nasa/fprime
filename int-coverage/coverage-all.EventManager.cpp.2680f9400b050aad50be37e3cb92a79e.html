@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-29 22:11:11</td>
+      <td>2026-10-30 22:09:23</td>
     </tr>
   </table>
 </div>
@@ -40,21 +40,21 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>43</td>
-      <td>93</td>
-      <td class="coverage-low">46.2%</td>
+      <td>49</td>
+      <td>102</td>
+      <td class="coverage-low">48.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
-      <td>7</td>
-      <td>9</td>
-      <td class="coverage-medium">77.8%</td>
+      <td>8</td>
+      <td>11</td>
+      <td class="coverage-low">72.7%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>42</td>
-      <td>104</td>
-      <td class="coverage-low">40.4%</td>
+      <td>44</td>
+      <td>107</td>
+      <td class="coverage-low">41.1%</td>
     </tr>
   </table>
 </div>
@@ -71,13 +71,15 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l146">Svc::EventManager::DUMP_FILTER_STATE_cmdHandler(unsigned int, unsigned int) (line 146)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l19">Svc::EventManager::EventManager(char const*) (line 19)</a></td><td>called 1 time</td><td>49.0%</td></tr>
+    <tr><td><a href="#l19">Svc::EventManager::EventManager(char const*) (line 19)</a></td><td>called 1 time</td><td>50.0%</td></tr>
     <tr><td><a href="#l31">Svc::EventManager::LogRecv_handler(short, unsigned int, Fw::Time&amp;, Fw::LogSeverity const&amp;, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 31)</a></td><td>called 691 times</td><td>63.0%</td></tr>
     <tr><td><a href="#l92">Svc::EventManager::SET_EVENT_FILTER_cmdHandler(unsigned int, unsigned int, Svc::EventManager_FilterSeverity const&amp;, Svc::EventManager_Enabled const&amp;) (line 92)</a></td><td>called 13 times</td><td>51.0%</td></tr>
     <tr><td><a href="#l114">Svc::EventManager::SET_ID_FILTER_cmdHandler(unsigned int, unsigned int, unsigned int, Svc::EventManager_Enabled const&amp;) (line 114)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l68">Svc::EventManager::loqQueue_internalInterfaceHandler(unsigned int, Fw::Time const&amp;, Fw::LogSeverity const&amp;, Fw::LinearBufferTemplate&lt;506ul&gt; const&amp;) (line 68)</a></td><td>called 558 times</td><td>83.0%</td></tr>
-    <tr><td><a href="#l180">Svc::EventManager::pingIn_handler(short, unsigned int) (line 180)</a></td><td>called 67 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l176">Svc::EventManager::run_handler(short, unsigned int) (line 176)</a></td><td>called 67 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l192">Svc::EventManager::pingIn_handler(short, unsigned int) (line 192)</a></td><td>called 66 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l187">Svc::EventManager::runInternal_internalInterfaceHandler() (line 187)</a></td><td>called 66 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l183">Svc::EventManager::runInternal_overflowHook() (line 183)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l176">Svc::EventManager::run_handler(short, unsigned int) (line 176)</a></td><td>called 66 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l29">Svc::EventManager::~EventManager() (line 29)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -233,7 +235,7 @@
         </details>
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="n">EventManager</span><span class="o">::</span><span class="n">EventManager</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">EventManagerComponentBase</span><span class="p">(</span><span class="n">name</span><span class="p">),</span><span class="w"> </span><span class="n">m_severityFilter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="n">EventManager</span><span class="o">::</span><span class="n">EventManager</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">EventManagerComponentBase</span><span class="p">(</span><span class="n">name</span><span class="p">),</span><span class="w"> </span><span class="n">m_severityFilter</span><span class="p">(),</span><span class="w"> </span><span class="n">m_runQueued</span><span class="p">(</span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
@@ -1479,82 +1481,179 @@
       <td class="lineno"><a id="l176" href="#l176">176</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">67</td>
+      <td class="linecount coveredLine">66</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l177" href="#l177">177</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 67 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 67 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 67 times.</div>
-          </div>
-        </details>
       </td>
-      <td class="linecount coveredLine">67</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_EventsDropped</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getNumMsgsDropped</span><span class="p">());</span></td>
+      <td class="linecount coveredLine">66</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l178" href="#l178">178</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 66 times.</div>
+            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount coveredLine">67</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
+      <td class="linecount partialCoveredLine">66</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runQueued</span><span class="p">.</span><span class="n">compare_exchange_strong</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l179" href="#l179">179</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 66 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">66</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">runInternal_internalInterfaceInvoke</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l180" href="#l180">180</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l181" href="#l181">181</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">66</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l182" href="#l182">182</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l180" href="#l180">180</a></td>
+      <td class="lineno"><a id="l183" href="#l183">183</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">67</td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">runInternal_overflowHook</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l184" href="#l184">184</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runQueued</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l185" href="#l185">185</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l186" href="#l186">186</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l187" href="#l187">187</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">66</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">runInternal_internalInterfaceHandler</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l188" href="#l188">188</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">66</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runQueued</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l189" href="#l189">189</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">3/3</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 66 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 66 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 66 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">66</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_EventsDropped</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getNumMsgsDropped</span><span class="p">());</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l190" href="#l190">190</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">66</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l191" href="#l191">191</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l192" href="#l192">192</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">66</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">pingIn_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l181" href="#l181">181</a></td>
+      <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// return key</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l182" href="#l182">182</a></td>
+      <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">67</td>
+      <td class="linecount coveredLine">66</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">pingOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l183" href="#l183">183</a></td>
+      <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">67</td>
+      <td class="linecount coveredLine">66</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l184" href="#l184">184</a></td>
+      <td class="lineno"><a id="l196" href="#l196">196</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l185" href="#l185">185</a></td>
+      <td class="lineno"><a id="l197" href="#l197">197</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l186" href="#l186">186</a></td>
+      <td class="lineno"><a id="l198" href="#l198">198</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

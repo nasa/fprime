@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-29 22:11:11</td>
+      <td>2026-10-30 22:09:23</td>
     </tr>
   </table>
 </div>
@@ -74,8 +74,8 @@
     <tr><td><a href="#l151">Svc::HealthImpl::HLTH_ENABLE_cmdHandler(unsigned int, unsigned int, Fw::Enabled const&amp;) (line 151)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l161">Svc::HealthImpl::HLTH_PING_ENABLE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Fw::Enabled const&amp;) (line 161)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l23">Svc::HealthImpl::HealthImpl(char const*) (line 23)</a></td><td>called 1 time</td><td>50.0%</td></tr>
-    <tr><td><a href="#l73">Svc::HealthImpl::PingReturn_handler(short, unsigned int) (line 73)</a></td><td>called 990 times</td><td>40.0%</td></tr>
-    <tr><td><a href="#l86">Svc::HealthImpl::Run_handler(short, unsigned int) (line 86)</a></td><td>called 67 times</td><td>42.0%</td></tr>
+    <tr><td><a href="#l73">Svc::HealthImpl::PingReturn_handler(short, unsigned int) (line 73)</a></td><td>called 975 times</td><td>40.0%</td></tr>
+    <tr><td><a href="#l86">Svc::HealthImpl::Run_handler(short, unsigned int) (line 86)</a></td><td>called 66 times</td><td>42.0%</td></tr>
     <tr><td><a href="#l215">Svc::HealthImpl::findEntry(Fw::StringTemplate&lt;40ul&gt; const&amp;) (line 215)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l41">Svc::HealthImpl::init(unsigned long, int) (line 41)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l46">Svc::HealthImpl::setPingEntries(Svc::HealthImpl::PingEntry*, short, unsigned int) (line 46)</a></td><td>called 1 time</td><td>73.0%</td></tr>
@@ -639,7 +639,7 @@
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">990</td>
+      <td class="linecount coveredLine">975</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">HealthImpl</span><span class="o">::</span><span class="n">PingReturn_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -656,11 +656,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 990 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 975 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">990</td>
+      <td class="linecount partialCoveredLine">975</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">portNum</span><span class="p">].</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -695,21 +695,21 @@
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">990</td>
+      <td class="linecount coveredLine">975</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">portNum</span><span class="p">].</span><span class="n">cycleCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">990</td>
+      <td class="linecount coveredLine">975</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">portNum</span><span class="p">].</span><span class="n">fatalReported</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">990</td>
+      <td class="linecount coveredLine">975</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">portNum</span><span class="p">].</span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -723,7 +723,7 @@
       <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">990</td>
+      <td class="linecount coveredLine">975</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -737,7 +737,7 @@
       <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">67</td>
+      <td class="linecount coveredLine">66</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">HealthImpl</span><span class="o">::</span><span class="n">Run_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -753,19 +753,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 1057 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 1041 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1057</td>
+      <td class="linecount partialCoveredLine">1041</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">queue_depth</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l89" href="#l89">89</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1057</td>
+      <td class="linecount coveredLine">1041</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">MsgDispatchStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">doDispatch</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -774,19 +774,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 67 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 990 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 66 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 975 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1057</td>
+      <td class="linecount coveredLine">1041</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">MSG_DISPATCH_EMPTY</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">stat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">67</td>
+      <td class="linecount coveredLine">66</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -800,7 +800,7 @@
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">990</td>
+      <td class="linecount coveredLine">975</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">MSG_DISPATCH_OK</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">stat</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -823,12 +823,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 67 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 66 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">67</td>
+      <td class="linecount partialCoveredLine">66</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_enabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">::</span><span class="n">ENABLED</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -865,12 +865,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 1005 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 67 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 990 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 66 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1072</td>
+      <td class="linecount coveredLine">1056</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numPingEntries</span><span class="p">;</span><span class="w"> </span><span class="n">entry</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -879,12 +879,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 1005 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 990 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1005</td>
+      <td class="linecount partialCoveredLine">990</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">::</span><span class="n">ENABLED</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">enabled</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -900,12 +900,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 1005 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 990 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1005</td>
+      <td class="linecount partialCoveredLine">990</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">cycleCount</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -919,14 +919,14 @@
       <td class="lineno"><a id="l106" href="#l106">106</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1005</td>
+      <td class="linecount coveredLine">990</td>
       <td class="src coveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">fatalReported</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l107" href="#l107">107</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1005</td>
+      <td class="linecount coveredLine">990</td>
       <td class="src coveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_key</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -940,7 +940,7 @@
       <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1005</td>
+      <td class="linecount coveredLine">990</td>
       <td class="src coveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">PingSend_out</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">key</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -954,7 +954,7 @@
       <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1005</td>
+      <td class="linecount coveredLine">990</td>
       <td class="src coveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_key</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -968,7 +968,7 @@
       <td class="lineno"><a id="l113" href="#l113">113</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1005</td>
+      <td class="linecount coveredLine">990</td>
       <td class="src coveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">cycleCount</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1174,11 +1174,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 67 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 66 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">67</td>
+      <td class="linecount partialCoveredLine">66</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">isConnected_WdogStroke_OutputPort</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1199,7 +1199,7 @@
       <td class="lineno"><a id="l145" href="#l145">145</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">67</td>
+      <td class="linecount coveredLine">66</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
