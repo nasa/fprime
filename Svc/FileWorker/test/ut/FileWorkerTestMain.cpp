@@ -61,6 +61,11 @@ TEST(Nominal, testWriteTruncatesExisting) {
     tester.testWriteTruncatesExisting();
 }
 
+TEST(Nominal, testWriteHashFailure) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteHashFailure();
+}
+
 TEST(Nominal, testTimeout) {
     Svc::FileWorkerTester tester;
     tester.testTimeout();
