@@ -36,7 +36,8 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Fw::Log`](../../../Fw/Log/docs/sdd.md) | LogRecv | Input | Synchronous | Receive events from components
 [`Fw::Com`](../../../Fw/Log/docs/sdd.md) | PktSend | Output | n/a | Send event packets to external user
 [`Svc::FatalEvent`](../../../Svc/Fatal/docs/sdd.md) | FatalAnnounce | Output | n/a | Send FATAL event (to health)
-[`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | run | Input | Async (drop) | Rate group driven telemetry updates
+[`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | run | Input | Synchronous | Rate group driven telemetry updates
+n/a | runInternal | Internal | Asynchronous (`hook` overflow behavior) | Performs the `run` work on the component thread; at most one message queued
 [`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | pingIn | Input | Asynchronous | Ping input from health checker
 [`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | pingOut | Output | n/a | Ping response to health checker
 [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Tlm | Output | n/a | Send telemetry channels

@@ -1,9 +1,9 @@
 {
   "schema": 1,
   "artifact": "sdd",
-  "generated_at": "2026-10-29T21:18:19Z",
+  "generated_at": "2026-10-30T21:08:22Z",
   "ref": "devel",
-  "commit": "46db58deffd10e0197f3398f9e6126475304ace5",
+  "commit": "15ebbf3db89f9102ff16e9f66e7302d5fa32fba0",
   "tier": "platinum",
   "has_sdd": true,
   "sections": 20,

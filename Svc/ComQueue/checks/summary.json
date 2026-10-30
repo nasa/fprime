@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-29T21:18:13Z",
+  "generated_at": "2026-10-30T21:08:17Z",
   "ref": "devel",
-  "commit": "46db58deffd10e0197f3398f9e6126475304ace5",
+  "commit": "15ebbf3db89f9102ff16e9f66e7302d5fa32fba0",
   "passed": 3,
   "failed": 8,
   "skipped": 5,
@@ -61,9 +61,10 @@
         "requirement 'SVC-COMQUEUE-009' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:36) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'SVC-COMQUEUE-010' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:37) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'SVC-COMQUEUE-011' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:38) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-COMQUEUE-012' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:39) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+        "requirement 'SVC-COMQUEUE-012' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:39) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-COMQUEUE-013' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:40) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "12 requirement(s) checked"
+      "detail": "13 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -97,7 +98,7 @@
         "command 'FLUSH_ALL_QUEUES' has no requirement referencing it (add a requirement mentioning 'FLUSH_ALL_QUEUES')",
         "command 'SET_QUEUE_PRIORITY' has no requirement referencing it (add a requirement mentioning 'SET_QUEUE_PRIORITY')"
       ],
-      "detail": "3 command(s) traced against 12 requirement(s)"
+      "detail": "3 command(s) traced against 13 requirement(s)"
     },
     {
       "id": "R2",
@@ -107,9 +108,13 @@
       "status": "fail",
       "failures": [
         "telemetry channel 'comQueueDepth' has no requirement referencing it (add a requirement mentioning 'comQueueDepth')",
-        "telemetry channel 'buffQueueDepth' has no requirement referencing it (add a requirement mentioning 'buffQueueDepth')"
+        "telemetry channel 'buffQueueDepth' has no requirement referencing it (add a requirement mentioning 'buffQueueDepth')",
+        "telemetry channel 'comIngressDropped' has no requirement referencing it (add a requirement mentioning 'comIngressDropped')",
+        "telemetry channel 'buffIngressDropped' has no requirement referencing it (add a requirement mentioning 'buffIngressDropped')",
+        "telemetry channel 'comManagedDropped' has no requirement referencing it (add a requirement mentioning 'comManagedDropped')",
+        "telemetry channel 'buffManagedDropped' has no requirement referencing it (add a requirement mentioning 'buffManagedDropped')"
       ],
-      "detail": "2 telemetry channel(s) traced against 12 requirement(s)"
+      "detail": "6 telemetry channel(s) traced against 13 requirement(s)"
     },
     {
       "id": "R3",
@@ -121,7 +126,7 @@
         "event 'QueueOverflow' has no requirement referencing it (add a requirement mentioning 'QueueOverflow')",
         "event 'QueuePriorityChanged' has no requirement referencing it (add a requirement mentioning 'QueuePriorityChanged')"
       ],
-      "detail": "2 event(s) traced against 12 requirement(s)"
+      "detail": "2 event(s) traced against 13 requirement(s)"
     },
     {
       "id": "R4",
@@ -155,7 +160,7 @@
         "port 'dataOut' has no requirement referencing it (add a requirement mentioning 'dataOut')",
         "port 'bufferReturnOut' has no requirement referencing it (add a requirement mentioning 'bufferReturnOut')"
       ],
-      "detail": "7 port(s) traced against 12 requirement(s)"
+      "detail": "7 port(s) traced against 13 requirement(s)"
     },
     {
       "id": "R7",
@@ -175,9 +180,10 @@
         "requirement 'SVC-COMQUEUE-009' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:36) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'SVC-COMQUEUE-010' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:37) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'SVC-COMQUEUE-011' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:38) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-COMQUEUE-012' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:39) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'SVC-COMQUEUE-012' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:39) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-COMQUEUE-013' (/home/runner/work/fprime/fprime/Svc/ComQueue/docs/sdd.md:40) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "12 requirement(s) checked"
+      "detail": "13 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -186,7 +192,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/ComQueue",
       "status": "pass",
       "failures": [],
-      "detail": "12 requirement(s) checked"
+      "detail": "13 requirement(s) checked"
     },
     {
       "id": "U3",
@@ -195,9 +201,10 @@
       "module": "/home/runner/work/fprime/fprime/Svc/ComQueue",
       "status": "fail",
       "failures": [
-        "unit-test dependency 'Fw/Com' (from #include \"Fw/Com/ComPacket.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
+        "unit-test dependency 'Fw/Com' (from #include \"Fw/Com/ComPacket.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Os' (from #include \"Os/Task.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
       ],
-      "detail": "2 dependency module(s) checked"
+      "detail": "3 dependency module(s) checked"
     }
   ]
 }

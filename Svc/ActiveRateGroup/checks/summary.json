@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-29T21:18:13Z",
+  "generated_at": "2026-10-30T21:08:17Z",
   "ref": "devel",
-  "commit": "46db58deffd10e0197f3398f9e6126475304ace5",
+  "commit": "15ebbf3db89f9102ff16e9f66e7302d5fa32fba0",
   "passed": 2,
   "failed": 7,
   "skipped": 7,
@@ -173,9 +173,10 @@
       "module": "/home/runner/work/fprime/fprime/Svc/ActiveRateGroup",
       "status": "fail",
       "failures": [
-        "unit-test dependency 'Fw/Obj' (from #include \"Fw/Obj/SimpleObjRegistry.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
+        "unit-test dependency 'Fw/Obj' (from #include \"Fw/Obj/SimpleObjRegistry.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Os' (from #include \"Os/Task.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
       ],
-      "detail": "1 dependency module(s) checked"
+      "detail": "2 dependency module(s) checked"
     }
   ]
 }
