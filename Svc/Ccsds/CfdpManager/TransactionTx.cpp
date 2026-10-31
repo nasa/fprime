@@ -274,8 +274,10 @@ void Transaction::sTickNak(I32* cont) {
     bool nakProcessed = false;
     Status::T status;
 
-    // Only Class 2 transactions should process NAKs
-    if (this->m_txn_class == Cfdp::Class::CLASS_2) {
+    // Only live Class 2 transactions should process NAKs. A finished transaction (HOLD) is
+    // only waiting on its inactivity timer to be recycled and has nothing left to resend;
+    // it may also never have been assigned a chunk list if it finished while still on PEND.
+    if (this->m_txn_class == Cfdp::Class::CLASS_2 && this->m_state != TxnState::TXN_STATE_HOLD) {
         status = this->sCheckAndRespondNak(&nakProcessed);
         if ((status == Cfdp::Status::SUCCESS) && nakProcessed) {
             *cont = 1;  // cause dispatcher to re-enter this scheduler cycle
