@@ -233,3 +233,12 @@ event CS_StepRecordPending(
   severity warning low \
   id 26 \
   format "Sequence {}: step rejected, previous command pending until {} s {} us"
+
+@ A sequence file name resolved outside the directory set with configureSandbox
+event CS_FileOutsideSandbox(
+                             fileName: string size FileNameStringSize @< The rejected sequence file name
+                             sandboxDir: string size FileNameStringSize @< The configured sandbox directory
+                           ) \
+  severity warning high \
+  id 27 \
+  format "Sequence file {} is outside the configured sandbox directory {}"

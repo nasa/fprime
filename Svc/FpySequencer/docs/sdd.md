@@ -156,5 +156,8 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | STEP | When paused, executes the next statement then returns to paused state. Not valid during automatic execution. |
 | DUMP_STACK_TO_FILE | Writes the contents of the stack to a file. Not valid during automatic execution. |
 
+## File Sandbox
+`configureSandbox(directory)` optionally restricts the files the sequencer opens to a directory, in the same way as the `Os::SandboxedFile` sandboxes of the file-handling components. The directory may be absolute or relative to the current working directory. Once configured, a sequence file (`RUN`, `RUN_ARGS`, `VALIDATE`, `VALIDATE_ARGS` and the `seqRunIn` port) or a `DUMP_STACK_TO_FILE` output file whose name resolves outside the directory is rejected with the `FileOutsideSandbox` event before the file is opened. Until `configureSandbox()` is called, any path is allowed, which keeps existing deployments unchanged. Call it from topology setup code. Path checking is textual and does not follow symbolic links.
+
 ## Directives
 See `directives.md` for documentation on all directives.

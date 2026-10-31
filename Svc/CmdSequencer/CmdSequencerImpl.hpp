@@ -16,6 +16,7 @@
 #include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/File.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Os/ValidateFile.hpp"
 #include "Svc/CmdSequencer/CmdSequencerComponentAc.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
@@ -492,6 +493,13 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     void setSequenceFormat(Sequence& sequence  //!< The sequence object
     );
 
+    //! (Optional) Restrict sequence file loads to a directory.
+    //! Every sequence load (CS_RUN, CS_VALIDATE, seqRunIn, seqDispatchIn) whose file name
+    //! resolves outside the directory is rejected with CS_FileOutsideSandbox before the file
+    //! is opened. Until this is called, any path is allowed.
+    void configureSandbox(const char* directory  //!< The allowed directory (absolute, or relative to CWD)
+    );
+
     //! Give the sequence a memory buffer.
     //! Call this after constructor and init, and after setting
     //! the sequence format, but before task is spawned.
@@ -659,6 +667,12 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     void setCmdTimeout(const Fw::Time& currentTime  //!< The current time
     );
 
+    //! Check a sequence file name against the configured sandbox directory, if any.
+    //! Emits CS_FileOutsideSandbox and counts an error on rejection.
+    //! \return true if the file may be opened
+    bool checkSandbox(const Fw::ConstStringBase& fileName  //!< The file name
+    );
+
     //! Shared body of the seqRunIn and seqDispatchIn handlers
     void doSequenceRun(const Fw::StringBase& fileName);
 
@@ -718,6 +732,12 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     FwOpcodeType m_opCode;
     U32 m_cmdSeq;
     bool m_join_waiting;
+
+    //! Directory sequence file loads are restricted to (resolved, with trailing '/')
+    char m_sandboxDir[Os::FilePathUtils::MAX_PATH_LENGTH];
+
+    //! Whether configureSandbox() has been called; until then any path is allowed
+    bool m_sandboxConfigured;
 
     //! Telemetry to update sequence not running
     const Fw::String NO_SEQ{"<no seq>"};
