@@ -56,6 +56,46 @@ TEST(Transaction, Class2TxLateFinAck) {
     tester.testClass2TxLateFinAck();
 }
 
+TEST(Transaction, Class2TxQueuedEarlyFinNoHang) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxQueuedEarlyFinNoHang();
+}
+
+TEST(Transaction, Class2TxQueuedAbandonNoHang) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxQueuedAbandonNoHang();
+}
+
+TEST(Transaction, Class2TxMalformedEarlyFinNoSpin) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxMalformedEarlyFinNoSpin();
+}
+
+TEST(Transaction, Class2TxThrottledNakMetadataYields) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxThrottledNakMetadataYields();
+}
+
+TEST(Transaction, Class2TxThrottledNakChunkRetries) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxThrottledNakChunkRetries();
+}
+
+TEST(Transaction, Class2TxThrottledInitialMetadataYields) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxThrottledInitialMetadataYields();
+}
+
+TEST(Transaction, PlaybackThrottledMetadataYields) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPlaybackThrottledMetadataYields();
+}
+
+TEST(Transaction, TxCycleNoProgressFailsTransaction) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTxCycleNoProgressFailsTransaction();
+}
+
 TEST(Transaction, Class1RxNominal) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass1RxNominal();

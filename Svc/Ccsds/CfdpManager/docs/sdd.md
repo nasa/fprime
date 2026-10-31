@@ -145,6 +145,8 @@ A specific case handled here is a syntactically valid FileData PDU that declares
 
 A related case is a Class 2 FileData PDU whose header declares more file-data octets than the PDU carries, following a Metadata PDU with an oversized `fileSize`. Such a PDU fails deserialization; the receive handler faults the transaction with `PROTOCOL_ERROR` (the same status used for other unsupported FileData PDUs) and tears it down instead of leaving it eligible for FIN/CRC processing. Independently, the CRC pass over the received file treats an end-of-file short read — fewer bytes returned than requested while `rx_crc_calc_bytes` is still below the declared file size — as a `FILE_SIZE_ERROR` (`RxReadCrcFailed`) rather than as progress, so a file shorter than its declared size can never keep the CRC loop spinning on zero-byte reads and pin the `CfdpManager` thread.
 
+On the transmit side, a FIN that arrives before a Class 2 send has finished transmitting is parsed before any transaction state changes. If the FIN fails deserialization, the event `FailFinPduDeserialization` is emitted and the transaction continues in its current sub-state. The transmit cycle also bounds its per-transaction dispatch loop: every dispatch must send a PDU, change the transaction's state or sub-state, or yield the cycle. A transaction whose dispatch does none of these is failed with `PROTOCOL_ERROR` instead of being dispatched again, so no PDU sequence can leave the `run1Hz` cycle spinning.
+
 ### Main Class Hierarchy
 
 CfdpManager ([CfdpManager.hpp](../CfdpManager.hpp))
@@ -220,7 +222,7 @@ The transmission throttling mechanism is implemented through a per-channel outgo
 
 **Buffer Management:**
 
-The transmission throttling mechanism works in conjunction with buffer allocation from downstream components. Two failure modes can occur: throttling limit reached (the `max_outgoing_pdus_per_cycle` limit is reached and no buffer allocation is attempted) or buffer exhaustion (the downstream buffer pool is exhausted and buffer allocation fails even when under the throttling limit). In both cases, the transaction defers PDU transmission until the next cycle by returning to a pending state and resuming processing in the next execution cycle. For Class 2 transactions, protocol timers (ACK, NAK, inactivity) continue running and will eventually trigger retransmissions or transaction abandonment if PDUs cannot be sent.
+The transmission throttling mechanism works in conjunction with buffer allocation from downstream components. Two failure modes can occur: throttling limit reached (the `max_outgoing_pdus_per_cycle` limit is reached and no buffer allocation is attempted) or buffer exhaustion (the downstream buffer pool is exhausted and buffer allocation fails even when under the throttling limit). In both cases, the transaction defers PDU transmission until the next cycle by returning to a pending state and resuming processing in the next execution cycle. This applies equally to the initial Metadata PDU, File Data PDUs, and Metadata or File Data PDUs resent in response to a NAK. A throttled resend in response to a NAK is retried on the next cycle and is not treated as a NAK response failure. For Class 2 transactions, protocol timers (ACK, NAK, inactivity) continue running and will eventually trigger retransmissions or transaction abandonment if PDUs cannot be sent.
 
 #### Receive Throttling
 
