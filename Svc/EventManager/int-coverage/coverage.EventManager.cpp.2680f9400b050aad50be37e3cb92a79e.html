@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-10-30 22:10:14</td>
+      <td>2026-10-31 22:12:30</td>
     </tr>
   </table>
 </div>
@@ -76,10 +76,10 @@
     <tr><td><a href="#l92">Svc::EventManager::SET_EVENT_FILTER_cmdHandler(unsigned int, unsigned int, Svc::EventManager_FilterSeverity const&amp;, Svc::EventManager_Enabled const&amp;) (line 92)</a></td><td>called 13 times</td><td>51.0%</td></tr>
     <tr><td><a href="#l114">Svc::EventManager::SET_ID_FILTER_cmdHandler(unsigned int, unsigned int, unsigned int, Svc::EventManager_Enabled const&amp;) (line 114)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l68">Svc::EventManager::loqQueue_internalInterfaceHandler(unsigned int, Fw::Time const&amp;, Fw::LogSeverity const&amp;, Fw::LinearBufferTemplate&lt;506ul&gt; const&amp;) (line 68)</a></td><td>called 558 times</td><td>83.0%</td></tr>
-    <tr><td><a href="#l192">Svc::EventManager::pingIn_handler(short, unsigned int) (line 192)</a></td><td>called 66 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l187">Svc::EventManager::runInternal_internalInterfaceHandler() (line 187)</a></td><td>called 66 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l192">Svc::EventManager::pingIn_handler(short, unsigned int) (line 192)</a></td><td>called 67 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l187">Svc::EventManager::runInternal_internalInterfaceHandler() (line 187)</a></td><td>called 67 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l183">Svc::EventManager::runInternal_overflowHook() (line 183)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l176">Svc::EventManager::run_handler(short, unsigned int) (line 176)</a></td><td>called 66 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l176">Svc::EventManager::run_handler(short, unsigned int) (line 176)</a></td><td>called 67 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l29">Svc::EventManager::~EventManager() (line 29)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -1481,14 +1481,14 @@
       <td class="lineno"><a id="l176" href="#l176">176</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l177" href="#l177">177</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1497,12 +1497,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 66 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 67 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">66</td>
+      <td class="linecount partialCoveredLine">67</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runQueued</span><span class="p">.</span><span class="n">compare_exchange_strong</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1511,11 +1511,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 66 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 67 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">runInternal_internalInterfaceInvoke</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1529,7 +1529,7 @@
       <td class="lineno"><a id="l181" href="#l181">181</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1571,14 +1571,14 @@
       <td class="lineno"><a id="l187" href="#l187">187</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">runInternal_internalInterfaceHandler</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l188" href="#l188">188</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runQueued</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1587,20 +1587,20 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 66 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 66 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 66 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 67 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 67 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 67 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_EventsDropped</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getNumMsgsDropped</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l190" href="#l190">190</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1614,7 +1614,7 @@
       <td class="lineno"><a id="l192" href="#l192">192</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">pingIn_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1628,14 +1628,14 @@
       <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">pingOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
