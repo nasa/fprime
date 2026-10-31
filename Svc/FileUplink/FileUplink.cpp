@@ -42,8 +42,9 @@ void FileUplink::configure(const char* directory) {
 // ----------------------------------------------------------------------
 
 void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
-    // If packet is too small to contain a packet type, log + deallocate and return
-    if (buffer.getSize() < sizeof(FwPacketDescriptorType)) {
+    // If packet is too small to contain a packet type plus at least one byte of file
+    // packet body, log + deallocate and return. A descriptor-only packet has nothing to decode.
+    if (buffer.getSize() <= sizeof(FwPacketDescriptorType)) {
         this->log_WARNING_HI_InvalidPacketReceived(Fw::ComPacketType::FW_PACKET_UNKNOWN);
         this->bufferSendOut_out(0, buffer);
         return;

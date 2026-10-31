@@ -159,8 +159,8 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
 
     // Strip FW_PACKET_FILE descriptor (first 2 bytes) from buffer
     // FprimeRouter sends the entire Space Packet data field, which includes the packet type descriptor
-    if (fwBuffer.getSize() < sizeof(FwPacketDescriptorType)) {
-        // Buffer too small - silently ignore
+    if (fwBuffer.getSize() <= sizeof(FwPacketDescriptorType)) {
+        // Buffer too small to hold the descriptor plus any PDU bytes - silently ignore
         this->dataInReturn_out(portNum, fwBuffer);
         return;
     }
