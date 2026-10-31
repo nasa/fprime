@@ -222,6 +222,21 @@ TEST(Command, AbandonTransactionInvalidChannel) {
     tester.testAbandonTransactionInvalidChannel();
 }
 
+TEST(Command, AbandonTransactionTwice) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testAbandonTransactionTwice();
+}
+
+TEST(Command, AbandonTransactionAfterCompletion) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testAbandonTransactionAfterCompletion();
+}
+
+TEST(Command, AbandonPlaybackTransactionAfterCompletion) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testAbandonPlaybackTransactionAfterCompletion();
+}
+
 TEST(Command, ResetCountersSingleChannel) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testResetCountersSingleChannel();

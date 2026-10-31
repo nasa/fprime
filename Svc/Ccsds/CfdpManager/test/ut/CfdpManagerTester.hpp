@@ -454,6 +454,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test AbandonTransaction command with invalid channel
     void testAbandonTransactionInvalidChannel();
 
+    //! Regression: a second AbandonTransaction for the same transaction is rejected
+    void testAbandonTransactionTwice();
+
+    //! Regression: AbandonTransaction on a completed commanded downlink is rejected
+    void testAbandonTransactionAfterCompletion();
+
+    //! Regression: AbandonTransaction on a completed playback child is rejected
+    void testAbandonPlaybackTransactionAfterCompletion();
+
     //! Test ResetCounters command for single channel
     void testResetCountersSingleChannel();
 
@@ -783,6 +792,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Wait for transaction to be recycled by inactivity timer
     void waitForTransactionRecycle(U8 channelId, U32 expectedSeqNum);
+
+    //! Abandon a transaction already finished (HOLD) and verify it is rejected without a second finish
+    void abandonFinishedTransaction(U8 channelId, TransactionSeq transactionSeq);
 
     //! Complete Class 2 transaction handshake (EOF-ACK, FIN, FIN-ACK)
     void completeClass2Handshake(U8 channelId, EntityId destEid, U32 expectedSeqNum, Transaction* txn);
