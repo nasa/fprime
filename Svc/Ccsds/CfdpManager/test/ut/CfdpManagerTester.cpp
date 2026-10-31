@@ -1601,6 +1601,57 @@ void CfdpManagerTester::testClass2TxThrottledInitialMetadataYields() {
     cleanupTestFile(srcFile);
 }
 
+void CfdpManagerTester::testPlaybackThrottledMetadataYields() {
+    // Regression test: with one outgoing PDU per cycle, a playback's first file sends its EOF
+    // from the tick handler, which uses up the cycle's budget before cycleTx starts the second
+    // file. That file's first Metadata send is throttled and must yield the cycle; it used to
+    // spin cycleTxFirstActive forever.
+    const char* srcDir = "test/ut/output/pb_throttle_src";
+    const char* dstDir = "test/ut/output/pb_throttle_dst";
+    const U8 channelId = TEST_CHANNEL_ID_0;
+    const U32 numFiles = 2;
+
+    Os::FileSystem::Status dirStatus = Os::FileSystem::createDirectory(srcDir);
+    ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
+    Fw::String files[numFiles] = {Fw::String(srcDir), Fw::String(srcDir)};
+    files[0] += "/a.bin";
+    files[1] += "/b.bin";
+    for (U32 i = 0; i < numFiles; ++i) {
+        FwSizeType fileSize;
+        createAndVerifyTestFile(files[i].toChar(), 50, fileSize);
+    }
+
+    // One outgoing PDU per cycle on this channel.
+    Fw::ParamValid valid;
+    ChannelArrayParams config = this->component.paramGet_ChannelConfig(valid);
+    config[channelId].set_max_outgoing_pdus_per_cycle(1);
+    this->paramSet_ChannelConfig(config, Fw::ParamValid::VALID);
+    this->paramSend_ChannelConfig(0, 0);
+    ASSERT_EQ(1U, this->component.getMaxOutgoingPdusPerCycleParam(channelId));
+
+    this->clearHistory();
+    this->sendCmd_PlaybackDirectory(0, 0, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_1, Cfdp::Keep::KEEP,
+                                    TEST_PRIORITY, Fw::CmdStringArg(srcDir), Fw::CmdStringArg(dstDir));
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_PLAYBACKDIRECTORY, 0, Fw::CmdResponse::OK);
+
+    // Each Class 1 file takes three PDUs (Metadata, FileData, EOF) at one per cycle. Before the
+    // fix, the cycle that started the second file never returned.
+    for (U32 i = 0; i < 4 * numFiles + 4; ++i) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+
+    // Both files complete; the no-progress guard must not have failed the throttled one.
+    ASSERT_EVENTS_TxFileTransferCompleted_SIZE(numFiles);
+    ASSERT_EVENTS_TxFileTransferFailed_SIZE(0);
+
+    for (U32 i = 0; i < numFiles; ++i) {
+        cleanupTestFile(files[i].toChar());
+    }
+    Os::FileSystem::removeDirectory(srcDir);
+}
+
 void CfdpManagerTester::testTxCycleNoProgressFailsTransaction() {
     // Defense in depth: a transaction on TXA whose dispatch makes no progress (here, an S2
     // transaction forced into CLOSEOUT_SYNC, which has no transmit handler) must be failed
