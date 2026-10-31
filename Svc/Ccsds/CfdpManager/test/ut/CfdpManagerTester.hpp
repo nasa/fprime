@@ -371,6 +371,10 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Regression: a throttled initial Metadata send must yield the cycle.
     void testClass2TxThrottledInitialMetadataYields();
 
+    //! Regression: with one PDU per cycle, a multi-file playback's next file must yield on a
+    //! throttled first Metadata send.
+    void testPlaybackThrottledMetadataYields();
+
     //! A TXA transaction whose dispatch makes no progress must be failed, not dispatched forever.
     void testTxCycleNoProgressFailsTransaction();
 

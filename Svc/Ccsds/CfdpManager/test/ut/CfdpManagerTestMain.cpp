@@ -86,6 +86,11 @@ TEST(Transaction, Class2TxThrottledInitialMetadataYields) {
     tester.testClass2TxThrottledInitialMetadataYields();
 }
 
+TEST(Transaction, PlaybackThrottledMetadataYields) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPlaybackThrottledMetadataYields();
+}
+
 TEST(Transaction, TxCycleNoProgressFailsTransaction) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testTxCycleNoProgressFailsTransaction();
