@@ -334,3 +334,10 @@ event DirectiveFromOldSequence(
 ) \
     severity warning low \
     format "Ignored directive {} because it was from a previous sequence, not the current one (old idx: {}, current idx: {})"
+
+event FileOutsideSandbox(
+    filePath: string
+    sandboxDir: string
+) \
+    severity warning high \
+    format "File {} is outside the configured sandbox directory {}"

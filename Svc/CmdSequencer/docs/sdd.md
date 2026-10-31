@@ -219,6 +219,19 @@ calling this function.
 
 The `deallocateBuffer()` method is used to deallocate the buffer supplied in `allocateBuffer()` method. It should be called before the destructor.
 
+##### 3.3.2.6 configureSandbox (Optional)
+
+The `configureSandbox()` public method restricts sequence file loads to a directory, in the same way as the
+`Os::SandboxedFile` sandboxes of the file-handling components. The directory may be absolute or relative to the
+current working directory. Once configured, every load (`CS_VALIDATE`, `CS_RUN`, `seqRunIn`, `seqDispatchIn` and
+[`loadSequence`](#loadSequence)) whose file name resolves outside the directory, for example through `..` segments
+or an absolute path elsewhere, is rejected with the `CS_FileOutsideSandbox` event before the file is opened. The
+check runs before the sequence format opens the file, so it applies to every format, including one set with
+`setSequenceFormat`.
+
+Until `configureSandbox()` is called, any path is allowed, which keeps existing deployments unchanged. Call it from
+topology setup code. Path checking is textual and does not follow symbolic links (see `Os::SandboxedFile`).
+
 #### 3.3.3 Data formats
 
 <a name="F_Prime_Sequence_Format"></a>

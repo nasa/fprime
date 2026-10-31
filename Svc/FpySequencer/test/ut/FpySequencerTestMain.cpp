@@ -3686,6 +3686,80 @@ TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE_openErrorLogsDumpFileName) {
     ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath, Fw::LogStringArg("nonexistent_dir/dump.bin"));
 }
 
+TEST_F(FpySequencerTester, validate_sandbox) {
+    // with no sandbox configured, any path is allowed
+    add_NO_OP();
+    writeToFile("test.bin");
+    U8 data[Fpy::Sequence::SERIALIZED_SIZE] = {0};
+    tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
+    tester_set_m_sequenceFilePath("test.bin");
+    ASSERT_EQ(tester_validate(), Fw::Success::SUCCESS);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(0);
+
+    // a sequence inside the sandbox validates normally
+    cmp.configureSandbox(".");
+    tester_get_m_sequenceBuffer_ptr()->resetSer();
+    ASSERT_EQ(tester_validate(), Fw::Success::SUCCESS);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(0);
+
+    // a sequence outside the sandbox is rejected before it is opened
+    cmp.configureSandbox("sandbox_dir");
+    tester_get_m_sequenceBuffer_ptr()->resetSer();
+    this->clearHistory();
+    ASSERT_EQ(tester_validate(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EQ(this->eventHistory_FileOutsideSandbox->at(0).filePath, Fw::LogStringArg("test.bin"));
+    ASSERT_EVENTS_FileOpenError_SIZE(0);
+
+    // a ".." segment that resolves outside the sandbox is rejected too
+    cmp.configureSandbox(".");
+    tester_set_m_sequenceFilePath("../test.bin");
+    this->clearHistory();
+    ASSERT_EQ(tester_validate(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EVENTS_FileOpenError_SIZE(0);
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE_sandbox) {
+    // DUMP_STACK_TO_FILE writes a file named by the command; outside the sandbox it is
+    // rejected before the file is opened
+    allocMem();
+    add_PUSH_VAL<U8>(0x00);
+    add_PUSH_VAL<U8>(0x11);
+    add_PUSH_VAL<U8>(0x22);
+    writeAndRun();
+
+    // pause before the end so we land in RUNNING_PAUSED
+    tester_get_m_breakpoint_ptr()->breakpointInUse = true;
+    tester_get_m_breakpoint_ptr()->breakpointIndex = 3;
+    dispatchUntilState(State::RUNNING_PAUSED);
+
+    cmp.configureSandbox(".");
+    removeFile("../sandbox_dump.bin");
+    this->clearHistory();
+    sendCmd_DUMP_STACK_TO_FILE(0, 0, Fw::String("../sandbox_dump.bin"));
+    dispatchCurrentMessages(cmp);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DUMP_STACK_TO_FILE(), 0,
+                        Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EQ(this->eventHistory_FileOutsideSandbox->at(0).filePath, Fw::LogStringArg("../sandbox_dump.bin"));
+    ASSERT_EVENTS_FileOpenError_SIZE(0);
+    Os::File outputFile;
+    ASSERT_NE(outputFile.open("../sandbox_dump.bin", Os::FileInterface::Mode::OPEN_READ), Os::File::Status::OP_OK)
+        << "Dump file outside the sandbox must not be created";
+
+    // inside the sandbox the dump still succeeds
+    this->clearHistory();
+    sendCmd_DUMP_STACK_TO_FILE(0, 0, Fw::String("sandbox_dump.bin"));
+    dispatchCurrentMessages(cmp);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DUMP_STACK_TO_FILE(), 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(0);
+    removeFile("sandbox_dump.bin");
+}
+
 TEST_F(FpySequencerTester, prmSeqBaseDirTlm) {
     // setting the param should emit the telemetry channel via parameterUpdated
     Fw::ParamString val("/seq");

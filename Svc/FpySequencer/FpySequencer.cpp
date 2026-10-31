@@ -35,9 +35,34 @@ FpySequencer ::FpySequencer(const char* const compName)
       m_runtime(),
       m_breakpoint(),
       m_debug(),
-      m_tlm() {}
+      m_tlm(),
+      m_sandboxDir(),
+      m_sandboxConfigured(false) {}
 
 FpySequencer ::~FpySequencer() {}
+
+void FpySequencer::configureSandbox(const char* directory) {
+    FW_ASSERT(directory != nullptr);
+    const Os::FilePathUtils::Status status =
+        Os::FilePathUtils::resolveDirectoryFromCwd(directory, this->m_sandboxDir, sizeof(this->m_sandboxDir));
+    FW_ASSERT(status == Os::FilePathUtils::VALID, static_cast<FwAssertArgType>(status));
+    this->m_sandboxConfigured = true;
+}
+
+bool FpySequencer::checkSandbox(const Fw::StringBase& fileName) {
+    if (!this->m_sandboxConfigured) {
+        return true;
+    }
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    const bool contained =
+        (Os::FilePathUtils::resolveFromCwd(fileName.toChar(), resolved, sizeof(resolved)) ==
+         Os::FilePathUtils::VALID) &&
+        (Os::FilePathUtils::checkContainment(resolved, this->m_sandboxDir) == Os::FilePathUtils::VALID);
+    if (!contained) {
+        this->log_WARNING_HI_FileOutsideSandbox(fileName, Fw::LogStringArg(this->m_sandboxDir));
+    }
+    return contained;
+}
 
 //! Handler for command RUN
 //!
@@ -251,6 +276,10 @@ void FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,           
 ) {
     if (this->sequencer_getState() != State::RUNNING_PAUSED) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    if (!this->checkSandbox(fileName)) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }

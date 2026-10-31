@@ -201,6 +201,12 @@ void CmdSequencerTester ::Validate() {
     this->parameterizedValidate(file);
 }
 
+void CmdSequencerTester ::Sandbox() {
+    const U32 numRecords = 5;
+    SequenceFiles::ImmediateFile file(numRecords, this->format);
+    this->parameterizedSandbox(file);
+}
+
 // ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------

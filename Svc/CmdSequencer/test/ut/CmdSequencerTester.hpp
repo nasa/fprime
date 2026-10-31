@@ -294,6 +294,10 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
     void parameterizedValidate(SequenceFiles::File& file  //!< The file
     );
 
+    //! Restrict sequence loads with configureSandbox
+    void parameterizedSandbox(SequenceFiles::File& file  //!< The file
+    );
+
   protected:
     // ----------------------------------------------------------------------
     // Instance helper methods
