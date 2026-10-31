@@ -1004,6 +1004,129 @@ void CfdpManagerTester::testAbandonTransactionNominal() {
     Os::FileSystem::removeFile(srcFile);
 }
 
+void CfdpManagerTester::abandonFinishedTransaction(U8 channelId, TransactionSeq transactionSeq) {
+    // A finished transaction stays findable in HOLD until it is recycled. Abandoning it must be
+    // rejected without finishing it a second time.
+    Transaction* txn = findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    ASSERT_EQ(TxnState::TXN_STATE_HOLD, txn->m_state) << "Transaction should already be finished";
+    const U32 numCmdTx = this->component.m_engine->m_channels[channelId]->getNumCmdTx();
+    const U16 numPbTs = (txn->m_pb != nullptr) ? txn->m_pb->num_ts : 0;
+
+    this->clearHistory();
+    this->sendCmd_AbandonTransaction(0, 0, channelId, transactionSeq, this->component.getLocalEidParam());
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_ABANDONTRANSACTION, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_TransactionNotFound_SIZE(1);
+    ASSERT_EVENTS_TransactionAbandoned_SIZE(0);
+    ASSERT_EVENTS_TxFileTransferCompleted_SIZE(0);
+    ASSERT_EVENTS_TxFileTransferFailed_SIZE(0);
+    EXPECT_EQ(numCmdTx, this->component.m_engine->m_channels[channelId]->getNumCmdTx());
+    if (txn->m_pb != nullptr) {
+        EXPECT_EQ(numPbTs, txn->m_pb->num_ts);
+    }
+
+    // Finishing it again directly is also a no-op.
+    this->component.m_engine->finishTransaction(txn, true);
+    ASSERT_EVENTS_TxFileTransferCompleted_SIZE(0);
+    ASSERT_EVENTS_TxFileTransferFailed_SIZE(0);
+    EXPECT_EQ(numCmdTx, this->component.m_engine->m_channels[channelId]->getNumCmdTx());
+
+    // The transaction is still recycled normally.
+    waitForTransactionRecycle(channelId, transactionSeq);
+}
+
+void CfdpManagerTester::testAbandonTransactionTwice() {
+    // Regression test: a second AbandonTransaction for the same transaction used to finish it
+    // again and fail the commanded-TX counter assert in Channel::decrementCmdTxCounter.
+    const char* srcFile = "test/ut/output/abandon_twice.bin";
+    const U8 channelId = TEST_CHANNEL_ID_0;
+
+    FwSizeType fileSize;
+    createAndVerifyTestFile(srcFile, 100, fileSize);
+    TransactionSetup setup;
+    setupTxTransaction(srcFile, "/dest/abandon_twice.bin", channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2,
+                       TEST_PRIORITY, TxnState::TXN_STATE_S2, setup);
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    this->clearHistory();
+    this->sendCmd_AbandonTransaction(0, 0, channelId, setup.expectedSeqNum, this->component.getLocalEidParam());
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_ABANDONTRANSACTION, 0, Fw::CmdResponse::OK);
+    EXPECT_EQ(0U, this->component.m_engine->m_channels[channelId]->getNumCmdTx());
+
+    abandonFinishedTransaction(channelId, setup.expectedSeqNum);
+
+    cleanupTestFile(srcFile);
+}
+
+void CfdpManagerTester::testAbandonTransactionAfterCompletion() {
+    // Regression test: abandoning a commanded downlink that already completed normally used to
+    // finish it a second time and fail the commanded-TX counter assert.
+    const char* srcFile = "test/ut/output/abandon_done.bin";
+    const U8 channelId = TEST_CHANNEL_ID_0;
+
+    FwSizeType fileSize;
+    createAndVerifyTestFile(srcFile, 100, fileSize);
+    TransactionSetup setup;
+    setupTxTransaction(srcFile, "/dest/abandon_done.bin", channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_1,
+                       TEST_PRIORITY, TxnState::TXN_STATE_S1, setup);
+
+    // A one-PDU Class 1 downlink completes within a few cycles.
+    for (U32 i = 0; (i < 5) && (setup.txn->m_state != TxnState::TXN_STATE_HOLD); ++i) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+    EXPECT_EQ(0U, this->component.m_engine->m_channels[channelId]->getNumCmdTx());
+
+    abandonFinishedTransaction(channelId, setup.expectedSeqNum);
+
+    cleanupTestFile(srcFile);
+}
+
+void CfdpManagerTester::testAbandonPlaybackTransactionAfterCompletion() {
+    // Regression test: abandoning a completed playback child used to finish it a second time
+    // and fail the playback transaction-count assert in Engine::finishTransaction.
+    const char* srcDir = "test/ut/output/abandon_pb_src";
+    const char* dstDir = "test/ut/output/abandon_pb_dst";
+    const U8 channelId = TEST_CHANNEL_ID_0;
+
+    Os::FileSystem::Status dirStatus = Os::FileSystem::createDirectory(srcDir);
+    ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
+    Fw::String testFilePath(srcDir);
+    testFilePath += "/test.bin";
+    FwSizeType fileSize;
+    createAndVerifyTestFile(testFilePath.toChar(), 100, fileSize);
+
+    const U32 initialSeqNum = this->component.m_engine->m_seqNum;
+    this->sendCmd_PlaybackDirectory(0, 0, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_1, Cfdp::Keep::KEEP,
+                                    TEST_PRIORITY, Fw::CmdStringArg(srcDir), Fw::CmdStringArg(dstDir));
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_PLAYBACKDIRECTORY, 0, Fw::CmdResponse::OK);
+
+    // The playback starts one child transaction, which completes within a few cycles.
+    Transaction* txn = nullptr;
+    for (U32 i = 0; i < 5; ++i) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+        txn = findTransaction(channelId, initialSeqNum + 1);
+        if ((txn != nullptr) && (txn->m_state == TxnState::TXN_STATE_HOLD)) {
+            break;
+        }
+    }
+    ASSERT_NE(nullptr, txn) << "Playback child transaction should exist";
+    ASSERT_NE(nullptr, txn->m_pb) << "Child should belong to the playback";
+    EXPECT_FALSE(txn->m_flags.tx.cmd_tx);
+
+    abandonFinishedTransaction(channelId, initialSeqNum + 1);
+
+    cleanupTestFile(testFilePath.toChar());
+    Os::FileSystem::removeDirectory(srcDir);
+}
+
 void CfdpManagerTester::testAbandonTransactionInvalidChannel() {
     // Test that AbandonTransaction command with invalid channel returns validation error
     //
