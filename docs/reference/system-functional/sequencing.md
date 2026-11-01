@@ -5,7 +5,7 @@
 
 - [F Prime Command Sequencing SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdSequencer/docs/sdd.md)
 - [F Prime Sequence Dispatcher SDD](https://github.com/nasa/fprime/blob/devel/Svc/SeqDispatcher/docs/sdd.md)
-- [F Prime Sequence Format](https://github.com/nasa/fprime/blob/devel/Svc/SeqDispatcher/docs/seq_format.md)
+- [F Prime Sequence Format](https://github.com/nasa/fprime/blob/devel/Svc/CmdSequencer/docs/sdd.md#3331-f-prime-sequence-format)
 - [F Prime Command Dispatcher SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdDispatcher/docs/sdd.md)
 - [Example F Prime Sequence](https://github.com/nasa/fprime-gds/blob/devel/examples/simple_sequence.seq)
 
