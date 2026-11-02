@@ -187,7 +187,7 @@ def cmd_manifest(a):
         "plan": {**file_entry(a.plan), "revision": a.plan_revision, "tests": tests},
         "checkers": checkers,
         "images": images,
-        "menu": file_entry(a.menu),
+        "menu": {**file_entry(a.menu), "content": read_json(a.menu, "fault menu")},
         "bench": file_entry(a.bench),
         "no_version_check": (
             a.no_version_check
@@ -244,15 +244,33 @@ def read_seed(a):
     return seed
 
 
+def manifest_for_draw(path):
+    """The draw happens on the human's machine: only the manifest itself is checked (well-formed,
+    test list, embedded menu). Repo trees and file hashes are verified by `verify` (runner, auditor)."""
+    m = read_json(path, "manifest")
+    for key in ("uut", "harness", "repos", "plan", "checkers", "images", "menu"):
+        if key not in m:
+            sys.exit(f"manifest lacks {key!r}")
+    tests = m["plan"].get("tests")
+    if not tests or len(set(tests)) != len(tests):
+        sys.exit("manifest has no unique test list")
+    if "content" not in m["menu"]:
+        sys.exit("manifest predates the embedded fault menu; re-run `manifest`")
+    return m
+
+
 def cmd_draw(a):
-    m, bad = verify_manifest(a.manifest)
-    if bad:
-        sys.exit("\n".join(bad))
+    m = manifest_for_draw(a.manifest)
     run = Path(a.run_dir)
     if len(run.name) > MAX_ID or not run.name:
         sys.exit(f"run id (directory name) must be 1..{MAX_ID} characters")
     tests = m["plan"]["tests"]
-    menu, pairs, by_name = load_menu(m["menu"]["path"], tests)
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+        json.dump(m["menu"]["content"], fh)
+    try:
+        menu, pairs, by_name = load_menu(fh.name, tests)
+    finally:
+        os.unlink(fh.name)
     seed = read_seed(a)
     msha = sha256_file(a.manifest)
     count = 1 + int(sha256_text(f"{seed}:{msha}:count"), 16) % menu["max_count"]
@@ -552,6 +570,21 @@ def _git_repo(path, content):
     subprocess.run(["git", "-C", path, *env, "commit", "-q", "-m", "x"], check=True)
 
 
+def _run_without(argv, without):
+    """Run main(argv) with the given paths renamed away: the draw must need nothing but the manifest."""
+    moved = []
+    for p in without:
+        p = Path(p)
+        if p.exists():
+            p.rename(p.with_name(p.name + ".away"))
+            moved.append(p)
+    try:
+        main(argv)
+    finally:
+        for p in moved:
+            p.with_name(p.name + ".away").rename(p)
+
+
 def cmd_selftest(_a):
     with tempfile.TemporaryDirectory() as tmp:
         d = Path(tmp)
@@ -620,8 +653,9 @@ def cmd_selftest(_a):
         seed.write_text("captain-picard-1701\n")
         seed.chmod(0o600)
         run2 = d / "rfr" / "run2"
-        main(
-            ["draw", "--manifest", mf, "--seed-file", str(seed), "--run-dir", str(run2)]
+        _run_without(  # the human draws on a machine without the repos or the menu file
+            ["draw", "--manifest", mf, "--seed-file", str(seed), "--run-dir", str(run2)],
+            without=[d / "uut", d / "harness", d / "proj", d / "menu.json"],
         )
         assert (run / "sealed" / "faults.json").read_text() == (
             run2 / "sealed" / "faults.json"

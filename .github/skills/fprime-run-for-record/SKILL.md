@@ -50,7 +50,11 @@ must pass before every later step.
 
 ## 2. Draw (human action)
 
-The human runs this in a shell of their own. The seed comes from an
+The human runs this in a shell of their own, on any machine holding
+`seal.py` and the manifest (the fault menu is embedded in the manifest;
+no repository or other file is needed — `draw` checks only the
+manifest, the full `verify` is the runner's and auditor's step). The
+seed comes from an
 un-echoed prompt (preferred) or a `chmod 600` file that `draw` deletes
 after reading — never a chat message or a command-line argument — and
 is kept by the human.
