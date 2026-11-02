@@ -12,6 +12,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import zlib
 from pathlib import Path
 
 VERDICTS = ("PASS", "FAIL", "UNVERIFIED")
@@ -412,6 +413,40 @@ def final_state_rows(run, faults, by_name):
     return rows
 
 
+# Run-start markers. Preferred form: NO_OP_STRING "RFR <run> M <sha8>" / "RFR <run> S <sha8>" as
+# event text. Deployments without a string command carry them as a marker event whose name
+# ends in ".Marker" and whose only argument is a U32 id: the preamble id (below) is followed
+# by the value as a separate marker: 0xFFFF0001, int(manifest sha8, 16); 0xFFFF0002,
+# int(seal-id sha8, 16); 0xFFFF0003, crc32(run id). Ids >= 0xFFFF0000 are reserved for this.
+MARK_MANIFEST, MARK_SEAL, MARK_RUN = 0xFFFF0001, 0xFFFF0002, 0xFFFF0003
+
+
+def marker_ids(events_text):
+    ids = []
+    for line in events_text.splitlines():
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        if not isinstance(row, dict) or not str(row.get("name", "")).endswith(".Marker"):
+            continue
+        args = row.get("args") or {}
+        v = args.get("id") if "id" in args else (args.get("nums") or [None])[-1]
+        if isinstance(v, int):
+            ids.append(v)
+    return ids
+
+
+def has_run_marker(events_text, kind, run, sha8):
+    """kind is "M" (manifest) or "S" (seal id); either marker form satisfies the check."""
+    if f"RFR {run} {kind} {sha8}" in events_text:
+        return True
+    ids = marker_ids(events_text)
+    pairs = set(zip(ids, ids[1:]))
+    preamble = MARK_MANIFEST if kind == "M" else MARK_SEAL
+    return (preamble, int(sha8, 16)) in pairs and (MARK_RUN, zlib.crc32(run.encode()) & 0xFFFFFFFF) in pairs
+
+
 def cmd_unseal(a):
     run = Path(a.run_dir)
     sealed = run / "sealed"
@@ -445,9 +480,9 @@ def cmd_unseal(a):
                 f"{who} verdicts name run {v.get('run')!r}, directory is {run.name!r}"
             )
     events = (run / "record" / "events.jsonl").read_text()
-    if f"RFR {run.name} M {msha[:8]}" not in events:
+    if not has_run_marker(events, "M", run.name, msha[:8]):
         sys.exit("record has no manifest marker for this manifest")
-    if f"RFR {run.name} S {seal_id[:8]}" not in events:
+    if not has_run_marker(events, "S", run.name, seal_id[:8]):
         sys.exit("record has no seal marker for this draw")
     expectations = read_json(sealed / "expectations.json", "sealed expectations")
     drawn = faults["faults"]
@@ -601,6 +636,15 @@ def cmd_selftest(_a):
             for s in markers
         ]
         (rec / "events.jsonl").write_text("\n".join(ev) + "\n")
+        # the Marker(id) form must satisfy the same check, and a wrong value must not
+        mark = [
+            json.dumps({"name": "x.harness.Marker", "args": {"text": f"marker {v}", "nums": [v]}})
+            for v in (MARK_MANIFEST, int(msha[:8], 16), MARK_SEAL, int(seal_id[:8], 16), MARK_RUN, zlib.crc32(b"run1") & 0xFFFFFFFF)
+        ]
+        assert has_run_marker("\n".join(mark), "M", "run1", msha[:8]), "Marker(id) manifest form"
+        assert has_run_marker("\n".join(mark), "S", "run1", seal_id[:8]), "Marker(id) seal form"
+        assert not has_run_marker("\n".join(mark[:-1]), "S", "run1", seal_id[:8]), "run id marker required"
+        assert not has_run_marker("\n".join(mark), "S", "run1", "00000000"), "wrong seal value must fail"
         (rec / "channels.jsonl").write_text("{}\n")
         (rec / "commands.jsonl").write_text("{}\n{}\n")
         counts = {"events.jsonl": 2, "channels.jsonl": 1, "commands.jsonl": 2}

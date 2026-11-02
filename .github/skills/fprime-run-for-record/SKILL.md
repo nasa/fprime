@@ -80,7 +80,10 @@ and auditor.
    firmware is a requirements matter, not a runner retry).
 3. Run the plan in order, once. At start the harness emits
    `NO_OP_STRING "RFR <run> M <manifest sha8>"` and
-   `"RFR <run> S <seal-id sha8>"`; every test is bracketed per
+   `"RFR <run> S <seal-id sha8>"` (a deployment without a string
+   command sends them as `Marker(id: U32)` events instead: `0xFFFF0001`,
+   the manifest sha8 as U32, `0xFFFF0002`, the seal-id sha8 as U32,
+   `0xFFFF0003`, `crc32(<run>)`; `seal.py` accepts either form); every test is bracketed per
    `fprime-system-test-harness` §3. Do not read `sealed/`. Do not fix,
    tune, or retry; log every anomaly, operator action, and timing in
    `runner/report.md`. Harness stdout and pytest output go to
@@ -97,7 +100,8 @@ and auditor.
 1. `seal.py verify <manifest>` and
    `seal.py verify-record --run-dir rfr/<run-id>`; confirm
    `record/events.jsonl` carries `RFR <run> M <sha8>` for this manifest
-   and `RFR <run> S <sha8>` matching `seal-id.txt`. Any failure ends
+   and `RFR <run> S <sha8>` matching `seal-id.txt` (or their `Marker(id)`
+   encoding, §3 step 3). Any failure ends
    the audit with `RECORD INVALID`.
 2. Image identity: device read-back hash in `record/raw/flash.log`
    must equal the manifest image hash — mismatch is
