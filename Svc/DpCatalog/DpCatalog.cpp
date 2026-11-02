@@ -201,6 +201,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         if (slot == this->m_stateFileEntries) {
             if (this->m_stateFileEntries >= this->m_numDpSlots) {
                 // no slot for another product; later records for products that have a slot still apply
+                fileLoc += size;
                 continue;
             }
             this->m_stateFileEntries++;
@@ -233,9 +234,7 @@ void DpCatalog::getFileState(DpStateEntry& entry) {
 FwSizeType DpCatalog::findStateFileSlot(const DpStateEntry& entry) const {
     FW_ASSERT(this->m_stateFileData != nullptr);
     for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
-        if (this->m_stateFileData[line].entry.dir == entry.dir &&
-            this->m_stateFileData[line].entry.hasIdentity(entry.record.get_id(), entry.record.get_tSec(),
-                                                          entry.record.get_tSub())) {
+        if (this->m_stateFileData[line].entry.isSameProduct(entry)) {
             return line;
         }
     }
@@ -657,8 +656,11 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
         return ProcessFileStatus::FAILED;
     }
 
-    // a duplicate insert updates the tree in place; skip it so pending counters are not double-counted
-    if (this->m_dpCatalog.find(entry) == Fw::Success::SUCCESS) {
+    // a duplicate insert updates the tree in place; skip it so pending counters are not double-counted.
+    // The sort key includes the priority, which SET_DP_PRIORITY may have changed since the file was
+    // added, so a file already in the catalog is recognized by its stable identity, not by the key
+    DpStateEntry existing{};
+    if (this->findEntryByIdentity(entry, existing) == DpCatalog_EntryLookupStatus::FOUND) {
         this->log_DIAGNOSTIC_DpDuplicate(entry.record);
         return ProcessFileStatus::FAILED;
     }
@@ -722,7 +724,15 @@ I8 DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpSta
         return 1;
     }
 
-    // if ids are equal we have two nodes with the same value
+    // check directory. A file of the same name in two configured directories is two products, and the
+    // key includes the directory so that a priority change can never move one onto the other's key
+    else if (left.dir < right.dir) {
+        return -1;
+    } else if (left.dir > right.dir) {
+        return 1;
+    }
+
+    // all fields equal: the same product
     else {
         return 0;
     }
@@ -730,6 +740,11 @@ I8 DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpSta
 
 bool DpCatalog::DpStateEntry::hasIdentity(FwDpIdType id, U32 tSec, U32 tSub) const {
     return (this->record.get_id() == id) && (this->record.get_tSec() == tSec) && (this->record.get_tSub() == tSub);
+}
+
+bool DpCatalog::DpStateEntry::isSameProduct(const DpStateEntry& other) const {
+    return (this->dir == other.dir) &&
+           this->hasIdentity(other.record.get_id(), other.record.get_tSec(), other.record.get_tSub());
 }
 
 bool DpCatalog::DpStateEntry::operator==(const DpStateEntry& other) const {
@@ -748,7 +763,7 @@ bool DpCatalog::DpStateEntry::operator<(const DpStateEntry& other) const {
 
 bool DpCatalog::insertEntry(DpStateEntry& entry) {
     // Insert into the RedBlackTreeSet
-    // The tree maintains sorting by priority, time, and ID via DpStateEntry comparison operators
+    // The tree maintains sorting by priority, time, ID, and directory via DpStateEntry comparison operators
     Fw::Success status = this->m_dpCatalog.insert(entry);
     return (status == Fw::Success::SUCCESS);
 }
@@ -885,9 +900,15 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     // add the size
     this->m_xmitBytes += this->m_currentXmitEntry.record.get_size();
 
-    // Remove from catalog
-    Fw::Success status = this->m_dpCatalog.remove(this->m_currentXmitEntry);
-    FW_ASSERT(status == Fw::Success::SUCCESS);
+    // Remove from catalog. The entry is located by its stable identity rather than by the copy kept
+    // for the send, whose sort key may be stale if the priority changed during the send.
+    // Not ground-reachable: only resetCatalog empties the set, and it also clears m_hasCurrentXmit (checked above)
+    DpStateEntry catalogEntry{};
+    const DpCatalog_EntryLookupStatus found = this->findEntryByIdentity(this->m_currentXmitEntry, catalogEntry);
+    FW_ASSERT(found == DpCatalog_EntryLookupStatus::FOUND, static_cast<FwAssertArgType>(found.e));
+    // catalogEntry is a copy of a set element, so its key is present
+    const Fw::Success status = this->m_dpCatalog.remove(catalogEntry);
+    FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
 
     this->m_hasCurrentXmit = false;
 
@@ -1117,7 +1138,7 @@ void DpCatalog ::SET_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,
     }
 
     DpStateEntry entry{};
-    if (this->findEntryByIdentity(id, tSec, tSub, entry) == DpCatalog_EntryLookupStatus::NOT_FOUND) {
+    if (this->findProductEntry(id, tSec, tSub, entry) == DpCatalog_EntryLookupStatus::NOT_FOUND) {
         this->log_WARNING_HI_DpNotFound(id, tSec, tSub);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -1142,21 +1163,24 @@ DpCatalog_PriorityChangeStatus DpCatalog ::setDpPriority(DpStateEntry& entry, Fw
     // Priority is part of the sort key, so the entry is re-linked by removing and re-inserting it.
     // Only this entry moves, and every send restarts the walk at begin(), so a transmit in
     // progress follows the new order from its next send
+    // entry is a copy of a set element, so its key is present
     Fw::Success status = this->m_dpCatalog.remove(entry);
     FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
     entry.record.set_priority(priority);
+    // the removal freed a node, and the key (which includes the full product identity) is held by no
+    // other entry, so the insert cannot fail or collide
     status = this->m_dpCatalog.insert(entry);
     FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
-    // The send in flight is not affected, but its copy must keep matching the catalog entry so
-    // that fileDone can remove it
-    if (this->m_hasCurrentXmit && this->m_currentXmitEntry.hasIdentity(id, tSec, tSub)) {
+    // The send in flight is not affected; its copy is kept current so that the record written on
+    // completion carries the priority the product had (fileDone finds the catalog entry by identity)
+    if (this->m_hasCurrentXmit && this->m_currentXmitEntry.isSameProduct(entry)) {
         this->m_currentXmitEntry.record.set_priority(priority);
     }
     this->log_ACTIVITY_HI_DpPrioritySet(id, tSec, tSub, oldPriority, priority);
 
-    // Record the new priority with the product's state. The state file data is updated whether or not
-    // a state file is configured, since getFileState applies the recorded priority before the duplicate
-    // check of a runtime addToCat; the state file keeps the priority across a rebuild or restart
+    // Record the new priority with the product's state, as completion does, so that a rewrite of the
+    // state file keeps it across a rebuild or restart. Nothing else depends on this record: a runtime
+    // addToCat recognizes the product by identity, not by priority (processFile)
     const DpCatalog_StateFileUpdateStatus updateStatus = this->updateStateFileData(entry);
     if (this->m_stateFile.length() == 0) {
         return DpCatalog_PriorityChangeStatus::CHANGED;
@@ -1169,12 +1193,22 @@ DpCatalog_PriorityChangeStatus DpCatalog ::setDpPriority(DpStateEntry& entry, Fw
                                                                     : DpCatalog_PriorityChangeStatus::NOT_RECORDED;
 }
 
-DpCatalog_EntryLookupStatus DpCatalog ::findEntryByIdentity(FwDpIdType id,
-                                                            U32 tSec,
-                                                            U32 tSub,
-                                                            DpStateEntry& entry) const {
-    // The sort key includes the priority, which is what is being changed, so the lookup is by the
+DpCatalog_EntryLookupStatus DpCatalog ::findEntryByIdentity(const DpStateEntry& product, DpStateEntry& entry) const {
+    // The sort key includes the priority, which SET_DP_PRIORITY changes, so the lookup is by the
     // identity fields alone; the walk is bounded by the catalog capacity
+    for (Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
+         iter != this->m_dpCatalog.end(); ++iter) {
+        if ((*iter).isSameProduct(product)) {
+            entry = *iter;
+            return DpCatalog_EntryLookupStatus::FOUND;
+        }
+    }
+    return DpCatalog_EntryLookupStatus::NOT_FOUND;
+}
+
+DpCatalog_EntryLookupStatus DpCatalog ::findProductEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const {
+    // The command names the product by id and time tag. The sort key includes the priority, which the
+    // command changes, so the lookup is a walk by the identity fields, bounded by the catalog capacity
     for (Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
          iter != this->m_dpCatalog.end(); ++iter) {
         if ((*iter).hasIdentity(id, tSec, tSub)) {

@@ -175,7 +175,13 @@ class DpCatalog final : public DpCatalogComponentBase {
         /// @return true if the entry has that identity
         bool hasIdentity(FwDpIdType id, U32 tSec, U32 tSub) const;
 
-        /// @brief compare two entries by transmit priority, then time tag, then id (the catalog sort order)
+        /// @brief check whether the entry is the same data product as another: same directory and identity
+        ///        (id and time tag). The priority and state, which change, are not compared
+        /// @param other the entry to compare with
+        /// @return true if both entries are the same data product
+        bool isSameProduct(const DpStateEntry& other) const;
+
+        /// @brief compare two entries by transmit priority, then time tag, id, and directory (the catalog sort order)
         /// @param left an entry to compare
         /// @param right other entry to compare
         /// @return -1 if left is higher priority, 0 if equal, and 1 if right is higher priority
@@ -290,13 +296,19 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param response the command response for the waited command
     void abortXmit(Fw::CmdResponse response);
 
-    /// @brief find the catalog entry for a data product by its identity (id and time tag)
+    /// @brief find the catalog entry for a data product by its stable identity (directory, id and time tag)
+    /// @param product the data product to find; its priority and state are not compared
+    /// @param entry the entry found
+    /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
+    DpCatalog_EntryLookupStatus findEntryByIdentity(const DpStateEntry& product, DpStateEntry& entry) const;
+
+    /// @brief find the first catalog entry of a data product named by id and time tag, as SET_DP_PRIORITY names it
     /// @param id container ID
     /// @param tSec seconds of the time tag
     /// @param tSub microseconds of the time tag
     /// @param entry the entry found
     /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
-    DpCatalog_EntryLookupStatus findEntryByIdentity(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
+    DpCatalog_EntryLookupStatus findProductEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
 
     /// @brief set the transmit priority of a catalog entry and record it in the state file, if one is configured
     /// @param entry a copy of the catalog entry; updated to the new priority

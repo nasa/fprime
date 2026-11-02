@@ -485,6 +485,26 @@ TEST(SetPriority, StateFileFull) {
     tester.test_SetPriorityStateFileFull();
 }
 
+TEST(SetPriority, NoStateFileTableFull) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNoStateFileTableFull();
+}
+
+TEST(SetPriority, NamesakeDirs) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNamesakeDirs();
+}
+
+TEST(SetPriority, NamesakeDirsSamePriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_NamesakeDirsSamePriority();
+}
+
+TEST(StateFile, SlotExhausted) {
+    Svc::DpCatalogTester tester;
+    tester.test_LoadStateFileSlotExhausted();
+}
+
 TEST(SetPriority, NotInit) {
     Svc::DpCatalogTester tester;
     tester.test_SetPriorityNotInit();

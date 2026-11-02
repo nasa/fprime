@@ -2546,6 +2546,205 @@ void DpCatalogTester ::test_SetPriorityStateFileFull() {
     (void)Os::FileSystem::removeFile(stateFile.toChar());
 }
 
+void DpCatalogTester ::test_SetPriorityNoStateFileTableFull() {
+    Fw::FileNameString dir("./DpTest_SetPrioNoStateFull");
+    Fw::FileNameString stateFile("");
+    Fw::String dpFiles[3];
+    this->setPriorityBuild(dir, stateFile, dpFiles);
+
+    // No state file and no free slot in the state file data: the change is recorded nowhere but the catalog
+    const FwSizeType numDpSlots = this->component.m_numDpSlots;
+    for (FwSizeType slot = 0; slot < numDpSlots; slot++) {
+        this->component.m_stateFileData[slot].used = true;
+        this->component.m_stateFileData[slot].visited = true;
+    }
+    this->component.m_stateFileEntries = numDpSlots;
+    this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[1], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpPrioritySet_SIZE(1);
+    ASSERT_EVENTS_StateFileFull_SIZE(0);
+
+    // A runtime add of the reprioritized file is still recognized by its identity, not added twice
+    this->invoke_to_addToCat(0, dpFiles[1], 0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpDuplicate_SIZE(1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(3);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 3);
+    ASSERT_EQ(this->component.m_pendingFiles, 3);
+
+    // The new order holds, and the reprioritized entry is removed on completion
+    this->setPriorityXmitAll(12);
+    ASSERT_from_fileOut_SIZE(3);
+    ASSERT_from_fileOut(0, dpFiles[1], dpFiles[1], 0, 0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+    ASSERT_EQ(this->component.m_pendingFiles, 0);
+    this->component.shutdown();
+
+    for (FwIndexType dp = 0; dp < 3; dp++) {
+        this->delDp(SET_PRIO_IDS[dp], SET_PRIO_TIME, dir.toChar());
+    }
+}
+
+namespace {
+const FwDpIdType NAMESAKE_ID = 0x77;
+}  // namespace
+
+void DpCatalogTester ::namesakeBuild(Fw::FileNameString (&dirs)[2],
+                                     FwDpPriorityType prio0,
+                                     FwDpPriorityType prio1,
+                                     Fw::String (&dpFiles)[2]) {
+    Fw::FileNameString stateFile("");
+    const FwDpPriorityType prios[2] = {prio0, prio1};
+    for (FwIndexType dir = 0; dir < 2; dir++) {
+        this->makeDpDir(dirs[dir].toChar());
+        this->delDp(NAMESAKE_ID, SET_PRIO_TIME, dirs[dir].toChar());
+        dpFiles[dir] = this->genDP(NAMESAKE_ID, prios[dir], SET_PRIO_TIME, 16, Fw::DpState::UNTRANSMITTED, false,
+                                   dirs[dir].toChar());
+        ASSERT_STRNE(dpFiles[dir].toChar(), "");
+    }
+    static Fw::MallocAllocator alloc;
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 2), stateFile, 100, alloc);
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    // The same name in two directories is two products: both are stored and counted
+    ASSERT_EVENTS_DpFileAdded_SIZE(2);
+    ASSERT_EVENTS_DpFileAdded(0, dpFiles[0].toChar());
+    ASSERT_EVENTS_DpFileAdded(1, dpFiles[1].toChar());
+    ASSERT_EVENTS_DpDuplicate_SIZE(0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 2);
+    ASSERT_EQ(this->component.m_pendingFiles, 2);
+}
+
+void DpCatalogTester ::namesakeClean(Fw::FileNameString (&dirs)[2]) {
+    this->component.shutdown();
+    for (FwIndexType dir = 0; dir < 2; dir++) {
+        this->delDp(NAMESAKE_ID, SET_PRIO_TIME, dirs[dir].toChar());
+    }
+}
+
+void DpCatalogTester ::test_SetPriorityNamesakeDirs() {
+    Fw::FileNameString dirs[2] = {Fw::FileNameString("./DpTest_Namesake0"), Fw::FileNameString("./DpTest_Namesake1")};
+    Fw::String dpFiles[2];
+    this->namesakeBuild(dirs, 10, 20, dpFiles);
+
+    // The first directory's file (priority 10) is sent first and held in flight
+    this->m_autoFileDone = false;
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    this->component.doDispatch();
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, dpFiles[0], dpFiles[0], 0, 0);
+    const U32 inFlight = this->m_lastContext;
+
+    // Moving the entry in flight (the first found by identity) onto the other's priority keeps both entries:
+    // the directory is part of the key, so nothing is merged
+    this->sendCmd_SET_DP_PRIORITY(0, 12, NAMESAKE_ID, SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 20);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_SET_DP_PRIORITY, 12, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpPrioritySet_SIZE(1);
+    ASSERT_EVENTS_DpPrioritySet(0, NAMESAKE_ID, SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 10, 20);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 2);
+    ASSERT_EQ(this->component.m_pendingFiles, 2);
+
+    // The send in flight completes (no assert) and the other directory's file follows
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, inFlight));
+    this->component.doDispatch();
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_from_fileOut(1, dpFiles[1], dpFiles[1], 0, 0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    this->invoke_to_fileDone(0, Svc::SendFileResponse(Svc::SendFileStatus::STATUS_OK, this->m_lastContext));
+    this->component.doDispatch();
+    ASSERT_EVENTS_ProductComplete_SIZE(2);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+    ASSERT_EQ(this->component.m_pendingFiles, 0);
+
+    this->namesakeClean(dirs);
+}
+
+void DpCatalogTester ::test_NamesakeDirsSamePriority() {
+    Fw::FileNameString dirs[2] = {Fw::FileNameString("./DpTest_NamesakeSame0"),
+                                  Fw::FileNameString("./DpTest_NamesakeSame1")};
+    Fw::String dpFiles[2];
+    this->namesakeBuild(dirs, 10, 10, dpFiles);
+
+    // Both files are sent, lower directory index first
+    this->setPriorityXmitAll(11);
+    ASSERT_from_fileOut_SIZE(2);
+    ASSERT_from_fileOut(0, dpFiles[0], dpFiles[0], 0, 0);
+    ASSERT_from_fileOut(1, dpFiles[1], dpFiles[1], 0, 0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 0);
+    ASSERT_EQ(this->component.m_pendingFiles, 0);
+
+    this->namesakeClean(dirs);
+}
+
+void DpCatalogTester ::test_LoadStateFileSlotExhausted() {
+    Fw::FileNameString dir("./DpTest_StateSlots");
+    Fw::FileNameString stateFile("./DpTest_StateSlots/dpState.dat");
+    const FwDpIdType ids[4] = {0x61, 0x62, 0x63, 0x64};
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    Fw::String dpFiles[4];
+    for (FwIndexType dp = 0; dp < 4; dp++) {
+        this->delDp(ids[dp], SET_PRIO_TIME, dir.toChar());
+        dpFiles[dp] = this->genDP(ids[dp], 10, SET_PRIO_TIME, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(dpFiles[dp].toChar(), "");
+    }
+    static Fw::MallocAllocator alloc;
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+
+    // Records for four products, then a later record for the first: with three slots the fourth product gets
+    // none, while the later record still applies to the first
+    const Fw::DpState states[5] = {Fw::DpState::UNTRANSMITTED, Fw::DpState::TRANSMITTED, Fw::DpState::TRANSMITTED,
+                                   Fw::DpState::TRANSMITTED, Fw::DpState::TRANSMITTED};
+    const FwIndexType recordIds[5] = {0, 1, 2, 3, 0};
+    for (FwIndexType record = 0; record < 5; record++) {
+        DpCatalog::DpStateEntry entry{};
+        entry.dir = 0;
+        entry.record.set_id(ids[recordIds[record]]);
+        entry.record.set_tSec(SET_PRIO_TIME.getSeconds());
+        entry.record.set_tSub(SET_PRIO_TIME.getUSeconds());
+        entry.record.set_priority(10);
+        entry.record.set_state(states[record]);
+        this->component.appendFileState(entry);
+    }
+    // A partial record at the end reports the offset at which it starts, which counts the skipped record
+    const FwSizeType recordSize = sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE;
+    Os::File partial;
+    ASSERT_EQ(partial.open(stateFile.toChar(), Os::File::OPEN_APPEND), Os::File::OP_OK);
+    BYTE junk[3] = {0, 0, 0};
+    FwSizeType junkSize = sizeof(junk);
+    ASSERT_EQ(partial.write(junk, junkSize), Os::File::OP_OK);
+    partial.close();
+    this->component.m_numDpSlots = 3;
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_StateFileTruncated_SIZE(1);
+    ASSERT_EVENTS_StateFileTruncated(0, stateFile.toChar(), static_cast<I32>(5 * recordSize), 3);
+    ASSERT_EQ(this->component.m_stateFileEntries, 3);
+    // The three slotted products are skipped as transmitted; the slotless one is re-added
+    ASSERT_EVENTS_DpFileSkipped_SIZE(3);
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+    this->setPriorityXmitAll(11);
+    ASSERT_EVENTS_SendingProduct_SIZE(1);
+    ASSERT_EVENTS_SendingProduct(0, dpFiles[3].toChar(), this->setPriorityFileSize(dpFiles[3]), 10);
+    // its completion finds no free slot either, so it is appended to the file but not held in the data
+    ASSERT_EVENTS_StateFileFull_SIZE(1);
+    ASSERT_EVENTS_StateFileFull(0, ids[3], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds());
+    this->component.shutdown();
+
+    for (FwIndexType dp = 0; dp < 4; dp++) {
+        this->delDp(ids[dp], SET_PRIO_TIME, dir.toChar());
+    }
+    ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+}
+
 void DpCatalogTester ::test_SetPriorityNotInit() {
     // Before configure, the command is rejected without looking for the product
     this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[0], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);

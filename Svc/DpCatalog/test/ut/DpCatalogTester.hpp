@@ -223,6 +223,20 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! SET_DP_PRIORITY with full state file data
     void test_SetPriorityStateFileFull();
 
+    //! SET_DP_PRIORITY with no state file and full state file data: a runtime addToCat is still a duplicate
+    void test_SetPriorityNoStateFileTableFull();
+
+    //! Two directories holding a file of the same name at different header priorities: both are transmitted
+    //! after SET_DP_PRIORITY moves the one in flight onto the other's priority
+    void test_SetPriorityNamesakeDirs();
+
+    //! Two directories holding a file of the same name at the same header priority: both are cataloged and sent
+    void test_NamesakeDirsSamePriority();
+
+    //! loadStateFile with more products in the state file than slots: later records for slotted products still
+    //! apply, the slotless transmitted product is re-added, and the read offset stays exact past the skipped record
+    void test_LoadStateFileSlotExhausted();
+
     //! SET_DP_PRIORITY before configure
     void test_SetPriorityNotInit();
 
@@ -261,6 +275,16 @@ class DpCatalogTester : public DpCatalogGTestBase {
 
     //! Transmit the whole catalog
     void setPriorityXmitAll(U32 cmdSeq);
+
+    //! generate a file of the same name in two directories (header priorities prio0, prio1), configure on both,
+    //! and build the catalog: both files are added
+    void namesakeBuild(Fw::FileNameString (&dirs)[2],
+                       FwDpPriorityType prio0,
+                       FwDpPriorityType prio1,
+                       Fw::String (&dpFiles)[2]);
+
+    //! remove the namesake files
+    void namesakeClean(Fw::FileNameString (&dirs)[2]);
 
     //! Size of a generated DP file, as reported by SendingProduct
     U32 setPriorityFileSize(const Fw::String& dpFile);
