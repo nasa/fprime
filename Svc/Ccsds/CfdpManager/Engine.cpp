@@ -778,7 +778,9 @@ Status::T Engine::abandonTransaction(U8 channelId, TransactionSeq transactionSeq
     Channel* chan = m_channels[channelId];
     Transaction* txn = chan->findTransactionBySequenceNumber(transactionSeq, entityId);
 
-    if (txn != nullptr) {
+    // A finished transaction stays findable in HOLD until its inactivity timer recycles it.
+    // There is nothing left to abandon, so report it the same as a transaction that is not found.
+    if ((txn != nullptr) && (txn->m_state != TxnState::TXN_STATE_HOLD)) {
         this->finishTransaction(txn, false);
         status = Status::SUCCESS;
     }
@@ -1039,6 +1041,13 @@ void Engine::cycle(void) {
 void Engine::finishTransaction(Transaction* txn, bool keep_history) {
     if (txn->m_flags.com.q_index == QueueId::FREE) {
         this->m_manager->log_DIAGNOSTIC_ResetFreedTransaction();
+        return;
+    }
+
+    // A transaction in HOLD has already been finished and is waiting for its inactivity timer
+    // to recycle it. Finishing it again would repeat the completion bookkeeping (the commanded
+    // TX and playback counters, completion events, and the port notification), so do nothing.
+    if (txn->m_state == TxnState::TXN_STATE_HOLD) {
         return;
     }
 
