@@ -91,6 +91,9 @@ class CmdSequencerTester : public ImmediateBase::CmdSequencerTester {
     //! Validate a sequence file
     void Validate();
 
+    //! Restrict sequence loads with configureSandbox
+    void Sandbox();
+
   private:
     // ----------------------------------------------------------------------
     // Private helper methods

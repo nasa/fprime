@@ -37,7 +37,9 @@ CmdSequencerComponentImpl::CmdSequencerComponentImpl(const char* name)
       m_blockState(Svc::BlockState::NO_BLOCK),
       m_opCode(0),
       m_cmdSeq(0),
-      m_join_waiting(false) {}
+      m_join_waiting(false),
+      m_sandboxDir(),
+      m_sandboxConfigured(false) {}
 
 void CmdSequencerComponentImpl::setTimeout(const U32 timeout) {
     this->m_timeout = timeout;
@@ -45,6 +47,31 @@ void CmdSequencerComponentImpl::setTimeout(const U32 timeout) {
 
 void CmdSequencerComponentImpl ::setSequenceFormat(Sequence& sequence) {
     this->m_sequence = &sequence;
+}
+
+void CmdSequencerComponentImpl ::configureSandbox(const char* directory) {
+    FW_ASSERT(directory != nullptr);
+    const Os::FilePathUtils::Status status =
+        Os::FilePathUtils::resolveDirectoryFromCwd(directory, this->m_sandboxDir, sizeof(this->m_sandboxDir));
+    FW_ASSERT(status == Os::FilePathUtils::VALID, static_cast<FwAssertArgType>(status));
+    this->m_sandboxConfigured = true;
+}
+
+bool CmdSequencerComponentImpl ::checkSandbox(const Fw::ConstStringBase& fileName) {
+    if (not this->m_sandboxConfigured) {
+        return true;
+    }
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    const bool contained =
+        (Os::FilePathUtils::resolveFromCwd(fileName.toChar(), resolved, sizeof(resolved)) ==
+         Os::FilePathUtils::VALID) &&
+        (Os::FilePathUtils::checkContainment(resolved, this->m_sandboxDir) == Os::FilePathUtils::VALID);
+    if (not contained) {
+        this->log_WARNING_HI_CS_FileOutsideSandbox(Fw::LogStringArg(fileName.toChar()),
+                                                   Fw::LogStringArg(this->m_sandboxDir));
+        this->error();
+    }
+    return contained;
 }
 
 void CmdSequencerComponentImpl ::allocateBuffer(const FwEnumStoreType identifier,
@@ -261,7 +288,9 @@ void CmdSequencerComponentImpl::CS_JOIN_WAIT_cmdHandler(const FwOpcodeType opCod
 // ----------------------------------------------------------------------
 
 bool CmdSequencerComponentImpl ::loadFile(const Fw::ConstStringBase& fileName) {
-    const bool status = this->m_sequence->loadFile(fileName);
+    // Checked here, before any sequence format opens the file, so the restriction applies to
+    // every format (including a custom one set with setSequenceFormat)
+    const bool status = this->checkSandbox(fileName) and this->m_sequence->loadFile(fileName);
     if (status) {
         Fw::LogStringArg& logFileName = this->m_sequence->getLogFileName();
         this->log_ACTIVITY_LO_CS_SequenceLoaded(logFileName);

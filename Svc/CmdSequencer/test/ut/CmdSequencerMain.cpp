@@ -200,6 +200,16 @@ TEST(Immediate, ValidateAMPCS) {
     tester.Validate();
 }
 
+TEST(Immediate, Sandbox) {
+    Svc::Immediate::CmdSequencerTester tester;
+    tester.Sandbox();
+}
+
+TEST(Immediate, SandboxAMPCS) {
+    Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
+    tester.Sandbox();
+}
+
 TEST(ImmediateEOS, AutoByCommand) {
     TEST_CASE(103.1.2, "Nominal Immediate Commands");
     Svc::ImmediateEOS::CmdSequencerTester tester;

@@ -11,6 +11,7 @@
 #include "CmdSequencerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Os/Delegate.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Os/Posix/Directory.hpp"
 #include "Os/Posix/FileSystem.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
@@ -349,6 +350,49 @@ void CmdSequencerTester ::parameterizedValidate(SequenceFiles::File& file) {
     file.write();
     // Validate the file
     this->validateFile(0, fileName);
+}
+
+void CmdSequencerTester ::parameterizedSandbox(SequenceFiles::File& file) {
+    // Set the time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
+    this->setTestTime(testTime);
+    // Write the file (under bin/)
+    const char* const fileName = file.getName().toChar();
+    file.write();
+    // A file inside the sandbox loads normally
+    this->component.configureSandbox("bin");
+    this->validateFile(0, fileName);
+    // A file outside the sandbox is rejected before it is opened, for every load path
+    char otherDir[Os::FilePathUtils::MAX_PATH_LENGTH];
+    ASSERT_EQ(Os::FilePathUtils::VALID,
+              Os::FilePathUtils::resolveDirectoryFromCwd("bin/other", otherDir, sizeof(otherDir)));
+    this->component.configureSandbox("bin/other");
+    const U32 errorCount = this->component.m_errorCount;
+    const U32 validateCmdSeq = 3;
+    this->sendCmd_CS_VALIDATE(0, validateCmdSeq, Fw::CmdStringArg(fileName));
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_VALIDATE, validateCmdSeq,
+                        Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EVENTS_CS_FileOutsideSandbox(0, fileName, otherDir);
+    ASSERT_EQ(errorCount + 1, this->component.m_errorCount);
+    const U32 runCmdSeq = 4;
+    this->sendCmd_CS_RUN(0, runCmdSeq, Fw::CmdStringArg(fileName), Svc::BlockState::NO_BLOCK);
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_RUN, runCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_CS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EQ(CmdSequencerComponentImpl::STOPPED, this->component.m_runMode);
+    // A ".." segment that resolves outside the sandbox is rejected too
+    this->component.configureSandbox("bin");
+    this->sendCmd_CS_VALIDATE(0, validateCmdSeq, Fw::CmdStringArg("bin/../outside.bin"));
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_VALIDATE, validateCmdSeq,
+                        Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_FileOutsideSandbox_SIZE(1);
 }
 
 void CmdSequencerTester ::parameterizedRunWithoutSeqDone() {
