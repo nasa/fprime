@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-01T21:08:06Z",
+  "generated_at": "2026-11-02T21:08:49Z",
   "ref": "devel",
-  "commit": "15ebbf3db89f9102ff16e9f66e7302d5fa32fba0",
+  "commit": "7865cc39d1c65c77443e9c3179b1b467f0291a2f",
   "passed": 3,
   "failed": 8,
   "skipped": 5,
@@ -147,9 +147,10 @@
         "event 'CS_JoinWaiting' has no requirement referencing it (add a requirement mentioning 'CS_JoinWaiting')",
         "event 'CS_JoinWaitingNotComplete' has no requirement referencing it (add a requirement mentioning 'CS_JoinWaitingNotComplete')",
         "event 'CS_NoRecords' has no requirement referencing it (add a requirement mentioning 'CS_NoRecords')",
-        "event 'CS_StepRecordPending' has no requirement referencing it (add a requirement mentioning 'CS_StepRecordPending')"
+        "event 'CS_StepRecordPending' has no requirement referencing it (add a requirement mentioning 'CS_StepRecordPending')",
+        "event 'CS_FileOutsideSandbox' has no requirement referencing it (add a requirement mentioning 'CS_FileOutsideSandbox')"
       ],
-      "detail": "25 event(s) traced against 6 requirement(s)"
+      "detail": "26 event(s) traced against 6 requirement(s)"
     },
     {
       "id": "R4",
