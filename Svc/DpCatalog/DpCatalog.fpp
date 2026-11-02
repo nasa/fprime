@@ -94,6 +94,13 @@ module Svc {
       NOT_FOUND = 1 @< No entry with the identity is in the catalog
     }
 
+    @ Outcome of setting the transmit priority of a catalog entry
+    enum PriorityChangeStatus : U8 {
+      UNCHANGED = 0 @< The entry already had the priority (DpPriorityUnchanged reported)
+      CHANGED = 1 @< The priority was changed and, if a state file is configured, recorded in it (DpPrioritySet reported)
+      NOT_RECORDED = 2 @< The priority was changed but could not be recorded in the configured state file (error reported)
+    }
+
     # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------
@@ -127,7 +134,7 @@ module Svc {
     async command CLEAR_CATALOG \
       opcode 3
 
-    @ Set the transmit priority of one data product in the in-memory catalog (lower is higher priority)
+    @ Set the transmit priority of one data product (lower is higher priority); kept in the state file if one is configured
     async command SET_DP_PRIORITY (
                                     $id: FwDpIdType @< Container ID of the data product
                                     tSec: U32 @< Seconds of the data product time tag
@@ -512,7 +519,7 @@ module Svc {
       id 52 \
       format "Catalog transmission started for priorities {} through {}"
 
-    @ Data product transmit priority changed by SET_DP_PRIORITY; equal values report a no-op
+    @ Data product transmit priority changed by SET_DP_PRIORITY
     event DpPrioritySet(
                             $id: FwDpIdType @< Container ID of the data product
                             tSec: U32 @< Seconds of the data product time tag
@@ -530,7 +537,7 @@ module Svc {
                             tSec: U32 @< Seconds of the data product time tag
                             tSub: U32 @< Microseconds of the data product time tag
                           ) \
-      severity warning low \
+      severity warning high \
       id 54 \
       format "DP id {} time {}.{} not found in catalog"
 
@@ -543,6 +550,17 @@ module Svc {
       severity warning high \
       id 55 \
       format "State file data full; state of DP {} time {}.{} not recorded"
+
+    @ SET_DP_PRIORITY named the priority the data product already has; nothing was changed
+    event DpPriorityUnchanged(
+                               $id: FwDpIdType @< Container ID of the data product
+                               tSec: U32 @< Seconds of the data product time tag
+                               tSub: U32 @< Microseconds of the data product time tag
+                               $priority: FwDpPriorityType @< The unchanged priority
+                             ) \
+      severity activity high \
+      id 56 \
+      format "Priority of DP id {} time {}.{} already {}"
 
 
     # ----------------------------------------------------------------------

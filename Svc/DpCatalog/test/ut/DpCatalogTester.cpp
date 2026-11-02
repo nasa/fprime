@@ -2159,6 +2159,14 @@ void DpCatalogTester ::test_SetPriorityRaise() {
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), 3);
     ASSERT_EQ(this->component.m_pendingFiles, 3);
 
+    // Without a state file, a runtime add of the reprioritized file is still recognized as a duplicate
+    this->invoke_to_addToCat(0, dpFiles[2], 0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpDuplicate_SIZE(1);
+    ASSERT_EVENTS_StateFileFull_SIZE(0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 3);
+    ASSERT_EQ(this->component.m_pendingFiles, 3);
+
     // The raised product is sent first, the others keep their order
     this->sendCmd_START_XMIT_CATALOG(0, 12, Fw::Wait::NO_WAIT, false);
     while (this->component.m_queue.getMessagesAvailable() > 0) {
@@ -2282,8 +2290,9 @@ void DpCatalogTester ::test_SetPrioritySameNoOp() {
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(2);
     ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::OK);
-    ASSERT_EVENTS_DpPrioritySet_SIZE(1);
-    ASSERT_EVENTS_DpPrioritySet(0, SET_PRIO_IDS[1], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 20, 20);
+    ASSERT_EVENTS_DpPrioritySet_SIZE(0);
+    ASSERT_EVENTS_DpPriorityUnchanged_SIZE(1);
+    ASSERT_EVENTS_DpPriorityUnchanged(0, SET_PRIO_IDS[1], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 20);
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), 3);
 
     this->sendCmd_START_XMIT_CATALOG(0, 12, Fw::Wait::NO_WAIT, false);
@@ -2491,6 +2500,7 @@ void DpCatalogTester ::test_SetPriorityStateFileOpenError() {
     this->component.doDispatch();
     ASSERT_EVENTS_DpPrioritySet_SIZE(1);
     ASSERT_EVENTS_StateFileOpenError_SIZE(1);
+    ASSERT_EVENTS_StateFileOpenError(0, stateFile.toChar(), static_cast<I32>(Os::File::Status::OTHER_ERROR));
     ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::EXECUTION_ERROR);
 
     this->setPriorityXmitAll(12);

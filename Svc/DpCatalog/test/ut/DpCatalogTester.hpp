@@ -256,13 +256,13 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! Generate three DPs with priorities 10, 20, 30 in dir, configure the component, and build the catalog
     void setPriorityBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, Fw::String (&dpFiles)[3]);
 
-    //! Size of a generated DP file, as reported by SendingProduct
     //! Restart the component and rebuild the catalog
     void setPriorityRebuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq);
 
     //! Transmit the whole catalog
     void setPriorityXmitAll(U32 cmdSeq);
 
+    //! Size of a generated DP file, as reported by SendingProduct
     U32 setPriorityFileSize(const Fw::String& dpFile);
 };
 

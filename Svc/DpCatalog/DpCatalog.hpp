@@ -9,6 +9,7 @@
 
 #include "Svc/DpCatalog/DpCatalogComponentAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_EntryLookupStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_PriorityChangeStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_StateFileUpdateStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_StateFileWriteStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpRecordSerializableAc.hpp"
@@ -149,7 +150,7 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     //! Handler implementation for command SET_DP_PRIORITY
     //!
-    //! Set the transmit priority of one data product in the in-memory catalog
+    //! Set the transmit priority of one data product; the change is recorded in the state file if one is configured
     void SET_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,       //!< The opcode
                                     U32 cmdSeq,                //!< The command sequence number
                                     FwDpIdType id,             //!< Container ID of the data product
@@ -297,6 +298,13 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
     DpCatalog_EntryLookupStatus findEntryByIdentity(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
 
+    /// @brief set the transmit priority of a catalog entry and record it in the state file, if one is configured
+    /// @param entry a copy of the catalog entry; updated to the new priority
+    /// @param priority the new priority
+    /// @return UNCHANGED if the entry already had the priority, CHANGED if it was set (and recorded if a state file
+    ///         is configured), NOT_RECORDED if it was set but could not be recorded in the configured state file
+    DpCatalog_PriorityChangeStatus setDpPriority(DpStateEntry& entry, FwDpPriorityType priority);
+
     /// @brief find the state file data slot for an entry's product (same directory, id and time tag)
     /// @param entry the entry to look up
     /// @return the slot index, or m_stateFileEntries if the product has no slot
@@ -304,7 +312,8 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// @brief record an entry's state in the state file data, reusing the product's slot or a stale one
     /// @param entry the entry to record
-    /// @return RECORDED, or FULL if the state file data has no free slot
+    /// @return RECORDED, or FULL if the state file data has no free slot (StateFileFull is reported when a state
+    ///         file is configured)
     DpCatalog_StateFileUpdateStatus updateStateFileData(const DpStateEntry& entry);
 
     // ----------------------------------

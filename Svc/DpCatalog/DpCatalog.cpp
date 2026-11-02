@@ -200,8 +200,8 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         const FwSizeType slot = this->findStateFileSlot(fileEntry);
         if (slot == this->m_stateFileEntries) {
             if (this->m_stateFileEntries >= this->m_numDpSlots) {
-                // no more room
-                break;
+                // no slot for another product; later records for products that have a slot still apply
+                continue;
             }
             this->m_stateFileEntries++;
         }
@@ -255,6 +255,11 @@ DpCatalog_StateFileUpdateStatus DpCatalog::updateStateFileData(const DpStateEntr
     }
     if (slot == this->m_stateFileEntries) {
         if (this->m_stateFileEntries >= this->m_numDpSlots) {
+            // only worth reporting when the state is kept in a state file
+            if (this->m_stateFile.length() > 0) {
+                this->log_WARNING_HI_StateFileFull(entry.record.get_id(), entry.record.get_tSec(),
+                                                   entry.record.get_tSub());
+            }
             return DpCatalog_StateFileUpdateStatus::FULL;
         }
         this->m_stateFileEntries++;
@@ -403,8 +408,9 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
         return response;
     }
 
-    // prune and rewrite the state file. A failure is reported by event and leaves the previous
-    // state file in place, so the build still completes
+    // prune and rewrite the state file. A failure is reported by event; the file then holds the records
+    // written before the failure (or the previous contents if it could not be opened), and the build
+    // still completes from the catalog in memory
     (void)this->pruneAndWriteStateFile();
 
     this->log_ACTIVITY_HI_CatalogBuildComplete();
@@ -873,12 +879,8 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     // mark the entry as transmitted
     this->m_currentXmitEntry.record.set_state(Fw::DpState::TRANSMITTED);
     // update the transmitted state in the state file data, so a later rewrite of the state file
-    // keeps it, and in the state file
-    if (this->updateStateFileData(this->m_currentXmitEntry) == DpCatalog_StateFileUpdateStatus::FULL) {
-        this->log_WARNING_HI_StateFileFull(this->m_currentXmitEntry.record.get_id(),
-                                           this->m_currentXmitEntry.record.get_tSec(),
-                                           this->m_currentXmitEntry.record.get_tSub());
-    }
+    // keeps it (a full table is reported by the update), and in the state file
+    (void)this->updateStateFileData(this->m_currentXmitEntry);
     this->appendFileState(this->m_currentXmitEntry);
     // add the size
     this->m_xmitBytes += this->m_currentXmitEntry.record.get_size();
@@ -1116,40 +1118,55 @@ void DpCatalog ::SET_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,
 
     DpStateEntry entry{};
     if (this->findEntryByIdentity(id, tSec, tSub, entry) == DpCatalog_EntryLookupStatus::NOT_FOUND) {
-        this->log_WARNING_LO_DpNotFound(id, tSec, tSub);
+        this->log_WARNING_HI_DpNotFound(id, tSec, tSub);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
+    const DpCatalog_PriorityChangeStatus status = this->setDpPriority(entry, priority);
+    this->cmdResponse_out(opCode, cmdSeq,
+                          (status == DpCatalog_PriorityChangeStatus::NOT_RECORDED) ? Fw::CmdResponse::EXECUTION_ERROR
+                                                                                   : Fw::CmdResponse::OK);
+}
+
+DpCatalog_PriorityChangeStatus DpCatalog ::setDpPriority(DpStateEntry& entry, FwDpPriorityType priority) {
+    const FwDpIdType id = entry.record.get_id();
+    const U32 tSec = entry.record.get_tSec();
+    const U32 tSub = entry.record.get_tSub();
     const FwDpPriorityType oldPriority = entry.record.get_priority();
-    if (priority != oldPriority) {
-        // Priority is part of the sort key, so the entry is re-linked by removing and re-inserting it.
-        // Only this entry moves, and every send restarts the walk at begin(), so a transmit in
-        // progress follows the new order from its next send
-        Fw::Success status = this->m_dpCatalog.remove(entry);
-        FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
-        entry.record.set_priority(priority);
-        status = this->m_dpCatalog.insert(entry);
-        FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
-        // The send in flight is not affected, but its copy must keep matching the catalog entry so
-        // that fileDone can remove it
-        if (this->m_hasCurrentXmit && this->m_currentXmitEntry.hasIdentity(id, tSec, tSub)) {
-            this->m_currentXmitEntry.record.set_priority(priority);
-        }
+    if (priority == oldPriority) {
+        this->log_ACTIVITY_HI_DpPriorityUnchanged(id, tSec, tSub, priority);
+        return DpCatalog_PriorityChangeStatus::UNCHANGED;
+    }
+
+    // Priority is part of the sort key, so the entry is re-linked by removing and re-inserting it.
+    // Only this entry moves, and every send restarts the walk at begin(), so a transmit in
+    // progress follows the new order from its next send
+    Fw::Success status = this->m_dpCatalog.remove(entry);
+    FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
+    entry.record.set_priority(priority);
+    status = this->m_dpCatalog.insert(entry);
+    FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
+    // The send in flight is not affected, but its copy must keep matching the catalog entry so
+    // that fileDone can remove it
+    if (this->m_hasCurrentXmit && this->m_currentXmitEntry.hasIdentity(id, tSec, tSub)) {
+        this->m_currentXmitEntry.record.set_priority(priority);
     }
     this->log_ACTIVITY_HI_DpPrioritySet(id, tSec, tSub, oldPriority, priority);
 
-    // Record the new priority with the product's state so that it is kept across a rebuild or restart
-    Fw::CmdResponse response = Fw::CmdResponse::OK;
-    if ((priority != oldPriority) and (this->m_stateFile.length() > 0)) {
-        if (this->updateStateFileData(entry) == DpCatalog_StateFileUpdateStatus::FULL) {
-            this->log_WARNING_HI_StateFileFull(id, tSec, tSub);
-            response = Fw::CmdResponse::EXECUTION_ERROR;
-        } else if (this->pruneAndWriteStateFile() != DpCatalog_StateFileWriteStatus::WRITTEN) {
-            response = Fw::CmdResponse::EXECUTION_ERROR;
-        }
+    // Record the new priority with the product's state. The state file data is updated whether or not
+    // a state file is configured, since getFileState applies the recorded priority before the duplicate
+    // check of a runtime addToCat; the state file keeps the priority across a rebuild or restart
+    const DpCatalog_StateFileUpdateStatus updateStatus = this->updateStateFileData(entry);
+    if (this->m_stateFile.length() == 0) {
+        return DpCatalog_PriorityChangeStatus::CHANGED;
     }
-    this->cmdResponse_out(opCode, cmdSeq, response);
+    if (updateStatus == DpCatalog_StateFileUpdateStatus::FULL) {
+        return DpCatalog_PriorityChangeStatus::NOT_RECORDED;
+    }
+    const DpCatalog_StateFileWriteStatus writeStatus = this->pruneAndWriteStateFile();
+    return (writeStatus == DpCatalog_StateFileWriteStatus::WRITTEN) ? DpCatalog_PriorityChangeStatus::CHANGED
+                                                                    : DpCatalog_PriorityChangeStatus::NOT_RECORDED;
 }
 
 DpCatalog_EntryLookupStatus DpCatalog ::findEntryByIdentity(FwDpIdType id,

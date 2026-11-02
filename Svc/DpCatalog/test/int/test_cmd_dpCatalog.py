@@ -209,14 +209,14 @@ def test_set_dp_priority_reorders_transmit(fprime_test_api):
         first[:3] != second[:3]
     ), "generated data products must have distinct identities"
 
-    # Same priority: reported with equal old and new values, command succeeds
+    # Same priority: reported as unchanged, command succeeds
     fprime_test_api.send_and_assert_command(
         dp_cat + ".SET_DP_PRIORITY",
         [first.id, first.tSec, first.tSub, 20],
         max_delay=10,
         events=[
             fprime_test_api.get_event_pred(
-                dp_cat + ".DpPrioritySet", [first.id, first.tSec, first.tSub, 20, 20]
+                dp_cat + ".DpPriorityUnchanged", [first.id, first.tSec, first.tSub, 20]
             )
         ],
     )
