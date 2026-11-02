@@ -42,7 +42,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
+Fw/DataStructures/CircularIndex.hpp           38      38   100%
 Fw/DataStructures/ExternalArray.hpp           57      57   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -127,7 +127,7 @@ googletest/googletest/include/gtest/gtest-assertion-result.h
 googletest/googletest/include/gtest/gtest-matchers.h
                                               83      50    60%   130-134,280-283,286-289,383,385-386,388,390,393,405,676,678-680,850-853,855-859
 googletest/googletest/include/gtest/gtest-message.h
-                                              12       7    58%   150,163-165,169
+                                              14       9    64%   150,163-165,169
 googletest/googletest/include/gtest/gtest-param-test.h
                                                6       6   100%
 googletest/googletest/include/gtest/gtest-printers.h
@@ -135,7 +135,7 @@ googletest/googletest/include/gtest/gtest-printers.h
 googletest/googletest/include/gtest/gtest-test-part.h
                                                1       1   100%
 googletest/googletest/include/gtest/gtest.h
-                                              43      22    51%   244,252,257-258,339,1338,1343,1362,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
+                                              46      25    54%   244,252,257-258,339,1338,1343,1362,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
 googletest/googletest/include/gtest/internal/gtest-death-test-internal.h
                                                6       4    66%   95-96
 googletest/googletest/include/gtest/internal/gtest-internal.h
@@ -143,7 +143,7 @@ googletest/googletest/include/gtest/internal/gtest-internal.h
 googletest/googletest/include/gtest/internal/gtest-param-util.h
                                              151     138    91%   325-326,344,350,354-355,389,584,588,610-611,710-711
 googletest/googletest/include/gtest/internal/gtest-port.h
-                                              15       8    53%   904,910-911,967,1065-1066,2102
+                                              15       9    60%   904,910-911,1065-1066,2102
 Os/ConditionVariableInterface.hpp              6       6   100%
 Os/Console.cpp                                42      39    92%   39-41
 Os/Console.hpp                                 2       2   100%
@@ -155,7 +155,7 @@ Os/Delegate.hpp                               20      20   100%
 Os/DelegateConditionVariable.cpp              22      21    95%   19
 Os/DelegateMutex.cpp                          16      16   100%
 Os/DelegateRawTime.cpp                        66      64    97%   102-103
-Os/Directory.cpp                              92      77    83%   26-28,86,90,103,109,118,122,135,141,147,150-152
+Os/Directory.cpp                              92      76    82%   26-28,86,90,103,109,118,122,133,135,141,147,150-152
 Os/Directory.hpp                               2       2   100%
 Os/File.cpp                                  211     182    86%   59-60,88-90,115,137,169-173,175-176,290-291,293-294,299-301,312-314,318-319,337-339
 Os/File.hpp                                    1       1   100%
@@ -200,7 +200,7 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      89    50%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,134-136,140-142,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
@@ -272,7 +272,7 @@ Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptor.cpp
                                               61      59    96%   107-108
 Svc/Ccsds/AesGcmEncryptor/AesGcmEncryptor.cpp
                                               80      76    95%   96-97,133-134
-Svc/Ccsds/AosDeframer/AosDeframer.cpp        284     280    98%   498,500-501,591
+Svc/Ccsds/AosDeframer/AosDeframer.cpp        286     283    99%   498,500-501
 Svc/Ccsds/AosFramer/AosFramer.cpp            190     190   100%
 Svc/Ccsds/ApidManager/ApidManager.cpp         20      20   100%
 Svc/Ccsds/ApidManager/ApidManager.hpp          1       1   100%
@@ -338,7 +338,7 @@ Svc/Ccsds/Utils/SdlsAuthMask.hpp              12      12   100%
 Svc/ChronoTime/ChronoTime.cpp                  8       8   100%
 Svc/CmdDispatcher/CommandDispatcherImpl.cpp
                                              153     147    96%   179-181,235,237-238
-Svc/CmdSequencer/CmdSequencerImpl.cpp        323     291    90%   59,80,88-90,117-119,189-191,215-220,222,224,303-304,378-380,389-391,405-407,478-479
+Svc/CmdSequencer/CmdSequencerImpl.cpp        343     311    90%   86,107,115-117,144-146,216-218,242-247,249,251,332-333,407-409,418-420,434-436,507-508
 Svc/CmdSequencer/CmdSequencerImpl.hpp         15      15   100%
 Svc/CmdSequencer/Events.cpp                   60      60   100%
 Svc/CmdSequencer/formats/AMPCSSequence.cpp
@@ -381,17 +381,17 @@ Svc/FileWorker/FileWorker.cpp                342     306    89%   85-88,191-194,
 Svc/FprimeDeframer/FprimeDeframer.cpp         54      54   100%
 Svc/FprimeFramer/FprimeFramer.cpp             41      41   100%
 Svc/FprimeRouter/FprimeRouter.cpp             57      55    96%   48,68
-Svc/FpySequencer/FpySequencer.cpp            269     217    80%   269-271,352-355,435-437,471,473-479,482,484-486,488-495,498,500-506,509-516,526-529,542-543
+Svc/FpySequencer/FpySequencer.cpp            290     238    82%   298-300,381-384,464-466,500,502-508,511,513-515,517-524,527,529-535,538-545,555-558,571-572
 Svc/FpySequencer/FpySequencer.hpp              2       2   100%
 Svc/FpySequencer/FpySequencerDirectives.cpp
-                                            1216    1057    86%   29-30,51,55,59,422-425,434-437,442-443,464-465,522-523,546-547,613,1231-1233,1243-1257,1261-1266,1273-1371,1381-1382,1543-1544,1549,1673-1674,1766-1767,1802-1803,1864-1865,1867
+                                            1230    1071    87%   29-30,51,55,59,422-425,434-437,442-443,464-465,522-523,546-547,613,1259-1261,1271-1285,1289-1294,1301-1399,1409-1410,1571-1572,1577,1701-1702,1794-1795,1830-1831,1892-1893,1895
 Svc/FpySequencer/FpySequencerRunState.cpp
                                              435     372    85%   38,158-160,169,171-172,180-182,269-271,279-281,289-291,303,305-306,314-316,360,362-363,420,422-423,431-433,441-443,451-453,461-463,488,490,494,496,502,504-505,677-679,681-684,688,735,739,741,759-760
 Svc/FpySequencer/FpySequencerStack.cpp        87      87   100%
 Svc/FpySequencer/FpySequencerStateMachine.cpp
                                              160     145    90%   132-134,136-137,251-253,255-256,278-280,282-283
 Svc/FpySequencer/FpySequencerValidationState.cpp
-                                             139     126    90%   76,82,93-94,100-101,110-112,119-120,255-256
+                                             141     128    90%   80,86,97-98,104-105,114-116,123-124,259-260
 Svc/FrameAccumulator/FrameAccumulator.cpp
                                               89      89   100%
 Svc/FrameAccumulator/FrameDetector.hpp         1       1   100%
@@ -447,5 +447,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      26397   22573    85%
+TOTAL                                      26461   22636    85%
 ------------------------------------------------------------------------------
