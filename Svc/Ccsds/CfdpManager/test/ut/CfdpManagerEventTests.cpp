@@ -3084,30 +3084,33 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
     Os::FileSystem::removeDirectory(moveSourceDir);
 }
 
-void CfdpManagerTester::testPlaybackDirEntryPathTooLong() {
-    // A playback entry whose "<dir>/<entry>" path exceeds MaxFilePathSize is skipped and
-    // reported with SendFileInitiateFail instead of reaching the MetadataPdu length assert.
-    // A second, short entry in the same directory verifies the playback keeps going.
+void CfdpManagerTester::runPlaybackPathTooLongCase(const char* srcDir,
+                                                   const char* dstDir,
+                                                   const char* longEntry,
+                                                   const char* shortEntry,
+                                                   bool sourceTooLong) {
+    // A playback entry whose "<dir>/<entry>" source or destination path exceeds MaxFilePathSize is
+    // skipped and reported instead of reaching the MetadataPdu length assert. A second, short entry
+    // in the same directory verifies the playback keeps going.
+    const FwSizeType maxPathLen = static_cast<FwSizeType>(MaxFilePathSize);
+    const FwSizeType srcPathLen = static_cast<FwSizeType>(::strlen(srcDir) + 1 + ::strlen(longEntry));
+    const FwSizeType dstPathLen = static_cast<FwSizeType>(::strlen(dstDir) + 1 + ::strlen(longEntry));
+    ASSERT_EQ(srcPathLen > maxPathLen, sourceTooLong);
+    ASSERT_EQ(dstPathLen > maxPathLen, !sourceTooLong);
+    ASSERT_LE(::strlen(srcDir) + 1 + ::strlen(shortEntry), static_cast<size_t>(MaxFilePathSize));
+    ASSERT_LE(::strlen(dstDir) + 1 + ::strlen(shortEntry), static_cast<size_t>(MaxFilePathSize));
 
-    const char* srcDir = "test/ut/output/playback_long";
-    Fw::String dstDir("/dest");
     U8 channelId = TEST_CHANNEL_ID_0;
 
     Os::FileSystem::Status dirStatus = Os::FileSystem::createDirectory(srcDir);
     ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
 
-    // Entry name sized so that strlen(srcDir) + 1 + strlen(entry) > MaxFilePathSize while the
-    // entry itself still fits in pending_file (StringTemplate<MaxFilePathSize>).
-    char longName[MaxFilePathSize];
-    (void)::memset(longName, 'a', sizeof(longName) - 1);
-    longName[sizeof(longName) - 1] = '\0';
-    ASSERT_GT(::strlen(srcDir) + 1 + ::strlen(longName), static_cast<size_t>(MaxFilePathSize));
-
     Fw::String longPath(srcDir);
     longPath += "/";
-    longPath += longName;
+    longPath += longEntry;
     Fw::String shortPath(srcDir);
-    shortPath += "/short.bin";
+    shortPath += "/";
+    shortPath += shortEntry;
 
     const char* files[] = {longPath.toChar(), shortPath.toChar()};
     for (const char* path : files) {
@@ -3122,7 +3125,8 @@ void CfdpManagerTester::testPlaybackDirEntryPathTooLong() {
     this->clearHistory();
 
     Fw::String srcDirStr(srcDir);
-    Cfdp::Status::T status = this->component.m_engine->playbackDir(srcDirStr, dstDir, Cfdp::Class::CLASS_1,
+    Fw::String dstDirStr(dstDir);
+    Cfdp::Status::T status = this->component.m_engine->playbackDir(srcDirStr, dstDirStr, Cfdp::Class::CLASS_1,
                                                                    Cfdp::Keep::KEEP, channelId, 0, TEST_GROUND_EID);
     ASSERT_EQ(status, Cfdp::Status::SUCCESS);
 
@@ -3158,8 +3162,16 @@ void CfdpManagerTester::testPlaybackDirEntryPathTooLong() {
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
 
-    ASSERT_EVENTS_SendFileInitiateFail_SIZE(1);
-    ASSERT_EVENTS_SendFileInitiateFail(0, longName);
+    if (sourceTooLong) {
+        ASSERT_EVENTS_PlaybackSourcePathTooLong_SIZE(1);
+        ASSERT_EVENTS_PlaybackSourcePathTooLong(0, srcDir, longEntry, srcPathLen, maxPathLen);
+        ASSERT_EVENTS_PlaybackDestinationPathTooLong_SIZE(0);
+    } else {
+        ASSERT_EVENTS_PlaybackDestinationPathTooLong_SIZE(1);
+        ASSERT_EVENTS_PlaybackDestinationPathTooLong(0, dstDir, longEntry, dstPathLen, maxPathLen);
+        ASSERT_EVENTS_PlaybackSourcePathTooLong_SIZE(0);
+    }
+    ASSERT_EVENTS_SendFileInitiateFail_SIZE(0);
     ASSERT_EVENTS_PlaybackDirReadFailed_SIZE(0);
     ASSERT_EQ(pb->num_ts, 1) << "Only the short entry should have started a transaction";
     ASSERT_FALSE(pb->diropen) << "Directory scan should have run to completion";
@@ -3169,6 +3181,23 @@ void CfdpManagerTester::testPlaybackDirEntryPathTooLong() {
     Os::FileSystem::removeFile(longPath.toChar());
     Os::FileSystem::removeFile(shortPath.toChar());
     Os::FileSystem::removeDirectory(srcDir);
+}
+
+void CfdpManagerTester::testPlaybackDirEntrySourcePathTooLong() {
+    // Entry name sized so that strlen(srcDir) + 1 + strlen(entry) > MaxFilePathSize while the
+    // shorter "/dest/<entry>" destination path still fits, isolating the source-path check.
+    char longName[MaxFilePathSize - 19] = {};
+    (void)::memset(longName, 'a', sizeof(longName) - 1);
+    this->runPlaybackPathTooLongCase("test/ut/output/playback_long", "/dest", longName, "short.bin", true);
+}
+
+void CfdpManagerTester::testPlaybackDirEntryDestinationPathTooLong() {
+    // Destination directory sized so that a short entry fits but a longer one does not, while
+    // every source path stays within MaxFilePathSize.
+    char longDstDir[MaxFilePathSize - 9] = {};
+    (void)::memset(longDstDir, 'd', sizeof(longDstDir) - 1);
+    longDstDir[0] = '/';
+    this->runPlaybackPathTooLongCase("test/ut/output/playback_long_dst", longDstDir, "toolongname.bin", "a.bin", false);
 }
 
 void CfdpManagerTester::testTimerZeroDurationExpiresOnFirstTick() {

@@ -542,6 +542,24 @@ event PlaybackDirReadFailed(
     severity warning low \
     format "Failed to read from playback directory {}, error={}"
 
+event PlaybackSourcePathTooLong(
+    directory: string size MaxFilePathSize @< Playback source directory
+    $entry: string size MaxFilePathSize @< Directory entry that was skipped
+    length: FwSizeType @< Length of the combined <directory>/<entry> source path
+    maxLength: FwSizeType @< Maximum file path length (MaxFilePathSize)
+) \
+    severity warning low \
+    format "Skipped playback entry {}/{}: source path length {} exceeds maximum {}"
+
+event PlaybackDestinationPathTooLong(
+    directory: string size MaxFilePathSize @< Playback destination directory
+    $entry: string size MaxFilePathSize @< Directory entry that was skipped
+    length: FwSizeType @< Length of the combined <directory>/<entry> destination path
+    maxLength: FwSizeType @< Maximum file path length (MaxFilePathSize)
+) \
+    severity warning low \
+    format "Skipped playback entry {}/{}: destination path length {} exceeds maximum {}"
+
 event ResetFreedTransaction severity diagnostic \
     format "Attempt to reset a transaction that has already been freed"
 

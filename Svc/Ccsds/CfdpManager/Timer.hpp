@@ -56,7 +56,7 @@ class Timer {
     // Class member variables
     // ----------------------------------------------------------------------
 
-    //! Number of seconds until the timer expires
+    //! Current state of the timer
     Status timerStatus;
 
     //! Number of seconds until the timer expires

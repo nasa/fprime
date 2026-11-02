@@ -6,8 +6,6 @@
 
 #include <Svc/Ccsds/CfdpManager/Timer.hpp>
 
-#include <Fw/Types/Assert.hpp>
-
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {

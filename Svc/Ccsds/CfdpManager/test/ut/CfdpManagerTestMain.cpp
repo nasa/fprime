@@ -663,9 +663,14 @@ TEST(Event, PlaybackDirSlotUnavailable) {
     tester.testPlaybackDirSlotUnavailableEvent();
 }
 
-TEST(Event, PlaybackDirEntryPathTooLong) {
+TEST(Event, PlaybackDirEntrySourcePathTooLong) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
-    tester.testPlaybackDirEntryPathTooLong();
+    tester.testPlaybackDirEntrySourcePathTooLong();
+}
+
+TEST(Event, PlaybackDirEntryDestinationPathTooLong) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPlaybackDirEntryDestinationPathTooLong();
 }
 
 TEST(Timer, ZeroDurationExpiresOnFirstTick) {

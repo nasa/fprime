@@ -772,14 +772,21 @@ void Channel::processPlaybackDirectory(Playback* pb) {
 
             pb->pending_file = path;
         } else {
-            // Skip entries whose combined "<dir>/<entry>" path would not fit the
-            // MaxFilePathSize limit enforced by the metadata PDU, reporting the
-            // entry instead of initiating a transfer that would assert. Checked
-            // before a transaction is acquired so no slot is consumed for it.
+            // Skip entries whose combined "<dir>/<entry>" source or destination path
+            // would not fit the MaxFilePathSize limit enforced by the metadata PDU.
+            // Checked before a transaction is acquired so no slot is consumed for it.
+            const FwSizeType maxPathLen = static_cast<FwSizeType>(MaxFilePathSize);
             const FwSizeType srcPathLen = pb->fnames.src_filename.length() + 1 + pb->pending_file.length();
             const FwSizeType dstPathLen = pb->fnames.dst_filename.length() + 1 + pb->pending_file.length();
-            if ((srcPathLen > MaxFilePathSize) || (dstPathLen > MaxFilePathSize)) {
-                this->m_cfdpManager->log_WARNING_LO_SendFileInitiateFail(pb->pending_file);
+            if (srcPathLen > maxPathLen) {
+                this->m_cfdpManager->log_WARNING_LO_PlaybackSourcePathTooLong(pb->fnames.src_filename, pb->pending_file,
+                                                                              srcPathLen, maxPathLen);
+            }
+            if (dstPathLen > maxPathLen) {
+                this->m_cfdpManager->log_WARNING_LO_PlaybackDestinationPathTooLong(
+                    pb->fnames.dst_filename, pb->pending_file, dstPathLen, maxPathLen);
+            }
+            if ((srcPathLen > maxPathLen) || (dstPathLen > maxPathLen)) {
                 pb->pending_file = "";  // continue reading dir
                 continue;
             }

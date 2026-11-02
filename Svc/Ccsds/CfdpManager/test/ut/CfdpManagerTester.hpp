@@ -631,7 +631,13 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testPlaybackDirOpenFailedEvent();
     void testPlaybackDirReadFailedEvent();
     void testPlaybackDirSlotUnavailableEvent();
-    void testPlaybackDirEntryPathTooLong();
+    void testPlaybackDirEntrySourcePathTooLong();
+    void testPlaybackDirEntryDestinationPathTooLong();
+    void runPlaybackPathTooLongCase(const char* srcDir,
+                                    const char* dstDir,
+                                    const char* longEntry,
+                                    const char* shortEntry,
+                                    bool sourceTooLong);
 
     // Timer robustness (issue #5890)
     void testTimerZeroDurationExpiresOnFirstTick();

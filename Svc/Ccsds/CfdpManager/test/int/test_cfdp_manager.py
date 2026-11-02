@@ -38,7 +38,7 @@ def playback_dir():
 def test_playback_directory_skips_overlong_entry(fprime_test_api, cfdp, playback_dir):
     """PlaybackDirectory reports and skips an entry whose path exceeds MaxFilePathSize.
 
-    Covers: CFDP-5890-1, CFDP-5890-2 (no assertion; SendFileInitiateFail event for the entry).
+    Covers CFDP-014 (nasa/fprime#5890): no assertion; PlaybackSourcePathTooLong for the entry.
     """
     directory, long_name = playback_dir
     fprime_test_api.clear_histories()
@@ -50,10 +50,14 @@ def test_playback_directory_skips_overlong_entry(fprime_test_api, cfdp, playback
     )
     fprime_test_api.assert_event(f"{cfdp}.PlaybackInitiated", timeout=5)
 
-    # The over-long entry is reported with SendFileInitiateFail and the scan continues
-    failure = fprime_test_api.await_event(f"{cfdp}.SendFileInitiateFail", timeout=10)
-    assert failure is not None, "Expected SendFileInitiateFail for the over-long entry"
-    assert failure.get_args()[0].val == long_name
+    # The over-long entry is reported with PlaybackSourcePathTooLong and the scan continues
+    failure = fprime_test_api.await_event(f"{cfdp}.PlaybackSourcePathTooLong", timeout=10)
+    assert failure is not None, "Expected PlaybackSourcePathTooLong for the over-long entry"
+    args = [arg.val for arg in failure.get_args()]
+    assert args[0] == directory
+    assert args[1] == long_name
+    assert args[2] == len(directory) + 1 + len(long_name)
+    assert args[3] == MAX_FILE_PATH_SIZE
 
     # Flight software is still alive: a second command still round-trips
     fprime_test_api.send_and_assert_command(f"{cfdp}.ResetCounters", [0], max_delay=5)
@@ -65,7 +69,7 @@ def test_zero_timer_parameters_do_not_assert(fprime_test_api, cfdp):
     Note: this sets the ChannelConfig parameter on the running deployment (not saved to
     the parameter file); restart the deployment to return to its configured defaults.
 
-    Covers: CFDP-5890-3, CFDP-5890-4.
+    Covers CFDP-015 (nasa/fprime#5890).
     """
     fprime_test_api.clear_histories()
     channel = {
