@@ -30,8 +30,9 @@ Governing rules are in
 - Requirements list (REQ-IDs) and `docs/sdd.md` of the UUT.
 - The deployment the tests run in. **Default: the project's full
   system deployment on the complete testbed** (contract §0). Run the
-  L0 feasibility check first — a `NO_OP_STRING` marker must round-trip
-  byte-exact through the archive and the plan's event rate must fit
+  L0 feasibility check first — the plan's marker (`NO_OP_STRING`, or a
+  tester `MARK(U32)` where the deployment has no string command) must
+  round-trip byte-exact through the archive and the plan's event rate must fit
   the downlink; if either fails on the system deployment, present a
   one-line test-deployment decision with that constraint, and wait
   for the human. When the plan is written before the code exists
@@ -250,11 +251,12 @@ Two audiences, two artifacts:
   procedure, stimulus, pass-rule, metric, menu or decision-log
   columns. A REQ-ID with no test gets one row whose Description names
   the reason. That table is the test-design gate's quick-look.
-- **The builder and the reviewer read the plan.** Deliver the full plan
-  (§2 structure, one entry per test) as a single markdown file plus
-  the fault menu as JSON, outside the component tree; it is the
-  baseline the harness implements and the checkers evaluate, and it
-  is not pasted into the SDD or into chat. Reviewer findings are recorded per the loop's record rule
+- **The builder and the reviewer read the plan.** Deliver `plan.json`
+  (§2 structure, one entry per test; `fth verify-plan` passes), its
+  rendered `plan.md`, the helpers module with the `@knob` declarations
+  and the generated fault menu, outside the component tree; it is the
+  baseline the harness implements and both checkers evaluate, and it is
+  not pasted into the SDD or into chat. Reviewer findings are recorded per the loop's record rule
 (`phase-review-loop.md`, "Record and gate"); the dispositions and the
 disagreement log are appended to §8 of the plan. The plan goes to the
 human only when the loop's stop rule is met (`phase-review-loop.md`,

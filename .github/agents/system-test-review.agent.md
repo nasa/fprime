@@ -75,7 +75,7 @@ helpers' implementation before step 1. Procedure:
 3. Review the harness against `fprime-system-test-harness`: UUT
    untouched, markers fit 40 characters and round-trip, END sent in
    `finally` and carries no verdict, no pytest or harness verdict under
-   `record/`, knobs invisible in the record, each `dry/<knob>/` run
+   `record/`, knobs invisible in the record, each single-knob vector
    fails its target with exactly the knob's `fails` predicates and its
    `ripples_to` with FAIL not UNVERIFIED while everything else passes
    (`fth vectors` green), engine and checker `failed` lists byte-equal

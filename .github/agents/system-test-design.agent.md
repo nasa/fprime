@@ -52,7 +52,9 @@ plan approved before the code existed, run the refresh of
 
 ## Output
 
-- `<uut>-system-test-plan.md` (single file) and `faults-menu.json`.
+- `plan.json` (passes `fth verify-plan`), its rendered `plan.md` (`fth
+  render-plan`), the helpers module with the `@knob` declarations, and
+  the generated `faults-menu.json` (`fth knobs-menu`).
 - A ≤ 10-line summary for the human: test count by level, requirements
   covered / waived, metrics, what is not covered, open disagreements.
 

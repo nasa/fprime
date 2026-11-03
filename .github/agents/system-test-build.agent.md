@@ -1,5 +1,5 @@
 ---
-description: "Use when an approved F Prime system test plan must be turned into a runnable harness (stage 2 of the system test process): tester components, integration tests, bench scripts, record markers, fault-injection knobs, and the builder's checker, iterated with the system-test reviewer through a dry run. Never edits the unit under test. Keywords: F Prime, test harness, test builder, tester component, fault injection, dry run."
+description: "Use when an approved F Prime system test plan must be turned into a runnable harness (stage 2 of the system test process): tester components, integration tests, bench scripts, record markers, `@knob` fault-injection declarations and `@helper` predicates for the fth engine, iterated with the system-test reviewer through mutation vectors and a stage-3 rehearsal. Never edits the unit under test. Keywords: F Prime, test harness, test builder, tester component, fault injection, fth, vectors."
 name: "F Prime System Test Builder"
 tools: [read, search, edit, execute]
 user-invocable: true
@@ -18,9 +18,10 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
 ## Procedure
 
 1. Follow `.github/skills/fprime-system-test-harness/SKILL.md`: reuse
-   first, system deployment by default, markers, record completeness,
-   knobs as configuration, one small checker file
-   (`fprime-test-oracle`).
+   first, system deployment by default, markers and stimulus through
+   the fth fixtures, `bench.json`, record completeness, knobs and
+   helpers as declarations in the plan's helpers module
+   (`fprime-test-oracle` §3, §5).
 2. Write any new code through `fprime-development.agent.md` — tester
    components take the component skills; a human-directed test
    deployment takes `fprime-topology-development`. All C++ follows

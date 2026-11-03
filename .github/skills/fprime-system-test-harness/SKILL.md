@@ -3,7 +3,7 @@ name: fprime-system-test-harness
 description: >-
   Use when building the harness for an approved F Prime system test
   plan: tester components, integration tests, bench scripts, record
-  markers, fault-injection knobs, and the builder's checker. Keeps the
+  markers, fault-injection knobs, and the engine's helpers. Keeps the
   harness small, reusable, and reviewable, and keeps it out of the unit
   under test. Stimulus tests use the fth pytest plugin; knobs are
   `@knob` declarations. Keywords: F Prime, test harness, tester
