@@ -98,6 +98,7 @@ relevant one instead of improvising:
   `fprime-hardware-input-tracing`.
 - Writing a subsystem reference page: `write-system-functional-doc`.
 - Adding or changing a skill or agent: `agent-skill-authoring`.
+- Deriving generated C++ names or wiring from the `.fpp` without reading autocode: `fprime-fpp-navigation`.
 
 Pull-request review is performed by the multi-agent flow in
 [`.github/agents/`](.github/agents/), entered through
