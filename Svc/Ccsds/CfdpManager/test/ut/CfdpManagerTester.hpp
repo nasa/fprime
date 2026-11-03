@@ -623,6 +623,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     // PDU Deserialization Failure Events
     void testFailPduHeaderDeserializationEvent();
+    void testFailPduHeaderDeserializationUnsupportedVersionEvent();
     void testFailMetadataPduDeserializationEvent();
     void testFailFileDataPduDeserializationEvent();
     void testFailEofPduDeserializationEvent();

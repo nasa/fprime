@@ -32,8 +32,8 @@ class NakPdu : public PduBase {
     //! Number of segment requests
     U8 m_numSegments;
 
-    //! Segment requests array (max NakMaxSegments = 58)
-    SegmentRequest m_segments[58];
+    //! Segment requests array
+    SegmentRequest m_segments[NakMaxSegments];
 
   public:
     //! Constructor

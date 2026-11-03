@@ -592,6 +592,37 @@ void CfdpManagerTester::testFailPduHeaderDeserializationEvent() {
     );
 }
 
+void CfdpManagerTester::testFailPduHeaderDeserializationUnsupportedVersionEvent() {
+    // FailPduHeaderDeserialization emitted for a complete header announcing CFDP version 2
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    U8 pduData[2 + 7];
+    Fw::Buffer pduBuffer(pduData, descriptorSize + 7);
+
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    pduData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    pduData[1] = static_cast<U8>(descriptor & 0xFF);
+
+    pduData[2] = 0x40;  // Flags byte: version 2
+    pduData[3] = 0x00;  // PDU length MSB
+    pduData[4] = 0x00;  // PDU length LSB
+    pduData[5] = 0x00;  // eidTsnLengths byte: 1-byte EIDs and TSN
+    pduData[6] = 0x01;  // source EID
+    pduData[7] = 0x02;  // TSN
+    pduData[8] = 0x03;  // dest EID
+
+    this->clearHistory();
+
+    this->invoke_to_dataIn(0, pduBuffer);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_FailPduHeaderDeserialization_SIZE(1);
+    ASSERT_EVENTS_FailPduHeaderDeserialization(0,                                                 // index
+                                               0,                                                 // channelId
+                                               static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR)  // status
+    );
+}
+
 void CfdpManagerTester::testFailMetadataPduDeserializationEvent() {
     // FailMetadataPduDeserialization for malformed metadata PDU
     // Strategy: Send a valid metadata PDU but with truncated body
@@ -813,7 +844,7 @@ void CfdpManagerTester::testFailAckPduDeserializationEvent() {
     );
 
     // Create malformed buffer (too short for valid ACK PDU)
-    U8 malformedData[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
+    U8 malformedData[5] = {0x20, 0x01, 0x02, 0x03, 0x04};  // valid flags byte, then truncated
     Fw::Buffer malformedBuffer(malformedData, sizeof(malformedData));
 
     this->clearHistory();
@@ -845,7 +876,7 @@ void CfdpManagerTester::testFailFinPduDeserializationEvent() {
     );
 
     // Create malformed buffer (too short for valid FIN PDU)
-    U8 malformedData[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
+    U8 malformedData[5] = {0x20, 0x01, 0x02, 0x03, 0x04};  // valid flags byte, then truncated
     Fw::Buffer malformedBuffer(malformedData, sizeof(malformedData));
 
     this->clearHistory();
@@ -877,7 +908,7 @@ void CfdpManagerTester::testFailNakPduDeserializationEvent() {
     );
 
     // Create malformed buffer (too short for valid NAK PDU)
-    U8 malformedData[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
+    U8 malformedData[5] = {0x20, 0x01, 0x02, 0x03, 0x04};  // valid flags byte, then truncated
     Fw::Buffer malformedBuffer(malformedData, sizeof(malformedData));
 
     this->clearHistory();

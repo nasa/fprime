@@ -442,6 +442,11 @@ TEST(Event, FailPduHeaderDeserialization) {
     tester.testFailPduHeaderDeserializationEvent();
 }
 
+TEST(Event, FailPduHeaderDeserializationUnsupportedVersion) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testFailPduHeaderDeserializationUnsupportedVersionEvent();
+}
+
 TEST(Event, FailMetadataPduDeserialization) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testFailMetadataPduDeserializationEvent();
