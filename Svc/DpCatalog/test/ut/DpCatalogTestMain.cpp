@@ -520,6 +520,51 @@ TEST(SetPriority, WithXmitRange) {
     tester.test_SetPriorityWithXmitRange();
 }
 
+TEST(DeleteDp, Nominal) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDp();
+}
+
+TEST(DeleteDp, NotFound) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpNotFound();
+}
+
+TEST(DeleteDp, InFlight) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpInFlight();
+}
+
+TEST(DeleteDp, StateFileReload) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStateFileReload();
+}
+
+TEST(DeleteDp, StaleDirectory) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStaleDirectory();
+}
+
+TEST(DeleteDp, PendingWithStateFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpPendingWithStateFile();
+}
+
+TEST(DeleteDp, NamesakeDirs) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpNamesakeDirs();
+}
+
+TEST(DeleteDp, RemoveError) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpRemoveError();
+}
+
+TEST(DeleteDp, StateFileWriteError) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStateFileWriteError();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

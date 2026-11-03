@@ -245,6 +245,21 @@ class DpCatalogTester : public DpCatalogGTestBase {
 
     //! SET_DP_PRIORITY moves products into and out of a START_XMIT_CATALOG_WITH_PRIORITY range
     void test_SetPriorityWithXmitRange();
+    //! DELETE_DP removes the file and the catalog entry; the product is no longer transmitted
+    void test_DeleteDp();
+    //! DELETE_DP is refused before configure and reports DpNotFound before the build and for an unknown product
+    void test_DeleteDpNotFound();
+    //! The product being sent cannot be deleted, before and after STOP; a pending one can
+    void test_DeleteDpInFlight();
+    //! Deleting a transmitted product drops its state file record, so a rebuild no longer sees it
+    void test_DeleteDpStateFileReload();
+    void test_DeleteDpStaleDirectory();
+    void test_DeleteDpPendingWithStateFile();
+    void test_DeleteDpNamesakeDirs();
+    //! A file that cannot be removed leaves the catalog untouched
+    void test_DeleteDpRemoveError();
+    //! A state file that cannot be rewritten fails the command after the product is deleted
+    void test_DeleteDpStateFileWriteError();
 
   private:
     //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog

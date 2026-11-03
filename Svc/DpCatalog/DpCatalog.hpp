@@ -159,6 +159,16 @@ class DpCatalog final : public DpCatalogComponentBase {
                                     FwDpPriorityType priority  //!< New transmit priority
                                     ) override;
 
+    //! Handler implementation for command DELETE_DP
+    //!
+    //! Delete one data product: its file, its catalog entry and its state file record
+    void DELETE_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                              U32 cmdSeq,           //!< The command sequence number
+                              FwDpIdType id,        //!< Container ID of the data product
+                              U32 tSec,             //!< Seconds of the data product time tag
+                              U32 tSub              //!< Microseconds of the data product time tag
+                              ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -302,7 +312,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
     DpCatalog_EntryLookupStatus findEntryByIdentity(const DpStateEntry& product, DpStateEntry& entry) const;
 
-    /// @brief find the first catalog entry of a data product named by id and time tag, as SET_DP_PRIORITY names it
+    /// @brief find the first catalog entry of a data product named by id and time tag, as SET_DP_PRIORITY and DELETE_DP
+    /// name it
     /// @param id container ID
     /// @param tSec seconds of the time tag
     /// @param tSub microseconds of the time tag
@@ -317,10 +328,26 @@ class DpCatalog final : public DpCatalogComponentBase {
     ///         is configured), NOT_RECORDED if it was set but could not be recorded in the configured state file
     DpCatalog_PriorityChangeStatus setDpPriority(DpStateEntry& entry, FwDpPriorityType priority);
 
-    /// @brief find the state file data slot for an entry's product (same directory, id and time tag)
+    /// @brief find the state file data slot for an entry's product (same directory, id and time tag; see
+    ///        findStateFileSlotByIdentity for a lookup without the directory)
     /// @param entry the entry to look up
     /// @return the slot index, or m_stateFileEntries if the product has no slot
     FwSizeType findStateFileSlot(const DpStateEntry& entry) const;
+
+    /// @brief find the state file data slot of the first product named by id and time tag, as DELETE_DP names it
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @return the slot index, or m_stateFileEntries if no product with the identity has a slot
+    FwSizeType findStateFileSlotByIdentity(FwDpIdType id, U32 tSec, U32 tSub) const;
+
+    /// @brief delete a data product named by id and time tag: its file, catalog entry and state file record
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @return OK if the product was deleted (and the state file rewritten, if one is configured and held a
+    ///         record of it), EXECUTION_ERROR otherwise
+    Fw::CmdResponse doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub);
 
     /// @brief record an entry's state in the state file data, reusing the product's slot or a stale one
     /// @param entry the entry to record
