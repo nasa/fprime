@@ -27,7 +27,7 @@ Before drafting, run the L0 feasibility check of
 the default deployment; its result is the first line of the plan. In
 the development lifecycle (plan before code) do it from configuration
 and documentation and write `L0: desk-checked; bench confirmation
-pending`; the stage-2 refresh (`fprime-system-test-design` §6)
+pending`; the stage-2 refresh (`fprime-system-test-design` §7)
 confirms it on the bench.
 
 If goals, requirements, or the testbed are unclear, ask before
@@ -48,7 +48,7 @@ with a disposition, append the disagreement log to the plan's
 decision log. Stop per the loop's stop rule — then present the plan
 to the human with the open items listed first. At stage 2 entry for a
 plan approved before the code existed, run the refresh of
-`fprime-system-test-design` §6 and present its diff.
+`fprime-system-test-design` §7 and present its diff.
 
 ## Output
 

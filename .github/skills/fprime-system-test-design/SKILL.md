@@ -5,10 +5,13 @@ description: >-
   for an F Prime component, driver, or subsystem that will be run and
   audited by agents (stage 2 of the system test process, or the
   test-design phase of component development). Produces a
-  requirements-traced plan with a machine-evaluable pass rule per test,
-  numeric metrics, a fault-injection menu, and an honest not-covered
-  list. Keywords: F Prime, system test, HIL, test plan, traceability,
-  pass rule, oracle, fault injection, qualification.
+  requirements-traced plan (`plan.json`, rendered to `plan.md` by
+  `fth render-plan`) with a one-sentence purpose and a structured,
+  machine-evaluable pass rule per test, knob-disjoint redundancy per
+  requirement, numeric metrics, a fault-injection menu, and an honest
+  not-covered list. Keywords: F Prime, system test, HIL, test plan,
+  traceability, pass rule, oracle, fault injection, qualification,
+  fth, plan.json.
 ---
 
 # Skill: F Prime system test design
@@ -35,7 +38,7 @@ Governing rules are in
   (test-design phase), do the check from the deployment's
   configuration and ground-system documentation and write the plan's
   first line as `L0: desk-checked; bench confirmation pending` — the
-  stage-2 refresh (§6) confirms it on the bench. A project with no
+  stage-2 refresh (§7) confirms it on the bench. A project with no
   deployment is the same human call (contract §2): ask first; without
   one, test in a temporary uncommitted deployment.
 - The FPP model: ports, commands, events, telemetry and parameters
@@ -52,6 +55,14 @@ Governing rules are in
 
 ## 2. Plan structure
 
+The plan is `plan.json`; `plan.md` is rendered from it (`fth
+render-plan`, byte-stable) and never edited by hand. Keys, predicate
+grammar and the test entry are defined in the tooling's
+`docs/plan-format.md` (pinned in `test-process-contract.md` §8);
+`fth verify-plan` must pass before a plan is handed to anyone — an
+unknown helper, knob or requirement or an unparsable predicate is a
+load error, never a verdict.
+
 ```
 0  Scope        UUT, deployment, bench, ground system, out of scope
 1  Entry gates  what must be true before a run (SHAs, marker round-trip, downlink
@@ -61,7 +72,7 @@ Governing rules are in
                 L4 endurance/performance · L5 fault paths · L6 negative controls
                 L7 final state for independent verification
 3  Test entries one block per test (§3)
-4  Traceability REQ-ID → test IDs; every REQ has ≥ 1 test or one row in the SDD's "Out-of-scope failure modes" table (no Waivers section)
+4  Traceability `requirements`: REQ-ID → {tests, verification, note}; redundancy rule below, or one row in the SDD's "Out-of-scope failure modes" table (no Waivers section)
 5  Metrics      numeric thresholds with units, decided here, never relaxed later
 6  Fault menu   knobs the harness must support to plant failures (§4)
 7  Not covered  what this plan cannot prove on this bench, and why
@@ -70,23 +81,62 @@ Governing rules are in
 
 ## 3. One test entry
 
+`plan.json` `tests[]` entry (rendered form in parentheses):
+
 ```
-ID:        L2-6                      # at column 0, one per test, unique, ≤ 8 chars; parsed into the manifest
-Title:     Full-device write/verify sweep
-Covers:    REQ-FRAM-003, REQ-FRAM-007
-Setup:     <state the UUT must be in>
-Procedure: <commands sent, in order>
-Window:    NO_OP_STRING "QUAL <run> L2-6 START" … "QUAL <run> L2-6 END"
-Pass rule: <machine-evaluable, per fprime-test-oracle>
-Evidence:  <which EVR sequence or telemetry strip a human should see>
-Fault knobs: <menu entries that may be applied to this test>
+id         L2-6                 # unique, ≤ 8 chars; the manifest's test list
+title      Full-device write/verify sweep
+purpose    One sentence: what a PASS proves, in the requirement's words.
+covers     ["REQ-FRAM-003", "REQ-FRAM-007"]
+setup      <state the UUT must be in>
+procedure  ["MARK(60)", "bracket (2 samples)", "SWEEP(seed=0x5005, 4096, 0x5005)",
+            "action: OpenOCD reset run", "MARK(61)"]      # NAME(args), bracket, wait, action:
+windows    [{"name": "W", "start_id": 60, "end_id": 61, "reset": false}]
+complete   ["STD"]                                        # or per window {"W1": ["STD"], "R": [...]}
+all_of     ["ABS", "<predicate>", {"helper": name, "text": ..., "args": {...}}]
+metrics    ["<predicate with units>"]
+rationale  [{"pred": "<predicate>", "text": "why this value is ignored / masked"}]
+knobs      ["verify_wrong_seed"]
+evidence   <which EVR sequence or telemetry strip a human should see>
 ```
 
 Rules:
 
+- `purpose` is one sentence per test; the QL page and the SDD test
+  table print it, so it names the observable outcome, not the
+  procedure.
 - One pass rule per test; no "verify visually", no "as expected".
   Completeness facts and UUT facts are separate blocks
-  (`fprime-test-oracle` §1).
+  (`fprime-test-oracle` §1): a failed `complete` predicate makes the
+  window `UNVERIFIED`; a failed `all_of` or `metrics` predicate in a
+  complete window is `FAIL`. Never put a UUT fact in `complete` (a hung
+  UUT would read as a bench problem).
+- Predicates are **structured text from the grammar** of
+  `docs/plan-format.md` (`event X(args) count == n`, `event A precedes
+  event B`, `delta/first/last(ch)`, `last(ch) & mask == v`,
+  `commands_sent == n`, `t(B) - t(CMD sent) <= N s`, the completeness
+  forms, `<packet> samples >= n`) or a reference to a registered
+  `@helper` (`{"helper", "text", "args"}`). Nothing else: prose, regexes
+  and inline code are load errors. The predicate text is the key the
+  verdict files, the knob `fails` lists and `fth unseal` match
+  byte-for-byte.
+- Every value a rule deliberately ignores or masks (a status bit, a
+  boot-cumulative counter judged only by Δ, a tolerance) has a
+  `rationale` line naming the predicate and the source of the value
+  (datasheet section, bench reading confirmed at stage 2).
+- A window that spans a reboot carries `"reset": true`; the plan's
+  top-level `reboot_min_backstep_s` is the FSW-clock fall-back the
+  exporter counts as a new boot epoch (default 1 s), and a reset
+  window must hold exactly one epoch boundary. Judge the two boots with
+  `segment`-aware helpers or per-boot predicates; `duration` is
+  undefined across a reboot.
+- **Redundancy.** Every requirement with system-test coverage is
+  covered by ≥ 2 tests whose knob sets are disjoint, so no drawn knob
+  can remove the prime-path verification of a requirement (`fth draw`
+  refuses a draw that would). A requirement that cannot get a second
+  knob-disjoint test carries an explicit waiver in its
+  `requirements` entry: `verification` text naming no test (e.g. `UT
+  only`, `Inspection`) and a `note` saying why.
 - Prefer EVR sequences a human can check off (start → progress →
   complete with counts); telemetry strips when counters are the
   evidence; never prose from the runner.
@@ -133,11 +183,14 @@ Observability rules for pass-rule predicates (found by running the checker):
 
 ## 4. Fault menu
 
-The menu lists knobs the harness applies **through its own
-configuration**, so a planted fault is invisible to the checkers and
-absent from harness output. A `uut-state` knob's disturbing command
-does appear in `commands.jsonl`; the auditor is forbidden to reason
-from it (contract §5):
+The menu is **generated** from the `@knob` declarations of the plan's
+helpers module (`fth knobs-menu plan.json`, `fprime-test-oracle` §5);
+the designer writes the declarations, never the JSON. Knobs are
+command rewrites or insertions applied by the harness to the drawn test
+only, so a planted fault is invisible to the checkers and absent from
+harness output. A `uut-state` knob's disturbing command does appear in
+`commands.jsonl`; the auditor is forbidden to reason from it (contract
+§5). Generated shape:
 
 ```
 { "max_count": 2,
@@ -179,6 +232,9 @@ from it (contract §5):
   expected to PASS.
 - Knobs that need a different build, a different test ID, or a
   visible flag are not acceptable.
+- Together with §3's redundancy rule: a knob may apply to several
+  tests, but for every requirement at least one covering test must
+  carry no knob that any other covering test also carries.
 
 ## 5. Hand-off
 
@@ -204,7 +260,24 @@ disagreement log are appended to §8 of the plan. The plan goes to the
 human only when the loop's stop rule is met (`phase-review-loop.md`,
 Bound and Rounds).
 
-## 6. Refresh at stage 2
+## 6. Stage-2 exit gate
+
+Stage 2 closes only when both hold, on the bench, with the frozen plan:
+
+1. **Mutation vectors** (`fth vectors plan.json vectors/`): one clean
+   full-plan record that PASSes every test, and one single-knob record
+   per knob that FAILs exactly that knob's `fails` set on its target
+   (and `ripples_to`, FAIL not UNVERIFIED) while every other test
+   passes. Records live under `vectors/<name>/` with `vector.json`
+   (`kind: clean | single-knob | regression`) and run in CI; a vector
+   that no longer judges as declared blocks the manifest.
+2. **Stage-3 rehearsal**, end to end with a throwaway seed on a
+   scratch manifest: `fth draw` → `fth run` → `fth audit` → `fth
+   unseal` without a tooling error, the harness reading that real
+   `sealed/faults.json` (fram-r1 was voided at run start because the
+   harness had only ever read a hand-written dry-run fault file).
+
+## 7. Refresh at stage 2
 
 A plan approved in stage 1 (before code) is refreshed when stage 2
 starts on the UUT SHA: confirm L0 on the bench and replace the
