@@ -88,6 +88,13 @@ concurrently on the same UUT SHA.
   threshold, metric, or the test list after plan approval is a plan
   change and returns to the human gate with a diff.
 
+Layout (Captain's rule, 2026-11-03): the plan, knobs, helper predicates,
+stimulus tests and independent checker live in the deployment repo/branch
+that hosts the test-helper component, beside it; the UUT repo holds the
+component, its unit tests and its SDD; the tooling repo holds nothing
+UUT-specific (generic code + vendored records with a labelled plan copy).
+See `fprime-system-test-harness` "Layout rule".
+
 ## 3. Hand-off artifacts
 
 Stage 2 → stage 3 delivers exactly one **manifest** (`fth manifest`,

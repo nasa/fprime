@@ -90,6 +90,10 @@ the plan. The package renderer (`render-ql --sdd`) fails when the SDD's test set
 from the plan's, so the SDD and the VnV matrix cannot drift. What the quick-look package
 must contain is the "QL package contract" in `fprime-run-for-record` §5a — design to it.
 
+Where it lives: `plan.json`, `plan_helpers.py` and the stimulus tests are
+committed in the deployment branch beside the test-helper component
+(`fprime-system-test-harness` "Layout rule") — never in the tooling repo.
+
 ## 3. One test entry
 
 `plan.json` `tests[]` entry (rendered form in parentheses):

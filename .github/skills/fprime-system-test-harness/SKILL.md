@@ -38,6 +38,27 @@ A tester component is harness, not UUT. It is never wired into the
 mission topology unless the human has chosen a dedicated test
 deployment.
 
+### Layout rule (where the test code lives)
+
+- **Deployment repo/branch that hosts the test-helper component**
+  (e.g. `fprime-samd-reference` `fram-harness`,
+  `CuriosityReference/FramTester/`): the tester component AND, beside
+  it under its `test/int/`, the plan (`plan.json`, rendered `plan.md`),
+  the fault knobs and helper predicates (`plan_helpers.py`), the
+  generated fault menu, `bench.json`, the pytest stimulus and the
+  adversary's independent checker. They require the deployment the
+  helper lives in, so they belong there.
+- **UUT repo** (e.g. `fprime-devices` `Fram.FramDriver`): the component,
+  its unit tests (`test/ut/`) and its SDD (whose Tests table is derived
+  from the plan by `fth render-sdd-tests`). Nothing from the system
+  test moves in here.
+- **Tooling repo** (`fprime-testing-harness`): nothing UUT-specific —
+  generic engine/runner/auditor/renderer plus vendored *records* as
+  regression vectors; each vector names a vendored, clearly labelled
+  COPY of its plan (`vectors/plans/<name>/SOURCE.json` = repo, branch,
+  sha, path, per-file sha256). `fth run --plan/--tests` and
+  `fth audit --plan/--independent` point at the deployment checkout.
+
 ## 2. Deployment
 
 Default is the project's full system deployment on the complete
@@ -138,6 +159,14 @@ knob handling in one small file each; isolate bench scripts (power
 control, flashing, ground-system start) from test logic. Harness code
 is reviewed by the system-test reviewer and, if the human requests,
 the local multi-agent review (`fprime-iterative-development` §2, step 4).
+The review scope of the harness stage explicitly includes, besides the
+tooling: the tester component (FPP, C++, SDD), the stimulus tests, the
+knob bodies and the helper predicates — lens passes (code, design,
+architecture, test quality) AND an adversarial pass (knob acting outside
+its drawn test via shared state; stimulus tautology — the harness emitting
+what the oracle checks; helper predicates without known-answer tests; the
+tester hiding UUT errors; steps that depend on another test's device
+state). Review findings are written locally, never posted to GitHub.
 Document the harness in a short README: how to run one test, the whole
 plan, and the dry run.
 
