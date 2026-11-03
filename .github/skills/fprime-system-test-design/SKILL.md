@@ -74,11 +74,21 @@ load error, never a verdict.
                 L7 final state for independent verification
 3  Test entries one block per test (§3)
 4  Traceability `requirements`: REQ-ID → {tests, verification, note}; redundancy rule below, or one row in the SDD's "Out-of-scope failure modes" table (no Waivers section)
+   Helpers      `helpers`: [{instance, component, src, repo}] — every harness-only component of the
+                test deployment (e.g. FramTester); the package renders a succinct SDD page per helper
 5  Metrics      numeric thresholds with units, decided here, never relaxed later
 6  Fault menu   knobs the harness must support to plant failures (§4)
 7  Not covered  what this plan cannot prove on this bench, and why
 8  Decision log numbered rulings with who decided and when
 ```
+
+The SDD's `## Tests` table is DERIVED, never hand-edited: `fth render-sdd-tests plan.json
+docs/sdd.md` rewrites it (and every requirement's Verification cell that names a system
+test) between `<!-- fth:tests:begin -->` / `<!-- fth:tests:end -->` markers from the plan's
+`purpose` and `covers`, in natural test-id order; commit the result on the UUT branch with
+the plan. The package renderer (`render-ql --sdd`) fails when the SDD's test set differs
+from the plan's, so the SDD and the VnV matrix cannot drift. What the quick-look package
+must contain is the "QL package contract" in `fprime-run-for-record` §5a — design to it.
 
 ## 3. One test entry
 

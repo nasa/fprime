@@ -227,6 +227,51 @@ Simulator evidence is labelled `SIMULATED` in the manifest and on the
 pages and is never a record; the record requires the device to pass the
 bench entry gate (answers a probe at the configured baud) first.
 
+## 5a. QL package contract (acceptance checklist)
+
+Every item is program-generated from the plan, the record, the F´ dictionary and the FPP
+model — no LLM prose anywhere in the package. The tooling's `tests/test_ql_contract.py`
+asserts each item; a package missing one is not deliverable.
+
+Package files: `index.md`; one `<test id>.md` per plan test; `sdd.md` (the UUT's SDD with
+`<a id="REQ-…"></a>` anchors, its Tests table derived from the plan — the renderer fails on
+drift); `commands.md` (every command the plan uses: component.mnemonic, opcode hex and
+decimal, each argument with type, enum values and meanings, FPP doc-comment; the events
+whose doc-comment names the command; dictionary sha256); `helpers/<Component>.md` for every
+plan `helpers` entry (FPP description, port diagram, commands → `commands.md`, events with
+id/severity/format/args, channels with id/type, parameters, source files with sha256 linked
+at the manifest's project sha); `ql.zip` of all of it.
+
+`index.md`: run metadata (manifest sha8, record sha256, seal sha8, dictionary sha256, SDD
+sha256, repo-check state); the per-test table (test, title, checker verdict, unseal
+expectation, unseal verdict, page); ONE VnV matrix requirement × test with cells
+P / E / F / U / · and an "Overall" column (any F → F; any P and no F → P; only E/U → U;
+waiver quoted when no test covers) and the legend stating the cell meanings and the
+roll-up rule; a "Test helper components" section; tests natural-sorted by id everywhere
+(execution order is the plan's business, not the index's).
+
+Each test page, in this order: `← back to [index](index.md)` under the H1 and as the last
+line; header table — engine verdict, Unseal expectation, Unseal verdict (stamped by
+`fth unseal`), "What this test does" (the plan's `purpose`), Covers (each REQ linked to
+`sdd.md#REQ-…`), Harness (link to each helper page), Window start / Window end / Window
+duration as separate rows per window with epoch; §1 Pass rule — one check per line
+(#, window, group, check, plain-words description) with a Rationale line for every value a
+rule deliberately ignores; §2 Procedure — plan steps aligned to sent commands with K lines,
+every command name linked to `commands.md`, non-command actions explained ("not a
+command — reboot visible as FSW clock restart …"); §3 "Possible Injected Faults" — sealed
+draw line and the knob | drawn | checks-it-may-break table (a `— none —` row when no knob
+applies, never an empty table, no "acted" column) filled by `fth unseal`, the italic note
+says so; §4 Rule verdict (#, window, check, value seen, holds), the verdict line, the
+unseal callout (⚠ when more checks failed than the drawn knob allows, a planted test
+PASSED or an unplanted test FAILED; otherwise "consistent with draw"), the footnote that
+counters are boot-cumulative and only Δ is judged, the caption that a handler's event
+precedes its OpCodeCompleted; §5 Events — complete, nothing elided, Δ from the window
+START marker, reboot rows marked; §6 Telemetry — one row per channel (samples, first/last
+with C line and FSW, "all = v" / "changed: a → b" / "monotonic a → b (n distinct)");
+§7 Commands last, with a "vs plan" column flagging arg differences and commands not in the
+plan as OBSERVATIONS only ("Observation: command K14 differs …" singular when one). Hex
+beside decimal wherever a rule uses hex (0x3FFC0 vs 262080).
+
 ## 6. Unseal (human action)
 
 ```bash
