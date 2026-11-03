@@ -554,6 +554,28 @@ event PlaybackDirReadFailed(
     severity warning low \
     format "Failed to read from playback directory {}, error={}"
 
+@ Lengths precede the path so a truncated text log keeps the numbers. The entry
+@ is read into a MaxFilePathSize buffer, so length is a lower bound for longer names.
+event PlaybackSourcePathTooLong(
+    length: FwSizeType @< Length of the combined <directory>/<entry> source path
+    maxLength: FwSizeType @< Maximum file path length (MaxFilePathSize)
+    directory: string size MaxFilePathSize @< Playback source directory
+    $entry: string size MaxFilePathSize @< Directory entry that was skipped
+) \
+    severity warning low \
+    format "Source path length {} exceeds maximum {}, skipped playback entry {}/{}"
+
+@ Lengths precede the path so a truncated text log keeps the numbers. The entry
+@ is read into a MaxFilePathSize buffer, so length is a lower bound for longer names.
+event PlaybackDestinationPathTooLong(
+    length: FwSizeType @< Length of the combined <directory>/<entry> destination path
+    maxLength: FwSizeType @< Maximum file path length (MaxFilePathSize)
+    directory: string size MaxFilePathSize @< Playback destination directory
+    $entry: string size MaxFilePathSize @< Directory entry that was skipped
+) \
+    severity warning low \
+    format "Destination path length {} exceeds maximum {}, skipped playback entry {}/{}"
+
 event ResetFreedTransaction severity diagnostic \
     format "Attempt to reset a transaction that has already been freed"
 

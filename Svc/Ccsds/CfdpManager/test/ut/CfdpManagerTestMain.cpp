@@ -683,6 +683,26 @@ TEST(Event, PlaybackDirSlotUnavailable) {
     tester.testPlaybackDirSlotUnavailableEvent();
 }
 
+TEST(Event, PlaybackDirEntrySourcePathTooLong) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPlaybackDirEntrySourcePathTooLong();
+}
+
+TEST(Event, PlaybackDirEntryDestinationPathTooLong) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPlaybackDirEntryDestinationPathTooLong();
+}
+
+TEST(Timer, ZeroDurationExpiresOnFirstTick) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTimerZeroDurationExpiresOnFirstTick();
+}
+
+TEST(Timer, ZeroInactivityTimerExpiresOnFirstTick) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testZeroInactivityTimerExpiresOnFirstTick();
+}
+
 TEST(Event, RxFileReopenFailed) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testRxFileReopenFailedEvent();

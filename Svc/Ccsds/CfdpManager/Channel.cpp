@@ -772,6 +772,27 @@ void Channel::processPlaybackDirectory(Playback* pb) {
 
             pb->pending_file = path;
         } else {
+            // Skip entries whose combined "<dir>/<entry>" source or destination path
+            // would not fit the MaxFilePathSize limit enforced by the metadata PDU.
+            // Checked before a transaction is acquired so no slot is consumed for it.
+            const FwSizeType maxPathLen = static_cast<FwSizeType>(MaxFilePathSize);
+            const FwSizeType srcPathLen = pb->fnames.src_filename.length() + 1 + pb->pending_file.length();
+            const FwSizeType dstPathLen = pb->fnames.dst_filename.length() + 1 + pb->pending_file.length();
+            const bool srcTooLong = (srcPathLen > maxPathLen);
+            const bool dstTooLong = (dstPathLen > maxPathLen);
+            if (srcTooLong) {
+                this->m_cfdpManager->log_WARNING_LO_PlaybackSourcePathTooLong(
+                    srcPathLen, maxPathLen, pb->fnames.src_filename, pb->pending_file);
+            }
+            if (dstTooLong) {
+                this->m_cfdpManager->log_WARNING_LO_PlaybackDestinationPathTooLong(
+                    dstPathLen, maxPathLen, pb->fnames.dst_filename, pb->pending_file);
+            }
+            if (srcTooLong || dstTooLong) {
+                pb->pending_file = "";  // continue reading dir
+                continue;
+            }
+
             txn = this->findUnusedTransaction(Direction::DIRECTION_TX);
             if (txn == nullptr) {
                 // while not expected this can certainly happen, because

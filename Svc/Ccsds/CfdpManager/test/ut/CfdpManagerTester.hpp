@@ -659,6 +659,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testPlaybackDirOpenFailedEvent();
     void testPlaybackDirReadFailedEvent();
     void testPlaybackDirSlotUnavailableEvent();
+    void testPlaybackDirEntrySourcePathTooLong();
+    void testPlaybackDirEntryDestinationPathTooLong();
+
+    // Timer robustness (issue #5890)
+    void testTimerZeroDurationExpiresOnFirstTick();
+    void testZeroInactivityTimerExpiresOnFirstTick();
 
     // Critical Error Path Events
     void testRxWriteFailedEvent();
@@ -766,6 +772,14 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void createAndVerifyTestFile(const char* filePath, FwSizeType expectedFileSize, FwSizeType& actualFileSize);
 
     //! Setup TX transaction and verify initial state (command-based)
+    //! Play back a directory holding one over-long and one short entry; exactly one of the
+    //! source (sourceTooLong) or destination path must exceed MaxFilePathSize
+    void runPlaybackPathTooLongCase(const char* srcDir,
+                                    const char* dstDir,
+                                    const char* longEntry,
+                                    const char* shortEntry,
+                                    bool sourceTooLong);
+
     void setupTxTransaction(const char* srcFile,
                             const char* dstFile,
                             U8 channelId,
