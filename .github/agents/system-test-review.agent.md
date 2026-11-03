@@ -85,6 +85,30 @@ helpers' implementation before step 1. Procedure:
    infrastructure counters only, commands paced, exporter writes all
    three exports plus `export-counts.json`, size reviewable in one
    sitting.
+3b. Adversarial reading. Read the tester/helper component sources
+   (fpp/cpp/hpp and its docs/sdd.md), the stimulus tests, the knob
+   bodies and the helper predicates, and answer these five questions
+   explicitly in `review-harness-round-N.md`, each with evidence
+   (file:line) and a verdict (clean / must fix / should fix):
+   (1) Tautology — does any check in the plan pass because the harness
+       emits what the oracle checks, without the UUT doing the work?
+       Trace each predicate's event/channel back to the UUT call that
+       produces it.
+   (2) Swallowed status — does the tester component swallow, default,
+       or remap any UUT/driver status or return (SpiDriver status, port
+       return values, `Fw::Success`) instead of surfacing it in an
+       event/channel the plan checks?
+   (3) Knob reach — can a knob body act on a test outside its
+       `applies_to`/drawn id via module state, fixture state, device
+       state or command ordering?
+   (4) Cross-test state — does any plan step rely on device/UUT state
+       left by a prior test (erase/sweep/reset), such that reordering or
+       a single-test rerun changes the verdict?
+   (5) Helper KATs — does every `@helper` predicate have a known-answer
+       test (hand-built record → expected verdict, both pass and fail
+       cases)?
+   Mechanics checks (step 3) alone do not close stage 2; a round with
+   step 3b on file and no open must-fix does.
 4. Output `review-harness-round-N.md` with the same tags. Five rounds
    maximum.
 

@@ -151,6 +151,7 @@ not tamper-proof. Every RfR report says so.
 - **Reviewer** is adversarial: finds what the plan would miss and what
   the harness would pass by construction; writes the independent
   checker; keeps the disagreement log.
+- **Reviewer** also reads the harness code adversarially (review Mode B step 3b: tautology, swallowed status, knob reach, cross-test state, helper KATs); mechanics checks alone do not close stage 2.
 - **Builder** keeps the harness small enough to be read in one sitting
   and reuses `test/int/` reusable integration tests and standard
   components before writing new code.
@@ -221,7 +222,7 @@ this table; bumping it is a one-line change here and nowhere else.
 
 | Tool | Pinned | Install |
 |---|---|---|
-| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 7e20cf3a31da79a24729ba8e388dde93a305ed41) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@7e20cf3a31da79a24729ba8e388dde93a305ed41#egg=fprime-testing-harness"` |
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 8b6efddccae2e8c1cb1310173e6fabb5cdd4a855) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@8b6efddccae2e8c1cb1310173e6fabb5cdd4a855#egg=fprime-testing-harness"` |
 
 Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and

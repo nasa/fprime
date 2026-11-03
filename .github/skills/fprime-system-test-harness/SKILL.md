@@ -167,6 +167,21 @@ its drawn test via shared state; stimulus tautology — the harness emitting
 what the oracle checks; helper predicates without known-answer tests; the
 tester hiding UUT errors; steps that depend on another test's device
 state). Review findings are written locally, never posted to GitHub.
+
+Before hand-off the builder answers the reviewer's five questions
+(`system-test-review.agent.md` Mode B step 3b) as a self-check, with
+file:line evidence: (1) tautology — does any plan check pass because the
+harness emits what the oracle checks, without the UUT doing the work?
+(2) swallowed status — does the tester swallow, default or remap any
+UUT/driver status or return instead of surfacing it in an event/channel
+the plan checks? (3) knob reach — can a knob body act outside its
+`applies_to`/drawn id via module, fixture, device state or command
+ordering? (4) cross-test state — does any step rely on device state left
+by a prior test, so that reordering or a single-test rerun changes the
+verdict? (5) helper KATs — does every `@helper` have a known-answer test
+(pass and fail cases)? The stage-2 exit gate (design skill §6) requires
+the reviewer's step-3b round on file with no open must-fix; mechanics
+checks alone do not close stage 2.
 Document the harness in a short README: how to run one test, the whole
 plan, and the dry run.
 

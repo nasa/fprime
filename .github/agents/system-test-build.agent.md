@@ -30,11 +30,14 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
    clean full-plan run plus one full-plan run per knob applied alone,
    kept as mutation vectors (`vectors/<name>/`, `fth vectors`) —
    `fprime-system-test-design` §6.
-4. Hand the harness diff and the vector records to
-   `system-test-review.agent.md` (harness mode); fix must-fixes; repeat
-   until the engine and the independent checker agree byte-for-byte on
-   every vector and no must-fix is open (five rounds maximum, then
-   escalate).
+4. Hand the harness diff, the vector records, the tester component
+   sources (fpp/cpp/hpp, docs/sdd.md) and the helpers module (knob
+   bodies + helper predicates) to `system-test-review.agent.md`
+   (harness mode); fix must-fixes; repeat until the engine and the
+   independent checker agree byte-for-byte on every vector and no
+   must-fix is open (five rounds maximum, then escalate). This step
+   cannot close until a round with the reviewer's step 3b (adversarial
+   reading, five questions) is on file with no open must-fix.
 5. Rehearse stage 3 end to end with a throwaway seed (`fth draw` →
    `fth run` → `fth audit --independent` → `fth unseal`), then close
    stage 2 with `fth manifest` (`fprime-run-for-record` §1), listing
