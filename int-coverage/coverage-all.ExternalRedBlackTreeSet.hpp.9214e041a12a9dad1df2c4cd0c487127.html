@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-11-02 22:10:44</td>
+      <td>2026-11-03 22:10:14</td>
     </tr>
   </table>
 </div>
@@ -40,21 +40,21 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>18</td>
+      <td>16</td>
       <td>19</td>
-      <td class="coverage-high">94.7%</td>
+      <td class="coverage-medium">84.2%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
-      <td>10</td>
+      <td>9</td>
       <td>11</td>
-      <td class="coverage-high">90.9%</td>
+      <td class="coverage-medium">81.8%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
+      <td>8</td>
       <td>9</td>
-      <td>9</td>
-      <td class="coverage-high">100.0%</td>
+      <td class="coverage-medium">88.9%</td>
     </tr>
   </table>
 </div>
@@ -71,10 +71,10 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l51">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::ExternalRedBlackTreeSet(Fw::RedBlackTreeSetOrMapImpl&lt;Svc::DpCatalog::DpStateEntry, Fw::Nil&gt;::Node*, unsigned long*, unsigned long) (line 51)</a></td><td>called 1 time</td><td>62.0%</td></tr>
-    <tr><td><a href="#l90">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::begin() const (line 90)</a></td><td>called 9 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l90">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::begin() const (line 90)</a></td><td>called 19 times</td><td>75.0%</td></tr>
     <tr><td><a href="#l93">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::clear() (line 93)</a></td><td>called 4 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l97">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::end() const (line 97)</a></td><td>called 10 times</td><td>75.0%</td></tr>
-    <tr><td><a href="#l101">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::find(Svc::DpCatalog::DpStateEntry const&amp;) const (line 101)</a></td><td>called 5 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l97">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::end() const (line 97)</a></td><td>called 26 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l101">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::find(Svc::DpCatalog::DpStateEntry const&amp;) const (line 101)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l109">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::getCapacity() const (line 109)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l113">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::getSize() const (line 113)</a></td><td>called 14 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l117">Fw::ExternalRedBlackTreeSet&lt;Svc::DpCatalog::DpStateEntry&gt;::insert(Svc::DpCatalog::DpStateEntry const&amp;) (line 117)</a></td><td>called 5 times</td><td>100.0%</td></tr>
@@ -735,12 +735,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 9 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 9 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 19 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 19 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">9</td>
+      <td class="linecount coveredLine">19</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ConstIterator</span><span class="w"> </span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ConstIterator</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_impl</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -791,12 +791,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 26 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 26 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">10</td>
+      <td class="linecount coveredLine">26</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ConstIterator</span><span class="w"> </span><span class="n">end</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ConstIterator</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_impl</span><span class="p">.</span><span class="n">end</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -824,8 +824,8 @@
       <td class="lineno"><a id="l101" href="#l101">101</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element</span><span class="w">  </span><span class="c1">//!&lt; The element</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element</span><span class="w">  </span><span class="c1">//!&lt; The element</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l102" href="#l102">102</a></td>
@@ -844,15 +844,9 @@
     <tr class="source-line">
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/1</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
-          </div>
-        </details>
       </td>
-      <td class="linecount coveredLine">10</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_impl</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">element</span><span class="p">,</span><span class="w"> </span><span class="n">nil</span><span class="p">);</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_impl</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">element</span><span class="p">,</span><span class="w"> </span><span class="n">nil</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l105" href="#l105">105</a></td>
