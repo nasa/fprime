@@ -1364,6 +1364,94 @@ void CfdpManagerTester ::testPing() {
     ASSERT_from_pingOut(0, key);
 }
 
+void CfdpManagerTester::queuedTxFinishedNoHang(bool viaAbandon) {
+    // Regression test: finishing a downlink that is still queued must not stall run1Hz.
+    //
+    // Two Class 2 downlinks are commanded on one channel. After one run1Hz cycle the first is
+    // active on TXA and the second is still waiting on PEND. Finishing the queued one, either by
+    // an uplinked early FIN addressed to it or by ABANDON_TRANSACTION, used to leave it on PEND in
+    // HOLD state. PEND is never ticked, so it was never recycled, and on the next cycle cycleTx
+    // promoted it to TXA where cycleTxFirstActive looped forever because dispatchTx has no
+    // handler for HOLD. The fix moves the finished transaction to TXW so the inactivity timer
+    // recycles it like any other finished downlink.
+    const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
+    const FwSizeType expectedFileSize = 3 * dataPerPdu;
+    const char* srcFile1 = "test/ut/output/c2_queued_1.bin";
+    const char* srcFile2 = "test/ut/output/c2_queued_2.bin";
+    const char* dstFile = "/dest/c2_queued.dat";
+    const U8 channelId = TEST_CHANNEL_ID_1;
+    const EntityId localEid = this->component.getLocalEidParam();
+
+    FwSizeType fileSize;
+    createAndVerifyTestFile(srcFile1, expectedFileSize, fileSize);
+    createAndVerifyTestFile(srcFile2, expectedFileSize, fileSize);
+
+    // Queue two downlinks. Both start in S2 on PEND.
+    TransactionSetup first;
+    setupTxTransaction(srcFile1, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, TEST_PRIORITY,
+                       TxnState::TXN_STATE_S2, first);
+    this->clearHistory();
+    TransactionSetup second;
+    setupTxTransaction(srcFile2, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, TEST_PRIORITY,
+                       TxnState::TXN_STATE_S2, second);
+
+    // One cycle: the first transaction is dequeued and starts sending (a short file leaves it
+    // on TXW waiting to send EOF by the end of the cycle), the second stays queued on PEND.
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    ASSERT_NE(QueueId::PEND, first.txn->m_flags.com.q_index) << "First downlink should have been dequeued";
+    ASSERT_EQ(QueueId::PEND, second.txn->m_flags.com.q_index) << "Second downlink should be queued";
+    const U8 firstQueue = first.txn->m_flags.com.q_index;
+
+    this->clearHistory();
+
+    if (viaAbandon) {
+        this->sendCmd_AbandonTransaction(0, 0, channelId, second.expectedSeqNum, localEid);
+        this->component.doDispatch();
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_ABANDONTRANSACTION, 0, Fw::CmdResponse::OK);
+        ASSERT_EVENTS_TransactionAbandoned_SIZE(1);
+    } else {
+        // Early FIN from the ground for the queued downlink. The source EID is the local (sender)
+        // EID and the destination is the ground peer, which is how receivePdu matches it.
+        this->sendFinPdu(
+            channelId, localEid, TEST_GROUND_EID, second.expectedSeqNum, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+            Cfdp::FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE, Cfdp::FinFileStatus::FIN_FILE_STATUS_RETAINED);
+        this->component.doDispatch();
+        ASSERT_EVENTS_TxEarlyFinReceived_SIZE(1);
+        ASSERT_EVENTS_TxEarlyFinReceived(0, Cfdp::Class::CLASS_2, localEid, second.expectedSeqNum);
+    }
+
+    // The finished transaction must be in HOLD and must have left PEND for TXW, where the
+    // tick processor can see it. This assertion fails (rather than hangs) without the fix.
+    ASSERT_EQ(second.txn, findTransaction(channelId, second.expectedSeqNum));
+    ASSERT_EQ(TxnState::TXN_STATE_HOLD, second.txn->m_state) << "Finished downlink should be in HOLD";
+    ASSERT_EQ(QueueId::TXW, second.txn->m_flags.com.q_index) << "Finished downlink must not remain on PEND";
+
+    // The first transaction is untouched.
+    ASSERT_EQ(firstQueue, first.txn->m_flags.com.q_index);
+    ASSERT_EQ(TxnState::TXN_STATE_S2, first.txn->m_state);
+
+    // This cycle used to never return.
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // The inactivity timer recycles the finished transaction like any other completed downlink.
+    // (With no peer answering, the first downlink times out and is recycled in the same window.)
+    waitForTransactionRecycle(channelId, second.expectedSeqNum);
+
+    cleanupTestFile(srcFile1);
+    cleanupTestFile(srcFile2);
+}
+
+void CfdpManagerTester::testClass2TxQueuedEarlyFinNoHang() {
+    this->queuedTxFinishedNoHang(false);
+}
+
+void CfdpManagerTester::testClass2TxQueuedAbandonNoHang() {
+    this->queuedTxFinishedNoHang(true);
+}
+
 }  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
