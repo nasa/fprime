@@ -97,13 +97,13 @@ TEST_F(PduTest, HeaderRejectsCrcFlag) {
     ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, deserializeRawHeader(bytes, sizeof(bytes), header));
 }
 
-TEST_F(PduTest, HeaderRejectsLargeFileFlag) {
-    if (sizeof(FileSize) >= sizeof(U64)) {
-        GTEST_SKIP() << "64-bit file sizes are accepted when FileSize is 64 bits wide";
-    }
+TEST_F(PduTest, HeaderLargeFileFlagMatchesConfiguredFileSize) {
+    // The 64-bit large-file flag is accepted only when FileSize is 64 bits wide
     const U8 bytes[] = {static_cast<U8>(VALID_FLAGS | 0x01), 0x00, 0x10, ONE_BYTE_WIDTHS, 0x01, 0x02, 0x03};
     PduHeader header;
-    ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, deserializeRawHeader(bytes, sizeof(bytes), header));
+    const Fw::SerializeStatus expected =
+        (sizeof(FileSize) < sizeof(U64)) ? Fw::FW_DESERIALIZE_FORMAT_ERROR : Fw::FW_SERIALIZE_OK;
+    ASSERT_EQ(expected, deserializeRawHeader(bytes, sizeof(bytes), header));
 }
 
 TEST_F(PduTest, HeaderAcceptsWideFieldsThatFit) {
@@ -130,37 +130,29 @@ static void encodeU64(U8* dest, U64 value) {
     }
 }
 
-TEST_F(PduTest, HeaderRejectsSourceEntityIdExceedingConfiguredType) {
-    if (sizeof(EntityId) >= sizeof(U64)) {
-        GTEST_SKIP() << "Every 8-byte entity ID fits a 64-bit EntityId";
-    }
-    // Source EID = one past the largest EntityId value, encoded in 8 bytes
+// Deserialize a header whose 8-byte field at fieldOffset holds the largest value of a type of
+// typeSize bytes plus one. When the configured type is narrower than 8 bytes the header must be
+// rejected; when it is 8 bytes wide the test value wraps to zero and the header must be accepted.
+static void checkFieldExceedingConfiguredType(FwSizeType fieldOffset, FwSizeType typeSize) {
     U8 bytes[4 + 8 + 8 + 8] = {VALID_FLAGS, 0x00, 0x10, EIGHT_BYTE_WIDTHS};
-    encodeU64(&bytes[4], static_cast<U64>(1) << (8 * sizeof(EntityId)));
+    const U64 largestPlusOne = (typeSize < sizeof(U64)) ? (static_cast<U64>(1) << (8 * typeSize)) : 0;
+    encodeU64(&bytes[fieldOffset], largestPlusOne);
+    const Fw::SerializeStatus expected =
+        (typeSize < sizeof(U64)) ? Fw::FW_DESERIALIZE_FORMAT_ERROR : Fw::FW_SERIALIZE_OK;
     PduHeader header;
-    ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, deserializeRawHeader(bytes, sizeof(bytes), header));
+    ASSERT_EQ(expected, deserializeRawHeader(bytes, sizeof(bytes), header));
 }
 
-TEST_F(PduTest, HeaderRejectsDestEntityIdExceedingConfiguredType) {
-    if (sizeof(EntityId) >= sizeof(U64)) {
-        GTEST_SKIP() << "Every 8-byte entity ID fits a 64-bit EntityId";
-    }
-    // Destination EID = one past the largest EntityId value, encoded in 8 bytes
-    U8 bytes[4 + 8 + 8 + 8] = {VALID_FLAGS, 0x00, 0x10, EIGHT_BYTE_WIDTHS};
-    encodeU64(&bytes[4 + 8 + 8], static_cast<U64>(1) << (8 * sizeof(EntityId)));
-    PduHeader header;
-    ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, deserializeRawHeader(bytes, sizeof(bytes), header));
+TEST_F(PduTest, HeaderRejectsSourceEntityIdExceedingConfiguredType) {
+    checkFieldExceedingConfiguredType(4, sizeof(EntityId));
 }
 
 TEST_F(PduTest, HeaderRejectsTransactionSeqExceedingConfiguredType) {
-    if (sizeof(TransactionSeq) >= sizeof(U64)) {
-        GTEST_SKIP() << "Every 8-byte sequence number fits a 64-bit TransactionSeq";
-    }
-    // TSN = one past the largest TransactionSeq value, encoded in 8 bytes
-    U8 bytes[4 + 8 + 8 + 8] = {VALID_FLAGS, 0x00, 0x10, EIGHT_BYTE_WIDTHS};
-    encodeU64(&bytes[4 + 8], static_cast<U64>(1) << (8 * sizeof(TransactionSeq)));
-    PduHeader header;
-    ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, deserializeRawHeader(bytes, sizeof(bytes), header));
+    checkFieldExceedingConfiguredType(4 + 8, sizeof(TransactionSeq));
+}
+
+TEST_F(PduTest, HeaderRejectsDestEntityIdExceedingConfiguredType) {
+    checkFieldExceedingConfiguredType(4 + 8 + 8, sizeof(EntityId));
 }
 
 // ======================================================================

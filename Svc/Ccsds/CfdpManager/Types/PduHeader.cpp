@@ -77,10 +77,19 @@ static U64 decodeIntegerInSize(Fw::SerialBufferBase& serialBuffer, U8 decodeSize
     return value;
 }
 
-// Helper function to check that a decoded wire value fits the configured field type
+// Helper function to decode a variable-width field into a configured field type, rejecting values that do not fit
 template <typename T>
-static bool fitsInType(U64 value) {
-    return static_cast<U64>(static_cast<T>(value)) == value;
+static Fw::SerializeStatus decodeFieldInSize(Fw::SerialBufferBase& serialBuffer, U8 decodeSize, T& field) {
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    const U64 value = decodeIntegerInSize(serialBuffer, decodeSize, status);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+    if (static_cast<U64>(static_cast<T>(value)) != value) {
+        return Fw::FW_DESERIALIZE_FORMAT_ERROR;
+    }
+    field = static_cast<T>(value);
+    return Fw::FW_SERIALIZE_OK;
 }
 
 U32 PduHeader::getBufferSize() const {
@@ -214,32 +223,20 @@ Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuff
 
     // Variable-width fields (size determined by encoded length). Any wire width up to 8 bytes is
     // accepted, but the decoded value must fit the configured EntityId/TransactionSeq type.
-    U64 value = decodeIntegerInSize(serialBuffer, eidSize, status);
+    status = decodeFieldInSize(serialBuffer, eidSize, this->m_sourceEid);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    if (!fitsInType<EntityId>(value)) {
-        return Fw::FW_DESERIALIZE_FORMAT_ERROR;
-    }
-    this->m_sourceEid = static_cast<EntityId>(value);
 
-    value = decodeIntegerInSize(serialBuffer, tsnSize, status);
+    status = decodeFieldInSize(serialBuffer, tsnSize, this->m_transactionSeq);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    if (!fitsInType<TransactionSeq>(value)) {
-        return Fw::FW_DESERIALIZE_FORMAT_ERROR;
-    }
-    this->m_transactionSeq = static_cast<TransactionSeq>(value);
 
-    value = decodeIntegerInSize(serialBuffer, eidSize, status);
+    status = decodeFieldInSize(serialBuffer, eidSize, this->m_destEid);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    if (!fitsInType<EntityId>(value)) {
-        return Fw::FW_DESERIALIZE_FORMAT_ERROR;
-    }
-    this->m_destEid = static_cast<EntityId>(value);
 
     // Don't set m_type yet - it will be determined by the directive code for directive PDUs
     // or set to FILE_DATA for file data PDUs
