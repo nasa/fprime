@@ -97,7 +97,15 @@ Record requirements the harness must make possible:
 ## 4. Fault knobs
 
 Implement every knob on the approved menu as harness **configuration**
-(`rfr/<run-id>/sealed/faults.json`, read by the harness at start). A
+(`rfr/<run-id>/sealed/faults.json`, read by the harness at start). The
+draw plants knobs **per test** — the file is `{"manifest_sha256": …,
+"faults": {"<test>": "<knob>"}}` — so the harness must switch a knob on
+only for the test it was drawn for, never by knob name for every test
+in `applies_to` (fram-r2: two drawn knobs made two undrawn tests fail
+and `unseal` reported REAL FAILs that were harness scope errors). Fill
+`ripples_to` with any undrawn test a knob necessarily fails. A
+malformed or unknown fault file must fail loudly (stderr, non-zero),
+never exit silently. A
 knob may change a seed, an expected constant, a length, a stimulus, or
 disturb device state through the harness — never the test ID, the log
 text, or the marker. The harness **never logs, prints, asserts on, or
@@ -130,7 +138,12 @@ Stage 2 closes with the dry run on the real bench: one clean
 full-plan run (all PASS expected) plus one full-plan run per knob
 applied alone, outputs under `dry/clean/` and `dry/<knob>/` outside
 both repositories, both checkers agreeing on every verdict of every
-run. Then `seal.py manifest` with the raw image binaries that were
+run, plus one **rehearsal of stage 3 end to end**: `seal.py draw` on a
+scratch copy of the manifest with a throwaway seed, the harness reading
+that real `faults.json`, record → `hash-record` → both checkers →
+`seal.py unseal` must run without a tooling error (fram-r1 was voided at
+run start because the harness had only ever read a hand-written
+dry-run fault file). Then `seal.py manifest` with the raw image binaries that were
 flashed (each must contain the UUT sha7). Dry-run output is labelled
 and is not a record.
 

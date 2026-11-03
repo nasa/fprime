@@ -61,7 +61,7 @@ Governing rules are in
                 L4 endurance/performance · L5 fault paths · L6 negative controls
                 L7 final state for independent verification
 3  Test entries one block per test (§3)
-4  Traceability REQ-ID → test IDs; every REQ has ≥ 1 test or a stated waiver
+4  Traceability REQ-ID → test IDs; every REQ has ≥ 1 test or one row in the SDD's "Out-of-scope failure modes" table (no Waivers section)
 5  Metrics      numeric thresholds with units, decided here, never relaxed later
 6  Fault menu   knobs the harness must support to plant failures (§4)
 7  Not covered  what this plan cannot prove on this bench, and why

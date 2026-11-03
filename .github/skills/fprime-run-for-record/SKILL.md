@@ -44,9 +44,19 @@ string, which is what `Svc.Version` reports, or
 `--no-version-check <reason>` is recorded on the manifest and printed
 at unseal. ELF, hex and UF2 files are refused (flash the `.bin`, e.g.
 `picotool load`, and read back the range with `picotool save -r` or
-OpenOCD `dump_image`). The manifest lives beside the
+OpenOCD `dump_image`). Record the exact
+toolchain (compiler package and version) in `bench.md`; without it a
+faithful rebuild can only be reported `REBUILD DIFFERS (toolchain
+unpinned)`. The manifest lives beside the
 runs, outside both repositories; `python3 seal.py verify <manifest>`
-must pass before every later step.
+must pass before every later step. Before announcing the draw, stage
+on the bench host (where the human draws and unseals) `seal.py`, the
+manifest, and every manifest-listed non-repo file at its recorded
+relative path (plan, fault menu, bench, both checkers) — `unseal`
+reads the menu by that path and fails with "missing fault menu"
+otherwise. The plan's independent final-state tool (§4.5) must have
+been exercised once in the stage-2 dry run; an improvised read on the
+day yields `UNVERIFIED`.
 
 ## 2. Draw (human action)
 

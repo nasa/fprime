@@ -388,7 +388,11 @@ def allowed_failures(test, expected, faults, by_name):
     """Predicates a planted (or ripple) test is allowed to fail; None = no check."""
     if expected not in ("FAIL", "FAIL-RIPPLE"):
         return None
-    allowed = set(by_name[faults[test]]["fails"]) if expected == "FAIL" else set()
+    allowed = set()
+    if expected == "FAIL":
+        fails = by_name[faults[test]]["fails"]
+        # `fails` is a list of predicates, or a dict {test: [predicates]} per target test
+        allowed = set(fails.get(test, []) if isinstance(fails, dict) else fails)
     preds = [
         by_name[n]["ripples_to"].get(test)
         for n in faults.values()

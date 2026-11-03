@@ -188,8 +188,12 @@ diagram and tables. Keep each
 subsection to what a reviewer needs to check the FPP against the
 requirements; the SDD is the quick-look the user reads at the design
 gate, so brevity is part of the design quality. Anything longer (design
-notes, alternatives, rationale) goes in a separate `docs/design-notes.md`
-the user is not asked to read.
+notes, alternatives, rationale) goes in the PR description or the
+review record — never in a tracked `docs/design-notes.md` (the F Prime
+lead removes such files from PRs). The SDD carries no change history
+(no "was/now", no revision table) and no Waivers subsection; failure
+modes the component does not own go in one table titled
+"Out-of-scope failure modes", one SHORT line each.
 
 SDD shape agreed with the F Prime lead: requirements → tables; a
 **port-box diagram** (input ports boxed on the left, output ports boxed
