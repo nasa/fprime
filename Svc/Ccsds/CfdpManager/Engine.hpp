@@ -40,6 +40,7 @@
 #include <Svc/Ccsds/CfdpManager/Transaction.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ChannelTelemetrySerializableAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/RxDestPathRejectReasonEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 
 // Forward declarations - do NOT include CfdpManager.hpp to avoid circular dependency
@@ -430,12 +431,51 @@ class Engine {
      * @brief Handle receipt of metadata PDU
      *
      * This should only be invoked for buffers that have been identified
-     * as a metadata PDU. PDU validation already done in MetadataPdu::fromBuffer.
+     * as a metadata PDU. Structural PDU validation is done in
+     * MetadataPdu::fromSerialBuffer; this function additionally validates the
+     * destination filename against the channel's `rx_dir` receive directory
+     * (if configured) before committing anything to the transaction, and then
+     * stores the file size, source name, and canonical contained destination
+     * path in the transaction history.
      *
      * @param txn  Pointer to the transaction state
      * @param pdu  The metadata PDU
+     * @return SUCCESS if the metadata was accepted and stored;
+     *         PDU_METADATA_ERROR if the destination path was rejected. In that
+     *         case the RxDestPathRejected event is logged with the reason,
+     *         faultFileOpen is incremented, the transaction status is set to
+     *         FILESTORE_REJECTION so the reception is reported as failed, and
+     *         nothing from the PDU is committed to the transaction. Whether the
+     *         sender learns of the refusal depends on the caller: the late
+     *         metadata path (Transaction::r2RecvMd) carries it in the FIN; the
+     *         metadata-first path (recvInit) finishes the transaction from INIT
+     *         without sending a FIN and parks it in HOLD for 2 x ack_timer, a
+     *         hold that every further PDU from the sender re-arms. A Class 2
+     *         sender that keeps retransmitting inside that window is never told
+     *         and fails on its own ACK limit; only if its traffic pauses longer
+     *         than the hold does its next PDU start a fresh transaction: File
+     *         Data reopens the Metadata NAK path and that FIN carries the
+     *         rejection, while an EOF-only retransmission is logged as
+     *         UnhandledPduInIdleState and still gets no FIN. See the SDD,
+     *         Security Considerations.
      */
-    void recvMd(Transaction* txn, const MetadataPdu& pdu);
+    Status::T recvMd(Transaction* txn, const MetadataPdu& pdu);
+
+    /**
+     * @brief Validate and canonicalize a received destination path against the channel rx_dir
+     *
+     * If the channel's `rx_dir` parameter is empty the path is accepted unchanged.
+     * Otherwise the path is resolved (relative paths are resolved against rx_dir,
+     * `.`/`..` segments are collapsed textually; symlinks are not followed), must
+     * remain inside rx_dir, and the canonical result must fit in MaxFilePathSize
+     * so it can be stored and reported without truncation.
+     *
+     * @param chan_num  Channel number whose rx_dir applies
+     * @param path      In: path from the Metadata PDU. Out: canonical absolute path on success
+     * @param reason    Out: why the path was rejected; unchanged when accepted
+     * @return true if accepted, false if rejected
+     */
+    bool validateRxDestPath(U8 chan_num, Fw::String& path, RxDestPathRejectReason& reason);
 
     /**
      * @brief Unpack a file data PDU from a received message

@@ -39,7 +39,7 @@ FileManager ::FileManager(const char* const compName  //!< The component name
       m_totalEntries(0),
       m_currentOpCode(0),
       m_currentCmdSeq(0),
-      m_runQueued(false),
+      m_schedInQueued(false),
       m_dpState(DP_IDLE),
       m_dpFileSize(0),
       m_dpOffset(0),
@@ -497,19 +497,19 @@ void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {
 }
 
 void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
-    bool isQueued = false;
-    // m_runQueued will be compared to isQueued (false). When equal (i.e. m_runQueued is false) the atomic will be
-    // set to true and the function will return true indicating that a run was successfully marked as queued and thus
-    // the internal handler should be invoked.
-    bool expects_enqueue = this->m_runQueued.compare_exchange_strong(isQueued, true);
-    if (expects_enqueue) {
-        this->run_internalInterfaceInvoke();
+    bool expected = false;
+    if (this->m_schedInQueued.compare_exchange_strong(expected, true)) {
+        this->schedInInternal_internalInterfaceInvoke();
     }
 }
 
-void FileManager ::run_internalInterfaceHandler() {
-    FW_ASSERT(this->m_runQueued);
-    this->m_runQueued = false;  // Run is not queued anymore (we are running)
+void FileManager ::schedInInternal_overflowHook() {
+    this->m_schedInQueued = false;
+}
+
+void FileManager ::schedInInternal_internalInterfaceHandler() {
+    FW_ASSERT(this->m_schedInQueued);
+    this->m_schedInQueued = false;
     // Data product generation is paced the same way as directory listing
     if (this->m_dpState == DP_IN_PROGRESS) {
         this->processDpChunks(FileManagerConfig::CHUNKS_PER_RATE_TICK);

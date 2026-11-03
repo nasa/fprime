@@ -117,7 +117,7 @@ The design of `CfdpManager` assumes the following:
 
 6. For Class 2 transfers, the remote entity implements the CFDP protocol correctly and responds to PDUs according to the specification.
 
-7. Received files are written directly to their final destination once the metadata PDU supplies the destination path. The temporary directory (`ChannelConfig.tmp_dir` per-channel parameter) is used only when a Class 2 receive starts with file data before the metadata PDU arrives: the partial file is staged in `tmp_dir` and moved to the final destination when the metadata arrives.
+7. For Class 2 transfers in which File Data PDUs arrive before the Metadata PDU, received data is staged in a temporary file under `ChannelConfig.tmp_dir` and moved to the final destination once the Metadata PDU arrives. In every other case (Metadata first, and all Class 1 transfers) the destination file named by the Metadata PDU is opened directly; `tmp_dir` staging is **not** a general mitigation for untrusted destination paths (see Security Considerations).
 
 8. Port-initiated file transfers (via `fileIn`) use default configuration parameters (`FileInDefaultChannel`, `FileInDefaultDestEntityId`, `FileInDefaultClass`, `FileInDefaultKeep`, and `FileInDefaultPriority`).
 
@@ -128,9 +128,14 @@ CfdpManager follows a layered security architecture where authentication and aut
 - **Physical/Network Layer Security**: Hardware encryption at the radio level, or network-layer protocols like Bundle Protocol Security or IPsec
 - **Application Layer**: CfdpManager assumes CFDP traffic originates from authenticated sources validated at lower layers
 
-CfdpManager accepts destination file paths as specified in incoming CFDP Metadata PDUs without application-layer path validation. This approach is consistent with the CCSDS 727.0-B-5 CFDP standard, which assumes operation over authenticated communication channels.
+The destination file path carried in an incoming CFDP Metadata PDU is supplied by the remote entity. Deserialization enforces only structural limits (non-empty, at most `MaxFilePathSize` octets). Beyond that, CfdpManager offers an optional per-channel receive directory, `ChannelConfig.rx_dir`. It is built on the same textual path-resolution and containment primitives (`Os::FilePathUtils`) as the `Os::SandboxedFile` used by `Svc::FileUplink`, `Svc::FileDownlink`, and `Svc::PrmDb`, and shares that class's threat model, but it is a distinct mechanism with a different guarantee: the check runs once, when the Metadata PDU is handled, on the path that is then stored in the transaction, rather than at every `open()`. That is what lets it cover the `moveFile` and `removeFile` operations the receive path performs, which `Os::SandboxedFile` does not wrap.
 
-For mission deployments, ensure radio links employ hardware encryption or cryptographic authentication, ground systems implement proper authentication and authorization controls, and operational procedures include verification of file paths before commanding transfers.
+- When `rx_dir` is **empty (the default)** destination paths are accepted as-is, consistent with the CCSDS 727.0-B-5 CFDP standard's assumption of operation over authenticated channels. This is a fail-open default chosen for backward compatibility.
+- When `rx_dir` is **set**, every received destination path is canonicalized with `Os::FilePathUtils::resolvePath` (relative paths are resolved against `rx_dir`; `.` and `..` segments are collapsed textually, without following symlinks) and must remain inside `rx_dir` per `Os::FilePathUtils::checkContainment`. The check is applied once, in `Engine::recvMd`, before anything from the Metadata PDU is committed to the transaction, so every downstream file operation (`open`, `moveFile`, `removeFile`) only ever sees a validated path and nothing from a rejected PDU is committed to the transaction (only its status changes, see below). A rejected path raises the `RxDestPathRejected` warning (which carries the reason), increments the channel's `faultFileOpen` counter, marks the transaction `FILESTORE_REJECTION` so it is reported locally as a failed reception, and terminates it without opening, moving, or removing any file. What the sender learns depends on when the Metadata PDU arrived. For a Class 2 transfer whose temporary file was already open (File Data before Metadata), the transaction is finished against the temporary file only and the FIN carries `FILESTORE_REJECTION` to the sender. For a transfer rejected on its first PDU, the transaction is finished from the initial state without sending a FIN and parked in HOLD for 2 × `ack_timer` (4 s at the defaults); every further PDU from the sender is logged as spurious and restarts that hold. As long as the sender's PDUs keep arriving less than 2 × `ack_timer` apart (an F Prime Class 2 sender retransmits EOF every `ack_timer`, 2 s by default) the sender is never told: it transmits the file, retries EOF until its ACK limit (10 × 2 s = 20 s at the defaults), and fails with `ACK_LIMIT_NO_EOF`. Only when the sender's traffic pauses for longer than 2 × `ack_timer` (a peer with a retransmission interval at least that long, or a link outage) does the hold expire and the sequence number get forgotten; a Class 2 sender still transmitting after that gets a fresh transaction for the same sequence number: its File Data PDUs open a temporary file under `tmp_dir` and trigger a NAK for Metadata, the retransmitted Metadata PDU is rejected again (a second `RxDestPathRejected`), and that FIN carries `FILESTORE_REJECTION` to the sender; EOF-only retransmissions after the hold are logged as `UnhandledPduInIdleState`. This keeps a mistyped or unexpected destination from writing outside the area the mission has set aside for received files.
+- **Rejection causes and length bound.** Four conditions produce the `RxDestPathRejected` event and `faultFileOpen` increment, distinguished by the event's `reason` argument: `rx_dir` itself cannot be resolved (`RX_DIR_UNRESOLVABLE`), the received path cannot be resolved or the joined path is too long to resolve (`PATH_UNRESOLVABLE`), the resolved path lies outside `rx_dir` (`OUTSIDE_RX_DIR`), or the resolved path is longer than `MaxFilePathSize` (`TOO_LONG`). Because the stored path is `rx_dir` joined with the received name, the longest accepted name is roughly `MaxFilePathSize` minus the length of the resolved `rx_dir`; size `rx_dir` accordingly when filenames approach the PDU limit.
+- **Symlinks are not followed.** Containment is textual, exactly as for `Os::SandboxedFile`: the assumption is that untrusted actors cannot create symlinks inside `rx_dir`. On POSIX targets where an untrusted local process has write access to `rx_dir`, a symlink placed there could redirect a contained path outside it; additional platform measures (for example `O_NOFOLLOW` or `realpath()` integration) are needed for that threat model.
+
+Deployments are encouraged to set `rx_dir` on every receiving channel, as an absolute path: a relative `rx_dir` is resolved against the process working directory at each Metadata PDU, and every reception on that channel is rejected on platforms where `Os::FileSystem::getWorkingDirectory` is unsupported. In all deployments, ensure radio links employ hardware encryption or cryptographic authentication, ground systems implement proper authentication and authorization controls, and operational procedures include verification of file paths before commanding transfers.
 
 #### Input Robustness
 
@@ -225,8 +230,8 @@ Unlike transmit operations that are driven by the periodic `run1Hz` scheduler po
 
 CfdpManager supports two related mechanisms for transferring the contents of a directory:
 
-- **Directory playback** (`PlaybackDirectory` command): a one-shot operation that sends every file currently in the source directory as individual CFDP transactions and completes when the directory has been fully processed.
-- **Directory polling** (`PollDirectory` command): a recurring operation that re-checks the source directory on a fixed interval and automatically sends any new files found. Each channel supports up to `MaxPollingDirPerChan` independent polling slots, identified by a poll index. The file is deleted from the directory after a successful transfer.
+- **Directory playback** (`PlaybackDirectory` command): a one-shot operation that sends every file currently in the source directory as individual CFDP transactions and completes when the directory has been fully processed. An entry whose combined `<directory>/<entry>` source or destination path would exceed `MaxFilePathSize` is skipped and reported with `PlaybackSourcePathTooLong` or `PlaybackDestinationPathTooLong` (path length, maximum, directory, and entry); the playback continues with the remaining entries.
+- **Directory polling** (`PollDirectory` command): a recurring operation that re-checks the source directory on a fixed interval and automatically sends any new files found. Each channel supports up to `MaxPollingDirPerChan` independent polling slots, identified by a poll index. The file is deleted from the directory after a successful transfer. The same `MaxFilePathSize` check applies to polled entries: an over-long entry is skipped with the same events, is not deleted or moved to `fail_dir`, and is reported again on every poll cycle until an operator removes or renames it.
 
 **Poll cycle behavior:**
 
@@ -433,7 +438,7 @@ These constants are defined in the `Svc.Ccsds.Cfdp` module and must be configure
 | Constant | Purpose |
 |----------|---------|
 | `NumChannels` | Number of CFDP channels to instantiate. Determines the size of channel-specific port arrays and the number of independent CFDP channel instances. Each channel has its own transaction pool, configuration, and state. |
-| `MaxFilePathSize` | Maximum length for file path strings. Used to size string parameters (`ChannelConfig.tmp_dir`, `ChannelConfig.fail_dir`, `ChannelConfig.move_dir`) and internal file path buffers. |
+| `MaxFilePathSize` | Maximum length for file path strings. Used to size string parameters (`ChannelConfig.tmp_dir`, `ChannelConfig.fail_dir`, `ChannelConfig.move_dir`, `ChannelConfig.rx_dir`) and internal file path buffers. |
 | `MaxPduSize` | Maximum PDU size in bytes. Limits the maximum possible TX PDU size. Must respect any CCSDS packet size limits on the system. |
 
 ### FPP Types (CfdpCfg.fpp)
@@ -511,6 +516,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | RxAckLimitReached | warning low | RX ACK limit reached for transaction, no fin-ack sent |
 | RxTempFileCreated | activity low | RX transaction creating temp file without metadata |
 | RxFileCreateFailed | warning low | RX transaction failed to create file |
+| RxDestPathRejected | warning high | RX transaction rejected a Metadata PDU destination path; carries the path, the channel's `rx_dir`, and the reason (see Security Considerations) |
 | RxCrcMismatch | warning low | RX transaction CRC mismatch: expected vs actual |
 | RxNakLimitReached | warning low | RX transaction NAK limit reached |
 | RxSeekFailed | warning low | RX transaction failed to seek to offset |
@@ -581,6 +587,8 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | PlaybackDirSlotUnavailable | warning low | No playback directory slot available |
 | DanglingFileHandleClosed | warning low | Closed dangling file handle for channel and transaction |
 | PlaybackDirReadFailed | warning low | Failed to read from playback directory |
+| PlaybackSourcePathTooLong | warning low | Playback or poll entry skipped: combined source directory/entry path length exceeds `MaxFilePathSize` (length, maximum, directory, entry; the entry is read into a `MaxFilePathSize` buffer, so the reported length is a lower bound for longer names) |
+| PlaybackDestinationPathTooLong | warning low | Playback or poll entry skipped: combined destination directory/entry path length exceeds `MaxFilePathSize` (length, maximum, directory, entry; the entry is read into a `MaxFilePathSize` buffer, so the reported length is a lower bound for longer names) |
 | ResetFreedTransaction | diagnostic | Attempt to reset a transaction that has already been freed |
 | FileRemoveFailed | warning low | Failed to remove file |
 
@@ -595,7 +603,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | SetChannelFlow | Sets the flow control state for a specific CFDP channel. Can freeze (pause) or resume PDU transmission on the channel. |
 | SuspendResumeTransaction | Suspend or resume a transaction. When suspended, the transaction remains in memory but stops making progress (no PDUs sent or processed, no timers tick). Useful during critical spacecraft operations. Takes an action parameter (SUSPEND or RESUME). Transactions are identified by channel ID, transaction sequence number, and entity ID. |
 | CancelTransaction | Gracefully cancel a transaction with protocol close-out. Sends FIN/ACK PDUs as appropriate for the transaction type and state. Transaction is removed from memory. Transactions are identified by channel ID, transaction sequence number, and entity ID. |
-| AbandonTransaction | Immediately terminate a transaction without protocol close-out. No FIN/ACK sent. Transaction is immediately removed from memory. Used for stuck or unresponsive transactions. Transactions are identified by channel ID, transaction sequence number, and entity ID. |
+| AbandonTransaction | Immediately terminate a transaction without protocol close-out. No FIN/ACK sent. Transaction is immediately removed from memory. Used for stuck or unresponsive transactions. Transactions are identified by channel ID, transaction sequence number, and entity ID. A transaction that has already finished and is waiting to be recycled is rejected with `EXECUTION_ERROR` and `TransactionNotFound`. |
 | ResetCounters | Resets telemetry counters for the specified CFDP channel. Pass `channelId` 0xFF to reset all channels. |
 
 ## Parameters
@@ -613,13 +621,14 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | FileInDefaultPriority | Priority (0-255, where 0 is highest) for file transfers initiated via the `fileIn` port interface |
 | ChannelConfig.ack_limit | Maximum number of ACK retransmission attempts before abandoning a transaction. Applies when waiting for ACK(EOF) or ACK(FIN) acknowledgments |
 | ChannelConfig.nack_limit | Maximum number of NAK retransmission attempts before abandoning a transaction. Applies when waiting for retransmitted file data after sending NAK |
-| ChannelConfig.ack_timer | ACK timeout duration in seconds. Determines how long to wait for ACK(EOF) or ACK(FIN) before retransmitting |
-| ChannelConfig.inactivity_timer | Inactivity timeout duration in seconds. Transaction is abandoned if no PDUs are received within this period |
+| ChannelConfig.ack_timer | ACK timeout duration in seconds. Determines how long to wait for ACK(EOF) or ACK(FIN) before retransmitting. A value of 0 is accepted and expires on the first 1 Hz cycle after the timer is armed, so every wait for an acknowledgment retransmits once per cycle until `ack_limit` is reached; 0 is not an operational value (see [Deep Space Timer Configuration](#deep-space-timer-configuration)) |
+| ChannelConfig.inactivity_timer | Inactivity timeout duration in seconds. Transaction is abandoned if no PDUs are received within this period. A value of 0 is accepted and expires on the first 1 Hz cycle after the timer is armed, so every receive transaction (Class 1 and Class 2) and every Class 2 transmit transaction on the channel is abandoned with an inactivity timeout; 0 is not an operational value (see [Deep Space Timer Configuration](#deep-space-timer-configuration)) |
 | ChannelConfig.dequeue_enabled | Enable or disable transaction dequeuing and processing for this channel. Can be used to pause channel activity |
 | ChannelConfig.move_dir | Directory path to move source files after successful TX (transmit) transactions when keep is set to DELETE. If set, provides an archive mechanism to preserve files instead of deleting them. If empty or if the move fails, source files are deleted from the filesystem. Only applies to sending files, not receiving |
 | ChannelConfig.max_outgoing_pdus_per_cycle | Maximum number of outgoing PDUs to transmit per execution cycle. Throttles transmission rate to prevent overwhelming downstream components |
-| ChannelConfig.tmp_dir | Directory path for staging temporary files during receive (RX) transactions that begin with file data before the metadata PDU arrives (Class 2 only). The staged file is moved to the final destination once the metadata arrives. Transactions that receive the metadata first write directly to the final destination |
+| ChannelConfig.tmp_dir | Directory path for temporary files during receive (RX) transactions. Only used for Class 2 transfers whose File Data PDUs arrive before the Metadata PDU; the temporary file is moved to the final destination once Metadata arrives |
 | ChannelConfig.fail_dir | Directory path for storing files from polling operations that failed to transfer successfully. If empty or if the move fails, files are deleted from the filesystem |
+| ChannelConfig.rx_dir | Receive sandbox directory. If non-empty, destination paths from incoming Metadata PDUs are resolved against this directory and rejected if they resolve outside it (see Security Considerations). If empty (default), destination paths are accepted as-is |
 
 ### Deep Space Timer Configuration
 
@@ -664,7 +673,7 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 | faultInactivityTimer | U32 | Number of transactions abandoned due to inactivity timeout |
 | faultCrcMismatch | U32 | Number of CRC mismatches detected in received files |
 | faultFileSizeMismatch | U32 | Number of file size mismatches detected (EOF size vs actual received size) |
-| faultFileOpen | U32 | Number of file open failures |
+| faultFileOpen | U32 | Number of file open failures, plus Metadata PDU destination paths rejected by `rx_dir` |
 | faultFileRead | U32 | Number of file read failures |
 | faultFileWrite | U32 | Number of file write failures |
 | faultFileSeek | U32 | Number of file seek failures |
@@ -733,3 +742,5 @@ section above.
 | CFDP-011 | `CfdpManager` shall support both command-initiated and port-initiated file transfers | Allows both ground operators and onboard components to initiate file transfers | Unit Test, System Test |
 | CFDP-012 | `CfdpManager` shall support flow control to freeze and resume channel operations | Provides mechanism to temporarily halt file transfers during critical spacecraft operations | Unit Test |
 | CFDP-013 | `CfdpManager` shall process malformed or degenerate received PDUs, including zero-length FileData segments, without raising a FATAL assertion | Preserves deployment availability against untrusted link input and prevents a single crafted PDU from terminating the process ([GHSA-mh5x-2m6h-8267](https://github.com/nasa/fprime/security/advisories/GHSA-mh5x-2m6h-8267)) | Unit Test |
+| CFDP-014 | `CfdpManager` shall skip and report a playback or poll directory entry whose combined source or destination path exceeds `MaxFilePathSize`, continuing with the remaining entries without raising a FATAL assertion | Directory contents and the `PlaybackDirectory` arguments are ground-controlled and must not be able to assert the flight software ([#5890](https://github.com/nasa/fprime/issues/5890)) | Unit Test |
+| CFDP-015 | `CfdpManager` shall treat an `ack_timer` or `inactivity_timer` of zero as expiring on the first 1 Hz cycle after it is armed, without raising a FATAL assertion | `ChannelConfig` is a ground-settable parameter and must not be able to assert the flight software ([#5890](https://github.com/nasa/fprime/issues/5890)) | Unit Test |

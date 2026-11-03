@@ -68,6 +68,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test generating a NAK PDU
     void testNakPdu();
 
+    //! Test parsing NAK PDUs whose segment request count is at or above NakMaxSegments
+    void testNakPduSegmentCountLimit();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -454,6 +457,15 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test AbandonTransaction command with invalid channel
     void testAbandonTransactionInvalidChannel();
 
+    //! Regression: a second AbandonTransaction for the same transaction is rejected
+    void testAbandonTransactionTwice();
+
+    //! Regression: AbandonTransaction on a completed commanded downlink is rejected
+    void testAbandonTransactionAfterCompletion();
+
+    //! Regression: AbandonTransaction on a completed playback child is rejected
+    void testAbandonPlaybackTransactionAfterCompletion();
+
     //! Test ResetCounters command for single channel
     void testResetCountersSingleChannel();
 
@@ -585,6 +597,22 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testBuffersExhaustedEvent();
     void testChunklistUnavailableEvent();
 
+    // Receive directory (rx_dir)
+    //! Configure channel 0 with the given rx_dir (other fields keep sane test values)
+    void setChannel0RxDir(const char* rxDir);
+    //! Metadata PDU whose destination resolves outside rx_dir is rejected: event, no file, transaction finished
+    void testRxDestPathRejectedEvent();
+    //! Relative destination is resolved inside rx_dir and the transaction proceeds normally
+    void testRxDestPathContained();
+    //! Late Metadata (Class 2, temp file already open) with a destination outside rx_dir fails the transaction
+    void testRxDestPathRejectedLateMetadata();
+    //! rx_dir applies per channel: the same path is refused on a confined channel and accepted on an unrestricted one
+    void testRxDirPerChannel();
+    //! An rx_dir that cannot be resolved rejects every reception on the channel with RX_DIR_UNRESOLVABLE
+    void testRxDirUnresolvable();
+    //! Run one 1 Hz cycle and return the channel's latest faultFileOpen telemetry value
+    U32 latestFaultFileOpen(U8 channelId);
+
     // PDU Deserialization Failure Events
     void testFailPduHeaderDeserializationEvent();
     void testFailMetadataPduDeserializationEvent();
@@ -631,6 +659,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testPlaybackDirOpenFailedEvent();
     void testPlaybackDirReadFailedEvent();
     void testPlaybackDirSlotUnavailableEvent();
+    void testPlaybackDirEntrySourcePathTooLong();
+    void testPlaybackDirEntryDestinationPathTooLong();
+
+    // Timer robustness (issue #5890)
+    void testTimerZeroDurationExpiresOnFirstTick();
+    void testZeroInactivityTimerExpiresOnFirstTick();
 
     // Critical Error Path Events
     void testRxWriteFailedEvent();
@@ -738,6 +772,14 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void createAndVerifyTestFile(const char* filePath, FwSizeType expectedFileSize, FwSizeType& actualFileSize);
 
     //! Setup TX transaction and verify initial state (command-based)
+    //! Play back a directory holding one over-long and one short entry; exactly one of the
+    //! source (sourceTooLong) or destination path must exceed MaxFilePathSize
+    void runPlaybackPathTooLongCase(const char* srcDir,
+                                    const char* dstDir,
+                                    const char* longEntry,
+                                    const char* shortEntry,
+                                    bool sourceTooLong);
+
     void setupTxTransaction(const char* srcFile,
                             const char* dstFile,
                             U8 channelId,
@@ -767,6 +809,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Wait for transaction to be recycled by inactivity timer
     void waitForTransactionRecycle(U8 channelId, U32 expectedSeqNum);
+
+    //! Abandon a transaction already finished (HOLD) and verify it is rejected without a second finish
+    void abandonFinishedTransaction(U8 channelId, TransactionSeq transactionSeq);
 
     //! Complete Class 2 transaction handshake (EOF-ACK, FIN, FIN-ACK)
     void completeClass2Handshake(U8 channelId, EntityId destEid, U32 expectedSeqNum, Transaction* txn);

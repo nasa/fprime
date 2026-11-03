@@ -138,10 +138,11 @@ TEST_F(PduTest, MetadataRoundTrip) {
     // Read segmentation control byte
     U8 segmentationControl;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, serialBuffer.deserializeTo(segmentationControl));
-    U8 rxClosureRequested = (segmentationControl >> 7) & 0x01;
+    U8 rxClosureRequested = (segmentationControl >> 6) & 0x01;
     U8 rxChecksumType = segmentationControl & 0x0F;
     ASSERT_EQ(closureRequested, rxClosureRequested);
     ASSERT_EQ(static_cast<U8>(checksumType), rxChecksumType);
+    ASSERT_EQ(0x40 | static_cast<U8>(checksumType), segmentationControl);
 
     // Read file size
     U32 rxFileSize;

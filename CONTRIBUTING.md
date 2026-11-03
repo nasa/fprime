@@ -41,6 +41,14 @@ All code contributions to F´ begin with an issue. Whether you're fixing a bug, 
 
 For non-trivial changes, opening an issue is not just a notification step. It is an approval gate. Please do not invest significant implementation effort until maintainers confirm that the work is in scope for F´ and appropriate for this repository.
 
+Issue status is tracked on the [CCB Resolution Board](https://github.com/orgs/nasa/projects/21/views/17). Do **not** start work on an issue in any of the following states:
+
+- **CCB**: the issue is awaiting review by the CCB and has not been approved.
+- **Backlog - Deferred**: the CCB has accepted the idea but deferred the work; it is not currently prioritized or resourced.
+- **No Status**: the issue has not yet been triaged onto the board.
+
+Work started on issues in these states may be reworked, delayed, or declined. Issues in other states (e.g. **Backlog - Resourced**) have been approved for work; check that nobody is already assigned before starting.
+
 ### What We Prioritize
 
 Maintainer review time is limited. We prioritize work that is approved by our [Change Control Board (CCB)](./GOVERNANCE.md) and aligned with project and community needs.
@@ -109,6 +117,21 @@ agents opening a pull request must complete the AI checklist in the pull request
 
 Every pull request affirms, via the checklist in the template, that the contributor has the rights to contribute the
 change set under the [Apache-2.0 license](./LICENSE.txt) and agrees to be bound by these contributor guidelines.
+
+### Recommendations for Opening a PR
+
+These recommendations help maintainers triage pull requests quickly and expedite their review.
+
+- **Title**: `<Component>: <imperative summary>`, using the component name rather than its full path
+  (e.g. `CmdSequencer: Reject sequences with zero records`, not `Svc/CmdSequencer: ...`). For changes outside a
+  component, use the area instead (e.g. `Os:`, `cmake:`, `docs:`).
+- **Related Issue(s)**: write `Fixes #nnnn` for each issue the PR resolves (`Fixes #1, Fixes #2`) so GitHub closes it
+  on merge. Use `Part of #nnnn` when the PR only partially addresses an issue.
+- **Description**: keep it short. A few bullets on what changed and a sentence or two on why. Do not list every changed
+  file or restate the diff; reviewers read the diff. Link specifications or docs rather than explaining them.
+- **Breaking changes**: state them at the top of the description, along with any `pr-<PR_NUMBER>` branches opened on
+  external repositories (see [Automated Checks on Reference Repositories](#automated-checks-on-reference-repositories)).
+- Remove the template's `<!-- -->` instruction comments once you have filled in the template.
 
 ### Submission Review
 

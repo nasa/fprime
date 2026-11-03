@@ -29,7 +29,7 @@ The following system requirements apply to your workstation for developing F´ a
 
 4. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
 
-5. *(Optional)* A [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) — required only to build components that depend on Rust. Components that require `cargo` are skipped when it is not found, and the rest of the framework builds normally.
+5. *(Optional)* A [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) 1.87 or newer — required only to build components that depend on Rust. Components that require `cargo` are skipped when it is not found, and the rest of the framework builds normally.
 
 <details>
 <summary>Click to Expand: How to Verify System Requirements</summary>

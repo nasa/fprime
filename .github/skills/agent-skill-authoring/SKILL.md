@@ -20,7 +20,7 @@ one directory per skill, holding a file named exactly `SKILL.md`.
 |---|---|
 | Skill | `.github/skills/<skill-name>/SKILL.md` |
 | Agent | `.github/agents/<agent-name>.agent.md` |
-| Shared review contract / registry | `.github/agents/_shared/` |
+| Shared review contract / registry / phase procedures (e.g. `phase-review-loop.md`) | `.github/agents/_shared/` |
 
 The directory name must equal the `name` in the skill's frontmatter,
 using lowercase letters, digits, and hyphens only — a mismatch makes

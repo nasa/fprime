@@ -47,7 +47,8 @@ param ChannelConfig: Cfdp.ChannelArrayParams \
             move_dir = "", \
             max_outgoing_pdus_per_cycle = 64, \
             tmp_dir = "/tmp", \
-            fail_dir = "/fail" \
+            fail_dir = "/fail", \
+            rx_dir = "" \
         }, \
         {
             ack_limit = 10, \
@@ -58,6 +59,7 @@ param ChannelConfig: Cfdp.ChannelArrayParams \
             move_dir = "", \
             max_outgoing_pdus_per_cycle = 64, \
             tmp_dir = "/tmp", \
-            fail_dir = "/fail" \
+            fail_dir = "/fail", \
+            rx_dir = "" \
         } \
     ]

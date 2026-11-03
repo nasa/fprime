@@ -14,7 +14,7 @@ module Svc {
     sync input port schedIn: Sched
 
     @ Internal port for delegating schedIn calls in a more controlled fashion
-    internal port run drop
+    internal port schedInInternal hook
 
     @ Ping output port
     output port pingOut: Svc.Ping

@@ -5,7 +5,7 @@ module Drv {
         OP_OK         @< Operation worked as expected
         SEND_RETRY    @< Data send should be retried
         RECV_NO_DATA  @< Receive worked, but there was no data 
-        OTHER_ERROR   @< Error occurred, retrying may succeed
+        OTHER_ERROR   @< Error occurred
     }
 
     @ Port to exchange buffer and status with the ByteStreamDriver model

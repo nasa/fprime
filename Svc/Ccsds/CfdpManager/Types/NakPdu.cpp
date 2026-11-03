@@ -158,15 +158,16 @@ Fw::SerializeStatus NakPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer)
 
     // Calculate number of segment requests from remaining buffer size
     // Each segment is 2 * sizeof(FileSize) bytes
-    Fw::Serializable::SizeType remainingBytes = serialBuffer.getDeserializeSizeLeft();
-    U32 segmentSize = static_cast<U32>(sizeof(FileSize) + sizeof(FileSize));
-    U32 numSegsCalculated = static_cast<U32>(remainingBytes / segmentSize);
-    this->m_numSegments = static_cast<U8>(numSegsCalculated);
+    const Fw::Serializable::SizeType remainingBytes = serialBuffer.getDeserializeSizeLeft();
+    const Fw::Serializable::SizeType segmentSize = sizeof(FileSize) + sizeof(FileSize);
+    Fw::Serializable::SizeType numSegsCalculated = remainingBytes / segmentSize;
 
-    // Limit to max segments
-    if (this->m_numSegments > NakMaxSegments) {
-        this->m_numSegments = NakMaxSegments;
+    // Limit to max segments before narrowing to the U8 count field. Narrowing first would
+    // wrap a count of 256 or more and bypass this limit.
+    if (numSegsCalculated > static_cast<Fw::Serializable::SizeType>(NakMaxSegments)) {
+        numSegsCalculated = static_cast<Fw::Serializable::SizeType>(NakMaxSegments);
     }
+    this->m_numSegments = static_cast<U8>(numSegsCalculated);
 
     // Deserialize segment requests
     for (U8 i = 0; i < this->m_numSegments; i++) {

@@ -3,10 +3,8 @@
 name: "Framework"
 
 on:
-  schedule:
-    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ release/** ]
+    branches: [ devel, release/** ]
   pull_request:
     branches: [ devel, release/** ]
     paths-ignore:
@@ -39,8 +37,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macOS runs only on the nightly schedule
-        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"},{"runner":"macos-latest","jobs":"2"}]') || fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"}]') }}
+        include:
+          - runner: ubuntu-22.04
+            jobs: "random"
+          - runner: macos-latest
+            jobs: "4"
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
@@ -65,8 +66,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macOS runs only on the nightly schedule
-        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"},{"runner":"macos-latest","jobs":"2"}]') || fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"}]') }}
+        include:
+          - runner: ubuntu-22.04
+            jobs: "random"
+          - runner: macos-latest
+            jobs: "4"
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:

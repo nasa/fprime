@@ -24,7 +24,12 @@ namespace CmdDispatcherCfg {
 //! When false, opcode fields are set to the maximum FwOpcodeType value.
 constexpr bool IncludeCommandOpcodesInEvents = true;
 
-constexpr FwOpcodeType getEventOpcode(const FwOpcodeType opcode) {
+//! Map a command opcode to the value reported in events.
+//!
+//! Every command opcode emitted in an event by Svc::CmdDispatcher and the sequencers passes through this function.
+//! Projects may replace the body with a more elaborate mapping (e.g. a lookup table or lightweight obfuscation);
+//! it must be deterministic and must not allocate.
+inline FwOpcodeType getEventOpcode(const FwOpcodeType opcode) {
     return IncludeCommandOpcodesInEvents ? opcode : std::numeric_limits<FwOpcodeType>::max();
 }
 

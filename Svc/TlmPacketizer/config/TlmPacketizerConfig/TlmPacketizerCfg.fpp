@@ -1,7 +1,12 @@
 # ======================================================================
 # TlmPacketizerCfg.fpp
-# Constants for configuring TlmPacketizer Send Logic Levels
+# Constants and types for configuring TlmPacketizer (sections, groups, send ports, packet offset type)
 # ======================================================================
+@ The type of an offset within a telemetry packet buffer.
+@ Deliberately defined here (global scope) rather than in FpConfig.fpp so that
+@ projects which override FpConfig.fpp continue to build without adding it.
+type FwTlmPacketizeOffsetType = U16
+
 module Svc {
     @ Configurable enum supporting multiple resampled telemetry sections
     @ Each section creates output indices for each telemetry group
@@ -12,6 +17,9 @@ module Svc {
         RECORDED, @< OPTIONAL: recorded telemetry stored on disk for later retrieval
         NUM_SECTIONS,     @< REQUIRED: Counter, leave as last element.
     }
+
+    @ Maximum number of packets the packetizer can be configured with
+    constant MAX_PACKETIZER_PACKETS = 50
 
     @ Greatest packet group
     constant MAX_CONFIGURABLE_TLMPACKETIZER_GROUP = 3
@@ -36,8 +44,8 @@ module Svc {
     @ Default configuration for section ENABLED states. In the default configuration, all sections start ENABLED.
     constant TELEMETRY_SECTION_ENABLED_DEFAULTS = [Fw.Enabled.ENABLED, Fw.Enabled.ENABLED]
 
-    @ Default Group configuration. The group is ENABLED, not forced, and uses output-on-change with no min or max time thresholds.
-    constant DEFAULT_GROUP_CONFIG = { enabled = Fw.Enabled.ENABLED, forceEnabled = Fw.Enabled.DISABLED, rateLogic =  RateLogic.ON_CHANGE_MIN, min = 0, max = 0 }
+    @ Default Group configuration. The group follows its section's enable (INHERIT_FROM_PARENT) and uses output-on-change with no min or max time thresholds.
+    constant DEFAULT_GROUP_CONFIG = { sendState = TlmSendState.INHERIT_FROM_PARENT, rates = { rateLogic = RateLogic.ON_CHANGE_MIN, min = 0, max = 0 } }
 
     @ Sets the default configuration for all sections and groups. Each section/group can be overridden. This acts as
     @ the default value for the SECTION_CONFIGS parameter. Thus runtime commands and parameter updates chan change this
