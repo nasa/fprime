@@ -53,14 +53,23 @@ Transaction* CfdpManagerTester::setupTestTransaction(TxnState state,
     // Mark this as a live (in-use) transaction. This helper grabs a raw transaction
     // slot directly instead of going through Channel::findUnusedTransaction(), so it
     // must take the slot off the FREE list (where engine init parked it) and put it on
-    // a real queue. Engine::finishTransaction() keys its double-free guard off
-    // q_index == QueueId::FREE and requeues anything tagged TXA or PEND, so the tag must
-    // match actual list membership: genuinely enqueue it on PEND, the queue every new
-    // downlink starts on.
+    // the queue the engine itself would use. Engine::finishTransaction() keys its
+    // double-free guard off q_index == QueueId::FREE and requeues anything tagged TXA or
+    // PEND to TXW, so the tag must match actual list membership:
+    //  - RX transactions go on the RX queue, as Engine::startRxTransaction() does. They
+    //    never pass through PEND, and leaving one there would make finishTransaction()
+    //    misfile it on TXW.
+    //  - TX transactions go on PEND, the queue every new downlink starts on.
     if (txn->m_flags.com.q_index == QueueId::FREE) {
         chan->dequeueTransaction(txn);
     }
-    chan->insertSortPrio(txn, QueueId::PEND);
+    const bool isRx = (state == TxnState::TXN_STATE_R1) || (state == TxnState::TXN_STATE_R2);
+    if (isRx) {
+        txn->m_flags.com.q_index = QueueId::RX;
+        chan->insertBackInQueue(QueueId::RX, &txn->m_cl_node);
+    } else {
+        chan->insertSortPrio(txn, QueueId::PEND);
+    }
 
     // Set transaction class based on state
     // S2/R2 are Class 2, S1/R1 are Class 1
