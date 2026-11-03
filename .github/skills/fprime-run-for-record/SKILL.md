@@ -240,10 +240,14 @@ decimal, each argument with type, enum values and meanings, FPP doc-comment; the
 whose doc-comment names the command; dictionary sha256); `helpers/<Component>.md` for every
 plan `helpers` entry (FPP description, port diagram, commands → `commands.md`, events with
 id/severity/format/args, channels with id/type, parameters, source files with sha256 linked
-at the manifest's project sha); `ql.zip` of all of it.
+at the manifest's project sha); `coverage/ut/` — the UUT's unit-test coverage report (gcovr
+html-details + text summary from `fprime-util check --coverage`, shipped by `render-ql
+--ut-coverage <dir>`; the index states line/branch/function % and the summary's sha256, which
+must match the manifest's `ut_coverage` pin written by `fth manifest --ut-coverage <summary>`);
+`ql.zip` of all of it.
 
 `index.md`: run metadata (manifest sha8, record sha256, seal sha8, dictionary sha256, SDD
-sha256, repo-check state); the per-test table (test, title, checker verdict, unseal
+sha256, UT coverage % + report sha256 and its pin state, repo-check state); the per-test table (test, title, checker verdict, unseal
 expectation, unseal verdict, page); ONE VnV matrix requirement × test with cells
 P / E / F / U / · and an "Overall" column (any F → F; any P and no F → P; only E/U → U;
 waiver quoted when no test covers) and the legend stating the cell meanings and the
