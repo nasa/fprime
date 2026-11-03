@@ -120,6 +120,18 @@ fth run --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
     --plan <plan.json> --bench <bench.json> --tests <deployment>/test/int
 ```
 
+Before it, on a **shared bench**, the runner checks for foreign processes
+on the serial port and the debugger (`pgrep -fa "fprime-gds|fprime-cli|
+openocd|comm_bridge|pytest"`, plus who holds the target's `/dev/tty*`)
+and writes the result — timestamp, the processes found, which port each
+holds — into the run log (`rfr/<run-id>-run.log` / `runner/notes.md`)
+before launching. A process on *another* port is noted, not a blocker;
+a process on the target's port stops the launch. If a foreign process
+kills the ground system mid-run, the run is void as an **external
+outage** (recorded as such in `runner/notes.md`), not a verdict, and is
+rerun once under a new run ID; a second outage is reported to the human.
+Never power-cycle a shared USB hub to clear a port.
+
 It performs, in order, and stops at the first failure:
 
 1. `fth verify` of the manifest (repos at their SHAs, clean trees, file
@@ -243,11 +255,20 @@ id/severity/format/args, channels with id/type, parameters, source files with sh
 at the manifest's project sha); `coverage/ut/` — the UUT's unit-test coverage report (gcovr
 html-details + text summary from `fprime-util check --coverage`, shipped by `render-ql
 --ut-coverage <dir>`; the index states line/branch/function % and the summary's sha256, which
-must match the manifest's `ut_coverage` pin written by `fth manifest --ut-coverage <summary>`);
-`ql.zip` of all of it.
+must match the manifest's `ut_coverage` pin written by `fth manifest --ut-coverage <summary>`;
+a **library** UUT's coverage is measured in a project built with the library's **default
+configuration** — a deployment's trimmed config can make UTs fail for configuration reasons
+only, e.g. `FW_FILEID_ASSERT` turning the assert text the death tests match into a file-id
+hash — and the index names that project); **optional** `coverage/system/` — on-target
+system-test coverage (gcovr over the `.gcda` streams `fth coverage-system` reassembles from
+the record's `CoverageChunk` events, placed beside the pinned build's `.gcno`; shipped by
+`render-ql --system-coverage <dir>`, index row "on-target coverage" with line/branch/function
+%, summary sha256 and its `system_coverage` pin state; requires a gcov-instrumented image
+built with **GCC ≥ 11 freestanding gcov** — recipe in the harness skill §3a); `ql.zip` of
+all of it.
 
 `index.md`: run metadata (manifest sha8, record sha256, seal sha8, dictionary sha256, SDD
-sha256, UT coverage % + report sha256 and its pin state, repo-check state); the per-test table (test, title, checker verdict, unseal
+sha256, UT coverage % + report sha256 and its pin state, on-target coverage likewise when present, repo-check state); the per-test table (test, title, checker verdict, unseal
 expectation, unseal verdict, page); ONE VnV matrix requirement × test with cells
 P / E / F / U / · and an "Overall" column (any F → F; any P and no F → P; only E/U → U;
 waiver quoted when no test covers) and the legend stating the cell meanings and the

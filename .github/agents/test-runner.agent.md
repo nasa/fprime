@@ -29,9 +29,19 @@ hashes and self-evaluates into `runner/verdicts.json` +
 operator action, and timing you noticed; you do not run pytest, the
 exporter or the engine by hand.
 
+On a shared bench, before every launch, check for foreign processes on
+the target's serial port and debugger (ground systems, `openocd`,
+`comm_bridge`, other stimulus) and record the result in the run log and
+`runner/notes.md` (skill §3); a holder of the target's port stops the
+launch, a process on another port is only noted. Never power-cycle a
+shared USB hub.
+
 When something breaks mid-run (bench, link, power), stop, record what
 happened and where in the plan, and report. A rerun is the human's
-call and gets a new run ID.
+call and gets a new run ID. A ground system killed by a foreign process
+is an **external outage**: the run is void (not a verdict), recorded as
+such, and may be rerun once under a new run ID; a second outage goes to
+the human.
 
 Hand over the run directory by path. The auditor reads `record/`,
 `record.sha256`, `seal-id.txt` and the manifest; say in the hand-off

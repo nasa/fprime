@@ -123,6 +123,59 @@ Record requirements the harness must make possible:
 - Downlink budget: estimate event rate against link capacity
   beforehand; a harness that loses events cannot prove an absence.
 
+## 3a. On-target coverage (optional; requires GCC ≥ 11 freestanding gcov)
+
+System-test coverage of the UUT on the target is an optional package item
+(`coverage/system/`, run-for-record §5a). It needs a compiler with
+freestanding gcov (`-fprofile-info-section`, GCC ≥ 11; GCC 9 rejects it)
+and costs RAM: 8 bytes per arc counter plus a per-function record — on a
+16 KiB part instrument only the UUT's and the tester's hand-written
+sources, never a whole target with its autocoded `*Ac.cpp`, and use
+`-fprofile-filter-files=<UUT>\.cpp$|<Tester>\.cpp$` so header inlines
+instantiated in those TUs are not counted. Recipe (FRAM trial,
+`fprime-samd-reference` branch `coverage-trial`):
+
+1. **Build option, never default**: `-DFRAM_COVERAGE_TRIAL=ON`-style
+   option adds `-fprofile-arcs -ftest-coverage -fprofile-info-section
+   -fprofile-update=single` to the two sources (`set_source_files_properties`),
+   links `-lgcov` (only `__gcov_merge_add` / `__gcov_info_to_gcda` are
+   pulled; no hosted libc) and, under `-flto`, adds `-fdata-sections
+   -ffunction-sections` at link so LTRANS keeps the `__gcov0.*` sections.
+2. **Linker script**: `.gcov_info` (KEEP, `__gcov_info_start/end`) in
+   flash; `.gcov_counters (NOLOAD)` in RAM collecting `.bss.__gcov0*`
+   outside `.bss`, so counters **survive the plan's MCU resets**; the
+   tester zeroes them on a cold start / image change (magic + identity
+   word beside them) and on `DUMP_COVERAGE(count=0)`.
+3. **Tester command** `DUMP_COVERAGE(start: U16, count: U8)`: walks
+   `__gcov_info_start..__gcov_info_end` with `__gcov_info_to_gcda`, emits
+   global 32-byte chunks `start..start+count-1` as `CoverageChunk(object,
+   offset, length, data0..data7)`, `CoverageObject(object, nameCrc, bytes)`
+   with an object's last chunk (`nameCrc` = CRC-32 of the compiler's
+   `.gcda` path — how fth finds the matching `.gcno`), and
+   `CoverageDumpDone(objects, totalBytes, crc)` once the window reaches
+   the end. `count` is capped so two events fit one downlink frame; the
+   **ground paces** the walk (one command per window, `bench.wait`),
+   because a baremetal framer with two buffers drops packets under a
+   burst — `delta(framer.DroppedPackets) == 0` is in the dump plan's checks.
+4. **Dump plan**: a separate one-test plan + stimulus beside the main
+   plan (`test/int/gcov-dump/`), run with `fth run --unsealed` right after
+   the main plan on the same image (fth's flash of the *same* image keeps
+   the counters). Then `fth coverage-system --record <run>/record
+   --gcno-root <build cache> --project-root <checkout> --filter <UUT dir>
+   --filter <tester dir> --gcov arm-none-eabi-gcov --out <dir>` and
+   `render-ql … --system-coverage <dir>`. Gaps, repeated-but-different
+   chunks, byte-count or CRC mismatches are loud errors; never report
+   partial coverage.
+5. **Report** the size table (flash, static RAM, counter region, stack
+   headroom) baseline vs instrumented and the dump cost (bytes, events,
+   commands, duration); an instrumented image is a **development trial,
+   not an RfR image** — the RfR verdicts come from the uninstrumented
+   pinned build.
+
+Toolchain: a compiler override (e.g. `SAMD_TOOLCHAIN_ROOT` in
+`fprime-samd`'s toolchain file) lives on its own branch until the human
+decides to pin it; the trial never repins the deployment's toolchain.
+
 ## 4. Fault knobs
 
 Implement every knob as a `@knob` declaration in the plan's helpers
