@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-11-02 21:33:13</td>
+      <td>2026-11-03 21:17:54</td>
     </tr>
   </table>
 </div>
@@ -70,12 +70,12 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l40">Svc::Ccsds::Cfdp::NakPdu::NakPdu() (line 40)</a></td><td>called 24 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l63">Svc::Ccsds::Cfdp::NakPdu::asHeader() const (line 63)</a></td><td>called 2 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l72">Svc::Ccsds::Cfdp::NakPdu::getNumSegments() const (line 72)</a></td><td>called 27 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l40">Svc::Ccsds::Cfdp::NakPdu::NakPdu() (line 40)</a></td><td>called 40 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l63">Svc::Ccsds::Cfdp::NakPdu::asHeader() const (line 63)</a></td><td>called 10 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l72">Svc::Ccsds::Cfdp::NakPdu::getNumSegments() const (line 72)</a></td><td>called 392 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l69">Svc::Ccsds::Cfdp::NakPdu::getScopeEnd() const (line 69)</a></td><td>called 2 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l66">Svc::Ccsds::Cfdp::NakPdu::getScopeStart() const (line 66)</a></td><td>called 4 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l75">Svc::Ccsds::Cfdp::NakPdu::getSegment(unsigned char) const (line 75)</a></td><td>called 19 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l75">Svc::Ccsds::Cfdp::NakPdu::getSegment(unsigned char) const (line 75)</a></td><td>called 717 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -366,7 +366,7 @@
       <td class="lineno"><a id="l40" href="#l40">40</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">24</td>
+      <td class="linecount coveredLine">40</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">NakPdu</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_scopeStart</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">m_scopeEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">m_numSegments</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -527,7 +527,7 @@
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PduHeader</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">asHeader</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -590,7 +590,7 @@
       <td class="lineno"><a id="l72" href="#l72">72</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">27</td>
+      <td class="linecount coveredLine">392</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="nf">getNumSegments</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numSegments</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -611,7 +611,7 @@
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">19</td>
+      <td class="linecount coveredLine">717</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SegmentRequest</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">getSegment</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_segments</span><span class="p">[</span><span class="n">index</span><span class="p">];</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

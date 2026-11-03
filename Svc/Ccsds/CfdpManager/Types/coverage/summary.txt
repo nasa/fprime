@@ -18,7 +18,7 @@ Svc/Ccsds/CfdpManager/Types/MetadataPdu.cpp
                                              114      92    80%   69,74,81,84,107,114,129,135,142,149,156,163,178,188,195,200,205,213,223,228,233,241
 Svc/Ccsds/CfdpManager/Types/MetadataPdu.hpp
                                               12      12   100%
-Svc/Ccsds/CfdpManager/Types/NakPdu.cpp        85      70    82%   64,69,76,79,102,109,115,121,129,135,150,156,168,176,182
+Svc/Ccsds/CfdpManager/Types/NakPdu.cpp        85      70    82%   64,69,76,79,102,109,115,121,129,135,150,156,168,177,183
 Svc/Ccsds/CfdpManager/Types/NakPdu.hpp         6       6   100%
 Svc/Ccsds/CfdpManager/Types/PduBase.hpp        2       2   100%
 Svc/Ccsds/CfdpManager/Types/PduHeader.cpp
