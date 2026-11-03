@@ -104,6 +104,8 @@ in the topology:
 2. If the origin is an input port handler argument, look up the
    port in the topology files (`topology.fpp` / `instances.fpp` /
    `*Topology.cpp`) to find the source component and port.
+   Grep recipes for ports, connections and pattern specifiers are in
+   `.github/skills/fprime-model-queries/SKILL.md`.
 3. Recurse on the source component's output port: what value does
    it pass? Apply §2 within that component.
 4. Continue until reaching a §1 entry point (→ `ground-input`), a

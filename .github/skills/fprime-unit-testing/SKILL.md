@@ -32,6 +32,10 @@ workflow order and quality criteria.
 
 ## 1 — Scaffold, implement, register, run
 
+`invoke_to_*`, `from_*_handler`, `sendCmd_*` and the `ASSERT_*` macros are
+derived from the `.fpp`; the table is in
+`.github/skills/fprime-model-queries/SKILL.md`.
+
 1. **Scaffold**: `fprime-util impl --ut` — rename `.template` files,
    delete auto-generated `*Ac.*` / `*GTestBase.*`.
 2. **Tester class**: inherit `<Component>GTestBase`, add test methods
