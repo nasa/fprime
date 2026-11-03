@@ -74,6 +74,12 @@ concurrently on the same UUT SHA.
 - **Stage 2 never edits the UUT.** A UUT defect found while building
   or dry-running is reported with the record lines that show it and
   goes back through stage 1 as a minimal iteration; harness work waits.
+- **Knobs are per-drawn-test command rewrites.** A knob is a `@knob`
+  declaration (`fprime-test-oracle` §5) applied by the tooling's
+  `faults` fixture to the drawn test only; the sealed file is exactly
+  `{"manifest_sha256": …, "faults": {test: knob}}` and anything else
+  fails before any command. Nothing outside `sealed/` names a knob —
+  not a run id, a file, or a stream.
 - **Bounded loops.** Plan review: bounded by `phase-review-loop.md` (the
   only place that bound is defined), then escalate with the disagreement
   log. Harness review: five rounds, then escalate. Agreement reached by

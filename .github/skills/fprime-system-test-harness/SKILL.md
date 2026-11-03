@@ -104,25 +104,22 @@ Record requirements the harness must make possible:
 
 ## 4. Fault knobs
 
-Implement every knob on the approved menu as harness **configuration**
-(`rfr/<run-id>/sealed/faults.json`, read by the harness at start). The
-draw plants knobs **per test** — the file is `{"manifest_sha256": …,
-"faults": {"<test>": "<knob>"}}` — so the harness must switch a knob on
-only for the test it was drawn for, never by knob name for every test
-in `applies_to` (fram-r2: two drawn knobs made two undrawn tests fail
-and `unseal` reported REAL FAILs that were harness scope errors). Fill
-`ripples_to` with any undrawn test a knob necessarily fails. A
-malformed or unknown fault file must fail loudly (stderr, non-zero),
-never exit silently. A
-knob may change a seed, an expected constant, a length, a stimulus, or
-disturb device state through the harness — never the test ID, the log
-text, or the marker. The harness **never logs, prints, asserts on, or
-writes which knobs are active**, to any file or stream, including its
-own stdout in `runner/`; the only trace of `faults.json` outside
-`sealed/` is the `S` marker. Verify in the dry run that each knob,
-applied alone, makes its target test fail with exactly the predicates
-in its `fails` list, and that every test in its `ripples_to` fails
-(FAIL, not UNVERIFIED) while all others pass.
+Implement every knob as a `@knob` declaration in the plan's helpers
+module (`fprime-test-oracle` §5): a command rewrite or insertion that
+the `faults` fixture applies to the **drawn test only**, from
+`rfr/<run-id>/sealed/faults.json` (`{"manifest_sha256": …, "faults":
+{"<test>": "<knob>"}}`); a malformed, unknown or stale file stops the
+run before any command, naming no knob. Fill `ripples_to` with any
+undrawn test a knob necessarily fails. A knob may change a seed, an
+expected constant, a length, a stimulus, or disturb device state
+through an inserted harness command — never the test ID, the log text,
+or the marker. The harness **never logs, prints, asserts on, or writes
+which knobs are active**, to any file or stream, including its own
+stdout in `runner/`; the only trace of `faults.json` outside `sealed/`
+is the seal-id run-start marker. The menu is `fth knobs-menu` output,
+never hand-written. The mutation vectors (§7) prove each knob, applied
+alone, fails its target with exactly its `fails` entry and its
+`ripples_to` with FAIL, not UNVERIFIED, while all others pass.
 
 ## 5. Checker
 
