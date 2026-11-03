@@ -153,7 +153,12 @@ instantiated in those TUs are not counted. Recipe (FRAM trial,
    with an object's last chunk (`nameCrc` = CRC-32 of the compiler's
    `.gcda` path — how fth finds the matching `.gcno`), and
    `CoverageDumpDone(objects, totalBytes, crc)` once the window reaches
-   the end. `count` is capped so two events fit one downlink frame; the
+   the end. Everything that runs **between** two windows — the dump path
+   itself and any periodic handler of the tester (its `schedIn`) — carries
+   `__attribute__((no_profile_instrument_function))`, otherwise the
+   counters move between commands and the windows describe different
+   streams (the first FRAM dump failed exactly so: the Done CRCs disagreed).
+   `count` is capped so two events fit one downlink frame; the
    **ground paces** the walk (one command per window, `bench.wait`),
    because a baremetal framer with two buffers drops packets under a
    burst — `delta(framer.DroppedPackets) == 0` is in the dump plan's checks.
