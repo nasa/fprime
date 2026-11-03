@@ -32,7 +32,7 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
    `system-test-review.agent.md` (harness mode); fix must-fixes; repeat
    until both checkers agree on every verdict and no must-fix is open
    (five rounds maximum, then escalate).
-5. Close stage 2 with `seal.py manifest` (`fprime-run-for-record` §1),
+5. Close stage 2 with `fth manifest` (`fprime-run-for-record` §1),
    listing the built image files, and present the harness to the human
    for review as local files. Whether harness code becomes a PR is the
    human's call.

@@ -73,13 +73,13 @@ record/
   commands.jsonl   {sent, kind:"command", opcode, name, args:{}, completion}
   export-counts.json  {"events.jsonl": N, …} — totals the archive itself reports
   raw/             ground-system archive as stored, plus raw/flash.log
-record.sha256      one line per file, produced by seal.py hash-record
+record.sha256      one line per file, produced by fth hash-record
 ```
 
 The exporter pages through the archive completely (fprime-yamcs REST
 pages at 1000 rows with a continuation token) and writes the totals
 it saw to `export-counts.json`; all three files are mandatory and
-`seal.py verify-record` fails when any is absent or its row count
+`fth verify-record` fails when any is absent or its row count
 differs. Because those totals come from the same exporter, the
 auditor re-exports from the replayed copy of `raw/` and diffs row
 counts with `record/*.jsonl` — that is the independent count. `completion` is
@@ -103,7 +103,7 @@ verdicts.json
 - Every test on the manifest gets an entry; a test with no window in
   the record is `UNVERIFIED` with `failed: ["window missing"]`.
 - `failed` holds the plan's predicate strings **verbatim** — the
-  string is the key `seal.py unseal` matches against a knob's `fails`;
+  string is the key `fth unseal` matches against a knob's `fails`;
   a paraphrase turns every planted test into an unexplained failure.
   The reviewer compares both checkers' dry-run `failed` lists for
   byte-equality.

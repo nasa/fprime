@@ -31,6 +31,7 @@ comes from the agents; trust comes from the hand-offs below.
 | Seal id | `sha256` of `sealed/sealed.sha256`, written to `seal-id.txt` beside `sealed/`. The only seal artifact runner and auditor may read. |
 | Run directory | `rfr/<run-id>/` outside both repositories, `<run-id>` ≤ 8 characters; holds `sealed/`, `seal-id.txt`, `record/`, `record.sha256`, `runner/`, `auditor/`, `unseal.md`. The manifest lives beside the runs as `rfr/manifest-<uut sha8>.json`. |
 | Quick-look | One auditor-produced page per test: reviewer-checker verdict, evidence image or snippet from the record, pass rule, provenance. |
+| Tooling | `fth`, the CLI of fprime-testing-harness, pinned in §8. Every `fth …` command in the skills and agents means that pinned version. |
 
 ## 1. Three stages, three human gates
 
@@ -83,7 +84,7 @@ concurrently on the same UUT SHA.
 
 ## 3. Hand-off artifacts
 
-Stage 2 → stage 3 delivers exactly one **manifest** (`seal.py manifest`,
+Stage 2 → stage 3 delivers exactly one **manifest** (`fth manifest`,
 `fprime-run-for-record` §1):
 
 ```
@@ -102,7 +103,7 @@ manifest.json
   bench:    { path, sha256 }        # bench recipe: wiring, ports, power control, ground system
 ```
 
-RfR refuses to start if `seal.py verify` fails. Anything not on the
+RfR refuses to start if `fth verify` fails. Anything not on the
 manifest is not under test. All RfR artifacts live in the run
 directory, never inside either repository (the dirty-tree check would
 otherwise trip on them).
@@ -117,7 +118,7 @@ Stage 3 delivers the run directory to the human: `record/` +
 
 | Party | Must not see | Enforcement |
 |---|---|---|
-| Every agent, including any orchestrator | The seed | The human runs `seal.py draw` in a shell of their own; the seed comes from a file or an un-echoed prompt, never a chat message or command line. The draw is reproducible from seed + manifest, so a leaked seed is a leaked draw. |
+| Every agent, including any orchestrator | The seed | The human runs `fth draw` in a shell of their own; the seed comes from a file or an un-echoed prompt, never a chat message or command line. The draw is reproducible from seed + manifest, so a leaked seed is a leaked draw. |
 | Runner | `sealed/` contents | The harness reads `sealed/faults.json` itself and never logs, prints, asserts on, or writes which knobs are active, to any file or stream; the runner never opens, prints, or diffs that directory. The harness writes the manifest sha8 and the seal id sha8 into the record at run start (`RFR <run> M <sha8>`, `RFR <run> S <sha8>`) — the only trace of the draw outside `sealed/`. |
 | Auditor | `sealed/`, `runner/` | The auditor's inputs are the manifest, the plan, `record/` + `record.sha256`, `seal-id.txt`, and the reviewer's checker. END markers carry **no verdict**. Whoever hands over the run directory passes paths, never runner text. |
 | Designer, reviewer, builder | The draw | The draw happens after the manifest is frozen. |
@@ -150,7 +151,7 @@ not tamper-proof. Every RfR report says so.
 
 ## 6. Unseal and human triggers
 
-`seal.py unseal` checks the integrity chain (seal id ↔ `sealed/`,
+`fth unseal` checks the integrity chain (seal id ↔ `sealed/`,
 draw ↔ manifest, record ↔ `record.sha256`, run id ↔ both verdict
 files, markers in the record ↔ both hashes) and then joins, for
 **every test on the manifest** plus the independent final-state row
@@ -197,3 +198,17 @@ Agents cite this list; they do not restate it.
   the other party's verdicts.
 - Pasting runner output, harness stdout, or pytest output into the
   record or to the auditor.
+
+## 8. Tooling version
+
+Every skill and agent of this flow invokes the tooling only through
+this table; bumping it is a one-line change here and nowhere else.
+
+| Tool | Pinned | Install |
+|---|---|---|
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 73ca7648791a70c41aebda395207a352546975b8) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@73ca7648791a70c41aebda395207a352546975b8#egg=fprime-testing-harness"` |
+
+Before any stage-3 step a host shows the pinned commit in
+`pip show fprime-testing-harness` (or `pip freeze`); the manifest and
+every report name it. A change of pin after the manifest is frozen is a
+plan change (§2).

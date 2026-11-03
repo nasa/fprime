@@ -138,12 +138,12 @@ Stage 2 closes with the dry run on the real bench: one clean
 full-plan run (all PASS expected) plus one full-plan run per knob
 applied alone, outputs under `dry/clean/` and `dry/<knob>/` outside
 both repositories, both checkers agreeing on every verdict of every
-run, plus one **rehearsal of stage 3 end to end**: `seal.py draw` on a
+run, plus one **rehearsal of stage 3 end to end**: `fth draw` on a
 scratch copy of the manifest with a throwaway seed, the harness reading
 that real `faults.json`, record → `hash-record` → both checkers →
-`seal.py unseal` must run without a tooling error (fram-r1 was voided at
+`fth unseal` must run without a tooling error (fram-r1 was voided at
 run start because the harness had only ever read a hand-written
-dry-run fault file). Then `seal.py manifest` with the raw image binaries that were
+dry-run fault file). Then `fth manifest` with the raw image binaries that were
 flashed (each must contain the UUT sha7). Dry-run output is labelled
 and is not a record.
 

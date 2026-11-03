@@ -5,27 +5,49 @@ description: >-
   system test process): freezing the manifest, drawing the human-seeded
   planted faults, running the approved plan once, hashing the record,
   auditing it blind into quick-looks, and producing the unseal table
-  the human reviews. Ships seal.py (manifest, verify, draw, seal-id,
+  the human reviews. The mechanics are the `fth` CLI of
+  fprime-testing-harness (manifest, verify, draw, run, audit,
   hash-record, verify-record, unseal). Keywords: F Prime, run for
   record, RfR, seal, manifest, fault injection, quick-look, audit,
-  unseal.
+  unseal, fth.
 ---
 
 # Skill: F Prime run-for-record
 
 Stage 3 of `.github/agents/_shared/test-process-contract.md`. Nothing
 here designs or fixes; it executes an approved plan against a frozen
-UUT and harness and makes the result inspectable. `seal.py` beside
-this file implements the mechanics (Python 3 stdlib only; run
-`python3 seal.py selftest`). Every artifact lives in the run directory
-`rfr/<run-id>/` outside both repositories; `<run-id>` ≤ 8 characters.
+UUT and harness and makes the result inspectable. Every artifact
+lives in the run directory `rfr/<run-id>/` outside both repositories;
+`<run-id>` ≤ 8 characters.
+
+## 0. Tooling
+
+The mechanics live in the `fth` CLI of
+[fprime-testing-harness](https://github.com/LeStarch/fprime-testing-harness)
+(`fth manifest | verify | draw | seal-id | run | audit | hash-record |
+verify-record | unseal | vectors | selftest`), pinned by version in
+`.github/agents/_shared/test-process-contract.md` §8 — no script ships
+beside this skill. Install the pinned commit on every host that runs a
+stage-3 step (bench host included):
+
+```bash
+pip install "git+https://github.com/LeStarch/fprime-testing-harness@<pinned commit>#egg=fprime-testing-harness"
+fth selftest          # exercises every seal subcommand in a temp dir
+```
+
+Requirements the tooling must keep meeting (its own test suite carries
+them; a tool that drops one is not pinned): a knob's `fails` is a
+per-test dict (`{"<test>": [predicate…]}`; a legacy list expands to
+every `applies_to` test) and `unseal` matches failed predicates against
+that test's entry only; `draw` reads the menu from the manifest;
+`unseal` needs the menu file at its manifest-relative path.
 
 ---
 
 ## 1. Manifest (closes stage 2)
 
 ```bash
-python3 seal.py manifest --uut <path> --harness <path> \
+fth manifest --uut <path> --harness <path> \
     --repo project=<path> --repo fprime=<path> [--repo <lib>=<path> …] \
     --plan <plan.md> --checker builder=<path> --checker reviewer=<path> \
     --image <Deployment>=<flashed>.bin:"<build command>" \
@@ -48,10 +70,10 @@ OpenOCD `dump_image`). Record the exact
 toolchain (compiler package and version) in `bench.md`; without it a
 faithful rebuild can only be reported `REBUILD DIFFERS (toolchain
 unpinned)`. The manifest lives beside the
-runs, outside both repositories; `python3 seal.py verify <manifest>`
+runs, outside both repositories; `fth verify <manifest>`
 must pass before every later step. Before announcing the draw, stage
-on the bench host (where the human draws and unseals) `seal.py`, the
-manifest, and every manifest-listed non-repo file at its recorded
+on the bench host (where the human draws and unseals) the pinned
+`fth`, the manifest, and every manifest-listed non-repo file at its recorded
 relative path (plan, fault menu, bench, both checkers) — `unseal`
 reads the menu by that path and fails with "missing fault menu"
 otherwise. The plan's independent final-state tool (§4.5) must have
@@ -61,7 +83,7 @@ day yields `UNVERIFIED`.
 ## 2. Draw (human action)
 
 The human runs this in a shell of their own, on any machine holding
-`seal.py` and the manifest (the fault menu is embedded in the manifest;
+the pinned `fth` and the manifest (the fault menu is embedded in the manifest;
 no repository or other file is needed — `draw` checks only the
 manifest, the full `verify` is the runner's and auditor's step). The
 seed comes from an
@@ -70,7 +92,7 @@ after reading — never a chat message or a command-line argument — and
 is kept by the human.
 
 ```bash
-python3 seal.py draw --manifest rfr/manifest-<sha8>.json --run-dir rfr/<run-id>
+fth draw --manifest rfr/manifest-<sha8>.json --run-dir rfr/<run-id>
 ```
 
 Writes `rfr/<run-id>/sealed/{faults.json, expectations.json,
@@ -83,7 +105,7 @@ and auditor.
 
 ## 3. Runner
 
-1. `seal.py verify <manifest>`. Flash exactly the manifest image
+1. `fth verify <manifest>`. Flash exactly the manifest image
    binaries; read back the same flash range (same offset and length,
    e.g. OpenOCD `dump_image`) and store `sha256sum` of file and
    read-back in `record/raw/flash.log`.
@@ -97,13 +119,13 @@ and auditor.
    `"RFR <run> S <seal-id sha8>"` (a deployment without a string
    command sends them as `Marker(id: U32)` events instead: `0xFFFF0001`,
    the manifest sha8 as U32, `0xFFFF0002`, the seal-id sha8 as U32,
-   `0xFFFF0003`, `crc32(<run>)`; `seal.py` accepts either form); every test is bracketed per
+   `0xFFFF0003`, `crc32(<run>)`; `fth` accepts either form); every test is bracketed per
    `fprime-system-test-harness` §3. Do not read `sealed/`. Do not fix,
    tune, or retry; log every anomaly, operator action, and timing in
    `runner/report.md`. Harness stdout and pytest output go to
    `runner/`, never to `record/`; neither may name an active knob.
 4. Export the record (`fprime-test-oracle` §2) into `record/`, then
-   `python3 seal.py hash-record --run-dir rfr/<run-id>`.
+   `fth hash-record --run-dir rfr/<run-id>`.
 5. Run the **builder's** checker → `runner/verdicts.json`. Report per
    test PASS/FAIL/UNVERIFIED plus anomalies. Hand over the run
    directory by path; the auditor reads `record/`, `record.sha256`,
@@ -111,8 +133,8 @@ and auditor.
 
 ## 4. Auditor
 
-1. `seal.py verify <manifest>` and
-   `seal.py verify-record --run-dir rfr/<run-id>`; confirm
+1. `fth verify <manifest>` and
+   `fth verify-record --run-dir rfr/<run-id>`; confirm
    `record/events.jsonl` carries `RFR <run> M <sha8>` for this manifest
    and `RFR <run> S <sha8>` matching `seal-id.txt` (or their `Marker(id)`
    encoding, §3 step 3). Any failure ends
@@ -129,7 +151,7 @@ and auditor.
 4. Build one quick-look per test (§5) from the record only. Replay
    the archive from a **copy** of `record/raw/`; re-export from that
    copy and diff row counts with `record/*.jsonl` (the independent
-   count); after the last quick-look run `seal.py verify-record` again
+   count); after the last quick-look run `fth verify-record` again
    and print both results in `auditor/report.md`.
 5. Perform the plan's independent final-state check after the runner
    has released the bench and before any reflash: UUT powered down or
@@ -167,7 +189,7 @@ the rule, not against the auditor's word.
 ## 6. Unseal (human action)
 
 ```bash
-python3 seal.py unseal --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
+fth unseal --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
     -o rfr/<run-id>/unseal.md
 ```
 
