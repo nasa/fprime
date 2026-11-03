@@ -1,5 +1,5 @@
 ---
-name: fprime-model-queries
+name: fprime-fpp-navigation
 description: >-
   Answer questions about an F Prime component or topology from the FPP
   model instead of reading autocoded C++. Covers grep recipes for the
