@@ -26,8 +26,10 @@ predicates, histories), see the
 [GDS Integration Test API Guide](https://github.com/nasa/fprime/blob/devel/docs/user-manual/gds/gds-test-api-guide.md).
 
 > **Note**: This skill covers **component-level** reusable integration
-> tests. System-wide integration tests (testing cross-component
-> workflows across an entire deployment) are a separate concern.
+> tests. System-level and hardware-in-the-loop testing across a
+> deployment is covered by `fprime-system-test-design` and
+> `fprime-system-test-harness`, which reuse these tests as building
+> blocks.
 
 ---
 

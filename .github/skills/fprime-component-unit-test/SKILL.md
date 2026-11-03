@@ -4,8 +4,9 @@ description: >-
   Unit testing phase of F Prime component development. Provides
   lifecycle context, goals, and decision criteria for the unit testing
   phase. Defers to fprime-unit-testing for implementation details.
-  Trigger when implementation is ready for testing or when following
-  TDD (tests before implementation). Keywords: F Prime, unit test,
+  Trigger when writing the unit-test list in the test-design phase,
+  when implementation is ready for testing, or when following TDD
+  (tests before implementation). Keywords: F Prime, unit test,
   GTest, TesterBase, GTestBase, Tester, fprime-util check, STest,
   rule-based testing.
 ---
@@ -37,6 +38,30 @@ implementation procedure, see `fprime-unit-testing` and the
 
 ---
 
+## Test list
+
+The unit-test list is written in the test-design phase (before any
+implementation; `fprime-development.agent.md` §2 phase 3) from the
+approved requirements and FPP model, lives in the component's
+`docs/sdd.md` under a "Unit-test list" heading, and is reviewed with
+the system test plan (`.github/agents/_shared/phase-review-loop.md`).
+Adding this section does not reopen the design phase; any other SDD
+edit found necessary does (`phase-review-loop.md`, reopen). One row
+per requirement whose verification method is a unit test:
+
+| Test | Description | Requirements |
+|---|---|---|
+
+(the same three-column table as the system tests in SDD §Tests: name,
+one sentence of ≤ 15 words on what the test proves, REQ-IDs). Add rows
+for every interface element (port, command, event, telemetry channel,
+parameter) not already exercised, and for the failure paths the
+requirements name. Stimulus and asserted values belong in the test
+code and the plan, not in the SDD row. The test suite implements the list; a test with
+no row, or a row with no test, is a gap recorded in the SDD.
+
+---
+
 ## Process
 
 Follow `fprime-unit-testing` for the step-by-step procedure:
@@ -49,8 +74,8 @@ Key decisions within the lifecycle:
 1. **Traditional vs. rule-based**: Use the criteria table in
    `fprime-unit-testing` §3. Default to rule-based for
    components with multiple ports or stateful behavior.
-2. **TDD**: If following test-driven development (tests before
-   implementation), see
+2. **TDD**: Implement the test list before the component (tests before
+   implementation); see
    [TDD guide](https://github.com/nasa/fprime/blob/devel/docs/how-to/test-driven-development.md).
    The FPP model is sufficient to write tests — implementation is not
    required.

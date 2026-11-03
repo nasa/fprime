@@ -73,9 +73,36 @@ environment/hardware access). Do not spin in place or guess.
    - Aggregate the findings locally per `review-summary.agent.md`
      into `review-iter-N/summary.md`.
 5. **Triage and fix**: classify each finding (fix / false positive /
-   acknowledged nit), fix test failures and valid findings, and
-   record the finding count for the iteration.
-6. **Loop**: return to step 1.
+   acknowledged nit / accepted as designed / future work), fix test
+   failures and valid findings, and record the finding count for the
+   iteration.
+6. **Keep the ledger** (`docs/review-ledger.md` in the repository
+   under review, or beside `review-iter-N/` when nothing may be
+   committed): one row per finding dispositioned *accepted as
+   designed* or *future work* — `finding key | first raised (iteration,
+   agent) | disposition | reason (one sentence) | who ruled`. Every
+   reviewer kickoff from the next iteration on names the ledger and
+   says: do not re-raise a ledger row unless new evidence is cited.
+   Attach the ledger with every review summary; the human reads it
+   before the findings.
+7. **Loop**: return to step 1.
+
+### Adversarial children
+
+When the work is a test harness, a plan, a checker or any artifact
+whose failure mode is "passes by construction", add adversaries to the
+review. Each is a separate context with the artifact's **inputs**, not
+its implementation, and a brief that names what it must break:
+
+| Child | Reads | Delivers |
+|---|---|---|
+| Independent checker author | plan text, replay API | a checker written from the plan alone; byte-for-byte diff against the engine on every vector (`fprime-test-oracle` §3) |
+| Knob-fixture breaker | fault menu, fixture API | faults files and draws that should be refused (unknown test, stale sha, extra key, by-name leak) and the exit code each produced |
+| Replay-fidelity reviewer | raw archive, exporter output | row-count and dedup diffs between `raw/` and the export; any sample lost or duplicated |
+| QL cold reader | rendered quick-look pages only | what a human who did not run the test would conclude, and where the page misleads |
+
+Their findings enter the same triage and the same ledger; a finding
+they could not reproduce is recorded as held (`*_held`), not dropped.
 
 ## 3. Exit criteria
 
@@ -92,7 +119,7 @@ Deliverables: the implementation and tests (delivered per the user's
 PR workflow; the PR description may summarize the final local review
 outcome, but never post the raw review as PR comments/reviews), plus
 the final iteration's `review-iter-N/` artifacts (per-agent findings
-and summary) shared with the user.
+and summary) and the ledger shared with the user.
 
 ## Forbidden actions
 
