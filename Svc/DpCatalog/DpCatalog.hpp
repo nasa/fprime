@@ -8,6 +8,10 @@
 #define Svc_DpCatalog_HPP
 
 #include "Svc/DpCatalog/DpCatalogComponentAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_EntryLookupStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_PriorityChangeStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_StateFileUpdateStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_StateFileWriteStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpRecordSerializableAc.hpp"
 
 #include <Fw/DataStructures/ExternalArray.hpp>
@@ -144,6 +148,17 @@ class DpCatalog final : public DpCatalogComponentBase {
                                   U32 cmdSeq            //!< The command sequence number
                                   ) override;
 
+    //! Handler implementation for command SET_DP_PRIORITY
+    //!
+    //! Set the transmit priority of one data product; the change is recorded in the state file if one is configured
+    void SET_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,       //!< The opcode
+                                    U32 cmdSeq,                //!< The command sequence number
+                                    FwDpIdType id,             //!< Container ID of the data product
+                                    U32 tSec,                  //!< Seconds of the data product time tag
+                                    U32 tSub,                  //!< Microseconds of the data product time tag
+                                    FwDpPriorityType priority  //!< New transmit priority
+                                    ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -153,7 +168,20 @@ class DpCatalog final : public DpCatalogComponentBase {
         FwIndexType dir;  //!< index to m_directories entry that has directory name where DP exists
         DpRecord record;  //!< data product metadata
 
-        /// @brief insert an entry into the sorted list; if it exists, update the metadata
+        /// @brief check whether the entry is the data product with the given identity (id and time tag)
+        /// @param id container ID
+        /// @param tSec seconds of the time tag
+        /// @param tSub microseconds of the time tag
+        /// @return true if the entry has that identity
+        bool hasIdentity(FwDpIdType id, U32 tSec, U32 tSub) const;
+
+        /// @brief check whether the entry is the same data product as another: same directory and identity
+        ///        (id and time tag). The priority and state, which change, are not compared
+        /// @param other the entry to compare with
+        /// @return true if both entries are the same data product
+        bool isSameProduct(const DpStateEntry& other) const;
+
+        /// @brief compare two entries by transmit priority, then time tag, id, and directory (the catalog sort order)
         /// @param left an entry to compare
         /// @param right other entry to compare
         /// @return -1 if left is higher priority, 0 if equal, and 1 if right is higher priority
@@ -213,7 +241,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     void getFileState(DpStateEntry& entry);
 
     /// @brief prune the state file data and write the remaining entries back
-    void pruneAndWriteStateFile();
+    /// @return WRITTEN, or the error (also reported by event)
+    DpCatalog_StateFileWriteStatus pruneAndWriteStateFile();
 
     /// @brief load state data from file
     Fw::CmdResponse loadStateFile();
@@ -266,6 +295,38 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief abandon the transmit: clear both transmit flags and answer a waited START_XMIT_CATALOG
     /// @param response the command response for the waited command
     void abortXmit(Fw::CmdResponse response);
+
+    /// @brief find the catalog entry for a data product by its stable identity (directory, id and time tag)
+    /// @param product the data product to find; its priority and state are not compared
+    /// @param entry the entry found
+    /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
+    DpCatalog_EntryLookupStatus findEntryByIdentity(const DpStateEntry& product, DpStateEntry& entry) const;
+
+    /// @brief find the first catalog entry of a data product named by id and time tag, as SET_DP_PRIORITY names it
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @param entry the entry found
+    /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
+    DpCatalog_EntryLookupStatus findProductEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
+
+    /// @brief set the transmit priority of a catalog entry and record it in the state file, if one is configured
+    /// @param entry a copy of the catalog entry; updated to the new priority
+    /// @param priority the new priority
+    /// @return UNCHANGED if the entry already had the priority, CHANGED if it was set (and recorded if a state file
+    ///         is configured), NOT_RECORDED if it was set but could not be recorded in the configured state file
+    DpCatalog_PriorityChangeStatus setDpPriority(DpStateEntry& entry, FwDpPriorityType priority);
+
+    /// @brief find the state file data slot for an entry's product (same directory, id and time tag)
+    /// @param entry the entry to look up
+    /// @return the slot index, or m_stateFileEntries if the product has no slot
+    FwSizeType findStateFileSlot(const DpStateEntry& entry) const;
+
+    /// @brief record an entry's state in the state file data, reusing the product's slot or a stale one
+    /// @param entry the entry to record
+    /// @return RECORDED, or FULL if the state file data has no free slot (StateFileFull is reported when a state
+    ///         file is configured)
+    DpCatalog_StateFileUpdateStatus updateStateFileData(const DpStateEntry& entry);
 
     // ----------------------------------
     // Private data
