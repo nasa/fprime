@@ -49,142 +49,183 @@ that test's entry only; `draw` reads the menu from the manifest;
 ```bash
 fth manifest --uut <path> --harness <path> \
     --repo project=<path> --repo fprime=<path> [--repo <lib>=<path> …] \
-    --plan <plan.md> --checker builder=<path> --checker reviewer=<path> \
+    --plan <plan.json> [--plan-revision <rev>] --checker reviewer=checks/<name>.py \
     --image <Deployment>=<flashed>.bin:"<build command>" \
-    --menu <faults-menu.json> --bench <bench.md>        # -> rfr/manifest-<uut sha8>.json
+    --menu <faults-menu.json> --bench <bench.json> \
+    --toolchain-json <toolchain.json>              # -> rfr/manifest-<uut sha8>.json
 ```
 
 Records, for the UUT, the harness (both listed in `repos`
 automatically — tester components and test deployments compile into
 the image) and every other repository the image is built from, the
-SHA and `git describe --tags --always --dirty --broken`
-string (dirty or broken trees are refused); file hashes; the plan's
-test list (parsed from its `ID:` lines at column 0, unique, ≤ 8
-characters); the validated fault menu; and the exact raw binaries that
-will be flashed — each must contain every repository's describe
-string, which is what `Svc.Version` reports, or
+SHA and `git describe --tags --always --dirty --broken` string (dirty
+or broken trees are refused); file hashes of the plan, the generated
+fault menu, `bench.json` and the reviewer's independent checker; the
+plan's test list (`tests[].id`, unique, ≤ 8 characters); the
+**toolchain** block from `--toolchain-json` (compiler package and
+version as the builder installed them — without it a faithful rebuild
+can only be reported `REBUILD DIFFERS (toolchain unpinned)`); and the
+exact raw binaries that will be flashed — each must contain every
+repository's describe string, which is what `Svc.Version` reports, or
 `--no-version-check <reason>` is recorded on the manifest and printed
-at unseal. ELF, hex and UF2 files are refused (flash the `.bin`, e.g.
-`picotool load`, and read back the range with `picotool save -r` or
-OpenOCD `dump_image`). Record the exact
-toolchain (compiler package and version) in `bench.md`; without it a
-faithful rebuild can only be reported `REBUILD DIFFERS (toolchain
-unpinned)`. The manifest lives beside the
-runs, outside both repositories; `fth verify <manifest>`
-must pass before every later step. Before announcing the draw, stage
-on the bench host (where the human draws and unseals) the pinned
-`fth`, the manifest, and every manifest-listed non-repo file at its recorded
-relative path (plan, fault menu, bench, both checkers) — `unseal`
-reads the menu by that path and fails with "missing fault menu"
-otherwise. The plan's independent final-state tool (§4.5) must have
-been exercised once in the stage-2 dry run; an improvised read on the
-day yields `UNVERIFIED`.
+at unseal. ELF, hex and UF2 files are refused (flash the `.bin` and
+read back the range with `picotool save -r` or OpenOCD `dump_image`).
+The builder's checker is the tooling's engine (`fth evaluate`), so only
+the reviewer's checker is a manifest file. The manifest lives beside
+the runs, outside both repositories; `fth verify <manifest>` must pass
+before every later step. Before announcing the draw, stage on the bench
+host (where the human draws and unseals) the pinned `fth`, the
+manifest, and every manifest-listed non-repo file at its recorded
+relative path (plan, fault menu, bench, checker, the helpers module)
+— `unseal` reads the menu by that path and fails with "missing fault
+menu" otherwise; `bench.json` uses relative paths only for the same
+reason. The plan's independent final-state tool (§4.5) must have been
+exercised once in the stage-2 rehearsal; an improvised read on the day
+yields `UNVERIFIED`.
 
 ## 2. Draw (human action)
 
-The human runs this in a shell of their own, on any machine holding
-the pinned `fth` and the manifest (the fault menu is embedded in the manifest;
-no repository or other file is needed — `draw` checks only the
-manifest, the full `verify` is the runner's and auditor's step). The
-seed comes from an
-un-echoed prompt (preferred) or a `chmod 600` file that `draw` deletes
-after reading — never a chat message or a command-line argument — and
-is kept by the human.
+The human runs this in a shell of their own, on any machine holding the
+pinned `fth` and the manifest (the fault menu is embedded in the
+manifest; no repository or other file is needed — `draw` checks only
+the manifest file, the full `verify` is the runner's and auditor's
+step). The seed comes from an un-echoed prompt (preferred) or a
+`chmod 600` file that `draw` deletes after reading — never a chat
+message or a command-line argument — and is kept by the human.
 
 ```bash
-fth draw --manifest rfr/manifest-<sha8>.json --run-dir rfr/<run-id>
+fth draw --manifest rfr/manifest-<sha8>.json --run-dir rfr/<run-id> [--seed-file <file>]
 ```
 
 Writes `rfr/<run-id>/sealed/{faults.json, expectations.json,
 sealed.sha256}` and `rfr/<run-id>/seal-id.txt`. The number of planted
 tests is drawn in `[1, max_count]` from the approved menu (no
 command-line override); expectations are `FAIL` for drawn tests,
-`FAIL-RIPPLE` for their knobs' `ripples_to`, `PASS` otherwise. Only
+`FAIL-RIPPLE` for their knobs' `ripples_to`, `PASS` otherwise. The
+draw **refuses to uncover a requirement**: if a candidate draw leaves
+any requirement without an unaltered covering test it re-draws from a
+derived sub-seed, deterministically, up to `--max-tries` (16), then
+fails loudly — a plan that trips this has a redundancy defect
+(`fprime-system-test-design` §3) and goes back to stage 2. Only
 `seal-id.txt` (and the sha8 the command prints) is readable by runner
 and auditor.
 
 ## 3. Runner
 
-1. `fth verify <manifest>`. Flash exactly the manifest image
-   binaries; read back the same flash range (same offset and length,
-   e.g. OpenOCD `dump_image`) and store `sha256sum` of file and
-   read-back in `record/raw/flash.log`.
-2. Start the ground system with a fresh archive for this run ID. Run
-   the bench entry probe from the recipe and record the decoded
-   identification reply in `runner/report.md`; a reply that does not
-   decode per the manifest's datasheet stops the run (wrong device or
-   firmware is a requirements matter, not a runner retry).
-3. Run the plan in order, once. At start the harness emits
-   `NO_OP_STRING "RFR <run> M <manifest sha8>"` and
-   `"RFR <run> S <seal-id sha8>"` (a deployment without a string
-   command sends them as `Marker(id: U32)` events instead: `0xFFFF0001`,
-   the manifest sha8 as U32, `0xFFFF0002`, the seal-id sha8 as U32,
-   `0xFFFF0003`, `crc32(<run>)`; `fth` accepts either form); every test is bracketed per
-   `fprime-system-test-harness` §3. Do not read `sealed/`. Do not fix,
-   tune, or retry; log every anomaly, operator action, and timing in
-   `runner/report.md`. Harness stdout and pytest output go to
-   `runner/`, never to `record/`; neither may name an active knob.
-4. Export the record (`fprime-test-oracle` §2) into `record/`, then
-   `fth hash-record --run-dir rfr/<run-id>`.
-5. Run the **builder's** checker → `runner/verdicts.json`. Report per
-   test PASS/FAIL/UNVERIFIED plus anomalies. Hand over the run
-   directory by path; the auditor reads `record/`, `record.sha256`,
-   `seal-id.txt` and nothing under `runner/` or `sealed/`.
+One command, run once per run ID, from the campaign root on the bench
+host:
+
+```bash
+fth run --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
+    --plan <plan.json> --bench <bench.json> --tests <deployment>/test/int
+```
+
+It performs, in order, and stops at the first failure:
+
+1. `fth verify` of the manifest (repos at their SHAs, clean trees, file
+   hashes, pinned `fth`).
+2. Flash exactly the manifest image with the recipe's `flash` line,
+   read back the same flash range (`dump`), and write
+   `record/raw/flash.log` with the debugger USB serial, the image
+   sha256 and the read-back sha256; a missing serial or a differing
+   read-back stops the run.
+3. Start the ground system and **exactly one** recorder from
+   `bench.json` (`gds`, `recorder`), fresh archive under `record/raw/`
+   for this run ID; the command sender logs under `record/raw/cmd/`
+   (the only source of `commands.jsonl`).
+4. Send the run-start markers `MARK(0xFFFF0001)`, `MARK(manifest
+   sha8)`, `MARK(0xFFFF0002)`, `MARK(seal-id sha8)`, `MARK(0xFFFF0003)`,
+   `MARK(crc32(<run-id>))` (ids ≥ 0xFFFF0000 are reserved; a deployment
+   with `NO_OP_STRING` may instead send `"RFR <run> M <sha8>"` /
+   `"RFR <run> S <sha8>"` — the plan's `markers` block decides).
+5. Run the plan's stimulus tests once, in plan order, through
+   `fth.pytest_plugin` (`window`, `send`, `bench`, `faults` fixtures);
+   the plugin validates `sealed/faults.json` and applies the drawn knob
+   to the drawn test only; stdout and pytest output go to `runner/`.
+6. Stop the ground system; `fth export` the raw logs into
+   `record/{events,channels,commands}.jsonl` + `export-counts.json`
+   (dedup of the recorder's double-written rows happens here, per file
+   per boot segment, exact raw line only); `fth hash-record`.
+7. Self-evaluate with the engine → `runner/verdicts.json`,
+   `runner/report.md`.
+
+The runner agent adds nothing to the record: every anomaly, operator
+action and timing it noticed goes to `runner/notes.md`. It does not
+read `sealed/`, fix, tune or retry; a mid-run break is recorded and
+reported, and a rerun is the human's call with a new run ID. Hand over
+the run directory by path; the auditor reads `record/`,
+`record.sha256`, `seal-id.txt` and nothing under `runner/` or
+`sealed/`.
 
 ## 4. Auditor
 
-1. `fth verify <manifest>` and
-   `fth verify-record --run-dir rfr/<run-id>`; confirm
-   `record/events.jsonl` carries `RFR <run> M <sha8>` for this manifest
-   and `RFR <run> S <sha8>` matching `seal-id.txt` (or their `Marker(id)`
-   encoding, §3 step 3). Any failure ends
-   the audit with `RECORD INVALID`.
-2. Image identity: device read-back hash in `record/raw/flash.log`
-   must equal the manifest image hash — mismatch is
-   `RECORD INVALID (image)`. The L0 test ties the image to the
-   manifest's `repos[].describe` strings through the `Svc.Version`
-   events. Rebuild from the manifest SHAs with the recorded
-   `build_cmd` and report `REBUILD MATCH` or
-   `REBUILD DIFFERS (<reason>)` — cross-compiled images often embed
-   paths; a differing rebuild is reported, not `RECORD INVALID`.
-3. Run the **reviewer's** checker → `auditor/verdicts.json`.
-4. Build one quick-look per test (§5) from the record only. Replay
-   the archive from a **copy** of `record/raw/`; re-export from that
-   copy and diff row counts with `record/*.jsonl` (the independent
-   count); after the last quick-look run `fth verify-record` again
-   and print both results in `auditor/report.md`.
-5. Perform the plan's independent final-state check after the runner
-   has released the bench and before any reflash: UUT powered down or
-   halted, a non-F´ tool. Write `auditor/final-state.md` (narrative)
-   and `auditor/final-state.json`:
-   `{"test": "L7-1", "verdict": "PASS|FAIL", "tool", "version",
-   "cmdline", "expected_sha256", "observed_sha256"}` — `unseal` adds it
-   as its own row, and a missing file is a human trigger.
-6. `auditor/report.md`: every `UNVERIFIED` window, every divergence
-   from the plan's expectations, the final-state result, the rebuild
-   result, and the blindness statement (contract §4). Do not open
-   `runner/` or `sealed/`; do not guess which failures were planted.
-
-## 5. Quick-look format
-
-`auditor/quicklooks/<id>.md` plus `<id>.png` when an image is used:
-
-```
-# L2-6 — Full-device write/verify sweep
-Verdict (reviewer checker): PASS
-Covers: REQ-FRAM-003, REQ-FRAM-007
-Pass rule: <copied from plan>
-Replay: run=<run>, window=<START recv time>–<END recv time>
-Evidence: ![L2-6](L2-6.png)   # EVR sequence or telemetry strip for this
-                                # window only; both marker rows visible
-          or a ≤ 12-line snippet from events.jsonl
-Record lines: events.jsonl:1041-1049
-Completeness: 14 commands sent, 14 dispatched, 0 errors, 0 events dropped
-Notes: <anything a human should know; empty is fine>
+```bash
+fth audit --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
+    --plan <plan.json> --independent checks/<name>.py \
+    [--rebuild --toolchain-json <toolchain.json>]
 ```
 
-The pass rule is on the page so the human checks the picture against
-the rule, not against the auditor's word.
+Each step is a line in `auditor/report.md`; a failed hash or marker step
+ends the audit with `RECORD INVALID`:
+
+1. `fth verify` of the manifest and `fth verify-record` (every export
+   file present, row counts equal `export-counts.json`); the run-start
+   markers in `record/events.jsonl` match this manifest, this run ID and
+   `seal-id.txt`; `record/raw/flash.log` carries the debugger serial and
+   a read-back sha equal to a manifest image sha (`RECORD INVALID
+   (image)` otherwise).
+2. With `--rebuild`: rebuild from the manifest SHAs with the recorded
+   `build_cmd` and toolchain and report `REBUILD MATCH` or `REBUILD
+   DIFFERS (<exactly which pinned item differs>)` — cross-compiled images
+   often embed paths; a differing rebuild is reported, not `RECORD
+   INVALID`.
+3. Re-export from a **copy** of `record/raw/` and compare with
+   `record/*.jsonl` (the independent count); replay never touches the
+   archive in place.
+4. Run the engine → `auditor/verdicts.json`, then the reviewer's
+   **independent checker** (`python checks/<name>.py <record-dir>
+   <plan.json> <out.json>` → `{"tests": {ID: {"verdict", "failed"}}}`)
+   and diff verdict **and** `failed` list per test byte-for-byte →
+   `auditor/diff.md`. Any row there is a human trigger.
+5. Render the quick-look pages, `index.md` (metadata, VnV matrix) and
+   `ql.zip` into `auditor/ql/` — **by program only** (`fth render-ql`
+   inside `audit`). No agent writes, edits or summarises a QL page,
+   ever; the auditor's words go to `auditor/report.md`.
+
+Then, outside the tool: the plan's independent final-state check after
+the runner has released the bench and before any reflash — UUT powered
+down or halted, a non-F´ tool — written to `auditor/final-state.md`
+(narrative) and `auditor/final-state.json`: `{"test": "L7-1",
+"verdict": "PASS|FAIL", "tool", "version", "cmdline",
+"expected_sha256", "observed_sha256"}`; `unseal` adds it as its own row
+and a missing file is a human trigger. `auditor/report.md` closes with
+every `UNVERIFIED` window, every divergence, the final-state result,
+the rebuild result and the blindness statement (contract §4). Do not
+open `runner/` or `sealed/`; do not guess which failures were planted.
+
+`fth audit --skip-repo-check` exists for hosts without the repos
+(tooling CI, vectors) and is **development-only**: it prints
+`repo_check: skipped` in the QL index metadata and a ⚠ line under every
+page header, so a campaign audit that used it is visible to the human
+on every page.
+
+## 5. Quick-look pages
+
+`auditor/ql/<id>.md`, rendered from the hashed record and the plan,
+byte-identical across renders: title and `purpose`; engine verdict;
+`covers`; the pass rule with each predicate's result and the record
+lines (`L`/`C`/`K` = events/channels/commands jsonl line numbers) that
+decided it; completeness (commands sent vs dispatched, drops);
+`rationale` lines; hex beside decimal where the rule uses hex; a "vs
+plan" column that is an observation, never attributed to a knob. The
+pass rule is on the page so the human checks the evidence against the
+rule, not against anyone's word. `index.md` carries the run metadata
+(manifest, seal id, `repo_check`) and the requirement × test VnV
+matrix.
+
+Simulator evidence is labelled `SIMULATED` in the manifest and on the
+pages and is never a record; the record requires the device to pass the
+bench entry gate (answers a probe at the configured baud) first.
 
 ## 6. Unseal (human action)
 
@@ -195,24 +236,28 @@ fth unseal --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
 
 Verifies the integrity chain (contract §6), then writes the check-off
 table `☐ | test | expected | runner | auditor | quick-look | outcome`
-for every test on the manifest plus one `<test>/dump` row per entry
-in `auditor/final-state.json` (expected from the drawn knob's class,
-not the test's expectation), flags planted or ripple tests whose
-failed predicates exceed the knob's `fails` list, shows any skipped
-image version check, and lists the human triggers first with the seal
-id to compare with the value printed by `draw`. The human
-reads trigger rows, spot-checks two or three nominal rows against the
-raw record, ticks the boxes, and records the decision in the plan's
-decision log.
-
-Simulator evidence is labelled `SIMULATED` in the manifest and the
-quick-look and is never a record; the record requires the device to pass
-the bench entry gate (answers a probe at the configured baud) first.
+for every test on the manifest plus one `<test>/dump` row per entry in
+`auditor/final-state.json` (expected from the drawn knob's class, not
+the test's expectation), flags planted or ripple tests whose failed
+predicates exceed the knob's `fails` entry for that test, shows any
+skipped image version check, and lists the human triggers first with
+the seal id to compare with the value printed by `draw`. It also stamps
+every QL page with `Unseal expectation` / `Unseal verdict`, inserts the
+§3 knob table (name, class, kind, mechanism; `— none —` when nothing
+applies) and a callout (⚠ WARNING for uncovered checks, a planted PASS
+or an unplanted FAIL; else "Consistent with draw") into `index.md`, and
+rebuilds `ql.zip`. The human reads trigger rows, spot-checks two or
+three nominal rows against the raw record, ticks the boxes, and records
+the decision in the plan's decision log.
 
 ## Anti-patterns
 
 - A second run "to confirm" without a new run ID and a stated reason.
-- Quick-looks built from the runner's report or from harness output.
+- Quick-looks written, edited or summarised by an agent, or built from
+  the runner's report or harness output.
+- `fth audit --skip-repo-check` on a campaign run.
 - An auditor that announces which failures it believes were planted.
 - A seed typed into a chat, a prompt, or a command line.
 - Replaying the archive in place.
+- Running pytest, the exporter or the engine by hand in stage 3 instead
+  of `fth run` / `fth audit`.

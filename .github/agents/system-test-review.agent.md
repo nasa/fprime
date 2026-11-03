@@ -57,24 +57,31 @@ doubles.
 
 ## Mode B — harness review
 
-Input: the approved plan, the harness diff, and the dry-run record.
-Do **not** read the builder's checker. Procedure:
+Input: the approved `plan.json`, the harness diff (stimulus tests,
+helpers module with `@helper`/`@knob`), and the vector records
+(`vectors/<name>/record`). Do **not** read the engine's source or the
+helpers' implementation before step 1. Procedure:
 
-1. Write the independent checker from the plan alone
-   (`fprime-test-oracle` §3) and run it on the dry-run record.
-2. Compare `verdicts.json` with the builder's; every disagreement goes
-   into `divergence.md` (`fprime-test-oracle` §4) and is a must-fix for
-   whichever side is wrong — decide from the record, not from the
-   code.
+1. Write the independent checker **from the plan text alone**
+   (`fprime-test-oracle` §3; contract `python checks/<name>.py
+   <record-dir> <plan.json> <out.json>` → `{"tests": {ID: {"verdict",
+   "failed"}}}`, `failed` = plan predicate text verbatim) over the
+   replay API only, and run it on every vector record.
+2. Compare with the engine's output (`fth evaluate plan.json
+   <record> -o out.json`) on verdict **and** `failed`, byte-for-byte;
+   every disagreement goes into `divergence.md` (`fprime-test-oracle`
+   §4) and is a must-fix for whichever side is wrong — decide from the
+   record, not from the code.
 3. Review the harness against `fprime-system-test-harness`: UUT
    untouched, markers fit 40 characters and round-trip, END sent in
    `finally` and carries no verdict, no pytest or harness verdict under
    `record/`, knobs invisible in the record, each `dry/<knob>/` run
    fails its target with exactly the knob's `fails` predicates and its
-   `ripples_to` with FAIL not UNVERIFIED while everything else passes,
-   both checkers' `failed` lists byte-equal on every dry run,
-   no knob name or test/knob pair anywhere in the dry-run `runner/`
-   output (grep for every knob name), completeness built from
+   `ripples_to` with FAIL not UNVERIFIED while everything else passes
+   (`fth vectors` green), engine and checker `failed` lists byte-equal
+   on every vector, no knob name or test/knob pair anywhere in the
+   dry-run `runner/` output or in a run id (grep for every knob name;
+   `MARK(crc32(run id))` inverts a knob-named id), completeness built from
    infrastructure counters only, commands paced, exporter writes all
    three exports plus `export-counts.json`, size reviewable in one
    sitting.
@@ -82,10 +89,11 @@ Do **not** read the builder's checker. Procedure:
    maximum.
 
 The reviewer's checker is a hand-off artifact: it goes on the
-manifest and the auditor runs it in stage 3.
+manifest (`--checker reviewer=checks/<name>.py`) and `fth audit
+--independent` runs it in stage 3.
 
 ## Forbidden
 
 Contract §7, plus: softening a must-fix to reach agreement (record it
-as a disagreement); reading the builder's checker before writing your
-own; editing the plan, the harness, or the UUT yourself.
+as a disagreement); reading the engine or the helpers' implementation
+before writing your own checker; editing the plan, the harness, or the UUT yourself.

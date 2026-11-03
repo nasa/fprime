@@ -25,17 +25,21 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
    components take the component skills; a human-directed test
    deployment takes `fprime-topology-development`. All C++ follows
    `fprime-cpp-design`.
-3. Dry-run on the real bench: one clean full-plan run plus one
-   full-plan run per knob applied alone (`dry/clean/`, `dry/<knob>/`),
-   each exported like a record.
-4. Hand the harness diff and dry-run record to
+3. Dry-run on the real bench with `fth run` (neutral run ids): one
+   clean full-plan run plus one full-plan run per knob applied alone,
+   kept as mutation vectors (`vectors/<name>/`, `fth vectors`) —
+   `fprime-system-test-design` §6.
+4. Hand the harness diff and the vector records to
    `system-test-review.agent.md` (harness mode); fix must-fixes; repeat
-   until both checkers agree on every verdict and no must-fix is open
-   (five rounds maximum, then escalate).
-5. Close stage 2 with `fth manifest` (`fprime-run-for-record` §1),
-   listing the built image files, and present the harness to the human
-   for review as local files. Whether harness code becomes a PR is the
-   human's call.
+   until the engine and the independent checker agree byte-for-byte on
+   every vector and no must-fix is open (five rounds maximum, then
+   escalate).
+5. Rehearse stage 3 end to end with a throwaway seed (`fth draw` →
+   `fth run` → `fth audit --independent` → `fth unseal`), then close
+   stage 2 with `fth manifest` (`fprime-run-for-record` §1), listing
+   the built image files and `--toolchain-json`, and present the
+   harness to the human for review as local files. Whether harness code
+   becomes a PR is the human's call.
 
 A UUT defect found on the way is reported to the human with the
 record lines that show it and stops the harness work until stage 1

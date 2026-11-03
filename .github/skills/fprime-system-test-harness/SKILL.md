@@ -5,8 +5,9 @@ description: >-
   plan: tester components, integration tests, bench scripts, record
   markers, fault-injection knobs, and the builder's checker. Keeps the
   harness small, reusable, and reviewable, and keeps it out of the unit
-  under test. Keywords: F Prime, test harness, tester component,
-  integration test, NO_OP_STRING, fault injection, fprime-yamcs, record.
+  under test. Stimulus tests use the fth pytest plugin; knobs are
+  `@knob` declarations. Keywords: F Prime, test harness, tester
+  component, integration test, markers, fault injection, fth, record.
 ---
 
 # Skill: F Prime system test harness
@@ -50,43 +51,50 @@ never add one to a repository.
 
 ## 3. Record and markers
 
-Every test is bracketed in the record by command markers so the
-auditor can slice it without timestamps (F Prime generation time may
-be uptime-based). `NO_OP_STRING` and `NoOpStringReceived` are 40-char
-strings (`Svc/CmdDispatcher/CmdDispatcher.fpp`), so `<run>` and `<id>`
-are each ≤ 8 characters:
+Every test is bracketed in the record by the plan's marker command
+(`markers.command`, e.g. a tester `MARK(id: U32)` → `Marker(id)` event,
+or `cmdDisp.NO_OP_STRING` where the deployment has it — 40-char
+strings, so `<run>` and `<id>` are ≤ 8 characters) so the auditor can
+slice it without timestamps (F Prime generation time may be
+uptime-based). `fth run` sends the run-start markers (`0xFFFF0001`,
+manifest sha8, `0xFFFF0002`, seal-id sha8, `0xFFFF0003`, `crc32(run
+id)`; ids ≥ 0xFFFF0000 are reserved) and runs the stimulus tests
+through `fth.pytest_plugin`:
 
+```python
+def test_L2_1(window, send, bench):          # test_<ID>, or @pytest.mark.plan_test("L2-1")
+    with window(30, 31):                      # START marker … END marker in finally
+        bench.wait_samples("framDriver.WritesCompleted", 2)
+        send("framTester.WRITE_PATTERN", [0, 0, 64, 0x5A])
+        send("framTester.VERIFY", [0, 0, 64, 0x5A])   # the drawn knob may rewrite this, for L2-1 only
 ```
-cmdDisp.NO_OP_STRING "RFR <run> M <manifest sha8>"     # once, at run start
-cmdDisp.NO_OP_STRING "RFR <run> S <seal-id sha8>"      # once, at run start
-cmdDisp.NO_OP_STRING "QUAL <run> <id> START"
-… test procedure …
-cmdDisp.NO_OP_STRING "QUAL <run> <id> END"             # always sent, in a finally block
-```
 
-END carries **no verdict** (contract §4). The L0 feasibility gate
-sends one marker and checks the archive shows the text byte-exact —
-a project that shortens `FW_LOG_STRING_MAX_SIZE` truncates it, and
-nothing is sliceable until the deployment decision is revisited.
-
-The procedure **drives and records; it never decides**. Reused
-`test/int/` tests assert inline, so run them under a wrapper that
-catches `AssertionError`, continues to the next step, discards the
-pytest verdict, and sends END in `finally`. Harness stdout and pytest
-output go to `runner/`, never into `record/`.
+Bodies are **stimulus only**: no assertions on results, only pacing
+waits (`bench.wait_event/wait_channel/wait_samples/reset/wait`); the
+record is judged on replay. END carries **no verdict** (contract §4).
+The L0 feasibility gate sends one marker and checks the archive shows
+it byte-exact (`NO_OP_STRING` truncates when a project shortens
+`FW_LOG_STRING_MAX_SIZE`; a `MARK(U32)` round-trips or not) — nothing
+is sliceable until the deployment decision is revisited. Reused
+`test/int/` tests assert inline, so wrap them to discard the pytest
+verdict. Harness stdout and pytest output go to `runner/`, never into
+`record/`. The fixture API is `docs/plan-format.md` of the tooling.
 
 Record requirements the harness must make possible:
 
-- Ground system with a persistent archive (fprime-yamcs preferred; GDS
-  logs acceptable), one instance and data directory per run ID, and an
-  exporter that pages the whole archive and writes
-  `export-counts.json` (`fprime-test-oracle` §2).
-- Completeness per window from infrastructure facts only: both
-  markers; `commands_sent` (markers included) equals
-  `delta(cmdDisp.CommandsDispatched)`; `CommandErrors`,
-  `CommandsDropped` and `eventLogger.EventsDropped` unchanged unless
-  the test expects a rejection. UUT completion events are pass-rule
-  facts, not completeness facts.
+- `bench.json` (relative paths only; hashed into the manifest) with
+  the `flash`, `dump`, `reset`, `gds`, `recorder` and `send` command
+  lines and timeouts; `fth run` starts one ground system and **one**
+  recorder per run ID and the sender logs under `record/raw/cmd/`.
+  Dedup of the recorder's double-written rows is the exporter's job
+  (`fth export`: exact raw line, per file, per boot segment) — never
+  the harness's or a checker's.
+- Completeness per window from infrastructure facts only
+  (`std_complete`): both markers; `commands_sent ==
+  count(event cmdDisp.OpCodeDispatched)`; `OpCodeError`,
+  `TooManyCommands` and the framer/event-logger drop counters unchanged
+  unless the test expects a rejection; `<packet> samples >= n`. UUT
+  completion events are pass-rule facts, not completeness facts.
 - Pacing: wait for each command's completion before sending the next;
   never more commands in flight than the dispatcher queue depth — a
   flooded dispatcher asserts, and that is a harness defect, not a UUT
@@ -118,9 +126,13 @@ in its `fails` list, and that every test in its `ripples_to` fails
 
 ## 5. Checker
 
-Write the builder's checker per `fprime-test-oracle`. It reads the
-exported record and emits `verdicts.json`. Do not share it with the
-reviewer, who writes an independent one.
+The builder's checker is the tooling's engine: pass rules are plan
+data, judged by `fth evaluate` (`fprime-test-oracle` §3). The builder
+writes only what the grammar cannot say, as `@helper` functions in the
+plan's helpers module, each returning `(holds, seen)` or `(holds,
+seen, refs, unverified)`; a helper is reviewed like a predicate. The
+reviewer's independent checker is written from the plan text alone —
+do not discuss helper internals with the reviewer before it exists.
 
 ## 6. Size and review
 
@@ -134,18 +146,18 @@ plan, and the dry run.
 
 ## 7. Dry run
 
-Stage 2 closes with the dry run on the real bench: one clean
-full-plan run (all PASS expected) plus one full-plan run per knob
-applied alone, outputs under `dry/clean/` and `dry/<knob>/` outside
-both repositories, both checkers agreeing on every verdict of every
-run, plus one **rehearsal of stage 3 end to end**: `fth draw` on a
-scratch copy of the manifest with a throwaway seed, the harness reading
-that real `faults.json`, record → `hash-record` → both checkers →
-`fth unseal` must run without a tooling error (fram-r1 was voided at
-run start because the harness had only ever read a hand-written
-dry-run fault file). Then `fth manifest` with the raw image binaries that were
-flashed (each must contain the UUT sha7). Dry-run output is labelled
-and is not a record.
+Stage 2 closes on the exit gate of `fprime-system-test-design` §6:
+`fth run` dry runs on the real bench with neutral run ids (`dry-1`…;
+the knob → run mapping lives only in the orchestration script) kept as
+mutation vectors — one clean record (all PASS) and one per knob applied
+alone (its target FAILs exactly its `fails` set, its `ripples_to` FAIL,
+everything else PASSes), `fth vectors` green, engine and independent
+checker byte-equal on every one — plus the **stage-3 rehearsal** with
+a throwaway seed (`fth draw` → `fth run` → `fth audit --independent` →
+`fth unseal`, no tooling error; fram-r1 was voided at run start because
+the harness had only ever read a hand-written dry-run fault file). Then
+`fth manifest` with the raw image binaries that were flashed and
+`--toolchain-json`. Dry-run output is labelled and is not a record.
 
 Bench entry (before the first dry run on hardware): prove the link in
 order and say which layer is proven — **host** (your own heartbeat log
@@ -161,7 +173,7 @@ lost and look like "no response".
 
 Dry-run traps (SunCamMgr simulator runs sim1–sim9 and the bench):
 
-- Run the **checker on the simulator dry run** before any record; most
+- Run `fth evaluate` on the simulator dry run before any record; most
   first-run failures are predicate or harness defects, and each one is
   either a plan amendment (reviewer confirms) or a UUT defect — write
   down which.
