@@ -214,7 +214,7 @@ this table; bumping it is a one-line change here and nowhere else.
 
 | Tool | Pinned | Install |
 |---|---|---|
-| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 73ca7648791a70c41aebda395207a352546975b8) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@73ca7648791a70c41aebda395207a352546975b8#egg=fprime-testing-harness"` |
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit e696cc8fcad829fe06e79d0d862c8c1dd38de0cb) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@73ca7648791a70c41aebda395207a352546975b8#egg=fprime-testing-harness"` |
 
 Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and
