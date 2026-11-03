@@ -61,8 +61,8 @@ void CfdpManagerTester::testParamOutgoingFileChunkSizeDefault() {
     // (4-byte) entity IDs and transaction sequence number
     U8 data[MaxPduSize] = {};
     FileDataPdu pdu;
-    pdu.initialize(PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
-                   0, static_cast<U16>(value), data);
+    pdu.initialize(PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0,
+                   static_cast<U16>(value), data);
     EXPECT_LE(pdu.getBufferSize(), MaxPduSize);
 
     // The stock ComCcsds downlink without packet spanning takes a Space Packet of at most the TM data field minus a
