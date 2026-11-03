@@ -778,15 +778,17 @@ void Channel::processPlaybackDirectory(Playback* pb) {
             const FwSizeType maxPathLen = static_cast<FwSizeType>(MaxFilePathSize);
             const FwSizeType srcPathLen = pb->fnames.src_filename.length() + 1 + pb->pending_file.length();
             const FwSizeType dstPathLen = pb->fnames.dst_filename.length() + 1 + pb->pending_file.length();
-            if (srcPathLen > maxPathLen) {
-                this->m_cfdpManager->log_WARNING_LO_PlaybackSourcePathTooLong(pb->fnames.src_filename, pb->pending_file,
-                                                                              srcPathLen, maxPathLen);
+            const bool srcTooLong = (srcPathLen > maxPathLen);
+            const bool dstTooLong = (dstPathLen > maxPathLen);
+            if (srcTooLong) {
+                this->m_cfdpManager->log_WARNING_LO_PlaybackSourcePathTooLong(
+                    srcPathLen, maxPathLen, pb->fnames.src_filename, pb->pending_file);
             }
-            if (dstPathLen > maxPathLen) {
+            if (dstTooLong) {
                 this->m_cfdpManager->log_WARNING_LO_PlaybackDestinationPathTooLong(
-                    pb->fnames.dst_filename, pb->pending_file, dstPathLen, maxPathLen);
+                    dstPathLen, maxPathLen, pb->fnames.dst_filename, pb->pending_file);
             }
-            if ((srcPathLen > maxPathLen) || (dstPathLen > maxPathLen)) {
+            if (srcTooLong || dstTooLong) {
                 pb->pending_file = "";  // continue reading dir
                 continue;
             }

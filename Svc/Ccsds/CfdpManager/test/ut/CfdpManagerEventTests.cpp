@@ -3164,11 +3164,11 @@ void CfdpManagerTester::runPlaybackPathTooLongCase(const char* srcDir,
 
     if (sourceTooLong) {
         ASSERT_EVENTS_PlaybackSourcePathTooLong_SIZE(1);
-        ASSERT_EVENTS_PlaybackSourcePathTooLong(0, srcDir, longEntry, srcPathLen, maxPathLen);
+        ASSERT_EVENTS_PlaybackSourcePathTooLong(0, srcPathLen, maxPathLen, srcDir, longEntry);
         ASSERT_EVENTS_PlaybackDestinationPathTooLong_SIZE(0);
     } else {
         ASSERT_EVENTS_PlaybackDestinationPathTooLong_SIZE(1);
-        ASSERT_EVENTS_PlaybackDestinationPathTooLong(0, dstDir, longEntry, dstPathLen, maxPathLen);
+        ASSERT_EVENTS_PlaybackDestinationPathTooLong(0, dstPathLen, maxPathLen, dstDir, longEntry);
         ASSERT_EVENTS_PlaybackSourcePathTooLong_SIZE(0);
     }
     ASSERT_EVENTS_SendFileInitiateFail_SIZE(0);
