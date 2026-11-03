@@ -15,7 +15,7 @@ Decrypting a frame proceeds as follows:
 
 Decryption is in place, so the emitted buffer is the one received, advanced past the IV and narrowed to the plaintext length; `Fw::Buffer` keeps its allocation context independently of the data pointer, so it remains deallocatable by the issuing `Svc.BufferManager`. Buffers returned on `decryptReturnIn` are passed upstream via `bufferReturnOut` unconditionally, since every buffer emitted is the one that arrived.
 
-The AAD is built by `Svc::Ccsds::Utils::SdlsTcAuthMask`, whose layout matches the ground segment's independent implementation of the same contract. The virtual channel comes from the frame context: `Svc::Ccsds::TcDeframer` reads it from the TC primary header and sets it on the context before stripping that header, so it is still available by decryption time.
+The AAD is built by `Svc::Ccsds::Utils::SdlsTcAad`, whose layout matches the ground segment's independent implementation of the same contract. The virtual channel comes from the frame context: `Svc::Ccsds::TcDeframer` reads it from the TC primary header and sets it on the context before stripping that header, so it is still available by decryption time.
 
 ## Security Considerations
 
@@ -56,7 +56,7 @@ The component emits no events: every outcome, including a failed authentication,
 
 Compile time: none.
 
-Runtime: none. The constructor builds the `EVP_CIPHER_CTX` every frame reuses, which is what keeps `decryptIn` free of dynamic allocation, and the authenticated virtual channel arrives per frame on the frame context. The [`Svc/Ccsds/AesGcmEncryptor`](../../AesGcmEncryptor/docs/sdd.md) downlink path is built the same way.
+Runtime: none. The cipher operation, the OpenSSL context it runs on, and the AES-256-GCM sizes (`KEY_LEN`, `IV_LEN`, `TAG_LEN`) are shared with the encryptor through `Svc::Ccsds::Utils::AesGcmCipher`, which builds the `EVP_CIPHER_CTX` once at construction so `decryptIn` is free of dynamic allocation. The AAD for the current (VC, SA) pair is held in a `Svc::Ccsds::Utils::SdlsAadCache<SdlsTcAad>` and rebuilt only when either changes; the authenticated virtual channel arrives per frame on the frame context. The [`Svc/Ccsds/AesGcmEncryptor`](../../AesGcmEncryptor/docs/sdd.md) downlink path is built the same way.
 
 A key source must be connected to `keyGet` and made ready before the first frame arrives; the component requests a key per frame and reports `KEY_ERROR` if none is available. The in-tree `Svc.Ccsds.SdlsFileKeyManager` needs `configure(path, keySize)` during topology setup.
 
