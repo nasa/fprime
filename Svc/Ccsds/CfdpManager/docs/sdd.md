@@ -611,7 +611,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | Name | Description |
 |---|---|
 | LocalEid | Local CFDP entity ID used in PDU headers to identify this node in the CFDP network |
-| OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission. The default of 981 keeps a File Data PDU within the default `MaxPduSize` with 4-byte entity IDs and sequence number and 32-bit offsets: 1001 - 16 (header) - 4 (offset). With 64-bit offsets use at most 977. |
+| OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission. The default of 981 keeps a File Data PDU within the default `MaxPduSize` with 4-byte entity IDs and sequence number: 1001 - 16 (header) - 4 (offset). |
 | RxCrcCalcBytesPerCycle | Maximum number of received file bytes to process for CRC calculation in a single scheduler cycle. Prevents blocking during large file verification |
 | PostInactivitySendRetries | Extra scheduler cycles a pending terminal send (EOF or FIN-ACK) is retried after the inactivity timer fires before the transaction is recycled regardless |
 | FileInDefaultChannel | CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
