@@ -164,7 +164,11 @@ void Engine::dispatchRecv(Transaction* txn, const Fw::Buffer& buffer) {
         }
     }
 
-    this->armInactTimer(txn);  // whenever a packet was received by the other size, always arm its inactivity timer
+    // Whenever a packet was received from the other side, re-arm its inactivity timer, unless the
+    // transaction was abandoned during dispatch and already sits on the FREE queue
+    if (txn->m_flags.com.q_index != QueueId::FREE) {
+        this->armInactTimer(txn);
+    }
 }
 
 void Engine::dispatchTx(Transaction* txn) {
