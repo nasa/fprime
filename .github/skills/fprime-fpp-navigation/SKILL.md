@@ -13,7 +13,7 @@ description: >-
 
 # Skill: Querying the F Prime model
 
-The `.fpp` file is the source of truth and is 5–10× smaller than the
+The `.fpp` file is the source of truth and is much smaller than the
 autocode it produces. Every generated C++ name is a deterministic
 function of the model, so read the model and derive the name; open the
 generated header only for an exact signature you cannot derive.
@@ -145,35 +145,16 @@ Argument passing: primitives by value, enums/structs/arrays `const T&`,
 ---
 
 ## 4. Codegen gotchas
-
-- Command `string` arguments always autocode to `Fw::CmdStringArg`
-  (`FW_CMD_STRING_MAX_SIZE`, default 40 in `default/config/FpConstants.fpp`)
-  whatever `string size N` the model says; longer values fail
-  deserialization with `FORMAT_ERROR`. Port and event string arguments
-  honor their declared size.
 - Pattern specifiers (`event connections instance X`, `telemetry
   connections instance X`, `command connections instance X`) include
   the instance `X` itself; a sink component's own events and telemetry
   are routed back into it.
-- `log_*` and `tlmWrite_*` check `isConnected_*` before invoking, so an
-  unconnected special port is silent; a plain `bar_out` on an
-  unconnected port asserts.
-- `event ... throttle N` stops emitting that event after `N` instances;
-  a self-routed event under a pattern specifier recurses up to the
-  throttle.
 - Only `deployment topology X` autocodes `<X>TopologyAc.*`; a bare
   `topology` block (every subtopology) does not, and the dictionary
   also needs `register_fprime_deployment` in CMake. A scratch
   `fpp-to-cpp` run on a plain `topology` cannot check pattern wiring.
 - Port numbers are compile-time constants: a port array of size `N`
   rejects `portNum >= N` with an assertion in the generated base class.
-- Subtopology instances are addressed as `<Subtopology>.<instance>`
-  in pattern specifiers (`CdhCore.cmdDisp`), but direct connections
-  use the subtopology's exported ports,
-  `<Subtopology>.Subtopology.<port>` (`CdhCore.Subtopology.tlmSendRun`),
-  declared as aliases `port tlmSendRun = tlmSend.Run` in the
-  subtopology. Subtopology instances are configured through
-  `<Sub>Config/*.fpp` modules the project may override.
 - A project `config/` directory shadows framework `.fpp`/`.hpp`
   configuration files by basename (`AcConstants.fpp`, `FpConstants.fpp`,
   `*Cfg.fpp`); check there before trusting the framework default.
