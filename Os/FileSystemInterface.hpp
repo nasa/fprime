@@ -8,7 +8,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Os.hpp>
-#include "config/OsDelegateFileSystem.hpp"
+#include "config/OsSelection.hpp"
 
 namespace Os {
 

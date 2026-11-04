@@ -111,6 +111,110 @@ TEST(CcsdsSdlsFramer, RandomizedTesting) {
     ASSERT_EQ(numSteps, numRulesToApply);
 }
 
+// Each failure event has its own quota; exhausting one must not suppress the other.
+TEST(CcsdsSdlsFramer, IndependentFailureEventLimits) {
+    COMMENT("Bound each failure event independently while preserving buffer returns and ready status.");
+    REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-009");
+    CcsdsSdlsFramerTester tester;
+    CcsdsSdlsFramerTester::Frame__EncryptFailure encryption;
+    CcsdsSdlsFramerTester::DataFlow__AllocationFailure allocation;
+    for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT; ++i) {
+        encryption.apply(tester);
+        tester.assertEncryptionFailedEvents(1);
+    }
+    encryption.apply(tester);
+    tester.assertEncryptionFailedEvents(0);
+    // The exhausted encryption quota does not affect the allocation quota
+    for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT; ++i) {
+        allocation.apply(tester);
+        tester.assertBufferAllocationFailedEvents(1);
+    }
+    allocation.apply(tester);
+    tester.assertBufferAllocationFailedEvents(0);
+    encryption.apply(tester);
+    tester.assertEncryptionFailedEvents(0);
+}
+
+TEST(CcsdsSdlsFramer, SuccessfulFramesDoNotResetFailureLimits) {
+    COMMENT("Interleave successful frames and both failures without resetting their independent quotas.");
+    REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-009");
+    CcsdsSdlsFramerTester tester;
+    CcsdsSdlsFramerTester::Frame__EncryptFailure encryption;
+    CcsdsSdlsFramerTester::DataFlow__AllocationFailure allocation;
+    CcsdsSdlsFramerTester::DataFlow__EncryptedData success;
+    for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT; ++i) {
+        encryption.apply(tester);
+        tester.assertEncryptionFailedEvents(1);
+        success.apply(tester);
+        allocation.apply(tester);
+        tester.assertBufferAllocationFailedEvents(1);
+        success.apply(tester);
+    }
+    encryption.apply(tester);
+    tester.assertEncryptionFailedEvents(0);
+    success.apply(tester);
+    allocation.apply(tester);
+    tester.assertBufferAllocationFailedEvents(0);
+    success.apply(tester);
+    encryption.apply(tester);
+    tester.assertEncryptionFailedEvents(0);
+}
+
+TEST(CcsdsSdlsFramer, FailureEventLimitsArePerInstance) {
+    COMMENT("A newly initialized component has independent, fresh failure-event quotas.");
+    REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-009");
+    for (U32 instance = 0; instance < 2; ++instance) {
+        CcsdsSdlsFramerTester tester;
+        CcsdsSdlsFramerTester::Frame__EncryptFailure encryption;
+        CcsdsSdlsFramerTester::DataFlow__AllocationFailure allocation;
+        for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT; ++i) {
+            encryption.apply(tester);
+            tester.assertEncryptionFailedEvents(1);
+            allocation.apply(tester);
+            tester.assertBufferAllocationFailedEvents(1);
+        }
+        encryption.apply(tester);
+        tester.assertEncryptionFailedEvents(0);
+        allocation.apply(tester);
+        tester.assertBufferAllocationFailedEvents(0);
+    }
+}
+
+// An exhausted quota re-arms once the throttle period has elapsed, so persistent failures stay observable.
+TEST(CcsdsSdlsFramer, FailureEventsResumeAfterThrottlePeriod) {
+    COMMENT("Report each failure event again once its throttle period elapses, then bound it again.");
+    REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-009");
+    CcsdsSdlsFramerTester tester;
+    CcsdsSdlsFramerTester::Frame__EncryptFailure encryption;
+    CcsdsSdlsFramerTester::DataFlow__AllocationFailure allocation;
+    for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT + 1; ++i) {
+        encryption.apply(tester);
+        allocation.apply(tester);
+    }
+    encryption.apply(tester);
+    tester.assertEncryptionFailedEvents(0);
+    allocation.apply(tester);
+    tester.assertBufferAllocationFailedEvents(0);
+    // Just short of the period both events remain suppressed
+    tester.advanceTestTime(CcsdsSdlsFramerTester::FAILURE_EVENT_PERIOD_SECONDS - 1);
+    encryption.apply(tester);
+    tester.assertEncryptionFailedEvents(0);
+    allocation.apply(tester);
+    tester.assertBufferAllocationFailedEvents(0);
+    // At the period boundary both events are reported again and their quotas re-arm
+    tester.advanceTestTime(1);
+    for (U32 i = 0; i < CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT; ++i) {
+        encryption.apply(tester);
+        tester.assertEncryptionFailedEvents(1);
+        allocation.apply(tester);
+        tester.assertBufferAllocationFailedEvents(1);
+    }
+    encryption.apply(tester);
+    tester.assertEncryptionFailedEvents(0);
+    allocation.apply(tester);
+    tester.assertBufferAllocationFailedEvents(0);
+}
+
 int main(int argc, char** argv) {
     STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);

@@ -9,7 +9,7 @@
 //
 // The dependency constraints are:
 //
-//   1. config/OsDelegateDirectory.hpp (CFG) defines the Os::Directory type alias by
+//   1. config/OsSelection.hpp (CFG) defines the Os::Directory type alias by
 //      forward-declaring a link-time delegate (e.g. DelegateDirectory) or directly
 //      aliasing a concrete implementation.
 //      Must not include Os OSAL headers (they aren't yet defined).
@@ -31,9 +31,9 @@
 
 #include "Os/DirectoryInterface.hpp"
 
-// Validate that OS_DIRECTORY_HEADER was defined by config/OsDelegateDirectory.hpp
+// Validate that OS_DIRECTORY_HEADER was defined by config/OsSelection.hpp
 #ifndef OS_DIRECTORY_HEADER
-#error "OS_DIRECTORY_HEADER must be defined in config/OsDelegateDirectory.hpp"
+#error "OS_DIRECTORY_HEADER must be defined in config/OsSelection.hpp"
 #endif
 
 #include OS_DIRECTORY_HEADER

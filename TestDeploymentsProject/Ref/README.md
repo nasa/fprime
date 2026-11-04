@@ -12,6 +12,10 @@ Understanding the reference application has a few minimal prerequisites.
 
 Please follow the [install guide for F´](../../docs/getting-started/installing-fprime.md).
 
+**Installing Rust**
+
+Ref uses `Svc::WasmSequencer`, which requires a [Rust toolchain](https://www.rust-lang.org/tools/install) (`cargo` and `rustc`) 1.87 or newer.
+
 ## Building and Running the Ref Application
 
 To get started with creating the Ref application we will first need to clone the nasa/fprime repository. We then can change directories into the project's

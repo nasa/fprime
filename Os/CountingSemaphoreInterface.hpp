@@ -6,7 +6,7 @@
 #define OS_COUNTINGSEMAPHOREINTERFACE_HPP_
 #include "Fw/Time/TimeInterval.hpp"
 #include "Os/Os.hpp"
-#include "config/OsDelegateCountingSemaphore.hpp"
+#include "config/OsSelection.hpp"
 
 namespace Os {
 

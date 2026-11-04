@@ -23,8 +23,14 @@ bool AMPCSSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     // Make sure there is a buffer allocated
     FW_ASSERT(this->m_buffer.getBuffAddr() != nullptr);
 
-    Fw::CmdStringArg crcFileName(fileName);
-    crcFileName += ".CRC32";
+    Fw::FileNameString crcFileName;
+    const Fw::FormatStatus formatStatus = crcFileName.format("%s.CRC32", fileName.toChar());
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        // format() failed; OVERFLOWED when the .CRC32 suffix does not fit in FileNameStringSize
+        this->setFileName(fileName);
+        this->m_events.fileInvalid(CmdSequencer_FileReadStage::READ_SEQ_CRC, static_cast<I32>(formatStatus));
+        return false;
+    }
 
     this->m_header.m_timeBase = TimeBase::TB_DONT_CARE;
     this->m_header.m_timeContext = FW_CONTEXT_DONT_CARE;
@@ -36,7 +42,7 @@ bool AMPCSSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     return status;
 }
 
-bool AMPCSSequence ::readCRCFile(Fw::CmdStringArg& crcFileName) {
+bool AMPCSSequence ::readCRCFile(const Fw::ConstStringBase& crcFileName) {
     bool result;
 
     this->setFileName(crcFileName);
@@ -118,6 +124,10 @@ bool AMPCSSequence ::validateRecords() {
             this->m_events.recordInvalid(numRecords, status);
             return false;
         }
+    }
+    if (numRecords == 0) {
+        this->m_events.noRecords();
+        return false;
     }
     // Set the number of records
     this->m_header.m_numRecords = numRecords;

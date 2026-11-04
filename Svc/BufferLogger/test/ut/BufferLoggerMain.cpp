@@ -45,6 +45,11 @@ TEST(TestLogging, CloseFile) {
     tester.CloseFile();
 }
 
+TEST(TestLogging, FlushFile) {
+    Svc::Logging::BufferLoggerTester tester;
+    tester.FlushFile();
+}
+
 TEST(TestLogging, ComIn) {
     Svc::Logging::BufferLoggerTester tester;
     tester.ComIn();

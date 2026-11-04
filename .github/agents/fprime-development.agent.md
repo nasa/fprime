@@ -38,9 +38,15 @@ order**, each producing the input to the next:
 4. **Unit test** — `fprime-component-unit-test` (with `fprime-unit-testing`)
 5. **Integration test** — `fprime-component-integration-test`
 
-Respect the phase gates: present requirements and obtain user approval
-before design, and present the FPP model and obtain explicit user
-confirmation before writing implementation or test code. Once the
+This agent — not the writing skills — runs the review loop of
+`.github/agents/_shared/phase-review-loop.md` after phase 1 and after
+phase 2 (reviewers, bound, prompt override and fallback are defined
+there; local only): draft with the skill, loop, then the skill's
+confirmation step with the review record. Then respect the phase
+gates: present requirements with the review record
+and obtain user approval before design, and present the FPP model
+with its review record and obtain explicit user confirmation before
+writing implementation or test code. Once the
 model is confirmed, tests may precede implementation (TDD). For
 implementation-only fixes that do not alter the interface, entering at
 phase 3 is permitted — confirm with the user first.
@@ -76,13 +82,23 @@ repeated local test-and-review iterations, follow
 the §2–§4 sequences in a local test / manual-GDS / multi-agent-review
 loop. That skill **requires explicit user approval before use** (its
 §0 gate): present the loop plan and obtain approval first — never
-enter the loop on your own initiative.
+enter the loop on your own initiative. The phase review loops of §2
+belong to component development, not to that skill: they run whether
+or not that skill is in use and need no §0 approval. When that skill
+is in use, its §0 approval precedes all of it, Phase 1 included; the
+§2 loops then run inside Phase 1 as usual.
 
 ## 6. Standing rules for every phase
 
 - All C++ complies with `fprime-cpp-design` (CPP-1 through CPP-37);
   consult it before writing code. Design-level expectations are in
   `jpl-design-principles`.
+- Work that modifies pre-existing code also follows
+  `fprime-maintenance`: the minimal change that completes the task,
+  low-hanging cleanup only, and engineer approval before any rework.
+- Comments are brief and describe the code as it is. Never write a
+  comment that explains the change, the previous behavior, or why the
+  new code differs from the old; put that in the PR description.
 - **Ask, don't guess.** Uncertainty about a requirement, interface,
   or deployment context stops work until the user answers.
 - Never edit autocoded outputs (`*Ac.hpp` / `*Ac.cpp`, files under

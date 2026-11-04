@@ -10,7 +10,8 @@ A sequence file consists of a 32-bit sequence header followed by
 record data. The record data size is bounded by the buffer
 allocated to the sequence at initialization.
 
-The record data consists of zero or more records.
+The record data consists of one or more records. A file with zero records
+is rejected at load time: `CS_NoRecords` is emitted and the load fails.
 Each record has the following format:
 
 Record Field | Size in Bytes | Description
@@ -29,6 +30,12 @@ The `AMPCSSequence` class implements the virtual functions of
 ### 2.1 `loadFile(`*filename*`)`
 
 1. Read the stored CRC value from *filename*`.CRC32`.
+If *filename*`.CRC32` is longer than `FileNameStringSize` characters, the load
+fails and `CmdSequencer` emits `CS_FileInvalid` with stage `READ_SEQ_CRC` and
+the `Fw::FormatStatus` value as the error (1, `OVERFLOWED`). The same stage
+reports an `Os::File::Status` when reading the CRC file fails and an
+`Fw::SerializeStatus` when decoding its contents fails, so read the error value
+against the enum of the step that failed.
 
 2. Ask the OS for the size of the sequence file, and use it to compute the size
 of the command record data.

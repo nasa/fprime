@@ -15,7 +15,7 @@ namespace Os {
 //! delegate constructed (via placement-new) by ConditionVariableInterface::getDelegate(). Which getDelegate()
 //! is linked selects the concrete implementation at link time. This is the default binding of the
 //! Os::ConditionVariable alias; platforms may instead alias Os::ConditionVariable directly to a concrete
-//! implementation for compile-time selection (see config/OsDelegateMutex.hpp).
+//! implementation for compile-time selection (see config/OsSelection.hpp).
 class DelegateConditionVariable final : public ConditionVariableInterface {
   public:
     //! \brief default constructor

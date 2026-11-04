@@ -107,6 +107,20 @@ TEST(ActiveRateGroupTest, PingPort) {
     tester.runPingTest();
 }
 
+TEST(ActiveRateGroupTest, ConcurrentCycleSlip) {
+    Svc::ActiveRateGroup::ContextArray contexts;
+    for (FwIndexType i = 0; i < Svc::ActiveRateGroup::CONNECTION_COUNT_MAX; i++) {
+        contexts[static_cast<FwSizeType>(i)] = static_cast<U32>(i + 1);
+    }
+    Svc::ActiveRateGroup impl("ActiveRateGroup");
+    impl.configure(contexts);
+    Svc::ActiveRateGroupTester tester(impl);
+    tester.init();
+    impl.init(10, 0);
+    connectPorts(impl, tester);
+    tester.runConcurrentCycleSlip();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

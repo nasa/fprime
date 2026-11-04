@@ -4,7 +4,10 @@ module Drv {
 
     @ Asynchronous ByteStreamDriver interface
     interface AsyncByteStreamDriver {
-        @ Port invoked when the driver is ready to send/receive data
+        @ Port invoked when the driver is ready to send/receive data. Invoke it on
+        @ (re)connection, and again whenever sending becomes possible after the
+        @ driver has returned OTHER_ERROR or a run of SEND_RETRY: a client may have
+        @ stopped sending on either status and waits for it before sending again
         output port ready: Drv.ByteStreamReady
 
         @ Port invoked by the driver when it receives data

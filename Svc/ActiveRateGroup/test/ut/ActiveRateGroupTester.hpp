@@ -17,7 +17,9 @@
 #define ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPTESTER_HPP_
 
 #include <ActiveRateGroupGTestBase.hpp>
+#include <Os/Task.hpp>
 #include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
+#include <atomic>
 
 namespace Svc {
 
@@ -29,6 +31,7 @@ class ActiveRateGroupTester : public ActiveRateGroupGTestBase {
     void runNominal(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
     void runCycleOverrun(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
     void runPingTest();
+    void runConcurrentCycleSlip();
 
   private:
     void from_RateGroupMemberOut_handler(FwIndexType portNum, U32 context);
@@ -42,6 +45,7 @@ class ActiveRateGroupTester : public ActiveRateGroupGTestBase {
     Svc::ActiveRateGroup& m_impl;
 
     void clearPortCalls();
+    static void cycleCallerTask(void* ptr);
 
     struct {
         bool portCalled;
@@ -49,8 +53,11 @@ class ActiveRateGroupTester : public ActiveRateGroupGTestBase {
         FwIndexType order;
     } m_callLog[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
 
-    bool m_causeOverrun;      //!< flag to cause an overrun during a rate group member port call
-    FwIndexType m_callOrder;  //!< tracks order of port call.
+    bool m_causeOverrun;                //!< flag to cause an overrun during a rate group member port call
+    FwIndexType m_callOrder;            //!< tracks order of port call.
+    std::atomic<bool> m_tickRequested;  //!< handler asks the caller task for a tick
+    std::atomic<bool> m_tickDelivered;  //!< caller task delivered the tick
+    bool m_concurrent;                  //!< hand off to the caller task on port 0
 };
 
 } /* namespace Svc */

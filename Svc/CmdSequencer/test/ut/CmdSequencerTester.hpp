@@ -271,6 +271,9 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
     //! Don't load any sequence, then try to run a sequence
     void parameterizedNeverLoaded();
 
+    //! Reject port-driven runs on an instance whose seqDone port is not connected
+    void parameterizedRunWithoutSeqDone();
+
     //! Sequence timeout
     void parameterizedSequenceTimeout(SequenceFiles::File& file  //!< The file
     );
@@ -289,6 +292,10 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
 
     //! Validate a sequence
     void parameterizedValidate(SequenceFiles::File& file  //!< The file
+    );
+
+    //! Restrict sequence loads with configureSandbox
+    void parameterizedSandbox(SequenceFiles::File& file  //!< The file
     );
 
   protected:
@@ -344,6 +351,11 @@ class CmdSequencerTester : public CmdSequencerGTestBase {
 
     //! Set the component sequence format
     void setComponentSequenceFormat();
+
+    //! Set the base name of a sequence file so that its full name has the given length
+    void setFileNameLength(SequenceFiles::File& file,  //!< The file
+                           const FwSizeType length     //!< The length of the full name
+    );
 
     //! Start a new sequence while checking command buffers
     void startNewSequence(const char* const fileName  //!< The file name

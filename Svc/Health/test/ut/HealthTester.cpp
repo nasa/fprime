@@ -178,7 +178,6 @@ void HealthTester ::warningTlm() {
     ASSERT_EVENTS_SIZE(0);
     ASSERT_TLM_SIZE(0);
     ASSERT_CMD_RESPONSE_SIZE(0);
-    return;
 
     // invoke run handler enough times for warnings
     for (U32 i = 0; i < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS * 2; i++) {
@@ -458,6 +457,95 @@ void HealthTester ::updatePingTimeout() {
     }
 }
 
+void HealthTester::updateTimeoutDuringPendingPing() {
+    TEST_CASE(900.1.12, "Update timeout during an outstanding ping");
+
+    // Start a ping and leave it unanswered for five cycles.
+    for (U32 i = 0; i < 5; i++) {
+        this->invoke_to_Run(0, 0);
+    }
+
+    ASSERT_EQ(5U, this->component.m_pingTrackerEntries[0].cycleCount);
+
+    // Lower the timeout thresholds below the elapsed cycle count.
+    Fw::CmdStringArg task("task0");
+    this->sendCmd_HLTH_CHNG_PING(0, 10, task, 2, 3);
+    this->dispatchAll();
+
+    ASSERT_EQ(2U, this->component.m_pingTrackerEntries[0].entry.warnCycles);
+    ASSERT_EQ(3U, this->component.m_pingTrackerEntries[0].entry.fatalCycles);
+
+    // Only inspect events emitted after the configuration change.
+    this->clearEvents();
+
+    this->invoke_to_Run(0, 0);
+
+    // Under immediate-update semantics, the pending ping is overdue.
+    ASSERT_EVENTS_HLTH_PING_LATE_SIZE(1);
+    ASSERT_EVENTS_HLTH_PING_LATE(0, "task0");
+
+    // The same outstanding ping must not produce repeated FATAL events.
+    this->invoke_to_Run(0, 0);
+    this->invoke_to_Run(0, 0);
+    ASSERT_EVENTS_HLTH_PING_LATE_SIZE(1);
+    ASSERT_EVENTS_HLTH_PING_WARN_SIZE(0);
+
+    // An already reported FATAL must not be downgraded to a warning.
+    // The current cycle count is 8.
+    this->sendCmd_HLTH_CHNG_PING(0, 11, task, 8, 9);
+    this->dispatchAll();
+    this->clearEvents();
+    this->invoke_to_Run(0, 0);
+
+    ASSERT_EVENTS_HLTH_PING_WARN_SIZE(0);
+    ASSERT_EVENTS_HLTH_PING_LATE_SIZE(0);
+    ASSERT_TRUE(this->component.m_pingTrackerEntries[0].fatalReported);
+
+    // Restore the thresholds for the next ping.
+    this->sendCmd_HLTH_CHNG_PING(0, 12, task, 2, 3);
+    this->dispatchAll();
+
+    // A valid response must reset the timeout reporting state.
+    const U32 key = this->component.m_pingTrackerEntries[0].key;
+    this->invoke_to_PingReturn(0, key);
+    this->dispatchAll();
+
+    ASSERT_EQ(0U, this->component.m_pingTrackerEntries[0].cycleCount);
+    ASSERT_FALSE(this->component.m_pingTrackerEntries[0].fatalReported);
+
+    // A new unanswered ping must be able to report another FATAL.
+    this->clearEvents();
+    for (U32 i = 0; i < 4; i++) {
+        this->invoke_to_Run(0, 0);
+    }
+    ASSERT_EVENTS_HLTH_PING_WARN_SIZE(1);
+    ASSERT_EVENTS_HLTH_PING_WARN(0, "task0");
+    ASSERT_EVENTS_HLTH_PING_LATE_SIZE(1);
+    ASSERT_EVENTS_HLTH_PING_LATE(0, "task0");
+
+    // A zero FATAL threshold must preserve the previous behavior:
+    // no FATAL timeout is reported for an outstanding ping.
+    this->sendCmd_HLTH_CHNG_PING(0, 13, task, 0, 0);
+    this->dispatchAll();
+
+    // Finish the previously timed-out ping so the next one starts clean.
+    const U32 zeroKey = this->component.m_pingTrackerEntries[0].key;
+    this->invoke_to_PingReturn(0, zeroKey);
+    this->dispatchAll();
+    ASSERT_FALSE(this->component.m_pingTrackerEntries[0].fatalReported);
+    ASSERT_EQ(0U, this->component.m_pingTrackerEntries[0].cycleCount);
+
+    this->clearEvents();
+
+    // Start a fresh unanswered ping with FATAL=0.
+    for (U32 i = 0; i < 3; i++) {
+        this->invoke_to_Run(0, 0);
+    }
+
+    ASSERT_EVENTS_HLTH_PING_LATE_SIZE(0);
+    ASSERT_EVENTS_HLTH_PING_WARN_SIZE(0);
+}
+
 void HealthTester ::watchdogCheck() {
     TEST_CASE(900.1.7, "Watchdog check");
     REQUIREMENT("ISF-HTH-007");
@@ -549,10 +637,15 @@ void HealthTester ::nominal2CmdsDuringTlm() {
     this->dispatchAll();
     ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_enabled);
 
-    return;
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_HLTH_CHECK_ENABLE_SIZE(1);
+    ASSERT_EVENTS_HLTH_CHECK_ENABLE(0, Fw::Enabled::DISABLED);
+
+    this->clearEvents();
+    this->clearTlm();
+
     // invoke schedIn handler for 50 times
     for (U32 i = 0; i < 50; i++) {
-        printf("Invoke: %d\n", i);
         this->invoke_to_Run(0, 0);
 
         // Check no events or telemetry have occurred
@@ -563,6 +656,13 @@ void HealthTester ::nominal2CmdsDuringTlm() {
     sendCmd_HLTH_ENABLE(0, 0, Fw::Enabled::ENABLED);
     this->dispatchAll();
     ASSERT_EQ(Fw::Enabled(Fw::Enabled::ENABLED), this->component.m_enabled);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_HLTH_CHECK_ENABLE_SIZE(1);
+    ASSERT_EVENTS_HLTH_CHECK_ENABLE(0, Fw::Enabled::ENABLED);
+
+    this->clearEvents();
+    this->clearTlm();
 
     this->invoke_to_Run(0, 0);
 

@@ -32,6 +32,11 @@ TEST(AMPCS, MissingFile) {
     tester.MissingFile();
 }
 
+TEST(AMPCS, CRCFileNameLimit) {
+    Svc::AMPCS::CmdSequencerTester tester;
+    tester.CRCFileNameLimit();
+}
+
 TEST(Health, Ping) {
     TEST_CASE(103.1.9, "Nominal ping test");
     Svc::Health::CmdSequencerTester tester;
@@ -48,6 +53,11 @@ TEST(Immediate, AutoByCommandAMPCS) {
     tester.AutoByCommand();
 }
 
+TEST(Immediate, AutoByCommandMaxFileNameAMPCS) {
+    Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
+    tester.AutoByCommandMaxFileName();
+}
+
 TEST(Immediate, AutoByPort) {
     Svc::Immediate::CmdSequencerTester tester;
     tester.AutoByPort();
@@ -58,9 +68,24 @@ TEST(Immediate, AutoByFileDispatcherPort) {
     tester.AutoByFileDispatcherPort();
 }
 
+TEST(Immediate, AutoByFileDispatcherPortMaxFileName) {
+    Svc::Immediate::CmdSequencerTester tester;
+    tester.AutoByFileDispatcherPortMaxFileName();
+}
+
 TEST(Immediate, AutoByPortAMPCS) {
     Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
     tester.AutoByPort();
+}
+
+TEST(Immediate, AutoByPortLongFileName) {
+    Svc::Immediate::CmdSequencerTester tester;
+    tester.AutoByPortLongFileName();
+}
+
+TEST(Immediate, AutoByPortLongFileNameAMPCS) {
+    Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
+    tester.AutoByPortLongFileName();
 }
 
 TEST(Immediate, Cancel) {
@@ -173,6 +198,16 @@ TEST(Immediate, Validate) {
 TEST(Immediate, ValidateAMPCS) {
     Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
     tester.Validate();
+}
+
+TEST(Immediate, Sandbox) {
+    Svc::Immediate::CmdSequencerTester tester;
+    tester.Sandbox();
+}
+
+TEST(Immediate, SandboxAMPCS) {
+    Svc::Immediate::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
+    tester.Sandbox();
 }
 
 TEST(ImmediateEOS, AutoByCommand) {
@@ -322,6 +357,11 @@ TEST(InvalidFiles, USecFieldTooShort) {
     tester.USecFieldTooShort();
 }
 
+TEST(InvalidFiles, BadUSec) {
+    Svc::InvalidFiles::CmdSequencerTester tester;
+    tester.BadUSec();
+}
+
 TEST(Mixed, AutoByCommand) {
     TEST_CASE(103.1.4, "Nominal Timed Relative Commands");
     Svc::Mixed::CmdSequencerTester tester;
@@ -364,6 +404,11 @@ TEST(NoFiles, NoSequenceActiveAMPCS) {
     tester.NoSequenceActive();
 }
 
+TEST(NoFiles, RunWithoutSeqDone) {
+    Svc::NoFiles::CmdSequencerTester tester;
+    tester.RunWithoutSeqDone();
+}
+
 TEST(Relative, AutoByCommand) {
     TEST_CASE(103.1.3, "Nominal Relative Commands");
     Svc::Relative::CmdSequencerTester tester;
@@ -373,6 +418,11 @@ TEST(Relative, AutoByCommand) {
 TEST(Relative, AutoByCommandAMPCS) {
     Svc::Relative::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
     tester.AutoByCommand();
+}
+
+TEST(Relative, StepWhileRecordPending) {
+    Svc::Relative::CmdSequencerTester tester;
+    tester.StepWhileRecordPending();
 }
 
 TEST(Relative, Validate) {
@@ -410,8 +460,18 @@ TEST(InvalidFiles, RunNoRecords) {
     tester.RunNoRecords();
 }
 
+TEST(InvalidFiles, RunNoRecordsAMPCS) {
+    Svc::NoRecords::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
+    tester.RunNoRecords();
+}
+
 TEST(InvalidFiles, ValidateNoRecords) {
     Svc::NoRecords::CmdSequencerTester tester;
+    tester.ValidateNoRecords();
+}
+
+TEST(InvalidFiles, ValidateNoRecordsAMPCS) {
+    Svc::NoRecords::CmdSequencerTester tester(Svc::SequenceFiles::File::Format::AMPCS);
     tester.ValidateNoRecords();
 }
 

@@ -62,7 +62,7 @@ The `CS_Manual` command will put the sequencer in a manual stepping mode, where 
 ##### 3.2.2.5 CS_Start
 The `CS_Start` command will execute the first command in the sequence in manual mode.
 ##### 3.2.2.6 CS_Step
-The `CS_Step` command will execute subsequent commands after receiving the `CS_Start` command.
+The `CS_Step` command will execute subsequent commands after receiving the `CS_Start` command. If the previously stepped command is a timed command still waiting for its time tag, the command is rejected with an execution error and the `CS_StepRecordPending` event, which reports the pending time tag; the pending command is kept and dispatched by `schedIn` when its time is reached, after which `CS_Step` is accepted again. Until then the sequence cannot be stepped past the pending record; the only way to abandon the wait is `CS_Cancel` (or `seqCancelIn`), which resets the sequence to its first record, so a subsequent `CS_Start` re-issues the commands already stepped.
 ##### 3.2.2.7 CS_Auto
 The `CS_Auto` command will change the sequencing mode from manual to automatic, which means that the sequencer will automatically execute commands upon loading. This command can only be run when there are no currently executing sequences. If a sequence is executing, a `CS_Cancel` followed by a `CS_Auto` will get the sequencer back to executing sequences automatically.
 ##### 3.2.2.8 CS_JOIN_WAIT
@@ -84,10 +84,20 @@ The `cmdResponseIn` port is called when a command in a sequence is completed. If
 This port takes two arguments: `filename`, the sequence file name, and
 `args` of type `Svc.SeqArgs` (currently unused by this component). In
 general, sending `filename` on this port has the same  effect as issuing
-a `CS_Run` command with `filename` as the file name argument. If the
+a `CS_Run` command with `filename` as the file name argument. The port
+accepts file names up to `FileNameStringSize` characters, as does
+`seqDispatchIn`, while the `CS_Run` file name argument is limited to
+`FW_CMD_STRING_MAX_SIZE` characters. Events carry at most the first 60
+characters of the file name, and the `CS_CurrentSequence` channel at most the
+first `FW_TLM_STRING_MAX_SIZE` characters. If the
 sequencer is in manual stepping mode (see `CS_Manual`), the request is
 rejected: the `CS_InvalidMode` event is emitted and `EXECUTION_ERROR` is
 returned on the `seqDone` port.
+
+Whenever a request on this port (or on `seqDispatchIn`, which runs sequences the
+same way) is rejected, `EXECUTION_ERROR` is returned on `seqDone` only if that
+port is connected, so a topology may drive `seqRunIn` or `seqDispatchIn` without
+wiring `seqDone`.
 
 If `filename` is empty, then `CmdSequencer` runs the sequence stored in the
 sequence buffer, without loading a sequence first. In order for this to work:
@@ -191,7 +201,7 @@ just the fixed-length header).
 
 ##### 3.3.2.3 allocateBuffer
 
-The `allocateBuffer()` public method passes a memory allocator to provide memory for the sequence buffer needed by `cmdSequencer`. The user will provide an instance of a sub-class of `Fw::MemAllocator` that implements memory allocation. An example of this using the heap can be found in `Fw/Types/MallocAllocator.hpp`.
+The `allocateBuffer()` public method passes a memory allocator to provide memory for the sequence buffer needed by `cmdSequencer`. The user will provide an instance of a sub-class of `Fw::MemAllocator` that implements memory allocation. An example of this using the heap can be found in `Fw/Types/MallocAllocator.hpp`. The buffer capacity is the size actually granted by the allocator, which may be smaller than the request. Allocation must return a non-null buffer large enough for a sequence header; otherwise initialization asserts. Files larger than the granted capacity are rejected by the existing file-size checks.
 
 <a name="loadSequence"></a>
 ##### 3.3.2.4 loadSequence (Optional)
@@ -199,7 +209,8 @@ The `allocateBuffer()` public method passes a memory allocator to provide memory
 This function takes a single argument `fileName` of type `Fw::String`.
 When you call this function, `CmdSequencer` loads the sequence file `fileName`
 into its buffer so that you can execute it later by calling
-[`seqRunIn`](#seqRunIn).
+[`seqRunIn`](#seqRunIn). `fileName` can be at most `FileNameStringSize`
+characters long.
 
 This function issues events, so you must connect the event topology before
 calling this function.
@@ -207,6 +218,19 @@ calling this function.
 ##### 3.3.2.5 deallocateBuffer
 
 The `deallocateBuffer()` method is used to deallocate the buffer supplied in `allocateBuffer()` method. It should be called before the destructor.
+
+##### 3.3.2.6 configureSandbox (Optional)
+
+The `configureSandbox()` public method restricts sequence file loads to a directory, in the same way as the
+`Os::SandboxedFile` sandboxes of the file-handling components. The directory may be absolute or relative to the
+current working directory. Once configured, every load (`CS_VALIDATE`, `CS_RUN`, `seqRunIn`, `seqDispatchIn` and
+[`loadSequence`](#loadSequence)) whose file name resolves outside the directory, for example through `..` segments
+or an absolute path elsewhere, is rejected with the `CS_FileOutsideSandbox` event before the file is opened. The
+check runs before the sequence format opens the file, so it applies to every format, including one set with
+`setSequenceFormat`.
+
+Until `configureSandbox()` is called, any path is allowed, which keeps existing deployments unchanged. Call it from
+topology setup code. Path checking is textual and does not follow symbolic links (see `Os::SandboxedFile`).
 
 #### 3.3.3 Data formats
 
@@ -231,7 +255,7 @@ The format for each record is as follows:
 Record Field | Size (bytes) | Description
 ------------ | ------------ | -----------
 Descriptor | 1 | What kind of record it is. 0 = absolute time command, 1 = relative time command, 2 = end of sequence
-Command Time | 8 | Start time of command. Depending on descriptor, will be relative or absolute. First four bytes are seconds of command, second four bytes are microseconds of command.
+Command Time | 8 | Start time of command. Depending on descriptor, will be relative or absolute. First four bytes are seconds of command, second four bytes are microseconds of command (must be less than 1,000,000; otherwise the record is rejected as `FW_DESERIALIZE_FORMAT_ERROR`).
 Record Size | 4 | Size of command buffer
 Command Buffer | >= 4 | Buffer containing command packet descriptor, command opcode, and zero or more serialized arguments.
 
@@ -347,3 +371,6 @@ Date | Change Description
 2/26/2017|Version for Design/Code Review
 4/6/2017|Version for Unit test
 10/30/2017|Revise design to make sequence format configurable
+09/24/2026|Reject invalid time-tag microseconds and zero-record AMPCS files during validation (#5891)
+09/30/2026|Keep sequence file names up to `FileNameStringSize` characters; reject AMPCS file names that leave no room for `.CRC32` (#5892)
+10/12/2026|Guard `seqDone` on rejected port runs; reject `CS_Step` with `CS_StepRecordPending` while a timed record is pending (#5899)

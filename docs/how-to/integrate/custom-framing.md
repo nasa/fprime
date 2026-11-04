@@ -251,5 +251,5 @@ fprime-gds --framing-selection MyCustomProtocol
 - [GDS Plugin Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/framing)
 - [F Prime GDS Framing Plugin](../../reference/gds-plugins/framing.md)
 - [F Prime Communication Adapter Interface](../../reference/communication-adapter-interface.md)
-- [F Prime GDS Plugin Development](https://fprime.jpl.nasa.gov/devel/docs/how-to/develop-gds-plugins/)
+- [F Prime GDS Plugin Development](../operate/develop-gds-plugins.md)
 

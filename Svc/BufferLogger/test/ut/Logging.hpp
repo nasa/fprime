@@ -31,6 +31,9 @@ class BufferLoggerTester : public Svc::BufferLoggerTester {
     //! Test close file command
     void CloseFile();
 
+    //! Test flush file command
+    void FlushFile();
+
     //! Test logging of data from comIn
     void ComIn();
 

@@ -11,6 +11,8 @@ namespace Svc {
 namespace Ccsds {
 
 const U16 CcsdsSdlsFramerTester::TEST_PARAM_SA_INDEX;
+const U32 CcsdsSdlsFramerTester::FAILURE_EVENT_LIMIT;
+const U32 CcsdsSdlsFramerTester::FAILURE_EVENT_PERIOD_SECONDS;
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -28,6 +30,37 @@ CcsdsSdlsFramerTester ::CcsdsSdlsFramerTester()
 
 CcsdsSdlsFramerTester ::~CcsdsSdlsFramerTester() {
     this->component.deinit();
+}
+
+// ----------------------------------------------------------------------
+// Throttle helpers
+// ----------------------------------------------------------------------
+
+void CcsdsSdlsFramerTester ::advanceTestTime(U32 seconds) {
+    this->m_currentTime.add(seconds, 0);
+    this->setTestTime(this->m_currentTime);
+}
+
+void CcsdsSdlsFramerTester ::assertEncryptionFailedEvents(U32 count) {
+    ASSERT_EVENTS_EncryptionFailed_SIZE(count);
+}
+
+void CcsdsSdlsFramerTester ::assertBufferAllocationFailedEvents(U32 count) {
+    ASSERT_EVENTS_BufferAllocationFailed_SIZE(count);
+}
+
+bool CcsdsSdlsFramerTester ::expectFailureEvent(U32& emissions, Fw::Time& periodStart) {
+    if (emissions >= FAILURE_EVENT_LIMIT) {
+        if (Fw::TimeInterval(periodStart, this->m_currentTime) < Fw::TimeInterval(FAILURE_EVENT_PERIOD_SECONDS, 0)) {
+            return false;
+        }
+        emissions = 0;
+    }
+    if (emissions == 0) {
+        periodStart = this->m_currentTime;
+    }
+    ++emissions;
+    return true;
 }
 
 // ----------------------------------------------------------------------

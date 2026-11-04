@@ -9,38 +9,17 @@
 // acknowledged.
 //
 // ======================================================================
-#include <sys/time.h>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <cerrno>
 #include <cstring>
 
 // This implementation has primarily implemented to isolate
 // the socket interface from the F' Fw::Buffer class.
 // There is a macro in VxWorks (m_data) that collides with
 // the m_data member in Fw::Buffer.
-
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <errnoLib.h>
-#include <fioLib.h>
-#include <hostLib.h>
-#include <inetLib.h>
-#include <ioLib.h>
-#include <sockLib.h>
-#include <socket.h>
-#include <sysLib.h>
-#include <taskLib.h>
-#include <vxWorks.h>
-#include <cstring>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <cerrno>
-#else
-#error OS not supported for IP Socket Communications
-#endif
 
 namespace Drv {
 
@@ -85,6 +64,18 @@ SocketIpStatus IpSocket::setupTimeouts(int socketFd) {
     if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char*>(&timeout), sizeof(timeout)) < 0) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
+#endif
+    return SOCK_SUCCESS;
+}
+
+SocketIpStatus IpSocket::setupNoSigPipe(int socketFd) {
+#ifdef SO_NOSIGPIPE
+    constexpr int enable = 1;
+    if (setsockopt(socketFd, SOL_SOCKET, SO_NOSIGPIPE, &enable, sizeof(enable)) < 0) {
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    }
+#else
+    (void)socketFd;
 #endif
     return SOCK_SUCCESS;
 }
@@ -158,15 +149,19 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
         errno = 0;
         // Send using my specific protocol
         sent = this->sendProtocol(socketDescriptor, data + total, size - total);
-        // Error is EINTR or timeout just try again
+        // Error is EINTR just try again
         if (((sent == -1) && (errno == EINTR)) || (sent == 0)) {
             continue;
         }
-        // Error bad file descriptor is a close along with reset
-        else if ((sent == -1) && ((errno == EBADF) || (errno == ECONNRESET))) {
+        // A bad file descriptor, a reset, or a broken pipe (the peer closed the connection) is a disconnect
+        else if ((sent == -1) && ((errno == EBADF) || (errno == ECONNRESET) || (errno == EPIPE))) {
             return SOCK_DISCONNECTED;
         }
-        // Error returned, and it wasn't an interrupt nor a disconnect
+        // Error is a send timeout (SO_SNDTIMEO) or would-block, recoverable by a caller retry
+        else if ((sent == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK))) {
+            return SOCK_INTERRUPTED_TRY_AGAIN;
+        }
+        // Error returned, and it wasn't an interrupt, a timeout, nor a disconnect
         else if (sent == -1) {
             return SOCK_SEND_ERROR;
         }

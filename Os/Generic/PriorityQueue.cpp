@@ -221,6 +221,10 @@ QueueInterface::Status PriorityQueue::receive(U8* destination,
                                               QueueInterface::BlockingType blockType,
                                               FwSizeType& actualSize,
                                               FwQueuePriorityType& priority) {
+    // Reject undersized buffers before popping so the message stays queued (matches POSIX mq_receive EMSGSIZE)
+    if (capacity < this->m_handle.m_maxSize) {
+        return QueueInterface::Status::SIZE_MISMATCH;
+    }
     {
         Os::ScopeLock lock(this->m_handle.m_data_lock);
         if (this->m_handle.m_heap.isEmpty() and blockType == BlockingType::NONBLOCKING) {

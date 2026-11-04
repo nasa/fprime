@@ -9,7 +9,7 @@
 //
 // The dependency constraints are:
 //
-//   1. config/OsDelegateFile.hpp (CFG) defines the Os::File type alias by
+//   1. config/OsSelection.hpp (CFG) defines the Os::File type alias by
 //      forward-declaring a link-time delegate (e.g. DelegateFile) or directly
 //      aliasing a concrete implementation (e.g. Va416x0Os::SomeFile).
 //      Must not include Os OSAL headers (they aren't yet defined).
@@ -31,9 +31,9 @@
 
 #include "Os/FileInterface.hpp"
 
-// Validate that OS_FILE_HEADER was defined by config/OsDelegateFile.hpp
+// Validate that OS_FILE_HEADER was defined by config/OsSelection.hpp
 #ifndef OS_FILE_HEADER
-#error "OS_FILE_HEADER must be defined in config/OsDelegateFile.hpp"
+#error "OS_FILE_HEADER must be defined in config/OsSelection.hpp"
 #endif
 
 #include OS_FILE_HEADER

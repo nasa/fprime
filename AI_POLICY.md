@@ -37,6 +37,7 @@ Include information about:
 
 When working with generative AI, provide clear rules and context to improve code quality and consistency. For Example:
 
+- **Follow the F´ AI development skills**: Point your tools at [`AGENTS.md`](./AGENTS.md) and the skills under [`.github/skills/`](./.github/skills/); contributions produced with AI are expected to follow them
 - **Reference F´ Style Guidelines**: Include the [F´ Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines) in your prompts
 - **Enforce coding standards**: Instruct AI to avoid "magic numbers" and use descriptive variable names or comments
 - **Provide project context**: Share relevant F´ architectural patterns and component structures

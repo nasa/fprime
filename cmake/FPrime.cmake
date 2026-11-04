@@ -32,7 +32,9 @@ if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/_fprime_packages")
     endif()
 endif()
 
-# Clear the locations metadata files at the start of the generate
+# Clear the metadata files at the start of the generate. Child directories are cleared by
+# fprime_util_metadata_add_subdirectory, so the top-level binary directory is cleared here.
+fprime_util_metadata_remove("${CMAKE_BINARY_DIR}")
 file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_SOURCE_LOCATIONS_FILE}" "")
 file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_BINARY_LOCATIONS_FILE}" "")
 file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_ALL_LOCATIONS_FILE}" "")
@@ -152,6 +154,12 @@ macro(fprime_initialize_build_system)
         if (NOT FPRIME_IS_SUB_BUILD)
             set(SUB_BUILD_TARGETS target/sub-build/fpp_locs target/sub-build/fpp_depend)
             if (FPRIME_ENABLE_JSON_MODEL_GENERATION)
+                fprime_cmake_warning(
+                    "FPRIME_ENABLE_JSON_MODEL_GENERATION is deprecated and will be removed in a future release.\n"
+                    "The FPP JSON model is superseded by the native FPP Python bindings (fprime-fpp-python).\n"
+                    "FPP 3.4.0, shipped with F Prime 4.4.0, is the last version to support the JSON model.\n"
+                    "Migration guide: https://github.com/fprime-community/fprime-python-model/blob/main/MIGRATION.md\n"
+                )
                 list(APPEND SUB_BUILD_TARGETS target/sub-build/fpp_to_json)
             endif()
             list(APPEND SUB_BUILD_TARGETS target/sub-build/module_info)
@@ -169,9 +177,13 @@ endmacro(fprime_initialize_build_system)
 # Function `fprime_setup_included_code`:
 #
 # Sets up the code/build for fprime and libraries. Call after all project specific targets and autocoders are set up and
-# registered.
+# registered. Resets the fprime-util metadata of the calling directory, so nothing may register in it before this call.
 ####
 function(fprime_setup_included_code)
+    # The calling directory (e.g. "F-Prime") has no add_fprime_subdirectory parent to reset its metadata
+    if (NOT "${CMAKE_CURRENT_BINARY_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+        fprime_util_metadata_remove("${CMAKE_CURRENT_BINARY_DIR}")
+    endif()
     # Must be done before code is registered but after custom target registration
     setup_global_targets()
     # For BUILD_TESTING builds then set up libraries that support testing

@@ -100,24 +100,6 @@ TEST(ParameterDbTest, NominalFileLoadTest) {
     tester.runNominalLoadFile();
 }
 
-// TEST(ParameterDbTest,RefPrmFile) {
-//
-//     Svc::PrmDbImpl impl("PrmDbImpl");
-//
-//     impl.init(10);
-//
-//     Svc::PrmDbTester tester(impl);
-//
-//     tester.init();
-//
-//     // connect ports
-//     connectPorts(impl,tester);
-//
-//     // run test to generate parameter file for reference example
-//     tester.runRefPrmFile();
-//
-// }
-
 TEST(ParameterDbTest, PrmMissingExtraParamsTest) {
     TEST_CASE(105.2.1, "Missing and too many parameters test");
     COMMENT("Attempt to read a nonexistent parameter and write too many parameters");

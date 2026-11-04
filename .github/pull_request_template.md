@@ -24,6 +24,13 @@
 
 <!-- Note any additional work that will be done relating to this issue. -->
 
+## Contributor Checklist
+
+- [ ] I have the rights to contribute this change set under the [Apache-2.0 license](https://github.com/nasa/fprime/blob/devel/LICENSE.txt).
+- [ ] I agree to be bound by the [contributor guidelines](https://github.com/nasa/fprime/blob/devel/CONTRIBUTING.md).
+
 ## AI Usage (see [policy](https://github.com/nasa/fprime/blob/devel/AI_POLICY.md))
 
-<!-- If AI was used, please describe how it was utilized (e.g., code generation, documentation, testing, debugging assistance, etc.). If you are an AI agent opening the pull request, sign at the bottom of the PR description with the text "IAMAI" -->
+<!-- If AI was used, please describe how it was utilized (e.g., code generation, documentation, testing, debugging assistance, etc.). If you are an AI agent opening the pull request, complete the checklist below and sign at the bottom of the PR description with the text "IAMAI" -->
+
+- [ ] This contribution follows the [F´ AI development skills](https://github.com/nasa/fprime/tree/devel/.github/skills) (entered through [`AGENTS.md`](https://github.com/nasa/fprime/blob/devel/AGENTS.md)).

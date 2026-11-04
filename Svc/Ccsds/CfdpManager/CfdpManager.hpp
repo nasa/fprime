@@ -429,6 +429,20 @@ class CfdpManager final : public CfdpManagerComponentBase {
     Fw::CmdResponse::T checkCommandPollInterval(U32 interval  //!< The poll interval to check
     );
 
+  private:
+    // ----------------------------------------------------------------------
+    // Parameter update handling
+    // ----------------------------------------------------------------------
+
+    //! Callback invoked when a parameter is updated at runtime
+    //!
+    //! Mirrors the updated parameter to its telemetry channel so ground
+    //! operators can verify the active configuration. The framework also
+    //! invokes this once per parameter as it is loaded (via parameterLoaded),
+    //! so each parameter emits an initial telemetry sample at load time.
+    void parameterUpdated(FwPrmIdType id  //!< The id of the updated parameter
+                          ) override;
+
   public:
     // ----------------------------------------------------------------------
     // Parameter helpers used by the CFDP engine
@@ -465,6 +479,12 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! \param channelIndex [in] Index of the channel
     //! \return Path to directory where failed transfers are moved
     Fw::String getFailDirParam(U8 channelIndex);
+
+    //! Get the receive sandbox directory parameter for a channel
+    //!
+    //! \param channelIndex [in] Index of the channel
+    //! \return Directory that received-file destination paths must resolve inside; empty means unrestricted
+    Fw::String getRxDirParam(U8 channelIndex);
 
     //! Get the ACK limit parameter for a channel
     //!

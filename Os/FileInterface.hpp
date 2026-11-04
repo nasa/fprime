@@ -8,7 +8,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/ConstStringBase.hpp>
 #include <Os/Os.hpp>
-#include "config/OsDelegateFile.hpp"
+#include "config/OsSelection.hpp"
 
 // Forward declaration for UTs
 namespace Os {

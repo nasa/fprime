@@ -78,7 +78,7 @@ Every OSAL _core service_ (e.g. File, Task, Mutex, etc.) follows a uniform three
 | Wrapper | [`Os::DelegateFile`](../DelegateFile.hpp) | A `final` concrete class that holds a reference to the interface delegate constructed inside it. Application code interacts exclusively with `Os::File`, which is the configured alias for the wrapper (see [§5.2](#52-selection-mechanisms-link-time-vs-compile-time)). |
 | Implementation | [`Os::Posix::File`](../Posix/File.hpp) | A concrete class that implements the interface. This is what needs to be implemented to support a new OS on F Prime. |
 
-For services that follow this pattern, the public header (e.g. `Os/File.hpp`) is a thin aggregator: it includes `Os/<Service>Interface.hpp` (which in turn pulls in the `config/OsDelegate<Service>.hpp` alias definition) and then the configured implementation header. The pure-virtual contract lives in `Os/<Service>Interface.hpp`.
+For services that follow this pattern, the public header (e.g. `Os/File.hpp`) is a thin aggregator: it includes `Os/<Service>Interface.hpp` (which in turn pulls in the `config/OsSelection.hpp` alias definition) and then the configured implementation header. The pure-virtual contract lives in `Os/<Service>Interface.hpp`.
 
 This pattern allows for the selection of the implementation used for a given build to be performed through the build system at link-time: CMake chooses which `Default*.cpp` file to link, and that file provides the `getDelegate` factory function for a given OSAL implementation.
 
@@ -139,7 +139,7 @@ Most OSAL services use **link-time selection** with runtime virtual dispatch:
 
 For performance-critical services, the OSAL supports **compile-time selection** that eliminates virtual dispatch:
 
-1. A configuration header (e.g., `default/config/OsDelegateRawTime.hpp`) defines a type alias
+1. A configuration header (`default/config/OsSelection.hpp`) defines a type alias
 2. The wrapper type (e.g., `Os::RawTime`) directly aliases the concrete implementation
 3. All calls are direct function calls that the compiler can inline
 4. With LTO enabled, the entire call chain can be optimized away for simple operations
@@ -156,20 +156,20 @@ For performance-critical services, the OSAL supports **compile-time selection** 
 
 **Currently Supported Services:**
 
-Each service below ships a default configuration header at `default/config/OsDelegate<Service>.hpp`, which defines the `Os::<Service>` alias and an `OS_<SERVICE>_HEADER` macro naming the implementation header to include:
+The default configuration header `default/config/OsSelection.hpp` defines the `Os::<Service>` alias and an `OS_<SERVICE>_HEADER` macro naming the implementation header to include for each service below:
 
-| Service | Configuration header | Implementation-header macro |
+| Service | Alias | Implementation-header macro |
 |---|---|---|
-| RawTime | `config/OsDelegateRawTime.hpp` | `OS_RAW_TIME_HEADER` |
-| File | `config/OsDelegateFile.hpp` | `OS_FILE_HEADER` |
-| FileSystem | `config/OsDelegateFileSystem.hpp` | `OS_FILE_SYSTEM_HEADER` |
-| Directory | `config/OsDelegateDirectory.hpp` | `OS_DIRECTORY_HEADER` |
-| Mutex | `config/OsDelegateMutex.hpp` | `OS_MUTEX_HEADER` |
-| ConditionVariable | `config/OsDelegateMutex.hpp` | `OS_CONDITION_VARIABLE_HEADER` |
-| Console | `config/OsDelegateConsole.hpp` | `OS_CONSOLE_HEADER` |
-| CountingSemaphore | `config/OsDelegateCountingSemaphore.hpp` | `OS_COUNTING_SEMAPHORE_HEADER` |
-| Cpu | `config/OsDelegateCpu.hpp` | `OS_CPU_HEADER` |
-| Memory | `config/OsDelegateMemory.hpp` | `OS_MEMORY_HEADER` |
+| RawTime | `Os::RawTime` | `OS_RAW_TIME_HEADER` |
+| File | `Os::File` | `OS_FILE_HEADER` |
+| FileSystem | `Os::FileSystem` | `OS_FILE_SYSTEM_HEADER` |
+| Directory | `Os::Directory` | `OS_DIRECTORY_HEADER` |
+| Mutex | `Os::Mutex` | `OS_MUTEX_HEADER` |
+| ConditionVariable | `Os::ConditionVariable` | `OS_CONDITION_VARIABLE_HEADER` |
+| Console | `Os::Console` | `OS_CONSOLE_HEADER` |
+| CountingSemaphore | `Os::CountingSemaphore` | `OS_COUNTING_SEMAPHORE_HEADER` |
+| Cpu | `Os::Cpu` | `OS_CPU_HEADER` |
+| Memory | `Os::Memory` | `OS_MEMORY_HEADER` |
 
 Mutex and ConditionVariable are configured together in the same header because a condition variable operates on the handle of the configured `Os::Mutex`; the two must be overridden together (a `static_assert` in `Os/ConditionVariableInterface.hpp` rejects aliasing only one of them), and the selected ConditionVariable must accept the handle of the selected `Os::Mutex` (implementations such as Posix cast it to their own handle type; `Os::Stub::Mutex::StubConditionVariable` accepts any mutex). Note that `ERROR_DIFFERENT_MUTEX` is reported only by the link-time `DelegateConditionVariable`; a directly aliased implementation does not track which mutex it was first used with.
 
@@ -177,7 +177,7 @@ The configuration header mechanism allows projects to opt into compile-time sele
 
 **Example: RawTime Configuration Header**
 
-F´ provides a default `default/config/OsDelegateRawTime.hpp` that enables link-time selection:
+F´ provides a default `default/config/OsSelection.hpp` that enables link-time selection for RawTime:
 
 ```c++
 namespace Os {

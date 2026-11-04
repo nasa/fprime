@@ -6,7 +6,7 @@
 #define OS_MEMORYINTERFACE_HPP_
 
 #include "Os/Os.hpp"
-#include "config/OsDelegateMemory.hpp"
+#include "config/OsSelection.hpp"
 
 namespace Os {
 

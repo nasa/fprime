@@ -14,26 +14,6 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <errnoLib.h>
-#include <fioLib.h>
-#include <hostLib.h>
-#include <inetLib.h>
-#include <ioLib.h>
-#include <sockLib.h>
-#include <socket.h>
-#include <sysLib.h>
-#include <taskLib.h>
-#include <vxWorks.h>
-#include <cstring>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#else
-#error OS not supported for IP Socket Communications
-#endif
-
 #include <cstring>
 
 namespace Drv {
@@ -123,6 +103,11 @@ SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor)
         (void)::close(clientFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
+    // Sends to a client that has disconnected must not raise SIGPIPE
+    if (IpSocket::setupNoSigPipe(clientFd) != SOCK_SUCCESS) {
+        (void)::close(clientFd);
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    }
 
     Fw::Logger::log("Accepted client at %s:%hu\n", this->m_ipv4_address, this->m_port);
     socketDescriptor.fd = clientFd;
@@ -133,7 +118,7 @@ FwSignedSizeType TcpServerSocket::sendProtocol(const SocketDescriptor& socketDes
                                                const U8* const data,
                                                const FwSizeType size) {
     return static_cast<FwSignedSizeType>(
-        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS));
+        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS | SEND_NO_SIGNAL_FLAGS));
 }
 
 FwSignedSizeType TcpServerSocket::recvProtocol(const SocketDescriptor& socketDescriptor,

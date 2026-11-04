@@ -72,6 +72,36 @@ module Svc {
     telemetry port Tlm
 
     # ----------------------------------------------------------------------
+    # Types
+    # ----------------------------------------------------------------------
+
+    @ Outcome of rewriting the state file from the state file data
+    enum StateFileWriteStatus : U8 {
+      WRITTEN = 0 @< The state file was rewritten
+      OPEN_ERROR = 1 @< The state file could not be opened (StateFileOpenError reported)
+      WRITE_ERROR = 2 @< A record could not be written (StateFileWriteError reported)
+    }
+
+    @ Outcome of recording an entry in the state file data
+    enum StateFileUpdateStatus : U8 {
+      RECORDED = 0 @< The entry was recorded in its own slot or a reused stale slot
+      FULL = 1 @< The state file data has no free slot
+    }
+
+    @ Outcome of looking up a catalog entry by data product identity
+    enum EntryLookupStatus : U8 {
+      FOUND = 0 @< An entry with the identity is in the catalog
+      NOT_FOUND = 1 @< No entry with the identity is in the catalog
+    }
+
+    @ Outcome of setting the transmit priority of a catalog entry
+    enum PriorityChangeStatus : U8 {
+      UNCHANGED = 0 @< The entry already had the priority (DpPriorityUnchanged reported)
+      CHANGED = 1 @< The priority was changed and, if a state file is configured, recorded in it (DpPrioritySet reported)
+      NOT_RECORDED = 2 @< The priority was changed but could not be recorded in the configured state file (error reported)
+    }
+
+    # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------
 
@@ -79,12 +109,22 @@ module Svc {
     async command BUILD_CATALOG \
       opcode 0
 
-    @ Start transmitting catalog
+    @ Start transmitting the whole catalog in priority order
+    @ (same as START_XMIT_CATALOG_WITH_PRIORITY over 0 through the maximum FwDpPriorityType value)
     async command START_XMIT_CATALOG (
                                     wait: Fw.Wait, @< have START_XMIT command complete wait for catalog to complete transmitting
                                     remainActive: bool @< should the catalog resume transmission when Dps are added at runtime
                                   ) \
       opcode 1
+
+    @ Start transmitting only the catalog products whose priority is within [startPriority, endPriority]
+    async command START_XMIT_CATALOG_WITH_PRIORITY (
+                                    wait: Fw.Wait, @< have the command complete wait for the in-range products to finish transmitting
+                                    remainActive: bool, @< resume transmission when a DP inside the active priority range is added at runtime
+                                    startPriority: FwDpPriorityType, @< lowest priority value (most urgent) to transmit, inclusive
+                                    endPriority: FwDpPriorityType @< highest priority value (least urgent) to transmit, inclusive
+                                  ) \
+      opcode 4
 
     @ Stop transmitting catalog
     async command STOP_XMIT_CATALOG \
@@ -93,6 +133,23 @@ module Svc {
     @ clear existing catalog
     async command CLEAR_CATALOG \
       opcode 3
+
+    @ Set the transmit priority of one data product (lower is higher priority); kept in the state file if one is configured
+    async command SET_DP_PRIORITY (
+                                    $id: FwDpIdType @< Container ID of the data product
+                                    tSec: U32 @< Seconds of the data product time tag
+                                    tSub: U32 @< Microseconds of the data product time tag
+                                    $priority: FwDpPriorityType @< New transmit priority
+                                  ) \
+      opcode 5
+
+    @ Delete one data product: its file, its catalog entry and its state file record. Refused while the product is being transmitted
+    async command DELETE_DP (
+                              $id: FwDpIdType @< Container ID of the data product
+                              tSec: U32 @< Seconds of the data product time tag
+                              tSub: U32 @< Microseconds of the data product time tag
+                            ) \
+      opcode 6
 
     # ----------------------------------------------------------------------
     # Events
@@ -191,6 +248,15 @@ module Svc {
       id 14 \
       format "Product {} complete. Pending products: {} Pending bytes: {}"
 
+    @ Catalog cleared by CLEAR_CATALOG; any transmit in progress was aborted
+    event CatalogCleared (
+                            pending: U32 @< pending data products dropped from the catalog
+                            pending_bytes: U64 @< pending data product volume dropped
+                          ) \
+      severity activity high \
+      id 15 \
+      format "Catalog cleared. Dropped pending products: {} Pending bytes: {}"
+
     @ Component not initialized error
     event ComponentNotInitialized \
       severity warning high \
@@ -265,7 +331,7 @@ module Svc {
       format "Error deserializing DP {}" \
       throttle 10
 
-    @ Error inserting entry into list
+    @ Data product already in the catalog; the insert is ignored
     event DpDuplicate(
                             dp: DpRecord @< The DP
                           ) \
@@ -431,6 +497,106 @@ module Svc {
       id 49 \
       format "Failed to format DP file name for {} with status {}" \
       throttle 10
+
+    @ fileDone that does not match the send in flight, or arrives with no send in flight
+    event StaleFileDone(
+                            context: U32 @< FileDownlink context carried by the fileDone
+                            status: Svc.SendFileStatus @< Downlink status
+                          ) \
+      severity warning low \
+      id 50 \
+      format "Stale fileDone context {} status {}, no matching transmit in flight" \
+      throttle 10
+
+    @ START_XMIT_CATALOG_WITH_PRIORITY rejected because the start priority exceeds the end priority
+    event XmitPriorityRangeInvalid(
+                            startPriority: FwDpPriorityType @< requested start of the priority range
+                            endPriority: FwDpPriorityType @< requested end of the priority range
+                          ) \
+      severity warning low \
+      id 51 \
+      format "Invalid priority range: start {} exceeds end {}. Transmit not started."
+
+    @ Catalog transmission started for a priority range (emitted on every accepted START_XMIT_CATALOG and
+    @ START_XMIT_CATALOG_WITH_PRIORITY; START_XMIT_CATALOG reports the full range)
+    event CatalogXmitRangeStarted(
+                            startPriority: FwDpPriorityType @< start of the priority range, inclusive
+                            endPriority: FwDpPriorityType @< end of the priority range, inclusive
+                          ) \
+      severity activity high \
+      id 52 \
+      format "Catalog transmission started for priorities {} through {}"
+
+    @ Data product transmit priority changed by SET_DP_PRIORITY
+    event DpPrioritySet(
+                            $id: FwDpIdType @< Container ID of the data product
+                            tSec: U32 @< Seconds of the data product time tag
+                            tSub: U32 @< Microseconds of the data product time tag
+                            oldPriority: FwDpPriorityType @< Priority before the command
+                            newPriority: FwDpPriorityType @< Priority after the command
+                          ) \
+      severity activity high \
+      id 53 \
+      format "Priority of DP id {} time {}.{} set from {} to {}"
+
+    @ SET_DP_PRIORITY or DELETE_DP named a data product that is not in the catalog
+    event DpNotFound(
+                            $id: FwDpIdType @< Container ID of the data product
+                            tSec: U32 @< Seconds of the data product time tag
+                            tSub: U32 @< Microseconds of the data product time tag
+                          ) \
+      severity warning high \
+      id 54 \
+      format "DP id {} time {}.{} not found in catalog"
+
+    @ State file data is full, so the state of a data product could not be recorded
+    event StateFileFull(
+                         $id: FwDpIdType @< Container ID of the data product
+                         tSec: U32 @< Seconds of the data product time tag
+                         tSub: U32 @< Microseconds of the data product time tag
+                       ) \
+      severity warning high \
+      id 55 \
+      format "State file data full; state of DP {} time {}.{} not recorded"
+
+    @ SET_DP_PRIORITY named the priority the data product already has; nothing was changed
+    event DpPriorityUnchanged(
+                               $id: FwDpIdType @< Container ID of the data product
+                               tSec: U32 @< Seconds of the data product time tag
+                               tSub: U32 @< Microseconds of the data product time tag
+                               $priority: FwDpPriorityType @< The unchanged priority
+                             ) \
+      severity activity high \
+      id 56 \
+      format "Priority of DP id {} time {}.{} already {}"
+
+    @ Data product deleted by DELETE_DP
+    event DpDeleted(
+                     file: string size FileNameStringSize @< The deleted data product file
+                     $state: Fw.DpState @< The transmit state the data product had
+                   ) \
+      severity activity high \
+      id 57 \
+      format "Deleted DP file {} (state {})"
+
+    @ DELETE_DP named the data product being transmitted; nothing was deleted
+    event DpInFlight(
+                      $id: FwDpIdType @< Container ID of the data product
+                      tSec: U32 @< Seconds of the data product time tag
+                      tSub: U32 @< Microseconds of the data product time tag
+                    ) \
+      severity warning high \
+      id 58 \
+      format "DP id {} time {}.{} is being transmitted; not deleted"
+
+    @ Error removing a data product file; the catalog and state file are unchanged
+    event DpFileRemoveError(
+                             file: string size FileNameStringSize @< The data product file
+                             stat: I32 @< The Os::FileSystem status returned from the remove operation
+                           ) \
+      severity warning high \
+      id 59 \
+      format "Failed to remove DP file {} with status {}"
 
 
     # ----------------------------------------------------------------------

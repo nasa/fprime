@@ -9,7 +9,7 @@
 //
 // The dependency constraints are:
 //
-//   1. config/OsDelegateCpu.hpp (CFG) defines the Os::Cpu type alias by
+//   1. config/OsSelection.hpp (CFG) defines the Os::Cpu type alias by
 //      forward-declaring a link-time delegate (e.g. DelegateCpu) or directly
 //      aliasing a concrete implementation.
 //      Must not include Os OSAL headers (they aren't yet defined).
@@ -31,9 +31,9 @@
 
 #include "Os/CpuInterface.hpp"
 
-// Validate that OS_CPU_HEADER was defined by config/OsDelegateCpu.hpp
+// Validate that OS_CPU_HEADER was defined by config/OsSelection.hpp
 #ifndef OS_CPU_HEADER
-#error "OS_CPU_HEADER must be defined in config/OsDelegateCpu.hpp"
+#error "OS_CPU_HEADER must be defined in config/OsSelection.hpp"
 #endif
 
 #include OS_CPU_HEADER

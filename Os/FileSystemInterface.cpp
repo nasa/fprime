@@ -188,7 +188,7 @@ FileSystemInterface::Status FileSystemInterface::copyFile(const char* sourcePath
     if (fileStatus != Os::File::OP_OK) {
         return handleFileError(fileStatus);
     }
-    fileStatus = destination.open(destPath, Os::File::OPEN_WRITE);
+    fileStatus = destination.open(destPath, Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE);
     if (fileStatus != Os::File::OP_OK) {
         return handleFileError(fileStatus);
     }

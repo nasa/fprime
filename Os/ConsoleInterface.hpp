@@ -8,7 +8,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Os/Os.hpp>
-#include "config/OsDelegateConsole.hpp"
+#include "config/OsSelection.hpp"
 
 namespace Os {
 //! \brief Base class for storing implementation specific handle information

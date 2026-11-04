@@ -9,12 +9,12 @@
 // defined by the one before it, so reordering them will fail to compile.
 // The ordering constraints are:
 //
-//   1. config/OsDelegateMutex.hpp (CFG) defines the Os::Mutex type alias by
+//   1. config/OsSelection.hpp (CFG) defines the Os::Mutex type alias by
 //      forward-declaring a link-time delegate (e.g. DelegateMutex) or directly
 //      aliasing a concrete implementation (e.g. Va416x0Os::AtomicMutex::AtomicMutex).
 //      Must not include Os OSAL headers (they aren't yet defined).
-//      Should only be included in Os/MutexInterface.hpp and
-//      Os/ConditionVariableInterface.hpp.
+//      Should only be included in Os/RawTimeInterface.hpp,
+//      Os/MutexInterface.hpp, and Os/ConditionVariableInterface.hpp.
 //
 //   2. Os/MutexInterface.hpp (IF) includes CFG first, then defines
 //      MutexHandle, MutexInterface, and ScopeLock.
@@ -32,9 +32,9 @@
 
 #include "Os/MutexInterface.hpp"
 
-// Validate that OS_MUTEX_HEADER was defined by config/OsDelegateMutex.hpp
+// Validate that OS_MUTEX_HEADER was defined by config/OsSelection.hpp
 #ifndef OS_MUTEX_HEADER
-#error "OS_MUTEX_HEADER must be defined in config/OsDelegateMutex.hpp"
+#error "OS_MUTEX_HEADER must be defined in config/OsSelection.hpp"
 #endif
 
 #include OS_MUTEX_HEADER

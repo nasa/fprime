@@ -9,7 +9,7 @@
 //
 // The dependency constraints are:
 //
-//   1. config/OsDelegateMemory.hpp (CFG) defines the Os::Memory type alias by
+//   1. config/OsSelection.hpp (CFG) defines the Os::Memory type alias by
 //      forward-declaring a link-time delegate (e.g. DelegateMemory) or directly
 //      aliasing a concrete implementation.
 //      Must not include Os OSAL headers (they aren't yet defined).
@@ -31,9 +31,9 @@
 
 #include "Os/MemoryInterface.hpp"
 
-// Validate that OS_MEMORY_HEADER was defined by config/OsDelegateMemory.hpp
+// Validate that OS_MEMORY_HEADER was defined by config/OsSelection.hpp
 #ifndef OS_MEMORY_HEADER
-#error "OS_MEMORY_HEADER must be defined in config/OsDelegateMemory.hpp"
+#error "OS_MEMORY_HEADER must be defined in config/OsSelection.hpp"
 #endif
 
 #include OS_MEMORY_HEADER

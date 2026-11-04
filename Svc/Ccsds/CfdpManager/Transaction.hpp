@@ -53,6 +53,7 @@ class CfdpManager;
 class Engine;
 class Channel;
 class Transaction;
+class FinPdu;
 
 // ======================================================================
 // Dispatch Table Type Definitions
@@ -364,6 +365,24 @@ class Transaction {
     void s2Fin(const Fw::Buffer& pdu);
 
     /************************************************************************/
+    /** @brief Deserialize a received FIN PDU.
+     *
+     * Emits FailFinPduDeserialization on failure.
+     *
+     * @param pdu Buffer containing the FIN PDU
+     * @param fin Output FIN PDU
+     * @returns true if the FIN deserialized successfully
+     */
+    bool s2DeserializeFin(const Fw::Buffer& pdu, FinPdu& fin);
+
+    /************************************************************************/
+    /** @brief S2 handling of a successfully deserialized FIN.
+     *
+     * @param fin The FIN PDU to process
+     */
+    void s2HandleFin(const FinPdu& fin);
+
+    /************************************************************************/
     /** @brief S2 NAK PDU received handling.
      *
      * Stores the segment requests from the NAK packet in the chunks
@@ -660,7 +679,9 @@ class Transaction {
      * The RxCrcCalcBytesPerCycle parameter specifies the number of bytes
      * to calculate per transaction per scheduler cycle. At each cycle, the file is
      * read and this number of bytes are calculated. This function will set
-     * the checksum error condition code if the final CRC does not match.
+     * the checksum error condition code if the final CRC does not match, and
+     * the file size error condition code if a read returns fewer bytes than
+     * requested (the file on disk is shorter than the declared file size).
      *
      * @par PTFO
      *       Increase throughput by consuming all CRC bytes per scheduler cycle in

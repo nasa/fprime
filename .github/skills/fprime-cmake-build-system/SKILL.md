@@ -56,7 +56,7 @@ Change the *narrowest* layer that solves the problem: a module's own
 | Deployment producing an F Prime binary | `register_fprime_deployment` |
 | Non-deployment executable / tool | `register_fprime_executable` |
 | Unit test | `register_fprime_ut` (see `fprime-unit-testing`) |
-| Configuration or platform config module | `register_fprime_config` |
+| Configuration module (framework, platform, library, or project overrides) | `register_fprime_config` |
 | Implementation of a swappable package (e.g. `Os_File`) | `register_fprime_module` + `IMPLEMENTS`; `register_os_implementation` for OSAL packages |
 | Custom build target (`<target>` + `<MODULE>_<target>`) | `register_fprime_target` / `register_fprime_ut_target` |
 
@@ -66,6 +66,7 @@ directory must also be pulled in with `add_fprime_subdirectory` from
 the including `CMakeLists.txt`.
 
 Guides: [customization / custom targets](../../../docs/user-manual/build-system/cmake-customization.md),
+[configuration modules](../../../docs/user-manual/build-system/configuration.md),
 [implementations](../../../docs/user-manual/build-system/cmake-implementations.md),
 [platforms](../../../docs/user-manual/build-system/cmake-platforms.md),
 [toolchains](../../../docs/user-manual/build-system/cmake-toolchains.md),
@@ -86,8 +87,9 @@ Guides: [customization / custom targets](../../../docs/user-manual/build-system/
 - **Unresolved implementation**: every platform must `CHOOSES_IMPLEMENTATIONS`
   for every package a module `REQUIRES_IMPLEMENTATIONS`; a missing
   choice surfaces as a link error, not a CMake error. Use the `_Stub`
-  implementation when a platform lacks the capability; override per
-  deployment, executable, or UT only.
+  implementation when a platform lacks the capability; override in the
+  project's configuration module (`CHOOSES_IMPLEMENTATIONS`) or per
+  deployment, executable, or UT.
 - **Sub-build assumptions**: code that must not run during the
   `fpp_locs`/`fpp_depend` sub-builds needs `skip_on_sub_build()`;
   platform-specific modules need `restrict_platforms(...)`.

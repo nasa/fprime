@@ -319,3 +319,25 @@ event LogDiagnostic(
 ) \
     severity diagnostic \
     format "Sequence {}: {}"
+
+event DirectiveWhileNotAwaiting(
+    directive: Fpy.DirectiveId
+    $state: I32
+) \
+    severity warning low \
+    format "Ignored directive {} because the sequencer was not awaiting a statement response (was in state {})"
+
+event DirectiveFromOldSequence(
+    directive: Fpy.DirectiveId
+    oldSequenceIdx: U64
+    currentSequenceIdx: U64
+) \
+    severity warning low \
+    format "Ignored directive {} because it was from a previous sequence, not the current one (old idx: {}, current idx: {})"
+
+event FileOutsideSandbox(
+    filePath: string
+    sandboxDir: string
+) \
+    severity warning high \
+    format "File {} is outside the configured sandbox directory {}"

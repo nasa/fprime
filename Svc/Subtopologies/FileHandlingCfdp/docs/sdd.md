@@ -44,9 +44,14 @@ The **FileHandlingCfdp subtopology** packages CFDP-based file-transfer services 
 > `FileHandlingCfdp::prmDb.configureSandbox(<directory>)`, where the directory contains the store
 > file set by `prmDb.configure(<file name>)` (which is **not** itself a sandbox). The
 > `fileManager` command-path sandbox is likewise configured to `"/"`; restrict it with
-> `FileHandlingCfdp::fileManager.configure(<directory>)`. Additionally,
-> CFDP file transfers via `cfdpManager` are not sandboxed: ground-commanded transactions may read
-> or write any path accessible to the process.
+> `FileHandlingCfdp::fileManager.configure(<directory>)`.
+>
+> CFDP file transfers via `cfdpManager` are not sandboxed
+> by default: ground-commanded transactions may read any path accessible to the process, and
+> received files are written wherever the incoming Metadata PDU says. Set the per-channel
+> `cfdpManager.ChannelConfig[n].rx_dir` parameter to confine received files to a directory
+> (see the CfdpManager SDD, *Security Considerations*).
+
 
 ### 2.4 Differences from FileHandling Subtopology
 
@@ -80,20 +85,24 @@ topology Flight {
 
   # Wire CFDP PDU data flow to/from communication stack
   connections ComCcsds_FileHandlingCfdp {
-    # CFDP Downlink -> ComQueue (PDU egress)
-    FileHandlingCfdp.Subtopology.cfdpManager.dataOut[0] -> ComCcsds.Subtopology.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.CFDP]
-    ComCcsds.Subtopology.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.CFDP] -> FileHandlingCfdp.Subtopology.cfdpManager.dataReturnIn[0]
-    
+    # CFDP Downlink -> ComQueue (PDU egress, uses the FILE queue slot)
+    FileHandlingCfdp.Subtopology.cfdpManager.dataOut[0] -> ComCcsds.Subtopology.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+    ComCcsds.Subtopology.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandlingCfdp.Subtopology.cfdpManager.dataReturnIn[0]
+
     # FprimeRouter -> CFDP Uplink (PDU ingress)
-    ComCcsds.Subtopology.cfdpUplinkOut -> FileHandlingCfdp.Subtopology.cfdpManager.dataIn[0]
-    FileHandlingCfdp.Subtopology.cfdpManager.dataInReturn[0] -> ComCcsds.Subtopology.cfdpUplinkReturnIn
-    
-    # Buffer allocation for CFDP PDU construction
-    FileHandlingCfdp.Subtopology.cfdpManager.bufferAllocate[0] -> ComCcsds.Subtopology.bufferGetIn[ComCcsds.Ports_ComBufferGet.CFDP]
-    ComCcsds.Subtopology.bufferDeallocateOut[ComCcsds.Ports_ComBufferGet.CFDP] -> FileHandlingCfdp.Subtopology.cfdpManager.bufferDeallocate[0]
+    ComCcsds.Subtopology.fileUplinkOut -> FileHandlingCfdp.Subtopology.cfdpManager.dataIn[0]
+    FileHandlingCfdp.Subtopology.cfdpManager.dataInReturn[0] -> ComCcsds.Subtopology.fileUplinkReturnIn
+
+    # Buffer allocation for CFDP PDU construction (ComCcsds comms buffer pool)
+    FileHandlingCfdp.Subtopology.cfdpManager.bufferAllocate[0] -> ComCcsds.Subtopology.commsBufferGetCallee
+    FileHandlingCfdp.Subtopology.cfdpManager.bufferDeallocate[0] -> ComCcsds.Subtopology.commsBufferSendIn
   }
 }
 ```
+
+The connections above use the only buffer queue slot the stock `ComCcsds` subtopology provides (`Ports_ComBufferQueue.FILE`) plus the router file uplink ports and the comms buffer pool boundary. These are the same ports the non-CFDP `FileHandling` subtopology wires to (see the `ComCcsds_FileHandling` connections in `TestDeploymentsProject/Ref/Top/topology.fpp`). A deployment that imports both `FileHandling` and `FileHandlingCfdp` therefore needs more than a second buffer queue entry, which covers downlink only: the stock `ComCcsds` hands the `fileUplinkOut` stream to a single consumer, so uplink needs a distinct routing path. Both `FileUplink` and `cfdpManager.dataIn` expect the same `FW_PACKET_FILE` descriptor, so the packet type cannot separate them; a custom router must discriminate on something else, for example the Space Packet APID carried in the deframer's `ComCfg::FrameContext`, before fanning out to the standard file uplink and to `cfdpManager.dataIn`. Otherwise the deployment runs only one of the two subtopologies on the stock wiring.
+
+The example wires `cfdpManager.bufferAllocate` into the shared `commsBufferManager`, which also serves `spacePacketFramer` and `frameAccumulator`. That is acceptable for a light CFDP workload, but note the budget: the stock pool holds 50 buffers (20 x 2048 plus 30 x 3000, see `ComCcsdsConfig.fpp`), while one channel can request up to `max_outgoing_pdus_per_cycle` buffers (default 64) per 1 Hz tick. Under a full-rate file downlink the CFDP channel can exhaust the pool and starve the framer and accumulator of buffers, and because the `Ports_ComBufferQueue.FILE` queue depth (100) exceeds the pool, ComQueue will not back-pressure first. For production use, either give CFDP its own `Svc.BufferManager` instance or size `max_outgoing_pdus_per_cycle` and the shared pool so the CFDP burst plus the framer and accumulator working set fits comfortably.
 
 ### 3.2 CFDP Configuration
 
@@ -109,7 +118,7 @@ The CFDP manager is configured at runtime via **parameters** defined in `CfdpCfg
 * **Local Entity ID**: Unique identifier for this CFDP entity
 * **ACK/NAK limits**: Maximum retry attempts for acknowledged transfers
 * **Timers**: ACK timeout and inactivity timeout durations
-* **Directories**: Temporary, failure, and move directories for file operations
+* **Directories**: Temporary, failure, move, and receive (`rx_dir`) directories for file operations
 * **Throttling**: Maximum outgoing PDUs per cycle for bandwidth control
 
 See the [CfdpManager SDD](../../../Ccsds/CfdpManager/docs/sdd.md) for detailed configuration options.

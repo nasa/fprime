@@ -11,7 +11,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 #include <Os/Os.hpp>
-#include "config/OsDelegateDirectory.hpp"
+#include "config/OsSelection.hpp"
 
 namespace Os {
 

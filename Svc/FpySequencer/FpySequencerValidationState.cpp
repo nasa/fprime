@@ -31,6 +31,10 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
+    if (!this->checkSandbox(this->m_sequenceFilePath)) {
+        return Fw::Success::FAILURE;
+    }
+
     // crc needs to be initialized with a particular value
     // for the calculation to work
     this->m_computedCRC.init();

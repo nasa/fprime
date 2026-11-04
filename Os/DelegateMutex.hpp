@@ -15,7 +15,7 @@ namespace Os {
 //! delegate constructed (via placement-new) by MutexInterface::getDelegate(). Which getDelegate()
 //! is linked selects the concrete implementation at link time. This is the default binding of the
 //! Os::Mutex alias; platforms may instead alias Os::Mutex directly to a concrete implementation for
-//! compile-time selection (see config/OsDelegateMutex.hpp).
+//! compile-time selection (see config/OsSelection.hpp).
 class DelegateMutex final : public MutexInterface {
   public:
     DelegateMutex();         //!<  Constructor. Mutex is unlocked when created

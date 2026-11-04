@@ -27,7 +27,10 @@ module Svc {
     async input port pingIn: Svc.Ping drop
 
     @ Run port used to emit telemetry
-    async input port run: Svc.Sched
+    sync input port run: Svc.Sched
+
+    @ Internal port that performs the run work on the component thread
+    internal port runInternal hook
 
     @ Ping output port
     output port pingOut: Svc.Ping

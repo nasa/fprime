@@ -35,6 +35,9 @@ class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
 
     //! Run PartialDrain command in nominal way
     void PartialDrainOK(void);
+
+    //! Run PartialDrain command in NOBLOCK mode with fewer buffers queued than requested
+    void PartialDrainNoBlock(void);
 };
 
 }  // namespace Drain

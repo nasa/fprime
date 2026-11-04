@@ -61,6 +61,10 @@ class VersionTester : public VersionGTestBase {
     void test_setVer(bool is_enabled);
     //! test all ports
     void test_ports();
+    //! test the scheduled re-emit (schedIn) port
+    void test_schedIn();
+    //! test the sendEvent function argument per telemetry method on the periodic (sendEvent=false) path
+    void test_sendEventParam();
     // clear history
     void clear_all();
 

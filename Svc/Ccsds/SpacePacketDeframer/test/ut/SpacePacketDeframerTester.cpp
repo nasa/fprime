@@ -44,9 +44,9 @@ void SpacePacketDeframerTester ::testDataReturnPassthrough() {
 
 void SpacePacketDeframerTester ::testNominalDeframing() {
     ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
-    U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
+    U16 seqCount = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
     U16 dataLength =
-        static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
+        static_cast<U16>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
     U8 data[dataLength];
     U16 lengthToken = static_cast<U16>(dataLength - 1);  // Length token is length - 1
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(dataLength); ++i) {
@@ -85,9 +85,9 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
 
 void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
     ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
-    U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
+    U16 seqCount = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
     U16 realDataLength =
-        static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
+        static_cast<U16>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
     U16 invalidLengthToken =
         static_cast<U16>(realDataLength + 1);  // Length token is greater than actual data available
     U8 data[realDataLength];
@@ -252,6 +252,10 @@ void SpacePacketDeframerTester ::testControlFieldAccepted(U16 pvn,
     ASSERT_from_dataReturnOut_SIZE(0);
     ASSERT_FROM_PORT_HISTORY_SIZE(2);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), expectedApid);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pktType(),
+              static_cast<ComCfg::SppPacketType::T>(packetType));
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_hasSecHdr(), static_cast<bool>(secondaryHeaderFlag));
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_sequenceFlags(), static_cast<U8>(sequenceFlags));
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_sequenceCount(), seqCount);
     ASSERT_EVENTS_SIZE(0);
 }

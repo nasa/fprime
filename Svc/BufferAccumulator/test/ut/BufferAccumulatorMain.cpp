@@ -58,6 +58,11 @@ TEST(TestPartialDrain, OK) {
     tester.PartialDrainOK();
 }
 
+TEST(TestPartialDrain, NoBlock) {
+    Svc::Drain::BufferAccumulatorTester tester;
+    tester.PartialDrainNoBlock();
+}
+
 // ----------------------------------------------------------------------
 // Test Health
 // ----------------------------------------------------------------------

@@ -9,7 +9,7 @@
 //
 // The dependency constraints are:
 //
-//   1. config/OsDelegateConsole.hpp (CFG) defines the Os::Console type alias by
+//   1. config/OsSelection.hpp (CFG) defines the Os::Console type alias by
 //      forward-declaring a link-time delegate (e.g. DelegateConsole) or directly
 //      aliasing a concrete implementation (e.g. Va416x0::GdsConsole).
 //      Must not include Os OSAL headers (they aren't yet defined).
@@ -31,9 +31,9 @@
 
 #include "Os/ConsoleInterface.hpp"
 
-// Validate that OS_CONSOLE_HEADER was defined by config/OsDelegateConsole.hpp
+// Validate that OS_CONSOLE_HEADER was defined by config/OsSelection.hpp
 #ifndef OS_CONSOLE_HEADER
-#error "OS_CONSOLE_HEADER must be defined in config/OsDelegateConsole.hpp"
+#error "OS_CONSOLE_HEADER must be defined in config/OsSelection.hpp"
 #endif
 
 #include OS_CONSOLE_HEADER

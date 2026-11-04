@@ -36,7 +36,7 @@ bool Tester::WaitTimeout::precondition(const Tester& state) {
 
 void Tester::WaitTimeout::action(Tester& state) {
     ++state.waiters;
-    Fw::TimeInterval timeout(0, 100000);  // 100ms
+    Fw::TimeInterval timeout(5, 0);  // 5 seconds
     this->getLock().unlock();
     ::Os::CountingSemaphore::Status status = state.semaphore.waitTimeout(timeout);
     this->getLock().lock();

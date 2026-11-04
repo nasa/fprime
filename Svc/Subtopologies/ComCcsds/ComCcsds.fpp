@@ -105,7 +105,16 @@ module ComCcsds {
         cpu ComCcsdsConfig.CpuAffinities.aggregator \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::enablePacketSpanning);
+        static_assert(static_cast<FwSizeType>(ComCcsdsConfig::Aggregator::aggregationSize) <=
+                          static_cast<FwSizeType>(Svc::Ccsds::TmDataFieldSize),
+                      "ComCcsdsConfig.Aggregator.aggregationSize must fit the TM Transfer Frame Data Field");
+        ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::aggregationSize,
+                                       ComCcsdsConfig::Aggregator::enablePacketSpanning,
+                                       2,  // Allocation id, distinct from the other ComCcsds instances
+                                       ComCcsds::Allocation::memAllocator);
+        """
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        ComCcsds::aggregator.cleanup();
         """
     }
 
@@ -314,7 +323,7 @@ module ComCcsds {
         # ----------------------------------------------------------------------
 
         # Upstream boundary (packet layer)
-        @ Input port receiving space packets from the packet layer for TM framing
+        @ Input port receiving complete (idle-filled) frame data fields from the packet layer for TM framing
         port dataIn        = framer.dataIn
 
         @ Output port returning ownership of downlinked buffers to the packet layer

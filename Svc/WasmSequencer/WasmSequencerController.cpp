@@ -35,9 +35,6 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_processInvo
         this->log_WARNING_LO_ModuleNotFound(value.get_moduleName());
         this->controller_sendSignal_invokeFailed(value.get_context());
     } else {
-        // Store the arguments for the ARGS host function round trip and carry the
-        // resolved module index forward in the request context.
-        this->m_args = value.get_args();
         Svc::WasmSequencer_RequestContext context = value.get_context();
         context.set_moduleIdx(static_cast<WasmSequencer_ModuleIdx>(moduleIdx));
         this->controller_sendSignal_invoked(context);
@@ -244,8 +241,6 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     FW_ASSERT(this->m_wasm != nullptr);
     FW_ASSERT(this->m_guest_allocator != nullptr);
 
-    this->m_args = value.get_args();
-
     // Resolve the sequence file path against SEQ_BASE_DIR
     Fw::String filePath;
     if (!this->resolveSequencePath(value.get_fileName(), filePath)) {
@@ -350,7 +345,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     if (value.get_source() == Svc::WasmSequencer_SignalSource::COMMAND_RUN ||
         value.get_source() == Svc::WasmSequencer_SignalSource::PORT_RUN) {
         if (this->isConnected_seqStartOut_OutputPort(0)) {
-            this->seqStartOut_out(0, this->m_lastLoadFileName, this->m_args);
+            this->seqStartOut_out(0, this->m_lastLoadFileName, Svc::SeqArgs{});
         }
     }
 }

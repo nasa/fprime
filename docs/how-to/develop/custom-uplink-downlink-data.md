@@ -49,9 +49,9 @@ The Space Packet header APID is filled from the same `ComCfg::Apid` value, which
 
 ## 1. Define the Custom APID
 
-APIDs are defined in the `ComCfg::Apid` enumeration in `config/ComCfg.fpp`. Projects override this file through the standard [configuration override mechanism](../../user-manual/build-system/settings.md) (`config_directory` in `settings.ini`).
+APIDs are defined in the `ComCfg::Apid` enumeration in `config/ComCfg.fpp`. Projects override this file through a [configuration module](../../user-manual/build-system/configuration.md#overriding-configuration-in-a-project) (`CONFIGURATION_OVERRIDES` in `config-overrides/CMakeLists.txt`).
 
-Copy `ComCfg.fpp` into your project configuration directory and add your APID to the enumeration, keeping all the reserved `FW_*` entries:
+Copy `ComCfg.fpp` into your project's `config-overrides/` directory and add your APID to the enumeration, keeping all the reserved `FW_*` entries:
 
 ```fpp
 @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF

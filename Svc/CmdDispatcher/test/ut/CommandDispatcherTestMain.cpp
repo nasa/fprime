@@ -212,7 +212,7 @@ TEST(CmdDispTestOffNominal, CommandOverflowExecuteUntracked) {
 }
 
 TEST(CmdDispTestOffNominal, ClearSequenceTracker) {
-    TEST_CASE(102.1.3, "Clear Command Tracker");
+    TEST_CASE(102.2.6, "Clear Command Tracker");
     COMMENT("Verify command to clear command tracker.");
 
     Svc::CommandDispatcherImpl impl("CmdDispImpl");
@@ -230,7 +230,7 @@ TEST(CmdDispTestOffNominal, ClearSequenceTracker) {
 }
 
 TEST(CmdDispTestOffNominal, CommandQueueOverflow) {
-    TEST_CASE(102.2.5, "Off-nominal Command QueueOverflow");
+    TEST_CASE(102.2.7, "Off-nominal Command QueueOverflow");
     COMMENT("Verify error case where the seqCmdBuff port queue overflows and does not ASSERT.");
 
     Svc::CommandDispatcherImpl impl("CmdDispImpl");
@@ -248,7 +248,7 @@ TEST(CmdDispTestOffNominal, CommandQueueOverflow) {
 }
 
 TEST(CmdDispTestOffNominal, ConcurrentQueueOverflow) {
-    TEST_CASE(102.2.9, "Off-nominal Concurrent Command QueueOverflow");
+    TEST_CASE(102.2.8, "Off-nominal Concurrent Command QueueOverflow");
     COMMENT("Verify the dropped-command counter loses no increments when the overflow hook runs on multiple threads.");
 
     Svc::CommandDispatcherImpl impl("CmdDispImpl");
@@ -266,7 +266,7 @@ TEST(CmdDispTestOffNominal, ConcurrentQueueOverflow) {
 }
 
 TEST(CmdDispTestOffNominal, SequenceNumberWrapSkipsTrackedIds) {
-    TEST_CASE(102.2.6, "Sequence Number Wraparound");
+    TEST_CASE(102.2.9, "Sequence Number Wraparound");
     COMMENT("Verify sequence number allocation skips IDs that are still tracked across U32 wraparound.");
 
     Svc::CommandDispatcherImpl impl("CmdDispImpl");
@@ -294,7 +294,7 @@ TEST(CmdDispTestOffNominal, SequenceNumberWrapSkipsTrackedIds) {
 }
 
 TEST(CmdDispTestOffNominal, SequenceNumberNoScanBeforeWrap) {
-    TEST_CASE(102.2.7, "Sequence Number Allocation Before Wraparound");
+    TEST_CASE(102.2.10, "Sequence Number Allocation Before Wraparound");
     COMMENT("Verify sequence number allocation does not scan the tracker until the U32 counter has wrapped.");
 
     Svc::CommandDispatcherImpl impl("CmdDispImpl");
@@ -315,7 +315,7 @@ TEST(CmdDispTestOffNominal, SequenceNumberNoScanBeforeWrap) {
 }
 
 TEST(CmdDispTestOffNominal, SequenceNumberWrapOnInvalidOpcode) {
-    TEST_CASE(102.2.8, "Sequence Number Wraparound On Invalid Opcode");
+    TEST_CASE(102.2.11, "Sequence Number Wraparound On Invalid Opcode");
     COMMENT("Verify the wrap flag is latched when an invalid opcode consumes the maximum sequence number.");
 
     Svc::CommandDispatcherImpl impl("CmdDispImpl");

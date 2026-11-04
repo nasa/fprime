@@ -9,7 +9,7 @@
 //
 // The dependency constraints are:
 //
-//   1. config/OsDelegateFileSystem.hpp (CFG) defines the Os::FileSystem type
+//   1. config/OsSelection.hpp (CFG) defines the Os::FileSystem type
 //      alias by forward-declaring a link-time delegate (e.g. DelegateFileSystem)
 //      or directly aliasing a concrete implementation.
 //      Must not include Os OSAL headers (they aren't yet defined).
@@ -35,9 +35,9 @@
 #include "Os/File.hpp"
 #include "Os/FileSystemInterface.hpp"
 
-// Validate that OS_FILE_SYSTEM_HEADER was defined by config/OsDelegateFileSystem.hpp
+// Validate that OS_FILE_SYSTEM_HEADER was defined by config/OsSelection.hpp
 #ifndef OS_FILE_SYSTEM_HEADER
-#error "OS_FILE_SYSTEM_HEADER must be defined in config/OsDelegateFileSystem.hpp"
+#error "OS_FILE_SYSTEM_HEADER must be defined in config/OsSelection.hpp"
 #endif
 
 #include OS_FILE_SYSTEM_HEADER

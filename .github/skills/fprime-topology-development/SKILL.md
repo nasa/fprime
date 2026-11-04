@@ -63,6 +63,9 @@ than from a generic default.
 
 ## 3 — Connections
 
+To find what is already wired to an instance, including pattern
+specifiers, see `.github/skills/fprime-fpp-navigation/SKILL.md` §1.
+
 **Pattern graphs** — one specifier per service wires the whole
 deployment's command, event, telemetry, text-event, parameter, time,
 and health ports, each naming the serving instance, e.g.
@@ -130,7 +133,8 @@ inner instances; a locally developed subtopology may instead be
 (`MySubtopology.rateGroup.CycleIn`). Its `PingEntries` live in
 `GlobalDefs::PingEntries` and its `SubtopologyTopologyDefs.hpp` must be
 included by the deployment's `TopologyDefs.hpp`. Configuration is
-overridden with a config module.
+overridden with a configuration module (see
+[Configuration Modules](../../../docs/user-manual/build-system/configuration.md)).
 See [subtopologies](../../../docs/user-manual/design-patterns/subtopologies.md)
 and [develop a subtopology](../../../docs/how-to/develop/develop-subtopologies.md).
 

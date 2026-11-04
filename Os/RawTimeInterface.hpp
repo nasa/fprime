@@ -9,7 +9,7 @@
 #include <Fw/Time/TimeInterval.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>
-#include "config/OsDelegateRawTime.hpp"
+#include "config/OsSelection.hpp"  // defines Os::RawTime alias and OS_RAW_TIME_HEADER consumed by Os/RawTime.hpp; do not remove
 #include "config/RawTimeSource.hpp"
 
 namespace Os {

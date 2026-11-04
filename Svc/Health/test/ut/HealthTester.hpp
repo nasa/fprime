@@ -44,6 +44,7 @@ class HealthTester : public HealthGTestBase {
     void disableAllMonitoring();
     void disableOneMonitoring();
     void updatePingTimeout();
+    void updateTimeoutDuringPendingPing();
     void watchdogCheck();
     void nominalCmd();
     void nominal2CmdsDuringTlm();

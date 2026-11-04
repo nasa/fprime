@@ -9,6 +9,7 @@ This guide will walk you through the structure and best practices in developing 
 3. [Optional: Toolchain Folder and Toolchain Files](#optional-toolchain-folder-and-toolchain-files)
 4. [Optional: Platform Folder and Platform Files](#optional-platform-folder-and-platform-files)
 5. [Optional: F´ Module Directories](#optional-f-module-directories)
+6. [Optional: Default Configuration Folder](#optional-default-configuration-folder)
 
 ## F´ Library Structure
 
@@ -17,6 +18,7 @@ In this section, you will learn about the expected structure of an F´ library.
 1. Module Directories and Modules (Components, Ports, Topologies, etc.)
 2. `cmake/toolchain` Folder and Toolchain Files
 3. `cmake/platform` Folder and Platform Files
+4. `default-config/config-<library name>` Folder and Default Configuration Files (optional)
 
 That means that a complete F´ library might look like the following:
 
@@ -25,6 +27,9 @@ my-library/
 ├── cmake
 │   ├── platform
 │   └── toolchain
+├── default-config
+│   └── config-my-library
+│       └── ...
 ├── MyLibrary
 │   ├── Components
 │   │   └── MyComponent
@@ -81,6 +86,18 @@ In a similar manner to toolchains, platforms may be provided in the `cmake/platf
 The example platform would thus need to include `set(FPRIME_PLATFORM "my-platform")`.
 
 The `cmake/platform` folder may contain any number of platform files and must be placed in the root of the library's directory structure.
+
+## Optional: Default Configuration Folder
+
+A library with configurable settings (FPP constants, `<Component>Cfg.hpp` headers) ships its defaults as a configuration
+module so that projects can override them file by file. Place the files in `default-config/config-<library name>/` and
+register them from that directory with `register_fprime_config(config-<library name> ...)`; modules in the library
+include them as `#include <config-<library name>/File.hpp>` and list `config-<library name>` in `DEPENDS` (or the
+module is registered with `GLOBAL_IMPLICIT_DEPENDENCY` to make it available to every module without `DEPENDS`).
+
+The configuration directory must not be placed directly at the library root (it would shadow every project override);
+see [Library Defaults](../../user-manual/build-system/configuration.md#library-defaults) for why, and for the full
+layout, include-path, and dependency rules with an example.
 
 ## Conclusion
 

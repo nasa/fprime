@@ -32,6 +32,10 @@ workflow order and quality criteria.
 
 ## 1 — Scaffold, implement, register, run
 
+`invoke_to_*`, `from_*_handler`, `sendCmd_*` and the `ASSERT_*` macros are
+derived from the `.fpp`; the table is in
+`.github/skills/fprime-fpp-navigation/SKILL.md`.
+
 1. **Scaffold**: `fprime-util impl --ut` — rename `.template` files,
    delete auto-generated `*Ac.*` / `*GTestBase.*`.
 2. **Tester class**: inherit `<Component>GTestBase`, add test methods
@@ -46,6 +50,15 @@ workflow order and quality criteria.
    [CMakeLists.txt registration](https://github.com/nasa/fprime/blob/devel/docs/user-manual/overview/unit-testing.md#cmakeliststxt-registration).
 5. **Build & run**: `fprime-util build --ut`, `fprime-util check`,
    `fprime-util check --coverage`.
+6. **Consolidate**: once the new tests pass, re-read the test diff as
+   a reviewer would and refactor before opening the PR:
+   - fold repeated invoke → assert sequences shared by two or more
+     tests into a Tester helper, or into an existing rule when the
+     component already has `test/ut/Rules/`;
+   - reuse existing helpers and rules before adding new ones;
+   - drop tests that do not verify the behavior the task added or
+     changed (note remaining coverage gaps as future work);
+   - re-run `fprime-util check` to confirm nothing regressed.
 
 ---
 
@@ -105,4 +118,6 @@ and include `DEPENDS STest`.
 - [ ] Rules-based testing for stateful / multi-port components (≥ 1000 random steps)
 - [ ] No dynamic memory after construction
 - [ ] `REQUIREMENT("...")` and `COMMENT("...")` macros present
+- [ ] Consolidation pass done: shared sequences folded into helpers or
+      rules, off-task tests removed
 - [ ] `fprime-util check` passes

@@ -9,7 +9,7 @@
 //
 // The dependency constraints are:
 //
-//   1. config/OsDelegateCountingSemaphore.hpp (CFG) defines the
+//   1. config/OsSelection.hpp (CFG) defines the
 //      Os::CountingSemaphore type alias by forward-declaring a link-time
 //      delegate (e.g. DelegateCountingSemaphore) or directly aliasing a
 //      concrete implementation.
@@ -33,9 +33,9 @@
 
 #include "Os/CountingSemaphoreInterface.hpp"
 
-// Validate that OS_COUNTING_SEMAPHORE_HEADER was defined by config/OsDelegateCountingSemaphore.hpp
+// Validate that OS_COUNTING_SEMAPHORE_HEADER was defined by config/OsSelection.hpp
 #ifndef OS_COUNTING_SEMAPHORE_HEADER
-#error "OS_COUNTING_SEMAPHORE_HEADER must be defined in config/OsDelegateCountingSemaphore.hpp"
+#error "OS_COUNTING_SEMAPHORE_HEADER must be defined in config/OsSelection.hpp"
 #endif
 
 #include OS_COUNTING_SEMAPHORE_HEADER

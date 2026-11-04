@@ -397,6 +397,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqFaile
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
+    this->m_tlm.sequencesFailed++;
     if (this->isConnected_seqDoneOut_OutputPort(0)) {
         // report that the sequence failed to internal callers
         this->seqDoneOut_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);

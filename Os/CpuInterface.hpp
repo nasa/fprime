@@ -6,7 +6,7 @@
 #define OS_CPUINTERFACE_HPP_
 
 #include "Os/Os.hpp"
-#include "config/OsDelegateCpu.hpp"
+#include "config/OsSelection.hpp"
 
 namespace Os {
 

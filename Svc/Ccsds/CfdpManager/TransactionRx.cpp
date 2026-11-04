@@ -773,6 +773,7 @@ void Transaction::r2SubstateRecvFileData(const Fw::Buffer& buffer) {
         // Bad file data PDU, reset transaction
         this->m_cfdpManager->log_WARNING_LO_FailFileDataPduDeserialization(this->getChannelId(),
                                                                            static_cast<I32>(deserStatus));
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_PROTOCOL_ERROR);
         this->r2Reset();
         return;
     }
@@ -952,7 +953,7 @@ Status::T Transaction::r2CalcCrcChunk() {
             if (ret == Cfdp::Status::SUCCESS) {
                 FwSizeType expected_read_size = read_size;
                 fileStatus = this->m_fd.read(buf, read_size, Os::File::WaitType::WAIT);
-                if (fileStatus != Os::File::OP_OK) {
+                if ((fileStatus != Os::File::OP_OK) || (read_size != expected_read_size)) {
                     this->m_cfdpManager->log_WARNING_LO_RxReadCrcFailed(
                         this->getClass(), this->m_history->src_eid, this->m_history->seq_num,
                         static_cast<U32>(expected_read_size), static_cast<I32>(read_size));
@@ -1074,8 +1075,15 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
             return;
         }
 
-        // PDU validation already done during deserialization
-        this->m_engine->recvMd(this, md);
+        // Structural PDU validation already done during deserialization; recvMd validates the
+        // destination path against the channel rx_dir before committing anything, so on rejection
+        // dst_filename still names the temp file.
+        if (this->m_engine->recvMd(this, md) != Status::SUCCESS) {
+            // Destination rejected: keep writing/cleaning up against the temp file only and fail the
+            // transaction with a filestore rejection so the sender is told in the FIN.
+            this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
+            return;
+        }
 
         /* successfully obtained md PDU */
         if (this->m_flags.rx.eof_recv) {

@@ -5,7 +5,7 @@
 
 - [OSAL SDD](https://github.com/nasa/fprime/blob/devel/Os/docs/sdd.md)
 - [Generic Services SDD](https://github.com/nasa/fprime/blob/devel/Os/Generic/docs/sdd.md)
-- [How-To: Implement an OSAL](https://github.com/nasa/fprime/blob/devel/docs/how-to/implement-osal.md)
+- [How-To: Implement an OSAL](https://github.com/nasa/fprime/blob/devel/docs/how-to/integrate/implement-osal.md)
 
 ## Overview
 

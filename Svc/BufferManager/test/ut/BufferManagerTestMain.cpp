@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "BufferManagerTester.hpp"
+#include "STest/Random/Random.hpp"
 
 TEST(Nominal, Setup) {
     Svc::BufferManagerTester tester;
@@ -30,6 +31,7 @@ TEST(OffNominal, SetupSizeOverflowAsserts) {
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
