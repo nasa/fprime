@@ -28,7 +28,7 @@ The `Svc::Ccsds::AsmFramer` uses an internal (member) buffer sized to hold the l
 
 ## Usage Example
 
-Projects insert an `AsmFramer` instance between the transfer-frame layer and the com interface, for example with the `ComCcsds` split subtopologies:
+Projects insert an `AsmFramer` instance between the transfer-frame layer and the com interface on the downlink path only; the uplink connections (`comStub.dataOut -> ComCcsds.TmTcFraming.framedDataIn`, `ComCcsds.TmTcFraming.framedDataReturnOut -> comStub.dataReturnIn`) stay wired directly, since TC uplink carries no ASM. For example with the `ComCcsds` split subtopologies:
 
 ```fpp
 ComCcsds.TmTcFraming.framedDataOut -> asmFramer.dataIn
@@ -45,6 +45,9 @@ On the ground side, the matching `fprime-gds` deframing chain is selected with
 ([nasa/fprime-gds#337](https://github.com/nasa/fprime-gds/pull/337)); releases up to 4.4.1 reject them
 and cannot synchronize on an ASM-marked downlink. Until then the matching ground deframer must be
 provided by the project.
+
+> [!WARNING]
+> The marker is fixed at initialization: `configure()` cannot be called once frames are flowing, and the component emits no event or telemetry channel. If the flight pattern or length (including the zero-length "disabled" setting) does not match the ground deframer's `--asm`, or an upstream `AosFramer` frame size does not match the ground's `--frame-size` (which defaults to `ComCfg.TmFrameFixedSize`), the ground never acquires frame synchronization and all downlink is lost with no flight-side indication. Treat the flight ASM configuration and the ground `--asm`/`--frame-size` settings as one configuration item and verify them together before flight.
 
 ## Port Descriptions
 
