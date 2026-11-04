@@ -54,11 +54,15 @@ class AsmFramer final : public AsmFramerComponentBase {
     //! Destroy AsmFramer object
     ~AsmFramer();
 
+    //! Component instances are constructed once by the topology and never copied
+    AsmFramer(const AsmFramer&) = delete;
+    AsmFramer& operator=(const AsmFramer&) = delete;
+
     //! Configure the ASM pattern. Sizes 1 to ASM_MAX_SIZE select a marker such as
-    //! the coded-data patterns of CCSDS 131.0-B-5 Sections 9.3.2 - 9.3.4; size 0
-    //! disables the marker so frames pass through unchanged. Must be called before
-    //! the component receives data, and may not be called while the component holds
-    //! outstanding frames.
+    //! the coded-data patterns of CCSDS 131.0-B-5 Sections 9.3.2 - 9.3.5; size 0
+    //! disables the marker so frames pass through unchanged. Intended to be called
+    //! at initialization; it may be called again only while the component owns its
+    //! frame buffer (no Sync-Marked Transfer Frame outstanding).
     void configure(const Fw::ConstByteArray& asmPattern  //!< ASM pattern bytes; size in [0, ASM_MAX_SIZE]
     );
 
@@ -107,6 +111,12 @@ class AsmFramer final : public AsmFramerComponentBase {
 
     //! Ownership state of the internal frame buffer
     BufferOwnershipState m_bufferState = BufferOwnershipState::OWNED;
+
+    //! Upstream frame buffer held until the Sync-Marked Transfer Frame buffer is returned on dataReturnIn
+    Fw::Buffer m_upstreamBuffer;
+
+    //! Context of the held upstream frame
+    ComCfg::FrameContext m_upstreamContext;
 };
 
 }  // namespace Ccsds

@@ -62,10 +62,15 @@ void AsmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
         (void)::memcpy(&this->m_frameBuffer[this->m_asmSize], data.getData(), static_cast<size_t>(data.getSize()));
     }
 
+    // Hold the upstream buffer until our own buffer comes back on dataReturnIn. Returning
+    // it earlier would signal the upstream framer that the frame was consumed while the
+    // com adapter may still hold it (asynchronous drivers), letting the upstream framer
+    // emit its next frame into a buffer this component does not own.
+    this->m_upstreamBuffer = data;
+    this->m_upstreamContext = context;
     Fw::Buffer frameBuffer(this->m_frameBuffer, this->m_asmSize + data.getSize());
     this->m_bufferState = BufferOwnershipState::NOT_OWNED;
     this->dataOut_out(0, frameBuffer, context);
-    this->dataReturnOut_out(0, data, context);  // return ownership of the original data buffer
 }
 
 void AsmFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
@@ -83,6 +88,11 @@ void AsmFramer ::dataReturnIn_handler(FwIndexType portNum,
     FW_ASSERT(frameBuffer.getData() >= &this->m_frameBuffer[0]);
     FW_ASSERT(frameBuffer.getData() < &this->m_frameBuffer[0] + sizeof(this->m_frameBuffer));
     this->m_bufferState = BufferOwnershipState::OWNED;
+
+    // Now that the com adapter has released our buffer, return the upstream frame
+    Fw::Buffer upstream = this->m_upstreamBuffer;
+    this->m_upstreamBuffer = Fw::Buffer();
+    this->dataReturnOut_out(0, upstream, this->m_upstreamContext);
 }
 
 }  // namespace Ccsds
