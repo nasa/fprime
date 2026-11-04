@@ -2,9 +2,11 @@
 param LocalEid: Cfdp.EntityId \
     default 42
 
-@ Maximum number of bytes to put into a file PDU
+@ Maximum number of bytes to put into a file PDU. The default keeps a File Data PDU within
+@ MaxPduSize (1001) with 4-byte entity IDs and sequence numbers and 32-bit offsets:
+@ 1001 - 16 (header) - 4 (offset) = 981
 param OutgoingFileChunkSize: U32 \
-    default 992
+    default 981
 
 @ The maximum number of received bytes to calculate a CRC for in a single scheduler cycle
 param RxCrcCalcBytesPerCycle: U32 \

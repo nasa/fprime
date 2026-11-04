@@ -443,7 +443,7 @@ These constants are defined in the `Svc.Ccsds.Cfdp` module and must be configure
 |----------|---------|
 | `NumChannels` | Number of CFDP channels to instantiate. Determines the size of channel-specific port arrays and the number of independent CFDP channel instances. Each channel has its own transaction pool, configuration, and state. |
 | `MaxFilePathSize` | Maximum length for file path strings. Used to size string parameters (`ChannelConfig.tmp_dir`, `ChannelConfig.fail_dir`, `ChannelConfig.move_dir`, `ChannelConfig.rx_dir`) and internal file path buffers. |
-| `MaxPduSize` | Maximum PDU size in bytes. Limits the maximum possible TX PDU size. Must respect any CCSDS packet size limits on the system. |
+| `MaxPduSize` | Maximum PDU size in bytes. Limits the maximum possible TX PDU size. Must respect any CCSDS packet size limits on the system. The default of 1001 is the largest PDU the stock `Svc.ComCcsds` downlink carries without packet spanning: TM data field (1016 with the default 1024-byte frame) minus a minimum idle packet (7), the Space Packet header (6) and the packet descriptor (2). |
 
 ### FPP Types (CfdpCfg.fpp)
 
@@ -615,7 +615,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | Name | Description |
 |---|---|
 | LocalEid | Local CFDP entity ID used in PDU headers to identify this node in the CFDP network |
-| OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission |
+| OutgoingFileChunkSize | Maximum number of bytes to include in each File Data PDU. Limits PDU size for transmission. The default of 981 keeps a File Data PDU within the default `MaxPduSize` with 4-byte entity IDs and sequence number: 1001 - 16 (header) - 4 (offset). |
 | RxCrcCalcBytesPerCycle | Maximum number of received file bytes to process for CRC calculation in a single scheduler cycle. Prevents blocking during large file verification |
 | PostInactivitySendRetries | Extra scheduler cycles a pending terminal send (EOF or FIN-ACK) is retried after the inactivity timer fires before the transaction is recycled regardless |
 | FileInDefaultChannel | CFDP channel ID used for file transfers initiated via the `fileIn` port interface (not commands) |
