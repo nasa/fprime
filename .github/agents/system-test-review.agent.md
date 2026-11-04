@@ -1,5 +1,5 @@
 ---
-description: "Use when an F Prime system test plan or test harness needs an adversarial review (stage 2 of the system test process, or the test-design phase of component development): finds what the plan would not catch, what the harness would pass by construction, and writes the independent checker that the auditor later runs. Produces must-fix / could-fix findings and a disagreement log, locally only. Keywords: F Prime, test review, adversarial, test plan, harness, independent checker, must fix."
+description: "Use when an F Prime system test plan or test harness needs an adversarial review (stage 2 of the system test process, or the test-design phase of component development): finds what the plan would not catch, what the harness would pass by construction, and checks the test functions' named checks against the plan text and the vector records (the auditor replays those same functions). Produces must-fix / could-fix findings and a disagreement log, locally only. Keywords: F Prime, test review, adversarial, test plan, harness, independent checker, must fix."
 name: "F Prime System Test Reviewer"
 tools: [read, search, edit, execute]
 user-invocable: true
@@ -116,9 +116,11 @@ helpers' implementation before step 1. Procedure:
 4. Output `review-harness-round-N.md` with the same tags. Five rounds
    maximum.
 
-The reviewer's checker is a hand-off artifact: it goes on the
-manifest (`--checker reviewer=checks/<name>.py`) and `fth audit
---independent` runs it in stage 3.
+The reviewer's hand-off artifacts are the findings and `divergence.md`;
+the test functions themselves are what stage 3 replays (`fth audit
+--tests`). A legacy plan with plan-owned pass rules still hands off the
+independent checker (`--checker reviewer=checks/<name>.py`, `fth audit
+--independent`).
 
 ## Forbidden
 

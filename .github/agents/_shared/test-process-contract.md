@@ -38,7 +38,7 @@ comes from the agents; trust comes from the hand-offs below.
 | Stage | Who iterates | Human gate | Close condition | Hand-off |
 |---|---|---|---|---|
 | 1. Base development | `fprime-development.agent` with review and unit-test skills (`fprime-iterative-development` when approved); requirements, FPP design and test design (system test plan, fault menu, unit-test list) each pass the loop of `phase-review-loop.md` | Requirements, FPP design and test-design approval **before** iteration | No must-fix findings; unit and component integration tests pass; the unit-test list is implemented with no gap rows | UUT SHA |
-| 2. System-test development | `system-test-design` ↔ `system-test-review` on the plan, standalone, when stage 1 produced none; else `system-test-design` runs the plan refresh of `fprime-system-test-design` §7 (bench L0, code read last, diff reviewed once then to the human); then `system-test-build` ↔ `system-test-review` on the harness, closing with the mutation vectors and a stage-3 rehearsal (`fprime-system-test-design` §6) | Test-plan approval (or approval of the refresh diff) **before** building; harness review (local files; a PR only if the human asks) **before** the manifest is frozen | Plan has no open must-fix; `fth vectors` green on the real bench (clean record + one record per planted fault); engine and independent checker agree byte-for-byte on every vector; rehearsal ran draw → run → audit → unseal without a tooling error | Manifest (§3) |
+| 2. System-test development | `system-test-design` ↔ `system-test-review` on the plan, standalone, when stage 1 produced none; else `system-test-design` runs the plan refresh of `fprime-system-test-design` §7 (bench L0, code read last, diff reviewed once then to the human); then `system-test-build` ↔ `system-test-review` on the harness, closing with the mutation vectors and a stage-3 rehearsal (`fprime-system-test-design` §6) | Test-plan approval (or approval of the refresh diff) **before** building; harness review (local files; a PR only if the human asks) **before** the manifest is frozen | Plan has no open must-fix; `fth vectors` green on the real bench (clean record + one record per planted fault); hand `pytest` and `fth run --replay-record` agree per test on every vector, `fth audit --tests` replays them without DIVERGENCE; rehearsal ran draw → run → audit → unseal without a tooling error | Manifest (§3) |
 | 3. Run-for-record (RfR) | `test-runner` then `test-auditor`, both blind | Human seeds the draw at start; human reviews `unseal.md` and the quick-looks at the end | `unseal.md` produced | Run directory |
 
 Each stage is a separate human-driven prompt. Stages never run
@@ -237,7 +237,7 @@ this table; bumping it is a one-line change here and nowhere else.
 
 | Tool | Pinned | Install |
 |---|---|---|
-| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 27fafb537479012ee57a7fe68cb93cce2dce0b33) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@27fafb537479012ee57a7fe68cb93cce2dce0b33#egg=fprime-testing-harness"` |
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 8a414a967926b27b9addf7d0562d9c17749aa22e) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@8a414a967926b27b9addf7d0562d9c17749aa22e#egg=fprime-testing-harness"` |
 
 Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and

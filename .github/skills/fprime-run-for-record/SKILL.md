@@ -158,7 +158,7 @@ It performs, in order, and stops at the first failure:
    `record/{events,channels,commands}.jsonl` + `export-counts.json`
    (dedup of the recorder's double-written rows happens here, per file
    per boot segment, exact raw line only); `fth hash-record`.
-7. Self-evaluate with the engine → `runner/verdicts.json`,
+7. Derive `runner/verdicts.json` from pytest's junit (`fth.junit`; the junit is copied into `record/` before hashing),
    `runner/report.md`.
 
 The runner agent adds nothing to the record: every anomaly, operator
@@ -173,8 +173,8 @@ the run directory by path; the auditor reads `record/`,
 
 ```bash
 fth audit --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
-    --plan <plan.json> --independent checks/<name>.py \
-    [--rebuild --toolchain-json <toolchain.json>]
+    --plan <plan.json> --tests <test/int> --bench <bench.json> \
+    [--rebuild --toolchain-json <toolchain.json>]      # legacy plans: --independent checks/<name>.py
 ```
 
 Each step is a line in `auditor/report.md`; a failed hash or marker step

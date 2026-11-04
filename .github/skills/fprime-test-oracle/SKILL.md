@@ -4,7 +4,7 @@ description: >-
   Use when writing or implementing the success condition of a system
   test as code over a recorded run: the pass-rule format, the exported
   record it reads, the completeness-versus-UUT split, the
-  two-independent-checkers rule, and the verdict and divergence formats
+  live-vs-replay rule (the same test functions, two executions), and the verdict and divergence formats
   shared by the test designer, reviewer, builder, runner, and auditor;
   the `@planted_fault` fault-injection declarations and the sealed faults file.
   Keywords: F Prime, test oracle, pass rule, checker, verdict, record,
@@ -119,9 +119,10 @@ in order, waits return at once) → `auditor/junit.xml` →
 runner's — verdict **and** `failed` — any difference is `DIVERGENCE`.
 Record integrity findings come first (one START..END per window, no
 command outside a window, monotonic time, export counts, junit hashed,
-no duplicate test). The former engine/independent-checker KATs are unit
-tests of the check grammar and the check functions (`tests/test_checks.py`,
-`tests/test_replay_match.py`, `tests/test_integrity.py`).
+no duplicate test). The check grammar and the check functions are unit
+tested in the tooling (`tests/test_checks.py`, `tests/test_checks_rules.py`);
+replay matching and the integrity findings in `tests/test_replay_match.py`,
+`tests/test_integrity.py`, `tests/test_audit_replay.py`.
 
 **Engine** (legacy plans with `complete`/`all_of`): `fth evaluate
 plan.json <record-dir> -o verdicts.json` judges every plan predicate and

@@ -105,9 +105,16 @@ is pytest's, `fth run` only reads the junit. Waits are pacing only
 UUT event that is absent is a **FAIL**; `require(...)` is for
 infrastructure absences only (Captain's rule). Check names are the
 identity the planted-fault `fails` lists, the unseal and the VnV matrix
-use — keep them verbatim-stable; `fth verify-plan plan.json --tests
-test/int` dry-runs the tests and refuses a `fails` entry no test
-declares. END carries **no verdict** (contract §4).
+use — keep them verbatim-stable and **constant per test** (built from
+literals, never from live data: the gate harvests them from one dry
+run); `fth verify-plan plan.json --tests test/int` dry-runs the tests and
+refuses a `fails` entry no test declares, and `fth run` repeats that
+pre-flight before flashing. A window must declare at least one check
+(a check-less window can never PASS); a judged FAIL stands whatever else
+happens on the test (teardown error, body exception, a later
+`Incomplete`); all failed checks are raised together at the test's last
+window — the stimulus of every window runs so the record stays whole for
+replay. END carries **no verdict** (contract §4).
 The L0 feasibility gate sends one marker and checks the archive shows
 it byte-exact (`NO_OP_STRING` truncates when a project shortens
 `FW_LOG_STRING_MAX_SIZE`; a `MARK(U32)` round-trips or not) — nothing
