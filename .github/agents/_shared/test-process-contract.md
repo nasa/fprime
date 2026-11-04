@@ -22,7 +22,7 @@ comes from the agents; trust comes from the hand-offs below.
 | UUT | Unit under test: the component, driver, or subsystem being qualified, identified by a git SHA. |
 | Plan | The approved system test plan (`fprime-system-test-design`). Each test has an `ID:` of ≤ 8 characters. |
 | Pass rule | The success condition of one test, written so a program can evaluate it over the record (`fprime-test-oracle`). |
-| Checker | A program that evaluates pass rules over the record and emits verdicts. Two exist: the tooling's engine (`fth evaluate`, judging the plan's predicates and registered helpers) and the reviewer's independent checker, written from the plan text alone. |
+| Checker | What judges the named checks over the record. Since phase 1 the checks live in the integration test; the runner's junit (live) and the auditor's replay of the same test functions over the sealed record (`fth audit`) are the two executions that must agree. The tooling's engine (`fth evaluate`) judges only legacy plans with plan-owned pass rules; a reviewer's independent checker is optional for those. |
 | Harness | Test-only code: tester components, test procedures, checkers, bench scripts. Never part of the UUT. |
 | Complete testbed | The bench recipe names every device, link, power control and ground system of the mission configuration; any build whose topology differs from the mission's is a *test deployment*. |
 | Record | `record/` = ground-system archive (`raw/`), its flat export, and the flash log — plus `record.sha256`. Harness stdout and pytest output are **not** record; they live in `runner/`. |
@@ -65,9 +65,15 @@ concurrently on the same UUT SHA.
   dispatcher and event-drop counters) and UUT facts (completion
   events) are separate: a missing UUT event in a complete window is
   `FAIL`, never `UNVERIFIED`.
-- **Two independent checkers.** The builder implements the pass rules;
-  the reviewer implements them again without reading the builder's
-  code. A verdict is reportable only when both exist.
+- **Two executions of the same checks.** The integration test carries
+  its named checks; the runner executes them live, the auditor replays
+  the very same test functions over the sealed record (`fth audit`,
+  replay mode: `send()` must meet the recorded commands in order, waits
+  return at once, checks are judged over the record). A verdict is
+  reportable only when both exist and agree per test (verdict + failed
+  check names); any difference is a `DIVERGENCE` finding. A separately
+  written independent checker is optional (legacy plans with plan-owned
+  pass rules only) and no longer part of this contract.
 - **The record is the evidence.** Quick-looks are derived from the
   hashed record by the auditor, never supplied by the runner. The
   procedure drives and records; it never decides.
@@ -165,11 +171,14 @@ not tamper-proof. Every RfR report says so.
   flash with read-back, one recorder, run-start markers, stimulus,
   export, hash, engine verdicts), fixes nothing, retries nothing
   silently, and notes every anomaly it noticed.
-- **Auditor** runs `fth audit` with the reviewer's independent checker
-  (hashes and markers first, re-export, engine vs checker diffed
-  byte-for-byte, quick-looks rendered by program), performs the plan's
-  independent final-state check, and reports divergences from the
-  plan's expectations without knowing the runner's verdicts.
+- **Auditor** runs `fth audit --tests <test/int>` (hashes and markers
+  first, re-export, record integrity — one START..END per window, no
+  command outside a window, monotonic time, export counts, junit hashed,
+  no duplicate test — then the replay of the test functions over the
+  record, diffed per test against the runner's junit verdicts,
+  quick-looks rendered by program from the replay's outcomes), performs
+  the plan's independent final-state check, and reports every
+  divergence and integrity finding.
 
 ## 6. Unseal and human triggers
 
@@ -191,7 +200,7 @@ Precedence, first match wins:
 | Expected FAIL / FAIL-RIPPLE, both UNVERIFIED | Planted window incomplete | Harness/bench triage |
 | Expected FAIL / FAIL-RIPPLE, FAIL vs UNVERIFIED | Checkers disagree on a planted fault | Human reads both |
 | Any MISSING (including the final-state row) | A test on the manifest was not reported, or the independent check was not performed | Human triage |
-| Runner ≠ auditor | Checkers disagree | Human reads both quick-look and runner evidence |
+| Runner ≠ auditor (`DIVERGENCE`) | Live run and replay of the same test disagree: the test's control flow is not a pure function of the record, or the record is not what was run | Human reads both quick-look and runner evidence |
 | Both PASS | Nominal | Spot-check two or three rows against the raw record |
 | Both UNVERIFIED | Window incomplete (markers, drops) | Bench/harness triage; not a UUT verdict |
 | Both FAIL | Real UUT or bench defect, or shared checker bug | Human triage; UUT fixes go to stage 1 |
@@ -228,7 +237,7 @@ this table; bumping it is a one-line change here and nowhere else.
 
 | Tool | Pinned | Install |
 |---|---|---|
-| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 9a2021338646ea278d6357787a2470daff0ef5f2) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@9a2021338646ea278d6357787a2470daff0ef5f2#egg=fprime-testing-harness"` |
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 27fafb537479012ee57a7fe68cb93cce2dce0b33) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@27fafb537479012ee57a7fe68cb93cce2dce0b33#egg=fprime-testing-harness"` |
 
 Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and

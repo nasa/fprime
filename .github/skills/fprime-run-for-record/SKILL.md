@@ -60,7 +60,7 @@ automatically — tester components and test deployments compile into
 the image) and every other repository the image is built from, the
 SHA and `git describe --tags --always --dirty --broken` string (dirty
 or broken trees are refused); file hashes of the plan, the generated
-fault menu, `bench.json` and the reviewer's independent checker; the
+fault menu, `bench.json` and (legacy plans) the reviewer's independent checker; the
 plan's test list (`tests[].id`, unique, ≤ 8 characters); the
 **toolchain** block from `--toolchain-json` (compiler package and
 version as the builder installed them — without it a faithful rebuild
@@ -194,11 +194,15 @@ ends the audit with `RECORD INVALID`:
 3. Re-export from a **copy** of `record/raw/` and compare with
    `record/*.jsonl` (the independent count); replay never touches the
    archive in place.
-4. Run the engine → `auditor/verdicts.json`, then the reviewer's
-   **independent checker** (`python checks/<name>.py <record-dir>
-   <plan.json> <out.json>` → `{"tests": {ID: {"verdict", "failed"}}}`)
-   and diff verdict **and** `failed` list per test byte-for-byte →
-   `auditor/diff.md`. Any row there is a human trigger.
+4. Record integrity findings (one START..END per window, no command
+   outside a window, monotonic time, export counts, junit hashed, no
+   duplicate test), then **replay the same test functions over the
+   record** (`--tests <test/int>`) → `auditor/junit.xml` →
+   `auditor/verdicts.json` and diff verdict **and** `failed` list per
+   test against `runner/verdicts.json` → `auditor/diff-runner-replay.md`;
+   any `DIVERGENCE` or integrity finding is a human trigger. Legacy
+   plans with plan-owned pass rules: engine [+ `--independent`
+   checker] → `auditor/diff.md` as before.
 5. Render the quick-look pages, `index.md` (metadata, VnV matrix) and
    `ql.zip` into `auditor/ql/` — **by program only** (`fth render-ql`
    inside `audit`). No agent writes, edits or summarises a QL page,
@@ -258,7 +262,7 @@ heading and `REQ-…` anchors preserved; ```mermaid blocks pre-rendered to inlin
 `mmdc` when the host has it, else the vendored `assets/mermaid.min.js` renders them from
 `file://` — no CDN, no plugin, no timestamps; the `.md` stays the diffable source); `inputs/`
 (the package is self-contained: `manifest.json`, `plan.json`, `faults-menu.json`, `bench.json`,
-the plan's `helpers_module` (predicates + planted fault bodies, pinned via the project repo sha), the independent checker and the sibling module it imports, `toolchain.json`, every image the
+the plan's `helpers_module` (planted fault bodies; legacy plans: predicates too — pinned via the project repo sha), any pinned independent checker and the sibling module it imports, `toolchain.json`, every image the
 manifest names with its pinned sha256 and the flash read-back sha, the F´ dictionary, and
 `inputs/README.md` listing each file, its sha256, the manifest pin and the stage-3 row that
 consumes it — a sha256 that disagrees with a pin is a loud failure; `fth unseal` adds `unseal.md`

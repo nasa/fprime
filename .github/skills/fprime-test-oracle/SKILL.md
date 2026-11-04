@@ -17,11 +17,15 @@ A **test oracle** is whatever decides that an observed result is
 correct. Here it has two halves with separate names: the **pass
 rule** (the condition, public, part of the approved plan) and the
 **checker** (a program that evaluates pass rules over the record).
-Two checkers judge every record: the tooling's engine (`fth
-evaluate`, pinned in `test-process-contract.md` §8) and the reviewer's
-independent checker, written from the plan text alone — so that a
-disagreement is two programs disagreeing about one record, not two
-opinions.
+Every record is judged twice by the same named checks: live, by the
+test function under `fth run` (pytest's junit is the runner's verdict),
+and by the auditor's **replay** of that same test function over the
+sealed record (`fth audit --tests`, tooling pinned in
+`test-process-contract.md` §8) — so that a disagreement (`DIVERGENCE`)
+is one program disagreeing with itself about one record, which only a
+non-deterministic test or a doctored record can produce. The engine
+(`fth evaluate`) and a reviewer's independent checker remain for legacy
+plans whose pass rules still live in `plan.json`.
 
 ---
 
@@ -104,9 +108,24 @@ segment(epoch)`), the only read surface the tooling's
 
 ## 3. Checker contract
 
-**Engine** (builder's side): `fth evaluate plan.json <record-dir> -o
-verdicts.json` judges every plan predicate and registered `@helper`;
-the builder writes no verdict code beyond helpers. Output:
+**Runner and replay** (phase 1/2): the test function's `check(...)`
+names are judged at window close; `fth run` derives
+`runner/verdicts.json` from pytest's junit only (pass → PASS, failed
+check → FAIL + the failed names, error/`Incomplete` → UNVERIFIED), and
+`fth audit --tests <test/int>` re-executes the same functions over the
+record (`--fth-replay-record`: `send()` must meet the recorded commands
+in order, waits return at once) → `auditor/junit.xml` →
+`auditor/verdicts.json` (`checker: fth.replay`), diffed per test with the
+runner's — verdict **and** `failed` — any difference is `DIVERGENCE`.
+Record integrity findings come first (one START..END per window, no
+command outside a window, monotonic time, export counts, junit hashed,
+no duplicate test). The former engine/independent-checker KATs are unit
+tests of the check grammar and the check functions (`tests/test_checks.py`,
+`tests/test_replay_match.py`, `tests/test_integrity.py`).
+
+**Engine** (legacy plans with `complete`/`all_of`): `fth evaluate
+plan.json <record-dir> -o verdicts.json` judges every plan predicate and
+registered `@helper`. Output:
 
 ```
 verdicts.json
@@ -116,8 +135,8 @@ verdicts.json
                          "evidence": ["events.jsonl:1041-1049"] } } }
 ```
 
-**Independent checker** (reviewer's side) — contract frozen
-2026-11-02; a change needs a new major version of the tooling:
+**Independent checker** (legacy plans only; optional since phase 2 —
+no longer part of the contract) — interface frozen 2026-11-02:
 
 ```
 python checks/<name>.py <record-dir> <plan.json> <out.json>

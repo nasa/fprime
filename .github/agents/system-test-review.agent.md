@@ -62,16 +62,20 @@ helpers module with `@helper`/`@planted_fault`), and the vector records
 (`vectors/<name>/record`). Do **not** read the engine's source or the
 helpers' implementation before step 1. Procedure:
 
-1. Write the independent checker **from the plan text alone**
-   (`fprime-test-oracle` §3; contract `python checks/<name>.py
-   <record-dir> <plan.json> <out.json>` → `{"tests": {ID: {"verdict",
-   "failed"}}}`, `failed` = plan predicate text verbatim) over the
-   replay API only, and run it on every vector record.
-2. Compare with the engine's output (`fth evaluate plan.json
-   <record> -o out.json`) on verdict **and** `failed`, byte-for-byte;
-   every disagreement goes into `divergence.md` (`fprime-test-oracle`
-   §4) and is a must-fix for whichever side is wrong — decide from the
-   record, not from the code.
+1. From the plan text alone (purpose, requirements, procedure), write
+   down the checks each test MUST carry before reading the test file;
+   then diff that list against the `check(...)` names the test declares
+   (`fth verify-plan plan.json --tests test/int` harvests them). A
+   missing or weaker check is a must-fix; a check that can hold without
+   the UUT doing the thing (tautology) is a must-fix.
+2. Replay every vector record through the tests (`fth run
+   --replay-record <record>` by hand, then `fth audit --tests`) and
+   compare with the vector's expected verdicts on verdict **and**
+   `failed`, byte-for-byte; every disagreement or `DIVERGENCE` goes
+   into `divergence.md` (`fprime-test-oracle` §4) and is a must-fix for
+   whichever side is wrong — decide from the record, not from the code.
+   (Legacy plans with plan-owned pass rules: write the independent
+   checker from the plan text as before, `fprime-test-oracle` §3.)
 3. Review the harness against `fprime-system-test-harness`: UUT
    untouched, markers fit 40 characters and round-trip, END sent in
    `finally` and carries no verdict, no pytest or harness verdict under
