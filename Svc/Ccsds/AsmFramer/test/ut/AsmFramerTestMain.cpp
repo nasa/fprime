@@ -46,6 +46,11 @@ TEST(AsmFramer, testBufferOwnershipState) {
     tester.testBufferOwnershipState();
 }
 
+TEST(AsmFramer, testReentrantReturn) {
+    Svc::Ccsds::AsmFramerTester tester;
+    tester.testReentrantReturn();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

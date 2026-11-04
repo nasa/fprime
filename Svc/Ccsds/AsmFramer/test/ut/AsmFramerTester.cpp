@@ -68,7 +68,8 @@ void AsmFramerTester ::testConfiguredAsm() {
     }
     this->sendAndVerifyFrame(Fw::ConstByteArray(turboAsm, sizeof(turboAsm)), buffer, context, 0);
 
-    // Maximum supported size (128-bit): rate-1/4 Turbo pattern (Blue Book 9.3.2, figure 9-4)
+    // Largest standard pattern that fits the default ComCfg.AsmMaxSize: 128-bit rate-1/4 Turbo
+    // (Blue Book 9.3.2, figure 9-4)
     const U8 rate14Asm[] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0,
                             0xFC, 0xB8, 0x89, 0x38, 0xD8, 0xD7, 0x6A, 0x4F};
     this->component.configure(Fw::ConstByteArray(rate14Asm, sizeof(rate14Asm)));
@@ -115,16 +116,19 @@ void AsmFramerTester ::testFrameSizeBounds() {
     Fw::Buffer emptyBuffer(emptyData, 0);
     this->sendAndVerifyFrame(Fw::ConstByteArray(DEFAULT_ASM, sizeof(DEFAULT_ASM)), emptyBuffer, context, 0);
 
-    // The largest configured frame (ComCfg.AsmFramerMaxFrameSize) is accepted with the largest marker
-    const U8 rate14Asm[] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0,
-                            0xFC, 0xB8, 0x89, 0x38, 0xD8, 0xD7, 0x6A, 0x4F};
-    this->component.configure(Fw::ConstByteArray(rate14Asm, sizeof(rate14Asm)));
+    // The largest configured frame (ComCfg.AsmFramerMaxFrameSize) is accepted with the largest
+    // configured marker (ComCfg.AsmMaxSize), filling the internal buffer to its last byte
+    U8 maxAsm[AsmFramer::ASM_MAX_SIZE] = {};
+    for (U32 i = 0; i < sizeof(maxAsm); ++i) {
+        maxAsm[i] = static_cast<U8>(0xC3u ^ i);
+    }
+    this->component.configure(Fw::ConstByteArray(maxAsm, sizeof(maxAsm)));
     U8 maxData[AsmFramer::FRAME_MAX_SIZE + 1] = {};
     for (U32 i = 0; i < sizeof(maxData); ++i) {
         maxData[i] = static_cast<U8>(i * 7u);
     }
     Fw::Buffer maxBuffer(maxData, AsmFramer::FRAME_MAX_SIZE);
-    this->sendAndVerifyFrame(Fw::ConstByteArray(rate14Asm, sizeof(rate14Asm)), maxBuffer, context, 1);
+    this->sendAndVerifyFrame(Fw::ConstByteArray(maxAsm, sizeof(maxAsm)), maxBuffer, context, 1);
 
     // One byte more than the largest supported frame is rejected
     Fw::Buffer tooLargeBuffer(maxData, AsmFramer::FRAME_MAX_SIZE + 1);
@@ -181,6 +185,55 @@ void AsmFramerTester ::testBufferOwnershipState() {
     ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::NOT_OWNED);
     // The upstream frame stays held (no dataReturnOut) while the com adapter has our buffer
     ASSERT_from_dataReturnOut_SIZE(0);
+}
+
+void AsmFramerTester ::testReentrantReturn() {
+    // AosFramer resumes packing when its buffer returns and may emit its next frame from inside
+    // dataReturnIn. The context returned for the first frame must be the one captured at dataIn,
+    // not whatever the re-entrant dataIn stored.
+    U8 bufferData[10] = {};
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext context;
+    context.set_vcId(2);
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataReturnOut_SIZE(0);
+
+    this->m_reenterOnReturn = true;
+    Fw::Buffer returned(this->component.m_frameBuffer, this->fromPortHistory_dataOut->at(0).data.getSize());
+    this->invoke_to_dataReturnIn(0, returned, context);
+    ASSERT_FALSE(this->m_reenterOnReturn);
+
+    // The first frame came back with its own context, after the re-entrant frame went out
+    ASSERT_from_dataOut_SIZE(2);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_dataReturnOut(0, buffer, context);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).context.get_vcId(), 12);
+    ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::NOT_OWNED);
+
+    // Return the re-entrant frame's buffer: its own context comes back
+    Fw::Buffer returned2(this->component.m_frameBuffer, this->fromPortHistory_dataOut->at(1).data.getSize());
+    this->invoke_to_dataReturnIn(0, returned2, context);
+    ASSERT_from_dataReturnOut_SIZE(2);
+    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(1).data.getData(), this->m_reentrantData);
+    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(1).context.get_vcId(), 12);
+    ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::OWNED);
+}
+
+// ----------------------------------------------------------------------
+// Handler overrides
+// ----------------------------------------------------------------------
+
+void AsmFramerTester ::from_dataReturnOut_handler(FwIndexType portNum,
+                                                  Fw::Buffer& data,
+                                                  const ComCfg::FrameContext& context) {
+    if (this->m_reenterOnReturn) {
+        this->m_reenterOnReturn = false;
+        Fw::Buffer next(this->m_reentrantData, sizeof(this->m_reentrantData));
+        ComCfg::FrameContext nextContext;
+        nextContext.set_vcId(static_cast<U8>(context.get_vcId() + 10));
+        this->invoke_to_dataIn(0, next, nextContext);
+    }
+    this->pushFromPortEntry_dataReturnOut(data, context);
 }
 
 // ----------------------------------------------------------------------
