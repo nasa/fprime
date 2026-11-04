@@ -59,9 +59,9 @@ class AsmFramer final : public AsmFramerComponentBase {
     //! the coded-data patterns of CCSDS 131.0-B-5 Sections 9.3.2 - 9.3.5; size 0
     //! disables the marker so frames pass through unchanged. Coded-data patterns are
     //! only appropriate when the frames on dataIn are already encoded (the standard
-    //! attaches them to the codeword, Section 9.4.1). Intended to be called at
-    //! initialization; it may be called again only while the component owns its
-    //! frame buffer (no Sync-Marked Transfer Frame outstanding).
+    //! attaches them to the codeword, Section 9.4.1). Must be called during topology
+    //! setup, before any frame flows; the ownership assertion is a guard against misuse,
+    //! not a runtime reconfiguration path.
     void configure(const Fw::ConstByteArray& asmPattern  //!< ASM pattern bytes; size in [0, ASM_MAX_SIZE]
     );
 

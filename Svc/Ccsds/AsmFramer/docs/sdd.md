@@ -67,9 +67,9 @@ provided by the project.
 | SVC-CCSDS-ASM-FRAMER-001 | The AsmFramer shall implement the `Svc.FramerInterface`. | Inspection, Unit Test |
 | SVC-CCSDS-ASM-FRAMER-002 | The AsmFramer shall prepend an Attached Sync Marker to each frame received on `dataIn` and emit the resulting Sync-Marked Transfer Frame on `dataOut`, per CCSDS 131.0-B-5 Section 9.4. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-003 | The AsmFramer shall default to the 32-bit ASM pattern `0x1ACFFC1D` (CCSDS 131.0-B-5 Section 9.3.1). | Unit Test, Inspection |
-| SVC-CCSDS-ASM-FRAMER-004 | The AsmFramer shall allow projects to configure the ASM pattern and length (up to 128 bits) at initialization to support the coded-data ASMs of CCSDS 131.0-B-5 Sections 9.3.2–9.3.5. | Unit Test |
+| SVC-CCSDS-ASM-FRAMER-004 | The AsmFramer shall allow projects to configure the ASM pattern and length (up to `ComCfg.AsmMaxSize` bytes, 128 bits by default) at initialization to support the coded-data ASMs of CCSDS 131.0-B-5 Sections 9.3.2–9.3.5. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-010 | The AsmFramer shall accept a zero-length ASM configuration that disables the marker, forwarding frames unchanged. | Unit Test |
-| SVC-CCSDS-ASM-FRAMER-011 | The AsmFramer shall reject, by assertion, a configuration whose length exceeds 128 bits or whose pattern is null with a non-zero length, and any reconfiguration while a frame is outstanding. | Unit Test |
+| SVC-CCSDS-ASM-FRAMER-011 | The AsmFramer shall reject, by assertion, a configuration whose length exceeds `ComCfg.AsmMaxSize` or whose pattern is null with a non-zero length, and any reconfiguration while a frame is outstanding. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-005 | The AsmFramer shall not alter, reorder, or drop payload frame data. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-006 | The AsmFramer shall return ownership of the input buffer via `dataReturnOut` only once the emitted SMTF buffer has been returned on `dataReturnIn`, preserving the upstream framer's flow-control handshake with the com adapter. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-007 | The AsmFramer shall use an internal frame buffer and shall only accept new data when it owns that buffer; the buffer is returned via `dataReturnIn`. | Unit Test |
