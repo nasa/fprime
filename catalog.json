@@ -3,7 +3,7 @@
   "ref": "release/v4.4.x",
   "ref_type": "branch",
   "commit": "f22ce8f2f2943e641d454e9daa7f129e6c878d32",
-  "generated_at": "2026-11-04T18:50:48Z",
+  "generated_at": "2026-11-04T18:59:48Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -24,11 +24,11 @@
   },
   "overall_int": null,
   "overall_codeql": {
-    "findings": 481,
+    "findings": 480,
     "by_severity": {
       "error": 0,
-      "medium": 207,
-      "low": 274
+      "medium": 208,
+      "low": 272
     },
     "worst": "medium",
     "tier": "bronze",
@@ -37,11 +37,11 @@
   },
   "overall_codeql_checks": {
     "codeql": {
-      "findings": 5,
+      "findings": 4,
       "by_severity": {
         "error": 0,
-        "medium": 1,
-        "low": 4
+        "medium": 2,
+        "low": 2
       },
       "worst": "medium",
       "tier": "bronze",
@@ -4599,27 +4599,27 @@
       },
       "int": null,
       "codeql": {
-        "findings": 10,
+        "findings": 11,
         "by_severity": {
           "error": 0,
-          "medium": 0,
+          "medium": 1,
           "low": 10
         },
-        "worst": "low",
-        "tier": "silver",
+        "worst": "medium",
+        "tier": "bronze",
         "dismissed": 2,
         "report": "Os/Generic/codeql/index.html"
       },
       "codeql_checks": {
         "codeql": {
-          "findings": 0,
+          "findings": 1,
           "by_severity": {
             "error": 0,
-            "medium": 0,
+            "medium": 1,
             "low": 0
           },
-          "worst": null,
-          "tier": "platinum",
+          "worst": "medium",
+          "tier": "bronze",
           "dismissed": 0,
           "label": "Static Analysis (Security) [CodeQL]",
           "report": "Os/Generic/codeql/index.html"
@@ -4654,7 +4654,7 @@
         "overall": "bronze",
         "ut": "gold",
         "int": null,
-        "codeql": "silver",
+        "codeql": "bronze",
         "checks": "bronze",
         "sdd": "gold"
       }
@@ -6088,11 +6088,11 @@
       },
       "int": null,
       "codeql": {
-        "findings": 211,
+        "findings": 209,
         "by_severity": {
           "error": 0,
           "medium": 147,
-          "low": 64
+          "low": 62
         },
         "worst": "medium",
         "tier": "bronze",
@@ -6101,11 +6101,11 @@
       },
       "codeql_checks": {
         "codeql": {
-          "findings": 3,
+          "findings": 1,
           "by_severity": {
             "error": 0,
             "medium": 1,
-            "low": 2
+            "low": 0
           },
           "worst": "medium",
           "tier": "bronze",
