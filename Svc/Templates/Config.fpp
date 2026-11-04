@@ -4,7 +4,7 @@ module Templates {
     struct ActiveComponentConfig {
         queueSize: FwSizeType
         stackSize: FwSizeType
-        $priority: FwIndexType
+        $priority: FwTaskPriorityType
         cpuAffinity: FwIndexType
     } default {
         queueSize = 10
