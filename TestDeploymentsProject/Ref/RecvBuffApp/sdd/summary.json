@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-11-04T19:52:00Z",
+  "ref": "v4.4.2",
+  "commit": "f22ce8f2f2943e641d454e9daa7f129e6c878d32",
+  "tier": "bronze",
+  "has_sdd": true,
+  "sections": 9,
+  "filled_sections": 0,
+  "prose_words": 31,
+  "placeholder_hits": 0,
+  "table_kinds": [],
+  "declared_kinds": [
+    "events",
+    "parameters",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.2/TestDeploymentsProject/Ref/RecvBuffApp/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Ref::RecvBuffImpl",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.2/docs/reference/api/cpp/html/class_ref_1_1_recv_buff_impl.html"
+    }
+  ]
+}

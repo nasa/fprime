@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-11-04T19:52:00Z",
+  "ref": "v4.4.2",
+  "commit": "f22ce8f2f2943e641d454e9daa7f129e6c878d32",
+  "tier": "silver",
+  "has_sdd": true,
+  "sections": 14,
+  "filled_sections": 3,
+  "prose_words": 381,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "commands",
+    "ports",
+    "telemetry"
+  ],
+  "declared_kinds": [
+    "commands",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.2/Svc/PassiveRateGroup/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::PassiveRateGroup",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.2/docs/reference/api/cpp/html/class_svc_1_1_passive_rate_group.html"
+    }
+  ]
+}

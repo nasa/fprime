@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-11-04T19:52:00Z",
+  "ref": "v4.4.2",
+  "commit": "f22ce8f2f2943e641d454e9daa7f129e6c878d32",
+  "tier": "platinum",
+  "has_sdd": true,
+  "sections": 11,
+  "filled_sections": 5,
+  "prose_words": 339,
+  "placeholder_hits": 0,
+  "table_kinds": [
+    "commands",
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "declared_kinds": [
+    "commands",
+    "events",
+    "ports",
+    "telemetry"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.2/Svc/BufferLogger/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::BufferLogger",
+      "url": "https://fprime.jpl.nasa.gov/v4.4.2/docs/reference/api/cpp/html/class_svc_1_1_buffer_logger.html"
+    }
+  ]
+}

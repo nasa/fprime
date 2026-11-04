@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-11-04T19:52:00Z",
+  "ref": "v4.4.2",
+  "commit": "f22ce8f2f2943e641d454e9daa7f129e6c878d32",
+  "tier": "bronze",
+  "has_sdd": true,
+  "sections": 20,
+  "filled_sections": 13,
+  "prose_words": 993,
+  "placeholder_hits": 0,
+  "table_kinds": [],
+  "declared_kinds": [],
+  "rendered_url": "https://fprime.jpl.nasa.gov/v4.4.2/Os/docs/sdd/",
+  "doxygen": []
+}
