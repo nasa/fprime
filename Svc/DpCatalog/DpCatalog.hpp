@@ -10,6 +10,7 @@
 #include "Svc/DpCatalog/DpCatalogComponentAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_EntryLookupStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_PriorityChangeStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_RetransmitRejectReasonEnumAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_StateFileUpdateStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_StateFileWriteStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpRecordSerializableAc.hpp"
@@ -169,6 +170,16 @@ class DpCatalog final : public DpCatalogComponentBase {
                               U32 tSub              //!< Microseconds of the data product time tag
                               ) override;
 
+    //! Handler implementation for command RETRANSMIT_DP
+    //!
+    //! Reschedule one transmitted data product for downlink at its recorded priority
+    void RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                  U32 cmdSeq,           //!< The command sequence number
+                                  FwDpIdType id,        //!< Container ID of the data product
+                                  U32 tSec,             //!< Seconds of the data product time tag
+                                  U32 tSub              //!< Microseconds of the data product time tag
+                                  ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -226,7 +237,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return directory index in m_directories; DP_MAX_DIRECTORIES if not in a managed dir
     FwSizeType determineDirectory(const Fw::String& fullFile);
 
-    /// @brief add entry to sorted list and state file; called on each file in it & upon addToCat
+    /// @brief add entry to sorted list and state file; called on each file in it, upon addToCat and by RETRANSMIT_DP
     /// @param fullFile full path to file to be processed
     /// @param dir directory index in m_directories
     /// @return QUIT to stop processing, FAILED for failure but continue, SUCCESS for success
@@ -312,8 +323,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
     DpCatalog_EntryLookupStatus findEntryByIdentity(const DpStateEntry& product, DpStateEntry& entry) const;
 
-    /// @brief find the first catalog entry of a data product named by id and time tag, as SET_DP_PRIORITY and DELETE_DP
-    /// name it
+    /// @brief find the first catalog entry of a data product named by id and time tag, as SET_DP_PRIORITY, DELETE_DP
+    /// and RETRANSMIT_DP name it
     /// @param id container ID
     /// @param tSec seconds of the time tag
     /// @param tSub microseconds of the time tag
@@ -354,6 +365,22 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return RECORDED, or FULL if the state file data has no free slot (StateFileFull is reported when a state
     ///         file is configured)
     DpCatalog_StateFileUpdateStatus updateStateFileData(const DpStateEntry& entry);
+
+    /// @brief resume a finished or stopped transmission after an entry was inserted, if the last transmit command
+    ///        had remainActive set and a pending entry lies inside its priority range
+    void resumeIfRemainActive();
+
+    /// @brief reschedule a transmitted data product named by id and time tag for downlink: catalog its file again
+    ///        from its header, record it UNTRANSMITTED in the state file data, and rewrite the state file if one is
+    ///        configured
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @return OK if the product was rescheduled (and the state file rewritten, if one is configured); EXECUTION_ERROR
+    ///         when the request is rejected (DpRetransmitError names the reason), when the component is not
+    ///         initialized (ComponentNotInitialized), or when the product was rescheduled but the state file could not
+    ///         be rewritten (StateFileOpenError/StateFileWriteError)
+    Fw::CmdResponse doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub);
 
     // ----------------------------------
     // Private data

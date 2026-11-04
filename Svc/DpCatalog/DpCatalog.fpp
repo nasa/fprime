@@ -101,6 +101,15 @@ module Svc {
       NOT_RECORDED = 2 @< The priority was changed but could not be recorded in the configured state file (error reported)
     }
 
+    @ Reason a RETRANSMIT_DP request was rejected
+    enum RetransmitRejectReason : U8 {
+      NOT_BUILT = 0 @< The catalog has not been built
+      IN_FLIGHT = 1 @< The data product is being transmitted
+      PENDING = 2 @< The data product is pending in the catalog and will be transmitted
+      NOT_FOUND = 3 @< No file of the data product exists in a managed directory
+      FILE_ERROR = 4 @< The data product file could not be cataloged (see the preceding file event)
+    }
+
     # ----------------------------------------------------------------------
     # Commands
     # ----------------------------------------------------------------------
@@ -150,6 +159,14 @@ module Svc {
                               tSub: U32 @< Microseconds of the data product time tag
                             ) \
       opcode 6
+
+    @ Reschedule one transmitted data product for downlink at its recorded priority. Refused while the product is pending or being transmitted
+    async command RETRANSMIT_DP (
+                                  $id: FwDpIdType @< Container ID of the data product
+                                  tSec: U32 @< Seconds of the data product time tag
+                                  tSub: U32 @< Microseconds of the data product time tag
+                                ) \
+      opcode 7
 
     # ----------------------------------------------------------------------
     # Events
@@ -597,6 +614,35 @@ module Svc {
       severity warning high \
       id 59 \
       format "Failed to remove DP file {} with status {}"
+
+    @ RETRANSMIT_DP rejected; nothing was rescheduled
+    event DpRetransmitError(
+                             $id: FwDpIdType @< Container ID of the data product
+                             tSec: U32 @< Seconds of the data product time tag
+                             tSub: U32 @< Microseconds of the data product time tag
+                             reason: RetransmitRejectReason @< Why the request was rejected
+                           ) \
+      severity warning high \
+      id 60 \
+      format "Retransmit of DP id {} time {}.{} rejected: {}"
+
+    @ Data product rescheduled for transmission by RETRANSMIT_DP
+    event DpRetransmitScheduled(
+                                 file: string size FileNameStringSize @< The data product file
+                                 $priority: FwDpPriorityType @< Priority the product is transmitted at
+                               ) \
+      severity activity high \
+      id 61 \
+      format "DP file {} rescheduled for transmission at priority {}"
+
+    @ RETRANSMIT_DP could not format the data product file name under a managed directory; the directory is skipped
+    event DpRetransmitNameError(
+                                 dir: string size FileNameStringSize @< The managed directory
+                                 status: Fw.StringFormatStatus @< The status returned from the format operation
+                               ) \
+      severity warning low \
+      id 62 \
+      format "Failed to format DP file name under {} with status {}; directory skipped"
 
 
     # ----------------------------------------------------------------------

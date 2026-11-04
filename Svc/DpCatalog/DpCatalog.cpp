@@ -970,22 +970,25 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     const ProcessFileStatus ret = processFile(fileName, dir);
 
     if (ret == ProcessFileStatus::SUCCESS) {
-        // If we already finished (or were stopped), resume only if m_remainActive and findNextEntry sees a
-        // pending entry (the new product or one left behind) inside the active priority range. Probing first
-        // avoids the CatalogXmitCompleted that sendNextEntry would report for an empty range.
-        if (!this->m_xmitInProgress && this->m_remainActive) {
-            DpStateEntry nextEntry{};
-            if (this->findNextEntry(nextEntry)) {
-                this->m_xmitInProgress = true;
-                this->sendNextEntry();
-            }
-        }
-        // Otherwise, the fileDone of the file in flight invokes sendNextEntry, which finds the right file,
-        // or the product is transmitted by the next transmit command
-
+        this->resumeIfRemainActive();
         // The state file is not rewritten here: a newly written product has no transmit state to
         // record, and pruneAndWriteStateFile() would discard the TRANSMITTED records appended by
         // fileDone since the catalog was built.
+    }
+}
+
+void DpCatalog ::resumeIfRemainActive() {
+    // If the transmission already finished (or was stopped), resume only if m_remainActive and findNextEntry sees a
+    // pending entry (the new product or one left behind) inside the active priority range. Probing first
+    // avoids the CatalogXmitCompleted that sendNextEntry would report for an empty range.
+    // Otherwise, the fileDone of the file in flight invokes sendNextEntry, which finds the right file,
+    // or the product is transmitted by the next transmit command
+    if (!this->m_xmitInProgress && this->m_remainActive) {
+        DpStateEntry nextEntry{};
+        if (this->findNextEntry(nextEntry)) {
+            this->m_xmitInProgress = true;
+            this->sendNextEntry();
+        }
     }
 }
 
@@ -1281,6 +1284,115 @@ Fw::CmdResponse DpCatalog ::doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub) {
         }
     }
     return Fw::CmdResponse::OK;
+}
+
+void DpCatalog ::RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub) {
+    this->cmdResponse_out(opCode, cmdSeq, this->doRetransmitDp(id, tSec, tSub));
+}
+
+Fw::CmdResponse DpCatalog ::doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub) {
+    if (not this->checkInit()) {
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+    // processFile needs the state file data of the last build to recognize the product's record
+    if (not this->m_catalogBuilt) {
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpCatalog_RetransmitRejectReason::NOT_BUILT);
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+    // The product in flight is still cataloged (3.6.4); report it as in flight rather than pending
+    if (this->m_hasCurrentXmit && this->m_currentXmitEntry.hasIdentity(id, tSec, tSub)) {
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpCatalog_RetransmitRejectReason::IN_FLIGHT);
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+    DpStateEntry pendingEntry{};
+    if (this->findProductEntry(id, tSec, tSub, pendingEntry) == DpCatalog_EntryLookupStatus::FOUND) {
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpCatalog_RetransmitRejectReason::PENDING);
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
+    // A transmitted product has no catalog entry, so its file is located by its canonical name in the managed
+    // directories; the first directory holding the file is used, as the other commands use the first match
+    Fw::String fullFile;
+    FwSizeType dir = DP_MAX_DIRECTORIES;
+    for (FwSizeType index = 0;
+         (index < this->m_numDirectories) && (index < static_cast<FwSizeType>(DP_MAX_DIRECTORIES)); index++) {
+        Fw::String candidate;
+        const Fw::FormatStatus formatStatus =
+            candidate.format(DP_FILENAME_FORMAT, this->m_directories[index].toChar(), id, tSec, tSub);
+        if (formatStatus != Fw::FormatStatus::SUCCESS) {
+            // a directory too long for the name is skipped; the file may still be in a shorter one
+            this->log_WARNING_LO_DpRetransmitNameError(this->m_directories[index],
+                                                       static_cast<Fw::StringFormatStatus::T>(formatStatus));
+            continue;
+        }
+        if (Os::FileSystem::exists(candidate.toChar())) {
+            fullFile = candidate;
+            dir = index;
+            break;
+        }
+    }
+    if (dir == static_cast<FwSizeType>(DP_MAX_DIRECTORIES)) {
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpCatalog_RetransmitRejectReason::NOT_FOUND);
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
+    // The identity key of the product: its directory, id and time tag (priority and state are not compared)
+    DpStateEntry product{};
+    product.dir = static_cast<FwIndexType>(dir);
+    product.record.set_id(id);
+    product.record.set_tSec(tSec);
+    product.record.set_tSub(tSub);
+    // processFile applies the product's state file record through getFileState, which looks the slot up by the same
+    // key: a record reading TRANSMITTED would make it skip the file, and a recorded priority would replace the header
+    // priority. Drop the record (the last slot moves into its place, as DELETE_DP does) so the product is cataloged
+    // from its header alone, and put it back if the file cannot be cataloged
+    const FwSizeType slot = this->findStateFileSlot(product);
+    const bool hadRecord = (slot != this->m_stateFileEntries);
+    DpDstateFileEntry savedSlot{};
+    DpDstateFileEntry savedLast{};
+    if (hadRecord) {
+        savedSlot = this->m_stateFileData[slot];
+        savedLast = this->m_stateFileData[this->m_stateFileEntries - 1];
+        this->m_stateFileEntries--;
+        this->m_stateFileData[slot] = this->m_stateFileData[this->m_stateFileEntries];
+        this->m_stateFileData[this->m_stateFileEntries].used = false;
+        this->m_stateFileData[this->m_stateFileEntries].visited = false;
+    }
+    const ProcessFileStatus ret = this->processFile(fullFile, dir);
+    if (ret != ProcessFileStatus::SUCCESS) {
+        if (hadRecord) {
+            this->m_stateFileData[this->m_stateFileEntries] = savedLast;
+            this->m_stateFileData[slot] = savedSlot;
+            this->m_stateFileEntries++;
+        }
+        this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpCatalog_RetransmitRejectReason::FILE_ERROR);
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+    // Not ground-reachable: processFile succeeded only if the file's canonical name, built from its header id and
+    // time tag, equals fullFile, which was built from the command's id and time tag in the same directory, so the
+    // entry it inserted has exactly this identity and nothing has touched the set since
+    DpStateEntry catalogEntry{};
+    const DpCatalog_EntryLookupStatus found = this->findEntryByIdentity(product, catalogEntry);
+    FW_ASSERT(found == DpCatalog_EntryLookupStatus::FOUND, static_cast<FwAssertArgType>(found.e));
+    this->log_ACTIVITY_HI_DpRetransmitScheduled(fullFile, catalogEntry.record.get_priority());
+
+    // Record the product UNTRANSMITTED at its header priority, as a completion records it, so that the state file
+    // data holds the reset; a product that had a record always gets one (its slot was just freed), a product without
+    // one may find the data full (StateFileFull, 3.6.8). Then rewrite the state file so that a rebuild after a
+    // restart catalogs the product instead of skipping it, whether its TRANSMITTED record held a slot or was appended
+    // without one. A write failure is reported by the rewrite and fails the command, as for DELETE_DP; the product
+    // stays rescheduled in memory
+    (void)this->updateStateFileData(catalogEntry);
+    Fw::CmdResponse response = Fw::CmdResponse::OK;
+    if (this->m_stateFile.length() > 0) {
+        const DpCatalog_StateFileWriteStatus writeStatus = this->pruneAndWriteStateFile();
+        if (writeStatus != DpCatalog_StateFileWriteStatus::WRITTEN) {
+            response = Fw::CmdResponse::EXECUTION_ERROR;
+        }
+    }
+    // From here on the product is scheduled as a runtime insert is (3.6.7)
+    this->resumeIfRemainActive();
+    return response;
 }
 
 DpCatalog_EntryLookupStatus DpCatalog ::findEntryByIdentity(const DpStateEntry& product, DpStateEntry& entry) const {
