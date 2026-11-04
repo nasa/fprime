@@ -37,6 +37,8 @@ class Timer {
     // ----------------------------------------------------------------------
 
     //! Initialize a CFDP timer and start its execution
+    //!
+    //! A duration of zero is accepted and expires on the first call to run().
     void setTimer(U32 timerDuration  //!< The duration of the timer in seconds
     );
 
@@ -54,7 +56,7 @@ class Timer {
     // Class member variables
     // ----------------------------------------------------------------------
 
-    //! Number of seconds until the timer expires
+    //! Current state of the timer
     Status timerStatus;
 
     //! Number of seconds until the timer expires

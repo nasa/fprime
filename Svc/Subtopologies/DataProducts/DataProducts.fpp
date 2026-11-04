@@ -10,9 +10,13 @@ module DataProducts{
         priority DataProductsConfig.Priorities.dpCat \
         cpu DataProductsConfig.CpuAffinities.dpCat \
     {
-        phase Fpp.ToCpp.Phases.configComponents """
+        phase Fpp.ToCpp.Phases.configObjects """
             Fw::FileNameString dpDir(DataProductsConfig::Paths::dpDir);
             Fw::FileNameString dpState(DataProductsConfig::Paths::dpState);
+            
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
             Os::FileSystem::createDirectory(dpDir.toChar());
             Fw::ExternalArray<Fw::FileNameString> dpDirs(&dpDir, 1);
             DataProducts::dpCat.configure(dpDirs, dpState, 0, DataProducts::Allocation::memAllocator);
@@ -31,6 +35,10 @@ module DataProducts{
         priority DataProductsConfig.Priorities.dpWriter \
         cpu DataProductsConfig.CpuAffinities.dpWriter \
     {
+        phase Fpp.ToCpp.Phases.configObjects """
+            Fw::FileNameString dpDir(DataProductsConfig::Paths::dpDir);
+        """
+
         phase Fpp.ToCpp.Phases.configComponents """
             DataProducts::dpWriter.configure(dpDir);
         """

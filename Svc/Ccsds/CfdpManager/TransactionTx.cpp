@@ -274,8 +274,10 @@ void Transaction::sTickNak(I32* cont) {
     bool nakProcessed = false;
     Status::T status;
 
-    // Only Class 2 transactions should process NAKs
-    if (this->m_txn_class == Cfdp::Class::CLASS_2) {
+    // Only live Class 2 transactions should process NAKs. A finished transaction (HOLD) is
+    // only waiting on its inactivity timer to be recycled and has nothing left to resend;
+    // it may also never have been assigned a chunk list if it finished while still on PEND.
+    if (this->m_txn_class == Cfdp::Class::CLASS_2 && this->m_state != TxnState::TXN_STATE_HOLD) {
         status = this->sCheckAndRespondNak(&nakProcessed);
         if ((status == Cfdp::Status::SUCCESS) && nakProcessed) {
             *cont = 1;  // cause dispatcher to re-enter this scheduler cycle
@@ -461,6 +463,10 @@ Status::T Transaction::sCheckAndRespondNak(bool* nakProcessed) {
         } else {
             if (sret == Cfdp::Status::SUCCESS) {
                 this->m_flags.tx.md_need_send = false;
+            } else {
+                // Throttle limit or buffer exhaustion - keep md_need_send, retry next cycle
+                // Set m_currentTxn to break the cycleTx loop (or tick loop) for this cycle
+                this->m_chan->setCurrentTxn(this);
             }
             // On SUCCESS or SEND_PDU_NO_BUF_AVAIL_ERROR (throttled, retry next cycle),
             // mark nak processed to keep caller from sending file data this cycle
@@ -471,7 +477,14 @@ Status::T Transaction::sCheckAndRespondNak(bool* nakProcessed) {
         chunk = this->m_chunks->chunks.getFirstChunk();
         if (chunk != nullptr) {
             ret = this->sSendFileData(chunk->offset, chunk->size, 0, &bytes_processed);
-            if (ret != Cfdp::Status::SUCCESS) {
+            if (ret == Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR) {
+                // Throttle limit or buffer exhaustion is transient, not a NAK response failure.
+                // The chunk stays on the list and is retried next cycle; set m_currentTxn to
+                // break the cycleTx loop (or tick loop) for this cycle
+                this->m_chan->setCurrentTxn(this);
+                *nakProcessed = true;  // nak pending, so don't send filedata
+                ret = Cfdp::Status::SUCCESS;
+            } else if (ret != Cfdp::Status::SUCCESS) {
                 // error occurred
                 ret = Cfdp::Status::ERROR;  // error occurred
             } else if (bytes_processed > 0) {
@@ -553,9 +566,12 @@ void Transaction::sSubstateSendMetadata() {
                 this->getClass(), this->m_history->seq_num, this->m_history->src_eid,
                 this->m_history->fnames.src_filename, this->m_history->peer_eid, this->m_history->fnames.dst_filename,
                 static_cast<U32>(this->m_fsize));
+        } else {
+            /* status==Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR, the send buffer is throttled;
+               leave success==true and retry the metadata send on the next cycle. Set m_currentTxn
+               to break the cycleTx loop for this cycle */
+            this->m_chan->setCurrentTxn(this);
         }
-        /* if status==Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR, then the send buffer is throttled;
-           leave success==true and retry the metadata send on the next cycle */
     }
 
     if (!success) {
@@ -575,6 +591,14 @@ Status::T Transaction::sSendFinAck() {
 }
 
 void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
+    // Parse the FIN before committing any state. A malformed FIN must leave the transaction in its
+    // current sub-state; moving to CLOSEOUT_SYNC (which has no transmit handler) without finishing
+    // the transaction would leave it on TXA where cycleTxFirstActive could never make progress.
+    FinPdu fin;
+    if (!this->s2DeserializeFin(buffer, fin)) {
+        return;
+    }
+
     // received early fin, so just cancel
     this->m_cfdpManager->log_WARNING_LO_TxEarlyFinReceived(this->getClass(), this->m_history->src_eid,
                                                            this->m_history->seq_num);
@@ -583,12 +607,17 @@ void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
     this->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC;
 
     // otherwise do normal fin processing
-    this->s2Fin(buffer);
+    this->s2HandleFin(fin);
 }
 
 void Transaction::s2Fin(const Fw::Buffer& buffer) {
-    // Deserialize FIN PDU from buffer
     FinPdu fin;
+    if (this->s2DeserializeFin(buffer, fin)) {
+        this->s2HandleFin(fin);
+    }
+}
+
+bool Transaction::s2DeserializeFin(const Fw::Buffer& buffer, FinPdu& fin) {
     // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
@@ -598,9 +627,12 @@ void Transaction::s2Fin(const Fw::Buffer& buffer) {
         // Bad FIN PDU
         this->m_cfdpManager->log_WARNING_LO_FailFinPduDeserialization(this->getChannelId(),
                                                                       static_cast<I32>(deserStatus));
-        return;
+        return false;
     }
+    return true;
+}
 
+void Transaction::s2HandleFin(const FinPdu& fin) {
     if (!this->m_engine->recvFin(this, fin)) {
         // Always set flag to send FIN-ACK, even if it is a retransmit
         this->m_flags.tx.send_fin_ack = true;

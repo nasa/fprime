@@ -270,7 +270,7 @@ In this section, we will keep working with our example MPU6050 IMU sensor connec
 
 Before starting development, understand the bus communication protocol you are targeting (I2C, SPI, UART, etc.) and obtain documentation for the platform-specific APIs for that protocol. Understand how to perform read and write operations on the bus using the platform's SDK or libraries. 
 
-In our case, we need to understand how to perform I2C read and write operations using Zephyr's I2C API. We look to the [Zephyr I2C documentation](https://docs.zephyrproject.org/latest/reference/peripherals/i2c.html) and [Zephyr I2C API](https://docs.zephyrproject.org/latest/doxygen/html/group__i2c__interface.html). It can also be useful to look at existing Zephyr code samples that use I2C.
+In our case, we need to understand how to perform I2C read and write operations using Zephyr's I2C API. We look to the [Zephyr I2C documentation](https://docs.zephyrproject.org/latest/hardware/peripherals/i2c.html) and [Zephyr I2C API](https://docs.zephyrproject.org/latest/doxygen/html/group__i2c__interface.html). It can also be useful to look at existing Zephyr code samples that use I2C.
 
 We learn the following:
 

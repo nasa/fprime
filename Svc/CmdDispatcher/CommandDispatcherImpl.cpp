@@ -26,7 +26,8 @@ CommandDispatcherImpl::CommandDispatcherImpl(const char* name)
       m_executeWhenSequenceTableFull(CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT),
       m_numCmdsDispatched(0),
       m_numCmdErrors(0),
-      m_numCmdsDropped(0) {}
+      m_numCmdsDropped(0),
+      m_runQueued(false) {}
 
 CommandDispatcherImpl::~CommandDispatcherImpl() {}
 
@@ -169,6 +170,18 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 }
 
 void CommandDispatcherImpl ::run_handler(FwIndexType portNum, U32 context) {
+    bool expected = false;
+    if (this->m_runQueued.compare_exchange_strong(expected, true)) {
+        this->runInternal_internalInterfaceInvoke();
+    }
+}
+
+void CommandDispatcherImpl ::runInternal_overflowHook() {
+    this->m_runQueued = false;
+}
+
+void CommandDispatcherImpl ::runInternal_internalInterfaceHandler() {
+    this->m_runQueued = false;
     this->tlmWrite_CommandsDropped(this->m_numCmdsDropped.load(std::memory_order_relaxed));
     this->tlmWrite_CommandErrors(this->m_numCmdErrors);
     this->tlmWrite_CommandsDispatched(this->m_numCmdsDispatched);

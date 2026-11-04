@@ -52,7 +52,8 @@ The diagram below shows the `DpWriter` component.
 
 | Kind | Name | Port Type | Usage |
 |------|------|-----------|-------|
-| `async input` | `schedIn` | `Svc.Sched` | Schedule in port |
+| `sync input` | `schedIn` | `Svc.Sched` | Schedule in port |
+| `internal` (`hook`) | `schedInInternal` | n/a | Performs the `schedIn` work on the component thread; at most one message queued |
 | `async input` | `bufferSendIn` | `[DpWriterNumPorts] Fw.BufferSend` | Ports for receiving data products to write to disk |
 | `output` | `procBufferSendOut` | `[DpWriterNumProcPorts] Fw.BufferSend` | Port for processing data products |
 | `output` | `dpWrittenOut` | `[DpWriterNumPorts] DpWritten` | Ports for sending `DpWritten` notifications |

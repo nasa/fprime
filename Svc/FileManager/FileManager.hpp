@@ -179,10 +179,13 @@ class FileManager final : public FileManagerComponentBase {
     // Handler implementations for user-defined internal interfaces
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for run
+    //! Handler implementation for schedInInternal
     //!
     //! Internal port for handling schedIn
-    void run_internalInterfaceHandler() override;
+    void schedInInternal_internalInterfaceHandler() override;
+
+    //! Overflow hook for schedInInternal
+    void schedInInternal_overflowHook() override;
 
   private:
     // ----------------------------------------------------------------------
@@ -237,7 +240,7 @@ class FileManager final : public FileManagerComponentBase {
     //! Command sequence number stored for final response
     U32 m_currentCmdSeq;
 
-    std::atomic<bool> m_runQueued;
+    std::atomic<bool> m_schedInQueued;
 
     // ----------------------------------------------------------------------
     // Data product generation state machine variables

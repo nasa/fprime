@@ -15,24 +15,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
 
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <errnoLib.h>
-#include <fioLib.h>
-#include <hostLib.h>
-#include <inetLib.h>
-#include <ioLib.h>
-#include <sockLib.h>
-#include <socket.h>
-#include <sysLib.h>
-#include <taskLib.h>
-#include <vxWorks.h>
-#include <cstring>
-#else
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#endif
-
 #include <cerrno>
 #include <cstring>
 #include <new>

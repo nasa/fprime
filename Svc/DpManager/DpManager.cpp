@@ -18,7 +18,8 @@ DpManager::DpManager(const char* const compName)
       numSuccessfulAllocations(0),
       numFailedAllocations(0),
       numDataProducts(0),
-      numBytes(0) {}
+      numBytes(0),
+      m_schedInQueued(false) {}
 
 DpManager::~DpManager() {}
 
@@ -53,6 +54,18 @@ void DpManager::productSendIn_handler(const FwIndexType portNum, FwDpIdType id, 
 }
 
 void DpManager::schedIn_handler(const FwIndexType portNum, U32 context) {
+    bool expected = false;
+    if (this->m_schedInQueued.compare_exchange_strong(expected, true)) {
+        this->schedInInternal_internalInterfaceInvoke();
+    }
+}
+
+void DpManager::schedInInternal_overflowHook() {
+    this->m_schedInQueued = false;
+}
+
+void DpManager::schedInInternal_internalInterfaceHandler() {
+    this->m_schedInQueued = false;
     // Emit telemetry
     this->tlmWrite_NumSuccessfulAllocations(this->numSuccessfulAllocations);
     this->tlmWrite_NumFailedAllocations(this->numFailedAllocations);

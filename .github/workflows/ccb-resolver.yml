@@ -1,0 +1,59 @@
+# Daily CCB resolver sweep of the "F´ Development" project board.
+#
+# Applies the Change Control Board decisions recorded in the board's
+# "CCB Resolution" field to every item whose Status is "CCB":
+#   Approved     -> Status becomes "Backlog - Deferred"
+#   Disapproved  -> the linked open issue gets the CCB scope comment and is
+#                   closed as "not planned" (the board's built-in
+#                   closed -> Done workflow then moves the item)
+#   Tabled / Needs Study / blank -> left alone
+# Items whose Status is anything other than "CCB" are never touched.
+#
+# Scheduled runs write (dry-run: false).  Manual runs default to a dry-run
+# that only reports what would change in the step summary; untick
+# "dry-run" on the dispatch form to apply.
+#
+# Top-level permissions are the minimum: the project and the issues are
+# written with the dedicated FPRIME_CCB_RESOLVER_TOKEN secret (fine-grained
+# PAT or GitHub App token with Organization Projects read/write and
+# nasa/fprime Issues write), because GITHUB_TOKEN cannot access
+# organization projects.
+#
+# See nasa/fprime-actions/ccb-resolver/README.md for the full rules.
+
+name: "CCB Resolver"
+
+on:
+  schedule:
+    # 20:10 UTC = 12:10 PM US/Pacific during standard time (PST) and
+    # 1:10 PM during daylight time (PDT).  Actions cron is UTC-only; the
+    # one-hour seasonal drift is accepted.
+    - cron: "10 20 * * *"
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Only report what would change (untick to apply)"
+        type: boolean
+        default: true
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  ccb-resolver:
+    name: "CCB Resolver"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: "Resolve CCB decisions"
+        uses: nasa/fprime-actions/ccb-resolver@devel
+        with:
+          token: ${{ secrets.FPRIME_CCB_RESOLVER_TOKEN }}
+          project-owner: nasa
+          project-number: 21
+          # Scheduled runs apply; manual runs follow the dispatch input
+          # (default true = dry-run).
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || 'false' }}

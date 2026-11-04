@@ -71,6 +71,90 @@ TEST_F(PduTest, HeaderRoundTrip) {
     ASSERT_EQ(pduDataLength, rxHeader.getPduDataLength());
 }
 
+// Deserialize a hand-built header byte sequence
+static Fw::SerializeStatus deserializeRawHeader(const U8* bytes, U32 size, PduHeader& header) {
+    Fw::SerialBuffer serialBuffer(const_cast<U8*>(bytes), size);
+    serialBuffer.setBuffLen(size);
+    return header.fromSerialBuffer(serialBuffer);
+}
+
+// Flags byte: version 1, directive, toward receiver, class 2, no CRC, 32-bit file size
+static const U8 VALID_FLAGS = 0x20;
+// eidTsnLengths byte: 1-byte EIDs and 1-byte TSN
+static const U8 ONE_BYTE_WIDTHS = 0x00;
+// eidTsnLengths byte: 8-byte EIDs and 8-byte TSN
+static const U8 EIGHT_BYTE_WIDTHS = 0x77;
+
+TEST_F(PduTest, HeaderRejectsUnsupportedVersion) {
+    const U8 bytes[] = {static_cast<U8>(0x02 << 5), 0x00, 0x10, ONE_BYTE_WIDTHS, 0x01, 0x02, 0x03};
+    PduHeader header;
+    ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, deserializeRawHeader(bytes, sizeof(bytes), header));
+}
+
+TEST_F(PduTest, HeaderRejectsCrcFlag) {
+    const U8 bytes[] = {static_cast<U8>(VALID_FLAGS | 0x02), 0x00, 0x10, ONE_BYTE_WIDTHS, 0x01, 0x02, 0x03};
+    PduHeader header;
+    ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, deserializeRawHeader(bytes, sizeof(bytes), header));
+}
+
+TEST_F(PduTest, HeaderLargeFileFlagMatchesConfiguredFileSize) {
+    // The 64-bit large-file flag is accepted only when FileSize is 64 bits wide
+    const U8 bytes[] = {static_cast<U8>(VALID_FLAGS | 0x01), 0x00, 0x10, ONE_BYTE_WIDTHS, 0x01, 0x02, 0x03};
+    PduHeader header;
+    const Fw::SerializeStatus expected =
+        (sizeof(FileSize) < sizeof(U64)) ? Fw::FW_DESERIALIZE_FORMAT_ERROR : Fw::FW_SERIALIZE_OK;
+    ASSERT_EQ(expected, deserializeRawHeader(bytes, sizeof(bytes), header));
+}
+
+TEST_F(PduTest, HeaderAcceptsWideFieldsThatFit) {
+    // 8-byte wire widths carrying values that fit the configured types
+    const U8 bytes[] = {VALID_FLAGS, 0x00, 0x10, EIGHT_BYTE_WIDTHS,
+                        0x00,        0x00, 0x00, 0x00,
+                        0x00,        0x00, 0x00, 0x0A,  // source EID = 10
+                        0x00,        0x00, 0x00, 0x00,
+                        0x00,        0x00, 0x00, 0x14,  // TSN = 20
+                        0x00,        0x00, 0x00, 0x00,
+                        0x00,        0x00, 0x00, 0x1E};  // dest EID = 30
+    PduHeader header;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, deserializeRawHeader(bytes, sizeof(bytes), header));
+    EXPECT_EQ(10, header.getSourceEid());
+    EXPECT_EQ(20, header.getTransactionSeq());
+    EXPECT_EQ(30, header.getDestEid());
+    EXPECT_EQ(0x0010, header.getPduDataLength());
+}
+
+// Write value big-endian into eight bytes starting at dest
+static void encodeU64(U8* dest, U64 value) {
+    for (U8 i = 0; i < 8; i++) {
+        dest[i] = static_cast<U8>(value >> (8 * (7 - i)));
+    }
+}
+
+// Deserialize a header whose 8-byte field at fieldOffset holds the largest value of a type of
+// typeSize bytes plus one. When the configured type is narrower than 8 bytes the header must be
+// rejected; when it is 8 bytes wide the test value wraps to zero and the header must be accepted.
+static void checkFieldExceedingConfiguredType(FwSizeType fieldOffset, FwSizeType typeSize) {
+    U8 bytes[4 + 8 + 8 + 8] = {VALID_FLAGS, 0x00, 0x10, EIGHT_BYTE_WIDTHS};
+    const U64 largestPlusOne = (typeSize < sizeof(U64)) ? (static_cast<U64>(1) << (8 * typeSize)) : 0;
+    encodeU64(&bytes[fieldOffset], largestPlusOne);
+    const Fw::SerializeStatus expected =
+        (typeSize < sizeof(U64)) ? Fw::FW_DESERIALIZE_FORMAT_ERROR : Fw::FW_SERIALIZE_OK;
+    PduHeader header;
+    ASSERT_EQ(expected, deserializeRawHeader(bytes, sizeof(bytes), header));
+}
+
+TEST_F(PduTest, HeaderRejectsSourceEntityIdExceedingConfiguredType) {
+    checkFieldExceedingConfiguredType(4, sizeof(EntityId));
+}
+
+TEST_F(PduTest, HeaderRejectsTransactionSeqExceedingConfiguredType) {
+    checkFieldExceedingConfiguredType(4 + 8, sizeof(TransactionSeq));
+}
+
+TEST_F(PduTest, HeaderRejectsDestEntityIdExceedingConfiguredType) {
+    checkFieldExceedingConfiguredType(4 + 8 + 8, sizeof(EntityId));
+}
+
 // ======================================================================
 // Metadata PDU Tests
 // ======================================================================
@@ -138,10 +222,11 @@ TEST_F(PduTest, MetadataRoundTrip) {
     // Read segmentation control byte
     U8 segmentationControl;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, serialBuffer.deserializeTo(segmentationControl));
-    U8 rxClosureRequested = (segmentationControl >> 7) & 0x01;
+    U8 rxClosureRequested = (segmentationControl >> 6) & 0x01;
     U8 rxChecksumType = segmentationControl & 0x0F;
     ASSERT_EQ(closureRequested, rxClosureRequested);
     ASSERT_EQ(static_cast<U8>(checksumType), rxChecksumType);
+    ASSERT_EQ(0x40 | static_cast<U8>(checksumType), segmentationControl);
 
     // Read file size
     U32 rxFileSize;

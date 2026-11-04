@@ -3,10 +3,8 @@
 name: "Ref"
 
 on:
-  schedule:
-    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [release/**]
+    branches: [devel, release/**]
   pull_request:
     branches: [devel, release/**]
     paths-ignore:
@@ -39,8 +37,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macOS runs only on the nightly schedule
-        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"},{"runner":"macos-latest","jobs":"2"}]') || fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"}]') }}
+        include:
+          - runner: ubuntu-22.04
+            jobs: "random"
+          - runner: macos-latest
+            jobs: "4"
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
@@ -72,8 +73,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macOS runs only on the nightly schedule
-        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04"},{"runner":"macos-latest"}]') || fromJSON('[{"runner":"ubuntu-22.04"}]') }}
+        include:
+          - runner: ubuntu-22.04
+          - runner: macos-latest
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
@@ -94,6 +96,17 @@ jobs:
         with:
           repository: nasa/fprime-gds
           pr-branch-only: true
+      # Upgrade the Fpy compiler to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-fpy to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: fprime-community/fpy
+          pr-branch-only: true
+      # The Fpy integration test (Ref/test/int/test_fpy.py) compiles its sequence to WebAssembly,
+      # which needs the compiler's wasm extra (LLVM and wasm-ld) on top of the pinned package
+      - name: "Install the Fpy wasm backend"
+        run: pip3 install "fprime-fpy[wasm]"
       - name: "Download Build Artifacts"
         uses: actions/download-artifact@v8
         with:
@@ -118,6 +131,8 @@ jobs:
           binary: "build-artifacts/*/Ref/bin/Ref"
           gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
           pytest-args: "Ref --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
+          # The suite runs close to the default 300s under valgrind, and the Fpy sequence adds about a minute
+          timeout: "600"
           valgrind: ${{ runner.os == 'Linux' && 'true' || 'false' }}
 
   unit-tests:
@@ -125,8 +140,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macOS runs only on the nightly schedule
-        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"},{"runner":"macos-latest","jobs":"2"}]') || fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"}]') }}
+        include:
+          - runner: ubuntu-22.04
+            jobs: "random"
+          - runner: macos-latest
+            jobs: "4"
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:

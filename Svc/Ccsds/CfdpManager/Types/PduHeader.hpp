@@ -89,6 +89,9 @@ class PduHeader {
     //! Header size (variable due to EID/TSN lengths)
     enum { MIN_HEADERSIZE = 7 };  // Minimum fixed portion
 
+    //! The only CFDP protocol version this implementation supports
+    enum { CFDP_VERSION = 1 };
+
     //! Initialize a PDU header
     void initialize(PduTypeEnum::T type,
                     PduDirection direction,

@@ -148,6 +148,18 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test EPP extraction for all length-of-length variants (lol=1, lol=2, lol=4)
     void testEppLengthOfLength();
 
+    //! Test adjacent 2-, 4- and 8-byte-header EPP packets and a trailing SPP from independent wire bytes
+    void testEppConformantAdjacentLengths();
+
+    //! Test acceptance of header-only EPP packets
+    void testEppHeaderOnlyPackets();
+
+    //! Test rejection of EPP lengths shorter than their headers
+    void testEppInvalidDeclaredLengths();
+
+    //! Test that createEppPacket encodes every protocol ID and the header-inclusive length
+    void testEppHelperEncodesTotalLength();
+
     //! Test EPP idle packet handling
     void testEppIdlePacket();
 

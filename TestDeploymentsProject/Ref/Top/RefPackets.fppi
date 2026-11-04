@@ -47,6 +47,10 @@ telemetry packets RefPackets {
     wasmSeq.LastTrapReason
     ComCcsds.commsBufferManager.NoBuffs
     ComCcsds.commsBufferManager.EmptyBuffs
+    ComCcsds.comQueue.comIngressDropped
+    ComCcsds.comQueue.buffIngressDropped
+    ComCcsds.comQueue.comManagedDropped
+    ComCcsds.comQueue.buffManagedDropped
 
     rateGroup1Comp.RgCycleSlips
     rateGroup2Comp.RgCycleSlips
