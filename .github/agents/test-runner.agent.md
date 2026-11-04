@@ -1,5 +1,5 @@
 ---
-description: "Use when executing a run-for-record of an approved and sealed F Prime system test plan (stage 3 of the system test process): runs `fth run` exactly once on the frozen UUT and harness — manifest verification, flash with read-back, ground system and recorder, run-start markers, stimulus, export, hash, engine verdicts — and reports anomalies without fixing anything or reading the seal. Keywords: F Prime, run for record, test runner, fth run, manifest, record, blind."
+description: "Use when executing a run-for-record of an approved and sealed F Prime system test plan (stage 3 of the system test process): runs `fth run` exactly once on the frozen UUT and harness — manifest verification, flash with read-back, ground system and recorder, run-start markers, stimulus, export, hash, verdicts derived from pytest's junit only — and reports anomalies without fixing anything or reading the seal. Keywords: F Prime, run for record, test runner, fth run, manifest, record, blind."
 name: "F Prime Test Runner"
 tools: [read, search, edit, execute]
 user-invocable: true

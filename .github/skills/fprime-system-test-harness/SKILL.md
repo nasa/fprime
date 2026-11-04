@@ -46,7 +46,7 @@ deployment.
   it under its `test/int/`, the plan (`plan.json`, rendered `plan.md`),
   the planted faults and helper predicates (`plan_helpers.py`), the
   generated fault menu, `bench.json`, the pytest stimulus and the
-  adversary's independent checker. They require the deployment the
+  adversary's independent checker (legacy plans with plan-owned pass rules only). They require the deployment the
   helper lives in, so they belong there.
 - **UUT repo** (e.g. `fprime-devices` `Fram.FramDriver`): the component,
   its unit tests (`test/ut/`) and its SDD (whose Tests table is derived
@@ -57,7 +57,7 @@ deployment.
   regression vectors; each vector names a vendored, clearly labelled
   COPY of its plan (`vectors/plans/<name>/SOURCE.json` = repo, branch,
   sha, path, per-file sha256). `fth run --plan/--tests` and
-  `fth audit --plan/--independent` point at the deployment checkout.
+  `fth audit --plan/--tests` (legacy: `--independent`) point at the deployment checkout.
 
 ## 2. Deployment
 
@@ -155,7 +155,7 @@ image is not the qualified image. The builder produces coverage with
 trimmed config, e.g. `FW_FILEID_ASSERT`, fails UTs for configuration reasons),
 (b) the plan on the gcov-instrumented image followed by the `DUMP_COVERAGE` dump
 plan, reassembled and measured by `fth coverage-system`, and (c) the pure run on
-the RfR image judged by the engine and the independent checker; it writes one
+the RfR image judged by the runner's junit and the auditor's replay of the same tests; it writes one
 `dev-evidence/` bundle (banner `DEVELOPMENT EVIDENCE — NOT RfR`, `ut/`, `system/`,
 `pure/`, `identities.json`, `findings.md`, and `ql/` — the dev QL package of the
 pure run rendered with `--dev`: index with both image identities + tri-state VnV
@@ -253,7 +253,7 @@ data, judged by `fth evaluate` (`fprime-test-oracle` §3). The builder
 writes only what the grammar cannot say, as `@helper` functions in the
 plan's helpers module, each returning `(holds, seen)` or `(holds,
 seen, refs, unverified)`; a helper is reviewed like a predicate. The
-reviewer's independent checker is written from the plan text alone —
+reviewer's independent checker (legacy plans with plan-owned pass rules only) is written from the plan text alone —
 do not discuss helper internals with the reviewer before it exists.
 
 ## 6. Size and review
@@ -304,9 +304,10 @@ Stage 2 closes on the exit gate of `fprime-system-test-design` §6:
 the planted fault → run mapping lives only in the orchestration script) kept as
 mutation vectors — one clean record (all PASS) and one per planted fault applied
 alone (its target FAILs exactly its `fails` set, its `ripples_to` FAIL,
-everything else PASSes), `fth vectors` green, engine and independent
-checker byte-equal on every one — plus the **stage-3 rehearsal** with
-a throwaway seed (`fth draw` → `fth run` → `fth audit --independent` →
+everything else PASSes), `fth vectors` green, hand `pytest` ==
+`fth run --replay-record` per test and `fth audit --tests` without
+DIVERGENCE on every one — plus the **stage-3 rehearsal** with
+a throwaway seed (`fth draw` → `fth run` → `fth audit --tests` →
 `fth unseal`, no tooling error; fram-r1 was voided at run start because
 the harness had only ever read a hand-written dry-run fault file). Then
 `fth manifest` with the raw image binaries that were flashed and

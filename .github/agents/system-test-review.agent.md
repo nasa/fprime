@@ -82,7 +82,7 @@ helpers' implementation before step 1. Procedure:
    `record/`, planted faults invisible in the record, each single-knob vector
    fails its target with exactly the planted fault's `fails` predicates and its
    `ripples_to` with FAIL not UNVERIFIED while everything else passes
-   (`fth vectors` green), engine and checker `failed` lists byte-equal
+   (`fth vectors` green), runner junit and replay `failed` lists byte-equal (legacy plans: engine and checker)
    on every vector, no planted fault name or test/planted fault pair anywhere in the
    dry-run `runner/` output or in a run id (grep for every planted fault name;
    `MARK(crc32(run id))` inverts a planted-fault-named id), completeness built from

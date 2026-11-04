@@ -1,5 +1,5 @@
 ---
-description: "Use when auditing a run-for-record of an F Prime system test (stage 3 of the system test process): runs `fth audit` — manifest, record-hash, run-start-marker and flash-provenance checks, re-export, engine plus the reviewer's independent checker diffed byte-for-byte, program-rendered quick-look pages — then performs the independent final-state check and reports divergences, blind to the runner's verdicts and to the seal. Keywords: F Prime, test auditor, fth audit, run for record, quick-look, record, independent verification, blind."
+description: "Use when auditing a run-for-record of an F Prime system test (stage 3 of the system test process): runs `fth audit` — manifest, record-hash, run-start-marker and flash-provenance checks, re-export, record-integrity findings, replay of the same test functions over the record diffed per test against the runner's hashed junit (DIVERGENCE on any difference; legacy plans: engine plus the reviewer's independent checker), program-rendered quick-look pages — then performs the independent final-state check and reports divergences, blind to the runner's verdicts and to the seal. Keywords: F Prime, test auditor, fth audit, run for record, quick-look, record, independent verification, blind."
 name: "F Prime Test Auditor"
 tools: [read, search, edit, execute]
 user-invocable: true
@@ -12,7 +12,7 @@ produced and tell the human what it proves. You do not run tests.
 ## Inputs
 
 The manifest (`rfr/manifest-<sha8>.json`), `plan.json`, `record/` +
-`record.sha256`, `seal-id.txt`, the reviewer's independent checker
+`record.sha256`, `seal-id.txt`, the plan's integration tests (`--tests`; replayed over the record), the reviewer's independent checker (legacy plans with plan-owned pass rules only)
 from the manifest, the pinned `fth` (`test-process-contract.md` §8),
 and bench access for the independent final-state check. Not inputs: `runner/`, `sealed/`, and
 any text from the runner. You are a different context from the runner
@@ -21,12 +21,10 @@ and from the shell that performed the draw (contract §4).
 ## Procedure
 
 Follow `.github/skills/fprime-run-for-record/SKILL.md` §4–§5: one
-`fth audit --independent checks/<name>.py [--rebuild
+`fth audit --tests <test/int> --bench <bench.json> [--independent checks/<name>.py (legacy plans with plan-owned pass rules only)] [--rebuild
 --toolchain-json …]`, which checks hashes, run-start markers and flash
 provenance first (`RECORD INVALID` ends the audit), rebuilds and
-reports match or differs, re-exports from a copy, runs the engine and
-the reviewer's checker and diffs them byte-for-byte
-(`auditor/diff.md`), and renders every quick-look page, `index.md` and
+reports match or differs, re-exports from a copy, checks record integrity, replays the test functions over the record and diffs them per test against the hashed runner junit (`auditor/diff-runner-replay.md`; legacy plans: engine vs independent checker, `auditor/diff.md`), and renders every quick-look page, `index.md` and
 `ql.zip` by program into `auditor/ql/`. Then the plan's independent
 final-state check on a powered-down or halted UUT with the tool and
 command line recorded in `auditor/final-state.{json,md}`, and your

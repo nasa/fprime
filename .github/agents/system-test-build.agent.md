@@ -34,16 +34,16 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
    sources (fpp/cpp/hpp, docs/sdd.md) and the helpers module (planted fault
    bodies + helper predicates) to `system-test-review.agent.md`
    (harness mode); fix must-fixes; repeat until the engine and the
-   independent checker agree byte-for-byte on every vector and no
+   hand `pytest` and `fth run --replay-record` agree per test on every vector, `fth audit --tests` replays each without DIVERGENCE, and no
    must-fix is open (five rounds maximum, then escalate). This step
    cannot close until a round with the reviewer's step 3b (adversarial
    reading, five questions) is on file with no open must-fix.
 5. Rehearse stage 3 end to end with a throwaway seed (`fth draw` →
-   `fth run` → `fth audit --independent` → `fth unseal`), produce the
+   `fth run` → `fth audit --tests` → `fth unseal`), produce the
    development evidence with `fth dev-campaign --out dev-evidence/`
    (UT coverage in a default-config project, the plan + dump plan on
    the gcov-instrumented image, the pure run on the RfR image; iterate
-   until it exits 0 — every pure verdict PASS, engine = checker,
+   until it exits 0 — every pure verdict PASS, runner junit == replay (no DIVERGENCE),
    coverage at or above the plan's thresholds with the uncovered lines
    acknowledged), then close stage 2 with `fth manifest`
    (`fprime-run-for-record` §1), listing the built image files and
