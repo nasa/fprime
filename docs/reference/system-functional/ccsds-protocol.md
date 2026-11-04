@@ -53,7 +53,7 @@ The AOS Framer implements the CCSDS Advanced Orbiting Systems (AOS) Space Data L
 
 ### TM Synchronization (Attached Sync Marker)
 
-The optional [AsmFramer](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AsmFramer/docs/sdd.md) prepends the CCSDS Attached Sync Marker (131.0-B-5 Section 9; default 32-bit `0x1ACFFC1D`, configurable up to 128 bits, or disabled) to each TM or AOS Transfer Frame, producing Sync-Marked Transfer Frames so the ground side can acquire frame boundaries on a byte stream.
+The optional [AsmFramer](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AsmFramer/docs/sdd.md) prepends the CCSDS Attached Sync Marker (131.0-B-5 Section 9; default 32-bit `0x1ACFFC1D`, configurable up to `ComCfg.AsmMaxSize` bytes (128 bits by default), or disabled) to each TM or AOS Transfer Frame, producing Sync-Marked Transfer Frames so the ground side can acquire frame boundaries on a byte stream.
 
 ### Space Data Link Security (SDLS)
 

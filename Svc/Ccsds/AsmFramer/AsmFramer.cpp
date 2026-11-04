@@ -17,6 +17,8 @@ namespace Ccsds {
 static constexpr U8 ASM_DEFAULT[] = {0x1A, 0xCF, 0xFC, 0x1D};
 static_assert(sizeof(ASM_DEFAULT) == AsmFramer::ASM_DEFAULT_SIZE, "ASM_DEFAULT_SIZE must match the default pattern");
 static_assert(AsmFramer::ASM_DEFAULT_SIZE <= AsmFramer::ASM_MAX_SIZE, "default ASM must fit the configured bound");
+static_assert(AsmFramer::FRAME_MAX_SIZE >= static_cast<FwSizeType>(ComCfg::TmFrameFixedSize),
+              "ComCfg.AsmFramerMaxFrameSize must hold at least a TM transfer frame");
 
 // Out-of-class definitions so the constants may be odr-used (C++14)
 constexpr FwSizeType AsmFramer::ASM_MAX_SIZE;
@@ -57,8 +59,9 @@ void AsmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
     // Sync-Marked Transfer Frame (CCSDS 131.0-B-5 Section 9.4: the ASM
     // precedes the data it delimits). Frame data is not modified. With the
     // marker disabled (size 0) the frame is forwarded unchanged.
-    // The size guards are required: size 0 admits a null source (asserted above), and
-    // memcpy with a null source pointer is undefined behavior even for zero bytes
+    // The data guard is required: size 0 admits a null source (asserted above), and memcpy
+    // with a null source pointer is undefined behavior even for zero bytes. The ASM guard
+    // merely skips a zero-length copy when the marker is disabled.
     if (this->m_asmSize > 0) {
         (void)::memcpy(this->m_frameBuffer, this->m_asm, static_cast<size_t>(this->m_asmSize));
     }
@@ -66,10 +69,10 @@ void AsmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
         (void)::memcpy(&this->m_frameBuffer[this->m_asmSize], data.getData(), static_cast<size_t>(data.getSize()));
     }
 
-    // Hold the upstream buffer until our own buffer comes back on dataReturnIn. Returning
-    // it earlier would signal the upstream framer that the frame was consumed while the
-    // com adapter may still hold it (asynchronous drivers), letting the upstream framer
-    // emit its next frame into a buffer this component does not own.
+    // Hold the upstream buffer until our own buffer comes back on dataReturnIn. This keeps the
+    // upstream framer's ownership timeline identical to a chain without the AsmFramer: its buffer
+    // returns when the com adapter has released the frame, so flow control (buffer return before
+    // comStatus) is preserved for synchronous and asynchronous drivers alike.
     this->m_upstreamBuffer = data;
     this->m_upstreamContext = context;
     Fw::Buffer frameBuffer(this->m_frameBuffer, this->m_asmSize + data.getSize());
@@ -94,9 +97,12 @@ void AsmFramer ::dataReturnIn_handler(FwIndexType portNum,
     this->m_bufferState = BufferOwnershipState::OWNED;
 
     // Now that the com adapter has released our buffer, return the upstream frame
+    // Copy both halves to locals: the port call may re-enter dataIn (AosFramer continues
+    // packing when its frame returns) and overwrite the members
     Fw::Buffer upstream = this->m_upstreamBuffer;
+    const ComCfg::FrameContext upstreamContext = this->m_upstreamContext;
     this->m_upstreamBuffer = Fw::Buffer();
-    this->dataReturnOut_out(0, upstream, this->m_upstreamContext);
+    this->dataReturnOut_out(0, upstream, upstreamContext);
 }
 
 }  // namespace Ccsds

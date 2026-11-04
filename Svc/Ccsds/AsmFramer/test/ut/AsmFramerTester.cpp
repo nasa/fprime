@@ -5,14 +5,14 @@
 // ======================================================================
 
 #include "AsmFramerTester.hpp"
-#include <cstring>
 
 namespace Svc {
 
 namespace Ccsds {
 
 //! CCSDS 131.0-B-5 Section 9.3.1 ASM pattern, as the component must apply it by default
-static const U8 DEFAULT_ASM[AsmFramer::ASM_DEFAULT_SIZE] = {0x1A, 0xCF, 0xFC, 0x1D};
+static const U8 DEFAULT_ASM[] = {0x1A, 0xCF, 0xFC, 0x1D};
+static_assert(sizeof(DEFAULT_ASM) == AsmFramer::ASM_DEFAULT_SIZE, "default pattern size");
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -56,7 +56,7 @@ void AsmFramerTester ::testNominalFraming() {
 
 void AsmFramerTester ::testConfiguredAsm() {
     // CCSDS 131.0-B-5 Section 9.3 rate-1/2 Turbo / TF-LDPC 1/2, 2/3, 4/5 pattern (64-bit)
-    const U8 turboAsm[8] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0};
+    const U8 turboAsm[] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0};
     this->component.configure(Fw::ConstByteArray(turboAsm, sizeof(turboAsm)));
 
     U8 bufferData[32] = {};
@@ -69,8 +69,8 @@ void AsmFramerTester ::testConfiguredAsm() {
     this->sendAndVerifyFrame(Fw::ConstByteArray(turboAsm, sizeof(turboAsm)), buffer, context, 0);
 
     // Maximum supported size (128-bit): rate-1/4 Turbo pattern (Blue Book 9.3.2, figure 9-4)
-    const U8 rate14Asm[AsmFramer::ASM_MAX_SIZE] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0,
-                                                   0xFC, 0xB8, 0x89, 0x38, 0xD8, 0xD7, 0x6A, 0x4F};
+    const U8 rate14Asm[] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0,
+                            0xFC, 0xB8, 0x89, 0x38, 0xD8, 0xD7, 0x6A, 0x4F};
     this->component.configure(Fw::ConstByteArray(rate14Asm, sizeof(rate14Asm)));
     this->sendAndVerifyFrame(Fw::ConstByteArray(rate14Asm, sizeof(rate14Asm)), buffer, context, 1);
 }
@@ -115,12 +115,10 @@ void AsmFramerTester ::testFrameSizeBounds() {
     Fw::Buffer emptyBuffer(emptyData, 0);
     this->sendAndVerifyFrame(Fw::ConstByteArray(DEFAULT_ASM, sizeof(DEFAULT_ASM)), emptyBuffer, context, 0);
 
-    // The largest frame either upstream framer emits is accepted with the largest marker
-    const U8 rate14Asm[AsmFramer::ASM_MAX_SIZE] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0,
-                                                   0xFC, 0xB8, 0x89, 0x38, 0xD8, 0xD7, 0x6A, 0x4F};
+    // The largest configured frame (ComCfg.AsmFramerMaxFrameSize) is accepted with the largest marker
+    const U8 rate14Asm[] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0,
+                            0xFC, 0xB8, 0x89, 0x38, 0xD8, 0xD7, 0x6A, 0x4F};
     this->component.configure(Fw::ConstByteArray(rate14Asm, sizeof(rate14Asm)));
-    static_assert(AsmFramer::FRAME_MAX_SIZE >= ComCfg::AosMaxFrameFixedSize, "AOS frames must fit");
-    static_assert(AsmFramer::FRAME_MAX_SIZE >= ComCfg::TmFrameFixedSize, "TM frames must fit");
     U8 maxData[AsmFramer::FRAME_MAX_SIZE + 1] = {};
     for (U32 i = 0; i < sizeof(maxData); ++i) {
         maxData[i] = static_cast<U8>(i * 7u);
@@ -160,8 +158,11 @@ void AsmFramerTester ::testDataReturn() {
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, aboveBuffer, context), "AsmFramer.cpp");
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, context), "AsmFramer.cpp");
 
-    // Returning the internal buffer restores ownership and releases the upstream frame
-    this->invoke_to_dataReturnIn(0, internalBuffer, context);
+    // Returning the internal buffer restores ownership and releases the upstream frame with the
+    // context captured at dataIn, not the context the com adapter hands back
+    ComCfg::FrameContext returnContext;
+    returnContext.set_vcId(6);
+    this->invoke_to_dataReturnIn(0, internalBuffer, returnContext);
     ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::OWNED);
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_from_dataReturnOut(0, buffer, context);
@@ -210,10 +211,12 @@ void AsmFramerTester ::sendAndVerifyFrame(const Fw::ConstByteArray& expectedAsm,
     ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::NOT_OWNED);
     ASSERT_from_dataReturnOut_SIZE(index);
     Fw::Buffer returned(outBuffer);
-    this->invoke_to_dataReturnIn(0, returned, context);
+    ComCfg::FrameContext returnContext;  // a different context, to prove the dataIn context is forwarded
+    returnContext.set_vcId(static_cast<U8>(context.get_vcId() + 1));
+    this->invoke_to_dataReturnIn(0, returned, returnContext);
     ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::OWNED);
 
-    // The original buffer (identity, size, and context) is then returned to its sender
+    // The original buffer (identity, size, and the dataIn context) is then returned to its sender
     ASSERT_from_dataReturnOut_SIZE(index + 1);
     ASSERT_from_dataReturnOut(index, frame, context);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(index).data.getData(), frame.getData());
