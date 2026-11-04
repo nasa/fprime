@@ -80,6 +80,12 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! configure the component on one directory and build the catalog as the first command
     void configureAndBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq, Fw::MemAllocator& alloc);
 
+    //! overwrite the state file with one transmitted record per (directory index, id), without checking the index
+    void writeStateFileRecords(Fw::FileNameString& stateFile,
+                               const FwIndexType* dirs,
+                               const FwDpIdType* ids,
+                               FwSizeType count);
+
     //! Generate some data product files
     Fw::String genDP(FwDpIdType id,
                      FwDpPriorityType prio,
@@ -236,6 +242,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! loadStateFile with more products in the state file than slots: later records for slotted products still
     //! apply, the slotless transmitted product is re-added, and the read offset stays exact past the skipped record
     void test_LoadStateFileSlotExhausted();
+    //! loadStateFile with records whose directory index is negative or past the configured list: each is skipped
+    //! with an event at its offset, the valid record still applies, and the event throttle is reset per load
+    void test_LoadStateFileDirectoryInvalid();
 
     //! SET_DP_PRIORITY before configure
     void test_SetPriorityNotInit();

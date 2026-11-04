@@ -644,6 +644,17 @@ module Svc {
       id 62 \
       format "Failed to format DP file name under {} with status {}; directory skipped"
 
+    @ A state file record names a directory index that is not in the configured directory list; the record is skipped
+    event StateFileDirectoryInvalid(
+                                     file: string size FileNameStringSize @< The state file
+                                     offset: I32 @< Offset of the record in the state file
+                                     dirIndex: FwIndexType @< The directory index in the record
+                                   ) \
+      severity warning high \
+      id 63 \
+      format "State file {} record at offset {} has unconfigured directory index {}; skipped" \
+      throttle 10
+
 
     # ----------------------------------------------------------------------
     # Telemetry
