@@ -13,7 +13,7 @@
 //      forward-declaring a link-time delegate (e.g. DelegateMemory) or directly
 //      aliasing a concrete implementation.
 //      Must not include Os OSAL headers (they aren't yet defined).
-//      Should only be included in Os/MemoryInterface.hpp.
+//      Included first by Os/MemoryInterface.hpp and again by this header.
 //
 //   2. Os/MemoryInterface.hpp (IF) includes CFG first (so the Os::Memory alias is
 //      available), then defines MemoryHandle and MemoryInterface.

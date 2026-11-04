@@ -109,6 +109,10 @@ class FileInterface {
     //! It is invalid to supply `mode` as a non-enumerated value.
     //! It is invalid to supply `overwrite` as a non-enumerated value.
     //!
+    //! This overload is also the implementation hook and applies no length bound to `path`, which must be
+    //! null-terminated. Callers holding a buffer that may be unterminated or longer than `FileNameStringSize`
+    //! should use an overload that takes an explicit `length`.
+    //!
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create

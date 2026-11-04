@@ -67,6 +67,9 @@ class PosixDirectory : public DirectoryInterface {
     //! \param fileNameBuffer: buffer to store filename
     //! \param buffSize: size of fileNameBuffer
     //! \return status of the operation
+    // Bring the base class's read(Fw::StringBase&) overload back into scope; it would
+    // otherwise be hidden by the read(char*, FwSizeType) override declared below.
+    using DirectoryInterface::read;
     Status read(char* fileNameBuffer, FwSizeType buffSize) override;
 
     //! \brief Close directory

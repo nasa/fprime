@@ -13,7 +13,7 @@
 //      forward-declaring a link-time delegate (e.g. DelegateCpu) or directly
 //      aliasing a concrete implementation.
 //      Must not include Os OSAL headers (they aren't yet defined).
-//      Should only be included in Os/CpuInterface.hpp.
+//      Included first by Os/CpuInterface.hpp and again by this header.
 //
 //   2. Os/CpuInterface.hpp (IF) includes CFG first (so the Os::Cpu alias is
 //      available), then defines CpuHandle and CpuInterface.

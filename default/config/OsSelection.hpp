@@ -94,7 +94,10 @@
 //
 // Each of these services is selected independently. A compile-time selection
 // MUST derive from the matching Os::<Service>Interface. The aliased class must
-// still be in the link (see the Mutex note above).
+// still be in the link (see the Mutex note above). Singleton services (Console,
+// FileSystem, Cpu, Memory) must also provide static init()/getSingleton(), and a
+// direct Os::File alias must implement the CRC methods and the open/closed guards
+// that DelegateFile otherwise provides; see Os/docs/sdd.md "Compile-time selection".
 //
 // Example compile-time selection override:
 //

@@ -207,8 +207,9 @@ namespace Os {
 
 **Additional requirements for singleton services.** `Console`, `FileSystem`, `Cpu` and `Memory` expose
 static convenience wrappers that resolve through `Os::<Service>::getSingleton()`, and `Os::init()`
-(`Os/Os.cpp`) calls `Os::<Service>::init()`. The static wrappers are declared on the interface class,
-but `init()` and `getSingleton()` are *not*, so a compile-time alias for one of these services MUST
+(`Os/Os.cpp`) calls `Os::<Service>::init()`. The `FileSystem`, `Cpu` and `Memory` static wrappers are
+declared on the interface class (`Console`'s `write()` statics are not, see below), and `init()` and
+`getSingleton()` are declared on no interface, so a compile-time alias for one of these services MUST
 additionally provide:
 
 ```c++
@@ -229,7 +230,11 @@ implementation lives on `DelegateFile` (see the design note in `Os/FileInterface
 compile-time `Os::File` alias MUST therefore call `setMode()` on open/close so that `isOpen()`,
 `readline()` and the mode checks in the `open(...)` overloads behave, and MUST override the three
 CRC methods — otherwise `Svc::PrmDb::readParamFile` fails on every boot and
-`Svc::FileManager`'s `CALCULATE_CRC` command always returns `EXECUTION_ERROR`. The same `setMode`
+`Svc::FileManager`'s `CALCULATE_CRC` command always returns `EXECUTION_ERROR`. It MUST also replicate the
+per-call guards that live only on `DelegateFile`: `open()` on an already-open file returns `INVALID_MODE`
+and every other operation on a closed file returns `NOT_OPENED`. `PosixFile` alone does neither (a
+re-open silently overwrites, and leaks, the previous descriptor), and callers such as
+`Svc::ActiveTextLogger` rely on those statuses. The same `setMode`
 style obligation applies to `Os::Directory` (`setOpen()`).
 
 ### 5.3 API usage

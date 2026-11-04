@@ -3,7 +3,6 @@
 // \brief link-time delegate implementation for Os::DelegateFile
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/StringUtils.hpp>
 #include <Os/DelegateFile.hpp>
 #include <config/FppConstantsAc.hpp>
 #include <limits>

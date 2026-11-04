@@ -16,9 +16,6 @@ namespace Os {
 //! This class uses the singleton pattern and should be accessed through
 //! its static functions, for example using `Os::FileSystem::removeFile(path)`.
 class DelegateFileSystem final : public FileSystemInterface {
-    // Grants FileSystemInterface's convenience static wrappers access to the private constructor below
-    friend class FileSystemInterface;
-
   private:
     DelegateFileSystem();  //!<  Constructor (private because singleton pattern)
   public:

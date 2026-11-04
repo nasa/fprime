@@ -13,7 +13,7 @@
 //      forward-declaring a link-time delegate (e.g. DelegateDirectory) or directly
 //      aliasing a concrete implementation.
 //      Must not include Os OSAL headers (they aren't yet defined).
-//      Should only be included in Os/DirectoryInterface.hpp.
+//      Included first by Os/DirectoryInterface.hpp and again by this header.
 //
 //   2. Os/DirectoryInterface.hpp (IF) includes CFG first (so the Os::Directory alias is
 //      available), then defines DirectoryHandle and DirectoryInterface.
