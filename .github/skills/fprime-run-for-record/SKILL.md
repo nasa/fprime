@@ -256,8 +256,15 @@ at the manifest's project sha); an HTML twin of every page (`index.html` entry p
 `<page>.html` beside each `.md`, one offline `style.css`; `.md` links rewritten to `.html`,
 heading and `REQ-…` anchors preserved; ```mermaid blocks pre-rendered to inline SVG by
 `mmdc` when the host has it, else the vendored `assets/mermaid.min.js` renders them from
-`file://` — no CDN, no plugin, no timestamps; the `.md` stays the diffable source); `ql.zip` of
-all of it. **No coverage of any kind** is in an RfR package: an instrumented image is not
+`file://` — no CDN, no plugin, no timestamps; the `.md` stays the diffable source); `inputs/`
+(the package is self-contained: `manifest.json`, `plan.json`, `faults-menu.json`, `bench.json`,
+the independent checker and the sibling module it imports, `toolchain.json`, every image the
+manifest names with its pinned sha256 and the flash read-back sha, the F´ dictionary, and
+`inputs/README.md` listing each file, its sha256, the manifest pin and the stage-3 row that
+consumes it — a sha256 that disagrees with a pin is a loud failure; `fth unseal` adds `unseal.md`
+and `seed.txt` (verified to reproduce the draw) — the seed enters the package only after the
+unseal, never before; tests, stimulus and tester sources stay in the pinned repositories); `ql.zip` of
+all of it — stage-3 row 8 "Deliver" is `rfr/<run>/auditor/ql/ql.zip` and nothing else. **No coverage of any kind** is in an RfR package: an instrumented image is not
 the qualified image, and the record is a pure record of the pinned build; `fth render-ql` /
 `fth audit` refuse `--ut-coverage` / `--system-coverage` without `--dev`, which stamps the
 package DEVELOPMENT EVIDENCE — NOT RfR. Coverage (UT and on-target) is development evidence,
