@@ -39,7 +39,9 @@ def write_and_transmit(fprime_test_api):
     start = fprime_test_api.get_event_test_history().size()
     transmit_catalog_until_complete(fprime_test_api, remain_active=False)
     fprime_test_api.assert_event(
-        dp_catalog(fprime_test_api, "ProductComplete"), [file_name, None, None], start=start
+        dp_catalog(fprime_test_api, "ProductComplete"),
+        [file_name, None, None],
+        start=start,
     )
     return file_name
 
@@ -54,7 +56,9 @@ def retransmit(fprime_test_api, file_name):
 def retransmit_rejected(fprime_test_api, dp_id, t_sec, t_sub, reason):
     """Send RETRANSMIT_DP and check it fails with EXECUTION_ERROR and DpRetransmitError naming reason"""
     start = fprime_test_api.get_event_test_history().size()
-    fprime_test_api.send_command(dp_catalog(fprime_test_api, "RETRANSMIT_DP"), [dp_id, t_sec, t_sub])
+    fprime_test_api.send_command(
+        dp_catalog(fprime_test_api, "RETRANSMIT_DP"), [dp_id, t_sec, t_sub]
+    )
     fprime_test_api.assert_event(
         dp_catalog(fprime_test_api, "DpRetransmitError"),
         [dp_id, t_sec, t_sub, reason],
@@ -80,7 +84,10 @@ def test_retransmit_transmitted_product(fprime_test_api):
 
     start = retransmit(fprime_test_api, file_name)
     fprime_test_api.assert_event(
-        dp_catalog(fprime_test_api, "DpRetransmitScheduled"), [file_name, None], start=start, timeout=5
+        dp_catalog(fprime_test_api, "DpRetransmitScheduled"),
+        [file_name, None],
+        start=start,
+        timeout=5,
     )
     fprime_test_api.assert_event(
         dp_catalog(fprime_test_api, "DpFileAdded"), [file_name], start=start, timeout=5
@@ -93,7 +100,9 @@ def test_retransmit_transmitted_product(fprime_test_api):
     start = fprime_test_api.get_event_test_history().size()
     transmit_catalog_until_complete(fprime_test_api, remain_active=False)
     fprime_test_api.assert_event(
-        dp_catalog(fprime_test_api, "ProductComplete"), [file_name, None, None], start=start
+        dp_catalog(fprime_test_api, "ProductComplete"),
+        [file_name, None, None],
+        start=start,
     )
 
     # transmitted again: the rebuild skips it and a transmission has nothing to send
@@ -119,7 +128,10 @@ def test_retransmit_survives_rebuild(fprime_test_api):
 
     start = retransmit(fprime_test_api, file_name)
     fprime_test_api.assert_event(
-        dp_catalog(fprime_test_api, "DpRetransmitScheduled"), [file_name, None], start=start, timeout=5
+        dp_catalog(fprime_test_api, "DpRetransmitScheduled"),
+        [file_name, None],
+        start=start,
+        timeout=5,
     )
 
     start = fprime_test_api.get_event_test_history().size()
@@ -160,5 +172,7 @@ def test_retransmit_rejected(fprime_test_api):
     start = fprime_test_api.get_event_test_history().size()
     transmit_catalog_until_complete(fprime_test_api, remain_active=False)
     fprime_test_api.assert_event(
-        dp_catalog(fprime_test_api, "ProductComplete"), [file_name, None, None], start=start
+        dp_catalog(fprime_test_api, "ProductComplete"),
+        [file_name, None, None],
+        start=start,
     )
