@@ -13,7 +13,7 @@
 //      forward-declaring a link-time delegate (e.g. DelegateConsole) or directly
 //      aliasing a concrete implementation (e.g. Va416x0::GdsConsole).
 //      Must not include Os OSAL headers (they aren't yet defined).
-//      Included first by Os/ConsoleInterface.hpp and again by this header.
+//      Included by Os/ConsoleInterface.hpp, which this header includes first.
 //
 //   2. Os/ConsoleInterface.hpp (IF) includes CFG first (so the Os::Console alias
 //      is available), then defines ConsoleHandle and ConsoleInterface.

@@ -156,8 +156,8 @@ class FileInterface {
     //!
     //! Open the file passed in with the given mode. The path length is bounded by `length`.
     //! If overwrite is set to OVERWRITE, then opening files in OPEN_CREATE mode will clobber
-    //! existing files. Set overwrite to NO_OVERWRITE to preserve existing files. This is the
-    //! core open implementation to which all other open overloads delegate.
+    //! existing files. Set overwrite to NO_OVERWRITE to preserve existing files. This overload
+    //! validates its arguments and then delegates to the 3-argument open() implementation hook.
     //!
     //! It is invalid to send `nullptr` as the path.
     //! It is invalid to supply `mode` as a non-enumerated value.

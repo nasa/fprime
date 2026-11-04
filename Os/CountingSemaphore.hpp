@@ -14,7 +14,7 @@
 //      delegate (e.g. DelegateCountingSemaphore) or directly aliasing a
 //      concrete implementation.
 //      Must not include Os OSAL headers (they aren't yet defined).
-//      Included first by Os/CountingSemaphoreInterface.hpp and again by this header.
+//      Included by Os/CountingSemaphoreInterface.hpp, which this header includes first.
 //
 //   2. Os/CountingSemaphoreInterface.hpp (IF) includes CFG first (so the
 //      Os::CountingSemaphore alias is available), then defines

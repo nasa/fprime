@@ -13,7 +13,7 @@
 //      alias by forward-declaring a link-time delegate (e.g. DelegateFileSystem)
 //      or directly aliasing a concrete implementation.
 //      Must not include Os OSAL headers (they aren't yet defined).
-//      Included first by Os/FileSystemInterface.hpp and again by this header.
+//      Included by Os/FileSystemInterface.hpp, which this header includes first.
 //
 //   2. Os/FileSystemInterface.hpp (IF) includes CFG first (so the
 //      Os::FileSystem alias is available), then defines FileSystemHandle
