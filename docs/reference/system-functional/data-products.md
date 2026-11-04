@@ -39,7 +39,7 @@ The Data Product Catalog manages the inventory and downlink of stored data produ
 - Reprioritize one data product for downlink (`SET_DP_PRIORITY`); the change is kept in the state file if one is configured
 - Restrict a transmission to an inclusive priority range (`START_XMIT_CATALOG_WITH_PRIORITY`); products outside the range stay cataloged for a later pass
 - Delete one data product from storage (`DELETE_DP`): its file, its catalog entry and its state file record; the product being transmitted is refused
-- Reschedule one already-transmitted data product for downlink (`RETRANSMIT_DP`) at its recorded priority, for a product corrupted in transit or lost on the ground
+- Reschedule one already-transmitted data product for downlink (`RETRANSMIT_DP`) at its header priority, for a product corrupted in transit or lost on the ground
 - Query the catalog status
 
 ### Configuration

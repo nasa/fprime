@@ -625,9 +625,9 @@ TEST(NominalManual, RetransmitFullStateFile) {
     tester.test_RetransmitFullStateFile();
 }
 
-TEST(NominalManual, RetransmitRecordedPriority) {
+TEST(NominalManual, RetransmitHeaderPriority) {
     Svc::DpCatalogTester tester;
-    tester.test_RetransmitRecordedPriority();
+    tester.test_RetransmitHeaderPriority();
 }
 
 TEST(NominalManual, RetransmitWithoutRecord) {

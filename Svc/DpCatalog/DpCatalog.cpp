@@ -1320,8 +1320,10 @@ Fw::CmdResponse DpCatalog ::doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub) {
         const Fw::FormatStatus formatStatus =
             candidate.format(DP_FILENAME_FORMAT, this->m_directories[index].toChar(), id, tSec, tSub);
         if (formatStatus != Fw::FormatStatus::SUCCESS) {
-            this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpCatalog_RetransmitRejectReason::NAME_ERROR);
-            return Fw::CmdResponse::EXECUTION_ERROR;
+            // a directory too long for the name is skipped; the file may still be in a shorter one
+            this->log_WARNING_LO_DpRetransmitNameError(this->m_directories[index],
+                                                       static_cast<Fw::StringFormatStatus::T>(formatStatus));
+            continue;
         }
         if (Os::FileSystem::exists(candidate.toChar())) {
             fullFile = candidate;
@@ -1341,21 +1343,27 @@ Fw::CmdResponse DpCatalog ::doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub) {
     product.record.set_tSec(tSec);
     product.record.set_tSub(tSub);
     // processFile applies the product's state file record through getFileState, which looks the slot up by the same
-    // key and marks it visited; a record reading TRANSMITTED would make it skip the file. Reset the record so the
-    // product is cataloged again, at the priority the record keeps (the header priority unless SET_DP_PRIORITY changed
-    // it, 3.6.8), and restore the whole slot if the file cannot be cataloged
+    // key: a record reading TRANSMITTED would make it skip the file, and a recorded priority would replace the header
+    // priority. Drop the record (the last slot moves into its place, as DELETE_DP does) so the product is cataloged
+    // from its header alone, and put it back if the file cannot be cataloged
     const FwSizeType slot = this->findStateFileSlot(product);
-    const bool hasRecord = (slot != this->m_stateFileEntries);
+    const bool hadRecord = (slot != this->m_stateFileEntries);
     DpDstateFileEntry savedSlot{};
-    if (hasRecord) {
+    DpDstateFileEntry savedLast{};
+    if (hadRecord) {
         savedSlot = this->m_stateFileData[slot];
-        this->m_stateFileData[slot].entry.record.set_state(Fw::DpState::UNTRANSMITTED);
-        this->m_stateFileData[slot].entry.record.set_blocks(0);
+        savedLast = this->m_stateFileData[this->m_stateFileEntries - 1];
+        this->m_stateFileEntries--;
+        this->m_stateFileData[slot] = this->m_stateFileData[this->m_stateFileEntries];
+        this->m_stateFileData[this->m_stateFileEntries].used = false;
+        this->m_stateFileData[this->m_stateFileEntries].visited = false;
     }
     const ProcessFileStatus ret = this->processFile(fullFile, dir);
     if (ret != ProcessFileStatus::SUCCESS) {
-        if (hasRecord) {
+        if (hadRecord) {
+            this->m_stateFileData[this->m_stateFileEntries] = savedLast;
             this->m_stateFileData[slot] = savedSlot;
+            this->m_stateFileEntries++;
         }
         this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpCatalog_RetransmitRejectReason::FILE_ERROR);
         return Fw::CmdResponse::EXECUTION_ERROR;
@@ -1368,11 +1376,15 @@ Fw::CmdResponse DpCatalog ::doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub) {
     FW_ASSERT(found == DpCatalog_EntryLookupStatus::FOUND, static_cast<FwAssertArgType>(found.e));
     this->log_ACTIVITY_HI_DpRetransmitScheduled(fullFile, catalogEntry.record.get_priority());
 
-    // Record the reset in the state file so that a rebuild after a restart catalogs the product instead of skipping
-    // it. A product without a record has no slot to write from (3.6.10). A write failure is reported by the rewrite
-    // and fails the command, as for DELETE_DP; the product stays rescheduled in memory
+    // Record the product UNTRANSMITTED at its header priority, as a completion records it, so that the state file
+    // data holds the reset; a product that had a record always gets one (its slot was just freed), a product without
+    // one may find the data full (StateFileFull, 3.6.8). Then rewrite the state file so that a rebuild after a
+    // restart catalogs the product instead of skipping it, whether its TRANSMITTED record held a slot or was appended
+    // without one. A write failure is reported by the rewrite and fails the command, as for DELETE_DP; the product
+    // stays rescheduled in memory
+    (void)this->updateStateFileData(catalogEntry);
     Fw::CmdResponse response = Fw::CmdResponse::OK;
-    if (hasRecord && (this->m_stateFile.length() > 0)) {
+    if (this->m_stateFile.length() > 0) {
         const DpCatalog_StateFileWriteStatus writeStatus = this->pruneAndWriteStateFile();
         if (writeStatus != DpCatalog_StateFileWriteStatus::WRITTEN) {
             response = Fw::CmdResponse::EXECUTION_ERROR;

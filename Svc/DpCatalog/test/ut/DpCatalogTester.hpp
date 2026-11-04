@@ -276,7 +276,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_RetransmitRejected();
     //! A file that cannot be cataloged is reported FILE_ERROR and the record is left as it was
     void test_RetransmitFileError();
-    //! A directory name too long for the canonical file name is answered NAME_ERROR
+    //! A directory too long for the canonical file name is skipped with DpRetransmitNameError and the search goes on
     void test_RetransmitNameError();
     //! A state file that cannot be rewritten fails the command after the product is rescheduled
     void test_RetransmitNoStateFileDir();
@@ -286,9 +286,10 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_RetransmitSecondDirectory();
     //! A retransmit with every state file slot in use survives a rebuild without growing the file
     void test_RetransmitFullStateFile();
-    //! A product reprioritized before its downlink is rescheduled at the recorded priority
-    void test_RetransmitRecordedPriority();
-    //! Without a state file, or without a record, the product is rescheduled from its file alone
+    //! A product reprioritized before its downlink is rescheduled at the header priority
+    void test_RetransmitHeaderPriority();
+    //! Without a state file nothing is written; without a record one is added, or StateFileFull reported, and the file
+    //! rewritten
     void test_RetransmitWithoutRecord();
 
   private:

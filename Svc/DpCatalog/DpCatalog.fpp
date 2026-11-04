@@ -107,8 +107,7 @@ module Svc {
       IN_FLIGHT = 1 @< The data product is being transmitted
       PENDING = 2 @< The data product is pending in the catalog and will be transmitted
       NOT_FOUND = 3 @< No file of the data product exists in a managed directory
-      NAME_ERROR = 4 @< The data product file name could not be formatted
-      FILE_ERROR = 5 @< The data product file could not be cataloged (see the preceding file event)
+      FILE_ERROR = 4 @< The data product file could not be cataloged (see the preceding file event)
     }
 
     # ----------------------------------------------------------------------
@@ -635,6 +634,15 @@ module Svc {
       severity activity high \
       id 61 \
       format "DP file {} rescheduled for transmission at priority {}"
+
+    @ RETRANSMIT_DP could not format the data product file name under a managed directory; the directory is skipped
+    event DpRetransmitNameError(
+                                 dir: string size FileNameStringSize @< The managed directory
+                                 status: Fw.StringFormatStatus @< The status returned from the format operation
+                               ) \
+      severity warning low \
+      id 62 \
+      format "Failed to format DP file name under {} with status {}; directory skipped"
 
 
     # ----------------------------------------------------------------------

@@ -371,14 +371,15 @@ class DpCatalog final : public DpCatalogComponentBase {
     void resumeIfRemainActive();
 
     /// @brief reschedule a transmitted data product named by id and time tag for downlink: catalog its file again
-    ///        with its state file record reset, and rewrite the state file if one is configured
+    ///        from its header, record it UNTRANSMITTED in the state file data, and rewrite the state file if one is
+    ///        configured
     /// @param id container ID
     /// @param tSec seconds of the time tag
     /// @param tSub microseconds of the time tag
-    /// @return OK if the product was rescheduled (and the state file rewritten, if one is configured and held a
-    ///         record of it); EXECUTION_ERROR when the request is rejected (DpRetransmitError names the reason), when
-    ///         the component is not initialized (ComponentNotInitialized), or when the product was rescheduled but the
-    ///         state file could not be rewritten (StateFileOpenError/StateFileWriteError)
+    /// @return OK if the product was rescheduled (and the state file rewritten, if one is configured); EXECUTION_ERROR
+    ///         when the request is rejected (DpRetransmitError names the reason), when the component is not
+    ///         initialized (ComponentNotInitialized), or when the product was rescheduled but the state file could not
+    ///         be rewritten (StateFileOpenError/StateFileWriteError)
     Fw::CmdResponse doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub);
 
     // ----------------------------------
