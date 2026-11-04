@@ -42,6 +42,11 @@ where the plan provides it.
 
 ## Forbidden
 
+- No coverage: the run for record uses the pure, uninstrumented image and
+  its package carries no `coverage/` — an instrumented image is not the
+  qualified image; coverage is development evidence (`fth dev-campaign`),
+  delivered beside the RfR inputs by the builder, never produced here.
+
 Contract §7, plus: reading `runner/` or `sealed/`, or guessing which
 failures were planted; rerunning tests or touching the bench except
 for the plan's independent check; replaying the archive in place;

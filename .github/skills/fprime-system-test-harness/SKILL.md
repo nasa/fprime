@@ -123,10 +123,31 @@ Record requirements the harness must make possible:
 - Downlink budget: estimate event rate against link capacity
   beforehand; a harness that loses events cannot prove an absence.
 
-## 3a. On-target coverage (optional; requires GCC ≥ 11 freestanding gcov)
+## 3a. Development evidence: coverage (never RfR; on-target needs GCC ≥ 11 freestanding gcov)
 
-System-test coverage of the UUT on the target is an optional package item
-(`coverage/system/`, run-for-record §5a). It needs a compiler with
+Coverage is **development evidence, not an RfR input**: the RfR runs the pure,
+uninstrumented image and its package contains no `coverage/`; an instrumented
+image is not the qualified image. The builder produces coverage with
+`fth dev-campaign --out dev-evidence/ …`, which runs (a) UT coverage on the host
+(`fprime-util check --coverage` in a **default-config** project — a deployment's
+trimmed config, e.g. `FW_FILEID_ASSERT`, fails UTs for configuration reasons),
+(b) the plan on the gcov-instrumented image followed by the `DUMP_COVERAGE` dump
+plan, reassembled and measured by `fth coverage-system`, and (c) the pure run on
+the RfR image judged by the engine and the independent checker; it writes one
+`dev-evidence/` bundle (banner `DEVELOPMENT EVIDENCE — NOT RfR`, `ut/`, `system/`,
+`pure/`, `identities.json`, `findings.md`) and exits non-zero with a findings
+list when a pure-run verdict is not PASS, the checkers disagree, or coverage is
+under the plan's `coverage: {lines_min, branches_min, not_covered_ack}` (design
+skill §2). "Iterate until clean" = repeat until it exits 0 and the uncovered
+lines are all in the acknowledgement. **Caveat — provenance, not equivalence:**
+until a toolchain pin is approved, the coverage image may be a different
+compiler and binary than the RfR image (FRAM: GCC 13 instrumented vs GCC 9
+pure); the bundle records both identities (image sha256 + read-back, toolchain,
+repo shas) and claims nothing about one from the other. The toolchain override
+(`SAMD_TOOLCHAIN_ROOT`, fprime-samd branch `gcc-override`) stays on its branch
+until the human decides.
+
+On-target coverage needs a compiler with
 freestanding gcov (`-fprofile-info-section`, GCC ≥ 11; GCC 9 rejects it)
 and costs RAM: 8 bytes per arc counter plus a per-function record — on a
 16 KiB part instrument only the UUT's and the tester's hand-written
@@ -242,6 +263,13 @@ the reviewer's step-3b round on file with no open must-fix; mechanics
 checks alone do not close stage 2.
 Document the harness in a short README: how to run one test, the whole
 plan, and the dry run.
+
+**Stage-2 hand-off** (build agent step 5): plan, harness, mutation
+vectors, manifest **and** the `dev-evidence/` bundle from §3a (UT
+coverage, on-target coverage, pure run), clean (`fth dev-campaign` exit
+0). The human gate lists dev-evidence as a *review* input beside the RfR
+inputs; it is never an RfR input and nothing from it enters the RfR
+package or the stage-3 checklist.
 
 ## 7. Dry run
 

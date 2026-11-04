@@ -39,10 +39,19 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
    cannot close until a round with the reviewer's step 3b (adversarial
    reading, five questions) is on file with no open must-fix.
 5. Rehearse stage 3 end to end with a throwaway seed (`fth draw` →
-   `fth run` → `fth audit --independent` → `fth unseal`), then close
-   stage 2 with `fth manifest` (`fprime-run-for-record` §1), listing
-   the built image files and `--toolchain-json`, and present the
-   harness to the human for review as local files. Whether harness code
+   `fth run` → `fth audit --independent` → `fth unseal`), produce the
+   development evidence with `fth dev-campaign --out dev-evidence/`
+   (UT coverage in a default-config project, the plan + dump plan on
+   the gcov-instrumented image, the pure run on the RfR image; iterate
+   until it exits 0 — every pure verdict PASS, engine = checker,
+   coverage at or above the plan's thresholds with the uncovered lines
+   acknowledged), then close stage 2 with `fth manifest`
+   (`fprime-run-for-record` §1), listing the built image files and
+   `--toolchain-json`, and present the harness to the human for review
+   as local files: plan, harness, vectors, manifest **and**
+   `dev-evidence/` — the last as a review input, never an RfR input
+   (harness skill §3a; the coverage image may be a different compiler
+   and binary than the RfR image: provenance, not equivalence). Whether harness code
    becomes a PR is the human's call.
 
 A UUT defect found on the way is reported to the human with the

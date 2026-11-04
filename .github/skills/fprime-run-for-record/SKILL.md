@@ -252,23 +252,16 @@ decimal, each argument with type, enum values and meanings, FPP doc-comment; the
 whose doc-comment names the command; dictionary sha256); `helpers/<Component>.md` for every
 plan `helpers` entry (FPP description, port diagram, commands → `commands.md`, events with
 id/severity/format/args, channels with id/type, parameters, source files with sha256 linked
-at the manifest's project sha); `coverage/ut/` — the UUT's unit-test coverage report (gcovr
-html-details + text summary from `fprime-util check --coverage`, shipped by `render-ql
---ut-coverage <dir>`; the index states line/branch/function % and the summary's sha256, which
-must match the manifest's `ut_coverage` pin written by `fth manifest --ut-coverage <summary>`;
-a **library** UUT's coverage is measured in a project built with the library's **default
-configuration** — a deployment's trimmed config can make UTs fail for configuration reasons
-only, e.g. `FW_FILEID_ASSERT` turning the assert text the death tests match into a file-id
-hash — and the index names that project); **optional** `coverage/system/` — on-target
-system-test coverage (gcovr over the `.gcda` streams `fth coverage-system` reassembles from
-the record's `CoverageChunk` events, placed beside the pinned build's `.gcno`; shipped by
-`render-ql --system-coverage <dir>`, index row "on-target coverage" with line/branch/function
-%, summary sha256 and its `system_coverage` pin state; requires a gcov-instrumented image
-built with **GCC ≥ 11 freestanding gcov** — recipe in the harness skill §3a); `ql.zip` of
-all of it.
+at the manifest's project sha); `ql.zip` of
+all of it. **No coverage of any kind** is in an RfR package: an instrumented image is not
+the qualified image, and the record is a pure record of the pinned build; `fth render-ql` /
+`fth audit` refuse `--ut-coverage` / `--system-coverage` without `--dev`, which stamps the
+package DEVELOPMENT EVIDENCE — NOT RfR. Coverage (UT and on-target) is development evidence,
+produced by `fth dev-campaign` (harness skill §3a) and delivered beside the RfR inputs as a
+review input — never as an RfR input or in this package.
 
 `index.md`: run metadata (manifest sha8, record sha256, seal sha8, dictionary sha256, SDD
-sha256, UT coverage % + report sha256 and its pin state, on-target coverage likewise when present, repo-check state); the per-test table (test, title, checker verdict, unseal
+sha256, repo-check state); the per-test table (test, title, checker verdict, unseal
 expectation, unseal verdict, page); ONE VnV matrix requirement × test with cells
 P / E / F / U / · and an "Overall" column (any F → F; any P and no F → P; only E/U → U;
 waiver quoted when no test covers) and the legend stating the cell meanings and the

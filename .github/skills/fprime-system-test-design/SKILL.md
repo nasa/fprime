@@ -268,7 +268,13 @@ Two audiences, two artifacts:
 - **The builder and the reviewer read the plan.** Deliver `plan.json`
   (§2 structure, one entry per test; `fth verify-plan` passes), its
   rendered `plan.md`, the helpers module with the `@knob` declarations
-  and the generated fault menu, outside the component tree; it is the
+  and the generated fault menu, outside the component tree; the plan
+  also declares the **development-evidence coverage thresholds**,
+  `coverage: {"lines_min": %, "branches_min": %, "not_covered_ack":
+  ["why each uncovered path is acceptable (waiver id, UT covers it,
+  not plantable on the bench)", …]}` — read by `fth dev-campaign`
+  (harness skill §3a), never by the RfR commands; an uncovered path
+  that no acknowledgement names is a finding; it is the
   baseline the harness implements and both checkers evaluate, and it is
   not pasted into the SDD or into chat. Reviewer findings are recorded per the loop's record rule
 (`phase-review-loop.md`, "Record and gate"); the dispositions and the
@@ -278,7 +284,8 @@ Bound and Rounds).
 
 ## 6. Stage-2 exit gate
 
-Stage 2 closes only when both hold, on the bench, with the frozen plan:
+Stage 2 closes only when all three hold, on the bench, with the frozen plan
+(the third is development evidence — a review input, not an RfR input):
 
 1. **Mutation vectors** (`fth vectors plan.json vectors/`): one clean
    full-plan record that PASSes every test, and one single-knob record
@@ -292,6 +299,10 @@ Stage 2 closes only when both hold, on the bench, with the frozen plan:
    unseal` without a tooling error, the harness reading that real
    `sealed/faults.json` (fram-r1 was voided at run start because the
    harness had only ever read a hand-written dry-run fault file).
+3. **Development evidence** (`fth dev-campaign`, harness skill §3a)
+   exits 0: UT coverage and on-target coverage at or above the plan's
+   `coverage` thresholds with the uncovered lines acknowledged, and the
+   pure run on the RfR image PASSes every test with engine = checker.
 
 ## 7. Refresh at stage 2
 

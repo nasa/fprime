@@ -152,6 +152,12 @@ not tamper-proof. Every RfR report says so.
   the harness would pass by construction; writes the independent
   checker; keeps the disagreement log.
 - **Reviewer** also reads the harness code adversarially (review Mode B step 3b: tautology, swallowed status, knob reach, cross-test state, helper KATs); mechanics checks alone do not close stage 2.
+- **Pure RfR / development provenance split**: the RfR runs the pure,
+  uninstrumented image and its package has no coverage; coverage (UT +
+  on-target, `fth dev-campaign` → `dev-evidence/`, banner DEVELOPMENT
+  EVIDENCE — NOT RfR) is delivered beside the RfR inputs as a review
+  input — provenance, not equivalence, when its image differs from the
+  RfR image.
 - **Builder** keeps the harness small enough to be read in one sitting
   and reuses `test/int/` reusable integration tests and standard
   components before writing new code.

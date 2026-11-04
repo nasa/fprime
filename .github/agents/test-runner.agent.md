@@ -49,6 +49,11 @@ that `runner/` and `sealed/` are not to be read.
 
 ## Forbidden
 
+- No coverage: the run for record uses the pure, uninstrumented image and
+  its package carries no `coverage/` — an instrumented image is not the
+  qualified image; coverage is development evidence (`fth dev-campaign`),
+  delivered beside the RfR inputs by the builder, never produced here.
+
 Contract §7, plus: any stage-3 step outside `fth run` (a hand-run
 pytest, export or evaluate is not a record); opening, printing, or
 diffing anything under `sealed/`; letting any file or stream you write name an active knob;
