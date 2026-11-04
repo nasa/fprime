@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-16T20:30:58Z",
+  "generated_at": "2026-11-04T18:50:44Z",
   "ref": "release/v4.4.x",
-  "commit": "558b7ef48edd5d25f3bdddcbbe7afddb9cc22d09",
+  "commit": "f22ce8f2f2943e641d454e9daa7f129e6c878d32",
   "passed": 1,
   "failed": 3,
   "skipped": 12,
