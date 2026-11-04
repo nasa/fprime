@@ -53,7 +53,7 @@ plan approved before the code existed, run the refresh of
 ## Output
 
 - `plan.json` (passes `fth verify-plan`), its rendered `plan.md` (`fth
-  render-plan`), the helpers module with the `@planted fault` declarations, and
+  render-plan`), the helpers module with the `@planted_fault` declarations, and
   the generated `faults-menu.json` (`fth planted-faults-menu`).
 - A ≤ 10-line summary for the human: test count by level, requirements
   covered / waived, metrics, what is not covered, open disagreements.

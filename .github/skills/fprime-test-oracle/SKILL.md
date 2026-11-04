@@ -189,7 +189,7 @@ def verify_wrong_seed(test_id, command_name, args):
   errors. Fixed by construction: the fixture consults only
   `faults[test_id]`.
 - A draw could remove the only unaltered test covering a requirement →
-  `fth draw` refuses such a draw; plans carry planted fault-disjoint redundancy.
+  `fth draw` refuses such a draw; plans carry planted-fault-disjoint redundancy.
 - A hand-written dry-run fault file shape voided fram-r1 at run start
   → the stage-3 rehearsal reads a real `fth draw` output.
 - Abbreviated `failed` keys broke unseal matching → predicate text

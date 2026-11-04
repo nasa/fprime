@@ -7,7 +7,7 @@ description: >-
   test-design phase of component development). Produces a
   requirements-traced plan (`plan.json`, rendered to `plan.md` by
   `fth render-plan`) with a one-sentence purpose and a structured,
-  machine-evaluable pass rule per test, planted fault-disjoint redundancy per
+  machine-evaluable pass rule per test, planted-fault-disjoint redundancy per
   requirement, numeric metrics, a fault-injection menu, and an honest
   not-covered list. Keywords: F Prime, system test, HIL, test plan,
   traceability, pass rule, oracle, fault injection, qualification,
@@ -149,7 +149,7 @@ Rules:
   covered by ≥ 2 tests whose planted fault sets are disjoint, so no drawn planted fault
   can remove the prime-path verification of a requirement (`fth draw`
   refuses a draw that would). A requirement that cannot get a second
-  planted fault-disjoint test carries an explicit waiver in its
+  planted-fault-disjoint test carries an explicit waiver in its
   `requirements` entry: `verification` text naming no test (e.g. `UT
   only`, `Inspection`) and a `note` saying why.
 - Prefer EVR sequences a human can check off (start → progress →
@@ -292,7 +292,7 @@ Stage 2 closes only when all three hold, on the bench, with the frozen plan
    per planted fault that FAILs exactly that planted fault's `fails` set on its target
    (and `ripples_to`, FAIL not UNVERIFIED) while every other test
    passes. Records live under `vectors/<name>/` with `vector.json`
-   (`kind: clean | single-knob | regression`) and run in CI; a vector
+   (`kind: clean | single-knob | regression  (Kept data names, not vocabulary: the `"knobs"` plan/menu key, the `single-knob` vector kind, `faults-menu.json`, `sealed/faults.json`, and the plan.md labels `Planted faults:` — `fth import-plan` also accepts the older `Fault knobs:` / `Fault planted faults:`. Prose and code identifiers say *planted fault*.)`) and run in CI; a vector
    that no longer judges as declared blocks the manifest.
 2. **Stage-3 rehearsal**, end to end with a throwaway seed on a
    scratch manifest: `fth draw` → `fth run` → `fth audit` → `fth

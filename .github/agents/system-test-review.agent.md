@@ -75,13 +75,13 @@ helpers' implementation before step 1. Procedure:
 3. Review the harness against `fprime-system-test-harness`: UUT
    untouched, markers fit 40 characters and round-trip, END sent in
    `finally` and carries no verdict, no pytest or harness verdict under
-   `record/`, planted faults invisible in the record, each single-planted fault vector
+   `record/`, planted faults invisible in the record, each single-knob vector
    fails its target with exactly the planted fault's `fails` predicates and its
    `ripples_to` with FAIL not UNVERIFIED while everything else passes
    (`fth vectors` green), engine and checker `failed` lists byte-equal
    on every vector, no planted fault name or test/planted fault pair anywhere in the
    dry-run `runner/` output or in a run id (grep for every planted fault name;
-   `MARK(crc32(run id))` inverts a planted fault-named id), completeness built from
+   `MARK(crc32(run id))` inverts a planted-fault-named id), completeness built from
    infrastructure counters only, commands paced, exporter writes all
    three exports plus `export-counts.json`, size reviewable in one
    sitting.
