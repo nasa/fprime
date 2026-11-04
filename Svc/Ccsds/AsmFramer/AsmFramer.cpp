@@ -14,7 +14,9 @@ namespace Ccsds {
 //! Default ASM pattern: 0x1ACFFC1D for uncoded, convolutional, Reed-Solomon,
 //! concatenated, rate-7/8 LDPC (Transfer Frame), and LDPC (SMTF stream) coded
 //! data (CCSDS 131.0-B-5 Section 9.3.1)
-static constexpr U8 ASM_DEFAULT[AsmFramer::ASM_DEFAULT_SIZE] = {0x1A, 0xCF, 0xFC, 0x1D};
+static constexpr U8 ASM_DEFAULT[] = {0x1A, 0xCF, 0xFC, 0x1D};
+static_assert(sizeof(ASM_DEFAULT) == AsmFramer::ASM_DEFAULT_SIZE, "ASM_DEFAULT_SIZE must match the default pattern");
+static_assert(AsmFramer::ASM_DEFAULT_SIZE <= AsmFramer::ASM_MAX_SIZE, "default ASM must fit the configured bound");
 
 // Out-of-class definitions so the constants may be odr-used (C++14)
 constexpr FwSizeType AsmFramer::ASM_MAX_SIZE;
@@ -55,6 +57,8 @@ void AsmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
     // Sync-Marked Transfer Frame (CCSDS 131.0-B-5 Section 9.4: the ASM
     // precedes the data it delimits). Frame data is not modified. With the
     // marker disabled (size 0) the frame is forwarded unchanged.
+    // The size guards are required: size 0 admits a null source (asserted above), and
+    // memcpy with a null source pointer is undefined behavior even for zero bytes
     if (this->m_asmSize > 0) {
         (void)::memcpy(this->m_frameBuffer, this->m_asm, static_cast<size_t>(this->m_asmSize));
     }

@@ -19,21 +19,18 @@ class AsmFramer final : public AsmFramerComponentBase {
     friend class AsmFramerTester;
 
   public:
-    //! Maximum supported ASM size in bytes: 128 bits, the rate-1/4 Turbo pattern
-    //! (CCSDS 131.0-B-5 Section 9.3.2). This is an implementation bound, not a
-    //! standard one: the 192-bit rate-1/6 Turbo ASM is intentionally not supported.
-    //! Raise this constant (and thereby m_frameBuffer) to add it.
-    static constexpr FwSizeType ASM_MAX_SIZE = 16;
+    //! Maximum supported ASM size in bytes (ComCfg::AsmMaxSize, default 16 = 128 bits, the
+    //! rate-1/4 Turbo pattern of CCSDS 131.0-B-5 Section 9.3.2). This is an implementation
+    //! bound, not a standard one: the 192-bit rate-1/6 Turbo ASM is not supported unless a
+    //! project raises ComCfg.AsmMaxSize, which also grows m_frameBuffer.
+    static constexpr FwSizeType ASM_MAX_SIZE = static_cast<FwSizeType>(ComCfg::AsmMaxSize);
 
     //! Size in bytes of the default ASM (CCSDS 131.0-B-5 Section 9.3.1)
     static constexpr FwSizeType ASM_DEFAULT_SIZE = 4;
 
-    //! Largest transfer frame accepted on dataIn: the larger of the fixed TM frame
-    //! and the maximum AOS frame, so the component can follow either upstream framer
-    static constexpr FwSizeType FRAME_MAX_SIZE =
-        (static_cast<FwSizeType>(ComCfg::AosMaxFrameFixedSize) > static_cast<FwSizeType>(ComCfg::TmFrameFixedSize))
-            ? static_cast<FwSizeType>(ComCfg::AosMaxFrameFixedSize)
-            : static_cast<FwSizeType>(ComCfg::TmFrameFixedSize);
+    //! Largest transfer frame accepted on dataIn (ComCfg::AsmFramerMaxFrameSize, by default the
+    //! AOS bound so the component can follow either upstream framer)
+    static constexpr FwSizeType FRAME_MAX_SIZE = static_cast<FwSizeType>(ComCfg::AsmFramerMaxFrameSize);
 
   private:
     enum class BufferOwnershipState {
@@ -60,8 +57,10 @@ class AsmFramer final : public AsmFramerComponentBase {
 
     //! Configure the ASM pattern. Sizes 1 to ASM_MAX_SIZE select a marker such as
     //! the coded-data patterns of CCSDS 131.0-B-5 Sections 9.3.2 - 9.3.5; size 0
-    //! disables the marker so frames pass through unchanged. Intended to be called
-    //! at initialization; it may be called again only while the component owns its
+    //! disables the marker so frames pass through unchanged. Coded-data patterns are
+    //! only appropriate when the frames on dataIn are already encoded (the standard
+    //! attaches them to the codeword, Section 9.4.1). Intended to be called at
+    //! initialization; it may be called again only while the component owns its
     //! frame buffer (no Sync-Marked Transfer Frame outstanding).
     void configure(const Fw::ConstByteArray& asmPattern  //!< ASM pattern bytes; size in [0, ASM_MAX_SIZE]
     );
