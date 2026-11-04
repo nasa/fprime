@@ -241,6 +241,16 @@ FwSizeType DpCatalog::findStateFileSlot(const DpStateEntry& entry) const {
     return this->m_stateFileEntries;
 }
 
+FwSizeType DpCatalog::findStateFileSlotByIdentity(FwDpIdType id, U32 tSec, U32 tSub) const {
+    FW_ASSERT(this->m_stateFileData != nullptr);
+    for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
+        if (this->m_stateFileData[line].entry.hasIdentity(id, tSec, tSub)) {
+            return line;
+        }
+    }
+    return this->m_stateFileEntries;
+}
+
 DpCatalog_StateFileUpdateStatus DpCatalog::updateStateFileData(const DpStateEntry& entry) {
     FwSizeType slot = this->findStateFileSlot(entry);
     if (slot == this->m_stateFileEntries) {
@@ -902,7 +912,8 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
 
     // Remove from catalog. The entry is located by its stable identity rather than by the copy kept
     // for the send, whose sort key may be stale if the priority changed during the send.
-    // Not ground-reachable: only resetCatalog empties the set, and it also clears m_hasCurrentXmit (checked above)
+    // Not ground-reachable: the set is emptied only by resetCatalog, which also clears m_hasCurrentXmit (checked
+    // above), and DELETE_DP refuses the product in flight (doDeleteDp)
     DpStateEntry catalogEntry{};
     const DpCatalog_EntryLookupStatus found = this->findEntryByIdentity(this->m_currentXmitEntry, catalogEntry);
     FW_ASSERT(found == DpCatalog_EntryLookupStatus::FOUND, static_cast<FwAssertArgType>(found.e));
@@ -1191,6 +1202,85 @@ DpCatalog_PriorityChangeStatus DpCatalog ::setDpPriority(DpStateEntry& entry, Fw
     const DpCatalog_StateFileWriteStatus writeStatus = this->pruneAndWriteStateFile();
     return (writeStatus == DpCatalog_StateFileWriteStatus::WRITTEN) ? DpCatalog_PriorityChangeStatus::CHANGED
                                                                     : DpCatalog_PriorityChangeStatus::NOT_RECORDED;
+}
+
+void DpCatalog ::DELETE_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwDpIdType id, U32 tSec, U32 tSub) {
+    this->cmdResponse_out(opCode, cmdSeq, this->doDeleteDp(id, tSec, tSub));
+}
+
+Fw::CmdResponse DpCatalog ::doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub) {
+    if (not this->checkInit()) {
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+    // The file in flight is never preempted (3.6.4): removing it would break the send and its fileDone
+    if (this->m_hasCurrentXmit && this->m_currentXmitEntry.hasIdentity(id, tSec, tSub)) {
+        this->log_WARNING_HI_DpInFlight(id, tSec, tSub);
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
+    // A pending product has a catalog entry; a transmitted one is known only by its state file record
+    DpStateEntry entry{};
+    const bool inCatalog = (this->findProductEntry(id, tSec, tSub, entry) == DpCatalog_EntryLookupStatus::FOUND);
+    FwSizeType slot = this->m_stateFileEntries;
+    if (inCatalog) {
+        slot = this->findStateFileSlot(entry);
+    } else {
+        slot = this->findStateFileSlotByIdentity(id, tSec, tSub);
+        if (slot != this->m_stateFileEntries) {
+            entry = this->m_stateFileData[slot].entry;
+        }
+    }
+    const bool inStateFile = (slot != this->m_stateFileEntries);
+    // A state file record is loaded without checking its directory index (3.6.5); a record whose directory is no
+    // longer configured names a file this configuration cannot locate, so the product is reported as not found
+    const bool dirConfigured = (entry.dir >= 0) && (entry.dir < static_cast<FwIndexType>(this->m_numDirectories));
+    if ((not inCatalog && not inStateFile) || not dirConfigured) {
+        this->log_WARNING_HI_DpNotFound(id, tSec, tSub);
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
+    Fw::FileNameString fileName;
+    const Fw::FormatStatus formatStatus =
+        fileName.format(DP_FILENAME_FORMAT, this->m_directories[entry.dir].toChar(), entry.record.get_id(),
+                        entry.record.get_tSec(), entry.record.get_tSub());
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        this->log_WARNING_HI_FileNameFormatError(fileName, static_cast<Fw::StringFormatStatus::T>(formatStatus));
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
+    // The file goes first so that a failure leaves the catalog and state file describing what is on disk.
+    // A file already gone is a stale reference that the delete cleans up
+    const Os::FileSystem::Status removeStatus = Os::FileSystem::removeFile(fileName.toChar());
+    if ((removeStatus != Os::FileSystem::OP_OK) && (removeStatus != Os::FileSystem::DOESNT_EXIST)) {
+        this->log_WARNING_HI_DpFileRemoveError(fileName, static_cast<I32>(removeStatus));
+        return Fw::CmdResponse::EXECUTION_ERROR;
+    }
+
+    if (inCatalog) {
+        // entry is a copy of a set element, so its key is present
+        const Fw::Success status = this->m_dpCatalog.remove(entry);
+        FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
+        this->m_pendingDpBytes -= entry.record.get_size();
+        this->m_pendingFiles--;
+    }
+    if (inStateFile) {
+        // drop the slot by moving the last one into it; the slots in use stay contiguous
+        this->m_stateFileEntries--;
+        this->m_stateFileData[slot] = this->m_stateFileData[this->m_stateFileEntries];
+        this->m_stateFileData[this->m_stateFileEntries].used = false;
+        this->m_stateFileData[this->m_stateFileEntries].visited = false;
+    }
+    this->log_ACTIVITY_HI_DpDeleted(fileName, entry.record.get_state());
+
+    // Rewrite the state file without the record so that a rebuild or restart does not resurrect it. A
+    // failure is reported by the rewrite; the product is gone from disk and memory regardless
+    if (inStateFile && (this->m_stateFile.length() > 0)) {
+        const DpCatalog_StateFileWriteStatus writeStatus = this->pruneAndWriteStateFile();
+        if (writeStatus != DpCatalog_StateFileWriteStatus::WRITTEN) {
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
+    }
+    return Fw::CmdResponse::OK;
 }
 
 DpCatalog_EntryLookupStatus DpCatalog ::findEntryByIdentity(const DpStateEntry& product, DpStateEntry& entry) const {

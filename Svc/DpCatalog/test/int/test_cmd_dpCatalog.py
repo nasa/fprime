@@ -250,3 +250,29 @@ def test_set_dp_priority_reorders_transmit(fprime_test_api):
         len(results) == 2
     ), "the reprioritized product was not sent before the other one"
     fprime_test_api.assert_event(dp_cat + ".CatalogXmitCompleted", timeout=120)
+
+
+def test_delete_dp_not_found(fprime_test_api):
+    """DELETE_DP of a product the catalog does not know emits DpNotFound and fails
+
+    Before BUILD_CATALOG (after CLEAR_CATALOG) nothing is known; after it an unknown identity is
+    rejected the same way. Both cases leave the deployment untouched, so this runs against any
+    deployment that includes DpCatalog.
+    """
+    dp_cat = fprime_test_api.get_mnemonic("Svc.DpCatalog")
+    cmd_disp = fprime_test_api.get_mnemonic("Svc.CommandDispatcher")
+    delete_cmd = dp_cat + ".DELETE_DP"
+    delete_opcode = fprime_test_api.translate_command_name(delete_cmd)
+    unknown_dp = [0xFFFFFFFE, 1, 2]
+    rejected = [
+        fprime_test_api.get_event_pred(dp_cat + ".DpNotFound", unknown_dp),
+        fprime_test_api.get_event_pred(
+            cmd_disp + ".OpCodeError", [delete_opcode, "EXECUTION_ERROR"]
+        ),
+    ]
+
+    fprime_test_api.send_and_assert_command(dp_cat + ".CLEAR_CATALOG", max_delay=10)
+    fprime_test_api.send_and_assert_event(delete_cmd, unknown_dp, rejected, timeout=10)
+
+    fprime_test_api.send_and_assert_command(dp_cat + ".BUILD_CATALOG", max_delay=10)
+    fprime_test_api.send_and_assert_event(delete_cmd, unknown_dp, rejected, timeout=10)

@@ -143,6 +143,14 @@ module Svc {
                                   ) \
       opcode 5
 
+    @ Delete one data product: its file, its catalog entry and its state file record. Refused while the product is being transmitted
+    async command DELETE_DP (
+                              $id: FwDpIdType @< Container ID of the data product
+                              tSec: U32 @< Seconds of the data product time tag
+                              tSub: U32 @< Microseconds of the data product time tag
+                            ) \
+      opcode 6
+
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
@@ -531,7 +539,7 @@ module Svc {
       id 53 \
       format "Priority of DP id {} time {}.{} set from {} to {}"
 
-    @ SET_DP_PRIORITY named a data product that is not in the catalog
+    @ SET_DP_PRIORITY or DELETE_DP named a data product that is not in the catalog
     event DpNotFound(
                             $id: FwDpIdType @< Container ID of the data product
                             tSec: U32 @< Seconds of the data product time tag
@@ -561,6 +569,34 @@ module Svc {
       severity activity high \
       id 56 \
       format "Priority of DP id {} time {}.{} already {}"
+
+    @ Data product deleted by DELETE_DP
+    event DpDeleted(
+                     file: string size FileNameStringSize @< The deleted data product file
+                     $state: Fw.DpState @< The transmit state the data product had
+                   ) \
+      severity activity high \
+      id 57 \
+      format "Deleted DP file {} (state {})"
+
+    @ DELETE_DP named the data product being transmitted; nothing was deleted
+    event DpInFlight(
+                      $id: FwDpIdType @< Container ID of the data product
+                      tSec: U32 @< Seconds of the data product time tag
+                      tSub: U32 @< Microseconds of the data product time tag
+                    ) \
+      severity warning high \
+      id 58 \
+      format "DP id {} time {}.{} is being transmitted; not deleted"
+
+    @ Error removing a data product file; the catalog and state file are unchanged
+    event DpFileRemoveError(
+                             file: string size FileNameStringSize @< The data product file
+                             stat: I32 @< The Os::FileSystem status returned from the remove operation
+                           ) \
+      severity warning high \
+      id 59 \
+      format "Failed to remove DP file {} with status {}"
 
 
     # ----------------------------------------------------------------------
