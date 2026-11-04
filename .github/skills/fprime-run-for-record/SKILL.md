@@ -252,7 +252,11 @@ decimal, each argument with type, enum values and meanings, FPP doc-comment; the
 whose doc-comment names the command; dictionary sha256); `helpers/<Component>.md` for every
 plan `helpers` entry (FPP description, port diagram, commands → `commands.md`, events with
 id/severity/format/args, channels with id/type, parameters, source files with sha256 linked
-at the manifest's project sha); `ql.zip` of
+at the manifest's project sha); an HTML twin of every page (`index.html` entry point,
+`<page>.html` beside each `.md`, one offline `style.css`; `.md` links rewritten to `.html`,
+heading and `REQ-…` anchors preserved; ```mermaid blocks pre-rendered to inline SVG by
+`mmdc` when the host has it, else the vendored `assets/mermaid.min.js` renders them from
+`file://` — no CDN, no plugin, no timestamps; the `.md` stays the diffable source); `ql.zip` of
 all of it. **No coverage of any kind** is in an RfR package: an instrumented image is not
 the qualified image, and the record is a pure record of the pinned build; `fth render-ql` /
 `fth audit` refuse `--ut-coverage` / `--system-coverage` without `--dev`, which stamps the
