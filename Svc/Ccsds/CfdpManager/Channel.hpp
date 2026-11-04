@@ -212,6 +212,23 @@ class Channel {
     void decrementCmdTxCounter();
 
     /**
+     * @brief Get the number of receive transactions currently holding a slot
+     *
+     * @returns Number of receive transactions allocated and not yet recycled
+     */
+    inline U32 getNumRx() const { return m_numRx; }
+
+    /**
+     * @brief Increment the receive transaction counter for this channel
+     */
+    inline void incrementRxCounter() { ++m_numRx; }
+
+    /**
+     * @brief Decrement the receive transaction counter for this channel
+     */
+    void decrementRxCounter();
+
+    /**
      * @brief Check if current transaction matches and clear if so
      *
      * @param txn Transaction to check against current
@@ -487,6 +504,7 @@ class Channel {
     CListNode* m_cs[static_cast<U32>(Direction::DIRECTION_NUM)];  //!< Command/history lists
 
     U32 m_numCmdTx;  //!< Number of commanded TX transactions
+    U32 m_numRx;     //!< Number of RX transactions holding a slot (allocated, not yet recycled)
 
     Playback m_playback[MaxCommandedPlaybackDirectoriesPerChan];  //!< Playback state
     CfdpPollDir m_polldir[MaxPollingDirPerChan];                  //!< Polling directory state
