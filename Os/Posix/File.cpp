@@ -61,6 +61,7 @@ PosixFile::PosixFile(const PosixFile& other) : FileInterface(other) {
 
 PosixFile& PosixFile::operator=(const PosixFile& other) {
     if (this != &other) {
+        FileInterface::operator=(other);
         this->m_handle.m_file_descriptor = fcntl(other.m_handle.m_file_descriptor, F_DUPFD, 0);
     }
     return *this;

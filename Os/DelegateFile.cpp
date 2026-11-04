@@ -53,13 +53,6 @@ DelegateFile::Status DelegateFile::open(const char* filepath,
                                         DelegateFile::OverwriteType overwrite) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(nullptr != filepath);
-    // The 3-argument open is the implementation hook, so callers invoking it directly bypass the
-    // bounds check in FileInterface::open(path, length, mode, overwrite). Re-apply it here against
-    // the default path bound so that those callers keep the over-long/unterminated path guard.
-    const FwSizeType path_bound = static_cast<FwSizeType>(FileNameStringSize) + 1;
-    const FwSizeType path_length = static_cast<FwSizeType>(Fw::StringUtils::string_length(filepath, path_bound));
-    FW_ASSERT(path_length < path_bound, static_cast<FwAssertArgType>(path_length),
-              static_cast<FwAssertArgType>(path_bound));
     FW_ASSERT(DelegateFile::Mode::OPEN_NO_MODE < requested_mode && DelegateFile::Mode::MAX_OPEN_MODE > requested_mode);
     FW_ASSERT((0 <= overwrite) && (overwrite < OverwriteType::MAX_OVERWRITE_TYPE));
     // Check for already opened file

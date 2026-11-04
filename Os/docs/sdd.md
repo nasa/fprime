@@ -187,7 +187,7 @@ namespace Os {
 #define OS_RAW_TIME_HEADER <Os/DelegateRawTime.hpp>
 ```
 
-Projects can override this header to enable compile-time selection:
+Projects can override this header to enable compile-time selection. The override replaces the whole `config/OsSelection.hpp`, so it must define every alias and `OS_*_HEADER` macro in the table above, not just the service being changed (see the complete example in [the OSAL how-to](../../docs/how-to/integrate/implement-osal.md#step-25--optional-override-for-compile-time-selection-performance-optimization)):
 
 ```c++
 namespace MyPlatform {
@@ -207,8 +207,9 @@ namespace Os {
 
 **Additional requirements for singleton services.** `Console`, `FileSystem`, `Cpu` and `Memory` expose
 static convenience wrappers that resolve through `Os::<Service>::getSingleton()`, and `Os::init()`
-(`Os/Os.cpp`) calls `Os::<Service>::init()`. These are *not* declared on the interface class, so a
-compile-time alias for one of these services MUST additionally provide:
+(`Os/Os.cpp`) calls `Os::<Service>::init()`. The static wrappers are declared on the interface class,
+but `init()` and `getSingleton()` are *not*, so a compile-time alias for one of these services MUST
+additionally provide:
 
 ```c++
 static void init();               //!< called by Os::init()

@@ -9,6 +9,10 @@ constant FW_CONSOLE_HANDLE_MAX_SIZE = 24
 constant FW_TASK_HANDLE_MAX_SIZE = 40
 
 @ Maximum size of a handle for Os::File
+@ Sized for Posix: vtable pointer (8) + FileInterface::m_mode (4) + m_file_descriptor (int, 4)
+@ = 16 bytes on a 64-bit platform, with no remaining margin. The mode moved from the Os::File
+@ wrapper onto FileInterface so that it is available to compile-time-selected implementations;
+@ an implementation with a pointer-sized handle needs 24.
 constant FW_FILE_HANDLE_MAX_SIZE = 16
 
 @ Maximum size of a handle for Os::Mutex
