@@ -1,0 +1,17 @@
+# test_fpy_lib.fpy
+#
+# Helper library imported by test_fpy.fpy. An imported sequence may only
+# contain function definitions (and further imports).
+
+def square(x: I64) -> I64:
+    return x * x
+
+def clamp(value: I64, low: I64, high: I64) -> I64:
+    if value < low:
+        return low
+    if value > high:
+        return high
+    return value
+
+def is_even(x: I64) -> bool:
+    return x % 2 == 0

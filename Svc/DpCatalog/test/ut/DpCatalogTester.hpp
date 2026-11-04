@@ -80,6 +80,12 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! configure the component on one directory and build the catalog as the first command
     void configureAndBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq, Fw::MemAllocator& alloc);
 
+    //! overwrite the state file with one transmitted record per (directory index, id), without checking the index
+    void writeStateFileRecords(Fw::FileNameString& stateFile,
+                               const FwIndexType* dirs,
+                               const FwDpIdType* ids,
+                               FwSizeType count);
+
     //! Generate some data product files
     Fw::String genDP(FwDpIdType id,
                      FwDpPriorityType prio,
@@ -236,6 +242,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! loadStateFile with more products in the state file than slots: later records for slotted products still
     //! apply, the slotless transmitted product is re-added, and the read offset stays exact past the skipped record
     void test_LoadStateFileSlotExhausted();
+    //! loadStateFile with records whose directory index is negative or past the configured list: each is skipped
+    //! with an event at its offset, the valid record still applies, and the event throttle is reset per load
+    void test_LoadStateFileDirectoryInvalid();
 
     //! SET_DP_PRIORITY before configure
     void test_SetPriorityNotInit();
@@ -260,6 +269,37 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_DeleteDpRemoveError();
     //! A state file that cannot be rewritten fails the command after the product is deleted
     void test_DeleteDpStateFileWriteError();
+
+    //! A product transmitted in an earlier session (record loaded by the rebuild) is rescheduled, resent and skipped
+    //! again
+    void test_RetransmitAfterRebuild();
+    //! The reset is recorded in the state file and survives rebuilds until the product is sent again
+    void test_RetransmitPersistsAcrossRebuild();
+    //! A product transmitted since the build is rescheduled and resent; the rebuild skips it again
+    void test_RetransmitSameSession();
+    //! A retransmit during a transmission is sent in priority order after the file in flight
+    void test_RetransmitDuringTransmit();
+    //! With remainActive set, a retransmit after the transmission finished resumes it
+    void test_RetransmitRemainActiveResumes();
+    //! Every rejection answers EXECUTION_ERROR with DpRetransmitError naming the reason and changes nothing
+    void test_RetransmitRejected();
+    //! A file that cannot be cataloged is reported FILE_ERROR and the record is left as it was
+    void test_RetransmitFileError();
+    //! A directory too long for the canonical file name is skipped with DpRetransmitNameError and the search goes on
+    void test_RetransmitNameError();
+    //! A state file that cannot be rewritten fails the command after the product is rescheduled
+    void test_RetransmitNoStateFileDir();
+    //! A retransmit after STOP_XMIT_CATALOG resumes the stopped transmission once the file in flight completes
+    void test_RetransmitAfterStop();
+    //! The product file is searched in every managed directory
+    void test_RetransmitSecondDirectory();
+    //! A retransmit with every state file slot in use survives a rebuild without growing the file
+    void test_RetransmitFullStateFile();
+    //! A product reprioritized before its downlink is rescheduled at the header priority
+    void test_RetransmitHeaderPriority();
+    //! Without a state file nothing is written; without a record one is added, or StateFileFull reported, and the file
+    //! rewritten
+    void test_RetransmitWithoutRecord();
 
   private:
     //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog
@@ -303,6 +343,26 @@ class DpCatalogTester : public DpCatalogGTestBase {
 
     //! Size of a generated DP file, as reported by SendingProduct
     U32 setPriorityFileSize(const Fw::String& dpFile);
+
+    //! Send RETRANSMIT_DP for one product and dispatch it; the command response is at index 0 of a cleared history
+    void retransmit(U32 cmdSeq, FwDpIdType id, const Fw::Time& time, Fw::CmdResponse expected);
+
+    //! Send START_XMIT_CATALOG (no wait) and drain the queue so every auto-completed send is processed
+    void xmitAll(U32 cmdSeq, bool remainActive);
+
+    //! Create dirName with one product (id, time, prio, 16 data bytes), configure with its dpState.dat state file,
+    //! build the catalog (cmdSeq 10) and transmit it (cmdSeq 11); returns the product file name
+    Fw::String transmitOneProduct(const char* dirName,
+                                  FwDpIdType id,
+                                  const Fw::Time& time,
+                                  FwDpPriorityType prio,
+                                  bool remainActive,
+                                  Fw::FileNameString& dir,
+                                  Fw::FileNameString& stateFile,
+                                  Fw::MemAllocator& alloc);
+
+    //! Size of one state file record (directory index and DpRecord)
+    static constexpr FwSizeType STATE_ENTRY_SIZE = sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE;
 };
 
 }  // namespace Svc

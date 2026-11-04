@@ -505,6 +505,11 @@ TEST(StateFile, SlotExhausted) {
     tester.test_LoadStateFileSlotExhausted();
 }
 
+TEST(StateFile, DirectoryInvalid) {
+    Svc::DpCatalogTester tester;
+    tester.test_LoadStateFileDirectoryInvalid();
+}
+
 TEST(SetPriority, NotInit) {
     Svc::DpCatalogTester tester;
     tester.test_SetPriorityNotInit();
@@ -563,6 +568,76 @@ TEST(DeleteDp, RemoveError) {
 TEST(DeleteDp, StateFileWriteError) {
     Svc::DpCatalogTester tester;
     tester.test_DeleteDpStateFileWriteError();
+}
+
+TEST(NominalManual, RetransmitAfterRebuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterRebuild();
+}
+
+TEST(NominalManual, RetransmitPersistsAcrossRebuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitPersistsAcrossRebuild();
+}
+
+TEST(NominalManual, RetransmitSameSession) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitSameSession();
+}
+
+TEST(NominalManual, RetransmitDuringTransmit) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDuringTransmit();
+}
+
+TEST(NominalManual, RetransmitRemainActiveResumes) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitRemainActiveResumes();
+}
+
+TEST(OffNominal, RetransmitRejected) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitRejected();
+}
+
+TEST(OffNominal, RetransmitFileError) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitFileError();
+}
+
+TEST(OffNominal, RetransmitNameError) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitNameError();
+}
+
+TEST(OffNominal, RetransmitNoStateFileDir) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitNoStateFileDir();
+}
+
+TEST(NominalManual, RetransmitAfterStop) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterStop();
+}
+
+TEST(NominalManual, RetransmitSecondDirectory) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitSecondDirectory();
+}
+
+TEST(NominalManual, RetransmitFullStateFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitFullStateFile();
+}
+
+TEST(NominalManual, RetransmitHeaderPriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitHeaderPriority();
+}
+
+TEST(NominalManual, RetransmitWithoutRecord) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitWithoutRecord();
 }
 
 int main(int argc, char** argv) {
