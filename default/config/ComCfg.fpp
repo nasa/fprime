@@ -22,6 +22,14 @@ module ComCfg {
     @ Upper Bound on Fixed size of CCSDS AOS frames
     constant AosMaxFrameFixedSize = 1536
 
+    @ Largest Attached Sync Marker, in bytes, that Svc.Ccsds.AsmFramer accepts (128 bits covers
+    @ every CCSDS 131.0-B-5 pattern except the 192-bit rate-1/6 Turbo marker)
+    constant AsmMaxSize = 16
+
+    @ Largest transfer frame, in bytes, that Svc.Ccsds.AsmFramer accepts on dataIn; defaults to the
+    @ AOS bound so the component can follow either framer. TM-only projects may lower it to TmFrameFixedSize
+    constant AsmFramerMaxFrameSize = AosMaxFrameFixedSize
+
     @ Packet Version Numbers are 3 bits with only 2 currently valid values
     dictionary enum Pvn : U8 {
         SPACE_PACKET_PROTOCOL         = 0x0   @< Fully Featured CCSDS Space Packet Protocol
