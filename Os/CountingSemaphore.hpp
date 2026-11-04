@@ -33,8 +33,9 @@
 
 #include "Os/CountingSemaphoreInterface.hpp"
 
-// A project config/OsSelection.hpp that predates the CountingSemaphore selection defines neither the Os::CountingSemaphore
-// alias nor OS_COUNTING_SEMAPHORE_HEADER; fall back to the link-time delegate so such projects keep building.
+// A project config/OsSelection.hpp that predates the CountingSemaphore selection defines neither the
+// Os::CountingSemaphore alias nor OS_COUNTING_SEMAPHORE_HEADER; fall back to the link-time delegate so such projects
+// keep building.
 #ifndef OS_COUNTING_SEMAPHORE_HEADER
 #include "Os/DelegateCountingSemaphore.hpp"
 namespace Os {
