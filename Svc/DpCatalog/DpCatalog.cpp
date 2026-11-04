@@ -143,6 +143,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
 
     FwSizeType fileLoc = 0;
     this->m_stateFileEntries = 0;
+    this->log_WARNING_HI_StateFileDirectoryInvalid_ThrottleClear();
 
     // A product may have several records (a priority change, then its completion); the last one
     // read wins, so the walk is bounded by the record count rather than the slot count
@@ -195,6 +196,14 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
             this->log_WARNING_HI_FileCorruptedDataError(this->m_stateFile, static_cast<I32>(status));
             stateFile.close();
             return Fw::CmdResponse::EXECUTION_ERROR;
+        }
+
+        // A record whose directory is not configured (the directory list changed, or the file is corrupt) names a
+        // file this configuration cannot locate. Skip it so that every loaded record has a valid directory index
+        if ((fileEntry.dir < 0) || (fileEntry.dir >= static_cast<FwIndexType>(this->m_numDirectories))) {
+            this->log_WARNING_HI_StateFileDirectoryInvalid(this->m_stateFile, static_cast<I32>(fileLoc), fileEntry.dir);
+            fileLoc += size;
+            continue;
         }
 
         const FwSizeType slot = this->findStateFileSlot(fileEntry);
@@ -1231,13 +1240,13 @@ Fw::CmdResponse DpCatalog ::doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub) {
         }
     }
     const bool inStateFile = (slot != this->m_stateFileEntries);
-    // A state file record is loaded without checking its directory index (3.6.5); a record whose directory is no
-    // longer configured names a file this configuration cannot locate, so the product is reported as not found
-    const bool dirConfigured = (entry.dir >= 0) && (entry.dir < static_cast<FwIndexType>(this->m_numDirectories));
-    if ((not inCatalog && not inStateFile) || not dirConfigured) {
+    if (not inCatalog && not inStateFile) {
         this->log_WARNING_HI_DpNotFound(id, tSec, tSub);
         return Fw::CmdResponse::EXECUTION_ERROR;
     }
+    // Catalog entries and loaded state file records only hold configured directory indices (3.6.5)
+    FW_ASSERT((entry.dir >= 0) && (entry.dir < static_cast<FwIndexType>(this->m_numDirectories)),
+              static_cast<FwAssertArgType>(entry.dir), static_cast<FwAssertArgType>(this->m_numDirectories));
 
     Fw::FileNameString fileName;
     const Fw::FormatStatus formatStatus =

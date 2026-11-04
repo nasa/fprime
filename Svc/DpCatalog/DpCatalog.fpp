@@ -598,6 +598,17 @@ module Svc {
       id 59 \
       format "Failed to remove DP file {} with status {}"
 
+    @ A state file record names a directory index that is not in the configured directory list; the record is skipped
+    event StateFileDirectoryInvalid(
+                                     file: string size FileNameStringSize @< The state file
+                                     offset: I32 @< Offset of the record in the state file
+                                     dirIndex: FwIndexType @< The directory index in the record
+                                   ) \
+      severity warning high \
+      id 60 \
+      format "State file {} record at offset {} has unconfigured directory index {}; skipped" \
+      throttle 10
+
 
     # ----------------------------------------------------------------------
     # Telemetry
