@@ -155,7 +155,7 @@ applied by the `faults` fixture of `fth.pytest_plugin` to the **drawn
 test only** — never by name to every test in `applies_to`:
 
 ```python
-@planted fault("verify_wrong_seed", applies_to=["L2-1", "L2-5"], cls="harness-expectation",
+@planted_fault("verify_wrong_seed", applies_to=["L2-1", "L2-5"], cls="harness-expectation",
       fails={"L2-1": ["event framTester.VerifyDone(client=0, offset=0, length=64, status=OK, mismatches=0) count == 1"],
              "L2-5": ["event framTester.SweepDone(kind=VERIFY, chunks=4096, errors=0) count == 1"]},
       mechanism="VERIFY sent with seed+1", kind="rewrite")          # kind: rewrite (default) | insert

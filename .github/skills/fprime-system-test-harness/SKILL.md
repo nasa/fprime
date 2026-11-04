@@ -205,7 +205,7 @@ Toolchain: a compiler override (e.g. `SAMD_TOOLCHAIN_ROOT` in
 `fprime-samd`'s toolchain file) lives on its own branch until the human
 decides to pin it; the trial never repins the deployment's toolchain.
 
-## 4. Fault planted faults
+## 4. Planted faults
 
 Implement every planted fault as a `@planted_fault` declaration in the plan's helpers
 module (`fprime-test-oracle` §5): a command rewrite or insertion that

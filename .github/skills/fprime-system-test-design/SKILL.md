@@ -111,7 +111,7 @@ complete   ["STD"]                                        # or per window {"W1":
 all_of     ["ABS", "<predicate>", {"helper": name, "text": ..., "args": {...}}]
 metrics    ["<predicate with units>"]
 rationale  [{"pred": "<predicate>", "text": "why this value is ignored / masked"}]
-planted faults      ["verify_wrong_seed"]
+knobs      ["verify_wrong_seed"]                        # planted faults that may be drawn against this test (key name kept)
 evidence   <which EVR sequence or telemetry strip a human should see>
 ```
 
@@ -209,7 +209,7 @@ harness output. A `uut-state` planted fault's disturbing command does appear in
 
 ```
 { "max_count": 2,
-  "planted faults": [
+  "knobs": [
   { "name": "verify_wrong_seed", "class": "harness-expectation",
     "applies_to": ["L2-6", "L7-1"],
     "fails": ["event SweepComplete(kind=VERIFY, pages=2048, errors=0) count == 1"],
@@ -288,11 +288,11 @@ Stage 2 closes only when all three hold, on the bench, with the frozen plan
 (the third is development evidence — a review input, not an RfR input):
 
 1. **Mutation vectors** (`fth vectors plan.json vectors/`): one clean
-   full-plan record that PASSes every test, and one single-planted fault record
+   full-plan record that PASSes every test, and one single-knob record
    per planted fault that FAILs exactly that planted fault's `fails` set on its target
    (and `ripples_to`, FAIL not UNVERIFIED) while every other test
    passes. Records live under `vectors/<name>/` with `vector.json`
-   (`kind: clean | single-planted_fault | regression`) and run in CI; a vector
+   (`kind: clean | single-knob | regression`) and run in CI; a vector
    that no longer judges as declared blocks the manifest.
 2. **Stage-3 rehearsal**, end to end with a throwaway seed on a
    scratch manifest: `fth draw` → `fth run` → `fth audit` → `fth
