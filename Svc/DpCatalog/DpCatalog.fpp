@@ -78,8 +78,9 @@ module Svc {
     @ Outcome of rewriting the state file from the state file data
     enum StateFileWriteStatus : U8 {
       WRITTEN = 0 @< The state file was rewritten
-      OPEN_ERROR = 1 @< The state file could not be opened (StateFileOpenError reported)
-      WRITE_ERROR = 2 @< A record could not be written (StateFileWriteError reported)
+      OPEN_ERROR = 1 @< The temporary file could not be opened (StateFileOpenError reported)
+      WRITE_ERROR = 2 @< A record could not be written to the temporary file (StateFileWriteError reported)
+      RENAME_ERROR = 3 @< The temporary file could not be renamed over the state file (StateFileRenameError reported)
     }
 
     @ Outcome of recording an entry in the state file data
@@ -597,6 +598,16 @@ module Svc {
       severity warning high \
       id 59 \
       format "Failed to remove DP file {} with status {}"
+
+    @ Error renaming the temporary file over the state file; the previous state file is unchanged
+    event StateFileRenameError(
+                            tmpFile: string size FileNameStringSize @< The temporary file holding the new records
+                            file: string size FileNameStringSize @< The state file
+                            stat: I32 @< The Os::FileSystem status returned from the rename
+                          ) \
+      severity warning high \
+      id 61 \
+      format "Error renaming temporary state file {} to {}, stat {}"
 
 
     # ----------------------------------------------------------------------

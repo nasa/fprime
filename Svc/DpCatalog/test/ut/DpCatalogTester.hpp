@@ -217,8 +217,15 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! Runtime addToCat after SET_DP_PRIORITY and after transmit keeps the state file consistent
     void test_SetPriorityRuntimeAdd();
 
-    //! SET_DP_PRIORITY with a state file that cannot be opened for writing
-    void test_SetPriorityStateFileOpenError();
+    //! SET_DP_PRIORITY with a state file that cannot be replaced by the rewrite's rename: change
+    //! applies in memory, the command fails, and the temporary file is discarded
+    void test_SetPriorityStateFileRenameError();
+
+    //! The rewrite's temporary file cannot be opened: the previous state file contents are untouched
+    void test_StateFileRewriteTempOpenError();
+
+    //! A temporary state file left by a reset mid-rewrite is removed by the next build
+    void test_StateFileStaleTempRemovedOnBuild();
 
     //! SET_DP_PRIORITY with full state file data
     void test_SetPriorityStateFileFull();

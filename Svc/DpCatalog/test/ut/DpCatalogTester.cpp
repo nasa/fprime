@@ -2485,23 +2485,35 @@ void DpCatalogTester ::test_SetPriorityRuntimeAdd() {
     ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
 }
 
-void DpCatalogTester ::test_SetPriorityStateFileOpenError() {
-    Fw::FileNameString dir("./DpTest_SetPrioStateOpenErr");
-    Fw::FileNameString stateFile("./DpTest_SetPrioStateOpenErr/dpState.dat");
+void DpCatalogTester ::test_SetPriorityStateFileRenameError() {
+    Fw::FileNameString dir("./DpTest_SetPrioStateRenameErr");
+    Fw::FileNameString stateFile("./DpTest_SetPrioStateRenameErr/dpState.dat");
     Fw::String dpFiles[3];
     this->setPriorityBuild(dir, stateFile, dpFiles);
 
-    // A directory in place of the state file cannot be opened for writing, even by root
+    // A directory in place of the state file cannot be renamed over, even by root
     ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
     ASSERT_EQ(Os::FileSystem::createDirectory(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+
+    // Probe the status the rename reports on this platform, as test_DeleteDpRemoveError does
+    Fw::FileNameString tmpFile;
+    ASSERT_EQ(tmpFile.format("%s.tmp", stateFile.toChar()), Fw::FormatStatus::SUCCESS);
+    Os::File probe;
+    ASSERT_EQ(probe.open(tmpFile.toChar(), Os::File::OPEN_CREATE), Os::File::OP_OK);
+    probe.close();
+    const Os::FileSystem::Status expected = Os::FileSystem::rename(tmpFile.toChar(), stateFile.toChar());
+    ASSERT_NE(expected, Os::FileSystem::Status::OP_OK);
+    (void)Os::FileSystem::removeFile(tmpFile.toChar());
 
     // The new priority applies in memory, but the command fails because it cannot be recorded
     this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[2], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
     this->component.doDispatch();
     ASSERT_EVENTS_DpPrioritySet_SIZE(1);
-    ASSERT_EVENTS_StateFileOpenError_SIZE(1);
-    ASSERT_EVENTS_StateFileOpenError(0, stateFile.toChar(), static_cast<I32>(Os::File::Status::OTHER_ERROR));
+    ASSERT_EVENTS_StateFileRenameError_SIZE(1);
+    ASSERT_EVENTS_StateFileRenameError(0, tmpFile.toChar(), stateFile.toChar(), static_cast<I32>(expected));
     ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    // the failed rewrite discarded its temporary file
+    ASSERT_FALSE(Os::FileSystem::exists(tmpFile.toChar()));
 
     this->setPriorityXmitAll(12);
     ASSERT_from_fileOut_SIZE(3);
@@ -2512,6 +2524,98 @@ void DpCatalogTester ::test_SetPriorityStateFileOpenError() {
         this->delDp(SET_PRIO_IDS[dp], SET_PRIO_TIME, dir.toChar());
     }
     ASSERT_EQ(Os::FileSystem::removeDirectory(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+}
+
+void DpCatalogTester ::test_StateFileRewriteTempOpenError() {
+    // The rewrite's temporary file cannot be opened: the previous state file contents are untouched
+    // (SVC-DPCAT-026)
+    Fw::FileNameString dir("./DpTest_StateTmpOpenErr");
+    Fw::FileNameString stateFile("./DpTest_StateTmpOpenErr/dpState.dat");
+    Fw::String dpFiles[3];
+    this->setPriorityBuild(dir, stateFile, dpFiles);
+
+    // Record one product in the state file so it has contents to preserve
+    this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[0], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(1, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::OK);
+    const FwSizeType entrySize = sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE;
+    FwSizeType size = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
+    EXPECT_EQ(size, entrySize);
+
+    // A directory in place of the temporary file cannot be opened for writing, even by root; the
+    // successful rewrite above left no temporary file in the way
+    Fw::FileNameString tmpFile;
+    ASSERT_EQ(tmpFile.format("%s.tmp", stateFile.toChar()), Fw::FormatStatus::SUCCESS);
+    ASSERT_FALSE(Os::FileSystem::exists(tmpFile.toChar()));
+    ASSERT_EQ(Os::FileSystem::createDirectory(tmpFile.toChar()), Os::FileSystem::Status::OP_OK);
+
+    this->sendCmd_SET_DP_PRIORITY(0, 12, SET_PRIO_IDS[1], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 2);
+    this->component.doDispatch();
+    ASSERT_EVENTS_StateFileOpenError_SIZE(1);
+    ASSERT_EVENTS_StateFileOpenError(0, tmpFile.toChar(), static_cast<I32>(Os::File::Status::OTHER_ERROR));
+    ASSERT_CMD_RESPONSE(2, DpCatalog::OPCODE_SET_DP_PRIORITY, 12, Fw::CmdResponse::EXECUTION_ERROR);
+    // the previous state file contents are untouched
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
+    EXPECT_EQ(size, entrySize);
+    this->component.shutdown();
+
+    for (FwIndexType dp = 0; dp < 3; dp++) {
+        this->delDp(SET_PRIO_IDS[dp], SET_PRIO_TIME, dir.toChar());
+    }
+    ASSERT_EQ(Os::FileSystem::removeDirectory(tmpFile.toChar()), Os::FileSystem::Status::OP_OK);
+    ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+}
+
+void DpCatalogTester ::test_StateFileStaleTempRemovedOnBuild() {
+    // A temporary file left by a reset mid-rewrite is removed by the next build, which loads the
+    // state file — the previous complete copy — normally
+    Fw::FileNameString dir("./DpTest_StateStaleTmp");
+    Fw::FileNameString stateFile("./DpTest_StateStaleTmp/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const FwDpIdType id = 0x660;
+    this->delDp(id, SET_PRIO_TIME, dir.toChar());
+    const Fw::String dpFile = this->genDP(id, 10, SET_PRIO_TIME, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+
+    // A transmitted record for the product in the state file, and a stale temporary next to it
+    Fw::MallocAllocator alloc;
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    DpCatalog::DpStateEntry entry{};
+    entry.dir = 0;
+    entry.record.set_id(id);
+    entry.record.set_tSec(SET_PRIO_TIME.getSeconds());
+    entry.record.set_tSub(SET_PRIO_TIME.getUSeconds());
+    entry.record.set_priority(10);
+    entry.record.set_state(Fw::DpState::TRANSMITTED);
+    this->component.appendFileState(entry);
+
+    Fw::FileNameString tmpFile;
+    ASSERT_EQ(tmpFile.format("%s.tmp", stateFile.toChar()), Fw::FormatStatus::SUCCESS);
+    Os::File stale;
+    ASSERT_EQ(stale.open(tmpFile.toChar(), Os::File::OPEN_CREATE), Os::File::OP_OK);
+    BYTE junk[5] = {1, 2, 3, 4, 5};
+    FwSizeType junkSize = sizeof(junk);
+    ASSERT_EQ(stale.write(junk, junkSize), Os::File::OP_OK);
+    stale.close();
+
+    this->sendCmd_BUILD_CATALOG(0, 10);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
+    // the stale temporary is gone, and the record was loaded from the state file, not lost to it
+    ASSERT_FALSE(Os::FileSystem::exists(tmpFile.toChar()));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+    const FwSizeType entrySize = sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE;
+    FwSizeType size = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
+    EXPECT_EQ(size, entrySize);
+    this->component.shutdown();
+
+    this->delDp(id, SET_PRIO_TIME, dir.toChar());
+    ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
 }
 
 void DpCatalogTester ::test_SetPriorityStateFileFull() {
@@ -3313,8 +3417,11 @@ void DpCatalogTester ::test_DeleteDpStateFileWriteError() {
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_DELETE_DP, 12, Fw::CmdResponse::EXECUTION_ERROR);
+    // the rewrite fails opening its temporary file next to the state file
+    Fw::FileNameString tmpFile;
+    ASSERT_EQ(tmpFile.format("%s.tmp", stateFile.toChar()), Fw::FormatStatus::SUCCESS);
     ASSERT_EVENTS_StateFileOpenError_SIZE(1);
-    ASSERT_EVENTS_StateFileOpenError(0, stateFile.toChar(), static_cast<I32>(Os::File::Status::DOESNT_EXIST));
+    ASSERT_EVENTS_StateFileOpenError(0, tmpFile.toChar(), static_cast<I32>(Os::File::Status::DOESNT_EXIST));
     ASSERT_EVENTS_DpDeleted_SIZE(1);
     ASSERT_EVENTS_DpDeleted(0, dpFile.toChar(), Fw::DpState::TRANSMITTED);
     ASSERT_EVENTS_DpNotFound_SIZE(0);

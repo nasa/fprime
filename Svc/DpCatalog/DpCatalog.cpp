@@ -18,6 +18,9 @@
 namespace Svc {
 static_assert(DP_MAX_DIRECTORIES > 0, "Configuration DP_MAX_DIRECTORIES must be positive");
 static_assert(DP_MAX_FILES > 0, "Configuration DP_MAX_FILES must be positive");
+
+//! Suffix of the temporary file the state file is rewritten through
+static const char TEMP_STATE_FILE_SUFFIX[] = ".tmp";
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
@@ -279,6 +282,30 @@ DpCatalog_StateFileUpdateStatus DpCatalog::updateStateFileData(const DpStateEntr
     return DpCatalog_StateFileUpdateStatus::RECORDED;
 }
 
+Fw::FormatStatus DpCatalog::getTempStateFileName(Fw::FileNameString& tmpFile) {
+    const Fw::FormatStatus formatStatus = tmpFile.format("%s%s", this->m_stateFile.toChar(), TEMP_STATE_FILE_SUFFIX);
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        // a state file name too long to carry the suffix cannot be rewritten safely
+        this->log_WARNING_HI_FileNameFormatError(this->m_stateFile,
+                                                 static_cast<Fw::StringFormatStatus::T>(formatStatus));
+    }
+    return formatStatus;
+}
+
+void DpCatalog::removeStaleTempStateFile() {
+    // nothing to clean when no state file is configured
+    if (this->m_stateFile.length() == 0) {
+        return;
+    }
+    Fw::FileNameString tmpFile;
+    if (this->getTempStateFileName(tmpFile) != Fw::FormatStatus::SUCCESS) {
+        return;
+    }
+    // A temporary file is left behind only by a reset that interrupted a rewrite before the rename,
+    // in which case the state file itself is the previous complete copy; the leftover is discarded
+    (void)Os::FileSystem::removeFile(tmpFile.toChar());
+}
+
 DpCatalog_StateFileWriteStatus DpCatalog::pruneAndWriteStateFile() {
     FW_ASSERT(this->m_stateFileData != nullptr);
 
@@ -288,14 +315,21 @@ DpCatalog_StateFileWriteStatus DpCatalog::pruneAndWriteStateFile() {
     // the entries that were visited during the last catalog build. This will
     // remove any entries that are no longer valid.
 
-    // open the state file
+    // The records are written to a temporary file that is renamed over the state file once it is
+    // complete, so that a complete state file is on disk at every instant: a reset or a failure
+    // mid-rewrite leaves the previous copy, where an in-place rewrite would have truncated it (#6305)
+    Fw::FileNameString tmpFile;
+    if (this->getTempStateFileName(tmpFile) != Fw::FormatStatus::SUCCESS) {
+        return DpCatalog_StateFileWriteStatus::OPEN_ERROR;
+    }
+
+    // open the temporary file
     Os::File stateFile;
     // we open it as a new file so we don't accumulate invalid entries
-    Os::File::Status stat =
-        stateFile.open(this->m_stateFile.toChar(), Os::File::OPEN_CREATE, Os::FileInterface::OVERWRITE);
+    Os::File::Status stat = stateFile.open(tmpFile.toChar(), Os::File::OPEN_CREATE, Os::FileInterface::OVERWRITE);
 
     if (stat != Os::File::OP_OK) {
-        this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
+        this->log_WARNING_HI_StateFileOpenError(tmpFile, stat);
         return DpCatalog_StateFileWriteStatus::OPEN_ERROR;
     }
 
@@ -321,15 +355,25 @@ DpCatalog_StateFileWriteStatus DpCatalog::pruneAndWriteStateFile() {
             // Protect against overflow
             stat = stateFile.write(buffer, size);
             if (stat != Os::File::OP_OK) {
-                this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
+                this->log_WARNING_HI_StateFileWriteError(tmpFile, stat);
                 stateFile.close();
+                // discard the partial file; the state file still holds the previous records
+                (void)Os::FileSystem::removeFile(tmpFile.toChar());
                 return DpCatalog_StateFileWriteStatus::WRITE_ERROR;
             }
         }
     }
 
-    // close the state file
+    // close the temporary file and move it over the state file. Both share a directory, so the
+    // rename cannot cross filesystems, and it atomically replaces the previous copy with the new one
     stateFile.close();
+    const Os::FileSystem::Status renameStat = Os::FileSystem::rename(tmpFile.toChar(), this->m_stateFile.toChar());
+    if (renameStat != Os::FileSystem::OP_OK) {
+        this->log_WARNING_HI_StateFileRenameError(tmpFile, this->m_stateFile, static_cast<I32>(renameStat));
+        // discard the new records; the state file still holds the previous ones
+        (void)Os::FileSystem::removeFile(tmpFile.toChar());
+        return DpCatalog_StateFileWriteStatus::RENAME_ERROR;
+    }
     return DpCatalog_StateFileWriteStatus::WRITTEN;
 }
 
@@ -397,6 +441,10 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // reset state file data
     this->resetStateFileData();
 
+    // remove a temporary state file left by a reset during a rewrite, so leftovers
+    // do not accumulate next to the state file
+    this->removeStaleTempStateFile();
+
     // load state data from file; proceeding on a failed load would later
     // overwrite the state file and destroy the transmit state it records
     Fw::CmdResponse response = this->loadStateFile();
@@ -417,9 +465,8 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
         return response;
     }
 
-    // prune and rewrite the state file. A failure is reported by event; the file then holds the records
-    // written before the failure (or the previous contents if it could not be opened), and the build
-    // still completes from the catalog in memory
+    // prune and rewrite the state file. A failure is reported by event and leaves the previous
+    // state file contents in place; the build still completes from the catalog in memory
     (void)this->pruneAndWriteStateFile();
 
     this->log_ACTIVITY_HI_CatalogBuildComplete();

@@ -475,9 +475,19 @@ TEST(SetPriority, RuntimeAdd) {
     tester.test_SetPriorityRuntimeAdd();
 }
 
-TEST(SetPriority, StateFileOpenError) {
+TEST(SetPriority, StateFileRenameError) {
     Svc::DpCatalogTester tester;
-    tester.test_SetPriorityStateFileOpenError();
+    tester.test_SetPriorityStateFileRenameError();
+}
+
+TEST(StateFile, RewriteTempOpenError) {
+    Svc::DpCatalogTester tester;
+    tester.test_StateFileRewriteTempOpenError();
+}
+
+TEST(StateFile, StaleTempRemovedOnBuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_StateFileStaleTempRemovedOnBuild();
 }
 
 TEST(SetPriority, StateFileFull) {

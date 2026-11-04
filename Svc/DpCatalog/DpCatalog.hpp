@@ -250,9 +250,19 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param entry entry to update from file state
     void getFileState(DpStateEntry& entry);
 
-    /// @brief prune the state file data and write the remaining entries back
+    /// @brief prune the state file data and write the remaining entries back.
+    /// The entries are written to a temporary file that is renamed over the state file on success,
+    /// so a failure or reset mid-rewrite leaves the previous state file untouched
     /// @return WRITTEN, or the error (also reported by event)
     DpCatalog_StateFileWriteStatus pruneAndWriteStateFile();
+
+    /// @brief build the name of the temporary file used to rewrite the state file
+    /// @param tmpFile filled with the temporary file name
+    /// @return SUCCESS, or the format error (also reported by event)
+    Fw::FormatStatus getTempStateFileName(Fw::FileNameString& tmpFile);
+
+    /// @brief remove a temporary state file left behind by a reset during a rewrite
+    void removeStaleTempStateFile();
 
     /// @brief load state data from file
     Fw::CmdResponse loadStateFile();
