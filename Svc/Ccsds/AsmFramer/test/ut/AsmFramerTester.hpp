@@ -50,8 +50,19 @@ class AsmFramerTester final : public AsmFramerGTestBase {
     void testFrameSizeBounds();
     void testDataReturn();
     void testBufferOwnershipState();
+    void testReentrantReturn();
 
   private:
+    // ----------------------------------------------------------------------
+    // Handler overrides
+    // ----------------------------------------------------------------------
+
+    //! Records the returned upstream frame; when armed, first re-enters dataIn with a new
+    //! frame (as AosFramer does when its buffer returns) before recording
+    void from_dataReturnOut_handler(FwIndexType portNum,
+                                    Fw::Buffer& data,
+                                    const ComCfg::FrameContext& context) override;
+
     // ----------------------------------------------------------------------
     // Helper functions
     // ----------------------------------------------------------------------
@@ -78,6 +89,12 @@ class AsmFramerTester final : public AsmFramerGTestBase {
 
     //! The component under test
     AsmFramer component;
+
+    //! When true, from_dataReturnOut_handler re-enters dataIn once before recording
+    bool m_reenterOnReturn = false;
+
+    //! Storage for the frame sent on re-entry
+    U8 m_reentrantData[16] = {};
 };
 
 }  // namespace Ccsds
