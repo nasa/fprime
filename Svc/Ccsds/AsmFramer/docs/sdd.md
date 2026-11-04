@@ -18,7 +18,7 @@ static const U8 turboAsm[] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0};
 asmFramer.configure(Fw::ConstByteArray(turboAsm, sizeof(turboAsm)));
 ```
 
-The standard's patterns are 32, 64, 96, 128, and 192 bits long (Standard 9.3.1–9.3.5). The AsmFramer accepts patterns up to `ComCfg.AsmMaxSize` bytes (default 16, i.e. 128 bits, the rate-1/4 Turbo pattern); this is an implementation bound, chosen to keep the internal buffer small, and the 192-bit rate-1/6 Turbo pattern is not supported by default. Projects needing it raise `ComCfg.AsmMaxSize` in their configuration, which also grows the internal buffer.
+The standard's patterns are 32, 64, 96, 128, and 192 bits long (Standard 9.3.1–9.3.5). The AsmFramer accepts patterns up to `ComCfg.AsmMaxSize` bytes (default 16, i.e. 128 bits, the rate-1/4 Turbo pattern); this is an implementation bound, chosen to keep the internal buffer small, and the 192-bit rate-1/6 Turbo pattern is not supported by default. Projects needing it raise `ComCfg.AsmMaxSize` in their configuration, which also grows the internal buffer; note that the `fprime-gds` ASM deframer accepts `--asm` patterns of at most 16 bytes, so a longer flight marker also requires a project-supplied ground deframer.
 
 Configuring a zero-length pattern (`Fw::ConstByteArray(nullptr, 0)`) disables the marker: frames are forwarded unchanged. This lets a topology keep the AsmFramer in place and select at initialization whether the downlink is sync-marked.
 
