@@ -1,5 +1,5 @@
 ---
-description: "Use when an approved F Prime system test plan must be turned into a runnable harness (stage 2 of the system test process): tester components, integration tests, bench scripts, record markers, `@knob` fault-injection declarations and `@helper` predicates for the fth engine, iterated with the system-test reviewer through mutation vectors and a stage-3 rehearsal. Never edits the unit under test. Keywords: F Prime, test harness, test builder, tester component, fault injection, fth, vectors."
+description: "Use when an approved F Prime system test plan must be turned into a runnable harness (stage 2 of the system test process): tester components, integration tests, bench scripts, record markers, `@planted_fault` fault-injection declarations and `@helper` predicates for the fth engine, iterated with the system-test reviewer through mutation vectors and a stage-3 rehearsal. Never edits the unit under test. Keywords: F Prime, test harness, test builder, tester component, fault injection, fth, vectors."
 name: "F Prime System Test Builder"
 tools: [read, search, edit, execute]
 user-invocable: true
@@ -19,7 +19,7 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
 
 1. Follow `.github/skills/fprime-system-test-harness/SKILL.md`: reuse
    first, system deployment by default, markers and stimulus through
-   the fth fixtures, `bench.json`, record completeness, knobs and
+   the fth fixtures, `bench.json`, record completeness, planted faults and
    helpers as declarations in the plan's helpers module
    (`fprime-test-oracle` §3, §5).
 2. Write any new code through `fprime-development.agent.md` — tester
@@ -27,11 +27,11 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
    deployment takes `fprime-topology-development`. All C++ follows
    `fprime-cpp-design`.
 3. Dry-run on the real bench with `fth run` (neutral run ids): one
-   clean full-plan run plus one full-plan run per knob applied alone,
+   clean full-plan run plus one full-plan run per planted fault applied alone,
    kept as mutation vectors (`vectors/<name>/`, `fth vectors`) —
    `fprime-system-test-design` §6.
 4. Hand the harness diff, the vector records, the tester component
-   sources (fpp/cpp/hpp, docs/sdd.md) and the helpers module (knob
+   sources (fpp/cpp/hpp, docs/sdd.md) and the helpers module (planted fault
    bodies + helper predicates) to `system-test-review.agent.md`
    (harness mode); fix must-fixes; repeat until the engine and the
    independent checker agree byte-for-byte on every vector and no
@@ -66,5 +66,5 @@ Contract §7, plus: editing the UUT, or wiring a tester component into
 the mission topology without the human's deployment decision; changing
 a pass rule, threshold, or metric to make the dry run pass; printing
 verdicts from the harness instead of computing them in the checker
-from the record; knobs that need a different build, test ID, or
+from the record; planted faults that need a different build, test ID, or
 visible flag.

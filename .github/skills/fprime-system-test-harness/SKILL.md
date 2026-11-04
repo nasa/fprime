@@ -3,10 +3,10 @@ name: fprime-system-test-harness
 description: >-
   Use when building the harness for an approved F Prime system test
   plan: tester components, integration tests, bench scripts, record
-  markers, fault-injection knobs, and the engine's helpers. Keeps the
+  markers, fault-injection planted faults, and the engine's helpers. Keeps the
   harness small, reusable, and reviewable, and keeps it out of the unit
-  under test. Stimulus tests use the fth pytest plugin; knobs are
-  `@knob` declarations. Keywords: F Prime, test harness, tester
+  under test. Stimulus tests use the fth pytest plugin; planted faults are
+  `@planted_fault` declarations. Keywords: F Prime, test harness, tester
   component, integration test, markers, fault injection, fth, record.
 ---
 
@@ -44,7 +44,7 @@ deployment.
   (e.g. `fprime-samd-reference` `fram-harness`,
   `CuriosityReference/FramTester/`): the tester component AND, beside
   it under its `test/int/`, the plan (`plan.json`, rendered `plan.md`),
-  the fault knobs and helper predicates (`plan_helpers.py`), the
+  the fault planted faults and helper predicates (`plan_helpers.py`), the
   generated fault menu, `bench.json`, the pytest stimulus and the
   adversary's independent checker. They require the deployment the
   helper lives in, so they belong there.
@@ -87,7 +87,7 @@ def test_L2_1(window, send, bench):          # test_<ID>, or @pytest.mark.plan_t
     with window(30, 31):                      # START marker … END marker in finally
         bench.wait_samples("framDriver.WritesCompleted", 2)
         send("framTester.WRITE_PATTERN", [0, 0, 64, 0x5A])
-        send("framTester.VERIFY", [0, 0, 64, 0x5A])   # the drawn knob may rewrite this, for L2-1 only
+        send("framTester.VERIFY", [0, 0, 64, 0x5A])   # the drawn planted fault may rewrite this, for L2-1 only
 ```
 
 Bodies are **stimulus only**: no assertions on results, only pacing
@@ -205,22 +205,22 @@ Toolchain: a compiler override (e.g. `SAMD_TOOLCHAIN_ROOT` in
 `fprime-samd`'s toolchain file) lives on its own branch until the human
 decides to pin it; the trial never repins the deployment's toolchain.
 
-## 4. Fault knobs
+## 4. Fault planted faults
 
-Implement every knob as a `@knob` declaration in the plan's helpers
+Implement every planted fault as a `@planted_fault` declaration in the plan's helpers
 module (`fprime-test-oracle` §5): a command rewrite or insertion that
 the `faults` fixture applies to the **drawn test only**, from
 `rfr/<run-id>/sealed/faults.json` (`{"manifest_sha256": …, "faults":
-{"<test>": "<knob>"}}`); a malformed, unknown or stale file stops the
-run before any command, naming no knob. Fill `ripples_to` with any
-undrawn test a knob necessarily fails. A knob may change a seed, an
+{"<test>": "<planted fault>"}}`); a malformed, unknown or stale file stops the
+run before any command, naming no planted fault. Fill `ripples_to` with any
+undrawn test a planted fault necessarily fails. A planted fault may change a seed, an
 expected constant, a length, a stimulus, or disturb device state
 through an inserted harness command — never the test ID, the log text,
 or the marker. The harness **never logs, prints, asserts on, or writes
-which knobs are active**, to any file or stream, including its own
+which planted faults are active**, to any file or stream, including its own
 stdout in `runner/`; the only trace of `faults.json` outside `sealed/`
-is the seal-id run-start marker. The menu is `fth knobs-menu` output,
-never hand-written. The mutation vectors (§7) prove each knob, applied
+is the seal-id run-start marker. The menu is `fth planted-faults-menu` output,
+never hand-written. The mutation vectors (§7) prove each planted fault, applied
 alone, fails its target with exactly its `fails` entry and its
 `ripples_to` with FAIL, not UNVERIFIED, while all others pass.
 
@@ -237,14 +237,14 @@ do not discuss helper internals with the reviewer before it exists.
 ## 6. Size and review
 
 Target: a human reads the harness in one sitting. Put pass rules and
-knob handling in one small file each; isolate bench scripts (power
+planted fault handling in one small file each; isolate bench scripts (power
 control, flashing, ground-system start) from test logic. Harness code
 is reviewed by the system-test reviewer and, if the human requests,
 the local multi-agent review (`fprime-iterative-development` §2, step 4).
 The review scope of the harness stage explicitly includes, besides the
 tooling: the tester component (FPP, C++, SDD), the stimulus tests, the
-knob bodies and the helper predicates — lens passes (code, design,
-architecture, test quality) AND an adversarial pass (knob acting outside
+planted fault bodies and the helper predicates — lens passes (code, design,
+architecture, test quality) AND an adversarial pass (planted fault acting outside
 its drawn test via shared state; stimulus tautology — the harness emitting
 what the oracle checks; helper predicates without known-answer tests; the
 tester hiding UUT errors; steps that depend on another test's device
@@ -256,7 +256,7 @@ file:line evidence: (1) tautology — does any plan check pass because the
 harness emits what the oracle checks, without the UUT doing the work?
 (2) swallowed status — does the tester swallow, default or remap any
 UUT/driver status or return instead of surfacing it in an event/channel
-the plan checks? (3) knob reach — can a knob body act outside its
+the plan checks? (3) planted fault reach — can a planted fault body act outside its
 `applies_to`/drawn id via module, fixture, device state or command
 ordering? (4) cross-test state — does any step rely on device state left
 by a prior test, so that reordering or a single-test rerun changes the
@@ -279,8 +279,8 @@ package or the stage-3 checklist.
 
 Stage 2 closes on the exit gate of `fprime-system-test-design` §6:
 `fth run` dry runs on the real bench with neutral run ids (`dry-1`…;
-the knob → run mapping lives only in the orchestration script) kept as
-mutation vectors — one clean record (all PASS) and one per knob applied
+the planted fault → run mapping lives only in the orchestration script) kept as
+mutation vectors — one clean record (all PASS) and one per planted fault applied
 alone (its target FAILs exactly its `fails` set, its `ripples_to` FAIL,
 everything else PASSes), `fth vectors` green, engine and independent
 checker byte-equal on every one — plus the **stage-3 rehearsal** with
@@ -336,5 +336,5 @@ Dry-run traps (SunCamMgr simulator runs sim1–sim9 and the bench):
   without payload, no completion event awaited).
 - Verdicts printed by the harness instead of computed by a checker
   from the record.
-- Knobs that are visible in the record.
+- Planted faults that are visible in the record.
 - pytest or harness verdicts anywhere under `record/`.

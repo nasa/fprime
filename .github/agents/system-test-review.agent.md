@@ -26,9 +26,9 @@ lifecycle, the unit-test list (`docs/sdd.md` "Unit-test list", form in
 3. Is at least one test's evidence outside the UUT's own reporting
    path? Does every constant cite a source?
 4. Could a planted fault from the menu be told apart in the record?
-   Does the menu carry `max_count`, a `uut-state` knob, coverage of
+   Does the menu carry `max_count`, a `uut-state` planted fault, coverage of
    ≥ 2 × `max_count` tests, verbatim `fails` predicates and honest
-   `ripples_to` per knob? Is any knob impossible to apply through
+   `ripples_to` per planted fault? Is any planted fault impossible to apply through
    configuration?
 5. Is the deployment the system deployment, a human-approved
    reduction with the constraint stated, or — where the project has
@@ -58,7 +58,7 @@ doubles.
 ## Mode B — harness review
 
 Input: the approved `plan.json`, the harness diff (stimulus tests,
-helpers module with `@helper`/`@knob`), and the vector records
+helpers module with `@helper`/`@planted_fault`), and the vector records
 (`vectors/<name>/record`). Do **not** read the engine's source or the
 helpers' implementation before step 1. Procedure:
 
@@ -75,18 +75,18 @@ helpers' implementation before step 1. Procedure:
 3. Review the harness against `fprime-system-test-harness`: UUT
    untouched, markers fit 40 characters and round-trip, END sent in
    `finally` and carries no verdict, no pytest or harness verdict under
-   `record/`, knobs invisible in the record, each single-knob vector
-   fails its target with exactly the knob's `fails` predicates and its
+   `record/`, planted faults invisible in the record, each single-planted fault vector
+   fails its target with exactly the planted fault's `fails` predicates and its
    `ripples_to` with FAIL not UNVERIFIED while everything else passes
    (`fth vectors` green), engine and checker `failed` lists byte-equal
-   on every vector, no knob name or test/knob pair anywhere in the
-   dry-run `runner/` output or in a run id (grep for every knob name;
-   `MARK(crc32(run id))` inverts a knob-named id), completeness built from
+   on every vector, no planted fault name or test/planted fault pair anywhere in the
+   dry-run `runner/` output or in a run id (grep for every planted fault name;
+   `MARK(crc32(run id))` inverts a planted fault-named id), completeness built from
    infrastructure counters only, commands paced, exporter writes all
    three exports plus `export-counts.json`, size reviewable in one
    sitting.
 3b. Adversarial reading. Read the tester/helper component sources
-   (fpp/cpp/hpp and its docs/sdd.md), the stimulus tests, the knob
+   (fpp/cpp/hpp and its docs/sdd.md), the stimulus tests, the planted fault
    bodies and the helper predicates, and answer these five questions
    explicitly in `review-harness-round-N.md`, each with evidence
    (file:line) and a verdict (clean / must fix / should fix):
@@ -98,7 +98,7 @@ helpers' implementation before step 1. Procedure:
        or remap any UUT/driver status or return (SpiDriver status, port
        return values, `Fw::Success`) instead of surfacing it in an
        event/channel the plan checks?
-   (3) Knob reach — can a knob body act on a test outside its
+   (3) Planted fault reach — can a planted fault body act on a test outside its
        `applies_to`/drawn id via module state, fixture state, device
        state or command ordering?
    (4) Cross-test state — does any plan step rely on device/UUT state

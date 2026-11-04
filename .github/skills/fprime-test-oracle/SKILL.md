@@ -6,9 +6,9 @@ description: >-
   record it reads, the completeness-versus-UUT split, the
   two-independent-checkers rule, and the verdict and divergence formats
   shared by the test designer, reviewer, builder, runner, and auditor;
-  the `@knob` fault-injection declarations and the sealed faults file.
+  the `@planted_fault` fault-injection declarations and the sealed faults file.
   Keywords: F Prime, test oracle, pass rule, checker, verdict, record,
-  knob, faults.json, fth, divergence.
+  planted fault, faults.json, fth, divergence.
 ---
 
 # Skill: F Prime test oracle — pass rules and checkers
@@ -127,7 +127,7 @@ extra keys are ignored. `fth audit --independent` diffs verdict **and**
 - Every test on the manifest gets an entry; a test with no window in
   the record is `UNVERIFIED` with `failed: ["window missing"]`.
 - `failed` holds the plan's predicate strings **verbatim** — the
-  string is the key `fth unseal` matches against a knob's `fails`; a
+  string is the key `fth unseal` matches against a planted fault's `fails`; a
   paraphrase turns every planted test into an unexplained failure.
   Transcribe whole sentences including any suffix the plan carries.
 - `evidence` points into the export so a quick-look can be built from
@@ -148,48 +148,48 @@ divergence.md                      (auditor/diff.md in stage 3)
 Any row here blocks stage-2 closure (vectors) and is read first by the
 human at unseal (stage 3).
 
-## 5. Knobs and the sealed faults file
+## 5. Planted faults and the sealed faults file
 
-A knob is a **command rewrite** declared next to the helpers and
+A planted fault is a **command rewrite** declared next to the helpers and
 applied by the `faults` fixture of `fth.pytest_plugin` to the **drawn
 test only** — never by name to every test in `applies_to`:
 
 ```python
-@knob("verify_wrong_seed", applies_to=["L2-1", "L2-5"], cls="harness-expectation",
+@planted fault("verify_wrong_seed", applies_to=["L2-1", "L2-5"], cls="harness-expectation",
       fails={"L2-1": ["event framTester.VerifyDone(client=0, offset=0, length=64, status=OK, mismatches=0) count == 1"],
              "L2-5": ["event framTester.SweepDone(kind=VERIFY, chunks=4096, errors=0) count == 1"]},
       mechanism="VERIFY sent with seed+1", kind="rewrite")          # kind: rewrite (default) | insert
 def verify_wrong_seed(test_id, command_name, args):
     if command_name == "framTester.VERIFY":
         return [args[0], args[1], args[2], args[3] + 1]              # rewrite: new args
-    return None                                                      # untouched; insert knobs return [(name, args), …]
+    return None                                                      # untouched; insert planted faults return [(name, args), …]
 ```
 
 - `fails` is a per-test dict of plan predicate text, verbatim (a legacy
   list expands to every `applies_to` test); `cls` is
   `harness-expectation | uut-state | stimulus`; `kind` is enforced at
   apply time (a `rewrite` that inserts is a `PlanError`). `fth
-  knobs-menu plan.json` generates the fault menu from these
+  planted-faults-menu plan.json` generates the fault menu from these
   declarations; it is never hand-written, and `fth verify-plan` rejects
-  a knob on an unknown test.
+  a planted fault on an unknown test.
 - The sealed draw is exactly
-  `{"manifest_sha256": "<sha of the manifest file>", "faults": {"<test>": "<knob>"}}`.
+  `{"manifest_sha256": "<sha of the manifest file>", "faults": {"<test>": "<planted_fault>"}}`.
   Anything else — malformed JSON, extra keys, unknown test, unknown or
-  inapplicable knob, a stale `manifest_sha256` — stops pytest with exit
+  inapplicable planted fault, a stale `manifest_sha256` — stops pytest with exit
   code 2 **before any command is sent**, with a message that names no
-  knob.
-- Nothing names an active knob outside `sealed/`: not the run id (it is
+  planted fault.
+- Nothing names an active planted fault outside `sealed/`: not the run id (it is
   invertible through `MARK(crc32(run id))`), not stdout, not a file
   under `runner/` or `record/`.
 
 ## 6. Lessons that shaped these rules (fram-r1, fram-r2)
 
-- Knob applied by **name** to every `applies_to` test → two undrawn
+- Planted fault applied by **name** to every `applies_to` test → two undrawn
   tests failed and unseal reported REAL FAILs that were harness scope
   errors. Fixed by construction: the fixture consults only
   `faults[test_id]`.
 - A draw could remove the only unaltered test covering a requirement →
-  `fth draw` refuses such a draw; plans carry knob-disjoint redundancy.
+  `fth draw` refuses such a draw; plans carry planted fault-disjoint redundancy.
 - A hand-written dry-run fault file shape voided fram-r1 at run start
   → the stage-3 rehearsal reads a real `fth draw` output.
 - Abbreviated `failed` keys broke unseal matching → predicate text
@@ -203,8 +203,8 @@ def verify_wrong_seed(test_id, command_name, args):
   exact raw line; commands come only from `raw/cmd/`.
 - `nums` scraped from event text were garbage for hex and enums → args
   are parsed with the plan's `event_patterns`.
-- Run ids named after knobs leaked the draw into the record → neutral
-  run ids; grep every knob name over `record/`, `runner/` and the
+- Run ids named after planted faults leaked the draw into the record → neutral
+  run ids; grep every planted fault name over `record/`, `runner/` and the
   verdicts before shipping.
 
 ## Anti-patterns
@@ -215,5 +215,5 @@ def verify_wrong_seed(test_id, command_name, args):
   bench problem instead of a failure.
 - Relaxing a predicate because the dry run failed it; that is a plan
   change (contract §2).
-- A knob switched on by name, a hand-written fault menu, or a faults
+- A planted fault switched on by name, a hand-written fault menu, or a faults
   file the harness "tolerates".

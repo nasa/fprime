@@ -7,7 +7,7 @@ description: >-
   test-design phase of component development). Produces a
   requirements-traced plan (`plan.json`, rendered to `plan.md` by
   `fth render-plan`) with a one-sentence purpose and a structured,
-  machine-evaluable pass rule per test, knob-disjoint redundancy per
+  machine-evaluable pass rule per test, planted fault-disjoint redundancy per
   requirement, numeric metrics, a fault-injection menu, and an honest
   not-covered list. Keywords: F Prime, system test, HIL, test plan,
   traceability, pass rule, oracle, fault injection, qualification,
@@ -43,7 +43,7 @@ Governing rules are in
   deployment is the same human call (contract §2): ask first; without
   one, test in a temporary uncommitted deployment.
 - The FPP model: ports, commands, events, telemetry and parameters
-  are the observables and the fault-injection surface (knobs are
+  are the observables and the fault-injection surface (planted faults are
   harness configuration, §4).
 - UUT code, when it exists, read after the plan's test entries (§3)
   exist, to locate observable counters. In the development lifecycle the
@@ -61,7 +61,7 @@ render-plan`, byte-stable) and never edited by hand. Keys, predicate
 grammar and the test entry are defined in the tooling's
 `docs/plan-format.md` (pinned in `test-process-contract.md` §8);
 `fth verify-plan` must pass before a plan is handed to anyone — an
-unknown helper, knob or requirement or an unparsable predicate is a
+unknown helper, planted fault or requirement or an unparsable predicate is a
 load error, never a verdict.
 
 ```
@@ -77,7 +77,7 @@ load error, never a verdict.
    Helpers      `helpers`: [{instance, component, src, repo}] — every harness-only component of the
                 test deployment (e.g. FramTester); the package renders a succinct SDD page per helper
 5  Metrics      numeric thresholds with units, decided here, never relaxed later
-6  Fault menu   knobs the harness must support to plant failures (§4)
+6  Fault menu   planted faults the harness must support to plant failures (§4)
 7  Not covered  what this plan cannot prove on this bench, and why
 8  Decision log numbered rulings with who decided and when
 ```
@@ -111,7 +111,7 @@ complete   ["STD"]                                        # or per window {"W1":
 all_of     ["ABS", "<predicate>", {"helper": name, "text": ..., "args": {...}}]
 metrics    ["<predicate with units>"]
 rationale  [{"pred": "<predicate>", "text": "why this value is ignored / masked"}]
-knobs      ["verify_wrong_seed"]
+planted faults      ["verify_wrong_seed"]
 evidence   <which EVR sequence or telemetry strip a human should see>
 ```
 
@@ -133,7 +133,7 @@ Rules:
   forms, `<packet> samples >= n`) or a reference to a registered
   `@helper` (`{"helper", "text", "args"}`). Nothing else: prose, regexes
   and inline code are load errors. The predicate text is the key the
-  verdict files, the knob `fails` lists and `fth unseal` match
+  verdict files, the planted fault `fails` lists and `fth unseal` match
   byte-for-byte.
 - Every value a rule deliberately ignores or masks (a status bit, a
   boot-cumulative counter judged only by Δ, a tolerance) has a
@@ -146,10 +146,10 @@ Rules:
   `segment`-aware helpers or per-boot predicates; `duration` is
   undefined across a reboot.
 - **Redundancy.** Every requirement with system-test coverage is
-  covered by ≥ 2 tests whose knob sets are disjoint, so no drawn knob
+  covered by ≥ 2 tests whose planted fault sets are disjoint, so no drawn planted fault
   can remove the prime-path verification of a requirement (`fth draw`
   refuses a draw that would). A requirement that cannot get a second
-  knob-disjoint test carries an explicit waiver in its
+  planted fault-disjoint test carries an explicit waiver in its
   `requirements` entry: `verification` text naming no test (e.g. `UT
   only`, `Inspection`) and a `note` saying why.
 - Prefer EVR sequences a human can check off (start → progress →
@@ -198,18 +198,18 @@ Observability rules for pass-rule predicates (found by running the checker):
 
 ## 4. Fault menu
 
-The menu is **generated** from the `@knob` declarations of the plan's
-helpers module (`fth knobs-menu plan.json`, `fprime-test-oracle` §5);
-the designer writes the declarations, never the JSON. Knobs are
+The menu is **generated** from the `@planted_fault` declarations of the plan's
+helpers module (`fth planted-faults-menu plan.json`, `fprime-test-oracle` §5);
+the designer writes the declarations, never the JSON. Planted faults are
 command rewrites or insertions applied by the harness to the drawn test
 only, so a planted fault is invisible to the checkers and absent from
-harness output. A `uut-state` knob's disturbing command does appear in
+harness output. A `uut-state` planted fault's disturbing command does appear in
 `commands.jsonl`; the auditor is forbidden to reason from it (contract
 §5). Generated shape:
 
 ```
 { "max_count": 2,
-  "knobs": [
+  "planted faults": [
   { "name": "verify_wrong_seed", "class": "harness-expectation",
     "applies_to": ["L2-6", "L7-1"],
     "fails": ["event SweepComplete(kind=VERIFY, pages=2048, errors=0) count == 1"],
@@ -230,26 +230,26 @@ harness output. A `uut-state` knob's disturbing command does appear in
   hidden number in `[1, max_count]`.
 - `class`: `harness-expectation` (the checker's expectation is wrong),
   `uut-state` (device content or state is disturbed), `stimulus` (the
-  drive differs from the plan). At least one knob is `uut-state`:
-  expectation-only knobs prove the checker reads the harness's error
+  drive differs from the plan). At least one planted fault is `uut-state`:
+  expectation-only planted faults prove the checker reads the harness's error
   event, not that the test catches a defect.
-- `fails`: the pass-rule predicates, verbatim, that the knob breaks.
+- `fails`: the pass-rule predicates, verbatim, that the planted fault breaks.
   At unseal any other failed predicate on a planted test is an
   unexplained failure and a human trigger.
-- `ripples_to`: tests that legitimately fail when this knob is
+- `ripples_to`: tests that legitimately fail when this planted fault is
   planted (a disturbed device stays disturbed), as a list or as a map
   `{"L7-1": ["<predicate>"]}` naming the predicates that fail there
   (map form enables the unexplained-failure check on ripples).
   Verified in the dry run; the draw expects `FAIL-RIPPLE` for them.
-- Only a `uut-state` knob changes what the independent final-state
-  dump should find; a `harness-expectation` or `stimulus` knob drawn
+- Only a `uut-state` planted fault changes what the independent final-state
+  dump should find; a `harness-expectation` or `stimulus` planted fault drawn
   on the final test leaves the device correct and the dump is
   expected to PASS.
-- Knobs that need a different build, a different test ID, or a
+- Planted faults that need a different build, a different test ID, or a
   visible flag are not acceptable.
-- Together with §3's redundancy rule: a knob may apply to several
+- Together with §3's redundancy rule: a planted fault may apply to several
   tests, but for every requirement at least one covering test must
-  carry no knob that any other covering test also carries.
+  carry no planted fault that any other covering test also carries.
 
 ## 5. Hand-off
 
@@ -267,7 +267,7 @@ Two audiences, two artifacts:
   the reason. That table is the test-design gate's quick-look.
 - **The builder and the reviewer read the plan.** Deliver `plan.json`
   (§2 structure, one entry per test; `fth verify-plan` passes), its
-  rendered `plan.md`, the helpers module with the `@knob` declarations
+  rendered `plan.md`, the helpers module with the `@planted_fault` declarations
   and the generated fault menu, outside the component tree; the plan
   also declares the **development-evidence coverage thresholds**,
   `coverage: {"lines_min": %, "branches_min": %, "not_covered_ack":
@@ -288,11 +288,11 @@ Stage 2 closes only when all three hold, on the bench, with the frozen plan
 (the third is development evidence — a review input, not an RfR input):
 
 1. **Mutation vectors** (`fth vectors plan.json vectors/`): one clean
-   full-plan record that PASSes every test, and one single-knob record
-   per knob that FAILs exactly that knob's `fails` set on its target
+   full-plan record that PASSes every test, and one single-planted fault record
+   per planted fault that FAILs exactly that planted fault's `fails` set on its target
    (and `ripples_to`, FAIL not UNVERIFIED) while every other test
    passes. Records live under `vectors/<name>/` with `vector.json`
-   (`kind: clean | single-knob | regression`) and run in CI; a vector
+   (`kind: clean | single-planted_fault | regression`) and run in CI; a vector
    that no longer judges as declared blocks the manifest.
 2. **Stage-3 rehearsal**, end to end with a throwaway seed on a
    scratch manifest: `fth draw` → `fth run` → `fth audit` → `fth
@@ -310,7 +310,7 @@ A plan approved in stage 1 (before code) is refreshed when stage 2
 starts on the UUT SHA: confirm L0 on the bench and replace the
 desk-checked line; read the UUT code — last — for observable counters
 and update §3 evidence paths where a counter is better than a report;
-re-check every fault-menu knob is still applicable. The reviewer sees
+re-check every fault-menu planted fault is still applicable. The reviewer sees
 the diff once (`system-test-review` Mode A on the changed entries, one
 review; an empty diff needs none), then the human re-approves it
 (contract §2, plan change); an empty diff is reported as such. No test

@@ -97,7 +97,7 @@ its implementation, and a brief that names what it must break:
 | Child | Reads | Delivers |
 |---|---|---|
 | Independent checker author | plan text, replay API | a checker written from the plan alone; byte-for-byte diff against the engine on every vector (`fprime-test-oracle` §3) |
-| Knob-fixture breaker | fault menu, fixture API | faults files and draws that should be refused (unknown test, stale sha, extra key, by-name leak) and the exit code each produced |
+| Planted fault-fixture breaker | fault menu, fixture API | faults files and draws that should be refused (unknown test, stale sha, extra key, by-name leak) and the exit code each produced |
 | Replay-fidelity reviewer | raw archive, exporter output | row-count and dedup diffs between `raw/` and the export; any sample lost or duplicated |
 | QL cold reader | rendered quick-look pages only | what a human who did not run the test would conclude, and where the page misleads |
 

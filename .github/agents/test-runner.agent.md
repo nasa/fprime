@@ -56,7 +56,7 @@ that `runner/` and `sealed/` are not to be read.
 
 Contract §7, plus: any stage-3 step outside `fth run` (a hand-run
 pytest, export or evaluate is not a record); opening, printing, or
-diffing anything under `sealed/`; letting any file or stream you write name an active knob;
+diffing anything under `sealed/`; letting any file or stream you write name an active planted fault;
 supplying screenshots or snippets as evidence (the auditor derives
 evidence from the record); writing harness or pytest output under
 `record/`.

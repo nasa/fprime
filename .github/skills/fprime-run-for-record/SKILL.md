@@ -36,7 +36,7 @@ fth selftest          # exercises every seal subcommand in a temp dir
 ```
 
 Requirements the tooling must keep meeting (its own test suite carries
-them; a tool that drops one is not pinned): a knob's `fails` is a
+them; a tool that drops one is not pinned): a planted fault's `fails` is a
 per-test dict (`{"<test>": [predicate…]}`; a legacy list expands to
 every `applies_to` test) and `unseal` matches failed predicates against
 that test's entry only; `draw` reads the menu from the manifest;
@@ -101,7 +101,7 @@ Writes `rfr/<run-id>/sealed/{faults.json, expectations.json,
 sealed.sha256}` and `rfr/<run-id>/seal-id.txt`. The number of planted
 tests is drawn in `[1, max_count]` from the approved menu (no
 command-line override); expectations are `FAIL` for drawn tests,
-`FAIL-RIPPLE` for their knobs' `ripples_to`, `PASS` otherwise. The
+`FAIL-RIPPLE` for their planted faults' `ripples_to`, `PASS` otherwise. The
 draw **refuses to uncover a requirement**: if a candidate draw leaves
 any requirement without an unaltered covering test it re-draws from a
 derived sub-seed, deterministically, up to `--max-tries` (16), then
@@ -152,7 +152,7 @@ It performs, in order, and stops at the first failure:
    `"RFR <run> S <sha8>"` — the plan's `markers` block decides).
 5. Run the plan's stimulus tests once, in plan order, through
    `fth.pytest_plugin` (`window`, `send`, `bench`, `faults` fixtures);
-   the plugin validates `sealed/faults.json` and applies the drawn knob
+   the plugin validates `sealed/faults.json` and applies the drawn planted fault
    to the drawn test only; stdout and pytest output go to `runner/`.
 6. Stop the ground system; `fth export` the raw logs into
    `record/{events,channels,commands}.jsonl` + `export-counts.json`
@@ -229,7 +229,7 @@ byte-identical across renders: title and `purpose`; engine verdict;
 lines (`L`/`C`/`K` = events/channels/commands jsonl line numbers) that
 decided it; completeness (commands sent vs dispatched, drops);
 `rationale` lines; hex beside decimal where the rule uses hex; a "vs
-plan" column that is an observation, never attributed to a knob. The
+plan" column that is an observation, never attributed to a planted fault. The
 pass rule is on the page so the human checks the evidence against the
 rule, not against anyone's word. `index.md` carries the run metadata
 (manifest, seal id, `repo_check`) and the requirement × test VnV
@@ -258,7 +258,7 @@ heading and `REQ-…` anchors preserved; ```mermaid blocks pre-rendered to inlin
 `mmdc` when the host has it, else the vendored `assets/mermaid.min.js` renders them from
 `file://` — no CDN, no plugin, no timestamps; the `.md` stays the diffable source); `inputs/`
 (the package is self-contained: `manifest.json`, `plan.json`, `faults-menu.json`, `bench.json`,
-the plan's `helpers_module` (predicates + knob bodies, pinned via the project repo sha), the independent checker and the sibling module it imports, `toolchain.json`, every image the
+the plan's `helpers_module` (predicates + planted fault bodies, pinned via the project repo sha), the independent checker and the sibling module it imports, `toolchain.json`, every image the
 manifest names with its pinned sha256 and the flash read-back sha, the F´ dictionary, and
 `inputs/README.md` listing each file, its sha256, the manifest pin and the stage-3 row that
 consumes it — a sha256 that disagrees with a pin is a loud failure; `fth unseal` adds `unseal.md`
@@ -288,10 +288,10 @@ duration as separate rows per window with epoch; §1 Pass rule — one check per
 rule deliberately ignores; §2 Procedure — plan steps aligned to sent commands with K lines,
 every command name linked to `commands.md`, non-command actions explained ("not a
 command — reboot visible as FSW clock restart …"); §3 "Possible Injected Faults" — sealed
-draw line and the knob | drawn | checks-it-may-break table (a `— none —` row when no knob
+draw line and the planted fault | drawn | checks-it-may-break table (a `— none —` row when no planted fault
 applies, never an empty table, no "acted" column) filled by `fth unseal`, the italic note
 says so; §4 Rule verdict (#, window, check, value seen, holds), the verdict line, the
-unseal callout (⚠ when more checks failed than the drawn knob allows, a planted test
+unseal callout (⚠ when more checks failed than the drawn planted fault allows, a planted test
 PASSED or an unplanted test FAILED; otherwise "consistent with draw"), the footnote that
 counters are boot-cumulative and only Δ is judged, the caption that a handler's event
 precedes its OpCodeCompleted; §5 Events — complete, nothing elided, Δ from the window
@@ -311,13 +311,13 @@ fth unseal --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
 Verifies the integrity chain (contract §6), then writes the check-off
 table `☐ | test | expected | runner | auditor | quick-look | outcome`
 for every test on the manifest plus one `<test>/dump` row per entry in
-`auditor/final-state.json` (expected from the drawn knob's class, not
+`auditor/final-state.json` (expected from the drawn planted fault's class, not
 the test's expectation), flags planted or ripple tests whose failed
-predicates exceed the knob's `fails` entry for that test, shows any
+predicates exceed the planted fault's `fails` entry for that test, shows any
 skipped image version check, and lists the human triggers first with
 the seal id to compare with the value printed by `draw`. It also stamps
 every QL page with `Unseal expectation` / `Unseal verdict`, inserts the
-§3 knob table (name, class, kind, mechanism; `— none —` when nothing
+§3 planted fault table (name, class, kind, mechanism; `— none —` when nothing
 applies) and a callout (⚠ WARNING for uncovered checks, a planted PASS
 or an unplanted FAIL; else "Consistent with draw") into `index.md`, and
 rebuilds `ql.zip`. The human reads trigger rows, spot-checks two or
