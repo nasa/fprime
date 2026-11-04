@@ -154,8 +154,8 @@ not tamper-proof. Every RfR report says so.
 - **Reviewer** also reads the harness code adversarially (review Mode B step 3b: tautology, swallowed status, knob reach, cross-test state, helper KATs); mechanics checks alone do not close stage 2.
 - **Pure RfR / development provenance split**: the RfR runs the pure,
   uninstrumented image and its package has no coverage; coverage (UT +
-  on-target, `fth dev-campaign` → `dev-evidence/`, banner DEVELOPMENT
-  EVIDENCE — NOT RfR) is delivered beside the RfR inputs as a review
+  on-target, `fth dev-campaign` → `dev-evidence/` incl. its dev QL package
+  `ql/`, banner DEVELOPMENT EVIDENCE — NOT RfR) is delivered beside the RfR inputs as a review
   input — provenance, not equivalence, when its image differs from the
   RfR image.
 - **Builder** keeps the harness small enough to be read in one sitting
@@ -228,7 +228,7 @@ this table; bumping it is a one-line change here and nowhere else.
 
 | Tool | Pinned | Install |
 |---|---|---|
-| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 350d605034ec745463b79ec8046c33b408f6a2b4) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@350d605#egg=fprime-testing-harness"` |
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 350d605034ec745463b79ec8046c33b408f6a2b4) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@6e8ad1d#egg=fprime-testing-harness"` |
 
 Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and

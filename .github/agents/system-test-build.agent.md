@@ -49,7 +49,9 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
    (`fprime-run-for-record` §1), listing the built image files and
    `--toolchain-json`, and present the harness to the human for review
    as local files: plan, harness, vectors, manifest **and**
-   `dev-evidence/` — the last as a review input, never an RfR input
+   `dev-evidence/` incl. its dev QL package (`dev-evidence/ql/`, pass
+   `--sdd`/`--dictionary` so sdd.md, commands.md and helpers/ are in it)
+   — the last as a review input, never an RfR input
    (harness skill §3a; the coverage image may be a different compiler
    and binary than the RfR image: provenance, not equivalence). Whether harness code
    becomes a PR is the human's call.

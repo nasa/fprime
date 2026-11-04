@@ -135,7 +135,10 @@ trimmed config, e.g. `FW_FILEID_ASSERT`, fails UTs for configuration reasons),
 plan, reassembled and measured by `fth coverage-system`, and (c) the pure run on
 the RfR image judged by the engine and the independent checker; it writes one
 `dev-evidence/` bundle (banner `DEVELOPMENT EVIDENCE — NOT RfR`, `ut/`, `system/`,
-`pure/`, `identities.json`, `findings.md`) and exits non-zero with a findings
+`pure/`, `identities.json`, `findings.md`, and `ql/` — the dev QL package of the
+pure run rendered with `--dev`: index with both image identities + tri-state VnV
+matrix, test pages, `commands.md`/`helpers/`/`sdd.md` when `--dictionary`/`--sdd`
+are given, `coverage/ut` + `coverage/system` copied from the bundle) and exits non-zero with a findings
 list when a pure-run verdict is not PASS, the checkers disagree, or coverage is
 under the plan's `coverage: {lines_min, branches_min, not_covered_ack}` (design
 skill §2). "Iterate until clean" = repeat until it exits 0 and the uncovered
@@ -265,9 +268,10 @@ Document the harness in a short README: how to run one test, the whole
 plan, and the dry run.
 
 **Stage-2 hand-off** (build agent step 5): plan, harness, mutation
-vectors, manifest **and** the `dev-evidence/` bundle from §3a (UT
-coverage, on-target coverage, pure run), clean (`fth dev-campaign` exit
-0). The human gate lists dev-evidence as a *review* input beside the RfR
+vectors, manifest **and** the `dev-evidence/` bundle from §3a incl. its
+dev QL package (`dev-evidence/ql/`; UT coverage, on-target coverage, pure
+run), clean (`fth dev-campaign` exit 0) — one bundle, nothing else to
+assemble by hand. The human gate lists dev-evidence as a *review* input beside the RfR
 inputs; it is never an RfR input and nothing from it enters the RfR
 package or the stage-3 checklist.
 
