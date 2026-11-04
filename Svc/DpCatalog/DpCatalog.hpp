@@ -376,7 +376,9 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param tSec seconds of the time tag
     /// @param tSub microseconds of the time tag
     /// @return OK if the product was rescheduled (and the state file rewritten, if one is configured and held a
-    ///         record of it), EXECUTION_ERROR otherwise (DpRetransmitError names the reason)
+    ///         record of it); EXECUTION_ERROR when the request is rejected (DpRetransmitError names the reason), when
+    ///         the component is not initialized (ComponentNotInitialized), or when the product was rescheduled but the
+    ///         state file could not be rewritten (StateFileOpenError/StateFileWriteError)
     Fw::CmdResponse doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub);
 
     // ----------------------------------

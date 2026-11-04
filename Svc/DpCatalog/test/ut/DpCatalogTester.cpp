@@ -3622,8 +3622,16 @@ void DpCatalogTester ::test_RetransmitRejected() {
     ASSERT_EVENTS_ComponentNotInitialized_SIZE(1);
     ASSERT_EVENTS_DpRetransmitError_SIZE(0);
 
-    // configured, catalog not built
+    // configured without slots (white box): refused by checkInit with ComponentNoMemory, without a DpRetransmitError
     this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
+    const FwSizeType numDpSlots = this->component.m_numDpSlots;
+    this->component.m_numDpSlots = 0;
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(9, id, time, Fw::CmdResponse::EXECUTION_ERROR));
+    ASSERT_EVENTS_ComponentNoMemory_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitError_SIZE(0);
+    this->component.m_numDpSlots = numDpSlots;
+
+    // configured, catalog not built
     ASSERT_NO_FATAL_FAILURE(this->retransmit(2, id, time, Fw::CmdResponse::EXECUTION_ERROR));
     ASSERT_EVENTS_DpRetransmitError_SIZE(1);
     ASSERT_EVENTS_DpRetransmitError(0, id, time.getSeconds(), time.getUSeconds(),
@@ -3732,6 +3740,8 @@ void DpCatalogTester ::test_RetransmitNameError() {
     // answered NAME_ERROR
     Fw::MallocAllocator alloc;
     constexpr FwSizeType dpNameLength = 34;
+    // the canonical name overflows Fw::String by 10 characters; the static_assert keeps the directory within a
+    // FileNameString
     char longName[Fw::String::STRING_SIZE - dpNameLength + 10] = {};
     static_assert(sizeof(longName) <= Fw::FileNameString::STRING_SIZE, "the directory must fit a FileNameString");
     memset(longName, 'd', sizeof(longName) - 1);
@@ -4044,12 +4054,41 @@ void DpCatalogTester ::test_RetransmitWithoutRecord() {
     ASSERT_NO_FATAL_FAILURE(this->retransmit(14, id, time, Fw::CmdResponse::OK));
     ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
     ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 10);
-    ASSERT_EVENTS_StateFileFull_SIZE(0);
+    // the full table was not touched: no slot was reset or taken
+    ASSERT_EQ(this->component.m_stateFileEntries, numDpSlots);
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
     ASSERT_EQ(this->component.m_pendingFiles, 1);
     this->component.resetStateFileData();
+    this->component.shutdown();
+
+    // no record with a state file configured: the product is rescheduled and the file is not rewritten
+    Fw::FileNameString realStateFile("./DpTest_RetransmitNoRecord/dpState.dat");
+    (void)Os::FileSystem::removeFile(realStateFile.toChar());
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, realStateFile, 20, alloc));
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(21, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    FwSizeType sizeBefore = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(realStateFile.toChar(), sizeBefore), Os::FileSystem::OP_OK);
+    ASSERT_EQ(sizeBefore, STATE_ENTRY_SIZE);
+    this->component.resetStateFileData();
+    for (FwSizeType slot = 0; slot < numDpSlots; slot++) {
+        this->component.m_stateFileData[slot].used = true;
+        this->component.m_stateFileData[slot].visited = true;
+    }
+    this->component.m_stateFileEntries = numDpSlots;
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(22, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 10);
+    ASSERT_EVENTS_StateFileOpenError_SIZE(0);
+    ASSERT_EVENTS_StateFileWriteError_SIZE(0);
+    FwSizeType sizeAfter = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(realStateFile.toChar(), sizeAfter), Os::FileSystem::OP_OK);
+    ASSERT_EQ(sizeAfter, sizeBefore);
+    this->component.resetStateFileData();
 
     this->delDp(id, time, dir.toChar());
+    (void)Os::FileSystem::removeFile(realStateFile.toChar());
     this->component.shutdown();
 }
 
