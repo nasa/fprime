@@ -237,6 +237,10 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! apply, the slotless transmitted product is re-added, and the read offset stays exact past the skipped record
     void test_LoadStateFileSlotExhausted();
 
+    //! loadStateFile with records whose directory index is out of range (high or negative): each is skipped
+    //! with StateFileInvalidDirIndex and the in-range records still load
+    void test_LoadStateFileInvalidDirIndex();
+
     //! SET_DP_PRIORITY before configure
     void test_SetPriorityNotInit();
 

@@ -2745,6 +2745,60 @@ void DpCatalogTester ::test_LoadStateFileSlotExhausted() {
     ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
 }
 
+void DpCatalogTester ::test_LoadStateFileInvalidDirIndex() {
+    // Records whose directory index does not lie within the configured directory list — too high or
+    // negative — are skipped at load with StateFileInvalidDirIndex; the in-range records still apply
+    // (SVC-DPCAT-025)
+    Fw::FileNameString dir("./DpTest_StateDirRange");
+    Fw::FileNameString stateFile("./DpTest_StateDirRange/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const FwDpIdType ids[3] = {0x650, 0x651, 0x652};
+    const FwIndexType dirIndices[3] = {3, -1, 0};
+    this->delDp(ids[2], SET_PRIO_TIME, dir.toChar());
+    const Fw::String dpFile =
+        this->genDP(ids[2], 10, SET_PRIO_TIME, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+
+    // The records are written directly: appendFileState asserts an in-range index, since the component
+    // never stores an out-of-range one
+    const FwSizeType recordSize = sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE;
+    Os::File rawFile;
+    ASSERT_EQ(rawFile.open(stateFile.toChar(), Os::File::OPEN_CREATE), Os::File::OP_OK);
+    for (FwIndexType record = 0; record < 3; record++) {
+        BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
+        Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
+        const DpRecord dpRecord(ids[record], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 10, 16, 0,
+                                Fw::DpState::TRANSMITTED);
+        ASSERT_EQ(entryBuffer.serializeFrom(dirIndices[record]), Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(entryBuffer.serializeFrom(dpRecord), Fw::FW_SERIALIZE_OK);
+        FwSizeType size = entryBuffer.getSize();
+        ASSERT_EQ(rawFile.write(buffer, size), Os::File::OP_OK);
+    }
+    rawFile.close();
+
+    Fw::MallocAllocator alloc;
+    this->configureAndBuild(dir, stateFile, 10, alloc);
+    // The two out-of-range records are skipped where they sit in the file; the in-range one still applies
+    ASSERT_EVENTS_StateFileInvalidDirIndex_SIZE(2);
+    ASSERT_EVENTS_StateFileInvalidDirIndex(0, stateFile.toChar(), 0, 3, 1);
+    ASSERT_EVENTS_StateFileInvalidDirIndex(1, stateFile.toChar(), static_cast<I32>(recordSize), -1, 1);
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_EVENTS_DpFileSkipped(0, dpFile.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EQ(this->component.m_pendingFiles, 0);
+
+    // The rewrite at the end of the build keeps the applied record and drops the skipped ones
+    FwSizeType size = 0;
+    ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
+    EXPECT_EQ(size, recordSize);
+    this->component.shutdown();
+
+    this->delDp(ids[2], SET_PRIO_TIME, dir.toChar());
+    ASSERT_EQ(Os::FileSystem::removeFile(stateFile.toChar()), Os::FileSystem::Status::OP_OK);
+}
+
 void DpCatalogTester ::test_SetPriorityNotInit() {
     // Before configure, the command is rejected without looking for the product
     this->sendCmd_SET_DP_PRIORITY(0, 11, SET_PRIO_IDS[0], SET_PRIO_TIME.getSeconds(), SET_PRIO_TIME.getUSeconds(), 1);
@@ -3118,8 +3172,8 @@ void DpCatalogTester ::test_DeleteDpStateFileReload() {
 }
 
 void DpCatalogTester ::test_DeleteDpStaleDirectory() {
-    // A state file record whose directory index is no longer configured is loaded without a range check;
-    // DELETE_DP of that product must report it as not found rather than index the directory table
+    // A state file record whose directory index is no longer configured is rejected at load
+    // (SVC-DPCAT-025), so DELETE_DP of that product reports it as not found
     Fw::FileNameString dirs[2] = {Fw::FileNameString("./DpTest_DeleteStaleDir0"),
                                   Fw::FileNameString("./DpTest_DeleteStaleDir1")};
     Fw::FileNameString stateFile("./DpTest_DeleteStaleDir0/dpState.dat");
@@ -3146,9 +3200,11 @@ void DpCatalogTester ::test_DeleteDpStaleDirectory() {
     ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
     EXPECT_EQ(size, entrySize);
 
-    // The build prunes the unvisited record from disk but keeps its slot in memory (3.6.6)
+    // The build rejects the record at load, so it never gets a slot, and prunes it from disk
     this->configureAndBuild(dirs[0], stateFile, 20, alloc);
-    EXPECT_EQ(this->component.m_stateFileEntries, 1);
+    ASSERT_EVENTS_StateFileInvalidDirIndex_SIZE(1);
+    ASSERT_EVENTS_StateFileInvalidDirIndex(0, stateFile.toChar(), 0, 1, 1);
+    EXPECT_EQ(this->component.m_stateFileEntries, 0);
     ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
     EXPECT_EQ(size, 0);
     this->sendCmd_DELETE_DP(0, 21, 0x640, time.getSeconds(), time.getUSeconds());
@@ -3158,8 +3214,8 @@ void DpCatalogTester ::test_DeleteDpStaleDirectory() {
     ASSERT_EVENTS_DpNotFound_SIZE(1);
     ASSERT_EVENTS_DpNotFound(0, 0x640, time.getSeconds(), time.getUSeconds());
     ASSERT_EVENTS_DpDeleted_SIZE(0);
-    // the slot is untouched and the state file was not rewritten
-    EXPECT_EQ(this->component.m_stateFileEntries, 1);
+    // nothing was held for the product and the state file was not rewritten
+    EXPECT_EQ(this->component.m_stateFileEntries, 0);
     ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), size), Os::FileSystem::Status::OP_OK);
     EXPECT_EQ(size, 0);
     this->component.shutdown();

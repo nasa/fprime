@@ -197,6 +197,17 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
+        // Skip a record whose directory index is outside the configured directory list (a corrupted
+        // state file, or one persisted across a load that configured fewer directories): a stored
+        // record must always name a locatable file, so consumers can index m_directories from it
+        if ((fileEntry.dir < 0) || (static_cast<FwSizeType>(fileEntry.dir) >= this->m_numDirectories)) {
+            this->log_WARNING_HI_StateFileInvalidDirIndex(this->m_stateFile, static_cast<I32>(fileLoc),
+                                                          static_cast<I32>(fileEntry.dir),
+                                                          static_cast<I32>(this->m_numDirectories));
+            fileLoc += size;
+            continue;
+        }
+
         const FwSizeType slot = this->findStateFileSlot(fileEntry);
         if (slot == this->m_stateFileEntries) {
             if (this->m_stateFileEntries >= this->m_numDpSlots) {
@@ -1231,8 +1242,8 @@ Fw::CmdResponse DpCatalog ::doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub) {
         }
     }
     const bool inStateFile = (slot != this->m_stateFileEntries);
-    // A state file record is loaded without checking its directory index (3.6.5); a record whose directory is no
-    // longer configured names a file this configuration cannot locate, so the product is reported as not found
+    // A state file record with an out-of-range directory index is rejected at load (3.6.5), so a stored
+    // record always names a configured directory; the check is kept as defense in depth
     const bool dirConfigured = (entry.dir >= 0) && (entry.dir < static_cast<FwIndexType>(this->m_numDirectories));
     if ((not inCatalog && not inStateFile) || not dirConfigured) {
         this->log_WARNING_HI_DpNotFound(id, tSec, tSub);

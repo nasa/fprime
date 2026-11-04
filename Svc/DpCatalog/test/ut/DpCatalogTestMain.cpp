@@ -505,6 +505,11 @@ TEST(StateFile, SlotExhausted) {
     tester.test_LoadStateFileSlotExhausted();
 }
 
+TEST(StateFile, InvalidDirIndex) {
+    Svc::DpCatalogTester tester;
+    tester.test_LoadStateFileInvalidDirIndex();
+}
+
 TEST(SetPriority, NotInit) {
     Svc::DpCatalogTester tester;
     tester.test_SetPriorityNotInit();
