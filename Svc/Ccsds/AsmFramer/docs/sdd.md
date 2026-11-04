@@ -24,7 +24,7 @@ Configuring a zero-length pattern (`Fw::ConstByteArray(nullptr, 0)`) disables th
 
 ## Internals
 
-The `Svc::Ccsds::AsmFramer` uses an internal (member) buffer sized to hold the largest supported ASM (`ComCfg.AsmMaxSize`) plus the largest accepted frame (`ComCfg.AsmFramerMaxFrameSize`, by default `ComCfg.AosMaxFrameFixedSize` so either upstream framer fits; TM-only projects may lower it to `ComCfg.TmFrameFixedSize`). Input frames larger than that bound are rejected with an assertion. The buffer **must** be returned to the AsmFramer via the `dataReturnIn` port once it has been used or consumed. Should a component want to use the frame data past the time it is returned, the data should be copied before the buffer is returned via `dataReturnIn`.
+The `Svc::Ccsds::AsmFramer` uses an internal (member) buffer sized to hold the largest supported ASM (`ComCfg.AsmMaxSize`) plus the largest accepted frame (`ComCfg.AsmFramerMaxFrameSize`, by default `ComCfg.AosMaxFrameFixedSize` so either upstream framer fits; TM-only projects may lower it to `ComCfg.TmFrameFixedSize`, which is also the compile-time minimum enforced by a `static_assert`). Input frames larger than that bound are rejected with an assertion. The buffer **must** be returned to the AsmFramer via the `dataReturnIn` port once it has been used or consumed. Should a component want to use the frame data past the time it is returned, the data should be copied before the buffer is returned via `dataReturnIn`.
 
 ## Usage Example
 
@@ -55,7 +55,7 @@ provided by the project.
 |---|---|---|---|
 | sync input | dataIn | Svc.ComDataWithContext | Receives a transfer frame to sync-mark, in a Fw::Buffer with optional context |
 | output | dataOut | Svc.ComDataWithContext | Outputs the Sync-Marked Transfer Frame (ASM + frame) |
-| output | dataReturnOut | Svc.ComDataWithContext | Returns ownership of the incoming Fw::Buffer to its sender once the emitted SMTF buffer has come back on `dataReturnIn` |
+| output | dataReturnOut | Svc.ComDataWithContext | Returns ownership of the incoming Fw::Buffer to its sender, with the context received on `dataIn`, once the emitted SMTF buffer has come back on `dataReturnIn` |
 | sync input | dataReturnIn | Svc.ComDataWithContext | Receives back ownership of the emitted SMTF buffer |
 | sync input | comStatusIn | Fw.SuccessCondition | Receives status from the downstream communication adapter |
 | output | comStatusOut | Fw.SuccessCondition | Passes status through to the upstream framer per the [Framer Status Protocol](../../../../docs/reference/communication-adapter-interface.md#framer-status-protocol) |
