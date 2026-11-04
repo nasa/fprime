@@ -9,6 +9,7 @@
 - [F Prime TmFramer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/TmFramer/docs/sdd.md)
 - [F Prime TcDeframer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/TcDeframer/docs/sdd.md)
 - [F Prime AosFramer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AosFramer/docs/sdd.md)
+- [F Prime AsmFramer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AsmFramer/docs/sdd.md)
 - [F Prime CcsdsSdlsFramer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/CcsdsSdlsFramer/docs/sdd.md)
 - [F Prime CcsdsSdlsDeframer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/CcsdsSdlsDeframer/docs/sdd.md)
 - [F Prime SdlsSaRouter SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/SdlsSaRouter/docs/sdd.md)
@@ -18,6 +19,7 @@
 - [CCSDS Space Packet Protocol (133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf)
 - [CCSDS TM Space Data Link Protocol (132.0-B-3)](https://ccsds.org/Pubs/132x0b3.pdf)
 - [CCSDS TC Space Data Link Protocol (232.0-B-4)](https://ccsds.org/Pubs/232x0b4e1c1.pdf)
+- [CCSDS TM Synchronization and Channel Coding (131.0-B-5)](https://ccsds.org/Pubs/131x0b5.pdf)
 - [CCSDS AOS Space Data Link Protocol (732.0-B-5)](https://ccsds.org/wp-content/uploads/gravity_forms/5-448e85c647331d9cbaf66c096458bdd5/2025/10/732x0b5ec1.pdf)
 
 ## Overview
