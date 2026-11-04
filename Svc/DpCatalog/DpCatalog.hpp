@@ -237,7 +237,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return directory index in m_directories; DP_MAX_DIRECTORIES if not in a managed dir
     FwSizeType determineDirectory(const Fw::String& fullFile);
 
-    /// @brief add entry to sorted list and state file; called on each file in it & upon addToCat
+    /// @brief add entry to sorted list and state file; called on each file in it, upon addToCat and by RETRANSMIT_DP
     /// @param fullFile full path to file to be processed
     /// @param dir directory index in m_directories
     /// @return QUIT to stop processing, FAILED for failure but continue, SUCCESS for success
@@ -323,8 +323,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
     DpCatalog_EntryLookupStatus findEntryByIdentity(const DpStateEntry& product, DpStateEntry& entry) const;
 
-    /// @brief find the first catalog entry of a data product named by id and time tag, as SET_DP_PRIORITY and DELETE_DP
-    /// name it
+    /// @brief find the first catalog entry of a data product named by id and time tag, as SET_DP_PRIORITY, DELETE_DP
+    /// and RETRANSMIT_DP name it
     /// @param id container ID
     /// @param tSec seconds of the time tag
     /// @param tSub microseconds of the time tag
@@ -370,19 +370,14 @@ class DpCatalog final : public DpCatalogComponentBase {
     ///        had remainActive set and a pending entry lies inside its priority range
     void resumeIfRemainActive();
 
-    /// @brief reject a RETRANSMIT_DP request: report DpRetransmitError and answer EXECUTION_ERROR
-    /// @param opCode the command opcode
-    /// @param cmdSeq the command sequence number
+    /// @brief reschedule a transmitted data product named by id and time tag for downlink: catalog its file again
+    ///        with its state file record reset, and rewrite the state file if one is configured
     /// @param id container ID
     /// @param tSec seconds of the time tag
     /// @param tSub microseconds of the time tag
-    /// @param reason why the request was rejected
-    void rejectRetransmit(FwOpcodeType opCode,
-                          U32 cmdSeq,
-                          FwDpIdType id,
-                          U32 tSec,
-                          U32 tSub,
-                          DpCatalog_RetransmitRejectReason::T reason);
+    /// @return OK if the product was rescheduled (and the state file rewritten, if one is configured and held a
+    ///         record of it), EXECUTION_ERROR otherwise (DpRetransmitError names the reason)
+    Fw::CmdResponse doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub);
 
     // ----------------------------------
     // Private data

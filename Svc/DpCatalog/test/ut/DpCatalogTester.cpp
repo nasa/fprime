@@ -3727,13 +3727,16 @@ void DpCatalogTester ::test_RetransmitFileError() {
 }
 
 void DpCatalogTester ::test_RetransmitNameError() {
-    // A managed directory long enough that the canonical name overflows Fw::String is answered NAME_ERROR
+    // A managed directory long enough that the canonical name (DP_FILENAME_FORMAT appends "/Dp_" + 8 + "_" + 8 + "_" +
+    // 8 + ".fdp" = 34 characters) overflows Fw::String, while the directory itself still fits Fw::FileNameString, is
+    // answered NAME_ERROR
     Fw::MallocAllocator alloc;
-    char longName[232];
+    constexpr FwSizeType dpNameLength = 34;
+    char longName[Fw::String::STRING_SIZE - dpNameLength + 10] = {};
+    static_assert(sizeof(longName) <= Fw::FileNameString::STRING_SIZE, "the directory must fit a FileNameString");
     memset(longName, 'd', sizeof(longName) - 1);
     longName[0] = '.';
     longName[1] = '/';
-    longName[sizeof(longName) - 1] = 0;
     Fw::FileNameString dir(longName);
     Fw::FileNameString stateFile("./DpTest_RetransmitNameErr.dat");
     this->makeDpDir(dir.toChar());
@@ -3826,6 +3829,7 @@ void DpCatalogTester ::test_RetransmitAfterStop() {
     ASSERT_EVENTS_CatalogXmitStopped_SIZE(1);
     ASSERT_NO_FATAL_FAILURE(this->retransmit(13, ids[0], time, Fw::CmdResponse::OK));
     ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, files[0].toChar(), 10);
     ASSERT_from_fileOut_SIZE(0);
 
     // the completion of the file in flight continues the walk: the first file is sent once more, then done
@@ -3955,6 +3959,97 @@ void DpCatalogTester ::test_RetransmitFullStateFile() {
         this->delDp(id, time, dirName);
     }
     (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester ::test_RetransmitRecordedPriority() {
+    // A product reprioritized by SET_DP_PRIORITY before its downlink keeps that priority in its record, so the
+    // retransmit reschedules it at the recorded priority rather than the header priority
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_RetransmitPrio");
+    Fw::FileNameString stateFile("./DpTest_RetransmitPrio/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const FwDpIdType id = 0x509;
+    const Fw::Time time(4012, 0);
+    this->delDp(id, time, dir.toChar());
+    Fw::String dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+    this->clearHistory();
+    this->sendCmd_SET_DP_PRIORITY(0, 11, id, time.getSeconds(), time.getUSeconds(), 3);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_SET_DP_PRIORITY, 11, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DpPrioritySet_SIZE(1);
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(12, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(13, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 3);
+    ASSERT_EQ(this->component.m_stateFileData[0].entry.record.get_priority(), 3);
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(14, false));
+    ASSERT_from_fileOut_SIZE(1);
+    ASSERT_from_fileOut(0, dpFile, dpFile, 0, 0);
+    this->component.shutdown();
+
+    // the recorded priority also survives the rebuild that follows a further retransmit
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
+    ASSERT_EVENTS_DpFileSkipped_SIZE(1);
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 3);
+
+    this->delDp(id, time, dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    this->component.shutdown();
+}
+
+void DpCatalogTester ::test_RetransmitWithoutRecord() {
+    // Without a state file the reset is kept in the state file data only and nothing is written; a product whose
+    // completion found no free slot (StateFileFull) has no record to reset and is rescheduled from its file alone
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_RetransmitNoRecord");
+    Fw::FileNameString stateFile("");
+    this->makeDpDir(dir.toChar());
+    const FwDpIdType id = 0x50A;
+    const Fw::Time time(4013, 0);
+    this->delDp(id, time, dir.toChar());
+    Fw::String dpFile = this->genDP(id, 10, time, 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(dpFile.toChar(), "");
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(11, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    // the completion is recorded in the state file data although no file is configured
+    ASSERT_EQ(this->component.m_stateFileEntries, 1);
+
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(12, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 10);
+    ASSERT_EVENTS_StateFileOpenError_SIZE(0);
+    ASSERT_EVENTS_StateFileWriteError_SIZE(0);
+    ASSERT_EQ(this->component.m_stateFileData[0].entry.record.get_state(), Fw::DpState::UNTRANSMITTED);
+    ASSERT_NO_FATAL_FAILURE(this->xmitAll(13, false));
+    ASSERT_EVENTS_ProductComplete_SIZE(1);
+    ASSERT_EQ(this->component.m_stateFileData[0].entry.record.get_state(), Fw::DpState::TRANSMITTED);
+
+    // no record: every slot is held by another product, as after a completion reported with StateFileFull
+    const FwSizeType numDpSlots = this->component.m_numDpSlots;
+    this->component.resetStateFileData();
+    for (FwSizeType slot = 0; slot < numDpSlots; slot++) {
+        this->component.m_stateFileData[slot].used = true;
+        this->component.m_stateFileData[slot].visited = true;
+    }
+    this->component.m_stateFileEntries = numDpSlots;
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(14, id, time, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
+    ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), 10);
+    ASSERT_EVENTS_StateFileFull_SIZE(0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
+    ASSERT_EQ(this->component.m_pendingFiles, 1);
+    this->component.resetStateFileData();
+
+    this->delDp(id, time, dir.toChar());
     this->component.shutdown();
 }
 

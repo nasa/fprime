@@ -286,6 +286,10 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_RetransmitSecondDirectory();
     //! A retransmit with every state file slot in use survives a rebuild without growing the file
     void test_RetransmitFullStateFile();
+    //! A product reprioritized before its downlink is rescheduled at the recorded priority
+    void test_RetransmitRecordedPriority();
+    //! Without a state file, or without a record, the product is rescheduled from its file alone
+    void test_RetransmitWithoutRecord();
 
   private:
     //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog

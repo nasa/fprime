@@ -625,6 +625,16 @@ TEST(NominalManual, RetransmitFullStateFile) {
     tester.test_RetransmitFullStateFile();
 }
 
+TEST(NominalManual, RetransmitRecordedPriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitRecordedPriority();
+}
+
+TEST(NominalManual, RetransmitWithoutRecord) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitWithoutRecord();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
