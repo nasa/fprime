@@ -10,6 +10,7 @@
 #include "Svc/DpCatalog/DpCatalogComponentAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_EntryLookupStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_PriorityChangeStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_RetransmitRejectReasonEnumAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_StateFileUpdateStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpCatalog_StateFileWriteStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpRecordSerializableAc.hpp"
@@ -168,6 +169,16 @@ class DpCatalog final : public DpCatalogComponentBase {
                               U32 tSec,             //!< Seconds of the data product time tag
                               U32 tSub              //!< Microseconds of the data product time tag
                               ) override;
+
+    //! Handler implementation for command RETRANSMIT_DP
+    //!
+    //! Reschedule one transmitted data product for downlink at its recorded priority
+    void RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                  U32 cmdSeq,           //!< The command sequence number
+                                  FwDpIdType id,        //!< Container ID of the data product
+                                  U32 tSec,             //!< Seconds of the data product time tag
+                                  U32 tSub              //!< Microseconds of the data product time tag
+                                  ) override;
 
     // ----------------------------------
     // Private data structures
@@ -354,6 +365,24 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return RECORDED, or FULL if the state file data has no free slot (StateFileFull is reported when a state
     ///         file is configured)
     DpCatalog_StateFileUpdateStatus updateStateFileData(const DpStateEntry& entry);
+
+    /// @brief resume a finished or stopped transmission after an entry was inserted, if the last transmit command
+    ///        had remainActive set and a pending entry lies inside its priority range
+    void resumeIfRemainActive();
+
+    /// @brief reject a RETRANSMIT_DP request: report DpRetransmitError and answer EXECUTION_ERROR
+    /// @param opCode the command opcode
+    /// @param cmdSeq the command sequence number
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @param reason why the request was rejected
+    void rejectRetransmit(FwOpcodeType opCode,
+                          U32 cmdSeq,
+                          FwDpIdType id,
+                          U32 tSec,
+                          U32 tSub,
+                          DpCatalog_RetransmitRejectReason::T reason);
 
     // ----------------------------------
     // Private data
