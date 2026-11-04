@@ -27,31 +27,37 @@ opinions.
 
 ## 1. Pass-rule format
 
-Pass rules are data in `plan.json` (`fprime-system-test-design` §3;
-grammar in the tooling's `docs/plan-format.md`). Predicates refer only
-to things that exist in the record and are evaluated per window:
+Since phase 1 the named checks are declared **in the integration test**
+(`fprime-system-test-harness` §3), in the grammar of the tooling's
+`docs/plan-format.md`; `plan.json` keeps windows and `metrics`. Checks
+refer only to things that exist in the record and are judged per window
+over its closed history:
 
-```json
-"windows":  [{"name": "W", "start_id": 60, "end_id": 61, "reset": false}],
-"complete": ["STD"],                                   // std_complete: markers, dispatcher, drops, packet samples
-"all_of":   ["ABS",                                    // absence group from plan.abs
-             "event framTester.SweepDone(kind=WRITE, chunks=4096, errors=0) count == 1",
-             "event framTester.SweepDone(kind=WRITE) precedes event framTester.SweepDone(kind=VERIFY)",
-             "delta(framDriver.SpiErrors) == 0",
-             {"helper": "dump_image_matches_xorshift32", "text": "dump image == xorshift32(seed)", "args": {"seed": "0x5A"}}],
-"metrics":  ["delta(framTester.BytesVerified) == 262144",
-             "t(event framTester.SweepDone(kind=VERIFY)) - t(framTester.SWEEP sent) <= 1200 s"]
+```python
+with window(60, 61):
+    require("STD")                                     # std_complete: markers, dispatcher, drops, packet samples
+    send("framTester.SWEEP", [0x5005, 4096, 0x5005]); bench.wait_event("framTester.SweepDone", min_new=2)
+    check("ABS")                                       # absence group from plan.abs
+    check("event framTester.SweepDone(kind=WRITE, chunks=4096, errors=0) count == 1")
+    check("event framTester.SweepDone(kind=WRITE) precedes event framTester.SweepDone(kind=VERIFY)")
+    check("delta(framDriver.SpiErrors) == 0")
+    check("dump image == xorshift32(seed)", dump_image_matches_xorshift32(0x5A, ...))   # check function
+# plan.json: "metrics": ["delta(framTester.BytesVerified) == 262144",
+#                        "t(event framTester.SweepDone(kind=VERIFY)) - t(framTester.SWEEP sent) <= 1200 s"]
 ```
 
 Rules:
 
-- `complete` may reference only markers and infrastructure counters
+- `require` may reference only markers and infrastructure counters
   (`both markers present`, `commands_sent == count(event
   cmdDisp.OpCodeDispatched)`, dispatcher error and drop counters,
-  `<packet> samples >= n`). UUT events belong in `all_of`. A failed
-  `complete` predicate is `UNVERIFIED`; a failed `all_of` or `metrics`
-  predicate in a complete window is `FAIL`. A missing UUT completion
-  event in a complete window is therefore `FAIL`, never `UNVERIFIED`.
+  `<packet> samples >= n`). UUT events belong in `check`. A precondition
+  that does not hold is `UNVERIFIED` (`Incomplete`); a failed `check` or
+  `metrics` predicate in a judgeable window is `FAIL`. A missing UUT
+  completion event is therefore `FAIL`, never `UNVERIFIED` (Captain's
+  rule: unverified only when the absence itself is not indicative of a
+  UUT failure assuming a working system). Legacy plans that still carry
+  `complete`/`all_of` are judged by `fth.engine` with the same rule.
 - Event arguments are matched from the event **text** with the plan's
   `event_patterns` regexes (named groups), never from the exporter's
   numeric scrape (garbage for hex and enums).

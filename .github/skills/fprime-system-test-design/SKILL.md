@@ -107,9 +107,9 @@ setup      <state the UUT must be in>
 procedure  ["MARK(60)", "bracket (2 samples)", "SWEEP(seed=0x5005, 4096, 0x5005)",
             "action: OpenOCD reset run", "MARK(61)"]      # NAME(args), bracket, wait, action:
 windows    [{"name": "W", "start_id": 60, "end_id": 61, "reset": false}]
-complete   ["STD"]                                        # or per window {"W1": ["STD"], "R": [...]}
-all_of     ["ABS", "<predicate>", {"helper": name, "text": ..., "args": {...}}]
-metrics    ["<predicate with units>"]
+metrics    ["<predicate with units>"]                      # judged beside the test's checks of the window
+# no `complete` / `all_of` since phase 1: the named checks are declared IN the integration test
+# (`check("<predicate>")`, `require("STD")` inside `with window(...)`; `fprime-system-test-harness` §3)
 rationale  [{"pred": "<predicate>", "text": "why this value is ignored / masked"}]
 knobs      ["verify_wrong_seed"]                        # planted faults that may be drawn against this test (key name kept)
 evidence   <which EVR sequence or telemetry strip a human should see>
@@ -120,12 +120,14 @@ Rules:
 - `purpose` is one sentence per test; the QL page and the SDD test
   table print it, so it names the observable outcome, not the
   procedure.
-- One pass rule per test; no "verify visually", no "as expected".
-  Completeness facts and UUT facts are separate blocks
-  (`fprime-test-oracle` §1): a failed `complete` predicate makes the
-  window `UNVERIFIED`; a failed `all_of` or `metrics` predicate in a
-  complete window is `FAIL`. Never put a UUT fact in `complete` (a hung
-  UUT would read as a bench problem).
+- One set of named checks per test, declared in its test function; no
+  "verify visually", no "as expected". Infrastructure preconditions
+  (`require`) and UUT facts (`check`) are separate (`fprime-test-oracle`
+  §1): a precondition that does not hold makes the test `UNVERIFIED`
+  (`Incomplete`); a failed check or `metrics` predicate is `FAIL`.
+  Captain's rule: *unverified only when the absence itself is not
+  indicative of a UUT failure assuming a working system* — never put a
+  UUT fact in `require` (a hung UUT would read as a bench problem).
 - Predicates are **structured text from the grammar** of
   `docs/plan-format.md` (`event X(args) count == n`, `event A precedes
   event B`, `delta/first/last(ch)`, `last(ch) & mask == v`,

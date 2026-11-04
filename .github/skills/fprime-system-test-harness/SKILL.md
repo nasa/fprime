@@ -83,16 +83,31 @@ id)`; ids ≥ 0xFFFF0000 are reserved) and runs the stimulus tests
 through `fth.pytest_plugin`:
 
 ```python
-def test_L2_1(window, send, bench):          # test_<ID>, or @pytest.mark.plan_test("L2-1")
+@pytest.mark.req("REQ-FRAM-001", "REQ-FRAM-002")        # requirement ↔ test (VnV matrix)
+def test_L2_1(window, send, bench, check, require):      # test_<ID>, or @pytest.mark.plan_test("L2-1")
     with window(30, 31):                      # START marker … END marker in finally
+        require("STD")                        # markers, dispatch, drops, samples → else Incomplete → UNVERIFIED
         bench.wait_samples("framDriver.WritesCompleted", 2)
         send("framTester.WRITE_PATTERN", [0, 0, 64, 0x5A])
         send("framTester.VERIFY", [0, 0, 64, 0x5A])   # the drawn planted fault may rewrite this, for L2-1 only
+        check("ABS")
+        check("event framTester.VerifyDone(client=0, offset=0, length=64, status=OK, mismatches=0) count == 1")
+        check("delta(framDriver.WritesCompleted) == 1")
 ```
 
-Bodies are **stimulus only**: no assertions on results, only pacing
-waits (`bench.wait_event/wait_channel/wait_samples/reset/wait`); the
-record is judged on replay. END carries **no verdict** (contract §4).
+Bodies send the stimulus and **declare the test's named checks** inside
+the window (`check("<predicate>")` in the plan grammar, or
+`check("<name>", fn)` with `fn(h)` over the closed window's history);
+at window close every check is judged over the record and all failures
+are raised together (`CheckFailures`, no fail-fast) — the test's verdict
+is pytest's, `fth run` only reads the junit. Waits are pacing only
+(`bench.wait_event/wait_channel/wait_samples/reset/wait`). An expected
+UUT event that is absent is a **FAIL**; `require(...)` is for
+infrastructure absences only (Captain's rule). Check names are the
+identity the planted-fault `fails` lists, the unseal and the VnV matrix
+use — keep them verbatim-stable; `fth verify-plan plan.json --tests
+test/int` dry-runs the tests and refuses a `fails` entry no test
+declares. END carries **no verdict** (contract §4).
 The L0 feasibility gate sends one marker and checks the archive shows
 it byte-exact (`NO_OP_STRING` truncates when a project shortens
 `FW_LOG_STRING_MAX_SIZE`; a `MARK(U32)` round-trips or not) — nothing
