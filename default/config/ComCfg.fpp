@@ -27,7 +27,8 @@ module ComCfg {
     constant AsmMaxSize = 16
 
     @ Largest transfer frame, in bytes, that Svc.Ccsds.AsmFramer accepts on dataIn; defaults to the
-    @ AOS bound so the component can follow either framer. TM-only projects may lower it to TmFrameFixedSize
+    @ AOS bound so the component can follow either framer. Projects may lower it, but not below
+    @ TmFrameFixedSize: the AsmFramer enforces that floor at compile time so a TM frame always fits
     constant AsmFramerMaxFrameSize = AosMaxFrameFixedSize
 
     @ Packet Version Numbers are 3 bits with only 2 currently valid values
