@@ -31,11 +31,15 @@
 
 #include "Os/CpuInterface.hpp"
 
-// Validate that OS_CPU_HEADER was defined by config/OsSelection.hpp
+// A project config/OsSelection.hpp that predates the Cpu selection defines neither the Os::Cpu
+// alias nor OS_CPU_HEADER; fall back to the link-time delegate so such projects keep building.
 #ifndef OS_CPU_HEADER
-#error "OS_CPU_HEADER must be defined in config/OsSelection.hpp"
-#endif
-
+#include "Os/DelegateCpu.hpp"
+namespace Os {
+using Cpu = DelegateCpu;
+}
+#else
 #include OS_CPU_HEADER
+#endif
 
 #endif  // Os_Cpu_hpp

@@ -31,11 +31,15 @@
 
 #include "Os/DirectoryInterface.hpp"
 
-// Validate that OS_DIRECTORY_HEADER was defined by config/OsSelection.hpp
+// A project config/OsSelection.hpp that predates the Directory selection defines neither the Os::Directory
+// alias nor OS_DIRECTORY_HEADER; fall back to the link-time delegate so such projects keep building.
 #ifndef OS_DIRECTORY_HEADER
-#error "OS_DIRECTORY_HEADER must be defined in config/OsSelection.hpp"
-#endif
-
+#include "Os/DelegateDirectory.hpp"
+namespace Os {
+using Directory = DelegateDirectory;
+}
+#else
 #include OS_DIRECTORY_HEADER
+#endif
 
 #endif  // Os_Directory_hpp

@@ -31,11 +31,15 @@
 
 #include "Os/ConsoleInterface.hpp"
 
-// Validate that OS_CONSOLE_HEADER was defined by config/OsSelection.hpp
+// A project config/OsSelection.hpp that predates the Console selection defines neither the Os::Console
+// alias nor OS_CONSOLE_HEADER; fall back to the link-time delegate so such projects keep building.
 #ifndef OS_CONSOLE_HEADER
-#error "OS_CONSOLE_HEADER must be defined in config/OsSelection.hpp"
-#endif
-
+#include "Os/DelegateConsole.hpp"
+namespace Os {
+using Console = DelegateConsole;
+}
+#else
 #include OS_CONSOLE_HEADER
+#endif
 
 #endif

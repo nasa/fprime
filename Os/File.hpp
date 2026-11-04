@@ -31,11 +31,15 @@
 
 #include "Os/FileInterface.hpp"
 
-// Validate that OS_FILE_HEADER was defined by config/OsSelection.hpp
+// A project config/OsSelection.hpp that predates the File selection defines neither the Os::File
+// alias nor OS_FILE_HEADER; fall back to the link-time delegate so such projects keep building.
 #ifndef OS_FILE_HEADER
-#error "OS_FILE_HEADER must be defined in config/OsSelection.hpp"
-#endif
-
+#include "Os/DelegateFile.hpp"
+namespace Os {
+using File = DelegateFile;
+}
+#else
 #include OS_FILE_HEADER
+#endif
 
 #endif  // Os_File_hpp_

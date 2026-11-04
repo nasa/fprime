@@ -31,11 +31,15 @@
 
 #include "Os/MemoryInterface.hpp"
 
-// Validate that OS_MEMORY_HEADER was defined by config/OsSelection.hpp
+// A project config/OsSelection.hpp that predates the Memory selection defines neither the Os::Memory
+// alias nor OS_MEMORY_HEADER; fall back to the link-time delegate so such projects keep building.
 #ifndef OS_MEMORY_HEADER
-#error "OS_MEMORY_HEADER must be defined in config/OsSelection.hpp"
-#endif
-
+#include "Os/DelegateMemory.hpp"
+namespace Os {
+using Memory = DelegateMemory;
+}
+#else
 #include OS_MEMORY_HEADER
+#endif
 
 #endif  // Os_Memory_hpp

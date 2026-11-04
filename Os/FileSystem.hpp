@@ -35,11 +35,15 @@
 #include "Os/File.hpp"
 #include "Os/FileSystemInterface.hpp"
 
-// Validate that OS_FILE_SYSTEM_HEADER was defined by config/OsSelection.hpp
+// A project config/OsSelection.hpp that predates the FileSystem selection defines neither the Os::FileSystem
+// alias nor OS_FILE_SYSTEM_HEADER; fall back to the link-time delegate so such projects keep building.
 #ifndef OS_FILE_SYSTEM_HEADER
-#error "OS_FILE_SYSTEM_HEADER must be defined in config/OsSelection.hpp"
-#endif
-
+#include "Os/DelegateFileSystem.hpp"
+namespace Os {
+using FileSystem = DelegateFileSystem;
+}
+#else
 #include OS_FILE_SYSTEM_HEADER
+#endif
 
 #endif

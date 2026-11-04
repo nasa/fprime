@@ -33,11 +33,15 @@
 
 #include "Os/CountingSemaphoreInterface.hpp"
 
-// Validate that OS_COUNTING_SEMAPHORE_HEADER was defined by config/OsSelection.hpp
+// A project config/OsSelection.hpp that predates the CountingSemaphore selection defines neither the Os::CountingSemaphore
+// alias nor OS_COUNTING_SEMAPHORE_HEADER; fall back to the link-time delegate so such projects keep building.
 #ifndef OS_COUNTING_SEMAPHORE_HEADER
-#error "OS_COUNTING_SEMAPHORE_HEADER must be defined in config/OsSelection.hpp"
-#endif
-
+#include "Os/DelegateCountingSemaphore.hpp"
+namespace Os {
+using CountingSemaphore = DelegateCountingSemaphore;
+}
+#else
 #include OS_COUNTING_SEMAPHORE_HEADER
+#endif
 
 #endif  // OS_COUNTING_SEMAPHORE_HPP_
