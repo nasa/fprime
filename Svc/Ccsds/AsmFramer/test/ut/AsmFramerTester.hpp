@@ -65,11 +65,10 @@ class AsmFramerTester final : public AsmFramerGTestBase {
     //! Send a frame through dataIn and verify the SMTF emitted on dataOut (ASM followed by
     //! the unmodified frame, context passed through) and the input buffer returned on
     //! dataReturnOut, at history index `index`. Reclaims the internal buffer afterwards.
-    void sendAndVerifyFrame(const U8* expectedAsm,                //!< Expected marker bytes (nullptr when size is 0)
-                            FwSizeType expectedAsmSize,           //!< Expected marker size in bytes
-                            Fw::Buffer& frame,                    //!< The frame to send
-                            const ComCfg::FrameContext& context,  //!< The context to send
-                            U32 index                             //!< Expected history index of the output
+    void sendAndVerifyFrame(const Fw::ConstByteArray& expectedAsm,  //!< Expected marker (size 0 when disabled)
+                            Fw::Buffer& frame,                      //!< The frame to send
+                            const ComCfg::FrameContext& context,    //!< The context to send
+                            U32 index                               //!< Expected history index of the output
     );
 
   private:

@@ -51,6 +51,10 @@ The TC Deframer implements the CCSDS Telecommand (TC) Space Data Link Protocol (
 
 The AOS Framer implements the CCSDS Advanced Orbiting Systems (AOS) Space Data Link Protocol (732.0-B-5). AOS provides an alternative to TM for missions requiring more flexible virtual channel management.
 
+### TM Synchronization (Attached Sync Marker)
+
+The optional [AsmFramer](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AsmFramer/docs/sdd.md) prepends the CCSDS Attached Sync Marker (131.0-B-5 Section 9; default 32-bit `0x1ACFFC1D`, configurable up to 128 bits, or disabled) to each TM or AOS Transfer Frame, producing Sync-Marked Transfer Frames so the ground side can acquire frame boundaries on a byte stream.
+
 ### Space Data Link Security (SDLS)
 
 An optional SDLS layer provides per-frame encryption and decryption keyed by a 16-bit security association (SA) index:
@@ -64,7 +68,7 @@ An optional SDLS layer provides per-frame encryption and decryption keyed by a 1
 
 ### Protocol Layering
 
-The CCSDS components can be stacked to provide multiple protocol layers. A typical downlink path might be: data source → Space Packet Framer → ComAggregator → TM Framer → byte stream driver (the TM Framer requires complete, idle-filled data fields from `Svc.ComAggregator`). A typical uplink path: byte stream driver → Frame Accumulator → TC Deframer → Space Packet Deframer → Router. The optional SDLS layer sits between the aggregator and the transfer frame layer on downlink, and between the transfer frame layer and the Space Packet layer on uplink (see the `Svc.ComCcsdsSdls` subtopology). The modular design allows missions to select the specific protocol layers they require.
+The CCSDS components can be stacked to provide multiple protocol layers. A typical downlink path might be: data source → Space Packet Framer → ComAggregator → TM Framer → byte stream driver (the TM Framer requires complete, idle-filled data fields from `Svc.ComAggregator`). A typical uplink path: byte stream driver → Frame Accumulator → TC Deframer → Space Packet Deframer → Router. The optional SDLS layer sits between the aggregator and the transfer frame layer on downlink, and between the transfer frame layer and the Space Packet layer on uplink (see the `Svc.ComCcsdsSdls` subtopology). The optional ASM layer (`Svc.Ccsds.AsmFramer`) sits between the transfer frame layer and the communication adapter on downlink. The modular design allows missions to select the specific protocol layers they require.
 
 ### Unsupported Features
 
