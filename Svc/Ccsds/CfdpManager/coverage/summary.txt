@@ -6,17 +6,17 @@ File                                       Lines    Exec  Cover   Missing
 ------------------------------------------------------------------------------
 Svc/Ccsds/CfdpManager/CfdpManager.cpp        396     385    97%   31,117-119,219-221,234-235,630-631
 Svc/Ccsds/CfdpManager/CfdpManager.hpp         99      99   100%
-Svc/Ccsds/CfdpManager/Channel.cpp            431     342    79%   254,313-314,317,326,381,411-412,476-477,484,486-487,490,493-496,509,511-512,525,527-529,532-534,545,547-549,551-553,555-557,559-561,563-564,569-570,577-579,583-592,595-597,673-676,678,700,704-706,718,801,829-830,832,834-835,837-838,841,849,882-883,922,928-932
-Svc/Ccsds/CfdpManager/Channel.hpp             23      20    87%   524-526
+Svc/Ccsds/CfdpManager/Channel.cpp            451     369    81%   255,314-315,318,327,382,412-413,451,477-478,485,487-488,491,494-497,526,528-529,534-535,546,548-550,552-554,556-558,560-562,564-565,570-571,578-580,584-593,596-598,685,712,730,813,841-842,844,846-847,849-850,853,861,870-873,921-922,961,967-971
+Svc/Ccsds/CfdpManager/Channel.hpp             25      25   100%
 Svc/Ccsds/CfdpManager/Chunk.cpp              141     115    81%   91,98,122-125,127,131-134,136,167,188-189,292-296,303,305,307-309,313
 Svc/Ccsds/CfdpManager/Chunk.hpp                6       5    83%   65
 Svc/Ccsds/CfdpManager/Clist.cpp               95      94    98%   204
 Svc/Ccsds/CfdpManager/Clist.hpp                5       5   100%
-Svc/Ccsds/CfdpManager/Engine.cpp             577     547    94%   146-148,155-157,161,163,233,492-493,509-510,525-526,528,554-556,558-559,561-562,566,608,654,704,1116,1217,1238
+Svc/Ccsds/CfdpManager/Engine.cpp             590     560    94%   146-148,155-157,161,163,237,496-497,513-514,529-530,532,558-560,562-563,565-566,570,612,654,730,1147,1248,1269
 Svc/Ccsds/CfdpManager/Timer.cpp               19      19   100%
-Svc/Ccsds/CfdpManager/Transaction.hpp          5       4    80%   232
+Svc/Ccsds/CfdpManager/Transaction.hpp          5       5   100%
 Svc/Ccsds/CfdpManager/TransactionRx.cpp      546     489    89%   108,211,259,262-263,282,285-286,310-312,314,332,334-336,338,340,375,401,435,497,499,578,580,679,681-682,705-707,711-712,715,762,860-861,873-877,883,885,917-918,995,1021,1039,1041-1042,1073,1075,1127-1130
-Svc/Ccsds/CfdpManager/TransactionTx.cpp      356     325    91%   76,79-80,167,177,216-218,224-226,251,289,359,368,377,429,432-433,458-460,462-463,467,476,493-496,715
+Svc/Ccsds/CfdpManager/TransactionTx.cpp      372     347    93%   76,79-80,167,177,216-218,224-226,251,291,361,370,379,434-435,462,489,506-509,747
 Svc/Ccsds/CfdpManager/Types/AckPdu.cpp        72      63    87%   56,63,66,89,96,109,122,137,153
 Svc/Ccsds/CfdpManager/Types/AckPdu.hpp        10      10   100%
 Svc/Ccsds/CfdpManager/Types/EofPdu.cpp        71      59    83%   56,68,71,94,101,109,115,121,127,143,151,163
@@ -25,7 +25,7 @@ Svc/Ccsds/CfdpManager/Types/FileDataPdu.cpp
                                               85      74    87%   36,50,75,103,109-110,117,124,148,166,186
 Svc/Ccsds/CfdpManager/Types/FileDataPdu.hpp
                                                5       5   100%
-Svc/Ccsds/CfdpManager/Types/FinPdu.cpp        67      58    86%   59,66,69,92,99,114,120,135,154
+Svc/Ccsds/CfdpManager/Types/FinPdu.cpp        67      59    88%   59,66,69,92,99,114,120,154
 Svc/Ccsds/CfdpManager/Types/FinPdu.hpp        11      10    90%   84
 Svc/Ccsds/CfdpManager/Types/MetadataPdu.cpp
                                              114      93    81%   69,74,81,84,107,114,129,135,142,149,156,163,178,188,195,200,205,213,223,228,233
@@ -35,12 +35,12 @@ Svc/Ccsds/CfdpManager/Types/NakPdu.cpp        85      74    87%   76,102,109,115
 Svc/Ccsds/CfdpManager/Types/NakPdu.hpp         6       6   100%
 Svc/Ccsds/CfdpManager/Types/PduBase.hpp        3       3   100%
 Svc/Ccsds/CfdpManager/Types/PduHeader.cpp
-                                             151     140    92%   57,119,125,141,147,152,157,170,183,190,215
+                                             162     150    92%   57,89,134,140,156,162,167,172,185,205,212,238
 Svc/Ccsds/CfdpManager/Types/PduHeader.hpp
                                                9       9   100%
 Svc/Ccsds/CfdpManager/Types/Tlv.cpp          120     108    90%   88,95,104,112,127,135,154,171,226,245-246,249
 Svc/Ccsds/CfdpManager/Types/Types.hpp          1       1   100%
 Svc/Ccsds/CfdpManager/Utils.cpp               50      46    92%   105-106,109-110
 ------------------------------------------------------------------------------
-TOTAL                                       3579    3227    90%
+TOTAL                                       3641    3306    90%
 ------------------------------------------------------------------------------

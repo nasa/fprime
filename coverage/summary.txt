@@ -42,7 +42,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
+Fw/DataStructures/CircularIndex.hpp           38      38   100%
 Fw/DataStructures/ExternalArray.hpp           57      57   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -135,7 +135,7 @@ googletest/googletest/include/gtest/gtest-printers.h
 googletest/googletest/include/gtest/gtest-test-part.h
                                                1       1   100%
 googletest/googletest/include/gtest/gtest.h
-                                              46      25    54%   244,252,257-258,339,1338,1343,1362,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
+                                              46      26    56%   244,252,257-258,339,1338,1343,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
 googletest/googletest/include/gtest/internal/gtest-death-test-internal.h
                                                6       4    66%   95-96
 googletest/googletest/include/gtest/internal/gtest-internal.h
@@ -155,7 +155,7 @@ Os/Delegate.hpp                               20      20   100%
 Os/DelegateConditionVariable.cpp              22      21    95%   19
 Os/DelegateMutex.cpp                          16      16   100%
 Os/DelegateRawTime.cpp                        66      64    97%   102-103
-Os/Directory.cpp                              92      77    83%   26-28,86,90,103,109,118,122,135,141,147,150-152
+Os/Directory.cpp                              92      76    82%   26-28,86,90,103,109,118,122,133,135,141,147,150-152
 Os/Directory.hpp                               2       2   100%
 Os/File.cpp                                  211     182    86%   59-60,88-90,115,137,169-173,175-176,290-291,293-294,299-301,312-314,318-319,337-339
 Os/File.hpp                                    1       1   100%
@@ -172,7 +172,7 @@ Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 166     139    83%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,262-263
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     157    92%   21-26,28,248-249,253,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,194,248-249,253,318,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -200,14 +200,14 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      89    50%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,134-136,140-142,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
 Os/Posix/RawTime.cpp                          44      39    88%   49-50,64,76,80
 Os/Posix/RawTime.hpp                           1       1   100%
-Os/Posix/Task.cpp                            156     105    67%   45-47,51,55-58,60-61,63-64,68-69,71-72,75-77,87-89,93-95,135-136,141,143-146,149-150,155,184,196,243,251,265-267,269-271,290-292,296-297,299
+Os/Posix/Task.cpp                            156     106    67%   45-47,51,55-58,60-61,63-64,68-69,71-72,75-77,87-89,93-95,135-136,141,143-146,149-150,155,184,196,243,251,265-267,269-271,291-292,296-297,299
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      71    92%   84,121,139-142
 Os/Queue.hpp                                   4       4   100%
@@ -282,17 +282,17 @@ Svc/Ccsds/CcsdsSdlsFramer/CcsdsSdlsFramer.cpp
                                               55      55   100%
 Svc/Ccsds/CfdpManager/CfdpManager.cpp        396     385    97%   31,117-119,219-221,234-235,630-631
 Svc/Ccsds/CfdpManager/CfdpManager.hpp         99      99   100%
-Svc/Ccsds/CfdpManager/Channel.cpp            431     342    79%   254,313-314,317,326,381,411-412,476-477,484,486-487,490,493-496,509,511-512,525,527-529,532-534,545,547-549,551-553,555-557,559-561,563-564,569-570,577-579,583-592,595-597,673-676,678,700,704-706,718,801,829-830,832,834-835,837-838,841,849,882-883,922,928-932
-Svc/Ccsds/CfdpManager/Channel.hpp             23      20    87%   524-526
+Svc/Ccsds/CfdpManager/Channel.cpp            451     369    81%   255,314-315,318,327,382,412-413,451,477-478,485,487-488,491,494-497,526,528-529,534-535,546,548-550,552-554,556-558,560-562,564-565,570-571,578-580,584-593,596-598,685,712,730,813,841-842,844,846-847,849-850,853,861,870-873,921-922,961,967-971
+Svc/Ccsds/CfdpManager/Channel.hpp             25      25   100%
 Svc/Ccsds/CfdpManager/Chunk.cpp              141     115    81%   91,98,122-125,127,131-134,136,167,188-189,292-296,303,305,307-309,313
 Svc/Ccsds/CfdpManager/Chunk.hpp                6       5    83%   65
 Svc/Ccsds/CfdpManager/Clist.cpp               95      94    98%   204
 Svc/Ccsds/CfdpManager/Clist.hpp                5       5   100%
-Svc/Ccsds/CfdpManager/Engine.cpp             577     547    94%   146-148,155-157,161,163,233,492-493,509-510,525-526,528,554-556,558-559,561-562,566,608,654,704,1116,1217,1238
+Svc/Ccsds/CfdpManager/Engine.cpp             590     560    94%   146-148,155-157,161,163,237,496-497,513-514,529-530,532,558-560,562-563,565-566,570,612,654,730,1147,1248,1269
 Svc/Ccsds/CfdpManager/Timer.cpp               19      19   100%
-Svc/Ccsds/CfdpManager/Transaction.hpp          5       4    80%   232
+Svc/Ccsds/CfdpManager/Transaction.hpp          5       5   100%
 Svc/Ccsds/CfdpManager/TransactionRx.cpp      546     489    89%   108,211,259,262-263,282,285-286,310-312,314,332,334-336,338,340,375,401,435,497,499,578,580,679,681-682,705-707,711-712,715,762,860-861,873-877,883,885,917-918,995,1021,1039,1041-1042,1073,1075,1127-1130
-Svc/Ccsds/CfdpManager/TransactionTx.cpp      356     325    91%   76,79-80,167,177,216-218,224-226,251,289,359,368,377,429,432-433,458-460,462-463,467,476,493-496,715
+Svc/Ccsds/CfdpManager/TransactionTx.cpp      372     347    93%   76,79-80,167,177,216-218,224-226,251,291,361,370,379,434-435,462,489,506-509,747
 Svc/Ccsds/CfdpManager/Types/AckPdu.cpp        72      63    87%   56,63,66,89,96,109,122,137,153
 Svc/Ccsds/CfdpManager/Types/AckPdu.hpp        10      10   100%
 Svc/Ccsds/CfdpManager/Types/EofPdu.cpp        71      59    83%   56,68,71,94,101,109,115,121,127,143,151,163
@@ -301,7 +301,7 @@ Svc/Ccsds/CfdpManager/Types/FileDataPdu.cpp
                                               85      74    87%   36,50,75,103,109-110,117,124,148,166,186
 Svc/Ccsds/CfdpManager/Types/FileDataPdu.hpp
                                                5       5   100%
-Svc/Ccsds/CfdpManager/Types/FinPdu.cpp        67      58    86%   59,66,69,92,99,114,120,135,154
+Svc/Ccsds/CfdpManager/Types/FinPdu.cpp        67      59    88%   59,66,69,92,99,114,120,154
 Svc/Ccsds/CfdpManager/Types/FinPdu.hpp        11      11   100%
 Svc/Ccsds/CfdpManager/Types/MetadataPdu.cpp
                                              114      93    81%   69,74,81,84,107,114,129,135,142,149,156,163,178,188,195,200,205,213,223,228,233
@@ -311,7 +311,7 @@ Svc/Ccsds/CfdpManager/Types/NakPdu.cpp        85      74    87%   76,102,109,115
 Svc/Ccsds/CfdpManager/Types/NakPdu.hpp         6       6   100%
 Svc/Ccsds/CfdpManager/Types/PduBase.hpp        3       3   100%
 Svc/Ccsds/CfdpManager/Types/PduHeader.cpp
-                                             151     140    92%   57,119,125,141,147,152,157,170,183,190,215
+                                             162     152    93%   57,134,140,156,162,167,172,185,205,212
 Svc/Ccsds/CfdpManager/Types/PduHeader.hpp
                                                9       9   100%
 Svc/Ccsds/CfdpManager/Types/Tlv.cpp          120     108    90%   88,95,104,112,127,135,154,171,226,245-246,249
@@ -353,7 +353,7 @@ Svc/ComQueue/ComQueue.cpp                    310     305    98%   274-276,596-59
 Svc/ComRetry/ComRetry.cpp                     50      50   100%
 Svc/ComSplitter/ComSplitter.cpp               12      12   100%
 Svc/ComStub/ComStub.cpp                       70      69    98%   34
-Svc/DpCatalog/DpCatalog.cpp                  630     549    87%   62,77,82-85,132-133,139-141,155-157,189-191,250-251,314-316,360-362,372,377-378,383-384,405-407,437-438,445-446,454,457-458,474,481,483,488,527,545,564-565,575-576,584-586,591-593,615-616,622-623,631,633,679-680,801,805-806,812,815-816,853-854,930,935-936,955-956,1050-1051,1056-1057
+Svc/DpCatalog/DpCatalog.cpp                  687     604    87%   62,77,82-85,132-133,139-141,155-157,189-191,260-261,324-326,370-372,382,387-388,393-394,415-417,447-448,455-456,464,467-468,484,491,493,498,537,555,574-575,585-586,594-596,601-603,625-626,632-633,641,643,689-690,811,815-816,822,825-826,863-864,941,946-947,966-967,1061-1062,1067-1068,1247-1248
 Svc/DpCatalog/DpCatalog.hpp                    1       1   100%
 Svc/DpCompressProc/DpCompressProc.cpp        173     153    88%   54,67-68,79-81,88,95,207-209,213,317-319,355-357,399-400
 Svc/DpManager/DpManager.cpp                   49      45    91%   63-65,104
@@ -447,5 +447,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      26584   22780    85%
+TOTAL                                      26703   22914    85%
 ------------------------------------------------------------------------------

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-11-03 21:17:54</td>
+      <td>2026-11-04 21:19:31</td>
     </tr>
   </table>
 </div>
@@ -70,15 +70,15 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l130">Svc::Ccsds::Cfdp::PduHeader::getDestEid() const (line 130)</a></td><td>called 208 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l118">Svc::Ccsds::Cfdp::PduHeader::getDirection() const (line 118)</a></td><td>called 41 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l133">Svc::Ccsds::Cfdp::PduHeader::getPduDataLength() const (line 133)</a></td><td>called 97 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l124">Svc::Ccsds::Cfdp::PduHeader::getSourceEid() const (line 124)</a></td><td>called 300 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l127">Svc::Ccsds::Cfdp::PduHeader::getTransactionSeq() const (line 127)</a></td><td>called 300 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l121">Svc::Ccsds::Cfdp::PduHeader::getTxmMode() const (line 121)</a></td><td>called 132 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l115">Svc::Ccsds::Cfdp::PduHeader::getType() const (line 115)</a></td><td>called 51 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l142">Svc::Ccsds::Cfdp::PduHeader::hasSegmentMetadata() const (line 142)</a></td><td>called 36 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l136">Svc::Ccsds::Cfdp::PduHeader::setPduDataLength(unsigned short) (line 136)</a></td><td>called 296 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l133">Svc::Ccsds::Cfdp::PduHeader::getDestEid() const (line 133)</a></td><td>called 272 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l121">Svc::Ccsds::Cfdp::PduHeader::getDirection() const (line 121)</a></td><td>called 41 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l136">Svc::Ccsds::Cfdp::PduHeader::getPduDataLength() const (line 136)</a></td><td>called 97 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l127">Svc::Ccsds::Cfdp::PduHeader::getSourceEid() const (line 127)</a></td><td>called 425 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l130">Svc::Ccsds::Cfdp::PduHeader::getTransactionSeq() const (line 130)</a></td><td>called 425 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l124">Svc::Ccsds::Cfdp::PduHeader::getTxmMode() const (line 124)</a></td><td>called 193 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l118">Svc::Ccsds::Cfdp::PduHeader::getType() const (line 118)</a></td><td>called 51 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l145">Svc::Ccsds::Cfdp::PduHeader::hasSegmentMetadata() const (line 145)</a></td><td>called 36 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l139">Svc::Ccsds::Cfdp::PduHeader::setPduDataLength(unsigned short) (line 139)</a></td><td>called 409 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -734,70 +734,70 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Initialize a PDU header</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! The only CFDP protocol version this implementation supports</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">type</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">CFDP_VERSION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                    </span><span class="n">PduDirection</span><span class="w"> </span><span class="n">direction</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                    </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">Class</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">txmMode</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Initialize a PDU header</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                    </span><span class="n">EntityId</span><span class="w"> </span><span class="n">sourceEid</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">type</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l97" href="#l97">97</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                    </span><span class="n">TransactionSeq</span><span class="w"> </span><span class="n">transactionSeq</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                    </span><span class="n">PduDirection</span><span class="w"> </span><span class="n">direction</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                    </span><span class="n">EntityId</span><span class="w"> </span><span class="n">destEid</span><span class="p">);</span></td>
+      <td class="src "><span class="w">                    </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">Class</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">txmMode</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l99" href="#l99">99</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                    </span><span class="n">EntityId</span><span class="w"> </span><span class="n">sourceEid</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l100" href="#l100">100</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Compute the buffer size needed to hold this Header</span></td>
+      <td class="src "><span class="w">                    </span><span class="n">TransactionSeq</span><span class="w"> </span><span class="n">transactionSeq</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l101" href="#l101">101</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getBufferSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                    </span><span class="n">EntityId</span><span class="w"> </span><span class="n">destEid</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l102" href="#l102">102</a></td>
@@ -811,49 +811,49 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Calculate the number of bytes needed to encode a value</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Compute the buffer size needed to hold this Header</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! @param value The value to encode</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getBufferSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! @return Number of bytes needed (1, 2, 4, or 8)</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l106" href="#l106">106</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">U8</span><span class="w"> </span><span class="nf">getValueEncodedSize</span><span class="p">(</span><span class="n">U64</span><span class="w"> </span><span class="n">value</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Calculate the number of bytes needed to encode a value</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l107" href="#l107">107</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! @param value The value to encode</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l108" href="#l108">108</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Initialize this Header from a SerialBufferBase</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! @return Number of bytes needed (1, 2, 4, or 8)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="nf">fromSerialBuffer</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">serialBuffer</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">U8</span><span class="w"> </span><span class="nf">getValueEncodedSize</span><span class="p">(</span><span class="n">U64</span><span class="w"> </span><span class="n">value</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l110" href="#l110">110</a></td>
@@ -867,14 +867,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Write this Header to a SerialBufferBase</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Initialize this Header from a SerialBufferBase</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="nf">toSerialBuffer</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">serialBuffer</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="nf">fromSerialBuffer</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">serialBuffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l113" href="#l113">113</a></td>
@@ -888,21 +888,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the PDU type</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Write this Header to a SerialBufferBase</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l115" href="#l115">115</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/2</summary>
-          <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 51 times.</div>
-          </div>
-        </details>
       </td>
-      <td class="linecount partialCoveredLine">51</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">getType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_type</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="nf">toSerialBuffer</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">serialBuffer</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l116" href="#l116">116</a></td>
@@ -916,14 +909,21 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the direction</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the PDU type</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 51 times.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount coveredLine">41</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">PduDirection</span><span class="w"> </span><span class="nf">getDirection</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_direction</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount partialCoveredLine">51</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">getType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_type</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l119" href="#l119">119</a></td>
@@ -937,21 +937,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the transmission mode</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the direction</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l121" href="#l121">121</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/2</summary>
-          <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 132 times.</div>
-          </div>
-        </details>
       </td>
-      <td class="linecount partialCoveredLine">132</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">Class</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">getTxmMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_class</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">41</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">PduDirection</span><span class="w"> </span><span class="nf">getDirection</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_direction</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l122" href="#l122">122</a></td>
@@ -965,14 +958,21 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the source entity ID</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the transmission mode</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l124" href="#l124">124</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 193 times.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount coveredLine">300</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">EntityId</span><span class="w"> </span><span class="nf">getSourceEid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sourceEid</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount partialCoveredLine">193</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">Class</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">getTxmMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_class</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l125" href="#l125">125</a></td>
@@ -986,14 +986,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the transaction sequence number</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the source entity ID</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l127" href="#l127">127</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">300</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">TransactionSeq</span><span class="w"> </span><span class="nf">getTransactionSeq</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_transactionSeq</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">425</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">EntityId</span><span class="w"> </span><span class="nf">getSourceEid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sourceEid</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l128" href="#l128">128</a></td>
@@ -1007,14 +1007,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the destination entity ID</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the transaction sequence number</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l130" href="#l130">130</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">208</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">EntityId</span><span class="w"> </span><span class="nf">getDestEid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_destEid</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">425</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">TransactionSeq</span><span class="w"> </span><span class="nf">getTransactionSeq</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_transactionSeq</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l131" href="#l131">131</a></td>
@@ -1028,14 +1028,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get PDU data length</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the destination entity ID</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l133" href="#l133">133</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">97</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="nf">getPduDataLength</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pduDataLength</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">272</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">EntityId</span><span class="w"> </span><span class="nf">getDestEid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_destEid</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l134" href="#l134">134</a></td>
@@ -1049,14 +1049,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Set PDU data length (used during encoding)</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get PDU data length</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l136" href="#l136">136</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">296</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setPduDataLength</span><span class="p">(</span><span class="n">U16</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pduDataLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">97</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="nf">getPduDataLength</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pduDataLength</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l137" href="#l137">137</a></td>
@@ -1070,14 +1070,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the large file flag</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Set PDU data length (used during encoding)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l139" href="#l139">139</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">LargeFileFlag</span><span class="w"> </span><span class="nf">getLargeFileFlag</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_largeFileFlag</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">409</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setPduDataLength</span><span class="p">(</span><span class="n">U16</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pduDataLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l140" href="#l140">140</a></td>
@@ -1091,14 +1091,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Check if segment metadata is present</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the large file flag</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l142" href="#l142">142</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">36</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">hasSegmentMetadata</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_segmentMetadataFlag</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">LargeFileFlag</span><span class="w"> </span><span class="nf">getLargeFileFlag</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_largeFileFlag</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l143" href="#l143">143</a></td>
@@ -1112,14 +1112,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Set the large file flag (used for testing and configuration)</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Check if segment metadata is present</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l145" href="#l145">145</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setLargeFileFlag</span><span class="p">(</span><span class="n">LargeFileFlag</span><span class="w"> </span><span class="n">flag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_largeFileFlag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flag</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">36</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">hasSegmentMetadata</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_segmentMetadataFlag</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l146" href="#l146">146</a></td>
@@ -1133,136 +1133,157 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Allow PDU classes to access private members</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Set the large file flag (used for testing and configuration)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l148" href="#l148">148</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MetadataPdu</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setLargeFileFlag</span><span class="p">(</span><span class="n">LargeFileFlag</span><span class="w"> </span><span class="n">flag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_largeFileFlag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flag</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l149" href="#l149">149</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FileDataPdu</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l150" href="#l150">150</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">EofPdu</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Allow PDU classes to access private members</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l151" href="#l151">151</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FinPdu</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MetadataPdu</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l152" href="#l152">152</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">AckPdu</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FileDataPdu</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l153" href="#l153">153</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">NakPdu</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">EofPdu</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l154" href="#l154">154</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FinPdu</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l155" href="#l155">155</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">AckPdu</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l156" href="#l156">156</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! Peek at the PDU type from a buffer without consuming it</span></td>
+      <td class="src "><span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">NakPdu</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l157" href="#l157">157</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! @param buffer The buffer containing the PDU</span></td>
+      <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l158" href="#l158">158</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! @return The PDU type, or NONE if the buffer is invalid</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l159" href="#l159">159</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">peekPduType</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span></td>
+      <td class="src "><span class="c1">//! Peek at the PDU type from a buffer without consuming it</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l160" href="#l160">160</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="c1">//! @param buffer The buffer containing the PDU</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l161" href="#l161">161</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Cfdp</span></td>
+      <td class="src "><span class="c1">//! @return The PDU type, or NONE if the buffer is invalid</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l162" href="#l162">162</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
+      <td class="src "><span class="n">PduTypeEnum</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">peekPduType</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l163" href="#l163">163</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l164" href="#l164">164</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Cfdp</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l165" href="#l165">165</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif  </span><span class="c1">// Svc_Ccsds_Cfdp_PduHeader_HPP</span></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l166" href="#l166">166</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l167" href="#l167">167</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l168" href="#l168">168</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif  </span><span class="c1">// Svc_Ccsds_Cfdp_PduHeader_HPP</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l169" href="#l169">169</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
