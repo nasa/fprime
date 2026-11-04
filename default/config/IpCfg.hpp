@@ -12,10 +12,27 @@
 #include <Fw/Time/TimeInterval.hpp>
 #ifndef REF_IPCFG_HPP
 #define REF_IPCFG_HPP
+// Platform socket headers used by Drv/Ip. Projects targeting other platforms override this file.
 #ifdef TGT_OS_TYPE_VXWORKS
+#include <errnoLib.h>
+#include <fioLib.h>
+#include <hostLib.h>
+#include <inetLib.h>
+#include <ioLib.h>
+#include <sockLib.h>
 #include <socket.h>
+#include <sysLib.h>
+#include <taskLib.h>
+#include <vxWorks.h>
+// Undefine VxWorks macros (from inetLib.h) that collide with F Prime member variables
+#undef m_type
+#undef m_data
+#undef m_len
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/time.h>
+#include <unistd.h>
 #else
 #error OS not supported for IP Socket Communications
 #endif

@@ -1457,6 +1457,100 @@ TEST_F(FpySequencerTester, ziext_16_64_underflow) {
 TEST_F(FpySequencerTester, ziext_32_64_underflow) {
     ASSERT_EQ(tester_op_ziext_32_64(), DirectiveError::STACK_UNDERFLOW);
 }
+
+// ======================================================================
+// Widening op stack overflow tests (fpext, siext, ziext). These pop a
+// narrow value and push a wider one, so with the narrow operand at the top
+// of a full stack the result does not fit. The op must report
+// STACK_OVERFLOW and leave the stack unchanged rather than assert.
+// ======================================================================
+
+TEST_F(FpySequencerTester, fpext_overflow) {
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(F32);
+    tester_push<F32>(1.5f);
+    ASSERT_EQ(tester_op_fpext(), DirectiveError::STACK_OVERFLOW);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(tester_pop<F32>(), 1.5f);
+
+    // Exactly enough room for the wider result succeeds
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(F64);
+    tester_push<F32>(1.5f);
+    ASSERT_EQ(tester_op_fpext(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(tester_pop<F64>(), 1.5);
+}
+TEST_F(FpySequencerTester, siext_8_64_overflow) {
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(I8);
+    tester_push<I8>(-42);
+    ASSERT_EQ(tester_op_siext_8_64(), DirectiveError::STACK_OVERFLOW);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(tester_pop<I8>(), -42);
+
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(I64);
+    tester_push<I8>(-42);
+    ASSERT_EQ(tester_op_siext_8_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -42);
+}
+TEST_F(FpySequencerTester, siext_16_64_overflow) {
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(I16);
+    tester_push<I16>(-1000);
+    ASSERT_EQ(tester_op_siext_16_64(), DirectiveError::STACK_OVERFLOW);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(tester_pop<I16>(), -1000);
+
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(I64);
+    tester_push<I16>(-1000);
+    ASSERT_EQ(tester_op_siext_16_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -1000);
+}
+TEST_F(FpySequencerTester, siext_32_64_overflow) {
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(I32);
+    tester_push<I32>(-100000);
+    ASSERT_EQ(tester_op_siext_32_64(), DirectiveError::STACK_OVERFLOW);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(tester_pop<I32>(), -100000);
+
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(I64);
+    tester_push<I32>(-100000);
+    ASSERT_EQ(tester_op_siext_32_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -100000);
+}
+TEST_F(FpySequencerTester, ziext_8_64_overflow) {
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U8);
+    tester_push<U8>(200);
+    ASSERT_EQ(tester_op_ziext_8_64(), DirectiveError::STACK_OVERFLOW);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(tester_pop<U8>(), 200);
+
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U64);
+    tester_push<U8>(200);
+    ASSERT_EQ(tester_op_ziext_8_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 200);
+}
+TEST_F(FpySequencerTester, ziext_16_64_overflow) {
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U16);
+    tester_push<U16>(60000);
+    ASSERT_EQ(tester_op_ziext_16_64(), DirectiveError::STACK_OVERFLOW);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(tester_pop<U16>(), 60000);
+
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U64);
+    tester_push<U16>(60000);
+    ASSERT_EQ(tester_op_ziext_16_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 60000);
+}
+TEST_F(FpySequencerTester, ziext_32_64_overflow) {
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U32);
+    tester_push<U32>(4000000000U);
+    ASSERT_EQ(tester_op_ziext_32_64(), DirectiveError::STACK_OVERFLOW);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(tester_pop<U32>(), 4000000000U);
+
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U64);
+    tester_push<U32>(4000000000U);
+    ASSERT_EQ(tester_op_ziext_32_64(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 4000000000U);
+}
 TEST_F(FpySequencerTester, itrunc_64_8_underflow) {
     ASSERT_EQ(tester_op_itrunc_64_8(), DirectiveError::STACK_UNDERFLOW);
 }
@@ -3686,6 +3780,80 @@ TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE_openErrorLogsDumpFileName) {
     ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath, Fw::LogStringArg("nonexistent_dir/dump.bin"));
 }
 
+TEST_F(FpySequencerTester, validate_sandbox) {
+    // with no sandbox configured, any path is allowed
+    add_NO_OP();
+    writeToFile("test.bin");
+    U8 data[Fpy::Sequence::SERIALIZED_SIZE] = {0};
+    tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
+    tester_set_m_sequenceFilePath("test.bin");
+    ASSERT_EQ(tester_validate(), Fw::Success::SUCCESS);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(0);
+
+    // a sequence inside the sandbox validates normally
+    cmp.configureSandbox(".");
+    tester_get_m_sequenceBuffer_ptr()->resetSer();
+    ASSERT_EQ(tester_validate(), Fw::Success::SUCCESS);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(0);
+
+    // a sequence outside the sandbox is rejected before it is opened
+    cmp.configureSandbox("sandbox_dir");
+    tester_get_m_sequenceBuffer_ptr()->resetSer();
+    this->clearHistory();
+    ASSERT_EQ(tester_validate(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EQ(this->eventHistory_FileOutsideSandbox->at(0).filePath, Fw::LogStringArg("test.bin"));
+    ASSERT_EVENTS_FileOpenError_SIZE(0);
+
+    // a ".." segment that resolves outside the sandbox is rejected too
+    cmp.configureSandbox(".");
+    tester_set_m_sequenceFilePath("../test.bin");
+    this->clearHistory();
+    ASSERT_EQ(tester_validate(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EVENTS_FileOpenError_SIZE(0);
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE_sandbox) {
+    // DUMP_STACK_TO_FILE writes a file named by the command; outside the sandbox it is
+    // rejected before the file is opened
+    allocMem();
+    add_PUSH_VAL<U8>(0x00);
+    add_PUSH_VAL<U8>(0x11);
+    add_PUSH_VAL<U8>(0x22);
+    writeAndRun();
+
+    // pause before the end so we land in RUNNING_PAUSED
+    tester_get_m_breakpoint_ptr()->breakpointInUse = true;
+    tester_get_m_breakpoint_ptr()->breakpointIndex = 3;
+    dispatchUntilState(State::RUNNING_PAUSED);
+
+    cmp.configureSandbox(".");
+    removeFile("../sandbox_dump.bin");
+    this->clearHistory();
+    sendCmd_DUMP_STACK_TO_FILE(0, 0, Fw::String("../sandbox_dump.bin"));
+    dispatchCurrentMessages(cmp);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DUMP_STACK_TO_FILE(), 0,
+                        Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EQ(this->eventHistory_FileOutsideSandbox->at(0).filePath, Fw::LogStringArg("../sandbox_dump.bin"));
+    ASSERT_EVENTS_FileOpenError_SIZE(0);
+    Os::File outputFile;
+    ASSERT_NE(outputFile.open("../sandbox_dump.bin", Os::FileInterface::Mode::OPEN_READ), Os::File::Status::OP_OK)
+        << "Dump file outside the sandbox must not be created";
+
+    // inside the sandbox the dump still succeeds
+    this->clearHistory();
+    sendCmd_DUMP_STACK_TO_FILE(0, 0, Fw::String("sandbox_dump.bin"));
+    dispatchCurrentMessages(cmp);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DUMP_STACK_TO_FILE(), 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_FileOutsideSandbox_SIZE(0);
+    removeFile("sandbox_dump.bin");
+}
+
 TEST_F(FpySequencerTester, prmSeqBaseDirTlm) {
     // setting the param should emit the telemetry channel via parameterUpdated
     Fw::ParamString val("/seq");
@@ -4296,6 +4464,59 @@ TEST_F(FpySequencerTester, tlmWrite) {
     this->tester_doDispatch();
     // make sure that all tlm is written every call
     ASSERT_TLM_SIZE(20);
+}
+
+TEST_F(FpySequencerTester, tlmWriteSingleMessageOnQueue) {
+    // repeated calls before the queue is serviced collapse into one message
+    invoke_to_tlmWrite(0, 0);
+    invoke_to_tlmWrite(0, 0);
+    invoke_to_tlmWrite(0, 0);
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    this->tester_doDispatch();
+    ASSERT_EQ(tester_getMessagesAvailable(), 0);
+    ASSERT_TLM_SIZE(20);
+    // once serviced, the next call enqueues again
+    tester_get_m_tlm_ptr()->statementsFailed++;
+    invoke_to_tlmWrite(0, 0);
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    this->tester_doDispatch();
+    ASSERT_EQ(tester_getMessagesAvailable(), 0);
+    ASSERT_TLM_StatementsFailed_SIZE(2);
+}
+
+TEST_F(FpySequencerTester, checkTimersSingleMessageOnQueue) {
+    allocMem();
+    add_PUSH_VAL<U32>(10);
+    add_PUSH_VAL<U32>(0);
+    add_WAIT_REL();
+    writeToFile("test.bin");
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), BlockState::BLOCK);
+    Fw::Time time(0, 0);
+    setTestTime(time);
+    dispatchUntilState(State::RUNNING_SLEEPING);
+    tester_dispatchAllMessages();
+    ASSERT_EQ(this->tester_getState(), State::RUNNING_SLEEPING);
+
+    // repeated calls before the queue is serviced collapse into one message
+    invoke_to_checkTimers(0, 0);
+    invoke_to_checkTimers(0, 0);
+    invoke_to_checkTimers(0, 0);
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    // servicing it sends a single checkTimersIn signal to the state machine
+    this->tester_doDispatch();
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    tester_dispatchAllMessages();
+    // should not leave sleep
+    ASSERT_EQ(this->tester_getState(), State::RUNNING_SLEEPING);
+
+    // once serviced, the next call enqueues again and is acted on
+    time = Fw::Time(10, 0);
+    setTestTime(time);
+    invoke_to_checkTimers(0, 0);
+    ASSERT_EQ(tester_getMessagesAvailable(), 1);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
 }
 
 TEST_F(FpySequencerTester, seqRunIn) {
@@ -5345,6 +5566,298 @@ TEST_F(FpySequencerTester, IntegrationStackCmd) {
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, CancelDropsQueuedDirective) {
+    allocMem();
+    add_CONST_CMD(123);
+    writeAndRun();
+    // the constCmd directive is queued but not yet executed
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_from_cmdOut_SIZE(0);
+
+    sendCmd_CANCEL(0, 0);
+    dispatchUntilState(State::IDLE);
+
+    // service the directive queued by the cancelled sequence
+    dispatchCurrentMessages(cmp);
+    ASSERT_EQ(tester_getState(), State::IDLE);
+    ASSERT_from_cmdOut_SIZE(0);
+    ASSERT_EVENTS_DirectiveWhileNotAwaiting_SIZE(1);
+    ASSERT_EVENTS_DirectiveWhileNotAwaiting(0, Fpy::DirectiveId::CONST_CMD, static_cast<I32>(State::IDLE));
+}
+
+TEST_F(FpySequencerTester, CancelledDirectiveDoesNotRunInNextSequence) {
+    allocMem();
+    add_ALLOCATE(8);
+    writeAndRun();
+    // the allocate directive is queued but not yet executed
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    sendCmd_CANCEL(0, 0);
+    dispatchUntilState(State::IDLE);
+
+    // start a new sequence before the cancelled sequence's directive is serviced
+    clearSeq();
+    add_NO_OP();
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
+
+    // service the directive queued by the cancelled sequence
+    tester_doDispatch();
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
+    ASSERT_EVENTS_DirectiveFromOldSequence_SIZE(1);
+    ASSERT_EVENTS_DirectiveFromOldSequence(0, Fpy::DirectiveId::ALLOCATE, 1, 2);
+
+    this->clearHistory();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, CancelledCmdDoesNotRunInNextSequence) {
+    allocMem();
+    add_CONST_CMD(123);
+    writeAndRun();
+    // the constCmd directive is queued but not yet executed
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    sendCmd_CANCEL(0, 0);
+    dispatchUntilState(State::IDLE);
+
+    // start a new sequence before the cancelled sequence's directive is serviced. the RUN cmd and the
+    // state machine signals it raises are higher priority than the queued directive, so the new sequence
+    // is awaiting its first statement response when the cancelled sequence's directive is serviced
+    clearSeq();
+    add_NO_OP();
+    writeAndRun();
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    this->clearHistory();
+    dispatchUntilState(State::IDLE);
+    ASSERT_from_cmdOut_SIZE(0);
+    ASSERT_EVENTS_DirectiveFromOldSequence_SIZE(1);
+    ASSERT_EVENTS_DirectiveFromOldSequence(0, Fpy::DirectiveId::CONST_CMD, 1, 2);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, waitRel_droppedWhenNotExpected) {
+    FpySequencer_WaitRelDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::WAIT_REL, [&](U64 sequenceIndex) {
+        tester_directive_waitRel_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, waitAbs_droppedWhenNotExpected) {
+    FpySequencer_WaitAbsDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::WAIT_ABS, [&](U64 sequenceIndex) {
+        tester_directive_waitAbs_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, goto_droppedWhenNotExpected) {
+    FpySequencer_GotoDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::GOTO, [&](U64 sequenceIndex) {
+        tester_directive_goto_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, if_droppedWhenNotExpected) {
+    FpySequencer_IfDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::IF, [&](U64 sequenceIndex) {
+        tester_directive_if_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, noOp_droppedWhenNotExpected) {
+    FpySequencer_NoOpDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::NO_OP, [&](U64 sequenceIndex) {
+        tester_directive_noOp_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, pushTlmVal_droppedWhenNotExpected) {
+    FpySequencer_PushTlmValDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::PUSH_TLM_VAL, [&](U64 sequenceIndex) {
+        tester_directive_pushTlmVal_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, pushTlmValAndTime_droppedWhenNotExpected) {
+    FpySequencer_PushTlmValAndTimeDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::PUSH_TLM_VAL_AND_TIME, [&](U64 sequenceIndex) {
+        tester_directive_pushTlmValAndTime_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, pushPrm_droppedWhenNotExpected) {
+    FpySequencer_PushPrmDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::PUSH_PRM, [&](U64 sequenceIndex) {
+        tester_directive_pushPrm_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, constCmd_droppedWhenNotExpected) {
+    FpySequencer_ConstCmdDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::CONST_CMD, [&](U64 sequenceIndex) {
+        tester_directive_constCmd_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, stackOp_droppedWhenNotExpected) {
+    FpySequencer_StackOpDirective directive(Fpy::DirectiveId::ADD);
+    checkDirectiveDropped(Fpy::DirectiveId::ADD, [&](U64 sequenceIndex) {
+        tester_directive_stackOp_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, exit_droppedWhenNotExpected) {
+    FpySequencer_ExitDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::EXIT, [&](U64 sequenceIndex) {
+        tester_directive_exit_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, allocate_droppedWhenNotExpected) {
+    FpySequencer_AllocateDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::ALLOCATE, [&](U64 sequenceIndex) {
+        tester_directive_allocate_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, storeRelConstOffset_droppedWhenNotExpected) {
+    FpySequencer_StoreRelConstOffsetDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::STORE_REL_CONST_OFFSET, [&](U64 sequenceIndex) {
+        tester_directive_storeRelConstOffset_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, pushVal_droppedWhenNotExpected) {
+    FpySequencer_PushValDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::PUSH_VAL, [&](U64 sequenceIndex) {
+        tester_directive_pushVal_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, loadRel_droppedWhenNotExpected) {
+    FpySequencer_LoadRelDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::LOAD_REL, [&](U64 sequenceIndex) {
+        tester_directive_loadRel_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, discard_droppedWhenNotExpected) {
+    FpySequencer_DiscardDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::DISCARD, [&](U64 sequenceIndex) {
+        tester_directive_discard_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, memCmp_droppedWhenNotExpected) {
+    FpySequencer_MemCmpDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::MEMCMP, [&](U64 sequenceIndex) {
+        tester_directive_memCmp_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, stackCmd_droppedWhenNotExpected) {
+    FpySequencer_StackCmdDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::STACK_CMD, [&](U64 sequenceIndex) {
+        tester_directive_stackCmd_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, pushTime_droppedWhenNotExpected) {
+    FpySequencer_PushTimeDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::PUSH_TIME, [&](U64 sequenceIndex) {
+        tester_directive_pushTime_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, setSeed_droppedWhenNotExpected) {
+    FpySequencer_SetSeedDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::SET_SEED, [&](U64 sequenceIndex) {
+        tester_directive_setSeed_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, pushRand_droppedWhenNotExpected) {
+    FpySequencer_PushRandDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::PUSH_RAND, [&](U64 sequenceIndex) {
+        tester_directive_pushRand_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, getField_droppedWhenNotExpected) {
+    FpySequencer_GetFieldDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::GET_FIELD, [&](U64 sequenceIndex) {
+        tester_directive_getField_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, peek_droppedWhenNotExpected) {
+    FpySequencer_PeekDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::PEEK, [&](U64 sequenceIndex) {
+        tester_directive_peek_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, storeRel_droppedWhenNotExpected) {
+    FpySequencer_StoreRelDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::STORE_REL, [&](U64 sequenceIndex) {
+        tester_directive_storeRel_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, call_droppedWhenNotExpected) {
+    FpySequencer_CallDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::CALL, [&](U64 sequenceIndex) {
+        tester_directive_call_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, return_droppedWhenNotExpected) {
+    FpySequencer_ReturnDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::RETURN, [&](U64 sequenceIndex) {
+        tester_directive_return_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, loadAbs_droppedWhenNotExpected) {
+    FpySequencer_LoadAbsDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::LOAD_ABS, [&](U64 sequenceIndex) {
+        tester_directive_loadAbs_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, storeAbs_droppedWhenNotExpected) {
+    FpySequencer_StoreAbsDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::STORE_ABS, [&](U64 sequenceIndex) {
+        tester_directive_storeAbs_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, storeAbsConstOffset_droppedWhenNotExpected) {
+    FpySequencer_StoreAbsConstOffsetDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, [&](U64 sequenceIndex) {
+        tester_directive_storeAbsConstOffset_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, popEvent_droppedWhenNotExpected) {
+    FpySequencer_PopEventDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::POP_EVENT, [&](U64 sequenceIndex) {
+        tester_directive_popEvent_internalInterfaceHandler(directive, sequenceIndex);
+    });
+}
+
+TEST_F(FpySequencerTester, popSerializable_droppedWhenNotExpected) {
+    FpySequencer_PopSerializableDirective directive{};
+    checkDirectiveDropped(Fpy::DirectiveId::POP_SERIALIZABLE, [&](U64 sequenceIndex) {
+        tester_directive_popSerializable_internalInterfaceHandler(directive, sequenceIndex);
+    });
 }
 
 TEST_F(FpySequencerTester, popEvent) {

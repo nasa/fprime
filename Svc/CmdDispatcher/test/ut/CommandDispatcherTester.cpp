@@ -21,8 +21,8 @@ static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 <= std::numeric_limits<U32
               "Unit test depends on CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 within range of U32");
 
 namespace {
-constexpr FwOpcodeType getExpectedEventOpcode(const FwOpcodeType opcode) {
-    return Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents ? opcode : std::numeric_limits<FwOpcodeType>::max();
+FwOpcodeType getExpectedEventOpcode(const FwOpcodeType opcode) {
+    return Svc::CmdDispatcherCfg::getEventOpcode(opcode);
 }
 }  // namespace
 
@@ -111,7 +111,7 @@ void CommandDispatcherTester::runNominalDispatch() {
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(testOpCode), 0, 4);
 
     // dispatch a test command
     REQUIREMENT("CD-001");
@@ -132,7 +132,7 @@ void CommandDispatcherTester::runNominalDispatch() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(testOpCode), 0);
 
     // verify sequence table entry
     CommandDispatcherImpl::SequenceTrackerEntry entry;
@@ -161,7 +161,7 @@ void CommandDispatcherTester::runNominalDispatch() {
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeCompleted_SIZE(1);
-    ASSERT_EVENTS_OpCodeCompleted(0u, testOpCode);
+    ASSERT_EVENTS_OpCodeCompleted(0u, getExpectedEventOpcode(testOpCode));
 
     REQUIREMENT("CD-004");
 
@@ -202,7 +202,7 @@ void CommandDispatcherTester::runNopCommands() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_NO_OP), 1);
 
     // dispatch for async command
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
@@ -232,7 +232,7 @@ void CommandDispatcherTester::runNopCommands() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING), 1);
 
     // dispatch for async command; the handler echoes the string argument
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
@@ -267,7 +267,7 @@ void CommandDispatcherTester::runNopCommands() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1), 1);
 
     // dispatch for async command; the handler echoes all three arguments
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
@@ -298,7 +298,7 @@ void CommandDispatcherTester::runCommandReregister() {
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(testOpCode), 0, 4);
 
     // clear reg events
     this->clearEvents();
@@ -312,7 +312,7 @@ void CommandDispatcherTester::runCommandReregister() {
     // verify re-registration event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeReregistered_SIZE(1);
-    ASSERT_EVENTS_OpCodeReregistered(0, testOpCode, 0);
+    ASSERT_EVENTS_OpCodeReregistered(0, getExpectedEventOpcode(testOpCode), 0);
 }
 
 void CommandDispatcherTester::runInvalidOpcodeDispatch() {
@@ -379,7 +379,7 @@ void CommandDispatcherTester::runFailedCommand() {
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(testOpCode), 0, 4);
 
     U32 currSeq = 0;
 
@@ -398,7 +398,7 @@ void CommandDispatcherTester::runFailedCommand() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(testOpCode), 0);
 
     // verify sequence table entry
     CommandDispatcherImpl::SequenceTrackerEntry entry;
@@ -428,7 +428,7 @@ void CommandDispatcherTester::runFailedCommand() {
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeError_SIZE(1);
-    ASSERT_EVENTS_OpCodeError(0, testOpCode, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_OpCodeError(0, getExpectedEventOpcode(testOpCode), Fw::CmdResponse::EXECUTION_ERROR);
 
     // Verify status passed back to port
     ASSERT_TRUE(this->m_seqStatusRcvd);
@@ -449,7 +449,7 @@ void CommandDispatcherTester::runFailedCommand() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(testOpCode), 0);
 
     // verify sequence table entry
     ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::SUCCESS);
@@ -477,7 +477,7 @@ void CommandDispatcherTester::runFailedCommand() {
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeError_SIZE(1);
-    ASSERT_EVENTS_OpCodeError(0, testOpCode, Fw::CmdResponse::INVALID_OPCODE);
+    ASSERT_EVENTS_OpCodeError(0, getExpectedEventOpcode(testOpCode), Fw::CmdResponse::INVALID_OPCODE);
 
     // Verify status passed back to port
     ASSERT_TRUE(this->m_seqStatusRcvd);
@@ -499,7 +499,7 @@ void CommandDispatcherTester::runFailedCommand() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(testOpCode), 0);
 
     // verify sequence table entry
     ASSERT_EQ(this->m_impl.m_sequenceTracker.find(currSeq, entry), Fw::Success::SUCCESS);
@@ -527,7 +527,7 @@ void CommandDispatcherTester::runFailedCommand() {
     // Verify completed event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeError_SIZE(1);
-    ASSERT_EVENTS_OpCodeError(0, testOpCode, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_OpCodeError(0, getExpectedEventOpcode(testOpCode), Fw::CmdResponse::VALIDATION_ERROR);
 
     // Verify status passed back to port
     ASSERT_TRUE(this->m_seqStatusRcvd);
@@ -583,10 +583,10 @@ void CommandDispatcherTester::runOverflowCommands(bool executeWhenSequenceTableF
     // verify event
     ASSERT_EVENTS_SIZE(4);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
-    ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
-    ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
-    ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_NO_OP), 1, 0);
+    ASSERT_EVENTS_OpCodeRegistered(1, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING), 1, 1);
+    ASSERT_EVENTS_OpCodeRegistered(2, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1), 1, 2);
+    ASSERT_EVENTS_OpCodeRegistered(3, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING), 1, 3);
 
     // register our own command
     FwOpcodeType testOpCode = 0x50;
@@ -601,7 +601,7 @@ void CommandDispatcherTester::runOverflowCommands(bool executeWhenSequenceTableF
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(testOpCode), 0, 4);
 
     for (U32 disp = 0; disp < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1; disp++) {
         // dispatch a test command
@@ -624,7 +624,7 @@ void CommandDispatcherTester::runOverflowCommands(bool executeWhenSequenceTableF
             // verify dispatch event
             ASSERT_EVENTS_SIZE(1);
             ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-            ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+            ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(testOpCode), 0);
 
             // verify sequence table entry
             CommandDispatcherImpl::SequenceTrackerEntry entry;
@@ -647,7 +647,7 @@ void CommandDispatcherTester::runOverflowCommands(bool executeWhenSequenceTableF
                 // verify the command was dispatched anyway, and that the overflow was still reported
                 ASSERT_EVENTS_SIZE(2);
                 ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-                ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+                ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(testOpCode), 0);
                 ASSERT_EVENTS_TooManyCommands_SIZE(1);
                 ASSERT_EVENTS_TooManyCommands(0, getExpectedEventOpcode(testOpCode));
 
@@ -702,7 +702,7 @@ void CommandDispatcherTester::runClearCommandTracking() {
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(testOpCode), 0, 4);
 
     // dispatch a test command
     U32 testCmdArg = 100;
@@ -718,7 +718,7 @@ void CommandDispatcherTester::runClearCommandTracking() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 0);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(testOpCode), 0);
 
     // verify sequence table entry
     CommandDispatcherImpl::SequenceTrackerEntry entry;
@@ -751,7 +751,7 @@ void CommandDispatcherTester::runClearCommandTracking() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING), 1);
 
     // verify both the test command and CLEAR_TRACKING are tracked
     ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 2);
@@ -852,7 +852,7 @@ void CommandDispatcherTester::runCommandQueueOverflow() {
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(testOpCode), 0, 4);
 
     // Flood CmdDispatcher with a series of NOOP commands until the command queue overflows
     for (U8 numCmds = 1; numCmds <= testNumCmdsToSend; numCmds++) {
@@ -901,7 +901,7 @@ void CommandDispatcherTester::runNonZeroPortDispatch() {
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 2, 4);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(testOpCode), 2, 4);
 
     // dispatch a test command via a nonzero port index
     U32 testCmdArg = 100;
@@ -919,7 +919,7 @@ void CommandDispatcherTester::runNonZeroPortDispatch() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-    ASSERT_EVENTS_OpCodeDispatched(0, testOpCode, 2);
+    ASSERT_EVENTS_OpCodeDispatched(0, getExpectedEventOpcode(testOpCode), 2);
 
     // verify sequence table entry tracks the nonzero caller port
     CommandDispatcherImpl::SequenceTrackerEntry entry;

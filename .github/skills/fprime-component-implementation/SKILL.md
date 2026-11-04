@@ -51,6 +51,9 @@ information needed for implementation.
 fprime-util impl
 ```
 
+Without a build cache, derive the handler names from the `.fpp` with the
+naming table in `.github/skills/fprime-fpp-navigation/SKILL.md`.
+
 This produces `<Component>-template.cpp` and `<Component>-template.hpp`
 files. If this is the first time:
 

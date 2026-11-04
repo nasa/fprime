@@ -17,6 +17,7 @@
 #include <Svc/LinuxTimer/LinuxTimer.hpp>
 #include <cerrno>
 #include <cstring>
+#include <limits>
 
 namespace Svc {
 
@@ -30,9 +31,10 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
         Fw::Logger::log("timer create error: %s\n", strerror(errno));
         return;
     }
+    // Ensure the interval fits in time_t before narrowing: on 32-bit targets time_t cannot
+    // represent every U32, and converting an out-of-range value is implementation-defined.
+    FW_ASSERT(interval.getSeconds() <= static_cast<U32>(std::numeric_limits<time_t>::max()));
     time_t seconds_value = static_cast<time_t>(interval.getSeconds());
-    // Ensure an overflow did not occur
-    FW_ASSERT(seconds_value == interval.getSeconds());
     itval.it_interval.tv_sec = static_cast<time_t>(seconds_value);
     itval.it_interval.tv_nsec = static_cast<long>(interval.getUSeconds() * 1000);
     itval.it_value.tv_sec = static_cast<time_t>(seconds_value);

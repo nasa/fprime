@@ -10,11 +10,14 @@
 #include <unistd.h>
 #endif
 
+#include <cstring>
+
 #include "CfdpManagerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Os/FileSystem.hpp"
 
 namespace Svc {
@@ -210,6 +213,303 @@ void CfdpManagerTester::testMetadataReceivedEvent() {
 }
 
 // ----------------------------------------------------------------------
+// Receive directory (rx_dir)
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester::setChannel0RxDir(const char* rxDir) {
+    // Channel 0 gets rxDir; every other channel gets the same sane values with rx_dir empty
+    // (unrestricted), so tests can show the confinement is per channel.
+    Cfdp::ChannelArrayParams channelConfig;
+    for (FwSizeType chan = 0; chan < Cfdp::NumChannels; chan++) {
+        Cfdp::ChannelParams& params = channelConfig[chan];
+        params.set_ack_limit(2);
+        params.set_nack_limit(3);
+        params.set_ack_timer(5);
+        params.set_inactivity_timer(30);
+        params.set_dequeue_enabled(Fw::Enabled::ENABLED);
+        params.set_move_dir(Fw::String(""));
+        params.set_max_outgoing_pdus_per_cycle(10);
+        params.set_tmp_dir(Fw::String("test/ut/output"));
+        params.set_fail_dir(Fw::String("test/ut/output"));
+        params.set_rx_dir(Fw::String((chan == 0) ? rxDir : ""));
+    }
+    this->paramSet_ChannelConfig(channelConfig, Fw::ParamValid::VALID);
+    this->paramSend_ChannelConfig(0, 0);
+}
+
+U32 CfdpManagerTester::latestFaultFileOpen(U8 channelId) {
+    // Telemetry is emitted from the 1 Hz cycle; the last emission carries cumulative counts
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    EXPECT_GE(this->tlmHistory_ChannelTelemetry->size(), 1u);
+    const U32 tlmIndex = static_cast<U32>(this->tlmHistory_ChannelTelemetry->size() - 1);
+    Cfdp::ChannelTelemetryArray tlm = this->tlmHistory_ChannelTelemetry->at(tlmIndex).arg;
+    return tlm[channelId].get_faultFileOpen();
+}
+
+void CfdpManagerTester::testRxDestPathRejectedEvent() {
+    // A Metadata PDU whose destination resolves outside rx_dir must be rejected before any
+    // file operation touches it.
+    const U8 channelId = 0;
+    const Cfdp::TransactionSeq transactionSeq = 7001;
+    const char* rxDir = "test/ut/output/rxbox";
+    const char* srcFile = "/ground/outside.bin";
+    // Relative paths resolve against rx_dir, so a leading '..' resolves outside it
+    const char* dstFile = "../../../outside_rx_dir.bin";
+    const char* outsidePath = "test/outside_rx_dir.bin";
+
+    (void)Os::FileSystem::createDirectory(rxDir);
+    (void)Os::FileSystem::removeFile(outsidePath);
+    this->setChannel0RxDir(rxDir);
+    this->clearHistory();
+
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100, srcFile,
+                          dstFile, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+
+    // Rejection event carries every argument (channel, source EID, sequence, path, directory);
+    // no MetadataReceived, and the refused transfer is reported as failed, never as completed
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    ASSERT_EVENTS_RxDestPathRejected(0, channelId, TEST_GROUND_EID, transactionSeq, dstFile, rxDir,
+                                     Cfdp::RxDestPathRejectReason::OUTSIDE_RX_DIR);
+    ASSERT_EVENTS_MetadataReceived_SIZE(0);
+    ASSERT_EVENTS_RxFileCreateFailed_SIZE(0);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
+    EXPECT_EQ(static_cast<U8>(TxnStatus::TXN_STATUS_FILESTORE_REJECTION),
+              this->eventHistory_RxFileTransferFailed->at(0).conditionCode)
+        << "the failure must be reported to the ground as a filestore rejection";
+
+    // The transaction never entered R1/R2: it was finished straight from INIT into HOLD (the
+    // inactivity timer recycles it) with no file ever opened; nothing exists outside rx_dir.
+    // Nothing from the rejected PDU was committed: no destination, no source name, no file size.
+    Transaction* txn = this->findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, txn->m_state);
+    EXPECT_EQ(TxnStatus::TXN_STATUS_FILESTORE_REJECTION, txn->m_history->txn_stat);
+    EXPECT_FALSE(txn->m_flags.rx.md_recv);
+    EXPECT_FALSE(txn->m_fd.isOpen());
+    EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar()) << "rejected path must not be retained";
+    EXPECT_STREQ("", txn->m_history->fnames.src_filename.toChar()) << "rejected PDU must not be committed";
+    EXPECT_EQ(0u, txn->m_fsize) << "rejected PDU must not be committed";
+    ASSERT_FALSE(Os::FileSystem::exists(outsidePath)) << "file must not be created outside rx_dir";
+
+    // The rejection is visible in telemetry as a file-open fault
+    EXPECT_EQ(1u, this->latestFaultFileOpen(channelId));
+
+    // An absolute path outside rx_dir is rejected too
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq + 1, 100,
+                          srcFile, "/other/dir/outside.bin", Cfdp::Class::CLASS_2, 1);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    ASSERT_STREQ("/other/dir/outside.bin", this->eventHistory_RxDestPathRejected->at(0).filename.toChar());
+    EXPECT_EQ(Cfdp::RxDestPathRejectReason::OUTSIDE_RX_DIR, this->eventHistory_RxDestPathRejected->at(0).reason.e);
+    txn = this->findTransaction(channelId, transactionSeq + 1);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, txn->m_state);
+    EXPECT_FALSE(txn->m_fd.isOpen());
+    EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar());
+
+    // A destination at the PDU length limit cannot even be resolved against rx_dir (the joined
+    // path exceeds the resolver's buffer): rejected as PATH_UNRESOLVABLE, same counter
+    char longDst[Cfdp::MaxFilePathSize + 1];
+    (void)memset(longDst, 'a', sizeof(longDst) - 1);
+    longDst[sizeof(longDst) - 1] = '\0';
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq + 2, 100,
+                          srcFile, longDst, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    EXPECT_EQ(Cfdp::RxDestPathRejectReason::PATH_UNRESOLVABLE, this->eventHistory_RxDestPathRejected->at(0).reason.e);
+    ASSERT_EVENTS_MetadataReceived_SIZE(0);
+    txn = this->findTransaction(channelId, transactionSeq + 2);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_FALSE(txn->m_fd.isOpen());
+    EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar());
+    EXPECT_EQ(3u, this->latestFaultFileOpen(channelId));
+
+    // A name sized so that the canonical path resolves and is contained but comes out exactly one
+    // byte over MaxFilePathSize is rejected by the length bound itself: TOO_LONG
+    char root[Os::FilePathUtils::MAX_PATH_LENGTH];
+    ASSERT_EQ(Os::FilePathUtils::VALID, Os::FilePathUtils::resolveDirectoryFromCwd(rxDir, root, sizeof(root)));
+    const FwSizeType rootLen = Fw::StringUtils::string_length(root, sizeof(root));
+    if (rootLen + 1 > Cfdp::MaxFilePathSize) {
+        GTEST_SKIP() << "resolved rx_dir (" << rootLen
+                     << " chars) leaves no room for a TOO_LONG name under MaxFilePathSize";
+    }
+    const FwSizeType overLen = Cfdp::MaxFilePathSize + 1 - rootLen;
+    char overDst[Cfdp::MaxFilePathSize + 1];
+    (void)memset(overDst, 'b', overLen);
+    overDst[overLen] = '\0';
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq + 3, 100,
+                          srcFile, overDst, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    EXPECT_EQ(Cfdp::RxDestPathRejectReason::TOO_LONG, this->eventHistory_RxDestPathRejected->at(0).reason.e);
+    ASSERT_EVENTS_MetadataReceived_SIZE(0);
+    txn = this->findTransaction(channelId, transactionSeq + 3);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_FALSE(txn->m_fd.isOpen());
+    EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar());
+    EXPECT_EQ(4u, this->latestFaultFileOpen(channelId));
+}
+
+void CfdpManagerTester::testRxDirUnresolvable() {
+    // A configured rx_dir that cannot be resolved rejects every reception on the channel. A relative
+    // rx_dir at the parameter's length limit is such a directory: joined with the working directory
+    // it exceeds Os::FilePathUtils::MAX_PATH_LENGTH, so resolveDirectoryFromCwd fails before the
+    // received path is even looked at.
+    const U8 channelId = 0;
+    const Cfdp::TransactionSeq transactionSeq = 7005;
+    char longRxDir[Cfdp::MaxFilePathSize];
+    (void)memset(longRxDir, 'r', sizeof(longRxDir) - 1);
+    longRxDir[sizeof(longRxDir) - 1] = '\0';
+
+    char root[Os::FilePathUtils::MAX_PATH_LENGTH];
+    if (Os::FilePathUtils::resolveDirectoryFromCwd(longRxDir, root, sizeof(root)) == Os::FilePathUtils::VALID) {
+        GTEST_SKIP() << "working directory is short enough that a " << (sizeof(longRxDir) - 1)
+                     << "-char relative rx_dir still resolves";
+    }
+
+    this->setChannel0RxDir(longRxDir);
+    this->clearHistory();
+
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100,
+                          "/ground/unresolvable.bin", "inside.bin", Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    ASSERT_EVENTS_RxDestPathRejected(0, channelId, TEST_GROUND_EID, transactionSeq, "inside.bin", longRxDir,
+                                     Cfdp::RxDestPathRejectReason::RX_DIR_UNRESOLVABLE);
+    ASSERT_EVENTS_MetadataReceived_SIZE(0);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
+    EXPECT_EQ(static_cast<U8>(TxnStatus::TXN_STATUS_FILESTORE_REJECTION),
+              this->eventHistory_RxFileTransferFailed->at(0).conditionCode);
+    Transaction* txn = this->findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, txn->m_state);
+    EXPECT_EQ(TxnStatus::TXN_STATUS_FILESTORE_REJECTION, txn->m_history->txn_stat);
+    EXPECT_FALSE(txn->m_fd.isOpen());
+    EXPECT_STREQ("", txn->m_history->fnames.dst_filename.toChar());
+    EXPECT_EQ(1u, this->latestFaultFileOpen(channelId));
+}
+
+void CfdpManagerTester::testRxDirPerChannel() {
+    // rx_dir is a per-channel parameter: the same destination is refused on the confined channel
+    // and accepted unchanged on a channel whose rx_dir is empty (the unrestricted default).
+    const Cfdp::TransactionSeq transactionSeq = 7004;
+    const char* rxDir = "test/ut/output/rxbox";
+    // A relative destination would be resolved against rx_dir and land inside it, so use an
+    // absolute path under the test output directory: outside rx_dir, harmless when accepted
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::getWorkingDirectory(cwd, sizeof(cwd)));
+    Fw::String dstPath;
+    dstPath.format("%s/test/ut/output/unrestricted_channel.bin", cwd);
+    const char* dstFile = dstPath.toChar();
+
+    (void)Os::FileSystem::createDirectory(rxDir);
+    (void)Os::FileSystem::removeFile(dstFile);
+    this->setChannel0RxDir(rxDir);
+    this->clearHistory();
+
+    // Channel 0 (confined): the path is outside rx_dir, so it is rejected
+    this->sendMetadataPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100,
+                          "/ground/per_channel.bin", dstFile, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    ASSERT_EVENTS_RxDestPathRejected(0, TEST_CHANNEL_ID_0, TEST_GROUND_EID, transactionSeq, dstFile, rxDir,
+                                     Cfdp::RxDestPathRejectReason::OUTSIDE_RX_DIR);
+    ASSERT_EVENTS_MetadataReceived_SIZE(0);
+    ASSERT_FALSE(Os::FileSystem::exists(dstFile));
+
+    // Channel 1 (unrestricted): the same path is accepted as-is and the file is opened
+    this->clearEvents();
+    this->sendMetadataPdu(TEST_CHANNEL_ID_1, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100,
+                          "/ground/per_channel.bin", dstFile, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(0);
+    ASSERT_EVENTS_MetadataReceived_SIZE(1);
+    Transaction* txn = this->findTransaction(TEST_CHANNEL_ID_1, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_EQ(TxnState::TXN_STATE_R1, txn->m_state);
+    EXPECT_STREQ(dstFile, txn->m_history->fnames.dst_filename.toChar()) << "unrestricted channel stores the path as-is";
+    EXPECT_TRUE(txn->m_fd.isOpen());
+    (void)Os::FileSystem::removeFile(dstFile);
+}
+
+void CfdpManagerTester::testRxDestPathContained() {
+    // With rx_dir set, a relative destination is resolved inside rx_dir and the transfer proceeds.
+    const U8 channelId = 0;
+    const Cfdp::TransactionSeq transactionSeq = 7002;
+    const char* rxDir = "test/ut/output/rxbox";
+    const char* dstFile = "sub/../inside.bin";  // '..' that stays inside is fine
+
+    (void)Os::FileSystem::createDirectory(rxDir);
+    this->setChannel0RxDir(rxDir);
+    this->clearHistory();
+
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 100,
+                          "/ground/inside.bin", dstFile, Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(0);
+    ASSERT_EVENTS_MetadataReceived_SIZE(1);
+    Transaction* txn = this->findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    EXPECT_EQ(TxnState::TXN_STATE_R1, txn->m_state);
+
+    // Stored destination is canonical, absolute, and inside the resolved rx_dir
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::getWorkingDirectory(cwd, sizeof(cwd)));
+    Fw::String expected;
+    expected.format("%s/%s/inside.bin", cwd, rxDir);
+    EXPECT_STREQ(expected.toChar(), txn->m_history->fnames.dst_filename.toChar());
+    EXPECT_STREQ(expected.toChar(), this->eventHistory_MetadataReceived->at(0).destFile.toChar());
+    EXPECT_TRUE(txn->m_fd.isOpen()) << "file inside rx_dir should have been created";
+}
+
+void CfdpManagerTester::testRxDestPathRejectedLateMetadata() {
+    // Class 2: File Data arrives first (temp file opened under tmp_dir), then Metadata with an
+    // destination outside rx_dir. The temp file must not be renamed onto the rejected path.
+    const U8 channelId = 0;
+    const Cfdp::TransactionSeq transactionSeq = 7003;
+    const char* rxDir = "test/ut/output/rxbox";
+    const char* outsidePath = "test/outside_rx_dir_late.bin";
+    const char* dstFile = "../../../outside_rx_dir_late.bin";
+
+    (void)Os::FileSystem::createDirectory(rxDir);
+    (void)Os::FileSystem::removeFile(outsidePath);
+    this->setChannel0RxDir(rxDir);
+    this->clearHistory();
+
+    U8 data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+    this->sendFileDataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, 0,
+                          static_cast<U16>(sizeof(data)), data, Cfdp::Class::CLASS_2);
+    this->component.doDispatch();
+    Transaction* txn = this->findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    ASSERT_EVENTS_RxTempFileCreated_SIZE(1);
+    Fw::String tempPath = txn->m_history->fnames.dst_filename;
+
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, TEST_GROUND_EID, this->component.getLocalEidParam(), transactionSeq, sizeof(data),
+                          "/ground/late.bin", dstFile, Cfdp::Class::CLASS_2, 1);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_RxDestPathRejected_SIZE(1);
+    EXPECT_EQ(Cfdp::RxDestPathRejectReason::OUTSIDE_RX_DIR, this->eventHistory_RxDestPathRejected->at(0).reason.e);
+    ASSERT_EVENTS_RxFileRenameFailed_SIZE(0);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    EXPECT_STREQ(tempPath.toChar(), txn->m_history->fnames.dst_filename.toChar())
+        << "destination must stay the temp path: nothing from the rejected PDU is committed";
+    EXPECT_EQ(TxnStatus::TXN_STATUS_FILESTORE_REJECTION, txn->m_history->txn_stat);
+    ASSERT_FALSE(Os::FileSystem::exists(outsidePath)) << "file must not be created outside rx_dir";
+}
+
+// ----------------------------------------------------------------------
 // Buffer Management Events
 // ----------------------------------------------------------------------
 
@@ -292,6 +592,37 @@ void CfdpManagerTester::testFailPduHeaderDeserializationEvent() {
     );
 }
 
+void CfdpManagerTester::testFailPduHeaderDeserializationUnsupportedVersionEvent() {
+    // FailPduHeaderDeserialization emitted for a complete header announcing CFDP version 2
+    const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
+    U8 pduData[2 + 7];
+    Fw::Buffer pduBuffer(pduData, descriptorSize + 7);
+
+    FwPacketDescriptorType descriptor = static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE);
+    pduData[0] = static_cast<U8>((descriptor >> 8) & 0xFF);
+    pduData[1] = static_cast<U8>(descriptor & 0xFF);
+
+    pduData[2] = 0x40;  // Flags byte: version 2
+    pduData[3] = 0x00;  // PDU length MSB
+    pduData[4] = 0x00;  // PDU length LSB
+    pduData[5] = 0x00;  // eidTsnLengths byte: 1-byte EIDs and TSN
+    pduData[6] = 0x01;  // source EID
+    pduData[7] = 0x02;  // TSN
+    pduData[8] = 0x03;  // dest EID
+
+    this->clearHistory();
+
+    this->invoke_to_dataIn(0, pduBuffer);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_FailPduHeaderDeserialization_SIZE(1);
+    ASSERT_EVENTS_FailPduHeaderDeserialization(0,                                                 // index
+                                               0,                                                 // channelId
+                                               static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR)  // status
+    );
+}
+
 void CfdpManagerTester::testFailMetadataPduDeserializationEvent() {
     // FailMetadataPduDeserialization for malformed metadata PDU
     // Strategy: Send a valid metadata PDU but with truncated body
@@ -339,10 +670,13 @@ void CfdpManagerTester::testFailMetadataPduDeserializationEvent() {
     this->invoke_to_dataIn(channelId, pduBuffer);
     this->component.doDispatch();
 
-    // Verify FailMetadataPduDeserialization event and its arguments (a second recovery event
-    // also fires). The status is the deserialize error code from parsing the truncated body.
-    ASSERT_EVENTS_SIZE(2);
+    // Verify FailMetadataPduDeserialization event and its arguments. The status is the
+    // deserialize error code from parsing the truncated body. No transfer started, so no
+    // completion event fires and the transaction slot is released.
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FailMetadataPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EQ(0u, this->component.m_engine->m_channels[channelId]->getNumRx());
     ASSERT_EVENTS_FailMetadataPduDeserialization(0,                                                  // index
                                                  channelId,                                          // channelId
                                                  static_cast<I32>(Fw::FW_DESERIALIZE_SIZE_MISMATCH)  // status
@@ -513,7 +847,7 @@ void CfdpManagerTester::testFailAckPduDeserializationEvent() {
     );
 
     // Create malformed buffer (too short for valid ACK PDU)
-    U8 malformedData[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
+    U8 malformedData[5] = {0x20, 0x01, 0x02, 0x03, 0x04};  // valid flags byte, then truncated
     Fw::Buffer malformedBuffer(malformedData, sizeof(malformedData));
 
     this->clearHistory();
@@ -545,7 +879,7 @@ void CfdpManagerTester::testFailFinPduDeserializationEvent() {
     );
 
     // Create malformed buffer (too short for valid FIN PDU)
-    U8 malformedData[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
+    U8 malformedData[5] = {0x20, 0x01, 0x02, 0x03, 0x04};  // valid flags byte, then truncated
     Fw::Buffer malformedBuffer(malformedData, sizeof(malformedData));
 
     this->clearHistory();
@@ -577,7 +911,7 @@ void CfdpManagerTester::testFailNakPduDeserializationEvent() {
     );
 
     // Create malformed buffer (too short for valid NAK PDU)
-    U8 malformedData[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
+    U8 malformedData[5] = {0x20, 0x01, 0x02, 0x03, 0x04};  // valid flags byte, then truncated
     Fw::Buffer malformedBuffer(malformedData, sizeof(malformedData));
 
     this->clearHistory();
@@ -943,11 +1277,11 @@ void CfdpManagerTester::testRxEofMdSizeMismatchEvent() {
 }
 
 void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
-    // RxTransactionLimitReached emitted when all transaction slots exhausted
-    // Strategy: Fill up all CFDP_NUM_TRANSACTIONS_PER_CHANNEL slots, then send one more PDU
+    // RxTransactionLimitReached emitted when the receive cap is reached
+    // Strategy: Fill MaxSimultaneousRx receive slots, then send one more Metadata PDU
     //
-    // Note: CFDP_NUM_TRANSACTIONS_PER_CHANNEL is the total pool size shared by TX and RX.
-    // From CfdpCfg.hpp:
+    // Note: CFDP_NUM_TRANSACTIONS_PER_CHANNEL is the total pool size shared by TX and RX,
+    // of which MaxSimultaneousRx are intended for receive. From CfdpCfg.hpp:
     //   = MaxCommandedPlaybackFilesPerChan (10)
     //   + MaxSimultaneousRx (5)
     //   + (MaxPollingDirPerChan + MaxCommandedPlaybackDirectoriesPerChan) *
@@ -962,20 +1296,20 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
 
     this->clearHistory();
 
-    // Exhaust all transaction slots in the FREE pool
-    // Channel::findUnusedTransaction() pulls from the shared FREE pool regardless of direction
-    for (U32 i = 0; i < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; i++) {
+    // Fill every receive slot permitted by the cap
+    for (U32 i = 0; i < MaxSimultaneousRx; i++) {
         this->sendMetadataPdu(channelId, sourceEid, destEid,
                               1000 + i,  // Unique transaction sequence
                               fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1, 1);
         this->component.doDispatch();
     }
+    ASSERT_EQ(static_cast<U32>(MaxSimultaneousRx), this->component.m_engine->m_channels[channelId]->getNumRx());
 
     // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Send one more PDU - this should trigger RxTransactionLimitReached
-    // because all transaction slots (FREE pool) are exhausted
+    // because the receive cap is reached
     this->sendMetadataPdu(channelId, sourceEid, destEid,
                           9999,  // Different transaction sequence
                           fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1, 1);
@@ -991,6 +1325,113 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
 
     // Cleanup
     Os::FileSystem::removeFile(dstFile);
+}
+
+void CfdpManagerTester::testOrphanPdusDoNotHoldSlots() {
+    // A PDU with an unknown transaction ID that cannot start a transaction (here, an EOF
+    // with no prior Metadata) must not hold a transaction slot or report a completed
+    // transfer. Send more of them than the whole pool holds and confirm the channel is
+    // untouched afterward.
+    const U8 channelId = 0;
+    const EntityId sourceEid = TEST_GROUND_EID;
+    const EntityId destEid = this->component.getLocalEidParam();
+    const TransactionSeq firstOrphanSeq = 25000;
+    const TransactionSeq victimSeq = 26000;
+    const U32 orphanCount = 2 * CFDP_NUM_TRANSACTIONS_PER_CHANNEL;
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+
+    this->clearHistory();
+
+    for (U32 i = 0; i < orphanCount; ++i) {
+        const TransactionSeq seq = firstOrphanSeq + i;
+        // Alternate classes: EOF is unexpected as a first PDU in either class
+        const Cfdp::Class::T txmMode = (i % 2 == 0) ? Cfdp::Class::CLASS_1 : Cfdp::Class::CLASS_2;
+        this->sendEofPdu(channelId, sourceEid, destEid, seq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, 0, 0,
+                         txmMode);
+        this->component.doDispatch();
+        ASSERT_EQ(nullptr, this->findTransaction(channelId, seq)) << "Orphan EOF " << i << " held a slot";
+        ASSERT_EQ(0u, chan->getNumRx()) << "Orphan EOF " << i << " left the RX count raised";
+    }
+
+    // Every orphan was reported, none was reported as a completed transfer, none was refused
+    ASSERT_EVENTS_UnhandledPduInIdleState_SIZE(orphanCount);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EVENTS_RxTransactionLimitReached_SIZE(0);
+
+    // The whole pool is back on the FREE queue
+    U32 freeCount = 0;
+    for (U32 i = 0; i < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; ++i) {
+        if (chan->m_transactions[i].m_flags.com.q_index == QueueId::FREE) {
+            ++freeCount;
+        }
+    }
+    ASSERT_EQ(static_cast<U32>(CFDP_NUM_TRANSACTIONS_PER_CHANNEL), freeCount);
+
+    // A legitimate transfer can still start
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, sourceEid, destEid, victimSeq, 1, "/ground/valid.bin",
+                          "test/ut/output/victim_valid.bin", Cfdp::Class::CLASS_1, 1);
+    this->component.doDispatch();
+
+    Transaction* txn = this->findTransaction(channelId, victimSeq);
+    ASSERT_NE(nullptr, txn);
+    ASSERT_EQ(TxnState::TXN_STATE_R1, txn->m_state);
+    ASSERT_EQ(1u, chan->getNumRx());
+    ASSERT_EVENTS_RxTransactionLimitReached_SIZE(0);
+
+    Os::FileSystem::removeFile("test/ut/output/victim_valid.bin");
+}
+
+void CfdpManagerTester::testRxCapReservesTxCapacity() {
+    // With every receive slot in use, a commanded transmit must still find a slot
+    const U8 channelId = 0;
+    const EntityId sourceEid = TEST_GROUND_EID;
+    const EntityId destEid = this->component.getLocalEidParam();
+    const char* rxDstFile = "test/ut/output/rx_cap_dst.bin";
+    const char* txSrcFile = "test/ut/output/rx_cap_tx_src.bin";
+    const char* txDstFile = "/ground/rx_cap_tx_dst.bin";
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+
+    // A small source file for the commanded transmit
+    {
+        Os::File file;
+        ASSERT_EQ(Os::File::OP_OK, file.open(txSrcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE));
+        U8 payload[16] = {0};
+        FwSizeType size = sizeof(payload);
+        ASSERT_EQ(Os::File::OP_OK, file.write(payload, size));
+        file.close();
+    }
+
+    this->clearHistory();
+
+    // Fill the receive cap with real transactions
+    for (U32 i = 0; i < MaxSimultaneousRx; ++i) {
+        this->sendMetadataPdu(channelId, sourceEid, destEid, 3000 + i, 100, "/ground/rx_cap.bin", rxDstFile,
+                              Cfdp::Class::CLASS_1, 1);
+        this->component.doDispatch();
+    }
+    ASSERT_EQ(static_cast<U32>(MaxSimultaneousRx), chan->getNumRx());
+    ASSERT_EVENTS_RxTransactionLimitReached_SIZE(0);
+
+    // One more receive is refused at the cap
+    this->clearEvents();
+    this->sendMetadataPdu(channelId, sourceEid, destEid, 3999, 100, "/ground/rx_cap.bin", rxDstFile,
+                          Cfdp::Class::CLASS_1, 1);
+    this->component.doDispatch();
+    ASSERT_EVENTS_RxTransactionLimitReached_SIZE(1);
+    ASSERT_EQ(nullptr, this->findTransaction(channelId, 3999));
+
+    // A commanded transmit still gets a slot
+    this->clearEvents();
+    Fw::String srcFilename(txSrcFile);
+    Fw::String dstFilename(txDstFile);
+    this->sendCmd_SendFile(0, 0, channelId, 2, Cfdp::Class::CLASS_1, Cfdp::Keep::KEEP, 0, srcFilename, dstFilename);
+    this->component.doDispatch();
+    ASSERT_EVENTS_MaxTxTransactionsReached_SIZE(0);
+    ASSERT_EQ(1u, chan->getNumCmdTx());
+
+    Os::FileSystem::removeFile(rxDstFile);
+    Os::FileSystem::removeFile(txSrcFile);
 }
 
 void CfdpManagerTester::testRxInvalidDirectiveCodeEvent() {
@@ -1242,9 +1683,13 @@ void CfdpManagerTester::testUnhandledPduInIdleStateEvent() {
                      Cfdp::Class::CLASS_1);
     this->component.doDispatch();
 
-    // Verify UnhandledPduInIdleState event (a second event also fires for the orphan PDU)
-    ASSERT_EVENTS_SIZE(2);
+    // Verify UnhandledPduInIdleState is the only event. No transfer happened, so no
+    // completion event is emitted, and the slot is released rather than held.
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_UnhandledPduInIdleState_SIZE(1);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EQ(nullptr, this->findTransaction(channelId, transactionSeq));
+    ASSERT_EQ(0u, this->component.m_engine->m_channels[channelId]->getNumRx());
 }
 
 void CfdpManagerTester::testInvalidDestinationEidEvent() {
@@ -2558,17 +3003,16 @@ void CfdpManagerTester::testChunklistUnavailableEvent() {
                           sizeof(testData), testData, Cfdp::Class::CLASS_2);
     this->component.doDispatch();
 
-    // Verify ChunklistUnavailable event and its argument.
-    // Note: Two events are emitted:
-    // 1. ChunklistUnavailable (line 509 of Engine.cpp) - when chunklist allocation fails
-    // 2. RxFileTransferCompleted (from finishTransaction line 962) - transaction status is UNDEFINED
-    //    which TxnStatusIsError treats as non-error, so success path is taken
-    ASSERT_EVENTS_SIZE(2);
+    // Verify ChunklistUnavailable event and its argument. The transaction never left INIT,
+    // so no completion event is emitted and the slot is released immediately.
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_ChunklistUnavailable_SIZE(1);
     ASSERT_EVENTS_ChunklistUnavailable(0,    // index
                                        9999  // abandoned transaction sequence
     );
-    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(1);
+    ASSERT_EVENTS_RxFileTransferCompleted_SIZE(0);
+    ASSERT_EQ(nullptr, this->findTransaction(0, 9999));
+    ASSERT_EQ(0u, chan->getNumRx());
 
     // Note: No cleanup needed - chunklists remain allocated but test isolation
     // handles component teardown
@@ -3080,6 +3524,182 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
     // Cleanup: rename succeeded, so the source no longer exists; the dest is now the directory.
     Os::FileSystem::removeDirectory(moveDest);
     Os::FileSystem::removeDirectory(moveSourceDir);
+}
+
+void CfdpManagerTester::runPlaybackPathTooLongCase(const char* srcDir,
+                                                   const char* dstDir,
+                                                   const char* longEntry,
+                                                   const char* shortEntry,
+                                                   bool sourceTooLong) {
+    // A playback entry whose "<dir>/<entry>" source or destination path exceeds MaxFilePathSize is
+    // skipped and reported instead of reaching the MetadataPdu length assert. A second, short entry
+    // in the same directory verifies the playback keeps going.
+    const FwSizeType maxPathLen = static_cast<FwSizeType>(MaxFilePathSize);
+    const FwSizeType srcPathLen = static_cast<FwSizeType>(::strlen(srcDir) + 1 + ::strlen(longEntry));
+    const FwSizeType dstPathLen = static_cast<FwSizeType>(::strlen(dstDir) + 1 + ::strlen(longEntry));
+    ASSERT_EQ(srcPathLen > maxPathLen, sourceTooLong);
+    ASSERT_EQ(dstPathLen > maxPathLen, !sourceTooLong);
+    ASSERT_LE(::strlen(srcDir) + 1 + ::strlen(shortEntry), static_cast<size_t>(MaxFilePathSize));
+    ASSERT_LE(::strlen(dstDir) + 1 + ::strlen(shortEntry), static_cast<size_t>(MaxFilePathSize));
+
+    U8 channelId = TEST_CHANNEL_ID_0;
+
+    Os::FileSystem::Status dirStatus = Os::FileSystem::createDirectory(srcDir);
+    ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
+
+    Fw::String longPath(srcDir);
+    longPath += "/";
+    longPath += longEntry;
+    Fw::String shortPath(srcDir);
+    shortPath += "/";
+    shortPath += shortEntry;
+
+    const char* files[] = {longPath.toChar(), shortPath.toChar()};
+    for (const char* path : files) {
+        Os::File file;
+        ASSERT_EQ(Os::File::OP_OK, file.open(path, Os::File::OPEN_CREATE, Os::File::OVERWRITE)) << path;
+        U8 data[16] = {0};
+        FwSizeType size = sizeof(data);
+        ASSERT_EQ(Os::File::OP_OK, file.write(data, size));
+        file.close();
+    }
+
+    this->clearHistory();
+
+    Fw::String srcDirStr(srcDir);
+    Fw::String dstDirStr(dstDir);
+    Cfdp::Status::T status = this->component.m_engine->playbackDir(srcDirStr, dstDirStr, Cfdp::Class::CLASS_1,
+                                                                   Cfdp::Keep::KEEP, channelId, 0, TEST_GROUND_EID);
+    ASSERT_EQ(status, Cfdp::Status::SUCCESS);
+
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+    ASSERT_NE(chan, nullptr);
+    Playback* pb = nullptr;
+    for (U32 i = 0; i < MaxCommandedPlaybackDirectoriesPerChan; ++i) {
+        Playback* candidate = chan->getPlayback(i);
+        if (candidate->busy && candidate->diropen) {
+            pb = candidate;
+            break;
+        }
+    }
+    ASSERT_NE(pb, nullptr);
+
+    // Count free transaction slots so the skipped entry can be shown not to consume one
+    auto countQueue = [](CListNode* head) {
+        U32 count = 0;
+        for (CListNode* node = head; node != nullptr; node = node->next) {
+            ++count;
+            if (node->next == head) {
+                break;
+            }
+        }
+        return count;
+    };
+    const U32 freeBefore = countQueue(chan->m_qs[QueueId::FREE]);
+    ASSERT_GE(freeBefore, 2U);
+
+    this->clearEvents();
+
+    // One 1Hz cycle scans the directory: the long entry is skipped, the short one starts a transaction.
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    if (sourceTooLong) {
+        ASSERT_EVENTS_PlaybackSourcePathTooLong_SIZE(1);
+        ASSERT_EVENTS_PlaybackSourcePathTooLong(0, srcPathLen, maxPathLen, srcDir, longEntry);
+        ASSERT_EVENTS_PlaybackDestinationPathTooLong_SIZE(0);
+    } else {
+        ASSERT_EVENTS_PlaybackDestinationPathTooLong_SIZE(1);
+        ASSERT_EVENTS_PlaybackDestinationPathTooLong(0, dstPathLen, maxPathLen, dstDir, longEntry);
+        ASSERT_EVENTS_PlaybackSourcePathTooLong_SIZE(0);
+    }
+    ASSERT_EVENTS_SendFileInitiateFail_SIZE(0);
+    ASSERT_EVENTS_PlaybackDirReadFailed_SIZE(0);
+    ASSERT_EQ(pb->num_ts, 1) << "Only the short entry should have started a transaction";
+    ASSERT_FALSE(pb->diropen) << "Directory scan should have run to completion";
+    ASSERT_EQ(countQueue(chan->m_qs[QueueId::FREE]), freeBefore - 1)
+        << "The skipped entry must not consume a transaction slot";
+
+    Os::FileSystem::removeFile(longPath.toChar());
+    Os::FileSystem::removeFile(shortPath.toChar());
+    Os::FileSystem::removeDirectory(srcDir);
+}
+
+void CfdpManagerTester::testPlaybackDirEntrySourcePathTooLong() {
+    // Entry name sized so that strlen(srcDir) + 1 + strlen(entry) > MaxFilePathSize while the
+    // shorter "/dest/<entry>" destination path still fits, isolating the source-path check.
+    char longName[MaxFilePathSize - 19] = {};
+    (void)::memset(longName, 'a', sizeof(longName) - 1);
+    this->runPlaybackPathTooLongCase("test/ut/output/playback_long", "/dest", longName, "short.bin", true);
+}
+
+void CfdpManagerTester::testPlaybackDirEntryDestinationPathTooLong() {
+    // Destination directory sized so that a short entry fits but a longer one does not, while
+    // every source path stays within MaxFilePathSize.
+    char longDstDir[MaxFilePathSize - 9] = {};
+    (void)::memset(longDstDir, 'd', sizeof(longDstDir) - 1);
+    longDstDir[0] = '/';
+    this->runPlaybackPathTooLongCase("test/ut/output/playback_long_dst", longDstDir, "toolongname.bin", "a.bin", false);
+}
+
+void CfdpManagerTester::testTimerZeroDurationExpiresOnFirstTick() {
+    // setTimer(0) must not assert in run(); it expires on the first tick.
+    Timer timer;
+    ASSERT_EQ(timer.getStatus(), Timer::UNINITIALIZED);
+
+    timer.setTimer(0);
+    ASSERT_EQ(timer.getStatus(), Timer::RUNNING);
+
+    timer.run();
+    ASSERT_EQ(timer.getStatus(), Timer::EXPIRED);
+
+    // Further ticks are harmless
+    timer.run();
+    ASSERT_EQ(timer.getStatus(), Timer::EXPIRED);
+
+    // Non-zero durations are unchanged: expire after exactly N ticks
+    timer.setTimer(2);
+    timer.run();
+    ASSERT_EQ(timer.getStatus(), Timer::RUNNING);
+    timer.run();
+    ASSERT_EQ(timer.getStatus(), Timer::EXPIRED);
+}
+
+void CfdpManagerTester::testZeroInactivityTimerExpiresOnFirstTick() {
+    // An inactivity timer armed with a zero duration (ChannelConfig.inactivity_timer = 0)
+    // fires the inactivity timeout on the first sTick() instead of asserting.
+    U8 channelId = 0;
+    const char* srcFile = "test/ut/output/tx_inactivity_zero.bin";
+    const char* dstFile = "/ground/tx_inactivity_zero.bin";
+    U32 fileSize = 500;
+    U32 sequenceId = 3001;
+    U32 peerId = TEST_GROUND_EID;
+    U32 localEid = this->component.getLocalEidParam();
+
+    this->clearHistory();
+
+    Transaction* txn =
+        setupTestTransaction(TxnState::TXN_STATE_S2, channelId, srcFile, dstFile, fileSize, sequenceId, peerId);
+    ASSERT_NE(txn, nullptr);
+    txn->m_history->src_eid = localEid;
+    txn->m_engine = this->component.m_engine;
+    txn->m_flags.com.inactivity_fired = false;
+    txn->m_flags.com.canceled = false;
+    txn->m_flags.com.suspended = false;
+    txn->m_flags.tx.send_eof = true;
+
+    txn->m_inactivity_timer.setTimer(0);
+    ASSERT_EQ(txn->m_inactivity_timer.getStatus(), Timer::RUNNING);
+
+    this->clearEvents();
+
+    I32 cont = 0;
+    txn->sTick(&cont);
+
+    ASSERT_EQ(txn->m_inactivity_timer.getStatus(), Timer::EXPIRED);
+    ASSERT_TRUE(txn->m_flags.com.inactivity_fired);
+    ASSERT_EVENTS_TxInactivityTimeout_SIZE(1);
+    ASSERT_EVENTS_TxInactivityTimeout(0, Cfdp::Class::CLASS_2, localEid, sequenceId);
 }
 
 }  // namespace Cfdp

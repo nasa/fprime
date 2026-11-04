@@ -63,6 +63,9 @@ than from a generic default.
 
 ## 3 — Connections
 
+To find what is already wired to an instance, including pattern
+specifiers, see `.github/skills/fprime-fpp-navigation/SKILL.md` §1.
+
 **Pattern graphs** — one specifier per service wires the whole
 deployment's command, event, telemetry, text-event, parameter, time,
 and health ports, each naming the serving instance, e.g.

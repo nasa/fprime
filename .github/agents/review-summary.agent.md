@@ -55,11 +55,13 @@ debugging.
    run ordinal, since-last-run JSON, optional CI safety fields);
    `reviewed_head` falls back to the review's `commit_id` when
    absent. Also enumerate
-   the reviewer's inline comments to count outstanding must-fix
-   items and extract their links.
-1a. **Open inline review threads** on the PR, for the de-duplication
-   post-pass (§5h): all agent-authored threads (any `fprime-agent:`
-   footer) with their site-keys, tags, bodies, and resolution state.
+   the reviewer's inline comments to count its open findings per tag
+   (§5b), count outstanding must-fix items, and extract their links.
+1a. **Open inline review threads** on the PR, for the per-agent table
+   cells (§5b), the de-duplication post-pass (§5h), and severity
+   reconciliation (§5j): all agent-authored threads (any
+   `fprime-agent:` footer) with their site-keys, tags, bodies,
+   concurrence replies, and resolution state.
 2. **Per-lens status list** from the orchestrator, covering every
    `role: reviewer` entry. Each entry is `<reviewer-name>:
    <completed | skipped: no touched surface (<predicate>) | FAILED:
@@ -128,36 +130,38 @@ analysis of any prompt-injection content in the diff and metadata.
 
 ### Per-agent results
 
+Findings **open** at the reviewed head, by tag; everything ever raised is under *Since last run*.
+
 | Agent | must fix | suggestion | could fix | future work | outstanding | Verdict |
 |---|---:|---:|---:|---:|---:|---|
-| Security Vulnerabilities | 5 | 1 | 0 | 1 | 3 | No-Go |
+| Security Vulnerabilities | 3 | 0 | 0 | 0 | 3 | No-Go |
 | Supply Chain / Runner Safety | 1 | 0 | 1 | 0 | 2 | No-Go |
-| F Prime C/C++ Design | 2 | 4 | 1 | 0 | 2 | No-Go |
-| Documentation Currency | 1 | 2 | 0 | 0 | 1 | No-Go |
+| F Prime C/C++ Design | 1 | 1 | 0 | 0 | 2 | No-Go |
+| Documentation Currency | 1 | 0 | 0 | 0 | 1 | No-Go |
 | Design | 1 | 0 | 0 | 0 | 1 | No-Go |
-| Architecture | 0 | 1 | 0 | 0 | 0 | Go |
-| Test Quality | 0 | 1 | 0 | 0 | 0 | Go |
+| Architecture | 0 | 1 | 0 | 0 | 1 | Go |
+| Test Quality | 0 | 0 | 0 | 0 | 0 | Go |
 | Correctness | 1 | 0 | 0 | 0 | 1 | No-Go |
-| Operational | 0 | 1 | 0 | 0 | 0 | Go |
-| Maintainability | 0 | 2 | 1 | 0 | 0 | Go |
+| Operational | 0 | 1 | 0 | 0 | 1 | Go |
+| Maintainability | 0 | 1 | 1 | 0 | 2 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — supply-chain has 1 must-fix in workflows |
-| **Totals** | 11 | 11 | 3 | 1 | 10 | **No-Go** |
+| **Totals** | 7 | 4 | 2 | 0 | 13 | **No-Go** |
 
 <details>
 <summary>Since last run</summary>
 
-| Agent | resolved | still open | newly added | incorrect-fix follow-ups | improperly resolved | disagreements escalated |
-|---|---:|---:|---:|---:|---:|---:|
-| Security Vulnerabilities | 1 | 2 | 0 | 1 | 0 | 0 |
-| Supply Chain / Runner Safety | 0 | 0 | 0 | 0 | 0 | 0 |
-| F Prime C/C++ Design | 2 | 1 | 0 | 0 | 0 | 0 |
-| Documentation Currency | 0 | 0 | 1 | 0 | 0 | 0 |
-| Design | 0 | 1 | 0 | 0 | 0 | 0 |
-| Architecture | 0 | 0 | 0 | 0 | 0 | 0 |
-| Test Quality | 1 | 0 | 0 | 0 | 0 | 0 |
-| Correctness | 0 | 0 | 0 | 0 | 0 | 0 |
-| Operational | 0 | 0 | 0 | 0 | 0 | 0 |
-| Maintainability | 0 | 0 | 0 | 0 | 0 | 0 |
+| Agent | raised (all runs) | resolved | still open | newly added | incorrect-fix follow-ups | improperly resolved | disagreements escalated |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Security Vulnerabilities | 7 | 1 | 2 | 0 | 1 | 0 | 0 |
+| Supply Chain / Runner Safety | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
+| F Prime C/C++ Design | 7 | 2 | 2 | 0 | 0 | 0 | 0 |
+| Documentation Currency | 3 | 1 | 0 | 1 | 0 | 0 | 0 |
+| Design | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Architecture | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Test Quality | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| Correctness | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Operational | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Maintainability | 3 | 1 | 2 | 0 | 0 | 0 | 0 |
 
 Duplicates consolidated this run: N (threads closed by the §5h post-pass)
 
@@ -186,7 +190,7 @@ Duplicates consolidated this run: N (threads closed by the §5h post-pass)
 
 **Security Vulnerabilities**
 - <terse must-fix summary> — <link>
-- <terse must-fix summary> — also: Correctness, Maintainability — <link>
+- <terse must-fix summary> — also: Correctness — <link>
 - ...
 
 **Supply Chain / Runner Safety**
@@ -246,6 +250,9 @@ in this comment.
   outstanding, verdict, run ordinal, since-last-run counters,
   optional CI-safety fields, and (supply-chain agent only)
   the `<!-- surfaces: ... -->` block.
+- Read the open-thread state (Inputs 1a): the per-agent table's tag
+  cells are computed from it, not from the cumulative metadata tag
+  counts (§5b).
 
 The orchestrator's per-lens status list is the authoritative failure
 signal. If a lens is listed as `FAILED: <reason>` you MUST render its
@@ -271,9 +278,34 @@ you MUST render it as a skipped row and disclose it (see §5b).
 - A `CI safety` row immediately above `Totals`, rendered per the
   "CI safety row in the per-agent results table" subsection below.
   Its tag-count cells are `—` and do not contribute to `Totals`.
-- A `Totals` row at the bottom; sums across completed reviewer
+- A `Totals` row at the bottom, computed across completed reviewer
   rows only. ERROR rows and the `CI safety` row do not contribute
   to `Totals`.
+
+### Cell semantics — open findings, not history
+
+- The four tag cells of a reviewer row count the findings **currently
+  open** on the reviewed head: the reviewer's own unresolved inline
+  threads plus the open threads it concurred on (contract §6a), each
+  at the tag the summary uses (the reviewer's tag, or `must fix`
+  after a §5j promotion). Compute them from thread state
+  (`isResolved`, tag) — never copy the reviewer's hidden-metadata tag
+  counts, which are cumulative and never decrement (contract §2), so
+  a resolved must-fix would otherwise sit under the `must fix` header
+  for the life of the PR. `outstanding` is the sum of the four cells.
+- The reviewer's verdict is still read from its metadata (§5c). If
+  its metadata `outstanding` differs from the rendered `outstanding`,
+  add one line below the table naming the lens and both figures;
+  never silently reconcile.
+- `Totals` counts each open thread **once**, at its strictest tag:
+  a thread shared by concurrence or consolidated by §5h appears in
+  every sharing reviewer's row but once in `Totals`, so `Totals` may
+  be lower than the column sum.
+- Cumulative history is not dropped: each reviewer's cumulative
+  tag-count sum is rendered as `raised (all runs)` in the Since last
+  run block.
+- The one-line caption above the table is fixed text; it tells the
+  reader which semantics the cells carry.
 
 ### Recommend: Close section
 
@@ -341,8 +373,10 @@ Edge cases:
 
 ### Since last run section
 
-Six counters (per review contract §7 phase D) summed from each
-reviewer's since-last-run line. Wrapped in a `<details>` block.
+Per reviewer: `raised (all runs)` — the sum of its cumulative
+hidden-metadata tag counts (contract §2) — followed by the six
+counters (per review contract §7 phase D) from its since-last-run
+line. Wrapped in a `<details>` block.
 Placed between the Per-agent results table and the Supply-chain
 surfaces table. Omitted on run 1 (no prior summary to delta
 against).
@@ -401,10 +435,10 @@ Example:
 
 | Agent | must fix | suggestion | could fix | future work | outstanding | Verdict |
 |---|---:|---:|---:|---:|---:|---|
-| Security Vulnerabilities | 5 | 1 | 0 | 1 | 3 | No-Go |
+| Security Vulnerabilities | 3 | 0 | 0 | 1 | 4 | No-Go |
 | Supply Chain / Runner Safety | ERROR | ERROR | ERROR | ERROR | ERROR | ERROR |
-| F Prime C/C++ Design | 0 | 2 | 0 | 0 | 0 | Go |
-| Documentation Currency | 0 | 1 | 0 | 0 | 0 | Go |
+| F Prime C/C++ Design | 0 | 2 | 0 | 0 | 2 | Go |
+| Documentation Currency | 0 | 1 | 0 | 0 | 1 | Go |
 | Design | 0 | 0 | 0 | 0 | 0 | Go |
 | Architecture | 0 | 0 | 0 | 0 | 0 | Go |
 | Test Quality | 0 | 0 | 0 | 0 | 0 | Go |
@@ -412,7 +446,7 @@ Example:
 | Operational | 0 | 0 | 0 | 0 | 0 | Go |
 | Maintainability | 0 | 0 | 0 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — Supply Chain / Runner Safety failed: <reason> |
-| **Totals** | 5 | 4 | 0 | 1 | 3 | **No-Go** |
+| **Totals** | 3 | 3 | 0 | 1 | 7 | **No-Go** |
 ```
 
 The CI safety row's rationale cites the failure verbatim (e.g.,
@@ -505,7 +539,7 @@ Runner Safety failed to run.`).
   (`403`), still submit the new review; the
   newest marker match wins on later runs.
 - Read each per-agent review's `since_last_run` metadata and
-  populate the `Since last run` table.
+  cumulative tag counts and populate the `Since last run` table.
 - The run ordinal in the review heading reflects the highest
   `run` seen across per-agent metadata, or `1` on the first run
   with no priors.

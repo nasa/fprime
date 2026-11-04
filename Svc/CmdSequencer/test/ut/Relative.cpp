@@ -41,6 +41,51 @@ void CmdSequencerTester ::Validate() {
     this->parameterizedValidate(file);
 }
 
+void CmdSequencerTester ::StepWhileRecordPending() {
+    const U32 numRecords = 2;
+    SequenceFiles::RelativeFile file(numRecords, this->format);
+    // Set the time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 0);
+    this->setTestTime(testTime);
+    // Write the file
+    const char* const fileName = file.getName().toChar();
+    file.write();
+    // Load the sequence in manual mode
+    this->goToManualMode(10);
+    this->runSequence(0, fileName);
+    ASSERT_from_comCmdOut_SIZE(0);
+    // Start: the first relative record arms the command timer
+    this->startSequence(14, fileName);
+    ASSERT_from_comCmdOut_SIZE(0);
+    ASSERT_EQ(CmdSequencerComponentImpl::Timer::SET, this->component.m_cmdTimer.m_state);
+    const Fw::Time pendingTime = this->component.m_cmdTimer.expirationTime;
+    // Step again before the record is dispatched: rejected, pending record kept
+    const U32 stepCmdSeq = 12;
+    this->sendCmd_CS_STEP(0, stepCmdSeq);
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentImpl::OPCODE_CS_STEP, stepCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_StepRecordPending_SIZE(1);
+    ASSERT_EVENTS_CS_StepRecordPending(0, fileName, pendingTime.getSeconds(), pendingTime.getUSeconds());
+    ASSERT_from_comCmdOut_SIZE(0);
+    ASSERT_EQ(CmdSequencerComponentImpl::Timer::SET, this->component.m_cmdTimer.m_state);
+    ASSERT_EQ(Fw::TimeComparison::EQ, Fw::Time::compare(pendingTime, this->component.m_cmdTimer.expirationTime));
+    // The first record still goes out once its time tag is reached
+    this->setTestTime(pendingTime);
+    this->invoke_to_schedIn(0, 0);
+    this->clearAndDispatch();
+    Fw::ComBuffer comBuff;
+    CommandBuffers::create(comBuff, 0, 1);
+    ASSERT_from_comCmdOut_SIZE(1);
+    ASSERT_from_comCmdOut(0, comBuff, 0U);
+    ASSERT_EQ(CmdSequencerComponentImpl::Timer::CLEAR, this->component.m_cmdTimer.m_state);
+    // With the timer cleared, the next step is accepted again and arms the timer for record 1
+    this->stepSequence(13);
+    ASSERT_EVENTS_CS_StepRecordPending_SIZE(0);
+    ASSERT_EQ(CmdSequencerComponentImpl::Timer::SET, this->component.m_cmdTimer.m_state);
+}
+
 // ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------

@@ -182,6 +182,18 @@ event RxFileCreateFailed(
     severity warning low \
     format "RX class {} transaction {}:{} failed to create file {}, error={}"
 
+@ Destination path in a received Metadata PDU was rejected by the channel's rx_dir sandbox
+event RxDestPathRejected(
+    channelId: U8 @< CFDP channel number
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< Destination path that was rejected
+    rxDir: string size MaxFilePathSize @< Configured receive sandbox directory
+    reason: Cfdp.RxDestPathRejectReason @< Why the path was rejected
+) \
+    severity warning high \
+    format "RX transaction {}:{}:{} rejected destination path {} for receive directory {}: {}"
+
 event RxCrcMismatch(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
@@ -541,6 +553,28 @@ event PlaybackDirReadFailed(
 ) \
     severity warning low \
     format "Failed to read from playback directory {}, error={}"
+
+@ Lengths precede the path so a truncated text log keeps the numbers. The entry
+@ is read into a MaxFilePathSize buffer, so length is a lower bound for longer names.
+event PlaybackSourcePathTooLong(
+    length: FwSizeType @< Length of the combined <directory>/<entry> source path
+    maxLength: FwSizeType @< Maximum file path length (MaxFilePathSize)
+    directory: string size MaxFilePathSize @< Playback source directory
+    $entry: string size MaxFilePathSize @< Directory entry that was skipped
+) \
+    severity warning low \
+    format "Source path length {} exceeds maximum {}, skipped playback entry {}/{}"
+
+@ Lengths precede the path so a truncated text log keeps the numbers. The entry
+@ is read into a MaxFilePathSize buffer, so length is a lower bound for longer names.
+event PlaybackDestinationPathTooLong(
+    length: FwSizeType @< Length of the combined <directory>/<entry> destination path
+    maxLength: FwSizeType @< Maximum file path length (MaxFilePathSize)
+    directory: string size MaxFilePathSize @< Playback destination directory
+    $entry: string size MaxFilePathSize @< Directory entry that was skipped
+) \
+    severity warning low \
+    format "Destination path length {} exceeds maximum {}, skipped playback entry {}/{}"
 
 event ResetFreedTransaction severity diagnostic \
     format "Attempt to reset a transaction that has already been freed"

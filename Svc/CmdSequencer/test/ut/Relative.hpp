@@ -41,6 +41,9 @@ class CmdSequencerTester : public MixedRelativeBase::CmdSequencerTester {
     //! Validate a sequence file
     void Validate();
 
+    //! Reject CS_STEP while the stepped record waits for its time tag
+    void StepWhileRecordPending();
+
   private:
     // ----------------------------------------------------------------------
     // Private helper methods

@@ -74,6 +74,12 @@ class DpManager final : public DpManagerComponentBase {
                          U32 context                 //!< The call order
                          ) final;
 
+    //! Internal interface handler for schedInInternal
+    void schedInInternal_internalInterfaceHandler() final;
+
+    //! Overflow hook for schedInInternal
+    void schedInInternal_overflowHook() final;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands
@@ -115,6 +121,9 @@ class DpManager final : public DpManagerComponentBase {
 
     //! The number of bytes handled
     U64 numBytes;
+
+    //! True while a schedInInternal message is on the queue
+    std::atomic<bool> m_schedInQueued;
 };
 
 }  // end namespace Svc

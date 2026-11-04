@@ -30,12 +30,39 @@ FpySequencer ::FpySequencer(const char* const compName)
       m_goalState(),
       m_sequencesStarted(0),
       m_statementsDispatched(0),
+      m_checkTimersQueued(false),
+      m_tlmWriteQueued(false),
       m_runtime(),
       m_breakpoint(),
       m_debug(),
-      m_tlm() {}
+      m_tlm(),
+      m_sandboxDir(),
+      m_sandboxConfigured(false) {}
 
 FpySequencer ::~FpySequencer() {}
+
+void FpySequencer::configureSandbox(const char* directory) {
+    FW_ASSERT(directory != nullptr);
+    const Os::FilePathUtils::Status status =
+        Os::FilePathUtils::resolveDirectoryFromCwd(directory, this->m_sandboxDir, sizeof(this->m_sandboxDir));
+    FW_ASSERT(status == Os::FilePathUtils::VALID, static_cast<FwAssertArgType>(status));
+    this->m_sandboxConfigured = true;
+}
+
+bool FpySequencer::checkSandbox(const Fw::StringBase& fileName) {
+    if (!this->m_sandboxConfigured) {
+        return true;
+    }
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    const bool contained =
+        (Os::FilePathUtils::resolveFromCwd(fileName.toChar(), resolved, sizeof(resolved)) ==
+         Os::FilePathUtils::VALID) &&
+        (Os::FilePathUtils::checkContainment(resolved, this->m_sandboxDir) == Os::FilePathUtils::VALID);
+    if (!contained) {
+        this->log_WARNING_HI_FileOutsideSandbox(fileName, Fw::LogStringArg(this->m_sandboxDir));
+    }
+    return contained;
+}
 
 //! Handler for command RUN
 //!
@@ -252,6 +279,10 @@ void FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,           
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
+    if (!this->checkSandbox(fileName)) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
     Os::File sequenceFile;
     Os::File::Status status = sequenceFile.open(fileName.toChar(), Os::File::OPEN_WRITE);
 
@@ -275,6 +306,17 @@ void FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,           
 void FpySequencer::checkTimers_handler(FwIndexType portNum,  //!< The port number
                                        U32 context           //!< The call order
 ) {
+    // only enqueue if a checkTimersInternal message is not already on the queue
+    bool expected = false;
+    if (this->m_checkTimersQueued.compare_exchange_strong(expected, true)) {
+        this->checkTimersInternal_internalInterfaceInvoke();
+    }
+}
+
+//! Internal interface handler for checkTimersInternal
+void FpySequencer::checkTimersInternal_internalInterfaceHandler() {
+    FW_ASSERT(this->m_checkTimersQueued);
+    this->m_checkTimersQueued = false;
     this->sequencer_sendSignal_checkTimersIn();
 }
 
@@ -411,6 +453,22 @@ void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& f
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
+    // only enqueue if a tlmWriteInternal message is not already on the queue
+    bool expected = false;
+    if (this->m_tlmWriteQueued.compare_exchange_strong(expected, true)) {
+        this->tlmWriteInternal_internalInterfaceInvoke();
+    }
+}
+
+//! Overflow hook for tlmWriteInternal
+void FpySequencer::tlmWriteInternal_overflowHook() {
+    this->m_tlmWriteQueued = false;
+}
+
+//! Internal interface handler for tlmWriteInternal
+void FpySequencer::tlmWriteInternal_internalInterfaceHandler() {
+    FW_ASSERT(this->m_tlmWriteQueued);
+    this->m_tlmWriteQueued = false;
     this->tlmWrite_State(static_cast<FwEnumStoreType>(this->sequencer_getState()));
     this->tlmWrite_StatementsDispatched(this->m_statementsDispatched);
     this->tlmWrite_StatementsFailed(this->m_tlm.statementsFailed);

@@ -14,6 +14,7 @@
 #define SVC_TLMPACKETIZER_TLMPACKETIZERTYPES_HPP_
 
 #include "Fw/FPrimeBasicTypes.hpp"
+#include "TlmPacketizerConfig/FppConstantsAc.hpp"
 #include "TlmPacketizerConfig/TlmPacketizerCfg.hpp"
 
 namespace Svc {

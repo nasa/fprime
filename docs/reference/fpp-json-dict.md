@@ -967,7 +967,8 @@ module M {
 | `name` | Name of the telemetry packet | **String** | true |
 | `id` | Numeric identifier of the packet | **Number** | true |
 | `group` | Packet group number | **Number** | true |
-| `members` | Telemetry Channels in the packet | Array of Fully Qualified Names of [Telemetry Channels](#telemetry-channels) | true
+| `members` | Telemetry Channels in the packet | Array of Fully Qualified Names of [Telemetry Channels](#telemetry-channels) | true |
+| `annotation` | User-defined annotation of the packet | **String** | false |
 
 ### Telemetry Packet Sets
 
@@ -976,6 +977,7 @@ module M {
 | `name` | Name of the telemetry packet set | **String** | true |
 | `members` | Telemetry Packets in the set | Array of [Telemetry Packets](#telemetry-packets) | true |
 | `omitted` | Telemetry Channels omitted from the set | Array of Fully Qualified Names of [Telemetry Channels](#telemetry-channels) | true |
+| `annotation` | User-defined annotation of the packet set | **String** | false |
 
 
 Example FPP model with JSON representation:
@@ -1003,7 +1005,9 @@ module M {
   topology T {
     instance c1
 
+    @ Packets sent during normal operation
     telemetry packets Packets {
+      @ Housekeeping data
       packet P1 id 0 level 0 {
         M.c1.Channel0
         M.c1.Channel1
@@ -1027,12 +1031,14 @@ module M {
           "members" : [
             "M.c1.Channel0",
             "M.c1.Channel1"
-          ]
+          ],
+          "annotation" : "Housekeeping data"
         }
       ],
       "omitted" : [
         "M.c1.Channel2"
-      ]
+      ],
+      "annotation" : "Packets sent during normal operation"
     }
 ]
 ```

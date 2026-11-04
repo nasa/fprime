@@ -87,6 +87,18 @@ void ComLoggerDp ::schedIn_handler(FwIndexType portNum, U32 context) {
     // portNum and context are unused
     (void)portNum;
     (void)context;
+    bool expected = false;
+    if (this->m_schedInQueued.compare_exchange_strong(expected, true)) {
+        this->schedInInternal_internalInterfaceInvoke();
+    }
+}
+
+void ComLoggerDp ::schedInInternal_overflowHook() {
+    this->m_schedInQueued = false;
+}
+
+void ComLoggerDp ::schedInInternal_internalInterfaceHandler() {
+    this->m_schedInQueued = false;
 
     // Check for auto-flush condition
     // Note: m_flushTimeout > 0 check ensures auto-flush is disabled when timeout is 0

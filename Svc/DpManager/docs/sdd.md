@@ -49,7 +49,8 @@ The diagram below shows the `DpManager` component.
 
 | Kind | Name | Port Type | Usage |
 |------|------|-----------|-------|
-| `async input` | `schedIn` | `Svc.Sched` | Schedule in port |
+| `sync input` | `schedIn` | `Svc.Sched` | Schedule in port |
+| `internal` (`hook`) | `schedInInternal` | n/a | Performs the `schedIn` work on the component thread; at most one message queued |
 | `sync input` | `productGetIn` | `[DpManagerNumPorts] Fw.DpGet` | Ports for responding to a data product get from a client component |
 | `async input` | `productRequestIn` | `[DpManagerNumPorts] Fw.DpRequest` | Ports for receiving data product buffer requests from a client component |
 | `output` | `productResponseOut` | `[DpManagerNumPorts] Fw.DpResponse` | Ports for sending requested data product buffers to a client component |

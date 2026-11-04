@@ -16,14 +16,6 @@
 #include <Os/Mutex.hpp>
 #include <config/IpCfg.hpp>
 
-// MSG_NOSIGNAL must be visible when SEND_NO_SIGNAL_FLAGS is defined below, independent of what IpCfg.hpp includes
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <sockLib.h>
-#include <socket.h>
-#elif defined(TGT_OS_TYPE_LINUX) || defined(TGT_OS_TYPE_DARWIN)
-#include <sys/socket.h>
-#endif
-
 namespace Drv {
 
 struct SocketDescriptor final {

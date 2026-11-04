@@ -65,15 +65,16 @@ Ask the user for:
 
 ### Step 2 — Define Behavioral Requirements
 
-Requirements are written as **"shall"** or **"should"** statements.
-Each requirement must be something that can be
-**validated/verified/tested**.
+Requirements are written as **"shall"** statements; each must be
+something that can be **verified** (a pass/fail observable). Goals
+that are not pass/fail ("should") go in the SDD narrative, not the
+table.
 
 Requirements are typically shipped as a table:
 
-| ID | Shall Statement | Description / Context | Test Method |
+| ID | Shall Statement | Rationale | Verification Method |
 |---|---|---|---|
-| REQ-\<Component\>-001 | The component shall \<behavior\>. | \<Human-readable context\> | \<Unit test / integration test / inspection\> |
+| REQ-\<Component\>-001 | The component shall \<behavior\>. | \<Why: request element, parent requirement, or fault scenario\> | \<Unit test / integration test / inspection — strongest feasible, in that order\> |
 | REQ-\<Component\>-002 | ... | ... | ... |
 
 Categories to cover:
@@ -118,7 +119,7 @@ A requirements document (typically captured in the component's
 `docs/sdd.md` or as a structured list in the PR description) with:
 
 - Component name, module, and work type
-- Requirements table (ID, shall statement, description, test method)
+- Requirements table (ID, shall statement, rationale, verification method)
 - Interface summary (data exchanged, not port types)
 - Any constraints or assumptions noted
 

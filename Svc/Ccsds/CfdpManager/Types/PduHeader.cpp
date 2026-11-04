@@ -20,7 +20,7 @@ void PduHeader::initialize(PduTypeEnum::T type,
                            TransactionSeq transactionSeq,
                            EntityId destEid) {
     this->m_type = type;
-    this->m_version = 1;  // CFDP version is always 1
+    this->m_version = CFDP_VERSION;
     this->m_pduType = (type == PduTypeEnum::FILE_DATA) ? PduType::PDU_TYPE_FILE_DATA : PduType::PDU_TYPE_DIRECTIVE;
     this->m_direction = direction;
     this->m_class = txmMode;
@@ -75,6 +75,21 @@ static U64 decodeIntegerInSize(Fw::SerialBufferBase& serialBuffer, U8 decodeSize
     }
 
     return value;
+}
+
+// Helper function to decode a variable-width field into a configured field type, rejecting values that do not fit
+template <typename T>
+static Fw::SerializeStatus decodeFieldInSize(Fw::SerialBufferBase& serialBuffer, U8 decodeSize, T& field) {
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    const U64 value = decodeIntegerInSize(serialBuffer, decodeSize, status);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+    if (static_cast<U64>(static_cast<T>(value)) != value) {
+        return Fw::FW_DESERIALIZE_FORMAT_ERROR;
+    }
+    field = static_cast<T>(value);
+    return Fw::FW_SERIALIZE_OK;
 }
 
 U32 PduHeader::getBufferSize() const {
@@ -177,6 +192,13 @@ Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuff
     this->m_crcFlag = static_cast<CrcFlag>((flags >> 1) & 0x01);
     this->m_largeFileFlag = static_cast<LargeFileFlag>(flags & 0x01);
 
+    // Reject headers announcing protocol features the body decoders do not implement:
+    // other protocol versions, a trailing CRC, and 64-bit file sizes when FileSize is narrower
+    if ((this->m_version != CFDP_VERSION) || (this->m_crcFlag != CrcFlag::CRC_NOT_PRESENT) ||
+        ((this->m_largeFileFlag == LargeFileFlag::LARGE_FILE_64_BIT) && (sizeof(FileSize) < sizeof(U64)))) {
+        return Fw::FW_DESERIALIZE_FORMAT_ERROR;
+    }
+
     // Bytes 1-2: PDU data length
     status = serialBuffer.deserializeTo(this->m_pduDataLength);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -199,18 +221,19 @@ Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuff
     FW_ASSERT(eidSize >= 1 && eidSize <= 8, static_cast<FwAssertArgType>(eidSize));
     FW_ASSERT(tsnSize >= 1 && tsnSize <= 8, static_cast<FwAssertArgType>(tsnSize));
 
-    // Variable-width fields (size determined by encoded length)
-    this->m_sourceEid = static_cast<EntityId>(decodeIntegerInSize(serialBuffer, eidSize, status));
+    // Variable-width fields (size determined by encoded length). Any wire width up to 8 bytes is
+    // accepted, but the decoded value must fit the configured EntityId/TransactionSeq type.
+    status = decodeFieldInSize(serialBuffer, eidSize, this->m_sourceEid);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    this->m_transactionSeq = static_cast<TransactionSeq>(decodeIntegerInSize(serialBuffer, tsnSize, status));
+    status = decodeFieldInSize(serialBuffer, tsnSize, this->m_transactionSeq);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
 
-    this->m_destEid = static_cast<EntityId>(decodeIntegerInSize(serialBuffer, eidSize, status));
+    status = decodeFieldInSize(serialBuffer, eidSize, this->m_destEid);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }

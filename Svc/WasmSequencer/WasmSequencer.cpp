@@ -22,6 +22,7 @@
 #include "Svc/WasmSequencer/WasmSequencer_SignalSourceEnumAc.hpp"
 #include "Svc/WasmSequencer/fprime_spacewasm/include/fprime_spacewasm.h"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
+#include "config/CommandDispatcherImplCfg.hpp"
 #include "config/FwAssertArgTypeAliasAc.h"
 #include "config/FwIndexTypeAliasAc.h"
 #include "config/FwSizeTypeAliasAc.h"
@@ -64,6 +65,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_invokeStatus(SPACEWASM_OK),
       m_pendingPause(false),
       m_cancelRequested(false),
+      m_writeTelemetryQueued(false),
       m_sequencesStarted(0) {}
 
 void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) {
@@ -210,7 +212,8 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
     // late reply (e.g. a command that returned after a CANCEL) and just report it
     // without failing the current sequence.
     if (sequenceIndex != currentSequenceIndex) {
-        this->log_WARNING_LO_CmdResponseFromOldSequence(opCode, response, sequenceIndex, currentSequenceIndex);
+        this->log_WARNING_LO_CmdResponseFromOldSequence(CmdDispatcherCfg::getEventOpcode(opCode), response,
+                                                        sequenceIndex, currentSequenceIndex);
         return;
     }
 
@@ -226,7 +229,8 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
     // Awaiting a command response, but was it for this exact dispatch instance, or
     // an earlier one in this sequence with the same opcode?
     if (cmdIndex != currentCmdIndex) {
-        this->log_WARNING_HI_WrongCmdResponseIndex(opCode, response, cmdIndex, currentCmdIndex);
+        this->log_WARNING_HI_WrongCmdResponseIndex(CmdDispatcherCfg::getEventOpcode(opCode), response, cmdIndex,
+                                                   currentCmdIndex);
         this->interpreter_sendSignal_hostResponseUnexpected(WasmSequencer_HostFunction::COMMAND);
         return;
     }
@@ -242,6 +246,18 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 }
 
 void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
+    bool expected = false;
+    if (this->m_writeTelemetryQueued.compare_exchange_strong(expected, true)) {
+        this->writeTelemetryInternal_internalInterfaceInvoke();
+    }
+}
+
+void WasmSequencer ::writeTelemetryInternal_overflowHook() {
+    this->m_writeTelemetryQueued = false;
+}
+
+void WasmSequencer ::writeTelemetryInternal_internalInterfaceHandler() {
+    this->m_writeTelemetryQueued = false;
     FW_ASSERT(this->m_wasm != nullptr);
 
     auto now = this->getTime();
