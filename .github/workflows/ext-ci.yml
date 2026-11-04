@@ -60,12 +60,12 @@ jobs:
           INPUT_FPRIME_REF: ${{ inputs.fprime_ref }}
           INPUT_FORCE_ALL: ${{ inputs.force_all }}
           POLL_INTERVAL_SECONDS: 60
-        run: node .github/scripts/ext-ci-orchestrator.mjs run
+        run: python3 .github/scripts/ext-ci-orchestrator.py run
       - name: "Finalize (close open checks, cancel orphaned remote runs)"
         if: always()
         env:
           JOB_STATUS: ${{ job.status }}
-        run: node .github/scripts/ext-ci-orchestrator.mjs finalize
+        run: python3 .github/scripts/ext-ci-orchestrator.py finalize
       - uses: actions/upload-artifact@v4
         if: always()
         with:
