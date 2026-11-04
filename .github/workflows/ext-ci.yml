@@ -32,7 +32,7 @@ on:
 # One orchestrator per F´ head (repo + branch); a newer PR push cancels the older PR fan-out and
 # the finalize step below propagates that to the remote runs. Branch/nightly runs are never cancelled.
 concurrency:
-  group: ext-ci-${{ github.event.workflow_run.head_repository.full_name || github.repository }}-${{ github.event.workflow_run.head_branch || inputs.pr_number || inputs.fprime_ref || github.ref_name }}
+  group: ext-ci-${{ github.event_name }}-${{ github.event.workflow_run.head_repository.full_name || github.repository }}-${{ github.event.workflow_run.head_branch || inputs.pr_number || inputs.fprime_ref || github.ref_name }}
   cancel-in-progress: ${{ github.event_name == 'workflow_run' }}
 
 permissions:

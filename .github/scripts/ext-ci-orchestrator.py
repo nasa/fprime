@@ -212,7 +212,9 @@ def resolve_target():
         else:
             ref = (env.get("INPUT_FPRIME_REF") or "").strip() or env["GITHUB_REF_NAME"]
             commit = own.get(f"/repos/{REPO}/commits/{q(ref)}")
-            t.update(head_sha=commit["sha"], head_branch=ref, base_ref=ref)
+            # base_ref (manifest + ext ref lookup) is the branch this run was started from, never the
+            # possibly untrusted ref under test: any PR SHA is readable through /contents?ref=.
+            t.update(head_sha=commit["sha"], head_branch=ref, base_ref=env["GITHUB_REF_NAME"])
     else:  # push, schedule
         t.update(head_sha=env["GITHUB_SHA"], head_branch=env["GITHUB_REF_NAME"], base_ref=env["GITHUB_REF_NAME"])
         before = EVENT.get("before")
@@ -276,7 +278,12 @@ def changed_files(target):
         return None  # unknown -> run everything
     files = []
     for page in range(1, 31):
-        r = own.get(f"{url}&page={page}")
+        try:
+            r = own.get(f"{url}&page={page}")
+        except ApiError as e:
+            if e.status == 404 and not target["pr"]:
+                return None  # before SHA no longer in history (force-push): run everything
+            raise
         batch = r if target["pr"] else r.get("files", [])
         files += [f["filename"] for f in batch]
         if len(batch) < 100:
@@ -420,7 +427,7 @@ def cancel_run(s):
 def correlate(state):
     """For dispatches without a run id (lost response, or an API server that still answers 204):
     find the run whose title carries our dispatch_id (the ext workflow echoes it into run-name)."""
-    pending = [s for s in state["repos"].values() if not s["remote_run_id"] and not s["remote_conclusion"]]
+    pending = [s for s in state["repos"].values() if not s.get("remote_run_id") and not s.get("remote_conclusion")]
     deadline = time.time() + CORRELATE_TIMEOUT_S
     while pending and time.time() < deadline:
         for s in list(pending):
@@ -452,7 +459,7 @@ def correlate(state):
 # ---------------------------------------------------------------- poll
 def poll_all(state):
     def active():
-        return [s for s in state["repos"].values() if s["remote_run_id"] and not s["remote_conclusion"]]
+        return [s for s in state["repos"].values() if s.get("remote_run_id") and not s.get("remote_conclusion")]
 
     while active():
         time.sleep(POLL_S)
