@@ -19,7 +19,8 @@ namespace Fw {
 //!
 //! Formats the location of a failed assertion and its arguments into destBuffer. Called by the
 //! framework when no Fw::AssertHook is registered, by the default Fw::AssertHook::reportAssert, and
-//! by Svc::AssertFatalAdapter.
+//! by Svc::AssertFatalAdapter. Implementations must leave destBuffer null-terminated whenever
+//! buffSize is greater than zero; an empty string is acceptable.
 //!
 //! \param file: file name or file ID (depending on FW_ASSERT_LEVEL)
 //! \param lineNo: line number where the assert occurred
