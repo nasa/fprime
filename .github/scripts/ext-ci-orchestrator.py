@@ -150,7 +150,7 @@ class Client:
             except (urllib.error.URLError, OSError) as e:
                 if not idempotent or i == 4:
                     raise ApiError(f"{self.label}: {method} {url} -> network error {e}")
-                time.sleep(2 * 2**i)
+                time.sleep(2 << i)
                 continue
             limited = status == 429 or (
                 status == 403
@@ -160,7 +160,7 @@ class Client:
                 )
             )
             if (limited or (status >= 500 and idempotent)) and i < 4:
-                wait = 2 * 2**i
+                wait = 2 << i
                 if hdrs.get("retry-after"):
                     wait = int(hdrs["retry-after"])
                 elif limited and hdrs.get("x-ratelimit-reset"):
