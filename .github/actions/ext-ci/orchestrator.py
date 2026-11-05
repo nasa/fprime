@@ -1,32 +1,21 @@
 #!/usr/bin/env python3
 """External-CI orchestrator (standard library only, Python >= 3.10).
 
-  python3 ext-ci-orchestrator.py run       dispatch, poll, report
-  python3 ext-ci-orchestrator.py finalize  close anything still open (runs under if: always())
+  python3 orchestrator.py run       dispatch, poll, report
+  python3 orchestrator.py finalize  close anything still open (runs under if: always())
 
-For every repo in .github/ext-ci-manifest.json: create a Check Run on the F´ commit under test,
+For every repo in manifest.json (same directory): create a Check Run on the F´ commit under test,
 dispatch the repo's own ci.yml with that commit, poll the remote run, close the Check Run with
 its result. A re-run of the orchestrator re-dispatches only the repos whose check is not green.
 
-Manifest (.github/ext-ci-manifest.json):
-  upstream_repository  only this repo dispatches automatically; forks only on workflow_dispatch
-  check_prefix         Check Run name is "<check_prefix> / <id>"
-  paths_ignore         globs; a PR touching only these gets "skipped" checks and no dispatch
-  repos[]: id, repository (owner/name), workflow (file name, must accept the inputs below),
-           default_ref (branch to dispatch when no pr-<N> / base-named branch exists),
-           timeout_minutes (of remote running time; 2x while queued), failure_policy
-           ("block": failure is a red check and fails this job; "notify": neutral check),
-           on_pr (false: never dispatched for a PR, only merge queue / manual)
-
-Contract for the external ci.yml: `on: workflow_dispatch` with inputs fprime_repository,
-fprime_ref (exact SHA to overlay as the F´ dependency), fprime_pr_number, dispatch_id; no secrets,
-read-only permissions, no cache writes on dispatched runs.
+Manifest keys and the contract an external ci.yml must satisfy: see README.md next to this file.
 
 Two credentials, never mixed:
   GITHUB_TOKEN    this repo only (checks: write) - reports results
   DISPATCH_TOKEN  external repos only (actions: write; contents: read too if an external repo
                   is private, for the branch lookup) - starts remote runs
 """
+
 import json
 import os
 import re
@@ -44,9 +33,13 @@ API = env.get("GITHUB_API_URL", "https://api.github.com")
 SERVER = env.get("GITHUB_SERVER_URL", "https://github.com")
 STATE_FILE = "ext-ci-state.json"
 RESULTS_FILE = "ext-ci-results.json"
-MANIFEST_PATH = ".github/ext-ci-manifest.json"
+MANIFEST_PATH = ".github/actions/ext-ci/manifest.json"
 POLL_S = int(env.get("POLL_INTERVAL_SECONDS") or 60)
-ORCHESTRATOR_FAULTS = ("dispatch_failed", "queue_timeout", "error")  # remote_conclusion values we made up
+ORCHESTRATOR_FAULTS = (
+    "dispatch_failed",
+    "queue_timeout",
+    "error",
+)  # remote_conclusion values we made up
 
 REPO = env.get("GITHUB_REPOSITORY")
 RUN_ID = env.get("GITHUB_RUN_ID")
@@ -54,7 +47,9 @@ ATTEMPT = int(env.get("GITHUB_RUN_ATTEMPT") or 1)
 EVENT_NAME = env.get("GITHUB_EVENT_NAME")
 with open(env["GITHUB_EVENT_PATH"]) as _f:
     EVENT = json.load(_f)
-ORCHESTRATOR_URL = f"{SERVER}/{REPO}/actions/runs/{RUN_ID}" + (f"/attempts/{ATTEMPT}" if ATTEMPT > 1 else "")
+ORCHESTRATOR_URL = f"{SERVER}/{REPO}/actions/runs/{RUN_ID}" + (
+    f"/attempts/{ATTEMPT}" if ATTEMPT > 1 else ""
+)
 
 
 def log(msg: str) -> None:
@@ -105,13 +100,16 @@ class Client:
     def __init__(self, token: str | None, label: str) -> None:
         self.token, self.label = token, label
 
-    def request(self, method: str, url: str, body=None, idempotent: bool = True) -> tuple:
+    def request(
+        self, method: str, url: str, body=None, idempotent: bool = True
+    ) -> tuple:
         """Perform one API call and return (HTTP status, parsed body).
 
         Never raises on a 4xx/5xx status: callers decide what a status means (see `api`, `exists`).
         Retries rate limits always; network errors and 5xx only when the call is idempotent (a
         workflow dispatch is not: the run may have started). Raises ApiError when the token is
-        missing, when a non-idempotent call hits a network error, or after five failed attempts."""
+        missing, when a non-idempotent call hits a network error, or after five failed attempts.
+        """
         if not self.token:
             raise ApiError(f"{self.label} token missing (secret not configured?)")
         headers = {
@@ -125,27 +123,41 @@ class Client:
             data = json.dumps(body).encode()
             headers["Content-Type"] = "application/json"
         for i in range(5):
-            req = urllib.request.Request(API + url, data=data, method=method, headers=headers)
+            req = urllib.request.Request(
+                API + url, data=data, method=method, headers=headers
+            )
             try:
                 with urllib.request.urlopen(req, timeout=60) as res:
                     status, hdrs, text = res.status, res.headers, res.read().decode()
             except urllib.error.HTTPError as e:
-                status, hdrs, text = e.code, e.headers, e.read().decode(errors="replace")
+                status, hdrs, text = (
+                    e.code,
+                    e.headers,
+                    e.read().decode(errors="replace"),
+                )
             except (urllib.error.URLError, OSError) as e:
                 if not idempotent or i == 4:
                     raise ApiError(f"{self.label}: {method} {url} -> network error {e}")
-                time.sleep(2 * 2**i)
+                time.sleep(2 << i)
                 continue
             limited = status == 429 or (
-                status == 403 and (hdrs.get("x-ratelimit-remaining") == "0" or re.search("rate limit", text, re.I))
+                status == 403
+                and (
+                    hdrs.get("x-ratelimit-remaining") == "0"
+                    or re.search("rate limit", text, re.I)
+                )
             )
             if (limited or (status >= 500 and idempotent)) and i < 4:
-                wait = 2 * 2**i
+                wait = 2 << i
                 if hdrs.get("retry-after"):
                     wait = int(hdrs["retry-after"])
                 elif limited and hdrs.get("x-ratelimit-reset"):
-                    wait = max(wait, int(hdrs["x-ratelimit-reset"]) - int(time.time()) + 1)
-                log(f"::warning::{self.label}: {method} {url} -> {status}; retrying in {wait} s")
+                    wait = max(
+                        wait, int(hdrs["x-ratelimit-reset"]) - int(time.time()) + 1
+                    )
+                log(
+                    f"::warning::{self.label}: {method} {url} -> {status}; retrying in {wait} s"
+                )
                 time.sleep(min(wait, 15 * 60))
                 continue
             try:
@@ -158,7 +170,10 @@ class Client:
         """`request` that raises ApiError on any non-2xx status; returns the parsed body."""
         status, data = self.request(method, url, body, idempotent)
         if not 200 <= status < 300:
-            raise ApiError(f"{self.label}: {method} {url} -> {status} {json.dumps(data)[:300]}", status)
+            raise ApiError(
+                f"{self.label}: {method} {url} -> {status} {json.dumps(data)[:300]}",
+                status,
+            )
         return data
 
     def get(self, url: str):
@@ -197,7 +212,13 @@ def resolve_target() -> dict:
     `base_ref` (trusted branch the run was started from; drives the external branch lookup) and
     Raises RuntimeError when a PR run no longer matches an open PR or `pr_number` is not numeric,
     ApiError when a manual PR/ref does not exist."""
-    t = {"pr": None, "head_repo": REPO, "head_sha": None, "head_branch": None, "base_ref": None}
+    t = {
+        "pr": None,
+        "head_repo": REPO,
+        "head_sha": None,
+        "head_branch": None,
+        "base_ref": None,
+    }
     if EVENT_NAME == "workflow_run":
         wr = EVENT["workflow_run"]
         # Trust only the event payload: nothing produced by the (untrusted) trigger run is read.
@@ -210,15 +231,27 @@ def resolve_target() -> dict:
             return t
         # workflow_run.pull_requests is empty for fork PRs; find the PR by commit, then by head ref.
         prs = own.get(f"/repos/{REPO}/commits/{t['head_sha']}/pulls?per_page=20")
-        pr = next((p for p in prs if p["state"] == "open" and p["head"]["sha"] == t["head_sha"]
-                   and p["base"]["repo"]["full_name"] == REPO), None)
+        pr = next(
+            (
+                p
+                for p in prs
+                if p["state"] == "open"
+                and p["head"]["sha"] == t["head_sha"]
+                and p["base"]["repo"]["full_name"] == REPO
+            ),
+            None,
+        )
         if not pr:
             owner = t["head_repo"].split("/")[0]
-            prs = own.get(f"/repos/{REPO}/pulls?state=open&head={q(owner + ':' + t['head_branch'])}")
+            prs = own.get(
+                f"/repos/{REPO}/pulls?state=open&head={q(owner + ':' + t['head_branch'])}"
+            )
             pr = next((p for p in prs if p["head"]["sha"] == t["head_sha"]), None)
         if not pr:
-            raise RuntimeError(f"no open PR found for {t['head_repo']}@{t['head_sha']} ({t['head_branch']}); "
-                               "the PR may have been updated or closed")
+            raise RuntimeError(
+                f"no open PR found for {t['head_repo']}@{t['head_sha']} ({t['head_branch']}); "
+                "the PR may have been updated or closed"
+            )
         t["pr"], t["base_ref"] = pr["number"], pr["base"]["ref"]
     elif EVENT_NAME == "workflow_dispatch":
         pr_number = (env.get("INPUT_PR_NUMBER") or "").strip()
@@ -226,13 +259,20 @@ def resolve_target() -> dict:
             if not pr_number.isdigit():
                 raise RuntimeError(f"pr_number must be numeric, got {pr_number!r}")
             pr = own.get(f"/repos/{REPO}/pulls/{pr_number}")
-            t.update(pr=pr["number"], head_sha=pr["head"]["sha"], head_repo=pr["head"]["repo"]["full_name"],
-                     head_branch=pr["head"]["ref"], base_ref=pr["base"]["ref"])
+            t.update(
+                pr=pr["number"],
+                head_sha=pr["head"]["sha"],
+                head_repo=pr["head"]["repo"]["full_name"],
+                head_branch=pr["head"]["ref"],
+                base_ref=pr["base"]["ref"],
+            )
         else:
             ref = (env.get("INPUT_FPRIME_REF") or "").strip() or env["GITHUB_REF_NAME"]
             commit = own.get(f"/repos/{REPO}/commits/{q(ref)}")
             # base_ref (ext branch lookup) is the branch this run was started from, not the ref under test.
-            t.update(head_sha=commit["sha"], head_branch=ref, base_ref=env["GITHUB_REF_NAME"])
+            t.update(
+                head_sha=commit["sha"], head_branch=ref, base_ref=env["GITHUB_REF_NAME"]
+            )
     else:
         raise RuntimeError(f"unsupported event: {EVENT_NAME}")
     return t
@@ -245,7 +285,9 @@ def changed_files(target: dict) -> list[str] | None:
         return None
     files = []
     for page in range(1, 31):  # GitHub lists at most 3000 files per PR
-        batch = own.get(f"/repos/{REPO}/pulls/{target['pr']}/files?per_page=100&page={page}")
+        batch = own.get(
+            f"/repos/{REPO}/pulls/{target['pr']}/files?per_page=100&page={page}"
+        )
         files += [f["filename"] for f in batch]
         if len(batch) < 100:
             break
@@ -285,12 +327,15 @@ def select_repos(manifest: dict, target: dict) -> list[dict]:
 
 def resolve_ext_ref(entry: dict, target: dict) -> str:
     """Return the external repo branch to dispatch: its `pr-<N>` branch if it exists, else a branch
-    named like the F´ base branch (`devel`, `release/x`), else the entry's `default_ref` (`main`)."""
+    named like the F´ base branch (`devel`, `release/x`), else the entry's `default_ref` (`main`).
+    """
     candidates = [target["base_ref"]]
     if target["pr"]:
         candidates.insert(0, f"pr-{target['pr']}")
     for candidate in candidates:
-        if candidate and ext.exists(f"/repos/{entry['repository']}/branches/{q(candidate)}"):
+        if candidate and ext.exists(
+            f"/repos/{entry['repository']}/branches/{q(candidate)}"
+        ):
             return candidate
     return entry.get("default_ref", "main")
 
@@ -302,8 +347,10 @@ def check_name(manifest: dict, repo_id: str) -> str:
 
 def check_succeeded(manifest: dict, entry: dict, target: dict) -> bool:
     """True when this entry's latest Check Run on the F´ commit (from an earlier attempt) succeeded."""
-    runs = own.get(f"/repos/{REPO}/commits/{target['head_sha']}/check-runs"
-                   f"?check_name={q(check_name(manifest, entry['id']))}&filter=latest")["check_runs"]
+    runs = own.get(
+        f"/repos/{REPO}/commits/{target['head_sha']}/check-runs"
+        f"?check_name={q(check_name(manifest, entry['id']))}&filter=latest"
+    )["check_runs"]
     return any(r["conclusion"] == "success" for r in runs)
 
 
@@ -322,44 +369,80 @@ def dispatch_one(manifest: dict, entry: dict, target: dict, state: dict) -> None
     remote_started_at, remote_conclusion, conclusion, error, ...). Never raises: any failure ends
     this repo as `remote_conclusion: dispatch_failed` so the other repos still run."""
     s = state["repos"][entry["id"]] = {
-        "id": entry["id"], "repository": entry["repository"], "workflow": entry["workflow"], "ext_ref": None,
-        "failure_policy": entry.get("failure_policy", "block"), "timeout_minutes": entry.get("timeout_minutes", 60),
-        "dispatched_at": now().strftime("%Y-%m-%dT%H:%M:%SZ"), "check_run_id": None,
-        "remote_run_id": None, "remote_run_url": None, "remote_started_at": None,
-        "remote_conclusion": None, "conclusion": None, "error": None,
+        "id": entry["id"],
+        "repository": entry["repository"],
+        "workflow": entry["workflow"],
+        "ext_ref": None,
+        "failure_policy": entry.get("failure_policy", "block"),
+        "timeout_minutes": entry.get("timeout_minutes", 60),
+        "dispatched_at": now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "check_run_id": None,
+        "remote_run_id": None,
+        "remote_run_url": None,
+        "remote_started_at": None,
+        "remote_conclusion": None,
+        "conclusion": None,
+        "error": None,
     }
     try:
         # Check Run first, so a credential or API problem on the ext side still ends in a visible
         # failed check rather than a required check that never appears.
-        check = own.post(f"/repos/{REPO}/check-runs", {
-            "name": check_name(manifest, entry["id"]), "head_sha": target["head_sha"], "status": "queued",
-            "details_url": ORCHESTRATOR_URL,
-            "output": {"title": f"Dispatching {entry['repository']}",
-                       "summary": f"Dispatching {code(entry['workflow'])} on {code(entry['repository'])} with F´ "
-                                  f"{code(fprime_rev(target))}.\n\nOrchestrator: {ORCHESTRATOR_URL}"},
-        })
+        check = own.post(
+            f"/repos/{REPO}/check-runs",
+            {
+                "name": check_name(manifest, entry["id"]),
+                "head_sha": target["head_sha"],
+                "status": "queued",
+                "details_url": ORCHESTRATOR_URL,
+                "output": {
+                    "title": f"Dispatching {entry['repository']}",
+                    "summary": f"Dispatching {code(entry['workflow'])} on {code(entry['repository'])} with F´ "
+                    f"{code(fprime_rev(target))}.\n\nOrchestrator: {ORCHESTRATOR_URL}",
+                },
+            },
+        )
         s["check_run_id"] = check["id"]
         save_state(state)
         s["ext_ref"] = resolve_ext_ref(entry, target)
-        r = ext.post(f"/repos/{entry['repository']}/actions/workflows/{entry['workflow']}/dispatches", {
-            "ref": s["ext_ref"],
-            "inputs": {"fprime_repository": target["head_repo"], "fprime_ref": target["head_sha"],
-                       "fprime_pr_number": str(target["pr"] or ""), "dispatch_id": f"{RUN_ID}-{ATTEMPT}-{entry['id']}"},
-            "return_run_details": True,
-        }, idempotent=False)
+        r = ext.post(
+            f"/repos/{entry['repository']}/actions/workflows/{entry['workflow']}/dispatches",
+            {
+                "ref": s["ext_ref"],
+                "inputs": {
+                    "fprime_repository": target["head_repo"],
+                    "fprime_ref": target["head_sha"],
+                    "fprime_pr_number": str(target["pr"] or ""),
+                    "dispatch_id": f"{RUN_ID}-{ATTEMPT}-{entry['id']}",
+                },
+                "return_run_details": True,
+            },
+            idempotent=False,
+        )
         if not r or not r.get("workflow_run_id"):
             raise RuntimeError("dispatch accepted but no run id returned")
-        s["remote_run_id"], s["remote_run_url"] = r["workflow_run_id"], r.get("html_url")
-        log(f"[{entry['id']}] dispatched {entry['repository']}/{entry['workflow']} @ {s['ext_ref']} -> {s['remote_run_url']}")
+        s["remote_run_id"], s["remote_run_url"] = r["workflow_run_id"], r.get(
+            "html_url"
+        )
+        log(
+            f"[{entry['id']}] dispatched {entry['repository']}/{entry['workflow']} @ {s['ext_ref']} -> {s['remote_run_url']}"
+        )
         try:
-            own.patch(f"/repos/{REPO}/check-runs/{s['check_run_id']}", {
-                "status": "in_progress", "details_url": s["remote_run_url"],
-                "output": {"title": f"Running on {s['repository']} @ {s['ext_ref']}",
-                           "summary": f"Remote run: {s['remote_run_url']}\n\nOrchestrator: {ORCHESTRATOR_URL}"},
-            })
+            own.patch(
+                f"/repos/{REPO}/check-runs/{s['check_run_id']}",
+                {
+                    "status": "in_progress",
+                    "details_url": s["remote_run_url"],
+                    "output": {
+                        "title": f"Running on {s['repository']} @ {s['ext_ref']}",
+                        "summary": f"Remote run: {s['remote_run_url']}\n\nOrchestrator: {ORCHESTRATOR_URL}",
+                    },
+                },
+            )
         except ApiError as e:  # cosmetic: the run exists and is polled regardless
             log(f"::warning::[{entry['id']}] check update: {e}")
-    except Exception as e:  # noqa: BLE001 - one repo's failure must not stop the fan-out
+    except (
+        Exception
+    ) as e:  # noqa: BLE001 - one repo's failure must not stop the fan-out
         s["error"], s["remote_conclusion"] = f"dispatch failed: {e}", "dispatch_failed"
         log(f"::error::[{entry['id']}] {s['error']}")
     save_state(state)
@@ -377,32 +460,51 @@ def poll_all(state: dict) -> None:
     """Poll every dispatched run every POLL_S seconds until each has a `remote_conclusion`.
 
     Sets it to the run's conclusion, `timed_out` (running longer than timeout_minutes, remote run
-    cancelled), `queue_timeout` (not started after 2x timeout) or `error` (401/404 while polling).
+    cancelled), `queue_timeout` (not started after another timeout_minutes) or `error` (401/404 while polling).
     Other poll errors are retried on the next tick."""
 
     def active() -> list[dict]:
-        return [s for s in state["repos"].values() if s["remote_run_id"] and not s["remote_conclusion"]]
+        return [
+            s
+            for s in state["repos"].values()
+            if s["remote_run_id"] and not s["remote_conclusion"]
+        ]
 
     while active():
         time.sleep(POLL_S)
         for s in active():
             try:
-                run = ext.get(f"/repos/{s['repository']}/actions/runs/{s['remote_run_id']}")
+                run = ext.get(
+                    f"/repos/{s['repository']}/actions/runs/{s['remote_run_id']}"
+                )
                 if run.get("run_started_at") and not s["remote_started_at"]:
                     s["remote_started_at"] = run["run_started_at"]
                 timeout = timedelta(minutes=s["timeout_minutes"])
                 if run["status"] == "completed":
                     s["remote_conclusion"] = run["conclusion"]
                     log(f"[{s['id']}] completed: {run['conclusion']}")
-                elif s["remote_started_at"] and now() - parse_ts(s["remote_started_at"]) > timeout:
+                elif (
+                    s["remote_started_at"]
+                    and now() - parse_ts(s["remote_started_at"]) > timeout
+                ):
                     # Counted from when the remote run started: queue time is not the ext repo's fault.
-                    log(f"::warning::[{s['id']}] timed out after {s['timeout_minutes']} min of running; cancelling remote run")
+                    log(
+                        f"::warning::[{s['id']}] timed out after {s['timeout_minutes']} min of running; cancelling remote run"
+                    )
                     cancel_run(s)
                     s["remote_conclusion"] = "timed_out"
-                elif not s["remote_started_at"] and now() - parse_ts(s["dispatched_at"]) > 2 * timeout:
-                    log(f"::warning::[{s['id']}] still queued after {2 * s['timeout_minutes']} min; giving up")
+                elif (
+                    not s["remote_started_at"]
+                    and now() - parse_ts(s["dispatched_at"]) > timeout
+                ):
+                    log(
+                        f"::warning::[{s['id']}] still queued after {s['timeout_minutes']} min; giving up"
+                    )
                     cancel_run(s)
-                    s["remote_conclusion"], s["error"] = "queue_timeout", "remote run never started (no runner available?)"
+                    s["remote_conclusion"], s["error"] = (
+                        "queue_timeout",
+                        "remote run never started (no runner available?)",
+                    )
             except ApiError as e:
                 # A single bad poll must not take the whole fan-out down; give up on this repo only
                 # when the credential is gone or the run vanished.
@@ -418,7 +520,9 @@ def failure_details(s: dict) -> str:
     if not s["remote_run_id"]:
         return ""
     try:
-        jobs = ext.get(f"/repos/{s['repository']}/actions/runs/{s['remote_run_id']}/jobs?per_page=100")["jobs"]
+        jobs = ext.get(
+            f"/repos/{s['repository']}/actions/runs/{s['remote_run_id']}/jobs?per_page=100"
+        )["jobs"]
     except ApiError as e:
         return f"_(job details unavailable: {code(e)})_"
     lines = []
@@ -426,8 +530,11 @@ def failure_details(s: dict) -> str:
         if j.get("conclusion") in (None, "success", "skipped"):
             continue
         lines.append(f"- [{code(j['name'])}]({j['html_url']}): **{j['conclusion']}**")
-        lines += [f"    - step {code(st['name'])}: {st['conclusion']}"
-                  for st in j.get("steps", []) if st.get("conclusion") not in (None, "success", "skipped")]
+        lines += [
+            f"    - step {code(st['name'])}: {st['conclusion']}"
+            for st in j.get("steps", [])
+            if st.get("conclusion") not in (None, "success", "skipped")
+        ]
     return "\n".join(lines)
 
 
@@ -449,25 +556,40 @@ def check_conclusion(s: dict) -> str:
 def finalize_one(target: dict, s: dict) -> None:
     """Close one repo's Check Run with its conclusion, summary and failed-job details.
 
-    Sets s["conclusion"] only after the update succeeded, so `finalize` retries it otherwise."""
+    Sets s["conclusion"] only after the update succeeded, so `finalize` retries it otherwise.
+    """
     conclusion = check_conclusion(s)
     details = "" if s["remote_conclusion"] == "success" else failure_details(s)
-    lines = [f"{code(s['repository'])} @ {code(s['ext_ref'] or '-')} with F´ {code(fprime_rev(target))}: "
-             f"**{s['remote_conclusion']}**", ""]
+    lines = [
+        f"{code(s['repository'])} @ {code(s['ext_ref'] or '-')} with F´ {code(fprime_rev(target))}: "
+        f"**{s['remote_conclusion']}**",
+        "",
+    ]
     if s["remote_run_url"]:
         lines.append(f"Remote run: {s['remote_run_url']}")
     if s["error"]:
         lines.append(f"Error: {code(s['error'])}")
     if s["failure_policy"] == "notify" and s["remote_conclusion"] != "success":
-        lines += ["", f"This repo is {code('failure_policy: notify')}: the failure does not block the PR."]
+        lines += [
+            "",
+            f"This repo is {code('failure_policy: notify')}: the failure does not block the PR.",
+        ]
     lines += ["", f"Orchestrator run: {ORCHESTRATOR_URL}"]
-    output = {"title": f"{s['remote_conclusion']} ({s['repository']} @ {s['ext_ref'] or '-'})", "summary": "\n".join(lines)}
+    output = {
+        "title": f"{s['remote_conclusion']} ({s['repository']} @ {s['ext_ref'] or '-'})",
+        "summary": "\n".join(lines),
+    }
     if details:
         output["text"] = details
-    own.patch(f"/repos/{REPO}/check-runs/{s['check_run_id']}", {
-        "status": "completed", "conclusion": conclusion, "details_url": s["remote_run_url"] or ORCHESTRATOR_URL,
-        "output": output,
-    })
+    own.patch(
+        f"/repos/{REPO}/check-runs/{s['check_run_id']}",
+        {
+            "status": "completed",
+            "conclusion": conclusion,
+            "details_url": s["remote_run_url"] or ORCHESTRATOR_URL,
+            "output": output,
+        },
+    )
     s["conclusion"] = conclusion
 
 
@@ -475,15 +597,27 @@ def skip_all(manifest: dict, target: dict, repos: list[dict], state: dict) -> No
     """Create every repo's Check Run directly as completed/skipped (only `paths_ignore` files changed)."""
     ignored = ", ".join(manifest.get("paths_ignore", []))
     for entry in repos:
-        check = own.post(f"/repos/{REPO}/check-runs", {
-            "name": check_name(manifest, entry["id"]), "head_sha": target["head_sha"],
-            "status": "completed", "conclusion": "skipped", "details_url": ORCHESTRATOR_URL,
-            "output": {"title": "Not dispatched: no relevant files changed",
-                       "summary": f"Only paths matching {code(ignored)} changed.\n\nOrchestrator: {ORCHESTRATOR_URL}"},
-        })
+        check = own.post(
+            f"/repos/{REPO}/check-runs",
+            {
+                "name": check_name(manifest, entry["id"]),
+                "head_sha": target["head_sha"],
+                "status": "completed",
+                "conclusion": "skipped",
+                "details_url": ORCHESTRATOR_URL,
+                "output": {
+                    "title": "Not dispatched: no relevant files changed",
+                    "summary": f"Only paths matching {code(ignored)} changed.\n\nOrchestrator: {ORCHESTRATOR_URL}",
+                },
+            },
+        )
         state["repos"][entry["id"]] = {
-            "id": entry["id"], "repository": entry["repository"], "failure_policy": entry.get("failure_policy", "block"),
-            "check_run_id": check["id"], "remote_conclusion": "skipped", "conclusion": "skipped",
+            "id": entry["id"],
+            "repository": entry["repository"],
+            "failure_policy": entry.get("failure_policy", "block"),
+            "check_run_id": check["id"],
+            "remote_conclusion": "skipped",
+            "conclusion": "skipped",
         }
 
 
@@ -497,19 +631,40 @@ def write_summary(target: dict, state: dict) -> None:
             link = code(s["error"])
         else:
             link = ""
-        rows.append(f"| {code(s['id'])} | {s['repository']} | {code(s.get('ext_ref') or '-')} | {s['failure_policy']} "
-                    f"| {s['remote_conclusion']} | {s['conclusion']} | {link} |")
-    where = f" (PR #{target['pr']})" if target["pr"] else f" ({code(target['head_branch'])})"
-    md = "\n".join([f"### External CI for {code(fprime_rev(target))}{where} — attempt {ATTEMPT}", "",
-                    "| id | repository | ext ref | policy | remote | check | link |",
-                    "|---|---|---|---|---|---|---|", *rows, ""])
+        rows.append(
+            f"| {code(s['id'])} | {s['repository']} | {code(s.get('ext_ref') or '-')} | {s['failure_policy']} "
+            f"| {s['remote_conclusion']} | {s['conclusion']} | {link} |"
+        )
+    where = (
+        f" (PR #{target['pr']})"
+        if target["pr"]
+        else f" ({code(target['head_branch'])})"
+    )
+    md = "\n".join(
+        [
+            f"### External CI for {code(fprime_rev(target))}{where} — attempt {ATTEMPT}",
+            "",
+            "| id | repository | ext ref | policy | remote | check | link |",
+            "|---|---|---|---|---|---|---|",
+            *rows,
+            "",
+        ]
+    )
     if env.get("GITHUB_STEP_SUMMARY"):
         with open(env["GITHUB_STEP_SUMMARY"], "a") as f:
             f.write(md)
     log(md)
     with open(RESULTS_FILE, "w") as f:
-        json.dump({"target": target, "attempt": ATTEMPT, "orchestrator_url": ORCHESTRATOR_URL, "repos": state["repos"]},
-                  f, indent=2)
+        json.dump(
+            {
+                "target": target,
+                "attempt": ATTEMPT,
+                "orchestrator_url": ORCHESTRATOR_URL,
+                "repos": state["repos"],
+            },
+            f,
+            indent=2,
+        )
 
 
 # ---------------------------------------------------------------- modes
@@ -524,16 +679,22 @@ def run() -> None:
     # Fork preflight: a fork of F´ that copies this workflow must not dispatch into the ext repos.
     upstream = manifest.get("upstream_repository")
     if upstream and upstream != REPO and EVENT_NAME != "workflow_dispatch":
-        log(f"::notice::{REPO} is not {upstream}; external CI is only dispatched from upstream. "
-            "Use workflow_dispatch to run it here deliberately.")
+        log(
+            f"::notice::{REPO} is not {upstream}; external CI is only dispatched from upstream. "
+            "Use workflow_dispatch to run it here deliberately."
+        )
         return
     repos = select_repos(manifest, target)
     if ATTEMPT > 1:  # re-run: only the repos whose check is not green yet
         repos = [e for e in repos if not check_succeeded(manifest, e, target)]
-        log(f"attempt {ATTEMPT}: re-dispatching {[e['id'] for e in repos] or 'nothing'}")
+        log(
+            f"attempt {ATTEMPT}: re-dispatching {[e['id'] for e in repos] or 'nothing'}"
+        )
     state = {"target": target, "attempt": ATTEMPT, "repos": {}}
     save_state(state)
-    if EVENT_NAME != "workflow_dispatch" and not relevant_change(changed_files(target), manifest):
+    if EVENT_NAME != "workflow_dispatch" and not relevant_change(
+        changed_files(target), manifest
+    ):
         log("no relevant files changed; marking all repos as skipped")
         skip_all(manifest, target, repos, state)
         write_summary(target, state)
@@ -544,15 +705,23 @@ def run() -> None:
     for s in state["repos"].values():
         try:
             finalize_one(target, s)
-        except Exception as e:  # noqa: BLE001 - the check stays open and finalize() closes it
+        except (
+            Exception
+        ) as e:  # noqa: BLE001 - the check stays open and finalize() closes it
             log(f"::error::[{s['id']}] finalize: {e}")
         save_state(state)
     write_summary(target, state)
     # conclusion is None when finalize_one failed: judge on what it would have been. `notify` only
     # softens a remote build failure; an orchestrator-side fault always fails this job.
-    blocking = [s["id"] for s in state["repos"].values()
-                if (s["conclusion"] or check_conclusion(s)) != "success"
-                and (s["failure_policy"] != "notify" or s["remote_conclusion"] in ORCHESTRATOR_FAULTS)]
+    blocking = [
+        s["id"]
+        for s in state["repos"].values()
+        if (s["conclusion"] or check_conclusion(s)) != "success"
+        and (
+            s["failure_policy"] != "notify"
+            or s["remote_conclusion"] in ORCHESTRATOR_FAULTS
+        )
+    ]
     if blocking:
         log("::error::blocking external repos failed: " + ", ".join(blocking))
         sys.exit(1)
@@ -560,7 +729,8 @@ def run() -> None:
 
 def finalize() -> None:
     """The `finalize` mode, run under `if: always()`: whatever the run step left open (crash, cancellation, timeout) is
-    closed here so no Check Run stays in_progress and no remote run keeps burning runners."""
+    closed here so no Check Run stays in_progress and no remote run keeps burning runners.
+    """
     if not os.path.exists(STATE_FILE):
         return log("no state file; nothing to finalize")
     with open(STATE_FILE) as f:
@@ -575,25 +745,43 @@ def finalize() -> None:
             cancel_run(s)
             remote += " (cancelled)"
         try:
-            if own.get(f"/repos/{REPO}/check-runs/{s['check_run_id']}")["status"] == "completed":
+            if (
+                own.get(f"/repos/{REPO}/check-runs/{s['check_run_id']}")["status"]
+                == "completed"
+            ):
                 continue
         except ApiError:
             pass
         if cancelled:
             conclusion = "neutral" if s["failure_policy"] == "notify" else "cancelled"
-            title, why = "Cancelled by orchestrator", "The orchestrator run was cancelled"
-        elif s.get("remote_conclusion"):  # reported, but the check update itself failed in run
-            conclusion, title = check_conclusion(s), f"{s['remote_conclusion']} ({s['repository']} @ {s.get('ext_ref') or '-'})"
+            title, why = (
+                "Cancelled by orchestrator",
+                "The orchestrator run was cancelled",
+            )
+        elif s.get(
+            "remote_conclusion"
+        ):  # reported, but the check update itself failed in run
+            conclusion, title = (
+                check_conclusion(s),
+                f"{s['remote_conclusion']} ({s['repository']} @ {s.get('ext_ref') or '-'})",
+            )
             why = "Closed by the finalize step after the check update failed"
         else:
             conclusion = "neutral" if s["failure_policy"] == "notify" else "failure"
             title = "Orchestrator error"
             why = f"The orchestrator run ended before this repo was reported ({code(s.get('error') or 'orchestrator error')})"
         try:
-            own.patch(f"/repos/{REPO}/check-runs/{s['check_run_id']}", {
-                "status": "completed", "conclusion": conclusion,
-                "output": {"title": title, "summary": f"{why}; remote run {remote}.\n\n{ORCHESTRATOR_URL}"},
-            })
+            own.patch(
+                f"/repos/{REPO}/check-runs/{s['check_run_id']}",
+                {
+                    "status": "completed",
+                    "conclusion": conclusion,
+                    "output": {
+                        "title": title,
+                        "summary": f"{why}; remote run {remote}.\n\n{ORCHESTRATOR_URL}",
+                    },
+                },
+            )
         except ApiError as e:
             log(f"::warning::[{s['id']}] check update: {e}")
 

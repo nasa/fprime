@@ -6,6 +6,8 @@ on:
   workflow_run:
     workflows: [ ext-ci-trigger ]
     types: [ completed ]
+  push:
+    branches: [ thomas-bc/ext-ci ]  # TEMPORARY: registers the workflow so it can be dispatched before merge
   workflow_dispatch:
     inputs:
       repos:
@@ -28,16 +30,16 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'workflow_run' }}
 
 permissions:
-  contents: read        # manifest
+  contents: read        # manifest + script
   checks: write         # per-repo Check Runs
 
 jobs:
   orchestrate:
     name: "External CI"
     # Only chain from a trigger that actually ran (not skipped/cancelled) for a PR or merge group.
-    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["pull_request","merge_group"]'), github.event.workflow_run.event))
-    runs-on: ubuntu-22.04
-    timeout-minutes: 180
+    if: github.event_name != 'push' && (github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["pull_request","merge_group"]'), github.event.workflow_run.event)))
+    runs-on: ubuntu-latest
+    timeout-minutes: 60  # > 2 * max manifest timeout_minutes (queue + run) + overhead
     env:
       GITHUB_TOKEN: ${{ github.token }}
     steps:
@@ -49,13 +51,13 @@ jobs:
           INPUT_PR_NUMBER: ${{ inputs.pr_number }}
           INPUT_FPRIME_REF: ${{ inputs.fprime_ref }}
           POLL_INTERVAL_SECONDS: 60
-        run: python3 .github/scripts/ext-ci-orchestrator.py run
+        run: python3 .github/actions/ext-ci/orchestrator.py run
       - name: "Finalize (close open checks, cancel orphaned remote runs)"
         if: always()
         env:
           DISPATCH_TOKEN: ${{ secrets.EXT_CI_DISPATCH_TOKEN }}  # external repos only; not exposed to other steps
           JOB_STATUS: ${{ job.status }}
-        run: python3 .github/scripts/ext-ci-orchestrator.py finalize
+        run: python3 .github/actions/ext-ci/orchestrator.py finalize
       - uses: actions/upload-artifact@v4
         if: always()
         with:
