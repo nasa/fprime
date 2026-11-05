@@ -47,17 +47,17 @@ def log(msg: str) -> None:
     print(msg, flush=True)
 
 
-def code(s: object) -> str:
+def code(text: object) -> str:
     """Render untrusted text (job/step names, branch names, errors) as a markdown code span.
 
     Backticks and newlines are replaced so remote-controlled text cannot inject markdown or links into
     Check Run output. Returns the quoted string."""
-    return "`" + re.sub(r"[`\r\n]", " ", str(s)) + "`"
+    return "`" + re.sub(r"[`\r\n]", " ", str(text)) + "`"
 
 
-def q(s: object) -> str:
+def q(text: object) -> str:
     """Percent-encode one URL path segment (branch names may contain '/')."""
-    return urllib.parse.quote(str(s), safe="")
+    return urllib.parse.quote(str(text), safe="")
 
 
 def now() -> datetime:
@@ -96,7 +96,7 @@ class Client:
         Never raises on a 4xx/5xx status: callers decide what a status means (see `api`, `exists`).
         Retries rate limits always; network errors and 5xx only when the call is idempotent (a
         workflow dispatch is not: the run may have started). Raises ApiError when the token is
-        missing or a non-idempotent call hits a network error."""
+        missing, when a non-idempotent call hits a network error, or after five failed attempts."""
         if not self.token:
             raise ApiError(f"{self.label} token missing (secret not configured?)")
         headers = {
@@ -139,9 +139,9 @@ class Client:
                 return status, text
         raise AssertionError("unreachable")
 
-    def api(self, method: str, url: str, body=None, **kw):
+    def api(self, method: str, url: str, body=None, idempotent: bool = True):
         """`request` that raises ApiError on any non-2xx status; returns the parsed body."""
-        status, data = self.request(method, url, body, **kw)
+        status, data = self.request(method, url, body, idempotent)
         if not 200 <= status < 300:
             raise ApiError(f"{self.label}: {method} {url} -> {status} {json.dumps(data)[:300]}", status)
         return data
@@ -150,9 +150,9 @@ class Client:
         """GET; returns the parsed body or raises ApiError."""
         return self.api("GET", url)
 
-    def post(self, url: str, body=None, **kw):
+    def post(self, url: str, body=None, idempotent: bool = True):
         """POST a JSON body; returns the parsed response or raises ApiError."""
-        return self.api("POST", url, body, **kw)
+        return self.api("POST", url, body, idempotent)
 
     def patch(self, url: str, body):
         """PATCH a JSON body; returns the parsed response or raises ApiError."""
@@ -177,10 +177,11 @@ def resolve_target() -> dict:
     """Decide which F´ revision is under test from the triggering event.
 
     Returns a dict with: `pr` (number or None), `head_repo` / `head_sha` / `head_branch` (the revision
-    to test; PR-author-controlled, only ever used as the SHA to dispatch and as display text),
+    to test; PR-author-controlled: forwarded verbatim as the dispatch inputs the external `ci.yml`
+    checks out, and otherwise used only to find the PR and as display text),
     `base_ref` (trusted branch the run was started from; drives the external branch lookup) and
     `before_sha` (previous tip for pushes, else None). Raises RuntimeError when a PR run no longer
-    matches an open PR or a manual input is invalid."""
+    matches an open PR or `pr_number` is not numeric, ApiError when a manual PR/ref does not exist."""
     t = {"pr": None, "head_repo": REPO, "head_sha": None, "head_branch": None, "base_ref": None, "before_sha": None}
     if EVENT_NAME == "workflow_run":
         wr = EVENT["workflow_run"]
@@ -251,43 +252,50 @@ def changed_files(target: dict) -> list[str] | None:
     return files
 
 
-def relevant_change(files: list[str] | None, manifest) -> bool:
-    """True unless every changed file matches a `paths_ignore` glob (or the file list is unknown).
+def relevant_change(files: list[str] | None, manifest: dict) -> bool:
+    """False only when every changed file matches a `paths_ignore` glob; an unknown list (None) counts
+    as relevant.
 
     paths_ignore lives here, not on the trigger workflow, so that filtered PRs still get a (skipped)
     Check Run per repo and required checks can be satisfied."""
     ignore = manifest.get("paths_ignore", [])
     if files is None or not ignore:
         return True
-    return any(not any(fnmatch(f, g) for g in ignore) for f in files)
+    # fnmatch's '*' also matches '/', so 'docs/**' behaves like 'docs/*' (good enough here).
+    ignored = lambda f: any(fnmatch(f, g) for g in ignore)  # noqa: E731
+    return not all(ignored(f) for f in files)
 
 
-def select_repos(manifest, target: dict) -> list[dict]:
-    """Return the manifest entries to run: the `repos` input ids on a manual run (unknown id raises
-    RuntimeError), entries with `on_pr: true` on a PR, otherwise all of them."""
+def select_repos(manifest: dict, target: dict) -> list[dict]:
+    """Return the manifest entries to run: all of them, narrowed to the `repos` input ids on a manual run
+    (unknown id raises RuntimeError) and to entries with `on_pr` true (the default) when a PR is tested,
+    manual runs included."""
     repos = manifest["repos"]
     wanted = (env.get("INPUT_REPOS") or "all").strip()
     if EVENT_NAME == "workflow_dispatch" and wanted and wanted != "all":
         ids = [s.strip() for s in wanted.split(",") if s.strip()]
-        unknown = [i for i in ids if not any(r["id"] == i for r in repos)]
+        unknown = [i for i in ids if not any(entry["id"] == i for entry in repos)]
         if unknown:
             raise RuntimeError("unknown manifest ids: " + ", ".join(unknown))
-        repos = [r for r in repos if r["id"] in ids]
-    elif target["pr"]:
-        repos = [r for r in repos if r.get("on_pr", True)]
+        repos = [entry for entry in repos if entry["id"] in ids]
+    if target["pr"]:
+        repos = [entry for entry in repos if entry.get("on_pr", True)]
     return repos
 
 
-def resolve_ext_ref(entry, target: dict) -> str:
+def resolve_ext_ref(entry: dict, target: dict) -> str:
     """Return the external repo branch to dispatch: its `pr-<N>` branch if it exists, else a branch
-    named like the F´ base branch (`devel`, `release/x`), else the entry's `default_ref`."""
-    for c in (f"pr-{target['pr']}" if target["pr"] else None, target["base_ref"]):
-        if c and ext.exists(f"/repos/{entry['repository']}/branches/{q(c)}"):
-            return c
+    named like the F´ base branch (`devel`, `release/x`), else the entry's `default_ref` (`main`)."""
+    candidates = [target["base_ref"]]
+    if target["pr"]:
+        candidates.insert(0, f"pr-{target['pr']}")
+    for candidate in candidates:
+        if candidate and ext.exists(f"/repos/{entry['repository']}/branches/{q(candidate)}"):
+            return candidate
     return entry.get("default_ref", "main")
 
 
-def check_name(manifest, repo_id: str) -> str:
+def check_name(manifest: dict, repo_id: str) -> str:
     """Name of the Check Run for one manifest entry: '<check_prefix> / <id>'."""
     return f"{manifest.get('check_prefix', 'ext-ci')} / {repo_id}"
 
@@ -299,7 +307,7 @@ def save_state(state: dict) -> None:
 
 
 # ---------------------------------------------------------------- dispatch and poll
-def dispatch_one(manifest, entry, target: dict, state: dict) -> None:
+def dispatch_one(manifest: dict, entry: dict, target: dict, state: dict) -> None:
     """Start one external repo: create its Check Run (queued), dispatch its workflow with the F´
     revision, mark the check in_progress with the remote run link.
 
@@ -355,7 +363,7 @@ def cancel_run(s: dict) -> None:
     try:
         ext.post(f"/repos/{s['repository']}/actions/runs/{s['remote_run_id']}/cancel")
     except ApiError as e:
-        log(f"  {e}")
+        log(f"::warning::[{s['id']}] cancel: {e}")
 
 
 def poll_all(state: dict) -> None:
@@ -453,10 +461,10 @@ def finalize_one(target: dict, s: dict) -> None:
         "status": "completed", "conclusion": conclusion, "details_url": s["remote_run_url"] or ORCHESTRATOR_URL,
         "output": output,
     })
-    s["conclusion"] = conclusion  # recorded only once the check is closed, so finalize() retries otherwise
+    s["conclusion"] = conclusion
 
 
-def skip_all(manifest, target: dict, repos: list[dict], state: dict) -> None:
+def skip_all(manifest: dict, target: dict, repos: list[dict], state: dict) -> None:
     """Create every repo's Check Run directly as completed/skipped (only `paths_ignore` files changed)."""
     ignored = ", ".join(manifest.get("paths_ignore", []))
     for entry in repos:
@@ -476,10 +484,15 @@ def write_summary(target: dict, state: dict) -> None:
     """Write the per-repo results table to the job summary and the log, and RESULTS_FILE as JSON."""
     rows = []
     for s in state["repos"].values():
-        link = f"[run]({s['remote_run_url']})" if s.get("remote_run_url") else (code(s["error"]) if s.get("error") else "")
+        if s.get("remote_run_url"):
+            link = f"[run]({s['remote_run_url']})"
+        elif s.get("error"):
+            link = code(s["error"])
+        else:
+            link = ""
         rows.append(f"| {code(s['id'])} | {s['repository']} | {code(s.get('ext_ref') or '-')} | {s['failure_policy']} "
                     f"| {s['remote_conclusion']} | {s['conclusion']} | {link} |")
-    where = f" (PR #{target['pr']})" if target["pr"] else f" ({target['head_branch']})"
+    where = f" (PR #{target['pr']})" if target["pr"] else f" ({code(target['head_branch'])})"
     md = "\n".join([f"### External CI for {code(fprime_rev(target))}{where} — attempt {ATTEMPT}", "",
                     "| id | repository | ext ref | policy | remote | check | link |",
                     "|---|---|---|---|---|---|---|", *rows, ""])
@@ -524,8 +537,9 @@ def run() -> None:
             log(f"::error::[{s['id']}] finalize: {e}")
         save_state(state)
     write_summary(target, state)
+    # conclusion is None when finalize_one failed: judge on what it would have been.
     blocking = [s["id"] for s in state["repos"].values()
-                if s["failure_policy"] != "notify" and (s["conclusion"] or check_conclusion(s)) not in ("success", "skipped")]
+                if s["failure_policy"] != "notify" and (s["conclusion"] or check_conclusion(s)) != "success"]
     if blocking:
         log("::error::blocking external repos failed: " + ", ".join(blocking))
         sys.exit(1)
@@ -552,11 +566,11 @@ def finalize() -> None:
                 continue
         except ApiError:
             pass
-        if s.get("remote_conclusion") and not cancelled:  # reported, but the check update itself failed in run
+        if cancelled:
+            conclusion, title, why = "cancelled", "Cancelled by orchestrator", "The orchestrator run was cancelled"
+        elif s.get("remote_conclusion"):  # reported, but the check update itself failed in run
             conclusion, title = check_conclusion(s), f"{s['remote_conclusion']} ({s['repository']} @ {s.get('ext_ref') or '-'})"
             why = "Closed by the finalize step after the check update failed"
-        elif cancelled:
-            conclusion, title, why = "cancelled", "Cancelled by orchestrator", "The orchestrator run was cancelled"
         else:
             conclusion = "neutral" if s["failure_policy"] == "notify" else "failure"
             title = "Orchestrator error"
@@ -567,8 +581,13 @@ def finalize() -> None:
                 "output": {"title": title, "summary": f"{why}; remote run {remote}.\n\n{ORCHESTRATOR_URL}"},
             })
         except ApiError as e:
-            log(f"  {e}")
+            log(f"::warning::[{s['id']}] check update: {e}")
 
 
 if __name__ == "__main__":
-    finalize() if MODE == "finalize" else run()
+    if MODE == "finalize":
+        finalize()
+    elif MODE == "run":
+        run()
+    else:
+        sys.exit(f"usage: {sys.argv[0]} run|finalize")
