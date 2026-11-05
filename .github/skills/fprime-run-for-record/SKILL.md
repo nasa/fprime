@@ -36,7 +36,7 @@ stage-3 step (bench host included):
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
 git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach 629b908
+git -C harness checkout --detach f6a6742
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
@@ -67,7 +67,10 @@ fth manifest --uut <path> --harness <path> \
     [--checker reviewer=checks/<name>.py]          # legacy plan-owned plans only
     --image <Deployment>=<flashed>.bin:"<build command>" \
     --menu <faults-menu.json> --bench <bench.json> \
-    --toolchain-json <toolchain.json>              # -> rfr/manifest-<uut sha8>.json
+    --toolchain-json <toolchain.json> \
+    --ut-coverage <dev-evidence/ut> --system-coverage <dev-evidence/system> \
+    --coverage-evidence <dev-evidence/evidence.json>  # coverage REPORTS pinned as inputs (image stays pure)
+                                                    # -> rfr/manifest-<uut sha8>.json
 ```
 
 Records, for the UUT, the harness (both listed in `repos`
@@ -190,6 +193,8 @@ the run directory by path; the auditor reads `record/`,
 ```bash
 fth audit --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
     --plan <plan.json> --tests <test/int> --bench <bench.json> \
+    --ut-coverage <dev-evidence/ut> --system-coverage <dev-evidence/system> \
+    [--coverage-evidence <dev-evidence/evidence.json>]  # same dirs the manifest pinned; unpinned ones are stamped post-run review inputs
     [--rebuild --toolchain-json <toolchain.json>]      # legacy plans: --independent checks/<name>.py
 ```
 

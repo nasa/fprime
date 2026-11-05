@@ -51,7 +51,8 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
    as local files: plan, harness, vectors, manifest **and**
    `dev-evidence/` incl. its dev QL package (`dev-evidence/ql/`, pass
    `--sdd`/`--dictionary` so sdd.md, commands.md and helpers/ are in it)
-   — the last as a review input, never an RfR input
+   — its coverage REPORTS (`ut/`, `system/`, `evidence.json`) are RfR inputs the runner pins in row 2;
+   its instrumented image and dev QL never are
    (harness skill §3a; the coverage image may be a different compiler
    and binary than the RfR image: provenance, not equivalence). Whether harness code
    becomes a PR is the human's call.

@@ -300,8 +300,9 @@ vectors, manifest **and** the `dev-evidence/` bundle from §3a incl. its
 dev QL package (`dev-evidence/ql/`; UT coverage, on-target coverage, pure
 run), clean (`fth dev-campaign` exit 0) — one bundle, nothing else to
 assemble by hand. The human gate lists dev-evidence as a *review* input beside the RfR
-inputs; it is never an RfR input and nothing from it enters the RfR
-package or the stage-3 checklist.
+inputs; its coverage REPORTS (`ut/`, `system/`, `evidence.json`+`identities.json`) are
+the RfR package's coverage inputs (stage-3 rows 2 and 5); its instrumented image and
+its dev QL never enter the RfR package.
 
 ## 7. Dry run
 
