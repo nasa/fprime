@@ -25,7 +25,12 @@ namespace Fw {
 //! \param file: file name or file ID (depending on FW_ASSERT_LEVEL)
 //! \param lineNo: line number where the assert occurred
 //! \param numArgs: number of additional arguments (0-6)
-//! \param arg1-arg6: optional assert arguments
+//! \param arg1: assert argument 1 (used when numArgs >= 1)
+//! \param arg2: assert argument 2 (used when numArgs >= 2)
+//! \param arg3: assert argument 3 (used when numArgs >= 3)
+//! \param arg4: assert argument 4 (used when numArgs >= 4)
+//! \param arg5: assert argument 5 (used when numArgs >= 5)
+//! \param arg6: assert argument 6 (used when numArgs >= 6)
 //! \param destBuffer: buffer to write the formatted message to
 //! \param buffSize: size of destBuffer
 void formatAssertMessage(FILE_NAME_ARG file,

@@ -122,8 +122,9 @@ choose. F´ ships two:
 | `Fw_AssertHook_Stub` | produces an empty message, prints nothing, calls `assert(false)` |
 
 `Fw_AssertHook_fputs` is the choice of the Unix (Linux/Darwin) platform. Every other platform
-package must list an `Fw_AssertHook_*` implementation in its `CHOOSES_IMPLEMENTATIONS`; a
-platform that chooses none fails to build. Targets
+package must list an `Fw_AssertHook_*` implementation in its `CHOOSES_IMPLEMENTATIONS`
+(or every deployment and unit test built for it must choose one itself); when neither
+chooses, the build fails with "requires implementation of Fw_AssertHook". Targets
 without a console, or that cannot afford `stdio`, choose `Fw_AssertHook_Stub` or
 provide their own implementation of the three functions (for example writing to a UART
 and resetting the processor) with `register_fprime_implementation`.
