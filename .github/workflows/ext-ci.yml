@@ -24,10 +24,6 @@ on:
         description: "Branch/SHA to test when no PR is given (default: the branch this run was started from)"
         type: string
         default: ""
-      force_all:
-        description: "On a re-run, re-dispatch every selected repo instead of only the failed ones"
-        type: boolean
-        default: false
 
 # One orchestrator per F´ head (repo + branch); a newer PR push cancels the older PR fan-out and
 # the finalize step below propagates that to the remote runs. Branch/nightly runs are never cancelled.
@@ -38,8 +34,6 @@ concurrency:
 permissions:
   contents: read        # manifest
   checks: write         # per-repo Check Runs
-  pull-requests: write  # notify-policy PR comments
-  issues: write         # notify-policy tracking issues
 
 jobs:
   orchestrate:
@@ -58,7 +52,6 @@ jobs:
           INPUT_REPOS: ${{ inputs.repos }}
           INPUT_PR_NUMBER: ${{ inputs.pr_number }}
           INPUT_FPRIME_REF: ${{ inputs.fprime_ref }}
-          INPUT_FORCE_ALL: ${{ inputs.force_all }}
           POLL_INTERVAL_SECONDS: 60
         run: python3 .github/scripts/ext-ci-orchestrator.py run
       - name: "Finalize (close open checks, cancel orphaned remote runs)"

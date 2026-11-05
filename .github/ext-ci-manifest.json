@@ -16,9 +16,6 @@
       "default_ref": "devel",
       "timeout_minutes": 60,
       "failure_policy": "notify",
-      "owners": [
-        "thomas-bc"
-      ],
       "on_pr": true
     }
   ]
