@@ -32,13 +32,17 @@ stage-3 step (bench host included):
 
 ```bash
 # fprime-testing-harness is a private repository: `pip install git+https://…` has no credentials and
-# fails. Clone with the credentials the host already has (gh auth, ssh, or a token URL that is never
-# written to a remote), check out the pinned commit, install editable:
-git clone https://github.com/LeStarch/fprime-testing-harness fth-src   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C fth-src checkout --detach 3466659
-pip install -e "fth-src[test]"
+# fails. Clone it ONCE as `harness` — the same checkout `fth manifest --harness harness` pins — with the
+# credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
+# those), check out the pinned commit, install editable FROM that checkout:
+git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
+git -C harness checkout --detach 6cccc90
+pip install -e "harness[test]"
+python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
 ```
+The installed `fth` and the pinned harness are therefore one tree: the manifest records its sha, and the
+assert above (repeat it in row 1) is what ties the tool that runs to the tree that was pinned.
 
 Stage-3 rows never build the image, so the bench host needs only a `fprime-gds` compatible with the
 UUT's `lib/fprime` (the version its `requirements.txt` names) for `fth run`; `fprime-fpp` and
