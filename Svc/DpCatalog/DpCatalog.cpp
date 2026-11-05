@@ -417,9 +417,8 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // reset catalog
     this->resetCatalog();
 
-    // each build reports its first files only: the per-file events are throttled so that a
-    // build over many files cannot flood the event path, and the budget starts over per build
-    this->log_ACTIVITY_HI_DpFileAdded_ThrottleClear();
+    // a build reports its first skipped files only: DpFileSkipped is throttled so that a build over
+    // many transmitted files cannot flood the event path, and the budget starts over per build
     this->log_ACTIVITY_HI_DpFileSkipped_ThrottleClear();
 
     // fill the catalog with DP files
@@ -708,8 +707,6 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
     this->m_pendingFiles++;
     this->m_pendingDpBytes += entry.record.get_size();
 
-    this->log_ACTIVITY_HI_DpFileAdded(canonicalFileName);
-
     // No need to track iterator state - begin() always gives us the highest priority entry
     // and we remove entries as we transmit them
 
@@ -981,14 +978,16 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         return;
     }
 
-    // a runtime addition is one file per call, so it is always reported: clear the throttle
-    // that a preceding build over many files may have exhausted
-    this->log_ACTIVITY_HI_DpFileAdded_ThrottleClear();
+    // a runtime addition is one file per call, so a skip is always reported: clear the throttle
+    // that a preceding build over many transmitted files may have exhausted
     this->log_ACTIVITY_HI_DpFileSkipped_ThrottleClear();
 
     const ProcessFileStatus ret = processFile(fileName, dir);
 
     if (ret == ProcessFileStatus::SUCCESS) {
+        // announced here, not in processFile, so that a build does not emit it per file (3.6.2);
+        // a successful processFile has checked that fileName is the canonical name
+        this->log_ACTIVITY_HI_DpFileAdded(fileName);
         this->resumeIfRemainActive();
         // The state file is not rewritten here: a newly written product has no transmit state to
         // record, and pruneAndWriteStateFile() would discard the TRANSMITTED records appended by
@@ -1377,8 +1376,8 @@ Fw::CmdResponse DpCatalog ::doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub) {
         this->m_stateFileData[this->m_stateFileEntries].used = false;
         this->m_stateFileData[this->m_stateFileEntries].visited = false;
     }
-    // a retransmit catalogs one file, so its DpFileAdded is always reported, as for a runtime addition
-    this->log_ACTIVITY_HI_DpFileAdded_ThrottleClear();
+    // a retransmit catalogs one file, so a skip (a file whose header says TRANSMITTED) is always
+    // reported: clear the throttle that a preceding build may have exhausted
     this->log_ACTIVITY_HI_DpFileSkipped_ThrottleClear();
     const ProcessFileStatus ret = this->processFile(fullFile, dir);
     if (ret != ProcessFileStatus::SUCCESS) {
@@ -1390,6 +1389,7 @@ Fw::CmdResponse DpCatalog ::doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub) {
         this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpCatalog_RetransmitRejectReason::FILE_ERROR);
         return Fw::CmdResponse::EXECUTION_ERROR;
     }
+    this->log_ACTIVITY_HI_DpFileAdded(fullFile);
     // Not ground-reachable: processFile succeeded only if the file's canonical name, built from its header id and
     // time tag, equals fullFile, which was built from the command's id and time tag in the same directory, so the
     // entry it inserted has exactly this identity and nothing has touched the set since
