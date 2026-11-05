@@ -160,12 +160,13 @@ not tamper-proof. Every RfR report says so.
   the harness would pass by construction; writes the independent
   checker (legacy plan-owned plans only; otherwise reviews the tests' checks); keeps the disagreement log.
 - **Reviewer** also reads the harness code adversarially (review Mode B step 3b: tautology, swallowed status, planted fault reach, cross-test state, helper KATs); mechanics checks alone do not close stage 2.
-- **Pure RfR / development provenance split**: the RfR runs the pure,
-  uninstrumented image and its package has no coverage; coverage (UT +
-  on-target, `fth dev-campaign` → `dev-evidence/` incl. its dev QL package
-  `ql/`, banner DEVELOPMENT EVIDENCE — NOT RfR) is delivered beside the RfR inputs as a review
-  input — provenance, not equivalence, when its image differs from the
-  RfR image.
+- **Pure RfR image / coverage reports as inputs**: the RfR runs the pure,
+  uninstrumented image; the coverage REPORTS of `fth dev-campaign` (UT + on-target,
+  `dev-evidence/ut`, `dev-evidence/system`, with `evidence.json`/`identities.json`) are
+  data INPUTS to the RfR package — pinned in the manifest (row 2) or recorded at audit
+  (row 5), rendered as `coverage.md` with the plan's thresholds and a provenance block
+  (coverage image sha256, compiler, run ids): provenance, not equivalence, since the
+  coverage image differs from the RfR image.
 - **Builder** keeps the harness small enough to be read in one sitting
   and reuses `test/int/` reusable integration tests and standard
   components before writing new code.
@@ -239,7 +240,7 @@ this table; bumping it is a one-line change here and nowhere else.
 
 | Tool | Pinned | Install |
 |---|---|---|
-| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 6cccc90) | `git clone <fprime-testing-harness> harness && git -C harness checkout --detach 6cccc90 && pip install -e "harness[test]"` — the same checkout `fth manifest --harness` pins; assert `fth.__file__` lies under it (private repo: clone with the host's credentials; `pip install git+https://…` has none) |
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 5f341be) | `git clone <fprime-testing-harness> harness && git -C harness checkout --detach 5f341be && pip install -e "harness[test]"` — the same checkout `fth manifest --harness` pins; assert `fth.__file__` lies under it (private repo: clone with the host's credentials; `pip install git+https://…` has none) |
 
 Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and

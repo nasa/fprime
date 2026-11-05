@@ -146,10 +146,13 @@ Record requirements the harness must make possible:
 - Downlink budget: estimate event rate against link capacity
   beforehand; a harness that loses events cannot prove an absence.
 
-## 3a. Development evidence: coverage (never RfR; on-target needs GCC ≥ 11 freestanding gcov)
+## 3a. Coverage: reports are RfR inputs, the image stays pure (on-target needs GCC ≥ 11 freestanding gcov)
 
-Coverage is **development evidence, not an RfR input**: the RfR runs the pure,
-uninstrumented image and its package contains no `coverage/`; an instrumented
+The RfR runs the pure, uninstrumented image; an instrumented image is never the qualified
+image. The coverage REPORTS, though, are **RfR inputs** (Captain's ruling): the builder hands
+`dev-evidence/ut`, `dev-evidence/system` and `evidence.json`+`identities.json` to the runner, who
+pins them in row 2 (`fth manifest --ut-coverage --system-coverage --coverage-evidence`) so row 5
+renders `coverage.md` + `inputs/coverage/` in the RfR package. An instrumented
 image is not the qualified image. The builder produces coverage with
 `fth dev-campaign --out dev-evidence/ …`, which runs (a) UT coverage on the host
 (`fprime-util check --coverage` in a **default-config** project — a deployment's

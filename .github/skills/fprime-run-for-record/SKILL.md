@@ -36,7 +36,7 @@ stage-3 step (bench host included):
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
 git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach 6cccc90
+git -C harness checkout --detach 5f341be
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
@@ -286,12 +286,7 @@ their checks and the planted-fault module the manifest pins as `stimulus` (`fth 
 replays exactly those sources or FAILS; they are never copied into the package — a sha256 that disagrees with a pin is a loud failure; `fth unseal` adds `unseal.md`
 and `seed.txt` (verified to reproduce the draw) — the seed enters the package only after the
 unseal, never before; tests, stimulus and tester sources stay in the pinned repositories); `ql.zip` of
-all of it — stage-3 row 8 "Deliver" is `rfr/<run>/auditor/ql/ql.zip` and nothing else. **No coverage of any kind** is in an RfR package: an instrumented image is not
-the qualified image, and the record is a pure record of the pinned build; `fth render-ql` /
-`fth audit` refuse `--ut-coverage` / `--system-coverage` without `--dev`, which stamps the
-package DEVELOPMENT EVIDENCE — NOT RfR. Coverage (UT and on-target) is development evidence,
-produced by `fth dev-campaign` (harness skill §3a) and delivered beside the RfR inputs as a
-review input — never as an RfR input or in this package.
+all of it — stage-3 row 8 "Deliver" is `rfr/<run>/auditor/ql/ql.zip` and nothing else. **The image stays pure, the coverage REPORTS are inputs** (Captain's ruling, rfr1 close-out): an instrumented image is never the qualified image and `fth run` never takes one, but the development campaign's coverage reports (`dev-evidence/ut`, `dev-evidence/system`, gcovr data files only) enter the RfR package — pinned by `fth manifest --ut-coverage --system-coverage --coverage-evidence dev-evidence/evidence.json` (row 2) or, failing that, recorded by sha256 at `fth audit --ut-coverage --system-coverage [--coverage-evidence]` (row 5) — as `inputs/coverage/` rows and a `coverage.md` page (thresholds from the plan's `coverage:`, provenance block: coverage image sha256, compiler, dev-campaign run ids — provenance, not equivalence). `--dev` stamps development runs only; it no longer gates coverage.
 
 `index.md`: run metadata (manifest sha8, record sha256, seal sha8, dictionary sha256, SDD
 sha256, repo-check state); the per-test table (test, title, checker verdict, unseal
