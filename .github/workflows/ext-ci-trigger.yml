@@ -17,6 +17,6 @@ permissions: {}
 jobs:
   approved:
     name: "Gate passed"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - run: echo "${GITHUB_EVENT_NAME} workflow ran for ${GITHUB_SHA}; ext-ci may proceed"

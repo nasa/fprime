@@ -14,7 +14,7 @@
       "repository": "fprime-community/fprime-workshop-led-blinker",
       "workflow": "ci.yml",
       "default_ref": "devel",
-      "timeout_minutes": 60,
+      "timeout_minutes": 30,
       "failure_policy": "notify",
       "on_pr": true
     }

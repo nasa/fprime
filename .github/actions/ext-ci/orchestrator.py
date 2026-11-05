@@ -1,26 +1,14 @@
 #!/usr/bin/env python3
 """External-CI orchestrator (standard library only, Python >= 3.10).
 
-  python3 ext-ci-orchestrator.py run       dispatch, poll, report
-  python3 ext-ci-orchestrator.py finalize  close anything still open (runs under if: always())
+  python3 orchestrator.py run       dispatch, poll, report
+  python3 orchestrator.py finalize  close anything still open (runs under if: always())
 
-For every repo in .github/ext-ci-manifest.json: create a Check Run on the F´ commit under test,
+For every repo in manifest.json (same directory): create a Check Run on the F´ commit under test,
 dispatch the repo's own ci.yml with that commit, poll the remote run, close the Check Run with
 its result. A re-run of the orchestrator re-dispatches only the repos whose check is not green.
 
-Manifest (.github/ext-ci-manifest.json):
-  upstream_repository  only this repo dispatches automatically; forks only on workflow_dispatch
-  check_prefix         Check Run name is "<check_prefix> / <id>"
-  paths_ignore         globs; a PR touching only these gets "skipped" checks and no dispatch
-  repos[]: id, repository (owner/name), workflow (file name, must accept the inputs below),
-           default_ref (branch to dispatch when no pr-<N> / base-named branch exists),
-           timeout_minutes (of remote running time; 2x while queued), failure_policy
-           ("block": failure is a red check and fails this job; "notify": neutral check),
-           on_pr (false: never dispatched for a PR, only merge queue / manual)
-
-Contract for the external ci.yml: `on: workflow_dispatch` with inputs fprime_repository,
-fprime_ref (exact SHA to overlay as the F´ dependency), fprime_pr_number, dispatch_id; no secrets,
-read-only permissions, no cache writes on dispatched runs.
+Manifest keys and the contract an external ci.yml must satisfy: see README.md next to this file.
 
 Two credentials, never mixed:
   GITHUB_TOKEN    this repo only (checks: write) - reports results
@@ -45,7 +33,7 @@ API = env.get("GITHUB_API_URL", "https://api.github.com")
 SERVER = env.get("GITHUB_SERVER_URL", "https://github.com")
 STATE_FILE = "ext-ci-state.json"
 RESULTS_FILE = "ext-ci-results.json"
-MANIFEST_PATH = ".github/ext-ci-manifest.json"
+MANIFEST_PATH = ".github/actions/ext-ci/manifest.json"
 POLL_S = int(env.get("POLL_INTERVAL_SECONDS") or 60)
 ORCHESTRATOR_FAULTS = (
     "dispatch_failed",
