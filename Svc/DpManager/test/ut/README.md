@@ -12,14 +12,14 @@
 | Variable | Type | Description | Initial Value |
 |----------|------|-------------|---------------|
 | `bufferGetStatus` | `BufferGetStatus` | The buffer get status | `VALID` |
-| `bufferSize` | `Option<FwSizeType>` | The current buffer size | `none` |
+| `bufferSize` | `Fw::Optional<FwSizeType>` | The current buffer size | `none` |
 | `NumSuccessfulAllocations` | `OnChangeChannel<U32>` | The number of successful buffer allocations | 0 |
 | `NumFailedAllocations` | `OnChangeChannel<U32>` | The number of failed buffer allocations | 0 |
 | `NumDataProducts` | `OnChangeChannel<U32>` | The number of data products handled | 0 |
 | `NumBytes` | `OnChangeChannel<U64>` | The number of bytes handled | 0 |
-| `bufferGetOutPortNumOpt` | `Option<FwIndexType>` | The last port number used for `bufferGetOut`. Updated in the port handler for `from_bufferGetOut`. | `none` |
-| `productResponseOutPortNumOpt` | `Option<FwIndexType>` | The last port number used for `productResponseOut`. Updated in the port handler for `from_productResponseOut`. | `none` |
-| `productSendOutPortNumOpt` | `Option<FwIndexType>` | The last port number used for `productSendOut`. Updated in the port handler for `from_productSendOut`. | `none` |
+| `bufferGetOutPortNumOpt` | `Fw::Optional<FwIndexType>` | The last port number used for `bufferGetOut`. Updated in the port handler for `from_bufferGetOut`. | `none` |
+| `productResponseOutPortNumOpt` | `Fw::Optional<FwIndexType>` | The last port number used for `productResponseOut`. Updated in the port handler for `from_productResponseOut`. | `none` |
+| `productSendOutPortNumOpt` | `Fw::Optional<FwIndexType>` | The last port number used for `productSendOut`. Updated in the port handler for `from_productSendOut`. | `none` |
 | `bufferAllocationFailedEventCount` | `FwSizeType` | The number of buffer allocation failed events since the last throttle clear |0 |
 
 ## 2. Rule Groups

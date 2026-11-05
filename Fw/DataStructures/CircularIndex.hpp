@@ -83,7 +83,10 @@ class CircularIndex final {
     ) {
         FW_ASSERT(this->m_modulus > 0);
         const FwSizeType offset = amount % m_modulus;
-        this->setValue(this->m_value + offset);
+        // The distance to the wrap point, in (0, m_modulus]. Adding the offset without this
+        // comparison could overflow FwSizeType before the modular reduction is applied.
+        const FwSizeType toWrap = this->m_modulus - this->m_value;
+        this->setValue((offset < toWrap) ? (this->m_value + offset) : (offset - toWrap));
         return this->m_value;
     }
 
@@ -93,7 +96,9 @@ class CircularIndex final {
     ) {
         FW_ASSERT(this->m_modulus > 0);
         const FwSizeType offset = amount % this->m_modulus;
-        this->setValue(this->m_value + this->m_modulus - offset);
+        // Subtracting first where possible avoids overflowing FwSizeType on m_value + m_modulus
+        this->setValue((offset <= this->m_value) ? (this->m_value - offset)
+                                                 : (this->m_modulus - (offset - this->m_value)));
         return this->m_value;
     }
 

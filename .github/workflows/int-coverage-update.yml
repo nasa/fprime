@@ -1,0 +1,78 @@
+# Integration-test coverage update for the coverage/<ref-name> baseline branch.
+#
+# Builds the Ref deployment as an instrumented Debug binary, runs the full
+# standard integration-test suite against that single binary, then splits the
+# resulting system-wide coverage data per module (gcovr only, no test re-run)
+# and publishes each module's int-coverage/ subtree plus a root-level
+# int-coverage/ overall summary to coverage/<ref-name>.
+#
+# Top-level permissions are scoped to exactly what the action needs:
+#   contents: write          — push commits to the baseline branch
+
+name: "Integration Coverage Update"
+
+on:
+  schedule:
+    - cron: "0 22 * * *"  # Nightly at 3:00 PM US/Pacific (PDT)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  int-coverage-update:
+    name: "Integration Coverage [push]"
+    # One publish per publisher and ref; a newer run supersedes (cancels) an
+    # older one.  Cross-publisher races on coverage/<ref> are handled by the
+    # fetch-and-retry push loop in the shared publish helper.
+    concurrency:
+      group: publish-int-coverage-${{ github.ref }}
+      cancel-in-progress: true
+    # ubuntu-24.04 ships gcov-13; see coverage-update.yml for why gcov-11
+    # (Ubuntu 22.04 default) must be avoided.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Build Ref (Debug, gcov instrumented)"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          build-type: "Debug"
+          generate-args: "-DCMAKE_C_FLAGS=--coverage -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_EXE_LINKER_FLAGS=--coverage"
+          jobs: "8"
+      - name: "Integration Tests (instrumented binary)"
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          gds-working-directory: "TestDeploymentsProject"
+          test-working-directory: "TestDeploymentsProject"
+          binary: "build-artifacts/*/Ref/bin/Ref"
+          gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
+          pytest-args: "Ref --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
+          valgrind: "false"
+      - name: "Coverage (common, gcovr only from int-test data)"
+        id: cov
+        uses: nasa/fprime-actions/coverage-common@devel
+        with:
+          working-directory: ${{ github.workspace }}
+          mode: "coverage"
+          project-root: ${{ github.workspace }}/TestDeploymentsProject
+      - name: "Coverage update (int-coverage)"
+        uses: nasa/fprime-actions/coverage-update@devel
+        with:
+          working-directory: ${{ github.workspace }}
+          modules-jsonl: ${{ steps.cov.outputs.modules-jsonl }}
+          artifact: "int"

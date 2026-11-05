@@ -27,6 +27,8 @@ module Drv {
 
     event PollingError(error_number: I32) severity warning high format "Interrupt polling returned errno: {}"
 
+    event InterruptTimeError(status: Os.RawTimeStatus) severity warning high format "Failed to read interrupt timestamp: {}"
+
   }
 
 }

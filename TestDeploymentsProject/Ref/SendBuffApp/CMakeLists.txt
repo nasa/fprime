@@ -8,8 +8,12 @@
 add_compile_options(
     -Wno-conversion
 )
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/SendBuffApp.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/SendBuffComponentImpl.cpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/SendBuffApp.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/SendBuffComponentImpl.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/SendBuff.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SendBuffComponentImpl.hpp"
 )
-register_fprime_module()

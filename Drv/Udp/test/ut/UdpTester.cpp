@@ -53,7 +53,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread, bool send_only)
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
-        this->component.start(name, true, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.start(name, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
     }
 
     // Loop through a bunch of client disconnects
@@ -98,10 +98,20 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread, bool send_only)
             // If receive thread is live, try the other way
             if (recv_thread and not send_only) {
                 m_spinner = false;
-                m_data_buffer.setSize(sizeof(m_data_storage));
-                udp2.send(udp2_fd, m_data_buffer.getData(), m_data_buffer.getSize());
-                while (not m_spinner) {
+                U8* send_data = nullptr;
+                FwSizeType send_size = 0;
+                {
+                    Os::ScopeLock lock(m_buffer_lock);
+                    m_data_buffer.setSize(sizeof(m_data_storage));
+                    send_data = m_data_buffer.getData();
+                    send_size = m_data_buffer.getSize();
                 }
+                status2 = udp2.send(udp2_fd, send_data, send_size);
+                EXPECT_EQ(status2, Drv::SOCK_SUCCESS) << "On iteration: " << i;
+                for (U32 wait = 0; (wait < 1000) && (not m_spinner); wait++) {
+                    Os::Task::delay(Fw::TimeInterval(0, 10000));
+                }
+                EXPECT_TRUE(m_spinner) << "Timed out waiting for receive";
             }
         }
         // Properly stop the client on the last iteration
@@ -127,7 +137,10 @@ bool UdpTester::wait_on_change(Drv::IpSocket& socket, bool open, U32 iterations)
 }
 
 UdpTester ::UdpTester()
-    : UdpGTestBase("Tester", MAX_HISTORY_SIZE), component("Udp"), m_data_buffer(m_data_storage, 0), m_spinner(true) {
+    : UdpGTestBase("Tester", MAX_HISTORY_SIZE),
+      component("Udp"),
+      m_data_buffer(m_data_storage, sizeof(m_data_storage)),
+      m_spinner(true) {
     this->initComponents();
     this->connectPorts();
     ::memset(m_data_storage, 0, sizeof(m_data_storage));
@@ -182,6 +195,7 @@ void UdpTester ::from_recv_handler(const FwIndexType portNum,
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     // Make sure we can get to unblocking the spinner
     if (recvStatus == ByteStreamStatus::OP_OK) {
+        Os::ScopeLock lock(m_buffer_lock);
         EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
         Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
         m_spinner = true;

@@ -1,0 +1,47 @@
+# One-button full regeneration of the coverage/<ref-name> quality site.
+#
+# Dispatches every baseline-branch publisher (UT coverage, integration
+# coverage, component checklist, and both CodeQL scans) on the ref selected
+# in the "Run workflow" dropdown.  Each publisher is idempotent, holds its
+# own per-publisher concurrency group, and lands on coverage/<ref> through
+# the shared publish helper's fetch-and-retry push loop, so the fan-out can
+# run everything in parallel; the site is complete and consistent once
+# every dispatched run finishes.
+#
+# GITHUB_TOKEN may create workflow_dispatch events (it is an exception to
+# the no-recursive-workflows rule), so no PAT is required.
+
+name: "Site Regenerate"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fan-out:
+    name: "Dispatch all baseline publishers"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Dispatch publishers on this ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          REF: ${{ github.ref_name }}
+        run: |
+          set -eu
+          for workflow in coverage-update.yml \
+                          int-coverage-update.yml \
+                          component-checks.yml \
+                          codeql-jpl-standard.yml \
+                          codeql-security-scan.yml; do
+            echo "Dispatching ${workflow} on ${REF}"
+            gh workflow run "${workflow}" --repo "${REPO}" --ref "${REF}"
+          done
+          echo "All publishers dispatched; monitor them in the Actions tab." >> "${GITHUB_STEP_SUMMARY}"

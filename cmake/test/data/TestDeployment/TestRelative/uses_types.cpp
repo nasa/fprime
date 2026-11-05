@@ -6,3 +6,5 @@
 #include <TestDeployment/TestRelative/FppConstantsAc.hpp>
 // Constant definitions will not be defined if the module setup failed
 bool new_constant = (relative_constant1 && relative_constant2);
+// Supplied through an .fppi include rather than the .fpp itself
+bool included_ok = included_constant;

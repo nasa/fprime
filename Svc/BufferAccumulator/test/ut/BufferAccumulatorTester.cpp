@@ -14,8 +14,6 @@
 
 #include "Fw/Types/BasicTypes.hpp"
 
-#include "Fw/Types/MallocAllocator.hpp"
-
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 30
 #define QUEUE_DEPTH 30
@@ -39,21 +37,14 @@ BufferAccumulatorTester ::BufferAccumulatorTester(bool a_doAllocateQueue)
     this->initComponents();
     this->connectPorts();
 
-    // Witch to BufferAccumulator_OpState::DRAIN at start so we don't have to
-    // change ut
-    component.m_mode = BufferAccumulator_OpState::DRAIN;
-    component.m_send = true;
-
     if (this->doAllocateQueue) {
-        Fw::MallocAllocator buffAccumMallocator;
-        this->component.allocateQueue(0, buffAccumMallocator, MAX_NUM_BUFFERS);
+        this->component.allocateQueue(0, this->buffAccumMallocator, MAX_NUM_BUFFERS, BufferAccumulator_OpState::DRAIN);
     }
 }
 
 BufferAccumulatorTester ::~BufferAccumulatorTester() {
     if (this->doAllocateQueue) {
-        Fw::MallocAllocator buffAccumMallocator;
-        this->component.deallocateQueue(buffAccumMallocator);
+        this->component.deallocateQueue(this->buffAccumMallocator);
     }
     this->component.deinit();
 }

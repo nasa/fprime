@@ -74,10 +74,10 @@ For examples of generated code, you can do the following:
 1. In a local installation of the `fprime` repository, go into `FppTest` and
 run `fprime-util generate --ut` and then `fprime-util check`.
 
-1. Look at the FPP models in `fprime/FppTest/state_machine/internal/state`.
+1. Look at the FPP models in `FppTestProject/FppTest/state_machine/internal/state`.
 
 1. Look at the generated files in
-   `fprime/FppTest/build-fprime-automatic-native-ut/FppTest/state_machine/internal/state`.
+   `FppTestProject/build-fprime-automatic-native-ut/FppTest/state_machine/internal/state`.
 
 <a name="sm-base-class"></a>
 ### 4.1. The State Machine Base Class
@@ -184,10 +184,10 @@ For examples of generated code, you can do the following:
 run `fprime-util generate --ut` and then `fprime-util check`.
 
 1. Look at the FPP models in
-   `fprime/FppTest/state_machine/internal_instance/state`.
+   `FppTestProject/FppTest/state_machine/internal_instance/state`.
 
 1. Look at the generated files in
-   `fprime/FppTest/build-fprime-automatic-native-ut/FppTest/state_machine/internal_instance/state`.
+   `FppTestProject/build-fprime-automatic-native-ut/FppTest/state_machine/internal_instance/state`.
 
 ### 5.1. State Machine Identifiers
 
@@ -256,15 +256,15 @@ machine ID.
 **Actions:** For each action _a_ of _M_, there is one private function that
 implements the [pure virtual function for _a_ defined in the base
 class for _M_](#sm-protected).
-The implementation calls the [pure virtual function in the bass class for _C_
-that corresponds to to _M_ and _a_](#component-pure-virtual).
+The implementation calls the [pure virtual function in the base class for _C_
+that corresponds to _M_ and _a_](#component-pure-virtual).
 It passes in the state machine ID of `*this`.
 
 **Guards:** For each guard _g_ of _M_, there is one private function that
 implements the [pure virtual function for _g_ defined in the base
 class for _M_](#sm-protected).
 The implementation calls the [pure virtual function in the base class for _C_
-that corresponds to to _M_ and _g_](#component-pure-virtual).
+that corresponds to _M_ and _g_](#component-pure-virtual).
 It passes in the state machine ID of `*this` and returns the Boolean value returned
 by that function.
 

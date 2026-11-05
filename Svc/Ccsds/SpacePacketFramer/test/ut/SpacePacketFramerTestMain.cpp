@@ -4,6 +4,7 @@
 // \brief  cpp file for SpacePacketFramer component test main function
 // ======================================================================
 
+#include "STest/Random/Random.hpp"
 #include "SpacePacketFramerTester.hpp"
 
 TEST(SpacePacketFramer, testComStatusPassthrough) {
@@ -26,7 +27,18 @@ TEST(SpacePacketFramer, OversizedAllocatorBufferIsTrimmed) {
     tester.testOversizedAllocatorBufferIsTrimmed();
 }
 
+TEST(SpacePacketFramer, InvalidAllocationEmitsComStatus) {
+    Svc::Ccsds::SpacePacketFramerTester tester;
+    tester.testInvalidAllocationEmitsComStatus();
+}
+
+TEST(SpacePacketFramer, UndersizedAllocationEmitsComStatus) {
+    Svc::Ccsds::SpacePacketFramerTester tester;
+    tester.testUndersizedAllocationEmitsComStatus();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
+    STest::Random::seed();
     return RUN_ALL_TESTS();
 }

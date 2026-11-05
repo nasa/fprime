@@ -65,6 +65,11 @@ TEST(NominalManual, OneDp) {
     tester.readDps(&dir, 1, stateFile, &dpSet, 1);
 }
 
+TEST(NominalManual, StateFileSkipsTransmitted) {
+    Svc::DpCatalogTester tester;
+    tester.stateFileSkipsTransmitted();
+}
+
 TEST(NominalManual, FiveDp) {
     Svc::DpCatalogTester tester;
     Fw::FileNameString dirs[2];
@@ -300,6 +305,36 @@ TEST(NominalManual, BadFileDone) {
     tester.test_BadFileDone();
 }
 
+TEST(NominalManual, StaleFileDoneAfterStopBuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_StaleFileDoneAfterStopBuild();
+}
+
+TEST(NominalManual, StaleFileDoneAfterClear) {
+    Svc::DpCatalogTester tester;
+    tester.test_StaleFileDoneAfterClear();
+}
+
+TEST(NominalManual, LateFileDoneNotAppliedToNewSend) {
+    Svc::DpCatalogTester tester;
+    tester.test_LateFileDoneNotAppliedToNewSend();
+}
+
+TEST(NominalManual, StopRecordsInFlightCompletion) {
+    Svc::DpCatalogTester tester;
+    tester.test_StopRecordsInFlightCompletion();
+}
+
+TEST(NominalManual, StartAfterStopResumesInFlight) {
+    Svc::DpCatalogTester tester;
+    tester.test_StartAfterStopResumesInFlight();
+}
+
+TEST(NominalManual, StopThenErrorCompletion) {
+    Svc::DpCatalogTester tester;
+    tester.test_StopThenErrorCompletion();
+}
+
 TEST(OffNominal, ProcessFileInvalidDir) {
     Svc::DpCatalogTester tester;
     tester.test_ProcessFileInvalidDir();
@@ -320,13 +355,293 @@ TEST(OffNominal, BadHeaderHashRejected) {
     tester.test_BadHeaderHashRejected();
 }
 
+TEST(NominalManual, NonDpFilesDoNotConsumeSlots) {
+    Svc::DpCatalogTester tester;
+    tester.test_NonDpFilesDoNotConsumeSlots();
+}
+
+TEST(NominalManual, XmitPriorityRangeAll) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeAll();
+}
+
+TEST(NominalManual, XmitPriorityRangeSubset) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeSubset();
+}
+
+TEST(NominalManual, XmitPriorityRangeBoundary) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeBoundary();
+}
+
+TEST(OffNominal, XmitPriorityRangeInverted) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeInverted();
+}
+
+TEST(NominalManual, XmitPriorityRangeRuntimeAdd) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeRuntimeAdd();
+}
+
+TEST(NominalManual, XmitPriorityRangeStopThenRuntimeAdd) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeStopThenRuntimeAdd();
+}
+
+TEST(NominalManual, XmitPriorityRangeStartAfterStopAppliesRangeToNextFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitPriorityRangeStartAfterStopAppliesRangeToNextFile();
+}
+
+TEST(NominalManual, XmitLegacyCommandSendsFullRange) {
+    Svc::DpCatalogTester tester;
+    tester.test_XmitLegacyCommandSendsFullRange();
+}
+
 TEST(OffNominal, MalformedFile) {
     Svc::DpCatalogTester tester;
     tester.test_MalformedFile();
 }
 
+TEST(NominalManual, InsertIntoEmptyBuiltCatalog) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertIntoEmptyBuiltCatalog();
+}
+
+TEST(NominalManual, InsertDuringTransmitInPriorityOrder) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertDuringTransmitInPriorityOrder();
+}
+
+TEST(OffNominal, InsertWhenFull) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertWhenFull();
+}
+
+TEST(OffNominal, InsertBeforeBuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertBeforeBuild();
+}
+
+TEST(OffNominal, InsertDuplicate) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertDuplicate();
+}
+
+TEST(NominalManual, InsertPreservesTransmittedState) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertPreservesTransmittedState();
+}
+
+TEST(NominalManual, InsertAlreadyTransmitted) {
+    Svc::DpCatalogTester tester;
+    tester.test_InsertAlreadyTransmitted();
+}
+
+TEST(SetPriority, Raise) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityRaise();
+}
+
+TEST(SetPriority, Lower) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityLower();
+}
+
+TEST(SetPriority, NotFound) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNotFound();
+}
+
+TEST(SetPriority, SameNoOp) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPrioritySameNoOp();
+}
+
+TEST(SetPriority, DuringXmit) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityDuringXmit();
+}
+
+TEST(SetPriority, Persisted) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityPersisted();
+}
+
+TEST(SetPriority, RuntimeAdd) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityRuntimeAdd();
+}
+
+TEST(SetPriority, StateFileOpenError) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityStateFileOpenError();
+}
+
+TEST(SetPriority, StateFileFull) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityStateFileFull();
+}
+
+TEST(SetPriority, NoStateFileTableFull) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNoStateFileTableFull();
+}
+
+TEST(SetPriority, NamesakeDirs) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNamesakeDirs();
+}
+
+TEST(SetPriority, NamesakeDirsSamePriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_NamesakeDirsSamePriority();
+}
+
+TEST(StateFile, SlotExhausted) {
+    Svc::DpCatalogTester tester;
+    tester.test_LoadStateFileSlotExhausted();
+}
+
+TEST(StateFile, DirectoryInvalid) {
+    Svc::DpCatalogTester tester;
+    tester.test_LoadStateFileDirectoryInvalid();
+}
+
+TEST(SetPriority, NotInit) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityNotInit();
+}
+
+TEST(SetPriority, SameIdByTime) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPrioritySameIdByTime();
+}
+
+TEST(SetPriority, WithXmitRange) {
+    Svc::DpCatalogTester tester;
+    tester.test_SetPriorityWithXmitRange();
+}
+
+TEST(DeleteDp, Nominal) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDp();
+}
+
+TEST(DeleteDp, NotFound) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpNotFound();
+}
+
+TEST(DeleteDp, InFlight) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpInFlight();
+}
+
+TEST(DeleteDp, StateFileReload) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStateFileReload();
+}
+
+TEST(DeleteDp, StaleDirectory) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStaleDirectory();
+}
+
+TEST(DeleteDp, PendingWithStateFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpPendingWithStateFile();
+}
+
+TEST(DeleteDp, NamesakeDirs) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpNamesakeDirs();
+}
+
+TEST(DeleteDp, RemoveError) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpRemoveError();
+}
+
+TEST(DeleteDp, StateFileWriteError) {
+    Svc::DpCatalogTester tester;
+    tester.test_DeleteDpStateFileWriteError();
+}
+
+TEST(NominalManual, RetransmitAfterRebuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterRebuild();
+}
+
+TEST(NominalManual, RetransmitPersistsAcrossRebuild) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitPersistsAcrossRebuild();
+}
+
+TEST(NominalManual, RetransmitSameSession) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitSameSession();
+}
+
+TEST(NominalManual, RetransmitDuringTransmit) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitDuringTransmit();
+}
+
+TEST(NominalManual, RetransmitRemainActiveResumes) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitRemainActiveResumes();
+}
+
+TEST(OffNominal, RetransmitRejected) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitRejected();
+}
+
+TEST(OffNominal, RetransmitFileError) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitFileError();
+}
+
+TEST(OffNominal, RetransmitNameError) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitNameError();
+}
+
+TEST(OffNominal, RetransmitNoStateFileDir) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitNoStateFileDir();
+}
+
+TEST(NominalManual, RetransmitAfterStop) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitAfterStop();
+}
+
+TEST(NominalManual, RetransmitSecondDirectory) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitSecondDirectory();
+}
+
+TEST(NominalManual, RetransmitFullStateFile) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitFullStateFile();
+}
+
+TEST(NominalManual, RetransmitHeaderPriority) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitHeaderPriority();
+}
+
+TEST(NominalManual, RetransmitWithoutRecord) {
+    Svc::DpCatalogTester tester;
+    tester.test_RetransmitWithoutRecord();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
-    // TODO: https://github.com/nasa/fprime/issues/5104 STest::Random::seed();
+    STest::Random::seed();
     return RUN_ALL_TESTS();
 }

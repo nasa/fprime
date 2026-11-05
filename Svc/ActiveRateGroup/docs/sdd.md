@@ -50,7 +50,8 @@ A context value can be used by a component to discriminate between more than one
 
 The task of the component calls the output ports in order, passing the context from the context list as the port argument. 
 
-The component sets a flag when the cycle port is invoked. At the beginning of the rate group execution, the component clears 
+The component sets a flag when the cycle port is invoked. The flag is atomic because it is set on the thread of the cycle 
+port caller and cleared and checked on the component thread. At the beginning of the rate group execution, the component clears 
 the flag. 
 If it detects that it has been set again at the end of the rate group cycle, it will declare a cycle slip, send an 
 event, and increase the cycle slip counters. 
@@ -110,6 +111,7 @@ Date | Description
 7/22/2015 | Design review actions
 8/10/2015 | Updated to cycle input port 
 8/31/2015 | Unit test review updates
+10/29/2026 | Cycle-started flag made atomic (nasa/fprime#6040 items 1 and 3)
 
 
 

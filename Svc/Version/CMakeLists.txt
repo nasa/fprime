@@ -6,26 +6,29 @@
 # UT_SOURCE_FILES: list of source files for unit tests
 #
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Version.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Version.cpp"
-)
 
 # Uncomment and add any modules that this component depends on, else
 # they might not be available when cmake tries to build this component.
 
-set(MOD_DEPS
-   Os
-   version 
+
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Version.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/Version.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/Version.hpp"
+  DEPENDS
+    Os
+    version
 )
 
-register_fprime_module()
-
-set(UT_SOURCE_FILES
-   "${CMAKE_CURRENT_LIST_DIR}/Version.fpp"
-   "${CMAKE_CURRENT_LIST_DIR}/test/ut/version.cpp"
-   "${CMAKE_CURRENT_LIST_DIR}/test/ut/VersionTester.cpp"
-   "${CMAKE_CURRENT_LIST_DIR}/test/ut/VersionTestMain.cpp"
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Version.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/version.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/VersionTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/VersionTestMain.cpp"
+  UT_AUTO_HELPERS
 )
-set (UT_AUTO_HELPERS ON)
-register_fprime_ut()

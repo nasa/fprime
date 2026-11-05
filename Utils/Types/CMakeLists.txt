@@ -31,7 +31,10 @@ register_fprime_ut(
     "Utils_Types_Queue_ut_exe"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/Queue/QueueTest.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/Queue/QueueRulesTest.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/Queue/QueueSerializableTest.cpp"
     DEPENDS
         STest
         Fw_Types
+        Fw_Buffer
 )

@@ -15,6 +15,7 @@
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/BadDescriptorFile.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/BadTimeBaseFile.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/BadTimeContextFile.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/BadUSecFile.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/Buffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/DataAfterRecordsFile.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/EmptyFile.hpp"

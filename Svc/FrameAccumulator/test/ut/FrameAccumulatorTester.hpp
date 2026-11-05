@@ -72,6 +72,9 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Test handling of errors from the FrameDetector (too large size_out)
     void testDetectionErrorHandling();
 
+    //! Test that the most recent context is forwarded when a frame is detected
+    void testContextForwarded();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

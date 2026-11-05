@@ -68,7 +68,7 @@ FifoQueue<U32, 10> q1;
 auto status = q1.enqueue(3);
 ASSERT_EQ(status, Success::SUCCESS);
 FifoQueue<U32, 10> q2(q1);
-ASSERT_EQ(q2.size(), 1);
+ASSERT_EQ(q2.getSize(), 1);
 U32 value = 0;
 status = q2.dequeue(value);
 ASSERT_EQ(status, Success::SUCCESS);
@@ -91,7 +91,7 @@ Defined as `= default`.
 FifoQueue<T, C>& operator=(const FifoQueue<T, C>& queue)
 ```
 
-Return `m_extQueue.copyDataFrom(queue)`.
+Call `m_extQueue.copyDataFrom(queue)` and return `*this`.
 
 _Example:_
 ```c++
@@ -99,9 +99,9 @@ FifoQueue<U32, 10> q1;
 auto status = q1.enqueue(3);
 ASSERT_EQ(status, Success::SUCCESS);
 FifoQueue<U32, 10> q2;
-ASSERT_EQ(q2.size(), 0);
+ASSERT_EQ(q2.getSize(), 0);
 q2 = q1;
-ASSERT_EQ(q2.size(), 1);
+ASSERT_EQ(q2.getSize(), 1);
 U32 value = 0;
 status = q2.dequeue(value);
 ASSERT_EQ(status, Success::SUCCESS);

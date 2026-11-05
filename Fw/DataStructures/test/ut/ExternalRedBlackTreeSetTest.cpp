@@ -18,7 +18,7 @@ namespace Fw {
 template <typename T>
 class ExternalRedBlackTreeSetTester {
   public:
-    ExternalRedBlackTreeSetTester<T>(const ExternalRedBlackTreeSet<T>& set) : m_set(set) {}
+    ExternalRedBlackTreeSetTester(const ExternalRedBlackTreeSet<T>& set) : m_set(set) {}
 
     const RedBlackTreeSetOrMapImpl<T, Nil>& getImpl() const { return this->m_set.m_impl; }
 

@@ -1,6 +1,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Svc/RateGroupDriver/RateGroupDriver.hpp>
+#include <Utils/Algorithms.hpp>
 #include <cstdio>
 #include <cstring>
 
@@ -10,12 +11,11 @@ RateGroupDriver::RateGroupDriver(const char* compName)
     : RateGroupDriverComponentBase(compName), m_ticks(0), m_rollover(1), m_configured(false) {}
 
 void RateGroupDriver::configure(const DividerSet& dividerSet) {
-    // check arguments
-    FW_ASSERT(dividerSet.dividers);
     // verify port/table size matches
-    FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_dividers) == this->getNum_CycleOut_OutputPorts(),
-              static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
-              static_cast<FwAssertArgType>(this->getNum_CycleOut_OutputPorts()));
+    static_assert(FW_NUM_ARRAY_ELEMENTS(m_dividers) == NUM_CYCLEOUT_OUTPUT_PORTS,
+                  "Divider table size must match the number of cycle output ports");
+    // reset rollover so a reconfigure does not carry over the prior rollover
+    this->m_rollover = 1;
     // copy provided array of dividers
     for (FwIndexType entry = 0; entry < RateGroupDriver::DIVIDER_SIZE; entry++) {
         // A port with an offset equal or bigger than the divisor is not accepted because it would never be called
@@ -24,14 +24,10 @@ void RateGroupDriver::configure(const DividerSet& dividerSet) {
                   static_cast<FwAssertArgType>(dividerSet.dividers[entry].offset),
                   static_cast<FwAssertArgType>(dividerSet.dividers[entry].divisor));
         this->m_dividers[entry] = dividerSet.dividers[entry];
-        // rollover value should be product of all dividers to make sure integer rollover doesn't jump cycles
-        // only use non-zero dividers
+        // Rollover value should be the least common multiple of all dividers to make sure integer rollover doesn't jump
+        // cycles. Only use non-zero dividers:
         if (dividerSet.dividers[entry].divisor != 0) {
-            // Ensure that rollover will not overflow
-            FW_ASSERT((std::numeric_limits<FwSizeType>::max() / dividerSet.dividers[entry].divisor) >= this->m_rollover,
-                      static_cast<FwAssertArgType>(this->m_rollover),
-                      static_cast<FwAssertArgType>(dividerSet.dividers[entry].divisor));
-            this->m_rollover *= dividerSet.dividers[entry].divisor;
+            this->m_rollover = Utils::lcm(this->m_rollover, dividerSet.dividers[entry].divisor);
         }
     }
     this->m_configured = true;
@@ -58,7 +54,8 @@ void RateGroupDriver::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
     }
 
     // rollover the tick value when the tick count reaches the rollover value
-    // the rollover value is the product of all the dividers. See comment in constructor.
+    // the rollover value is the least common multiple of all the dividers.
+    FW_ASSERT(this->m_rollover > 0);
     this->m_ticks = (this->m_ticks + 1) % this->m_rollover;
 }
 

@@ -23,13 +23,13 @@ namespace Drv {
 
 TcpClientComponentImpl::TcpClientComponentImpl(const char* const compName) : TcpClientComponentBase(compName) {}
 
-SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
+SocketIpStatus TcpClientComponentImpl::configure(const char* const ipv4_address,
                                                  const U16 port,
                                                  const U32 send_timeout_seconds,
                                                  const U32 send_timeout_microseconds,
                                                  FwSizeType buffer_size) {
     m_allocation_size = buffer_size;  // Store the buffer size
-    return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
+    return m_socket.configure(ipv4_address, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
 TcpClientComponentImpl::~TcpClientComponentImpl() {}
@@ -47,6 +47,8 @@ Fw::Buffer TcpClientComponentImpl::getBuffer() {
 }
 
 void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
+    // A successful receive must have produced a buffer with backing data (size may be zero)
+    FW_ASSERT((status != SOCK_SUCCESS) || (buffer.getData() != nullptr));
     Drv::ByteStreamStatus recvStatus = ByteStreamStatus::OTHER_ERROR;
     if (status == SOCK_SUCCESS) {
         recvStatus = ByteStreamStatus::OP_OK;

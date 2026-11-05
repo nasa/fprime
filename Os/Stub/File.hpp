@@ -32,7 +32,7 @@ class StubFile : public FileInterface {
 
     //! \brief open file with supplied path and mode
     //!
-    //! This implementation does nothing but return NOT_IMPLEMENTED.
+    //! This implementation does nothing but return NOT_SUPPORTED.
     //!
     //! It is invalid to send `nullptr` as the path.
     //! It is invalid to supply `mode` as a non-enumerated value.
@@ -41,7 +41,7 @@ class StubFile : public FileInterface {
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! \return: NOT_IMPLEMENTED
+    //! \return: NOT_SUPPORTED
     //!
     Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
 
@@ -53,54 +53,54 @@ class StubFile : public FileInterface {
 
     //! \brief get size of currently open file
     //!
-    //! This implementation does nothing but return NOT_IMPLEMENTED.
+    //! This implementation does nothing but return NOT_SUPPORTED.
     //! \param size: output parameter for size.
-    //! \return NOT_IMPLEMENTED
+    //! \return NOT_SUPPORTED
     //!
     Status size(FwSizeType& size_result) override;
 
     //! \brief get file pointer position of the currently open file
     //!
-    //! This implementation does nothing but return NOT_IMPLEMENTED.
+    //! This implementation does nothing but return NOT_SUPPORTED.
     //! \param position: output parameter for size.
-    //! \return NOT_IMPLEMENTED
+    //! \return NOT_SUPPORTED
     //!
     Status position(FwSizeType& position_result) override;
 
     //! \brief pre-allocate file storage
     //!
-    //! This implementation does nothing but return NOT_IMPLEMENTED.
+    //! This implementation does nothing but return NOT_SUPPORTED.
     //!
     //! It is invalid to pass a negative `offset`.
     //! It is invalid to pass a negative `length`.
     //!
     //! \param offset: offset into file
     //! \param length: length after offset to preallocate
-    //! \return NOT_IMPLEMENTED
+    //! \return NOT_SUPPORTED
     //!
     Status preallocate(FwSizeType offset, FwSizeType length) override;
 
     //! \brief seek the file pointer to the given offset
     //!
-    //! This implementation does nothing but return NOT_IMPLEMENTED.
+    //! This implementation does nothing but return NOT_SUPPORTED.
     //!
     //! \param offset: offset to seek to
     //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `RELATIVE` to use current position.
-    //! \return NOT_IMPLEMENTED
+    //! \return NOT_SUPPORTED
     //!
     Status seek(FwSignedSizeType offset, SeekType seekType) override;
 
     //! \brief flush file contents to storage
     //!
-    //! This implementation does nothing but return NOT_IMPLEMENTED.
+    //! This implementation does nothing but return NOT_SUPPORTED.
     //!
-    //! \return NOT_IMPLEMENTED
+    //! \return NOT_SUPPORTED
     //!
     Status flush() override;
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!
-    //! This implementation does nothing but return NOT_IMPLEMENTED.
+    //! This implementation does nothing but return NOT_SUPPORTED.
     //!
     //! It is invalid to pass `nullptr` to this function call.
     //! It is invalid to pass a negative `size`.
@@ -109,13 +109,13 @@ class StubFile : public FileInterface {
     //! \param buffer: memory location to store data read from file
     //! \param size: size of data to read
     //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
-    //! \return NOT_IMPLEMENTED
+    //! \return NOT_SUPPORTED
     //!
     Status read(U8* buffer, FwSizeType& size, WaitType wait) override;
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!
-    //! This implementation does nothing but return NOT_IMPLEMENTED.
+    //! This implementation does nothing but return NOT_SUPPORTED.
     //!
     //! It is invalid to pass `nullptr` to this function call.
     //! It is invalid to pass a negative `size`.
@@ -124,7 +124,7 @@ class StubFile : public FileInterface {
     //! \param buffer: memory location to store data read from file
     //! \param size: size of data to read
     //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
-    //! \return NOT_IMPLEMENTED
+    //! \return NOT_SUPPORTED
     //!
     Status write(const U8* buffer, FwSizeType& size, WaitType wait) override;
 

@@ -7,53 +7,12 @@
 #ifndef FW_PARAM_STRING_HPP
 #define FW_PARAM_STRING_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-
-#include "Fw/Types/SerIds.hpp"
-#include "Fw/Types/StringBase.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 
 namespace Fw {
 
-class ParamString final : public StringBase {
-  public:
-    enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_PRM_STR,
-        STRING_SIZE = FW_PARAM_STRING_MAX_SIZE,
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE)
-    };
+using ParamString = StringTemplate<FW_PARAM_STRING_MAX_SIZE>;
 
-    ParamString() : StringBase() { *this = ""; }
-
-    ParamString(const ParamString& src) : StringBase() { *this = src; }
-
-    ParamString(const ConstStringBase& src) : StringBase() { *this = src; }
-
-    ParamString(const char* src) : StringBase() { *this = src; }
-
-    ~ParamString() {}
-
-    ParamString& operator=(const ParamString& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    ParamString& operator=(const ConstStringBase& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    ParamString& operator=(const char* src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    const char* toChar() const { return this->m_buf; }
-
-    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
-
-  private:
-    char m_buf[BUFFER_SIZE(STRING_SIZE)];
-};
 }  // namespace Fw
 
 #endif

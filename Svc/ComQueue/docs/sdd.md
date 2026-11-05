@@ -5,6 +5,7 @@
 `Svc::ComQueue` is an  F´ active component that functions as a priority queue of buffer types. Messages are dequeued and forwarded in order of priority when a `Fw::Success::SUCCESS` signal is received on the `comStatusIn` port. `Fw::Success::SUCCESS` is accepted in three contexts: (1) at start-up to initiate data flow, (2) in response to a previously sent message, and (3) after a previous `Fw::Success::FAILURE` to indicate recovery. Receiving a `Fw::Success::FAILURE` results in the queues being paused until a subsequent `Fw::Success::SUCCESS` is received.
 
 `Svc::ComQueue` is configured with a queue depth and queue priority for each incoming `Fw::Com` and `Fw::Buffer` port by passing in a configuration table at initialization. 
+A depth of 0 disables the queue for that port: no storage is allocated for it and any message received on that port is treated as an overflow. At least one port must have a non-zero depth; an all-zero table (the default-constructed table) is rejected with an assertion at configuration.
 Queued messages from the highest priority source port are serviced first and a round-robin algorithm is used to balance between ports of shared priority.
 
 `Svc::ComQueue` is designed to act alongside instances of the [communication adapter interface](../../../docs/reference/communication-adapter-interface.md) and implements the communication queue [protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol).
@@ -35,6 +36,8 @@ Queued messages from the highest priority source port are serviced first and a r
 | SVC-COMQUEUE-009 | `Svc::ComQueue` shall keep track and throttle queue overflow events per port.                                                           | Prevents a flood of queue overflow events.                              | Unit test           | 
 | SVC-COMQUEUE-010 | `Svc::ComQueue` shall return ownership of incoming buffers once they have been enqueued.                                                | Memory management                                                       | Unit test           | 
 | SVC-COMQUEUE-011 | `Svc::ComQueue` shall provide a command to flush queued items.      | Queue management              | Unit test           | 
+| SVC-COMQUEUE-012 | `Svc::ComQueue` shall accept a configured depth of 0 for a port, allocating no storage for that queue and treating any message received on that port as an overflow. | Deployments may leave a port unused (e.g. no file downlink) without allocating memory or crashing. | Unit test | 
+| SVC-COMQUEUE-013 | `Svc::ComQueue` shall report cumulative, per-port message drops caused by async ingress and managed queue overflow separately, including both overflow policies and disabled queues. | Provide observability without generating additional messages during ingress saturation. | Unit test |
 
 
 ## 4. Design
@@ -64,6 +67,8 @@ The diagram below shows the `Svc::ComQueue` component.
 2. `m_prioritizedList`: An instance of `Svc::ComQueue::QueueMetadata` storing the priority-order queue metadata.
 3. `m_state`: Instance of `Svc::ComQueue::SendState` representing the state of the component. See: 4.3.1 State Machine
 4. `m_throttle`: An array of flags that throttle the per-port queue overflow messages.
+5. `m_comIngressDrops` and `m_buffIngressDrops`: atomic per-port async ingress loss counters, updated in the caller's thread.
+6. `m_managedDrops`: per-port managed queue loss counter, updated in the component dispatch thread.
 
 ### 4.2.1 State Machine
 
@@ -100,6 +105,8 @@ and an allocator of `Fw::MemAllocator`. The `configure` method foes the followin
    3. Ensures that every entry in the queue containing the prioritized order of the com buffer and buffer data have been 
    initialized. 
    4. Ensures that there is enough memory for the com buffer and buffer data we want to process
+   5. Skips storage setup for any entry with a depth of 0; such a queue is disabled and always overflows
+   6. Asserts that at least one entry has a non-zero depth
 
 ### 4.5 Port Handlers
 
@@ -133,6 +140,7 @@ state. For a full description see [4.2.1 State Machine](#4.2.1-State-Machine).
 The `run` port handler does the following: 
 1. Report the high-water mark for each queue since last `run` invocation via telemetry
 2. Clear each queue's high-water mark
+3. Report cumulative per-port ingress and managed queue drop counters; counters are not reset by `run`
 
 ### 4.6 Telemetry
 
@@ -140,6 +148,34 @@ The `run` port handler does the following:
 |----------------|--------------------|-----------------------------------------------------------|
 | comQueueDepth  | Svc.ComQueueDepth  | High-water mark depths of queues handling `Fw::ComBuffer` |
 | buffQueueDepth | Svc.BuffQueueDepth | High-water mark depths of queues handling `Fw::Buffer`    |
+| comIngressDropped | Svc.ComQueueIngressDrops | Cumulative drops at the async `Fw::ComBuffer` ingress, by port |
+| buffIngressDropped | Svc.BuffQueueIngressDrops | Cumulative drops at the async `Fw::Buffer` ingress, by port |
+| comManagedDropped | Svc.ComQueueManagedDrops | Cumulative drops in managed `Fw::ComBuffer` queues, by port |
+| buffManagedDropped | Svc.BuffQueueManagedDrops | Cumulative drops in managed `Fw::Buffer` queues, by port |
+
+The loss counters are unsigned 32-bit cumulative counts since component construction; they wrap modulo 2^32.
+They count drops caused by queue overflow only. Explicit `FLUSH_QUEUE` and `FLUSH_ALL_QUEUES` operations
+are excluded; returning a buffer during a commanded flush does not increment any drop counter.
+A managed queue `DROP_OLDEST` replacement counts as one lost message even though the new input is accepted.
+A configured managed queue depth of zero counts each rejected input as one managed queue loss.
+
+The ingress counters reflect overflow of the component instance's single shared asynchronous
+message queue, configured by the FPP instance `queue size` (for example,
+`ComCcsdsConfig.QueueSizes.comQueue`). This queue is shared by the async input ports,
+including `run`, and is distinct from the per-port managed queues. The managed drop
+counters reflect the corresponding `QueueConfigurationTable` entry's `depth` and
+`overflowMode` (for example, `ComCcsdsConfig.QueueDepths.events` and `.tlm`).
+Increasing a managed queue depth does not resolve saturation of the shared async queue.
+
+Deployments with an FPP telemetry packet set must include or explicitly omit the four
+drop channels. The `Ref` deployment includes them in its `CDHErrors` packet.
+
+The `run` input is itself asynchronous with `drop` overflow behavior. If the async
+message queue is full, that telemetry invocation may be dropped too; the
+cumulative counters are retained and will be reported upon a subsequent
+successfully dispatched `run`. The async ingress overflow hooks intentionally
+do not emit events or enqueue messages. A returned `Fw::Buffer` signals
+ownership return, not successful transmission.
 
 ### 4.7 Events
 
@@ -179,12 +215,16 @@ the prioritized list.
 
 #### 4.9.4 enqueue
 
-Attempts to enqueue the buffer onto the queue index, logs a (throttled) warning if data is discarded, and immediately processes the queue if state is `READY`.
+Attempts to enqueue a buffer into its per-port managed queue. A rejected input, including one sent to a disabled (depth 0) queue, increments the managed drop counter; a `DROP_OLDEST` replacement counts the displaced item as one drop even when the new input is accepted. The overflow warning is throttled per port. If the state is `READY`, processing resumes immediately. A disabled queue never drains, so its overflow warning remains throttled after the first rejection.
 
 #### 4.9.5 drainQueue
 
-Pops all messages out of the queue at queueIndex, `index`.
+Pops all messages out of the queue at queueIndex, `index`. A disabled (depth 0) queue has nothing to drain and is skipped.
 
 #### 4.9.6 getQueueNum
 
-Converts a `queueType` & `portNum` into an index into the `m_queues` array--translates between user facing index system & internal one.
+Converts a `queueType` & `portNum` into an index into the `m_queues` array--translates between user facing index system & internal one. `portNum` is validated against the port count of `queueType` (`COM_PORT_COUNT` or `BUFFER_PORT_COUNT`) before folding; an out-of-range `portNum` yields `-1`, which `FLUSH_QUEUE` and `SET_QUEUE_PRIORITY` reject with `VALIDATION_ERROR` so a `COM_QUEUE` index can never address a buffer queue (or vice versa).
+
+#### 4.9.7 getQueueDepth
+
+Looks up the configured depth of the queue at a given `m_queues` index from the prioritized metadata list; a depth of 0 identifies a disabled queue.

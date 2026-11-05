@@ -11,12 +11,15 @@
 // ======================================================================
 
 #include "Os/ValidatedFile.hpp"
+#include "Fw/Types/Assert.hpp"
 #include "Utils/Hash/Hash.hpp"
 
 namespace Os {
 
 ValidatedFile ::ValidatedFile(const char* const fileName) : m_fileName(fileName), m_hashFileName(""), m_hashBuffer() {
-    Utils::Hash::addFileExtension(this->m_fileName, this->m_hashFileName);
+    const Fw::FormatStatus formatStatus = Utils::Hash::addFileExtension(this->m_fileName, this->m_hashFileName);
+    // A truncated hash file name would silently validate against the wrong file
+    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS, static_cast<FwAssertArgType>(formatStatus));
 }
 
 Os::ValidateFile::Status ValidatedFile ::validate() {
@@ -28,6 +31,13 @@ Os::ValidateFile::Status ValidatedFile ::validate() {
 Os::ValidateFile::Status ValidatedFile ::createHashFile() {
     const Os::ValidateFile::Status status = Os::ValidateFile::createValidation(
         this->m_fileName.toChar(), this->m_hashFileName.toChar(), this->m_hashBuffer);
+    return status;
+}
+
+Os::ValidateFile::Status ValidatedFile ::createHashFile(const Utils::HashBuffer& hashBuffer) {
+    this->m_hashBuffer = hashBuffer;
+    const Os::ValidateFile::Status status =
+        Os::ValidateFile::createValidation(this->m_hashFileName.toChar(), this->m_hashBuffer);
     return status;
 }
 

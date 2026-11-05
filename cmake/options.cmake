@@ -17,13 +17,18 @@
 #
 ####
 include_guard()
-# Remap changed settings
-if (DEFINED FPRIME_INSTALL_DEST)
-    set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
-endif()
 include("settings/ini")
-ini_to_cache()
-
+# Skip ini processing when fprime was loaded via find_package() and no settings file was explicitly provided.
+# In the find_package flow the project does not rely on fprime-util or settings.ini for path configuration.
+if (NOT FPRIME_LOADED_VIA_FIND_PACKAGE OR DEFINED FPRIME_SETTINGS_FILE)
+    ini_to_cache()
+endif()
+# FPRIME_INSTALL_DEST is the default DESTDIR used by fprime_install.cmake
+# when the user has not set DESTDIR in the environment.
+if(NOT DEFINED FPRIME_INSTALL_DEST)
+    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts" CACHE INTERNAL
+        "Install destination used as default DESTDIR" FORCE)
+endif()
 
 ####
 # `CMAKE_TOOLCHAIN_FILE:`
@@ -180,11 +185,16 @@ option(FPRIME_ENABLE_TEXT_LOGGERS "Enable text loggers in build" ON)
 ####
 # `FPRIME_ENABLE_JSON_MODEL_GENERATION`:
 #
+# **Deprecated:** the FPP JSON model is deprecated in favor of the native FPP Python bindings
+# (`fprime-fpp-python`). FPP 3.4.0, shipped alongside F Prime 4.4.0, is the final version that supports the JSON
+# model. Users of `fprime-python-model` should follow the migration guide to `fprime-fpp-python`. Enabling this
+# option emits a deprecation warning at configure time.
+#
 # Turns on the generation of JSON models for all modules in the build system. This will run `fpp-to-json` and may
 # require the user to install `java` and the .jar variants of FPP.
 #
 # **Values:**
-# - ON: enable JSON model generation
+# - ON: enable JSON model generation (deprecated)
 # - OFF: (default) disable JSON model generation
 #
 # e.g. `-DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON`
@@ -326,7 +336,7 @@ include(CTest)
 # includes, etc. Default is FPRIME_FRAMEWORK_PATH if the PROJECT_SOURCE_DIR is a child of FPRIME_FRAMEWORK_PATH
 # otherwise PROJECT_SOURCE_DIR is used as the project root.
 #
-# e.g. `-DFPRIME_FRAMEWORK_PATH=/path/to/fprime/project`
+# e.g. `-DFPRIME_PROJECT_ROOT=/path/to/fprime/project`
 #
 # FPRIME_LIBRARY_LOCATIONS: locations of libraries included in the build. CMake list supplied in ; separated format like
 # other CMake lists. Default: "", no libraries available.
@@ -350,18 +360,12 @@ endif()
 set(FPRIME_FRAMEWORK_PATH "${DETECTED_FRAMEWORK_PATH}" CACHE PATH "F Prime framework location" FORCE)
 
 # Setup project root
-get_filename_component(FULL_PROJECT_PATH "${CMAKE_PROJECT_DIR}" ABSOLUTE)
-file(RELATIVE_PATH TEMP_PATH "${FPRIME_FRAMEWORK_PATH}" "${FULL_PROJECT_PATH}")
-# If defined then force it to be absolute
 if (DEFINED FPRIME_PROJECT_ROOT)
+    # If explicitly defined (CLI or settings.ini), force it to be absolute
     get_filename_component(FPRIME_PROJECT_ROOT_ABS "${FPRIME_PROJECT_ROOT}" ABSOLUTE)
     set(FPRIME_PROJECT_ROOT "${FPRIME_PROJECT_ROOT_ABS}" CACHE PATH "F Prime project location" FORCE)
-# Forces framework path as project root, if a child
-elseif( "${TEMP_PATH}" MATCHES "^[^./].*" )
-    set(FPRIME_PROJECT_ROOT "${FPRIME_FRAMEWORK_PATH}" CACHE PATH "F Prime project location" FORCE)
-# Force PROJECT_ROOT
 else()
-    set(FPRIME_PROJECT_ROOT "${FULL_PROJECT_PATH}" CACHE PATH "F Prime project location" FORCE)
+    set(FPRIME_PROJECT_ROOT "${PROJECT_SOURCE_DIR}" CACHE PATH "F Prime project location" FORCE)
 endif()
 # Force  FPRIME_LIBRARY_LOCATIONS to be absolute
 set(FPRIME_LIBRARY_LOCATIONS_ABS)

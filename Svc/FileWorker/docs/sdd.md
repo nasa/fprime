@@ -10,6 +10,7 @@ Svc::FileWorker is an active F' component used for writing and reading files on 
 |FileWorker-002|FileWorker shall provide an interface to write contents to a file passed in from a client-provided buffer|Unit Test|
 |FileWorker-003|FileWorker shall handle receiving read-done signals while in improper state|Unit Test|
 |FileWorker-004|FileWorker shall handle cancel for reads|Unit Test|
+|FileWorker-005|FileWorker shall validate the inputs to its read, write, and verify port handlers and report malformed inputs via an event and a failure status rather than asserting|Unit Test|
 
 ### Diagrams
 
@@ -42,59 +43,63 @@ Svc::FileWorker is an active F' component used for writing and reading files on 
 <tr style = "border: 2px solid black;"><td rowspan="1"><code>CrcFailed</code></td><td rowspan="1">warning high</td><td rowspan="1">"Failed CRC check with {} status"</td><td rowspan="1">2</td><td><code>crcStat</code></td><td><code>U32</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="2"><code>CrcVerificationError</code></td><td rowspan="2">warning low</td><td rowspan="2">"Failed to verify file. Expected CRC {}. Actual CRC {}"</td><td rowspan="2"></td><td><code>crcExp</code></td><td><code>U32</code></td><td></td></tr><tr><td><code>crcCalculated</code></td><td><code>U32</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="1"><code>ReadFailedFileSize</code></td><td rowspan="1">warning high</td><td rowspan="1">"Failed to get filesize with stat {} in read handler"</td><td rowspan="1">2</td><td><code>fsStat</code></td><td><code>U32</code></td><td></td></tr>
-<tr style = "border: 2px solid black;"><td rowspan="2"><code>OpenFileError</code></td><td rowspan="2">warning high</td><td rowspan="2">"Failed to open file {} with stat {}"</td><td rowspan="2">2</td><td><code>fileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>size FileNameStringSize
-fsStat</code></td><td><code>U32</code></td><td></td></tr>
+<tr style = "border: 2px solid black;"><td rowspan="2"><code>OpenFileError</code></td><td rowspan="2">warning high</td><td rowspan="2">"Failed to open file {} with stat {}"</td><td rowspan="2">2</td><td><code>fileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>fsStat</code></td><td><code>U32</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="2"><code>ReadBegin</code></td><td rowspan="2">activity low</td><td rowspan="2">"Reading {} bytes from {}"</td><td rowspan="2"></td><td><code>fileSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="2"><code>ReadCompleted</code></td><td rowspan="2">activity low</td><td rowspan="2">"Finished reading {} bytes from {}"</td><td rowspan="2"></td><td><code>fileSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="3"><code>ReadError</code></td><td rowspan="3">warning high</td><td rowspan="3">"Failed after {} of {} bytes read to {}"</td><td rowspan="3"></td><td><code>bytesRead</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>readSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="3"><code>ReadAborted</code></td><td rowspan="3">warning low</td><td rowspan="3">"Aborted after {} of {} bytes read to {}"</td><td rowspan="3"></td><td><code>bytesRead</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>readSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr>
-<tr style = "border: 2px solid black;"><td rowspan="4"><code>ReadTimeout</code></td><td rowspan="4">warning high</td><td rowspan="4">"Failed after {} of {} bytes read to {} after exceeding timeout of {} microseconds"</td><td rowspan="4"></td><td><code>bytesRead</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>readSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>size FileNameStringSize
-timeout</code></td><td><code>U64</code></td><td></td></tr>
+<tr style = "border: 2px solid black;"><td rowspan="4"><code>ReadTimeout</code></td><td rowspan="4">warning high</td><td rowspan="4">"Failed after {} of {} bytes read to {} after exceeding timeout of {} microseconds"</td><td rowspan="4"></td><td><code>bytesRead</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>readSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>timeout</code></td><td><code>U64</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="2"><code>WriteBegin</code></td><td rowspan="2">activity low</td><td rowspan="2">"Beginning write of size {} to {}"</td><td rowspan="2"></td><td><code>writeSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="2"><code>WriteCompleted</code></td><td rowspan="2">activity low</td><td rowspan="2">"Completed write of size {} to {}"</td><td rowspan="2"></td><td><code>writeSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr>
-<tr style = "border: 2px solid black;"><td rowspan="4"><code>WriteFileError</code></td><td rowspan="4">warning high</td><td rowspan="4">"Failed after {} of {} bytes written to {} with write status {}"</td><td rowspan="4">2</td><td><code>bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>writeSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>size FileNameStringSize
-status</code></td><td><code>I32</code></td><td></td></tr>
-<tr style = "border: 2px solid black;"><td rowspan="2"><code>WriteValidationOpenError</code></td><td rowspan="2">warning high</td><td rowspan="2">"Failed to open validation file {} with status {}"</td><td rowspan="2">2</td><td><code>hashFileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>size FileNameStringSize
-status</code></td><td><code>I32</code></td><td></td></tr>
-<tr style = "border: 2px solid black;"><td rowspan="2"><code>WriteValidationReadError</code></td><td rowspan="2">warning high</td><td rowspan="2">"Failed to read validation file {} with status {}"</td><td rowspan="2">2</td><td><code>hashFileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>size FileNameStringSize
-status</code></td><td><code>I32</code></td><td></td></tr>
-<tr style = "border: 2px solid black;"><td rowspan="3"><code>WriteValidationError</code></td><td rowspan="3">warning low</td><td rowspan="3">"Failed to create hash file {}. Wrote {} bytes when expected to write {} bytes to hash file"</td><td rowspan="3"></td><td><code>hashFileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>size FileNameStringSize
-bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>hashSize</code></td><td><code>FwSizeType</code></td><td></td></tr>
-<tr style = "border: 2px solid black;"><td rowspan="4"><code>WriteTimeout</code></td><td rowspan="4">warning high</td><td rowspan="4">"Failed after {} of {} bytes written to {} after exceeding timeout of {} microseconds"</td><td rowspan="4"></td><td><code>bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>writeSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>size FileNameStringSize
-timeout</code></td><td><code>U64</code></td><td></td></tr>
+<tr style = "border: 2px solid black;"><td rowspan="4"><code>WriteFileError</code></td><td rowspan="4">warning high</td><td rowspan="4">"Failed after {} of {} bytes written to {} with write status {}"</td><td rowspan="4">2</td><td><code>bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>writeSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>status</code></td><td><code>I32</code></td><td></td></tr>
+<tr style = "border: 2px solid black;"><td rowspan="2"><code>WriteValidationOpenError</code></td><td rowspan="2">warning high</td><td rowspan="2">"Failed to open validation file {} with status {}"</td><td rowspan="2">2</td><td><code>hashFileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>status</code></td><td><code>I32</code></td><td></td></tr>
+<tr style = "border: 2px solid black;"><td rowspan="2"><code>WriteValidationReadError</code></td><td rowspan="2">warning high</td><td rowspan="2">"Failed to read validation file {} with status {}"</td><td rowspan="2">2</td><td><code>hashFileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>status</code></td><td><code>I32</code></td><td></td></tr>
+<tr style = "border: 2px solid black;"><td rowspan="3"><code>WriteValidationError</code></td><td rowspan="3">warning low</td><td rowspan="3">"Failed to create hash file {}. Wrote {} bytes when expected to write {} bytes to hash file"</td><td rowspan="3"></td><td><code>hashFileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>hashSize</code></td><td><code>FwSizeType</code></td><td></td></tr>
+<tr style = "border: 2px solid black;"><td rowspan="4"><code>WriteTimeout</code></td><td rowspan="4">warning high</td><td rowspan="4">"Failed after {} of {} bytes written to {} after exceeding timeout of {} microseconds"</td><td rowspan="4"></td><td><code>bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>writeSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>timeout</code></td><td><code>U64</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="3"><code>WriteAborted</code></td><td rowspan="3">warning low</td><td rowspan="3">"Aborted after {} of {} bytes written to {}"</td><td rowspan="3"></td><td><code>bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>writeSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr>
+<tr style = "border: 2px solid black;"><td rowspan="2"><code>InvalidInput</code></td><td rowspan="2">warning high</td><td rowspan="2">"Invalid input in {} handler: {}"</td><td rowspan="2"></td><td><code>handler</code></td><td><code>string</code></td><td></td></tr><tr><td><code>issue</code></td><td><code>string</code></td><td></td></tr>
 </tbody></table>
 
-### 3.4 Functional Description
+## Functional Description
 
-#### 3.4.1 writeIn_handler
+Each `*In` port handler validates its arguments before performing any file operation. Malformed inputs — such as an empty path, an invalid (null or zero-length) buffer, a write offset past the end of the buffer, or a path that leaves no room for the `.CRC32` hash-file extension within `FileNameStringSize` — are reported by emitting an `InvalidInput` warning event and returning `INVALID_INPUT` to the client, rather than triggering an `FW_ASSERT`. This ensures that invalid, externally supplied (e.g. ground-commanded) inputs are surfaced to operators as telemetry instead of causing an assertion failure.
+
+### writeIn_handler
 
 Calling component passes in a buffer for writing to file, the file location is *path*, and the offset to start writing at.
 
-1. If not in IDLE state, return NOT_IDLE
-2. Set state to WRITING
-3. Open a file at the provided path and write contents of client-provided buffer to it
-4. After file is finished being written to, also write a validation CRC file
-5. Return to client with write size and set state to IDLE
+1. Validate inputs. If the path is empty, the buffer is invalid, the write offset is past the end of the buffer, or the path plus the hash-file extension exceeds `FileNameStringSize`, emit an `InvalidInput` event and return `INVALID_INPUT`
+2. If not in IDLE state, return NOT_IDLE
+3. Set state to WRITING
+4. Open a file at the provided path and write contents of client-provided buffer to it. Non-append writes truncate any existing file at the path.
+5. After file is finished being written to, also write a validation CRC file
+6. Return to client with write size and set state to IDLE
 
-#### 3.4.2 readIn_handler
+### readIn_handler
 
 Calling component passes in a file path *path* to read and a buffer for client to read from
 
-1. If not in IDLE state, return NOT_IDLE
-2. Set state to READING
-3. Verify checksum. If checksum fails, return FAILED_CRC and set state to IDLE
-4. Otherwise, get file size
-5. Read from file into buffer provided by the client
-6. Send back the buffer and set state to IDLE
+1. Validate inputs. If the path is empty, the buffer is invalid, or the path plus the hash-file extension exceeds `FileNameStringSize`, emit an `InvalidInput` event and return `INVALID_INPUT`
+2. If not in IDLE state, return NOT_IDLE
+3. Set state to READING
+4. Verify checksum. If checksum fails, return FAILED_CRC and set state to IDLE
+5. Otherwise, get file size. If getting the file size fails, emit `ReadFailedFileSize` and return `FAILED_FILE_SIZE`, setting state to IDLE
+6. Read from file into buffer provided by the client
+7. Send back the buffer and set state to IDLE
 
-#### 3.4.3 verifyIn_handler
+### verifyIn_handler
 
-1. Verify checksum. If checksum fails, return FAILED_CRC
-2. Get file size. If file size fails, return FAILED_FILE_SIZE
-3. Return file size to client
+1. Validate the input path. If the path is empty or the path plus the hash-file extension exceeds `FileNameStringSize`, emit an `InvalidInput` event and return `INVALID_INPUT`
+2. Verify checksum. If checksum fails, return FAILED_CRC
+3. Get file size. If file size fails, return FAILED_FILE_SIZE
+4. Return file size to client
 
-#### 3.4.4 cancelIn_handler
+### cancelIn_handler
 
 1. Set abort flag to true
-2. Return DONE status
+
+### Checksum (`.CRC32`) file format
+
+`writeIn_handler` writes a `.CRC32` sidecar alongside each file, and `readIn_handler` / `verifyIn_handler` validate the file against it. The sidecar stores the file's CRC-32 (a `U32`) in F Prime's serialized, big-endian representation — the same layout produced and consumed by `Utils::Hash` and `Os::ValidateFile` — so its contents do not depend on the endianness of the target that wrote it. `Svc::FileWorker` writes the sidecar through `Utils::Hash` (`writeBufferHashToFile`) and validates it through `Utils::verify_checksum`, which reads the value back with `Utils::CRCChecker::read_crc32_from_file`; both sides serialize and deserialize the `U32` through `Fw::SerialBuffer`.
+
+**Compatibility note:** `.CRC32` sidecars written by builds that predate this serialized format on a little-endian target stored the raw host-order bytes and will not validate against the current code. Such sidecars must be regenerated before the current build reads or verifies their data files — ground-side, or on board via `Os::ValidateFile::createValidation`. Sidecars written by `Svc::FileWorker` itself (via `Utils::Hash`) are unaffected, as that path already used this layout.

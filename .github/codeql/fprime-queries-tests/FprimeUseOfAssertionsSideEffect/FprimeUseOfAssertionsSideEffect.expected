@@ -1,0 +1,2 @@
+| test.cpp:14:15:14:31 | ... < ... | Assertions should not have side effects. |
+| test.cpp:19:15:19:36 | ... < ... | Assertions should not have side effects. |

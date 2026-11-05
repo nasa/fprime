@@ -12,11 +12,36 @@
 #ifndef FW_BASIC_TYPES_HPP
 #define FW_BASIC_TYPES_HPP
 
+#include <cstddef>
 #include <limits>
+#include <type_traits>
 // Use C linkage for the basic items
 extern "C" {
 #include "Fw/Types/BasicTypes.h"
 }
+
+// FW_NUM_ARRAY_ELEMENTS for C++. This has to live outside the extern "C" block
+// above (C linkage cannot be applied to templates). The plain sizeof macro is
+// wrong for FPP array types and other non-array types (see #5155), so the C++
+// form asserts the argument is a C-style array and then takes its extent.
+//
+// numArrayElements is resolved on the type only (via decltype, which does not
+// evaluate its operand) and takes no runtime argument, so FW_NUM_ARRAY_ELEMENTS
+// stays a constant expression and is safe on member arrays such as this->member.
+namespace Fw {
+namespace BasicTypes {
+
+template <typename T>
+constexpr std::size_t numArrayElements() {
+    static_assert(std::is_array<T>::value, "FW_NUM_ARRAY_ELEMENTS may only be used on a primitive (C-style) array");
+    return std::extent<T>::value;
+}
+
+}  // namespace BasicTypes
+}  // namespace Fw
+
+#define FW_NUM_ARRAY_ELEMENTS(a) \
+    (::Fw::BasicTypes::numArrayElements<decltype(a)>())  //!< number of elements in a C-style array
 
 // IEEE compliance checks must occur in C++ code
 #if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE

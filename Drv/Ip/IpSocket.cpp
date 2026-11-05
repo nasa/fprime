@@ -9,11 +9,11 @@
 // acknowledged.
 //
 // ======================================================================
-#include <sys/time.h>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <cerrno>
 #include <cstring>
 
 // This implementation has primarily implemented to isolate
@@ -21,48 +21,33 @@
 // There is a macro in VxWorks (m_data) that collides with
 // the m_data member in Fw::Buffer.
 
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <errnoLib.h>
-#include <fioLib.h>
-#include <hostLib.h>
-#include <inetLib.h>
-#include <ioLib.h>
-#include <sockLib.h>
-#include <socket.h>
-#include <sysLib.h>
-#include <taskLib.h>
-#include <vxWorks.h>
-#include <cstring>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <cerrno>
-#else
-#error OS not supported for IP Socket Communications
-#endif
-
 namespace Drv {
 
 IpSocket::IpSocket() : m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0) {
-    ::memset(m_hostname, 0, sizeof(m_hostname));
+    (void)::memset(this->m_ipv4_address, 0, sizeof(this->m_ipv4_address));
 }
 
-SocketIpStatus IpSocket::configure(const char* const hostname,
+SocketIpStatus IpSocket::configure(const char* const ipv4_address,
                                    const U16 port,
                                    const U32 timeout_seconds,
                                    const U32 timeout_microseconds) {
     FW_ASSERT(timeout_microseconds < 1000000, static_cast<FwAssertArgType>(timeout_microseconds));
     FW_ASSERT(this->isValidPort(port), static_cast<FwAssertArgType>(port));
-    FW_ASSERT(hostname != nullptr);
+    FW_ASSERT(ipv4_address != nullptr);
+    // Defense-in-depth: reject inputs that would have been silently truncated by string_copy.
+    FW_ASSERT(Fw::StringUtils::string_length(ipv4_address, static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE)) <
+              static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE));
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
     this->m_port = port;
-    (void)Fw::StringUtils::string_copy(this->m_hostname, hostname, static_cast<FwSizeType>(SOCKET_MAX_HOSTNAME_SIZE));
+    (void)Fw::StringUtils::string_copy(this->m_ipv4_address, ipv4_address,
+                                       static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE));
+    // Post-condition: NUL termination guaranteed by Fw::StringUtils::string_copy contract.
+    FW_ASSERT(this->m_ipv4_address[SOCKET_MAX_IPV4_ADDRESS_SIZE - 1] == '\0');
     return SOCK_SUCCESS;
 }
 
-bool IpSocket::isValidPort(U16 port) {
+bool IpSocket::isValidPort(U16 port) const {
     return true;
 }
 
@@ -83,29 +68,50 @@ SocketIpStatus IpSocket::setupTimeouts(int socketFd) {
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
-    FW_ASSERT(address != nullptr);
-    FW_ASSERT(ip4 != nullptr);
+SocketIpStatus IpSocket::setupNoSigPipe(int socketFd) {
+#ifdef SO_NOSIGPIPE
+    constexpr int enable = 1;
+    if (setsockopt(socketFd, SOL_SOCKET, SO_NOSIGPIPE, &enable, sizeof(enable)) < 0) {
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    }
+#else
+    (void)socketFd;
+#endif
+    return SOCK_SUCCESS;
+}
+
+SocketIpStatus IpSocket::addressToIp4(const char* const ipv4_address, void* const out) {
+    FW_ASSERT(ipv4_address != nullptr);
+    FW_ASSERT(out != nullptr);
+    // Pre-zero the destination so that on failure, callers cannot accidentally consume
+    // uninitialized memory. This is a defense-in-depth measure for safety-critical use.
+    (void)::memset(out, 0, sizeof(struct in_addr));
     // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
-    int ip = inet_addr(address);
+    int ip = inet_addr(ipv4_address);
     if (ip == ERROR) {
         return SOCK_INVALID_IP_ADDRESS;
     }
     // from sin_addr, which has one struct
     // member s_addr, which is unsigned int
-    *reinterpret_cast<unsigned long*>(ip4) = ip;
+    *static_cast<unsigned long*>(out) = static_cast<unsigned long>(ip);
 #else
-    // First IP address to socket sin_addr
-    if (not ::inet_pton(AF_INET, address, ip4)) {
+    // inet_pton(3) returns 1 on success, 0 if the input is not a valid IPv4 presentation
+    // string, and -1 (with errno=EAFNOSUPPORT) if the family argument is bogus. Only a
+    // strict equality check is safe — a `not` test treats -1 as success and would silently
+    // mask an EAFNOSUPPORT failure. (Power-of-Ten Rule 7: check every return value.)
+    const int ptonStatus = ::inet_pton(AF_INET, ipv4_address, out);
+    if (ptonStatus != 1) {
         return SOCK_INVALID_IP_ADDRESS;
-    };
+    }
 #endif
     return SOCK_SUCCESS;
 }
 
 void IpSocket::close(const SocketDescriptor& socketDescriptor) {
-    (void)::close(socketDescriptor.fd);
+    if (socketDescriptor.fd >= 0) {
+        (void)::close(socketDescriptor.fd);
+    }
 }
 
 void IpSocket::shutdown(const SocketDescriptor& socketDescriptor) {
@@ -130,8 +136,11 @@ SocketIpStatus IpSocket::open(SocketDescriptor& socketDescriptor) {
 }
 
 SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const FwSizeType size) {
-    FW_ASSERT(data != nullptr);
-    FW_ASSERT(size > 0);
+    FW_ASSERT((size == 0) || (data != nullptr));
+    // Zero-size sends are a no-op
+    if (size == 0) {
+        return SOCK_SUCCESS;
+    }
 
     FwSizeType total = 0;
     FwSignedSizeType sent = 0;
@@ -140,15 +149,19 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
         errno = 0;
         // Send using my specific protocol
         sent = this->sendProtocol(socketDescriptor, data + total, size - total);
-        // Error is EINTR or timeout just try again
+        // Error is EINTR just try again
         if (((sent == -1) && (errno == EINTR)) || (sent == 0)) {
             continue;
         }
-        // Error bad file descriptor is a close along with reset
-        else if ((sent == -1) && ((errno == EBADF) || (errno == ECONNRESET))) {
+        // A bad file descriptor, a reset, or a broken pipe (the peer closed the connection) is a disconnect
+        else if ((sent == -1) && ((errno == EBADF) || (errno == ECONNRESET) || (errno == EPIPE))) {
             return SOCK_DISCONNECTED;
         }
-        // Error returned, and it wasn't an interrupt nor a disconnect
+        // Error is a send timeout (SO_SNDTIMEO) or would-block, recoverable by a caller retry
+        else if ((sent == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK))) {
+            return SOCK_INTERRUPTED_TRY_AGAIN;
+        }
+        // Error returned, and it wasn't an interrupt, a timeout, nor a disconnect
         else if (sent == -1) {
             return SOCK_SEND_ERROR;
         }
@@ -196,6 +209,8 @@ SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data
                 // Connection reset or bad file descriptor.
                 req_read = 0;
                 return SOCK_DISCONNECTED;  // Or a more specific error like SOCK_READ_ERROR
+            } else if (errno == EINTR) {
+                continue;
             } else {
                 // Other socket read error.
                 req_read = 0;

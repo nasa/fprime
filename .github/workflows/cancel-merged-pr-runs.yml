@@ -1,0 +1,36 @@
+# Cancels in-flight workflow runs for a PR once it is closed or merged;
+# concurrency groups alone never cancel on PR close.  pull_request_target
+# provides a write token for fork PRs and executes no PR code.
+
+name: "Cancel Merged PR Runs"
+
+on:
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  actions: write
+
+jobs:
+  cancel:
+    name: "Cancel in-flight runs for closed PR"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Cancel runs for the PR head SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -eu
+          run_ids=$(gh api "repos/${REPO}/actions/runs?head_sha=${HEAD_SHA}&per_page=100" \
+            --jq '.workflow_runs[] | select(.status == "queued" or .status == "in_progress" or .status == "waiting") | .id')
+          if [ -z "${run_ids}" ]; then
+            echo "No in-flight runs for ${HEAD_SHA}."
+            exit 0
+          fi
+          for run_id in ${run_ids}; do
+            echo "Canceling run ${run_id}"
+            gh api -X POST "repos/${REPO}/actions/runs/${run_id}/cancel" || true
+          done

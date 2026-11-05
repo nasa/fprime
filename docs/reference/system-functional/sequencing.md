@@ -1,19 +1,21 @@
 
-# Sequencing Functionality
+# Standard Sequencing Functionality
 
 ## References
 
 - [F Prime Command Sequencing SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdSequencer/docs/sdd.md)
 - [F Prime Sequence Dispatcher SDD](https://github.com/nasa/fprime/blob/devel/Svc/SeqDispatcher/docs/sdd.md)
-- [F Prime Sequence Format](https://github.com/nasa/fprime/blob/devel/Svc/SeqDispatcher/docs/seq_format.md)
+- [F Prime Sequence Format](https://github.com/nasa/fprime/blob/devel/Svc/CmdSequencer/docs/sdd.md#3331-f-prime-sequence-format)
 - [F Prime Command Dispatcher SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdDispatcher/docs/sdd.md)
-- [Example F Prime Sequence](https://github.com/nasa/fprime-gds/blob/devel/examples/simple_sequence.seq)]
+- [Example F Prime Sequence](https://github.com/nasa/fprime-gds/blob/devel/examples/simple_sequence.seq)
 
 ## Overview
 
-Spacecraft Sequences, are an ordered list of commands that are executed together. Sequences store a series of commands in a specific order and with specific timing to be dispatched later in that order and with that timing. Any software command can be executed in a sequence.
+This document provides an overview of standard, simple sequencing in Fprime. For more complex sequencing, see [advanced sequencing](./advanced-sequencing.md).
 
-In Fprime this capability is handled by the Sequence Dispatcher and Command Sequencer components. The Sequence Dispatcher component is responsible for coordinating the execution of multiple sequences while the Command Sequence component is instanced for each sequence to be executed. 
+A Spacecraft Sequence is an ordered list of commands that are executed together. Sequences store a series of commands in a specific order and with specific timing to be dispatched later in that order and with that timing. Any software command can be executed in a sequence.
+
+In Fprime this capability is handled by the Sequence Dispatcher and Command Sequencer components. The Sequence Dispatcher component is responsible for coordinating the execution of multiple sequences while the Command Sequencer component is instantiated for each sequence to be executed.
 
 ### Sequence Management
 

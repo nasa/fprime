@@ -14,7 +14,8 @@
 //
 // This file also contains macros for a number of useful operations:
 //
-// - FW_NUM_ARRAY_ELEMENTS(a): number of elements in an array
+// - FW_NUM_ARRAY_ELEMENTS(a): number of elements in an array (C only here; the C++
+//       version lives in BasicTypes.hpp and is restricted to C-style arrays)
 // - FW_MAX(a, b): maximum of a and b
 // - FW_MIN(a, b): minimum of a and b
 //
@@ -87,7 +88,11 @@ typedef double F64;   //!< 64-bit floating point (double). Required for compiler
 /*----------------------------------------------------------------------------*/
 /* Useful macro definitions                                                   */
 /*----------------------------------------------------------------------------*/
+#ifndef __cplusplus
+// C++ defines a type-safe FW_NUM_ARRAY_ELEMENTS in BasicTypes.hpp. This sizeof
+// form is for C only.
 #define FW_NUM_ARRAY_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))  //!< number of elements in an array
+#endif
 // Deprecated: prefer std::max/std::min from <algorithm> in C++ code.
 // Kept for C compatibility only.
 #define FW_MAX(a, b) (((a) > (b)) ? (a) : (b))  //!< MAX macro (deprecated in C++, use std::max)

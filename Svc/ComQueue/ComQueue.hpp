@@ -11,6 +11,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
 #include <Utils/Types/Queue.hpp>
+#include <atomic>
 #include <limits>
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/Mutex.hpp"
@@ -124,9 +125,10 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     //! Takes in the queue depth and priority per-port in order from Fw::Com through Fw::Buffer ports. Calculates the
     //! queue metadata stored `m_prioritizedList` and then sorts that list by priority.
-    void configure(QueueConfigurationTable queueConfig,  //!< Table of the configuration properties for the component
-                   FwEnumStoreType allocationId,         //!< Identifier used  when dealing with the Fw::MemAllocator
-                   Fw::MemAllocator& allocator           //!< Fw::MemAllocator used to acquire memory
+    void configure(
+        const QueueConfigurationTable& queueConfig,  //!< Table of the configuration properties for the component
+        FwEnumStoreType allocationId,                //!< Identifier used  when dealing with the Fw::MemAllocator
+        Fw::MemAllocator& allocator                  //!< Fw::MemAllocator used to acquire memory
     );
 
     //! Deallocate resources and cleanup ComQueue
@@ -142,9 +144,9 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     //! Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
     //! downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
-    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,       //!< The opcode
-                                U32 cmdSeq,                //!< The command sequence number
-                                Svc::QueueType queueType,  //!< The Queue data type
+    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
+                                U32 cmdSeq,                       //!< The command sequence number
+                                const Svc::QueueType& queueType,  //!< The Queue data type
                                 FwIndexType indexType  //!< The index of the queue (within the supplied type) to flush
                                 ) override;
 
@@ -159,11 +161,11 @@ class ComQueue final : public ComQueueComponentBase {
     //! Handler for SET_QUEUE_PRIORITY command
     //!
     void SET_QUEUE_PRIORITY_cmdHandler(
-        FwOpcodeType opCode,       //!< The opcode
-        U32 cmdSeq,                //!< The command sequence number
-        Svc::QueueType queueType,  //!< The Queue data type
-        FwIndexType indexType,     //!< The index of the queue (within the supplied type) to modify
-        FwIndexType newPriority    //!< New priority value for the queue
+        FwOpcodeType opCode,              //!< The opcode
+        U32 cmdSeq,                       //!< The command sequence number
+        const Svc::QueueType& queueType,  //!< The Queue data type
+        FwIndexType indexType,            //!< The index of the queue (within the supplied type) to modify
+        FwIndexType newPriority           //!< New priority value for the queue
         ) override;
 
   private:
@@ -195,6 +197,12 @@ class ComQueue final : public ComQueueComponentBase {
                      U32 context                /*!<The call order*/
                      ) override;
 
+    //! Internal interface handler for runInternal
+    void runInternal_internalInterfaceHandler() override;
+
+    //! Overflow hook for runInternal
+    void runInternal_overflowHook() override;
+
     //! Handler implementation for dataReturnIn
     //!
     //! Port for returning ownership of Fw::Buffer to its sender
@@ -206,8 +214,10 @@ class ComQueue final : public ComQueueComponentBase {
     // Hook implementations for typed async input ports
     // ----------------------------------------------------------------------
 
-    //! Queue overflow hook method that deallocates the fwBuffer
-    //!
+    //! Records an Fw::ComBuffer rejected by the async input queue
+    void comPacketQueueIn_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
+
+    //! Returns an Fw::Buffer rejected by the async input queue to its sender
     void bufferQueueIn_overflowHook(FwIndexType portNum,  //!< The port number
                                     Fw::Buffer& fwBuffer  //!< The buffer
                                     ) override;
@@ -216,12 +226,26 @@ class ComQueue final : public ComQueueComponentBase {
     // Helper Functions
     // ----------------------------------------------------------------------
 
-    //! Enqueues a message on the appropriate queue
+    //! Enqueues an Fw::ComBuffer on the appropriate com queue
     //!
     bool enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
-                 QueueType queueType,         //!< Type of the queue and message data
-                 const U8* data,              //!< Pointer to the message data
-                 const FwSizeType size        //!< Size of the message
+                 const Fw::ComBuffer& data    //!< Com buffer to enqueue
+    );
+
+    //! Enqueues an Fw::Buffer on the appropriate buffer queue
+    //!
+    bool enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
+                 const Fw::Buffer& data       //!< Buffer to enqueue
+    );
+
+    //! Handles overflow events, throttling, and queue processing after an enqueue attempt
+    //! \return true when the message was accepted onto the queue, false otherwise
+    //!
+    bool handleEnqueueStatus(const FwIndexType queueNum,       //!< Index of the queue enqueued to
+                             QueueType queueType,              //!< Type of the queue and message data
+                             const FwIndexType portNum,        //!< Port number associated with the queue
+                             const bool preEmptiveOverflow,    //!< Whether an entry was pre-emptively dropped
+                             const Fw::SerializeStatus status  //!< Status of the enqueue attempt
     );
 
     //! Send a chosen Fw::ComBuffer
@@ -243,19 +267,27 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     void processQueue();
 
-    //! Convert Queue Type & Index into single queueIndex
+    //! Convert Queue Type & Index into single queueIndex; returns -1 when portNum is out of range for queueType
     FwIndexType getQueueNum(Svc::QueueType queueType, FwIndexType portNum);
+
+    //! Look up the configured depth of a queue; a depth of 0 means the queue is disabled
+    FwSizeType getQueueDepth(const FwIndexType queueNum  //!< Index of the queue in m_queues
+    ) const;
 
   private:
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
-    Fw::ComBuffer m_dequeued_com_buffer;                //!< Store a dequeued com buffer so it does not leave scope
-    Types::Queue m_queues[TOTAL_PORT_COUNT];            //!< Stores queued data waiting for transmission
-    QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
-    bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles
-    SendState m_state;                                  //!< State of the component
-    BufferState m_buffer_state;                         //!< Ownership state of buffer
+    Fw::ComBuffer m_dequeued_com_buffer;                     //!< Store a dequeued com buffer so it does not leave scope
+    Types::Queue m_queues[TOTAL_PORT_COUNT];                 //!< Stores queued data waiting for transmission
+    QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];       //!< Priority sorted list of queue metadata
+    std::atomic<U32> m_comIngressDrops[COM_PORT_COUNT];      //!< Async ingress drops per Com port
+    std::atomic<U32> m_buffIngressDrops[BUFFER_PORT_COUNT];  //!< Async ingress drops per buffer port
+    U32 m_managedDrops[TOTAL_PORT_COUNT];     //!< Managed queue overflow drops, single writer (dispatch thread)
+    bool m_throttle[TOTAL_PORT_COUNT];        //!< Per-queue EVR throttles
+    SendState m_state;                        //!< State of the component
+    std::atomic<BufferState> m_buffer_state;  //!< Ownership state of buffer, shared with the sync dataReturnIn caller
+    std::atomic<bool> m_runQueued;            //!< True while a runInternal message is on the queue
 
     // Storage for Fw::MemAllocator properties
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID

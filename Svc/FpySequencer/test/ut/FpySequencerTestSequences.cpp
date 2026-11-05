@@ -119,9 +119,9 @@ TEST_F(FpySequencerTester, NotTrueSeq) {
     add_STACK_OP(Fpy::DirectiveId::NOT);
     add_IF(5);
     // should not get here
-    add_PUSH_VAL<U8>(1);
+    add_PUSH_VAL<I32>(1);
     add_EXIT();
-    add_PUSH_VAL<U8>(0);
+    add_PUSH_VAL<I32>(0);
     add_EXIT();
 
     writeAndRun();

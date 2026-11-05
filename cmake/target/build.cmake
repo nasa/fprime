@@ -10,8 +10,8 @@ include(utilities)
 include(implementation)
 
 # Flags used when BUILD_TESTING is enabled
-set(FPRIME_TESTING_REQUIRED_COMPILE_FLAGS)
-set(FPRIME_TESTING_REQUIRED_LINK_FLAGS)
+set(FPRIME_TESTING_REQUIRED_COMPILE_FLAGS CACHE INTERNAL "Compile flags required for testing" FORCE)
+set(FPRIME_TESTING_REQUIRED_LINK_FLAGS CACHE INTERNAL "Link flags required for testing" FORCE)
 
 # Special coverage for unit tests
 if (FPRIME_ENABLE_UT_COVERAGE)

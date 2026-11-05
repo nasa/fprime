@@ -11,9 +11,12 @@
 #ifndef Svc_CmdSequencerImpl_HPP
 #define Svc_CmdSequencerImpl_HPP
 
+#include <Utils/Hash/Hash.hpp>
 #include "Fw/Com/ComBuffer.hpp"
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/File.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Os/ValidateFile.hpp"
 #include "Svc/CmdSequencer/CmdSequencerComponentAc.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
@@ -215,7 +218,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
 
         //! Get the file name
         //! \return The file name
-        Fw::CmdStringArg& getFileName();
+        Fw::FileNameString& getFileName();
 
         //! Get the log file name
         //! \return The log file name
@@ -259,7 +262,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
         Events m_events;
 
         //! The sequence file name
-        Fw::CmdStringArg m_fileName;
+        Fw::FileNameString m_fileName;
 
         //! Copy of file name for events
         Fw::LogStringArg m_logFileName;
@@ -298,11 +301,11 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
                         FwSizeType bufferSize  //!< The buffer size
             );
 
-            //! Finalize computed CRC
-            void finalize();
+            //! Return the finalized CRC
+            U32 finalize();
 
             //! Computed CRC
-            U32 m_computed;
+            Utils::Hash m_computed;
 
             //! Stored CRC
             U32 m_stored;
@@ -378,7 +381,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
         );
 
         //! Deserialize a time tag
-        //! \return Serialize status
+        //! \return Serialize status; FW_DESERIALIZE_FORMAT_ERROR if microseconds >= 1000000
         Fw::SerializeStatus deserializeTimeTag(Fw::Time& timeTag  //!< The time tag
         );
 
@@ -440,6 +443,14 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
         //! Clear the timer
         void clear() { this->m_state = CLEAR; }
 
+        //! Determine whether the timer is set
+        //! \return Yes or no
+        bool isSet() const { return this->m_state == SET; }
+
+        //! Get the expiration time
+        //! \return The time at which a set timer expires
+        Fw::Time getExpirationTime() const { return this->expirationTime; }
+
         //! Determine whether the timer is expired at a given time
         //! \return Yes or no
         bool isExpiredAt(Fw::Time time  //!< The time
@@ -480,6 +491,13 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     //! to load and run sequences. By default, it uses an FPrimeSequence
     //! object.
     void setSequenceFormat(Sequence& sequence  //!< The sequence object
+    );
+
+    //! (Optional) Restrict sequence file loads to a directory.
+    //! Every sequence load (CS_RUN, CS_VALIDATE, seqRunIn, seqDispatchIn) whose file name
+    //! resolves outside the directory is rejected with CS_FileOutsideSandbox before the file
+    //! is opened. Until this is called, any path is allowed.
+    void configureSandbox(const char* directory  //!< The allowed directory (absolute, or relative to CWD)
     );
 
     //! Give the sequence a memory buffer.
@@ -569,7 +587,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     void CS_RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                            U32 cmdSeq,                        //!< The command sequence number
                            const Fw::CmdStringArg& fileName,  //!< The file name
-                           Svc::BlockState block              /*!< Return command status when complete or not*/
+                           const Svc::BlockState& block       /*!< Return command status when complete or not*/
                            ) override;
 
     //! Handler for command CS_START
@@ -649,8 +667,18 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     void setCmdTimeout(const Fw::Time& currentTime  //!< The current time
     );
 
-    //! Sequence run helper
+    //! Check a sequence file name against the configured sandbox directory, if any.
+    //! Emits CS_FileOutsideSandbox and counts an error on rejection.
+    //! \return true if the file may be opened
+    bool checkSandbox(const Fw::ConstStringBase& fileName  //!< The file name
+    );
+
+    //! Shared body of the seqRunIn and seqDispatchIn handlers
     void doSequenceRun(const Fw::StringBase& fileName);
+
+    //! Answer a rejected seqRunIn / seqDispatchIn request with EXECUTION_ERROR on seqDone,
+    //! if that port is connected
+    void rejectSequenceRun();
 
   private:
     // ----------------------------------------------------------------------
@@ -704,6 +732,15 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     FwOpcodeType m_opCode;
     U32 m_cmdSeq;
     bool m_join_waiting;
+
+    //! Directory sequence file loads are restricted to (resolved, with trailing '/')
+    char m_sandboxDir[Os::FilePathUtils::MAX_PATH_LENGTH];
+
+    //! Whether configureSandbox() has been called; until then any path is allowed
+    bool m_sandboxConfigured;
+
+    //! Telemetry to update sequence not running
+    const Fw::String NO_SEQ{"<no seq>"};
 };
 
 }  // namespace Svc

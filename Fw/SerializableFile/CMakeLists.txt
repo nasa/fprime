@@ -8,23 +8,25 @@
 if (BUILD_TESTING)
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/TestSerializable")
 endif()
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/SerializableFile.cpp"
-)
-set(MOD_DEPS
-    Fw/Types
+
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/SerializableFile.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/SerializableFile.hpp"
+  DEPENDS
+    Fw_Types
     Os
 )
-register_fprime_module()
+
 ### UTs ###
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Test.cpp"
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Test.cpp"
+  DEPENDS
+    Fw_SerializableFile
+    Fw_SerializableFile_test_TestSerializable
+    Fw_Types
+    Utils_Hash
+    Os
 )
-set(UT_MOD_DEPS
-  Fw/SerializableFile
-  Fw/SerializableFile/test/TestSerializable
-  Fw/Types
-  Utils/Hash
-  Os
-)
-register_fprime_ut()

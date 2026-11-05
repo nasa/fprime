@@ -29,7 +29,7 @@ The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` packa
 | FPY-SEQ-009 | The sequencer shall support sequence-local variables.                                                                                             | Unit Test                       |
 | FPY-SEQ-010 | The sequencer shall support dispatching commands with dynamic and constant arguments.                                                             | Unit Test                       |
 | FPY-SEQ-011 | The sequencer shall support running sequences with arguments.                                                                                     | Unit Test                       |
-| FPY-SEQ-012 | The sequencer shall read a binary-encoded sequence file of the format described in [TBD]()                                                        | Unit Test                       |
+| FPY-SEQ-012 | The sequencer shall read a binary-encoded sequence file of the format produced by the `fprime-fpyc` compiler (in the `fprime-gds` package)                                                        | Unit Test                       |
 | FPY-SEQ-013 | The sequencer shall support sending commands for dispatch.                                                                                        | Unit Test                       |
 | FPY-SEQ-014 | The sequencer shall support parameterized sequences.                                                                                              | Unit Test                       |
 | FPY-SEQ-015 | The sequencer shall support conversions between F Prime signed, unsigned, and floating-point primitive types and their equivalent 64-bit types.   | Unit Test                       |
@@ -138,10 +138,11 @@ The FpySequencer supports certain boolean flags which control the behavior of th
 | Name | Description |
 |-----|-----|
 | RUN | Loads, validates and runs a sequence |
+| RUN_ARGS | Loads, validates and runs a sequence, passing arguments to it |
 | VALIDATE | Loads and validates a sequence. Mutually exclusive with RUN |
+| VALIDATE_ARGS | Loads and validates a sequence with arguments. Mutually exclusive with RUN |
 | RUN_VALIDATED | Must be called after VALIDATE. Runs the sequence that was validated. |
 | CANCEL | Cancels a running or validated sequence. After running CANCEL, the sequencer should return to IDLE |
-| SET_FLAG | Sets the value of a flag |
 
 ## Debugging Commands
 The FpySequencer has a set of debugging commands which can be used to pause and step through sequences. They should not be necessary for nominal use cases.
@@ -154,6 +155,9 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | CLEAR_BREAKPOINT | Clears any set breakpoint, but does not continue executing the sequence. |
 | STEP | When paused, executes the next statement then returns to paused state. Not valid during automatic execution. |
 | DUMP_STACK_TO_FILE | Writes the contents of the stack to a file. Not valid during automatic execution. |
+
+## File Sandbox
+`configureSandbox(directory)` optionally restricts the files the sequencer opens to a directory, in the same way as the `Os::SandboxedFile` sandboxes of the file-handling components. The directory may be absolute or relative to the current working directory. Once configured, a sequence file (`RUN`, `RUN_ARGS`, `VALIDATE`, `VALIDATE_ARGS` and the `seqRunIn` port) or a `DUMP_STACK_TO_FILE` output file whose name resolves outside the directory is rejected with the `FileOutsideSandbox` event before the file is opened. Until `configureSandbox()` is called, any path is allowed, which keeps existing deployments unchanged. Call it from topology setup code. Path checking is textual and does not follow symbolic links.
 
 ## Directives
 See `directives.md` for documentation on all directives.

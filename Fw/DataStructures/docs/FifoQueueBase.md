@@ -71,9 +71,9 @@ _Example:_
 ```c++
 void f(FifoQueueBase<U32>& queue) {
     queue.clear();
-    const auto status = queue.enqueue(3);
+    auto status = queue.enqueue(3);
     ASSERT_EQ(status, Success::SUCCESS);
-    const auto status = queue.enqueue(4);
+    status = queue.enqueue(4);
     ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(queue.at(0), 3);
     ASSERT_EQ(queue.at(1), 4);
@@ -167,7 +167,7 @@ _Example:_
 ```c++
 void f(FifoQueueBase<U32>& queue) {
     queue.clear();
-    const auto status = queue.enqueue(3);
+    auto status = queue.enqueue(3);
     ASSERT_EQ(status, Success::SUCCESS);
 }
 ```

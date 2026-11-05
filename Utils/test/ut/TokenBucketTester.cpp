@@ -119,6 +119,68 @@ void TokenBucketTester ::testInitialSettings() {
     ASSERT_FALSE(bucket.trigger(Fw::Time(0, 0)));
 }
 
+void TokenBucketTester ::testTimeBase() {
+    const U32 interval = 1000000;
+    const U32 maxTokens = 3;
+    const TimeBase base = TimeBase::TB_WORKSTATION_TIME;
+    const FwTimeContextStoreType context = 7;
+
+    // Short constructor (start time in TB_NONE) driven with real-time-base times replenishes
+    TokenBucket bucket(interval, maxTokens);
+    for (U32 i = 0; i < maxTokens; i++) {
+        ASSERT_TRUE(bucket.trigger(Fw::Time(base, context, 100, 0)));
+    }
+    ASSERT_FALSE(bucket.trigger(Fw::Time(base, context, 100, 999999)));
+    ASSERT_TRUE(bucket.trigger(Fw::Time(base, context, 101, 0)));
+    ASSERT_FALSE(bucket.trigger(Fw::Time(base, context, 101, 500000)));
+    // Two intervals elapsed: two tokens replenished
+    ASSERT_TRUE(bucket.trigger(Fw::Time(base, context, 103, 0)));
+    ASSERT_TRUE(bucket.trigger(Fw::Time(base, context, 103, 0)));
+    ASSERT_FALSE(bucket.trigger(Fw::Time(base, context, 103, 0)));
+
+    // Full constructor with a start time in the same real time base
+    TokenBucket started(interval, maxTokens, 1, 0, Fw::Time(base, context, 10, 0));
+    ASSERT_FALSE(started.trigger(Fw::Time(base, context, 10, 500000)));
+    ASSERT_TRUE(started.trigger(Fw::Time(base, context, 11, 0)));
+    ASSERT_FALSE(started.trigger(Fw::Time(base, context, 11, 0)));
+    ASSERT_TRUE(started.trigger(Fw::Time(base, context, 12, 0)));
+
+    // Start time in a different base: no replenishment until an interval elapses in the caller's base
+    TokenBucket rebased(interval, maxTokens, 1, 0, Fw::Time(0, 0));
+    ASSERT_FALSE(rebased.trigger(Fw::Time(base, context, 1000, 0)));
+    ASSERT_FALSE(rebased.trigger(Fw::Time(base, context, 1000, 999999)));
+    ASSERT_TRUE(rebased.trigger(Fw::Time(base, context, 1001, 0)));
+    ASSERT_FALSE(rebased.trigger(Fw::Time(base, context, 1001, 0)));
+}
+
+void TokenBucketTester ::testReplenishAndEdgeCases() {
+    const U32 interval = 1000000;
+    const U32 maxTokens = 5;
+
+    // Manual replenish when already full is a no-op
+    TokenBucket bucket(interval, maxTokens);
+    ASSERT_EQ(bucket.getTokens(), maxTokens);
+    bucket.replenish();
+    ASSERT_EQ(bucket.getTokens(), maxTokens);
+
+    // Zero replenish rate: tokens are never replenished
+    TokenBucket zeroRate(interval, maxTokens, 0, 2, Fw::Time(0, 0));
+    ASSERT_TRUE(zeroRate.trigger(Fw::Time(1, 0)));
+    ASSERT_TRUE(zeroRate.trigger(Fw::Time(100, 0)));
+    ASSERT_FALSE(zeroRate.trigger(Fw::Time(1000, 0)));
+    ASSERT_EQ(zeroRate.getTokens(), 0u);
+
+    // Time moving backwards: no replenishment occurs, existing tokens still consumable
+    TokenBucket backwards(interval, maxTokens, 1, 1, Fw::Time(50, 0));
+    ASSERT_TRUE(backwards.trigger(Fw::Time(10, 0)));
+    ASSERT_FALSE(backwards.trigger(Fw::Time(10, 0)));
+
+    // Replenish rate larger than the remaining capacity saturates at maxTokens
+    TokenBucket bigRate(interval, maxTokens, maxTokens * 10, 0, Fw::Time(0, 0));
+    ASSERT_TRUE(bigRate.trigger(Fw::Time(1, 0)));
+    ASSERT_EQ(bigRate.getTokens(), maxTokens - 1);
+}
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------

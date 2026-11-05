@@ -8,6 +8,7 @@
 
 #include <Svc/ActiveTextLogger/ActiveTextLoggerComponentAc.hpp>
 #include <Svc/ActiveTextLogger/LogFile.hpp>
+#include <Svc/Types/EventSeverityFilter/EventSeverityFilter.hpp>
 #include <config/ActiveTextLoggerCfg.hpp>
 
 namespace Svc {
@@ -52,6 +53,11 @@ class ActiveTextLogger final : public ActiveTextLoggerComponentBase {
 
     //! Configure component with event ID filters
     void configure(const FwEventIdType* filteredIds, FwSizeType count);
+
+    //! Set the filter state for a severity level
+    //! \param severity The severity level to configure (FATAL is ignored)
+    //! \param enabled true = events pass through, false = events are dropped
+    void setSeverityFilter(Fw::LogSeverity severity, bool enabled);
 
   private:
     // ----------------------------------------------------------------------
@@ -108,6 +114,9 @@ class ActiveTextLogger final : public ActiveTextLoggerComponentBase {
     // Event ID filters
     FwSizeType m_numFilteredIDs;
     FwEventIdType m_filteredIDs[ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE];
+
+    // Severity filter
+    EventSeverityFilter m_severityFilter;
 };
 
 }  // namespace Svc

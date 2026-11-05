@@ -19,6 +19,9 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/ComAggregator.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/ComAggregator.cpp"
+    DEPENDS
+        Svc_Ccsds_Types
+        Svc_Ccsds_Utils
 )
 
 ### Unit Tests ###
@@ -28,6 +31,7 @@ register_fprime_ut(
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComAggregatorTestMain.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/ComAggregatorTester.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/Spanning.cpp"
     DEPENDS
         STest # For rules-based testing
     UT_AUTO_HELPERS

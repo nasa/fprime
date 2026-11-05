@@ -45,6 +45,9 @@ constant BufferRepeaterOutputPorts = 10
 @ Size of port array for DpManager
 constant DpManagerNumPorts = 5
 
+@ Size of data product routing port arrays for DpWriter
+constant DpWriterNumPorts = 5
+
 @ Size of processing port array for DpWriter
 constant DpWriterNumProcPorts = 5
 
@@ -54,13 +57,20 @@ constant FileNameStringSize = 240
 @ The size of an assert text string
 constant FwAssertTextSize = 256
 
-@ The size of a file name in an AssertFatalAdapter event
-@ Note: File names in assertion failures are also truncated by
-@ the constants FW_ASSERT_TEXT_SIZE and FW_LOG_STRING_MAX_SIZE, set
-@ in FpConfig.h.
+@ The size of a file name in an AssertFatalAdapter event (leading-truncation:
+@ the tail of the path is kept)
+@ Note: Svc::AssertFatalAdapter truncates to the smaller of this constant and
+@ FW_LOG_STRING_MAX_SIZE (set in FpConstants.fpp), so raising this alone has no
+@ effect once it exceeds that bound. With the defaults (240 here, 200 there)
+@ FW_LOG_STRING_MAX_SIZE is what governs.
+@ FwAssertTextSize (in this file) is a separate bound on the console assert
+@ text, which also carries the timestamp and assert arguments.
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
-@ The maximum size in bytes for passing sequence arguments through CmdSeqIn ports
-@ Note: This must fit within FW_CMD_ARG_BUFFER_MAX_SIZE along with cmd arguments using Svc::SeqArgs
-@ Total serialized size: string length prefix + fileName + BlockState + SeqArgs(size + buffer)
-constant SequenceArgumentsMaxSize = FW_CMD_ARG_BUFFER_MAX_SIZE - sizeof(FwSizeStoreType) - FileNameStringSize - sizeof(U8) - sizeof(FwSizeType)
+@ The maximum size in bytes of the argument blob carried in a Svc::SeqArgs buffer
+@ (CmdSeqIn / RUN / INVOKE).
+@ Deliberately kept small (rather than derived from FW_CMD_ARG_BUFFER_MAX_SIZE) to
+@ keep SeqArgs easy to populate from fprime-gds. It must still fit within
+@ FW_CMD_ARG_BUFFER_MAX_SIZE alongside the other command arguments it travels with
+@ (filename length prefix + fileName + BlockState + the SeqArgs size field).
+constant SequenceArgumentsMaxSize = 12

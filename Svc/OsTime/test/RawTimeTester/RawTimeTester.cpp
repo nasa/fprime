@@ -1,12 +1,15 @@
 
 #include "RawTimeTester.hpp"
+#include <config/RawTimeSource.hpp>
 #include "Fw/Time/Time.hpp"
 #include "Os/Delegate.hpp"
 #include "Os/RawTime.hpp"
 
 namespace Os {
 RawTimeInterface* RawTimeInterface::getDelegate(RawTimeHandleStorage& aligned_new_memory,
-                                                const RawTimeInterface* to_copy) {
+                                                const RawTimeInterface* to_copy,
+                                                RawTimeSource source) {
+    (void)source;  // Test implementation ignores timer source
     return Os::Delegate::makeDelegate<RawTimeInterface, Svc::RawTimeTester, RawTimeHandleStorage>(aligned_new_memory,
                                                                                                   to_copy);
 }
@@ -14,4 +17,5 @@ RawTimeInterface* RawTimeInterface::getDelegate(RawTimeHandleStorage& aligned_ne
 
 namespace Svc {
 Fw::Time RawTimeTester::s_now_time = Fw::Time();
-}
+Os::RawTimeInterface::Status RawTimeTester::s_now_status = Os::RawTimeInterface::OP_OK;
+}  // namespace Svc

@@ -7,9 +7,7 @@
 #include <cstdio>
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
-extern "C" {
-#include <Utils/Hash/libcrc/lib_crc.h>  // borrow CRC
-}
+#include "Utils/Hash/Hash.hpp"
 
 // For testing, limit files to 32K
 const FwSizeType FILE_DATA_MAXIMUM = 32 * 1024;
@@ -42,9 +40,12 @@ void Os::Test::FileTest::Tester::shadow_close() {
 std::vector<U8> Os::Test::FileTest::Tester::shadow_read(FwSizeType size) {
     std::vector<U8> output;
     output.resize(size);
-    Os::File::Status status = m_shadow.read(output.data(), size, Os::File::WaitType::WAIT);
-    output.resize(size);
-    EXPECT_EQ(status, Os::File::Status::OP_OK);
+    // Zero-size reads have no buffer to read into; the shadow file is unchanged
+    if (size > 0) {
+        Os::File::Status status = m_shadow.read(output.data(), size, Os::File::WaitType::WAIT);
+        output.resize(size);
+        EXPECT_EQ(status, Os::File::Status::OP_OK);
+    }
     return output;
 }
 
@@ -83,14 +84,22 @@ void Os::Test::FileTest::Tester::shadow_flush() {
 }
 
 void Os::Test::FileTest::Tester::shadow_crc(U32& crc) {
-    crc = this->m_independent_crc;
+    Utils::Hash hash;
+    hash.setHashValue(U32(~this->m_independent_crc));
+
     SyntheticFileData& data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
     // Calculate CRC on full file starting at m_pointer
     for (FwSizeType i = data.m_pointer; i < data.m_data.size();
          i++, this->m_shadow.seek(1, Os::File::SeekType::RELATIVE)) {
-        crc = update_crc_32(crc, static_cast<char>(data.m_data.at(i)));
+        U8 byte = data.m_data.at(i);
+        hash.update(&byte, sizeof(byte));
     }
+
+    U32 crcFinal = 0;
+    hash.finalize(crcFinal);
+    crc = ~crcFinal;
+
     // Update tracking variables
     this->m_independent_crc = Os::File::INITIAL_CRC;
 }
@@ -103,7 +112,16 @@ void Os::Test::FileTest::Tester::shadow_partial_crc(FwSizeType& size) {
         std::min(static_cast<FwSizeType>(data.m_pointer) + size, static_cast<FwSizeType>(data.m_data.size()));
     size = (data.m_pointer >= bound) ? 0 : static_cast<FwSizeType>(bound - data.m_pointer);
     for (FwSizeType i = data.m_pointer; i < bound; i++) {
-        this->m_independent_crc = update_crc_32(this->m_independent_crc, static_cast<char>(data.m_data.at(i)));
+        U8 byte = data.m_data.at(i);
+
+        Utils::Hash hash;
+        hash.setHashValue(U32(~this->m_independent_crc));
+        hash.update(&byte, sizeof(byte));
+
+        U32 crcFinal = 0;
+        hash.finalize(crcFinal);
+        this->m_independent_crc = ~crcFinal;
+
         this->m_shadow.seek(1, Os::File::SeekType::RELATIVE);
     }
 }
@@ -115,8 +133,6 @@ void Os::Test::FileTest::Tester::shadow_finalize(U32& crc) {
 
 Os::Test::FileTest::Tester::FileState Os::Test::FileTest::Tester::current_file_state() {
     Os::Test::FileTest::Tester::FileState state;
-    // Invariant: mode must not be closed, or path must be nullptr
-    EXPECT_TRUE((Os::File::Mode::OPEN_NO_MODE != this->m_file.m_mode) || (nullptr == this->m_file.m_path));
 
     // Read state when file is open
     if (Os::File::Mode::OPEN_NO_MODE != this->m_file.m_mode) {
@@ -141,15 +157,15 @@ void Os::Test::FileTest::Tester::assert_valid_mode_status(Os::File::Status& stat
 void Os::Test::FileTest::Tester::assert_file_consistent() {
     // Ensure file mode
     ASSERT_EQ(this->m_mode, this->m_file.m_mode);
-    // Ensure CRC match
-    ASSERT_EQ(this->m_file.m_crc, this->m_independent_crc);
-    if (this->m_file.m_path == nullptr) {
+    // Ensure the current CRC value is consistent with the file. This is done by finalizing the file's hash, removing
+    // the ones complement performed by finalize, and then comparing the values directly.
+    U32 crcNow = 0;
+    this->m_file.m_hash.finalize(crcNow);
+    crcNow = ~crcNow;
+    ASSERT_EQ(crcNow, this->m_independent_crc);
+    if (Os::File::Mode::OPEN_NO_MODE == this->m_file.m_mode) {
         ASSERT_EQ(this->m_current_path, std::string(""));
     } else {
-        // Ensure the state path matches the file path
-        std::string path = std::string(this->m_file.m_path);
-        ASSERT_EQ(path, this->m_current_path);
-
         // Check real file properties when able to do so
         if (this->functional()) {
             //  File exists, check all properties
@@ -192,7 +208,6 @@ void Os::Test::FileTest::Tester::assert_file_opened(const std::string& path,
             ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
             ASSERT_EQ(file_position, 0);
         }
-        ASSERT_EQ(std::string(this->m_file.m_path), path);
         ASSERT_EQ(this->m_file.m_mode, newly_opened_mode) << "File is in unexpected mode";
 
         // Check truncations
@@ -476,13 +491,6 @@ void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest
     Os::File::Status status = state.m_file.open(path, m_mode, this->m_overwrite);
     Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
     ASSERT_EQ(status, s2);
-
-    // After open, m_path points to the local Fw::String buffer which will be destroyed
-    // when this action returns. Reset m_path to point to the persistent filename string
-    // kept alive in the FILES vector to avoid a dangling pointer.
-    if (Os::File::Status::OP_OK == status) {
-        state.m_file.m_path = filename->c_str();
-    }
 
     // Extra check to ensure file is consistently open
     if (Os::File::Status::OP_OK == status) {
@@ -1145,7 +1153,13 @@ void Os::Test::FileTest::Tester::IncrementalCrc::action(Os::Test::FileTest::Test
     state.shadow_partial_crc(shadow_size);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
     ASSERT_EQ(size_desired, shadow_size);
-    ASSERT_EQ(state.m_file.m_crc, state.m_independent_crc);
+
+    // Ensure the current CRC value is consistent with the file. This is done by finalizing the file's hash, removing
+    // the ones complement performed by finalize, and then comparing the values directly.
+    U32 expected_crc = 0;
+    state.m_file.m_hash.finalize(expected_crc);
+    expected_crc = ~expected_crc;
+    ASSERT_EQ(expected_crc, state.m_independent_crc);
     state.assert_file_consistent();
 }
 

@@ -57,6 +57,7 @@ Directory::Status Directory::read(char* fileNameBuffer, FwSizeType bufSize) {
         return Status::NOT_OPENED;
     }
     FW_ASSERT(fileNameBuffer != nullptr);
+    FW_ASSERT(bufSize > 0);
     Status status = this->m_delegate.read(fileNameBuffer, bufSize);
     fileNameBuffer[bufSize - 1] = '\0';  // Guarantee null-termination
     return status;
@@ -110,11 +111,9 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
     return Status::OP_OK;
 }
 
-Directory::Status Directory::readDirectory(Fw::String filenameArray[],
-                                           const FwSizeType filenameArraySize,
-                                           FwSizeType& filenameCount) {
-    FW_ASSERT(filenameArray != nullptr);
-    FW_ASSERT(filenameArraySize > 0);
+Directory::Status Directory::readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount) {
+    FW_ASSERT(filenameArray.getElements() != nullptr);
+    FW_ASSERT(filenameArray.getSize() > 0);
     if (not this->m_is_open) {
         return Status::NOT_OPENED;
     }
@@ -128,7 +127,7 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[],
     FwSizeType index;
     filenameCount = 0;
     // Iterate through the directory and read the filenames into the array
-    for (index = 0; index < filenameArraySize; index++) {
+    for (index = 0; index < filenameArray.getSize(); index++) {
         readStatus = this->read(filenameArray[index]);
         if (readStatus == Status::NO_MORE_FILES) {
             break;
@@ -143,6 +142,13 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[],
     }
 
     return returnStatus;
+}
+
+Directory::Status Directory::readDirectory(Fw::String filenameArray[],
+                                           const FwSizeType filenameArraySize,
+                                           FwSizeType& filenameCount) {
+    Fw::ExternalArray<Fw::String> array(filenameArray, filenameArraySize);
+    return this->readDirectory(array, filenameCount);
 }
 
 }  // namespace Os

@@ -118,25 +118,45 @@ Projects may configure the framework types that the framework and components use
 | FwSizeType       | Sizes                        | PlatformSizeType       | PRI_FwSizeType       | No     | Minimum 4 Bytes |
 | FwSignedSizeType | Signed sizes                 | PlatformSignedSizeType | PRI_FwSignedSizeType | Yes    | Minimum 4 Bytes |
 | FwAssertArgType  | Arguments to asserts         | PlatformAssertArgType  | PRI_FwAssertArgType  | Yes/No | Any             |
+| FwTaskPriorityType | Task priorities            | PlatformTaskPriorityType | PRI_FwTaskPriorityType | Yes/No | Any           |
+| FwQueuePriorityType | Queue priorities          | PlatformQueuePriorityType | PRI_FwQueuePriorityType | Yes/No | Any         |
+| FwTaskIdType     | Task identifiers             | PlatformTaskIdType     | PRI_FwTaskIdType     | Yes/No | Any             |
+| FwIdType         | Identifiers (base type for the GDS id types below) | U32 | PRI_FwIdType    | No     | 4 Bytes         |
+
+This list is not exhaustive; see `default/config/FpConfig.fpp` for the complete set of configurable
+types (e.g. `FwDpPriorityType`, `FwTraceIdType`). Component configuration modules may add more, e.g.
+`FwTlmPacketizeOffsetType` in `Svc/TlmPacketizer/config/TlmPacketizerConfig/TlmPacketizerCfg.fpp`.
 
 There is also a set of framework types that are used across F´ deployments and specifically interact with ground data
 systems. These GDS types have defaults based on configurable platform independent fixed-widths as shown below:
 
 | GDS Type               | Logical Usage              | Default               | Format Specifier           |
 |------------------------|----------------------------|-----------------------|----------------------------|
-| FwBuffSizeType         | `Fw::Buffer` sizes         | U16                   | PRI_FwBuffSizeType         |
+| FwSizeStoreType        | Serialized sizes and string lengths | FwSizeType   | PRI_FwSizeStoreType        |
 | FwEnumStoreType        | Enumeration values         | I32                   | PRI_FwEnumStoreType        |
 | FwTimeBaseStoreType    | Time base                  | U16                   | PRI_FwTimeBaseStoreType    |
 | FwTimeContextStoreType | Time context               | U8                    | PRI_FwTimeContextStoreType |
 | FwPacketDescriptorType | F´ packet descriptor field | U32                   | PRI_FwPacketDescriptorType |
-| FwOpcodeType           | F´ command opcodes         | U32                   | PRI_FwOpcodeType           |
-| FwChanIdType           | F´ channel ids             | U32                   | PRI_FwChanIdType           |
-| FwEventIdType          | F´ event ids               | U32                   | PRI_FwEventIdType          |
-| FwPrmIdType            | F´ parameter ids           | U32                   | PRI_FwPrmIdType            |
+| FwOpcodeType           | F´ command opcodes         | FwIdType (U32)        | PRI_FwOpcodeType           |
+| FwChanIdType           | F´ channel ids             | FwIdType (U32)        | PRI_FwChanIdType           |
+| FwEventIdType          | F´ event ids               | FwIdType (U32)        | PRI_FwEventIdType          |
+| FwPrmIdType            | F´ parameter ids           | FwIdType (U32)        | PRI_FwPrmIdType            |
 | FwTlmPacketizeIdType   | F´ telemetry packet ids    | U16                   | PRI_FwTlmPacketizeIdType   |
 
 > [!NOTE]
 > the F´ GDS expects the above types to use their default setting. Users intending to use the F´ GDS should not stray from the above definitions.
+
+> [!WARNING]
+> `FwSizeStoreType` **must be kept in sync with `FwSizeType`**. It defaults to `FwSizeType` so that any in-memory
+> size can be serialized without truncation; its width therefore follows the platform (e.g. 8 bytes on 64-bit hosts),
+> and it prefixes every serialized string, `Fw::Buffer`, and data product size field. Framework components
+> (`Fw::DpContainer`, `Svc::GenericHub`, the data product services, string serialization) are built on the assumption
+> that every `FwSizeType` value is representable as `FwSizeStoreType`. Projects that set the two types differently
+> (e.g. narrowing `FwSizeStoreType` to `U16`) risk failures in these components: any size exceeding the narrowed range
+> fails to serialize with `FW_SERIALIZE_FORMAT_ERROR`, and data products, buffers, or strings of that size are lost.
+> Do not diverge from the default without understanding these consequences. Changing the type also changes the
+> serialized format: data products, parameter databases, and binary sequences produced under a different setting must
+> be regenerated. `FwBuffSizeType` is retained as a backwards-compatible alias of `FwSizeStoreType`.
 
 All defaults can be overridden via project specific configuration supplying a custom `FpConfig.h`. A complete
 definition of a framework/GDS type in `FpConfig.h` would look like:

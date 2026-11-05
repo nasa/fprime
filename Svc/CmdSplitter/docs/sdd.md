@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-The `Svc::CmdSplitter` splits an uplinked command execution to two separate `Svc::CmdDispatcher` components: one "local" and the other "remote". This splitting is done by opcode where local commands are commands whose opcode is less than a configured base and remote commands are those opcodes equal to or larger than that configurated base setting. `Svc::CmdSplitter` is intended to be used as part of the hub pattern to route command to a command dispatcher in the remote deployment.
+The `Svc::CmdSplitter` splits an uplinked command execution to two separate `Svc::CmdDispatcher` components: one "local" and the other "remote". This splitting is done by opcode where local commands are commands whose opcode is less than a configured base and remote commands are those opcodes equal to or larger than that configured base setting. `Svc::CmdSplitter` is intended to be used as part of the hub pattern to route command to a command dispatcher in the remote deployment.
 
 All input and output are done through port arrays that mirror the port array of input commands to the command dispatcher. In this way `Svc::CmdSplitter` may support multiple command sources in the same manner that `Svc::CmdDispatcher` does.
 

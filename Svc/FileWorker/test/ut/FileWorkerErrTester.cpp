@@ -88,6 +88,44 @@ void FileWorkerTester ::testReadErr() {
     fTest.setOpen(Os::FileInterface::OP_OK);
 }
 
+// A failed or aborted read must report a failure status, not FW_STATUS_DONE_READ.
+// Tested at the readBufferFromFile level because the mocked Os::File cannot pass the
+// readIn port's CRC gate, matching how testReadErr checks the error and abort paths.
+void FileWorkerTester ::testReadErrStatusReported() {
+    FileWorkerStatus wStat;
+    const char* fnameChar = "nominalread.bin";
+    FwSizeType size = 1024 * 100;
+    U8 data[size];
+    Fw::Buffer buf(data, size);
+
+    fTest.setOpen(Os::FileInterface::OP_OK);
+    fTest.setSize(Os::FileInterface::OP_OK, 8247);
+    fTest.setRead(Os::FileInterface::OP_OK);
+    fTest.setWrite(Os::FileInterface::OP_OK);
+
+    // Positive control: a fully completed read maps to FW_STATUS_DONE_READ.
+    this->clearHistory();
+    this->component.m_abort.store(false);
+    wStat = this->component.readBufferFromFile(buf, fnameChar);
+    ASSERT_EQ(FileWorkerStatus::FW_STATUS_DONE_READ, wStat);
+
+    // Read error: a failed read must not be reported as FW_STATUS_DONE_READ.
+    this->clearHistory();
+    fTest.setRead(Os::FileInterface::INVALID_MODE);
+    wStat = this->component.readBufferFromFile(buf, fnameChar);
+    ASSERT_EQ(FileWorkerStatus::FW_STATUS_FAILED_TO_READ, wStat);
+    ASSERT_EVENTS_ReadError_SIZE(1);
+    fTest.setRead(Os::FileInterface::OP_OK);
+
+    // Abort via cancelIn: a cancelled read must not be reported as FW_STATUS_DONE_READ.
+    this->clearHistory();
+    this->component.m_abort.store(true);
+    wStat = this->component.readBufferFromFile(buf, fnameChar);
+    ASSERT_EQ(FileWorkerStatus::FW_STATUS_FAILED_TO_READ, wStat);
+    ASSERT_EVENTS_ReadAborted_SIZE(1);
+    this->component.m_abort.store(false);
+}
+
 void FileWorkerTester ::testVerifyErr() {
     const char* fnameChar = "testfile.txt";
     Fw::String fname = fnameChar;
@@ -148,6 +186,35 @@ void FileWorkerTester ::testWriteErr() {
     fTest.setOpen(Os::FileInterface::OP_OK);
 }
 
+// Regression test: when the underlying write fails, writeIn must report a
+// failure status on writeDoneOut rather than FW_STATUS_DONE_WRITE. Drives the
+// full writeIn port handler (not just the writeBufferToFile helper) so the
+// status-propagation path is exercised.
+void FileWorkerTester ::testWriteErrStatusReported() {
+    FwSizeType dataSize = 1024;
+    U8 data[dataSize];
+    for (FwSizeType i = 0; i < dataSize; i++) {
+        data[i] = static_cast<U8>(i % 256);
+    }
+    Fw::Buffer buffer(data, dataSize);
+    Fw::String fname = "testwrite.txt";
+    FwSizeType offsetBytes = 0;
+
+    // Force the write's open() to fail so writeBufferToFile returns false.
+    this->clearHistory();
+    fTest.setOpen(Os::FileInterface::INVALID_MODE);
+
+    this->invoke_to_writeIn(0, fname, buffer, offsetBytes, false);
+    this->component.doDispatch();
+
+    // The write failed, so ground must be told it failed.
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_FAILED_TO_WRITE, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+    fTest.setOpen(Os::FileInterface::OP_OK);
+}
+
 void FileWorkerTester ::testWriteHashErr() {
     FwSizeType offsetBytes = 0;
     const char* fnameChar = "testfile.txt";
@@ -199,6 +266,98 @@ void FileWorkerTester ::testWriteHashErr() {
     fTest.setRead(Os::FileInterface::INVALID_MODE);
     this->component.getHash(hashFileName, hash, hashBuffer, dataFromOffset, hashSize);
     fTest.setRead(Os::FileInterface::OP_OK);
+}
+
+// ----------------------------------------------------------------------
+// Input-validation tests
+//
+// These exercise the runtime checks that replaced FW_ASSERTs on the
+// readIn/verifyIn/writeIn port handlers. Each malformed input should emit
+// a single InvalidInput warning event, return FW_STATUS_INVALID_INPUT on the
+// corresponding done port, and leave the component in IDLE. None of these
+// paths touch the filesystem, so the FileTester mock state is irrelevant.
+// ----------------------------------------------------------------------
+
+void FileWorkerTester ::testReadInvalidInput() {
+    FwSizeType size = 1024;
+    U8 data[size];
+    Fw::Buffer validBuf(data, size);
+
+    // Empty path
+    this->clearHistory();
+    Fw::String emptyPath("");
+    this->invoke_to_readIn(0, emptyPath, validBuf);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "readIn", "empty path");
+    ASSERT_from_readDoneOut_SIZE(1);
+    ASSERT_from_readDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+    // Invalid (null/zero-size) buffer with an otherwise valid path
+    this->clearHistory();
+    Fw::String validPath("nominalread.bin");
+    Fw::Buffer invalidBuf;  // default construction: null data, zero size -> !isValid()
+    this->invoke_to_readIn(0, validPath, invalidBuf);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "readIn", "invalid buffer");
+    ASSERT_from_readDoneOut_SIZE(1);
+    ASSERT_from_readDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+}
+
+void FileWorkerTester ::testVerifyInvalidInput() {
+    // Empty path
+    this->clearHistory();
+    Fw::String emptyPath("");
+    this->invoke_to_verifyIn(0, emptyPath, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "verifyIn", "empty path");
+    ASSERT_from_verifyDoneOut_SIZE(1);
+    ASSERT_from_verifyDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+}
+
+void FileWorkerTester ::testWriteInvalidInput() {
+    FwSizeType size = 1024;
+    U8 data[size];
+    Fw::Buffer validBuf(data, size);
+    Fw::String validPath("testwrite.txt");
+
+    // Empty path
+    this->clearHistory();
+    Fw::String emptyPath("");
+    this->invoke_to_writeIn(0, emptyPath, validBuf, 0, false);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "writeIn", "empty path");
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+    // Invalid (null/zero-size) buffer
+    this->clearHistory();
+    Fw::Buffer invalidBuf;  // default construction -> !isValid()
+    this->invoke_to_writeIn(0, validPath, invalidBuf, 0, false);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "writeIn", "invalid buffer");
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+    // Offset past the end of the buffer
+    this->clearHistory();
+    FwSizeType badOffset = size + 1024;
+    this->invoke_to_writeIn(0, validPath, validBuf, badOffset, false);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "writeIn", "invalid offset");
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
 }
 
 }  // namespace Svc

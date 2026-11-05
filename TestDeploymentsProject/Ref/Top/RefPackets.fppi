@@ -4,6 +4,7 @@ telemetry packets RefPackets {
     CdhCore.cmdDisp.CommandsDispatched
 
     FileHandling.fileUplink.FilesReceived
+    FileHandling.fileUplink.FilesReceivedFailed
     FileHandling.fileUplink.PacketsReceived
     FileHandling.fileDownlink.FilesSent
     FileHandling.fileDownlink.PacketsSent
@@ -13,6 +14,10 @@ telemetry packets RefPackets {
     cmdSeq.CS_CancelCommands
     cmdSeq.CS_CommandsExecuted
     cmdSeq.CS_SequencesCompleted
+    wasmSeq.ControllerState
+    wasmSeq.InterpreterState
+    wasmSeq.SequencesSucceeded
+    wasmSeq.CommandsDispatched
     ComCcsds.comQueue.comQueueDepth
     ComCcsds.comQueue.buffQueueDepth
     ComCcsds.commsBufferManager.TotalBuffs
@@ -29,14 +34,23 @@ telemetry packets RefPackets {
   packet CDHErrors id 2 group 1 {
     CdhCore.$health.PingLateWarnings
     CdhCore.cmdDisp.CommandsDropped
+    CdhCore.events.EventsDropped
 
     FileHandling.fileUplink.Warnings
     FileHandling.fileDownlink.Warnings
     FileHandling.fileManager.Errors
 
     cmdSeq.CS_Errors
+    wasmSeq.SequencesFailed
+    wasmSeq.SequencesCancelled
+    wasmSeq.CommandsFailed
+    wasmSeq.LastTrapReason
     ComCcsds.commsBufferManager.NoBuffs
     ComCcsds.commsBufferManager.EmptyBuffs
+    ComCcsds.comQueue.comIngressDropped
+    ComCcsds.comQueue.buffIngressDropped
+    ComCcsds.comQueue.comManagedDropped
+    ComCcsds.comQueue.buffManagedDropped
 
     rateGroup1Comp.RgCycleSlips
     rateGroup2Comp.RgCycleSlips
@@ -196,6 +210,8 @@ telemetry packets RefPackets {
     DataProducts.dpWriter.NumFailedWrites
     DataProducts.dpWriter.NumErrors
 
+    DataProducts.dpBufferAccumulator.BA_NumQueuedBuffers
+
     DataProducts.dpBufferManager.TotalBuffs
     DataProducts.dpBufferManager.CurrBuffs
     DataProducts.dpBufferManager.HiBuffs
@@ -273,6 +289,21 @@ telemetry packets RefPackets {
     CdhCore.version.CustomVersion10
   }
 
+  # Empty packet: exercises a packet specification with no channels
+  packet Empty id 39 group 3 {
+  }
+
+  # Uncomment to enable DpCompression subtopology
+  #packet DpCompression id 38 group 3 {
+    #DpCompression.dpZLibCompressorBufferManager.TotalBuffs
+    #DpCompression.dpZLibCompressorBufferManager.CurrBuffs
+    #DpCompression.dpZLibCompressorBufferManager.HiBuffs
+    #DpCompression.dpZLibCompressorBufferManager.NoBuffs
+    #DpCompression.dpZLibCompressorBufferManager.EmptyBuffs
+  #}
+
 } omit {
   CdhCore.cmdDisp.CommandErrors
+  cmdSeq.CS_CurrentSequence
+  wasmSeq.SeqName
 }

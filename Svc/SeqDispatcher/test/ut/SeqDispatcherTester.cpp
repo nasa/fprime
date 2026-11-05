@@ -92,6 +92,106 @@ void SeqDispatcherTester::seqRunOut_handler(FwIndexType portNum,             //!
     this->pushFromPortEntry_seqRunOut(filename, args);
 }
 
+void SeqDispatcherTester::seqCancelOut_handler(FwIndexType portNum  //!< The port number
+) {
+    this->pushFromPortEntry_seqCancelOut();
+}
+
+// Test CANCEL_NAME cancels the sequencer running the named file and clears state on done
+void SeqDispatcherTester::testCancelName() {
+    // Dispatch a non-blocking sequence so sequencer 0 is running "test"
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->sendCmd_RUN_ARGS(0, 0, Fw::String("test"), BlockState::NO_BLOCK, emptyArgs);
+    this->component.doDispatch();
+    ASSERT_from_seqRunOut_SIZE(1);
+    ASSERT_TLM_sequencersAvailable(0, SeqDispatcherSequencerPorts - 1);
+    this->clearHistory();
+
+    // Cancel by filename
+    this->sendCmd_CANCEL_NAME(0, 0, Fw::String("test"));
+    this->component.doDispatch();
+
+    // The matching sequencer should have been sent a cancel on its port
+    ASSERT_from_seqCancelOut_SIZE(1);
+    // Event + counter recorded
+    ASSERT_EVENTS_SequenceCanceled_SIZE(1);
+    ASSERT_EVENTS_SequenceCanceled(0, 0, "test");
+    ASSERT_TLM_canceledCount(0, 1);
+    // Command succeeds
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_CANCEL_NAME, 0, Fw::CmdResponse::OK);
+    this->clearHistory();
+
+    // The canceled sequencer reports done, which clears our internal state
+    this->invoke_to_seqDoneIn(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->component.doDispatch();
+    ASSERT_TLM_sequencersAvailable(0, SeqDispatcherSequencerPorts);
+}
+
+// Test CANCEL_NAME with a filename that is not running returns an error and cancels nothing
+void SeqDispatcherTester::testCancelNameNotFound() {
+    // No sequence running; cancel a name that does not match
+    this->sendCmd_CANCEL_NAME(0, 0, Fw::String("does_not_exist"));
+    this->component.doDispatch();
+
+    // Nothing canceled
+    ASSERT_from_seqCancelOut_SIZE(0);
+    // Warning event, error response
+    ASSERT_EVENTS_CancelSequenceNotFound_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_CANCEL_NAME, 0, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+// Test CANCEL_ALL cancels every running sequencer and clears state on done.
+// This is a broadcast: no sequencer is excluded, so a sequence that issues
+// CANCEL_ALL would itself be canceled.
+void SeqDispatcherTester::testCancelAll() {
+    Svc::SeqArgs emptyArgs{0, 0};
+    // Fill every sequencer with a running (non-blocking) sequence
+    for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
+        this->sendCmd_RUN_ARGS(0, 0, Fw::String("test"), BlockState::NO_BLOCK, emptyArgs);
+        this->component.doDispatch();
+    }
+    ASSERT_from_seqRunOut_SIZE(SeqDispatcherSequencerPorts);
+    ASSERT_TLM_sequencersAvailable(SeqDispatcherSequencerPorts - 1, 0);
+    this->clearHistory();
+
+    // Broadcast cancel to every running sequencer
+    this->sendCmd_CANCEL_ALL(0, 0);
+    this->component.doDispatch();
+
+    // Every sequencer received a cancel on its port
+    ASSERT_from_seqCancelOut_SIZE(SeqDispatcherSequencerPorts);
+    // One event + one counter increment per canceled sequencer
+    ASSERT_EVENTS_SequenceCanceled_SIZE(SeqDispatcherSequencerPorts);
+    ASSERT_TLM_canceledCount_SIZE(SeqDispatcherSequencerPorts);
+    ASSERT_TLM_canceledCount(SeqDispatcherSequencerPorts - 1, SeqDispatcherSequencerPorts);
+    // Command succeeds
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_CANCEL_ALL, 0, Fw::CmdResponse::OK);
+    this->clearHistory();
+
+    // Each canceled sequencer reports done, which clears our internal state
+    for (int i = 0; i < SeqDispatcherSequencerPorts; i++) {
+        this->invoke_to_seqDoneIn(static_cast<FwIndexType>(i), 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+        this->component.doDispatch();
+    }
+    ASSERT_TLM_sequencersAvailable(SeqDispatcherSequencerPorts - 1, SeqDispatcherSequencerPorts);
+}
+
+// Test CANCEL_ALL with no sequences running succeeds and cancels nothing
+void SeqDispatcherTester::testCancelAllNoneRunning() {
+    // No sequences running; CANCEL_ALL should be a benign no-op that still succeeds
+    this->sendCmd_CANCEL_ALL(0, 0);
+    this->component.doDispatch();
+
+    // Nothing canceled, no events, but the command still reports OK
+    ASSERT_from_seqCancelOut_SIZE(0);
+    ASSERT_EVENTS_SequenceCanceled_SIZE(0);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_CANCEL_ALL, 0, Fw::CmdResponse::OK);
+}
+
 // Test RUN_ARGS with valid arguments - verify arguments are propagated correctly
 void SeqDispatcherTester::testRunArgsWithValidArguments() {
     // Create test arguments with some data

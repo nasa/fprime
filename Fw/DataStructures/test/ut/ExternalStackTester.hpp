@@ -14,7 +14,7 @@ namespace Fw {
 template <typename T>
 class ExternalStackTester {
   public:
-    ExternalStackTester<T>(const ExternalStack<T>& stack) : m_stack(stack) {}
+    ExternalStackTester(const ExternalStack<T>& stack) : m_stack(stack) {}
 
     const ExternalArray<T> getItems() const { return this->m_stack.m_items; }
 

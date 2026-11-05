@@ -4,18 +4,8 @@
 Test the command version with basic integration tests.
 """
 
-from enum import Enum
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.utils.event_severity import EventSeverity
-
-
-"""
-This enum is includes the values of EventSeverity that can be filtered by the ActiveLogger Component
-"""
-FilterSeverity = Enum(
-    "FilterSeverity",
-    "WARNING_HI WARNING_LO COMMAND ACTIVITY_HI ACTIVITY_LO DIAGNOSTIC",
-)
 
 
 def test_send_version_command(fprime_test_api):
@@ -26,64 +16,76 @@ def test_send_version_command(fprime_test_api):
       version.ENABLE, [DISABLED/ENABLED]
     """
 
+    # Enable all telemetry packet groups so ProjectVersion/FrameworkVersion are emitted
+    fprime_test_api.set_tlm_packet_level(3)
+
+    version = fprime_test_api.get_mnemonic("Svc.Version")
+    version_events = fprime_test_api.get_event_pred(
+        event=predicates.is_a_member_of(
+            [
+                fprime_test_api.translate_event_name(version + "." + name)
+                for name in [
+                    "ProjectVersion",
+                    "FrameworkVersion",
+                    "LibraryVersions",
+                    "CustomVersions",
+                ]
+            ]
+        ),
+        severity=EventSeverity.ACTIVITY_LO,
+    )
+    # Library/custom counts are deployment specific; ALL must report the sum of the parts
+    emitted = {}
+
     for count, value in enumerate(
         ["PROJECT", "FRAMEWORK", "LIBRARY", "CUSTOM", "ALL"], 1
     ):
+        if value in ["PROJECT", "FRAMEWORK"]:
+            pred = predicates.equal_to(1)
+        elif value == "ALL":
+            pred = predicates.equal_to(2 + emitted["LIBRARY"] + emitted["CUSTOM"])
+        else:
+            pred = predicates.greater_than_or_equal_to(0)
 
-        pred = predicates.greater_than(0)
+        start_tlm = fprime_test_api.get_telemetry_test_history().size()
+        start_evr = fprime_test_api.get_event_test_history().size()
 
-        ActLo_events = fprime_test_api.get_event_pred(
-            severity=EventSeverity.ACTIVITY_LO
-        )
-
-        results2 = fprime_test_api.send_and_assert_command(
-            fprime_test_api.get_mnemonic("Svc.Version") + "." + "VERSION",
+        fprime_test_api.send_and_assert_command(
+            version + "." + "VERSION",
             [
                 value,
             ],
             max_delay=5,
-            #            events=events,
         )
 
-        event_cnt = fprime_test_api.assert_event_count(pred, ActLo_events)
+        event_cnt = fprime_test_api.assert_event_count(
+            pred, version_events, start=start_evr, timeout=5
+        )
+        emitted[value] = len(event_cnt)
         # EVR or report MSG_EVR:  2025-07-28T17:36:43.474151: CdhCore.version.ProjectVersion EventSeverity.ACTIVITY_LO : Project Version: [v4.0.0a1-122-g7b6e9a2e1]
 
         for result in event_cnt:
             msg = "{}".format(result.get_str())
-            msg_list = str(msg).split()
-            version = msg_list[6].replace("[", "")
-            report_ver_value = version.replace("]", "")
+            report_ver_value = msg.split("[")[-1].split("]")[0]
 
         # Channel (Telemetry) History search found the specified item: 2025-07-28T17:36:43.474180: CdhCore.version.ProjectVersion = v4.0.0a1-122-g7b6e9a2e1
         if count == 1:
             evr_ver = fprime_test_api.await_telemetry(
                 fprime_test_api.get_mnemonic("Svc.Version") + "." + "ProjectVersion",
-                start="NOW",
+                start=start_tlm,
             )
         elif count == 2:
             evr_ver = fprime_test_api.await_telemetry(
                 fprime_test_api.get_mnemonic("Svc.Version") + "." + "FrameworkVersion",
-                start="NOW",
+                start=start_tlm,
             )
 
         if count == 1 or count == 2:
-            evr_ver_list = str(evr_ver).split()
-            evr_ver_value = evr_ver_list[3]
+            evr_ver_value = str(evr_ver).split("=")[-1].strip()
 
-            if evr_ver_value == report_ver_value:
-                print(
-                    "COMPARE EVR vs. TELEMETRY channel and version cmd_option PASS ",
-                    evr_ver_value,
-                    report_ver_value,
-                    value,
-                )
-            else:
-                print(
-                    "COMPARE EVR vs. TELEMETRY channel and version cmd_option FAIL ",
-                    evr_ver_value,
-                    report_ver_value,
-                    value,
-                )
+            assert (
+                evr_ver_value == report_ver_value
+            ), f"EVR version {report_ver_value} != telemetry version {evr_ver_value} for {value}"
 
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Version") + "." + "ENABLE",

@@ -12,7 +12,6 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Os/FileSystem.hpp>
 #include <Svc/FileDownlink/FileDownlink.hpp>
 
 namespace Svc {
@@ -27,24 +26,30 @@ Os::File::Status FileDownlink::File ::open(const Fw::FileNameString& sourceFileN
     Fw::LogStringArg destLogStringArg(destFileName);
     this->m_destName = destLogStringArg;
 
-    // Set size
-    FwSizeType file_size;
-    const Os::FileSystem::Status status = Os::FileSystem::getFileSize(sourceFileName.toChar(), file_size);
-    if (status != Os::FileSystem::OP_OK) {
-        return Os::File::BAD_SIZE;
-    }
-    // If the size does not cast cleanly to the desired U32 type, return size error
-    if (static_cast<FwSizeType>(static_cast<U32>(file_size)) != file_size) {
-        return Os::File::BAD_SIZE;
-    }
-    this->m_size = static_cast<U32>(file_size);
-
     // Initialize checksum
     CFDP::Checksum checksum;
     this->m_checksum = checksum;
 
-    // Open osFile for reading
-    return this->m_osFile.open(sourceFileName.toChar(), Os::File::OPEN_READ);
+    // Open osFile for reading (sandbox path validation happens here)
+    Os::File::Status status = this->m_osFile.open(sourceFileName.toChar(), Os::File::OPEN_READ);
+    if (status != Os::File::OP_OK) {
+        return status;
+    }
+
+    // Query size only after the path passes sandbox checks
+    FwSizeType file_size;
+    status = this->m_osFile.size(file_size);
+    if (status != Os::File::OP_OK) {
+        this->m_osFile.close();
+        return Os::File::BAD_SIZE;
+    }
+    // If the size does not cast cleanly to the desired U32 type, return size error
+    if (static_cast<FwSizeType>(static_cast<U32>(file_size)) != file_size) {
+        this->m_osFile.close();
+        return Os::File::BAD_SIZE;
+    }
+    this->m_size = static_cast<U32>(file_size);
+    return Os::File::OP_OK;
 }
 
 Os::File::Status FileDownlink::File ::read(U8* const data, const U32 byteOffset, const U32 size) {

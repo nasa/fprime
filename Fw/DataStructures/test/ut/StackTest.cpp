@@ -48,7 +48,7 @@ TEST(Stack, CopyConstructor) {
 }
 
 TEST(Stack, CopyAssignmentOperator) {
-    // Call the constructor providing backing storage
+    // Call the default constructor
     TestStack s1;
     // Push an item
     const auto item = State::getRandomItem();

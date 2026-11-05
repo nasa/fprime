@@ -40,6 +40,9 @@ class CmdSequencerTester : public Svc::CmdSequencerTester {
 
     //! Issue a cancel command with no sequence active
     void NoSequenceActive();
+
+    //! Reject port-driven runs when seqDone is not connected
+    void RunWithoutSeqDone();
 };
 
 }  // namespace NoFiles

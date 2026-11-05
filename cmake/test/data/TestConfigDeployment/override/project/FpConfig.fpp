@@ -72,7 +72,7 @@ type FwOpcodeType = FwIdType
 type FwPrmIdType = FwIdType
 
 @ The type used to serialize a size value
-type FwSizeStoreType = U16
+type FwSizeStoreType = FwSizeType
 
 @ The type used to serialize a time context value
 type FwTimeContextStoreType = U8

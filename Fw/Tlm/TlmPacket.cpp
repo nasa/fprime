@@ -142,6 +142,9 @@ SerializeStatus TlmPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endiann
     }
     // deserialize the channel value entry buffers
     FwSizeType size = buffer.getDeserializeSizeLeft();
+    if (size > this->m_tlmBuffer.getCapacity()) {
+        return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
     stat = buffer.deserializeTo(this->m_tlmBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail

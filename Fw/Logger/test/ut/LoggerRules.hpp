@@ -59,23 +59,23 @@ struct LogGood : public STest::Rule<MockLogging::FakeLogger> {
 /**
  * LogBad:
  *
- * As long as a non-NULL logger is set as the system logger, then valid log messages should be processed.
+ * When no logger (NULL) is set as the system logger, then log messages should be discarded.
  */
 struct LogBad : public STest::Rule<MockLogging::FakeLogger> {
     // Constructor
     explicit LogBad(const Fw::String& name);
 
-    // Check for logging, only when not NULL
+    // Applies only when the logger is NULL
     bool precondition(const MockLogging::FakeLogger& truth);
 
-    // Log valid messages
+    // Log messages and assert they are discarded
     void action(MockLogging::FakeLogger& truth);
 };
 
 /**
  * LogGoodStringObject:
  *
- * As long as a non-NULL logger is set as the system logger, then valid log messages should be processed.
+ * As long as a non-NULL logger is set as the system logger, then string-object log messages should be processed.
  */
 struct LogGoodStringObject : public STest::Rule<MockLogging::FakeLogger> {
     // Constructor

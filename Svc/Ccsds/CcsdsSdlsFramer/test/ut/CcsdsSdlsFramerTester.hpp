@@ -1,0 +1,146 @@
+// ======================================================================
+// \title  CcsdsSdlsFramerTester.hpp
+// \author devin
+// \brief  hpp file for CcsdsSdlsFramer component test harness implementation class
+// ======================================================================
+
+#ifndef Svc_Ccsds_CcsdsSdlsFramerTester_HPP
+#define Svc_Ccsds_CcsdsSdlsFramerTester_HPP
+
+#include "Svc/Ccsds/CcsdsSdlsFramer/CcsdsSdlsFramer.hpp"
+#include "Svc/Ccsds/CcsdsSdlsFramer/CcsdsSdlsFramerGTestBase.hpp"
+#include "TestUtils/RuleBasedTesting.hpp"
+
+namespace Svc {
+
+namespace Ccsds {
+
+class CcsdsSdlsFramerTester : public CcsdsSdlsFramerGTestBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    //! Maximum size of histories storing events, telemetry, and port outputs
+    static const FwSizeType MAX_HISTORY_SIZE = 10;
+
+    //! Expected per-event quota, independent of the generated throttle implementation
+    static const U32 FAILURE_EVENT_LIMIT = 5;
+
+    //! Expected throttle period after which an exhausted quota re-arms
+    static const U32 FAILURE_EVENT_PERIOD_SECONDS = 60;
+
+    //! Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+
+    //! Maximum size of a test data buffer
+    static const FwSizeType TEST_BUFFER_SIZE = 64;
+
+    //! Size of the allocation storage (data + SA index)
+    static const FwSizeType TEST_ALLOCATION_SIZE = TEST_BUFFER_SIZE + sizeof(U16);
+
+    //! Security association index staged into the SA_INDEX parameter
+    static const U16 TEST_PARAM_SA_INDEX = 27;
+
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
+
+    //! Construct object CcsdsSdlsFramerTester
+    CcsdsSdlsFramerTester();
+
+    //! Destroy object CcsdsSdlsFramerTester
+    ~CcsdsSdlsFramerTester();
+
+  private:
+    // ----------------------------------------------------------------------
+    // Handler overrides for typed from ports
+    // ----------------------------------------------------------------------
+
+    //! Override recording the encryption request
+    void from_encryptOut_handler(FwIndexType portNum,
+                                 U16 securityAssociationIndex,
+                                 Fw::Buffer& data,
+                                 const ComCfg::FrameContext& context) override;
+
+    //! Override returning a buffer from the tester-owned allocation storage
+    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
+
+  private:
+    // ----------------------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------------------
+
+    //! Connect ports
+    void connectPorts();
+
+    //! Initialize components
+    void initComponents();
+
+  public:
+    // ----------------------------------------------------------------------
+    // Throttle helpers
+    // ----------------------------------------------------------------------
+
+    //! Advance the time reported to the component
+    void advanceTestTime(U32 seconds);
+
+    //! Assert the number of EncryptionFailed events in the current history
+    void assertEncryptionFailedEvents(U32 count);
+
+    //! Assert the number of BufferAllocationFailed events in the current history
+    void assertBufferAllocationFailedEvents(U32 count);
+
+    //! Update a shadow throttle for one failure at the current test time; true when an event is expected
+    bool expectFailureEvent(U32& emissions, Fw::Time& periodStart);
+
+  public:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+
+    //! The component under test
+    CcsdsSdlsFramer component;
+
+    //! Whether the allocation stub returns an undersized buffer
+    bool m_allocateUndersized = false;
+
+    //! Whether the allocation stub returns an invalid buffer
+    bool m_allocateInvalid = false;
+
+    //! Time currently reported to the component
+    Fw::Time m_currentTime;
+
+    //! Shadow emission counts and period starts for the independently throttled failure events
+    U32 m_encryptionFailureEvents = 0;
+    Fw::Time m_encryptionFailurePeriodStart;
+    U32 m_allocationFailureEvents = 0;
+    Fw::Time m_allocationFailurePeriodStart;
+
+    //! Storage backing the allocation stub
+    U8 m_allocationStorage[TEST_ALLOCATION_SIZE] = {};
+
+  public:
+    // ----------------------------------------------------------------------
+    // Rule Based Testing
+    // ----------------------------------------------------------------------
+
+    //! Rules for the framing path (dataIn)
+    FW_RBT_DEFINE_RULE(CcsdsSdlsFramerTester, Frame, ContextSa);
+    FW_RBT_DEFINE_RULE(CcsdsSdlsFramerTester, Frame, ParameterSa);
+    FW_RBT_DEFINE_RULE(CcsdsSdlsFramerTester, Frame, EncryptFailure);
+
+    //! Rules for the encrypted data and ownership return paths
+    FW_RBT_DEFINE_RULE(CcsdsSdlsFramerTester, DataFlow, EncryptedData);
+    FW_RBT_DEFINE_RULE(CcsdsSdlsFramerTester, DataFlow, AllocationFailure);
+    FW_RBT_DEFINE_RULE(CcsdsSdlsFramerTester, DataFlow, DataReturn);
+    FW_RBT_DEFINE_RULE(CcsdsSdlsFramerTester, DataFlow, BufferReturn);
+    FW_RBT_DEFINE_RULE(CcsdsSdlsFramerTester, DataFlow, ComStatus);
+};
+
+}  // namespace Ccsds
+
+}  // namespace Svc
+
+#endif

@@ -23,16 +23,11 @@ ApidManager ::ApidManager(const char* const compName) : ApidManagerComponentBase
 
 U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::Apid& apid, U16 receivedSeqCount) {
     const U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
-    if (expectedSequenceCount == SEQUENCE_COUNT_ERROR) {
-        // APID could not be tracked (table full); nothing to validate or sync against
-        return receivedSeqCount;
-    }
     if (receivedSeqCount != expectedSequenceCount) {
         // Likely a packet was dropped or out of order
         this->log_WARNING_LO_UnexpectedSequenceCount(receivedSeqCount, expectedSequenceCount);
         // Sync onboard count to what was received so counting can keep going. Insert cannot fail:
-        // getAndIncrementSeqCount above inserted the APID already, we would have returned early
-        // due to SEQUENCE_COUNT_ERROR
+        // getAndIncrementSeqCount above inserted the APID already (asserting on failure)
         const Fw::Success insertStatus = m_apidSequences.insert(apid, this->calculateNextSeqCount(receivedSeqCount));
         FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(apid));
     }
@@ -52,12 +47,11 @@ U16 ApidManager ::getAndIncrementSeqCount(ComCfg::Apid::T apid) {
     // Find current sequence count if APID is tracked; otherwise default to 0 (first count for a new APID)
     (void)m_apidSequences.find(apid, seqCount);
     // Store the next sequence count for this APID. If the APID is not yet tracked, this
-    // also registers it; insert can only fail when registering a new APID into a full table.
+    // also registers it.
+    // Insert should never fail because the apid should be a valid enum value and
+    // the table should be large enough to hold all the enum values
     const Fw::Success insertStatus = m_apidSequences.insert(apid, this->calculateNextSeqCount(seqCount));
-    if (insertStatus != Fw::Success::SUCCESS) {
-        this->log_WARNING_HI_ApidTableFull(apid);
-        return SEQUENCE_COUNT_ERROR;
-    }
+    FW_ASSERT(insertStatus == Fw::Success::SUCCESS);
     return seqCount;
 }
 

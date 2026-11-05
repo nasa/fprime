@@ -23,6 +23,8 @@ class TimeTester {
     void test_CopyTest();
     void test_ZeroTimeEquality();
     void test_TimeToTimeValue();
+    void test_InstantiateFromFloatCarry();
+    void test_DeserializeRejectsOutOfRangeUSeconds();
 };
 }  // namespace Fw
 

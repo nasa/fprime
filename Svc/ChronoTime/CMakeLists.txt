@@ -10,17 +10,21 @@
 #
 ####
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.cpp"
+
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.hpp"
 )
 
-register_fprime_module()
-
-set(UT_AUTO_HELPERS ON)
-set(UT_SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/ChronoTimeTester.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/ChronoTimeTestMain.cpp"
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/ChronoTime.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ChronoTimeTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ChronoTimeTestMain.cpp"
+  UT_AUTO_HELPERS
 )
-register_fprime_ut()

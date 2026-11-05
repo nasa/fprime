@@ -352,6 +352,27 @@ void AosDeframerTester::testMultiplePacketsInFrame() {
     ASSERT_TLM_PacketsExtracted(2, 3);  // Final count is 3
 }
 
+void AosDeframerTester::testMinimumSizeSppPackets() {
+    this->configureDefault();
+
+    // A 7 byte packet is shorter than the 8 byte header accumulation buffer
+    U8 payload[64];
+    FwSizeType offset = 0;
+    const FwSizeType firstSize = this->createSppPacket(payload + offset, 0x030, 1);
+    offset += firstSize;
+    const FwSizeType secondSize = this->createSppPacket(payload + offset, 0x031, 10);
+    offset += secondSize;
+
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, offset, 0);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(2);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), firstSize);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).data.getSize(), secondSize);
+}
+
 // ----------------------------------------------------------------------
 // Tests - Spanning Packets
 // ----------------------------------------------------------------------
@@ -478,12 +499,12 @@ void AosDeframerTester::testSpanningPacketAllocFailureEvent() {
     // Start an EPP packet that declares a payload large enough to exceed the test allocator buffer.
     payload[0] = (ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL << EPPSubfields::packetVersionOffset);
     payload[0] |= EppProtocolId::MissionSpecific << EPPSubfields::protocolIdOffset;
-    payload[0] |= 0x02 & EPPSubfields::lengthOfLengthMask;
+    payload[0] |= 0x03 & EPPSubfields::lengthOfLengthMask;
 
     payload[1] = 0x00;  // Ext Field
 
-    payload[2] = 0xFF;
-    payload[3] = 0xFF;  // dataLength = 65535 -> total packet size = 65539 (> ALLOC_BUF_SIZE=65536)
+    payload[5] = 0x01;
+    payload[7] = 0x01;  // packet length (header-inclusive) = 65537 (> ALLOC_BUF_SIZE=65536)
 
     Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), 0);
     ComCfg::FrameContext context;
@@ -810,6 +831,76 @@ void AosDeframerTester::testEppLengthOfLength() {
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), size4);
 }
 
+void AosDeframerTester::testEppConformantAdjacentLengths() {
+    this->configureDefault();
+    this->clearHistory();
+    // EPI=7; lengths 5, 7 and 11 include their 2-, 4- and 8-byte headers.
+    // A final SPP packet checks the boundary between the two packet protocols.
+    U8 payload[] = {0xFD, 5, 0xA1, 0xA2, 0xA3, 0xFE, 0,    0,    7,    0xB1, 0xB2, 0xB3, 0xFF, 0,    0,    0,
+                    0,    0, 0,    11,   0xC1, 0xC2, 0xC3, 0x01, 0x11, 0xC0, 0,    0,    2,    0xD1, 0xD2, 0xD3};
+    const FwSizeType sizes[] = {5, 7, 11, 9};
+    Fw::Buffer frame = this->assembleFrameBuffer(payload, sizeof payload, 0);
+    ComCfg::FrameContext context;
+    this->invoke_to_dataIn(0, frame, context);
+
+    ASSERT_from_dataOut_SIZE(4);
+    for (U32 i = 0; i < 4; ++i) {
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(i).data.getSize(), sizes[i]);
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(i).context.get_pvn(),
+                  i < 3 ? ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL : ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
+    }
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EVENTS_SIZE(0);
+}
+
+void AosDeframerTester::testEppHeaderOnlyPackets() {
+    this->configureDefault();
+    this->clearHistory();
+    // EPP PID=7, with no length field or with a declared header-only total.
+    U8 packets[] = {0xFC, 0xFD, 2, 0xFE, 0, 0, 4, 0xFF, 0, 0, 0, 0, 0, 0, 8};
+    const FwSizeType sizes[] = {1, 2, 4, 8};
+    Fw::Buffer frame = this->assembleFrameBuffer(packets, sizeof packets, 0);
+    ComCfg::FrameContext context;
+    this->invoke_to_dataIn(0, frame, context);
+
+    ASSERT_from_dataOut_SIZE(4);
+    for (U32 i = 0; i < 4; ++i) {
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(i).data.getSize(), sizes[i]);
+    }
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EVENTS_SIZE(0);
+}
+
+void AosDeframerTester::testEppInvalidDeclaredLengths() {
+    const U8 headerSizes[] = {2, 4, 8};
+    const U8 firstBytes[] = {0xFD, 0xFE, 0xFF};
+    for (U32 variant = 0; variant < 3; ++variant) {
+        // Declared lengths shorter than the header are rejected.
+        for (FwSizeType declared = 0; declared < headerSizes[variant]; ++declared) {
+            SCOPED_TRACE(::testing::Message() << "headerSize=" << headerSizes[variant] << " declared=" << declared);
+            this->configureDefault();
+            this->clearHistory();
+            U8 payload[8] = {};
+            payload[0] = firstBytes[variant];
+            payload[headerSizes[variant] - 1] = static_cast<U8>(declared);
+            Fw::Buffer frame = this->assembleFrameBuffer(payload, headerSizes[variant], 0);
+            ComCfg::FrameContext context;
+            this->invoke_to_dataIn(0, frame, context);
+            ASSERT_from_dataOut_SIZE(0);
+            ASSERT_from_dataReturnOut_SIZE(1);
+        }
+    }
+}
+
+void AosDeframerTester::testEppHelperEncodesTotalLength() {
+    for (U8 protocolId = 0; protocolId < 8; ++protocolId) {
+        U8 packet[2] = {};
+        ASSERT_EQ(this->createEppPacket(packet, protocolId, EppLengthOfLength::One, 0), 2U);
+        ASSERT_EQ(packet[0], static_cast<U8>(0xE1 | (protocolId << 2)));
+        ASSERT_EQ(packet[1], 2U);
+    }
+}
+
 void AosDeframerTester::testEppIdlePacket() {
     this->configureDefault();
 
@@ -1001,6 +1092,111 @@ void AosDeframerTester::testUntrustedFhp() {
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_EVENTS_InvalidFhp_SIZE(1);
+}
+
+// ----------------------------------------------------------------------
+// Tests - Security regression (CVE: EPP integer overflow → heap buffer overflow)
+// ----------------------------------------------------------------------
+
+void AosDeframerTester::testEppSizeOverflowRejected() {
+    // Regression test for the integer overflow in sizeEppPacket (CWE-190 / CWE-122).
+    //
+    // Craft a malformed EPP lol=4 header whose length field is 0xFFFFFFFC.
+    // On a 32-bit target (FwSizeType = U32):
+    //   headerLength(8) + 0xFFFFFFFC = 0x100000004, which wraps to 4.
+    //   Without the fix, allocate_out(0,4) would be called, then a 8-byte memcpy
+    //   into the 4-byte buffer would corrupt the heap.
+    //   With the fix, the length field already includes the header, so no addition
+    //   occurs; the allocator rejects the ~4 GB request and SpanningPacketAllocFailed fires.
+    //
+    // On a 64-bit host (FwSizeType = U64, where CI tests run):
+    //   No arithmetic overflow occurs; the computed size is ~4 GB.
+    //   The allocator rejects the ~4 GB request and SpanningPacketAllocFailed fires.
+    //
+    // In both cases the invariant is: zero packets emitted, no crash.
+
+    this->configureDefault();
+
+    // Build byte sequence using createEppPacket for a correct byte-0 encoding,
+    // then overwrite the 4-byte length field (bytes 4-7) with the attack value.
+    U8 payload[8] = {};
+    this->createEppPacket(payload, EppProtocolId::MissionSpecific, EppLengthOfLength::Four, 0);
+    // packetDataLength = 0xFFFFFFFC: on 32-bit, headerLength(8) + 0xFFFFFFFC wraps to 4
+    payload[4] = 0xFF;
+    payload[5] = 0xFF;
+    payload[6] = 0xFF;
+    payload[7] = 0xFC;
+
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, sizeof(payload), 0);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataIn(0, buffer, context);
+
+    // Primary assertion: no packet must ever be delivered downstream
+    ASSERT_from_dataOut_SIZE(0);
+    // Frame buffer must still be returned regardless of the error path taken
+    ASSERT_from_dataReturnOut_SIZE(1);
+
+    // In the overflow case, the allocation should report failure
+    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
+}
+
+void AosDeframerTester::testEppSizeOverflowHeaderSpansFrame() {
+    // Exercises the same CVE attack path as testEppSizeOverflowRejected, but with
+    // the 8-byte malicious EPP header split across two AOS frames.
+    //
+    // Frame 0 contributes the first 4 bytes of the header (EPP byte-0, extension,
+    // and two CCSDS-reserved bytes). sizeEppPacket cannot yet determine the total
+    // size because payloadSize(4) < headerLength(8) and returns 0.
+    //
+    // Frame 1 (FHP_NO_PACKET_START) delivers the remaining 4 bytes (the length
+    // field 0xFFFFFFFC). Now headerBuf holds all 8 bytes and sizeEppPacket fires:
+    //   the allocator rejects the ~4 GB request → SpanningPacketAllocFailed
+
+    this->configureDefault();
+
+    // Reuse the same malicious 8-byte EPP header
+    U8 headerBytes[8] = {};
+    this->createEppPacket(headerBytes, EppProtocolId::MissionSpecific, EppLengthOfLength::Four, 0);
+    headerBytes[4] = 0xFF;
+    headerBytes[5] = 0xFF;
+    headerBytes[6] = 0xFF;
+    headerBytes[7] = 0xFC;
+
+    ComCfg::FrameContext context;
+
+    // --- Frame 0 ---
+    // Place the first 4 bytes of the malicious header at FHP = (TEST_DATA_ZONE_SIZE - 4)
+    // so exactly 4 bytes remain in the data zone after the FHP.  The bytes before FHP
+    // are zeros; since there is no active spanning packet they are ignored by the deframer.
+    const FwSizeType splitAt = TEST_DATA_ZONE_SIZE - 4;
+    U8 payload1[TEST_DATA_ZONE_SIZE] = {};
+    ::memcpy(payload1 + splitAt, headerBytes, 4);
+
+    Fw::Buffer frame1 =
+        this->assembleFrameBuffer(payload1, TEST_DATA_ZONE_SIZE, static_cast<U16>(splitAt), ComCfg::SpacecraftId, 0, 0);
+    this->invoke_to_dataIn(0, frame1, context);
+
+    // 4 bytes in headerBuf, but headerLength=8 → sizeEppPacket returns 0 → no output yet
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(0);
+    this->clearHistory();
+
+    // --- Frame 1 ---
+    // Deliver the remaining 4 bytes of the header as a pure continuation frame.
+    // assembleFrameBuffer fills the rest of the data zone with an EPP idle byte,
+    // which is never reached because appendToSpanningPacket exits on alloc failure
+    // before the body copy begins.
+    Fw::Buffer frame2 =
+        this->assembleFrameBuffer(headerBytes + 4, 4, M_PDUSubfields::FHP_NO_PACKET_START, ComCfg::SpacecraftId, 0, 1);
+    this->invoke_to_dataIn(0, frame2, context);
+
+    // Primary assertion: no packet emitted after receiving both halves of the attack header
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+
+    // In the overflow case, the allocation should report failure
+    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
 }
 
 }  // namespace Ccsds

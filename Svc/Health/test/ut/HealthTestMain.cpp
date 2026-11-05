@@ -19,6 +19,11 @@ TEST(Test, FaultTlm) {
     tester.faultTlm();
 }
 
+TEST(Test, EqualWarnFatalCycles) {
+    Svc::HealthTester tester;
+    tester.equalWarnFatalCycles();
+}
+
 TEST(Test, DisableAllMonitoring) {
     Svc::HealthTester tester;
     tester.disableAllMonitoring();
@@ -32,6 +37,11 @@ TEST(Test, DisableOneMonitoring) {
 TEST(Test, UpdatePingTimeout) {
     Svc::HealthTester tester;
     tester.updatePingTimeout();
+}
+
+TEST(Test, UpdateTimeoutDuringPendingPing) {
+    Svc::HealthTester tester;
+    tester.updateTimeoutDuringPendingPing();
 }
 
 TEST(Test, WatchdogCheck) {

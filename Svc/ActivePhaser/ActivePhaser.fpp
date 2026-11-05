@@ -6,13 +6,17 @@ module Svc {
         # General Ports
         # ----------------------------------------------------------------------
 
-        @ The rate group cycle input
+        @ The rate group cycle input. Cycles arriving while the queue is full are dropped
+        @ silently and by design: unlike ActiveRateGroup, ActivePhaser reports no cycle-slip
+        @ event or channel. A dropped cycle leaves the phase base permanently lagged, which is
+        @ the intended behavior, so operators should not expect a slip indication here.
         async input port CycleIn: Svc.Cycle drop
 
         @ Scheduler output port to rate group members
         output port PhaserMemberOut: [ActiveRateGroupOutputPorts] Sched
 
-        @ An internal port for sending data of type T
+        @ An internal port for sending data of type T. Dropped ticks are silent by design; see
+        @ the note on CycleIn.
         internal port Tick drop
 
         # ----------------------------------------------------------------------

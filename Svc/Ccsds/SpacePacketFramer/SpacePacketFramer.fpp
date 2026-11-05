@@ -14,6 +14,12 @@ module Ccsds {
         @ Port to retrieve the current sequence count for a given APID
         output port getApidSeqCount: Ccsds.ApidSequenceCount
 
+        @ No buffer was available to hold the packet, which was dropped
+        event NoBufferAvailable \
+            severity warning high \
+            format "Failed to allocate a packet buffer: packet dropped" \
+            throttle 5
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

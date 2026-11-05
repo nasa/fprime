@@ -33,8 +33,6 @@ void DpWriter::configure(const Fw::ConstStringBase& dpFileNamePrefix) {
 
 void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
     Fw::Success::T status = Fw::Success::SUCCESS;
-    // portNum is unused
-    (void)portNum;
     // Update num buffers received
     ++this->m_numBuffersReceived;
     // Check that the buffer is valid
@@ -85,8 +83,12 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
     if (status == Fw::Success::SUCCESS) {
         const FwDpIdType containerId = container.getId();
         const Fw::Time timeTag = container.getTimeTag();
-        fileName.format(DP_FILENAME_FORMAT, this->m_dpFileNamePrefix.toChar(), containerId, timeTag.getSeconds(),
-                        timeTag.getUSeconds());
+        const Fw::FormatStatus formatStatus = fileName.format(DP_FILENAME_FORMAT, this->m_dpFileNamePrefix.toChar(),
+                                                              containerId, timeTag.getSeconds(), timeTag.getUSeconds());
+        if (formatStatus != Fw::FormatStatus::SUCCESS) {
+            this->log_WARNING_HI_FileNameFormatError(static_cast<Fw::StringFormatStatus::T>(formatStatus));
+            status = Fw::Success::FAILURE;
+        }
     }
     // Calculate and populate the file data checksum
     if (status == Fw::Success::SUCCESS) {
@@ -97,13 +99,13 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
     if (status == Fw::Success::SUCCESS) {
         status = this->writeFile(container, fileName, fileSize);
     }
-    // Send the DpWritten notification
+    // Send the DpWritten notification on the path matching the input port
     if (status == Fw::Success::SUCCESS) {
-        this->sendNotification(container, fileName, fileSize);
+        this->sendNotification(portNum, container, fileName, fileSize);
     }
-    // Deallocate the buffer
+    // Return the buffer on the path matching the input port
     if (buffer.isValid()) {
-        this->deallocBufferSendOut_out(0, buffer);
+        this->deallocBufferSendOut_out(portNum, buffer);
     }
     // Update the error count
     if (status != Fw::Success::SUCCESS) {
@@ -115,6 +117,18 @@ void DpWriter::schedIn_handler(const FwIndexType portNum, U32 context) {
     // portNum and context are not used
     (void)portNum;
     (void)context;
+    bool expected = false;
+    if (this->m_schedInQueued.compare_exchange_strong(expected, true)) {
+        this->schedInInternal_internalInterfaceInvoke();
+    }
+}
+
+void DpWriter::schedInInternal_overflowHook() {
+    this->m_schedInQueued = false;
+}
+
+void DpWriter::schedInInternal_internalInterfaceHandler() {
+    this->m_schedInQueued = false;
     // Write telemetry
     this->tlmWrite_NumBuffersReceived(this->m_numBuffersReceived);
     this->tlmWrite_NumBytesWritten(this->m_numBytesWritten);
@@ -178,9 +192,10 @@ void DpWriter::performProcessing(Fw::DpContainer& container) {
         Fw::SerializeStatus stat = container.deserializeHeader();
         FW_ASSERT(stat == Fw::FW_SERIALIZE_OK, stat);
 
-        // Check that the buffer size is compatible with the data size in
+        // Check that the buffer size is compatible with the packet size in
         // the container header
-        FW_ASSERT(container.getDataSize() <= buffer.getSize(), static_cast<FwAssertArgType>(container.getDataSize()),
+        FW_ASSERT(container.getPacketSize() <= buffer.getSize(),
+                  static_cast<FwAssertArgType>(container.getPacketSize()),
                   static_cast<FwAssertArgType>(buffer.getSize()));
 
         // Re-compute and serialize the container header into the buffer
@@ -239,13 +254,14 @@ Fw::Success::T DpWriter::writeFile(const Fw::DpContainer& container,
     return status;
 }
 
-void DpWriter::sendNotification(const Fw::DpContainer& container,
+void DpWriter::sendNotification(FwIndexType portNum,
+                                const Fw::DpContainer& container,
                                 const Fw::FileNameString& fileName,
                                 FwSizeType fileSize) {
-    if (isConnected_dpWrittenOut_OutputPort(0)) {
+    if (isConnected_dpWrittenOut_OutputPort(portNum)) {
         // Get the priority
         const FwDpPriorityType priority = container.getPriority();
-        this->dpWrittenOut_out(0, fileName, priority, fileSize);
+        this->dpWrittenOut_out(portNum, fileName, priority, fileSize);
     }
 }
 

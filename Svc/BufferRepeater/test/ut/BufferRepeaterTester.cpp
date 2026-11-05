@@ -34,8 +34,7 @@ BufferRepeaterTester ::~BufferRepeaterTester() {}
 
 void BufferRepeaterTester ::testRepeater() {
     this->component.configure(BufferRepeater::FATAL_ON_OUT_OF_MEMORY);
-    m_initial_buffer.setSize(1024);
-    m_initial_buffer.setData(new U8[1024]);
+    m_initial_buffer.set(new U8[1024], 1024);
     for (U32 i = 0; i < m_initial_buffer.getSize(); i++) {
         m_initial_buffer.getData()[i] = static_cast<U8>(i);
     }
@@ -64,14 +63,13 @@ void BufferRepeaterTester ::testRepeater() {
     ASSERT_EQ(m_initial_buffer.getData(), fromPortHistory_deallocate->at(0).fwBuffer.getData());
     ASSERT_EQ(m_initial_buffer.getSize(), fromPortHistory_deallocate->at(0).fwBuffer.getSize());
     delete[] m_initial_buffer.getData();
-    m_initial_buffer.setData(nullptr);
+    m_initial_buffer.set(nullptr, 0);
 }
 
 void BufferRepeaterTester ::testFailure(BufferRepeater::BufferRepeaterFailureOption failure_option) {
     this->m_failure = true;
     this->component.configure(failure_option);
-    m_initial_buffer.setSize(1024);
-    m_initial_buffer.setData(new U8[1024]);
+    m_initial_buffer.set(new U8[1024], 1024);
 
     invoke_to_portIn(0, m_initial_buffer);
     switch (failure_option) {
@@ -98,7 +96,7 @@ void BufferRepeaterTester ::testFailure(BufferRepeater::BufferRepeaterFailureOpt
     ASSERT_EQ(m_initial_buffer.getData(), fromPortHistory_deallocate->at(0).fwBuffer.getData());
     ASSERT_EQ(m_initial_buffer.getSize(), fromPortHistory_deallocate->at(0).fwBuffer.getSize());
     delete[] m_initial_buffer.getData();
-    m_initial_buffer.setData(nullptr);
+    m_initial_buffer.set(nullptr, 0);
 }
 
 // ----------------------------------------------------------------------
@@ -109,12 +107,8 @@ Fw::Buffer BufferRepeaterTester ::from_allocate_handler(const FwIndexType portNu
     this->pushFromPortEntry_allocate(size);
     Fw::Buffer new_buffer;
 
-    if (m_failure) {
-        new_buffer.setSize(0);
-        new_buffer.setData(nullptr);
-    } else {
-        new_buffer.setSize(size);
-        new_buffer.setData(new U8[size]);
+    if (!m_failure) {
+        new_buffer.set(new U8[size], size);
     }
     return new_buffer;
 }

@@ -12,7 +12,7 @@ module Ref {
 
 
 
-  topology Ref {
+  deployment topology Ref {
     # ----------------------------------------------------------------------
     # Subtopology instances
     # ----------------------------------------------------------------------
@@ -20,6 +20,7 @@ module Ref {
     instance ComCcsds.Subtopology
     instance FileHandling.Subtopology
     instance DataProducts.Subtopology
+    #instance DpCompression.Subtopology
 
     # ----------------------------------------------------------------------
     # Instances used in the topology
@@ -45,6 +46,7 @@ module Ref {
     instance linuxTimer
     instance comDriver
     instance cmdSeq
+    instance wasmSeq
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -99,6 +101,8 @@ module Ref {
       rateGroup2Comp.RateGroupMemberOut[4] -> dpDemo.run
       #connection to FileManager listing feature command for sequencing
       rateGroup2Comp.RateGroupMemberOut[5] -> FileHandling.Subtopology.fileManagerSchedIn
+      rateGroup2Comp.RateGroupMemberOut[6] -> wasmSeq.checkTimers
+      rateGroup2Comp.RateGroupMemberOut[7] -> wasmSeq.writeTelemetry
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
@@ -109,6 +113,8 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[4] -> DataProducts.Subtopology.dpBufferManagerSchedIn
       rateGroup3Comp.RateGroupMemberOut[5] -> DataProducts.Subtopology.dpWriterSchedIn
       rateGroup3Comp.RateGroupMemberOut[6] -> DataProducts.Subtopology.dpMgrSchedIn
+      rateGroup3Comp.RateGroupMemberOut[7] -> CdhCore.Subtopology.eventsRun
+      #rateGroup3Comp.RateGroupMemberOut[8] -> DpCompression.Subtopology.dpZLibBufferManagerSchedIn
     }
 
     connections Communications {
@@ -144,6 +150,9 @@ module Ref {
       # Asynchronous request
       dpDemo.productRequestOut -> DataProducts.Subtopology.productRequestIn
       DataProducts.Subtopology.productResponseOut -> dpDemo.productRecvIn
+
+      wasmSeq.getTlmChan -> CdhCore.tlmSend.TlmGet
+      wasmSeq.getParam ->   FileHandling.prmDb.getPrm
     }
 
     connections ComCcsds_CdhCore {
@@ -156,6 +165,8 @@ module Ref {
       CdhCore.Subtopology.seqCmdStatus       -> ComCcsds.Subtopology.cmdResponseIn
       cmdSeq.comCmdOut                       -> CdhCore.Subtopology.seqCmdBuff
       CdhCore.Subtopology.seqCmdStatus       -> cmdSeq.cmdResponseIn
+      wasmSeq.cmdOut                         -> CdhCore.Subtopology.seqCmdBuff
+      CdhCore.Subtopology.seqCmdStatus       -> wasmSeq.cmdResponseIn
     }
 
     connections ComCcsds_FileHandling {
@@ -171,6 +182,8 @@ module Ref {
     connections FileHandling_DataProducts {
       DataProducts.Subtopology.dpCatFileOut              -> FileHandling.Subtopology.fileDownlinkSendFile
       FileHandling.Subtopology.fileDownlinkFileComplete  -> DataProducts.Subtopology.dpCatFileDone
+
+      #DataProducts.Subtopology.dpWriterProcOut[0] -> DpCompression.Subtopology.dpCompressProcIn
     }
 
   }

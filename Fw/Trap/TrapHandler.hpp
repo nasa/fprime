@@ -7,8 +7,9 @@ namespace Fw {
  * TrapHandler:
  *   A framework class used to handle traps that occur during the execution of the
  * the F' framework. Must be registered with a trap register. The user should
- * inherit from this class and ensure that the doTrap function is implemented. The
- * default implementation will be do-nothing.
+ * inherit from this class and implement the doTrap function. There is no default
+ * implementation: doTrap is pure virtual, so a subclass that does not implement it
+ * cannot be instantiated.
  */
 class TrapHandler {
   public:
@@ -16,8 +17,6 @@ class TrapHandler {
     virtual ~TrapHandler() {};  //!< destructor
     /**
      * Handles the incoming trap.
-     * Note: if user does not supply an implementer of this
-     *       function, a do-nothing version will be run.
      * \param trap: trap number
      */
     virtual void doTrap(U32 trap) = 0;

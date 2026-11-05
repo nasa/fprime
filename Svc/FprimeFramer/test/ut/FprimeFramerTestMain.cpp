@@ -26,6 +26,16 @@ TEST(OffNominal, OversizedAllocatorBufferIsTrimmed) {
     tester.testOversizedAllocatorBufferIsTrimmed();
 }
 
+TEST(OffNominal, InvalidAllocationEmitsComStatus) {
+    Svc::FprimeFramerTester tester;
+    tester.testInvalidAllocationEmitsComStatus();
+}
+
+TEST(OffNominal, UndersizedAllocationEmitsComStatus) {
+    Svc::FprimeFramerTester tester;
+    tester.testUndersizedAllocationEmitsComStatus();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

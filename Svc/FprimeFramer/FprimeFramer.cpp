@@ -36,6 +36,20 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
 
     // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, frameSize);
+    // The allocator may return an invalid or smaller-than-requested buffer
+    if ((not frameBuffer.isValid()) || (frameBuffer.getSize() < frameSize)) {
+        this->log_WARNING_HI_NoBufferAvailable();
+        if (frameBuffer.isValid()) {
+            this->bufferDeallocate_out(0, frameBuffer);
+        }
+        this->dataReturnOut_out(0, data, context);
+        // No frame produced: report SUCCESS so the upstream ComQueue keeps sending (Framer Status Protocol)
+        if (this->isConnected_comStatusOut_OutputPort(0)) {
+            Fw::Success status = Fw::Success::SUCCESS;
+            this->comStatusOut_out(0, status);
+        }
+        return;
+    }
     auto frameSerializer = frameBuffer.getSerializer();
     Fw::SerializeStatus status;
 

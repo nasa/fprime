@@ -55,9 +55,10 @@ class SystemResources final : public SystemResourcesComponentBase {
 
     //! Implementation for SYS_RES_ENABLE command handler
     //! A command to enable or disable system resource telemetry
-    void ENABLE_cmdHandler(const FwOpcodeType opCode,   /*!< The opcode*/
-                           const U32 cmdSeq,            /*!< The command sequence number*/
-                           SystemResourceEnabled enable /*!< whether or not system resource telemetry is enabled*/
+    void ENABLE_cmdHandler(
+        const FwOpcodeType opCode,          /*!< The opcode*/
+        const U32 cmdSeq,                   /*!< The command sequence number*/
+        const SystemResourceEnabled& enable /*!< whether or not system resource telemetry is enabled*/
     );
 
   private:

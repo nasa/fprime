@@ -27,6 +27,8 @@ class PosixTimeTester : public PosixTimeGTestBase {
   public:
     void getTime();
 
+    void getTimeWithContext();
+
     // ----------------------------------------------------------------------
     // The component under test
     // ----------------------------------------------------------------------

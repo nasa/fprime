@@ -6,6 +6,8 @@
 #ifndef _OS_DIRECTORY_HPP_
 #define _OS_DIRECTORY_HPP_
 
+#include <Fw/DataStructures/ExternalArray.hpp>
+#include <Fw/Deprecate.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 #include <Os/Os.hpp>
@@ -182,6 +184,17 @@ class Directory final : public DirectoryInterface {
     //! \return status of the operation
     Status read(Fw::StringBase& filename);
 
+    //! \brief Read the contents of the directory and store filenames in the supplied array.
+    //!
+    //! Reads at most filenameArray.getSize() filenames.
+    //! The function first rewinds the directory stream to ensure reading starts from the beginning.
+    //! After reading, it rewinds the directory stream again, resetting seek position to beginning.
+    //!
+    //! \param filenameArray: array to store filenames
+    //! \param filenameCount: number of filenames written to filenameArray (output)
+    //! \return status of the operation
+    Status readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount);
+
     //! \brief Read the contents of the directory and store filenames in filenameArray of size arraySize.
     //!
     //! The function first rewinds the directory stream to ensure reading starts from the beginning.
@@ -191,7 +204,8 @@ class Directory final : public DirectoryInterface {
     //! \param arraySize: size of filenameArray
     //! \param filenameCount: number of filenames written to filenameArray (output)
     //! \return status of the operation
-    Status readDirectory(Fw::String filenameArray[], const FwSizeType arraySize, FwSizeType& filenameCount);
+    DEPRECATED(Status readDirectory(Fw::String filenameArray[], const FwSizeType arraySize, FwSizeType& filenameCount),
+               "Use readDirectory(Fw::ExternalArray<Fw::String>& filenameArray, FwSizeType& filenameCount) instead");
 
     //! \brief Get the number of files in the directory.
     //!

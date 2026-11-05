@@ -17,7 +17,7 @@ namespace Fw {
 template <typename K, typename V, FwSizeType C>
 class ArrayMapTester {
   public:
-    ArrayMapTester<K, V, C>(const ArrayMap<K, V, C>& map) : m_map(map) {}
+    ArrayMapTester(const ArrayMap<K, V, C>& map) : m_map(map) {}
 
     const ExternalArrayMap<K, V> getExtMap() const { return this->m_map.extMap; }
 

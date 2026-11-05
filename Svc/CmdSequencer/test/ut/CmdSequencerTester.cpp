@@ -11,6 +11,7 @@
 #include "CmdSequencerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Os/Delegate.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Os/Posix/Directory.hpp"
 #include "Os/Posix/FileSystem.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
@@ -351,6 +352,88 @@ void CmdSequencerTester ::parameterizedValidate(SequenceFiles::File& file) {
     this->validateFile(0, fileName);
 }
 
+void CmdSequencerTester ::parameterizedSandbox(SequenceFiles::File& file) {
+    // Set the time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
+    this->setTestTime(testTime);
+    // Write the file (under bin/)
+    const char* const fileName = file.getName().toChar();
+    file.write();
+    // A file inside the sandbox loads normally
+    this->component.configureSandbox("bin");
+    this->validateFile(0, fileName);
+    // A file outside the sandbox is rejected before it is opened, for every load path
+    char otherDir[Os::FilePathUtils::MAX_PATH_LENGTH];
+    ASSERT_EQ(Os::FilePathUtils::VALID,
+              Os::FilePathUtils::resolveDirectoryFromCwd("bin/other", otherDir, sizeof(otherDir)));
+    this->component.configureSandbox("bin/other");
+    const U32 errorCount = this->component.m_errorCount;
+    const U32 validateCmdSeq = 3;
+    this->sendCmd_CS_VALIDATE(0, validateCmdSeq, Fw::CmdStringArg(fileName));
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_VALIDATE, validateCmdSeq,
+                        Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EVENTS_CS_FileOutsideSandbox(0, fileName, otherDir);
+    ASSERT_EQ(errorCount + 1, this->component.m_errorCount);
+    const U32 runCmdSeq = 4;
+    this->sendCmd_CS_RUN(0, runCmdSeq, Fw::CmdStringArg(fileName), Svc::BlockState::NO_BLOCK);
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_RUN, runCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_CS_FileOutsideSandbox_SIZE(1);
+    ASSERT_EQ(CmdSequencerComponentImpl::STOPPED, this->component.m_runMode);
+    // A ".." segment that resolves outside the sandbox is rejected too
+    this->component.configureSandbox("bin");
+    this->sendCmd_CS_VALIDATE(0, validateCmdSeq, Fw::CmdStringArg("bin/../outside.bin"));
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_VALIDATE, validateCmdSeq,
+                        Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_FileOutsideSandbox_SIZE(1);
+}
+
+void CmdSequencerTester ::parameterizedRunWithoutSeqDone() {
+    // A topology may drive seqRunIn or seqDispatchIn without wiring seqDone
+    CmdSequencerComponentImpl unwired("CmdSequencerNoSeqDone");
+    unwired.init(QUEUE_DEPTH, INSTANCE);
+    unwired.allocateBuffer(ALLOCATOR_ID, this->mallocator, BUFFER_SIZE);
+    ASSERT_FALSE(unwired.isConnected_seqDone_OutputPort(0));
+    // Route the instance's events to this tester so each rejection path is observed
+    unwired.set_logOut_OutputPort(0, this->get_from_logOut(0));
+    // No sequence loaded
+    this->clearHistory();
+    unwired.doSequenceRun(Fw::String(""));
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_NoSequenceActive_SIZE(1);
+    ASSERT_EQ(1U, unwired.m_errorCount);
+    // File cannot be loaded
+    this->clearHistory();
+    unwired.doSequenceRun(Fw::String("CmdSequencerNoSeqDone/missing.bin"));
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_FileNotFound_SIZE(1);
+    ASSERT_EVENTS_CS_FileNotFound(0, "CmdSequencerNoSeqDone/missing.bin");
+    // Sequencer already running
+    unwired.m_runMode = CmdSequencerComponentImpl::RUNNING;
+    this->clearHistory();
+    unwired.doSequenceRun(Fw::String(""));
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
+    unwired.m_runMode = CmdSequencerComponentImpl::STOPPED;
+    // MANUAL step mode
+    unwired.m_stepMode = CmdSequencerComponentImpl::MANUAL;
+    this->clearHistory();
+    unwired.doSequenceRun(Fw::String(""));
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
+    // Every rejection left the sequencer stopped
+    ASSERT_EQ(CmdSequencerComponentImpl::STOPPED, unwired.m_runMode);
+    unwired.deallocateBuffer(this->mallocator);
+    unwired.deinit();
+}
+
 // ----------------------------------------------------------------------
 // Instance helper methods
 // ----------------------------------------------------------------------
@@ -430,6 +513,22 @@ void CmdSequencerTester ::setComponentSequenceFormat() {
             ASSERT_TRUE(0) << "Invalid sequence format " << format << "\n";
             break;
     }
+}
+
+void CmdSequencerTester ::setFileNameLength(SequenceFiles::File& file, const FwSizeType length) {
+    // The full name is a fixed prefix and suffix around the base name
+    file.setName("");
+    const FwSizeType fixedLength = file.getName().length();
+    char baseName[FileNameStringSize + 1];
+    ASSERT_GT(length, fixedLength);
+    const FwSizeType baseLength = length - fixedLength;
+    ASSERT_LT(baseLength, static_cast<FwSizeType>(sizeof baseName));
+    for (FwSizeType i = 0; i < baseLength; i++) {
+        baseName[i] = 'x';
+    }
+    baseName[baseLength] = 0;
+    file.setName(baseName);
+    ASSERT_EQ(length, file.getName().length());
 }
 
 void CmdSequencerTester ::clearAndDispatch() {

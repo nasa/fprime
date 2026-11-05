@@ -1,0 +1,48 @@
+# Component checklist checks for pushes / tags.
+#
+# Runs the static component checklist gate scripts (requirements
+# traceability, design, implementation, and unit-test source checks) for
+# every module that calls register_fprime_module(), publishes the results
+# to the per-base-branch baseline branch coverage/<ref-name>, and adds a
+# "Checks" badge column to the checklist landing page next to the coverage
+# and CodeQL badges.
+#
+# See nasa/fprime-actions/component-checks/README.md for input
+# documentation.
+
+name: "Component Checks"
+
+on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
+  push:
+    branches: [ release/** ]
+    tags:     [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  component-checks:
+    name: "Component Checks [push]"
+    # One publish per publisher and ref; a newer run supersedes (cancels) an
+    # older one.  Cross-publisher races on coverage/<ref> are handled by the
+    # fetch-and-retry push loop in the shared publish helper.
+    concurrency:
+      group: publish-checks-${{ github.ref }}
+      cancel-in-progress: true
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - name: "Component checks"
+        uses: nasa/fprime-actions/component-checks@devel

@@ -48,9 +48,19 @@ TEST(TestDrain, OK) {
     tester.OK();
 }
 
+TEST(TestDrain, InitialMode) {
+    Svc::Drain::BufferAccumulatorTester tester(false);
+    tester.InitialMode();
+}
+
 TEST(TestPartialDrain, OK) {
     Svc::Drain::BufferAccumulatorTester tester;
     tester.PartialDrainOK();
+}
+
+TEST(TestPartialDrain, NoBlock) {
+    Svc::Drain::BufferAccumulatorTester tester;
+    tester.PartialDrainNoBlock();
 }
 
 // ----------------------------------------------------------------------

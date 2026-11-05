@@ -19,13 +19,40 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_signalEntered(
 //! Implementation for action setSequenceFilePath of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
-//! sets the current sequence file path member var
+//! sets the current sequence file path member var, resolving it against
+//! the SEQ_BASE_DIR parameter so that subsequent telemetry, events, and
+//! file IO see the fully qualified path
 void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceFilePath(
     SmId smId,                                              //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
 ) {
-    this->m_sequenceFilePath = value.get_filePath();
+    Fw::ParamValid valid;
+    Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(valid);
+    if (baseDir.length() == 0) {
+        // the assignment here ensures the string is null terminated
+        // because it uses the string_copy method
+        // also, the filePath string in SequenceExecutionArgs is guaranteed
+        // to be truncated to FileNameStringSize chars, so it will not
+        // be truncated by this assignment
+        this->m_sequenceFilePath = value.get_filePath();
+        return;
+    }
+
+    Fw::FormatStatus status;
+    // the result will get truncated to FileNameStringSize
+    status = this->m_sequenceFilePath.format("%s/%s", baseDir.toChar(), value.get_filePath().toChar());
+    if (status == Fw::FormatStatus::SUCCESS) {
+        return;
+    }
+
+    // the only runtime-reachable non-success status is OVERFLOWED, which means the
+    // base dir and file name together are longer than the sequence file path buffer.
+    // the other statuses can only result from a bad format string literal, which is a
+    // coding error. let the user know the path was truncated; validate() will then fail
+    // to open the (truncated) path and report a FileOpenError.
+    FW_ASSERT(status == Fw::FormatStatus::OVERFLOWED, static_cast<I32>(status));
+    this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, value.get_filePath());
 }
 
 //! Implementation for action setSequenceBlockState of state machine
@@ -61,6 +88,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqSucce
 ) {
     this->m_tlm.sequencesSucceeded++;
     this->log_ACTIVITY_HI_SequenceDone(this->m_sequenceFilePath);
+    this->m_sequenceFilePath = NO_SEQ;
     if (this->isConnected_seqDoneOut_OutputPort(0)) {
         // report that the sequence succeeded to internal callers
         this->seqDoneOut_out(0, 0, 0, Fw::CmdResponse::OK);
@@ -106,7 +134,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_dispatchStateme
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(result));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(result));
         }
     }
 }
@@ -195,6 +223,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_validate(
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     Fw::Success result = this->validate();
+    FW_ASSERT(result == Fw::Success::SUCCESS || result == Fw::Success::FAILURE, static_cast<FwAssertArgType>(result));
     if (result == Fw::Success::FAILURE) {
         this->sequencer_sendSignal_result_failure();
         return;
@@ -224,7 +253,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkShouldWake
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(result));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(result));
         }
     }
 }
@@ -251,7 +280,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkStatementT
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(result));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(result));
         }
     }
 }
@@ -368,6 +397,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqFaile
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
+    this->m_tlm.sequencesFailed++;
     if (this->isConnected_seqDoneOut_OutputPort(0)) {
         // report that the sequence failed to internal callers
         this->seqDoneOut_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);

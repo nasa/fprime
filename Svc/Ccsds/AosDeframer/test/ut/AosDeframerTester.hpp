@@ -95,6 +95,7 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Test multiple packets in single frame
     void testMultiplePacketsInFrame();
+    void testMinimumSizeSppPackets();
 
     // ----------------------------------------------------------------------
     // Tests - Spanning Packets
@@ -147,6 +148,18 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     //! Test EPP extraction for all length-of-length variants (lol=1, lol=2, lol=4)
     void testEppLengthOfLength();
 
+    //! Test adjacent 2-, 4- and 8-byte-header EPP packets and a trailing SPP from independent wire bytes
+    void testEppConformantAdjacentLengths();
+
+    //! Test acceptance of header-only EPP packets
+    void testEppHeaderOnlyPackets();
+
+    //! Test rejection of EPP lengths shorter than their headers
+    void testEppInvalidDeclaredLengths();
+
+    //! Test that createEppPacket encodes every protocol ID and the header-inclusive length
+    void testEppHelperEncodesTotalLength();
+
     //! Test EPP idle packet handling
     void testEppIdlePacket();
 
@@ -182,6 +195,15 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Test untrusted inputs
     void testUntrustedFhp();
+
+    //! Regression test: EPP lol=4 integer overflow in sizeEppPacket must not reach memcpy
+    //! (CWE-190 / CWE-122). Single-frame delivery of the malicious header.
+    void testEppSizeOverflowRejected();
+
+    //! Regression test: same integer overflow as testEppSizeOverflowRejected, but with
+    //! the 8-byte EPP header split across two AOS frames to exercise the header
+    //! accumulation path in appendToSpanningPacket.
+    void testEppSizeOverflowHeaderSpansFrame();
 
   private:
     // ----------------------------------------------------------------------

@@ -42,6 +42,8 @@ bool PortBase::isConnected() const {
 #if FW_PORT_TRACING == 1
 
 void PortBase::trace() const {
+    // Ports are only traced as part of invocation, which requires a connection
+    FW_ASSERT(this->isConnected());
     bool do_trace = false;
 
     if (this->m_ovr_trace) {
@@ -79,6 +81,7 @@ const char* PortBase::getToStringFormatString() {
 
 void PortBase::toString(char* buffer, FwSizeType size) {
     FW_ASSERT(size > 0);
+    FW_ASSERT(buffer != nullptr);
     // Get the port-custom format string
     const char* formatString = this->getToStringFormatString();
     // Determine this port object name (or use "UNKNOWN")
@@ -100,8 +103,9 @@ void PortBase::toString(char* buffer, FwSizeType size) {
 #endif
                                                    : "None";
     // Format the external string or use "" on error
-    if (Fw::ExternalString(buffer, static_cast<Fw::ExternalString::SizeType>(size))
-            .format(formatString, object_name, this_is_connected, connected_to) != Fw::FormatStatus::SUCCESS) {
+    const Fw::FormatStatus formatStatus = Fw::ExternalString(buffer, static_cast<Fw::ExternalString::SizeType>(size))
+                                              .format(formatString, object_name, this_is_connected, connected_to);
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
         buffer[0] = 0;
     }
 }

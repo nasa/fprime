@@ -83,7 +83,7 @@ U32 FilePacket ::bufferSize() const {
         case T_NONE:
             return 0;
         default:
-            FW_ASSERT(0);
+            FW_ASSERT(false);
             return 0;
     }
 }
@@ -99,7 +99,7 @@ SerializeStatus FilePacket ::toBuffer(Buffer& buffer) const {
         case T_CANCEL:
             return this->m_cancelPacket.toBuffer(buffer);
         default:
-            FW_ASSERT(0);
+            FW_ASSERT(false);
             return static_cast<SerializeStatus>(0);
     }
 }

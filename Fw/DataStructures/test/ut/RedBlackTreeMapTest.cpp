@@ -21,7 +21,7 @@ class RedBlackTreeMapTester {
 
     using FreeNodes = typename RedBlackTreeMap<K, V, C>::FreeNodes;
 
-    RedBlackTreeMapTester<K, V, C>(RedBlackTreeMap<K, V, C>& map) : m_map(map) {}
+    RedBlackTreeMapTester(RedBlackTreeMap<K, V, C>& map) : m_map(map) {}
 
     const ExternalRedBlackTreeMap<K, V>& getExtMap() const { return this->m_map.m_extMap; }
 

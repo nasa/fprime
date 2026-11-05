@@ -15,11 +15,13 @@
 
 // Anonymous namespace for configuration parameters
 
-// The parameters below provide for tuning of the hash function used to
-// write and read entries in the database. The has function is very simple;
-// It first takes the telemetry ID and does a modulo computation with
-// TLMCHAN_HASH_MOD_VALUE. It then does a second modulo with the number
-// of slots to make sure the value lands in the provided slots.
+// The parameters below tune the seeded hash function used to write and read
+// entries in the database. The channel ID is XORed with a per-boot seed and
+// then passed through a Murmur3 finalizer (>=32-bit FwChanIdType) or a Wang
+// hash (16-bit FwChanIdType), and finally reduced modulo
+// TLMCHAN_NUM_TLM_HASH_SLOTS. Only the 8-bit FwChanIdType path uses
+// TLMCHAN_HASH_MOD_VALUE (modulo MOD_VALUE, then modulo the slot count);
+// TLMCHAN_HASH_MOD_VALUE has no effect for wider channel-ID types.
 // The values can be experimented with to try and balance the number
 // of slots versus the number of buckets.
 // To test the set of telemetry ID in the system to see if the hash is
@@ -46,8 +48,18 @@ enum {
     TLMCHAN_HASH_MOD_VALUE = 99,      // !< The modulo value of the hashing function.
                                       // Should be set to a little below the ID gaps to spread the entries around
 
-    TLMCHAN_HASH_BUCKETS = 500  // !< Buckets assignable to a hash slot.
-                                // Buckets must be >= number of telemetry channels in system
+    TLMCHAN_HASH_BUCKETS = 500,  // !< Buckets assignable to a hash slot.
+                                 // Buckets must be >= number of telemetry channels in system
+
+    // Maximum number of updated telemetry entries Run_handler will serialize
+    // per invocation. The default of TLMCHAN_HASH_BUCKETS makes the cap a
+    // no-op and preserves the original uncapped behavior (all updated entries
+    // are processed each cycle). Lowering this value bounds Run_handler's
+    // worst-case execution time, but it is an observable behavioral change:
+    // updated entries beyond the cap are dropped for the cycle and a
+    // WARNING_HI TlmChanEpochProcessingCapReached event is emitted. Reducing
+    // it therefore requires CCB approval for the affected deployment.
+    TLMCHAN_MAX_ENTRIES_PER_RUN = TLMCHAN_HASH_BUCKETS,
 };
 
 }

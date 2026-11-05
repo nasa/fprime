@@ -1,0 +1,1 @@
+| test.cpp:16:11:16:43 | call to newValue_internalInterfaceHandler | Internal port handler newValue_internalInterfaceHandler is called directly; use the auto-coded newValue_internalInterfaceInvoke instead. |

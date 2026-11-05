@@ -1,8 +1,10 @@
 name: "Code Format Check"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/**, ci/** ]
+    branches: [ release/**, ci/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -11,6 +13,10 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+
+permissions:
+  contents: read
 
 jobs:
   cpp-formatting:
@@ -21,12 +27,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - name: "Setup Python"
         uses: actions/setup-python@v5
         with:
           python-version: 3.12
-      - uses: ./.github/actions/setup
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+          ccache: "false"
       - name: "Check C++ Formatting"
         env:
           # Svc is currently listing all but Svc/FpySequencer

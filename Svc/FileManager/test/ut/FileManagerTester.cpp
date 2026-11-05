@@ -10,6 +10,7 @@
 //
 // ======================================================================
 
+#include <cstring>
 #include <fstream>
 
 #include "FileManagerTester.hpp"
@@ -30,6 +31,9 @@ namespace Svc {
 FileManagerTester ::FileManagerTester() : FileManagerGTestBase("Tester", MAX_HISTORY_SIZE), component("FileManager") {
     this->connectPorts();
     this->initComponents();
+    // The sandbox is fail-closed until configured; open it fully, as the subtopologies do by
+    // default, so the nominal tests exercise unrestricted behavior. Sandbox tests re-configure.
+    this->component.configure("/");
 }
 
 FileManagerTester ::~FileManagerTester() {
@@ -220,7 +224,7 @@ void FileManagerTester ::appendFileSucceed_newFile() {
 
     //================================================================
     // Case 1: 1 normal files appended, new file created
-    this->system("echo 'file1 text' > file1");
+    this->writeFile("file1", "file1 text\n");
 #else
     FAIL();  // Commands not implemented for this OS
 #endif
@@ -248,8 +252,8 @@ void FileManagerTester ::appendFileSucceed_existingFile() {
     //================================================================
     // Case 2: 2 normal files appended, stored in existing file
     // create existing files
-    this->system("echo 'file1 text' > file1");
-    this->system("echo 'file2 text' > file2");
+    this->writeFile("file1", "file1 text\n");
+    this->writeFile("file2", "file2 text\n");
 #else
     FAIL();  // Commands not implemented for this OS
 #endif
@@ -291,7 +295,7 @@ void FileManagerTester ::fileSizeSucceed() {
     // Remove testing files, if they exist
     this->system("rm -rf file1");
 
-    this->system("echo 'file1 text' > file1");
+    this->writeFile("file1", "file1 text\n");
 #else
     FAIL();  // Commands not implemented for this OS
 #endif
@@ -324,11 +328,7 @@ void FileManagerTester ::calculateCrcSucceed() {
 
     // Remove and recreate the test file with deterministic content
     this->system("rm -f crc_test_file");
-    {
-        std::ofstream outFile(fileName, std::ios::binary);
-        ASSERT_TRUE(outFile.is_open());
-        outFile << "123456789";  // Payload with a well-known CRC32
-    }
+    this->writeFile(fileName, "123456789");  // Payload with a well-known CRC32
 
     // Compute expected CRC using the same file utility as the component
     Os::File crcFile;
@@ -352,6 +352,376 @@ void FileManagerTester ::calculateCrcSucceed() {
     this->system("rm -f crc_test_file");
 #else
     FAIL();  // Commands not implemented for this OS
+#endif
+}
+
+void FileManagerTester ::resetDpState() {
+    this->m_dpSendCount = 0;
+    this->m_dpBytesSent = 0;
+    this->m_dpGetShouldFail = false;
+    this->m_dpGetUndersizedBuffer = false;
+    this->m_dpLastPriority = 0;
+    // Construct the buffer over the backing store: setData adjusts an existing
+    // allocation rather than establishing one, so it cannot initialize a
+    // default-constructed buffer
+    this->m_dpContainerBuffer = Fw::Buffer(this->m_dpContainerData, sizeof this->m_dpContainerData);
+}
+
+Fw::Success::T FileManagerTester ::productGet_handler(FwDpIdType id, FwSizeType size, Fw::Buffer& buffer) {
+    if (this->m_dpGetShouldFail || (size > sizeof this->m_dpContainerData)) {
+        return Fw::Success::FAILURE;
+    }
+    // An undersized buffer lets the serialization failure path be exercised
+    const FwSizeType bufferSize =
+        this->m_dpGetUndersizedBuffer ? Fw::DpContainer::MIN_PACKET_SIZE : sizeof this->m_dpContainerData;
+    this->m_dpContainerBuffer = Fw::Buffer(this->m_dpContainerData, bufferSize);
+    buffer = this->m_dpContainerBuffer;
+    return Fw::Success::SUCCESS;
+}
+
+void FileManagerTester ::productSend_handler(FwDpIdType id, const Fw::Buffer& buffer) {
+    this->m_dpSendCount++;
+    this->m_dpBytesSent += buffer.getSize();
+
+    // Recover the priority and payload size from the serialized container.
+    // Each container holds one chunk: a FileChunkHeaderRecord followed by a
+    // FileChunkDataRecord, so a non-zero data size confirms the chunk actually
+    // carried header-plus-data content rather than an empty container.
+    Fw::DpContainer container(id, buffer);
+    if (container.deserializeHeader() == Fw::FW_SERIALIZE_OK) {
+        this->m_dpLastPriority = container.getPriority();
+        const FwSizeType dataSize = container.getDataSize();
+        this->m_dpPayloadBytes += dataSize;
+        if ((this->m_dpMinPayloadBytes == 0) || (dataSize < this->m_dpMinPayloadBytes)) {
+            this->m_dpMinPayloadBytes = dataSize;
+        }
+    }
+}
+
+void FileManagerTester ::generateDpSucceed() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_test_file";
+    this->system("rm -f dp_test_file");
+    // 100 bytes of deterministic content
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_test_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // 32 byte chunks over a 100 byte file yields 4 chunks (32 + 32 + 32 + 4)
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+
+    // Only the start event so far; the response is deferred
+    ASSERT_EVENTS_GenerateDpStarted_SIZE(1);
+    ASSERT_EVENTS_GenerateDpStarted(0, fileName, 100);
+    ASSERT_CMD_RESPONSE_SIZE(0);
+
+    // Drive the rate group until the file is fully packaged
+    this->runRateGroupCycles(10);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete_SIZE(1);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 4);
+    ASSERT_EQ(4u, this->m_dpSendCount);
+
+    // Every container carried a real header-plus-data payload (none empty), and
+    // the total payload exceeds the 100 file bytes by the per-chunk record
+    // overhead, confirming the chunks hold actual content and not just headers
+    ASSERT_GT(this->m_dpMinPayloadBytes, 0u);
+    ASSERT_GT(this->m_dpPayloadBytes, 100u);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_test_file");
+#endif
+}
+
+void FileManagerTester ::generateDpFileNotFound() {
+    this->resetDpState();
+
+    const char* const missingName = "no_such_dp_file";
+
+    // Recover the exact open status the component will observe for the missing
+    // file, so the assertion checks the real value rather than a hardcoded one
+    Os::File probeFile;
+    const Os::File::Status openStatus = probeFile.open(missingName, Os::File::OPEN_READ);
+    ASSERT_NE(Os::File::OP_OK, openStatus);
+    probeFile.close();
+
+    Fw::CmdStringArg cmdStringFile(missingName);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
+    ASSERT_EVENTS_GenerateDpFailed(0, missingName, FileManager_GenerateDpStage::OPEN, static_cast<U32>(openStatus));
+    ASSERT_EQ(0u, this->m_dpSendCount);
+}
+
+void FileManagerTester ::generateDpEmptyFile() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_empty_file";
+    this->system("rm -f dp_empty_file");
+    this->system("touch dp_empty_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+
+    // An empty file completes immediately with no chunks
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpStarted_SIZE(1);
+    ASSERT_EQ(0u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_empty_file");
+#endif
+}
+
+void FileManagerTester ::generateDpChunkSizeClamped() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_clamp_file";
+    this->system("rm -f dp_clamp_file");
+    this->system("printf '0123456789%.0s' $(seq 1 5) > dp_clamp_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // A chunk size beyond the configured maximum is clamped, so the 50 byte
+    // file still fits in a single chunk
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE * 4, 0, 0,
+                             0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+    this->runRateGroupCycles(5);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 1);
+    ASSERT_EQ(1u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_clamp_file");
+#endif
+}
+
+void FileManagerTester ::generateDpPartialRange() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_range_file";
+    this->system("rm -f dp_range_file");
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_range_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // Bytes [20, 60) of a 100 byte file with 16 byte chunks yields 3 chunks
+    // (16 + 16 + 8), which lets an operator retransmit part of a file
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 20, 60, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+    this->runRateGroupCycles(10);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 3);
+    ASSERT_EQ(3u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_range_file");
+#endif
+}
+
+void FileManagerTester ::generateDpInvalidRange() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_bad_range_file";
+    this->system("rm -f dp_bad_range_file");
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_bad_range_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // A begin offset at or past the end offset has nothing to package
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 60, 20, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpInvalidRange_SIZE(1);
+    ASSERT_EVENTS_GenerateDpInvalidRange(0, fileName, 60, 20, 100);
+    ASSERT_EQ(0u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_bad_range_file");
+#endif
+}
+
+void FileManagerTester ::generateDpBufferFailure() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_buffer_fail_file";
+    this->system("rm -f dp_buffer_fail_file");
+    this->system("printf '0123456789%.0s' $(seq 1 5) > dp_buffer_fail_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+    this->m_dpGetShouldFail = true;
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+    this->runRateGroupCycles(5);
+
+    // A container allocation failure is reported but does not fail the command
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpBufferFailed_SIZE(1);
+    ASSERT_EVENTS_GenerateDpBufferFailed(0, fileName);
+    ASSERT_EQ(0u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_buffer_fail_file");
+#endif
+}
+
+void FileManagerTester ::generateDpWhileBusy() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_busy_file";
+    this->system("rm -f dp_busy_file");
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_busy_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // Start a generation and leave it in progress by not running the rate group
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(0);
+
+    // A second request while one is in progress is reported and rejected
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
+    ASSERT_EVENTS_GenerateDpFailed(0, fileName, FileManager_GenerateDpStage::BUSY, 0);
+
+    // Let the first generation finish so the component returns to idle, and
+    // confirm the busy rejection did not corrupt the in-progress generation
+    this->runRateGroupCycles(10);
+
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete_SIZE(1);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 7);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_busy_file");
+#endif
+}
+
+void FileManagerTester ::generateDpSerializationFailure() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_serialize_fail_file";
+    this->system("rm -f dp_serialize_fail_file");
+    this->system("printf '0123456789%.0s' $(seq 1 5) > dp_serialize_fail_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+    this->m_dpGetUndersizedBuffer = true;
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0, 0, FileManager_GenerateDpMode::PACED);
+    this->component.doDispatch();
+    this->runRateGroupCycles(5);
+
+    // A serialization failure is reported but does not fail the command
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
+    // The undersized buffer leaves no room to serialize the chunk, so the
+    // failure status is the serialize error the handler forwards
+    ASSERT_EVENTS_GenerateDpFailed(0, fileName, FileManager_GenerateDpStage::SERIALIZE,
+                                   static_cast<U32>(Fw::FW_SERIALIZE_NO_ROOM_LEFT));
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_serialize_fail_file");
+#endif
+}
+
+void FileManagerTester ::generateDpImmediateMode() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_immediate_file";
+    this->system("rm -f dp_immediate_file");
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_immediate_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // In immediate mode the whole file is emitted without the rate group
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::IMMEDIATE);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 4);
+    ASSERT_EQ(4u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_immediate_file");
+#endif
+}
+
+void FileManagerTester ::generateDpCustomPriority() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_priority_file";
+    this->system("rm -f dp_priority_file");
+    this->system("printf '0123456789%.0s' $(seq 1 5) > dp_priority_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // A non-zero priority overrides the configured default
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 64, 0, 0, 42, FileManager_GenerateDpMode::IMMEDIATE);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EQ(1u, this->m_dpSendCount);
+    ASSERT_EQ(42u, this->m_dpLastPriority);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_priority_file");
 #endif
 }
 
@@ -404,20 +774,20 @@ void FileManagerTester ::listDirectoryWithSubdirs() {
     this->system("mkdir -p test_dir/emptydir");  // An empty directory
 
     // Create various files with different sizes in root directory
-    this->system("echo 'Small file content' > test_dir/file1.txt");
-    this->system("echo 'Medium sized file with more content than the first one' > test_dir/file2.txt");
+    this->writeFile("test_dir/file1.txt", "Small file content\n");
+    this->writeFile("test_dir/file2.txt", "Medium sized file with more content than the first one\n");
     this->system("dd if=/dev/zero bs=1K count=4 of=test_dir/binaryfile.dat 2>/dev/null");  // 4KB binary file
 
     // Create files in subdirectories
-    this->system("echo 'Subdir1 file 1' > test_dir/subdir1/sub1_file1.txt");
-    this->system("echo 'Subdir1 file 2' > test_dir/subdir1/sub1_file2.txt");
-    this->system("echo 'Nested1 file' > test_dir/subdir1/nested1/nested_file.txt");
+    this->writeFile("test_dir/subdir1/sub1_file1.txt", "Subdir1 file 1\n");
+    this->writeFile("test_dir/subdir1/sub1_file2.txt", "Subdir1 file 2\n");
+    this->writeFile("test_dir/subdir1/nested1/nested_file.txt", "Nested1 file\n");
 
-    this->system("echo 'Subdir2 file 1' > test_dir/subdir2/sub2_file1.txt");
-    this->system("echo 'Nested2 file' > test_dir/subdir2/nested2/nested_file.txt");
+    this->writeFile("test_dir/subdir2/sub2_file1.txt", "Subdir2 file 1\n");
+    this->writeFile("test_dir/subdir2/nested2/nested_file.txt", "Nested2 file\n");
 
-    this->system("echo 'Subdir3 file 1' > test_dir/subdir3/sub3_file1.txt");
-    this->system("echo 'Deep1 file' > test_dir/subdir3/nested3/deep1/deep_file.txt");
+    this->writeFile("test_dir/subdir3/sub3_file1.txt", "Subdir3 file 1\n");
+    this->writeFile("test_dir/subdir3/nested3/deep1/deep_file.txt", "Deep1 file\n");
 #else
     FAIL();  // Commands not implemented for this OS
 #endif
@@ -471,6 +841,16 @@ void FileManagerTester ::listDirectoryFail() {
 // Helper methods
 // ----------------------------------------------------------------------
 
+void FileManagerTester ::writeFile(const char* const fileName, const char* const content) {
+    Os::File file;
+    ASSERT_EQ(Os::File::OP_OK, file.open(fileName, Os::File::OPEN_CREATE, Os::File::OVERWRITE));
+    const FwSizeType expectedSize = static_cast<FwSizeType>(::strlen(content));
+    FwSizeType size = expectedSize;
+    ASSERT_EQ(Os::File::OP_OK, file.write(reinterpret_cast<const U8*>(content), size, Os::File::WAIT));
+    ASSERT_EQ(expectedSize, size);
+    file.close();
+}
+
 void FileManagerTester ::system(const char* const cmd) {
     const int status = ::system(cmd);
     ASSERT_EQ(static_cast<int>(0), status);
@@ -515,7 +895,8 @@ void FileManagerTester ::listDirectory(const char* const dirName) {
 }
 
 void FileManagerTester ::runRateGroupCycles(const U32 cycles) {
-    // Simulate rate group execution for asynchronous directory listing operations.
+    // Simulate rate group execution for asynchronous operations (directory
+    // listing and data product generation).
     // This method mimics the behavior of Rate Group 2 (0.5Hz) by calling the
     // schedule handler repeatedly until the directory listing operation completes.
     // Each cycle processes one directory entry, ensuring bounded execution time.
@@ -524,8 +905,10 @@ void FileManagerTester ::runRateGroupCycles(const U32 cycles) {
         this->invoke_to_schedIn(0, 0);
         this->component.doDispatch();
 
-        // Check if directory listing operation has completed
-        if (this->component.m_listState != FileManager::LISTING_IN_PROGRESS) {
+        // Check if the asynchronous operation has completed
+        const bool listingActive = (this->component.m_listState == FileManager::LISTING_IN_PROGRESS);
+        const bool dpActive = (this->component.m_dpState == FileManager::DP_IN_PROGRESS);
+        if (!listingActive && !dpActive) {
             // Operation finished, no need to continue cycling
             break;
         }
@@ -567,6 +950,172 @@ void FileManagerTester ::assertFailure(const FwOpcodeType opcode) const {
     ASSERT_TLM_Errors_SIZE(1);
     ASSERT_TLM_Errors(0, 1);
 }
+void FileManagerTester ::assertSandboxRejection(const FwOpcodeType opcode, const char* const path) {
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, opcode, CMD_SEQ, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(1);
+    ASSERT_STREQ(path, this->eventHistory_PathOutsideSandbox->at(0).path.toChar());
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_Errors_SIZE(1);
+}
+
+void FileManagerTester ::sandboxRejectsOutsidePaths() {
+    // Confine the component to a test directory; anything resolving outside must be rejected
+    // before any filesystem operation happens.
+    this->system("rm -rf sandbox_ut && mkdir -p sandbox_ut/inner");
+    this->component.configure("sandbox_ut");
+
+    // Absolute path outside the sandbox
+    this->clearHistory();
+    this->removeFile("/tmp/fprime_sandbox_ut_target.txt", false);
+    this->assertSandboxRejection(FileManager::OPCODE_REMOVEFILE, "/tmp/fprime_sandbox_ut_target.txt");
+
+    // Relative path escaping via '..'
+    this->clearHistory();
+    this->createDirectory("sandbox_ut/../escaped_dir");
+    this->assertSandboxRejection(FileManager::OPCODE_CREATEDIRECTORY, "sandbox_ut/../escaped_dir");
+    int ret = ::system("test -e escaped_dir");
+    ASSERT_NE(ret, 0) << "directory must not be created outside the sandbox";
+
+    // MoveFile: contained source, escaping destination — nothing may happen
+    this->writeFile("sandbox_ut/contained.txt", "data\n");
+    this->clearHistory();
+    this->moveFile("sandbox_ut/contained.txt", "../moved_out.txt");
+    this->assertSandboxRejection(FileManager::OPCODE_MOVEFILE, "../moved_out.txt");
+    ret = ::system("test -f sandbox_ut/contained.txt");
+    ASSERT_EQ(ret, 0) << "source must be untouched when the destination is rejected";
+
+    // AppendFile: escaping source
+    this->clearHistory();
+    this->appendFile("/etc/hostname", "sandbox_ut/contained.txt");
+    this->assertSandboxRejection(FileManager::OPCODE_APPENDFILE, "/etc/hostname");
+
+    // FileSize outside
+    this->clearHistory();
+    Fw::CmdStringArg sizeArg("/etc/hostname");
+    this->sendCmd_FileSize(INSTANCE, CMD_SEQ, sizeArg);
+    this->component.doDispatch();
+    this->assertSandboxRejection(FileManager::OPCODE_FILESIZE, "/etc/hostname");
+
+    // ListDirectory outside
+    this->clearHistory();
+    Fw::CmdStringArg listArg("/etc");
+    this->sendCmd_ListDirectory(INSTANCE, CMD_SEQ, listArg);
+    this->component.doDispatch();
+    this->assertSandboxRejection(FileManager::OPCODE_LISTDIRECTORY, "/etc");
+
+    // CalculateCrc outside
+    this->clearHistory();
+    Fw::CmdStringArg crcArg("/etc/hostname");
+    this->sendCmd_CalculateCrc(INSTANCE, CMD_SEQ, crcArg);
+    this->component.doDispatch();
+    this->assertSandboxRejection(FileManager::OPCODE_CALCULATECRC, "/etc/hostname");
+
+    // RemoveDirectory outside
+    this->clearHistory();
+    this->removeDirectory("/tmp");
+    this->assertSandboxRejection(FileManager::OPCODE_REMOVEDIRECTORY, "/tmp");
+
+    // GenerateDp outside
+    this->clearHistory();
+    Fw::CmdStringArg dpArg("/etc/hostname");
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, dpArg, 0, 0, 0, 0, FileManager_GenerateDpMode::IMMEDIATE);
+    this->component.doDispatch();
+    this->assertSandboxRejection(FileManager::OPCODE_GENERATEDP, "/etc/hostname");
+
+    // A contained command still works
+    this->clearHistory();
+    this->createDirectory("sandbox_ut/new_dir");
+    this->assertSuccess(FileManager::OPCODE_CREATEDIRECTORY);
+    ret = ::system("test -d sandbox_ut/new_dir");
+    ASSERT_EQ(ret, 0);
+
+    this->system("rm -rf sandbox_ut escaped_dir");
+}
+
+void FileManagerTester ::sandboxFailClosed() {
+    // Until configure() is called, every command must be rejected. The tester constructor
+    // configures the component, so reset the flag (friend access) to exercise the
+    // unconfigured state, then restore.
+    ASSERT_TRUE(this->component.m_sandboxConfigured) << "tester component is configured in the constructor";
+    this->component.m_sandboxConfigured = false;
+    this->clearHistory();
+    this->removeFile("any_file.txt", false);
+    this->assertSandboxRejection(FileManager::OPCODE_REMOVEFILE, "any_file.txt");
+    this->component.configure("/");
+}
+
+void FileManagerTester ::sandboxResolvesPaths() {
+    // With the sandbox open ("/", set in the constructor), '..' segments that stay inside
+    // still resolve, and operations act on the canonical path.
+    this->system("rm -rf sandbox_res && mkdir -p sandbox_res/a");
+    this->component.configure("sandbox_res");
+
+    // 'a/../inside.txt' resolves to '<sandbox>/inside.txt': contained, so it is accepted
+    this->clearHistory();
+    this->writeFile("sandbox_res/inside.txt", "hello\n");
+    Fw::CmdStringArg sizeArg("sandbox_res/a/../inside.txt");
+    this->sendCmd_FileSize(INSTANCE, CMD_SEQ, sizeArg);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_FILESIZE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(0);
+    ASSERT_EVENTS_FileSizeSucceeded_SIZE(1);
+
+    this->system("rm -rf sandbox_res");
+    this->component.configure("/");
+}
+
+void FileManagerTester ::sandboxOpenRootIsUnrestricted() {
+    // The FileHandling subtopologies configure the sandbox to "/" by default for backwards
+    // compatibility. This test mirrors the operations from the report that motivated the
+    // sandbox (arbitrary absolute paths under /tmp) and verifies they still succeed with the
+    // open configuration, pinning the compatibility guarantee.
+    this->component.configure("/");
+    this->system("rm -rf /tmp/fprime_sandbox_ut_open");
+
+    // CreateDirectory at an arbitrary absolute path
+    this->clearHistory();
+    this->createDirectory("/tmp/fprime_sandbox_ut_open");
+    this->assertSuccess(FileManager::OPCODE_CREATEDIRECTORY);
+    int ret = ::system("test -d /tmp/fprime_sandbox_ut_open");
+    ASSERT_EQ(ret, 0);
+
+    // FileSize at an arbitrary absolute path
+    this->writeFile("/tmp/fprime_sandbox_ut_open/file.txt", "0123456789AB");
+    this->clearHistory();
+    Fw::CmdStringArg sizeArg("/tmp/fprime_sandbox_ut_open/file.txt");
+    this->sendCmd_FileSize(INSTANCE, CMD_SEQ, sizeArg);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_FILESIZE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(0);
+    ASSERT_EVENTS_FileSizeSucceeded_SIZE(1);
+    ASSERT_EVENTS_FileSizeSucceeded(0, "/tmp/fprime_sandbox_ut_open/file.txt", 12);
+
+    // MoveFile between arbitrary absolute paths (assert response directly: assertSuccess
+    // expects CommandsExecuted == 1, which does not hold on this shared tester instance)
+    this->clearHistory();
+    this->moveFile("/tmp/fprime_sandbox_ut_open/file.txt", "/tmp/fprime_sandbox_ut_open/moved.txt");
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_MOVEFILE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(0);
+    ret = ::system("test -f /tmp/fprime_sandbox_ut_open/moved.txt");
+    ASSERT_EQ(ret, 0);
+
+    // RemoveFile at an arbitrary absolute path
+    this->clearHistory();
+    this->removeFile("/tmp/fprime_sandbox_ut_open/moved.txt", false);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_REMOVEFILE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_PathOutsideSandbox_SIZE(0);
+    ret = ::system("test -f /tmp/fprime_sandbox_ut_open/moved.txt");
+    ASSERT_NE(ret, 0);
+
+    this->system("rm -rf /tmp/fprime_sandbox_ut_open");
+}
+
 void FileManagerTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
 }

@@ -35,7 +35,9 @@ if (limiter.trigger(this->getTime())) {
 
 If you use time-throttling, your component must provide it the current
 `Fw::Time` in the trigger. It will then update its internal state, and return
-true if the threshold is reached.
+true if the threshold is reached. A time passed to `setTime` must be in the same
+time base as the times later passed to `trigger`; times in different bases are
+incomparable, so the time criterion would never trigger.
 
 ### 2.2 Using both criteria
 

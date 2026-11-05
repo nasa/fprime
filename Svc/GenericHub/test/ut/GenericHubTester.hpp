@@ -56,13 +56,25 @@ class GenericHubTester : public GenericHubGTestBase {
     //!
     void test_telemetry();
 
+    //! Test of telemetry in-out for a specified buffer size
+    //!
+    void test_telemetry_size(U32 size);
+
     //! Test of event in-out
     //!
     void test_events();
 
+    //! Test of event in-out for a specified buffer size
+    //!
+    void test_events_size(U32 size);
+
     //! Test of commands in-out
     //!
     void test_commands();
+
+    //! Test of commands in-out on a nonzero port index
+    //!
+    void test_commands_nonzero_port();
 
     //! Test invalid input/deserialization guard paths
     //!
@@ -88,6 +100,21 @@ class GenericHubTester : public GenericHubGTestBase {
                              FwChanIdType id,           /*!< Telemetry Channel ID */
                              Fw::Time& timeTag,         /*!< Time Tag */
                              Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
+    );
+
+    //! Handler for from_cmdDispOut
+    //!
+    void from_cmdDispOut_handler(const FwIndexType portNum, /*!< The port number*/
+                                 Fw::ComBuffer& data,       /*!< Buffer containing packet data */
+                                 U32 context                /*!< Call context value; meaning chosen by user */
+    );
+
+    //! Handler for from_cmdRespOut
+    //!
+    void from_cmdRespOut_handler(const FwIndexType portNum,      /*!< The port number*/
+                                 FwOpcodeType opCode,            /*!< Command Op Code */
+                                 U32 cmdSeq,                     /*!< Command Sequence */
+                                 const Fw::CmdResponse& response /*!< The command response argument */
     );
 
     //! Handler for from_bufferOut
@@ -133,6 +160,10 @@ class GenericHubTester : public GenericHubGTestBase {
 
     void random_fill(Fw::SerialBufferBase& buffer, U32 max_size);
 
+    //! Fill a buffer with a specified number of bytes
+    //!
+    void fill(Fw::SerialBufferBase& buffer, U32 size);
+
     void test_command_dispatch();
 
     void test_command_response();
@@ -174,6 +205,8 @@ class GenericHubTester : public GenericHubGTestBase {
     U32 m_comm_out;
     U32 m_buffer_out;
     U32 m_current_port;
+    FwIndexType m_cmdDispOutPort;
+    FwIndexType m_cmdRespOutPort;
     U8 m_data_store[DATA_SIZE];
     U8 m_data_for_allocation[DATA_SIZE];
 };

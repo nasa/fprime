@@ -1,0 +1,28 @@
+# On-demand soak summary for the Zephyr Reference deployment on Pi Pico 2.
+#
+# Reads the persistent soak log written by soak-setup / soak-test and
+# prints a chronological summary of every event, alert, and telemetry
+# channel captured over the life of the soak.
+
+name: "Soak Summary: Pico 2 Zephyr Reference"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Shared with the soak-setup + soak-test workflows so a summary queues
+# behind any in-flight test and doesn't race the log writer.
+concurrency:
+  group: soak-zephyr-reference
+  cancel-in-progress: false
+
+jobs:
+  soak-summary:
+    name: "Soak Summary"
+    runs-on: [self-hosted, ARM64, soak-test]
+    steps:
+      - uses: nasa/fprime-actions/soak-summary@devel
+        with:
+          deployment-name: zephyr-reference

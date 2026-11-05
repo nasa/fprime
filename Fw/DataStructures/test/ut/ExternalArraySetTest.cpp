@@ -17,7 +17,7 @@ namespace Fw {
 template <typename T>
 class ExternalArraySetTester {
   public:
-    ExternalArraySetTester<T>(const ExternalArraySet<T>& set) : m_set(set) {}
+    ExternalArraySetTester(const ExternalArraySet<T>& set) : m_set(set) {}
 
     const ArraySetOrMapImpl<T, Nil>& getImpl() const { return this->m_set.m_impl; }
 

@@ -215,9 +215,30 @@ event CS_JoinWaitingNotComplete() \
   id 24 \
   format "Still waiting for sequence file to complete"
 
+@ The sequence file contains no command records.
 event CS_NoRecords(
                       fileName: string size 60 @< The name of the sequence file
                     ) \
   severity warning low \
   id 25 \
   format "Sequence file {} has no records. Ignoring."
+
+@ CS_STEP was rejected because the previously stepped command is still waiting for its
+@ time tag; the step can be retried once schedIn has dispatched that command
+event CS_StepRecordPending(
+                            fileName: string size 60 @< The sequence file
+                            seconds: U32 @< Seconds of the pending command's time tag
+                            useconds: U32 @< Microseconds of the pending command's time tag
+                          ) \
+  severity warning low \
+  id 26 \
+  format "Sequence {}: step rejected, previous command pending until {} s {} us"
+
+@ A sequence file name resolved outside the directory set with configureSandbox
+event CS_FileOutsideSandbox(
+                             fileName: string size FileNameStringSize @< The rejected sequence file name
+                             sandboxDir: string size FileNameStringSize @< The configured sandbox directory
+                           ) \
+  severity warning high \
+  id 27 \
+  format "Sequence file {} is outside the configured sandbox directory {}"

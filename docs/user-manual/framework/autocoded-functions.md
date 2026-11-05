@@ -320,7 +320,7 @@ The values of the port arguments are passed to the function.
 
 The function name for commands is as follows:
 
-> void \<command mnemonic\>\_preMsgHook(FswOpcodeType opcode, U32
+> void \<command mnemonic\>\_preMsgHook(FwOpcodeType opcode, U32
 > cmdSeq);
 
 It does not provide the arguments for the command since they are not

@@ -27,6 +27,52 @@ FpySequencerTester ::~FpySequencerTester() {
     this->component.deinit();
 }
 
+void FpySequencerTester::connectPorts() {
+    // Connect special input ports
+    this->connect_to_cmdIn(0, this->component.get_cmdIn_InputPort(0));
+
+    // Connect special output ports
+    this->component.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
+    this->component.set_cmdResponseOut_OutputPort(0, this->get_from_cmdResponseOut(0));
+    this->component.set_logOut_OutputPort(0, this->get_from_logOut(0));
+#if FW_ENABLE_TEXT_LOGGING == 1
+    this->component.set_logTextOut_OutputPort(0, this->get_from_logTextOut(0));
+#endif
+    this->component.set_prmGet_OutputPort(0, this->get_from_prmGet(0));
+    this->component.set_prmSet_OutputPort(0, this->get_from_prmSet(0));
+    this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
+    this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
+
+    // Connect typed input ports
+    this->connect_to_checkTimers(0, this->component.get_checkTimers_InputPort(0));
+    this->connect_to_cmdResponseIn(0, this->component.get_cmdResponseIn_InputPort(0));
+    this->connect_to_pingIn(0, this->component.get_pingIn_InputPort(0));
+    this->connect_to_seqCancelIn(0, this->component.get_seqCancelIn_InputPort(0));
+    this->connect_to_seqRunIn(0, this->component.get_seqRunIn_InputPort(0));
+    this->connect_to_tlmWrite(0, this->component.get_tlmWrite_InputPort(0));
+
+    // Connect typed output ports
+    this->component.set_cmdOut_OutputPort(0, this->get_from_cmdOut(0));
+    this->component.set_getParam_OutputPort(0, this->get_from_getParam(0));
+    this->component.set_getTlmChan_OutputPort(0, this->get_from_getTlmChan(0));
+    this->component.set_pingOut_OutputPort(0, this->get_from_pingOut(0));
+    this->component.set_seqDoneOut_OutputPort(0, this->get_from_seqDoneOut(0));
+    this->component.set_seqStartOut_OutputPort(0, this->get_from_seqStartOut(0));
+
+    // Connect serial output ports - SKIP port 1 for testing SERIAL_PORT_NOT_CONNECTED
+    for (FwIndexType i = 0; i < 5; i++) {
+        if (i == 1) {
+            continue;  // Leave port 1 disconnected for testing
+        }
+        this->component.set_serialOut_OutputPort(i, this->get_from_serialOut(i));
+    }
+}
+
+void FpySequencerTester::initComponents() {
+    this->init();
+    this->component.init(TEST_INSTANCE_QUEUE_DEPTH, TEST_INSTANCE_ID);
+}
+
 // dispatches events from the queue until the cmp reaches the given state
 void FpySequencerTester::dispatchUntilState(State state, U32 bound) {
     U64 iters = 0;
@@ -92,10 +138,12 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
 
-    U32 crc = FpySequencer::CRC_INITIAL_VALUE;
-    FpySequencer::updateCrc(crc, buf.getBuffAddr(), buf.getSize());
+    Utils::Hash hash;
+    hash.update(buf.getBuffAddr(), buf.getSize());
+    U32 crc = 0;
+    hash.finalize(crc);
 
-    seq.get_footer().set_crc(~crc);
+    seq.get_footer().set_crc(crc);
 
     ASSERT_EQ(buf.serializeFrom(seq.get_footer()), Fw::SerializeStatus::FW_SERIALIZE_OK);
 
@@ -313,6 +361,14 @@ void FpySequencerTester::add_PUSH_TIME() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::PUSH_TIME, buf);
 }
+void FpySequencerTester::add_SET_SEED() {
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::SET_SEED, buf);
+}
+void FpySequencerTester::add_PUSH_RAND() {
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::PUSH_RAND, buf);
+}
 void FpySequencerTester::add_GET_FIELD(const Fpy::StackSizeType parentSize, const Fpy::StackSizeType memberSize) {
     add_GET_FIELD(FpySequencer_GetFieldDirective(parentSize, memberSize));
 }
@@ -396,6 +452,16 @@ void FpySequencerTester::add_POP_EVENT() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::POP_EVENT, buf);
 }
+
+void FpySequencerTester::add_POP_SERIALIZABLE(FwIndexType portIndex, Fpy::StackSizeType size) {
+    add_POP_SERIALIZABLE(FpySequencer_PopSerializableDirective(portIndex, size));
+}
+
+void FpySequencerTester::add_POP_SERIALIZABLE(FpySequencer_PopSerializableDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::POP_SERIALIZABLE, buf);
+}
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time
@@ -446,6 +512,16 @@ Fw::ParamValid FpySequencerTester::from_getParam_handler(
     }
     val = nextPrmValue;
     return Fw::ParamValid::VALID;
+}
+
+void FpySequencerTester::from_serialOut_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
+    // Capture serialOut calls for verification
+    SerialOutCall call;
+    call.portNum = portNum;
+    call.dataSize = buffer.getSize();
+    FW_ASSERT(call.dataSize <= sizeof(call.data));
+    memcpy(call.data, buffer.getBuffAddr(), call.dataSize);
+    m_serialOutHistory.push_back(call);
 }
 
 // Access to private and protected FpySequencer methods and members for UTs
@@ -577,6 +653,16 @@ Signal FpySequencerTester::tester_pushTime_directiveHandler(const FpySequencer_P
     return this->cmp.pushTime_directiveHandler(directive, err);
 }
 
+Signal FpySequencerTester::tester_setSeed_directiveHandler(const FpySequencer_SetSeedDirective& directive,
+                                                           DirectiveError& err) {
+    return this->cmp.setSeed_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive,
+                                                            DirectiveError& err) {
+    return this->cmp.pushRand_directiveHandler(directive, err);
+}
+
 Signal FpySequencerTester::tester_allocate_directiveHandler(const FpySequencer_AllocateDirective& directive,
                                                             DirectiveError& err) {
     return this->cmp.allocate_directiveHandler(directive, err);
@@ -598,12 +684,200 @@ Signal FpySequencerTester::tester_pushVal_directiveHandler(const FpySequencer_Pu
     return this->cmp.pushVal_directiveHandler(directive, err);
 }
 
+Signal FpySequencerTester::tester_popSerializable_directiveHandler(
+    const FpySequencer_PopSerializableDirective& directive,
+    DirectiveError& err) {
+    return this->cmp.popSerializable_directiveHandler(directive, err);
+}
+
+void FpySequencerTester::tester_directive_waitRel_internalInterfaceHandler(
+    const FpySequencer_WaitRelDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_waitRel_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_waitAbs_internalInterfaceHandler(
+    const FpySequencer_WaitAbsDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_waitAbs_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_goto_internalInterfaceHandler(const FpySequencer_GotoDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_goto_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_if_internalInterfaceHandler(const FpySequencer_IfDirective& directive,
+                                                                      U64 sequenceIndex) {
+    this->cmp.directive_if_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_noOp_internalInterfaceHandler(const FpySequencer_NoOpDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_noOp_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushTlmVal_internalInterfaceHandler(
+    const FpySequencer_PushTlmValDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushTlmVal_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushTlmValAndTime_internalInterfaceHandler(
+    const FpySequencer_PushTlmValAndTimeDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushTlmValAndTime_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushPrm_internalInterfaceHandler(
+    const FpySequencer_PushPrmDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushPrm_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_constCmd_internalInterfaceHandler(
+    const FpySequencer_ConstCmdDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_constCmd_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_stackOp_internalInterfaceHandler(
+    const FpySequencer_StackOpDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_stackOp_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_exit_internalInterfaceHandler(const FpySequencer_ExitDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_exit_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_allocate_internalInterfaceHandler(
+    const FpySequencer_AllocateDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_allocate_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_storeRelConstOffset_internalInterfaceHandler(
+    const FpySequencer_StoreRelConstOffsetDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_storeRelConstOffset_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushVal_internalInterfaceHandler(
+    const FpySequencer_PushValDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushVal_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_loadRel_internalInterfaceHandler(
+    const FpySequencer_LoadRelDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_loadRel_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_discard_internalInterfaceHandler(
+    const FpySequencer_DiscardDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_discard_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_memCmp_internalInterfaceHandler(const FpySequencer_MemCmpDirective& directive,
+                                                                          U64 sequenceIndex) {
+    this->cmp.directive_memCmp_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_stackCmd_internalInterfaceHandler(
+    const FpySequencer_StackCmdDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_stackCmd_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushTime_internalInterfaceHandler(
+    const FpySequencer_PushTimeDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushTime_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_setSeed_internalInterfaceHandler(
+    const FpySequencer_SetSeedDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_setSeed_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_pushRand_internalInterfaceHandler(
+    const FpySequencer_PushRandDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_pushRand_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_getField_internalInterfaceHandler(
+    const FpySequencer_GetFieldDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_getField_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_peek_internalInterfaceHandler(const FpySequencer_PeekDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_peek_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_storeRel_internalInterfaceHandler(
+    const FpySequencer_StoreRelDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_storeRel_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_call_internalInterfaceHandler(const FpySequencer_CallDirective& directive,
+                                                                        U64 sequenceIndex) {
+    this->cmp.directive_call_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_return_internalInterfaceHandler(const FpySequencer_ReturnDirective& directive,
+                                                                          U64 sequenceIndex) {
+    this->cmp.directive_return_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_loadAbs_internalInterfaceHandler(
+    const FpySequencer_LoadAbsDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_loadAbs_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_storeAbs_internalInterfaceHandler(
+    const FpySequencer_StoreAbsDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_storeAbs_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_storeAbsConstOffset_internalInterfaceHandler(
+    const FpySequencer_StoreAbsConstOffsetDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_storeAbsConstOffset_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_popEvent_internalInterfaceHandler(
+    const FpySequencer_PopEventDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_popEvent_internalInterfaceHandler(directive, sequenceIndex);
+}
+
+void FpySequencerTester::tester_directive_popSerializable_internalInterfaceHandler(
+    const FpySequencer_PopSerializableDirective& directive,
+    U64 sequenceIndex) {
+    this->cmp.directive_popSerializable_internalInterfaceHandler(directive, sequenceIndex);
+}
+
 Svc::Signal FpySequencerTester::tester_dispatchStatement() {
     return this->cmp.dispatchStatement();
 }
 
 Fw::Success FpySequencerTester::tester_validate() {
     return this->cmp.validate();
+}
+
+bool FpySequencerTester::tester_isRunningState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state) {
+    return this->cmp.isRunningState(state);
 }
 
 Svc::Signal FpySequencerTester::tester_checkStatementTimeout() {
@@ -646,6 +920,13 @@ void FpySequencerTester::tester_set_m_sequenceFilePath(Fw::String str) {
     this->cmp.m_sequenceFilePath = str;
 }
 
+void FpySequencerTester::tester_setSequenceFilePath(const Svc::FpySequencer_SequenceExecutionArgs& args) {
+    // the action ignores smId/signal; pass any valid values
+    this->cmp.Svc_FpySequencer_SequencerStateMachine_action_setSequenceFilePath(
+        FpySequencer::SmId::sequencer, Svc::FpySequencer_SequencerStateMachineStateMachineBase::Signal::cmd_VALIDATE,
+        args);
+}
+
 U64 FpySequencerTester::tester_get_m_sequencesStarted() {
     return this->cmp.m_sequencesStarted;
 }
@@ -663,7 +944,21 @@ void FpySequencerTester::tester_set_m_statementsDispatched(U64 val) {
 }
 
 void FpySequencerTester::tester_set_m_computedCRC(U32 crc) {
-    this->cmp.m_computedCRC = crc;
+    this->cmp.m_computedCRC.setHashValue(U32(~crc));
+}
+
+void FpySequencerTester::tester_init_m_computedCRC() {
+    this->cmp.m_computedCRC.init();
+}
+
+void FpySequencerTester::tester_update_m_computedCRC(const U8* buffer, FwSizeType bufferSize) {
+    this->cmp.m_computedCRC.update(buffer, bufferSize);
+}
+
+U32 FpySequencerTester::tester_finalize_m_computedCRC() {
+    U32 finalCrc = 0;
+    this->cmp.m_computedCRC.finalize(finalCrc);
+    return finalCrc;
 }
 
 void FpySequencerTester::tester_set_m_sequenceArgs(Svc::SeqArgs args) {
@@ -673,6 +968,13 @@ void FpySequencerTester::tester_set_m_sequenceArgs(Svc::SeqArgs args) {
 // Get cmp member pointers
 FpySequencer::Runtime* FpySequencerTester::tester_get_m_runtime_ptr() {
     return &(this->cmp.m_runtime);
+}
+
+void FpySequencerTester::tester_disconnect_getParam() {
+    Fw::OutputPrmGetPort& port = this->cmp.m_getParam_OutputPort[0];
+    port.~OutputPrmGetPort();
+    new (&port) Fw::OutputPrmGetPort();
+    port.init();
 }
 
 Fpy::Sequence* FpySequencerTester::tester_get_m_sequenceObj_ptr() {
@@ -830,8 +1132,30 @@ DirectiveError FpySequencerTester::tester_op_itrunc_64_16() {
 DirectiveError FpySequencerTester::tester_op_itrunc_64_32() {
     return this->cmp.op_itrunc_64_32();
 }
+DirectiveError FpySequencerTester::tester_op_ffloor() {
+    return this->cmp.op_ffloor();
+}
+DirectiveError FpySequencerTester::tester_op_iabs() {
+    return this->cmp.op_iabs();
+}
+DirectiveError FpySequencerTester::tester_op_fabs() {
+    return this->cmp.op_fabs();
+}
 void FpySequencerTester::tester_doDispatch() {
     this->cmp.doDispatch();
+}
+
+FwSizeType FpySequencerTester::tester_getMessagesAvailable() {
+    return this->cmp.m_queue.getMessagesAvailable();
+}
+
+void FpySequencerTester::tester_dispatchAllMessages(U32 bound) {
+    U32 iters = 0;
+    while (this->cmp.m_queue.getMessagesAvailable() > 0 && iters < bound) {
+        this->cmp.doDispatch();
+        iters++;
+    }
+    ASSERT_EQ(this->cmp.m_queue.getMessagesAvailable(), 0);
 }
 
 Svc::FpySequencer_SequencerStateMachineStateMachineBase::State FpySequencerTester::tester_getState() {

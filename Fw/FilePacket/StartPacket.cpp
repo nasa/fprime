@@ -61,6 +61,10 @@ SerializeStatus FilePacket::StartPacket ::fromSerialBuffer(SerialBuffer& serialB
         }
     }
 
+    if (serialBuffer.getDeserializeSizeLeft() != 0) {
+        return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+
     return FW_SERIALIZE_OK;
 }
 

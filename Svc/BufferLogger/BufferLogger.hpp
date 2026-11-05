@@ -25,8 +25,10 @@ namespace Svc {
 // Forward declaration for UTs
 namespace Logging {
 class CloseFileTester;
+class FlushFileTester;
 class SendBuffersTester;
 class OnOffTester;
+class TruncateTester;
 }  // namespace Logging
 namespace Errors {
 class BufferLoggerTester;
@@ -35,8 +37,10 @@ class BufferLoggerTester;
 class BufferLogger final : public BufferLoggerComponentBase {
     friend class BufferLoggerTester;
     friend class Svc::Logging::CloseFileTester;
+    friend class Svc::Logging::FlushFileTester;
     friend class Svc::Logging::SendBuffersTester;
     friend class Svc::Logging::OnOffTester;
+    friend class Svc::Logging::TruncateTester;
     friend class Svc::Errors::BufferLoggerTester;
 
   private:
@@ -50,6 +54,7 @@ class BufferLogger final : public BufferLoggerComponentBase {
         friend class Svc::Logging::CloseFileTester;
         friend class Svc::Logging::SendBuffersTester;
         friend class Svc::Logging::OnOffTester;
+        friend class Svc::Logging::TruncateTester;
         friend class Svc::Errors::BufferLoggerTester;
 
       public:
@@ -152,6 +157,9 @@ class BufferLogger final : public BufferLoggerComponentBase {
         //! The number of bytes written to the current file
         FwSizeType m_bytesWritten;
 
+        //! Running hash computed incrementally as data is written
+        Utils::Hash m_hash;
+
     };  // class File
 
   public:
@@ -225,7 +233,7 @@ class BufferLogger final : public BufferLoggerComponentBase {
     //! Sets the volatile logging state
     void BL_SetLogging_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                   const U32 cmdSeq,          /*!< The command sequence number*/
-                                  BufferLogger_LogState state);
+                                  const BufferLogger_LogState& state);
 
     //! Implementation for BL_FlushFile command handler
     //! Flushes the current open log file to disk

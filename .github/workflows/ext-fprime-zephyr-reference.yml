@@ -1,0 +1,104 @@
+# Cross-compile https://github.com/fprime-community/fprime-zephyr-reference
+#
+# Builds every supported board (Pico 2, Teensy 4.1) as separate steps within a
+# single job on one runner so the expensive Zephyr SDK / west workspace setup
+# is only performed once, instead of once per board.
+
+name: "External Repo: Zephyr Reference"
+
+on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
+  push:
+    branches: [ release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-zephyr-reference
+
+  build:
+    name: "Zephyr Build (all boards)"
+    needs: get-branch
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Make Space"
+        uses: nasa/fprime-actions/make-space@devel
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-zephyr-reference
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+          stage: build
+      - name: "Build Binary (Pico 2)"
+        run: |
+          CCACHE_DISABLE=1 fprime-ci -c ./lib/fprime-zephyr/ci/sample-configs/pico2.yml --add-stage build
+      - name: "Archive Results (Pico 2)"
+        uses: actions/upload-artifact@v7
+        with:
+          name: archive-pico2.tar.gz
+          path: ./archive.tar.gz
+      - name: "Clean archive between boards"
+        run: rm -f ./archive.tar.gz
+      - name: "Build Binary (Teensy 4.1)"
+        run: |
+          CCACHE_DISABLE=1 fprime-ci -c ./lib/fprime-zephyr/ci/sample-configs/teensy41.yml --add-stage build
+      - name: "Archive Results (Teensy 4.1)"
+        uses: actions/upload-artifact@v7
+        with:
+          name: archive-teensy41.tar.gz
+          path: ./archive.tar.gz
+
+  integration-tests:
+    needs: [ get-branch, build ]
+    name: "Integration Tests (${{ matrix.board }})"
+    runs-on: apple-ci
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - board: pico2
+            config: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
+          - board: teensy41
+            config: ./lib/fprime-zephyr/ci/sample-configs/teensy41.yml
+    env:
+      CI_CONFIG_FILE: ${{ matrix.config }}
+    steps:
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-zephyr-reference
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+          stage: int
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+      - name: Pull Archive Results
+        uses: actions/download-artifact@v8
+        with:
+          name: archive-${{ matrix.board }}.tar.gz
+      - name: "Integration tests"
+        run: |
+          fprime-ci -c ${CI_CONFIG_FILE} --skip-stage build

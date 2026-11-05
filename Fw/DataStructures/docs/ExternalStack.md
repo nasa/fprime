@@ -30,7 +30,7 @@ storing the items on the stack.
 
 ```mermaid
 classDiagram
-    Stack *-- ExternalArray
+    ExternalStack *-- ExternalArray
 ```
 
 ## 4. Public Constructors and Destructors

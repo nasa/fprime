@@ -16,9 +16,11 @@
 #include <Fw/DataStructures/ArrayMap.hpp>
 #include <Fw/Types/String.hpp>
 #include <Os/Mutex.hpp>
+#include <Os/SandboxedFile.hpp>
 #include <Svc/PrmDb/PrmDbComponentAc.hpp>
 #include <Svc/PrmDb/PrmDb_PrmDbFileLoadStateEnumAc.hpp>
 #include <Svc/PrmDb/PrmDb_PrmDbTypeEnumAc.hpp>
+#include <Utils/Hash/Hash.hpp>
 #include <config/PrmDbImplCfg.hpp>
 #include <cstring>
 
@@ -57,6 +59,14 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param file file where parameters are stored.
     void configure(const char* file);
 
+    //!  \brief PrmDb sandbox configure method
+    //!
+    //!  Restricts every file access (startup read, PRM_SAVE_FILE, PRM_LOAD_FILE) to a directory.
+    //!  Fail-closed: until called, every file open is rejected. Configure `/` to allow any path.
+    //!
+    //!  \param directory directory that all parameter file accesses are restricted to.
+    void configureSandbox(const char* directory);
+
     //!  \brief PrmDb file read function
     //!
     //!  The readFile function reads the set of parameters from the file passed in to
@@ -84,12 +94,10 @@ class PrmDbImpl final : public PrmDbComponentBase {
 
   protected:
   private:
-    Fw::String m_fileName;  //!< filename for parameter storage
+    Fw::String m_fileName;    //!< filename for parameter storage
+    Fw::String m_sandboxDir;  //!< directory restriction for all file access (empty = all opens rejected)
 
     PrmDbFileLoadState m_state;  // Current file load state of the parameter database
-
-    // helper to compute CRC over a buffer
-    U32 computeCrc(U32 crc, const BYTE* buff, FwSizeType size);
 
     // Pointers to the active and staging databases
     // These point to the actual storage arrays below
@@ -119,6 +127,23 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param dbType The type of database to read into  (active or staging)
     //!  \return status success (True) / failure(False)
     PrmLoadStatus readParamFileImpl(const Fw::StringBase& fileName, PrmDbType dbType);
+
+    //!  \brief Apply the configured sandbox directory (if any) to a file object
+    //!
+    //!  \param file sandboxed file to configure
+    void applySandbox(Os::SandboxedFile& file) const;
+
+    //! Write one chunk of the parameter file while locked; on failure unlocks, emits PrmFileWriteError, responds
+    //! EXECUTION_ERROR
+    bool writeSaveFileChunk(Os::SandboxedFile& paramFile,
+                            const U8* data,
+                            FwSizeType size,
+                            PrmWriteError::T statusStage,
+                            PrmWriteError::T sizeStage,
+                            U32 numRecords,
+                            FwOpcodeType opCode,
+                            U32 cmdSeq,
+                            Utils::Hash& crc);
 
     //!  \brief PrmDb parameter get handler
     //!
@@ -182,7 +207,10 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param cmdSeq The sequence number of the command
     //!  \param fileName The name of the parameter load file
     //!  \param merge Whether to merge (true) or fully reset (false) the parameter database from the file contents
-    void PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& fileName, PrmDb_Merge merge);
+    void PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode,
+                                  U32 cmdSeq,
+                                  const Fw::CmdStringArg& fileName,
+                                  const PrmDb_Merge& merge);
 
     //!  \brief PrmDb PRM_COMMIT_STAGED command handler
     //!

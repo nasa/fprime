@@ -1,0 +1,1 @@
+| test.cpp:5:5:12:5 | switch (...) ...  | This switch statement does not have a default case. |

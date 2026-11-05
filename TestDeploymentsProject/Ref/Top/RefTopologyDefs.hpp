@@ -25,6 +25,7 @@
 #include "Svc/Subtopologies/ComCcsds/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
+// #include "Svc/Subtopologies/DpCompression/SubtopologyTopologyDefs.hpp"
 
 /**
  * \brief required ping constants
@@ -69,6 +70,8 @@ enum { WARN = 3, FATAL = 5 };
 // Definitions are placed within a namespace named after the deployment
 namespace Ref {
 
+extern Fw::MemAllocator& memAllocator;
+
 /**
  * \brief required type definition to carry state
  *
@@ -84,6 +87,7 @@ struct TopologyState {
     ComCcsds::SubtopologyState comCcsds;          //!< Subtopology state for ComCcsds
     DataProducts::SubtopologyState dataProducts;  //!< Subtopology state for DataProducts
     FileHandling::SubtopologyState fileHandling;  //!< Subtopology state for FileHandling
+    // DpCompression::SubtopologyState dpCompression;//!< Subtopology state for DpCompression
 };
 
 namespace PingEntries = ::PingEntries;

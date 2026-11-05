@@ -24,8 +24,11 @@ class Version final : public VersionComponentBase {
     //! Destroy Version object
     ~Version();
 
-    //! configure version's verbosity and startup
+    //! configure version's verbosity
     void config(bool enable);
+
+    //! send initial version tlm and events
+    void start();
 
   private:
     // ----------------------------------------------------------------------
@@ -50,11 +53,18 @@ class Version final : public VersionComponentBase {
                             Svc::VersionStatus& status                       //!< The command response argument
                             ) override;
 
+    //! Handler implementation for schedIn
+    //!
+    //! Scheduled port to periodically re-emit all version information
+    void schedIn_handler(FwIndexType portNum,  //!< The port number
+                         U32 context           //!< The call order
+                         ) override;
+
     //! \struct verId_db
     //! \brief Custom Version database structure
     //!
-    //! This structure stores the latest values of the measurements.
-    //! The statuses are all initialized to MeasurementStatus::STALE by the constructor.
+    //! Stores the latest custom version values set through the setVersion port.
+    //! The constructor initializes every entry to "no_ver" with status VersionStatus::FAILURE.
     //!
     CustomVersionDb verId_db[Svc::VersionCfg::VersionEnum::NUM_CONSTANTS];
 
@@ -66,17 +76,17 @@ class Version final : public VersionComponentBase {
     //! Handler implementation for command ENABLE
     //!
     //! A command to enable or disable Version telemetry
-    void ENABLE_cmdHandler(FwOpcodeType opCode,        //!< The opcode
-                           U32 cmdSeq,                 //!< The command sequence number
-                           Svc::VersionEnabled enable  //!< whether or not Version telemetry is enabled
+    void ENABLE_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                           U32 cmdSeq,                        //!< The command sequence number
+                           const Svc::VersionEnabled& enable  //!< whether or not Version telemetry is enabled
                            ) override;
 
     //! Handler implementation for command VERSION
     //!
     //! Report version as event
-    void VERSION_cmdHandler(FwOpcodeType opCode,           //!< The opcode
-                            U32 cmdSeq,                    //!< The command sequence number
-                            Svc::VersionType version_type  //!< which version type event is requested
+    void VERSION_cmdHandler(FwOpcodeType opCode,                  //!< The opcode
+                            U32 cmdSeq,                           //!< The command sequence number
+                            const Svc::VersionType& version_type  //!< which version type event is requested
                             ) override;
 
   private:
@@ -94,15 +104,15 @@ class Version final : public VersionComponentBase {
         VER_SLOT_09 = 9
     };
 
-    // function to log framework version events and channels
-    void fwVersion_tlm();
-    // function to log project version events and channels
-    void projectVersion_tlm();
-    // function to log library version events and channels
-    void libraryVersion_tlm();
-    // function to log custom version events and channels
-    void customVersion_tlm(VersionSlot custom_slot);
-    void customVersion_tlm_all();
+    // function to log framework version channel, and event when sendEvent is true
+    void fwVersion_tlm(bool sendEvent = true);
+    // function to log project version channel, and event when sendEvent is true
+    void projectVersion_tlm(bool sendEvent = true);
+    // function to log library version channels, and events when sendEvent is true
+    void libraryVersion_tlm(bool sendEvent = true);
+    // function to log custom version channels (if verbosity is enabled), and events when sendEvent is true
+    void customVersion_tlm(VersionSlot custom_slot, bool sendEvent = true);
+    void customVersion_tlm_all(bool sendEvent = true);
     bool m_enable;             /*!<Send TLM when true>*/
     U8 m_num_custom_elements;  // number of custom versions
 };

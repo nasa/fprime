@@ -1,0 +1,107 @@
+// ======================================================================
+// \title  DataFlow.cpp
+// \author lestarch-autobot
+// \brief  Rule implementations for the DataFlow rule group
+//
+// These rules exercise the processed data path (saDataIn -> dataOut),
+// the ownership return path (dataReturnIn -> saDataReturnOut), and the
+// deallocation path (saBufferReturnIn -> bufferReturnOut).
+// ======================================================================
+
+#include "STest/Pick/Pick.hpp"
+#include "Svc/Ccsds/SdlsSaRouter/test/ut/SdlsSaRouterTester.hpp"
+
+namespace Svc {
+
+namespace Ccsds {
+
+// ----------------------------------------------------------------------
+// DataFlow.ProcessedData
+// ----------------------------------------------------------------------
+
+bool SdlsSaRouterTester::DataFlow__ProcessedData__precondition() const {
+    return this->shadow.shadow_outstanding.size() < SdlsCfg::SaRouterMaxOutstandingBuffers;
+}
+
+void SdlsSaRouterTester::DataFlow__ProcessedData__action() {
+    this->clearHistory();
+
+    U8* const storage = this->getFreePoolBuffer();
+    ASSERT_NE(storage, nullptr);
+    const FwIndexType portNum = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, SdlsCfg::SaRouterPortCount - 1));
+    Fw::Buffer buffer = this->makePoolBuffer(storage);
+    ComCfg::FrameContext context;
+
+    // Pick a random status to verify pass-forward alongside the data
+    const Svc::Ccsds::SdlsStatus status = (STest::Pick::lowerUpper(0, 1) == 0)
+                                              ? Svc::Ccsds::SdlsStatus::SUCCESS
+                                              : Svc::Ccsds::SdlsStatus::DECRYPTION_FAILURE;
+
+    this->invoke_to_saDataIn(portNum, status, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataOut(0, status, buffer, context);
+    this->shadow.shadow_outstanding[storage] = portNum;
+}
+
+// ----------------------------------------------------------------------
+// DataFlow.ProcessedDataReturn
+// ----------------------------------------------------------------------
+
+bool SdlsSaRouterTester::DataFlow__ProcessedDataReturn__precondition() const {
+    return !this->shadow.shadow_outstanding.empty();
+}
+
+void SdlsSaRouterTester::DataFlow__ProcessedDataReturn__action() {
+    this->clearHistory();
+
+    const U8* const storage = this->shadow.shadow_getRandomOutstanding();
+    const FwIndexType expectedPort = this->shadow.shadow_outstanding[storage];
+    Fw::Buffer buffer = this->makePoolBuffer(const_cast<U8*>(storage));
+    // Downstream consumers may adjust the buffer pointer/size in place (e.g. stripping
+    // headers) before returning ownership: tracking must be robust to this
+    const Fw::Buffer::SizeType shift = static_cast<Fw::Buffer::SizeType>(STest::Pick::lowerUpper(0, 8));
+    buffer.setData(buffer.getData() + shift);
+    buffer.setSize(buffer.getSize() - shift);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataReturnIn(0, buffer, context);
+
+    if (expectedPort == ROUTER_ERROR_PORT) {
+        // Buffer was forwarded by the router itself on a routing error: returned upstream
+        ASSERT_from_saDataReturnOut_SIZE(0);
+        ASSERT_from_bufferReturnOut_SIZE(1);
+        ASSERT_from_bufferReturnOut(0, buffer, context);
+    } else {
+        ASSERT_from_saDataReturnOut_SIZE(1);
+        ASSERT_from_saDataReturnOut(0, buffer, context);
+        ASSERT_EQ(this->m_lastSaDataReturnOutPort, expectedPort);
+    }
+    this->shadow.shadow_outstanding.erase(storage);
+}
+
+// ----------------------------------------------------------------------
+// DataFlow.BufferReturn
+// ----------------------------------------------------------------------
+
+bool SdlsSaRouterTester::DataFlow__BufferReturn__precondition() const {
+    return true;
+}
+
+void SdlsSaRouterTester::DataFlow__BufferReturn__action() {
+    this->clearHistory();
+
+    const FwIndexType portNum = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, SdlsCfg::SaRouterPortCount - 1));
+    U8 storage[TEST_BUFFER_SIZE];
+    Fw::Buffer buffer(storage, sizeof storage);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_saBufferReturnIn(portNum, buffer, context);
+
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer, context);
+}
+
+}  // namespace Ccsds
+
+}  // namespace Svc

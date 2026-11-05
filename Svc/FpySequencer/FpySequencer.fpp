@@ -33,16 +33,24 @@ module Svc {
 
         @ Ping in port
         # TODO should ping have highest prio? or lowest?
-        async input port pingIn: Svc.Ping priority 10 assert
+        async input port pingIn: Svc.Ping priority 10 drop
 
         @ port to trigger a wakeup or timeout check. increase frequency
         @ to increase temporal resolution of sequencer
+        sync input port checkTimers: Svc.Sched
+
+        @ internal port that performs the checkTimers work on the component thread.
+        @ at most one message from this port is on the queue at a time
         # timer check has lower prio than sm sigs, cmds, cmd resp and ping
-        async input port checkTimers: Svc.Sched priority 4 assert
+        internal port checkTimersInternal priority 4 assert
 
         @ port to write all telemetry
+        sync input port tlmWrite: Svc.Sched
+
+        @ internal port that performs the tlmWrite work on the component thread.
+        @ at most one message from this port is on the queue at a time
         # least important, lowest prio
-        async input port tlmWrite: Svc.Sched priority 1 assert
+        internal port tlmWriteInternal priority 1 hook
 
         @ port for requests to run sequences
         # same priority as RUN cmd
@@ -66,6 +74,9 @@ module Svc {
 
         @ port for getting param values and storing them in sequence serRegs
         output port getParam: Fw.PrmGet
+
+        @ Output ports for popping serializable data from stack to downstream components
+        output port serialOut: [Svc.Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

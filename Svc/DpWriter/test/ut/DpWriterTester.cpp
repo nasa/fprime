@@ -36,14 +36,27 @@ void DpWriterTester::from_procBufferSendOut_handler(FwIndexType portNum, Fw::Buf
     this->abstractState.m_procTypes =
         static_cast<Fw::DpCfg::ProcType::SerialType>(this->abstractState.m_procTypes | (1 << portNum));
 
-    if (this->abstractState.m_procShrinkDataSizeOpt.hasValue()) {
+    if (this->abstractState.m_procShrinkDataSizeOpt.has_value()) {
         // Update the data size in the container
-        const FwSizeType newSize = this->abstractState.m_procShrinkDataSizeOpt.get();
+        const FwSizeType newSize = this->abstractState.m_procShrinkDataSizeOpt.value();
         Fw::DpContainer c(0, buffer);
         c.deserializeHeader();
         c.setDataSize(newSize);
         c.serializeHeader();
     }
+}
+
+void DpWriterTester::from_dpWrittenOut_handler(FwIndexType portNum,
+                                               const Fw::StringBase& fileName,
+                                               FwDpPriorityType priority,
+                                               FwSizeType fileSize) {
+    this->abstractState.m_dpWrittenOutPortNumOpt = Fw::Optional<FwIndexType>(portNum);
+    this->pushFromPortEntry_dpWrittenOut(fileName, priority, fileSize);
+}
+
+void DpWriterTester::from_deallocBufferSendOut_handler(FwIndexType portNum, Fw::Buffer& buffer) {
+    this->abstractState.m_deallocBufferSendOutPortNumOpt = Fw::Optional<FwIndexType>(portNum);
+    this->pushFromPortEntry_deallocBufferSendOut(buffer);
 }
 
 // ----------------------------------------------------------------------

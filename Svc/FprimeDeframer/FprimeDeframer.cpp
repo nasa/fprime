@@ -71,8 +71,10 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         status = deserializer.deserializeTo(packetDescriptor);
         FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
         // If a valid descriptor is deserialized, set it in the context
-        if ((packetDescriptor < ComCfg::Apid::INVALID_UNINITIALIZED)) {
+        if (ComCfg::Apid::isValid(packetDescriptor)) {
             contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
+        } else {
+            contextCopy.set_apid(ComCfg::Apid::INVALID_UNINITIALIZED);
         }
     }
 
@@ -100,11 +102,10 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     }
 
     // ---------------- Extract payload from frame ----------------
-    // Shift data pointer to effectively remove the header
-    data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
-    // Shrink size to effectively remove the trailer (also removes the header)
-    data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
-                 FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
+    // Advance past the header (adjusts size accordingly)
+    data.advance(FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
+    // Shrink size to effectively remove the trailer
+    data.setSize(data.getSize() - FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Emit the deframed data
     this->dataOut_out(0, data, contextCopy);
 }

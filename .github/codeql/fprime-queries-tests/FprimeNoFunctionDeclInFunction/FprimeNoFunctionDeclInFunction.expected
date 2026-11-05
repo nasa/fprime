@@ -1,0 +1,1 @@
+| test.cpp:7:5:7:26 | declaration | Function nested is declared inside the body of function outer. |

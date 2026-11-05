@@ -65,7 +65,12 @@ extern "C" {
 
 
 unsigned short          update_crc_16(     unsigned short crc, char c                 );
+// F PRIME CHANGE:
+// Instead of this function, use the alternative more efficient implementation
+// via the Utils/Hash interface.
+#if 0
 unsigned long           update_crc_32(     unsigned long  crc, char c                 );
+#endif
 unsigned short          update_crc_ccitt(  unsigned short crc, char c                 );
 unsigned short          update_crc_dnp(    unsigned short crc, char c                 );
 unsigned short          update_crc_kermit( unsigned short crc, char c                 );

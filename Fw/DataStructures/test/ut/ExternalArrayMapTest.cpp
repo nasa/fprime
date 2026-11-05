@@ -15,7 +15,7 @@ namespace Fw {
 template <typename K, typename V>
 class ExternalArrayMapTester {
   public:
-    ExternalArrayMapTester<K, V>(const ExternalArrayMap<K, V>& map) : m_map(map) {}
+    ExternalArrayMapTester(const ExternalArrayMap<K, V>& map) : m_map(map) {}
 
     const ArraySetOrMapImpl<K, V>& getImpl() const { return this->m_map.m_impl; }
 

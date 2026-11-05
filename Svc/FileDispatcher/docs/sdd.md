@@ -4,8 +4,6 @@ Component to dispatch delivered files to various services. The user passes in a 
 
 ## Requirements
 
-Add requirements in the chart below
-
 | Name | Description | Rationale | Validation |
 |---|---|---|---|
 |FPRIME-FDISP-001|File dispatcher will provide a way to dispatch files to other components|Need to have a way to supply a file name for a newly transferred file|Unit Test/System Test|
@@ -41,7 +39,7 @@ The fields should be filled as follows:
 
 ### Class Diagram
 
-![`FileDispatcher` Diagram](img/FileDispatcher.drawio.png "FileUplink")
+![`FileDispatcher` Diagram](img/FileDispatcher.drawio.png "FileDispatcher")
 
 ## Port Descriptions
 
@@ -68,6 +66,7 @@ No parameters
 |---|---|
 |`FileDispatchState`|Sent when a dispatch type is enabled or disabled|
 |`FileDispatched`|Sent when a dispatch type is matched and dispatched|
+|`FileDispatchPortNotConnected`|Sent (throttled) when a file matches a dispatch entry whose output port is not connected|
 
 ## Telemetry
 
@@ -81,7 +80,6 @@ No telemetry
 |`dispatchAllDisabledTest`|Tests dispatches of files with all file types initially disabled|---|---|
 |`dispatchAllCmdDisabledTest`|Tests dispatches of files with all file types initially enabled, but then disabled by command|---|---|
 |`dispatchAllCmdEnabledTest`|Tests dispatches of files with all file types initially disabled, but then enabled by command|---|---|
-|`dispatchNotFullConfigTest`|Tests dispatches of files with a table with less entries than output ports|---|---|
 |`dispatchPingTest`|Tests ping returns|---|---|
 
 

@@ -24,9 +24,11 @@ to pass outside a given address space.
 
 Name | Type | Accessors | Purpose
 ---- | ---- | --------- | -------
-`m_bufferData` | `U8*` | `getData()`/`setData()`       | Pointer to the raw memory wrapped by this buffer
-`m_size`       | `U32` | `getSize()`/`setSize()`       | Size of the raw memory region wrapped by this buffer
-`m_context`    | `U32` | `getContext()`/`setContext()` | Context of buffer's origin. Used to track buffers created by [`BufferManager`](../../../Svc/BufferManager/docs/sdd.md)
+`m_bufferData` | `U8*`        | `getOriginalData()`           | Pointer to the original allocation wrapped by this buffer
+`m_offset`     | `FwSizeType` | `getOffset()`/`setData()`/`advance()` | Offset of the current data within the original allocation; `getData()` returns `m_bufferData + m_offset`
+`m_size`       | `FwSizeType` | `getSize()`/`setSize()`       | Size of the data region currently represented by this buffer
+`m_capacity`   | `FwSizeType` | `getCapacity()`               | Size of the original allocation; set on construction or `set()`
+`m_context`    | `U32`        | `getContext()`/`setContext()` | Context of buffer's origin. Used to track buffers created by [`BufferManager`](../../../Svc/BufferManager/docs/sdd.md)
 
 A value _B_ of type `Fw::Buffer` is **valid** if `m_bufferData != nullptr` and
 `m_size > 0`; otherwise it is **invalid**.
@@ -36,6 +38,28 @@ Calling this function on a buffer _B_ returns `true` if _B_ is valid, otherwise 
 If a buffer _B_ is invalid, then the pointer returned by _B_ `.getData()` and the
 serialization interfaces returned by
 _B_ `.getSerializer()` and _B_ `.getDeserializer()` are considered invalid and should not be used.
+
+#### 2.1.1 Original Pointer, Offset, and Capacity
+
+`Fw::Buffer` stores its original allocation pointer plus an offset rather than allowing raw manipulation of the data
+pointer. This contract guarantees that the original allocation pointer is always recoverable via `getOriginalData()`,
+regardless of how much downstream consumers have advanced into the buffer. Components that must re-identify a buffer
+when ownership is returned (e.g. a buffer manager reclaiming an allocation) may therefore key on `getOriginalData()`.
+
+The following contractual expectations apply:
+
+* Constructing a buffer with `Fw::Buffer(data, size, context)` or calling `set(data, size, context)` establishes a new
+  original allocation: the offset is reset to `0` and the capacity is set to `size`.
+* `advance(amount)` moves the offset forward (positive) or backward (negative) and updates the size such that the end
+  of the represented data is unchanged. Consuming leading bytes (e.g. a frame header) must be done with `advance()`.
+  An assertion fails if the resulting offset falls outside `[0, capacity]` or the resulting size would be negative.
+* `setData(pointer)` requires the supplied pointer to lie within the original allocation
+  (`[getOriginalData(), getOriginalData() + getCapacity()]`); the offset is updated accordingly. An assertion fails
+  for a pointer outside the original allocation. **To wrap unrelated memory, construct a new `Fw::Buffer` or call
+  `set()`** — reusing an existing buffer for unrelated memory via `setData()` is not permitted.
+* `setSize(size)` requires `getOffset() + size <= getCapacity()`; an assertion fails otherwise.
+* Serialization (`serializeTo`/`deserializeFrom`) carries the original pointer, offset, and capacity so that
+  provenance survives transfer across ports.
 
 ### 2.2 The Port Fw::BufferGet
 

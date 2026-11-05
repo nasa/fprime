@@ -12,8 +12,6 @@
 
 #include "Svc/BufferAccumulator/BufferAccumulator.hpp"
 
-#include <sys/time.h>
-
 #include <limits>
 #include "Fw/Types/BasicTypes.hpp"
 
@@ -45,16 +43,21 @@ BufferAccumulator ::~BufferAccumulator() {}
 
 void BufferAccumulator ::allocateQueue(FwEnumStoreType identifier,
                                        Fw::MemAllocator& allocator,
-                                       FwSizeType maxNumBuffers  //!< The maximum number of buffers
+                                       FwSizeType maxNumBuffers,  //!< The maximum number of buffers
+                                       BufferAccumulator_OpState initialMode
+                                       //!< The initial operating mode
 ) {
     this->m_allocatorId = identifier;
     // Overflow protection
+    FW_ASSERT(maxNumBuffers > 0);
     FW_ASSERT((std::numeric_limits<FwSizeType>::max() / maxNumBuffers) >= sizeof(Fw::Buffer));
     FwSizeType memSize = static_cast<FwSizeType>(sizeof(Fw::Buffer) * maxNumBuffers);
     bool recoverable = false;
-    this->m_bufferMemory = static_cast<Fw::Buffer*>(allocator.allocate(identifier, memSize, recoverable));
-    // TODO: Fail gracefully here
+    // A null or short allocation would be placement-new'd through by the queue below
+    this->m_bufferMemory = static_cast<Fw::Buffer*>(allocator.checkedAllocate(identifier, memSize, recoverable));
     m_bufferQueue.init(this->m_bufferMemory, maxNumBuffers);
+    this->m_mode = initialMode;
+    this->m_send = this->m_mode == BufferAccumulator_OpState::DRAIN;
 }
 
 void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {
@@ -77,6 +80,8 @@ void BufferAccumulator ::bufferSendInFill_handler(const FwIndexType portNum, Fw:
             this->log_WARNING_HI_BA_QueueFull();
         }
         m_numWarnings++;
+        // The buffer is dropped; ownership must go back to its sender or the pool is depleted
+        this->bufferSendOutReturn_out(0, buffer);
     }
     if (this->m_send) {
         this->sendStoredBuffer();
@@ -106,7 +111,7 @@ void BufferAccumulator ::pingIn_handler(const FwIndexType portNum, U32 key) {
 
 void BufferAccumulator ::BA_SetMode_cmdHandler(const FwOpcodeType opCode,
                                                const U32 cmdSeq,
-                                               BufferAccumulator_OpState mode) {
+                                               const BufferAccumulator_OpState& mode) {
     // cancel an in-progress partial drain
     if (this->m_numToDrain > 0) {
         // reset counters for partial buffer drain
@@ -131,7 +136,7 @@ void BufferAccumulator ::BA_SetMode_cmdHandler(const FwOpcodeType opCode,
 void BufferAccumulator ::BA_DrainBuffers_cmdHandler(const FwOpcodeType opCode,
                                                     const U32 cmdSeq,
                                                     U32 numToDrain,
-                                                    BufferAccumulator_BlockMode blockMode) {
+                                                    const BufferAccumulator_BlockMode& blockMode) {
     if (this->m_numDrained < this->m_numToDrain) {
         this->log_WARNING_HI_BA_StillDraining(static_cast<U32>(this->m_numDrained),
                                               static_cast<U32>(this->m_numToDrain));
@@ -177,7 +182,7 @@ void BufferAccumulator ::BA_DrainBuffers_cmdHandler(const FwOpcodeType opCode,
     // We are still waiting for a buffer from last time
     if (!this->m_waitForBuffer) {
         this->m_send = true;
-        this->sendStoredBuffer();  // kick off the draining;
+        this->sendStoredBuffer();  // kick off the draining
     }
 }
 

@@ -41,14 +41,34 @@ TEST(Nominal, testWritingOffset) {
     tester.testWritingOffset();
 }
 
+TEST(Nominal, testWriteZeroLength) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteZeroLength();
+}
+
 TEST(Nominal, testAppending) {
     Svc::FileWorkerTester tester;
     tester.testAppending();
 }
 
+TEST(Nominal, testWriteReadRoundTrip) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteReadRoundTrip();
+}
+
+TEST(Nominal, testWriteTruncatesExisting) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteTruncatesExisting();
+}
+
 TEST(Nominal, testTimeout) {
     Svc::FileWorkerTester tester;
     tester.testTimeout();
+}
+
+TEST(Nominal, testPathTooLong) {
+    Svc::FileWorkerTester tester;
+    tester.testPathTooLong();
 }
 
 int main(int argc, char** argv) {

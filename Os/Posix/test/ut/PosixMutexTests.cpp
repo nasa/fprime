@@ -34,6 +34,15 @@ static void testTaskRoutine(void* pointer) {
 
 // Attempt to delete a locked mutex - expect an assertion
 TEST_F(FunctionalityTester, PosixDeleteLockedMutex) {
+// ThreadSanitizer aborts with its own "destroy of a locked mutex" report before the
+// framework assertion fires, so the expected death message never appears
+#if defined(__SANITIZE_THREAD__)
+    GTEST_SKIP() << "Skipped under ThreadSanitizer";
+#elif defined(__has_feature)
+#if __has_feature(thread_sanitizer)
+    GTEST_SKIP() << "Skipped under ThreadSanitizer";
+#endif
+#endif
     Os::Test::Mutex::Tester::LockMutex lock_rule;
     lock_rule.apply(*tester);
     // tester is a unique_ptr, retrieve the raw pointer and attempt to delete the Mutex

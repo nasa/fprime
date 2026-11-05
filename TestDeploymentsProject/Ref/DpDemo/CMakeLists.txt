@@ -16,8 +16,3 @@ register_fprime_library(
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/DpDemo.cpp"
 )
-
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/DpDemo.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/DpDemo.cpp"
-)

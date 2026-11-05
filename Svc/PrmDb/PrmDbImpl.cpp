@@ -9,9 +9,7 @@
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 
 #include <Os/File.hpp>
-extern "C" {
-#include <Utils/Hash/libcrc/lib_crc.h>
-}
+#include <Utils/Hash/Hash.hpp>
 
 #include <cstdio>
 #include <cstring>
@@ -25,11 +23,7 @@ namespace Svc {
 namespace {
 class WorkingBuffer : public Fw::LinearBufferBase {
   public:
-    FwSizeType getCapacity() const { return sizeof(m_buff); }
-
-    U8* getBuffAddr() { return m_buff; }
-
-    const U8* getBuffAddr() const { return m_buff; }
+    WorkingBuffer() : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {}
 
   private:
     // Set to max of parameter buffer + id
@@ -54,6 +48,18 @@ PrmDbImpl::~PrmDbImpl() {}
 void PrmDbImpl::configure(const char* file) {
     FW_ASSERT(file != nullptr);
     this->m_fileName = file;
+}
+
+void PrmDbImpl::configureSandbox(const char* directory) {
+    FW_ASSERT(directory != nullptr);
+    this->m_sandboxDir = directory;
+}
+
+void PrmDbImpl::applySandbox(Os::SandboxedFile& file) const {
+    // Left unconfigured (fail-closed) when configureSandbox() was never called
+    if (this->m_sandboxDir.length() > 0) {
+        file.configure(this->m_sandboxDir.toChar());
+    }
 }
 
 void PrmDbImpl::readParamFile() {
@@ -88,7 +94,7 @@ Fw::ParamValid PrmDbImpl::getPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw
         case Fw::Success::SUCCESS:
             return Fw::ParamValid::VALID;
         default:
-            FW_ASSERT(0, success.e);
+            FW_ASSERT(false, success.e);
             return Fw::ParamValid::INVALID;
     }
 }
@@ -118,28 +124,6 @@ void PrmDbImpl::pingIn_handler(FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
-U32 PrmDbImpl::computeCrc(U32 crc, const BYTE* buff, FwSizeType size) {
-    // Note: The crc parameter accepts any U32 value as valid input.
-    // This is correct behavior for CRC32 accumulation functions where:
-    // - Initial CRC values are typically 0x00000000 or 0xFFFFFFFF
-    // - Intermediate CRC values (from prior computeCrc calls) can be any U32 value
-
-    // Check for null pointer before dereferencing
-    if (buff == nullptr) {
-        // Return the input CRC unchanged if buffer is null
-        return crc;
-    }
-
-    // Check for zero size to avoid unnecessary processing
-    if (size == 0) {
-        return crc;
-    }
-    for (FwSizeType byte = 0; byte < size; byte++) {
-        crc = static_cast<U32>(update_crc_32(crc, static_cast<char>(buff[byte])));
-    }
-    return crc;
-}
-
 void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Reject PRM_SAVE_FILE command during non-idle file load states
     if (m_state != PrmDbFileLoadState::IDLE) {
@@ -150,7 +134,8 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     FW_ASSERT(this->m_fileName.length() > 0);
 
-    Os::File paramFile;
+    Os::SandboxedFile paramFile;
+    this->applySandbox(paramFile);
     WorkingBuffer buff;
 
     Os::File::Status stat = paramFile.open(this->m_fileName.toChar(), Os::File::OPEN_WRITE, Os::File::OVERWRITE);
@@ -161,9 +146,10 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     }
 
     // write placeholder for the CRC
-    U32 crc = 0xFFFFFFFF;
+    Utils::Hash crc;
+    U32 crcInitial = 0xFFFFFFFF;
     buff.resetSer();
-    Fw::SerializeStatus serStat = buff.serializeFrom(crc);
+    Fw::SerializeStatus serStat = buff.serializeFrom(crcInitial);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
     FwSizeType writeSize = static_cast<FwSizeType>(buff.getSize());
     stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
@@ -185,24 +171,10 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     for (const auto& entry : *db) {
         // write delimiter
         static const U8 delim = PRMDB_ENTRY_DELIMITER;
-        writeSize = static_cast<FwSizeType>(sizeof(delim));
-        stat = paramFile.write(&delim, writeSize, Os::File::WaitType::WAIT);
-        if (stat != Os::File::OP_OK) {
-            this->unLock();
-            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER, static_cast<I32>(numRecords), stat);
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        if (!this->writeSaveFileChunk(paramFile, &delim, sizeof(delim), PrmWriteError::DELIMITER,
+                                      PrmWriteError::DELIMITER_SIZE, numRecords, opCode, cmdSeq, crc)) {
             return;
         }
-        if (writeSize != sizeof(delim)) {
-            this->unLock();
-            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER_SIZE, static_cast<I32>(numRecords),
-                                                   static_cast<I32>(writeSize));
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-            return;
-        }
-
-        // add delimiter to CRC
-        crc = this->computeCrc(crc, &delim, sizeof(delim));
 
         // serialize record size = id field + data
         U32 recordSize = static_cast<U32>(sizeof(FwPrmIdType) + entry.getValue().getSize());
@@ -214,24 +186,10 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
         // write record size
-        writeSize = static_cast<FwSizeType>(buff.getSize());
-        stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
-        if (stat != Os::File::OP_OK) {
-            this->unLock();
-            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE, static_cast<I32>(numRecords), stat);
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        if (!this->writeSaveFileChunk(paramFile, buff.getBuffAddr(), buff.getSize(), PrmWriteError::RECORD_SIZE,
+                                      PrmWriteError::RECORD_SIZE_SIZE, numRecords, opCode, cmdSeq, crc)) {
             return;
         }
-        if (writeSize != sizeof(recordSize)) {
-            this->unLock();
-            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE_SIZE, static_cast<I32>(numRecords),
-                                                   static_cast<I32>(writeSize));
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-            return;
-        }
-
-        // add recordSize to CRC
-        crc = this->computeCrc(crc, buff.getBuffAddr(), writeSize);
 
         // reset buffer
         buff.resetSer();
@@ -243,45 +201,17 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
         // write parameter ID
-        writeSize = static_cast<FwSizeType>(buff.getSize());
-        stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
-        if (stat != Os::File::OP_OK) {
-            this->unLock();
-            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID, static_cast<I32>(numRecords), stat);
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        if (!this->writeSaveFileChunk(paramFile, buff.getBuffAddr(), buff.getSize(), PrmWriteError::PARAMETER_ID,
+                                      PrmWriteError::PARAMETER_ID_SIZE, numRecords, opCode, cmdSeq, crc)) {
             return;
         }
-        if (writeSize != static_cast<FwSizeType>(buff.getSize())) {
-            this->unLock();
-            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID_SIZE, static_cast<I32>(numRecords),
-                                                   static_cast<I32>(writeSize));
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-            return;
-        }
-
-        // add parameter ID to CRC
-        crc = this->computeCrc(crc, buff.getBuffAddr(), writeSize);
 
         // write serialized parameter value
-
-        writeSize = static_cast<FwSizeType>(entry.getValue().getSize());
-        stat = paramFile.write(entry.getValue().getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
-        if (stat != Os::File::OP_OK) {
-            this->unLock();
-            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE, static_cast<I32>(numRecords), stat);
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        if (!this->writeSaveFileChunk(paramFile, entry.getValue().getBuffAddr(), entry.getValue().getSize(),
+                                      PrmWriteError::PARAMETER_VALUE, PrmWriteError::PARAMETER_VALUE_SIZE, numRecords,
+                                      opCode, cmdSeq, crc)) {
             return;
         }
-        if (writeSize != static_cast<FwSizeType>(entry.getValue().getSize())) {
-            this->unLock();
-            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE_SIZE, static_cast<I32>(numRecords),
-                                                   static_cast<I32>(writeSize));
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-            return;
-        }
-
-        // add serialized parameter value to crc
-        crc = this->computeCrc(crc, entry.getValue().getBuffAddr(), writeSize);
 
         numRecords++;
     }
@@ -306,7 +236,10 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         return;
     }
     buff.resetSer();
-    serStat = buff.serializeFrom(crc);
+    U32 crcFinal = 0;
+    crc.finalize(crcFinal);
+    crcFinal = ~crcFinal;
+    serStat = buff.serializeFrom(crcFinal);
 
     FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
     writeSize = static_cast<FwSizeType>(buff.getSize());
@@ -330,14 +263,50 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+bool PrmDbImpl::writeSaveFileChunk(Os::SandboxedFile& paramFile,
+                                   const U8* data,
+                                   FwSizeType size,
+                                   PrmWriteError::T statusStage,
+                                   PrmWriteError::T sizeStage,
+                                   U32 numRecords,
+                                   FwOpcodeType opCode,
+                                   U32 cmdSeq,
+                                   Utils::Hash& crc) {
+    FwSizeType writeSize = size;
+    Os::File::Status stat = paramFile.write(data, writeSize, Os::File::WaitType::WAIT);
+    if (stat != Os::File::OP_OK) {
+        this->unLock();
+        this->log_WARNING_HI_PrmFileWriteError(statusStage, static_cast<I32>(numRecords), stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return false;
+    }
+    if (writeSize != size) {
+        this->unLock();
+        this->log_WARNING_HI_PrmFileWriteError(sizeStage, static_cast<I32>(numRecords), static_cast<I32>(writeSize));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return false;
+    }
+    if (data != nullptr && writeSize != 0) {
+        crc.update(data, writeSize);
+    }
+    return true;
+}
+
 void PrmDbImpl::PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode,
                                          U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
-                                         PrmDb_Merge merge) {
+                                         const PrmDb_Merge& merge) {
     // Reject PRM_LOAD_FILE command during non-idle file load states
     if (m_state != PrmDbFileLoadState::IDLE) {
         this->log_WARNING_LO_PrmDbFileLoadInvalidAction(m_state, PrmDb_PrmLoadAction::LOAD_FILE_COMMAND);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
+        return;
+    }
+
+    // Reject an empty file name before touching the staging database
+    if (fileName.length() == 0) {
+        this->log_WARNING_HI_PrmDbFileLoadFailed();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
 
@@ -405,8 +374,8 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
     Fw::String dbString = getDbString(dbType);
 
-    // load file. FIXME: Put more robust file checking, such as a CRC.
-    Os::File paramFile;
+    Os::SandboxedFile paramFile;
+    this->applySandbox(paramFile);
 
     Os::File::Status stat = paramFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
@@ -463,6 +432,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     U32 recordNumTotal = 0;
     U32 recordNumAdded = 0;
     U32 recordNumUpdated = 0;
+    U32 recordNumDropped = 0;
 
     for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
         U8 delimiter;
@@ -471,8 +441,9 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
         // read delimiter
         Os::File::Status fStat = paramFile.read(&delimiter, readSize, Os::File::WaitType::WAIT);
 
-        // check for end of file (read size 0)
-        if (0 == readSize) {
+        // check for end of file (successful read of size 0); a failed read can
+        // also yield size 0 and must not be mistaken for a clean EOF
+        if ((Os::File::OP_OK == fStat) && (0 == readSize)) {
             break;
         }
 
@@ -520,7 +491,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
         // sanity check value. It can't be larger than the maximum parameter buffer size + id
         // or smaller than the record id
-        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32)) or (recordSize < sizeof(U32))) {
+        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwPrmIdType)) or (recordSize < sizeof(FwPrmIdType))) {
             this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_VALUE, static_cast<I32>(recordNumTotal),
                                                   static_cast<I32>(recordSize));
             return PrmLoadStatus::ERROR;
@@ -579,8 +550,14 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
         if (updateStatus == NO_SLOTS) {
             this->log_WARNING_HI_PrmDbFull(parameterId);
+            recordNumDropped++;
         }
         recordNumTotal++;
+    }
+
+    // Dropped records mean the database does not reflect the file: report an error
+    if (recordNumDropped > 0) {
+        return PrmLoadStatus::ERROR;
     }
 
     this->log_ACTIVITY_HI_PrmFileLoadComplete(dbString, recordNumTotal, recordNumAdded, recordNumUpdated);

@@ -9,10 +9,15 @@ add_compile_options(
     -Wno-conversion
     -Wno-double-promotion
 )
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentImpl.cpp"
-
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentImpl.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/RecvBuff.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentImpl.hpp"
+  DEPENDS
+    Os
+    Fw_Cmd
 )
-set(MOD_DEPS "Os" "Fw/Cmd")
-register_fprime_module()

@@ -106,9 +106,7 @@ void ComStubTester ::test_retry_async() {
     U8 storage[MAX_ITERS][8];
     Fw::Buffer buffers[MAX_ITERS];
     for (FwIndexType i = 0; i < MAX_ITERS; i++) {
-        buffers[i].setData(storage[i]);
-        buffers[i].setSize(sizeof(storage[i]));
-        buffers[i].setContext(static_cast<U32>(i));
+        buffers[i].set(storage[i], sizeof(storage[i]), static_cast<U32>(i));
         this->fill(buffers[i]);
     }
     // Retrying for as many times as the RETRY_LIMIT should be ok
@@ -182,9 +180,7 @@ void ComStubTester ::test_retry_reset_async() {
     U8 storage[MAX_ITERS][8];
     Fw::Buffer buffers[MAX_ITERS];
     for (FwIndexType i = 0; i < MAX_ITERS; i++) {
-        buffers[i].setData(storage[i]);
-        buffers[i].setSize(sizeof(storage[i]));
-        buffers[i].setContext(static_cast<U32>(i));
+        buffers[i].set(storage[i], sizeof(storage[i]), static_cast<U32>(i));
         this->fill(buffers[i]);
     }
 

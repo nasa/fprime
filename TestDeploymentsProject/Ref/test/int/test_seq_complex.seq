@@ -1,0 +1,10 @@
+; Let's try sequence with complex arguments too!
+
+; Simple struct
+R00:00:00 Ref.typeDemo.CHOICE_PAIR {firstChoice: ONE, secondChoice: TWO}
+
+; Simple Array
+R00:00:00 Ref.typeDemo.CHOICES [TWO, BLUE]
+
+; A complex struct of structs and arrays
+R00:00:00 Ref.typeDemo.GLUTTON_OF_CHOICE {tooManyChoices: [[ONE, BLUE], [TWO, RED]], separateChoice: ONE, choicePair: {firstChoice: ONE, secondChoice: ONE}, choiceAsMemberArray: [2, 5]}

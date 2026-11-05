@@ -29,9 +29,24 @@ TEST(FileDownlink, DownlinkPartial) {
     tester.downlinkPartial();
 }
 
+TEST(FileDownlink, DownlinkPartialOffsetLengthOverflow) {
+    Svc::FileDownlinkTester tester;
+    tester.downlinkPartialOffsetLengthOverflow();
+}
+
+TEST(FileDownlink, SendDataPacketRejectsExhaustedRange) {
+    Svc::FileDownlinkTester tester;
+    tester.sendDataPacketRejectsExhaustedRange();
+}
+
 TEST(FileDownlink, SendFilePort) {
     Svc::FileDownlinkTester tester;
     tester.sendFilePort();
+}
+
+TEST(FileDownlink, SourceOutOfSandbox) {
+    Svc::FileDownlinkTester tester;
+    tester.sourceOutOfSandbox();
 }
 
 int main(int argc, char** argv) {

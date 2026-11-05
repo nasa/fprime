@@ -36,6 +36,16 @@ TEST(TmFramer, testBufferOwnershipState) {
     tester.testBufferOwnershipState();
 }
 
+TEST(TmFramer, testFirstHeaderPointerFromContext) {
+    Svc::Ccsds::TmFramerTester tester;
+    tester.testFirstHeaderPointerFromContext();
+}
+
+TEST(TmFramer, testPartialDataFieldAsserts) {
+    Svc::Ccsds::TmFramerTester tester;
+    tester.testPartialDataFieldAsserts();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

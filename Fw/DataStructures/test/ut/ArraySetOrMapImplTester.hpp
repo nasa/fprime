@@ -19,7 +19,7 @@ class ArraySetOrMapImplTester {
   public:
     using Entry = SetOrMapImplEntry<KE, VN>;
 
-    ArraySetOrMapImplTester<KE, VN>(const ArraySetOrMapImpl<KE, VN>& impl) : m_impl(impl) {}
+    ArraySetOrMapImplTester(const ArraySetOrMapImpl<KE, VN>& impl) : m_impl(impl) {}
 
     const ExternalArray<Entry>& getEntries() const { return this->m_impl.m_entries; }
 

@@ -2,7 +2,7 @@
 
 The manager/worker pattern is used to perform long-running background work within a component that needs to remain highly responsive to the rest of the system. It is an adoption of the "worker thread" pattern (commonly seen in Computer Science) into the F Prime architecture.
 
-The fprime-examples repository provides an example of the [Manager/Worker Pattern](http://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker).
+The fprime-examples repository provides an example of the [Manager/Worker Pattern](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker).
 
 ## Applicability
 
@@ -148,7 +148,7 @@ instance worker: ManagerWorker.Worker base id 0x1000 \
 
 Standard F Prime [Unit Testing](../overview/unit-testing.md) can be applied to test each component individually. However, this pattern typically requires integration testing to ensure that the manager/worker perform in-unison.
 
-** Manager Response Testing **
+**Manager Response Testing**
 ```
 def test_manager_response(fprime_test_api):
     """ Test that the manager remains responsive during work"""

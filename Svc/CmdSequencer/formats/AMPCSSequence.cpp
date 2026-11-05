@@ -10,12 +10,10 @@
 // ======================================================================
 
 #include "Svc/CmdSequencer/formats/AMPCSSequence.hpp"
+#include <Utils/Hash/Hash.hpp>
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Os/FileSystem.hpp"
-extern "C" {
-#include "Utils/Hash/libcrc/lib_crc.h"
-}
 
 namespace Svc {
 
@@ -23,10 +21,16 @@ AMPCSSequence ::AMPCSSequence(CmdSequencerComponentImpl& component) : CmdSequenc
 
 bool AMPCSSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     // Make sure there is a buffer allocated
-    FW_ASSERT(this->m_buffer.getBuffAddr());
+    FW_ASSERT(this->m_buffer.getBuffAddr() != nullptr);
 
-    Fw::CmdStringArg crcFileName(fileName);
-    crcFileName += ".CRC32";
+    Fw::FileNameString crcFileName;
+    const Fw::FormatStatus formatStatus = crcFileName.format("%s.CRC32", fileName.toChar());
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        // format() failed; OVERFLOWED when the .CRC32 suffix does not fit in FileNameStringSize
+        this->setFileName(fileName);
+        this->m_events.fileInvalid(CmdSequencer_FileReadStage::READ_SEQ_CRC, static_cast<I32>(formatStatus));
+        return false;
+    }
 
     this->m_header.m_timeBase = TimeBase::TB_DONT_CARE;
     this->m_header.m_timeContext = FW_CONTEXT_DONT_CARE;
@@ -38,7 +42,7 @@ bool AMPCSSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     return status;
 }
 
-bool AMPCSSequence ::readCRCFile(Fw::CmdStringArg& crcFileName) {
+bool AMPCSSequence ::readCRCFile(const Fw::ConstStringBase& crcFileName) {
     bool result;
 
     this->setFileName(crcFileName);
@@ -96,8 +100,9 @@ bool AMPCSSequence ::readSequenceFile(const Fw::ConstStringBase& seqFileName) {
 
 bool AMPCSSequence ::validateCRC() {
     bool result = true;
-    if (this->m_crc.m_stored != this->m_crc.m_computed) {
-        this->m_events.fileCRCFailure(this->m_crc.m_stored, this->m_crc.m_computed);
+    U32 computed = this->m_crc.finalize();
+    if (this->m_crc.m_stored != computed) {
+        this->m_events.fileCRCFailure(this->m_crc.m_stored, computed);
         result = false;
     }
     return result;
@@ -119,6 +124,10 @@ bool AMPCSSequence ::validateRecords() {
             this->m_events.recordInvalid(numRecords, status);
             return false;
         }
+    }
+    if (numRecords == 0) {
+        this->m_events.noRecords();
+        return false;
     }
     // Set the number of records
     this->m_header.m_numRecords = numRecords;
@@ -190,7 +199,6 @@ bool AMPCSSequence ::readOpenSequenceFile() {
         FW_ASSERT(buffLen == this->m_header.m_fileSize, static_cast<FwAssertArgType>(buffLen),
                   static_cast<FwAssertArgType>(this->m_header.m_fileSize));
         this->m_crc.update(buffAddr, buffLen);
-        this->m_crc.finalize();
     }
     return status;
 }
@@ -302,8 +310,13 @@ Fw::SerializeStatus AMPCSSequence ::deserializeCmdLength(Record::CmdLength::t& c
         // Not enough data left
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
-    if (status == Fw::FW_SERIALIZE_OK and
-        sizeof(FwPacketDescriptorType) + sizeof(U16) + cmdLength > Fw::ComBuffer::SERIALIZED_SIZE) {
+    // The translated record occupies the packet descriptor, the zero-extension bytes prepended to
+    // the two-byte AMPCS opcode, and the record body. It must fit the ComBuffer capacity:
+    // SERIALIZED_SIZE is the capacity plus the stored length, and comparing against it admits
+    // records that setBuffLen then rejects, asserting in translateCommand
+    const FwSizeType translatedSize =
+        sizeof(FwPacketDescriptorType) + (sizeof(FwOpcodeType) - 2) + static_cast<FwSizeType>(cmdLength);
+    if (status == Fw::FW_SERIALIZE_OK and translatedSize > FW_COM_BUFFER_MAX_SIZE) {
         // Record size is too big for com buffer
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
@@ -318,7 +331,7 @@ Fw::SerializeStatus AMPCSSequence ::translateCommand(Fw::ComBuffer& comBuffer, c
     Fw::SerializeStatus status = comBuffer.serializeFrom(cmdDescriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // Zero-extend the two-byte AMPCS opcode by (sizeof(FwOpcodeType) - 2) bytes
-    FW_ASSERT(sizeof(FwOpcodeType) >= 2);
+    static_assert(sizeof(FwOpcodeType) >= 2, "FwOpcodeType must be at least two bytes wide");
     U32 sizeOfZeros = 0;
     const FwIndexType bytesToExtend = sizeof(FwOpcodeType) - 2;
     const U8 zeros = 0;

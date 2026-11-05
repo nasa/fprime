@@ -12,6 +12,7 @@
  * in embedded systems.
  */
 
+namespace {
 // Define an Assert handler
 class TestAssertHook : public Fw::AssertHook {
   public:
@@ -30,6 +31,11 @@ class TestAssertHook : public Fw::AssertHook {
         this->m_lineNo = lineNo;
         this->m_numArgs = numArgs;
         this->m_arg1 = arg1;
+        this->m_arg2 = arg2;
+        this->m_arg3 = arg3;
+        this->m_arg4 = arg4;
+        this->m_arg5 = arg5;
+        this->m_arg6 = arg6;
     };
 
     void doAssert() { this->m_asserted = true; }
@@ -41,6 +47,16 @@ class TestAssertHook : public Fw::AssertHook {
     FwSizeType getNumArgs() { return this->m_numArgs; }
 
     FwAssertArgType getArg1() { return this->m_arg1; }
+
+    FwAssertArgType getArg2() { return this->m_arg2; }
+
+    FwAssertArgType getArg3() { return this->m_arg3; }
+
+    FwAssertArgType getArg4() { return this->m_arg4; }
+
+    FwAssertArgType getArg5() { return this->m_arg5; }
+
+    FwAssertArgType getArg6() { return this->m_arg6; }
 
     bool asserted() {
         bool didAssert = this->m_asserted;
@@ -59,8 +75,14 @@ class TestAssertHook : public Fw::AssertHook {
     FwSizeType m_lineNo = 0;
     FwSizeType m_numArgs = 0;
     FwAssertArgType m_arg1 = 0;
+    FwAssertArgType m_arg2 = 0;
+    FwAssertArgType m_arg3 = 0;
+    FwAssertArgType m_arg4 = 0;
+    FwAssertArgType m_arg5 = 0;
+    FwAssertArgType m_arg6 = 0;
     bool m_asserted = false;
 };
+}  // namespace
 
 // Test that FW_CASSERT_1 macro compiles and works correctly when true
 TEST(CAssertTest, CAssert1Macro) {
@@ -124,6 +146,60 @@ TEST(CAssertTest, CAssert1MacroFailure) {
     EXPECT_EQ(hook.getArg1(), static_cast<FwAssertArgType>(testValue));
 
     // Deregister hook
+    hook.deregisterHook();
+
+#pragma GCC diagnostic pop
+#else
+    GTEST_SKIP() << "Assertions are disabled (FW_ASSERT_LEVEL == FW_NO_ASSERT), skipping assert failure test";
+#endif
+}
+
+// Test that the multi-argument FW_CASSERT_N macros forward all their arguments to the hook
+TEST(CAssertTest, CAssertMultiArgMacroFailure) {
+#if FW_ASSERT_LEVEL != FW_NO_ASSERT
+// Disable old-style cast warnings for this test since we're testing C macros
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+
+    TestAssertHook hook;
+    hook.registerHook();
+
+    // FW_CASSERT_2
+    FW_CASSERT_2(false, 1, 2);
+    EXPECT_TRUE(hook.asserted());
+    EXPECT_EQ(hook.getNumArgs(), 2U);
+    EXPECT_EQ(hook.getArg1(), static_cast<FwAssertArgType>(1));
+    EXPECT_EQ(hook.getArg2(), static_cast<FwAssertArgType>(2));
+
+    // FW_CASSERT_3
+    FW_CASSERT_3(false, 1, 2, 3);
+    EXPECT_TRUE(hook.asserted());
+    EXPECT_EQ(hook.getNumArgs(), 3U);
+    EXPECT_EQ(hook.getArg3(), static_cast<FwAssertArgType>(3));
+
+    // FW_CASSERT_4
+    FW_CASSERT_4(false, 1, 2, 3, 4);
+    EXPECT_TRUE(hook.asserted());
+    EXPECT_EQ(hook.getNumArgs(), 4U);
+    EXPECT_EQ(hook.getArg4(), static_cast<FwAssertArgType>(4));
+
+    // FW_CASSERT_5
+    FW_CASSERT_5(false, 1, 2, 3, 4, 5);
+    EXPECT_TRUE(hook.asserted());
+    EXPECT_EQ(hook.getNumArgs(), 5U);
+    EXPECT_EQ(hook.getArg5(), static_cast<FwAssertArgType>(5));
+
+    // FW_CASSERT_6
+    FW_CASSERT_6(false, 1, 2, 3, 4, 5, 6);
+    EXPECT_TRUE(hook.asserted());
+    EXPECT_EQ(hook.getNumArgs(), 6U);
+    EXPECT_EQ(hook.getArg1(), static_cast<FwAssertArgType>(1));
+    EXPECT_EQ(hook.getArg2(), static_cast<FwAssertArgType>(2));
+    EXPECT_EQ(hook.getArg3(), static_cast<FwAssertArgType>(3));
+    EXPECT_EQ(hook.getArg4(), static_cast<FwAssertArgType>(4));
+    EXPECT_EQ(hook.getArg5(), static_cast<FwAssertArgType>(5));
+    EXPECT_EQ(hook.getArg6(), static_cast<FwAssertArgType>(6));
+
     hook.deregisterHook();
 
 #pragma GCC diagnostic pop

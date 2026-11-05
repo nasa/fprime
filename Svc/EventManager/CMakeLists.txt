@@ -13,6 +13,8 @@ register_fprime_library(
     "${CMAKE_CURRENT_LIST_DIR}/EventManager.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/EventManager.fpp"
+  DEPENDS
+    Svc_Types_EventSeverityFilter
 )
 
 ### UTs ###

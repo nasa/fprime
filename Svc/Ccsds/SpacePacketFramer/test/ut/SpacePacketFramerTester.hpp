@@ -47,6 +47,8 @@ class SpacePacketFramerTester final : public SpacePacketFramerGTestBase {
     void testDataReturnPassthrough();
     void testNominalFraming();
     void testOversizedAllocatorBufferIsTrimmed();
+    void testInvalidAllocationEmitsComStatus();
+    void testUndersizedAllocationEmitsComStatus();
 
   private:
     // ----------------------------------------------------------------------
@@ -82,8 +84,10 @@ class SpacePacketFramerTester final : public SpacePacketFramerGTestBase {
 
     U16 m_nextSeqCount;  // Sequence count to be returned by getApidSeqCount output port
 
-    // Flag read by from_bufferAllocate_handler to choose which path to take
+    // Flags read by from_bufferAllocate_handler to choose which path to take
     bool m_useOversizedAlloc = false;
+    bool m_useInvalidAlloc = false;
+    bool m_useUndersizedAlloc = false;
 };
 
 }  // namespace Ccsds

@@ -15,6 +15,7 @@ register_os_implementation(Cpu Stub)
 register_os_implementation(Memory Stub)
 register_os_implementation(Queue Stub)
 register_os_implementation(RawTime Stub)
+register_os_implementation(CountingSemaphore Stub)
 
 register_fprime_implementation(
     Os_File_None
@@ -48,6 +49,7 @@ register_fprime_ut(
     Os_Cpu_Stub
     Os_Memory_Stub
     Os_RawTime_Stub
+    Os_CountingSemaphore_Stub
 )
 if (TARGET StubTest)
     target_compile_options(StubTest PRIVATE -Wno-conversion)

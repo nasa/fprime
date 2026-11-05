@@ -15,6 +15,7 @@ comments with simple GitHub Markdown. It looks for blocks following the pattern:
 
 @author mstarch
 """
+
 import enum
 import os
 import re
@@ -74,7 +75,6 @@ def process_file(file_name, outdir):
     # Open both files, and loop over all the lines reading and writing each
     with open(file_name, "r") as in_file_handle:
         with open(out_fn, "w") as out_file_handle:
-            state = DocState.SEARCH
             next_state = DocState.SEARCH
             out_file_handle.write(
                 "**Note:** auto-generated from comments in: {0}\n\n".format(file_name)

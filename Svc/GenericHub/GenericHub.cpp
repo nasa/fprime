@@ -61,8 +61,9 @@ void GenericHub::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuff
 
 void GenericHub ::cmdDispIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     Fw::SerializeStatus status;
-    // Buffer to send and a buffer used to write to it
-    U8 buffer[Fw::ComBuffer::SERIALIZED_SIZE];
+    // Buffer to send and a buffer used to write to it. Must hold a maximum-size
+    // command buffer (serialized without its length token) plus the context word.
+    U8 buffer[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)];
 
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
@@ -202,7 +203,9 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
         } else if (type == HUB_TYPE_CMD_DISP) {
             U32 context;
             // Check that the size is sufficient for the context
-            if (rawSize < sizeof(U32) || (rawSize - sizeof(U32)) > Fw::ComBuffer::SERIALIZED_SIZE) {
+            // The wrapped command must fit the ComBuffer capacity; SERIALIZED_SIZE is the capacity
+            // plus the stored length and would admit sizes the ComBuffer cannot hold
+            if (rawSize < sizeof(U32) || (rawSize - sizeof(U32)) > FW_COM_BUFFER_MAX_SIZE) {
                 status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
             }
             // Shift the command buffer out and deserialize the context
@@ -261,7 +264,7 @@ void GenericHub::eventIn_handler(const FwIndexType portNum,
                                  Fw::LogBuffer& args) {
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     U8 buffer[sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + Fw::LogSeverity::SERIALIZED_SIZE +
-              FW_LOG_BUFFER_MAX_SIZE];
+              sizeof(FwSizeStoreType) + FW_LOG_BUFFER_MAX_SIZE]{};
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
     status = serializer.serializeFrom(id);
@@ -278,7 +281,7 @@ void GenericHub::eventIn_handler(const FwIndexType portNum,
 
 void GenericHub::tlmIn_handler(const FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
-    U8 buffer[sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + FW_TLM_BUFFER_MAX_SIZE];
+    U8 buffer[sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwSizeStoreType) + FW_TLM_BUFFER_MAX_SIZE]{};
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();
     status = serializer.serializeFrom(id);

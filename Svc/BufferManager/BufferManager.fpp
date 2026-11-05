@@ -14,7 +14,7 @@ module Svc {
     guarded input port bufferGetCallee: Fw.BufferGet
 
     @ Schedule input port
-    sync input port schedIn: Svc.Sched
+    guarded input port schedIn: Svc.Sched
 
     # ----------------------------------------------------------------------
     # Special ports

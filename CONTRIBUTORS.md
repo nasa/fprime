@@ -1,7 +1,7 @@
 **NOTE:** a full list of contributors is here <https://github.com/nasa/fprime/graphs/contributors>.
 
 This file contains a list of contributors and authors prior to proper tracking using the publicly available GitHub. The above link is a better representation
-of F´ contributors since the transition to open source.  This file will be removed in future releases.
+of F´ contributors since the transition to open source.
 
 JPL Contributors to the F' Software Framework:
 

@@ -7,11 +7,15 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
+#include <atomic>
+#include <random>
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Fw/Types/WaitEnumAc.hpp"
 #include "Os/File.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
 #include "Svc/FpySequencer/FooterSerializableAc.hpp"
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
@@ -21,6 +25,7 @@
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
+#include "Utils/Hash/Hash.hpp"
 #include "config/FppConstantsAc.hpp"
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
@@ -64,6 +69,8 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_MemCmpDirective memCmp;
         FpySequencer_StackCmdDirective stackCmd;
         FpySequencer_PushTimeDirective pushTime;
+        FpySequencer_SetSeedDirective setSeed;
+        FpySequencer_PushRandDirective pushRand;
         FpySequencer_GetFieldDirective getField;
         FpySequencer_PeekDirective peek;
         FpySequencer_StoreRelDirective storeRel;
@@ -73,6 +80,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_StoreAbsDirective storeAbs;
         FpySequencer_StoreAbsConstOffsetDirective storeAbsConstOffset;
         FpySequencer_PopEventDirective popEvent;
+        FpySequencer_PopSerializableDirective popSerializable;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -144,15 +152,15 @@ class FpySequencer : public FpySequencerComponentBase {
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        Svc::BlockState block              //!< Return command status when complete or not
+                        const Svc::BlockState& block       //!< Return command status when complete or not
                         ) override;
 
     //! Handler implementation for command RUN_ARGS
     void RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                              U32 cmdSeq,                        //!< The command sequence number
                              const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                             Svc::BlockState block,             //!< Return command status when complete or not
-                             Svc::SeqArgs args                  //!< Arguments to pass to the sequencer
+                             const Svc::BlockState& block,      //!< Return command status when complete or not
+                             const Svc::SeqArgs& args           //!< Arguments to pass to the sequencer
                              ) override;
 
     //! Handler for command VALIDATE
@@ -169,15 +177,15 @@ class FpySequencer : public FpySequencerComponentBase {
     void VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                                   U32 cmdSeq,                        //!< The command sequence number
                                   const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                                  Svc::SeqArgs buffer                //!< Arguments to pass to the sequencer
+                                  const Svc::SeqArgs& buffer         //!< Arguments to pass to the sequencer
                                   ) override;
 
     //! Handler implementation for command RUN_VALIDATED
     //!
     //! Must be called after VALIDATE. Runs the sequence that was validated.
-    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,   //!< The opcode
-                                  U32 cmdSeq,            //!< The command sequence number
-                                  Svc::BlockState block  //!< Return command status when complete or not
+    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,          //!< The opcode
+                                  U32 cmdSeq,                   //!< The command sequence number
+                                  const Svc::BlockState& block  //!< Return command status when complete or not
                                   ) override;
 
     //! Handler for command CANCEL
@@ -531,92 +539,141 @@ class FpySequencer : public FpySequencerComponentBase {
                           U32 context           //!< The call order
                           ) override;
 
+    //! Internal interface handler for checkTimersInternal
+    void checkTimersInternal_internalInterfaceHandler() override;
+
+    //! Internal interface handler for tlmWriteInternal
+    void tlmWriteInternal_internalInterfaceHandler() override;
+
+    //! Overflow hook for tlmWriteInternal
+    void tlmWriteInternal_overflowHook() override;
+
     //! Internal interface handler for directive_waitAbs
-    void directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) override;
+    void directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive,
+                                                    U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_waitRel
-    void directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) override;
+    void directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive,
+                                                    U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_goto
-    void directive_goto_internalInterfaceHandler(const Svc::FpySequencer_GotoDirective& directive) override;
+    void directive_goto_internalInterfaceHandler(const Svc::FpySequencer_GotoDirective& directive,
+                                                 U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_if
-    void directive_if_internalInterfaceHandler(const Svc::FpySequencer_IfDirective& directive) override;
+    void directive_if_internalInterfaceHandler(const Svc::FpySequencer_IfDirective& directive,
+                                               U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_noOp
-    void directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) override;
+    void directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive,
+                                                 U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_pushTlmVal
-    void directive_pushTlmVal_internalInterfaceHandler(const Svc::FpySequencer_PushTlmValDirective& directive) override;
+    void directive_pushTlmVal_internalInterfaceHandler(const Svc::FpySequencer_PushTlmValDirective& directive,
+                                                       U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_pushTlmValAndTime
     void directive_pushTlmValAndTime_internalInterfaceHandler(
-        const Svc::FpySequencer_PushTlmValAndTimeDirective& directive) override;
+        const Svc::FpySequencer_PushTlmValAndTimeDirective& directive,
+        U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_pushPrm
-    void directive_pushPrm_internalInterfaceHandler(const Svc::FpySequencer_PushPrmDirective& directive) override;
+    void directive_pushPrm_internalInterfaceHandler(const Svc::FpySequencer_PushPrmDirective& directive,
+                                                    U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_constCmd
-    void directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive) override;
+    void directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive,
+                                                     U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_stackOp
-    void directive_stackOp_internalInterfaceHandler(const Svc::FpySequencer_StackOpDirective& directive) override;
+    void directive_stackOp_internalInterfaceHandler(const Svc::FpySequencer_StackOpDirective& directive,
+                                                    U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_exit
-    void directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) override;
+    void directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive,
+                                                 U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_allocate
-    void directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) override;
+    void directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive,
+                                                     U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_storeRelConstOffset
     void directive_storeRelConstOffset_internalInterfaceHandler(
-        const Svc::FpySequencer_StoreRelConstOffsetDirective& directive) override;
+        const Svc::FpySequencer_StoreRelConstOffsetDirective& directive,
+        U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_loadRel
-    void directive_loadRel_internalInterfaceHandler(const Svc::FpySequencer_LoadRelDirective& directive) override;
+    void directive_loadRel_internalInterfaceHandler(const Svc::FpySequencer_LoadRelDirective& directive,
+                                                    U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_pushVal
-    void directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive) override;
+    void directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive,
+                                                    U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_discard
-    void directive_discard_internalInterfaceHandler(const Svc::FpySequencer_DiscardDirective& directive) override;
+    void directive_discard_internalInterfaceHandler(const Svc::FpySequencer_DiscardDirective& directive,
+                                                    U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_memCmp
-    void directive_memCmp_internalInterfaceHandler(const Svc::FpySequencer_MemCmpDirective& directive) override;
+    void directive_memCmp_internalInterfaceHandler(const Svc::FpySequencer_MemCmpDirective& directive,
+                                                   U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_stackCmd
-    void directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive) override;
+    void directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive,
+                                                     U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_pushTime
-    void directive_pushTime_internalInterfaceHandler(const Svc::FpySequencer_PushTimeDirective& directive) override;
+    void directive_pushTime_internalInterfaceHandler(const Svc::FpySequencer_PushTimeDirective& directive,
+                                                     U64 sequenceIndex) override;
+
+    //! Internal interface handler for directive_setSeed
+    void directive_setSeed_internalInterfaceHandler(const Svc::FpySequencer_SetSeedDirective& directive,
+                                                    U64 sequenceIndex) override;
+
+    //! Internal interface handler for directive_pushRand
+    void directive_pushRand_internalInterfaceHandler(const Svc::FpySequencer_PushRandDirective& directive,
+                                                     U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_getField
-    void directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) override;
+    void directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive,
+                                                     U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_peek
-    void directive_peek_internalInterfaceHandler(const Svc::FpySequencer_PeekDirective& directive) override;
+    void directive_peek_internalInterfaceHandler(const Svc::FpySequencer_PeekDirective& directive,
+                                                 U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_storeRel
-    void directive_storeRel_internalInterfaceHandler(const Svc::FpySequencer_StoreRelDirective& directive) override;
+    void directive_storeRel_internalInterfaceHandler(const Svc::FpySequencer_StoreRelDirective& directive,
+                                                     U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_call
-    void directive_call_internalInterfaceHandler(const Svc::FpySequencer_CallDirective& directive) override;
+    void directive_call_internalInterfaceHandler(const Svc::FpySequencer_CallDirective& directive,
+                                                 U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_return
-    void directive_return_internalInterfaceHandler(const Svc::FpySequencer_ReturnDirective& directive) override;
+    void directive_return_internalInterfaceHandler(const Svc::FpySequencer_ReturnDirective& directive,
+                                                   U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_loadAbs
-    void directive_loadAbs_internalInterfaceHandler(const Svc::FpySequencer_LoadAbsDirective& directive) override;
+    void directive_loadAbs_internalInterfaceHandler(const Svc::FpySequencer_LoadAbsDirective& directive,
+                                                    U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_storeAbs
-    void directive_storeAbs_internalInterfaceHandler(const Svc::FpySequencer_StoreAbsDirective& directive) override;
+    void directive_storeAbs_internalInterfaceHandler(const Svc::FpySequencer_StoreAbsDirective& directive,
+                                                     U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_storeAbsConstOffset
     void directive_storeAbsConstOffset_internalInterfaceHandler(
-        const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive) override;
+        const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive,
+        U64 sequenceIndex) override;
 
     //! Internal interface handler for directive_popEvent
-    void directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) override;
+    void directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive,
+                                                     U64 sequenceIndex) override;
+
+    //! Internal interface handler for directive_popSerializable
+    void directive_popSerializable_internalInterfaceHandler(const Svc::FpySequencer_PopSerializableDirective& directive,
+                                                            U64 sequenceIndex) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -626,8 +683,20 @@ class FpySequencer : public FpySequencerComponentBase {
 
     void deallocateBuffer(Fw::MemAllocator& allocator);
 
+    //! (Optional) Restrict file access to a directory.
+    //! Sequence files (RUN, VALIDATE and the seqRunIn port) and DUMP_STACK_TO_FILE output files
+    //! whose names resolve outside the directory are rejected with FileOutsideSandbox before the
+    //! file is opened. Until this is called, any path is allowed.
+    //! \param directory the allowed directory (absolute, or relative to CWD)
+    void configureSandbox(const char* directory);
+
   private:
     static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
+
+    //! Check a file name against the configured sandbox directory, if any.
+    //! Emits FileOutsideSandbox on rejection.
+    //! \return true if the file may be opened
+    bool checkSandbox(const Fw::StringBase& fileName);
 
     // allocated at startup
     Fw::ExternalSerializeBuffer m_sequenceBuffer;
@@ -635,11 +704,12 @@ class FpySequencer : public FpySequencerComponentBase {
     FwEnumStoreType m_allocatorId;
 
     // assigned by the user via cmd
-    Fw::String m_sequenceFilePath;
+    // length is FileNameStringSize
+    Fw::FileNameString m_sequenceFilePath;
     // the sequence, loaded in memory
     Fpy::Sequence m_sequenceObj;
     // live running computation of CRC (updated as we read)
-    U32 m_computedCRC;
+    Utils::Hash m_computedCRC;
 
     // Size of arguments read in current sequence. Used for validation between
     // User provided arguments and what is requested of the sequence.
@@ -667,6 +737,15 @@ class FpySequencer : public FpySequencerComponentBase {
     // otherwise, since construction
     U64 m_statementsDispatched;
 
+    const Fw::String NO_SEQ{"<no seq>"};
+
+    // true while a checkTimersInternal message is on the queue. set by the
+    // sync checkTimers handler, cleared by the internal handler
+    std::atomic<bool> m_checkTimersQueued;
+    // true while a tlmWriteInternal message is on the queue. set by the
+    // sync tlmWrite handler, cleared by the internal handler
+    std::atomic<bool> m_tlmWriteQueued;
+
     // the runtime state of the sequence. encapsulates all state
     // needed to run the sequence.
     // this is distinct from the state of the sequencer. the
@@ -686,6 +765,10 @@ class FpySequencer : public FpySequencerComponentBase {
         // the absolute time we should wait for until returning
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
+
+        // RNG state used by PUSH_RAND and SET_SEED directives during this run
+        std::mt19937 rng;
+        bool rngSeeded = false;
 
         Stack stack = Stack();
     } m_runtime;
@@ -742,14 +825,14 @@ class FpySequencer : public FpySequencerComponentBase {
         Fpy::DirectiveId directiveErrorId = Fpy::DirectiveId::INVALID;
     } m_tlm;
 
+    // directory file access is restricted to (resolved, with trailing '/')
+    char m_sandboxDir[Os::FilePathUtils::MAX_PATH_LENGTH];
+    // whether configureSandbox() has been called; until then any path is allowed
+    bool m_sandboxConfigured;
+
     // ----------------------------------------------------------------------
     // Validation state
     // ----------------------------------------------------------------------
-
-    static void updateCrc(U32& crc,              //!< The CRC to update
-                          const U8* buffer,      //!< The buffer
-                          FwSizeType bufferSize  //!< The buffer size
-    );
 
     // loads the sequence in memory, and does header/crc/integrity checks.
     // return SUCCESS if sequence is valid, FAILURE otherwise
@@ -799,6 +882,10 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // return true if state is a substate of RUNNING
     bool isRunningState(State state);
+
+    // return true if a directive dispatched by the given sequence can execute in the current state.
+    // otherwise, log a warning
+    bool checkDirectiveExpected(Fpy::DirectiveId directive, U64 sequenceIndex);
 
     // update a struct containing debug telemetry, or defaults if not in debug break
     void updateDebugTelemetryStruct();
@@ -866,7 +953,6 @@ class FpySequencer : public FpySequencerComponentBase {
     DirectiveError op_fsub();
     DirectiveError op_fmul();
     DirectiveError op_fdiv();
-    DirectiveError op_float_floor_div();
     DirectiveError op_fpow();
     DirectiveError op_flog();
     DirectiveError op_fmod();
@@ -879,6 +965,9 @@ class FpySequencer : public FpySequencerComponentBase {
     DirectiveError op_itrunc_64_8();
     DirectiveError op_itrunc_64_16();
     DirectiveError op_itrunc_64_32();
+    DirectiveError op_ffloor();
+    DirectiveError op_iabs();
+    DirectiveError op_fabs();
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
     Signal allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error);
@@ -894,6 +983,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error);
     Signal stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error);
     Signal pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error);
+    Signal setSeed_directiveHandler(const FpySequencer_SetSeedDirective& directive, DirectiveError& error);
+    Signal pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive, DirectiveError& error);
     Signal getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error);
     Signal peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& error);
     Signal storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive, DirectiveError& error);
@@ -904,6 +995,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
                                                 DirectiveError& error);
     Signal popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error);
+    Signal popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
+                                            DirectiveError& error);
 };
 
 }  // namespace Svc

@@ -29,7 +29,8 @@ typedef enum {
     FAILED_FILE_CRC_OPEN,
     FAILED_FILE_CRC_READ,
     FAILED_FILE_CRC_WRITE,
-    FAILED_FILE_CRC_CHECK
+    FAILED_FILE_CRC_CHECK,
+    FAILED_FILE_NAME_TOO_LONG  //!< filename + hash extension does not fit in Fw::FileNameString
 } crc_stat_t;
 
 crc_stat_t create_checksum_file(const char* const filename);

@@ -15,7 +15,7 @@ ISF-CMDS-002 | The `Svc::CmdSequencer` component shall validate the sequence fil
 ISF-CMDS-003 | The `Svc::CmdSequencer` component shall provide a command to validate the sequence file. | Unit Test | Waiting to validate the file only when running it can cause operational issues
 ISF-CMDS-004 | The `Svc::CmdSequencer` component shall cancel the sequence upon receiving a failed command status. | Unit Test | A sequence should not continue if a command fails since subsequent commands may depend on the outcome
 ISF-CMDS-005 | The `Svc::CmdSequencer` component shall provide a command to cancel the existing sequence | Unit Test | Operator should be able to cancel the sequence if it is hung or needs to be stopped.
-ISF-CMDS-006 | The `Svc::CmdSequencer` component shall provide an overall sequence timeout. | Unit Test | Sequencer should quit if a component fails to send a command response
+ISF-CMDS-006 | The `Svc::CmdSequencer` component shall provide a per-command timeout that restarts for each dispatched command. | Unit Test | Sequencer should quit if a component fails to send a command response
 
 ## 3 Design
 
@@ -44,6 +44,9 @@ schedIn|Svc::Sched|async input|Scheduler input - timed commands will be checked
 comCmdOut|Fw::Com|output|Sends command buffers for each command in sequence
 cmdResponseIn|Fw::CmdResponse|async input|Received status of last dispatched command
 seqRunIn|Svc::CmdSeqIn|async input|Receives requests for running sequences from other components
+seqDispatchIn|Svc::FileDispatch|async input|Receives file dispatches to run sequences
+seqCancelIn|Svc::CmdSeqCancel|async input|Receives requests to cancel the running sequence
+seqStartOut|Svc::CmdSeqIn|output|Notifies that a sequence has started running
 seqDone|Fw::CmdResponse|output|outputs status of sequence run; meant to be used with `seqRunIn`
 
 #### 3.2.2 Command Handlers
@@ -51,7 +54,7 @@ seqDone|Fw::CmdResponse|output|outputs status of sequence run; meant to be used 
 ##### 3.2.2.1 CS_Validate
 The `CS_Validate` command will validate that the format and checksum of a sequence file are correct without executing any commands in the file. This allows operators to validate a file prior to executing it.
 ##### 3.2.2.2 CS_Run
-The `CS_Run` command will execute a sequence. If a prior sequence is still running, it will be canceled. If a command returns a failed status, the sequence will be aborted.
+The `CS_Run` command will execute a sequence. If a prior sequence is still running, the command is rejected with an execution error; the running sequence must complete or be canceled first. If a command returns a failed status, the sequence will be aborted.
 ##### 3.2.2.3 CS_Cancel
 The `CS_Cancel` command will cancel an existing sequence. If there is no sequence currently executing, the command will emit a warning event but not fail.
 ##### 3.2.2.4 CS_Manual
@@ -59,9 +62,11 @@ The `CS_Manual` command will put the sequencer in a manual stepping mode, where 
 ##### 3.2.2.5 CS_Start
 The `CS_Start` command will execute the first command in the sequence in manual mode.
 ##### 3.2.2.6 CS_Step
-The `CS_Step` command will execute subsequent commands after receiving the `CS_Start` command.
+The `CS_Step` command will execute subsequent commands after receiving the `CS_Start` command. If the previously stepped command is a timed command still waiting for its time tag, the command is rejected with an execution error and the `CS_StepRecordPending` event, which reports the pending time tag; the pending command is kept and dispatched by `schedIn` when its time is reached, after which `CS_Step` is accepted again. Until then the sequence cannot be stepped past the pending record; the only way to abandon the wait is `CS_Cancel` (or `seqCancelIn`), which resets the sequence to its first record, so a subsequent `CS_Start` re-issues the commands already stepped.
 ##### 3.2.2.7 CS_Auto
 The `CS_Auto` command will change the sequencing mode from manual to automatic, which means that the sequencer will automatically execute commands upon loading. This command can only be run when there are no currently executing sequences. If a sequence is executing, a `CS_Cancel` followed by a `CS_Auto` will get the sequencer back to executing sequences automatically.
+##### 3.2.2.8 CS_JOIN_WAIT
+The `CS_JOIN_WAIT` command waits for the running sequence to finish before returning its command response. It is intended for use after a `CS_RUN` issued in `NO_BLOCK` mode. If no sequence is running, it emits a warning event and returns OK immediately. If a completion response is already owed to a BLOCK-mode `CS_RUN` caller or a previous `CS_JOIN_WAIT` caller, the command is rejected with an execution error.
 
 #### 3.2.3 Port Handlers
 
@@ -76,9 +81,23 @@ The `cmdResponseIn` port is called when a command in a sequence is completed. If
 <a name="seqRunIn"></a>
 ##### 3.2.3.3 seqRunIn
 
-This port takes a single argument `filename` of type `Fw::String`. In
+This port takes two arguments: `filename`, the sequence file name, and
+`args` of type `Svc.SeqArgs` (currently unused by this component). In
 general, sending `filename` on this port has the same  effect as issuing
-a `CS_Run` command with `filename` as the file name argument.
+a `CS_Run` command with `filename` as the file name argument. The port
+accepts file names up to `FileNameStringSize` characters, as does
+`seqDispatchIn`, while the `CS_Run` file name argument is limited to
+`FW_CMD_STRING_MAX_SIZE` characters. Events carry at most the first 60
+characters of the file name, and the `CS_CurrentSequence` channel at most the
+first `FW_TLM_STRING_MAX_SIZE` characters. If the
+sequencer is in manual stepping mode (see `CS_Manual`), the request is
+rejected: the `CS_InvalidMode` event is emitted and `EXECUTION_ERROR` is
+returned on the `seqDone` port.
+
+Whenever a request on this port (or on `seqDispatchIn`, which runs sequences the
+same way) is rejected, `EXECUTION_ERROR` is returned on `seqDone` only if that
+port is connected, so a topology may drive `seqRunIn` or `seqDispatchIn` without
+wiring `seqDone`.
 
 If `filename` is empty, then `CmdSequencer` runs the sequence stored in the
 sequence buffer, without loading a sequence first. In order for this to work:
@@ -182,7 +201,7 @@ just the fixed-length header).
 
 ##### 3.3.2.3 allocateBuffer
 
-The `allocateBuffer()` public method passes a memory allocator to provide memory for the sequence buffer needed by `cmdSequencer`. The user will provide an instance of a sub-class of `Fw::MemAllocator` that implements memory allocation. An example of this using the heap can be found in `Fw/Types/MallocAllocator.hpp`.
+The `allocateBuffer()` public method passes a memory allocator to provide memory for the sequence buffer needed by `cmdSequencer`. The user will provide an instance of a sub-class of `Fw::MemAllocator` that implements memory allocation. An example of this using the heap can be found in `Fw/Types/MallocAllocator.hpp`. The buffer capacity is the size actually granted by the allocator, which may be smaller than the request. Allocation must return a non-null buffer large enough for a sequence header; otherwise initialization asserts. Files larger than the granted capacity are rejected by the existing file-size checks.
 
 <a name="loadSequence"></a>
 ##### 3.3.2.4 loadSequence (Optional)
@@ -190,7 +209,8 @@ The `allocateBuffer()` public method passes a memory allocator to provide memory
 This function takes a single argument `fileName` of type `Fw::String`.
 When you call this function, `CmdSequencer` loads the sequence file `fileName`
 into its buffer so that you can execute it later by calling
-[`seqRunIn`](#seqRunIn).
+[`seqRunIn`](#seqRunIn). `fileName` can be at most `FileNameStringSize`
+characters long.
 
 This function issues events, so you must connect the event topology before
 calling this function.
@@ -198,6 +218,19 @@ calling this function.
 ##### 3.3.2.5 deallocateBuffer
 
 The `deallocateBuffer()` method is used to deallocate the buffer supplied in `allocateBuffer()` method. It should be called before the destructor.
+
+##### 3.3.2.6 configureSandbox (Optional)
+
+The `configureSandbox()` public method restricts sequence file loads to a directory, in the same way as the
+`Os::SandboxedFile` sandboxes of the file-handling components. The directory may be absolute or relative to the
+current working directory. Once configured, every load (`CS_VALIDATE`, `CS_RUN`, `seqRunIn`, `seqDispatchIn` and
+[`loadSequence`](#loadSequence)) whose file name resolves outside the directory, for example through `..` segments
+or an absolute path elsewhere, is rejected with the `CS_FileOutsideSandbox` event before the file is opened. The
+check runs before the sequence format opens the file, so it applies to every format, including one set with
+`setSequenceFormat`.
+
+Until `configureSandbox()` is called, any path is allowed, which keeps existing deployments unchanged. Call it from
+topology setup code. Path checking is textual and does not follow symbolic links (see `Os::SandboxedFile`).
 
 #### 3.3.3 Data formats
 
@@ -222,7 +255,7 @@ The format for each record is as follows:
 Record Field | Size (bytes) | Description
 ------------ | ------------ | -----------
 Descriptor | 1 | What kind of record it is. 0 = absolute time command, 1 = relative time command, 2 = end of sequence
-Command Time | 8 | Start time of command. Depending on descriptor, will be relative or absolute. First four bytes are seconds of command, second four bytes are microseconds of command.
+Command Time | 8 | Start time of command. Depending on descriptor, will be relative or absolute. First four bytes are seconds of command, second four bytes are microseconds of command (must be less than 1,000,000; otherwise the record is rejected as `FW_DESERIALIZE_FORMAT_ERROR`).
 Record Size | 4 | Size of command buffer
 Command Buffer | >= 4 | Buffer containing command packet descriptor, command opcode, and zero or more serialized arguments.
 
@@ -260,7 +293,18 @@ where:
 
 `MNEMONIC` - Command mnemonic in dictionary
 
-`A1,A2...AN` - any arguments for the command
+`A1,A2...AN` - any arguments for the command. Arguments can be:
+  - Simple types: strings (`"text"`), numbers (`42`), booleans (`true`, `false`)
+  - Arrays: `[value1, value2, ...]`
+  - Structs: `{key1: value1, key2: value2}` (note: keys are unquoted)
+
+Examples:
+```
+R00:00:00 CMD_SIMPLE "string arg", 42, true
+R00:00:00 CMD_ARRAY [1, 2, 3]
+R00:00:00 CMD_STRUCT {field: "value", count: 10}
+R00:00:00 CMD_MIXED "text", [1, 2], {key: "val"}
+```
 
 __Immediate Command:__
 
@@ -275,7 +319,7 @@ __Absolute Command:__
 
 where:
 
-`R` - Relative time descriptor
+`A` - Absolute time descriptor
 
 `YYYY` - Year
 
@@ -291,7 +335,7 @@ where:
 
 `MNEMONIC` - Command mnemonic in dictionary
 
-`A1,A2...AN` - any arguments for the command
+`A1,A2...AN` - any arguments for the command (see argument syntax in Relative Time Command section above)
 
 Note that the time is encoded in UTC with an epoch of 1/1/1970.
 
@@ -327,3 +371,6 @@ Date | Change Description
 2/26/2017|Version for Design/Code Review
 4/6/2017|Version for Unit test
 10/30/2017|Revise design to make sequence format configurable
+09/24/2026|Reject invalid time-tag microseconds and zero-record AMPCS files during validation (#5891)
+09/30/2026|Keep sequence file names up to `FileNameStringSize` characters; reject AMPCS file names that leave no room for `.CRC32` (#5892)
+10/12/2026|Guard `seqDone` on rejected port runs; reject `CS_Step` with `CS_StepRecordPending` while a timed record is pending (#5899)

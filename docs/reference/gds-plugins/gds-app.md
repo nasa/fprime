@@ -2,7 +2,7 @@
 
 GDS App Plugins allow users to extend the functionality of the F Prime Ground Data System by running custom Python applications in a separate process. These plugins are launched and managed by the GDS infrastructure and can be used to integrate new behaviors, data processors, UIs, or bridges to external systems. There are two application types `GdsApp`, which is a general app plugin, and `GdsStandardApp`, which is an app plugin that launches the GDS standard pipeline.
 
-Each GDS App runs independently and a may communicate with the rest of the GDS through inter-process communication. This separation helps isolate potentially blocking or experimental functionality from core GDS processes.
+Each GDS App runs independently and may communicate with the rest of the GDS through inter-process communication. This separation helps isolate potentially blocking or experimental functionality from core GDS processes.
 
 An example [`OpenMCT`](https://github.com/fprime-community/fprime-openmct/blob/devel/src/fprime_openmct/launch_plugin.py) shows how to use a GDS App plugin to launch another service (in this case `fprime-openmct-launch`, which is a script provided by the package).
 
@@ -93,7 +93,7 @@ class MyCustomApp(GdsStandardApp):
         self.no_op_rate = custom_rate
 
     def start(self, pipeline):
-        print("App started: " + self.no_op_rate)
+        print(f"App started: {self.no_op_rate}")
         while True:
             pipeline.send_command("cmdDisp.CMD_NO_OP", [])
             time.sleep(self.no_op_rate)

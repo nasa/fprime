@@ -28,6 +28,9 @@ The `Svc::AssertFatalAdapter` component uses only the log infrastructure ports.
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
+`Fw::Log` | Log | output | Output | Port for emitting events
+`Fw::LogText` | LogText | output | Output | Port for emitting text events
+`Fw::Time` | Time | output | Output | Port for getting the time
 
 #### 3.2 Functional Description
 
@@ -36,6 +39,11 @@ The `Svc::AssertFatalAdapter` component contains a private implementation of the
 ### 3.3 Scenarios
 
 #### 3.3.1 FW_ASSERT calls
+
+When FW_ASSERT fires, the registered hook logs the assert message via `Fw::Logger` and then issues the
+FATAL event (`AF_ASSERT_0` through `AF_ASSERT_6`) matching the number of assert arguments. If the `Log`
+output port is not connected, or more than `FW_ASSERT_COUNT_MAX` asserts are already being processed
+(a cascading-assert guard), the component falls back to the C `assert()` instead of issuing an event.
 
 
 ### 3.4 State

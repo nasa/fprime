@@ -20,7 +20,11 @@ namespace Svc {
 Os::File::Status FileUplink::File::open(const Fw::FilePacket::StartPacket& startPacket) {
     const U32 length = startPacket.getDestinationPath().getLength();
     char path[Fw::FilePacket::PathName::MAX_LENGTH + 1];
-    memcpy(path, startPacket.getDestinationPath().getValue(), length);
+    // Ensure that length is not greater that the size of the variable we will copy into
+    if (length >= sizeof(path)) {
+        return Os::File::Status::BAD_SIZE;
+    }
+    (void)memcpy(path, startPacket.getDestinationPath().getValue(), length);
     path[length] = 0;
     Fw::LogStringArg logStringArg(path);
     this->name = logStringArg;
@@ -44,7 +48,10 @@ Os::File::Status FileUplink::File::write(const U8* const data, const U32 byteOff
         return status;
     }
 
-    FW_ASSERT(static_cast<U32>(intLength) == length, static_cast<FwAssertArgType>(intLength));
+    // A short write (e.g. disk full) is an error, not an assertion failure
+    if (static_cast<U32>(intLength) != length) {
+        return Os::File::NO_SPACE;
+    }
     this->m_checksum.update(data, byteOffset, length);
     return Os::File::OP_OK;
 }

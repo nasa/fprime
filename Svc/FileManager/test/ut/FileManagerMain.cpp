@@ -89,6 +89,81 @@ TEST(Test, listDirectoryWithSubdirs) {
     tester.listDirectoryWithSubdirs();
 }
 
+TEST(Test, generateDpSucceed) {
+    Svc::FileManagerTester tester;
+    tester.generateDpSucceed();
+}
+
+TEST(Test, generateDpFileNotFound) {
+    Svc::FileManagerTester tester;
+    tester.generateDpFileNotFound();
+}
+
+TEST(Test, generateDpEmptyFile) {
+    Svc::FileManagerTester tester;
+    tester.generateDpEmptyFile();
+}
+
+TEST(Test, generateDpChunkSizeClamped) {
+    Svc::FileManagerTester tester;
+    tester.generateDpChunkSizeClamped();
+}
+
+TEST(Test, generateDpPartialRange) {
+    Svc::FileManagerTester tester;
+    tester.generateDpPartialRange();
+}
+
+TEST(Test, generateDpInvalidRange) {
+    Svc::FileManagerTester tester;
+    tester.generateDpInvalidRange();
+}
+
+TEST(Test, generateDpBufferFailure) {
+    Svc::FileManagerTester tester;
+    tester.generateDpBufferFailure();
+}
+
+TEST(Test, generateDpWhileBusy) {
+    Svc::FileManagerTester tester;
+    tester.generateDpWhileBusy();
+}
+
+TEST(Test, generateDpSerializationFailure) {
+    Svc::FileManagerTester tester;
+    tester.generateDpSerializationFailure();
+}
+
+TEST(Test, generateDpImmediateMode) {
+    Svc::FileManagerTester tester;
+    tester.generateDpImmediateMode();
+}
+
+TEST(Test, generateDpCustomPriority) {
+    Svc::FileManagerTester tester;
+    tester.generateDpCustomPriority();
+}
+
+TEST(Sandbox, rejectsOutsidePaths) {
+    Svc::FileManagerTester tester;
+    tester.sandboxRejectsOutsidePaths();
+}
+
+TEST(Sandbox, failClosed) {
+    Svc::FileManagerTester tester;
+    tester.sandboxFailClosed();
+}
+
+TEST(Sandbox, resolvesPaths) {
+    Svc::FileManagerTester tester;
+    tester.sandboxResolvesPaths();
+}
+
+TEST(Sandbox, openRootIsUnrestricted) {
+    Svc::FileManagerTester tester;
+    tester.sandboxOpenRootIsUnrestricted();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

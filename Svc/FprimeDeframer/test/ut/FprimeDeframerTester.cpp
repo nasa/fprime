@@ -59,10 +59,16 @@ void FprimeDeframerTester ::testNominalFrameApid() {
     this->injectChecksum(data, sizeof(data));
     this->mockReceiveData(data, sizeof(data));
 
-    ASSERT_from_dataOut_SIZE(1);                                                     // something emitted on dataOut
-    ASSERT_from_dataReturnOut_SIZE(0);                                               // nothing emitted on dataReturnOut
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), randomByte);  // APID should be set in context
-    ASSERT_EVENTS_SIZE(0);                                                           // no events emitted
+    ASSERT_from_dataOut_SIZE(1);        // something emitted on dataOut
+    ASSERT_from_dataReturnOut_SIZE(0);  // nothing emitted on dataReturnOut
+    if (ComCfg::Apid::isValid(randomByte)) {
+        // Random byte is a valid APID: APID should be set to random byte in context
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), randomByte);
+    } else {
+        // Random byte is not a valid APID: APID should be set to invalid in context
+        ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::Apid::INVALID_UNINITIALIZED);
+    }
+    ASSERT_EVENTS_SIZE(0);  // no events emitted
 }
 
 void FprimeDeframerTester ::testIncorrectLengthToken() {

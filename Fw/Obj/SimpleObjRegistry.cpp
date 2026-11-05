@@ -23,7 +23,9 @@ SimpleObjRegistry::~SimpleObjRegistry() {
 }
 
 void SimpleObjRegistry::dump() {
+    FW_ASSERT(this->m_numEntries <= FW_OBJ_SIMPLE_REG_ENTRIES, static_cast<FwAssertArgType>(this->m_numEntries));
     for (FwSizeType obj = 0; obj < this->m_numEntries; obj++) {
+        FW_ASSERT(this->m_objPtrArray[obj] != nullptr, static_cast<FwAssertArgType>(obj));
 #if FW_OBJECT_NAMES == 1
 #if FW_OBJECT_TO_STRING == 1
         char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];
@@ -41,7 +43,9 @@ void SimpleObjRegistry::dump() {
 
 #if FW_OBJECT_NAMES == 1
 void SimpleObjRegistry::dump(const char* objName) {
+    FW_ASSERT(this->m_numEntries <= FW_OBJ_SIMPLE_REG_ENTRIES, static_cast<FwAssertArgType>(this->m_numEntries));
     for (FwSizeType obj = 0; obj < this->m_numEntries; obj++) {
+        FW_ASSERT(this->m_objPtrArray[obj] != nullptr, static_cast<FwAssertArgType>(obj));
         char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];
         if (strncmp(objName, this->m_objPtrArray[obj]->getObjName(), sizeof(objDump)) == 0) {
 #if FW_OBJECT_TO_STRING == 1

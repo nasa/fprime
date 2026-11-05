@@ -37,7 +37,6 @@ class ApidManager final : public ApidManagerComponentBase {
 
   public:
     static constexpr U16 MAX_TRACKED_APIDS = ComCfg::Apid::NUM_CONSTANTS;
-    static constexpr U16 SEQUENCE_COUNT_ERROR = std::numeric_limits<U16>::max();
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
@@ -69,8 +68,7 @@ class ApidManager final : public ApidManagerComponentBase {
     // Helpers
     // ----------------------------------------------------------------------
     //! Get the sequence count for a given APID and increment it for the next.
-    //! Wraps around at 14 bits. Returns SEQUENCE_COUNT_ERROR and logs ApidTableFull event
-    //! if the APID is not yet tracked and the table is full.
+    //! Wraps around at 14 bits. Asserts if the APID cannot be inserted in the table.
     U16 getAndIncrementSeqCount(ComCfg::Apid::T apid);
 
     //! Helper function for wrapping around at 14 bits when calculating the next sequence count

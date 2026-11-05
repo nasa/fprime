@@ -2,6 +2,7 @@
  * Fw/Types/StringUtils.hpp:
  *
  * C-string helper utilities. Note: wherever possible, use Fw::StringBase and derived classes instead of raw C-strings.
+ * Each function below documents the standard C string call it is a bounded, safe replacement for.
  */
 #ifndef FW_STRINGUTILS_HPP
 #define FW_STRINGUTILS_HPP
@@ -19,6 +20,9 @@ namespace StringUtils {
  * large enough for the content and a null-character. Other behavior retains the
  * behavior of strncpy.
  *
+ * \note Replaces `strncpy(dest, src, n)` and `strcpy(dest, src)`. Arguments map 1:1 to strncpy; `num` is the full
+ * size of `destination` (e.g. `sizeof(destination)`), not the count of characters to copy.
+ *
  * \param destination: destination buffer to hold copied contents
  * \param source: source buffer to read content to copy
  * \param num: length of destination buffer
@@ -27,10 +31,30 @@ namespace StringUtils {
 char* string_copy(char* destination, const char* source, FwSizeType num);
 
 /**
+ * \brief get a pointer to the last N characters of a string
+ *
+ * Return a pointer to the last N characters of a string. If the string is shorter than N characters, this will return
+ * a pointer to the start of the string. The string is assumed to be null-terminated but operations will be performed
+ * within the supplied buffer size bound.
+ *
+ * \note Replaces the idiom `source + strlen(source) - n`, adding a `buffer_size` bound to the length scan and
+ * clamping to the start of the string.
+ *
+ * \param source: string to get the last N characters of
+ * \param n: number of characters from the end of the string to return
+ * \param buffer_size: the size of the buffer containing source string.
+ * \return pointer to the last N characters of the string, or the source for strings of length less than N
+ */
+const char* string_last_n(const char* source, const FwSizeType n, const FwSizeType buffer_size);
+
+/**
  * \brief get the length of the source string
  *
  * If no string termination character is detected within buffer_size number of characters then buffer_size is returned.
  * When buffer_size is returned, it can be assumed that the source string is invalid within a bound of buffer_size.
+ *
+ * \note Replaces `strlen(s)` and `strnlen(s, maxlen)`. Arguments map 1:1 to strnlen; `buffer_size` is `maxlen` and
+ * should be the size of the buffer holding `source`.
  *
  * \param source: string to calculate the length
  * \param buffer_size: the size of the buffer containing source string.
@@ -41,11 +65,14 @@ FwSizeType string_length(const CHAR* source, FwSizeType buffer_size);
 /**
  * \brief find the first occurrence of a substring
  *
+ * \note Replaces `strstr(haystack, needle)`. `source_string` is `haystack` and `sub_string` is `needle`, each with an
+ * explicit size bound; returns an index into `source_string` instead of a pointer (or -1 instead of nullptr).
+ *
  * \param source_string: string to search for the substring
  * \param source_size: the size of the source string
  * \param substring: string to search for
  * \param sub_size: the size of the string to search for
- * \return index of substring, -1 if not found
+ * \return index of substring, -1 if not found. A zero-size substring always matches at index 0
  */
 FwSignedSizeType substring_find(const CHAR* source_string,
                                 FwSizeType source_size,
@@ -54,6 +81,9 @@ FwSignedSizeType substring_find(const CHAR* source_string,
 
 /**
  * \brief find the last occurrence of a substring
+ *
+ * \note Substring analog of `strrchr(s, c)`: `source_string` is `s` and `sub_string` is the multi-character needle,
+ * each with an explicit size bound; returns an index into `source_string` instead of a pointer (-1 instead of nullptr).
  *
  * \param source_string: string to search for the substring
  * \param source_size: the size of the source string
@@ -93,6 +123,11 @@ enum StringToNumberStatus {
  * It is an error to supply a null input string.
  * It is an error to supply a string that does not terminate with a \0 within buffer_size characters
  * The numerical conversion may also return errors.
+ *
+ * \note The string_to_number overloads replace `strtol`, `strtoll`, `strtoul`, `strtoull`, `strtof`, `strtod`, `atoi`,
+ * `atol`, and `atof`. `strtoX(nptr, endptr, base)` maps to `string_to_number(nptr, buffer_size, output, endptr, base)`:
+ * the converted value is returned via `output`, the overload is selected by the type of `output`, and errno/ERANGE
+ * checking is replaced by the returned status.
  *
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
@@ -209,6 +244,8 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  *
  * See string_to_number (above) for full explanation. `base` is not supported on floating point conversions.
  *
+ * \note Replaces `strtof(nptr, endptr)` and `atof`; maps to `string_to_number(nptr, buffer_size, output, endptr)`.
+ *
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
@@ -217,11 +254,12 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
 StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size, F32& output, char** next);
-#if FW_HAS_F64
 /**
  * \brief converts a string to a F64
  *
  * See string_to_number (above) for full explanation. `base` is not supported on floating point conversions.
+ *
+ * \note Replaces `strtod(nptr, endptr)` and `atof`; maps to `string_to_number(nptr, buffer_size, output, endptr)`.
  *
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
@@ -231,7 +269,6 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
 StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size, F64& output, char** next);
-#endif
 
 }  // namespace StringUtils
 }  // namespace Fw

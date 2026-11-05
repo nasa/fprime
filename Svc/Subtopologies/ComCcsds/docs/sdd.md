@@ -21,7 +21,8 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 | SVC-COMCCSDS-003 | Provide an F´ **router** to route deframed packets (e.g., commands/files) into the flight software.            | Inspection |
 | SVC-COMCCSDS-004 | Provide a **subtopology variant that supplies `Svc::ComStub`** designed to connect to a ByteStream driver.     | Inspection |
 | SVC-COMCCSDS-005 | Provide a **subtopology variant that expects an external `Svc::ComInterface`** supplied by the deployment.     | Inspection |
-| SVC-COMCCSDS-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via `ComCcsdsConfig`. | Inspection |
+| SVC-COMCCSDS-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities, aggregation size, packet spanning) via `ComCcsdsConfig`. | Inspection |
+| SVC-COMCCSDS-007 | Provide **composable layer topologies**: a Space Packet packet layer (`SpacePacketFraming`, `SpacePacket`) and a TM/TC transfer frame layer (`TmTcFraming`), from which the full stack is composed. | Inspection |
 
 ---
 
@@ -31,29 +32,110 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 
 | Instance name         | Type (Svc/Drv)                  | Kind    | Purpose (core function)                                                                         |
 | --------------------- | ------------------------------- | ------- | ----------------------------------------------------------------------------------------------- |
-| `fprimeRouter`        | `Svc.FprimeRouter`              | Passive | Routes deframed packets (e.g., commands/files) into the flight software.                        |
+| `fprimeRouter`        | `Svc.FprimeRouter` (default; configurable via `ComCcsdsRouterConfig.fpp`) | Passive | Routes deframed packets (e.g., commands/files) into the flight software.                        |
 | `comQueue`            | `Svc.ComQueue`                  | Active  | Queues categorized COM data for framing (telemetry, events, file, etc.); exposes `run`.         |
 | `spacePacketFramer`   | `Svc.Ccsds.SpacePacketFramer`   | Passive | Builds **CCSDS Space Packets** from COM buffers (downlink step 1).                              |
-| `framer`              | `Svc.Ccsds.TmFramer`            | Passive | Builds **CCSDS TM Transfer Frames** from space packets and sends to the link (downlink step 2). |
+| `framer`              | `Svc.Ccsds.TmFramer`            | Passive | Builds **CCSDS TM Transfer Frames** from the idle-filled aggregates emitted by `aggregator` and sends to the link (downlink step 3). |
 | `spacePacketDeframer` | `Svc.Ccsds.SpacePacketDeframer` | Passive | Deframes F Prime data from **CCSDS Space Packets** (uplink step 2).                             |
 | `tcDeframer`          | `Svc.Ccsds.tcFramer`            | Passive | Deframes **CCSDS Space Packets** from  **CCSDS TM Transfer Frames** (uplink step 1).            |
 | `frameAccumulator`    | `Svc.FrameAccumulator`          | Passive | Collects bytes from the link and emits complete frames/packets for deframing (uplink path).     |
 | `comStub`             | `Svc.ComStub`                   | Passive | (Variant A only) Implementation of `Svc.ComInterface`, adapting a `Drv::ByteStreamDriverModel`. |
+| `aggregator`          | `Svc.ComAggregator`             | Active  | Aggregates Space Packets into fixed-size, idle-filled aggregates (`Aggregator.aggregationSize`) for `framer`. |
 
 > **Two variants:**
 > **A. “With ComStub”:** Subtopology **includes** `Svc::ComStub` and exposes **ByteStream** ports to your driver.
 > **B. “With External ComInterface”:** Subtopology **does not include** `Svc::ComStub`; you **provide** one in the deployment.
 
-### 2.2 Required Inputs for Operation
+### 2.1.1 Layered Topologies
 
-* **Rate Groups:** Connect a rate group to **`comQueue.run`**. This is not required for the subtopology to function, but defines the rate at which ComQueue will send telemetry.
+The module also exposes the two layers of the stack as importable topologies, allowing projects to compose
+alternative stacks (e.g., inserting an SDLS security layer between them) while reusing the same instances:
+
+| Topology             | Contents                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------- |
+| `SpacePacketFraming` | Packet layer: `comQueue`, `fprimeRouter`, `spacePacketFramer`, `spacePacketDeframer`, `apidManager`, `aggregator`, `commsBufferManager`. Open framing boundary. |
+| `SpacePacket`        | `SpacePacketFraming` plus `comStub` — a space-packet-only stack with no transfer frame layer.      |
+| `TmTcFraming`       | Transfer frame layer: `framer` (TM), `tcDeframer`, `frameAccumulator`. Open upstream/downstream boundaries. |
+| `FramingSubtopology` | `SpacePacketFraming` composed with `TmTcFraming` (variant B).                                      |
+| `Subtopology`        | `FramingSubtopology` plus `comStub` (variant A).                                                    |
+
+> **Warning:** `aggregator` idle-fills every aggregate to `Aggregator.aggregationSize` regardless of the topology it is composed in. In the frame-less `SpacePacket` topology this means each flush (including a timeout flush carrying a single small packet) emits a fixed-size, idle-padded aggregate; size `Aggregator.aggregationSize` for the link rate accordingly.
+
+Each layer topology exposes its open boundary as **topology ports** (e.g. `SpacePacketFraming.dataOut`,
+`TmTcFraming.framedDataIn`, `FramingSubtopology.comStatusIn`), so composing topologies and deployments wire
+to the layer's ports rather than to individual component instances.
+
+### 2.2 Data Flow - Uplink
+
+On uplink, raw bytes from the com interface are accumulated into TC Transfer Frames,
+deframed into Space Packets, and routed into the flight software.
+
+```mermaid
+flowchart LR
+    subgraph TMTC["ComCcsds.TmTcFraming (transfer frame layer)"]
+        frameAccumulator["frameAccumulator<br>Svc.FrameAccumulator"]
+        tcDeframer["tcDeframer<br>Svc.Ccsds.TcDeframer"]
+    end
+
+    subgraph SPF["ComCcsds.SpacePacketFraming (packet layer)"]
+        spacePacketDeframer["spacePacketDeframer<br>Svc.Ccsds.SpacePacketDeframer"]
+        fprimeRouter["fprimeRouter<br>Svc.FprimeRouter"]
+    end
+
+    com["ComInterface<br>comStub (variant A) or external (variant B)"]
+    fsw["Flight software<br>(command dispatch, file uplink, ...)"]
+
+    com -->|raw bytes| frameAccumulator
+    frameAccumulator -->|TC Transfer Frame| tcDeframer
+    tcDeframer -->|Space Packet| spacePacketDeframer
+    spacePacketDeframer -->|F´ packet| fprimeRouter
+    fprimeRouter -->|commands / files| fsw
+```
+
+### 2.3 Data Flow - Downlink
+
+On downlink, COM data is queued, framed into CCSDS Space Packets, aggregated, and framed
+into TM Transfer Frames for transmission by the com interface.
+
+```mermaid
+flowchart LR
+    subgraph SPF["ComCcsds.SpacePacketFraming (packet layer)"]
+        comQueue["comQueue<br>Svc.ComQueue"]
+        spacePacketFramer["spacePacketFramer<br>Svc.Ccsds.SpacePacketFramer"]
+        aggregator["aggregator<br>Svc.ComAggregator"]
+    end
+
+    subgraph TMTC["ComCcsds.TmTcFraming (transfer frame layer)"]
+        framer["framer<br>Svc.Ccsds.TmFramer"]
+    end
+
+    com["ComInterface<br>comStub (variant A) or external (variant B)"]
+    src["Packet sources<br>(telemetry, events, file downlink)"]
+
+    src -->|COM data| comQueue
+    comQueue -->|Fw::Buffer| spacePacketFramer
+    spacePacketFramer -->|Space Packet| aggregator
+    aggregator -->|aggregated Space Packets| framer
+    framer -->|TM Transfer Frame| com
+```
+
+For the variant of these flows with an SDLS security layer inserted between the packet and
+transfer frame layers, see the [ComCcsdsSdls subtopology](../../ComCcsdsSdls/docs/sdd.md).
+
+### 2.4 Required Inputs for Operation
+
+* **Rate Groups:** The subtopology exports three scheduling ports; the Ref topology wires all of them.
+
+  * **`comQueueRun`** (`comQueue.run`): defines the rate at which ComQueue sends queued telemetry. Not required for the subtopology to function.
+  * **`aggregatorTimeout`** (`aggregator.timeout`): **required** for timely downlink. ComAggregator otherwise sends an aggregate only when it fills, so a partially filled aggregate would be held indefinitely.
+  * **`bufferManagerSchedIn`** (`commsBufferManager.schedIn`): drives the comms buffer manager's telemetry output. Optional.
 * **Transport Endpoint:**
 
   * **Variant A:** Wire **ByteStream send/recv** between your **`Drv::ByteStreamDriverModel`** and the subtopology’s **`ComStub`**.
   * **Variant B:** Provide your own **`Svc::ComInterface`** and wire it to the **CCSDS framer/deframer ports** in the subtopology.
 * **Flight-side hookups:** Wire the **router** outputs (commands/files) into your CDH stack (e.g., command dispatcher, file uplink), and feed **packet sources** (telemetry/events/file downlink) into **`comQueue`**.
 
-### 2.3 Limitations
+### 2.5 Limitations
 
 These subtopologies focus on the **CCSDS framing and deframing setup** and does not provide wider CDH.
 
@@ -105,14 +187,14 @@ topology Flight {
 
   # (B3) Wire your ComInterface between the driver and the ComCcsds framer/deframer
   connections Link {
-    # Downlink: TM framer -> your ComInterface
-    ComCcsds.framer.dataOut         -> radio.dataIn
-    radio.dataReturnOut               -> ComCcsds.framer.dataReturnIn
-    radio.comStatusOut                -> ComCcsds.framer.comStatusIn
+    # Downlink: framing layer -> your ComInterface
+    ComCcsds.FramingSubtopology.dataOut       -> radio.dataIn
+    radio.dataReturnOut                       -> ComCcsds.FramingSubtopology.dataReturnIn
+    radio.comStatusOut                        -> ComCcsds.FramingSubtopology.comStatusIn
 
-    # Uplink: your ComInterface -> frame accumulator
-    radio.dataOut                     -> ComCcsds.frameAccumulator.dataIn
-    ComCcsds.frameAccumulator.dataReturnOut -> radio.dataReturnIn
+    # Uplink: your ComInterface -> framing layer
+    radio.dataOut                             -> ComCcsds.FramingSubtopology.dataIn
+    ComCcsds.FramingSubtopology.dataReturnOut -> radio.dataReturnIn
   }
 }
 ```
@@ -130,6 +212,12 @@ topology Flight {
 * **Queue sizes** — Depths for **`ComQueue`** and any other active/queued elements defined by the subtopology.
 * **Stack sizes** — Task stack allocations for active components (if any beyond `ComQueue`).
 * **Priorities** — RTOS priorities for active/queued components as applicable.
+* **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
+* **Aggregator** — `Aggregator.aggregationSize` is the size of every aggregate the `aggregator` instance emits (idle-filled by the aggregator, see `Svc.ComAggregator`); it defaults to `Svc.Ccsds.TmDataFieldSize`, the TM Transfer Frame Data Field expected by `Svc.Ccsds.TmFramer`, and is passed to `aggregator.configure()` in the `configComponents` phase together with `Allocation.memAllocator`, which supplies the aggregate storage (released by `aggregator.cleanup()` in `tearDownComponents`). Any layer inserted between `aggregator` and `framer` that adds bytes (e.g. `ComCcsdsSdls`, +`Svc.Ccsds.SdlsSaIndexSize`) requires the project to reduce `Aggregator.aggregationSize` by that overhead; the phase `static_assert`s that the value does not exceed `Svc.Ccsds.TmDataFieldSize`. `Aggregator.enablePacketSpanning` controls whether the instance spans CCSDS TM packets across transfer frames; `false` by default.
+
+  Projects supplying a pool-based `Allocation.memAllocator` must serve these allocation identifiers: `0` (`comQueue` and `commsBufferManager` bins), `1` (`frameAccumulator`, `BuffMgr.frameAccumulatorSize` bytes) and `2` (`aggregator`, `Aggregator.aggregationSize` bytes).
+
+  > **Upgrading:** `Aggregator.aggregationSize` replaces the former global `ComCfg.AggregationSize`. Projects that override `ComCcsdsConfig.fpp` must add the `Aggregator.aggregationSize` constant (and move any SDLS/encryptor size adjustment there). Topologies that connect a Space Packet source directly to `Svc.Ccsds.TmFramer` must route through `Svc.ComAggregator`: the framer no longer idle-fills and asserts unless it receives exactly `Svc.Ccsds.TmDataFieldSize` bytes.
 
 ### 4.2 Buffer Manager Bin Configuration
 
@@ -143,8 +231,8 @@ topology Flight {
 | ---------------- | -------------------------------------------------------------------------------------- |
 | SVC-COMCCSDS-001 | `spacePacketFramer` — `Svc.Ccsds.SpacePacketFramer`, `tmFramer` — `Svc.Ccsds.TmFramer` |
 | SVC-COMCCSDS-002 | `frameAccumulator` — `Svc.FrameAccumulator`                                            |
-| SVC-COMCCSDS-003 | `fprimeRouter` — `Svc.FprimeRouter`                                                    |
+| SVC-COMCCSDS-003 | `fprimeRouter` — `Svc.FprimeRouter` (default; swappable via `ComCcsdsRouterConfig.fpp`)      |
 | SVC-COMCCSDS-004 | `Subtopology` (variant including `Svc.ComStub`)                                        |
 | SVC-COMCCSDS-005 | `FramingSubtopology` (variant expecting external `Svc.ComInterface`)                   |
 | SVC-COMCCSDS-006 | `ComCcsdsConfig` module                                                                |
-
+| SVC-COMCCSDS-007 | `SpacePacketFraming`, `SpacePacket`, and `TmTcFraming` topologies                     |

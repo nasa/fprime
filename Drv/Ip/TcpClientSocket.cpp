@@ -15,26 +15,6 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <errnoLib.h>
-#include <fioLib.h>
-#include <hostLib.h>
-#include <inetLib.h>
-#include <ioLib.h>
-#include <sockLib.h>
-#include <socket.h>
-#include <sysLib.h>
-#include <taskLib.h>
-#include <vxWorks.h>
-#include <cstring>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#else
-#error OS not supported for IP Socket Communications
-#endif
-
 #include <cstdio>
 #include <cstring>
 
@@ -42,16 +22,16 @@ namespace Drv {
 
 TcpClientSocket::TcpClientSocket() : IpSocket() {}
 
-bool TcpClientSocket::isValidPort(U16 port) {
+bool TcpClientSocket::isValidPort(U16 port) const {
     return port != 0;
 }
 
 SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor) {
-    int socketFd = -1;
     struct sockaddr_in address;
 
     // Acquire a socket, or return error
-    if ((socketFd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    int socketFd = ::socket(AF_INET, SOCK_STREAM, 0);
+    if (socketFd == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
     // Set up the address port and name
@@ -63,30 +43,38 @@ SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor)
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
 
-    // First IP address to socket sin_addr
-    if (IpSocket::addressToIp4(m_hostname, &(address.sin_addr)) != SOCK_SUCCESS) {
-        ::close(socketFd);
+    // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
+
+    const SocketIpStatus addressStatus = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
+    if (addressStatus != SOCK_SUCCESS) {
+        (void)::close(socketFd);
         return SOCK_INVALID_IP_ADDRESS;
     };
 
     if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
     // Now apply timeouts
     if (IpSocket::setupTimeouts(socketFd) != SOCK_SUCCESS) {
-        ::close(socketFd);
+        (void)::close(socketFd);
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
+    }
+
+    // Sends to a server that has disconnected must not raise SIGPIPE
+    if (IpSocket::setupNoSigPipe(socketFd) != SOCK_SUCCESS) {
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
     // TCP requires connect to the socket to allow for communication
     if (::connect(socketFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_CONNECT;
     }
     socketDescriptor.fd = socketFd;
-    Fw::Logger::log("Connected to %s:%hu as a tcp client\n", m_hostname, m_port);
+    Fw::Logger::log("Connected to %s:%hu as a tcp client\n", this->m_ipv4_address, this->m_port);
     return SOCK_SUCCESS;
 }
 
@@ -94,7 +82,7 @@ FwSignedSizeType TcpClientSocket::sendProtocol(const SocketDescriptor& socketDes
                                                const U8* const data,
                                                const FwSizeType size) {
     return static_cast<FwSignedSizeType>(
-        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS));
+        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS | SEND_NO_SIGNAL_FLAGS));
 }
 
 FwSignedSizeType TcpClientSocket::recvProtocol(const SocketDescriptor& socketDescriptor,

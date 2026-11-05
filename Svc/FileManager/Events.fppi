@@ -215,6 +215,15 @@ event CalculateCrcFailed(fileName: string size FileNameStringSize @< The name of
   id 0x1b \
   format "Failed CRC calculation for file {}, returned status {}"
 
+@ Error formatting a file path
+event FileNameFormatError(
+                          fileName: string size FileNameStringSize @< The file whose full path failed to format
+                          status: Fw.StringFormatStatus @< The status returned from the format operation
+                        ) \
+  severity warning high \
+  id 0x1d \
+  format "Failed to format full path for file {} with status {}"
+
 @ CRC succeeded
 event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name of the file being read from
                        crc: U32 @< The computed CRC value
@@ -222,3 +231,53 @@ event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name
   severity activity high \
   id 0x1c \
   format "{} has CRC value 0x{x}"
+@ File data product generation started
+event GenerateDpStarted(fileName: string size FileNameStringSize @< The file being packaged
+                        bytesToWrite: U64 @< The number of file bytes that will be written
+                       ) \
+  severity activity high \
+  id 0x1e \
+  format "Started data product generation for file {} ({} bytes)"
+
+@ File data product generation completed
+event GenerateDpComplete(fileName: string size FileNameStringSize @< The file that was packaged
+                         chunks: U32 @< The number of chunks emitted
+                        ) \
+  severity activity high \
+  id 0x1f \
+  format "Completed data product generation for file {} in {} chunks"
+
+@ File data product generation failed
+event GenerateDpFailed(fileName: string size FileNameStringSize @< The file being packaged
+                       stage: Svc.FileManager.GenerateDpStage @< Where the failure occurred
+                       status: U32 @< The error status
+                      ) \
+  severity warning high \
+  id 0x20 \
+  format "Data product generation failed for file {} at stage {}, status {}"
+
+@ Data product container allocation failed
+event GenerateDpBufferFailed(fileName: string size FileNameStringSize @< The file being packaged
+                            ) \
+  severity warning high \
+  id 0x21 \
+  format "Failed to allocate data product buffer for file {}"
+
+@ Invalid offset range requested for data product generation
+event GenerateDpInvalidRange(fileName: string size FileNameStringSize @< The file being packaged
+                             beginOffset: U64 @< The requested begin offset
+                             endOffset: U64 @< The requested end offset
+                             fileSize: U64 @< The size of the file
+                            ) \
+  severity warning high \
+  id 0x22 \
+  format "Invalid offset range requested for file {}: [{}, {}) with file size {}"
+
+@ A command path argument was rejected by the configured sandbox directory
+event PathOutsideSandbox(
+                            path: string size FileNameStringSize @< The rejected path
+                            sandboxDir: string size FileNameStringSize @< The configured sandbox directory
+                        ) \
+  severity warning high \
+  id 0x23 \
+  format "Path {} is outside the configured sandbox directory {}"

@@ -35,8 +35,9 @@ class LinuxTimer final : public LinuxTimerComponentBase {
     //!
     ~LinuxTimer();
 
-    //! Start timer
-    void startTimer(const Fw::TimeInterval& interval);  //!< interval in milliseconds
+    //! Start the timer, donating the calling thread; blocks until quit().
+    //! Asserts if the interval's seconds do not fit in time_t (32-bit targets).
+    void startTimer(const Fw::TimeInterval& interval);
 
     //! Quit timer
     void quit();
@@ -47,6 +48,8 @@ class LinuxTimer final : public LinuxTimerComponentBase {
     volatile bool m_quit;  //!< flag to quit
 
     Os::RawTime m_rawTime;  //!< timestamp to pass to CycleOut port calls
+
+    bool m_rawTimeErrorLogged = false;  //!< latch so a persistent raw time failure is logged once
 };
 
 }  // end namespace Svc

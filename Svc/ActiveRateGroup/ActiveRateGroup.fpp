@@ -15,7 +15,7 @@ module Svc {
     output port RateGroupMemberOut: [ActiveRateGroupOutputPorts] Sched
 
     @ Ping input port for health
-    async input port PingIn: Ping
+    async input port PingIn: Ping drop
 
     @ Ping output port for health
     output port PingOut: Ping
@@ -37,6 +37,15 @@ module Svc {
       severity warning high \
       id 1 \
       format "Rate group cycle slipped on cycle {}"
+
+    @ Warning event that reading the cycle end time failed
+    event RateGroupTimeGetError(
+                                 status: Os.RawTimeStatus @< The status returned by the time read
+                               ) \
+      severity warning high \
+      id 2 \
+      format "Rate group failed to read cycle end time with status {}" \
+      throttle 5
 
     # ----------------------------------------------------------------------
     # Telemetry channels

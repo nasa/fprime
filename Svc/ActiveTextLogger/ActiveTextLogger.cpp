@@ -17,18 +17,31 @@ static_assert(std::numeric_limits<FwSizeType>::max() >= ACTIVE_TEXT_LOGGER_ID_FI
 // ----------------------------------------------------------------------
 
 ActiveTextLogger::ActiveTextLogger(const char* name)
-    : ActiveTextLoggerComponentBase(name), m_log_file(), m_numFilteredIDs(0) {}
+    : ActiveTextLoggerComponentBase(name), m_log_file(), m_numFilteredIDs(0), m_severityFilter() {
+    // Set severity filter defaults from config
+    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_HI, ACTIVE_TEXT_LOGGER_FILTER_WARNING_HI_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_LO, ACTIVE_TEXT_LOGGER_FILTER_WARNING_LO_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::COMMAND, ACTIVE_TEXT_LOGGER_FILTER_COMMAND_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_HI, ACTIVE_TEXT_LOGGER_FILTER_ACTIVITY_HI_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_LO, ACTIVE_TEXT_LOGGER_FILTER_ACTIVITY_LO_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::DIAGNOSTIC, ACTIVE_TEXT_LOGGER_FILTER_DIAGNOSTIC_DEFAULT);
+}
 
 ActiveTextLogger::~ActiveTextLogger() {}
 
 void ActiveTextLogger::configure(const FwEventIdType* filteredIds, FwSizeType count) {
-    FW_ASSERT(count < ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE, static_cast<FwAssertArgType>(count),
+    FW_ASSERT(filteredIds != nullptr || count == 0);
+    FW_ASSERT(count <= ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE, static_cast<FwAssertArgType>(count),
               ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE);
 
     this->m_numFilteredIDs = count;
     for (FwSizeType entry = 0; entry < count; entry++) {
         this->m_filteredIDs[entry] = filteredIds[entry];
     }
+}
+
+void ActiveTextLogger::setSeverityFilter(Fw::LogSeverity severity, bool enabled) {
+    this->m_severityFilter.setFilter(severity, enabled);
 }
 
 // ----------------------------------------------------------------------
@@ -40,11 +53,11 @@ void ActiveTextLogger::TextLogger_handler(FwIndexType portNum,
                                           Fw::Time& timeTag,
                                           const Fw::LogSeverity& severity,
                                           Fw::TextLogString& text) {
-    // Currently not doing any input filtering
-    // TKC - 5/3/2018 - remove diagnostic
-    if (Fw::LogSeverity::DIAGNOSTIC == severity.e) {
+    // Check severity filter
+    if (this->m_severityFilter.isFiltered(severity)) {
         return;
     }
+
     // Check event ID filters
     for (FwSizeType i = 0; i < this->m_numFilteredIDs; i++) {
         if (this->m_filteredIDs[i] == id) {
@@ -81,6 +94,7 @@ void ActiveTextLogger::TextLogger_handler(FwIndexType portNum,
             severityString = "SEVERITY ERROR";
             break;
     }
+    FW_ASSERT(severityString != nullptr);
     // Overflow is allowed and truncation accepted
     Fw::InternalInterfaceString intText;
     (void)intText.format("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32

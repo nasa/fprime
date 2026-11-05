@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 from fprime_gds.common.dp.decoder import DataProductDecoder
@@ -8,7 +9,9 @@ def test_dp_send(fprime_test_api):
     """Test that DPs are generated and received on the ground"""
 
     # Run Dp command to send a data product
-    fprime_test_api.send_and_assert_command("Ref.dpDemo.Dp", ["IMMEDIATE", 1])
+    fprime_test_api.send_and_assert_command(
+        "Ref.dpDemo.Dp", ["IMMEDIATE", 1, "PROC_TYPE_NONE"]
+    )
     # Wait for DpStarted event
     result = fprime_test_api.await_event("Ref.dpDemo.DpStarted", start=0, timeout=5)
     assert result
@@ -20,8 +23,8 @@ def test_dp_send(fprime_test_api):
         "DataProducts.dpWriter.FileWritten", start=0, timeout=10
     )
     dp_file_path = file_result.get_display_text().split().pop()
-    # Verify that the file exists
-    # Assumes that we are running the test from the Ref directory
+    # Verify that the file exists. The FSW writes ./DpCat relative to its
+    # working directory, so the test must run from that same directory.
     assert Path(dp_file_path).is_file()
 
 
@@ -29,14 +32,16 @@ def test_dp_decode(fprime_test_api):
     """Test that we can decode DPs on the ground via DataProductDecoder (`fprime-dp decode`)"""
 
     # Run Dp command to send a data product
-    fprime_test_api.send_and_assert_command("Ref.dpDemo.Dp", ["IMMEDIATE", 1])
+    fprime_test_api.send_and_assert_command(
+        "Ref.dpDemo.Dp", ["IMMEDIATE", 1, "PROC_TYPE_NONE"]
+    )
     # Check for FileWritten event and capture the name of the file that was created
     file_result = fprime_test_api.await_event(
         "DataProducts.dpWriter.FileWritten", start=0, timeout=10
     )
     dp_file_path = file_result.get_display_text().split().pop()
-    # Verify that the file exists
-    # Assumes that we are running the test from the Ref directory
+    # Verify that the file exists. The FSW writes ./DpCat relative to its
+    # working directory, so the test must run from that same directory.
     assert Path(dp_file_path).is_file(), "Dp file not downlinked correctly"
     # Decode DP file
     decoded_file_name = Path(dp_file_path).name.replace(".fdp", ".json")
@@ -58,3 +63,59 @@ def test_dp_decode(fprime_test_api):
         output_json["Header"].pop("Checksum")
         # Every other fields in Header and Data should be exactly the same
         assert ref_json == output_json
+
+
+def test_dp_delete(fprime_test_api):
+    """Test that DpCatalog.DELETE_DP removes a generated DP file and that a second delete of the
+    same product is rejected as not found (nasa/fprime#3197)"""
+
+    # Generate a data product and capture the file it was written to
+    fprime_test_api.send_and_assert_command(
+        "Ref.dpDemo.Dp", ["IMMEDIATE", 1, "PROC_TYPE_NONE"]
+    )
+    file_result = fprime_test_api.await_event(
+        "DataProducts.dpWriter.FileWritten", start=0, timeout=10
+    )
+    dp_file_path = file_result.get_display_text().split().pop()
+    # The file name carries the product identity: Dp_<id>_<tSec>_<tSub>.fdp (DP_FILENAME_FORMAT)
+    match = re.search(r"Dp_(\d+)_(\d+)_(\d+)\.fdp$", dp_file_path)
+    assert match, f"unexpected DP file name {dp_file_path}"
+    identity = [int(field) for field in match.groups()]
+
+    # Rebuild the catalog so it knows the new product, then delete it
+    fprime_test_api.send_and_assert_command(
+        "DataProducts.dpCat.CLEAR_CATALOG", max_delay=10
+    )
+    fprime_test_api.send_and_assert_command(
+        "DataProducts.dpCat.BUILD_CATALOG", max_delay=10
+    )
+    fprime_test_api.send_and_assert_command(
+        "DataProducts.dpCat.DELETE_DP",
+        identity,
+        max_delay=10,
+        events=[fprime_test_api.get_event_pred("DataProducts.dpCat.DpDeleted")],
+    )
+
+    # The product is gone from the catalog: a second delete finds nothing
+    result = fprime_test_api.send_and_await_event(
+        "DataProducts.dpCat.DELETE_DP",
+        identity,
+        "DataProducts.dpCat.DpNotFound",
+        timeout=10,
+    )
+    assert result, "second DELETE_DP was not rejected"
+
+    # The file is gone from disk: a rebuilt catalog does not find it either
+    fprime_test_api.send_and_assert_command(
+        "DataProducts.dpCat.CLEAR_CATALOG", max_delay=10
+    )
+    fprime_test_api.send_and_assert_command(
+        "DataProducts.dpCat.BUILD_CATALOG", max_delay=10
+    )
+    result = fprime_test_api.send_and_await_event(
+        "DataProducts.dpCat.DELETE_DP",
+        identity,
+        "DataProducts.dpCat.DpNotFound",
+        timeout=10,
+    )
+    assert result, "DELETE_DP after rebuild found a deleted product"

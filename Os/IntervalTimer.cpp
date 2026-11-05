@@ -11,11 +11,11 @@ namespace Os {
 IntervalTimer::IntervalTimer() : m_startTime(), m_stopTime() {}
 
 void IntervalTimer::start() {
-    this->m_startTime.now();
+    (void)this->m_startTime.now();
 }
 
 void IntervalTimer::stop() {
-    this->m_stopTime.now();
+    (void)this->m_stopTime.now();
 }
 
 U32 IntervalTimer::getDiffUsec() const {

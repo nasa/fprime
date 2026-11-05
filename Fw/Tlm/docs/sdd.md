@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-The `Fw::Tlm` port is used to pass a serialized telemetry value. It also passes the telemetry channel IS as well a time tag representing the time the channel was written. 
+The `Fw::Tlm` port is used to pass a serialized telemetry value. It also passes the telemetry channel ID, as well as a time tag representing when the channel was written.
 
 ## 2. Design
 

@@ -14,24 +14,26 @@ This guide includes:
     - [Asserts](#asserts)
     - [Port Tracing](#port-tracing)
     - [Port Serialization](#port-serialization)
-    - [Serialization Type ID](#serializable-type-id)
     - [Buffer Sizes](#buffer-sizes)
     - [Text Logging](#text-logging)
     - [Misc Configuration Settings](#misc-configuration-settings)
 - [Component Configuration](#component-configuration)
+- [OSAL Configuration](#osal-configuration)
+- [Library Default Configuration](#library-default-configuration)
 - [Conclusion](#conclusion)
 
 
 ## How To Configure F´
 
-All configurable files (top-level and component-specific) for F´ are available in the top-level
-`config` directory. By default, all deployments use the F´ provided default configuration options.
+All configurable files (top-level and component-specific) for F´ are available in the
+`default/config` directory. By default, all deployments use the F´ provided default configuration options.
 
-Projects can also take ownership of the `config` directory to provide their own HPP/FPP configuration to
-override the framework defaults. To do so, copy the `config` directory into your project and use the
-[`register_fprime_config()`](../../reference/api/cmake/API.md) CMake API to let the build system know 
-to use your configuration overrides. This is demonstrated in various F´ reference projects, such as the 
-[FprimeZephyrReference](https://github.com/fprime-community/fprime-zephyr-reference/tree/devel/FprimeZephyrReference).
+A project overrides a framework setting by copying only the file that holds it (keeping the file name), editing the
+copy, and registering it with the `CONFIGURATION_OVERRIDES` directive of
+[`register_fprime_config()`](../../reference/api/cmake/API.md). Files that are not overridden keep their defaults.
+The mechanism, the same steps for platform, library, and subtopology configuration, and the way libraries ship
+their own defaults are described in [Configuration Modules](../build-system/configuration.md); this page
+describes the individual settings.
 
 The `FpConfig.h` file is a C header allowing the user to define global settings. Other configuration options
 can be found in `FpConfig.fpp` and `FpConstants.fpp`
@@ -225,6 +227,7 @@ can be configured.
 |                        | FW_NO_ASSERT                     | Asserts turned off, removing all assert code.                      |                    |
 |                        | FW_FILEID_ASSERT                 | Asserts turned on, hash value used in place of __FILE__ on message |                    |
 |                        | FW_FILENAME_ASSERT               | Asserts turned on, __FILE__ macro is used in the assert message    |                    |
+|                        | FW_RELATIVE_PATH_ASSERT          | Asserts turned on, relative path within F´ or library used in the assert message |      |
 | FW_ASSERT_TEXT_SIZE    | The buffer size used to store the assert message  |                                                   | 120                |
 
 Setting assert level `FW_FILEID_ASSERT`  saves a lot of code space since no file name is stored. The make system
@@ -263,26 +266,6 @@ can be disabled to reduce the code size. Table 40 provides the macro to configur
 | Macro                   | Definition                  | Default | Valid Values      |
 | ----------------------- | --------------------------- |---------|-------------------|
 | FW_PORT_SERIALIZATION   | Enables port serialization. | 1 (on)  | 0 (off) 1 (on)    |
-
-### Serializable Type ID
-
-As described [in serializable types](../overview/05-enum-arr-ser.md), serializable types can be defined for use in the code.
-When objects of those types are serialized, an integer representing the type ID can be serialized along with the object
-data. This allows the type to be determined later if only the serialized form is available. Turning off this feature
-will lower the amount of data moved around for a given object when it is serialized. Table 41 provides
-the macros to configure this feature.
-
-
-**Table 41.** Macros for serializable type ID.
-
-| Macro                          | Definition                       | Default | Valid Values      |
-| -------------------------------| ---------------------------------|---------|-------------------|
-| FW_SERIALIZATION_TYPE_ID       | Enables serializing the type ID  | 0 (off) | 0 (off) 1 (on)    |
-| FW_SERIALIZATION_TYPE_ID_BYTES | Defines size of serialization ID | 4       | 1 - 4             |
-
-> [!NOTE]
-> Smaller values for `FW_SERIALIZATION_TYPE_ID_BYTES` means that less data storage is needed, but also limits the number of types that can be defined. `FW_SERIALIZATION_TYPE_ID` is required to have type IDs in the buffer and thus to introspect what type is contained in the buffer.
-
 
 ### Buffer Sizes
 
@@ -381,10 +364,9 @@ Table 47 describes other user settings.
 
 ## Component Configuration
 
-Component configurations are also provided as part of the project's config directory. If the directory is not provided,
-then the default from the framework is used. **Remember:** if the project overrides any configuration, that new
-directory must contain all the component headers as well as the `FpConfig.hpp` as C++ prevents including individual
-headers.
+Component configuration headers live in `default/config` next to `FpConfig.h` and are overridden the same way, one
+file at a time (see [Configuration Modules](../build-system/configuration.md)). Headers that are not overridden keep
+the framework defaults.
 
 These component headers follow the form `<Component>Cfg.hpp` and allows a project to set the configuration for each
 component's C++ implementation. This is typically to set maximum sizes for tables, and other static memory allocations.
@@ -392,6 +374,58 @@ Some components allow users to turn on and off features. If a component does not
 for the user to set.
 
 Users are encouraged to look through the header for the component of interest as they should be self-descriptive.
+
+`CommandDispatcherImplCfg.hpp` provides `Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents`. When this setting is
+`false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum
+`FwOpcodeType` value before downlink. The mapping is performed by `Svc::CmdDispatcherCfg::getEventOpcode()`, which
+every command opcode emitted in an event by the command dispatcher and the sequencers passes through. Projects needing
+more than the on/off behavior (e.g. an opcode lookup table) may replace that function's body in their copy of the
+header.
+
+The same header provides `Svc::CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT`, the default for what
+happens when a command arrives and the dispatcher's pending command table is full. Each dispatcher instance may
+override it at runtime by calling `Svc::CommandDispatcherImpl::configure(bool)` during topology setup. When the
+setting is `false` (the default), the command is rejected with `Fw::CmdResponse::EXECUTION_ERROR` and is never
+dispatched. When `true`, the command is dispatched and the caller receives `Fw::CmdResponse::DISPATCHED_UNTRACKED`,
+indicating that the command is running but that its completion status cannot be tracked and will never be reported.
+
+## OSAL Configuration
+
+The `Os/` subdirectory of the configuration directory holds settings for the OS abstraction layer.
+
+### RawTimeSource.hpp
+
+`Os/RawTimeSource.hpp` defines the `Os::RawTimeSource` enumeration selecting the clock read by `Os::RawTime::now()`.
+On POSIX platforms (Linux, Darwin) each enumerator holds the `clockid_t` value passed to `clock_gettime()`:
+
+| Enumerator          | Clock              | Notes                                                          |
+|---------------------|--------------------|----------------------------------------------------------------|
+| `RAWTIME_DEFAULT`   | `CLOCK_REALTIME`   | Used by every default-constructed `Os::RawTime`                |
+| `RAWTIME_REALTIME`  | `CLOCK_REALTIME`   | Wall-clock time; steps or slews when the system time is adjusted |
+| `RAWTIME_MONOTONIC` | `CLOCK_MONOTONIC`  | Never adjusted; recommended for measuring elapsed time         |
+| `RAWTIME_BOOTTIME`  | `CLOCK_BOOTTIME`   | Monotonic and advances during suspend (Linux only)             |
+
+To switch an entire deployment to a different clock, override this header in the project's configuration module and
+set `RAWTIME_DEFAULT` to the desired clock, for example `RAWTIME_DEFAULT = CLOCK_MONOTONIC`. All framework components
+using `Os::RawTime` (rate groups, `Svc::LinuxTimer`, `Svc::OsTime`, etc.) then read that clock with no code changes.
+Individual instances may select another source via `Os::RawTime(Os::RawTimeSource)`.
+
+> [!NOTE]
+> `Os::RawTime` intervals are only defined between instances reading the same clock; on POSIX `getTimeInterval()` and
+> `getDiffUsec()` return `INVALID_PARAMS` when the sources differ. Enumerator values are platform-specific and are not
+> part of the serialized `Os::RawTime` form.
+
+## Library Default Configuration
+
+Libraries may ship default configuration of their own, registered with `register_fprime_config` from a
+`default-config/config-<library name>/` directory, which consumers list in `DEPENDS` (or which the library marks
+`GLOBAL_IMPLICIT_DEPENDENCY` to reach every module). Projects override library files exactly as they override
+framework files, with `CONFIGURATION_OVERRIDES`. See
+[Library Defaults](../build-system/configuration.md#library-defaults) for the layout, include path, and dependency
+rules.
+
+> [!NOTE]
+> `GLOBAL_IMPLICIT_DEPENDENCY` replaces the `BASE_CONFIG` flag, which is deprecated and emits a warning when used.
 
 ## Conclusion
 

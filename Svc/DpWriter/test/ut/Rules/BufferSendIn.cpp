@@ -9,6 +9,7 @@
 // acknowledged.
 // ======================================================================
 
+#include <algorithm>
 #include <limits>
 #include <string>
 
@@ -16,6 +17,7 @@
 #include "STest/Pick/Pick.hpp"
 #include "Svc/DpWriter/test/ut/Rules/BufferSendIn.hpp"
 #include "Svc/DpWriter/test/ut/Rules/Testers.hpp"
+#include "config/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -105,7 +107,7 @@ void TestState ::action__BufferSendIn__OKProcShrink() {
     this->abstractState.setDataSize(buffer_data_size);
     Fw::Buffer buffer = this->abstractState.getDpBufferWithProc(1);
     // Instruct the proc handler to shrink the buffer
-    this->abstractState.m_procShrinkDataSizeOpt.set(shrink_data_size);
+    this->abstractState.m_procShrinkDataSizeOpt = shrink_data_size;
     const FwSizeType exp_buffer_size = Fw::DpContainer::MIN_PACKET_SIZE + shrink_data_size;
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
@@ -142,7 +144,7 @@ void TestState ::action__BufferSendIn__OKProcShrink() {
     this->abstractState.m_NumSuccessfulWrites.value++;
 
     this->abstractState.clearDataSize();
-    this->abstractState.m_procShrinkDataSizeOpt.clear();
+    this->abstractState.m_procShrinkDataSizeOpt.reset();
 }
 
 bool TestState ::precondition__BufferSendIn__InvalidBuffer() const {
@@ -328,8 +330,11 @@ void TestState ::action__BufferSendIn__BufferTooSmallForData() {
     // Invalidate the data size
     Fw::SerializeStatus serialStatus = container.deserializeHeader();
     ASSERT_EQ(serialStatus, Fw::FW_SERIALIZE_OK);
+    // Bound the pick by U32 since Pick::lowerUpper operates on U32 values
+    constexpr FwSizeType maxDataSize = std::min(static_cast<FwSizeType>(std::numeric_limits<FwSizeStoreType>::max()),
+                                                static_cast<FwSizeType>(std::numeric_limits<U32>::max()));
     const FwSizeType dataSize =
-        STest::Pick::lowerUpper(AbstractState::MAX_DATA_SIZE + 1, std::numeric_limits<FwSizeStoreType>::max());
+        STest::Pick::lowerUpper(static_cast<U32>(AbstractState::MAX_DATA_SIZE + 1), static_cast<U32>(maxDataSize));
     container.setDataSize(dataSize);
     container.updateHeaderHash();
     container.serializeHeader();
@@ -462,6 +467,54 @@ void TestState ::action__BufferSendIn__FileWriteError() {
     fileData.writeResult = savedWriteResult;
 }
 
+// ----------------------------------------------------------------------
+// Non-rule tests
+// ----------------------------------------------------------------------
+
+void TestState ::testFileNameFormatError() {
+    // Configure a prefix that fills the file name string, forcing a format overflow
+    Fw::FileNameString prefix;
+    const std::string longPrefix(static_cast<size_t>(prefix.getCapacity() - 1), 'A');
+    prefix = longPrefix.c_str();
+    this->component.configure(prefix);
+    const FwSizeType throttle = Svc::DpWriterTester::getFileNameFormatErrorThrottle();
+    for (FwSizeType i = 0; i < throttle + 1; i++) {
+        this->clearHistory();
+        Fw::Buffer buffer = this->abstractState.getDpBuffer();
+        this->invoke_to_bufferSendIn(0, buffer);
+        this->doDispatch();
+        if (i < throttle) {
+            ASSERT_EVENTS_SIZE(1);
+            ASSERT_EVENTS_FileNameFormatError_SIZE(1);
+            ASSERT_EVENTS_FileNameFormatError(0, Fw::StringFormatStatus::OVERFLOWED);
+        } else {
+            ASSERT_EVENTS_SIZE(0);
+        }
+    }
+}
+
+void TestState::testRoutingPorts() {
+    auto& fileData = Os::Stub::File::Test::StaticData::data;
+    for (FwIndexType portNum = 0; portNum < DpWriterNumPorts; ++portNum) {
+        this->clearHistory();
+        this->abstractState.m_dpWrittenOutPortNumOpt.reset();
+        this->abstractState.m_deallocBufferSendOutPortNumOpt.reset();
+        fileData.pointer = 0;
+
+        Fw::Buffer buffer = this->abstractState.getDpBuffer();
+        this->invoke_to_bufferSendIn(portNum, buffer);
+        this->doDispatch();
+
+        ASSERT_from_dpWrittenOut_SIZE(1);
+        ASSERT_from_deallocBufferSendOut_SIZE(1);
+        ASSERT_from_deallocBufferSendOut(0, buffer);
+        ASSERT_TRUE(this->abstractState.m_dpWrittenOutPortNumOpt.has_value());
+        ASSERT_TRUE(this->abstractState.m_deallocBufferSendOutPortNumOpt.has_value());
+        ASSERT_EQ(this->abstractState.m_dpWrittenOutPortNumOpt.value(), portNum);
+        ASSERT_EQ(this->abstractState.m_deallocBufferSendOutPortNumOpt.value(), portNum);
+    }
+}
+
 namespace BufferSendIn {
 
 // ----------------------------------------------------------------------
@@ -475,6 +528,11 @@ void Tester::BufferTooSmallForData() {
 
 void Tester::BufferTooSmallForPacket() {
     this->ruleBufferTooSmallForPacket.apply(this->testState);
+    this->testState.printEvents();
+}
+
+void Tester::FileNameFormatError() {
+    this->testState.testFileNameFormatError();
     this->testState.printEvents();
 }
 
@@ -512,6 +570,11 @@ void Tester::OK() {
 
 void Tester::OKProcShrink() {
     this->ruleOKProcShrink.apply(this->testState);
+    this->testState.printEvents();
+}
+
+void Tester::RoutingPorts() {
+    this->testState.testRoutingPorts();
     this->testState.printEvents();
 }
 

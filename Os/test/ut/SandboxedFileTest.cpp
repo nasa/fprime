@@ -1,0 +1,139 @@
+// ======================================================================
+// \title Os/test/ut/SandboxedFileTest.cpp
+// \brief Unit tests for Os::SandboxedFile
+// ======================================================================
+#include <gtest/gtest.h>
+#include <Os/FileSystem.hpp>
+#include <Os/SandboxedFile.hpp>
+#include <cstdio>
+#include <cstring>
+
+// ======================================================================
+// SandboxedFile tests
+// ======================================================================
+
+class SandboxedFileTest : public ::testing::Test {
+  protected:
+    void SetUp() override { Os::FileSystem::createDirectory("/tmp/sandbox_test/"); }
+    void TearDown() override {
+        Os::FileSystem::removeFile("/tmp/sandbox_test/test_file.bin");
+        Os::FileSystem::removeDirectory("/tmp/sandbox_test/");
+    }
+};
+
+TEST_F(SandboxedFileTest, ConfigureValid) {
+    Os::SandboxedFile file;
+    ASSERT_FALSE(file.isConfigured());  // fail-closed: unconfigured by default
+    file.configure("/tmp/sandbox_test/");
+    ASSERT_TRUE(file.isConfigured());
+    ASSERT_STREQ("/tmp/sandbox_test/", file.getSandboxDirectory());
+}
+
+TEST_F(SandboxedFileTest, OpenWithinSandbox) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+    auto status = file.open("/tmp/sandbox_test/test_file.bin", Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::File::OP_OK, status);
+    ASSERT_TRUE(file.isOpen());
+    file.close();
+}
+
+TEST_F(SandboxedFileTest, OpenOutsideSandboxRejected) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+    auto status = file.open("/tmp/outside_sandbox.bin", Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+TEST_F(SandboxedFileTest, TraversalAttackRejected) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+    auto status = file.open("/tmp/sandbox_test/../../etc/passwd", Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+// GHSA-g8xv-rf85-4pjp regression: an unconfigured sandbox must deny every open
+// (fail-closed). Previously it defaulted to "/", permitting arbitrary absolute paths.
+TEST_F(SandboxedFileTest, DefaultConfigDeniesAbsolutePath) {
+    Os::SandboxedFile file;
+    auto status = file.open("/tmp/sandbox_test/test_file.bin", Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+// GHSA-g8xv-rf85-4pjp regression: unconfigured sandbox also denies relative paths.
+TEST_F(SandboxedFileTest, DefaultConfigDeniesRelativePath) {
+    Os::SandboxedFile file;
+    auto status = file.open("test_file.bin", Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+// GHSA-g8xv-rf85-4pjp regression: an absolute traversal target outside the configured
+// sandbox (e.g. the classic ../../etc/passwd read) is rejected.
+TEST_F(SandboxedFileTest, ConfiguredSandboxRejectsAbsoluteEscape) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+    auto status = file.open("/etc/passwd", Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+TEST_F(SandboxedFileTest, WriteAndRead) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+
+    // Write data
+    auto status = file.open("/tmp/sandbox_test/test_file.bin", Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::File::OP_OK, status);
+    const U8 writeData[] = {0x01, 0x02, 0x03, 0x04};
+    FwSizeType writeSize = sizeof(writeData);
+    status = file.write(writeData, writeSize, Os::File::WAIT);
+    ASSERT_EQ(Os::File::OP_OK, status);
+    ASSERT_EQ(sizeof(writeData), writeSize);
+    file.close();
+
+    // Read data back
+    status = file.open("/tmp/sandbox_test/test_file.bin", Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::OP_OK, status);
+    U8 readData[sizeof(writeData)];
+    FwSizeType readSize = sizeof(readData);
+    status = file.read(readData, readSize, Os::File::WAIT);
+    ASSERT_EQ(Os::File::OP_OK, status);
+    ASSERT_EQ(sizeof(writeData), readSize);
+    ASSERT_EQ(0, std::memcmp(writeData, readData, sizeof(writeData)));
+    file.close();
+}
+
+TEST_F(SandboxedFileTest, GetSandboxDirectoryDefault) {
+    Os::SandboxedFile file;
+    ASSERT_STREQ("", file.getSandboxDirectory());  // fail-closed: no directory until configure()
+}
+
+TEST_F(SandboxedFileTest, OpenEmptyPathRejected) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+    auto status = file.open("", Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+TEST_F(SandboxedFileTest, OpenOverlongPathRejected) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+    // Create a path that exceeds MAX_PATH_LENGTH
+    char longPath[Os::FilePathUtils::MAX_PATH_LENGTH + 100];
+    std::memset(longPath, 'a', sizeof(longPath) - 1);
+    longPath[0] = '/';
+    longPath[sizeof(longPath) - 1] = '\0';
+    auto status = file.open(longPath, Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

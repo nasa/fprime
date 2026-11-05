@@ -11,7 +11,6 @@ from pathlib import Path
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.utils.event_severity import EventSeverity
 
-
 """
 This enum is includes the values of EventSeverity that can be filtered by the EventManager Component
 """
@@ -291,6 +290,26 @@ def test_seqgen(fprime_test_api):
     )
 
 
+def test_seqgen_complex_args(fprime_test_api):
+    """Tests the seqgen can be dispatched (requires localhost testing)"""
+    sequence = Path(__file__).parent / "test_seq_complex.seq"
+    assert (
+        subprocess.run(
+            [
+                "fprime-seqgen",
+                "--dictionary",
+                str(fprime_test_api.dictionaries.dictionary_path),
+                str(sequence),
+                "/tmp/ref_test_complex.bin",
+            ]
+        ).returncode
+        == 0
+    ), "Failed to run fprime-seqgen"
+    fprime_test_api.send_and_assert_command(
+        "Ref.cmdSeq.CS_RUN", args=["/tmp/ref_test_complex.bin", "BLOCK"], max_delay=5
+    )
+
+
 def test_system_resources(fprime_test_api):
     """Test system resources telemetry meets minimum thresholds"""
     from fprime_gds.common.testing_fw import predicates
@@ -313,4 +332,84 @@ def test_system_resources(fprime_test_api):
 
     fprime_test_api.await_telemetry_count(
         predicates.greater_than(1.0), "Ref.systemResources.CPU", timeout=3
+    )
+
+
+def test_file_uplink_sandbox(fprime_test_api):
+    """Test that FileUplink sandbox rejects files outside the allowed directory.
+
+    The Ref deployment sandboxes FileUplink to "." (the working directory of the
+    flight software process). Uploading to an absolute path outside that directory
+    should produce a FileOpenError event and no FileReceived event; uploading to a
+    path relative to the working directory should succeed.
+    """
+    import os
+    import tempfile
+
+    uploaded = "ref_sandbox_test.bin"
+
+    # Create a small temporary file to uplink
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".bin") as f:
+        f.write(b"\x00" * 64)
+        local_file = f.name
+
+    try:
+        # --- Test 1: uplink to a path OUTSIDE the sandbox should fail ---
+        fprime_test_api.clear_histories()
+        fprime_test_api.uplink_file(local_file, destination="/tmp/evil/escaped.bin")
+
+        # Expect a FileOpenError warning because the path is outside the working directory
+        fprime_test_api.await_event("FileHandling.fileUplink.FileOpenError", timeout=10)
+
+        # --- Test 2: uplink to a path INSIDE the sandbox should succeed ---
+        fprime_test_api.clear_histories()
+        fprime_test_api.uplink_file(local_file, destination=uploaded)
+
+        fprime_test_api.await_event("FileHandling.fileUplink.FileReceived", timeout=10)
+    finally:
+        os.unlink(local_file)
+        # The flight software owns the working directory; ask it to remove the upload
+        fprime_test_api.send_and_assert_command(
+            "FileHandling.fileManager.RemoveFile", args=[uploaded, True], max_delay=5
+        )
+
+
+def test_prm_db_sandbox(fprime_test_api):
+    """Test that PrmDb file access is confined to its sandbox directory.
+
+    The Ref deployment sandboxes PrmDb to "." (the working directory of the flight
+    software process). Saving the store file and loading it back by a relative path
+    should succeed, while loading an absolute path outside the working directory
+    should fail with a PrmFileReadError and no PrmFileLoadComplete event.
+    """
+    # --- Save the active database to the store file (PrmDb.dat in the CWD) ---
+    fprime_test_api.clear_histories()
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.prmDb.PRM_SAVE_FILE", max_delay=5
+    )
+    fprime_test_api.assert_event("FileHandling.prmDb.PrmFileSaveComplete", timeout=5)
+
+    # --- Loading a path OUTSIDE the sandbox must be rejected ---
+    fprime_test_api.clear_histories()
+    results = fprime_test_api.send_and_await_event(
+        "FileHandling.prmDb.PRM_LOAD_FILE",
+        args=["/tmp/evil/escaped.prm", "RESET"],
+        events=["FileHandling.prmDb.PrmFileReadError"],
+        timeout=5,
+    )
+    assert len(results) == 1, "Expected PrmFileReadError for path outside sandbox"
+    fprime_test_api.assert_event_count(
+        0, "FileHandling.prmDb.PrmFileLoadComplete", timeout=1
+    )
+
+    # --- Loading the store file by a path INSIDE the sandbox must succeed ---
+    fprime_test_api.clear_histories()
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.prmDb.PRM_LOAD_FILE", args=["PrmDb.dat", "RESET"], max_delay=5
+    )
+    fprime_test_api.assert_event("FileHandling.prmDb.PrmFileLoadComplete", timeout=5)
+
+    # Commit the staged load so PrmDb returns to the IDLE state for later tests
+    fprime_test_api.send_and_assert_command(
+        "FileHandling.prmDb.PRM_COMMIT_STAGED", max_delay=5
     )

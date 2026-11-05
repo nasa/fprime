@@ -43,6 +43,26 @@ TEST(FwLogTest, LogPacketSerialize) {
     ASSERT_EQ(str1, str2);
 }
 
+TEST(FwLogTest, LogPacketDeserializeOversizeRejected) {
+    // A payload larger than the log buffer capacity must be rejected, not copied
+    Fw::LogPacket pktIn;
+    Fw::LogBuffer buffIn;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serializeFrom(static_cast<U32>(12)));
+    pktIn.setId(10);
+    pktIn.setTimeTag(Fw::Time(TimeBase::TB_WORKSTATION_TIME, 10, 11));
+    pktIn.setLogBuffer(buffIn);
+
+    U8 data[FW_COM_BUFFER_MAX_SIZE + 128];
+    Fw::ExternalSerializeBuffer bigBuff(data, sizeof(data));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, bigBuff.serializeFrom(pktIn));
+    // Append filler so the remaining payload exceeds the LogBuffer capacity
+    U8 filler[FW_LOG_BUFFER_MAX_SIZE] = {};
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, bigBuff.serializeFrom(filler, sizeof(filler), Fw::Serialization::OMIT_LENGTH));
+
+    Fw::LogPacket pktOut;
+    ASSERT_EQ(Fw::FW_DESERIALIZE_SIZE_MISMATCH, bigBuff.deserializeTo(pktOut));
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

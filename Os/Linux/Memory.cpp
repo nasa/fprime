@@ -14,7 +14,9 @@ namespace Memory {
 MemoryInterface::Status LinuxMemory::_getUsage(Os::Memory::Usage& memory_usage) {
     struct sysinfo info;
     // Only error in sysinfo call is invalid address
-    FW_ASSERT(sysinfo(&info) == 0);
+    const int sysinfoStatus = sysinfo(&info);
+    FW_ASSERT(sysinfoStatus == 0);
+    FW_ASSERT(info.mem_unit > 0);
     const FwSizeType MAX_MEASURABLE_RAM_UNITS = std::numeric_limits<FwSizeType>::max() / info.mem_unit;
     if ((MAX_MEASURABLE_RAM_UNITS < info.totalram) || (MAX_MEASURABLE_RAM_UNITS < info.freeram)) {
         memory_usage.total = 1;
@@ -23,7 +25,7 @@ MemoryInterface::Status LinuxMemory::_getUsage(Os::Memory::Usage& memory_usage) 
     }
 
     memory_usage.total = info.totalram * info.mem_unit;
-    memory_usage.used = info.freeram * info.mem_unit;
+    memory_usage.used = (info.totalram - info.freeram) * info.mem_unit;
     return Status::OP_OK;
 }
 

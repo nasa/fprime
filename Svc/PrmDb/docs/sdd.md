@@ -14,6 +14,7 @@ PRMDB-001 | The `Svc::PrmDb` component shall load parameter values from a file |
 PRMDB-002 | The `Svc::PrmDb` component shall provide an interface to read parameter values | Inspection, Unit Test
 PRMDB-003 | The `Svc::PrmDb` component shall provide an interface to update parameter values | Inspection, Unit Test
 PRMDB-004 | The `Svc::PrmDb` component shall provide a command to save the current parameter values | Inspection, Unit Test
+PRMDB-005 | The `Svc::PrmDb` component shall reject a `PRM_LOAD_FILE` command with an empty file name with a `VALIDATION_ERROR` response and a `PrmDbFileLoadFailed` event, without asserting or altering the staging database | Unit Test, Integration Test
 
 ## 3. Design
 
@@ -42,10 +43,26 @@ When a new parameter value is written to the `setPrm` port, the table in memory 
 
 When the component receives the `PRM_SAVE_FILE` command, it saves the entire table to the file, overwriting the old values. Unless the file is written, any parameter updates will be lost when the software is restarted.
 
-The fields for each parameter value as stored in the parameter file are as follows:
+The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied path into the staging database. Paths rejected by the sandbox emit a `PrmFileReadError` event with an `OPEN` stage. An empty file name is rejected before the load begins: the command emits `PrmDbFileLoadFailed`, returns `VALIDATION_ERROR`, and leaves the staging database and load state unchanged.
+
+> [!WARNING]
+> All `PrmDb` file access — the startup `readParamFile` read, `PRM_SAVE_FILE` writes, and
+> `PRM_LOAD_FILE` reads — goes through an `Os::SandboxedFile` restricted to the directory set by
+> `configureSandbox(directory)`. The sandbox is **fail-closed**: until `configureSandbox(directory)`
+> is called every file open is rejected with `OUTSIDE_SANDBOX`. A deployment **must** call
+> `configureSandbox(directory)` during topology setup (before `readParamFile`) with a directory
+> that contains the store file set by `configure(file)`. Note that the stock `FileHandling` and
+> `FileHandlingCfdp` subtopologies configure the sandbox to `"/"` for backwards compatibility,
+> which permits reading or writing **any absolute path accessible to the process**.
+> Security-conscious deployments using them **must** call `configureSandbox(directory)` again from
+> topology setup code with a restricted directory, after which `../` traversal and absolute paths
+> outside it are rejected. `configure(file)` sets the store-file name only and is **not** a sandbox.
+
+The parameter file begins with a CRC32 followed by the serialized parameter records. The CRC is written as a placeholder, then overwritten after all records are written, and is computed over all record bytes.
 
 Description | Size (in bytes) | Value
 ----------- | ---- | -----
+CRC32 | 4 | Offset 0; placeholder initially, then the CRC over all record bytes; verified on load, with a mismatch emitting `PrmFileBadCrc`
 Entry Delimiter | 1 | 0xA5
 Record Size | 4 | Id type size + number of bytes in parameter value
 Parameter ID | Size of FwPrmIdType | Value of parameter ID
@@ -73,7 +90,13 @@ This diagram shows the scenario where parameters are saved to a file.
 
 ### 3.4 State
 
-`Svc::PrmDb` has no state machines.
+`Svc::PrmDb` uses the `PrmDbFileLoadState` state machine:
+
+- `IDLE` transitions to `LOADING_FILE_UPDATES` when `PRM_LOAD_FILE` is accepted.
+- A successful load transitions to `FILE_UPDATES_STAGED`.
+- A failed load clears the staging database, emits `PrmDbFileLoadFailed`, returns `EXECUTION_ERROR`, and transitions to `IDLE`.
+- `FILE_UPDATES_STAGED` transitions to `IDLE` on `PRM_COMMIT_STAGED`, which swaps the active and staging databases and emits `PrmDbCommitComplete`.
+- In any non-`IDLE` state, `setPrm` is rejected with `PrmDbFileLoadInvalidAction`; `PRM_SAVE_FILE` and `PRM_LOAD_FILE` are rejected with that event and `BUSY`. `PRM_COMMIT_STAGED` outside `FILE_UPDATES_STAGED` emits `PrmDbFileLoadInvalidAction` and returns `VALIDATION_ERROR`.
 
 ### 3.5 Algorithms
 
@@ -101,6 +124,4 @@ Date | Description
 ---- | -----------
 7/15/2015 | Design review edits
 10/6/2015 | Unit test review edits 
-
-
 

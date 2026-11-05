@@ -69,7 +69,7 @@ module Ref {
         async command SelectColor(color: ColorEnum) opcode 0
 
         @ Command for generating a DP
-        sync command Dp(reqType: DpReqType, $priority: U32)
+        sync command Dp(reqType: DpReqType, $priority: U32, proc: Fw.DpCfg.ProcType)
         
         @ Color selected event
         event ColorSelected(color: ColorEnum) severity activity high id 0 format "Color selected {}"

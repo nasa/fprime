@@ -26,8 +26,10 @@ TmFramer ::~TmFramer() {}
 // ----------------------------------------------------------------------
 
 void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
-              static_cast<FwAssertArgType>(data.getSize()));
+    // The data must fill the data field exactly: idle filling (Standard 4.2.2.5) is done upstream by Svc::ComAggregator
+    FW_ASSERT(data.getSize() == TmPayloadCapacity, static_cast<FwAssertArgType>(data.getSize()));
+    FW_ASSERT(context.get_firstHeaderPointer() <= TMSubfields::fhpMask,
+              static_cast<FwAssertArgType>(context.get_firstHeaderPointer()));
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
 
     // -----------------------------------------------
@@ -41,10 +43,11 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
 
     // Data Field Status (Standard 4.1.2.7):
-    // - all flags to 0 except segment length id 0b11 per standard (4.1.2.7)
-    // - First Header Pointer is always 0 since we are always wrapping a single entire packet at offset 0
-    U16 dataFieldStatus = 0;
-    dataFieldStatus |= 0x3 << TMSubfields::segLengthOffset;  // Seg Length Id '11' (0x3) per Standard (4.1.2.7.5)
+    // - all flags to 0 except Segment Length Id 0b11 (Standard 4.1.2.7.5)
+    // - First Header Pointer from context (Standard 4.1.2.7.6): set by an upstream aggregator when packets
+    //   span frames; the default of 0 indicates a packet header at offset 0 of the data field
+    const U16 dataFieldStatus =
+        static_cast<U16>((0x3 << TMSubfields::segLengthOffset) | context.get_firstHeaderPointer());
 
     header.set_globalVcId(globalVcId);
     header.set_masterFrameCount(this->m_masterFrameCount);
@@ -68,9 +71,6 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     status = frameSerializer.serializeFrom(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet
-    this->fill_with_idle_packet(frameSerializer);
-
     // -------------------------------------------------
     // Trailer (CRC)
     // -------------------------------------------------
@@ -81,7 +81,8 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // Set the Frame Error Control Field (FECF)
     trailer.set_fecf(crc);
     // Move the serializer pointer to the end of the location where the trailer will be serialized
-    frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
+    status = frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     status = frameSerializer.serializeFrom(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -103,29 +104,6 @@ void TmFramer ::dataReturnIn_handler(FwIndexType portNum,
     FW_ASSERT(frameBuffer.getData() >= &this->m_frameBuffer[0]);
     FW_ASSERT(frameBuffer.getData() < &this->m_frameBuffer[0] + sizeof(this->m_frameBuffer));
     this->m_bufferState = BufferOwnershipState::OWNED;
-}
-
-void TmFramer ::fill_with_idle_packet(Fw::SerialBufferBase& serializer) {
-    constexpr U16 endIndex = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
-    constexpr U16 idleApid = static_cast<U16>(ComCfg::Apid::SPP_IDLE_PACKET);
-    const U16 startIndex = static_cast<U16>(serializer.getSize());
-    const U16 idlePacketSize = static_cast<U16>(endIndex - startIndex);
-    // Length token is defined as the number of bytes of payload data minus 1
-    const U16 lengthToken = static_cast<U16>(idlePacketSize - SpacePacketHeader::SERIALIZED_SIZE - 1);
-
-    FW_ASSERT(idlePacketSize >= 7, static_cast<FwAssertArgType>(idlePacketSize));  // 7 bytes minimum for idle packet
-    FW_ASSERT(idlePacketSize <= ComCfg::TmFrameFixedSize, static_cast<FwAssertArgType>(idlePacketSize));
-
-    SpacePacketHeader header;
-    header.set_packetIdentification(idleApid);
-    header.set_packetSequenceControl(
-        0x3 << SpacePacketSubfields::SeqFlagsOffset);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
-    header.set_packetDataLength(lengthToken);
-    // Serialize header and idle data into the frame
-    serializer.serializeFrom(header);
-    for (U16 i = static_cast<U16>(startIndex + SpacePacketHeader::SERIALIZED_SIZE); i < endIndex; i++) {
-        serializer.serializeFrom(IDLE_DATA_PATTERN);  // Idle data
-    }
 }
 }  // namespace Ccsds
 }  // namespace Svc

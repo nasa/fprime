@@ -35,9 +35,15 @@ namespace Fw {
 //! the data itself. However, it comes with the expectation that the user maintain and protect this memory as it moves
 //! about the system until such a time as it is returned.
 //!
-//! Fw::Buffer is composed of several elements: a U8* pointer to the data, a U32 size of that data, and a U32 context
+//! Fw::Buffer is composed of several elements: a U8* pointer to the original allocation, an offset into that
+//! allocation, a size of the represented data, a capacity recording the original allocation size, and a U32 context
 //! describing the origin of that data, such that it may be freed at some later point. The default context of 0xFFFFFFFF
 //! should not be used for tracking purposes, as it represents a context-free buffer.
+//!
+//! The original allocation pointer is always recoverable via getOriginalData(). Consuming leading bytes (e.g. a
+//! header) is done with advance(), which adjusts the offset and size without losing the original pointer. setData()
+//! and setSize() are bounds-checked against the original allocation: to wrap unrelated memory, construct a new
+//! Fw::Buffer or call set().
 //!
 //! Fw::Buffer also comes with functions to return a representation of the data as a LinearBufferBase. These two
 //! functions allow easy access to the data as if it were a serialize or deserialize buffer. This can aid in writing and
@@ -61,8 +67,8 @@ class Buffer : public Fw::Serializable {
     using SizeType = FwSizeType;
 
     enum {
-        SERIALIZED_SIZE = sizeof(SizeType) + sizeof(U32) + sizeof(U8*),  //!< Size of Fw::Buffer when serialized
-        NO_CONTEXT = 0xFFFFFFFF                                          //!< Value representing no context
+        SERIALIZED_SIZE = 3 * sizeof(SizeType) + sizeof(U32) + sizeof(U8*),  //!< Size of Fw::Buffer when serialized
+        NO_CONTEXT = 0xFFFFFFFF                                              //!< Value representing no context
     };
 
     //! Construct a buffer with no context nor data
@@ -155,31 +161,57 @@ class Buffer : public Fw::Serializable {
     //!
     bool isValid() const;
 
-    //! Returns wrapped data pointer
+    //! Returns pointer to the current data (original allocation pointer plus offset)
     //!
     U8* getData() const;
+
+    //! Returns the original allocation pointer, regardless of any advance/setData adjustments
+    //!
+    U8* getOriginalData() const;
 
     //! Returns size of wrapped data
     //!
     FwSizeType getSize() const;
 
+    //! Returns the capacity (size of the original allocation)
+    //!
+    FwSizeType getCapacity() const;
+
+    //! Returns the current offset from the original allocation pointer
+    //!
+    FwSizeType getOffset() const;
+
     //! Returns creation context
     //!
     U32 getContext() const;
 
-    //! Sets pointer to wrapped data and the size of the given data
+    //! Moves the offset forward (positive) or backward (negative) by the given amount
     //!
+    //! The size is updated such that the end of the represented data is unchanged. Asserts if the resulting
+    //! offset is outside [0, capacity] or the resulting size would be negative.
+    //! \param amount: signed number of bytes to move the offset by
+    void advance(FwSignedSizeType amount);
+
+    //! Sets pointer to current data within the original allocation
+    //!
+    //! The supplied pointer must lie within the original allocation (original pointer + capacity); the offset is
+    //! updated accordingly and the size is adjusted such that the end of the represented data is unchanged.
+    //! Asserts when the pointer is outside the original allocation. To wrap unrelated memory, construct a new
+    //! Fw::Buffer or call set().
+    //! \param data: pointer within the original allocation
     void setData(U8* data);
 
-    //! Sets pointer to wrapped data and the size of the given data
+    //! Sets size of wrapped data
     //!
+    //! Asserts unless offset + size <= capacity.
+    //! \param size: new size of the represented data
     void setSize(FwSizeType size);
 
     //! Sets creation context
     //!
     void setContext(U32 context);
 
-    //! Sets all values
+    //! Sets all values, resetting the original allocation pointer, with capacity = size and offset = 0
     //! \param data: data pointer to wrap
     //! \param size: size of data located at data pointer
     //! \param context: user-specified context to track creation. Default: no context
@@ -198,8 +230,10 @@ class Buffer : public Fw::Serializable {
 
   private:
     Fw::ExternalSerializeBuffer m_serialize_repr;  //<! Representation for serialization and deserialization functions
-    U8* m_bufferData;                              //<! data - A pointer to the data
+    U8* m_bufferData;                              //<! data - A pointer to the original allocation
+    FwSizeType m_offset;                           //<! offset - Offset of the current data within the allocation
     FwSizeType m_size;                             //<! size - The data size in bytes
+    FwSizeType m_capacity;                         //<! capacity - Size of the original allocation in bytes
     U32 m_context;                                 //!< Creation context for disposal
 };
 }  // end namespace Fw

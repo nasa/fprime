@@ -29,6 +29,9 @@ class ComQueueTester : public ComQueueGTestBase {
     // Queue depth supplied to the component instance under test
     static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
+    static const U32 CONCURRENT_INGRESS_TASKS = 4;
+    static const U32 CONCURRENT_INGRESS_DROPS_PER_TASK = 5000;
+
   private:
     // ----------------------------------------------------------------------
     // Construction and destruction
@@ -67,6 +70,8 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testQueueFlush();
 
+    void testQueueFlushInvalidIndex();
+
     void testQueueFlushAll();
 
     void testQueuePause();
@@ -76,6 +81,20 @@ class ComQueueTester : public ComQueueGTestBase {
     void testExternalQueueOverflow();
 
     void testInternalQueueOverflow();
+
+    void testComPacketAsyncIngressDrop();
+
+    void testBufferAsyncIngressDrop();
+
+    void testConcurrentComAsyncIngressDrop();
+
+    void testFifoDropNewestAccounting();
+
+    void testFifoDropOldestAccounting();
+
+    void testDepthZeroQueue();
+
+    void testAllQueuesDisabled();
 
     void testReadyFirst();
 
@@ -101,6 +120,8 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testSetQueuePriorityInvalidIndex();
 
+    void testSetQueuePriorityInvalidBufferIndex();
+
     void testSetQueuePriorityNegativeIndex();
 
     void testSetQueuePriorityInvalidPriority();
@@ -111,6 +132,12 @@ class ComQueueTester : public ComQueueGTestBase {
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------
+
+    //! Invoke run once and assert that every drop-counter channel reports all zeros
+    void assertZeroDropTelemetry();
+
+    //! Producer for the concurrent async ingress test
+    static void concurrentComAsyncProducerTask(void* context);
 
     //! Connect ports
     //!

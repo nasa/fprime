@@ -2,7 +2,6 @@
 #define FW_POLY_TYPE_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/SerIds.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/StringType.hpp>
 
@@ -156,7 +155,6 @@ class PolyType : public Serializable {
 
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_POLY,                         //!< typeid for PolyType
         SERIALIZED_SIZE = sizeof(FwEnumStoreType) + sizeof(PolyVal)  //!< stored serialized size
     };
 };

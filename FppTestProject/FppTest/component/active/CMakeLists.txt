@@ -42,6 +42,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/../tests/InternalInterfaceTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/OverflowTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/ParamTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/PortBufferTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/PortTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHandlers.cpp"

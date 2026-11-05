@@ -1,8 +1,0 @@
-AUTOGEN
-atype
-deinit
-github
-https
-ssh
-ubuntu
-workarounds

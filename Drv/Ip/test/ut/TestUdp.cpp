@@ -12,6 +12,7 @@
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Os/Console.hpp>
+#include <STest/Random/Random.hpp>
 
 Os::Console logger;
 
@@ -183,7 +184,59 @@ TEST(Ephemeral, TestEphemeralPorts) {
     receiver.close(recv_fd);
 }
 
+// Fails every send with the given errno; the zero-length datagram path classifies errors on its own
+class UdpSendTimeoutSocket final : public Drv::UdpSocket {
+  public:
+    explicit UdpSendTimeoutSocket(int send_errno) : m_send_errno(send_errno) {}
+    U32 send_calls = 0;
+
+  private:
+    FwSignedSizeType sendProtocol(const Drv::SocketDescriptor&, const U8* const, const FwSizeType) override {
+        this->send_calls++;
+        errno = this->m_send_errno;
+        return -1;
+    }
+
+    int m_send_errno;
+};
+
+TEST(SendTimeout, TestZeroLengthSendTimeoutIsRetryable) {
+    UdpSendTimeoutSocket socket(EAGAIN);
+    Drv::SocketDescriptor fd;
+
+    EXPECT_EQ(socket.send(fd, nullptr, 0), Drv::SOCK_INTERRUPTED_TRY_AGAIN);
+    EXPECT_EQ(socket.send_calls, 1u);
+}
+
+#ifndef TGT_OS_TYPE_VXWORKS
+// A send port of 0 means "reply to the source of the last datagram received", so such a
+// socket does send and the configured send timeout has to reach it. It used to be applied
+// only when a non-zero send port was configured.
+TEST(SendTimeout, TestSendTimeoutAppliedWithoutSendPort) {
+    const U32 timeout_seconds = 1;
+    const U32 timeout_microseconds = 0;
+
+    Drv::UdpSocket socket;
+    Drv::SocketDescriptor fd;
+    U16 recv_port = Drv::Test::get_free_port(true);
+    ASSERT_NE(0, recv_port);
+
+    socket.configureRecv("127.0.0.1", recv_port);
+    ASSERT_EQ(socket.configureSend("127.0.0.1", 0, timeout_seconds, timeout_microseconds), Drv::SOCK_SUCCESS);
+    ASSERT_EQ(socket.open(fd), Drv::SOCK_SUCCESS);
+
+    struct timeval timeout = {};
+    socklen_t timeout_size = sizeof(timeout);
+    ASSERT_EQ(::getsockopt(fd.fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, &timeout_size), 0) << std::strerror(errno);
+    EXPECT_EQ(static_cast<U32>(timeout.tv_sec), timeout_seconds);
+    EXPECT_EQ(static_cast<U32>(timeout.tv_usec), timeout_microseconds);
+
+    socket.close(fd);
+}
+#endif
+
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

@@ -16,7 +16,7 @@ Components may need memory internally to function. There are several reasons why
 
 2. **Runtime sizing**: The size of the memory required may not be known at compile time. This includes cases where multiple instances of a component may require different sizes of memory.
 
-A good example is the [`Svc::BufferManager`](../../../Svc/BufferManager/docs/sdd.md) component, which manages pools of buffers of configurable sizes. These pools are often large and the number can vary widely based on project requirements. There can also be the need to have multiple instances of the `Svc::BufferManager`, each instance with different size configurations. Using `Fw::MemAllocator` allows each instance of `Svc::BufferManager` to independently allocate the necessary memory during system initialization.
+A good example is the [`Svc::BufferManager`](../../../../Svc/BufferManager/docs/sdd.md) component, which manages pools of buffers of configurable sizes. These pools are often large and the number can vary widely based on project requirements. There can also be the need to have multiple instances of the `Svc::BufferManager`, each instance with different size configurations. Using `Fw::MemAllocator` allows each instance of `Svc::BufferManager` to independently allocate the necessary memory during system initialization.
 
 > [!TIP]
 > Many other components in F´ also use `Fw::MemAllocator`, you can search the codebase for `MemAllocator` to find more examples.

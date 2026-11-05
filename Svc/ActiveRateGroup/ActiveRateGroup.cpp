@@ -20,6 +20,10 @@
 
 namespace Svc {
 
+// The cycle-started flag is stored from the cycle caller's thread, which may be interrupt context;
+// a std::atomic implemented with a hidden lock would not be safe there.
+static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "std::atomic<bool> must be lock-free for the cycle-started flag");
+
 ActiveRateGroup::ActiveRateGroup(const char* compName)
     : ActiveRateGroupComponentBase(compName),
       m_cycles(0),
@@ -29,19 +33,27 @@ ActiveRateGroup::ActiveRateGroup(const char* compName)
       m_overrunThrottle(0),
       m_cycleSlips(0) {}
 
-void ActiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {
-    FW_ASSERT(contexts);
-    FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(numContexts),
-              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
-    FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
-              static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
-              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
+void ActiveRateGroup::configure(const ContextArray& contexts) {
+    static_assert(FW_NUM_ARRAY_ELEMENTS(m_contexts) == NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS,
+                  "Context table size must match the number of rate group member output ports");
 
-    this->m_numContexts = numContexts;
+    this->m_numContexts = CONNECTION_COUNT_MAX;
     // copy context values
     for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {
-        this->m_contexts[entry] = contexts[entry];
+        this->m_contexts[entry] = contexts[static_cast<FwSizeType>(entry)];
     }
+}
+
+void ActiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {
+    FW_ASSERT(contexts != nullptr);
+    FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(numContexts),
+              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
+
+    ContextArray contextArray;
+    for (FwIndexType entry = 0; entry < numContexts; entry++) {
+        contextArray[static_cast<FwSizeType>(entry)] = contexts[entry];
+    }
+    this->configure(contextArray);
 }
 
 ActiveRateGroup::~ActiveRateGroup() {}
@@ -52,11 +64,13 @@ void ActiveRateGroup::preamble() {
 
 void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {
     // Make sure it's been configured
-    FW_ASSERT(this->m_numContexts);
+    FW_ASSERT(this->m_numContexts != 0);
 
     Os::RawTime endTime;
 
-    this->m_cycleStarted = false;
+    // Clear the flag set by this cycle's CycleIn_preMsgHook. A cycle message whose hook ran
+    // between the dequeue and this store is coalesced with this cycle: one slip per delay.
+    this->m_cycleStarted.store(false, std::memory_order_relaxed);
 
     // invoke any members of the rate group
     for (FwIndexType port = 0; port < this->m_numContexts; port++) {
@@ -66,7 +80,10 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
     }
 
     // grab timer for endTime of cycle
-    endTime.now();
+    Os::RawTime::Status timeStatus = endTime.now();
+    if (timeStatus != Os::RawTime::Status::OP_OK) {
+        this->log_WARNING_HI_RateGroupTimeGetError(Os::RawTimeStatus(static_cast<Os::RawTimeStatus::T>(timeStatus)));
+    }
 
     // get rate group execution time
     U32 cycleTime;
@@ -84,7 +101,7 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
 
     // check for cycle slip. That will happen if new cycle message has been received
     // which will cause flag will be set again.
-    if (this->m_cycleStarted) {
+    if (this->m_cycleStarted.load(std::memory_order_relaxed)) {
         this->m_cycleSlips++;
         if (this->m_overrunThrottle < ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) {
             this->log_WARNING_HI_RateGroupCycleSlip(this->m_cycles);
@@ -104,7 +121,7 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
 
 void ActiveRateGroup::CycleIn_preMsgHook(FwIndexType portNum, Os::RawTime& cycleStart) {
     // set flag to indicate cycle has started. Check in thread for overflow.
-    this->m_cycleStarted = true;
+    this->m_cycleStarted.store(true, std::memory_order_relaxed);
 }
 
 void ActiveRateGroup::PingIn_handler(FwIndexType portNum, U32 key) {

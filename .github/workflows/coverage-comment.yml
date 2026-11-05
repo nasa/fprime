@@ -1,0 +1,51 @@
+# Sticky-comment-poster companion to .github/workflows/coverage-check.yml.
+#
+# Why this is a separate workflow:
+#
+# GitHub strips write permissions from GITHUB_TOKEN on pull_request
+# events triggered from forks (a security boundary; the workflow
+# `permissions:` block is silently ignored).  As a result, the
+# coverage-check workflow that runs on fork content cannot post a PR
+# comment back to nasa/fprime, even though it generates one fine.
+#
+# This workflow runs on the workflow_run event instead.  It fires in
+# nasa/fprime's context (not the fork's), so its GITHUB_TOKEN has the
+# pull-requests: write permission requested below.  Critically, no
+# fork-supplied code executes here: this job only downloads the
+# already-built artifact uploaded by coverage-check and posts its
+# (validated) contents.
+#
+# See nasa/fprime-actions/coverage-comment/README.md for the full
+# rationale and the action's contract.
+
+name: "Coverage Comment"
+
+on:
+  workflow_run:
+    workflows: ["Coverage Check"]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read           # list + download artifacts from the triggering run
+  pull-requests: write    # upsert the sticky comment
+
+concurrency:
+  # Serialize per source-run so two completions of the same PR can't
+  # race when posting / updating the sticky comment.
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.id }}
+  cancel-in-progress: false
+
+jobs:
+  coverage-comment:
+    name: "Post coverage comment"
+    runs-on: ubuntu-latest
+    # Only run for pull_request-triggered coverage runs that completed
+    # successfully.  Skipping cancelled / failed runs avoids posting
+    # stale comments when the upstream job died before producing data.
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: "Post sticky coverage comment"
+        uses: nasa/fprime-actions/coverage-comment@devel

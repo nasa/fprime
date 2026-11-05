@@ -14,6 +14,7 @@
 #define TESTER_HPP
 
 #include "BufferAccumulatorGTestBase.hpp"
+#include "Fw/Types/MallocAllocator.hpp"
 #include "Svc/BufferAccumulator/BufferAccumulator.hpp"
 
 #define MAX_NUM_BUFFERS 10
@@ -79,6 +80,9 @@ class BufferAccumulatorTester : public BufferAccumulatorGTestBase {
 
     //! Whether to allocate/deallocate a queue for the user
     bool doAllocateQueue;
+
+    //! Allocator used for the component queue
+    Fw::MallocAllocator buffAccumMallocator;
 
     // ----------------------------------------------------------------------
     //  Methods

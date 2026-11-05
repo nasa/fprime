@@ -60,6 +60,12 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void dispatchUntilState(State state, U32 bound = 100);
     void resetRuntime();
 
+    //! invokes a directive's internal interface handler while the sequencer is not awaiting a statement
+    //! response, and again with the index of a sequence older than the running one, and checks that the
+    //! directive is dropped with the matching warning each time, without running or sending a signal
+    template <typename InvokeHandler>
+    void checkDirectiveDropped(Fpy::DirectiveId id, InvokeHandler invokeHandler);
+
     // a sequence that you can build with the following functions
     Fpy::Sequence seq;
     U8 internalSeqBuf[Fpy::Sequence::SERIALIZED_SIZE] = {0};
@@ -113,6 +119,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_MEMCMP(Fpy::StackSizeType size);
     void add_MEMCMP(FpySequencer_MemCmpDirective dir);
     void add_PUSH_TIME();
+    void add_SET_SEED();
+    void add_PUSH_RAND();
     void add_GET_FIELD(Fpy::StackSizeType parentSize, Fpy::StackSizeType memberSize);
     void add_GET_FIELD(FpySequencer_GetFieldDirective dir);
     void add_PEEK();
@@ -130,6 +138,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_STORE_ABS_CONST_OFFSET(Fpy::StackSizeType globalOffset, Fpy::StackSizeType size);
     void add_STORE_ABS_CONST_OFFSET(FpySequencer_StoreAbsConstOffsetDirective dir);
     void add_POP_EVENT();
+    void add_POP_SERIALIZABLE(FwIndexType portIndex, Fpy::StackSizeType size);
+    void add_POP_SERIALIZABLE(FpySequencer_PopSerializableDirective dir);
     template <typename T>
     void add_PUSH_VAL(T val);
     //! Handle a text event
@@ -155,6 +165,17 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                                          Fw::ParamBuffer& val  //!< Buffer containing serialized parameter value.
                                                                //!< Unmodified if param not found.
                                          ) override;
+
+    // Test helpers for serialOut port
+    struct SerialOutCall {
+        FwIndexType portNum;
+        U8 data[Fpy::MAX_STACK_SIZE];
+        FwSizeType dataSize;
+    };
+    std::vector<SerialOutCall> m_serialOutHistory;
+
+    // Default handler implementation for from_serialOut_handler
+    void from_serialOut_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) override;
 
     // Access to private and protected FpySequencer methods and members for UTs
     Signal tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& err);
@@ -183,11 +204,75 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                                                        DirectiveError& err);
     Signal tester_popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& err);
     Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);
+    Signal tester_setSeed_directiveHandler(const FpySequencer_SetSeedDirective& directive, DirectiveError& err);
+    Signal tester_pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive, DirectiveError& err);
     Signal tester_allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& err);
     Signal tester_loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive, DirectiveError& err);
     Signal tester_storeRelConstOffset_directiveHandler(const FpySequencer_StoreRelConstOffsetDirective& directive,
                                                        DirectiveError& err);
     Signal tester_pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& err);
+    Signal tester_popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
+                                                   DirectiveError& err);
+    void tester_directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive,
+                                                           U64 sequenceIndex);
+    void tester_directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive,
+                                                           U64 sequenceIndex);
+    void tester_directive_goto_internalInterfaceHandler(const FpySequencer_GotoDirective& directive, U64 sequenceIndex);
+    void tester_directive_if_internalInterfaceHandler(const FpySequencer_IfDirective& directive, U64 sequenceIndex);
+    void tester_directive_noOp_internalInterfaceHandler(const FpySequencer_NoOpDirective& directive, U64 sequenceIndex);
+    void tester_directive_pushTlmVal_internalInterfaceHandler(const FpySequencer_PushTlmValDirective& directive,
+                                                              U64 sequenceIndex);
+    void tester_directive_pushTlmValAndTime_internalInterfaceHandler(
+        const FpySequencer_PushTlmValAndTimeDirective& directive,
+        U64 sequenceIndex);
+    void tester_directive_pushPrm_internalInterfaceHandler(const FpySequencer_PushPrmDirective& directive,
+                                                           U64 sequenceIndex);
+    void tester_directive_constCmd_internalInterfaceHandler(const FpySequencer_ConstCmdDirective& directive,
+                                                            U64 sequenceIndex);
+    void tester_directive_stackOp_internalInterfaceHandler(const FpySequencer_StackOpDirective& directive,
+                                                           U64 sequenceIndex);
+    void tester_directive_exit_internalInterfaceHandler(const FpySequencer_ExitDirective& directive, U64 sequenceIndex);
+    void tester_directive_allocate_internalInterfaceHandler(const FpySequencer_AllocateDirective& directive,
+                                                            U64 sequenceIndex);
+    void tester_directive_storeRelConstOffset_internalInterfaceHandler(
+        const FpySequencer_StoreRelConstOffsetDirective& directive,
+        U64 sequenceIndex);
+    void tester_directive_pushVal_internalInterfaceHandler(const FpySequencer_PushValDirective& directive,
+                                                           U64 sequenceIndex);
+    void tester_directive_loadRel_internalInterfaceHandler(const FpySequencer_LoadRelDirective& directive,
+                                                           U64 sequenceIndex);
+    void tester_directive_discard_internalInterfaceHandler(const FpySequencer_DiscardDirective& directive,
+                                                           U64 sequenceIndex);
+    void tester_directive_memCmp_internalInterfaceHandler(const FpySequencer_MemCmpDirective& directive,
+                                                          U64 sequenceIndex);
+    void tester_directive_stackCmd_internalInterfaceHandler(const FpySequencer_StackCmdDirective& directive,
+                                                            U64 sequenceIndex);
+    void tester_directive_pushTime_internalInterfaceHandler(const FpySequencer_PushTimeDirective& directive,
+                                                            U64 sequenceIndex);
+    void tester_directive_setSeed_internalInterfaceHandler(const FpySequencer_SetSeedDirective& directive,
+                                                           U64 sequenceIndex);
+    void tester_directive_pushRand_internalInterfaceHandler(const FpySequencer_PushRandDirective& directive,
+                                                            U64 sequenceIndex);
+    void tester_directive_getField_internalInterfaceHandler(const FpySequencer_GetFieldDirective& directive,
+                                                            U64 sequenceIndex);
+    void tester_directive_peek_internalInterfaceHandler(const FpySequencer_PeekDirective& directive, U64 sequenceIndex);
+    void tester_directive_storeRel_internalInterfaceHandler(const FpySequencer_StoreRelDirective& directive,
+                                                            U64 sequenceIndex);
+    void tester_directive_call_internalInterfaceHandler(const FpySequencer_CallDirective& directive, U64 sequenceIndex);
+    void tester_directive_return_internalInterfaceHandler(const FpySequencer_ReturnDirective& directive,
+                                                          U64 sequenceIndex);
+    void tester_directive_loadAbs_internalInterfaceHandler(const FpySequencer_LoadAbsDirective& directive,
+                                                           U64 sequenceIndex);
+    void tester_directive_storeAbs_internalInterfaceHandler(const FpySequencer_StoreAbsDirective& directive,
+                                                            U64 sequenceIndex);
+    void tester_directive_storeAbsConstOffset_internalInterfaceHandler(
+        const FpySequencer_StoreAbsConstOffsetDirective& directive,
+        U64 sequenceIndex);
+    void tester_directive_popEvent_internalInterfaceHandler(const FpySequencer_PopEventDirective& directive,
+                                                            U64 sequenceIndex);
+    void tester_directive_popSerializable_internalInterfaceHandler(
+        const FpySequencer_PopSerializableDirective& directive,
+        U64 sequenceIndex);
     DirectiveError tester_op_or();
     DirectiveError tester_op_and();
     DirectiveError tester_op_ieq();
@@ -236,7 +321,12 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     DirectiveError tester_op_itrunc_64_8();
     DirectiveError tester_op_itrunc_64_16();
     DirectiveError tester_op_itrunc_64_32();
+    DirectiveError tester_op_ffloor();
+    DirectiveError tester_op_iabs();
+    DirectiveError tester_op_fabs();
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
+    //! Reset getParam to unconnected (framework has no disconnect; reconstruct port in place)
+    void tester_disconnect_getParam();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
     void tester_set_m_sequencesStarted(U64 val);
     void tester_set_m_statementsDispatched(U64 val);
@@ -247,8 +337,12 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fpy::Sequence* tester_get_m_sequenceObj_ptr();
     Svc::Signal tester_dispatchStatement();
     Fw::Success tester_validate();
+    bool tester_isRunningState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
+    // directly invokes the setSequenceFilePath state machine action, bypassing the
+    // command path (which truncates string args to FW_CMD_STRING_MAX_SIZE)
+    void tester_setSequenceFilePath(const Svc::FpySequencer_SequenceExecutionArgs& args);
     Fw::Success tester_readBytes(Os::File& file,
                                  FwSizeType readLen,
                                  FpySequencer_FileReadStage readStage,
@@ -257,12 +351,18 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_readBody();
     Fw::Success tester_readHeader();
     void tester_set_m_computedCRC(U32 crc);
+    void tester_init_m_computedCRC();
+    void tester_update_m_computedCRC(const U8* buffer, FwSizeType bufferSize);
+    U32 tester_finalize_m_computedCRC();
     void tester_set_m_sequenceArgs(Svc::SeqArgs args);
     Svc::FpySequencer::BreakpointInfo* tester_get_m_breakpoint_ptr();
     Svc::Signal tester_checkStatementTimeout();
     Svc::Signal tester_checkShouldWake();
     Svc::FpySequencer::Telemetry* tester_get_m_tlm_ptr();
     void tester_doDispatch();
+    FwSizeType tester_getMessagesAvailable();
+    // dispatches messages until the queue is empty, including messages enqueued while dispatching
+    void tester_dispatchAllMessages(U32 bound = 100);
     void tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
     Svc::FpySequencer_SequencerStateMachineStateMachineBase::State tester_getState();
     void tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id);
@@ -332,6 +432,37 @@ class FpySequencer_SequencerStateMachineTester {
     // ----------------------------------------------------------------------
     static void setState(FpySequencer_SequencerStateMachineStateMachineBase& sm, State s) { sm.m_state = s; }
 };
+
+template <typename InvokeHandler>
+void FpySequencerTester::checkDirectiveDropped(Fpy::DirectiveId id, InvokeHandler invokeHandler) {
+    const U64 currentSequenceIndex = 2;
+    const U64 oldSequenceIndex = currentSequenceIndex - 1;
+    const FwSizeType messagesQueued = this->cmp.m_queue.getMessagesAvailable();
+    const Fpy::StackSizeType stackSize = this->cmp.m_runtime.stack.size;
+    tester_set_m_sequencesStarted(currentSequenceIndex);
+
+    // a directive serviced after its sequence was cancelled
+    this->clearHistory();
+    tester_setState(State::IDLE);
+    invokeHandler(currentSequenceIndex);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DirectiveWhileNotAwaiting_SIZE(1);
+    ASSERT_EVENTS_DirectiveWhileNotAwaiting(0, id, static_cast<I32>(State::IDLE));
+    ASSERT_from_cmdOut_SIZE(0);
+    ASSERT_EQ(this->cmp.m_queue.getMessagesAvailable(), messagesQueued);
+    ASSERT_EQ(this->cmp.m_runtime.stack.size, stackSize);
+
+    // a directive serviced while a newer sequence awaits its own statement response
+    this->clearHistory();
+    tester_setState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    invokeHandler(oldSequenceIndex);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DirectiveFromOldSequence_SIZE(1);
+    ASSERT_EVENTS_DirectiveFromOldSequence(0, id, oldSequenceIndex, currentSequenceIndex);
+    ASSERT_from_cmdOut_SIZE(0);
+    ASSERT_EQ(this->cmp.m_queue.getMessagesAvailable(), messagesQueued);
+    ASSERT_EQ(this->cmp.m_runtime.stack.size, stackSize);
+}
 
 }  // namespace Svc
 

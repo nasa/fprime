@@ -77,6 +77,20 @@ event InsufficientBufferSpace(
     severity warning high \
     format "Buffer capacity of {} was not big enough for sequence {}"
 
+event FileApiError(
+    filePath: string
+    errorCode: I32
+) \
+    severity warning high \
+    format "File system API error encountered while operating on file {}: {}"
+
+event SequenceFilePathTooLong(
+    baseDir: string
+    fileName: string
+) \
+    severity warning high \
+    format "Sequence file path was truncated: base directory {} and file name {} together exceed the maximum path length"
+
 # runtime
 
 event CommandFailed(
@@ -102,7 +116,7 @@ event SequenceCancelled(
 
 event SequenceExitedWithError(
     filePath: string
-    errorCode: U8
+    errorCode: I32
 ) \
     severity warning high \
     format "Sequence {} exited with error code {}"
@@ -227,6 +241,13 @@ event ArgSizeMismatch(
     severity warning high \
     format "Expected {} bytes of arguments, but received {} in sequence file {}"
 
+event ArgSizeExceedsCapacity(
+    actual: FwSizeType
+    capacity: FwSizeType
+) \
+    severity warning high \
+    format "Argument size {} exceeds the {} byte argument buffer"
+
 event ArgTotalSizeExceedsStackLimit(
     argSize: Fpy.StackSizeType
 ) \
@@ -298,3 +319,25 @@ event LogDiagnostic(
 ) \
     severity diagnostic \
     format "Sequence {}: {}"
+
+event DirectiveWhileNotAwaiting(
+    directive: Fpy.DirectiveId
+    $state: I32
+) \
+    severity warning low \
+    format "Ignored directive {} because the sequencer was not awaiting a statement response (was in state {})"
+
+event DirectiveFromOldSequence(
+    directive: Fpy.DirectiveId
+    oldSequenceIdx: U64
+    currentSequenceIdx: U64
+) \
+    severity warning low \
+    format "Ignored directive {} because it was from a previous sequence, not the current one (old idx: {}, current idx: {})"
+
+event FileOutsideSandbox(
+    filePath: string
+    sandboxDir: string
+) \
+    severity warning high \
+    format "File {} is outside the configured sandbox directory {}"

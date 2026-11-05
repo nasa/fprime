@@ -16,6 +16,7 @@ register_fprime_module(
         "${CMAKE_CURRENT_LIST_DIR}/Generic.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/RawTime.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/Queue.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CountingSemaphore.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/Models.cpp"
     DEPENDS

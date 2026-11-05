@@ -1,0 +1,2 @@
+| test.cpp:9:5:9:30 | ... = ... | Floating-point operation in interrupt service routine adc_isr. |
+| test.cpp:9:16:9:30 | ... * ... | Floating-point operation in interrupt service routine adc_isr. |

@@ -33,7 +33,7 @@ class SignalGen final : public SignalGenComponentBase {
                              U32 Frequency,
                              F32 Amplitude,
                              F32 Phase,
-                             Ref::SignalType SigType) final;
+                             const Ref::SignalType& SigType) final;
 
     void Toggle_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
                            U32 cmdSeq           /*!< The command sequence number*/
@@ -48,7 +48,7 @@ class SignalGen final : public SignalGenComponentBase {
     //! Signal Generator Settings
     void Dp_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                        U32 cmdSeq,           //!< The command sequence number
-                       Ref::SignalGen_DpReqType reqType,
+                       const Ref::SignalGen_DpReqType& reqType,
                        U32 records,
                        U32 priority) final;
 

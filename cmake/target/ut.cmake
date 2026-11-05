@@ -5,8 +5,8 @@
 ####
 include(target/build) # Borrows some implementation
 include(fprime-util)
-set(FPRIME__INTERNAL_UT_TARGET "ut_exe") # For historical reasons
-set(FPRIME__INTERNAL_UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
+set(FPRIME__INTERNAL_UT_TARGET "ut_exe" CACHE INTERNAL "Internal name for UT target" FORCE) # For historical reasons
+set(FPRIME__INTERNAL_UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake" CACHE INTERNAL "Internal path to UT clean script" FORCE)
 
 
 ####
@@ -65,6 +65,7 @@ function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPEND
     # Add dependencies if tests have been defined
     if (DEPLOYMENT_TESTS)
         add_dependencies("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}" ${DEPLOYMENT_TESTS})
+        fprime_util_metadata_set_test_dir("${CMAKE_BINARY_DIR}")
     endif()
     fprime_util_metadata_add_build_target("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
 endfunction(ut_add_deployment_target)

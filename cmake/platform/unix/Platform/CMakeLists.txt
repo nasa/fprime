@@ -18,10 +18,11 @@ register_fprime_config(
         Os_RawTime_Posix
         Fw_StringFormat_snprintf
         Fw_StringScan_sscanf
+        Os_CountingSemaphore_Stub # Linux/Darwin specific, so common uses Stub
         Fw_AssertHook_fputs
         # No posix API
         Os_Cpu_Stub
         Os_Memory_Stub
     INTERFACE # No compilable outputs produced
-    BASE_CONFIG
+    GLOBAL_IMPLICIT_DEPENDENCY
 )

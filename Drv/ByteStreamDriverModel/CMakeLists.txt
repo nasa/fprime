@@ -5,8 +5,8 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(SOURCE_FILES
+
+register_fprime_module(
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverModel.fpp"
 )
-
-register_fprime_module()

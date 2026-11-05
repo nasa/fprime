@@ -42,14 +42,14 @@ class AosFramer final : public AosFramerComponentBase {
 
     struct AosVc {
         U8 vc_struct_index = 0xFF;  //!< Index into VC Array for this vc struct
-        U8 virtualChannelId = 1;    //!< VCID for this particular virtual channel
+        U8 virtualChannelId = 0;    //!< VCID for this particular virtual channel
         // Current implementation uses a single virtual channel, so we can use a single virtual frame count
         U32 virtualFrameCount = 0;  //!< Virtual Frame Count - 24 bits - wraps around at 16,777,216
 
         // Because the AOS protocol use fixed width frames, and only one frame is in transit between ComQueue and
         // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
         struct FrameBuffer {
-            U8 backer[ComCfg::AosMaxFrameFixedSize];                   //!< Buffer to hold the frame data
+            U8 backer[ComCfg::AosMaxFrameFixedSize] = {};              //!< Buffer to hold the frame data
             Fw::Buffer buffer;                                         //!< Buffer object pointing at frameBufferBacker
             BufferOwnershipState state = BufferOwnershipState::OWNED;  //!< whether m_frameBuffer is owned by AosFramer
         } frame;
@@ -65,7 +65,7 @@ class AosFramer final : public AosFramerComponentBase {
         // Technically we'd only use 6 of the 7 bytes at worst
         // cuz the first one had to go into the prev frame
         struct SppIdle {
-            U8 backer[MIN_SPP_LENGTH];
+            U8 backer[MIN_SPP_LENGTH] = {};
             U8 offset = 0;
         } spp_idle;
 
@@ -88,11 +88,13 @@ class AosFramer final : public AosFramerComponentBase {
 
     //! Configure Managed Parameters for this AOS Framer
     //!
-    void configure(U32 fixedFixedSize,                  //!< Number of bytes in each AOS SDL Frame
-                   bool frameErrorControlField,         //!< Whether to enable the frame error control field
-                   U8 idlePvns = PvnBitfield::SPP_MASK  //!< Bitfield of which Packet Version Numbers to use
-                                                        //!< for idle packets
-                                                        //!< Default to SPP
+    void configure(U32 fixedFixedSize,                       //!< Number of bytes in each AOS SDL Frame
+                   bool frameErrorControlField,              //!< Whether to enable the frame error control field
+                   U16 spacecraftId = ComCfg::SpacecraftId,  //!< Spacecraft ID
+                   U8 vcId = 1,                              //!< Virtual Channel ID (default 1)
+                   U8 idlePvns = PvnBitfield::SPP_MASK       //!< Bitfield of which Packet Version Numbers to use
+                                                             //!< for idle packets
+                                                             //!< Default to SPP
     );
 
   private:
@@ -158,7 +160,7 @@ class AosFramer final : public AosFramerComponentBase {
     void compute_and_inject_fecf(AosVc& currentVc);
 
     //! Determine if the Fw::Buffer is within the backing character buffer
-    static bool buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size);
+    static bool buffer_belongs(const Fw::Buffer& buffer, U8 const* start, FwSizeType size);
 
     //! TODO: Implement multiple VCs
     //! Map frame context onto index into array of Virtual Channel structs
@@ -170,7 +172,8 @@ class AosFramer final : public AosFramerComponentBase {
     // ----------------------------------------------------------------------
   private:
     // Config Parameters
-    bool m_fecf = true;  //!< AOS Frame Error Control Field presence
+    bool m_fecf = true;      //!< AOS Frame Error Control Field presence
+    U16 m_spacecraftId = 0;  //!< Expected spacecraft ID (10 bits)
 
     AosVc m_vcs[1];  //! Our one AOS Virtual Channel (for now)
 };

@@ -26,9 +26,9 @@ memory allocation should include two output ports:
 
 This can be done by importing the `Svc.BufferAllocation` FPP interface in the component's FPP definition file as shown in the examples below.
 
-In the case that allocation fails, the `Fw::Buffer` return from the `Fw::BufferGet` port will be marked invalid and have a size of zero.
-This must be checked using the `Fw::Buffer::isValid()` method.
-Developers must check that the size is not smaller than requested before proceeding to use the memory.
+When using `Svc.BufferManager`, allocation failure returns an invalid `Fw::Buffer` with a size of zero. This must be
+checked using the `Fw::Buffer::isValid()` method. On success, `Svc.BufferManager` returns a buffer whose size is
+exactly the requested size.
 
 **Example Component Definition**
 
@@ -51,7 +51,7 @@ passive component MyComponent {
     const U32 needed_size = 1024;
     Fw::Buffer my_buffer = this->allocate_out(0, needed_size);
     
-    if (my_buffer.getSize() < needed_size) {
+    if (!my_buffer.isValid()) {
         this->deallocate_out(0, my_buffer);
         this->log_WARNING_LO_MemoryAllocationFailed();
     } else {
@@ -121,7 +121,8 @@ Each section will describe any special setup needed in the topology and how to h
 
 Svc.BufferManager uses multiple bins of memory with fixed-size sub-allocations within a bin. It has a single allocate
 and deallocate port that may take any size allocation request. Svc.BufferManager searches all bins with sub-allocation
-size larger than the request for an available buffer, which it then marks as used and returns.
+size at least as large as the request for an available buffer, which it then marks as used and returns with its size
+trimmed to the requested size. The underlying allocation may come from a larger bin.
 
 There is no restriction on the ordering of calls for allocation and deallocation. Clients may have multiple outstanding allocations and thus asynchronous usage of these allocations is supported.
 
@@ -135,7 +136,8 @@ be used generically but comes at the cost of complexity of implementation and se
 **Usage Requirements**
 
 Allocating more memory than available will result in buffers with size 0 being returned and is not an error. However,
-buffers must be allocated and returned using the same instance of Svc.BufferManager. 
+buffers must be allocated and returned using the same instance of Svc.BufferManager. Returned buffers are trimmed to
+the requested size, although their underlying allocations may come from a larger bin.
 
 Buffer manager will assert under the following conditions:
 

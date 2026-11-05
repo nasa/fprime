@@ -9,9 +9,9 @@
 // - Space Packet Protocol (SPP) extraction (CCSDS 133.0-B-2)
 // - Encapsulation Packet Protocol (EPP) extraction (CCSDS 133.1-B-3)
 // ======================================================================
-
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
 #include <cstring>
+#include <limits>
 #include "Svc/Ccsds/Types/EppLengthOfLengthEnumAc.hpp"
 #include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
@@ -104,19 +104,20 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     // Validate FECF if enabled (Section 4.1.6)
     // FrameDetector + FrameAccumulator or Lower Protocol Layer should enforce whole AOS Frames
-    if (m_fecfEnabled && !this->validateFecf(data)) {
-        this->dataReturnOut_out(0, data, context);
-        return;
+    if (m_fecfEnabled) {
+        const bool fecfValid = this->validateFecf(data);
+        if (!fecfValid) {
+            this->dataReturnOut_out(0, data, context);
+            return;
+        }
     }
 
     // Create a mutable context for extracted packet info
     ComCfg::FrameContext packetContext = context;
-    // Start null, and is set by the parse step
-    AosDeframerVc* vc;
-
     // Parse and validate the AOS Primary Header (Section 4.1.2)
     // Note: parseAndValidateHeader handles warning events and errorNotify for header failures.
-    if ((vc = this->parseAndValidateHeader(data, packetContext)) == nullptr) {
+    AosDeframerVc* vc = this->parseAndValidateHeader(data, packetContext);
+    if (vc == nullptr) {
         this->dataReturnOut_out(0, data, context);
         return;
     }
@@ -265,8 +266,9 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
     // Deserialize the trailer
     AOSTrailer trailer;
     auto deserializer = data.getDeserializer();
-    deserializer.moveDeserToOffset(crcDataLen);
-    Fw::SerializeStatus status = deserializer.deserializeTo(trailer);
+    Fw::SerializeStatus status = deserializer.moveDeserToOffset(crcDataLen);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    status = deserializer.deserializeTo(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     U16 transmittedCrc = trailer.get_fecf();
@@ -302,7 +304,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             FW_ASSERT(vc.spanningPacket.bytesReceived + toHeader <= headerCap,
                       static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
                       static_cast<FwAssertArgType>(toHeader), static_cast<FwAssertArgType>(headerCap));
-            ::memcpy(vc.spanningPacket.headerBuf + vc.spanningPacket.bytesReceived, data, toHeader);
+            (void)::memcpy(vc.spanningPacket.headerBuf + vc.spanningPacket.bytesReceived, data, toHeader);
             vc.spanningPacket.bytesReceived += toHeader;
 
             // We'll work w/ everything past the copied header if we get a clean parse
@@ -313,17 +315,28 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
         // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
         // packet)
-        // FIXME: packetSize is untrusted (read straight from the wire) and could have unintended side effects,
-        // especially with EPP. We should skip if packetSize exceeds a mission-defined limit instead of letting the
-        // allocator handle any requests, which has a side effect of abandoning spanning packets on failure
         const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
         if (packetSize == 0) {
             return 0;
         }
 
-        // Try to allocate a buffer for the whole packet
+        // A packet may declare fewer bytes than the header buffer holds, so give the surplus back
+        // to the caller as the next packet instead of copying it past the end of this one
+        if (packetSize < vc.spanningPacket.bytesReceived) {
+            const FwSizeType surplus = vc.spanningPacket.bytesReceived - packetSize;
+            // Prior calls left bytesReceived <= packetSize, so the surplus came from this call
+            FW_ASSERT(surplus <= toHeader, static_cast<FwAssertArgType>(surplus),
+                      static_cast<FwAssertArgType>(toHeader));
+            vc.spanningPacket.bytesReceived = packetSize;
+            data -= surplus;
+            size += surplus;
+            seekForward -= surplus;
+        }
+
+        // Try to allocate a buffer for the whole packet. If this size is invalid (too large) or if the buffer
+        // manager is out of memory, this is handled below.
         vc.spanningPacket.buffer = this->allocate_out(0, packetSize);
-        if (vc.spanningPacket.buffer.getSize() < packetSize) {
+        if ((not vc.spanningPacket.buffer.isValid()) || (vc.spanningPacket.buffer.getSize() < packetSize)) {
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
                                                            packetSize);
             // Save before abandon clears it -— needed for the correct seek offset below
@@ -332,7 +345,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
             // Seek past the failed packet (header bytes already consumed + remaining body)
             const FwSizeType remainingLength = seekForward + remainingBody;
-            if (remainingLength > size) {
+            if (remainingBody > size) {
                 return 0;
             } else {
                 return remainingLength;
@@ -343,7 +356,14 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         FW_ASSERT(vc.spanningPacket.bytesReceived <= AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE,
                   static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
                   AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE);
-        ::memcpy(vc.spanningPacket.buffer.getData(), vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
+        // Destination buffer must be large enough for the accumulated header bytes.
+        // Protect against any future regression in sizeEppPacket/sizeSppPacket
+        // reintroducing an overflow that makes packetSize < bytesReceived.
+        FW_ASSERT(vc.spanningPacket.bytesReceived <= vc.spanningPacket.buffer.getSize(),
+                  static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
+                  static_cast<FwAssertArgType>(vc.spanningPacket.buffer.getSize()));
+        (void)::memcpy(vc.spanningPacket.buffer.getData(), vc.spanningPacket.headerBuf,
+                       vc.spanningPacket.bytesReceived);
     }
 
     // Already have the dynamic buffer, so fill away
@@ -354,7 +374,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         FW_ASSERT(vc.spanningPacket.bytesReceived + toBody <= vc.spanningPacket.buffer.getSize(),
                   static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived), static_cast<FwAssertArgType>(toBody),
                   static_cast<FwAssertArgType>(vc.spanningPacket.buffer.getSize()));
-        ::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, toBody);
+        (void)::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, toBody);
         vc.spanningPacket.bytesReceived += toBody;
         seekForward += toBody;
     }
@@ -378,8 +398,9 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
     // Parse M_PDU header (per CCSDS 732.0-B-5 Section 4.1.4.2.2)
     M_PDUHeader mpduHeader;
     auto deserializer = data.getDeserializer();
-    deserializer.moveDeserToOffset(AOSHeader::SERIALIZED_SIZE);
-    Fw::SerializeStatus status = deserializer.deserializeTo(mpduHeader);
+    Fw::SerializeStatus status = deserializer.moveDeserToOffset(AOSHeader::SERIALIZED_SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    status = deserializer.deserializeTo(mpduHeader);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     U16 firstHeaderPointer = mpduHeader.get_firstHeaderPointer();
@@ -449,6 +470,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
 }
 
 FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeType remainingBytes) {
+    FW_ASSERT(packetStart != nullptr);
     FW_ASSERT(remainingBytes > 0, static_cast<FwAssertArgType>(remainingBytes));
 
     // Determine packet type from PVN (upper 3 bits of first byte)
@@ -481,6 +503,7 @@ FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeTyp
 }
 
 FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) {
+    FW_ASSERT(payloadStart != nullptr);
     SpacePacketHeader header;
 
     Fw::Buffer data(payloadStart, payloadSize);
@@ -491,6 +514,13 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
     }
 
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
+    // packetDataLength is a 16-bit field (max 65535); SERIALIZED_SIZE is a small constant.
+    // Guarantee at compile time that the maximum possible sum fits in FwSizeType. If
+    // FwSizeType is ever narrowed below 17 bits, this fails to build and the addition
+    // below must be guarded against overflow.
+    constexpr FwSizeType MAX_LENGTH = std::numeric_limits<FwSizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE;
+    static_assert(MAX_LENGTH >= std::numeric_limits<U16>::max() + 1,
+                  "FwSizeType must be wide enough to hold the maximum SPP packet size without overflow");
     FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + header.get_packetDataLength() + 1;
 
     // TODO: Unify Deframers | bring the whole spp processing into this component
@@ -510,6 +540,7 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
 FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType payloadSize) {
     // Per CCSDS 133.1-B-3 Section 4.1.2.1.1, EPP minimum header is 1 byte
     // Since we identified this as an EPP we had the 1 byte to read the PVN already
+    FW_ASSERT(payloadStart != nullptr);
     FW_ASSERT(payloadSize > 0, static_cast<FwAssertArgType>(payloadSize));
 
     // Parse first byte
@@ -525,6 +556,11 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
 
     // Encapsulation Idle Packet per CCSDS 133.1-B-3 Section 4.1.3.2
     U8 lengthOfLength = firstByte & EPPSubfields::lengthOfLengthMask;
+
+    // No Packet Length field: the packet is one octet (CCSDS 133.1-B-3 Section 4.1.2.8.2)
+    if (lengthOfLength == EppLengthOfLength::Zero) {
+        return 1;
+    }
 
     U8 lengthOffset = 1U;
 
@@ -548,13 +584,17 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
         return 0;  // Incomplete
     }
 
-    // Read length field (big-endian)
-    U32 packetDataLength = 0;
+    // Read length field (big-endian); it includes the header (CCSDS 133.1-B-3 Section 4.1.2.8.2)
+    U32 packetLength = 0;
     for (U8 i = 0; i < lengthOfLength; i++) {
-        packetDataLength = (packetDataLength << 8) | payloadStart[lengthOffset + i];
+        packetLength = (packetLength << 8) | payloadStart[lengthOffset + i];
     }
 
-    totalPacketSize = headerLength + packetDataLength;
+    // Reject a length FwSizeType cannot hold or one shorter than the header
+    totalPacketSize = static_cast<FwSizeType>(packetLength);
+    if ((static_cast<U32>(totalPacketSize) != packetLength) || (totalPacketSize < headerLength)) {
+        return 0;
+    }
 
     return totalPacketSize;
 }

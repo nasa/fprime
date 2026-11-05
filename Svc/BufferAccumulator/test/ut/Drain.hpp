@@ -21,6 +21,8 @@ namespace Drain {
 
 class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
   public:
+    using Svc::BufferAccumulatorTester::BufferAccumulatorTester;
+
     // ----------------------------------------------------------------------
     // Tests
     // ----------------------------------------------------------------------
@@ -28,8 +30,14 @@ class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
     //! Send some buffers
     void OK(void);
 
+    //! Initialize the accumulator in drain mode
+    void InitialMode(void);
+
     //! Run PartialDrain command in nominal way
     void PartialDrainOK(void);
+
+    //! Run PartialDrain command in NOBLOCK mode with fewer buffers queued than requested
+    void PartialDrainNoBlock(void);
 };
 
 }  // namespace Drain

@@ -35,6 +35,8 @@ class ConstStringBase : public Serializable {
     virtual SizeType length() const;
     //! Get the maximum length of a string that the buffer can hold (which is capacity - 1)
     SizeType maxLength() const;
+    //! Get the maximum length given a specific capacity
+    SizeType maxLength(SizeType capacity) const;
 
     //! Get the static serialized size of a string
     //! This is the max length of the string plus the size of the stored size

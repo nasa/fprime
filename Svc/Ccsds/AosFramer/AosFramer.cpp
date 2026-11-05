@@ -23,7 +23,11 @@ AosFramer ::AosFramer(const char* const compName) : AosFramerComponentBase(compN
 
 AosFramer ::~AosFramer() {}
 
-void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControlField, const U8 idlePvns) {
+void AosFramer::configure(const U32 fixedFrameSize,
+                          const bool frameErrorControlField,
+                          const U16 spacecraftId,
+                          const U8 vcId,
+                          const U8 idlePvns) {
     // fixedFrameSize must be less than or equal to the maximum defined in ComCfg.fpp
     FW_ASSERT(fixedFrameSize <= ComCfg::AosMaxFrameFixedSize, static_cast<FwAssertArgType>(fixedFrameSize));
 
@@ -32,13 +36,20 @@ void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControl
                                    (frameErrorControlField ? AOSTrailer::SERIALIZED_SIZE : 0),
               static_cast<FwAssertArgType>(fixedFrameSize));
 
+    // Spacecraft ID is 10 bits (per CCSDS 732.0-B-5 Section 4.1.2.2)
+    FW_ASSERT((spacecraftId & 0xFC00) == 0, static_cast<FwAssertArgType>(spacecraftId));
+
+    // Virtual Channel ID is 6 bits (per CCSDS 732.0-B-5 Section 4.1.2.3)
+    FW_ASSERT((vcId & 0xC0) == 0, static_cast<FwAssertArgType>(vcId));
+
     // AOS Framer must be provided with a protocol to use for Idle Packets
     // Currently, only SPP idle packing is supported
     // EPP is more optimal, however
-    FW_ASSERT(idlePvns & PvnBitfield::SPP_MASK, static_cast<FwAssertArgType>(idlePvns));
+    FW_ASSERT((idlePvns & PvnBitfield::SPP_MASK) != 0, static_cast<FwAssertArgType>(idlePvns));
 
     // FECF is constant for a given Physical Channel during a Mission Phase (4.1.6.1.3)
     this->m_fecf = frameErrorControlField;
+    this->m_spacecraftId = spacecraftId;
 
     // For each vc, init the buffer objects
     for (U8 ind = 0; ind < sizeof(this->m_vcs) / sizeof(AosVc); ind++) {
@@ -46,6 +57,7 @@ void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControl
 
         // Write the index for mapping a vc struct onto an output port
         currentVc.vc_struct_index = ind;
+        currentVc.virtualChannelId = vcId;
         currentVc.frame.buffer = {currentVc.frame.backer, fixedFrameSize};
         // Set the bitmask of PVNs to use for idle packets
         currentVc.idle_packet_types = idlePvns;
@@ -150,9 +162,9 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
     AOSHeader header;
 
     // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
-    U16 globalVcId = static_cast<U16>(context.get_vcId() << AOSHeaderSubfields::virtualChannelIdOffset);
-    globalVcId |= static_cast<U16>((ComCfg::SpacecraftId & 0x00FF) << AOSHeaderSubfields::spacecraftIdLsbOffset);
-    globalVcId |= static_cast<U16>((Tfvn::AOS & 0x3) << AOSHeaderSubfields::frameVersionOffset);
+    U16 globalVcId = static_cast<U16>((context.get_vcId() << AOSHeaderSubfields::virtualChannelIdOffset) |
+                                      ((m_spacecraftId & 0x00FF) << AOSHeaderSubfields::spacecraftIdLsbOffset) |
+                                      ((Tfvn::AOS & 0x3) << AOSHeaderSubfields::frameVersionOffset));
 
     // Virtual Channel Frame Count (4.1.2.4)
     U32 frameCountAndSignaling = static_cast<U32>((currentVc.virtualFrameCount & 0x00FFFFFFU)
@@ -163,7 +175,7 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
 
     // Spacecraft ID MSB (4.1.2.5.4)
     frameCountAndSignaling |=
-        static_cast<U32>((ComCfg::SpacecraftId & 0x0300) >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
+        static_cast<U32>((m_spacecraftId & 0x0300) >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
 
     // Virtual Channel Frame Cycle Count (4.1.2.5.5)
     frameCountAndSignaling |= static_cast<U32>((currentVc.virtualFrameCount & 0x0F000000) >> 24);
@@ -208,7 +220,7 @@ void AosFramer ::setup_m_pdu_header(const ComCfg::FrameContext& context, bool no
     Fw::SerializeStatus status = frameSerializer.moveSerToOffset(AOSHeader::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    frameSerializer.serializeFrom(muxedPdu);
+    status = frameSerializer.serializeFrom(muxedPdu);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 }
 
@@ -216,7 +228,7 @@ FwSizeType AosFramer::get_min_size() {
     return AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + (this->m_fecf ? AOSTrailer::SERIALIZED_SIZE : 0);
 }
 
-bool AosFramer::buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
+bool AosFramer::buffer_belongs(const Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
     return (buffer.getData() >= start && buffer.getData() < start + size);
 }
 
@@ -268,6 +280,9 @@ void AosFramer ::pack_pad_send(Fw::Buffer& data, const ComCfg::FrameContext& con
     if (context.get_sendNow()) {
         // Compute some sizes to check if we've got space left to pad
         const FwSizeType min_size = get_min_size();
+        FW_ASSERT(currentVc.frame.buffer.getSize() >= min_size,
+                  static_cast<FwAssertArgType>(currentVc.frame.buffer.getSize()),
+                  static_cast<FwAssertArgType>(min_size));
         const FwSizeType maxPayload = currentVc.frame.buffer.getSize() - min_size;
 
         if (currentVc.current_payload_offset < maxPayload) {
@@ -330,7 +345,8 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     // Return the buffer if no bytes are outstanding
     if (currentVc.outstanding.offset == 0) {
         // Return the buffer if this isn't the SPP Idle buff
-        if (!buffer_belongs(data, currentVc.spp_idle.backer, sizeof(currentVc.spp_idle.backer))) {
+        const bool isSppIdleBuffer = buffer_belongs(data, currentVc.spp_idle.backer, sizeof(currentVc.spp_idle.backer));
+        if (!isSppIdleBuffer) {
             this->dataReturnOut_out(0, data,
                                     context);  // return ownership of the original data buffer
         }
@@ -391,10 +407,9 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
         vc.past_first_fresh_packet = true;
     }
 
-    // Use EPP if we can (solves for all sizes)
+    // EPP-only idle fill is not yet supported; configure() requires the SPP bit
     if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
-        // TODO: Serialize an EPP of the right size
-        FW_ASSERT(1);
+        // TODO: Serialize an EPP of the right size once EPP idle is supported
     }
     // While we are using only SPP, we have to comply w/ the min SPP packet size
     // We'll stripe this packet onto the next frame of this VC if we have to

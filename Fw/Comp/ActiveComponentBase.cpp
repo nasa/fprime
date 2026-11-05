@@ -7,18 +7,13 @@ namespace Fw {
 
 class ActiveComponentExitSerializableBuffer : public Fw::LinearBufferBase {
   public:
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const { return sizeof(m_buff); }
-
-    U8* getBuffAddr() { return m_buff; }
-
-    const U8* getBuffAddr() const { return m_buff; }
+    ActiveComponentExitSerializableBuffer() : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {}
 
   private:
     U8 m_buff[sizeof(ActiveComponentBase::ACTIVE_COMPONENT_EXIT)];
 };
 
-ActiveComponentBase::ActiveComponentBase(const char* name) : QueuedComponentBase(name) {}
+ActiveComponentBase::ActiveComponentBase(const char* name) : QueuedComponentBase(name), m_stage(Lifecycle::CREATED) {}
 
 ActiveComponentBase::~ActiveComponentBase() {}
 
@@ -98,7 +93,7 @@ void ActiveComponentBase::s_taskStateMachine(void* component_pointer) {
         case Lifecycle::DONE:
             break;
         default:
-            FW_ASSERT(0);
+            FW_ASSERT(false);
             break;
     }
 }
@@ -108,6 +103,7 @@ void ActiveComponentBase::s_taskLoop(void* component_pointer) {
     ActiveComponentBase* component = static_cast<ActiveComponentBase*>(component_pointer);
     // A non-cooperative task switching implementation is just a while-loop around the active component
     // state-machine. Here the while loop is at top-level.
+    // @non-terminating@: component lifecycle loop runs until DONE
     while (component->m_stage != ActiveComponentBase::Lifecycle::DONE) {
         ActiveComponentBase::s_taskStateMachine(component);
     }

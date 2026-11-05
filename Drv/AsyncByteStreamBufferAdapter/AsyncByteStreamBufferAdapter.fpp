@@ -37,7 +37,7 @@ module Drv {
     @ Time get port
     time get port Time
 
-    @ Driver Ready
+    @ Driver not ready
     event DriverNotReady \
       severity warning low \
       id 0 \

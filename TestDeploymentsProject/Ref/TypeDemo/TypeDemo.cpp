@@ -20,13 +20,13 @@ TypeDemo ::TypeDemo(const char* const compName) : TypeDemoComponentBase(compName
 // Command handler implementations
 // ----------------------------------------------------------------------
 
-void TypeDemo ::CHOICE_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, Ref::Choice choice) {
+void TypeDemo ::CHOICE_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const Ref::Choice& choice) {
     this->tlmWrite_ChoiceCh(choice);
     this->log_ACTIVITY_HI_ChoiceEv(choice);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void TypeDemo ::CHOICES_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, Ref::ManyChoices choices) {
+void TypeDemo ::CHOICES_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const Ref::ManyChoices& choices) {
     this->tlmWrite_ChoicesCh(choices);
     this->log_ACTIVITY_HI_ChoicesEv(choices);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -35,7 +35,7 @@ void TypeDemo ::CHOICES_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, 
 void TypeDemo ::CHOICES_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
                                                 const U32 cmdSeq,
                                                 U8 repeat,
-                                                Ref::ManyChoices choices,
+                                                const Ref::ManyChoices& choices,
                                                 U8 repeat_max) {
     for (U32 i = 0; (i < repeat) && (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
         this->tlmWrite_ChoicesCh(choices);
@@ -44,7 +44,9 @@ void TypeDemo ::CHOICES_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void TypeDemo ::EXTRA_CHOICES_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, Ref::TooManyChoices choices) {
+void TypeDemo ::EXTRA_CHOICES_cmdHandler(const FwOpcodeType opCode,
+                                         const U32 cmdSeq,
+                                         const Ref::TooManyChoices& choices) {
     this->tlmWrite_ExtraChoicesCh(choices);
     this->log_ACTIVITY_HI_ExtraChoicesEv(choices);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -53,7 +55,7 @@ void TypeDemo ::EXTRA_CHOICES_cmdHandler(const FwOpcodeType opCode, const U32 cm
 void TypeDemo ::EXTRA_CHOICES_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
                                                       const U32 cmdSeq,
                                                       U8 repeat,
-                                                      Ref::TooManyChoices choices,
+                                                      const Ref::TooManyChoices& choices,
                                                       U8 repeat_max) {
     for (U32 i = 0; (i < repeat) && (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
         this->tlmWrite_ExtraChoicesCh(choices);
@@ -62,7 +64,7 @@ void TypeDemo ::EXTRA_CHOICES_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void TypeDemo ::CHOICE_PAIR_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, Ref::ChoicePair choices) {
+void TypeDemo ::CHOICE_PAIR_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const Ref::ChoicePair& choices) {
     this->tlmWrite_ChoicePairCh(choices);
     this->log_ACTIVITY_HI_ChoicePairEv(choices);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -71,7 +73,7 @@ void TypeDemo ::CHOICE_PAIR_cmdHandler(const FwOpcodeType opCode, const U32 cmdS
 void TypeDemo ::CHOICE_PAIR_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
                                                     const U32 cmdSeq,
                                                     U8 repeat,
-                                                    Ref::ChoicePair choices,
+                                                    const Ref::ChoicePair& choices,
                                                     U8 repeat_max) {
     for (U32 i = 0; (i < repeat) && (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
         this->tlmWrite_ChoicePairCh(choices);
@@ -80,7 +82,9 @@ void TypeDemo ::CHOICE_PAIR_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void TypeDemo ::GLUTTON_OF_CHOICE_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, Ref::ChoiceSlurry choices) {
+void TypeDemo ::GLUTTON_OF_CHOICE_cmdHandler(const FwOpcodeType opCode,
+                                             const U32 cmdSeq,
+                                             const Ref::ChoiceSlurry& choices) {
     this->tlmWrite_ChoiceSlurryCh(choices);
     this->log_ACTIVITY_HI_ChoiceSlurryEv(choices);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -89,7 +93,7 @@ void TypeDemo ::GLUTTON_OF_CHOICE_cmdHandler(const FwOpcodeType opCode, const U3
 void TypeDemo ::GLUTTON_OF_CHOICE_WITH_FRIENDS_cmdHandler(const FwOpcodeType opCode,
                                                           const U32 cmdSeq,
                                                           U8 repeat,
-                                                          Ref::ChoiceSlurry choices,
+                                                          const Ref::ChoiceSlurry& choices,
                                                           U8 repeat_max) {
     for (U32 i = 0; (i < repeat) && (i < std::numeric_limits<U8>::max()) && (i < repeat_max); i++) {
         this->tlmWrite_ChoiceSlurryCh(choices);
@@ -132,7 +136,9 @@ void TypeDemo ::DUMP_FLOATS_cmdHandler(const FwOpcodeType opCode, const U32 cmdS
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void TypeDemo ::SEND_SCALARS_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, Ref::ScalarStruct scalar_input) {
+void TypeDemo ::SEND_SCALARS_cmdHandler(const FwOpcodeType opCode,
+                                        const U32 cmdSeq,
+                                        const Ref::ScalarStruct& scalar_input) {
     this->log_ACTIVITY_HI_ScalarStructEv(scalar_input);
     this->tlmWrite_ScalarStructCh(scalar_input);
     this->tlmWrite_ScalarU8Ch(scalar_input.get_u8());

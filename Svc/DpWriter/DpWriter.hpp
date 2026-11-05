@@ -9,6 +9,8 @@
 
 #include <config/DpCfg.hpp>
 
+#include <atomic>
+
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/String.hpp"
@@ -19,6 +21,14 @@ namespace Svc {
 
 class DpWriter final : public DpWriterComponentBase {
     friend class DpWriterTester;
+
+    // Keep the generated routing arrays consistent with the forwarding contract.
+    static_assert(DpWriter::NUM_BUFFERSENDIN_INPUT_PORTS == static_cast<FwSizeType>(DpWriterNumPorts),
+                  "Number of buffer send in ports must equal DpWriterNumPorts");
+    static_assert(DpWriter::NUM_DPWRITTENOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpWriterNumPorts),
+                  "Number of dp written out ports must equal DpWriterNumPorts");
+    static_assert(DpWriter::NUM_DEALLOCBUFFERSENDOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpWriterNumPorts),
+                  "Number of dealloc buffer send out ports must equal DpWriterNumPorts");
 
   public:
     // ----------------------------------------------------------------------
@@ -55,6 +65,12 @@ class DpWriter final : public DpWriterComponentBase {
                          U32 context                 //!< The call order
                          ) final;
 
+    //! Internal interface handler for schedInInternal
+    void schedInInternal_internalInterfaceHandler() final;
+
+    //! Overflow hook for schedInInternal
+    void schedInInternal_overflowHook() final;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands
@@ -90,9 +106,10 @@ class DpWriter final : public DpWriterComponentBase {
     );
 
     //! Send the DpWritten notification
-    void sendNotification(const Fw::DpContainer& container,    //!< The container
+    void sendNotification(FwIndexType portNum,                 //!< The routing port number
+                          const Fw::DpContainer& container,    //!< The container
                           const Fw::FileNameString& fileName,  //!< The file name
-                          FwSizeType packetSize                //!< The packet size
+                          FwSizeType fileSize                  //!< The file size
     );
 
   private:
@@ -114,6 +131,9 @@ class DpWriter final : public DpWriterComponentBase {
 
     //! The number of errors
     U32 m_numErrors = 0;
+
+    //! True while a schedInInternal message is on the queue
+    std::atomic<bool> m_schedInQueued{false};
 
     //! The file name prefix for writing DP files
     //! The precise meaning depends on the DP format string

@@ -62,7 +62,7 @@ Defined as `= default`.
 ### 6.1. begin
 
 ```c++
-virtual ConstIterator begin() const = 0.
+virtual ConstIterator begin() const = 0
 ```
 
 Return the begin value of the iterator for the implementation.
@@ -111,13 +111,13 @@ _Example:_
 void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
     m1.clear();
     // Insert an entry
-    const U16 key = 0
+    const U16 key = 0;
     const U32 value = 42;
     const auto status = m1.insert(key, value);
     ASSERT_EQ(status, Success::SUCCESS);
     m2.clear();
     ASSERT_EQ(m2.getSize(), 0);
-    m2.copyDataFrom(q1);
+    m2.copyDataFrom(m1);
     ASSERT_EQ(m2.getSize(), 1);
 }
 ```
@@ -142,7 +142,7 @@ void f(MapBase<U16, U32>& map) {
     // Check that iter is not at the end
     ASSERT_NE(iter, map.end());
     // Increment iter
-    it++;
+    iter++;
     // Check that iter is at the end
     ASSERT_EQ(iter, map.end());
 }
@@ -161,7 +161,7 @@ then set `value = e.getValue()` and return `SUCCESS`.
 
 _Example:_
 ```c++
-void f(const MapBase<U16, U32>& map) {
+void f(MapBase<U16, U32>& map) {
     map.clear();
     U32 value = 0;
     auto status = map.find(0, value);

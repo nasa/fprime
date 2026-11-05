@@ -102,7 +102,7 @@ TEST(Interface, SendBuffer) {
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.lastCalled, Os::Stub::Queue::Test::StaticData::SEND_FN);
     ASSERT_EQ(Os::QueueInterface::Status::UNKNOWN_ERROR, status);
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.buffer, storage);
-    ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.size, 7);
+    ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.size, sizeof(FwSizeStoreType) + message.length());
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.priority, priority);
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.blockType, Os::QueueInterface::BlockingType::NONBLOCKING);
     ASSERT_EQ(depth, queue.getDepth());

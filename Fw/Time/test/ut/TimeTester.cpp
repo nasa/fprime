@@ -1,4 +1,5 @@
 #include "TimeTester.hpp"
+#include <Fw/Types/SerialBuffer.hpp>
 #include <iostream>
 
 namespace Fw {
@@ -192,10 +193,10 @@ void TimeTester::test_CopyTest() {
     // set method
     Fw::Time time4;
     time4.set(time1.getTimeBase(), time1.getContext(), time1.getSeconds(), time1.getUSeconds());
-    ASSERT_EQ(time1.getSeconds(), time3.getSeconds());
-    ASSERT_EQ(time1.getUSeconds(), time3.getUSeconds());
-    ASSERT_EQ(time1.getTimeBase(), time3.getTimeBase());
-    ASSERT_EQ(time1.getContext(), time3.getContext());
+    ASSERT_EQ(time1.getSeconds(), time4.getSeconds());
+    ASSERT_EQ(time1.getUSeconds(), time4.getUSeconds());
+    ASSERT_EQ(time1.getTimeBase(), time4.getTimeBase());
+    ASSERT_EQ(time1.getContext(), time4.getContext());
 }
 
 void TimeTester::test_ZeroTimeEquality() {
@@ -222,6 +223,26 @@ void TimeTester::test_TimeToTimeValue() {
     ASSERT_EQ(time_value.get_timeContext(), context);
     ASSERT_EQ(time_value.get_seconds(), seconds);
     ASSERT_EQ(time_value.get_useconds(), useconds);
+}
+
+void TimeTester::test_InstantiateFromFloatCarry() {
+    // The fraction rounds up to a whole second and must be carried into the seconds count
+    Fw::Time time(static_cast<F64>(1.9999999));
+    ASSERT_EQ(time.getSeconds(), 2);
+    ASSERT_EQ(time.getUSeconds(), 0);
+}
+
+void TimeTester::test_DeserializeRejectsOutOfRangeUSeconds() {
+    U8 data[Fw::Time::SERIALIZED_SIZE];
+    Fw::SerialBuffer buffer(data, sizeof(data));
+    Fw::TimeValue outOfRange(TimeBase::TB_NONE, 0, 1, 1000000);
+    ASSERT_EQ(buffer.serializeFrom(outOfRange), Fw::FW_SERIALIZE_OK);
+
+    Fw::Time time(TimeBase::TB_NONE, 0, 5, 5);
+    ASSERT_EQ(time.deserializeFrom(buffer), Fw::FW_DESERIALIZE_FORMAT_ERROR);
+    // The rejected value must not be stored
+    ASSERT_EQ(time.getSeconds(), 5);
+    ASSERT_EQ(time.getUSeconds(), 5);
 }
 
 }  // namespace Fw

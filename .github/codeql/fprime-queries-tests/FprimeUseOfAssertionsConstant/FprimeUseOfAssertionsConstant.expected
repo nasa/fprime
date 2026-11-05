@@ -1,0 +1,2 @@
+| test.cpp:13:15:13:20 | ... == ... | This assertion is always true. |
+| test.cpp:18:15:18:24 | ... == ... | This assertion is always false. |

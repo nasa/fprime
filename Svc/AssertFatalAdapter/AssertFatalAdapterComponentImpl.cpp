@@ -13,9 +13,12 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
+#include <algorithm>
 #include <cassert>
 #include <cstdio>
+#include <limits>
 
 namespace Fw {
 void defaultReportAssert(FILE_NAME_ARG file,
@@ -64,7 +67,7 @@ void AssertFatalAdapterComponentImpl::AssertFatalAdapter::reportAssert(FILE_NAME
     } else {
         // Can't assert, what else can we do? Maybe somebody will see it.
         Fw::Logger::log("Svc::AssertFatalAdapter not registered!\n");
-        assert(0);
+        assert(false);
     }
 }
 
@@ -89,11 +92,19 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
                                                    FwAssertArgType arg4,
                                                    FwAssertArgType arg5,
                                                    FwAssertArgType arg6) {
+    // Get file arg for events
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
     Fw::LogStringArg fileArg;
     fileArg.format("0x%08" PRIX32, file);
 #else
-    Fw::LogStringArg fileArg(file);
+    const FwSizeType outputSize = std::min(static_cast<FwSizeType>(AssertFatalAdapterEventFileSize),
+                                           static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE));
+    // File name argument is derived from a compiler string literal. Per the C++ standard, string literals are
+    // guaranteed to be null-terminated and whose maximum length is from U16_MAX to available system memory size. Thus,
+    // we choose a bound of the lowest allowed maximum literal length.
+    const CHAR* start = Fw::StringUtils::string_last_n(file, outputSize, std::numeric_limits<U16>::max());
+
+    Fw::LogStringArg fileArg(start);
 #endif
 
     CHAR msg[Fw::StringBase::BUFFER_SIZE(FW_ASSERT_TEXT_SIZE)] = {0};
@@ -106,7 +117,11 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
 
     // Handle the case where the ports aren't connected yet or we've surpassed the maximum cascading FW_ASSERT failures
     if (not this->isConnected_Log_OutputPort(0) || this->m_assertCount > FW_ASSERT_COUNT_MAX) {
-        assert(0);
+        // assert() is a no-op when NDEBUG is defined, so this counter must be released here as it
+        // is on the normal path below. Otherwise unreported asserts accumulate until the count
+        // exceeds FW_ASSERT_COUNT_MAX permanently and no further assert is ever reported.
+        this->m_assertCount--;
+        assert(false);
         return;
     }
 

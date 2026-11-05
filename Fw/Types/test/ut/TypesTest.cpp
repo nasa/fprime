@@ -31,20 +31,23 @@
 
 class SerializeTestBuffer : public Fw::LinearBufferBase {
   public:
-    FwSizeType getCapacity() const {  // !< returns capacity, not current size, of buffer
-        return sizeof(m_testBuff);
-    }
-
-    U8* getBuffAddr() {  // !< gets buffer address for data filling
-        return m_testBuff;
-    }
-    const U8* getBuffAddr() const {  // !< gets buffer address for data reading
-        return m_testBuff;
-    }
+    SerializeTestBuffer() : Fw::LinearBufferBase(m_testBuff, sizeof(m_testBuff)) {}
 
   private:
     U8 m_testBuff[255];
 };
+
+TEST(SerializationTest, SerializeSizeLeftStartsAtCapacity) {
+    SerializeTestBuffer buff;
+
+    ASSERT_EQ(buff.getCapacity(), buff.getSerializeSizeLeft());
+
+    const U8 value = 0xAB;
+    const Fw::SerializeStatus status = buff.serializeFrom(value);
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
+    ASSERT_EQ(buff.getCapacity() - sizeof(value), buff.getSerializeSizeLeft());
+}
 
 TEST(SerializationTest, Serialization1) {
     printf("Testing Serialization code\n");
@@ -578,6 +581,28 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(boolt1, boolt2);
 
+    buff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(true));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(false));
+    ASSERT_EQ(static_cast<U8>(FW_SERIALIZE_TRUE_VALUE), buff.getBuffAddr()[0]);
+    ASSERT_EQ(static_cast<U8>(FW_SERIALIZE_FALSE_VALUE), buff.getBuffAddr()[1]);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.deserializeTo(boolt2));
+    ASSERT_TRUE(boolt2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.deserializeTo(boolt2));
+    ASSERT_FALSE(boolt2);
+
+    // a malformed boolean byte is reported and left unconsumed
+    buff.resetSer();
+    const U8 badBool = 0x5A;
+    ASSERT_NE(static_cast<U8>(FW_SERIALIZE_TRUE_VALUE), badBool);
+    ASSERT_NE(static_cast<U8>(FW_SERIALIZE_FALSE_VALUE), badBool);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(badBool));
+    ASSERT_EQ(Fw::FW_DESERIALIZE_FORMAT_ERROR, buff.deserializeTo(boolt2));
+    ASSERT_EQ(1, buff.getDeserializeSizeLeft());
+    U8 rawBool = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.deserializeTo(rawBool));
+    ASSERT_EQ(badBool, rawBool);
+
 #if DEBUG_VERBOSE
     printf("Val: in: %s out: %s stat1: %d stat2: %d\n", boolt1 ? "TRUE" : "FALSE", boolt2 ? "TRUE" : "FALSE", stat1,
            stat2);
@@ -594,6 +619,13 @@ TEST(SerializationTest, Serialization1) {
     stat2 = buff.deserializeTo(ptrt2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
     ASSERT_EQ(ptrt1, ptrt2);
+
+    U8 small[sizeof(void*) - 1] = {};
+    Fw::ExternalSerializeBuffer tight(small, sizeof(small));
+    ASSERT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT, tight.serializeFrom(ptrt1));
+    ASSERT_EQ(0, tight.getSize());
+    tight.setExtBuffer(small, 0);
+    ASSERT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT, tight.serializeFrom(true));
 
 #if DEBUG_VERBOSE
     printf("Val: in: %s out: %s stat1: %d stat2: %d\n", boolt1 ? "TRUE" : "FALSE", boolt2 ? "TRUE" : "FALSE", stat1,
@@ -627,7 +659,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     stat2 = buff.deserializeSize(size2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
-    ASSERT_EQ(u64t1, u64t2);
+    ASSERT_EQ(size1, size2);
     Fw::LinearBufferBaseTester::verifyDeserLocEq(buff, sizeof(FwSizeStoreType));
 
 #if DEBUG_VERBOSE
@@ -645,7 +677,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat1);
     stat2 = buff.deserializeSize(size2, Fw::Endianness::LITTLE);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat2);
-    ASSERT_EQ(u64t1, u64t2);
+    ASSERT_EQ(size1, size2);
     Fw::LinearBufferBaseTester::verifyDeserLocEq(buff, sizeof(FwSizeStoreType));
 
 #if DEBUG_VERBOSE
@@ -1536,15 +1568,41 @@ TEST(TypesTest, FormatSpecifierTest) {
     str.format("F32: %" PRI_F64, static_cast<double>(numF32));
     ASSERT_STREQ(str.toChar(), "F32: 12.345679");
 
-#if FW_HAS_F64
     F64 numF64 = 12.3456789;
     str.format("F64: %" PRI_F64, numF64);
     ASSERT_STREQ(str.toChar(), "F64: 12.345679");
-#endif
 
     char c = 'A';
     str.format("CHAR: %" PRI_CHAR, c);
     ASSERT_STREQ(str.toChar(), "CHAR: A");
+}
+
+namespace {
+struct ArrayElementsHolder {
+    U32 m_items[4];
+    FwSizeType count() const {
+        // Member array (this->member) in a constant expression. This is the case
+        // a by-reference helper could not handle ("use of 'this' pointer ...
+        // constexpr"); the sizeof form does not evaluate the argument.
+        static_assert(FW_NUM_ARRAY_ELEMENTS(this->m_items) == 4, "member array count");
+        return static_cast<FwSizeType>(FW_NUM_ARRAY_ELEMENTS(this->m_items));
+    }
+};
+}  // namespace
+
+TEST(TypesTest, NumArrayElements) {
+    // FW_NUM_ARRAY_ELEMENTS reports the element count of a C-style array.
+    U32 ids[7] = {0};
+    ASSERT_EQ(FW_NUM_ARRAY_ELEMENTS(ids), static_cast<std::size_t>(7));
+
+    // For a multi-dimensional array it returns the outer extent, matching the
+    // old sizeof-based behavior.
+    U8 grid[3][5] = {{0}};
+    ASSERT_EQ(FW_NUM_ARRAY_ELEMENTS(grid), static_cast<std::size_t>(3));
+
+    // Member array used through this-> in a constant expression.
+    ArrayElementsHolder holder{};
+    ASSERT_EQ(holder.count(), static_cast<FwSizeType>(4));
 }
 
 TEST(PerformanceTest, F64SerPerfTest) {
@@ -1707,6 +1765,49 @@ TEST(OffNominal, string_len_zero) {
     ASSERT_EQ(Fw::StringUtils::string_length(test_string, static_cast<FwSizeType>(0)), 0);
 }
 
+TEST(Nominal, string_last_n) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 3, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string + 3);
+    ASSERT_STREQ(tail, "123");
+}
+
+TEST(OffNominal, string_last_n_n_equals_length) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 6, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string);
+    ASSERT_STREQ(tail, "abc123");
+}
+
+TEST(OffNominal, string_last_n_n_greater_than_length) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 50, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string);
+    ASSERT_STREQ(tail, "abc123");
+}
+
+TEST(OffNominal, string_last_n_zero_n) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 0, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string + 6);
+    ASSERT_STREQ(tail, "");
+}
+
+TEST(OffNominal, string_last_n_zero_buffer) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 3, static_cast<FwSizeType>(0));
+    ASSERT_EQ(tail, test_string);
+    ASSERT_STREQ(tail, "abc123");
+}
+
+TEST(OffNominal, string_last_n_bounded_non_null_terminated) {
+    char test_string[] = {'a', 'b', 'c', 'd'};
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 2, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string + 2);
+    ASSERT_EQ(tail[0], 'c');
+    ASSERT_EQ(tail[1], 'd');
+}
+
 TEST(OffNominal, sub_string_no_match) {
     const char* source_string = "abc123";
     const char* sub_string = "456";
@@ -1771,6 +1872,12 @@ TEST(OffNominal, sub_string_substring_zero_size) {
     const char* source_string = "abc123";
     const char* sub_string = "";
     ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 0), 0);
+}
+
+TEST(OffNominal, sub_string_source_and_substring_zero_size) {
+    const char* source_string = "";
+    const char* sub_string = "";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 0, sub_string, 0), 0);
 }
 
 TEST(OffNominal, sub_string_last_no_match) {

@@ -15,6 +15,10 @@
 #ifndef SVC_ACTIVERATEGROUP_HPP
 #define SVC_ACTIVERATEGROUP_HPP
 
+#include <atomic>
+
+#include <Fw/DataStructures/Array.hpp>
+#include <Fw/Deprecate.hpp>
 #include <Svc/ActiveRateGroup/ActiveRateGroupComponentAc.hpp>
 
 namespace Svc {
@@ -34,6 +38,9 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
   public:
     static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 
+    //! Array of context values for rate group members, indexed by output port number
+    using ContextArray = Fw::Array<U32, CONNECTION_COUNT_MAX>;
+
     //!  \brief ActiveRateGroup constructor
     //!
     //!  The constructor of the class clears all the flags and copies the
@@ -47,12 +54,23 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
     //!  The configuration function takes an array of context values to pass to
     //!  members of the rate group.
     //!
+    //!  \param contexts Array of context values that will be sent to each member component.
+    //!         The index of the array corresponds to the output port number.
+
+    void configure(const ContextArray& contexts);
+
+    //!  \brief ActiveRateGroup configuration function
+    //!
+    //!  The configuration function takes an array of context values to pass to
+    //!  members of the rate group.
+    //!
     //!  \param contexts Array of integers that contain the context values that will be sent
     //!         to each member component. The index of the array corresponds to the
     //!         output port number.
     //!  \param numContexts The number of elements in the context array.
 
-    void configure(const U32 contexts[], const FwIndexType numContexts);
+    DEPRECATED(void configure(const U32 contexts[], const FwIndexType numContexts),
+               "Use configure(const ActiveRateGroup::ContextArray& contexts) instead");
 
     //!  \brief ActiveRateGroup destructor
     //!
@@ -99,9 +117,10 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
 
     void preamble();
 
-    U32 m_cycles;                          //!< cycles executed
-    U32 m_maxTime;                         //!< maximum execution time in microseconds
-    volatile bool m_cycleStarted;          //!< indicate that cycle has started. Used to detect overruns.
+    U32 m_cycles;   //!< cycles executed
+    U32 m_maxTime;  //!< maximum execution time in microseconds
+    std::atomic<bool>
+        m_cycleStarted;  //!< set on the cycle caller thread, cleared/checked on the component thread to detect overruns
     U32 m_contexts[CONNECTION_COUNT_MAX];  //!< Must match number of output ports
     FwIndexType m_numContexts;             //!< Number of contexts passed in by user
     FwIndexType m_overrunThrottle;         //!< throttle value for overrun events

@@ -60,6 +60,35 @@ TEST(ExternalArray, CopyAssignment) {
     ASSERT_EQ(a1.getSize(), a2.getSize());
 }
 
+TEST(ExternalArray, CopyAssignmentWithAliasedStorage) {
+    constexpr FwSizeType size = 3;
+    U32 elements[size] = {10, 20, 30};
+    // Create a1 with backing storage
+    ExternalArray<U32> a1(elements, size);
+    // Create a2 from a1 (copy constructor - both share the same storage)
+    ExternalArray<U32> a2(a1);
+    ASSERT_EQ(a1.getElements(), a2.getElements());
+    ASSERT_EQ(a1.getSize(), size);
+    ASSERT_EQ(a2.getSize(), size);
+    // Assign a2 to a1 - this tests the aliasing case in setStorage
+    a1 = a2;
+    // Verify both still work and share the same storage
+    ASSERT_EQ(a1.getElements(), elements);
+    ASSERT_EQ(a2.getElements(), elements);
+    ASSERT_EQ(a1.getSize(), size);
+    ASSERT_EQ(a2.getSize(), size);
+    // Verify data integrity
+    ASSERT_EQ(a1[0], 10);
+    ASSERT_EQ(a1[1], 20);
+    ASSERT_EQ(a1[2], 30);
+    ASSERT_EQ(a2[0], 10);
+    ASSERT_EQ(a2[1], 20);
+    ASSERT_EQ(a2[2], 30);
+    // Modify through a1 and verify a2 sees the change (shared storage)
+    a1[0] = 100;
+    ASSERT_EQ(a2[0], 100);
+}
+
 namespace {
 
 void testCopyDataFrom(ExternalArray<U32> a1, ExternalArray<U32> a2) {

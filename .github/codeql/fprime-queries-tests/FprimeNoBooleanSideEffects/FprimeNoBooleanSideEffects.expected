@@ -1,0 +1,2 @@
+| test.cpp:9:12:9:37 | ... != ... | This Boolean expression is not side-effect free. |
+| test.cpp:16:9:16:25 | ... < ... | This Boolean expression is not side-effect free. |

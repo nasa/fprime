@@ -18,7 +18,8 @@ Core services are those that directly wrap OS primitives and are implemented by 
 | Service | Purpose |
 |---|---|
 | **Mutex** | Mutual-exclusion lock and RAII `ScopeLock` helper. |
-| **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. |
+| **CountingSemaphore** | Counting semaphore for resource counting and thread synchronization. |
+| **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. Priority is platform-defined; `TASK_PRIORITY_DEFAULT` selects the platform default. The Posix backend additionally accepts `Os::Posix::Task::PosixTask::TASK_PRIORITY_NON_REALTIME` (FPP: `Os.Posix.TASK_PRIORITY_NON_REALTIME`) to run a task under the non-realtime `SCHED_OTHER` policy rather than `SCHED_RR`; see [Non-Realtime Tasks on POSIX](../../docs/user-manual/framework/run-multi-core.md#non-realtime-tasks-on-posix). |
 | **Queue** | Inter-task message passing with configurable depth, priority support, and blocking modes. |
 
 ### 2.2 File system
@@ -60,6 +61,9 @@ Generic services are implemented in the `Os::Generic` namespace and are not tied
 | Service | Purpose |
 |---|---|
 | **PriorityQueue** | Heap-based priority queue implementation |
+| **LocklessPriorityQueue** | Lockless ISR-safe priority queue implementation |
+| **FilePathUtils** | Textual path resolution (collapsing `.`/`..`/`//`) and directory-containment checking. No filesystem access; suitable for embedded targets. |
+| **SandboxedFile** | Composition wrapper around `Os::File` that validates all paths on `open()` against a configured allowed directory, preventing path-traversal attacks. |
 
 
 ## 5. Implementation Architecture
@@ -107,7 +111,85 @@ classDiagram
 
 ```
 
-### 5.2 API usage
+### 5.2 Selection Mechanisms: Link-Time vs Compile-Time
+
+The OSAL supports two mechanisms for selecting which platform-specific implementation to use:
+
+#### 5.2.1 Link-Time Selection (Default)
+
+Most OSAL services use **link-time selection** with runtime virtual dispatch:
+
+1. The wrapper class (e.g., `Os::File`) contains a reference to an interface delegate
+2. At construction, the wrapper calls `Interface::getDelegate()` to construct the implementation via placement-new
+3. CMake selects which `Default*.cpp` file to link based on platform configuration
+4. All method calls dispatch through the virtual function table at runtime
+
+**Advantages:**
+- Runtime flexibility to swap implementations
+- Clean interface/implementation separation
+- Well-suited where call overhead is negligible
+
+**Disadvantages:**
+- Virtual dispatch overhead
+- Compiler cannot inline methods across the virtual boundary
+
+#### 5.2.2 Compile-Time Selection (Performance Optimization)
+
+For performance-critical services, the OSAL supports **compile-time selection** that eliminates virtual dispatch:
+
+1. A configuration header (`default/config/OsSelection.hpp`) defines a type alias
+2. The wrapper type (e.g., `Os::RawTime`) directly aliases the concrete implementation
+3. All calls are direct function calls that the compiler can inline
+4. With LTO enabled, the entire call chain can be optimized away for simple operations
+
+**Advantages:**
+- Zero virtual dispatch overhead
+- Enables aggressive inlining and LTO optimizations
+- Can reduce simple operations (like time reads) from dozens of cycles to single-digit instructions
+
+**Disadvantages:**
+- No runtime flexibility — implementation selected at compile time
+- Different builds using different overrides have incompatible ABIs
+- More complex build configuration
+
+**Currently Supported Services:**
+- **RawTime** (`config/OsSelection.hpp`, `OS_RAW_TIME_HEADER`)
+- **Mutex** (`config/OsSelection.hpp`, `OS_MUTEX_HEADER`)
+- **ConditionVariable** (`config/OsSelection.hpp`, `OS_CONDITION_VARIABLE_HEADER`) — configured in the same header as Mutex; the two must be overridden together (a `static_assert` in `Os/ConditionVariableInterface.hpp` rejects aliasing only one of them), and the selected ConditionVariable must accept the handle of the selected `Os::Mutex` (implementations such as Posix cast it to their own handle type; `Os::Stub::Mutex::StubConditionVariable` accepts any mutex). Note that `ERROR_DIFFERENT_MUTEX` is reported only by the link-time `DelegateConditionVariable`; a directly aliased implementation does not track which mutex it was first used with.
+
+The configuration header mechanism allows projects to opt into compile-time selection while maintaining link-time selection as the default for backward compatibility.
+
+**Example: RawTime Configuration Header**
+
+F´ provides a default `default/config/OsSelection.hpp` that enables link-time selection for RawTime:
+
+```c++
+namespace Os {
+    class DelegateRawTime;
+    using RawTime = DelegateRawTime;  // Wrapper with virtual dispatch
+}
+#define OS_RAW_TIME_HEADER <Os/DelegateRawTime.hpp>
+```
+
+Projects can override this header to enable compile-time selection:
+
+```c++
+namespace MyPlatform {
+    class MyRawTime;  // Concrete implementation
+}
+namespace Os {
+    using RawTime = MyPlatform::MyRawTime;  // Direct alias, no wrapper
+}
+#define OS_RAW_TIME_HEADER "MyPlatform/Os/RawTime.hpp"
+```
+
+> [!IMPORTANT]
+> When using compile-time selection:
+> - All object files in the build directory must use the same configuration (same ABI)
+> - The concrete implementation MUST inherit from the corresponding interface class
+> - The configuration header MUST NOT include Os OSAL headers (to avoid circular dependencies)
+
+### 5.3 API usage
 
 Application code interacts exclusively with the wrapper classes (e.g., `Os::File`) and never directly with the interfaces or implementations.  The wrapper forwards calls to the delegate interface, which is implemented by the platform-specific implementation class.
 
@@ -116,21 +198,21 @@ There are two usage patterns for the wrapper classes:
 | Usage Pattern | Description | Service | Example Usage |
 |---|---|---|---|
 | **Singletons** | Global state and/or accessed through static methods | FileSystem, Cpu, Memory, Task | Trough a static call:<br>```Os::FileSystem::rename(source, destination);``` |
-| **Handles** | Represents an OS object that carries state | File, Directory, Mutex, Task, Queue, Console | Through an instance:<br>```Os::File my_file; my_file.open("path/to/file.txt");``` |
+| **Handles** | Represents an OS object that carries state | File, Directory, Mutex, CountingSemaphore, Task, Queue, Console | Through an instance:<br>```Os::File my_file; my_file.open("path/to/file.txt");``` |
 
 The full API for each service is documented in the header files in the [`Os/` module](../).
 
 > [!NOTE]
 > `Os::Task` exposes both usage patterns. `Os::Task::delay()` is a static method that blocks the current task for a specified duration, while `Os::Task` instances represent individual tasks that can be started and stopped.
 
-### 5.3 Initialization
+### 5.4 Initialization
 
 `Os::init()` is called once at system startup.  It initializes the singleton instances used by
 services that have global state (Console, FileSystem, Cpu, Memory, Task).
 
 While calling `Os::init()` is not strictly required, it does provide a deterministic place to initialize all singletons.  When not called, singletons are initialized at the time of their first use.
 
-### 5.4 Error Handling
+### 5.5 Error Handling
 
 All operations return a typed `Status` enumeration specific to each service.  Platform
 backends translate native error codes (e.g., `errno`) into these status values so that callers
@@ -151,7 +233,7 @@ OSAL selection is controlled by the CMake build system.  Each backend provides a
 
 ## 7. Resources
 
-- [How-To: Implement an OSAL](../../docs/how-to/implement-osal.md) — Step-by-step guide to implementing a new OSAL backend.
+- [How-To: Implement an OSAL](../../docs/how-to/integrate/implement-osal.md) — Step-by-step guide to implementing a new OSAL backend.
 - [Posix OSAL implementation](https://github.com/nasa/fprime/tree/devel/Os/Posix) — Reference implementation for POSIX systems.
 - [fprime-zephyr](https://github.com/fprime-community/fprime-zephyr) — OSAL implementation for Zephyr RTOS.
 - [fprime-vxworks](https://github.com/fprime-community/fprime-vxworks) - OSAL implementation for VxWorks RTOS.

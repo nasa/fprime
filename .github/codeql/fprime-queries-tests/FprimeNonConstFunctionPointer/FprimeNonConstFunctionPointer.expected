@@ -1,0 +1,1 @@
+| test.cpp:4:5:4:13 | call to expression | This call does not go through a const function pointer. |

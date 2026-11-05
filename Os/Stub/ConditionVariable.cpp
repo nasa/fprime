@@ -15,11 +15,11 @@ StubConditionVariable::Status StubConditionVariable::pend(Os::Mutex& mutex) {
     return StubConditionVariable::Status::ERROR_NOT_IMPLEMENTED;
 }
 void StubConditionVariable::notify() {
-    // Nobody is waiting, because we assert if anyone tries to wait.
+    // Nobody can be waiting, because pend() always fails with ERROR_NOT_IMPLEMENTED.
     // Therefore, we can notify all waiters by doing nothing.
 }
 void StubConditionVariable::notifyAll() {
-    // Nobody is waiting, because we assert if anyone tries to wait.
+    // Nobody can be waiting, because pend() always fails with ERROR_NOT_IMPLEMENTED.
     // Therefore, we can notify all waiters by doing nothing.
 }
 

@@ -1,0 +1,2 @@
+| test.cpp:6:5:6:10 | call to printf | Call to printf; use F Prime events/logging instead. |
+| test.cpp:11:11:11:18 | call to snprintf | Call to snprintf; use F Prime events/logging instead. |

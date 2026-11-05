@@ -5,8 +5,15 @@
 // ======================================================================
 
 #include "Svc/ComAggregator/ComAggregator.hpp"
+#include <cstring>
+#include "Fw/FPrimeBasicTypes.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 
 namespace Svc {
+
+// Definition for ODR-use of static constexpr member (required until C++17)
+constexpr U16 ComAggregator::FHP_UNSET;
+constexpr FwSizeType ComAggregator::MIN_NON_SPANNING_AGGREGATION_SIZE;
 
 // ----------------------------------------------------------------------
 // Component construction and destruction
@@ -14,12 +21,74 @@ namespace Svc {
 
 ComAggregator ::ComAggregator(const char* const compName)
     : ComAggregatorComponentBase(compName),
+      m_allocator(nullptr),
+      m_allocationId(static_cast<FwEnumStoreType>(-1)),
+      m_allocation(nullptr),
       m_bufferState(Fw::Buffer::OwnershipState::OWNED),
-      m_frameBuffer(m_frameBufferStore, sizeof(m_frameBufferStore)),
-      m_frameSerializer(m_frameBuffer.getSerializer()),
-      m_allow_timeout(false) {}
+      m_frameBuffer(),
+      m_frameSerializer(),
+      m_allow_timeout(false),
+      m_spanning(false),
+      m_aggregationSize(0),
+      m_heldOffset(0),
+      m_fhp(FHP_UNSET),
+      m_pendingIdleCount(0),
+      m_leadingIdleCount(0),
+      m_lastFrameLost(false) {}
 
 ComAggregator ::~ComAggregator() {}
+
+void ComAggregator ::configure(FwSizeType aggregationSize,
+                               bool spanningEnabled,
+                               FwEnumStoreType allocationId,
+                               Fw::MemAllocator& allocator) {
+    // Storage is configured once, before any data is aggregated; cleanup() must run before reconfiguring
+    FW_ASSERT(this->m_allocation == nullptr);
+    // An aggregate must have room for data beyond the minimum idle packet
+    FW_ASSERT(aggregationSize > Ccsds::Utils::IdlePacket::MIN_SIZE, static_cast<FwAssertArgType>(aggregationSize));
+    if (spanningEnabled) {
+        // Every packet header offset in an aggregate must be representable as an 11-bit First Header Pointer
+        // and distinct from the reserved values (CCSDS 132.0-B-3 4.1.2.7.6)
+        const FwSizeType fhpRange = static_cast<FwSizeType>(Ccsds::TMSubfields::FHP_IDLE_DATA_ONLY);
+        FW_ASSERT(aggregationSize <= fhpRange, static_cast<FwAssertArgType>(aggregationSize));
+    } else {
+        // Without spanning, a full com buffer or file buffer Space Packet must fit next to a minimum idle packet
+        FW_ASSERT(aggregationSize >= MIN_NON_SPANNING_AGGREGATION_SIZE, static_cast<FwAssertArgType>(aggregationSize));
+        // The residual idle packet, up to aggregationSize - 1 bytes, must have a representable SPP length field
+        FW_ASSERT((aggregationSize - 1) <= Ccsds::Utils::IdlePacket::MAX_SIZE,
+                  static_cast<FwAssertArgType>(aggregationSize));
+    }
+    this->m_spanning = spanningEnabled;
+    this->m_aggregationSize = aggregationSize;
+
+    this->m_allocator = &allocator;
+    this->m_allocationId = allocationId;
+    FwSizeType allocatedSize = aggregationSize;
+    this->m_allocation = allocator.checkedAllocate(allocationId, allocatedSize);
+    this->m_frameBuffer.set(static_cast<U8*>(this->m_allocation), aggregationSize);
+    this->m_frameSerializer.setExtBuffer(static_cast<U8*>(this->m_allocation), aggregationSize);
+}
+
+void ComAggregator ::cleanup() {
+    if ((this->m_allocator != nullptr) && (this->m_allocation != nullptr)) {
+        // The aggregate must not be held downstream when its storage is released
+        FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::OWNED,
+                  static_cast<FwAssertArgType>(this->m_bufferState.load()));
+        // Drop the per-aggregate state so a later configure() starts clean
+        this->m_held = Svc::ComDataContextPair();
+        this->m_heldOffset = 0;
+        this->m_fhp = FHP_UNSET;
+        this->m_pendingIdleCount = 0;
+        this->m_leadingIdleCount = 0;
+        this->m_lastFrameLost = false;
+        this->m_frameSerializer.setExtBuffer(nullptr, 0);
+        this->m_frameBuffer.set(nullptr, 0);
+        this->m_aggregationSize = 0;
+        this->m_allocator->deallocate(this->m_allocationId, this->m_allocation);
+        this->m_allocation = nullptr;
+        this->m_allocator = nullptr;
+    }
+}
 
 void ComAggregator ::preamble() {
     Fw::Success good = Fw::Success::SUCCESS;
@@ -35,13 +104,18 @@ void ComAggregator ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condi
 }
 
 void ComAggregator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    FW_ASSERT(this->m_allocation != nullptr);
+    // Without spanning, any packet must fit in an empty aggregate next to a minimum idle packet
+    FW_ASSERT(this->m_spanning || data.getSize() <= (this->m_aggregationSize - Ccsds::Utils::IdlePacket::MIN_SIZE),
+              static_cast<FwAssertArgType>(data.getSize()));
     Svc::ComDataContextPair pair(data, context);
     this->aggregationMachine_sendSignal_fill(pair);
 }
 
 void ComAggregator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    FW_ASSERT(this->m_bufferState == Fw::Buffer::OwnershipState::NOT_OWNED);
-    this->m_bufferState = Fw::Buffer::OwnershipState::OWNED;
+    // This handler runs on the returning caller's thread: take ownership atomically
+    const Fw::Buffer::OwnershipState previousState = this->m_bufferState.exchange(Fw::Buffer::OwnershipState::OWNED);
+    FW_ASSERT(previousState == Fw::Buffer::OwnershipState::NOT_OWNED, static_cast<FwAssertArgType>(previousState));
 }
 
 void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
@@ -67,33 +141,49 @@ void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
 void ComAggregator ::Svc_AggregationMachine_action_doClear(SmId smId, Svc_AggregationMachine::Signal signal) {
     this->m_allow_timeout = true;  // Allow timeout messages in FILL state
     this->m_frameSerializer.resetSer();
-    this->m_frameBuffer.setSize(sizeof(this->m_frameBufferStore));
+    this->m_frameBuffer.setSize(this->m_aggregationSize);
     this->m_lastContext = ComCfg::FrameContext();
-    if (this->m_held.get_data().isValid()) {
-        // Fill the held data
-        this->Svc_AggregationMachine_action_doFill(smId, signal, this->m_held);
-        this->m_held = Svc::ComDataContextPair();
+    this->m_fhp = FHP_UNSET;
+    this->dropLostFrameState();
+    this->m_leadingIdleCount = this->m_pendingIdleCount;
+    // Write out any idle packet bytes spanning over from the previous aggregate
+    if (this->m_pendingIdleCount > 0) {
+        Fw::SerializeStatus status = this->m_frameSerializer.serializeFrom(
+            this->m_pendingIdle, this->m_pendingIdleCount, Fw::Serialization::OMIT_LENGTH);
+        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+        this->m_pendingIdleCount = 0;
     }
+    // Fill from the held buffer (whole packet, or remainder of a spanned packet)
+    this->fillFromHeld();
 }
 
 void ComAggregator ::Svc_AggregationMachine_action_doFill(SmId smId,
                                                           Svc_AggregationMachine::Signal signal,
                                                           const Svc::ComDataContextPair& value) {
+    this->markFirstHeaderIfUnset();
     Fw::SerializeStatus status = this->m_frameSerializer.serializeFrom(
         value.get_data().getData(), value.get_data().getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
     this->m_lastContext = value.get_context();
-    Fw::Success good = Fw::Success::SUCCESS;
-    // Return port does not alter data and thus const-cast is safe
-    this->dataReturnOut_out(0, const_cast<Fw::Buffer&>(value.get_data()), value.get_context());
-    this->comStatusOut_out(0, good);
+    this->returnAndSignalReady(value);
 }
 
 void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_AggregationMachine::Signal signal) {
     // Send only when the buffer will be valid
     if (this->m_frameSerializer.getSize() > 0) {
-        this->m_bufferState = Fw::Buffer::OwnershipState::NOT_OWNED;
-        this->m_frameBuffer.setSize(this->m_frameSerializer.getSize());
+        this->fillResidualWithIdle();
+        FW_ASSERT(this->m_frameSerializer.getSize() == this->m_aggregationSize,
+                  static_cast<FwAssertArgType>(this->m_frameSerializer.getSize()));
+        if (this->m_spanning) {
+            this->m_lastContext.set_firstHeaderPointer(
+                (this->m_fhp == FHP_UNSET) ? static_cast<U16>(Ccsds::TMSubfields::FHP_NO_PACKET_START) : this->m_fhp);
+        } else {
+            // Packets are never split: the first packet header is always at the start of the aggregate
+            this->m_lastContext.set_firstHeaderPointer(0);
+        }
+        const Fw::Buffer::OwnershipState previousState =
+            this->m_bufferState.exchange(Fw::Buffer::OwnershipState::NOT_OWNED);
+        FW_ASSERT(previousState == Fw::Buffer::OwnershipState::OWNED, static_cast<FwAssertArgType>(previousState));
         this->m_allow_timeout = false;  // Timeout messages should be discarded in WAIT_STATUS state
         this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);
     }
@@ -104,11 +194,35 @@ void ComAggregator ::Svc_AggregationMachine_action_doHold(SmId smId,
                                                           const Svc::ComDataContextPair& value) {
     FW_ASSERT(not this->m_held.get_data().isValid());
     this->m_held = value;
+    this->m_heldOffset = 0;
+}
+
+void ComAggregator ::Svc_AggregationMachine_action_doSplitHold(SmId smId,
+                                                               Svc_AggregationMachine::Signal signal,
+                                                               const Svc::ComDataContextPair& value) {
+    this->Svc_AggregationMachine_action_doHold(smId, signal, value);
+    if (this->m_spanning) {
+        // Split the leading bytes of the held packet into the remaining aggregation space
+        const FwSizeType remaining = this->remainingCapacity();
+        if (remaining > 0) {
+            // The held packet's header starts at the current fill offset of this aggregate
+            this->markFirstHeaderIfUnset();
+            Fw::SerializeStatus status = this->m_frameSerializer.serializeFrom(value.get_data().getData(), remaining,
+                                                                               Fw::Serialization::OMIT_LENGTH);
+            FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+            this->m_heldOffset = remaining;
+            this->m_lastContext = value.get_context();
+        }
+    }
+}
+
+void ComAggregator ::Svc_AggregationMachine_action_doNoteFailure(SmId smId, Svc_AggregationMachine::Signal signal) {
+    this->m_lastFrameLost = true;
 }
 
 void ComAggregator ::Svc_AggregationMachine_action_assertNoStatus(SmId smId, Svc_AggregationMachine::Signal signal) {
     // Status is not possible in this state, confirm by assertion
-    FW_ASSERT(0);
+    FW_ASSERT(false);
 }
 
 // ----------------------------------------------------------------------
@@ -118,27 +232,126 @@ void ComAggregator ::Svc_AggregationMachine_action_assertNoStatus(SmId smId, Svc
 bool ComAggregator ::Svc_AggregationMachine_guard_isFull(SmId smId,
                                                          Svc_AggregationMachine::Signal signal,
                                                          const Svc::ComDataContextPair& value) const {
-    FW_ASSERT(value.get_data().getSize() <= ComCfg::AggregationSize);
-    const FwSizeType remaining = this->m_frameSerializer.getCapacity() - this->m_frameSerializer.getSize();
-    return (remaining < value.get_data().getSize());
+    return not this->accepts(value.get_data().getSize());
 }
 
 bool ComAggregator ::Svc_AggregationMachine_guard_willFill(SmId smId,
                                                            Svc_AggregationMachine::Signal signal,
                                                            const Svc::ComDataContextPair& value) const {
-    FW_ASSERT(value.get_data().getSize() <= ComCfg::AggregationSize);
-    const FwSizeType remaining = this->m_frameSerializer.getCapacity() - this->m_frameSerializer.getSize();
-    return (remaining == value.get_data().getSize());
+    return (this->remainingCapacity() == value.get_data().getSize());
 }
 
 bool ComAggregator ::Svc_AggregationMachine_guard_isNotEmpty(SmId smId, Svc_AggregationMachine::Signal signal) const {
-    return this->m_frameSerializer.getSize() > 0;
+    // Carried-over idle bytes are not payload: an aggregate holding only those is empty for timeout purposes
+    return this->m_frameSerializer.getSize() > this->m_leadingIdleCount;
 }
 
 bool ComAggregator ::Svc_AggregationMachine_guard_isGood(SmId smId,
                                                          Svc_AggregationMachine::Signal signal,
                                                          const Fw::Success& value) const {
     return value == Fw::Success::SUCCESS;
+}
+
+bool ComAggregator ::Svc_AggregationMachine_guard_isSpanFull(SmId smId, Svc_AggregationMachine::Signal signal) const {
+    return this->m_spanning && (this->m_frameSerializer.getSize() == this->m_aggregationSize);
+}
+
+// ----------------------------------------------------------------------
+// Helper functions
+// ----------------------------------------------------------------------
+
+FwSizeType ComAggregator ::remainingCapacity() const {
+    FW_ASSERT(this->m_frameSerializer.getSize() <= this->m_aggregationSize,
+              static_cast<FwAssertArgType>(this->m_frameSerializer.getSize()));
+    return this->m_aggregationSize - this->m_frameSerializer.getSize();
+}
+
+bool ComAggregator ::accepts(FwSizeType size) const {
+    const FwSizeType remaining = this->remainingCapacity();
+    if (size > remaining) {
+        return false;
+    }
+    // Without spanning, an idle packet cannot continue into the next aggregate: the packet must either complete
+    // the aggregate or leave room for a whole minimum idle packet
+    const FwSizeType residual = remaining - size;
+    return this->m_spanning || (residual == 0) || (residual >= Ccsds::Utils::IdlePacket::MIN_SIZE);
+}
+
+void ComAggregator ::markFirstHeaderIfUnset() {
+    if (this->m_spanning && this->m_fhp == FHP_UNSET) {
+        this->m_fhp = static_cast<U16>(this->m_frameSerializer.getSize());
+    }
+}
+
+void ComAggregator ::fillFromHeld() {
+    if (this->m_held.get_data().isValid()) {
+        const Fw::Buffer& held = this->m_held.get_data();
+        const FwSizeType heldRemaining = held.getSize() - this->m_heldOffset;
+        const FwSizeType fillSize = FW_MIN(this->remainingCapacity(), heldRemaining);
+        if (this->m_heldOffset == 0) {
+            // The held packet's header starts at the current fill offset of this aggregate
+            this->markFirstHeaderIfUnset();
+        }
+        Fw::SerializeStatus status = this->m_frameSerializer.serializeFrom(held.getData() + this->m_heldOffset,
+                                                                           fillSize, Fw::Serialization::OMIT_LENGTH);
+        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+        this->m_lastContext = this->m_held.get_context();
+        this->m_heldOffset += fillSize;
+        if (this->m_heldOffset == held.getSize()) {
+            // Held buffer fully consumed: return it and request more data
+            this->returnAndSignalReady(this->m_held);
+            this->m_held = Svc::ComDataContextPair();
+            this->m_heldOffset = 0;
+        }
+    }
+}
+
+void ComAggregator ::fillResidualWithIdle() {
+    const FwSizeType residual = this->remainingCapacity();
+    if (residual == 0) {
+        return;
+    }
+    // The idle packet's header starts at the current fill offset of this aggregate
+    this->markFirstHeaderIfUnset();
+    // Idle packet size: fill the residual space exactly, spanning a minimum-size idle packet
+    // into the next aggregate when the residual space is too small (CCSDS 132.0-B-3 4.1.4)
+    Fw::SerializeStatus status = Fw::SerializeStatus::FW_SERIALIZE_OK;
+    if (residual >= Ccsds::Utils::IdlePacket::MIN_SIZE) {
+        // Idle packet fits entirely within this aggregate
+        status = Ccsds::Utils::IdlePacket::serialize(this->m_frameSerializer, residual);
+        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    } else {
+        // Without spanning, accepts() keeps the residual at zero or at least a minimum idle packet
+        FW_ASSERT(this->m_spanning);
+        // Stage a minimum-size idle packet, emit the leading bytes now and span the rest
+        U8 staging[Ccsds::Utils::IdlePacket::MIN_SIZE] = {};
+        Fw::ExternalSerializeBuffer stager(staging, sizeof(staging));
+        status = Ccsds::Utils::IdlePacket::serialize(stager, Ccsds::Utils::IdlePacket::MIN_SIZE);
+        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+        status = this->m_frameSerializer.serializeFrom(staging, residual, Fw::Serialization::OMIT_LENGTH);
+        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+        this->m_pendingIdleCount = Ccsds::Utils::IdlePacket::MIN_SIZE - residual;
+        (void)memcpy(this->m_pendingIdle, &staging[residual], this->m_pendingIdleCount);
+    }
+}
+
+void ComAggregator ::dropLostFrameState() {
+    if (this->m_lastFrameLost) {
+        this->m_pendingIdleCount = 0;
+        if (this->m_held.get_data().isValid() && this->m_heldOffset > 0) {
+            this->returnAndSignalReady(this->m_held);
+            this->m_held = Svc::ComDataContextPair();
+            this->m_heldOffset = 0;
+        }
+        this->m_lastFrameLost = false;
+    }
+}
+
+void ComAggregator ::returnAndSignalReady(const Svc::ComDataContextPair& pair) {
+    // Return port does not alter data and thus const-cast is safe
+    this->dataReturnOut_out(0, const_cast<Fw::Buffer&>(pair.get_data()), pair.get_context());
+    Fw::Success good = Fw::Success::SUCCESS;
+    this->comStatusOut_out(0, good);
 }
 
 }  // namespace Svc

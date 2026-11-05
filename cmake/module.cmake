@@ -13,9 +13,9 @@ include(implementation)
 include(target/ut) # For FPRIME__INTERNAL_UT_TARGET variable
 include(utilities)
 include(fprime-util)
-set(FPRIME__INTERNAL_BASE_CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" "AUTOCODER_INPUTS" "REQUIRES_IMPLEMENTATIONS")
+set(FPRIME__INTERNAL_BASE_CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" "AUTOCODER_INPUTS" "REQUIRES_IMPLEMENTATIONS" "LINK_DEPENDS" CACHE INTERNAL "Base set of control directives for module registration" FORCE)
 
-set(FPRIME__INTERNAL_EMPTY_CPP "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
+set(FPRIME__INTERNAL_EMPTY_CPP "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp" CACHE INTERNAL "Empty cpp file to attach to targets before autocoding" FORCE)
 
 ####
 # Function `fprime__internal_add_build_target`:
@@ -43,7 +43,8 @@ function(fprime__internal_add_build_target BUILD_TARGET_TYPE_STRING EXTRA_CONTRO
     fprime__internal_add_build_target_helper("${INTERNAL_MODULE_NAME}" "${BUILD_TARGET_TYPE_STRING}" "${INTERNAL_SOURCES}"
                                              "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}"
                                              "${INTERNAL_REQUIRES_IMPLEMENTATIONS}"
-                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}")
+                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}"
+                                             "${INTERNAL_LINK_DEPENDS}")
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
     foreach(DIRECTIVE IN LISTS EXTRA_CONTROL_DIRECTIVES FPRIME__INTERNAL_BASE_CONTROL_SETS)
         if (DEFINED "INTERNAL_${DIRECTIVE}")
@@ -51,6 +52,22 @@ function(fprime__internal_add_build_target BUILD_TARGET_TYPE_STRING EXTRA_CONTRO
         endif()
     endforeach()
 endfunction()
+
+####
+# Macro `fprime__internal_close_control_set`:
+#
+# Finalizes the active control word (CURRENT_LIST_NAME) once its arguments have ended. Zero-argument flags that
+# received no value become TRUE; list directives that received no values are an error.
+####
+macro(fprime__internal_close_control_set)
+    if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
+        if (CURRENT_LIST_NAME IN_LIST FPRIME_FLAG_CONTROL_SETS)
+            set("LIST_${CURRENT_LIST_NAME}" TRUE)
+        else()
+            fprime_cmake_fatal_error("${CURRENT_LIST_NAME} supplied without values in call to register_fprime_*")
+        endif()
+    endif()
+endmacro()
 
 ####
 # Function `fprime__process_module_setup`:
@@ -75,9 +92,11 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
     # List of control words, file-based control words, and CMAKE control words from (add_library and add_executable)
     set(FPRIME_CONTROL_SETS)
     set(CONTROL_SETS ${FPRIME__INTERNAL_BASE_CONTROL_SETS} ${ADDITIONAL_CONTROL_SETS})
-    set(FILE_CONTROL_SETS "HEADERS" "SOURCES" "AUTOCODER_INPUTS")
+    set(FILE_CONTROL_SETS "HEADERS" "SOURCES" "AUTOCODER_INPUTS" "LINK_DEPENDS")
     set(FPRIME_CMAKE_ADD_OPTIONS "WIN32" "MACOSX_BUNDLE" "OBJECT" "INTERFACE" "IMPORTED" "ALIAS" "GLOBAL"
         "STATIC" "SHARED" "MODULE" "EXCLUDE_FROM_ALL")
+    set(FPRIME_FLAG_CONTROL_SETS ${FPRIME_CMAKE_ADD_OPTIONS} "GLOBAL_IMPLICIT_DEPENDENCY" "BASE_CONFIG" "UT_AUTO_HELPERS"
+        "INCLUDE_GTEST")
     # Set module name as passed in, then defaulting to FPRIME_CURRENT_MODULE
     if (${INPUT_COUNT} GREATER 0 AND NOT FIRST_ARGUMENT IN_LIST CONTROL_SETS)
         list(POP_FRONT INPUT_ARGUMENTS MODULE_NAME)
@@ -134,35 +153,29 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
         fprime_cmake_fatal_error("Cannot both set UT_MOD_DEPS and supply a dependency list to register_fprime_ut")
     elseif (DEFINED UT_AUTO_HELPERS)
         fprime_cmake_fatal_error("Cannot both set UT_AUTO_HELPERS and supply use new-style register_fprime_ut")
-    else()
-        # Unset all the control lists so the module can track what controls were passed in along with their arguments
-        # allowing signal control sets that do not take arguments.
-        foreach(CONTROL_SET IN LISTS CONTROL_SETS)
-            unset("${CONTROL_SET}")
-        endforeach()
     endif()
     unset(CURRENT_LIST_NAME)
+    # Control words already seen in this call, used to detect a directive supplied twice
+    set(SEEN_CONTROL_SETS "")
     # Process all arguments and fill in the module sources
     foreach (ARGUMENT IN LISTS INPUT_ARGUMENTS)
         # EXISTS only defined for resolved absolute paths
         set(RESOLVED_ARGUMENT "${ARGUMENT}")
         resolve_path_variables(RESOLVED_ARGUMENT)
-        # If the argument is one of our control tokens, and the list is already defined, this means the user has specified
+        # If the argument is one of our control tokens, and it was already seen, this means the user has specified
         # the argument twice. This is likely an error.
-        if (ARGUMENT IN_LIST CONTROL_SETS AND DEFINED "${ARGUMENT}")
-            fprime_cmake_fatal_error("${ARGUMENT} supplied multiple times in call to register_fprime_module")
+        if (ARGUMENT IN_LIST CONTROL_SETS AND ARGUMENT IN_LIST SEEN_CONTROL_SETS)
+            fprime_cmake_fatal_error("${ARGUMENT} supplied multiple times in call to register_fprime_*")
         # Now update the current list and define the backing store for it. This will allow us to capture arguments
         # between this and other control words.
         elseif(ARGUMENT IN_LIST CONTROL_SETS)
-            # Check for control words that are zero-argument (flags) and set them to true
-            if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
-                set("LIST_${CURRENT_LIST_NAME}" TRUE)
-            endif()
+            list(APPEND SEEN_CONTROL_SETS "${ARGUMENT}")
+            fprime__internal_close_control_set()
             set(CURRENT_LIST_NAME "${ARGUMENT}")
             set("LIST_${CURRENT_LIST_NAME}")
         # Check that file types' files exist
         elseif(DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FILE_CONTROL_SETS AND NOT EXISTS "${RESOLVED_ARGUMENT}")
-            fprime_cmake_fatal_error("${ARGUMENT} does not exist but was specified as a SOURCE/HEADER/AUTOCODER_INPUT")
+            fprime_cmake_fatal_error("${ARGUMENT} does not exist but was specified as a ${CURRENT_LIST_NAME}")
         # Add in an element to the active control list
         elseif(DEFINED CURRENT_LIST_NAME)
             list(APPEND "LIST_${CURRENT_LIST_NAME}" "${ARGUMENT}")
@@ -172,10 +185,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             fprime_cmake_fatal_error("One of ${CONTROL_SETS_STRING} must be specified before list elements: ${ARGUMENT}")
         endif()
     endforeach()
-    # Check for control words that are zero-argument (flags) and set them to true
-    if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
-        set("LIST_${CURRENT_LIST_NAME}" TRUE)
-    endif()
+    fprime__internal_close_control_set()
     # Update caller scope with the new variables
     set(INTERNAL_CMAKE_ADD_OPTIONS)
     set(INTERNAL_MODULE_NAME "${MODULE_NAME}" PARENT_SCOPE)
@@ -250,6 +260,24 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     # Add the link libraries safely in both real and INTERFACE libraries
     fprime_target_dependencies("${TARGET_NAME}" PUBLIC ${DEPENDENCIES} ${REQUIRED_IMPLEMENTATIONS})
 
+    # Carry the flags required to build F Prime code. This is deliberately not a
+    # fprime_target_dependencies call: the flags are a usage requirement, not a module, and have no
+    # place in the FPRIME_DEPENDENCIES list that deployments recurse to build their link lines.
+    # Append to the link properties directly (as the autocoder does for detected dependencies): a
+    # target_link_libraries call here would commit every registered target to the keyword
+    # signature, breaking projects that link their own modules with the plain signature.
+    get_target_property(FPRIME__INTERNAL_TARGET_TYPE "${TARGET_NAME}" TYPE)
+    if (NOT FPRIME__INTERNAL_TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
+        append_list_property("${FPRIME_REQUIRED_FLAGS_TARGET}" TARGET "${TARGET_NAME}" PROPERTY LINK_LIBRARIES)
+    endif()
+    append_list_property("${FPRIME_REQUIRED_FLAGS_TARGET}" TARGET "${TARGET_NAME}" PROPERTY INTERFACE_LINK_LIBRARIES)
+
+    # Set extra link dependencies when supplied
+    set(EXTRA_LINK_DEPENDS "${ARGV9}")
+    if (EXTRA_LINK_DEPENDS)
+        set_target_properties("${TARGET_NAME}" PROPERTIES LINK_DEPENDS "${EXTRA_LINK_DEPENDS}")
+    endif()
+
     # Set F Prime target properties
     set_target_properties("${TARGET_NAME}"
         PROPERTIES
@@ -273,4 +301,3 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
         append_list_property("${REQUIRES_IMPLEMENTATIONS}" GLOBAL PROPERTY FPRIME_REQUIRED_IMPLEMENTATIONS)
     endif()      
 endfunction()
-

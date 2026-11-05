@@ -35,20 +35,20 @@ class PrimitiveTest : public ::testing::Test {
         ASSERT_EQ(s.get_mI16(), testI16);
         ASSERT_EQ(s.get_mF64(), testF64);
     }
-
     void assertUnsuccessfulSerialization(T& s, U32 bufSize) {
         // Avoid creating an array of size zero
         U8 data[bufSize + 1];
-        Fw::SerialBuffer buf(data, bufSize);
+        // If array size size should be 0, pass in a nullptr instead of address
+        Fw::SerialBuffer buf(bufSize > 0 ? data : nullptr, bufSize);
         Fw::SerializeStatus status;
 
         // Serialize
         status = buf.serializeFrom(s);
-        ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
+        ASSERT_NE(status, Fw::FW_SERIALIZE_OK) << "Buffer size " << bufSize << " should fail serialization";
 
         // Deserialize
         status = buf.deserializeTo(s);
-        ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
+        ASSERT_NE(status, Fw::FW_SERIALIZE_OK) << "Buffer size " << bufSize << " should fail deserialization";
     }
 
     bool testBool;
@@ -197,15 +197,27 @@ TYPED_TEST_P(PrimitiveTest, ToString) {
     TypeParam s(this->testBool, this->testU32, this->testI16, this->testF64);
     std::stringstream buf1, buf2;
 
+    // 1. Test operator<< output (truncates to default Fw::String capacity)
     buf1 << s;
 
+    // 2. Test s.toString() output (uses full buffer capacity)
+    Fw::StringTemplate<1024> str;
+    s.toString(str);
+
+    // Build the expected string representation
     buf2 << "( "
          << "mBool = " << this->testBool << ", "
          << "mU32 = " << this->testU32 << ", "
          << "mI16 = " << this->testI16 << ", "
          << "mF64 = " << std::fixed << this->testF64 << " )";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    // Verify operator<< output against standard Fw::String
+    Fw::String sTruncated(buf2.str().c_str());
+    ASSERT_STREQ(buf1.str().c_str(), sTruncated.toChar());
+
+    // Verify full s.toString() output against large capacity buffer
+    Fw::StringTemplate<1024> sFull(buf2.str().c_str());
+    ASSERT_STREQ(str.toChar(), sFull.toChar());
 }
 
 REGISTER_TYPED_TEST_SUITE_P(PrimitiveTest,
@@ -220,6 +232,16 @@ REGISTER_TYPED_TEST_SUITE_P(PrimitiveTest,
 
 using PrimitiveTestImplementations = ::testing::Types<C_Primitive, SM_SMPrimitive>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, PrimitiveTest, PrimitiveTestImplementations);
+
+// Verify LinearBufferBase invariant: buffAddr is null iff capacity is zero.
+TEST(SerialBufferInvariant, NonNullAddrZeroCapacityAborts) {
+    U8 data[1];
+    EXPECT_DEATH(Fw::SerialBuffer(data, 0), "Assert");
+}
+
+TEST(SerialBufferInvariant, NullAddrNonZeroCapacityAborts) {
+    EXPECT_DEATH(Fw::SerialBuffer(nullptr, 1), "Assert");
+}
 
 }  // namespace Struct
 

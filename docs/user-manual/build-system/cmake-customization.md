@@ -43,4 +43,4 @@ Alternatively, `ExternalProject_Add` can be used if the external library require
 version control, and building steps.
 
 For a guide on integrating with another build system see:
-[How To: Integrate External Libraries](../../how-to/integrate-external-libraries.md).
+[How To: Integrate External Libraries](../../how-to/integrate/integrate-external-libraries.md).

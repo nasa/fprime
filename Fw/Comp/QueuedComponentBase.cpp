@@ -30,7 +30,8 @@ Os::Queue::Queue::Status QueuedComponentBase::createQueue(FwSizeType depth, FwSi
 #if FW_OBJECT_NAMES == 1
     queueName = this->m_objName;
 #else
-    queueName.format("CompQ_%" PRI_FwSizeType, Os::Queue::getNumQueues());
+    // Truncation of a queue name is benign
+    (void)queueName.format("CompQ_%" PRI_FwSizeType, Os::Queue::getNumQueues());
 #endif
     return this->m_queue.create(this->getInstance(), queueName, depth, msgSize);
 }

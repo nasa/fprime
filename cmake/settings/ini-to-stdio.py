@@ -1,7 +1,8 @@
-""" ini-to-stdio.py:
+"""ini-to-stdio.py:
 
 Loads fprime style ini files into a format CMake can process.
 """
+
 import argparse
 import os.path
 import sys
@@ -11,7 +12,6 @@ from pathlib import Path
 from typing import List
 
 from fprime.fbuild.settings import IniSettings
-
 
 REMAPPING = {}
 
@@ -47,8 +47,8 @@ CMAKE_NEEDED_SETTINGS = {
         "FPRIME_LIBRARY_LOCATIONS", ";".join(str(item) for item in value)
     ),
     "default_cmake_options": lambda value: print_list_settings(value.split("\n")),
-    # Sets two settings from install dest: fprime and cmake settings
-    "install_destination": partial(print_setting, "CMAKE_INSTALL_PREFIX"),
+    # Sets install directory used as default DESTDIR by fprime_install.cmake
+    "install_destination": partial(print_setting, "FPRIME_INSTALL_DEST"),
 }
 
 

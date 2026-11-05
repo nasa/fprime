@@ -1,10 +1,6 @@
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Topology.fpp"
+register_fprime_module(
+    EXCLUDE_FROM_ALL
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/Topology.fpp"
+    INTERFACE
 )
-
-set(MOD_DEPS
-        ${PROJECT_NAME}/topology/components/Sender
-        ${PROJECT_NAME}/topology/components/Receiver
-)
-
-register_fprime_module()

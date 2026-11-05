@@ -400,7 +400,7 @@ class RedBlackTreeSetOrMapImpl final {
         // Compute the nearest offset at or after nodesSize that is aligned for FreeNodes
         const auto freeNodesAlignment = FreeNodes::getByteArrayAlignment();
         const U8 modulus = nodesSize % freeNodesAlignment;
-        const FwSizeType freeNodesOffset = (modulus == 0) ? 0 : freeNodesAlignment - modulus;
+        const FwSizeType freeNodesOffset = nodesSize + ((modulus == 0) ? 0 : freeNodesAlignment - modulus);
         FW_ASSERT(freeNodesOffset % freeNodesAlignment == 0, static_cast<FwAssertArgType>(freeNodesOffset),
                   static_cast<FwAssertArgType>(freeNodesAlignment));
         const auto freeNodesSize = FreeNodes::getByteArraySize(capacity);
@@ -1557,6 +1557,8 @@ class RedBlackTreeSetOrMapImpl final {
                                     Index& sibling,               //!< The sibling (input and output)
                                     Index& distantNephew          //!< The distant nephew (input and output)
     ) {
+        FW_ASSERT(sibling != Node::NONE);
+        FW_ASSERT(closeNephew != Node::NONE);
         this->rotateSubtree(sibling, oppositeDirection);
         this->m_nodes[sibling].m_color = Color::RED;
         this->m_nodes[closeNephew].m_color = Color::BLACK;
@@ -1594,6 +1596,7 @@ class RedBlackTreeSetOrMapImpl final {
     //! entry, node stores the node to be removed. It must not be NONE.
     void removeNodeWithAtMostOneChild(Index node  //!< The node to remove
     ) {
+        FW_ASSERT(node != Node::NONE);
         if (this->m_nodes[node].m_left != Node::NONE) {
             this->removeNodeWithOneChild(node, Direction::LEFT);
         } else if (this->m_nodes[node].m_right != Node::NONE) {
@@ -1671,9 +1674,11 @@ class RedBlackTreeSetOrMapImpl final {
                        Direction direction  //!< The direction
     ) {
         // We assume that the tree is a binary search tree (BST).
+        FW_ASSERT(node != Node::NONE);
         const auto parent = this->m_nodes[node].m_parent;
         const auto oppositeDirection = Node::getOppositeDirection(direction);
         const auto newRoot = this->m_nodes[node].getChild(oppositeDirection);
+        FW_ASSERT(newRoot != Node::NONE);
         const auto newChild = this->m_nodes[newRoot].getChild(direction);
         this->m_nodes[node].setChild(oppositeDirection, newChild);
         if (newChild != Node::NONE) {

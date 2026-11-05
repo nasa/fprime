@@ -1,13 +1,13 @@
 #####
 # File dispatch ports:
 #
-# A port setting/getting custom versions per project.
+# A port for dispatching files (e.g., routing an uplinked file to a handler by type).
 #####
 
 module Svc{
-    
+
     @ Port for dispatching files
     port FileDispatch(
-             ref file_name: string @< The file to dispatch
+             ref file_name: string size FileNameStringSize @< The file to dispatch
     )
 }

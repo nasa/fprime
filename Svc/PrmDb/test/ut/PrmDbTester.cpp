@@ -15,6 +15,7 @@
 #include <cstdio>
 #include "Os/Stub/Directory.hpp"
 #include "Os/Stub/FileSystem.hpp"
+#include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
 
@@ -638,7 +639,7 @@ void PrmDbTester::runDbEqualTest() {
     this->m_impl.updateAddPrmImpl(id1, pBuff, PrmDb_PrmDbType::DB_STAGING);
     EXPECT_TRUE(this->dbEqual());
 
-    // 4. Update entry in active DB only - should not be equal
+    // 4. Update entry in staging DB only - should not be equal
     U32 val2 = 0x43;
     pBuff.resetSer();
     serStat = pBuff.serializeFrom(val2);
@@ -647,7 +648,7 @@ void PrmDbTester::runDbEqualTest() {
     this->m_impl.updateAddPrmImpl(id1, pBuff, PrmDb_PrmDbType::DB_STAGING);
     EXPECT_FALSE(this->dbEqual());
 
-    // 5. Update staging DB to match - should be equal again
+    // 5. Update active DB to match - should be equal again
     pBuff.resetSer();
     serStat = pBuff.serializeFrom(val2);
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
@@ -871,7 +872,7 @@ void PrmDbTester::runDbCommitTest() {
 }
 
 void PrmDbTester::runPrmFileLoadNominal() {
-    Fw::String file = "TestFile.prm";
+    Fw::String file = "/prm/TestFile.prm";
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
 
     // Store pointers to databases before swap for verification
@@ -883,17 +884,9 @@ void PrmDbTester::runPrmFileLoadNominal() {
 
     // Populate the active DB and save to file
     runNominalSaveFile();
-    printf("Saved into File: \n");
-    printDb(PrmDbType::DB_ACTIVE);
-    printDb(PrmDbType::DB_STAGING);
-
     // Clear both databases
     this->m_impl.clearDb(PrmDbType::DB_ACTIVE);
     this->m_impl.clearDb(PrmDbType::DB_STAGING);
-
-    printf("Cleared: \n");
-    printDb(PrmDbType::DB_ACTIVE);
-    printDb(PrmDbType::DB_STAGING);
 
     // Populate active database with some values so we can test merge=true
     // A new ID
@@ -930,10 +923,6 @@ void PrmDbTester::runPrmFileLoadNominal() {
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
     EXPECT_EQ(testVal2, activeVal2Update);
 
-    printf("Added new: \n");
-    printDb(PrmDbType::DB_ACTIVE);
-    printDb(PrmDbType::DB_STAGING);
-
     // Send PRM_LOAD_FILE command with merge=true to merge with active database
     Os::Stub::File::Test::StaticData::setReadResult(m_io_data, Os::Stub::File::Test::StaticData::data.pointer);
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
@@ -950,10 +939,6 @@ void PrmDbTester::runPrmFileLoadNominal() {
     // Verify EVRs for the file load
     ASSERT_EVENTS_PrmFileLoadComplete_SIZE(1);
     ASSERT_EVENTS_PrmFileLoadComplete(0, "STAGING", 2, 1, 1);
-
-    printf("Parameter Load file complete: \n");
-    printDb(PrmDbType::DB_ACTIVE);
-    printDb(PrmDbType::DB_STAGING);
 
     //  Verify state and command response after PRM_LOAD_FILE
     EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::FILE_UPDATES_STAGED);
@@ -1032,7 +1017,7 @@ void PrmDbTester::runPrmFileLoadNominal() {
 }
 
 void PrmDbTester::runPrmFileLoadWithErrors() {
-    Fw::String file = "TestFile.prm";
+    Fw::String file = "/prm/TestFile.prm";
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
 
     // Store pointers to databases before swap for verification
@@ -1044,17 +1029,9 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
 
     // Populate the active DB and save to file
     runNominalSaveFile();
-    printf("Saved into File: \n");
-    printDb(PrmDbType::DB_ACTIVE);
-    printDb(PrmDbType::DB_STAGING);
-
     // Clear both databases
     this->m_impl.clearDb(PrmDbType::DB_ACTIVE);
     this->m_impl.clearDb(PrmDbType::DB_STAGING);
-
-    printf("Cleared: \n");
-    printDb(PrmDbType::DB_ACTIVE);
-    printDb(PrmDbType::DB_STAGING);
 
     // Populate active database with some values so we can test merge=true
     // A new ID
@@ -1091,10 +1068,6 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
     EXPECT_EQ(testVal2, activeVal2Update);
 
-    printf("Added new: \n");
-    printDb(PrmDbType::DB_ACTIVE);
-    printDb(PrmDbType::DB_STAGING);
-
     // Send PRM_LOAD_FILE command with merge=true to merge with active database
     // but with a file open error
     Os::Stub::File::Test::StaticData::setReadResult(m_io_data, Os::Stub::File::Test::StaticData::data.pointer);
@@ -1113,10 +1086,6 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
     // Verify EVRs for the file load cmd failure
     ASSERT_EVENTS_PrmDbFileLoadFailed_SIZE(1);
 
-    printf("Parameter Load file complete: \n");
-    printDb(PrmDbType::DB_ACTIVE);
-    printDb(PrmDbType::DB_STAGING);
-
     //  Verify state and command response after PRM_LOAD_FILE
     EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
     ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 10, Fw::CmdResponse::EXECUTION_ERROR);
@@ -1127,6 +1096,118 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
 
     // Verify the staging database is empty
     EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 0);
+}
+
+void PrmDbTester::runPrmFileLoadEmptyFileName() {
+    Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
+    Fw::ParamBuffer pBuff;
+    U32 stagedVal = 0x5678;
+    FwPrmIdType stagedId = 0x21;
+
+    // Pre-populate the staging database so we can verify it is left untouched
+    Fw::SerializeStatus stat = pBuff.serializeFrom(stagedVal);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+    this->m_impl.updateAddPrmImpl(stagedId, pBuff, PrmDbType::DB_STAGING);
+    EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 1);
+    EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
+
+    const PrmDb_Merge merges[] = {PrmDb_Merge::MERGE, PrmDb_Merge::RESET};
+    for (const PrmDb_Merge& merge : merges) {
+        this->clearEvents();
+        this->clearHistory();
+        this->sendCmd_PRM_LOAD_FILE(0, 10, Fw::String(""), merge);
+        dispatchStatus = this->m_impl.doDispatch();
+        EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 10, Fw::CmdResponse::VALIDATION_ERROR);
+        ASSERT_EVENTS_SIZE(1);
+        ASSERT_EVENTS_PrmDbFileLoadFailed_SIZE(1);
+        ASSERT_EVENTS_PrmFileReadError_SIZE(0);
+
+        // Component stays idle and the staging database is untouched
+        EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
+        EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 1);
+    }
+
+    // A subsequent load with a valid path is still accepted (reaches file I/O)
+    this->clearEvents();
+    this->clearHistory();
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::DOESNT_EXIST);
+    this->sendCmd_PRM_LOAD_FILE(0, 11, Fw::String("/prm/good.prm"), PrmDb_Merge::RESET);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::DOESNT_EXIST);
+    EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+}
+
+void PrmDbTester::runPrmFileLoadSandboxViolation() {
+    Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
+
+    // 0. With no sandbox configured, every file access is rejected (fail-closed)
+    this->clearEvents();
+    this->clearHistory();
+    this->m_impl.readParamFile();
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::OUTSIDE_SANDBOX);
+
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_SAVE_FILE(0, 8);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_SAVE_FILE, 8, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
+    ASSERT_EVENTS_PrmFileWriteError(0, PrmWriteError::OPEN, 0, Os::File::OUTSIDE_SANDBOX);
+
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_LOAD_FILE(0, 9, Fw::String("/prm/good.prm"), PrmDb_Merge::RESET);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 9, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::OUTSIDE_SANDBOX);
+    ASSERT_EVENTS_PrmDbFileLoadFailed_SIZE(1);
+
+    // Restrict all file access to /prm
+    this->m_impl.configureSandbox("/prm");
+
+    // 1. A path escaping the sandbox must be rejected before any file I/O
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_LOAD_FILE(0, 10, Fw::String("/prm/../etc/passwd"), PrmDb_Merge::RESET);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 10, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::OUTSIDE_SANDBOX);
+    ASSERT_EVENTS_PrmDbFileLoadFailed_SIZE(1);
+
+    // 2. A path inside the sandbox passes containment and reaches file I/O
+    this->clearEvents();
+    this->clearHistory();
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::DOESNT_EXIST);
+    this->sendCmd_PRM_LOAD_FILE(0, 11, Fw::String("/prm/good.prm"), PrmDb_Merge::RESET);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 11, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileReadError_SIZE(1);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::DOESNT_EXIST);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
 }
 
 void PrmDbTester::runPrmFileLoadIllegal() {
@@ -1263,7 +1344,28 @@ void PrmDbTester::runPrmFileLoadIllegal() {
     // -------------------------------------------------------------------
     // 3. Test illegal operations in IDLE state
     // -------------------------------------------------------------------
-    this->m_impl.m_state = PrmDbFileLoadState::IDLE;
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_COMMIT_STAGED(0, 16);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_COMMIT_STAGED, 16, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_PrmDbCommitComplete_SIZE(1);
+    EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
+
+    this->clearEvents();
+    this->clearHistory();
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::DOESNT_EXIST);
+    this->sendCmd_PRM_LOAD_FILE(0, 17, Fw::String("/prm/missing.prm"), PrmDb_Merge::RESET);
+    dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 17, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_PrmFileReadError(0, PrmDb_PrmReadError::OPEN, 0, Os::File::DOESNT_EXIST);
+    ASSERT_EVENTS_PrmDbFileLoadFailed_SIZE(1);
+    EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
 
     // 3.1 Attempt PRM_COMMIT_STAGED in IDLE state
     this->clearEvents();
@@ -1501,21 +1603,6 @@ PrmDbTester::~PrmDbTester() {
 
 void PrmDbTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
-}
-
-void PrmDbTester::printDb(PrmDb_PrmDbType dbType) {
-    auto* db = this->m_impl.getDbPtr(dbType);
-    printf("%s Parameter DB @ %p \n", PrmDbImpl::getDbString(dbType).toChar(), static_cast<void*>(db));
-    for (const auto& entry : *db) {
-        printf(" ID = %08X", entry.getKey());
-        printf(" Value = ");
-        const U8* data = entry.getValue().getBuffAddr();
-        FwSizeType len = entry.getValue().getSize();
-        for (FwSizeType i = 0; i < len; ++i) {
-            printf("%02X ", data[i]);
-        }
-        printf("\n");
-    }
 }
 
 } /* namespace Svc */

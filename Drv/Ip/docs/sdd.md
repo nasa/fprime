@@ -23,7 +23,7 @@ Each of these classes is explained in more detail below.
 - [Drv::UdpSocket](#drvudpsocket-class)
 - [Drv::SocketComponentHelper](#drvsocketreadtask-virtual-baseclass)
 
-> ![WARNING]
+> [!WARNING]
 > The core library is not thread-safe. Users of this library (i.e. F´ components) must provide synchronization calls.
 
 ## Drv::IpSocket Baseclass
@@ -47,13 +47,22 @@ number of times on correctable errors before finally succeeding once all data ha
 socket send fail. Interrupts and timeouts are the only recoverable errors. Users must call `close` and `open` to recover
 from other errors.
 
+A send on a connection the peer has closed or reset, or on a descriptor already closed locally, returns
+`SOCK_DISCONNECTED` (`EPIPE`, `ECONNRESET`, or `EBADF`). Such a send must not raise `SIGPIPE`, whose default action
+terminates the process, so TCP sends pass `MSG_NOSIGNAL` where the platform defines it, and connected TCP sockets have
+`SO_NOSIGPIPE` set where the platform provides that option instead (e.g. macOS). On Linux and macOS, a `Drv::Ip` TCP
+send therefore cannot raise `SIGPIPE` on disconnect. This covers only `Drv::Ip` sends: other `write`/`send` calls in
+the process, and targets with neither `MSG_NOSIGNAL` nor `SO_NOSIGPIPE`, still raise `SIGPIPE` (default action: process
+termination), so a deployment that removes a global `SIGPIPE` handler on the strength of this section must audit those
+paths first.
+
 `Drv::IpSocket::recv` will attempt to read data from across the socket. It will block until data is received and
 in the case that the socket is interrupted without data, it will retry a configurable number of times. Users must call
 `close` and `open` to recover from other errors.
 
-A call to `Drv::IpSocket::close` will specifically shutdown and close the client connection. This has the effect of
-stopping any blocking reads on the socket, issuing a formal disconnect, and cleaning up the allocated resources. Once
-called, the Drv::IpSocket should be ready for another call to `Drv::IpSocket::open`.
+A call to `Drv::IpSocket::close` will close the client connection and clean up the allocated resources. Once called,
+the Drv::IpSocket should be ready for another call to `Drv::IpSocket::open`. `close` does not shut the connection down,
+and on Linux it does not stop a read blocked in another thread. `Drv::IpSocket::shutdown` does.
 
 ### Example Usage of Drv::IpSocket
 
@@ -75,6 +84,32 @@ socket.open();
 ...
 ```
 
+## Configuration: Socket Options
+
+The `IP_SOCKET_OPTIONS` array in `config/IpCfg.hpp` defines socket options that are applied to all sockets (TCP server,
+TCP client, and UDP) during setup via `setsockopt`. By default, `SO_REUSEADDR` is enabled (`1`). This prevents
+`EADDRINUSE` ("address already in use") errors when restarting flight software that uses a TCP server, by allowing the
+socket to bind immediately even if the port is still in `TIME_WAIT` state from a prior connection.
+
+To disable `SO_REUSEADDR`, override the entry in your project's `IpCfg.hpp`:
+
+```c++
+static const IpSocketOptions IP_SOCKET_OPTIONS[] = {
+    makeIntOption(SO_REUSEADDR, SOL_SOCKET, 0),  // Disable reuse
+};
+```
+
+> [!NOTE]
+> Enabling `SO_REUSEADDR` allows another process on the same machine to bind to the same port. Projects should
+> evaluate their threat model before leaving this enabled. See the comments in `IpCfg.hpp` for details.
+
+Additional socket options can be appended to the `IP_SOCKET_OPTIONS` array using the `makeIntOption` and
+`makeSizeOption` helper functions defined in `IpCfg.hpp`.
+
+`SOCKET_IP_SEND_FLAGS` in `IpCfg.hpp` sets the flags passed to every `send`/`sendto`. TCP sends add `MSG_NOSIGNAL` to
+these flags themselves (see [Drv::IpSocket Baseclass](#drvipsocket-baseclass)), so a project that overrides `IpCfg.hpp`
+does not need to include it.
+
 ## Drv::TcpClientSocket Class
 
 The Drv::TcpClientSocket class represents an IPv4 TCP client. It inherently provides bidirectional communication with
@@ -83,7 +118,7 @@ message or this client will return an error. In other words, dropped packets wil
 above and an example instantiation is shown below.
 
 ```c++
-Drv::IpSocket& socket = Drv::TcpClientSocket;
+Drv::TcpClientSocket socket;
 ```
 
 ## Drv::TcpServerSocket Class
@@ -94,7 +129,7 @@ Since this class is intended to communicate with exactly one client, no listen q
 from clients will be ignored until the primary client has been closed. Like the TCP client packet drops will result in an
 error.
 
-> ![NOTE]
+> [!NOTE]
 > The `Drv::TcpServerSocket::open` call will block until a client connects to the server.
 
 In order to startup the server to listen, the `Drv::TcpServerSocket::startup` method should be called. It will create a
@@ -103,14 +138,14 @@ socket that will listen for incoming connections.  `Drv::TcpServerSocket::startu
 will only close the client connection and does not affect the server from listening for clients, however; it does free
 up the server to accept a new client.
 
-`Drv::TcpServerSocket::shutdown` will close the TCP server from receiving any new clients and effectively releases all
-resources allocated to the server. `Drv::TcpServerSocket::shutdown` implies `Drv::TcpServerSocket::close` and client
-connections will be stopped.
+`Drv::TcpServerSocket::terminate` will shut down and close the TCP server socket, releasing the resources allocated by
+`Drv::TcpServerSocket::startup` and preventing new clients. The shutdown is done first so that a thread waiting in
+`Drv::TcpServerSocket::open` can exit. It does not close an accepted client connection; use `Drv::TcpServerSocket::close`.
 
 ## Example TcpServer Usage
 
 ```c++
-Drv::TcpServerSocket& server = Drv::; // Initialize the component
+Drv::TcpServerSocket server; // Initialize the component
 server.configure("127.0.0.1", 60210, 0, 100); // Use 127.0.0.1:60210 with a 100us send timeout
 ...
 server.startup(); // Listen on 127.0.0.1:60210
@@ -120,10 +155,11 @@ while (chatting) {
     server.send(); // Timeout of 100us
     server.recv(); // Will block
 }
-server.close();
+server.close(); // Close the client connection
 server.open(); // Blocks until a client is available
 ...
-server.shutdown();
+server.close(); // Close the client connection
+server.terminate(); // Shut down and close the server's listening socket
 ```
 
 ## Drv::UdpSocket Class
@@ -139,11 +175,11 @@ will result in an assertion failure. Other interaction with the UDP socket is as
 of instantiation and configuration are provided below.
 
 ```c++
-Drv::UdpSocket& socketSend = Drv::UdpSocket;
+Drv::UdpSocket socketSend;
 socketSend.configureSend(127.0.0.1, 60211, 0, 100); // Send only socket
 ...
 
-Drv::UdpSocket& socketRecv = Drv::UdpSocket;
+Drv::UdpSocket socketRecv;
 socketRecv.configureRecv(127.0.0.1, 60212); // Receive only socket
 ...
 
@@ -178,8 +214,8 @@ in a name, and all arguments to `Os::Task::start` to start the receive and recon
 will determine if this read task will request reconnects to sockets should a disconnect or error occur. Once started, the read task will continue
 until a `Drv::SocketComponentHelper::stop` has been called or an error occurred when started without reconnect set to
 `true`.  Once the socket stop call has been made, the user should call `Drv::SocketComponentHelper::join` in order to
-wait until the full tasks have finished.  `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::close` on the
-provided Drv::IpSocket to ensure that any blocking reads exit freeing the thread to completely stop. Normal usage of
+wait until the full tasks have finished.  `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::shutdown`
+on the provided Drv::IpSocket to ensure that any blocking reads exit, freeing the thread to completely stop. Normal usage of
 a Drv::SocketComponentHelper derived class is shown below.
 
 ```c++

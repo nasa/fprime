@@ -441,7 +441,7 @@ module M1 {
         "signed": false,
         "size": 32
       },
-    "annotation": "Alias of type A2"
+    "annotation": "Alias of type A1"
   }
 ]
 ```
@@ -593,7 +593,7 @@ Formal Parameters are used in Commands and Events definitions.
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the command | Period-separated **String** | true |
+| `name` | Name of the command: The qualified name of a component instance followed by a dot and the name of a command for that instance | Period-separated **String** | true |
 | `commandKind` | The kind of command | `async`, `guarded`, `sync`, `set`, `save` | true |
 | `opcode` | Command opcode | **Number** | true |
 | `formalParams` | Parameters of the command | Array of [Formal Parameters](#formal-parameters) | true |
@@ -649,7 +649,7 @@ JSON representation:
             "type": {
                 "name": "string",
                 "kind": "string",
-                "size": "80"
+                "size": 80
             },
             "ref": false
         }
@@ -661,7 +661,7 @@ JSON representation:
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the telemetry channel | Period-separated **String** | true |
+| `name` | Name of the telemetry channel: The qualified name of a component instance followed by a dot and the name of a channel for that instance | Period-separated **String** | true |
 | `type` | [Type Descriptor](#type-descriptors) of the telemetry channel | [Type Descriptor](#type-descriptors) | true |
 | `id` | Numeric identifier of the channel | **Number** | true |
 | `telemetryUpdate` | Update specifier of the telemetry channel | `always`, `on change` | true |
@@ -728,7 +728,7 @@ module M {
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the event | Period-separated **String** | true |
+| `name` | Name of the event: The qualified name of a component instance followed by a dot and the name of an event for that instance | Period-separated **String** | true |
 | `severity` | Severity of the event | `ACTIVITY_HI`, `ACTIVITY_LO`, `COMMAND`, `DIAGNOSTIC`, `FATAL`, `WARNING_HI`, `WARNING_LO` | true |
 | `formalParams` | Parameters of the event | Array of [Formal Parameters](#formal-parameters) | true |
 | `id` | Numeric identifier of the event | **Number** | true |
@@ -791,7 +791,7 @@ module M {
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the parameter | Period-separated **String** | true |
+| `name` | Name of the parameter: The qualified name of a component instance followed by a dot and the name of a parameter for that instance | Period-separated **String** | true |
 | `type` | [Type Descriptor](#type-descriptors) of the parameter | [Type Descriptor](#type-descriptors) | true |
 | `id` | Numeric identifier of the parameter | **Number** | true |
 | `default` | Default value (of type specified in `type`)  of the parameter | Value of type specified in `type` | false |
@@ -830,7 +830,7 @@ module M {
         "signed": false,
         "size": 32
     },
-    "id": "260",
+    "id": 260,
     "annotation": "This is the annotation for Parameter 1",
     "default": 0
 }
@@ -841,7 +841,7 @@ module M {
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the record | Period-separated **String** | true |
+| `name` | Name of the record: The qualified name of a component instance followed by a dot and the name of a record for that instance | Period-separated **String** | true |
 | `type` | [Type Descriptor](#type-descriptors) the record | [Type Descriptor](#type-descriptors) | true |
 | `array` | **Boolean** specifying whether the record stores a variable number of elements | **Boolean** | true |
 | `id` | The numeric identifier of the record | **Number** | true |
@@ -904,7 +904,7 @@ module M {
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the container | Period-separated **String** | true |
+| `name` | Name of the container: The qualified name of a component instance followed by a dot and the name of a container for that instance | Period-separated **String** | true |
 | `id` | The numeric identifier of the record | **Number** | true |
 | `defaultPriority` | The downlink priority for the container | **Number** | false |
 | `annotation` | User-defined annotation of container | **String** | false |
@@ -967,7 +967,8 @@ module M {
 | `name` | Name of the telemetry packet | **String** | true |
 | `id` | Numeric identifier of the packet | **Number** | true |
 | `group` | Packet group number | **Number** | true |
-| `members` | Telemetry Channels in the packet | Array of Fully Qualified Names of [Telemetry Channels](#telemetry-channels) | true
+| `members` | Telemetry Channels in the packet | Array of Fully Qualified Names of [Telemetry Channels](#telemetry-channels) | true |
+| `annotation` | User-defined annotation of the packet | **String** | false |
 
 ### Telemetry Packet Sets
 
@@ -976,6 +977,7 @@ module M {
 | `name` | Name of the telemetry packet set | **String** | true |
 | `members` | Telemetry Packets in the set | Array of [Telemetry Packets](#telemetry-packets) | true |
 | `omitted` | Telemetry Channels omitted from the set | Array of Fully Qualified Names of [Telemetry Channels](#telemetry-channels) | true |
+| `annotation` | User-defined annotation of the packet set | **String** | false |
 
 
 Example FPP model with JSON representation:
@@ -1003,7 +1005,9 @@ module M {
   topology T {
     instance c1
 
+    @ Packets sent during normal operation
     telemetry packets Packets {
+      @ Housekeeping data
       packet P1 id 0 level 0 {
         M.c1.Channel0
         M.c1.Channel1
@@ -1027,12 +1031,14 @@ module M {
           "members" : [
             "M.c1.Channel0",
             "M.c1.Channel1"
-          ]
+          ],
+          "annotation" : "Housekeeping data"
         }
       ],
       "omitted" : [
         "M.c1.Channel2"
-      ]
+      ],
+      "annotation" : "Packets sent during normal operation"
     }
 ]
 ```
@@ -1076,6 +1082,7 @@ Example FPP model with JSON representation:
 ```
 module M {
 
+  @ An array of 2 String values
   array StringArray = [2] string size 80 default [ "A", "B"]
 
   enum StatusEnum {
@@ -1265,7 +1272,7 @@ module M {
           "ref" : false
         }
       ],
-      "annotation" : "Parameter (struct)"
+      "annotation" : "This is the annotation for Parameter 1"
     },
     {
       "name" : "M.c1.Parameter1_PRM_SAVE",
@@ -1273,7 +1280,7 @@ module M {
       "opcode" : 260,
       "formalParams" : [
       ],
-      "annotation" : "Parameter (struct)"
+      "annotation" : "This is the annotation for Parameter 1"
     }
   ],
   "parameters" : [
@@ -1286,9 +1293,9 @@ module M {
       "id" : 258,
       "default" : {
         "x" : 1,
-        "y" : 1.15
+        "y" : [1.15, 1.15]
       },
-      "annotation" : "Parameter (struct)"
+      "annotation" : "This is the annotation for Parameter 1"
     }
   ],
   "events" : [
@@ -1324,14 +1331,14 @@ module M {
       "annotation" : "Telemetry channel 1 of type I32",
       "limit": {
         "low": {
-          "yellow": "-1",
-          "orange": "-2",
-          "red": "-3"
+          "yellow": -1,
+          "orange": -2,
+          "red": -3
         },
         "high": {
-          "yellow": "1",
-          "orange": "2",
-          "red": "3"
+          "yellow": 1,
+          "orange": 2,
+          "red": 3
         }
       }
     }

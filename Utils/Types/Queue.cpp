@@ -61,6 +61,40 @@ Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType siz
     return status;
 }
 
+template <typename T>
+Fw::SerializeStatus Queue::enqueue_impl(const T& message) {
+    FW_ASSERT(m_message_size > 0, static_cast<FwAssertArgType>(m_message_size));  // Ensure initialization
+    Fw::SerializeStatus status = m_internal.serialize(message, m_message_size);
+
+    // If queue is full and we're in DROP_OLDEST mode, remove the oldest and try again
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && m_overflow_mode == QUEUE_DROP_OLDEST) {
+        // Remove the oldest message by rotating
+        Fw::SerializeStatus rotate_status = m_internal.rotate(m_message_size);
+        if (rotate_status != Fw::FW_SERIALIZE_OK) {
+            return rotate_status;
+        }
+
+        // Now enqueue the new message (should succeed since we just freed space)
+        status = m_internal.serialize(message, m_message_size);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        } else {
+            // Let the caller know we deleted data
+            return Fw::FW_SERIALIZE_DISCARDED_EXISTING;
+        }
+    }
+
+    return status;
+}
+
+Fw::SerializeStatus Queue::enqueue(const Fw::Serializable& message) {
+    return this->enqueue_impl(message);
+}
+
+Fw::SerializeStatus Queue::enqueue(const Fw::LinearBufferBase& message) {
+    return this->enqueue_impl(message);
+}
+
 Fw::SerializeStatus Queue::dequeue(U8* const message, const FwSizeType size) {
     FW_ASSERT(m_message_size > 0);  // Ensure initialization
     FW_ASSERT(m_message_size <= size, static_cast<FwAssertArgType>(size),
@@ -90,6 +124,41 @@ Fw::SerializeStatus Queue::dequeue(U8* const message, const FwSizeType size) {
     }
 }
 
+template <typename T>
+Fw::SerializeStatus Queue::dequeue_impl(T& message) {
+    FW_ASSERT(m_message_size > 0);  // Ensure initialization
+    Fw::SerializeStatus result;
+
+    if (m_mode == QUEUE_FIFO) {
+        // FIFO: Dequeue from the front (oldest message)
+        result = m_internal.peek(message, m_message_size, 0);
+        if (result != Fw::FW_SERIALIZE_OK) {
+            return result;
+        }
+        return m_internal.rotate(m_message_size);
+    } else {
+        // LIFO: Dequeue from the back (newest message)
+        FwSizeType current_size = m_internal.get_allocated_size();
+        if (current_size < m_message_size) {
+            return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
+        }
+        FwSizeType offset = current_size - m_message_size;
+        result = m_internal.peek(message, m_message_size, offset);
+        if (result != Fw::FW_SERIALIZE_OK) {
+            return result;
+        }
+        return m_internal.trim(m_message_size);
+    }
+}
+
+Fw::SerializeStatus Queue::dequeue(Fw::Serializable& message) {
+    return this->dequeue_impl(message);
+}
+
+Fw::SerializeStatus Queue::dequeue(Fw::LinearBufferBase& message) {
+    return this->dequeue_impl(message);
+}
+
 Fw::SerializeStatus Queue::popFront(U8* const message, const FwSizeType size) {
     FW_ASSERT(m_message_size > 0);
     FW_ASSERT(m_message_size <= size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(m_message_size));
@@ -100,6 +169,25 @@ Fw::SerializeStatus Queue::popFront(U8* const message, const FwSizeType size) {
         return result;
     }
     return m_internal.rotate(m_message_size);
+}
+
+template <typename T>
+Fw::SerializeStatus Queue::popFront_impl(T& message) {
+    FW_ASSERT(m_message_size > 0);
+    // Always remove from the front (oldest), regardless of queue mode
+    Fw::SerializeStatus result = m_internal.peek(message, m_message_size, 0);
+    if (result != Fw::FW_SERIALIZE_OK) {
+        return result;
+    }
+    return m_internal.rotate(m_message_size);
+}
+
+Fw::SerializeStatus Queue::popFront(Fw::Serializable& message) {
+    return this->popFront_impl(message);
+}
+
+Fw::SerializeStatus Queue::popFront(Fw::LinearBufferBase& message) {
+    return this->popFront_impl(message);
 }
 
 FwSizeType Queue::get_high_water_mark() const {

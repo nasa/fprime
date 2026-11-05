@@ -1,5 +1,5 @@
 /*
- * TestTelemRecvImpl.hpp
+ * PosixTime.hpp
  *
  *  Created on: Mar 28, 2014
  *      Author: tcanham
@@ -16,6 +16,7 @@ class PosixTime final : public PosixTimeComponentBase {
   public:
     explicit PosixTime(const char* compName);
     virtual ~PosixTime();
+    void setTimeContext(FwTimeContextStoreType timeContext);
 
   protected:
     void timeGetPort_handler(FwIndexType portNum, /*!< The port number*/
@@ -23,6 +24,7 @@ class PosixTime final : public PosixTimeComponentBase {
     );
 
   private:
+    FwTimeContextStoreType m_timeContext;
 };
 
 }  // namespace Svc

@@ -1,0 +1,8 @@
+# Configuration for the per-module checklist published to the coverage
+# baseline branch (coverage/<ref>) by nasa/fprime-actions coverage-update
+# and codeql-publish.  All keys are optional; defaults apply when absent.
+coverage:
+  tiers:            # line-coverage percent cut-offs
+    platinum: 95
+    gold: 90
+    silver: 80      # below silver is bronze; no coverage is bronze

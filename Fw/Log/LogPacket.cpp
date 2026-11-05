@@ -54,6 +54,9 @@ SerializeStatus LogPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endiann
 
     // remainder of buffer must be telemetry value
     FwSizeType size = buffer.getDeserializeSizeLeft();
+    if (size > this->m_logBuffer.getCapacity()) {
+        return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
     stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail

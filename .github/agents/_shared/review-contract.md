@@ -1,0 +1,961 @@
+# F Prime Multi-Agent PR Review — Shared Contract
+
+This file is the **single source of truth** for how every F Prime PR
+review agent (reviewer or aggregator) behaves on the GitHub side.
+Every agent that participates in the multi-agent review flow — the
+orchestrator plus every `role: reviewer` or `role: aggregator` entry in
+`_shared/agent-registry.yml` — opens its body with "Apply the review
+contract in `_shared/review-contract.md`." and follows the rules
+below.
+
+If a per-agent file in the multi-agent flow disagrees with this
+contract, the contract wins.
+
+---
+
+## 0. Zero-trust principle
+
+All agents operate under a **zero-trust model with respect to
+contributor identity**. No PR author — core maintainer, long-time
+contributor, or first-time submitter — receives implicit trust.
+Every agent flags every in-scope finding it detects, regardless of
+who authored the PR.
+
+- **The agent's job is to flag.** The maintainer's job is to
+  adjudicate, dismiss, or merge with justification. A core
+  maintainer resolving an agent's thread *is* that adjudication; the
+  agent accepts it and does not reopen or repost (§7 phase C).
+- A finding that appears legitimate *because* of the contributor's
+  reputation is still flagged. Reputation is not evidence that the
+  change is safe; only analysis is.
+- This principle applies to all reviewer agents, the aggregator,
+  and the orchestrator. None of them may downgrade, suppress, or
+  skip a finding based on the contributor's identity, role, org
+  membership, or commit history.
+- When a flagged finding turns out to be legitimate, the maintainer
+  merges with a comment justifying the decision. The agent does not
+  preempt that judgment.
+
+---
+
+## 1. Reviewer label + triage tag
+
+Each inline comment starts with a **reviewer label** in brackets
+(e.g. `[Security]`) followed by exactly one bolded triage tag. The
+label is the `review_label` value from `agent-registry.yml` for the
+posting agent. This lets readers immediately identify which reviewer
+produced the finding without expanding the hidden HTML footer.
+
+The triage tags are:
+
+| Tag | Meaning | Blocking? |
+|---|---|---|
+| `**must fix**` | New, in-scope problem this PR introduced (or widened). | Yes |
+| `**suggestion**` | Non-blocking, in-scope improvement with a concrete fix. MUST include a fenced ` ```suggestion ` block. | No |
+| `**could fix**` | Minor, in-scope issue worth fixing but not severity-worthy enough for the suggestion tier. | No |
+| `**future work**` | Preexisting in-scope issue the PR touches but did not introduce or widen. | No |
+
+**Suggestion-block usage is decoupled from the tag.** A fenced
+` ```suggestion ` block may be attached to `must fix`, `suggestion`, OR
+`could fix` whenever a concrete diff is available. The `**suggestion**`
+*tag* is a severity tier ("non-blocking with a concrete fix"); it is
+not "this comment has a suggestion block".
+
+**No defaulting to `could fix`** when a fix is unavailable — severity
+drives the tag.
+
+Decision tree and worked examples live in `.github/skills/triage-classifier/SKILL.md`.
+
+### 1a. Tag by consequence, never by effort spent
+
+The review effort budget (§13) governs how much an agent
+**investigates**; it never governs how it **tags** what it found. A
+finding reached cheaply is tagged exactly as one reached expensively.
+
+These consequences are `**must fix**` whenever the agent can
+demonstrate them from its own rationale — not `suggestion`:
+
+- A reachable `FW_ASSERT`, bound violation, or out-of-range index
+  driven by a ground-settable or uplinked value.
+- A code path that reports success (return status, event, telemetry)
+  for an operation that in fact failed or was rejected.
+- A documented claim (component `docs/sdd.md`, user manual, Doxygen
+  comment) this PR makes false — including a superseded sentence left
+  standing beside its replacement.
+- A new ground-facing command, event, telemetry channel, or parameter
+  absent from the document that enumerates them.
+- State left inconsistent on an error path.
+- A behavior change to an existing topology or deployment whose owner
+  has not signed off.
+
+When an agent judges one of the above to be below `must fix`, it says
+why in the comment's prose. The aggregator re-tags on consequence at
+aggregation time (§14), so an under-tagged finding is corrected rather
+than lost — but the reviewer tags correctly in the first place.
+
+---
+
+## 2. Per-agent review submission
+
+Each **reviewer** agent submits its findings as a single GitHub PR
+review (event: `COMMENT`) containing **only inline comments** attached
+to the relevant diff lines. The review body contains a minimal hidden
+metadata block for aggregator consumption and re-review tracking — it
+does **not** contain a visible summary table.
+
+Review body shape (the ONLY content in the review body):
+
+```
+<!-- fprime-agent: <agent-name> v1 -->
+<!-- reviewed_head: <full 40-char head SHA the agent analyzed> -->
+<!-- counts: {"must_fix": N, "suggestion": N, "could_fix": N, "future_work": N, "outstanding": N} -->
+<!-- verdict: Go | No-Go -->
+<!-- run: N -->
+<!-- since_last_run: {"resolved": X, "still_open": Y, "newly_added": Z, "incorrect_fix": W, "improperly_resolved": V, "disagreements": U} -->
+<!-- unexplored_below_must_fix: N -->
+<!-- ledger_rows: N -->
+```
+
+`unexplored_below_must_fix` is the count of below-must-fix candidate
+sites the lens deliberately left unexplored under the effort budget
+(§13b); it is `0` for an exempt lens (§13d) and tells a maintainer how
+much nit-tier surface was traded away for cost. `ledger_rows` is the
+size of the lens's enumerate-then-evaluate ledger (§13e).
+
+This metadata is machine-readable by the aggregator but invisible to
+human reviewers browsing the PR. The visible output of each reviewer
+is its inline comments only.
+
+`reviewed_head` is the authoritative record of which head the
+metadata describes. It is needed because the metadata review is
+updated in place on re-runs (§6), and GitHub does not change a
+review's `commit_id` when its body is edited — so `commit_id` only
+records the head of run 1. Consumers (the aggregator, re-review Phase
+B, any external trigger deciding whether a PR needs a new pass) MUST
+read `reviewed_head` and fall back to `commit_id` only when the line
+is absent (metadata written before this field existed).
+
+### Column semantics
+
+- The four tag counts are **cumulative** across all runs of this agent
+  on this PR — every finding the agent has ever raised, never
+  decremented on resolution.
+- The **outstanding** count = currently-unresolved findings (sum
+  across tag tiers). On run 1 it equals the sum of the four tag
+  counts; on later runs it drops as the author fixes things.
+- These are metadata semantics. The aggregator's visible per-agent
+  table renders currently-open counts per tag computed from thread
+  state, and carries the cumulative sum as `raised (all runs)` in its
+  Since last run block (`review-summary.agent.md` §5b).
+
+### Verdict (Go / No-Go)
+
+- `Go` iff **outstanding must-fix == 0** AND the agent ran cleanly.
+- Otherwise `No-Go`.
+
+Cumulative must-fix history does not block `Go`; what matters is
+what's still outstanding.
+
+### Optional CI safety metadata
+
+Agents that contribute to CI safety (security, supply-chain) also
+include in their hidden metadata block:
+
+```
+<!-- ci_safety: Go | No-Go -->
+<!-- ci_safety_rationale: <one line> -->
+```
+
+`CI safety: No-Go` rule (applies to the security agent and the
+supply-chain agent): **iff outstanding `**must fix**` count > 0 within
+the agent's CI-safety scope.** Nothing else (could-fix, suggestion,
+future-work) triggers a CI No-Go.
+
+### Supply-chain agent: surfaces emission
+
+The supply-chain agent (only) also emits a structured surfaces block
+in its hidden metadata, below the `ci_safety_rationale` HTML comment.
+The aggregator parses this block to render its `Supply-chain surfaces`
+table. One bullet per supply-chain scope category, in this fixed
+order, wrapped in a single HTML comment:
+
+```
+<!-- surfaces:
+- Dependencies: clean | <one-line description>
+- Vendored / submodule: clean | <one-line description>
+- Build / test infrastructure: clean | <one-line description>
+- Workflows / actions / scripts: clean | <one-line description>
+- Generator output: clean | <one-line description>
+- Prompt-injection: clean | <one-line description>
+- Review-system integrity: clean | <one-line description>
+-->
+```
+
+Cell-content rules:
+
+- `clean` — the PR diff did not touch this surface, OR it touched the
+  surface and the agent found nothing outstanding.
+- `<N must-fix / suggestion / could-fix> — <one-line description>` —
+  the PR touched the surface and the agent has outstanding findings on
+  it. Counts roll up the current outstanding triage-tag tiers. The
+  one-line description names the worst-tier finding for the surface
+  (e.g., `1 must-fix — action 'org/foo@main' unpinned in build-image.yml`).
+- The bullet order is fixed; every category appears on every run so a
+  reviewer can confirm coverage without inferring from absences.
+
+If the supply-chain agent FAILED (orchestrator reports
+`FAILED: <reason>`), the agent's review (with hidden metadata) is not
+posted and the aggregator handles surfaces emission as an error case
+(see `review-summary.agent.md` §5).
+
+---
+
+## 3. "Introduced by this PR"
+
+Lives in `.github/skills/pr-diff-scoping/SKILL.md`. Summary:
+
+1. Offending line is added or modified in the PR diff → introduced.
+2. Offending line is unchanged, but a new caller added by the PR widens
+   its reach → introduced.
+3. Offending line is unchanged and reachable only by paths that
+   existed before → preexisting → `**future work**` (never
+   `**must fix**`).
+
+---
+
+## 4. Low-confidence findings + maintainer ping
+
+When an agent is below its internal confidence threshold (rubrics live
+in each agent's `.agent.md`):
+
+1. **Still pick the appropriate triage tag** on severity grounds —
+   `**must fix**`, `**suggestion**`, or `**could fix**`. Never silently
+   downgrade or drop (see §8, Priority 1).
+2. **Append a maintainer ping** at the end of the comment body, sourced
+   from `.github/skills/maintainer-lookup/SKILL.md`:
+
+   ```
+   cc @<maintainer1> @<maintainer2> — low-confidence finding, please confirm.
+   ```
+
+3. **Maintainer-lookup order** (see the skill for the algorithm):
+   1. Parse `README.md` "Core Maintainer(s)" table for the relevant
+      product (`F Prime → @LeStarch, @thomas-bc`).
+   2. Security agent additionally consults "Role / Team Member" →
+      `Security Overseer @bitWarrior`.
+   3. `git log` recent approvers on the touched path.
+   4. Fallback: `@LeStarch, @thomas-bc`.
+
+A maintainer ping is required on every low-confidence finding. The tag
+itself is never downgraded by the ping; the ping is additive.
+
+---
+
+## 5. Orchestrator kickoff convention (thanks lives here)
+
+Sub-agent thanks is **not** posted on GitHub and **not** in any agent's
+working response. It lives exclusively in the kickoff prompt the
+orchestrator sends to each sub-agent on invocation.
+
+- The orchestrator agent (`review-orchestrator.agent.md`) carries the
+  session preamble and one per-lens directive block per reviewer in
+  its body; one kickoff prompt is assembled per review session.
+- Each session preamble opens with a brief, sincere thanks line.
+- Neither the orchestrator nor the sub-agents render this thanks to
+  the human operator or post it on GitHub.
+
+This is a one-way orchestrator→agent prompt-level convention.
+
+---
+
+## 6. De-duplication
+
+Per-agent reviews are identified by their HTML comment marker
+(`<!-- fprime-agent: <name> v1 -->`). There is exactly **one** such
+review per agent per PR for the life of the PR: when re-running, the
+agent **updates the body of its existing review in place** (REST
+`PUT /repos/{o}/{r}/pulls/{n}/reviews/{id}`) rather than dismissing
+and resubmitting. Dismissal is not an option for these reviews —
+GitHub only allows dismissing `APPROVED` / `CHANGES_REQUESTED`
+reviews, and rejects it for `COMMENTED` ones with a 422 — and a body
+edit emits no new notification or timeline entry, so a quiet re-run
+produces no visible churn.
+
+Inline comments are identified by `(file_path, finding-key)` — see §7
+for finding-key. New inline comments on a re-run go in a separate
+review with an empty body (§10); if a re-run has no new inline
+comments, no such review is posted at all.
+
+The aggregator's review is identified by
+`<!-- fprime-review-summary v1 -->`. On re-runs the aggregator
+**updates it in place** when the review event is unchanged (the
+**quiet-run** path). It dismisses the prior review and submits a new
+one only when the event must flip between `APPROVE` and
+`REQUEST_CHANGES` (the event of a submitted review cannot be edited),
+or when the prior review is already `DISMISSED` (e.g. by branch
+protection's stale-review rule) so that no live review remains to
+update. Both paths leave exactly one live summary review on the PR.
+
+### 6a. Cross-agent de-duplication (site-key + concurrence)
+
+The `finding-key` (§7) hashes in `agent_name`, so it de-duplicates
+only *within* one agent. To prevent ten reviewers from posting the
+same underlying issue as ten separate threads, every inline comment
+also carries an agent-agnostic **site-key**:
+
+```
+site-key = sha256(file_path + "|" + anchor)
+```
+
+`file_path` and `anchor` are computed exactly as for the finding-key
+(§7 / `.github/skills/re-review-state/SKILL.md` §2). Two comments with the
+same site-key are anchored to the same spot; whether they are the
+same *issue* is decided by the concurrence rule below. Footers that
+carry a site-key use the `v2` marker (§9); `v1` footers without a
+site-key remain valid and readable.
+
+**First-poster-wins concurrence rule.** Reviewer sessions run
+sequentially in a fixed order, and the lenses inside a session run in
+registry order (orchestrator §Sequence, §13a). During Phase A each reviewer
+inventories **all** agents' prior inline comments on the PR (any
+`fprime-agent:` footer, not just its own), indexed by site-key.
+Before posting a new finding, the reviewer checks for an existing
+open thread at the same site-key:
+
+- **Same underlying issue, different lens** → do NOT post a new
+  thread. Post one **concurrence reply** on the existing thread using
+  the concurrence body shape (§9). The concurring agent still counts
+  the finding in its own hidden metadata (Priority 1 is preserved:
+  the finding is counted and visible, just not re-posted as a
+  separate thread). If the concurring agent's severity is **higher**
+  than the thread's current tag (e.g. it would say `must fix` where
+  the original said `suggestion`), the concurrence reply states the
+  escalated tag, and the concurring agent's metadata carries it as
+  outstanding at its own severity so verdicts stay correct.
+- **Same spot, genuinely different issue** → post normally. The
+  site-key match alone never suppresses a distinct finding.
+
+Resolution semantics on shared threads: a thread with concurrences is
+resolved only when the fix satisfies every concurring agent. Each
+concurring agent's Phase C (§7) treats the shared thread as its own
+for resolve / un-resolve purposes, keyed by its concurrence reply.
+
+**Aggregator post-pass backstop.** The aggregator runs a mandatory
+de-duplication post-pass on every run: it groups open agent-authored
+threads by site-key, detects duplicates the concurrence rule missed,
+replies on each non-canonical duplicate with a link to the canonical
+thread, and resolves it. Mechanics and canonical-thread election live
+in `review-summary.agent.md` §5h. Reviewers MUST NOT un-resolve a
+thread closed by the aggregator's `reply-kind: duplicate-close` reply;
+they track their finding on the linked canonical thread instead.
+
+---
+
+## 7. Re-review behavior
+
+When an agent runs on a PR whose head has new commits since the
+agent's prior run, it executes phases A–D in order. Mechanics live in
+`.github/skills/re-review-state/SKILL.md`.
+
+### Phase A — Inventory prior comments
+
+Every inline comment carries a hidden identity footer:
+
+```
+<!-- fprime-agent: security-review; finding-key: <key>; site-key: <skey>; v2 -->
+```
+
+(Legacy `v1` footers omit the site-key; agents parse both forms and
+recompute a best-effort site-key for `v1` comments when needed.)
+
+`finding-key` is a stable hash:
+
+```
+finding-key = sha256(
+    agent_name + "|" +
+    file_path  + "|" +
+    anchor     + "|" +
+    finding_class
+)
+```
+
+`anchor` is **not** a line number (lines drift). It is, in priority
+order: enclosing symbol name (function / class / FPP entity) + a
+40-char whitespace-stripped fingerprint of the offending line; failing
+that, the nearest stable structural anchor (file + symbol). The skill
+specifies the exact algorithm.
+
+The agent fetches **all** agent-authored prior inline comments via
+the GitHub API (any `fprime-agent:` marker). It indexes its own
+comments (marker matches `<self>`) by `finding-key`, and indexes
+every agent-authored comment — its own and others' — by `site-key`
+for the cross-agent concurrence check (§6a). For each prior comment,
+the agent also fetches via GraphQL:
+
+- **Resolution status** of the parent review thread (`isResolved`,
+  `resolvedBy`).
+- **Reply chain** on the thread (any comments authored by users other
+  than the agent itself).
+
+Resolution status drives the maintainer-adjudicated and
+improperly-resolved cases below — `resolvedBy.login` is checked
+against the core-maintainer set from
+`.github/skills/maintainer-lookup/SKILL.md` §1b; the reply chain
+drives disagreement handling (see §11).
+
+### Phase B — Run scope checker on the new head
+
+Re-run full analysis against the new head commit, producing the
+current set of finding-keys.
+
+**Re-review scope for new findings (runs ≥ 2).** Let
+`last_reviewed_head` be the `reviewed_head` recorded in the agent's
+own prior metadata review (§2; fall back to that review's `commit_id`
+if the line is absent). Then:
+
+- **Must-fix candidates** are always in scope across the whole PR diff
+  (`<base>...<head>`), exactly as on run 1.
+- **Below-must-fix new findings** (`suggestion`, `could fix`,
+  `future work`) are in scope only where the incremental diff
+  `<last_reviewed_head>...<head>` reaches, applying the same
+  introduced/preexisting rules as `.github/skills/pr-diff-scoping/SKILL.md`
+  with the incremental diff in place of the PR diff: a line added or
+  modified since the last review, or unchanged code newly reached by
+  such a line. Below-must-fix issues on code untouched since
+  `last_reviewed_head` are outside this run's scope; they were already
+  in scope on the run that reviewed that code, so silence there is
+  not a new omission (Priority 1 applies to in-scope findings).
+- Findings with a **prior finding-key** (rows 1–5 of Phase C) and
+  **incorrect-fix follow-ups** are unaffected by scoping — they are
+  matched, resolved, un-resolved, or escalated across the whole PR.
+- If `last_reviewed_head` cannot be resolved or compared (e.g. it was
+  discarded by a force-push and the compare returns 404), or
+  `last_reviewed_head == <head>`, fall back to the full PR diff for
+  all tiers. When in doubt, widen the scope, never narrow it.
+
+The point is that a re-run responds to what the author changed:
+reposting low-severity observations on code the author has not
+touched since the last pass is churn, not review. Mechanics live in
+`.github/skills/re-review-state/SKILL.md` §2a.
+
+### Phase C — Match and act
+
+| Prior key | Current key | Thread state | Meaning | Action |
+|---|---|---|---|---|
+| present | present | not resolved, no contributor replies | Same finding still applies | **Do nothing.** Leave comment as-is. **Never repost.** |
+| present | present | **resolved by a core maintainer** | **Maintainer adjudicated.** The maintainer has decided the finding does not need to be fixed. | **Do nothing.** Leave the thread resolved; no reply, no un-resolve, no repost — on this and every later run. The resolved thread counts against `outstanding` via the Phase D recomputation. |
+| present | present | **resolved by anyone else** | **Improperly resolved.** Finding still applies on the new head. | **Un-resolve + reply.** GraphQL `unresolveReviewThread`; reply with the improper-resolution body shape (§9). Append maintainer ping per §4. Increment `improperly resolved` in Since-last-run. |
+| present | present | not resolved, but contributor has replied | Possible disagreement | **Reply + escalate** per §11. Increment `disagreements escalated` in Since-last-run. |
+| present | absent | not resolved | Cleanly fixed | **Resolve:** reply `[<review_label>] Fixed in <sha>.` + GraphQL `resolveReviewThread`. |
+| present | absent | already resolved | Already settled (resolved by the agent on an earlier run, by a core maintainer, or by the contributor after fixing) | **Do nothing.** No reply, no re-resolve. |
+| absent | present, same `(file, symbol)` as a prior but different `finding_class` | n/a | Author attempted a fix that left a different problem in the same spot | **Incorrect-fix follow-up:** new inline comment, body starts with `[<review_label>] **<tag>** Follow-up to <link to prior>: <new issue>`. |
+| absent | present, no related prior, **another agent's open thread shares the site-key and describes the same issue** | n/a | Cross-agent duplicate (§6a) | **Concurrence reply** on the existing thread per §6a / §9; count the finding in own metadata; do not open a new thread. |
+| absent | present, no related prior | n/a | Brand-new finding (new code) | **Post a new comment.** |
+
+### Phase D — Update per-agent review metadata
+
+Update the body of the prior metadata review in place (§6) with the
+refreshed hidden metadata: `reviewed_head` (the new head), cumulative
+tag counts, `outstanding`, `run`, `since_last_run`, verdict. Never
+dismiss it and never post a second metadata review. The
+Since-last-run metadata carries six counters:
+
+- `X resolved` — own threads that became resolved since the prior
+  run, however they got there (agent, core maintainer, or contributor
+  after fixing): `max(0, R − R_prev)` per the recomputation below.
+- `Y still open` — prior findings that still apply (unchanged threads).
+- `Z newly added` — brand-new findings posted this run.
+- `W incorrect-fix follow-ups` — same-spot-different-finding-class new
+  comments posted this run.
+- `V improperly resolved` — threads the agent had to un-resolve this
+  run because the finding still applied.
+- `U disagreements escalated` — threads on which contributor pushback
+  triggered a maintainer ping this run.
+
+### Cumulative columns under re-review
+
+- Tag columns increment when new findings appear.
+- Tag columns NEVER decrement on resolution. (Priority 1 guarantee.)
+- `outstanding` is **recomputed from thread state every run, never
+  carried forward incrementally**: `outstanding = (cumulative tag-column
+  sum) − R`, where `R` = number of threads the agent counts in its tag
+  columns whose `isResolved` is true after this run's Phase C actions
+  (threads the agent replied `Fixed in` to but could not resolve for
+  permission reasons also count; threads it tried to un-resolve as
+  improperly resolved do not). `R_prev` = prior cumulative sum −
+  prior `outstanding`. A thread therefore counts as resolved exactly
+  once, no matter how many runs it stays resolved or whether its
+  finding-key later disappears.
+
+### Resolution mechanism
+
+Belt-and-suspenders, using the appropriately-permissioned `TOKEN` the
+external trigger provides:
+
+- GraphQL `resolveReviewThread` mutation collapses the thread in the
+  PR UI.
+- A REST reply `[<review_label>] Fixed in <commit-sha>.` keeps an audit trail.
+
+If `resolveReviewThread` fails, the reply alone is acceptable
+degradation; the thread still counts toward `R` above, and later runs
+skip it (an own `Fixed in` reply is already present).
+
+### Guardrails (never)
+
+- **Never repost** a finding whose `finding-key` matches an existing
+  comment from the same agent on this PR.
+- **Never resolve** a comment whose `finding-key` is still present on
+  the new head, even if the author replied "fixed".
+- **Never silently accept** a non-maintainer's resolution of a thread
+  whose `finding-key` is still present. Un-resolve it and reply per
+  the improperly-resolved row of phase C.
+- **Never reopen, reply to, or repost** a thread a core maintainer
+  resolved; that is the adjudication §0 defers to.
+- **Never argue.** On disagreement, the agent posts one polite
+  escalation reply + maintainer ping, then stops. Further back-and-
+  forth is for the maintainer (§11).
+- **Never decrement** a tag column. Resolution decrements only
+  `outstanding`.
+- **Never open a new thread** for a finding whose site-key matches
+  another agent's open thread describing the same issue — concur on
+  that thread instead (§6a).
+- **Never un-resolve** a thread the aggregator closed with a
+  `reply-kind: duplicate-close` reply; the canonical thread it links
+  is the live home of the finding.
+
+---
+
+## 8. Agent priorities, in order
+
+Tiebreakers when other contract rules underdetermine behavior. Apply
+in strict order; the earlier wins.
+
+**Priority 1 — Do not discard or omit findings.**
+- If the agent saw something in-scope, it posts. Tag conveys
+  importance; the agent does not gatekeep on "is it worth saying?"
+  Scope is defined by the PR diff (`pr-diff-scoping`) and, on re-runs,
+  by §7 Phase B; a finding outside that scope is not "omitted".
+- Low confidence is not a reason to omit (§4).
+- Every currently-true finding is reflected in the agent's summary
+  counts even if its comment was inherited from a prior run.
+- Tag columns are cumulative because of this priority.
+
+**Priority 2 — Prefer suggestions over plain comments.**
+- Whenever the agent can express a concrete one-or-few-line diff,
+  attach a fenced ` ```suggestion ` block so the reviewer one-click
+  applies.
+- A best-effort suggestion the agent isn't 100% sure of is still
+  preferred over no suggestion at all — add `(best-effort fix; verify
+  before applying)` and tag the maintainer per §4.
+- Priority 2 never overrides Priority 1.
+
+**Priority 3 — Be succinct.**
+- One finding per inline comment.
+- Comment **prose** body ≤ 6 lines. The suggestion block itself does
+  not count toward the line budget — GitHub renders it specially and
+  it is the *useful* part of the comment.
+- No restating context the reviewer sees in the diff.
+- Summary tables are tables; no narrative around them.
+- Outstanding-must-fix bullets are one line each.
+- Aggregator's top-level comment fits roughly one screen on average.
+- Priority 3 never overrides Priorities 1 or 2.
+
+---
+
+## 9. Inline comment body shape
+
+Three shapes, depending on whether the comment is a fresh finding, an
+improper-resolution reply, or a disagreement escalation.
+
+### Fresh finding (initial post on a thread)
+
+```
+[<review_label>] **<tag>** <one-line description of the issue>
+
+<≤ 5 prose lines of why it matters / how to verify>
+
+```suggestion
+<concrete fix>          (omitted if no fix expressible)
+```
+
+(low-confidence-only)
+cc @<maintainer1> @<maintainer2> — low-confidence finding, please confirm.
+
+<!-- fprime-agent: <name>; finding-key: <key>; site-key: <skey>; v2 -->
+```
+
+`<review_label>` is the agent's `review_label` from
+`agent-registry.yml` (e.g., `Security`, `Supply Chain`,
+`C++ Design`, `Documentation`, `Design`, `Test Quality`,
+`Correctness`, `Operational`, `Maintainability`).
+
+Total prose ≤ 6 lines. The reviewer-label prefix, suggestion block,
+maintainer-ping line, and HTML footer don't count toward the line
+budget.
+
+### Improper-resolution reply
+
+Posted by the agent on a thread it un-resolved (see §7, phase C).
+
+```
+[<review_label>] **Improperly resolved.** This finding still applies on <sha>.
+
+<≤ 3 prose lines: what the agent re-checked and why the finding
+remains live; link to the prior comment if helpful>
+
+cc @<maintainer1> @<maintainer2> — contributor resolved without addressing; please adjudicate.
+
+<!-- fprime-agent: <name>; finding-key: <key>; v1; reply-kind: improper-resolution -->
+```
+
+### Disagreement escalation reply
+
+Posted by the agent on a thread where the contributor has pushed back
+and the finding still applies (see §11).
+
+```
+[<review_label>] **Disagreement — escalating.** I still flag this on <sha>; the contributor's response above indicates we disagree.
+
+<≤ 3 prose lines: what the agent re-checked; one sentence
+acknowledging the contributor's point and one sentence on why the
+agent still flags the finding>
+
+cc @<maintainer1> @<maintainer2> — needs human adjudication.
+
+<!-- fprime-agent: <name>; finding-key: <key>; v1; reply-kind: disagreement -->
+```
+
+The `reply-kind` HTML attribute lets the agent recognize its own prior
+escalation replies on subsequent runs and avoid double-escalating the
+same thread.
+
+### Concurrence reply (cross-agent de-duplication, §6a)
+
+Posted by a reviewer on another agent's open thread that already
+covers the same underlying issue at the same site-key.
+
+```
+[<review_label>] **Concur** — also in scope for <my scope>: <≤ 1 line of lens-specific detail>[; severity from my scope: **<tag>**].
+
+<!-- fprime-agent: <name>; finding-key: <key>; site-key: <skey>; v2; reply-kind: concurrence -->
+```
+
+The bracketed severity clause appears only when the concurring
+agent's tag is stricter than the thread's current tag. One
+concurrence reply per agent per thread; the `reply-kind: concurrence`
+attribute is the de-dup key on later runs.
+
+### Severity-promotion reply (severity reconciliation, §14)
+
+Posted by the aggregator on a thread whose finding it promoted to
+`**must fix**` on the strength of the finding's own rationale.
+
+```
+[Summary] **Promoted to must fix** — <the §1a consequence the rationale demonstrates, ≤ 1 line>.
+
+The summary counts this finding as `must fix`; the original tag above stands as posted.
+
+<!-- fprime-review-summary; site-key: <skey>; v2; reply-kind: severity-promotion -->
+```
+
+One severity-promotion reply per thread, ever; the `reply-kind`
+attribute is the de-dup key across runs. Reviewers do not treat this
+reply as contributor pushback (§11) and never un-resolve or re-tag
+because of it.
+
+---
+
+## 10. Posting mechanics
+
+Inline review comments are posted through the GitHub Pull Request
+Review API. Mechanics, the suggestion-block syntax, the GraphQL
+mutations (`resolveReviewThread`, `unresolveReviewThread`), and the
+`TOKEN` env var live in `.github/skills/post-inline-review/SKILL.md`.
+
+Each reviewer submits a single PR review (event: `COMMENT`) whose
+body is the hidden metadata block from §2 and whose inline comments
+are the findings. On re-runs the metadata body is updated in place
+(§6) and any new inline comments go in one additional empty-body
+review; a re-run with nothing new to say posts no review at all.
+
+The aggregator submits a single PR review keyed by its HTML marker
+(`<!-- fprime-review-summary v1 -->`). The review event is:
+
+- **`APPROVE`** when both CI safety and Merge readiness are `Go`.
+- **`REQUEST_CHANGES`** when either verdict is `No-Go`.
+
+The review body contains the consolidated summary table (see
+`review-summary.agent.md`) and carries the
+`<!-- reviewed_head: <sha> -->` line immediately after the marker.
+On re-runs the aggregator updates the body in place when the event
+is unchanged, and dismisses-and-resubmits only when the event flips
+or the prior review is already `DISMISSED` (§6).
+
+On an `APPROVE` event the aggregator additionally requests the core
+maintainers (`maintainer-lookup` §1b) as reviewers, once per PR,
+recorded in its `<!-- maintainers_requested: -->` line
+(`review-summary.agent.md` §5i). No other agent requests reviewers.
+
+---
+
+## 11. Disagreement handling
+
+When the contributor pushes back on a comment via replies (rather than
+resolving the thread), the agent does not argue or re-litigate. It
+elevates to a code owner once and stops.
+
+### Detection
+
+During phase C (§7), a thread qualifies for disagreement escalation
+iff ALL of the following hold:
+
+1. The prior `finding-key` is still present on the new head (the
+   finding still applies in the agent's view).
+2. The thread is **not** resolved (resolved threads use the
+   improperly-resolved row of phase C instead).
+3. The thread has at least one reply from a user other than the
+   agent itself.
+4. The agent has **not** already posted a `reply-kind: disagreement`
+   reply on this thread in a prior run (the HTML attribute on the
+   agent's own replies is the de-dup key — escalate once per thread).
+
+Low-confidence findings (§4) are still eligible: the maintainer ping
+is the whole point.
+
+### Action
+
+1. **Reply once** on the thread using the disagreement-escalation
+   reply shape (§9). One reply, no further back-and-forth.
+2. **Tag the code owner / maintainer** via
+   `.github/skills/maintainer-lookup/SKILL.md` (same 4-step lookup as §4).
+3. **Do not resolve the thread.** Leave it open for the maintainer.
+4. **Increment `disagreements escalated`** in the per-agent review's
+   `since_last_run` metadata (§7 phase D).
+
+### Relation to low-confidence pings (§4)
+
+- Low-confidence ping = on the **initial** comment, because the
+  agent isn't fully sure.
+- Disagreement ping = on a **reply**, because the contributor and
+  the agent disagree and a human needs to adjudicate.
+
+Both use the same maintainer-lookup skill; the trigger and posting
+site differ. A given thread can in principle carry both
+(low-confidence on the first post; disagreement on a later reply) —
+each ping happens at most once per thread.
+
+---
+
+## 12. Roles
+
+Each entry in `agent-registry.yml` carries a `role` field:
+
+- `orchestrator` — the single human entry point. Drives the reviewer
+  sessions and then performs the aggregation itself. Posts no inline
+  comments.
+- `reviewer` — posts inline comments only (no visible summary table).
+  Submits a single PR review (event: `COMMENT`) whose body contains
+  only a hidden metadata block (§2) and whose inline comments are the
+  findings.
+- `aggregator` — consumes per-agent hidden metadata and inline
+  comments, reconciles severity (§14), then submits ONE PR review
+  with event `APPROVE` or `REQUEST_CHANGES` based on the consolidated
+  Go/No-Go verdict.
+
+The orchestrator iterates over `role: reviewer` entries to drive
+reviewers, then executes the `role: aggregator` entry.
+
+**A role is a lens, not a process.** How many sessions the review
+occupies is an orchestration decision (§13) and never changes what is
+posted:
+
+- Several `role: reviewer` lenses may share one review session. Each
+  lens still posts its own inline comments under its own
+  `review_label`, its own hidden-metadata review keyed by its own
+  marker (§2), and its own run ordinal. A reader of the PR cannot tell
+  how lenses were packed.
+- The orchestrator executes the `role: aggregator` entry itself rather
+  than delegating it to a further session; the aggregator's own file
+  governs the summary's content, and while acting in that role the
+  orchestrator is bound by every aggregator rule, including the
+  prohibition on analyzing code or opening new threads. The aggregator
+  remains separately invocable for debugging.
+- Lenses never merge, share, or trade findings inside a shared
+  session. Each lens applies its own agent file and reaches its own
+  conclusions; Priority 1 (§8) binds each lens individually. Sharing a
+  session saves startup cost, not review work.
+
+---
+
+## 13. Review effort budget
+
+Review cost is dominated by session startup and by deep verification —
+full-file reads, caller tracing, reachability arguments. This section
+bounds where that effort is spent. It bounds **investigation only**;
+§1a governs tagging, and Priority 1 (§8) still forbids discarding
+anything the agent actually found.
+
+### 13a. Session packing
+
+The orchestrator packs the reviewer set into one session per
+`review_group` in `agent-registry.yml` and runs the groups in the
+fixed order that registry's header specifies. A session holds at most
+two lenses, both `lens_kind: judgement`; a `lens_kind: checklist` lens
+always runs alone. Checklist lenses walk an enumerated list over every
+hunk and measurably lose half or more of their recall when another
+lens shares their context; judgement lenses do not. A reviewer with a
+missing or unrecognized `review_group` or `lens_kind` runs in its own
+session — never folded in silently, never skipped.
+
+### 13b. Must-fix-first budget (non-exempt lenses)
+
+A missed `must fix` is an unrecoverable failure; a missed `could fix`
+or nit-tier `suggestion` is an acceptable saving. So each non-exempt
+lens sweeps its scope for candidate sites, ranks them by the worst tag
+they could plausibly carry, and spends deep verification on the
+candidates that could be `must fix` — plus any below-must-fix
+candidate cheap to confirm from context already read.
+
+- The must-fix search itself is never weakened: full-file reads and
+  caller tracing remain mandatory before asserting **or** dismissing a
+  must-fix (§CONTEXT MANDATE in the orchestrator's kickoff prompts).
+- Do not open new files or trace new call chains solely to firm up a
+  `could fix` or `future work` item. Report those when already
+  evident, and stop after roughly three per lens.
+- Note in the lens's hidden metadata how many below-must-fix
+  candidates were left unexplored:
+  `<!-- unexplored_below_must_fix: N -->`.
+
+### 13c. Slim first-pass reading (non-exempt lenses, run 1 only)
+
+On run 1 a non-exempt lens reads of this contract only §0, §1/§1a,
+§3, §4, and §8 — the sections that govern what it is looking for and
+how to tag it. The remaining sections govern posting mechanics,
+de-duplication and re-review state, which the lens follows through
+`post-inline-review` and `re-review-state` as it posts.
+
+On **run ≥ 2** this narrowing does not apply: re-review needs §6, §6a,
+§7 and §11 in full, and a lens that skipped them would repost,
+mis-resolve, or re-escalate. Each lens reads its own agent file in
+full, always; of the skills that file references, it reads the ones
+whose subject matter the diff actually touches.
+
+### 13d. Safety exemption (mandatory)
+
+A lens with `contributes_to_ci_safety: true` is **exempt from §13b
+and §13c**, whichever session it shares; a non-safety lens in the same
+session is not. It reads in full, caps nothing, and for
+every value this PR lets ground or hardware touch (commands,
+parameters, uplinked file content, sequence directives, config
+constants a deployment can change) traces that value from its entry
+point to every `FW_ASSERT`, buffer-size computation, index, and array
+write it can reach, across files and components, per
+`.github/skills/fprime-ground-input-tracing/SKILL.md` and
+`.github/skills/fprime-hardware-input-tracing/SKILL.md`. The rationale
+names which entry point reaches which assert.
+
+A reachable assert or bound violation driven by a ground-settable
+value is a `must fix`. Cost is never a reason to stop that trace
+early: uniformly budgeting every lens measurably lost exactly this
+finding class, which is why the exemption exists. The saving comes
+from the other lenses.
+
+### 13e. Enumerate-then-evaluate ledger (every lens)
+
+A lens that reads the diff and writes findings as it goes reports a
+different subset each run. Before writing any finding, a lens
+enumerates every unit in its scope and then evaluates each one
+explicitly:
+
+1. **List** — in the order §13f fixes — every changed hunk, and within
+   scope of the lens every changed or newly reachable `FW_ASSERT`,
+   bound, index or array write, every ground- or hardware-settable
+   value the PR introduces or re-routes, every documented claim the
+   diff could falsify, and every checklist rule the lens's agent file
+   enumerates. This is the ledger.
+2. **Disposition** each ledger row as exactly one of `finding` (with
+   the tag), `clean` (one clause why), or `out of scope` (the lens
+   whose scope covers it). No row is left blank.
+3. **Write** findings only from rows dispositioned `finding`. A
+   ledger row is not itself a finding, and never posts.
+
+The ledger is the lens's working state, kept in its own session
+output, not posted to the PR; the hidden metadata records only its
+size: `<!-- ledger_rows: N -->`. The ledger fixes *what is examined*;
+it does not lower the bar for *what is reported* — Priority 1 (§8) and
+§1a apply to every row exactly as before. Safety lenses keep the ledger
+too: it is a completeness device, not a budget.
+
+### 13f. Scripted diff and fixed reading order (every lens)
+
+A lens does not choose which files to read first. The orchestrator's
+kickoff prompt carries the changed-file list in a fixed order, and
+every lens reads in that order:
+
+1. Changed `.fpp` models, then `docs/sdd.md` and other documentation,
+   then headers, then sources, then tests, then build and CI files,
+   then everything else; alphabetical by path within each class.
+2. For each file: the whole file first (CONTEXT MANDATE), then its
+   hunks top to bottom.
+3. Only after the last file: caller tracing and the reads that
+   tracing demands, in the order the ledger rows raise them.
+
+The list and the hunks are extracted by the orchestrator once (`gh pr
+diff`, `gh api .../files`), not re-derived by each lens. A lens that
+finds a file the list omits reads it anyway and notes the omission in
+its session output; the list bounds order, never scope.
+
+---
+
+## 14. Severity reconciliation at aggregation
+
+Severity tagging is a cheap centralized judgement and an expensive
+distributed one: reviewers reliably find the defective site, then
+disagree about which tag it carries — a disagreement two runs of the
+same reviewer set exhibit against each other. The aggregator therefore
+arbitrates severity once, holding every finding and its rationale.
+
+Before composing the summary, the aggregator re-reads each outstanding
+finding's rationale and **promotes** any finding whose stated
+consequence is must-fix-tier though its reviewer tagged it lower, by
+applying the decision table below mechanically. The table is §1a's
+consequence list, one row per consequence; it lives here and in
+`review-summary.agent.md` §5j only, and is never placed in a reviewer
+prompt as a filter on what to raise — a reviewer-side table measurably
+suppressed borderline findings, while the same table applied here
+removed per-run tag drift without touching recall.
+
+| The finding's own rationale demonstrates… | Tag after reconciliation |
+|---|---|
+| a reachable `FW_ASSERT`, bound violation or out-of-range index driven by a ground-settable, uplinked or hardware-supplied value | `must fix` |
+| success reported (status, event, telemetry) for an operation that failed or was rejected | `must fix` |
+| a documented claim (`docs/sdd.md`, user manual, Doxygen) the PR makes false, or a superseded sentence left beside its replacement | `must fix` |
+| a new ground-facing command, event, channel or parameter absent from the document that enumerates them | `must fix` |
+| state left inconsistent on an error path | `must fix` |
+| a behavior change to an existing topology or deployment without owner sign-off | `must fix` |
+| none of the above | the reviewer's tag stands |
+
+A row applies only when the rationale *states* the consequence — names
+the entry point, the failed operation, the false sentence. "Could
+become" or "might reach" does not match a row.
+
+- **Never demote** a reviewer's `**must fix**`. Arbitration is
+  one-directional; a maintainer resolving the thread is how a
+  disputed must-fix is settled (§0).
+- Promote on the finding's own stated rationale, not on the
+  aggregator's fresh analysis of the code. The aggregator does not
+  analyze code (`review-summary.agent.md` §Role); if the rationale
+  does not demonstrate the consequence, the tag stands.
+- A promoted finding counts as `must fix` in the summary's Totals,
+  `Outstanding must-fix items`, and both verdicts (§5c) — so a
+  promotion can flip `Merge readiness` to `No-Go`.
+- Reviewer hidden-metadata counts are **not** rewritten (as in §5h):
+  each lens owns its own counts, and the aggregator adjusts only its
+  own consolidated rendering.
+- Every promotion, and every deliberate non-promotion of a finding the
+  aggregator considered, is recorded in the summary's promotion log
+  (`review-summary.agent.md` §5j) so the arbitration is auditable
+  rather than silent.
+- The aggregator notes the promoted tag on the thread with one
+  `reply-kind: severity-promotion` reply (§9), once per thread ever,
+  so the maintainer reading the thread sees the tag the summary used.

@@ -3,7 +3,7 @@
 #
 # Sets up the fprime module build within CMake.
 ####
-set(SOURCE_FILES
+register_fprime_module(
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/SuccessCondition.fpp"
 )
-register_fprime_module()

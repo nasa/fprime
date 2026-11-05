@@ -1,0 +1,2 @@
+| test.cpp:11:15:11:17 | ptr | Assertions should be defined as Boolean tests. |
+| test.cpp:17:15:17:19 | count | Assertions should be defined as Boolean tests. |

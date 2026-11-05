@@ -32,12 +32,16 @@ class RedBlackTreeSetOrMapImplTester {
 
     using Nodes = typename Impl::Nodes;
 
-    RedBlackTreeSetOrMapImplTester<KE, VN>(const Impl& impl) : m_impl(impl) {
+    RedBlackTreeSetOrMapImplTester(const Impl& impl) : m_impl(impl) {
         const auto capacity = this->m_impl.getCapacity();
         this->blackHeights.setStorage(new FwSizeType[capacity], capacity);
     }
 
-    ~RedBlackTreeSetOrMapImplTester<KE, VN>() {
+    RedBlackTreeSetOrMapImplTester(const RedBlackTreeSetOrMapImplTester&) = delete;
+
+    RedBlackTreeSetOrMapImplTester& operator=(const RedBlackTreeSetOrMapImplTester&) = delete;
+
+    ~RedBlackTreeSetOrMapImplTester() {
         auto* const elements = this->blackHeights.getElements();
         if (elements != nullptr) {
             delete[] elements;
@@ -77,13 +81,14 @@ class RedBlackTreeSetOrMapImplTester {
         ASSERT_EQ(size, this->m_impl.getSize());
     }
 
-    // Check the red-black tree properties of the tree. Return the black height.
+    // Check the red-black tree properties of the tree
     void checkRbtProperties() {
         const auto& nodes = this->m_impl.m_nodes;
         auto node = this->m_impl.getOuterNodeUnder(this->m_impl.m_root, Direction::LEFT);
         const auto capacity = this->m_impl.getCapacity();
-        bool done = (capacity > 0);
-        for (FwSizeType i = 0; i < capacity; i++) {
+        bool done = (capacity == 0);
+        // A full tree requires capacity + 1 iterations: one per node plus one to observe NONE
+        for (FwSizeType i = 0; i < (capacity + 1); i++) {
             if (node == Node::NONE) {
                 done = true;
                 break;

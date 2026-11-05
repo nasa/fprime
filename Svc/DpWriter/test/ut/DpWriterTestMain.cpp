@@ -25,6 +25,13 @@ TEST(BufferSendIn, BufferTooSmallForPacket) {
     tester.BufferTooSmallForPacket();
 }
 
+TEST(BufferSendIn, FileNameFormatError) {
+    COMMENT("Invoke bufferSendIn with a file name format error and verify the event throttle.");
+    REQUIREMENT("SVC-DPMANAGER-001");
+    BufferSendIn::Tester tester;
+    tester.FileNameFormatError();
+}
+
 TEST(BufferSendIn, FileOpenError) {
     COMMENT("Invoke bufferSendIn with a file open error.");
     REQUIREMENT("SVC-DPMANAGER-001");
@@ -79,6 +86,15 @@ TEST(BufferSendIn, OKProcShrink) {
     REQUIREMENT("SVC-DPMANAGER-007");
     BufferSendIn::Tester tester;
     tester.OKProcShrink();
+}
+
+TEST(BufferSendIn, RoutingPorts) {
+    COMMENT("Verify fused DpWriter routing paths preserve the input port index.");
+    REQUIREMENT("SVC-DPWRITER-001");
+    REQUIREMENT("SVC-DPWRITER-005");
+    REQUIREMENT("SVC-DPWRITER-008");
+    BufferSendIn::Tester tester;
+    tester.RoutingPorts();
 }
 
 TEST(CLEAR_EVENT_THROTTLE, OK) {

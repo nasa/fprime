@@ -4,10 +4,24 @@ The `Svc::Ccsds::SpacePacketFramer` is an implementation of the [FramerInterface
 
 It receives user data on its input port and constructs a CCSDS Space Packet. Please refer to the CCSDS [Space Packet Protocol specification (CCSDS 133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf) for details on the packet format.
 
-The `Svc::Ccsds::SpacePacketFramer` is typically used upstream of a component that adds transfer frame headers, such as the `Svc::Ccsds::TmFramer`. It encapsulates user data into a Space Packet, adding the necessary header fields.
+The `Svc::Ccsds::SpacePacketFramer` is typically used upstream of `Svc::ComAggregator`, which packs Space Packets into fixed-size, idle-filled aggregates for a component that adds transfer frame headers, such as the `Svc::Ccsds::TmFramer`. It encapsulates user data into a Space Packet, adding the necessary header fields.
 
 ## Configuration
 The `Svc::Ccsds::SpacePacketFramer` requires an Application Process Identifier (APID) for the Space Packets it generates. This APID is typically provided during instantiation or configuration. It also uses a sequence count, which is managed per APID via the `getApidSeqCount` port.
+
+The component uses packet type ('pktType') passed in the `FrameContext` (0 = Telemetry (reporting), 1 = Command).
+
+The component supports an optional Secondary Header Flag (`hasSecHdr`) that can be set via the `FrameContext` passed to the `dataIn` port. This flag defaults to `false` (no secondary header) but can be configured per packet to indicate the presence of a secondary header.
+
+The component also supports configurable Sequence Flags (`sequenceFlags`) via the `FrameContext`. These 2-bit flags indicate the segmentation state of the user data and default to `0x3` (unsegmented). The flags can be set to:
+- `0x0` (0b00) - Continuation segment of a segmented packet
+- `0x1` (0b01) - First segment of a segmented packet
+- `0x2` (0b10) - Last segment of a segmented packet
+- `0x3` (0b11) - Unsegmented (complete user data in single packet)
+
+## Buffer Allocation Failure
+
+If the frame buffer cannot be allocated (the allocator returns an invalid buffer or one smaller than requested), the packet is dropped: the `NoBufferAvailable` event is emitted, any valid-but-undersized buffer is deallocated, the input data is returned on `dataReturnOut`, and a single `Fw::Success::SUCCESS` is emitted on `comStatusOut`. Per the [Framer Status Protocol](../../../../docs/reference/communication-adapter-interface.md#framer-status-protocol), a message that produces zero frames must still be acknowledged with `SUCCESS`, otherwise the upstream `Svc::ComQueue` would wait forever for a status that the downstream components never produce. Because each `SUCCESS` immediately re-arms `Svc::ComQueue`, a sustained allocation failure drains and drops the whole ComQueue backlog at the ComQueue thread's rate instead of stalling it. `NoBufferAvailable` is throttled after 5 emissions and is never cleared by this component, so the allocator's own counters (e.g. `Svc::BufferManager` `NoBuffs`) are the durable indicator of how many packets were dropped.
 
 ## CCSDS Header Fields
 
@@ -16,10 +30,10 @@ For each Space Packet generated, the `Svc::Ccsds::SpacePacketFramer` will popula
 | Field | Value | Notes |
 |---|---|---|
 | Version Number | 000 | As per protocol 4.1.3.2 |
-| Packet Type | 0 (Telemetry) | SpacePacketFramer emits reporting packets only (no commanding), as per 4.1.3.3.2 |
-| Secondary Header Flag | 0 | F Prime does not use secondary headers formally |
+| Packet Type | Uses `pktType` passed in the `context` argument (defaults to `0`, Telemetry) | `SppPacketType.SPP_TELEMETRY` (0) or `SPP_COMMAND` (1), as per 4.1.3.3.2; `Svc::ComQueue` leaves the default |
+| Secondary Header Flag | Uses value passed in the `context` argument | Presence of secondary header are defined in `config/ComCfg.fpp` |
 | Application Process Identifier (APID) | Uses value passed in the `context` argument | Project APIDs are defined in `config/ComCfg.fpp` |
-| Sequence Flags | `0b11` (Unsegmented) | Unsegmented user data, F´ data fits in a single packet |
+| Sequence Flags | Uses value passed in the `context` argument (defaults to `0b11` Unsegmented) | Indicates segmentation state: 0b00=Continuation, 0b01=First, 0b10=Last, 0b11=Unsegmented |
 | Packet Sequence Count | Incremented for each packet, unique count per APID | Managed externally by a [`Svc::Ccsds::ApidManager`](../../ApidManager/docs/sdd.md) |
 | Packet Data Length | Set to the length of the passed in data | Calculated based on the length of the data received on `dataIn` |
 
@@ -47,3 +61,4 @@ For each Space Packet generated, the `Svc::Ccsds::SpacePacketFramer` will popula
 | SPF-008 | The SpacePacketFramer shall correctly populate all mandatory fields of the Space Packet Primary Header, including Version Number, Packet Type, Secondary Header Flag, APID, Sequence Flags, Packet Sequence Count, and Packet Data Length. | Unit Test |
 | SPF-009 | The SpacePacketFramer shall be configurable with an Application Process Identifier (APID) to be used in the Space Packet Header. | Inspection, Unit Test |
 | SPF-010 | The SpacePacketFramer shall accurately calculate and set the Packet Data Length field in the Space Packet header based on the length of the user data. | Unit Test |
+| SPF-011 | The SpacePacketFramer shall emit exactly one `Fw::Success::SUCCESS` on `comStatusOut` when a packet received on `dataIn` produces no Space Packet because a buffer could not be allocated, per the [Framer Status Protocol](../../../../docs/reference/communication-adapter-interface.md#framer-status-protocol). | Unit Test |

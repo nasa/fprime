@@ -18,7 +18,7 @@ Both variants provide the standard **F´ framer/deframer + router + ComQueue** p
 | SVC-COMFPRIME-003 | Provide an F´ **router** to route deframed packets (e.g., commands/files) into the flight software.             | Inspection |
 | SVC-COMFPRIME-004 | Provide a **subtopology variant that supplies `Svc::ComStub`** designed to connect to a ByteStream driver.      | Inspection |
 | SVC-COMFPRIME-005 | Provide a **subtopology variant that expects an external `Svc::ComInterface`** supplied by the deployment.      | Inspection |
-| SVC-COMFPRIME-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via `ComFprimeConfig`. | Inspection |
+| SVC-COMFPRIME-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities) via `ComFprimeConfig`. | Inspection |
 
 ---
 
@@ -32,7 +32,7 @@ Both variants provide the standard **F´ framer/deframer + router + ComQueue** p
 | `deframer`     | `Svc.FprimeDeframer`         | Passive | Deframes fprime data from incoming packets.                                            |
 | `fprimeRouter` | `Svc.FprimeRouter`           | Passive | Routes deframed packets (e.g., commands/files) into the flight software.               |
 | `comQueue`     | `Svc.ComQueue`               | Active  | Queues data for framing (telemetry, events, file, etc.); has `Run`.                    |
-| `commsBufferManager` | `Svc.BufferManager`    | Active  | Provides memory allocation to the subtopology.                                         |
+| `commsBufferManager` | `Svc.BufferManager`    | Passive | Provides memory allocation to the subtopology.                                         |
 | `frameAccumulator`   | `Svc.FrameAccumulator` | Passive | Accumulates whole frames before deframing.                                             |
 | `comStub`      | `Svc.ComStub`                | Passive | (Variant A only) Adapts  a `Drv::ByteStreamDriverModel` driver for use as downlink.    |
 
@@ -74,6 +74,7 @@ topology Flight {
   }
 
   # (A3) Wire ByteStream driver <-> ComStub supplied by the subtopology
+  connections ComDriver {
       comDriver.$recv                            -> ComFprime.Subtopology.drvReceiveIn
       ComFprime.Subtopology.drvReceiveReturnOut  -> comDriver.recvReturnIn
       ComFprime.Subtopology.drvSendOut           -> comDriver.$send
@@ -126,6 +127,7 @@ topology Flight {
 * **Queue sizes** — Depths for **`ComQueue`** and any other active/queued elements defined by the subtopology.
 * **Stack sizes** — Task stack allocations for active components (if any beyond `ComQueue`).
 * **Priorities** — RTOS priorities for active/queued components as applicable.
+* **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
 
 ### 4.2 Buffer Manager Bin Configuration
 
@@ -140,5 +142,4 @@ topology Flight {
 | SVC-COMFPRIME-003 | `router` — `Svc.FprimeRouter`                                     |
 | SVC-COMFPRIME-004 | `Subtopology`                                                     |
 | SVC-COMFPRIME-005 | `FramingSubtopology`                                              |
-| SVC-COMFPRIME-006 | `comQueue` — `Svc.ComQueue` (`run` scheduling port)               |
-| SVC-COMFPRIME-007 | `ComFprimeConfig`                                                 
+| SVC-COMFPRIME-006 | `ComFprimeConfig`                                                 |

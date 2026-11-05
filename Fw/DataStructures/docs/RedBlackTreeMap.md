@@ -29,10 +29,10 @@ It represents a map based on a red-black tree with internal storage.
 |Name|Definition|
 |----|----------|
 |`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
-|`Node`|Alias of [`RedBlackTreeSetOrMapImpl<K, V>::Node`](SetOrMapImplEntry.md)|
-|`Nodes`|Alias of [`Node[C]`|
-|`Index`|Alias of [`RedBlackTreeSetOrMapImpl<K, V>::Index`](SetOrMapImplEntry.md)|
-|`FreeNodes`|Alias of [`Index[C]`|
+|`Node`|Alias of [`RedBlackTreeSetOrMapImpl<K, V>::Node`](RedBlackTreeSetOrMapImpl.md)|
+|`Nodes`|Alias of `Node[C]`|
+|`Index`|Alias of [`RedBlackTreeSetOrMapImpl<K, V>::Index`](RedBlackTreeSetOrMapImpl.md)|
+|`FreeNodes`|Alias of `Index[C]`|
 
 ## 4. Private Member Variables
 
@@ -104,7 +104,7 @@ Defined as `= default`.
 RedBlackTreeMap<K, V, C>& operator=(const RedBlackTreeMap<K, V, C>& map)
 ```
 
-Return `m_extMap.copyDataFrom(map)`.
+Call `m_extMap.copyDataFrom(map)` and return `*this`.
 
 _Example:_
 ```c++
@@ -145,8 +145,8 @@ ASSERT_EQ(status, Fw::Success::SUCCESS);
 // Get a map const iterator object
 auto it = map.begin();
 // Use the iterator to access the underlying map const entry
-const key = it->getKey();
-const value = it->getValue();
+const auto key = it->getKey();
+const auto value = it->getValue();
 ASSERT_EQ(key, 0);
 ASSERT_EQ(value, 1);
 ```
@@ -190,7 +190,7 @@ auto iter = map.begin();
 // Check that iter is not at the end
 ASSERT_NE(iter, map.end());
 // Increment iter
-it++;
+iter++;
 // Check that iter is at the end
 ASSERT_EQ(iter, map.end());
 ```
@@ -198,7 +198,7 @@ ASSERT_EQ(iter, map.end());
 ### 6.5. find
 
 ```c++
-Success find(const K& key, V& value) override
+Success find(const K& key, V& value) const override
 ```
 
 Return `m_extMap.find(key, value)`.

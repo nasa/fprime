@@ -14,6 +14,7 @@
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
+#include "Fw/Types/MemAllocator.hpp"
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
@@ -21,15 +22,19 @@ using namespace Ref;
 // Instantiate a malloc allocator for cmdSeq buffer allocation
 Fw::MallocAllocator mallocator;
 
+namespace Ref {
+Fw::MemAllocator& memAllocator = mallocator;
+}
+
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers
 Svc::RateGroupDriver::DividerSet rateGroupDivisorsSet{{{1, 0}, {2, 0}, {4, 0}}};
 
 // Rate groups may supply a context token to each of the attached children whose purpose is set by the project. The
 // reference topology sets each token to zero as these contexts are unused in this project.
-U32 rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
-U32 rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
-U32 rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
+Svc::ActiveRateGroup::ContextArray rateGroup1Context(0);
+Svc::ActiveRateGroup::ContextArray rateGroup2Context(0);
+Svc::ActiveRateGroup::ContextArray rateGroup3Context(0);
 
 enum TopologyConstants {
     COMM_PRIORITY = 34,
@@ -47,12 +52,17 @@ void configureTopology() {
     rateGroupDriverComp.configure(rateGroupDivisorsSet);
 
     // Rate groups require context arrays. Empty for Reference example.
-    rateGroup1Comp.configure(rateGroup1Context, FW_NUM_ARRAY_ELEMENTS(rateGroup1Context));
-    rateGroup2Comp.configure(rateGroup2Context, FW_NUM_ARRAY_ELEMENTS(rateGroup2Context));
-    rateGroup3Comp.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
+    rateGroup1Comp.configure(rateGroup1Context);
+    rateGroup2Comp.configure(rateGroup2Context);
+    rateGroup3Comp.configure(rateGroup3Context);
 
     // Command sequencer needs to allocate memory to hold contents of command sequences
     cmdSeq.allocateBuffer(0, mallocator, 5 * 1024);
+
+    // Restrict file access to the working directory (where PrmDb.dat lives)
+    FileHandling::fileUplink.configure(".");
+    FileHandling::fileDownlink.configure(".");
+    FileHandling::prmDb.configureSandbox(".");
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -64,8 +74,6 @@ void setupTopology(const TopologyState& state) {
     setBaseIds();
     // Autocoded connection wiring. Function provided by autocoder.
     connectComponents();
-    // Autocoded command registration. Function provided by autocoder.
-    regCommands();
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
     if (state.hostname != nullptr && state.port != 0) {
@@ -73,6 +81,10 @@ void setupTopology(const TopologyState& state) {
     }
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
+    // Autocoded command registration. Function provided by autocoder.
+    regCommands();
+    // Autocoded parameter file read (prmDb). Function provided by autocoder.
+    readParameters();
     // Autocoded parameter loading. Function provided by autocoder.
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.

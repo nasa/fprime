@@ -7,6 +7,10 @@ module FppTest {
     c: string size 10
   }
 
+  struct ZeroSizeData {
+    c: string size 0
+  }
+
   port EmitTelemetry(a: U32)
   port GetParameter() -> U32
 
@@ -18,7 +22,7 @@ module FppTest {
     async input port syncIn: Svc.Sched
     output port syncOut: Svc.Sched
 
-    async input port PingIn: Svc.Ping
+    async input port PingIn: Svc.Ping drop
     output port PingOut: Svc.Ping
 
     async command Start(nRecords: U32)
@@ -48,6 +52,7 @@ module FppTest {
 
     @ A record containing fixed-size data
     product record FixedSizeDataRecord: FixedSizeData id 0x00
+    product record ZeroSizeDataRecord: ZeroSizeData id 0x02
     @ A record containing a variable-size array
     product record F32ArrayRecord: F32 array id 0x01
 

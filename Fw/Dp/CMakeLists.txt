@@ -1,13 +1,19 @@
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Dp.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/DpContainer.cpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Dp.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/DpContainer.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/DpContainer.hpp"
+  DEPENDS
+    Utils_Hash
 )
-set(MOD_DEPS Utils/Hash)
-register_fprime_module()
 
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Dp.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Dp.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+  DEPENDS
+    STest
 )
-set(UT_MOD_DEPS STest)
-register_fprime_ut()

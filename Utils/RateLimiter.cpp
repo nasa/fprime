@@ -105,8 +105,9 @@ bool RateLimiter ::shouldTimeTrigger(Fw::Time time) {
     FW_ASSERT(this->m_timeCycle > 0);
 
     // trigger at prev trigger time + time cycle seconds OR when time is at negative infinity
-    Fw::Time timeCycle = Fw::Time(this->m_timeCycle, 0);
-    Fw::Time nextTrigger = Fw::Time::add(this->m_time, timeCycle);
+    // Member add keeps the time base/context of m_time so it stays comparable with time
+    Fw::Time nextTrigger = this->m_time;
+    nextTrigger.add(this->m_timeCycle, 0);
     bool shouldTrigger = (time >= nextTrigger) || this->m_timeAtNegativeInfinity;
 
     return shouldTrigger;
@@ -116,12 +117,16 @@ void RateLimiter ::updateCounter(bool triggered) {
     FW_ASSERT(this->m_counterCycle > 0);
 
     if (triggered) {
-        // triggered, set to next state
+        // triggered, set to next state and maybe wrap (handles counterCycle == 1)
         this->m_counter = 1;
+        if (this->m_counter >= this->m_counterCycle) {
+            this->m_counter = 0;
+        }
 
     } else {
         // otherwise, just increment and maybe wrap
-        if (++this->m_counter >= this->m_counterCycle) {
+        this->m_counter++;
+        if (this->m_counter >= this->m_counterCycle) {
             this->m_counter = 0;
         }
     }

@@ -109,11 +109,14 @@ TEST(ComponentExternalParameterTest, ParameterExternalTest) {
 
     tester.setPrmValid(Fw::ParamValid::VALID);
     tester.testExternalParam();
+
+    tester.setPrmValid(Fw::ParamValid::INVALID);
+    tester.testExternalParam();
 }
 
 // External Parameter tests
 using ExternalParamCommandTestImplementations = ::testing::Types<FppTest::Types::BoolParam,
-                                                                 FppTest::Types::I32Param,
+                                                                 FppTest::Types::U32Param,
                                                                  FppTest::Types::PrmStringParam,
                                                                  FppTest::Types::EnumParam,
                                                                  FppTest::Types::ArrayParam,

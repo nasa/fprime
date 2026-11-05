@@ -8,6 +8,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/ConstStringBase.hpp>
 #include <Os/Os.hpp>
+#include <Utils/Hash/Hash.hpp>
 
 // Forward declaration for UTs
 namespace Os {
@@ -28,28 +29,29 @@ struct FileHandle {};
 class FileInterface {
   public:
     enum Mode {
-        OPEN_NO_MODE,     //!<  File mode not yet selected
-        OPEN_READ,        //!<  Open file for reading
+        OPEN_NO_MODE,     //!< File mode not yet selected
+        OPEN_READ,        //!< Open file for reading
         OPEN_CREATE,      //!< Open file for writing and truncates file if it exists, ie same flags as creat()
-        OPEN_WRITE,       //!<  Open file for writing
-        OPEN_SYNC_WRITE,  //!<  Open file for writing; writes don't return until data is on disk
+        OPEN_WRITE,       //!< Open file for writing
+        OPEN_SYNC_WRITE,  //!< Open file for writing; writes don't return until data is on disk
         OPEN_APPEND,      //!< Open file for appending
         MAX_OPEN_MODE     //!< Maximum value of mode
     };
 
     enum Status {
-        OP_OK,              //!<  Operation was successful
-        DOESNT_EXIST,       //!<  File doesn't exist (for read)
-        NO_SPACE,           //!<  No space left
-        NO_PERMISSION,      //!<  No permission to read/write file
-        BAD_SIZE,           //!<  Invalid size parameter
-        NOT_OPENED,         //!<  file hasn't been opened yet
+        OP_OK,              //!< Operation was successful
+        DOESNT_EXIST,       //!< File doesn't exist (for read)
+        NO_SPACE,           //!< No space left
+        NO_PERMISSION,      //!< No permission to read/write file
+        BAD_SIZE,           //!< Invalid size parameter
+        NOT_OPENED,         //!< file hasn't been opened yet
         FILE_EXISTS,        //!< file already exist (for CREATE with O_EXCL enabled)
         NOT_SUPPORTED,      //!< Kernel or file system does not support operation
         INVALID_MODE,       //!< Mode for file access is invalid for current operation
         INVALID_ARGUMENT,   //!< Invalid argument passed in
         NO_MORE_RESOURCES,  //!< No more available resources
-        OTHER_ERROR,        //!<  A catch-all for other errors. Have to look in implementation-specific code
+        OTHER_ERROR,        //!< A catch-all for other errors. Have to look in implementation-specific code
+        OUTSIDE_SANDBOX,    //!< Path falls outside the configured sandbox directory
         MAX_STATUS          //!< Maximum value of status
     };
 
@@ -585,9 +587,8 @@ class File final : public FileInterface {
     static const U32 INITIAL_CRC = 0xFFFFFFFF;  //!< Initial value for CRC calculation
 
     Mode m_mode = Mode::OPEN_NO_MODE;  //!< Stores mode for error checking
-    const CHAR* m_path = nullptr;      //!< Path last opened
 
-    U32 m_crc = File::INITIAL_CRC;  //!< Current CRC calculation
+    Utils::Hash m_hash;  //!< Hash object for incremental CRC calculation
     U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];
 
     // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is

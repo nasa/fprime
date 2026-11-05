@@ -25,6 +25,9 @@ on:
       target-branch:
         value: ${{ jobs.runs.outputs.target-branch }}
 
+permissions:
+  contents: read
+
 jobs:
   runs:
     runs-on: "ubuntu-22.04"
