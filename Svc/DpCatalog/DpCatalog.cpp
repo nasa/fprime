@@ -417,6 +417,11 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // reset catalog
     this->resetCatalog();
 
+    // each build reports its first files only: the per-file events are throttled so that a
+    // build over many files cannot flood the event path, and the budget starts over per build
+    this->log_ACTIVITY_HI_DpFileAdded_ThrottleClear();
+    this->log_ACTIVITY_HI_DpFileSkipped_ThrottleClear();
+
     // fill the catalog with DP files
     response = this->fillBinaryTree();
     if (response != Fw::CmdResponse::OK) {
@@ -574,7 +579,7 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
     Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));   // buffer for container header decoding
     Fw::DpContainer container;                    // container object for extracting header fields
 
-    this->log_ACTIVITY_LO_ProcessingFile(fullFile);
+    this->log_DIAGNOSTIC_ProcessingFile(fullFile);
 
     // get file size
     FwSizeType fileSize = 0;
@@ -976,6 +981,11 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         return;
     }
 
+    // a runtime addition is one file per call, so it is always reported: clear the throttle
+    // that a preceding build over many files may have exhausted
+    this->log_ACTIVITY_HI_DpFileAdded_ThrottleClear();
+    this->log_ACTIVITY_HI_DpFileSkipped_ThrottleClear();
+
     const ProcessFileStatus ret = processFile(fileName, dir);
 
     if (ret == ProcessFileStatus::SUCCESS) {
@@ -1367,6 +1377,9 @@ Fw::CmdResponse DpCatalog ::doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub) {
         this->m_stateFileData[this->m_stateFileEntries].used = false;
         this->m_stateFileData[this->m_stateFileEntries].visited = false;
     }
+    // a retransmit catalogs one file, so its DpFileAdded is always reported, as for a runtime addition
+    this->log_ACTIVITY_HI_DpFileAdded_ThrottleClear();
+    this->log_ACTIVITY_HI_DpFileSkipped_ThrottleClear();
     const ProcessFileStatus ret = this->processFile(fullFile, dir);
     if (ret != ProcessFileStatus::SUCCESS) {
         if (hadRecord) {
