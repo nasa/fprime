@@ -36,7 +36,7 @@ stage-3 step (bench host included):
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
 git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach f6a6742
+git -C harness checkout --detach 70e6d05
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
@@ -58,7 +58,26 @@ that test's entry only; `draw` reads the menu from the manifest;
 
 ---
 
-## 1. Manifest (closes stage 2)
+## 1. Deliver (closes stage 2) — developer side, host only
+
+The developer runs ONE tool; it fails with a findings list instead of producing a package
+when anything is missing, unpinned, dirty, stale or under threshold (Captain's rule: input
+validation runs as the deliverable is produced). The runner receives `rfr-input.zip` +
+`rfr-input.zip.sha256`, runs `sha256sum -c` and `fth verify-package rfr-input.zip` (every
+manifest-pinned file present with its sha256), unzips it to `rfr/rfr-input/` and uses
+`rfr/rfr-input/manifest.json` in every later row — the runner never runs `fth manifest`.
+
+```bash
+fth deliver --uut <path> --harness <path> --repo project=<path> --repo fprime=<path> [--repo <lib>=<path> …] \
+    --plan <plan.json> --menu <faults-menu.json> --bench <bench.json> --tests <test/int dir> \
+    --image <Deployment>=<built>.bin:"<build command>" --rebuild-cmd "<build command>" --toolchain-json <toolchain.json> \
+    --sdd <uut>/…/docs/sdd.md --dictionary <dict.json> \
+    --ut-coverage dev-evidence/ut --system-coverage dev-evidence/system --dev-evidence dev-evidence \
+    [--version-check-waiver version-check-waiver.txt]   # only for images without Svc.Version; the reason is the human trigger
+    -o rfr-input                                        # -> rfr-input/{manifest.json,inputs/,deliver-report.md}, rfr-input.zip, .sha256
+```
+
+Inside it, the manifest (`fth manifest`, for reference — not a runner step):
 
 ```bash
 fth manifest --uut <path> --harness <path> \

@@ -45,9 +45,13 @@ UUT SHA from stage 1, and the deployment/testbed the human chose.
    the gcov-instrumented image, the pure run on the RfR image; iterate
    until it exits 0 — every pure verdict PASS, runner junit == replay (no DIVERGENCE),
    coverage at or above the plan's thresholds with the uncovered lines
-   acknowledged), then close stage 2 with `fth manifest`
-   (`fprime-run-for-record` §1), listing the built image files and
-   `--toolchain-json`, and present the harness to the human for review
+   acknowledged), then close stage 2 with `fth deliver`
+   (`fprime-run-for-record` §1: trees, plan, menu, bench, tests, image +
+   `--rebuild-cmd`, `--toolchain-json`, SDD, dictionary, both coverage report
+   dirs and `--dev-evidence`; a version-check waiver file only when the image
+   has no Svc.Version) — it must exit 0 and yield `rfr-input.zip` + sha256; a
+   finding is a stage-2 defect, fix it, never hand-assemble — and present the
+   harness and the package to the human for review
    as local files: plan, harness, vectors, manifest **and**
    `dev-evidence/` incl. its dev QL package (`dev-evidence/ql/`, pass
    `--sdd`/`--dictionary` so sdd.md, commands.md and helpers/ are in it)

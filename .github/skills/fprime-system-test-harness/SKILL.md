@@ -317,8 +317,10 @@ DIVERGENCE on every one — plus the **stage-3 rehearsal** with
 a throwaway seed (`fth draw` → `fth run` → `fth audit --tests` →
 `fth unseal`, no tooling error; fram-r1 was voided at run start because
 the harness had only ever read a hand-written dry-run fault file). Then
-`fth manifest` with the raw image binaries that were flashed and
-`--toolchain-json`. Dry-run output is labelled and is not a record.
+`fth deliver` with the raw image binaries that were flashed, `--rebuild-cmd`,
+`--toolchain-json`, SDD, dictionary, coverage report dirs and `--dev-evidence`
+(it runs `fth manifest` inside and refuses an incomplete delivery). Dry-run
+output is labelled and is not a record.
 
 Bench entry (before the first dry run on hardware): prove the link in
 order and say which layer is proven — **host** (your own heartbeat log
