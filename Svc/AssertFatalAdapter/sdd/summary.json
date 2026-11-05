@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "artifact": "sdd",
-  "generated_at": "2026-11-04T21:08:28Z",
+  "generated_at": "2026-11-05T21:07:44Z",
   "ref": "devel",
-  "commit": "a4b1b1c043d1f9b51a7faba4a47d5d0f231910c7",
+  "commit": "3556871d6fd5d94b6f148a394ba0b6c67e84f897",
   "tier": "silver",
   "has_sdd": true,
   "sections": 12,
   "filled_sections": 3,
-  "prose_words": 175,
+  "prose_words": 191,
   "placeholder_hits": 0,
   "table_kinds": [
     "ports"

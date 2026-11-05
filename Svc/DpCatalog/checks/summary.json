@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-04T21:08:23Z",
+  "generated_at": "2026-11-05T21:07:42Z",
   "ref": "devel",
-  "commit": "a4b1b1c043d1f9b51a7faba4a47d5d0f231910c7",
+  "commit": "3556871d6fd5d94b6f148a394ba0b6c67e84f897",
   "passed": 3,
   "failed": 8,
   "skipped": 5,
@@ -23,7 +23,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
       "status": "pass",
       "failures": [],
-      "detail": "7 command(s) checked"
+      "detail": "8 command(s) checked"
     },
     {
       "id": "D3",
@@ -50,26 +50,27 @@
       "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
       "status": "fail",
       "failures": [
-        "requirement 'SVC-DPCAT-001' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:29) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-002' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:30) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-003' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:31) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-004' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:32) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-005' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:33) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-006' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:34) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-007' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:35) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-008' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:36) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-009' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:37) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-012' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:40) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-013' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:41) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-014' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:42) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-015' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:43) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-016' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:44) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-018' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:46) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-019' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:47) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-020' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:48) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'SVC-DPCAT-022' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:50) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+        "requirement 'SVC-DPCAT-001' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:30) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-002' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:31) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-003' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:32) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-004' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:33) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-005' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:34) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-006' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:35) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-007' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:36) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-008' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:37) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-009' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:38) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-012' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:41) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-013' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:42) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-014' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:43) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-015' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:44) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-016' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:45) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-018' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:47) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-019' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:48) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-020' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:49) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-022' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:51) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-026' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:55) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "24 requirement(s) checked"
+      "detail": "28 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -106,9 +107,10 @@
         "command 'STOP_XMIT_CATALOG' has no requirement referencing it (add a requirement mentioning 'STOP_XMIT_CATALOG')",
         "command 'CLEAR_CATALOG' has no requirement referencing it (add a requirement mentioning 'CLEAR_CATALOG')",
         "command 'SET_DP_PRIORITY' has no requirement referencing it (add a requirement mentioning 'SET_DP_PRIORITY')",
-        "command 'DELETE_DP' has no requirement referencing it (add a requirement mentioning 'DELETE_DP')"
+        "command 'DELETE_DP' has no requirement referencing it (add a requirement mentioning 'DELETE_DP')",
+        "command 'RETRANSMIT_DP' has no requirement referencing it (add a requirement mentioning 'RETRANSMIT_DP')"
       ],
-      "detail": "7 command(s) traced against 24 requirement(s)"
+      "detail": "8 command(s) traced against 28 requirement(s)"
     },
     {
       "id": "R2",
@@ -120,7 +122,7 @@
         "telemetry channel 'CatalogDps' has no requirement referencing it (add a requirement mentioning 'CatalogDps')",
         "telemetry channel 'DpsSent' has no requirement referencing it (add a requirement mentioning 'DpsSent')"
       ],
-      "detail": "2 telemetry channel(s) traced against 24 requirement(s)"
+      "detail": "2 telemetry channel(s) traced against 28 requirement(s)"
     },
     {
       "id": "R3",
@@ -171,9 +173,13 @@
         "event 'DpPriorityUnchanged' has no requirement referencing it (add a requirement mentioning 'DpPriorityUnchanged')",
         "event 'DpDeleted' has no requirement referencing it (add a requirement mentioning 'DpDeleted')",
         "event 'DpInFlight' has no requirement referencing it (add a requirement mentioning 'DpInFlight')",
-        "event 'DpFileRemoveError' has no requirement referencing it (add a requirement mentioning 'DpFileRemoveError')"
+        "event 'DpFileRemoveError' has no requirement referencing it (add a requirement mentioning 'DpFileRemoveError')",
+        "event 'DpRetransmitError' has no requirement referencing it (add a requirement mentioning 'DpRetransmitError')",
+        "event 'DpRetransmitScheduled' has no requirement referencing it (add a requirement mentioning 'DpRetransmitScheduled')",
+        "event 'DpRetransmitNameError' has no requirement referencing it (add a requirement mentioning 'DpRetransmitNameError')",
+        "event 'StateFileDirectoryInvalid' has no requirement referencing it (add a requirement mentioning 'StateFileDirectoryInvalid')"
       ],
-      "detail": "43 event(s) traced against 24 requirement(s)"
+      "detail": "47 event(s) traced against 28 requirement(s)"
     },
     {
       "id": "R4",
@@ -206,7 +212,7 @@
         "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')",
         "port 'fileOut' has no requirement referencing it (add a requirement mentioning 'fileOut')"
       ],
-      "detail": "5 port(s) traced against 24 requirement(s)"
+      "detail": "5 port(s) traced against 28 requirement(s)"
     },
     {
       "id": "R7",
@@ -215,32 +221,36 @@
       "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
       "status": "fail",
       "failures": [
-        "requirement 'SVC-DPCAT-001' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:29) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-002' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:30) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-003' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:31) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-004' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:32) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-005' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:33) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-006' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:34) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-007' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:35) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-008' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:36) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-009' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:37) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-010' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:38) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-011' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:39) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-012' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:40) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-013' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:41) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-014' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:42) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-015' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:43) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-016' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:44) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-017' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:45) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-018' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:46) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-019' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:47) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-020' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:48) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-021' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:49) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-022' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:50) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-023' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:51) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'SVC-DPCAT-024' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:52) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'SVC-DPCAT-001' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:30) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-002' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:31) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-003' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:32) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-004' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:33) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-005' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:34) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-006' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:35) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-007' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:36) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-008' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:37) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-009' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:38) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-010' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:39) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-011' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:40) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-012' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:41) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-013' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:42) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-014' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:43) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-015' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:44) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-016' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:45) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-017' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:46) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-018' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:47) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-019' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:48) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-020' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:49) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-021' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:50) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-022' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:51) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-023' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:52) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-024' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:53) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-025' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:54) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-026' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:55) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-027' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:56) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-028' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:57) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "24 requirement(s) checked"
+      "detail": "28 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -249,7 +259,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
       "status": "pass",
       "failures": [],
-      "detail": "24 requirement(s) checked"
+      "detail": "28 requirement(s) checked"
     },
     {
       "id": "U3",
