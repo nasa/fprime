@@ -1,4 +1,4 @@
-name: External CI
+name: External CI Trigger
 
 # Deliberately trivial. This workflow runs under the repository's normal `pull_request`
 # rules, and its completion is what starts the privileged orchestrator in ext-ci.yml via
