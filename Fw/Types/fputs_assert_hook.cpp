@@ -14,17 +14,17 @@
 #define fileIdFs "Assert: \"%s:%" PRI_FwSizeType "\""
 #endif
 
-void Fw::defaultDoAssert() {
+void Fw::terminateOnAssert() {
     assert(false);
 }
 
-void Fw::defaultPrintAssert(const CHAR* msg) {
+void Fw::printAssertMessage(const CHAR* msg) {
     // Write to stderr w/o formatting
     (void)fputs(msg, stderr);
     (void)fputs("\n", stderr);
 }
 
-void Fw::defaultReportAssert(FILE_NAME_ARG file,
+void Fw::formatAssertMessage(FILE_NAME_ARG file,
                              FwSizeType lineNo,
                              FwSizeType numArgs,
                              FwAssertArgType arg1,

@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  assert_hook.hpp
 // \author Andrei Tumbar
-// \brief  hpp file for assert hook functions
+// \brief  link-time selected default assert handling functions (Fw_AssertHook implementations)
 //
 // \copyright
 // Copyright (C) 2025 California Institute of Technology.
@@ -20,33 +20,18 @@
 
 namespace Fw {
 
-//! \brief handles an assertion
-//!
-//! Handle an assertion failure or FATAL. This function is called after the defaultPrintAssert has
-//! been called. The default implementation calls `assert(false)`, which is compiled out when NDEBUG
-//! is defined; FW_ASSERTIONS_ALWAYS_ABORT then decides whether execution may continue.
-void defaultDoAssert();
-
-//! \brief print an assert message
-//!
-//! Print a pre-formatted assert message. This function is called after the assert message has been formatted
-//! by defaultReportAssert. The default implementation uses fputs to write to stderr.
-//!
-//! \param msg: null-terminated string containing the formatted assert message
-void defaultPrintAssert(const CHAR* msg);
-
 //! \brief format an assert message
 //!
-//! Format an assert message with file, line number, and optional arguments. The formatted message is written
-//! to destBuffer. This function is called to format assert messages before they are printed.
+//! Formats the location of a failed assertion and its arguments into destBuffer. Called by the
+//! framework when no Fw::AssertHook is registered, and by Svc::AssertFatalAdapter.
 //!
 //! \param file: file name or file ID (depending on FW_ASSERT_LEVEL)
 //! \param lineNo: line number where the assert occurred
 //! \param numArgs: number of additional arguments (0-6)
 //! \param arg1-arg6: optional assert arguments
-//! \param destBuffer: buffer to write formatted message
+//! \param destBuffer: buffer to write the formatted message to
 //! \param buffSize: size of destBuffer
-void defaultReportAssert(FILE_NAME_ARG file,
+void formatAssertMessage(FILE_NAME_ARG file,
                          FwSizeType lineNo,
                          FwSizeType numArgs,
                          FwAssertArgType arg1,
@@ -57,6 +42,22 @@ void defaultReportAssert(FILE_NAME_ARG file,
                          FwAssertArgType arg6,
                          CHAR* destBuffer,
                          FwSizeType buffSize);
+
+//! \brief print an assert message
+//!
+//! Outputs a message formatted by formatAssertMessage. Called by the framework when no
+//! Fw::AssertHook is registered.
+//!
+//! \param msg: null-terminated string containing the formatted assert message
+void printAssertMessage(const CHAR* msg);
+
+//! \brief terminate after a failed assertion
+//!
+//! Called by the framework after printAssertMessage when no Fw::AssertHook is registered, and by
+//! the default Fw::AssertHook::doAssert. Implementations typically call `assert(false)`, which is
+//! compiled out when NDEBUG is defined; FW_ASSERTIONS_ALWAYS_ABORT then decides whether execution
+//! may continue.
+void terminateOnAssert();
 
 }  // namespace Fw
 #endif  // FW_TYPES_ASSERT_HOOKS_HPP_
