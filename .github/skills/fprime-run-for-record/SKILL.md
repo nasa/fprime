@@ -31,7 +31,7 @@ beside this skill. Install the pinned commit on every host that runs a
 stage-3 step (bench host included):
 
 ```bash
-pip install "git+https://github.com/LeStarch/fprime-testing-harness@fca0745#egg=fprime-testing-harness"
+pip install "git+https://github.com/LeStarch/fprime-testing-harness@02083c1#egg=fprime-testing-harness"
 fth selftest          # exercises every seal subcommand in a temp dir
 ```
 
