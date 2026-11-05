@@ -72,6 +72,13 @@ diff alone — that would be guessing.
 
 ## Scope — nine categories
 
+Gate that applies to every system-test design (`plan.json`): the plan's
+`coverage:` block (UT `lines_min` ≥ 95, on-target 75 baseline, planner
+deviations with a stated `rationale`, `not_covered_ack` naming the
+uncovered paths) is present and the rationale holds — the targets are set
+in the design phase and reviewed here, not discovered at delivery.
+Finding-class: `design-coverage-targets`.
+
 ### 1. Design vs. intent mismatch
 
 The PR's stated intent (from PR description / linked issue) is not
@@ -383,7 +390,7 @@ from the review contract applies, with no special always-on behavior.
   by `security-review.agent.md`.
 - Supply-chain / runner-safety findings — handled by
   `supply-chain-review.agent.md`.
-- Test substance and coverage — handled by
+- Test substance — handled by
   `test-quality-review.agent.md`.
 - Documentation currency (SDD updates, user-manual edits) —
   handled by `stale-documentation-review.agent.md`. The design

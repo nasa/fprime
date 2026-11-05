@@ -64,6 +64,20 @@ grammar and the test entry are defined in the tooling's
 unknown helper, planted fault or requirement or an unparsable predicate is a
 load error, never a verdict.
 
+**Coverage targets are part of the plan** and are set here, in the design
+phase, then confirmed at design review (`design-review`): `"coverage":
+{"ut": {"lines_min": N, "branches_min"?: N}, "system": {"lines_min": N,
+"branches_min"?: N}, "not_covered_ack": [...], "rationale": "..."}`.
+Baselines: UT `lines_min` ≥ 95 (100 where practical — the host build can
+force every error branch); on-target `lines_min` 75 (system-caused error
+branches cannot be forced without breaking test-as-you-fly). The planner
+may move either with the reason stated in `rationale`. Branches are
+always reported, thresholded only when `branches_min` is set (C++ inserts
+hidden branches; the on-target gcovr run excludes throw/unreachable
+branches). `fth verify-plan` refuses a plan without the block; `fth
+deliver` fails on it; the dev campaign's reports are judged against it
+and enter the RfR package as data inputs.
+
 ```
 0  Scope        UUT, deployment, bench, ground system, out of scope
 1  Entry gates  what must be true before a run (SHAs, marker round-trip, downlink

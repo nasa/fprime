@@ -31,6 +31,9 @@ plans whose pass rules still live in `plan.json`.
 
 ## 1. Pass-rule format
 
+(Coverage targets — `plan.json` `coverage:` — are the design skill's:
+`fprime-system-test-design` §2; the oracle judges verdicts, not coverage.)
+
 Since phase 1 the named checks are declared **in the integration test**
 (`fprime-system-test-harness` §3), in the grammar of the tooling's
 `docs/plan-format.md`; `plan.json` keeps windows and `metrics`. Checks
