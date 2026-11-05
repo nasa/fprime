@@ -18,13 +18,15 @@ static const U8 turboAsm[] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0};
 asmFramer.configure(Fw::ConstByteArray(turboAsm, sizeof(turboAsm)));
 ```
 
-The standard's patterns are 32, 64, 96, 128, and 192 bits long (Standard 9.3.1–9.3.5). The AsmFramer accepts patterns up to `ComCfg.AsmMaxSize` bytes (default 16, i.e. 128 bits, the rate-1/4 Turbo pattern); this is an implementation bound, chosen to keep the internal buffer small, and the 192-bit rate-1/6 Turbo pattern is not supported by default. Projects needing it raise `ComCfg.AsmMaxSize` in their configuration, which also grows the internal buffer; note that the `fprime-gds` ASM deframer accepts `--asm` patterns of at most 16 bytes, so a longer flight marker also requires a project-supplied ground deframer.
+The standard's patterns are 32, 64, 96, 128, and 192 bits long (Standard 9.3.1–9.3.5). The AsmFramer accepts patterns up to `Svc.AsmFramerCfg.AsmMaxSize` bytes (default 16, i.e. 128 bits, the rate-1/4 Turbo pattern); this is an implementation bound, chosen to keep the internal buffer small, and the 192-bit rate-1/6 Turbo pattern is not supported by default. Projects needing it raise `Svc.AsmFramerCfg.AsmMaxSize` in their configuration, which also grows the internal buffer; note that the `fprime-gds` ASM deframer accepts `--asm` patterns of at most 16 bytes, so a longer flight marker also requires a project-supplied ground deframer.
+
+An enabled marker must be at least 4 bytes (the shortest standard pattern): a 1–3 byte marker would false-sync the ground deframer on random channel data at 2^-(8 × size) per byte position, so `configure()` rejects such lengths by assertion.
 
 Configuring a zero-length pattern (`Fw::ConstByteArray(nullptr, 0)`) disables the marker: frames are forwarded unchanged. This lets a topology keep the AsmFramer in place and select at initialization whether the downlink is sync-marked.
 
 ## Internals
 
-The `Svc::Ccsds::AsmFramer` uses an internal (member) buffer sized to hold the largest supported ASM (`ComCfg.AsmMaxSize`) plus the largest accepted frame (`ComCfg.AsmFramerMaxFrameSize`, by default `ComCfg.AosMaxFrameFixedSize` so either upstream framer fits; TM-only projects may lower it to `ComCfg.TmFrameFixedSize`, which is also the compile-time minimum enforced by a `static_assert`). Input frames larger than that bound are rejected with an assertion. The buffer **must** be returned to the AsmFramer via the `dataReturnIn` port once it has been used or consumed. Should a component want to use the frame data past the time it is returned, the data should be copied before the buffer is returned via `dataReturnIn`.
+The `Svc::Ccsds::AsmFramer` uses an internal (member) buffer sized to hold the largest supported ASM (`Svc.AsmFramerCfg.AsmMaxSize`) plus the largest accepted frame (`Svc.AsmFramerCfg.MaxFrameSize`, by default `ComCfg.AosMaxFrameFixedSize` so either upstream framer fits; TM-only projects may lower it to `ComCfg.TmFrameFixedSize`, which is also the compile-time minimum enforced by a `static_assert`). Input frames larger than that bound are rejected with an assertion. The buffer **must** be returned to the AsmFramer via the `dataReturnIn` port once it has been used or consumed. Should a component want to use the frame data past the time it is returned, the data should be copied before the buffer is returned via `dataReturnIn`.
 
 ## Usage Example
 
@@ -67,11 +69,11 @@ provided by the project.
 | SVC-CCSDS-ASM-FRAMER-001 | The AsmFramer shall implement the `Svc.FramerInterface`. | Inspection, Unit Test |
 | SVC-CCSDS-ASM-FRAMER-002 | The AsmFramer shall prepend an Attached Sync Marker to each frame received on `dataIn` and emit the resulting Sync-Marked Transfer Frame on `dataOut`, per CCSDS 131.0-B-5 Section 9.4. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-003 | The AsmFramer shall default to the 32-bit ASM pattern `0x1ACFFC1D` (CCSDS 131.0-B-5 Section 9.3.1). | Unit Test, Inspection |
-| SVC-CCSDS-ASM-FRAMER-004 | The AsmFramer shall allow projects to configure the ASM pattern and length (up to `ComCfg.AsmMaxSize` bytes, 128 bits by default) at initialization to support the coded-data ASMs of CCSDS 131.0-B-5 Sections 9.3.2–9.3.5. | Unit Test |
+| SVC-CCSDS-ASM-FRAMER-004 | The AsmFramer shall allow projects to configure the ASM pattern and length (up to `Svc.AsmFramerCfg.AsmMaxSize` bytes, 128 bits by default) at initialization to support the coded-data ASMs of CCSDS 131.0-B-5 Sections 9.3.2–9.3.5. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-010 | The AsmFramer shall accept a zero-length ASM configuration that disables the marker, forwarding frames unchanged. | Unit Test |
-| SVC-CCSDS-ASM-FRAMER-011 | The AsmFramer shall reject, by assertion, a configuration whose length exceeds `ComCfg.AsmMaxSize` or whose pattern is null with a non-zero length, and any reconfiguration while a frame is outstanding. | Unit Test |
+| SVC-CCSDS-ASM-FRAMER-011 | The AsmFramer shall reject, by assertion, a configuration whose length exceeds `Svc.AsmFramerCfg.AsmMaxSize`, whose non-zero length is shorter than 4 bytes (the shortest CCSDS 131.0-B-5 pattern; shorter markers false-sync on random data), or whose pattern is null with a non-zero length, and any reconfiguration while a frame is outstanding. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-005 | The AsmFramer shall not alter, reorder, or drop payload frame data. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-006 | The AsmFramer shall return ownership of the input buffer via `dataReturnOut` only once the emitted SMTF buffer has been returned on `dataReturnIn`, preserving the upstream framer's flow-control handshake with the com adapter. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-007 | The AsmFramer shall use an internal frame buffer and shall only accept new data when it owns that buffer; the buffer is returned via `dataReturnIn`. | Unit Test |
 | SVC-CCSDS-ASM-FRAMER-008 | The AsmFramer shall pass communication status from `comStatusIn` through to `comStatusOut` per the Framer Status Protocol. | Unit Test |
-| SVC-CCSDS-ASM-FRAMER-009 | The AsmFramer shall accept frames up to `ComCfg.AsmFramerMaxFrameSize` bytes (default `ComCfg.AosMaxFrameFixedSize`, which also covers `ComCfg.TmFrameFixedSize`) and shall assert if input data exceeds that bound. | Unit Test |
+| SVC-CCSDS-ASM-FRAMER-009 | The AsmFramer shall accept frames up to `Svc.AsmFramerCfg.MaxFrameSize` bytes (default `ComCfg.AosMaxFrameFixedSize`, which also covers `ComCfg.TmFrameFixedSize`) and shall assert if input data exceeds that bound. | Unit Test |
