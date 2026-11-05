@@ -31,14 +31,19 @@ beside this skill. Install the pinned commit on every host that runs a
 stage-3 step (bench host included):
 
 ```bash
-pip install "git+https://github.com/LeStarch/fprime-testing-harness@02083c1#egg=fprime-testing-harness"
+# fprime-testing-harness is a private repository: `pip install git+https://…` has no credentials and
+# fails. Clone with the credentials the host already has (gh auth, ssh, or a token URL that is never
+# written to a remote), check out the pinned commit, install editable:
+git clone https://github.com/LeStarch/fprime-testing-harness fth-src   # or: git@github.com:LeStarch/fprime-testing-harness.git
+git -C fth-src checkout --detach 3466659
+pip install -e "fth-src[test]"
 fth selftest          # exercises every seal subcommand in a temp dir
 ```
 
-The same venv must satisfy the UUT's `lib/fprime/requirements.txt` at the pinned sha
-(`pip install -r uut/lib/fprime/requirements.txt`); F´'s `required.cmake` refuses an older
-`fprime-fpp`/`fprime-tools`/`fprime-gds`, and the bench host needs the matching `fprime-gds`
-for `fth run`. Check it in row 1, before the bench is touched.
+Stage-3 rows never build the image, so the bench host needs only a `fprime-gds` compatible with the
+UUT's `lib/fprime` (the version its `requirements.txt` names) for `fth run`; `fprime-fpp` and
+`fprime-tools` are build-host prerequisites (`required.cmake` refuses older ones) and are NOT required
+in the stage-3 venv. Check `pip show fprime-gds` in row 1, before the bench is touched.
 
 Requirements the tooling must keep meeting (its own test suite carries
 them; a tool that drops one is not pinned): a planted fault's `fails` is a
