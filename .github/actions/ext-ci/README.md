@@ -1,8 +1,8 @@
-# External CI (`ext-ci`)
+# External CI
 
 F´ does not build the `fprime-community` projects itself any more: `.github/workflows/ext-ci.yml`
 dispatches each project's own `ci.yml` with the F´ revision under test and reports the result as a
-Check Run named `ext-ci / <id>` on the F´ commit. `ext-ci-trigger.yml` is the trivial `pull_request`
+Check Run named `External CI / <id>` on the F´ commit. `ext-ci-trigger.yml` (`External CI / Approval Gate`) is the trivial `pull_request`
 workflow whose completion (after GitHub's fork-approval gate) starts the orchestrator; the orchestrator
 also runs for merge groups and on manual dispatch (`repos`, `pr_number` or `fprime_ref` inputs).
 

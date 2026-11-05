@@ -1,6 +1,6 @@
 {
   "upstream_repository": "nasa/fprime",
-  "check_prefix": "ext-ci",
+  "check_prefix": "External CI",
   "paths_ignore": [
     "docs/**",
     "**.md",

@@ -1,4 +1,4 @@
-name: ext-ci-trigger
+name: External CI
 
 # Deliberately trivial. This workflow runs under the repository's normal `pull_request`
 # rules, and its completion is what starts the privileged orchestrator in ext-ci.yml via
@@ -16,7 +16,7 @@ permissions: {}
 
 jobs:
   approved:
-    name: "Gate passed"
+    name: "Approval Gate"
     runs-on: ubuntu-latest
     steps:
       - run: echo "${GITHUB_EVENT_NAME} workflow ran for ${GITHUB_SHA}; ext-ci may proceed"
