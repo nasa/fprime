@@ -286,6 +286,13 @@ def check_name(manifest: dict, repo_id: str) -> str:
     return f"{manifest.get('check_prefix', 'ext-ci')} / {repo_id}"
 
 
+def check_succeeded(manifest: dict, entry: dict, target: dict) -> bool:
+    """True when this entry's latest Check Run on the F´ commit (from an earlier attempt) succeeded."""
+    runs = own.get(f"/repos/{REPO}/commits/{target['head_sha']}/check-runs"
+                   f"?check_name={q(check_name(manifest, entry['id']))}&filter=latest")["check_runs"]
+    return any(r["conclusion"] == "success" for r in runs)
+
+
 def save_state(state: dict) -> None:
     """Write the run state to STATE_FILE; called after every step so `finalize` can recover it."""
     with open(STATE_FILE, "w") as f:
@@ -507,6 +514,9 @@ def run() -> None:
             "Use workflow_dispatch to run it here deliberately.")
         return
     repos = select_repos(manifest, target)
+    if ATTEMPT > 1:  # re-run: only the repos whose check is not green yet
+        repos = [e for e in repos if not check_succeeded(manifest, e, target)]
+        log(f"attempt {ATTEMPT}: re-dispatching {[e['id'] for e in repos] or 'nothing'}")
     state = {"target": target, "attempt": ATTEMPT, "repos": {}}
     save_state(state)
     if EVENT_NAME != "workflow_dispatch" and not relevant_change(changed_files(target), manifest):
