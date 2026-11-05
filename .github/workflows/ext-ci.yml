@@ -43,9 +43,28 @@ jobs:
       GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
+      # One GitHub App, two installation tokens (1 h, revoked after the job): the external one can only
+      # start/cancel runs in the external repositories; the checks one can only write Check Runs here.
+      - name: "App token for the external repositories"
+        id: ext-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.EXT_CI_APP_ID }}
+          private-key: ${{ secrets.EXT_CI_APP_PRIVATE_KEY }}
+          owner: fprime-community
+      - name: "App token for the Check Runs"
+        id: checks-token
+        continue-on-error: true  # App not installed here yet -> GITHUB_TOKEN (checks then land in another workflow's suite)
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.EXT_CI_APP_ID }}
+          private-key: ${{ secrets.EXT_CI_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
       - name: "Dispatch, poll and report"
         env:
-          DISPATCH_TOKEN: ${{ secrets.EXT_CI_DISPATCH_TOKEN }}  # external repos only; not exposed to other steps
+          DISPATCH_TOKEN: ${{ steps.ext-token.outputs.token }}  # external repos only; not exposed to other steps
+          CHECKS_TOKEN: ${{ steps.checks-token.outputs.token }}
           INPUT_REPOS: ${{ inputs.repos }}
           INPUT_PR_NUMBER: ${{ inputs.pr_number }}
           INPUT_FPRIME_REF: ${{ inputs.fprime_ref }}
@@ -54,7 +73,8 @@ jobs:
       - name: "Finalize (close open checks, cancel orphaned remote runs)"
         if: always()
         env:
-          DISPATCH_TOKEN: ${{ secrets.EXT_CI_DISPATCH_TOKEN }}  # external repos only; not exposed to other steps
+          DISPATCH_TOKEN: ${{ steps.ext-token.outputs.token }}  # external repos only; not exposed to other steps
+          CHECKS_TOKEN: ${{ steps.checks-token.outputs.token }}
           JOB_STATUS: ${{ job.status }}
         run: python3 .github/actions/ext-ci/orchestrator.py finalize
       - uses: actions/upload-artifact@v4

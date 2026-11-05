@@ -10,10 +10,13 @@ its result. A re-run of the orchestrator re-dispatches only the repos whose chec
 
 Manifest keys and the contract an external ci.yml must satisfy: see README.md next to this file.
 
-Two credentials, never mixed:
-  GITHUB_TOKEN    this repo only (checks: write) - reports results
-  DISPATCH_TOKEN  external repos only (actions: write; contents: read too if an external repo
-                  is private, for the branch lookup) - starts remote runs
+Two credentials, never mixed (both are installation tokens of the External CI GitHub App, minted by
+the workflow):
+  CHECKS_TOKEN    this repo only (checks: write) - reports results; the App's own check suite makes the
+                  checks show as "External CI / <id>" instead of inside another workflow's group.
+                  Falls back to GITHUB_TOKEN when the App is not installed on this repository.
+  DISPATCH_TOKEN  external repos only (actions: write; contents: read for the branch lookup) - starts
+                  remote runs
 """
 
 import json
@@ -198,7 +201,11 @@ class Client:
         raise ApiError(f"{self.label}: GET {url} -> {status}", status)
 
 
-own = Client(env.get("GITHUB_TOKEN"), "GITHUB_TOKEN")
+own = (
+    Client(env["CHECKS_TOKEN"], "CHECKS_TOKEN")
+    if env.get("CHECKS_TOKEN")
+    else Client(env.get("GITHUB_TOKEN"), "GITHUB_TOKEN")
+)
 ext = Client(env.get("DISPATCH_TOKEN"), "DISPATCH_TOKEN")
 
 
