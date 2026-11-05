@@ -1389,7 +1389,6 @@ Fw::CmdResponse DpCatalog ::doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub) {
         this->log_WARNING_HI_DpRetransmitError(id, tSec, tSub, DpCatalog_RetransmitRejectReason::FILE_ERROR);
         return Fw::CmdResponse::EXECUTION_ERROR;
     }
-    this->log_ACTIVITY_HI_DpFileAdded(fullFile);
     // Not ground-reachable: processFile succeeded only if the file's canonical name, built from its header id and
     // time tag, equals fullFile, which was built from the command's id and time tag in the same directory, so the
     // entry it inserted has exactly this identity and nothing has touched the set since

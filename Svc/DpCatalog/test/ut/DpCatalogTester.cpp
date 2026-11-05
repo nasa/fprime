@@ -1335,7 +1335,8 @@ FwSizeType DpCatalogTester::expectedBuildSkipEvents(FwSizeType files) {
 
 void DpCatalogTester::test_BuildFileEventsThrottled() {
     // A build announces no file with DpFileAdded and reports its first skipped files only; the next
-    // build starts over; a runtime addition, a retransmit, and a skip by either are always reported
+    // build starts over; a runtime addition is announced, and a skip by a runtime addition or a
+    // retransmit is always reported. Each throttle clear is exercised right after a used throttle
     Fw::MallocAllocator alloc;
     Fw::FileNameString dir("./DpTest_EventThrottle");
     Fw::FileNameString stateFile("./DpTest_EventThrottle/dpState.dat");
@@ -1404,24 +1405,18 @@ void DpCatalogTester::test_BuildFileEventsThrottled() {
     ASSERT_EVENTS_DpFileSkipped_SIZE(throttle + 1);
     ASSERT_EVENTS_DpFileSkipped(static_cast<U32>(throttle), extra.toChar());
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), numNew);
-
-    // a retransmit is announced, and its product cataloged again
-    const FwDpIdType retransmitId = 1;
-    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, retransmitId, Fw::Time(1000 + retransmitId, 0), Fw::CmdResponse::OK));
-    ASSERT_EVENTS_DpFileAdded_SIZE(1);
-    ASSERT_EQ(this->component.m_dpCatalog.getSize(), numNew + 1);
     this->component.shutdown();
 
-    // the runtime skip left the throttle partly used; the next build starts over and again reports a full
-    // throttle of skipped files (all transmitted files but the retransmitted one)
+    // the runtime skip left the throttle partly used (one skip since its clear); the next build clears it
+    // and again reports a full throttle of skipped files, not the remainder
     this->clearHistory();
     ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 30, alloc));
-    ASSERT_EQ(this->component.m_dpCatalog.getSize(), numNew + 1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), numNew);
     ASSERT_EVENTS_DpFileSkipped_SIZE(throttle);
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
 
-    // a retransmit of a product whose file header says TRANSMITTED (no state file record) is refused with
-    // FILE_ERROR, and its DpFileSkipped is reported despite the exhausted build
+    // right after that exhausted build, a retransmit of a product whose file header says TRANSMITTED (no state
+    // file record) is refused with FILE_ERROR, and its DpFileSkipped is reported
     const Fw::Time staleTime(1000 + staleId, 0);
     const Fw::String stale = this->genDP(staleId, 10, staleTime, 16, Fw::DpState::TRANSMITTED, false, dir.toChar());
     ASSERT_STRNE(stale.toChar(), "");
@@ -1431,6 +1426,15 @@ void DpCatalogTester::test_BuildFileEventsThrottled() {
     ASSERT_EVENTS_DpRetransmitError_SIZE(1);
     ASSERT_EVENTS_DpRetransmitError(0, staleId, staleTime.getSeconds(), staleTime.getUSeconds(),
                                     DpCatalog_RetransmitRejectReason::FILE_ERROR);
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), numNew);
+
+    // a successful retransmit is announced by DpRetransmitScheduled, not DpFileAdded, and its product is
+    // cataloged again
+    const FwDpIdType retransmitId = 1;
+    const Fw::Time retransmitTime(1000 + retransmitId, 0);
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(32, retransmitId, retransmitTime, Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), numNew + 1);
 
@@ -3586,8 +3590,7 @@ void DpCatalogTester ::test_RetransmitAfterRebuild() {
     ASSERT_EVENTS_DpRetransmitError_SIZE(0);
     ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
     ASSERT_EVENTS_DpRetransmitScheduled(0, dpFile.toChar(), prio);
-    ASSERT_EVENTS_DpFileAdded_SIZE(1);
-    ASSERT_EVENTS_DpFileAdded(0, dpFile.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), 1);
     ASSERT_EQ(this->component.m_pendingFiles, 1);
     ASSERT_from_fileOut_SIZE(0);
@@ -4160,8 +4163,7 @@ void DpCatalogTester ::test_RetransmitFullStateFile() {
     ASSERT_NO_FATAL_FAILURE(this->retransmit(21, 1, time, Fw::CmdResponse::OK));
     ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
     ASSERT_EVENTS_DpRetransmitScheduled(0, firstFile.toChar(), 10);
-    ASSERT_EVENTS_DpFileAdded_SIZE(1);
-    ASSERT_EVENTS_DpFileAdded(0, firstFile.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(0);
     this->component.shutdown();
 
     // the reset survives the reboot and the file still holds exactly one record per product

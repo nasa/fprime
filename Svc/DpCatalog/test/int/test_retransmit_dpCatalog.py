@@ -89,9 +89,6 @@ def test_retransmit_transmitted_product(fprime_test_api):
         start=start,
         timeout=5,
     )
-    fprime_test_api.assert_event(
-        dp_catalog(fprime_test_api, "DpFileAdded"), [file_name], start=start, timeout=5
-    )
     # remainActive was not set, so the product waits for the next transmit command
     fprime_test_api.assert_event_count(
         0, dp_catalog(fprime_test_api, "SendingProduct"), start=start
