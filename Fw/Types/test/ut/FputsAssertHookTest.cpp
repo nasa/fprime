@@ -29,10 +29,10 @@ TEST(FputsAssertHook, FormatsEveryArgumentCount) {
     }
 }
 
-TEST(FputsAssertHook, FormatLeavesBufferOnBadArgumentCount) {
+TEST(FputsAssertHook, FormatYieldsEmptyMessageOnBadArgumentCount) {
     CHAR buffer[FW_ASSERT_TEXT_SIZE] = {'x', 0};
     Fw::formatAssertMessage(TEST_FILE, 42, 7, 1, 2, 3, 4, 5, 6, buffer, static_cast<FwSizeType>(sizeof(buffer)));
-    EXPECT_STREQ(buffer, "x");
+    EXPECT_STREQ(buffer, "");
 }
 
 TEST(FputsAssertHook, PrintWritesLineToStderr) {

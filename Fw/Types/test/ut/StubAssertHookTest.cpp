@@ -48,8 +48,8 @@ TEST(StubAssertHook, FormatToleratesEmptyBuffer) {
     CHAR sentinel[1] = {'x'};
     Fw::formatAssertMessage(TEST_FILE, 1, 0, 0, 0, 0, 0, 0, 0, sentinel, 0);
     EXPECT_EQ(sentinel[0], 'x');
+    // nullptr with buffSize == 0 must not dereference; a crash fails the test
     Fw::formatAssertMessage(TEST_FILE, 1, 0, 0, 0, 0, 0, 0, 0, nullptr, 0);
-    EXPECT_EQ(sentinel[0], 'x');
 }
 
 TEST(StubAssertHook, PrintWritesNothing) {

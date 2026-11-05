@@ -71,6 +71,9 @@ void Fw::formatAssertMessage(FILE_NAME_ARG file,
                                file, lineNo, arg1, arg2, arg3, arg4, arg5, arg6);
             break;
         default:  // in an assert already, what can we do?
+            if (buffSize > 0) {
+                destBuffer[0] = '\0';
+            }
             break;
     }
 }
