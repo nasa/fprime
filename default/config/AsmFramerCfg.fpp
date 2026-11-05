@@ -13,7 +13,9 @@ module Svc {
     @ Largest transfer frame, in bytes, that the AsmFramer accepts on dataIn; defaults to the
     @ AOS bound so the component can follow either framer. Projects may lower it, but not below
     @ ComCfg.TmFrameFixedSize: the AsmFramer enforces that floor at compile time so a TM frame
-    @ always fits
+    @ always fits. This file is autocoded with every deployment, so a project that overrides
+    @ ComCfg.fpp must keep ComCfg.AosMaxFrameFixedSize defined (or override this file too), even
+    @ when it does not instantiate the AsmFramer
     constant MaxFrameSize = ComCfg.AosMaxFrameFixedSize
 
   }
