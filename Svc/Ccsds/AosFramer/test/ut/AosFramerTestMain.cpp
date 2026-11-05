@@ -42,6 +42,21 @@ TEST(AosFramer, testShortPackets) {
     tester.testShortPackets();
 }
 
+TEST(AosFramer, testEppIdleFill) {
+    Svc::Ccsds::AosFramerTester tester;
+    tester.testEppIdleFill();
+}
+
+TEST(AosFramer, testEppPreferredOverSpp) {
+    Svc::Ccsds::AosFramerTester tester;
+    tester.testEppPreferredOverSpp();
+}
+
+TEST(AosFramer, testIdlePvnsValidation) {
+    Svc::Ccsds::AosFramerTester tester;
+    tester.testIdlePvnsValidation();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

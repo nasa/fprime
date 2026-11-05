@@ -24,6 +24,7 @@ class AosFramer final : public AosFramerComponentBase {
     friend class AosFramerTester;
 
     static constexpr U8 SPP_IDLE_DATA_PATTERN = 0x44;
+    static constexpr U8 EPP_IDLE_DATA_PATTERN = 0x44;
     static constexpr U8 MIN_SPP_LENGTH = 7;
 
     // Offset to start of payload
@@ -93,7 +94,8 @@ class AosFramer final : public AosFramerComponentBase {
                    U16 spacecraftId = ComCfg::SpacecraftId,  //!< Spacecraft ID
                    U8 vcId = 1,                              //!< Virtual Channel ID (default 1)
                    U8 idlePvns = PvnBitfield::SPP_MASK       //!< Bitfield of which Packet Version Numbers to use
-                                                             //!< for idle packets
+                                                             //!< for idle packets: SPP and/or EPP, at least one.
+                                                             //!< EPP is preferred when both are permitted.
                                                              //!< Default to SPP
     );
 
@@ -140,6 +142,10 @@ class AosFramer final : public AosFramerComponentBase {
     void fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& context);
 
     void serialize_idle_spp_packet(Fw::SerialBufferBase& serializer, U16 length);
+
+    //! Serialize an Encapsulation Idle Packet of exactly length bytes (CCSDS 133.1-B-3 4.1.3.2),
+    //! using the smallest header that can carry the length
+    void serialize_idle_epp_packet(Fw::SerialBufferBase& serializer, U16 length);
 
     //! Fill out the Transfer Frame Primary Header (4.1.2)
     void setup_header(const ComCfg::FrameContext& context);
