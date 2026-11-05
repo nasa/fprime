@@ -30,7 +30,8 @@ class AsmFramer final : public AsmFramerComponentBase {
 
     //! Smallest enabled ASM in bytes: the shortest CCSDS 131.0-B-5 pattern (32 bits). Shorter
     //! markers false-sync on random channel data at 2^-(8 * size) per byte position, so they are
-    //! rejected; the standard lengths are 4, 8, 12 and 16 bytes.
+    //! rejected; the standard lengths are 4, 8, 12, 16 and 24 bytes (24 requires raising
+    //! Svc.AsmFramerCfg.AsmMaxSize).
     static constexpr FwSizeType ASM_MIN_SIZE = 4;
 
     //! Largest transfer frame accepted on dataIn (Svc.AsmFramerCfg.MaxFrameSize, by default the
