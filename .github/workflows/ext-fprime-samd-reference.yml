@@ -37,7 +37,9 @@ jobs:
   build:
     name: "SAMD21 Build (Curiosity Nano)"
     needs: get-branch
-    runs-on: ubuntu-22.04
+    # fprime-samd's static-tlm-packetizer / static-cmd-dispatcher autocoders need
+    # Python >= 3.11 (tomllib); ubuntu-22.04 ships 3.10.
+    runs-on: ubuntu-24.04
     steps:
       - name: "Set up target repository"
         uses: nasa/fprime-actions/external-repository-setup@devel
