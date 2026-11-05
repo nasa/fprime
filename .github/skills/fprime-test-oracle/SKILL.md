@@ -167,8 +167,8 @@ extra keys are ignored. `fth audit --independent` diffs verdict **and**
 ## 4. Divergence report
 
 ```
-divergence.md                      (auditor/diff.md in stage 3)
-| Test | Engine | Independent | Predicate(s) in dispute | Record lines |
+divergence.md                      (stage 3: auditor/diff-runner-replay.md — runner junit vs replay)
+| Test | Runner (live) | Replay (auditor) | Check(s) in dispute | Record lines |
 ```
 
 Any row here blocks stage-2 closure (vectors) and is read first by the

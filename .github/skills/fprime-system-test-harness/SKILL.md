@@ -44,7 +44,8 @@ deployment.
   (e.g. `fprime-samd-reference` `fram-harness`,
   `CuriosityReference/FramTester/`): the tester component AND, beside
   it under its `test/int/`, the plan (`plan.json`, rendered `plan.md`),
-  the planted faults and helper predicates (`plan_helpers.py`), the
+  the planted-fault module (`planted_faults.py`, named by `plan.json`
+  `helpers_module`; the tests carry their own checks), the
   generated fault menu, `bench.json`, the pytest stimulus and the
   adversary's independent checker (legacy plans with plan-owned pass rules only). They require the deployment the
   helper lives in, so they belong there.

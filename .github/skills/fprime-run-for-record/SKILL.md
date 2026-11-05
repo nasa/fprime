@@ -262,10 +262,12 @@ heading and `REQ-…` anchors preserved; ```mermaid blocks pre-rendered to inlin
 `mmdc` when the host has it, else the vendored `assets/mermaid.min.js` renders them from
 `file://` — no CDN, no plugin, no timestamps; the `.md` stays the diffable source); `inputs/`
 (the package is self-contained: `manifest.json`, `plan.json`, `faults-menu.json`, `bench.json`,
-the plan's `helpers_module` (planted fault bodies; legacy plans: predicates too — pinned via the project repo sha), any pinned independent checker and the sibling module it imports, `toolchain.json`, every image the
+the pinned independent checker and the sibling modules it imports (legacy plans only), the image(s) the
 manifest names with its pinned sha256 and the flash read-back sha, the F´ dictionary, and
 `inputs/README.md` listing each file, its sha256, the manifest pin and the stage-3 row that
-consumes it — a sha256 that disagrees with a pin is a loud failure; `fth unseal` adds `unseal.md`
+consumes it — and, as DATA-ONLY rows (`repo@sha path sha256`, "pinned, not shipped"), the integration tests,
+their checks and the planted-fault module the manifest pins as `stimulus` (`fth manifest --tests`): the auditor
+replays exactly those sources or FAILS; they are never copied into the package — a sha256 that disagrees with a pin is a loud failure; `fth unseal` adds `unseal.md`
 and `seed.txt` (verified to reproduce the draw) — the seed enters the package only after the
 unseal, never before; tests, stimulus and tester sources stay in the pinned repositories); `ql.zip` of
 all of it — stage-3 row 8 "Deliver" is `rfr/<run>/auditor/ql/ql.zip` and nothing else. **No coverage of any kind** is in an RfR package: an instrumented image is not
@@ -327,6 +329,16 @@ or an unplanted FAIL; else "Consistent with draw") into `index.md`, and
 rebuilds `ql.zip`. The human reads trigger rows, spot-checks two or
 three nominal rows against the raw record, ticks the boxes, and records
 the decision in the plan's decision log.
+
+## 7. Campaign close (human + agent, after unseal)
+
+1. Update the watch ledger: append one evidence row per harness feature the campaign exercised to
+   `docs/upstream-watch.md` in fprime-testing-harness (`<campaign> <run id> (<date>): <finding>`; move `status`
+   to `earned` when the row's criterion is met). The QL index already links the ledger rows this run relied on
+   (`watch ledger` field) at the harness sha the manifest pins — a ledger edit lands on main and is picked up by
+   the next manifest, never by re-rendering a sealed run.
+2. Archive `ql.zip` + `unseal.md` with the campaign record; note any `DIVERGENCE`, integrity finding or
+   `UNEXPLAINED FAIL` as a tracked item.
 
 ## Anti-patterns
 
