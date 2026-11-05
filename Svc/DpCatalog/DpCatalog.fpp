@@ -189,8 +189,9 @@ module Svc {
       id 1 \
       format "Processing directory {}"
 
-    @ Processing a file. Emitted once per file read at build time, so it is a diagnostic
-    @ (filtered by Svc.EventManager unless enabled) to keep a build from flooding the event path
+    @ Processing a file. Emitted for every file read (by BUILD_CATALOG, a runtime addition or
+    @ RETRANSMIT_DP), so it is a diagnostic, filtered by Svc.EventManager unless that severity is
+    @ enabled, to keep a build from flooding the event path
     event ProcessingFile (
                             file: string size FileNameStringSize @< The file
                           ) \
@@ -458,15 +459,14 @@ module Svc {
       format "Error sending DP file {}, stat {}. Halting xmit." \
       throttle 10
 
-    @ File added. Throttled so that a BUILD_CATALOG over many files reports the first few only;
-    @ the throttle is cleared at the start of each build and before each runtime addition or retransmit
+    @ File added at runtime, by a runtime addition or RETRANSMIT_DP; a BUILD_CATALOG does not emit
+    @ it per file and reports its totals with ProcessingDirectoryComplete
     event DpFileAdded(
                           file: string size FileNameStringSize @< The file
       ) \
       severity activity high \
       id 43 \
-      format "DP file {} added at runtime" \
-      throttle 10
+      format "DP file {} added at runtime"
 
     event NotLoaded(
                             file: string size FileNameStringSize @< The file
@@ -475,7 +475,9 @@ module Svc {
       id 44 \
       format "Not adding file {} now; Catalog not yet loaded"
 
-    @ Skipped a transmitted file. Throttled and cleared as DpFileAdded is
+    @ Skipped a transmitted file. Throttled so that a BUILD_CATALOG over many transmitted files
+    @ reports the first few only; the throttle is cleared at the start of each build and before
+    @ each runtime addition or RETRANSMIT_DP
     event DpFileSkipped(
                           file: string size FileNameStringSize @< The file
       ) \
