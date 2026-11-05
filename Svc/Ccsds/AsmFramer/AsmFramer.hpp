@@ -19,18 +19,23 @@ class AsmFramer final : public AsmFramerComponentBase {
     friend class AsmFramerTester;
 
   public:
-    //! Maximum supported ASM size in bytes (ComCfg::AsmMaxSize, default 16 = 128 bits, the
+    //! Maximum supported ASM size in bytes (Svc.AsmFramerCfg.AsmMaxSize, default 16 = 128 bits, the
     //! rate-1/4 Turbo pattern of CCSDS 131.0-B-5 Section 9.3.2). This is an implementation
     //! bound, not a standard one: the 192-bit rate-1/6 Turbo ASM is not supported unless a
-    //! project raises ComCfg.AsmMaxSize, which also grows m_frameBuffer.
-    static constexpr FwSizeType ASM_MAX_SIZE = static_cast<FwSizeType>(ComCfg::AsmMaxSize);
+    //! project raises Svc.AsmFramerCfg.AsmMaxSize, which also grows m_frameBuffer.
+    static constexpr FwSizeType ASM_MAX_SIZE = static_cast<FwSizeType>(AsmFramerCfg::AsmMaxSize);
 
     //! Size in bytes of the default ASM (CCSDS 131.0-B-5 Section 9.3.1)
     static constexpr FwSizeType ASM_DEFAULT_SIZE = 4;
 
-    //! Largest transfer frame accepted on dataIn (ComCfg::AsmFramerMaxFrameSize, by default the
+    //! Smallest enabled ASM in bytes: the shortest CCSDS 131.0-B-5 pattern (32 bits). Shorter
+    //! markers false-sync on random channel data at 2^-(8 * size) per byte position, so they are
+    //! rejected; the standard lengths are 4, 8, 12 and 16 bytes.
+    static constexpr FwSizeType ASM_MIN_SIZE = 4;
+
+    //! Largest transfer frame accepted on dataIn (Svc.AsmFramerCfg.MaxFrameSize, by default the
     //! AOS bound so the component can follow either upstream framer)
-    static constexpr FwSizeType FRAME_MAX_SIZE = static_cast<FwSizeType>(ComCfg::AsmFramerMaxFrameSize);
+    static constexpr FwSizeType FRAME_MAX_SIZE = static_cast<FwSizeType>(AsmFramerCfg::MaxFrameSize);
 
   private:
     enum class BufferOwnershipState {
@@ -55,14 +60,15 @@ class AsmFramer final : public AsmFramerComponentBase {
     AsmFramer(const AsmFramer&) = delete;
     AsmFramer& operator=(const AsmFramer&) = delete;
 
-    //! Configure the ASM pattern. Sizes 1 to ASM_MAX_SIZE select a marker such as
+    //! Configure the ASM pattern. Sizes ASM_MIN_SIZE to ASM_MAX_SIZE select a marker such as
     //! the coded-data patterns of CCSDS 131.0-B-5 Sections 9.3.2 - 9.3.5; size 0
     //! disables the marker so frames pass through unchanged. Coded-data patterns are
     //! only appropriate when the frames on dataIn are already encoded (the standard
     //! attaches them to the codeword, Section 9.4.1). Must be called during topology
     //! setup, before any frame flows; the ownership assertion is a guard against misuse,
     //! not a runtime reconfiguration path.
-    void configure(const Fw::ConstByteArray& asmPattern  //!< ASM pattern bytes; size in [0, ASM_MAX_SIZE]
+    void configure(
+        const Fw::ConstByteArray& asmPattern  //!< ASM pattern bytes; size 0 or in [ASM_MIN_SIZE, ASM_MAX_SIZE]
     );
 
   private:

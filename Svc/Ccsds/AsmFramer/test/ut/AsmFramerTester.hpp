@@ -91,6 +91,9 @@ class AsmFramerTester final : public AsmFramerGTestBase {
     AsmFramer component;
 
     //! When true, from_dataReturnOut_handler re-enters dataIn once before recording
+    //! vcId offset applied to the frame emitted from inside from_dataReturnOut_handler
+    static constexpr U8 REENTRANT_VCID_OFFSET = 10;
+
     bool m_reenterOnReturn = false;
 
     //! Storage for the frame sent on re-entry

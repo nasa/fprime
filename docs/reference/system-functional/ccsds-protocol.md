@@ -24,7 +24,7 @@
 
 ## Overview
 
-F Prime provides components implementing the Consultative Committee for Space Data Systems (CCSDS) protocols for missions requiring standards-compliant space communication. These components plug into the communication stack in place of (or alongside) the default F Prime protocol components, providing CCSDS-standard framing at multiple protocol layers. The implementation covers the Space Packet Protocol, TM and TC Space Data Link protocols, and the AOS Space Data Link protocol.
+F Prime provides components implementing the Consultative Committee for Space Data Systems (CCSDS) protocols for missions requiring standards-compliant space communication. These components plug into the communication stack in place of (or alongside) the default F Prime protocol components, providing CCSDS-standard framing at multiple protocol layers. The implementation covers the Space Packet Protocol, TM and TC Space Data Link protocols, the AOS Space Data Link protocol, and the optional Attached Sync Marker of TM Synchronization and Channel Coding (131.0-B-5).
 
 ### Space Packet Protocol
 
@@ -53,7 +53,7 @@ The AOS Framer implements the CCSDS Advanced Orbiting Systems (AOS) Space Data L
 
 ### TM Synchronization (Attached Sync Marker)
 
-The optional [AsmFramer](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AsmFramer/docs/sdd.md) prepends the CCSDS Attached Sync Marker (131.0-B-5 Section 9; default 32-bit `0x1ACFFC1D`, configurable up to `ComCfg.AsmMaxSize` bytes (128 bits by default), or disabled) to each TM or AOS Transfer Frame, producing Sync-Marked Transfer Frames so the ground side can acquire frame boundaries on a byte stream.
+The optional [AsmFramer](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AsmFramer/docs/sdd.md) prepends the CCSDS Attached Sync Marker (131.0-B-5 Section 9; default 32-bit `0x1ACFFC1D`, configurable up to `Svc.AsmFramerCfg.AsmMaxSize` bytes (128 bits by default), or disabled) to each TM or AOS Transfer Frame, producing Sync-Marked Transfer Frames so the ground side can acquire frame boundaries on a byte stream.
 
 ### Space Data Link Security (SDLS)
 

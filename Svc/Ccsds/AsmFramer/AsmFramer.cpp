@@ -17,12 +17,14 @@ namespace Ccsds {
 static constexpr U8 ASM_DEFAULT[] = {0x1A, 0xCF, 0xFC, 0x1D};
 static_assert(sizeof(ASM_DEFAULT) == AsmFramer::ASM_DEFAULT_SIZE, "ASM_DEFAULT_SIZE must match the default pattern");
 static_assert(AsmFramer::ASM_DEFAULT_SIZE <= AsmFramer::ASM_MAX_SIZE, "default ASM must fit the configured bound");
+static_assert(AsmFramer::ASM_MIN_SIZE <= AsmFramer::ASM_DEFAULT_SIZE, "default ASM must satisfy the minimum size");
 static_assert(AsmFramer::FRAME_MAX_SIZE >= static_cast<FwSizeType>(ComCfg::TmFrameFixedSize),
-              "ComCfg.AsmFramerMaxFrameSize must hold at least a TM transfer frame");
+              "Svc.AsmFramerCfg.MaxFrameSize must hold at least a TM transfer frame");
 
 // Out-of-class definitions so the constants may be odr-used (C++14)
 constexpr FwSizeType AsmFramer::ASM_MAX_SIZE;
 constexpr FwSizeType AsmFramer::ASM_DEFAULT_SIZE;
+constexpr FwSizeType AsmFramer::ASM_MIN_SIZE;
 constexpr FwSizeType AsmFramer::FRAME_MAX_SIZE;
 
 // ----------------------------------------------------------------------
@@ -38,6 +40,8 @@ AsmFramer ::~AsmFramer() {}
 
 void AsmFramer ::configure(const Fw::ConstByteArray& asmPattern) {
     FW_ASSERT(asmPattern.size <= ASM_MAX_SIZE, static_cast<FwAssertArgType>(asmPattern.size));
+    FW_ASSERT((asmPattern.size == 0) || (asmPattern.size >= ASM_MIN_SIZE),
+              static_cast<FwAssertArgType>(asmPattern.size));
     FW_ASSERT((asmPattern.size == 0) || (asmPattern.bytes != nullptr), static_cast<FwAssertArgType>(asmPattern.size));
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
     if (asmPattern.size > 0) {
@@ -73,6 +77,9 @@ void AsmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Com
     // upstream framer's ownership timeline identical to a chain without the AsmFramer: its buffer
     // returns when the com adapter has released the frame, so flow control (buffer return before
     // comStatus) is preserved for synchronous and asynchronous drivers alike.
+    // ORDER MATTERS: the hold and the NOT_OWNED flip must precede dataOut_out. A synchronous
+    // adapter (e.g. ComStub) returns the buffer from inside that call, re-entering
+    // dataReturnIn_handler, which reads these members.
     this->m_upstreamBuffer = data;
     this->m_upstreamContext = context;
     Fw::Buffer frameBuffer(this->m_frameBuffer, this->m_asmSize + data.getSize());

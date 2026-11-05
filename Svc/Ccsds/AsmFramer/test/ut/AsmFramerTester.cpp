@@ -6,6 +6,8 @@
 
 #include "AsmFramerTester.hpp"
 
+#include <cstring>
+
 namespace Svc {
 
 namespace Ccsds {
@@ -68,7 +70,7 @@ void AsmFramerTester ::testConfiguredAsm() {
     }
     this->sendAndVerifyFrame(Fw::ConstByteArray(turboAsm, sizeof(turboAsm)), buffer, context, 0);
 
-    // Largest standard pattern that fits the default ComCfg.AsmMaxSize: 128-bit rate-1/4 Turbo
+    // Largest standard pattern that fits the default Svc.AsmFramerCfg.AsmMaxSize: 128-bit rate-1/4 Turbo
     // (Blue Book 9.3.2, figure 9-4)
     const U8 rate14Asm[] = {0x03, 0x47, 0x76, 0xC7, 0x27, 0x28, 0x95, 0xB0,
                             0xFC, 0xB8, 0x89, 0x38, 0xD8, 0xD7, 0x6A, 0x4F};
@@ -95,6 +97,9 @@ void AsmFramerTester ::testDisabledAsm() {
 }
 
 void AsmFramerTester ::testConfigureInvalid() {
+    // A marker shorter than the shortest CCSDS pattern is rejected (sizes 1-3)
+    ASSERT_DEATH_IF_SUPPORTED(this->component.configure(Fw::ConstByteArray(DEFAULT_ASM, AsmFramer::ASM_MIN_SIZE - 1)),
+                              "AsmFramer.cpp");
     // A null pattern is only acceptable with size 0
     ASSERT_DEATH_IF_SUPPORTED(this->component.configure(Fw::ConstByteArray(nullptr, sizeof(DEFAULT_ASM))),
                               "AsmFramer.cpp");
@@ -116,8 +121,8 @@ void AsmFramerTester ::testFrameSizeBounds() {
     Fw::Buffer emptyBuffer(emptyData, 0);
     this->sendAndVerifyFrame(Fw::ConstByteArray(DEFAULT_ASM, sizeof(DEFAULT_ASM)), emptyBuffer, context, 0);
 
-    // The largest configured frame (ComCfg.AsmFramerMaxFrameSize) is accepted with the largest
-    // configured marker (ComCfg.AsmMaxSize), filling the internal buffer to its last byte
+    // The largest configured frame (Svc.AsmFramerCfg.MaxFrameSize) is accepted with the largest
+    // configured marker (Svc.AsmFramerCfg.AsmMaxSize), filling the internal buffer to its last byte
     U8 maxAsm[AsmFramer::ASM_MAX_SIZE] = {};
     for (U32 i = 0; i < sizeof(maxAsm); ++i) {
         maxAsm[i] = static_cast<U8>(0xC3u ^ i);
@@ -207,7 +212,13 @@ void AsmFramerTester ::testReentrantReturn() {
     ASSERT_from_dataOut_SIZE(2);
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_from_dataReturnOut(0, buffer, context);
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).context.get_vcId(), 12);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).context.get_vcId(), context.get_vcId() + REENTRANT_VCID_OFFSET);
+    // The re-entrant frame itself was framed correctly: ASM followed by its payload
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).data.getData(), this->component.m_frameBuffer);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).data.getSize(), sizeof(DEFAULT_ASM) + sizeof(this->m_reentrantData));
+    ASSERT_EQ(0, ::memcmp(this->component.m_frameBuffer, DEFAULT_ASM, sizeof(DEFAULT_ASM)));
+    ASSERT_EQ(0, ::memcmp(&this->component.m_frameBuffer[sizeof(DEFAULT_ASM)], this->m_reentrantData,
+                          sizeof(this->m_reentrantData)));
     ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::NOT_OWNED);
 
     // Return the re-entrant frame's buffer: its own context comes back
@@ -215,7 +226,8 @@ void AsmFramerTester ::testReentrantReturn() {
     this->invoke_to_dataReturnIn(0, returned2, context);
     ASSERT_from_dataReturnOut_SIZE(2);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(1).data.getData(), this->m_reentrantData);
-    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(1).context.get_vcId(), 12);
+    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(1).context.get_vcId(),
+              context.get_vcId() + REENTRANT_VCID_OFFSET);
     ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::OWNED);
 }
 
@@ -230,7 +242,7 @@ void AsmFramerTester ::from_dataReturnOut_handler(FwIndexType portNum,
         this->m_reenterOnReturn = false;
         Fw::Buffer next(this->m_reentrantData, sizeof(this->m_reentrantData));
         ComCfg::FrameContext nextContext;
-        nextContext.set_vcId(static_cast<U8>(context.get_vcId() + 10));
+        nextContext.set_vcId(static_cast<U8>(context.get_vcId() + REENTRANT_VCID_OFFSET));
         this->invoke_to_dataIn(0, next, nextContext);
     }
     this->pushFromPortEntry_dataReturnOut(data, context);
