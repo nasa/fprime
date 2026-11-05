@@ -32,6 +32,7 @@ STATE_FILE = "ext-ci-state.json"
 RESULTS_FILE = "ext-ci-results.json"
 MANIFEST_PATH = ".github/ext-ci-manifest.json"
 POLL_S = int(env.get("POLL_INTERVAL_SECONDS") or 60)
+ORCHESTRATOR_FAULTS = ("dispatch_failed", "queue_timeout", "error")  # remote_conclusion values we made up
 
 REPO = env.get("GITHUB_REPOSITORY")
 RUN_ID = env.get("GITHUB_RUN_ID")
@@ -180,9 +181,9 @@ def resolve_target() -> dict:
     to test; PR-author-controlled: forwarded verbatim as the dispatch inputs the external `ci.yml`
     checks out, and otherwise used only to find the PR and as display text),
     `base_ref` (trusted branch the run was started from; drives the external branch lookup) and
-    `before_sha` (previous tip for pushes, else None). Raises RuntimeError when a PR run no longer
-    matches an open PR or `pr_number` is not numeric, ApiError when a manual PR/ref does not exist."""
-    t = {"pr": None, "head_repo": REPO, "head_sha": None, "head_branch": None, "base_ref": None, "before_sha": None}
+    Raises RuntimeError when a PR run no longer matches an open PR or `pr_number` is not numeric,
+    ApiError when a manual PR/ref does not exist."""
+    t = {"pr": None, "head_repo": REPO, "head_sha": None, "head_branch": None, "base_ref": None}
     if EVENT_NAME == "workflow_run":
         wr = EVENT["workflow_run"]
         # Trust only the event payload: nothing produced by the (untrusted) trigger run is read.
@@ -218,34 +219,19 @@ def resolve_target() -> dict:
             commit = own.get(f"/repos/{REPO}/commits/{q(ref)}")
             # base_ref (ext branch lookup) is the branch this run was started from, not the ref under test.
             t.update(head_sha=commit["sha"], head_branch=ref, base_ref=env["GITHUB_REF_NAME"])
-    else:  # push, schedule
-        t.update(head_sha=env["GITHUB_SHA"], head_branch=env["GITHUB_REF_NAME"], base_ref=env["GITHUB_REF_NAME"])
-        before = EVENT.get("before")
-        if EVENT_NAME == "push" and before and not re.fullmatch("0+", before):
-            t["before_sha"] = before
+    else:
+        raise RuntimeError(f"unsupported event: {EVENT_NAME}")
     return t
 
 
 def changed_files(target: dict) -> list[str] | None:
-    """List the files touched by the PR or push.
-
-    Returns None when the set is unknown (schedule / manual runs, or a push whose `before` SHA is
-    gone after a force-push); callers then treat every repo as relevant."""
-    if target["pr"]:
-        url = f"/repos/{REPO}/pulls/{target['pr']}/files?per_page=100"
-    elif target["before_sha"]:
-        url = f"/repos/{REPO}/compare/{target['before_sha']}...{target['head_sha']}?per_page=100"
-    else:
+    """List the files touched by the PR; None when there is no PR (manual ref runs), which callers
+    treat as "every repo is relevant"."""
+    if not target["pr"]:
         return None
     files = []
-    for page in range(1, 31):
-        try:
-            r = own.get(f"{url}&page={page}")
-        except ApiError as e:
-            if e.status == 404 and not target["pr"]:
-                return None  # before SHA no longer in history (force-push): run everything
-            raise
-        batch = r if target["pr"] else r.get("files", [])
+    for page in range(1, 31):  # GitHub lists at most 3000 files per PR
+        batch = own.get(f"/repos/{REPO}/pulls/{target['pr']}/files?per_page=100&page={page}")
         files += [f["filename"] for f in batch]
         if len(batch) < 100:
             break
@@ -508,7 +494,8 @@ def write_summary(target: dict, state: dict) -> None:
 # ---------------------------------------------------------------- modes
 def run() -> None:
     """The `run` mode: resolve target, load manifest, fork preflight, select repos, dispatch, poll,
-    close checks, write summary. Exits 1 when a `failure_policy: block` repo did not succeed."""
+    close checks, write summary. Exits 1 when a `failure_policy: block` repo did not succeed or the
+    orchestrator itself failed on any repo."""
     target = resolve_target()
     log(f"target: {json.dumps(target)}")
     with open(MANIFEST_PATH) as f:
@@ -537,9 +524,11 @@ def run() -> None:
             log(f"::error::[{s['id']}] finalize: {e}")
         save_state(state)
     write_summary(target, state)
-    # conclusion is None when finalize_one failed: judge on what it would have been.
+    # conclusion is None when finalize_one failed: judge on what it would have been. `notify` only
+    # softens a remote build failure; an orchestrator-side fault always fails this job.
     blocking = [s["id"] for s in state["repos"].values()
-                if s["failure_policy"] != "notify" and (s["conclusion"] or check_conclusion(s)) != "success"]
+                if (s["conclusion"] or check_conclusion(s)) != "success"
+                and (s["failure_policy"] != "notify" or s["remote_conclusion"] in ORCHESTRATOR_FAULTS)]
     if blocking:
         log("::error::blocking external repos failed: " + ", ".join(blocking))
         sys.exit(1)
