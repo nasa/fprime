@@ -338,6 +338,11 @@ Dry-run traps (SunCamMgr simulator runs sim1–sim9 and the bench):
   never through `head`/`tail` (SIGPIPE kills it mid-run → the UART driver
   reports `OTHER_ERROR`). Give it a per-chunk delay so captures take
   seconds, or mid-readout tests (BUSY, status during readout) cannot run.
+- Kill only by a pid you recorded when you launched the process (`kill $PID`), never by
+  pattern: on a shared bench `pgrep -f`/`pkill -f` matched a `bash -c` wrapper instead of the
+  runner it wrapped, the runner lived on, and two flashers met on one CMSIS-DAP probe within the
+  same second (`CMD_CONNECT failed`, empty read-back). One actor per bench, one recorded pid per
+  launch, and a `MATCH/MISMATCH` read-back line after every flash.
 - `pkill -f <pattern>` kills the calling shell when the pattern is in its
   own command line — anchor the pattern (`^python3 run_plan.py`) or
   bracket a character (`strea[m].py`); to free a serial port use

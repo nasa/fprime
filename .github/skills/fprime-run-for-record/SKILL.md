@@ -31,9 +31,14 @@ beside this skill. Install the pinned commit on every host that runs a
 stage-3 step (bench host included):
 
 ```bash
-pip install "git+https://github.com/LeStarch/fprime-testing-harness@13cbef3#egg=fprime-testing-harness"
+pip install "git+https://github.com/LeStarch/fprime-testing-harness@fca0745#egg=fprime-testing-harness"
 fth selftest          # exercises every seal subcommand in a temp dir
 ```
+
+The same venv must satisfy the UUT's `lib/fprime/requirements.txt` at the pinned sha
+(`pip install -r uut/lib/fprime/requirements.txt`); F´'s `required.cmake` refuses an older
+`fprime-fpp`/`fprime-tools`/`fprime-gds`, and the bench host needs the matching `fprime-gds`
+for `fth run`. Check it in row 1, before the bench is touched.
 
 Requirements the tooling must keep meeting (its own test suite carries
 them; a tool that drops one is not pinned): a planted fault's `fails` is a
