@@ -99,13 +99,14 @@ Fw/Time/Time.hpp                               1       1   100%
 Fw/Time/TimeInterval.cpp                      87      81    93%   60,62,65,67,102-103
 Fw/Time/TimeInterval.hpp                       2       2   100%
 Fw/Tlm/TlmPacket.cpp                          71      56    78%   41,45,75,81,87,109,115,121,131,141,148-149,151-152,154
-Fw/Types/Assert.cpp                          150     104    69%   17,19-21,73-75,77,86-87,90-91,93-94,124-125,127-128,217-218,220-221,232-233,235-236,247-248,250-251,262-263,265-266,282-283,285-286,303-304,306-307,325-326,328-329
+Fw/Types/Assert.cpp                           72      57    79%   10-12,14,23-24,27-28,30-32,61-62,64-65
 Fw/Types/Assert.hpp                            2       2   100%
 Fw/Types/BasicTypes.hpp                        2       2   100%
 Fw/Types/ByteArray.hpp                         2       2   100%
 Fw/Types/ConstExternalString.hpp              12      12   100%
 Fw/Types/ConstStringBase.cpp                  48      41    85%   49-50,91,94,105-107
 Fw/Types/ExternalString.hpp                   24      24   100%
+Fw/Types/fputs_assert_hook.cpp                34      32    94%   17-18
 Fw/Types/LinearBufferTemplate.hpp             16      15    93%   48
 Fw/Types/MallocAllocator.cpp                  10       9    90%   26
 Fw/Types/MallocAllocator.hpp                   2       2   100%
@@ -122,6 +123,7 @@ Fw/Types/StringBase.cpp                       53      50    94%   77-79
 Fw/Types/StringTemplate.hpp                   16      16   100%
 Fw/Types/StringToNumber.cpp                   65      27    41%   9,13,18,31,35-36,70-71,74-75,92,97,101,106,109,114,118,123,125,130,133,138,140,145,147,151-154,156-157,160,164-167,169-170
 Fw/Types/StringUtils.cpp                      60      59    98%   10
+Fw/Types/stub_assert_hook.cpp                  7       5    71%   30-31
 googletest/googletest/include/gtest/gtest-assertion-result.h
                                               13       3    23%   183-184,187,191-193,206-209
 googletest/googletest/include/gtest/gtest-matchers.h
@@ -131,11 +133,11 @@ googletest/googletest/include/gtest/gtest-message.h
 googletest/googletest/include/gtest/gtest-param-test.h
                                                6       6   100%
 googletest/googletest/include/gtest/gtest-printers.h
-                                              84      24    28%   133-142,145,148-149,152-153,155-156,182-184,189,191,213,216-217,332-333,341-342,358-359,412,414,450,454-455,458-460,501-506,554-556,593,606,623-625,627-629,631,639-641
+                                              90      24    26%   133-142,145,148-149,152-153,155-156,182-184,189,191,213,216-217,332-333,341-342,358-359,386,412,414,450,454-455,458-460,501-506,554-556,593,606,623-625,627-629,631,639-641,904-906,908,910
 googletest/googletest/include/gtest/gtest-test-part.h
                                                1       1   100%
 googletest/googletest/include/gtest/gtest.h
-                                              46      26    56%   244,252,257-258,339,1338,1343,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
+                                              47      27    57%   244,252,257-258,339,1338,1343,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
 googletest/googletest/include/gtest/internal/gtest-death-test-internal.h
                                                6       4    66%   95-96
 googletest/googletest/include/gtest/internal/gtest-internal.h
@@ -168,11 +170,11 @@ Os/Generic/DefaultPriorityMemQueue.cpp         3       0     0%   16-18
 Os/Generic/DefaultPriorityQueue.cpp            3       3   100%
 Os/Generic/LocklessPriorityQueue.cpp         202     190    94%   128,130-131,147-149,151-154,368-369
 Os/Generic/LocklessPriorityQueue.hpp           1       1   100%
-Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,123-124,190-192,196-197,213,219-220,223-224,228-230,232,235-236,238,246,424,434-435,460,485,531-532,601,767
+Os/Generic/PriorityMemQueue.cpp              352     318    90%   79-80,110-111,123-124,190-192,196-197,213,219-220,223-224,228-230,232,235-236,238,246,424,434-435,460,485,531-532,601,766-767
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 166     139    83%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,262-263
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,194,248-249,253,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     155    91%   21-26,28,248-249,253,311,318,343,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -200,7 +202,7 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      89    50%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,134-136,140-142,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
@@ -258,7 +260,7 @@ Svc/ActiveTextLogger/ActiveTextLogger.cpp
                                               65      47    72%   32-34,37-39,41,63-64,81-83,90-95
 Svc/ActiveTextLogger/LogFile.cpp              51      50    98%   115
 Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.cpp
-                                              58      54    93%   69-70,123-124
+                                              58      54    93%   55-56,109-110
 Svc/BufferAccumulator/ArrayFIFOBuffer.cpp
                                               36      32    88%   45,65,89-90
 Svc/BufferAccumulator/BufferAccumulator.cpp
@@ -353,7 +355,7 @@ Svc/ComQueue/ComQueue.cpp                    310     305    98%   274-276,596-59
 Svc/ComRetry/ComRetry.cpp                     50      50   100%
 Svc/ComSplitter/ComSplitter.cpp               12      12   100%
 Svc/ComStub/ComStub.cpp                       70      69    98%   34
-Svc/DpCatalog/DpCatalog.cpp                  687     604    87%   62,77,82-85,132-133,139-141,155-157,189-191,260-261,324-326,370-372,382,387-388,393-394,415-417,447-448,455-456,464,467-468,484,491,493,498,537,555,574-575,585-586,594-596,601-603,625-626,632-633,641,643,689-690,811,815-816,822,825-826,863-864,941,946-947,966-967,1061-1062,1067-1068,1247-1248
+Svc/DpCatalog/DpCatalog.cpp                  766     685    89%   62,77,82-85,132-133,139-141,156-158,190-192,269-270,333-335,379-381,391,396-397,402-403,424-426,456-457,464-465,473,476-477,493,500,502,507,546,564,583-584,594-595,603-605,610-612,634-635,641-642,650,652,698-699,820,824-825,831,834-835,950,955-956,975-976,1073-1074,1079-1080,1259-1260
 Svc/DpCatalog/DpCatalog.hpp                    1       1   100%
 Svc/DpCompressProc/DpCompressProc.cpp        173     153    88%   54,67-68,79-81,88,95,207-209,213,317-319,355-357,399-400
 Svc/DpManager/DpManager.cpp                   49      45    91%   63-65,104
@@ -447,5 +449,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      26703   22914    85%
+TOTAL                                      26752   22987    85%
 ------------------------------------------------------------------------------

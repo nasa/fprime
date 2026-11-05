@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-11-04 21:19:50</td>
+      <td>2026-11-05 21:15:03</td>
     </tr>
   </table>
 </div>
@@ -85,7 +85,7 @@
     <tr><td><a href="#l179">Svc::CommandDispatcherImpl::runInternal_overflowHook() (line 179)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l172">Svc::CommandDispatcherImpl::run_handler(short, unsigned int) (line 172)</a></td><td>called 4 times</td><td>93.0%</td></tr>
     <tr><td><a href="#l110">Svc::CommandDispatcherImpl::seqCmdBuff_handler(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 110)</a></td><td>called 78 times</td><td>81.0%</td></tr>
-    <tr><td><a href="#l240">Svc::CommandDispatcherImpl::seqCmdBuff_overflowHook(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 240)</a></td><td>called 77513 times</td><td>87.0%</td></tr>
+    <tr><td><a href="#l240">Svc::CommandDispatcherImpl::seqCmdBuff_overflowHook(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 240)</a></td><td>called 78218 times</td><td>87.0%</td></tr>
     <tr><td><a href="#l32">Svc::CommandDispatcherImpl::~CommandDispatcherImpl() (line 32)</a></td><td>called 15 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -2256,14 +2256,14 @@
       <td class="lineno"><a id="l240" href="#l240">240</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">77513</td>
+      <td class="linecount coveredLine">78218</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CommandDispatcherImpl</span><span class="o">::</span><span class="n">seqCmdBuff_overflowHook</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ComBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l241" href="#l241">241</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">77513</td>
+      <td class="linecount coveredLine">78218</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Note: 0 = Reserved opcode</span></td>
     </tr>
     <tr class="source-line">
@@ -2279,11 +2279,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 62386 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 71748 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">77513</td>
+      <td class="linecount coveredLine">78218</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdPacket</span><span class="w"> </span><span class="n">cmdPkt</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -2292,11 +2292,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 60819 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 69690 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">62386</td>
+      <td class="linecount coveredLine">71748</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmdPkt</span><span class="p">.</span><span class="n">deserializeFrom</span><span class="p">(</span><span class="n">data</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2306,11 +2306,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 60813 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 69684 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">60819</td>
+      <td class="linecount coveredLine">69690</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -2337,7 +2337,7 @@
       <td class="lineno"><a id="l248" href="#l248">248</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">60819</td>
+      <td class="linecount coveredLine">69690</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -2351,7 +2351,7 @@
       <td class="lineno"><a id="l250" href="#l250">250</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">63238</td>
+      <td class="linecount coveredLine">73491</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_CommandDroppedQueueOverflow</span><span class="p">(</span><span class="n">CmdDispatcherCfg</span><span class="o">::</span><span class="n">getEventOpcode</span><span class="p">(</span><span class="n">opcode</span><span class="p">),</span><span class="w"> </span><span class="n">context</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2365,14 +2365,14 @@
       <td class="lineno"><a id="l252" href="#l252">252</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">74187</td>
+      <td class="linecount coveredLine">73420</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numCmdsDropped</span><span class="p">.</span><span class="n">fetch_add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l253" href="#l253">253</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">61845</td>
+      <td class="linecount coveredLine">76328</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
