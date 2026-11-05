@@ -23,8 +23,9 @@ namespace Fw {
 //! \brief handles an assertion
 //!
 //! Handle an assertion failure or FATAL. This function is called after the defaultPrintAssert has
-//! been called. The default implementation calls `assert(0)`.
-[[noreturn]] void defaultDoAssert();
+//! been called. The default implementation calls `assert(false)`, which is compiled out when NDEBUG
+//! is defined; FW_ASSERTIONS_ALWAYS_ABORT then decides whether execution may continue.
+void defaultDoAssert();
 
 //! \brief print an assert message
 //!

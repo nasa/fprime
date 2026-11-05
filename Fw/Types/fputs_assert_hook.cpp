@@ -7,7 +7,6 @@
 #include <Fw/Types/format.hpp>
 #include <cassert>
 #include <cstdio>
-#include <cstdlib>
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define fileIdFs "Assert: 0x%08" PRIx32 ":%" PRI_FwSizeType ""
@@ -16,8 +15,7 @@
 #endif
 
 void Fw::defaultDoAssert() {
-    assert(0);
-    abort();
+    assert(false);
 }
 
 void Fw::defaultPrintAssert(const CHAR* msg) {
