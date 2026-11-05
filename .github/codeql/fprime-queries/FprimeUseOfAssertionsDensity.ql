@@ -67,7 +67,7 @@ predicate assertInfrastructure(Function f) {
   or
   f.hasGlobalName(["CAssert0", "CAssert1"])
   or
-  f.hasQualifiedName("Fw", "defaultReportAssert")
+  f.hasQualifiedName("Fw", ["formatAssertMessage", "printAssertMessage", "terminateOnAssert"])
 }
 
 /**

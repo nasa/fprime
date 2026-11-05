@@ -14,26 +14,12 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Fw/Types/assert_hook.hpp>
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
 #include <limits>
-
-namespace Fw {
-void defaultReportAssert(FILE_NAME_ARG file,
-                         FwSizeType lineNo,
-                         FwSizeType numArgs,
-                         FwAssertArgType arg1,
-                         FwAssertArgType arg2,
-                         FwAssertArgType arg3,
-                         FwAssertArgType arg4,
-                         FwAssertArgType arg5,
-                         FwAssertArgType arg6,
-                         CHAR* destBuffer,
-                         FwSizeType buffSize);
-
-}
 
 namespace Svc {
 
@@ -108,8 +94,8 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
 #endif
 
     CHAR msg[Fw::StringBase::BUFFER_SIZE(FW_ASSERT_TEXT_SIZE)] = {0};
-    Fw::defaultReportAssert(file, static_cast<U32>(lineNo), numArgs, arg1, arg2, arg3, arg4, arg5, arg6, msg,
-                            sizeof(msg));
+    Fw::formatAssertMessage(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6, msg,
+                            static_cast<FwSizeType>(sizeof(msg)));
     Fw::Logger::log("%s\n", msg);
 
     // Increment active assert counter
