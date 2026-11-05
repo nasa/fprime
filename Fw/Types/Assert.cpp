@@ -149,62 +149,22 @@ I8 CAssert6(FILE_NAME_ARG file,
 }
 
 I8 CAssert0(FILE_NAME_ARG file, FwSizeType lineNo) {
-    Fw::AssertHook* const registeredHook = Fw::AssertHook::getRegisteredHook();
-    if (nullptr == registeredHook) {
-        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
-        Fw::formatAssertMessage(file, lineNo, 0, 0, 0, 0, 0, 0, 0, assertMsg,
-                                static_cast<FwSizeType>(sizeof(assertMsg)));
-        Fw::printAssertMessage(assertMsg);
-        Fw::terminateOnAssert();
-    } else {
-        registeredHook->reportAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0);
-        registeredHook->doAssert();
-    }
+    Fw::defaultSwAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0);
     return 0;
 }
 
 I8 CAssert1(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) {
-    Fw::AssertHook* const registeredHook = Fw::AssertHook::getRegisteredHook();
-    if (nullptr == registeredHook) {
-        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
-        Fw::formatAssertMessage(file, lineNo, 1, arg1, 0, 0, 0, 0, 0, assertMsg,
-                                static_cast<FwSizeType>(sizeof(assertMsg)));
-        Fw::printAssertMessage(assertMsg);
-        Fw::terminateOnAssert();
-    } else {
-        registeredHook->reportAssert(file, lineNo, 1, arg1, 0, 0, 0, 0, 0);
-        registeredHook->doAssert();
-    }
+    Fw::defaultSwAssert(file, lineNo, 1, arg1, 0, 0, 0, 0, 0);
     return 0;
 }
 
 I8 CAssert2(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, FwSizeType lineNo) {
-    Fw::AssertHook* const registeredHook = Fw::AssertHook::getRegisteredHook();
-    if (nullptr == registeredHook) {
-        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
-        Fw::formatAssertMessage(file, lineNo, 2, arg1, arg2, 0, 0, 0, 0, assertMsg,
-                                static_cast<FwSizeType>(sizeof(assertMsg)));
-        Fw::printAssertMessage(assertMsg);
-        Fw::terminateOnAssert();
-    } else {
-        registeredHook->reportAssert(file, lineNo, 2, arg1, arg2, 0, 0, 0, 0);
-        registeredHook->doAssert();
-    }
+    Fw::defaultSwAssert(file, lineNo, 2, arg1, arg2, 0, 0, 0, 0);
     return 0;
 }
 
 I8 CAssert3(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, FwAssertArgType arg3, FwSizeType lineNo) {
-    Fw::AssertHook* const registeredHook = Fw::AssertHook::getRegisteredHook();
-    if (nullptr == registeredHook) {
-        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
-        Fw::formatAssertMessage(file, lineNo, 3, arg1, arg2, arg3, 0, 0, 0, assertMsg,
-                                static_cast<FwSizeType>(sizeof(assertMsg)));
-        Fw::printAssertMessage(assertMsg);
-        Fw::terminateOnAssert();
-    } else {
-        registeredHook->reportAssert(file, lineNo, 3, arg1, arg2, arg3, 0, 0, 0);
-        registeredHook->doAssert();
-    }
+    Fw::defaultSwAssert(file, lineNo, 3, arg1, arg2, arg3, 0, 0, 0);
     return 0;
 }
 
@@ -214,17 +174,7 @@ I8 CAssert4(FILE_NAME_ARG file,
             FwAssertArgType arg3,
             FwAssertArgType arg4,
             FwSizeType lineNo) {
-    Fw::AssertHook* const registeredHook = Fw::AssertHook::getRegisteredHook();
-    if (nullptr == registeredHook) {
-        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
-        Fw::formatAssertMessage(file, lineNo, 4, arg1, arg2, arg3, arg4, 0, 0, assertMsg,
-                                static_cast<FwSizeType>(sizeof(assertMsg)));
-        Fw::printAssertMessage(assertMsg);
-        Fw::terminateOnAssert();
-    } else {
-        registeredHook->reportAssert(file, lineNo, 4, arg1, arg2, arg3, arg4, 0, 0);
-        registeredHook->doAssert();
-    }
+    Fw::defaultSwAssert(file, lineNo, 4, arg1, arg2, arg3, arg4, 0, 0);
     return 0;
 }
 
@@ -235,17 +185,7 @@ I8 CAssert5(FILE_NAME_ARG file,
             FwAssertArgType arg4,
             FwAssertArgType arg5,
             FwSizeType lineNo) {
-    Fw::AssertHook* const registeredHook = Fw::AssertHook::getRegisteredHook();
-    if (nullptr == registeredHook) {
-        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
-        Fw::formatAssertMessage(file, lineNo, 5, arg1, arg2, arg3, arg4, arg5, 0, assertMsg,
-                                static_cast<FwSizeType>(sizeof(assertMsg)));
-        Fw::printAssertMessage(assertMsg);
-        Fw::terminateOnAssert();
-    } else {
-        registeredHook->reportAssert(file, lineNo, 5, arg1, arg2, arg3, arg4, arg5, 0);
-        registeredHook->doAssert();
-    }
+    Fw::defaultSwAssert(file, lineNo, 5, arg1, arg2, arg3, arg4, arg5, 0);
     return 0;
 }
 
@@ -257,16 +197,6 @@ I8 CAssert6(FILE_NAME_ARG file,
             FwAssertArgType arg5,
             FwAssertArgType arg6,
             FwSizeType lineNo) {
-    Fw::AssertHook* const registeredHook = Fw::AssertHook::getRegisteredHook();
-    if (nullptr == registeredHook) {
-        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
-        Fw::formatAssertMessage(file, lineNo, 6, arg1, arg2, arg3, arg4, arg5, arg6, assertMsg,
-                                static_cast<FwSizeType>(sizeof(assertMsg)));
-        Fw::printAssertMessage(assertMsg);
-        Fw::terminateOnAssert();
-    } else {
-        registeredHook->reportAssert(file, lineNo, 6, arg1, arg2, arg3, arg4, arg5, arg6);
-        registeredHook->doAssert();
-    }
+    Fw::defaultSwAssert(file, lineNo, 6, arg1, arg2, arg3, arg4, arg5, arg6);
     return 0;
 }
