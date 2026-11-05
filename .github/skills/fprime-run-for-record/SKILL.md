@@ -36,7 +36,7 @@ stage-3 step (bench host included):
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
 git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach a59e998
+git -C harness checkout --detach 4173bca
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
