@@ -102,6 +102,16 @@ if (FPRIME_PLATFORM STREQUAL "Linux")
     )
 endif()
 register_fprime_ut(
+    Fw_AssertHook_fputs_ut_exe
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FputsAssertHookTest.cpp"
+  DEPENDS
+    Fw_Types
+  CHOOSES_IMPLEMENTATIONS
+    Fw_AssertHook_fputs
+)
+
+register_fprime_ut(
     Fw_AssertHook_Stub_ut_exe
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubAssertHookTest.cpp"

@@ -35,6 +35,7 @@ void Fw::formatAssertMessage(FILE_NAME_ARG file,
                              FwAssertArgType arg6,
                              CHAR* destBuffer,
                              FwSizeType buffSize) {
+    // Format status is discarded: a truncated assert message is still useful and there is no better recourse here
     switch (numArgs) {
         case 0:
             (void)stringFormat(destBuffer, buffSize, fileIdFs, file, lineNo);

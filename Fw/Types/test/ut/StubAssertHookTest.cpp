@@ -31,26 +31,31 @@ class RecordingHook : public Fw::AssertHook {
 };
 }  // namespace
 
-TEST(StubAssertHook, FormatYieldsEmptyMessage) {
-    CHAR buffer[FW_ASSERT_TEXT_SIZE];
-    buffer[0] = 'x';
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-    FILE_NAME_ARG file = 0x1234;
+FILE_NAME_ARG TEST_FILE = 0x1234;
 #else
-    FILE_NAME_ARG file = "StubAssertHookTest.cpp";
+FILE_NAME_ARG TEST_FILE = "StubAssertHookTest.cpp";
 #endif
-    Fw::formatAssertMessage(file, 42, 2, 1, 2, 0, 0, 0, 0, buffer, static_cast<FwSizeType>(sizeof(buffer)));
+
+TEST(StubAssertHook, FormatYieldsEmptyMessage) {
+    CHAR buffer[FW_ASSERT_TEXT_SIZE] = {0};
+    buffer[0] = 'x';
+    Fw::formatAssertMessage(TEST_FILE, 42, 2, 1, 2, 0, 0, 0, 0, buffer, static_cast<FwSizeType>(sizeof(buffer)));
     EXPECT_STREQ(buffer, "");
-    Fw::printAssertMessage(buffer);
 }
 
 TEST(StubAssertHook, FormatToleratesEmptyBuffer) {
-#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-    FILE_NAME_ARG file = 0x1234;
-#else
-    FILE_NAME_ARG file = "StubAssertHookTest.cpp";
-#endif
-    Fw::formatAssertMessage(file, 1, 0, 0, 0, 0, 0, 0, 0, nullptr, 0);
+    CHAR sentinel[1] = {'x'};
+    Fw::formatAssertMessage(TEST_FILE, 1, 0, 0, 0, 0, 0, 0, 0, sentinel, 0);
+    EXPECT_EQ(sentinel[0], 'x');
+    Fw::formatAssertMessage(TEST_FILE, 1, 0, 0, 0, 0, 0, 0, 0, nullptr, 0);
+    EXPECT_EQ(sentinel[0], 'x');
+}
+
+TEST(StubAssertHook, PrintWritesNothing) {
+    ::testing::internal::CaptureStderr();
+    Fw::printAssertMessage("should not appear");
+    EXPECT_EQ(::testing::internal::GetCapturedStderr(), "");
 }
 
 TEST(StubAssertHook, RegisteredHookStillDispatched) {
@@ -65,9 +70,18 @@ TEST(StubAssertHook, RegisteredHookStillDispatched) {
     EXPECT_EQ(hook.m_arg1, 7);
 }
 
+// terminateOnAssert() is assert(false), which compiles out under NDEBUG
+#ifndef NDEBUG
 TEST(StubAssertHookDeathTest, TerminateAsserts) {
-    EXPECT_DEATH(Fw::terminateOnAssert(), "");
+    EXPECT_DEATH(Fw::terminateOnAssert(), "false");
 }
+
+TEST(StubAssertHookDeathTest, DefaultPathPrintsNothingAndDies) {
+    // No hook registered: FW_ASSERT goes through the stub, so the first line on stderr is the
+    // C library's own assertion message from terminateOnAssert(), not an F Prime "Assert:" line
+    EXPECT_DEATH(FW_ASSERT(false, 7), "^[^\n]*terminateOnAssert");
+}
+#endif
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

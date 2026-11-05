@@ -126,15 +126,21 @@ without a console, or that cannot afford `stdio`, choose `Fw_AssertHook_Stub` or
 provide their own implementation of the three functions (for example writing to a UART
 and resetting the processor) with `register_fprime_implementation`.
 
-`terminateOnAssert` is reached only when `FW_ASSERTIONS_ALWAYS_ABORT` is `0`; when it
-is `1` the framework calls `abort()` after any handler, registered or default. With
+`terminateOnAssert` (or a registered hook's `doAssert`) is always called; when
+`FW_ASSERTIONS_ALWAYS_ABORT` is `1` the framework additionally calls `abort()` afterwards,
+so an implementation whose `terminateOnAssert` returns still terminates the program. With
 `NDEBUG` defined, `assert(false)` compiles out and execution continues after the
-assertion unless `FW_ASSERTIONS_ALWAYS_ABORT` is set.
+assertion unless `FW_ASSERTIONS_ALWAYS_ABORT` is set. Both the C++ `FW_ASSERT` macros and
+the C `FW_CASSERT` macros follow this sequence.
 
 The link-time choice sets the default behavior of a platform. The runtime
 `AssertHook` below sits on top of it and is how a flight system redirects assertions
 into its FATAL handling (`Svc::AssertFatalAdapter`) and how unit tests intercept
-them; it is unaffected by the implementation chosen.
+them. The registry itself is independent of the implementation chosen, but the default
+`AssertHook::printAssert` / `AssertHook::doAssert` and the message that
+`Svc::AssertFatalAdapter` writes to `Fw::Logger` use the chosen functions: with
+`Fw_AssertHook_Stub` that log line is empty (the `AF_ASSERT_n` FATAL events still carry
+file, line and arguments).
 
 ## AssertHook
 

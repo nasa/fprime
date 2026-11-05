@@ -8,15 +8,10 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 // ======================================================================
-#ifndef FW_TYPES_ASSERT_HOOKS_HPP_
-#define FW_TYPES_ASSERT_HOOKS_HPP_
+#ifndef FW_TYPES_ASSERT_HOOK_HPP_
+#define FW_TYPES_ASSERT_HOOK_HPP_
 #include <Fw/FPrimeBasicTypes.hpp>
-
-#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define FILE_NAME_ARG U32
-#else
-#define FILE_NAME_ARG const CHAR*
-#endif
+#include <Fw/Types/Assert.hpp>
 
 namespace Fw {
 
@@ -60,4 +55,4 @@ void printAssertMessage(const CHAR* msg);
 void terminateOnAssert();
 
 }  // namespace Fw
-#endif  // FW_TYPES_ASSERT_HOOKS_HPP_
+#endif  // FW_TYPES_ASSERT_HOOK_HPP_
