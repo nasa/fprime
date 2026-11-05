@@ -149,10 +149,11 @@ class AssertHook {
                               FwAssertArgType arg5,
                               FwAssertArgType arg6);
     // default reportAssert() will call this when the message is built
-    // override it to do another kind of print. printf by default
+    // override it to do another kind of print. By default calls Fw::printAssertMessage
+    // of the chosen Fw_AssertHook implementation (see Fw/Types/assert_hook.hpp)
     virtual void printAssert(const CHAR* msg);
-    // do assert action. By default, calls assert.
-    // Called after reportAssert()
+    // do assert action. By default, calls Fw::terminateOnAssert of the chosen
+    // Fw_AssertHook implementation. Called after reportAssert()
     virtual void doAssert();
     // register the hook
     void registerHook();

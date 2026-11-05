@@ -18,7 +18,8 @@ namespace Fw {
 //! \brief format an assert message
 //!
 //! Formats the location of a failed assertion and its arguments into destBuffer. Called by the
-//! framework when no Fw::AssertHook is registered, and by Svc::AssertFatalAdapter.
+//! framework when no Fw::AssertHook is registered, by the default Fw::AssertHook::reportAssert, and
+//! by Svc::AssertFatalAdapter.
 //!
 //! \param file: file name or file ID (depending on FW_ASSERT_LEVEL)
 //! \param lineNo: line number where the assert occurred
@@ -41,7 +42,7 @@ void formatAssertMessage(FILE_NAME_ARG file,
 //! \brief print an assert message
 //!
 //! Outputs a message formatted by formatAssertMessage. Called by the framework when no
-//! Fw::AssertHook is registered.
+//! Fw::AssertHook is registered and by the default Fw::AssertHook::printAssert.
 //!
 //! \param msg: null-terminated string containing the formatted assert message
 void printAssertMessage(const CHAR* msg);

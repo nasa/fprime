@@ -121,7 +121,9 @@ choose. F´ ships two:
 | `Fw_AssertHook_fputs` | formats with `Fw::stringFormat`, prints to `stderr` with `fputs`, calls `assert(false)` |
 | `Fw_AssertHook_Stub` | produces an empty message, prints nothing, calls `assert(false)` |
 
-`Fw_AssertHook_fputs` is the choice of the Unix (Linux/Darwin) platform. Targets
+`Fw_AssertHook_fputs` is the choice of the Unix (Linux/Darwin) platform. Every other platform
+package must list an `Fw_AssertHook_*` implementation in its `CHOOSES_IMPLEMENTATIONS`; a
+platform that chooses none fails to build. Targets
 without a console, or that cannot afford `stdio`, choose `Fw_AssertHook_Stub` or
 provide their own implementation of the three functions (for example writing to a UART
 and resetting the processor) with `register_fprime_implementation`.
@@ -150,19 +152,19 @@ of the chosen `Fw_AssertHook` implementation described above. The framework also
 registration of a user-defined handler. The handler is
 registerHook and can be found in Fw/Types/Assert.hpp. The assert hook is
 called with a string representing the text of the assert. The user
-implements a derived class that implements the reportAssert() pure
-virtual method, and does whatever project-specific logic is required.
+implements a derived class that overrides the virtual methods below and
+does whatever project-specific logic is required.
 
 ### reportAssert
 
-When formatting an assert message use the default message line hash or
-name, and argument approach.
+Receives the location of and arguments to the assertion. The default formats
+them with `Fw::formatAssertMessage` and passes the text to `printAssert`.
 
 ### printAssert
 
-When outputting the assert message use the default Fw::Logger. Force the
-Fw::Logger default to printf for systems with print f.
+Outputs the formatted message. The default calls `Fw::printAssertMessage`.
 
 ### doAssert
 
-Actually asserts (action of assert).
+Performs the assert action after the message has been reported. The default
+calls `Fw::terminateOnAssert`.
