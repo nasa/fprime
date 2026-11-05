@@ -44,11 +44,11 @@ jobs:
     timeout-minutes: 180
     env:
       GITHUB_TOKEN: ${{ github.token }}
-      DISPATCH_TOKEN: ${{ secrets.EXT_CI_DISPATCH_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: "Dispatch, poll and report"
         env:
+          DISPATCH_TOKEN: ${{ secrets.EXT_CI_DISPATCH_TOKEN }}  # external repos only; not exposed to other steps
           INPUT_REPOS: ${{ inputs.repos }}
           INPUT_PR_NUMBER: ${{ inputs.pr_number }}
           INPUT_FPRIME_REF: ${{ inputs.fprime_ref }}
@@ -57,6 +57,7 @@ jobs:
       - name: "Finalize (close open checks, cancel orphaned remote runs)"
         if: always()
         env:
+          DISPATCH_TOKEN: ${{ secrets.EXT_CI_DISPATCH_TOKEN }}  # external repos only; not exposed to other steps
           JOB_STATUS: ${{ job.status }}
         run: python3 .github/scripts/ext-ci-orchestrator.py finalize
       - uses: actions/upload-artifact@v4
