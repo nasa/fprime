@@ -52,6 +52,8 @@ jobs:
           app-id: ${{ secrets.EXT_CI_APP_ID }}
           private-key: ${{ secrets.EXT_CI_APP_PRIVATE_KEY }}
           owner: fprime-community
+          permission-actions: write
+          permission-contents: read
       - name: "App token for the Check Runs"
         id: checks-token
         continue-on-error: true  # App not installed here yet -> GITHUB_TOKEN (checks then land in another workflow's suite)
@@ -61,6 +63,10 @@ jobs:
           private-key: ${{ secrets.EXT_CI_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: ${{ github.event.repository.name }}
+          permission-checks: write
+          permission-actions: read
+          permission-contents: read
+          permission-pull-requests: read
       - name: "Dispatch, poll and report"
         env:
           DISPATCH_TOKEN: ${{ steps.ext-token.outputs.token }}  # external repos only; not exposed to other steps
