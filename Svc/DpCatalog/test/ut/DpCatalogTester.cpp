@@ -169,7 +169,7 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
 
-    ASSERT_EVENTS_DpFileAdded_SIZE(numDps - numRuntime);
+    ASSERT_EVENTS_DpFileAdded_SIZE(expectedBuildFileEvents(numDps - numRuntime));
 
     this->sendCmd_START_XMIT_CATALOG(0, 11, wait, true);
 
@@ -237,7 +237,8 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
         // This should fail since we just cleaned up the catalog
         ASSERT_CMD_RESPONSE(4, DpCatalog::OPCODE_START_XMIT_CATALOG, 125, Fw::CmdResponse::EXECUTION_ERROR);
     } else {
-        ASSERT_EVENTS_DpFileAdded_SIZE(numDps);
+        // the build is throttled; each runtime addition is reported
+        ASSERT_EVENTS_DpFileAdded_SIZE(expectedBuildFileEvents(numDps - numRuntime) + numRuntime);
         ASSERT_from_fileOut_SIZE(numDps);
 
         ASSERT_CMD_RESPONSE_SIZE(2);
@@ -1320,9 +1321,101 @@ void DpCatalogTester::test_NonDpFilesDoNotConsumeSlots() {
     ASSERT_CMD_RESPONSE(0, DpCatalog::OPCODE_BUILD_CATALOG, 10, Fw::CmdResponse::OK);
 
     // every DP file must be cataloged despite the non-DP files
-    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
+    ASSERT_EVENTS_DpFileAdded_SIZE(expectedBuildFileEvents(DP_MAX_FILES));
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), DP_MAX_FILES);
     ASSERT_EVENTS_CatalogFull_SIZE(1);
 
+    this->component.shutdown();
+}
+
+FwSizeType DpCatalogTester::expectedBuildFileEvents(FwSizeType files) {
+    const FwSizeType throttle = static_cast<FwSizeType>(DpCatalogComponentBase::EVENTID_DPFILEADDED_THROTTLE);
+    return (files < throttle) ? files : throttle;
+}
+
+void DpCatalogTester::test_BuildFileEventsThrottled() {
+    // A build over more files than the throttle reports the first files only; the next build
+    // starts over; a runtime addition and a retransmit are reported whatever the build emitted
+    Fw::MallocAllocator alloc;
+    Fw::FileNameString dir("./DpTest_EventThrottle");
+    Fw::FileNameString stateFile("./DpTest_EventThrottle/dpState.dat");
+    this->makeDpDir(dir.toChar());
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
+    const FwSizeType throttle = static_cast<FwSizeType>(DpCatalogComponentBase::EVENTID_DPFILEADDED_THROTTLE);
+    ASSERT_EQ(throttle, static_cast<FwSizeType>(DpCatalogComponentBase::EVENTID_DPFILESKIPPED_THROTTLE));
+    const FwSizeType numFiles = throttle + 3;
+    const FwSizeType numNew = throttle + 2;
+    ASSERT_LT(numFiles + 1 + numNew, static_cast<FwSizeType>(DP_MAX_FILES));
+    const FwDpIdType extraId = static_cast<FwDpIdType>(numFiles + 1);
+    const FwDpIdType lastId = static_cast<FwDpIdType>(numFiles + 1 + numNew);
+    for (FwDpIdType id = 1; id <= lastId; id++) {
+        this->delDp(id, Fw::Time(1000 + id, 0), dir.toChar());
+    }
+    for (FwDpIdType id = 1; id <= static_cast<FwDpIdType>(numFiles); id++) {
+        Fw::String file =
+            this->genDP(id, 10, Fw::Time(1000 + id, 0), 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(file.toChar(), "");
+    }
+
+    // every file is read and cataloged; DpFileAdded stops at the throttle, ProcessingFile does not
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), numFiles);
+    ASSERT_EVENTS_DpFileAdded_SIZE(throttle);
+    ASSERT_EVENTS_ProcessingFile_SIZE(numFiles);
+    ASSERT_EVENTS_CatalogBuildComplete_SIZE(1);
+
+    // a runtime addition after the exhausted build is still reported, and names the file
+    Fw::String extra =
+        this->genDP(extraId, 10, Fw::Time(1000 + extraId, 0), 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+    ASSERT_STRNE(extra.toChar(), "");
+    this->invoke_to_addToCat(0, extra, 10, 0);
+    this->component.doDispatch();
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), numFiles + 1);
+    ASSERT_EVENTS_DpFileAdded_SIZE(throttle + 1);
+    ASSERT_EVENTS_DpFileAdded(static_cast<U32>(throttle), extra.toChar());
+
+    // transmit everything so the state file records every product as TRANSMITTED
+    this->sendCmd_START_XMIT_CATALOG(0, 11, Fw::Wait::NO_WAIT, false);
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        this->component.doDispatch();
+    }
+    ASSERT_from_fileOut_SIZE(numFiles + 1);
+    ASSERT_EVENTS_CatalogXmitCompleted_SIZE(1);
+    this->component.shutdown();
+
+    // more new products appear while the software is down
+    for (FwDpIdType id = extraId + 1; id <= lastId; id++) {
+        Fw::String file =
+            this->genDP(id, 10, Fw::Time(1000 + id, 0), 16, Fw::DpState::UNTRANSMITTED, false, dir.toChar());
+        ASSERT_STRNE(file.toChar(), "");
+    }
+
+    // the next build starts over: the transmitted files are skipped and the new ones added, each event
+    // stopping at its throttle
+    this->clearHistory();
+    ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), numNew);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(throttle);
+    ASSERT_EVENTS_DpFileAdded_SIZE(throttle);
+    ASSERT_EVENTS_ProcessingFile_SIZE(numFiles + 1 + numNew);
+
+    // a runtime addition of a transmitted product is reported as skipped despite the exhausted build
+    this->invoke_to_addToCat(0, extra, 10, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_DpFileSkipped_SIZE(throttle + 1);
+    ASSERT_EVENTS_DpFileSkipped(static_cast<U32>(throttle), extra.toChar());
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), numNew);
+
+    // so is a retransmit, whose product is cataloged again
+    const FwDpIdType retransmitId = 1;
+    ASSERT_NO_FATAL_FAILURE(this->retransmit(21, retransmitId, Fw::Time(1000 + retransmitId, 0), Fw::CmdResponse::OK));
+    ASSERT_EVENTS_DpFileAdded_SIZE(1);
+    ASSERT_EQ(this->component.m_dpCatalog.getSize(), numNew + 1);
+
+    for (FwDpIdType id = 1; id <= lastId; id++) {
+        this->delDp(id, Fw::Time(1000 + id, 0), dir.toChar());
+    }
+    (void)Os::FileSystem::removeFile(stateFile.toChar());
     this->component.shutdown();
 }
 
@@ -1508,7 +1601,7 @@ void DpCatalogTester::test_InsertWhenFull() {
     }
 
     ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
-    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
+    ASSERT_EVENTS_DpFileAdded_SIZE(expectedBuildFileEvents(DP_MAX_FILES));
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), DP_MAX_FILES);
     const U32 pendingFiles = this->component.m_pendingFiles;
     const U64 pendingBytes = this->component.m_pendingDpBytes;
@@ -1521,7 +1614,7 @@ void DpCatalogTester::test_InsertWhenFull() {
     ASSERT_EVENTS_DpCatalogFull_SIZE(1);
     ASSERT_EQ(this->eventHistory_DpCatalogFull->at(0).dp.get_id(), extraId);
     ASSERT_EVENTS_DpInsertError_SIZE(0);
-    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
+    ASSERT_EVENTS_DpFileAdded_SIZE(expectedBuildFileEvents(DP_MAX_FILES));
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), DP_MAX_FILES);
     ASSERT_EQ(this->component.m_pendingFiles, pendingFiles);
     ASSERT_EQ(this->component.m_pendingDpBytes, pendingBytes);
@@ -1539,8 +1632,8 @@ void DpCatalogTester::test_InsertWhenFull() {
     this->invoke_to_addToCat(0, extra, 10, 0);
     this->component.doDispatch();
     ASSERT_EVENTS_DpCatalogFull_SIZE(1);
-    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES + 1);
-    ASSERT_EVENTS_DpFileAdded(DP_MAX_FILES, extra.toChar());
+    ASSERT_EVENTS_DpFileAdded_SIZE(expectedBuildFileEvents(DP_MAX_FILES) + 1);
+    ASSERT_EVENTS_DpFileAdded(expectedBuildFileEvents(DP_MAX_FILES), extra.toChar());
     ASSERT_EQ(this->component.m_dpCatalog.getSize(), DP_MAX_FILES);
 
     for (FwDpIdType id = 1; id <= extraId; id++) {
@@ -4038,14 +4131,14 @@ void DpCatalogTester ::test_RetransmitFullStateFile() {
         }
     }
     ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 10, alloc));
-    ASSERT_EVENTS_DpFileAdded_SIZE(DP_MAX_FILES);
+    ASSERT_EVENTS_DpFileAdded_SIZE(expectedBuildFileEvents(DP_MAX_FILES));
     ASSERT_NO_FATAL_FAILURE(this->xmitAll(11, false));
     ASSERT_EVENTS_ProductComplete_SIZE(DP_MAX_FILES);
     this->component.shutdown();
 
     this->clearHistory();
     ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 20, alloc));
-    ASSERT_EVENTS_DpFileSkipped_SIZE(DP_MAX_FILES);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(expectedBuildFileEvents(DP_MAX_FILES));
     ASSERT_EQ(this->component.m_stateFileEntries, static_cast<FwSizeType>(DP_MAX_FILES));
     ASSERT_NO_FATAL_FAILURE(this->retransmit(21, 1, time, Fw::CmdResponse::OK));
     ASSERT_EVENTS_DpRetransmitScheduled_SIZE(1);
@@ -4055,7 +4148,7 @@ void DpCatalogTester ::test_RetransmitFullStateFile() {
     // the reset survives the reboot and the file still holds exactly one record per product
     this->clearHistory();
     ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 30, alloc));
-    ASSERT_EVENTS_DpFileSkipped_SIZE(DP_MAX_FILES - 1);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(expectedBuildFileEvents(DP_MAX_FILES - 1));
     ASSERT_EVENTS_DpFileAdded_SIZE(1);
     ASSERT_EVENTS_DpFileAdded(0, firstFile.toChar());
     ASSERT_NO_FATAL_FAILURE(this->xmitAll(31, false));
@@ -4067,7 +4160,7 @@ void DpCatalogTester ::test_RetransmitFullStateFile() {
     this->component.shutdown();
     this->clearHistory();
     ASSERT_NO_FATAL_FAILURE(this->configureAndBuild(dir, stateFile, 40, alloc));
-    ASSERT_EVENTS_DpFileSkipped_SIZE(DP_MAX_FILES);
+    ASSERT_EVENTS_DpFileSkipped_SIZE(expectedBuildFileEvents(DP_MAX_FILES));
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
     ASSERT_EQ(Os::FileSystem::getFileSize(stateFile.toChar(), fileSize), Os::FileSystem::OP_OK);
     ASSERT_EQ(fileSize, static_cast<FwSizeType>(DP_MAX_FILES) * STATE_ENTRY_SIZE);

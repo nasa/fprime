@@ -80,6 +80,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! configure the component on one directory and build the catalog as the first command
     void configureAndBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq, Fw::MemAllocator& alloc);
 
+    //! number of DpFileAdded/DpFileSkipped events one build over this many files emits (bounded by the throttle)
+    static FwSizeType expectedBuildFileEvents(FwSizeType files);
+
     //! overwrite the state file with one transmitted record per (directory index, id), without checking the index
     void writeStateFileRecords(Fw::FileNameString& stateFile,
                                const FwIndexType* dirs,
@@ -186,6 +189,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_NonCanonicalDpRejected();
     void test_BadHeaderHashRejected();
     void test_NonDpFilesDoNotConsumeSlots();
+    void test_BuildFileEventsThrottled();
     void test_InsertIntoEmptyBuiltCatalog();
     void test_InsertDuringTransmitInPriorityOrder();
     void test_InsertWhenFull();
