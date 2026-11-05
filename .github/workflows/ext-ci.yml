@@ -38,7 +38,7 @@ jobs:
   orchestrate:
     name: "Orchestrate"
     # Only chain from a trigger that actually ran (not skipped/cancelled) for a PR or merge group.
-    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["pull_request","merge_group"]'), github.event.workflow_run.event))
+    if: github.event_name != 'push' && (github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["pull_request","merge_group"]'), github.event.workflow_run.event)))
     runs-on: ubuntu-latest
     timeout-minutes: 60  # > 2 * max manifest timeout_minutes (queue + run) + overhead
     env:
