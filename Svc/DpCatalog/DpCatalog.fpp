@@ -459,8 +459,9 @@ module Svc {
       format "Error sending DP file {}, stat {}. Halting xmit." \
       throttle 10
 
-    @ File added at runtime, by a runtime addition or RETRANSMIT_DP; a BUILD_CATALOG does not emit
-    @ it per file and reports its totals with ProcessingDirectoryComplete
+    @ File added at runtime by a runtime addition (addToCat); a BUILD_CATALOG does not emit it per
+    @ file and reports its totals with ProcessingDirectoryComplete, and RETRANSMIT_DP announces its
+    @ file with DpRetransmitScheduled
     event DpFileAdded(
                           file: string size FileNameStringSize @< The file
       ) \
