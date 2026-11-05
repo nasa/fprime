@@ -6,7 +6,21 @@
 
 For every repo in .github/ext-ci-manifest.json: create a Check Run on the F´ commit under test,
 dispatch the repo's own ci.yml with that commit, poll the remote run, close the Check Run with
-its result. A re-run of the orchestrator re-dispatches every repo.
+its result. A re-run of the orchestrator re-dispatches only the repos whose check is not green.
+
+Manifest (.github/ext-ci-manifest.json):
+  upstream_repository  only this repo dispatches automatically; forks only on workflow_dispatch
+  check_prefix         Check Run name is "<check_prefix> / <id>"
+  paths_ignore         globs; a PR touching only these gets "skipped" checks and no dispatch
+  repos[]: id, repository (owner/name), workflow (file name, must accept the inputs below),
+           default_ref (branch to dispatch when no pr-<N> / base-named branch exists),
+           timeout_minutes (of remote running time; 2x while queued), failure_policy
+           ("block": failure is a red check and fails this job; "notify": neutral check),
+           on_pr (false: never dispatched for a PR, only merge queue / manual)
+
+Contract for the external ci.yml: `on: workflow_dispatch` with inputs fprime_repository,
+fprime_ref (exact SHA to overlay as the F´ dependency), fprime_pr_number, dispatch_id; no secrets,
+read-only permissions, no cache writes on dispatched runs.
 
 Two credentials, never mixed:
   GITHUB_TOKEN    this repo only (checks: write) - reports results
@@ -566,7 +580,8 @@ def finalize() -> None:
         except ApiError:
             pass
         if cancelled:
-            conclusion, title, why = "cancelled", "Cancelled by orchestrator", "The orchestrator run was cancelled"
+            conclusion = "neutral" if s["failure_policy"] == "notify" else "cancelled"
+            title, why = "Cancelled by orchestrator", "The orchestrator run was cancelled"
         elif s.get("remote_conclusion"):  # reported, but the check update itself failed in run
             conclusion, title = check_conclusion(s), f"{s['remote_conclusion']} ({s['repository']} @ {s.get('ext_ref') or '-'})"
             why = "Closed by the finalize step after the check update failed"
