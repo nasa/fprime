@@ -1,13 +1,14 @@
-name: ext-ci
+name: External CI
 
 on:
-  # PR path: fires after ext-ci-trigger completed, i.e. after GitHub's own approval gate.
-  # The workflow file and the checked-out scripts come from the default branch, never from the PR.
-  workflow_run:
-    workflows: [ ext-ci-trigger ]
-    types: [ completed ]
   push:
     branches: [ thomas-bc/ext-ci ]  # TEMPORARY: registers the workflow so it can be dispatched before merge
+  # PR path: fires after the "External CI Trigger" workflow (ext-ci-trigger.yml) completed, i.e. after
+  # GitHub's own approval gate.
+  # The workflow file and the checked-out scripts come from the default branch, never from the PR.
+  workflow_run:
+    workflows: [ "External CI Trigger" ]
+    types: [ completed ]
   workflow_dispatch:
     inputs:
       repos:
@@ -35,18 +36,43 @@ permissions:
 
 jobs:
   orchestrate:
-    name: "External CI"
+    name: "Orchestrate"
     # Only chain from a trigger that actually ran (not skipped/cancelled) for a PR or merge group.
-    if: github.event_name != 'push' && (github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["pull_request","merge_group"]'), github.event.workflow_run.event)))
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["pull_request","merge_group"]'), github.event.workflow_run.event))
     runs-on: ubuntu-latest
     timeout-minutes: 60  # > 2 * max manifest timeout_minutes (queue + run) + overhead
     env:
       GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
+      # One GitHub App, two installation tokens (1 h, revoked after the job): the external one can only
+      # start/cancel runs in the external repositories; the checks one can only write Check Runs here.
+      - name: "App token for the external repositories"
+        id: ext-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.EXT_CI_APP_ID }}
+          private-key: ${{ secrets.EXT_CI_APP_PRIVATE_KEY }}
+          owner: fprime-community
+          permission-actions: write
+          permission-contents: read
+      - name: "App token for the Check Runs"
+        id: checks-token
+        continue-on-error: true  # App not installed here yet -> GITHUB_TOKEN (checks then land in another workflow's suite)
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.EXT_CI_APP_ID }}
+          private-key: ${{ secrets.EXT_CI_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-checks: write
+          permission-actions: read
+          permission-contents: read
+          permission-pull-requests: read
       - name: "Dispatch, poll and report"
         env:
-          DISPATCH_TOKEN: ${{ secrets.EXT_CI_DISPATCH_TOKEN }}  # external repos only; not exposed to other steps
+          DISPATCH_TOKEN: ${{ steps.ext-token.outputs.token }}  # external repos only; not exposed to other steps
+          CHECKS_TOKEN: ${{ steps.checks-token.outputs.token }}
           INPUT_REPOS: ${{ inputs.repos }}
           INPUT_PR_NUMBER: ${{ inputs.pr_number }}
           INPUT_FPRIME_REF: ${{ inputs.fprime_ref }}
@@ -55,7 +81,8 @@ jobs:
       - name: "Finalize (close open checks, cancel orphaned remote runs)"
         if: always()
         env:
-          DISPATCH_TOKEN: ${{ secrets.EXT_CI_DISPATCH_TOKEN }}  # external repos only; not exposed to other steps
+          DISPATCH_TOKEN: ${{ steps.ext-token.outputs.token }}  # external repos only; not exposed to other steps
+          CHECKS_TOKEN: ${{ steps.checks-token.outputs.token }}
           JOB_STATUS: ${{ job.status }}
         run: python3 .github/actions/ext-ci/orchestrator.py finalize
       - uses: actions/upload-artifact@v4

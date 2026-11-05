@@ -1,8 +1,8 @@
-# External CI (`ext-ci`)
+# External CI
 
 F´ does not build the `fprime-community` projects itself any more: `.github/workflows/ext-ci.yml`
 dispatches each project's own `ci.yml` with the F´ revision under test and reports the result as a
-Check Run named `ext-ci / <id>` on the F´ commit. `ext-ci-trigger.yml` is the trivial `pull_request`
+Check Run named `External CI / <id>` on the F´ commit. `ext-ci-trigger.yml` (`External CI Trigger / Approval Gate`) is the trivial `pull_request`
 workflow whose completion (after GitHub's fork-approval gate) starts the orchestrator; the orchestrator
 also runs for merge groups and on manual dispatch (`repos`, `pr_number` or `fprime_ref` inputs).
 
@@ -35,6 +35,14 @@ whatever the policy. A re-run of the orchestrator re-dispatches only the repos w
 
 ## Credentials
 
-`GITHUB_TOKEN` (`checks: write`, this repository only) reports results; the repository secret
-`EXT_CI_DISPATCH_TOKEN` (`actions: write` on the external repositories, no permission here) starts the
-remote runs and is exposed only to the two orchestrator steps.
+One GitHub App ("External CI", registered under fprime-community; permissions Actions read/write,
+Checks read/write, Contents read, Pull requests read; no webhook) installed twice: on the external
+repositories listed in the manifest and on this repository. The workflow mints two 1-hour installation
+tokens from the repository secrets `EXT_CI_APP_ID` and `EXT_CI_APP_PRIVATE_KEY`, exposed only to the two
+orchestrator steps:
+
+- `DISPATCH_TOKEN` (fprime-community installation) starts and cancels the remote runs. Adding an
+  external repository = adding it to that installation and to the manifest.
+- `CHECKS_TOKEN` (this repository's installation) creates the Check Runs, so they appear under their own
+  "External CI" group in the PR checks list. If the App is not installed here the orchestrator falls
+  back to `GITHUB_TOKEN` (`checks: write`) and GitHub files the checks under another workflow's group.
