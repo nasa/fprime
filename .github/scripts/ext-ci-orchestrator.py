@@ -42,45 +42,61 @@ with open(env["GITHUB_EVENT_PATH"]) as _f:
 ORCHESTRATOR_URL = f"{SERVER}/{REPO}/actions/runs/{RUN_ID}" + (f"/attempts/{ATTEMPT}" if ATTEMPT > 1 else "")
 
 
-def log(msg):
+def log(msg: str) -> None:
+    """Print one line to the job log, unbuffered so it interleaves correctly with GitHub's step output."""
     print(msg, flush=True)
 
 
-def code(s):
-    # Remote-controlled text (job/step names, branch names) is only ever rendered inside code spans.
+def code(s: object) -> str:
+    """Render untrusted text (job/step names, branch names, errors) as a markdown code span.
+
+    Backticks and newlines are replaced so remote-controlled text cannot inject markdown or links into
+    Check Run output. Returns the quoted string."""
     return "`" + re.sub(r"[`\r\n]", " ", str(s)) + "`"
 
 
-def q(s):
+def q(s: object) -> str:
+    """Percent-encode one URL path segment (branch names may contain '/')."""
     return urllib.parse.quote(str(s), safe="")
 
 
-def now():
+def now() -> datetime:
+    """Current time as a timezone-aware UTC datetime."""
     return datetime.now(timezone.utc)
 
 
-def parse_ts(s):
+def parse_ts(s: str) -> datetime:
+    """Parse a GitHub API timestamp such as '2026-01-01T12:00:00Z' into an aware UTC datetime."""
     return datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
 
 
-def fprime_rev(target):
+def fprime_rev(target: dict) -> str:
+    """Short 'owner/repo@sha7' label of the F´ revision under test, for messages."""
     return f"{target['head_repo']}@{target['head_sha'][:7]}"
 
 
 # ---------------------------------------------------------------- GitHub REST client
 class ApiError(Exception):
-    def __init__(self, msg, status=0):
+    """A GitHub API call failed. `status` is the HTTP status, or 0 for a network error / missing token."""
+
+    def __init__(self, msg: str, status: int = 0) -> None:
         super().__init__(msg)
         self.status = status
 
 
 class Client:
-    def __init__(self, token, label):
+    """Minimal GitHub REST client bound to one credential; `label` names it in logs and errors."""
+
+    def __init__(self, token: str | None, label: str) -> None:
         self.token, self.label = token, label
 
-    def request(self, method, url, body=None, idempotent=True):
-        """Returns (status, parsed body). Retries rate limits always; network errors and 5xx only
-        when the call is idempotent (a workflow dispatch is not: the run may have started)."""
+    def request(self, method: str, url: str, body=None, idempotent: bool = True) -> tuple:
+        """Perform one API call and return (HTTP status, parsed body).
+
+        Never raises on a 4xx/5xx status: callers decide what a status means (see `api`, `exists`).
+        Retries rate limits always; network errors and 5xx only when the call is idempotent (a
+        workflow dispatch is not: the run may have started). Raises ApiError when the token is
+        missing or a non-idempotent call hits a network error."""
         if not self.token:
             raise ApiError(f"{self.label} token missing (secret not configured?)")
         headers = {
@@ -123,23 +139,27 @@ class Client:
                 return status, text
         raise AssertionError("unreachable")
 
-    def api(self, method, url, body=None, **kw):
+    def api(self, method: str, url: str, body=None, **kw):
+        """`request` that raises ApiError on any non-2xx status; returns the parsed body."""
         status, data = self.request(method, url, body, **kw)
         if not 200 <= status < 300:
             raise ApiError(f"{self.label}: {method} {url} -> {status} {json.dumps(data)[:300]}", status)
         return data
 
-    def get(self, url):
+    def get(self, url: str):
+        """GET; returns the parsed body or raises ApiError."""
         return self.api("GET", url)
 
-    def post(self, url, body=None, **kw):
+    def post(self, url: str, body=None, **kw):
+        """POST a JSON body; returns the parsed response or raises ApiError."""
         return self.api("POST", url, body, **kw)
 
-    def patch(self, url, body):
+    def patch(self, url: str, body):
+        """PATCH a JSON body; returns the parsed response or raises ApiError."""
         return self.api("PATCH", url, body)
 
-    def exists(self, url):
-        # True/False for 200/404; anything else is an error, never silently "absent".
+    def exists(self, url: str) -> bool:
+        """True on 200, False on 404; any other status raises ApiError, never silently "absent"."""
         status, _ = self.request("GET", url)
         if status == 200:
             return True
@@ -153,8 +173,14 @@ ext = Client(env.get("DISPATCH_TOKEN"), "DISPATCH_TOKEN")
 
 
 # ---------------------------------------------------------------- what to test
-def resolve_target():
-    """Which F´ revision is under test, and which PR (if any) it belongs to."""
+def resolve_target() -> dict:
+    """Decide which F´ revision is under test from the triggering event.
+
+    Returns a dict with: `pr` (number or None), `head_repo` / `head_sha` / `head_branch` (the revision
+    to test; PR-author-controlled, only ever used as the SHA to dispatch and as display text),
+    `base_ref` (trusted branch the run was started from; drives the external branch lookup) and
+    `before_sha` (previous tip for pushes, else None). Raises RuntimeError when a PR run no longer
+    matches an open PR or a manual input is invalid."""
     t = {"pr": None, "head_repo": REPO, "head_sha": None, "head_branch": None, "base_ref": None, "before_sha": None}
     if EVENT_NAME == "workflow_run":
         wr = EVENT["workflow_run"]
@@ -199,8 +225,11 @@ def resolve_target():
     return t
 
 
-def changed_files(target):
-    """Files of the PR / push, or None when unknown (then everything runs)."""
+def changed_files(target: dict) -> list[str] | None:
+    """List the files touched by the PR or push.
+
+    Returns None when the set is unknown (schedule / manual runs, or a push whose `before` SHA is
+    gone after a force-push); callers then treat every repo as relevant."""
     if target["pr"]:
         url = f"/repos/{REPO}/pulls/{target['pr']}/files?per_page=100"
     elif target["before_sha"]:
@@ -222,16 +251,20 @@ def changed_files(target):
     return files
 
 
-def relevant_change(files, manifest):
-    # paths_ignore lives here, not on the trigger workflow, so that filtered PRs still get a
-    # (skipped) Check Run per repo and required checks can be satisfied.
+def relevant_change(files: list[str] | None, manifest) -> bool:
+    """True unless every changed file matches a `paths_ignore` glob (or the file list is unknown).
+
+    paths_ignore lives here, not on the trigger workflow, so that filtered PRs still get a (skipped)
+    Check Run per repo and required checks can be satisfied."""
     ignore = manifest.get("paths_ignore", [])
     if files is None or not ignore:
         return True
     return any(not any(fnmatch(f, g) for g in ignore) for f in files)
 
 
-def select_repos(manifest, target):
+def select_repos(manifest, target: dict) -> list[dict]:
+    """Return the manifest entries to run: the `repos` input ids on a manual run (unknown id raises
+    RuntimeError), entries with `on_pr: true` on a PR, otherwise all of them."""
     repos = manifest["repos"]
     wanted = (env.get("INPUT_REPOS") or "all").strip()
     if EVENT_NAME == "workflow_dispatch" and wanted and wanted != "all":
@@ -245,25 +278,34 @@ def select_repos(manifest, target):
     return repos
 
 
-def resolve_ext_ref(entry, target):
-    """pr-<N> branch on the ext repo, else the F´ base branch name, else the manifest default."""
+def resolve_ext_ref(entry, target: dict) -> str:
+    """Return the external repo branch to dispatch: its `pr-<N>` branch if it exists, else a branch
+    named like the F´ base branch (`devel`, `release/x`), else the entry's `default_ref`."""
     for c in (f"pr-{target['pr']}" if target["pr"] else None, target["base_ref"]):
         if c and ext.exists(f"/repos/{entry['repository']}/branches/{q(c)}"):
             return c
     return entry.get("default_ref", "main")
 
 
-def check_name(manifest, repo_id):
+def check_name(manifest, repo_id: str) -> str:
+    """Name of the Check Run for one manifest entry: '<check_prefix> / <id>'."""
     return f"{manifest.get('check_prefix', 'ext-ci')} / {repo_id}"
 
 
-def save_state(state):
+def save_state(state: dict) -> None:
+    """Write the run state to STATE_FILE; called after every step so `finalize` can recover it."""
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, indent=2)
 
 
 # ---------------------------------------------------------------- dispatch and poll
-def dispatch_one(manifest, entry, target, state):
+def dispatch_one(manifest, entry, target: dict, state: dict) -> None:
+    """Start one external repo: create its Check Run (queued), dispatch its workflow with the F´
+    revision, mark the check in_progress with the remote run link.
+
+    Records progress in state["repos"][id] (keys: check_run_id, ext_ref, remote_run_id/_url,
+    remote_started_at, remote_conclusion, conclusion, error, ...). Never raises: any failure ends
+    this repo as `remote_conclusion: dispatch_failed` so the other repos still run."""
     s = state["repos"][entry["id"]] = {
         "id": entry["id"], "repository": entry["repository"], "workflow": entry["workflow"], "ext_ref": None,
         "failure_policy": entry.get("failure_policy", "block"), "timeout_minutes": entry.get("timeout_minutes", 60),
@@ -308,15 +350,22 @@ def dispatch_one(manifest, entry, target, state):
     save_state(state)
 
 
-def cancel_run(s):
+def cancel_run(s: dict) -> None:
+    """Cancel the remote run of one repo; API errors are logged, not raised."""
     try:
         ext.post(f"/repos/{s['repository']}/actions/runs/{s['remote_run_id']}/cancel")
     except ApiError as e:
         log(f"  {e}")
 
 
-def poll_all(state):
-    def active():
+def poll_all(state: dict) -> None:
+    """Poll every dispatched run every POLL_S seconds until each has a `remote_conclusion`.
+
+    Sets it to the run's conclusion, `timed_out` (running longer than timeout_minutes, remote run
+    cancelled), `queue_timeout` (not started after 2x timeout) or `error` (401/404 while polling).
+    Other poll errors are retried on the next tick."""
+
+    def active() -> list[dict]:
         return [s for s in state["repos"].values() if s["remote_run_id"] and not s["remote_conclusion"]]
 
     while active():
@@ -349,7 +398,8 @@ def poll_all(state):
 
 
 # ---------------------------------------------------------------- report
-def failure_details(s):
+def failure_details(s: dict) -> str:
+    """Markdown list of the remote run's failed jobs and steps (empty when there is no remote run)."""
     if not s["remote_run_id"]:
         return ""
     try:
@@ -366,7 +416,9 @@ def failure_details(s):
     return "\n".join(lines)
 
 
-def check_conclusion(s):
+def check_conclusion(s: dict) -> str:
+    """Map the remote result to the Check Run conclusion: success, neutral (any failure on a
+    `failure_policy: notify` repo), cancelled, timed_out or failure."""
     rc = s["remote_conclusion"]
     if rc == "success":
         return "success"
@@ -379,7 +431,10 @@ def check_conclusion(s):
     return "failure"
 
 
-def finalize_one(target, s):
+def finalize_one(target: dict, s: dict) -> None:
+    """Close one repo's Check Run with its conclusion, summary and failed-job details.
+
+    Sets s["conclusion"] only after the update succeeded, so `finalize` retries it otherwise."""
     conclusion = check_conclusion(s)
     details = "" if s["remote_conclusion"] == "success" else failure_details(s)
     lines = [f"{code(s['repository'])} @ {code(s['ext_ref'] or '-')} with F´ {code(fprime_rev(target))}: "
@@ -401,7 +456,8 @@ def finalize_one(target, s):
     s["conclusion"] = conclusion  # recorded only once the check is closed, so finalize() retries otherwise
 
 
-def skip_all(manifest, target, repos, state):
+def skip_all(manifest, target: dict, repos: list[dict], state: dict) -> None:
+    """Create every repo's Check Run directly as completed/skipped (only `paths_ignore` files changed)."""
     ignored = ", ".join(manifest.get("paths_ignore", []))
     for entry in repos:
         check = own.post(f"/repos/{REPO}/check-runs", {
@@ -416,7 +472,8 @@ def skip_all(manifest, target, repos, state):
         }
 
 
-def write_summary(target, state):
+def write_summary(target: dict, state: dict) -> None:
+    """Write the per-repo results table to the job summary and the log, and RESULTS_FILE as JSON."""
     rows = []
     for s in state["repos"].values():
         link = f"[run]({s['remote_run_url']})" if s.get("remote_run_url") else (code(s["error"]) if s.get("error") else "")
@@ -436,7 +493,9 @@ def write_summary(target, state):
 
 
 # ---------------------------------------------------------------- modes
-def run():
+def run() -> None:
+    """The `run` mode: resolve target, load manifest, fork preflight, select repos, dispatch, poll,
+    close checks, write summary. Exits 1 when a `failure_policy: block` repo did not succeed."""
     target = resolve_target()
     log(f"target: {json.dumps(target)}")
     with open(MANIFEST_PATH) as f:
@@ -472,8 +531,8 @@ def run():
         sys.exit(1)
 
 
-def finalize():
-    """Runs under `if: always()`: whatever the run step left open (crash, cancellation, timeout) is
+def finalize() -> None:
+    """The `finalize` mode, run under `if: always()`: whatever the run step left open (crash, cancellation, timeout) is
     closed here so no Check Run stays in_progress and no remote run keeps burning runners."""
     if not os.path.exists(STATE_FILE):
         return log("no state file; nothing to finalize")
