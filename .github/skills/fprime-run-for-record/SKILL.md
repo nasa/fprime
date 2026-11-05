@@ -49,7 +49,8 @@ that test's entry only; `draw` reads the menu from the manifest;
 ```bash
 fth manifest --uut <path> --harness <path> \
     --repo project=<path> --repo fprime=<path> [--repo <lib>=<path> …] \
-    --plan <plan.json> [--plan-revision <rev>] --checker reviewer=checks/<name>.py \
+    --plan <plan.json> [--plan-revision <rev>] --tests <test/int dir> \
+    [--checker reviewer=checks/<name>.py]          # legacy plan-owned plans only
     --image <Deployment>=<flashed>.bin:"<build command>" \
     --menu <faults-menu.json> --bench <bench.json> \
     --toolchain-json <toolchain.json>              # -> rfr/manifest-<uut sha8>.json
@@ -70,8 +71,9 @@ repository's describe string, which is what `Svc.Version` reports, or
 `--no-version-check <reason>` is recorded on the manifest and printed
 at unseal. ELF, hex and UF2 files are refused (flash the `.bin` and
 read back the range with `picotool save -r` or OpenOCD `dump_image`).
-The builder's checker is the tooling's engine (`fth evaluate`), so only
-the reviewer's checker is a manifest file. The manifest lives beside
+The checks live in the integration tests; the manifest pins them as `stimulus`
+(`--tests`: repo, sha, per-file sha256) and the auditor replays exactly those. A
+reviewer's checker is a manifest file only for legacy plan-owned plans. The manifest lives beside
 the runs, outside both repositories; `fth verify <manifest>` must pass
 before every later step. Before announcing the draw, stage on the bench
 host (where the human draws and unseals) the pinned `fth`, the
@@ -79,7 +81,7 @@ manifest, and every manifest-listed non-repo file at its recorded
 relative path (plan, fault menu, bench, checker, the helpers module)
 — `unseal` reads the menu by that path and fails with "missing fault
 menu" otherwise; `bench.json` uses relative paths only for the same
-reason. The plan's independent final-state tool (§4.5) must have been
+reason. The plan's independent final-state tool (§4, final-state paragraph) must have been
 exercised once in the stage-2 rehearsal; an improvised read on the day
 yields `UNVERIFIED`.
 
@@ -151,7 +153,7 @@ It performs, in order, and stops at the first failure:
    with `NO_OP_STRING` may instead send `"RFR <run> M <sha8>"` /
    `"RFR <run> S <sha8>"` — the plan's `markers` block decides).
 5. Run the plan's stimulus tests once, in plan order, through
-   `fth.pytest_plugin` (`window`, `send`, `bench`, `faults` fixtures);
+   `fth.pytest_plugin` (`window`, `send`, `check`, `require`, `bench` fixtures; no fixture exposes the draw);
    the plugin validates `sealed/faults.json` and applies the drawn planted fault
    to the drawn test only; stdout and pytest output go to `runner/`.
 6. Stop the ground system; `fth export` the raw logs into
@@ -311,7 +313,7 @@ beside decimal wherever a rule uses hex (0x3FFC0 vs 262080).
 
 ```bash
 fth unseal --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
-    -o rfr/<run-id>/unseal.md
+    --seed-file <the Captain's seed file> -o rfr/<run-id>/unseal.md   # the seed enters the package here, verified to reproduce the draw
 ```
 
 Verifies the integrity chain (contract §6), then writes the check-off

@@ -3,7 +3,7 @@ name: fprime-system-test-harness
 description: >-
   Use when building the harness for an approved F Prime system test
   plan: tester components, integration tests, bench scripts, record
-  markers, fault-injection planted faults, and the engine's helpers. Keeps the
+  markers, fault-injection planted faults, and the tests' named checks. Keeps the
   harness small, reusable, and reviewable, and keeps it out of the unit
   under test. Stimulus tests use the fth pytest plugin; planted faults are
   `@planted_fault` declarations. Keywords: F Prime, test harness, tester
@@ -162,7 +162,7 @@ the RfR image judged by the runner's junit and the auditor's replay of the same 
 pure run rendered with `--dev`: index with both image identities + tri-state VnV
 matrix, test pages, `commands.md`/`helpers/`/`sdd.md` when `--dictionary`/`--sdd`
 are given, `coverage/ut` + `coverage/system` copied from the bundle) and exits non-zero with a findings
-list when a pure-run verdict is not PASS, the checkers disagree, or coverage is
+list when a pure-run verdict is not PASS, runner and replay disagree (DIVERGENCE), or coverage is
 under the plan's `coverage: {lines_min, branches_min, not_covered_ack}` (design
 skill §2). "Iterate until clean" = repeat until it exits 0 and the uncovered
 lines are all in the acknowledgement. **Caveat — provenance, not equivalence:**
@@ -232,7 +232,7 @@ decides to pin it; the trial never repins the deployment's toolchain.
 
 Implement every planted fault as a `@planted_fault` declaration in the plan's helpers
 module (`fprime-test-oracle` §5): a command rewrite or insertion that
-the `faults` fixture applies to the **drawn test only**, from
+the plugin's private sender applies to the **drawn test only** (no fixture exposes the draw; a test naming `faults`/`sealed` is refused by `fth verify-plan --tests`), from
 `rfr/<run-id>/sealed/faults.json` (`{"manifest_sha256": …, "faults":
 {"<test>": "<planted fault>"}}`); a malformed, unknown or stale file stops the
 run before any command, naming no planted fault. Fill `ripples_to` with any
@@ -247,19 +247,21 @@ never hand-written. The mutation vectors (§7) prove each planted fault, applied
 alone, fails its target with exactly its `fails` entry and its
 `ripples_to` with FAIL, not UNVERIFIED, while all others pass.
 
-## 5. Checker
+## 5. Checks
 
-The builder's checker is the tooling's engine: pass rules are plan
-data, judged by `fth evaluate` (`fprime-test-oracle` §3). The builder
-writes only what the grammar cannot say, as `@helper` functions in the
-plan's helpers module, each returning `(holds, seen)` or `(holds,
-seen, refs, unverified)`; a helper is reviewed like a predicate. The
-reviewer's independent checker (legacy plans with plan-owned pass rules only) is written from the plan text alone —
-do not discuss helper internals with the reviewer before it exists.
+The checks live in the integration tests: `check("<stable name>")` /
+`require(...)` inside `with window(...)`, judged over the closed window's
+history; the runner's verdict is pytest's junit (fail → FAIL, `Incomplete`
+→ UNVERIFIED) and the auditor replays the same test functions over the
+sealed record (`fth audit --tests`). Check functions beyond the grammar
+live in the test file and are reviewed like any check. A reviewer's
+independent checker exists only for legacy plans with plan-owned pass
+rules (`fth evaluate`) — do not discuss check internals with the reviewer
+before the review.
 
 ## 6. Size and review
 
-Target: a human reads the harness in one sitting. Put pass rules and
+Target: a human reads the harness in one sitting. Put the named checks and
 planted fault handling in one small file each; isolate bench scripts (power
 control, flashing, ground-system start) from test logic. Harness code
 is reviewed by the system-test reviewer and, if the human requests,
@@ -328,7 +330,7 @@ lost and look like "no response".
 
 Dry-run traps (SunCamMgr simulator runs sim1–sim9 and the bench):
 
-- Run `fth evaluate` on the simulator dry run before any record; most
+- Run `fth verify-plan --tests <test/int>` (dry-runs the tests: declared checks, `fails:`, blind guard, `req` == `covers`) before any record; most
   first-run failures are predicate or harness defects, and each one is
   either a plan amendment (reviewer confirms) or a UUT defect — write
   down which.

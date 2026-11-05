@@ -177,8 +177,8 @@ human at unseal (stage 3).
 ## 5. Planted faults and the sealed faults file
 
 A planted fault is a **command rewrite** declared next to the helpers and
-applied by the `faults` fixture of `fth.pytest_plugin` to the **drawn
-test only** — never by name to every test in `applies_to`:
+applied by the private sender of `fth.pytest_plugin` to the **drawn
+test only** (no fixture exposes the draw) — never by name to every test in `applies_to`:
 
 ```python
 @planted_fault("verify_wrong_seed", applies_to=["L2-1", "L2-5"], cls="harness-expectation",

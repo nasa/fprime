@@ -82,7 +82,7 @@ concurrently on the same UUT SHA.
   goes back through stage 1 as a minimal iteration; harness work waits.
 - **Planted faults are per-drawn-test command rewrites.** A planted fault is a `@planted_fault`
   declaration (`fprime-test-oracle` §5) applied by the tooling's
-  `faults` fixture to the drawn test only; the sealed file is exactly
+  private sender to the drawn test only (no fixture exposes the draw); the sealed file is exactly
   `{"manifest_sha256": …, "faults": {test: planted_fault}}` and anything else
   fails before any command. Nothing outside `sealed/` names a planted fault —
   not a run id, a file, or a stream.
@@ -113,7 +113,9 @@ manifest.json
   repos:    [ { name, path, sha, describe } ]     # uut + every repository the image is built from
                                                   # (project, fprime, libraries); clean trees only
   plan:     { path, sha256, revision, tests: [ "L0-1", … ] }   # plan.json tests[].id (unique, ≤ 8 chars)
-  checkers: [ { owner: reviewer, path, sha256 } ] # the independent checker; the engine is the pinned tooling
+  stimulus: { repo, sha, path, files: { <rel path>: sha256 } }  # every *.py + pytest config under test/int + helpers_module:
+                                                  # the auditor replays exactly these or FAILS (fth manifest --tests)
+  checkers: [ { owner: reviewer, path, sha256 } ] # legacy plan-owned plans only; builder entry is module-only
   images:   [ { deployment, path, sha256, build_cmd, version_check } ]
             # raw .bin written to flash; each must contain every repos[].describe string
             # (what Svc.Version reports as PROJECT / FRAMEWORK / LIBRARY versions)
@@ -130,9 +132,9 @@ otherwise trip on them).
 
 Stage 3 delivers the run directory to the human: `record/` +
 `record.sha256`, `runner/report.md` + `runner/verdicts.json`,
-`auditor/quicklooks/` + `auditor/verdicts.json` +
-`auditor/final-state.{json,md}` + `auditor/report.md`, and
-`unseal.md`.
+`auditor/ql/` (+ `ql.zip` with data-only `inputs/`) + `auditor/junit.xml` +
+`auditor/verdicts.json` + `auditor/diff-runner-replay.md` + `auditor/integrity.json` +
+`auditor/final-state.{json,md}` + `auditor/report.md`, and `unseal.md`.
 
 ## 4. Blindness
 
@@ -140,7 +142,7 @@ Stage 3 delivers the run directory to the human: `record/` +
 |---|---|---|
 | Every agent, including any orchestrator | The seed | The human runs `fth draw` in a shell of their own; the seed comes from a file or an un-echoed prompt, never a chat message or command line. The draw is reproducible from seed + manifest, so a leaked seed is a leaked draw. |
 | Runner | `sealed/` contents | `fth run`'s pytest plugin reads `sealed/faults.json` itself and never logs, prints, asserts on, or writes which planted faults are active, to any file or stream; the runner never opens, prints, or diffs that directory. The run-start markers carry the manifest sha8 and the seal-id sha8 into the record (`MARK(0xFFFF0001/2/3)` form or `RFR <run> M/S <sha8>`) — the only trace of the draw outside `sealed/`. |
-| Auditor | `sealed/`, `runner/` | The auditor's inputs are the manifest, the plan, `record/` + `record.sha256`, `seal-id.txt`, and the reviewer's checker. END markers carry **no verdict**. Whoever hands over the run directory passes paths, never runner text. |
+| Auditor | `sealed/`, `runner/` | The auditor's inputs are the manifest, the plan, the pinned test sources (`stimulus`), `record/` + `record.sha256`, `seal-id.txt`, and (legacy plans) the reviewer's checker. END markers carry **no verdict**. Whoever hands over the run directory passes paths, never runner text. |
 | Designer, reviewer, builder | The draw | The draw happens after the manifest is frozen. |
 
 Runner, auditor, and the shell that performed the draw are **three
@@ -156,7 +158,7 @@ not tamper-proof. Every RfR report says so.
   traceability, the L0 feasibility check, and the fault menu.
 - **Reviewer** is adversarial: finds what the plan would miss and what
   the harness would pass by construction; writes the independent
-  checker; keeps the disagreement log.
+  checker (legacy plan-owned plans only; otherwise reviews the tests' checks); keeps the disagreement log.
 - **Reviewer** also reads the harness code adversarially (review Mode B step 3b: tautology, swallowed status, planted fault reach, cross-test state, helper KATs); mechanics checks alone do not close stage 2.
 - **Pure RfR / development provenance split**: the RfR runs the pure,
   uninstrumented image and its package has no coverage; coverage (UT +
@@ -169,7 +171,7 @@ not tamper-proof. Every RfR report says so.
   components before writing new code.
 - **Runner** runs `fth run` exactly once per run ID (manifest verify,
   flash with read-back, one recorder, run-start markers, stimulus,
-  export, hash, engine verdicts), fixes nothing, retries nothing
+  export, hash, junit-derived verdicts), fixes nothing, retries nothing
   silently, and notes every anomaly it noticed.
 - **Auditor** runs `fth audit --tests <test/int>` (hashes and markers
   first, re-export, record integrity — one START..END per window, no
@@ -237,7 +239,7 @@ this table; bumping it is a one-line change here and nowhere else.
 
 | Tool | Pinned | Install |
 |---|---|---|
-| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit ae9550a0f) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@ae9550a0f#egg=fprime-testing-harness"` |
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 58e9d90a0) | `pip install "git+https://github.com/LeStarch/fprime-testing-harness@58e9d90a0#egg=fprime-testing-harness"` |
 
 Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and
