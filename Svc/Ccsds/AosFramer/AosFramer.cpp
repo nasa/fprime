@@ -116,7 +116,24 @@ void AosFramer::compute_and_inject_fecf(AosVc& currentVc) {
 }
 
 void AosFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
-    // We just ask upstream for more packets
+    // MultiVc support would require mapping the status port onto a vc struct
+    AosVc& currentVc = this->m_vcs[0];
+
+    // A SUCCESS that arrives while a packet tail is outstanding answers an intermediate frame of
+    // that packet, not the message upstream sent, so it is consumed to continue the packet: if the
+    // tail fills the frame, the next frame goes out and its status is awaited; if it leaves room,
+    // check_and_send_vc asks upstream for more data. Either way exactly one status reaches the
+    // upstream queue per dataIn message, as the ComQueue protocol requires (#5888)
+    if ((condition == Fw::Success::SUCCESS) && currentVc.outstanding.packet.isValid()) {
+        // The frame buffer was returned before this status: the communication adapter interface
+        // requires the dataReturnOut call before the comStatusOut call it applies to
+        FW_ASSERT(currentVc.frame.state == BufferOwnershipState::OWNED,
+                  static_cast<FwAssertArgType>(currentVc.frame.state));
+        this->pack_pad_send(currentVc.outstanding.packet, currentVc.outstanding.context, currentVc.outstanding.offset);
+        return;
+    }
+
+    // No tail outstanding (or a FAILURE, which pauses the upstream queue): forward the status.
     // comQueue decides to which VCs to allocate comStatus success
     if (this->isConnected_comStatusOut_OutputPort(portNum)) {
         // Forward the comStatus upstream
@@ -134,10 +151,10 @@ void AosFramer ::dataReturnIn_handler(FwIndexType portNum,
     FW_ASSERT(buffer_belongs(frameBuffer, currentVc.frame.backer, sizeof(currentVc.frame.backer)));
     currentVc.frame.state = BufferOwnershipState::OWNED;
 
-    // If we have an outstanding packet from the prior frame, pack it
-    if (currentVc.outstanding.packet.isValid()) {
-        this->pack_pad_send(currentVc.outstanding.packet, currentVc.outstanding.context, currentVc.outstanding.offset);
-    }
+    // An outstanding packet tail is not packed here: it is continued when the adapter reports the
+    // status of the sent frame (comStatusIn), which the interface guarantees arrives after this
+    // return. Packing it here emitted a second status for one transmitted frame whenever the tail
+    // did not fill the new frame, violating the one-status-per-message ComQueue protocol (#5888)
 }
 
 AosFramer::AosVc& AosFramer ::get_vc_struct(const ComCfg::FrameContext& context) {

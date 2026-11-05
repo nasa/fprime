@@ -26,6 +26,8 @@ The AOS protocol specifies a fixed frame size. The maximum for all AOS framers c
 
 The `Svc::Ccsds::AosFramer` uses an internal (member) buffer to hold the fixed size frame. The buffer **must** be returned to the AosFramer via the `dataReturnIn` port once it has been used or consumed. When the buffer returns to the AosFramer it will reuse the buffer for the next frame. Should a component want to use the frame data past the time it is returned to the AosFramer, data should be copied before the original buffer is returned to the AosFramer via the `dataReturnIn` port. 
 
+Because one `dataIn` message may produce zero frames (packed into a frame still being filled) or several frames (a packet striped across frames), the framer manages the flow of statuses per the [framer status protocol](../../../../docs/reference/communication-adapter-interface.md): a message that produces no frame is answered directly with one `SUCCESS` on `comStatusOut`; a `SUCCESS` received on `comStatusIn` while a packet tail is outstanding is consumed to continue that packet into the freed frame buffer (the communication adapter interface guarantees the buffer was returned on `dataReturnIn` before the status); and a status received with no tail outstanding is forwarded. `FAILURE` is always forwarded, pausing the upstream queue; a subsequent recovery `SUCCESS` resumes striping an outstanding tail before any new message is requested. The net effect is that exactly one status reaches `Svc::ComQueue` per `dataIn` message, as its protocol requires.
+
 ## Port Descriptions
 
 | Kind | Name | Port Type | Description |

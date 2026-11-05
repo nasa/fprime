@@ -42,6 +42,16 @@ TEST(AosFramer, testShortPackets) {
     tester.testShortPackets();
 }
 
+TEST(AosFramer, testTailPackingSingleStatus) {
+    Svc::Ccsds::AosFramerTester tester;
+    tester.testTailPackingSingleStatus();
+}
+
+TEST(AosFramer, testTailPackingFailureThenRecovery) {
+    Svc::Ccsds::AosFramerTester tester;
+    tester.testTailPackingFailureThenRecovery();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

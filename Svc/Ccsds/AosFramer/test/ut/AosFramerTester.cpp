@@ -273,12 +273,17 @@ void AosFramerTester ::testLongPacket() {
                 << " does not match expected idle pattern";
         }
 
-        // Return this buffer so the framer can reset
-        this->invoke_to_dataReturnIn(0, outBuffer, outContext);
+        // Behave as the adapter: return the frame, then report its status. The statuses of the
+        // first two frames are consumed to continue the striped packet; only the final frame's
+        // status is forwarded, so upstream sees exactly one status for its one message (#5888)
+        this->ackFrame(frame);
+        ASSERT_from_comStatusOut_SIZE((frame == 2) ? 1 : 0);
     }
 
     // Make sure we don't send any extra frames (continue into null)
     ASSERT_from_dataOut_SIZE(3);
+    Fw::Success expectedStatus = Fw::Success::SUCCESS;
+    ASSERT_from_comStatusOut(0, expectedStatus);
 }
 
 // Many Packets for one frame
@@ -397,11 +402,124 @@ void AosFramerTester ::testShortPackets() {
             << " does not match expected idle pattern";
     }
 
-    // Return this buffer so the framer can reset
-    this->invoke_to_dataReturnIn(0, outBuffer, outContext);
+    // Each of the nine packets that did not produce a frame was answered with one SUCCESS directly
+    ASSERT_from_comStatusOut_SIZE(9);
+
+    // Behave as the adapter: return the frame, then report its status, which is forwarded since no
+    // tail is outstanding — ten messages, ten statuses upstream (#5888)
+    this->ackFrame(0);
+    ASSERT_from_comStatusOut_SIZE(10);
 
     // Make sure we don't send any extra frames (continue into null)
     ASSERT_from_dataOut_SIZE(1);
+}
+
+// ----------------------------------------------------------------------
+// Status Protocol Tests
+// ----------------------------------------------------------------------
+
+void AosFramerTester ::ackFrame(FwSizeType frameIndex) {
+    Fw::Buffer frame = this->fromPortHistory_dataOut->at(static_cast<U32>(frameIndex)).data;
+    ComCfg::FrameContext context = this->fromPortHistory_dataOut->at(static_cast<U32>(frameIndex)).context;
+    this->invoke_to_dataReturnIn(0, frame, context);
+    Fw::Success status = Fw::Success::SUCCESS;
+    this->invoke_to_comStatusIn(0, status);
+}
+
+void AosFramerTester ::testTailPackingSingleStatus() {
+    // The repro from #5888: a packet whose tail spans into a second frame must yield exactly one
+    // status upstream, not one per transmitted frame
+    const FwSizeType frameSize = 1024;
+    this->component.configure(frameSize, true);
+    const FwSizeType maxPayload =
+        frameSize - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
+
+    U8 bufferData[2048];
+    const FwSizeType packetSize = maxPayload + 86;
+    ASSERT_LE(packetSize, sizeof(bufferData));
+    for (FwSizeType i = 0; i < packetSize; ++i) {
+        bufferData[i] = static_cast<U8>(i);
+    }
+    Fw::Buffer buffer(bufferData, packetSize);
+    ComCfg::FrameContext context;
+    context.set_sendNow(true);
+
+    // The packet fills the first frame, which is sent; nothing goes upstream yet
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_comStatusOut_SIZE(0);
+
+    // The adapter returns the frame and reports its status: the status is consumed to pack the
+    // tail, which (with sendNow) is idle-filled and emitted as the second frame — still nothing
+    // upstream
+    this->ackFrame(0);
+    ASSERT_from_dataOut_SIZE(2);
+    ASSERT_from_comStatusOut_SIZE(0);
+
+    // The second frame's status finds no tail outstanding and is forwarded: exactly one status
+    // for the one message
+    this->ackFrame(1);
+    ASSERT_from_dataOut_SIZE(2);
+    ASSERT_from_comStatusOut_SIZE(1);
+    Fw::Success expectedStatus = Fw::Success::SUCCESS;
+    ASSERT_from_comStatusOut(0, expectedStatus);
+
+    // Without sendNow, the consumed status leaves the tail in a partial frame and one SUCCESS is
+    // emitted upstream asking for more data: still exactly one status for the message
+    ComCfg::FrameContext noSendNow;
+    noSendNow.set_sendNow(false);
+    this->invoke_to_dataIn(0, buffer, noSendNow);
+    // The first frame of this second packet is full and sent; the tail is outstanding
+    ASSERT_from_dataOut_SIZE(3);
+    this->ackFrame(2);
+    // The consumed status packed the tail into a partial frame, which asks upstream for more data
+    ASSERT_from_dataOut_SIZE(3);
+    ASSERT_from_comStatusOut_SIZE(2);
+    ASSERT_from_comStatusOut(1, expectedStatus);
+}
+
+void AosFramerTester ::testTailPackingFailureThenRecovery() {
+    // A FAILURE with a tail outstanding is forwarded (pausing the upstream queue) without packing;
+    // the recovery SUCCESS is consumed to resume striping the tail
+    const FwSizeType frameSize = 1024;
+    this->component.configure(frameSize, true);
+    const FwSizeType maxPayload =
+        frameSize - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
+
+    U8 bufferData[2048];
+    const FwSizeType packetSize = maxPayload + 86;
+    ASSERT_LE(packetSize, sizeof(bufferData));
+    for (FwSizeType i = 0; i < packetSize; ++i) {
+        bufferData[i] = static_cast<U8>(i);
+    }
+    Fw::Buffer buffer(bufferData, packetSize);
+    ComCfg::FrameContext context;
+    context.set_sendNow(true);
+
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(1);
+
+    // The adapter returns the frame but reports FAILURE: forwarded, tail left outstanding
+    Fw::Buffer frame = this->fromPortHistory_dataOut->at(0).data;
+    ComCfg::FrameContext frameContext = this->fromPortHistory_dataOut->at(0).context;
+    this->invoke_to_dataReturnIn(0, frame, frameContext);
+    Fw::Success failure = Fw::Success::FAILURE;
+    this->invoke_to_comStatusIn(0, failure);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, failure);
+
+    // The recovery SUCCESS is consumed to resume the tail, which completes the second frame
+    Fw::Success recovery = Fw::Success::SUCCESS;
+    this->invoke_to_comStatusIn(0, recovery);
+    ASSERT_from_dataOut_SIZE(2);
+    ASSERT_from_comStatusOut_SIZE(1);
+
+    // The second frame's status is forwarded, resuming the queue
+    this->ackFrame(1);
+    ASSERT_from_comStatusOut_SIZE(2);
+    Fw::Success expectedStatus = Fw::Success::SUCCESS;
+    ASSERT_from_comStatusOut(1, expectedStatus);
 }
 
 // ----------------------------------------------------------------------
