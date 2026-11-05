@@ -55,6 +55,16 @@ register_fprime_implementation(
     "${CMAKE_CURRENT_LIST_DIR}/fputs_assert_hook.cpp"
 )
 
+register_fprime_implementation(
+    Fw_AssertHook_Stub
+  IMPLEMENTS
+    Fw_AssertHook
+  DEPENDS
+    Fw_Types
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/stub_assert_hook.cpp"
+)
+
 
 ### UTs ###
 register_fprime_ut(
@@ -91,6 +101,16 @@ if (FPRIME_PLATFORM STREQUAL "Linux")
         Fw_Types
     )
 endif()
+register_fprime_ut(
+    Fw_AssertHook_Stub_ut_exe
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubAssertHookTest.cpp"
+  DEPENDS
+    Fw_Types
+  CHOOSES_IMPLEMENTATIONS
+    Fw_AssertHook_Stub
+)
+
 register_fprime_ut(
     Fw_StringScan_sscanf_ut_exe
   SOURCES

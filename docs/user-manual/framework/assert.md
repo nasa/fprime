@@ -99,11 +99,48 @@ The assert can be configured in the following ways:
   - FW\_ASSERT\_TEXT\_SIZE Identifies the size of the buffer used to
     store the text of the assert.
 
+## Default Assert Handling
+
+When no `AssertHook` is registered (see below), a failed assertion is handled by
+three functions declared in `Fw/Types/assert_hook.hpp`:
+
+| Function | Role |
+|---|---|
+| `Fw::formatAssertMessage` | formats the location and arguments of the assertion into a buffer |
+| `Fw::printAssertMessage` | outputs the formatted message |
+| `Fw::terminateOnAssert` | terminates (or not) after the message has been output |
+
+These functions are provided by an implementation of the `Fw_AssertHook` CMake
+implementation (see [CMake Implementations](../build-system/cmake-implementations.md)).
+The platform or project configuration chooses one with `CHOOSES_IMPLEMENTATIONS`, and
+the choice is resolved at link time, so a small target pays nothing for code it did not
+choose. F´ ships two:
+
+| Implementation | Behavior |
+|---|---|
+| `Fw_AssertHook_fputs` | formats with `Fw::stringFormat`, prints to `stderr` with `fputs`, calls `assert(false)` |
+| `Fw_AssertHook_Stub` | produces an empty message, prints nothing, calls `assert(false)` |
+
+`Fw_AssertHook_fputs` is the choice of the Unix (Linux/Darwin) platform. Targets
+without a console, or that cannot afford `stdio`, choose `Fw_AssertHook_Stub` or
+provide their own implementation of the three functions (for example writing to a UART
+and resetting the processor) with `register_fprime_implementation`.
+
+`terminateOnAssert` is reached only when `FW_ASSERTIONS_ALWAYS_ABORT` is `0`; when it
+is `1` the framework calls `abort()` after any handler, registered or default. With
+`NDEBUG` defined, `assert(false)` compiles out and execution continues after the
+assertion unless `FW_ASSERTIONS_ALWAYS_ABORT` is set.
+
+The link-time choice sets the default behavior of a platform. The runtime
+`AssertHook` below sits on top of it and is how a flight system redirects assertions
+into its FATAL handling (`Svc::AssertFatalAdapter`) and how unit tests intercept
+them; it is unaffected by the implementation chosen.
+
 ## AssertHook
 
-By default, when FW\_ASSERT is called the framework prints a message
-(location of and arguments to the macro), and then calls the C assert()
-function. The framework also provides a function that allows the
+By default, when FW\_ASSERT is called the framework formats and prints a message
+(location of and arguments to the macro) and then terminates, using the functions
+of the chosen `Fw_AssertHook` implementation described above. The framework also provides a function that allows the
 registration of a user-defined handler. The handler is
 registerHook and can be found in Fw/Types/Assert.hpp. The assert hook is
 called with a string representing the text of the assert. The user
