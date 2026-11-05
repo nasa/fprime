@@ -17,7 +17,7 @@ also runs for merge groups and on manual dispatch (`repos`, `pr_number` or `fpri
 | `repos[].repository` | external repository (`owner/name`) |
 | `repos[].workflow` | workflow file in that repository; must accept the inputs below |
 | `repos[].default_ref` | branch to dispatch when neither `pr-<N>` nor a branch named like the F´ base branch exists there |
-| `repos[].timeout_minutes` | remote running time allowed (2x while queued); the remote run is cancelled on timeout |
+| `repos[].timeout_minutes` | remote running time allowed, and separately the time it may wait in queue; the remote run is cancelled on timeout. Keep `2 * timeout_minutes` under the job's `timeout-minutes` in ext-ci.yml |
 | `repos[].failure_policy` | `block`: a failure is a red check and fails the orchestrator job; `notify`: neutral (non-blocking) check |
 | `repos[].on_pr` | `false`: never dispatched for a PR head (merge queue and manual `fprime_ref` runs only) |
 

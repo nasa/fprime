@@ -460,7 +460,7 @@ def poll_all(state: dict) -> None:
     """Poll every dispatched run every POLL_S seconds until each has a `remote_conclusion`.
 
     Sets it to the run's conclusion, `timed_out` (running longer than timeout_minutes, remote run
-    cancelled), `queue_timeout` (not started after 2x timeout) or `error` (401/404 while polling).
+    cancelled), `queue_timeout` (not started after another timeout_minutes) or `error` (401/404 while polling).
     Other poll errors are retried on the next tick."""
 
     def active() -> list[dict]:
@@ -495,10 +495,10 @@ def poll_all(state: dict) -> None:
                     s["remote_conclusion"] = "timed_out"
                 elif (
                     not s["remote_started_at"]
-                    and now() - parse_ts(s["dispatched_at"]) > 2 * timeout
+                    and now() - parse_ts(s["dispatched_at"]) > timeout
                 ):
                     log(
-                        f"::warning::[{s['id']}] still queued after {2 * s['timeout_minutes']} min; giving up"
+                        f"::warning::[{s['id']}] still queued after {s['timeout_minutes']} min; giving up"
                     )
                     cancel_run(s)
                     s["remote_conclusion"], s["error"] = (
