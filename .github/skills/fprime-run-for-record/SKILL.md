@@ -36,7 +36,7 @@ stage-3 step (bench host included):
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
 git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach ff09104
+git -C harness checkout --detach a59e998
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
@@ -310,7 +310,7 @@ their checks and the planted-fault module the manifest pins as `stimulus` (`fth 
 replays exactly those sources or FAILS; they are never copied into the package — a sha256 that disagrees with a pin is a loud failure; `fth unseal` adds `unseal.md`
 and `seed.txt` (verified to reproduce the draw) — the seed enters the package only after the
 unseal, never before; tests, stimulus and tester sources stay in the pinned repositories); `ql.zip` of
-all of it — stage-3 row 8 "Deliver" is `rfr/<run>/auditor/ql/ql.zip` and nothing else. **The image stays pure, the coverage REPORTS are inputs** (Captain's ruling, rfr1 close-out): an instrumented image is never the qualified image and `fth run` never takes one, but the development campaign's coverage reports (`dev-evidence/ut`, `dev-evidence/system`, gcovr data files only) enter the RfR package — pinned by `fth manifest --ut-coverage --system-coverage --coverage-evidence dev-evidence/evidence.json` (row 2) or, failing that, recorded by sha256 at `fth audit --ut-coverage --system-coverage [--coverage-evidence]` (row 5) — as `inputs/coverage/` rows and a `coverage.md` page (thresholds from the plan's `coverage:`, provenance block: coverage image sha256, compiler, dev-campaign run ids — provenance, not equivalence). `--dev` stamps development runs only; it no longer gates coverage.
+all of it; stage-3 row 8 "Package" is `fth package --run-dir rfr/<run> --manifest rfr/<package>/manifest.json --name <campaign>-<date> [--evidence dev-evidence/] [--ledger ledger.md] -o <campaign>-<date>.zip` — the FINAL delivery is assembled and verified by the tool from the unsealed run (root `index.md`/`index.html` with the unseal-attributed headline, pins, coverage, VnV matrix, every test page, `unseal.md`, dev-evidence, reports, watch rows; `ql/` beneath; refuses a sealed run or a missing link; byte-reproducible — run it twice and compare the sha256; the index names the packaging harness beside the audited-under manifest pin). A deviation ledger is a human/LLM document passed in with `--ledger`; nothing else in the delivery is hand-assembled. **The image stays pure, the coverage REPORTS are inputs** (Captain's ruling, rfr1 close-out): an instrumented image is never the qualified image and `fth run` never takes one, but the development campaign's coverage reports (`dev-evidence/ut`, `dev-evidence/system`, gcovr data files only) enter the RfR package — pinned by `fth manifest --ut-coverage --system-coverage --coverage-evidence dev-evidence/evidence.json` (row 2) or, failing that, recorded by sha256 at `fth audit --ut-coverage --system-coverage [--coverage-evidence]` (row 5) — as `inputs/coverage/` rows and a `coverage.md` page (thresholds from the plan's `coverage:`, provenance block: coverage image sha256, compiler, dev-campaign run ids — provenance, not equivalence). `--dev` stamps development runs only; it no longer gates coverage.
 
 `index.md`: run metadata (manifest sha8, record sha256, seal sha8, dictionary sha256, SDD
 sha256, repo-check state); the per-test table (test, title, checker verdict, unseal
@@ -372,7 +372,7 @@ the decision in the plan's decision log.
    to `earned` when the row's criterion is met). The QL index already links the ledger rows this run relied on
    (`watch ledger` field) at the harness sha the manifest pins — a ledger edit lands on main and is picked up by
    the next manifest, never by re-rendering a sealed run.
-2. Archive `ql.zip` + `unseal.md` with the campaign record; note any `DIVERGENCE`, integrity finding or
+2. Archive the `fth package` zip (+ its sha256) with the campaign record; note any `DIVERGENCE`, integrity finding or
    `UNEXPLAINED FAIL` as a tracked item.
 
 ## Anti-patterns
