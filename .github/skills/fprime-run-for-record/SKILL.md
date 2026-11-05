@@ -24,8 +24,8 @@ lives in the run directory `rfr/<run-id>/` outside both repositories;
 
 The mechanics live in the `fth` CLI of
 [fprime-testing-harness](https://github.com/LeStarch/fprime-testing-harness)
-(`fth manifest | verify | draw | seal-id | run | audit | hash-record |
-verify-record | unseal | vectors | selftest`), pinned by version in
+(stage-3 subset: `fth manifest | verify | draw | seal-id | run | audit | hash-record |
+verify-record | unseal | render-ql | vectors | selftest`), pinned by version in
 `.github/agents/_shared/test-process-contract.md` §8 — no script ships
 beside this skill. Install the pinned commit on every host that runs a
 stage-3 step (bench host included):
@@ -230,7 +230,7 @@ on every page.
 ## 5. Quick-look pages
 
 `auditor/ql/<id>.md`, rendered from the hashed record and the plan,
-byte-identical across renders: title and `purpose`; engine verdict;
+byte-identical across renders: title and `purpose`; checker verdict;
 `covers`; the pass rule with each predicate's result and the record
 lines (`L`/`C`/`K` = events/channels/commands jsonl line numbers) that
 decided it; completeness (commands sent vs dispatched, drops);
@@ -288,7 +288,7 @@ roll-up rule; a "Test helper components" section; tests natural-sorted by id eve
 (execution order is the plan's business, not the index's).
 
 Each test page, in this order: `← back to [index](index.md)` under the H1 and as the last
-line; header table — engine verdict, Unseal expectation, Unseal verdict (stamped by
+line; header table — checker verdict, Unseal expectation, Unseal verdict (stamped by
 `fth unseal`), "What this test does" (the plan's `purpose`), Covers (each REQ linked to
 `sdd.md#REQ-…`), Harness (link to each helper page), Window start / Window end / Window
 duration as separate rows per window with epoch; §1 Pass rule — one check per line
