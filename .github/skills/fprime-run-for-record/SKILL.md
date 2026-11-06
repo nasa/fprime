@@ -36,7 +36,7 @@ stage-3 step (bench host included):
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
 git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach 4173bca
+git -C harness checkout --detach 3e60f40
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
@@ -150,11 +150,31 @@ and auditor.
 
 ## 3. Runner
 
-One command, run once per run ID, from the campaign root on the bench
-host:
+Stage 3 is ONE command, from the campaign root on the bench host, with the
+delivered package as its only required input (README stage-3 row 1):
 
 ```bash
-fth run --run-dir rfr/<run-id> --manifest rfr/manifest-<sha8>.json \
+umask 077; head -c 32 /dev/urandom | base64 > rfr/seed.txt     # the seed: the human's, kept nowhere else
+fth rfr rfr-input.zip --seed-file rfr/seed.txt [--out rfr] [--evidence dev-evidence/] [--ledger ledger.md] [--name <campaign>-<date>]
+```
+
+It runs the manual rows 1–8 in order with the arguments the rows name —
+`verify-package` + unpack, the package's manifest, sealed draw, run with
+the pure image, audit + replay with the manifest-pinned coverage reports
+rendered, quick-look, unseal, `package` → `rfr/<name>.zip` — and refuses
+with a NAMED check before the bench when anything a row needs is not in
+the package or the campaign root (`uut/`/`harness/` at the pins, the
+running `fth` is the pinned harness, bench device present, no foreign
+holder). `rfr/<run>/rfr.log` is the per-row record (start, end, exit,
+sha256). The first failing row stops it; nothing is retried; the bench is
+not re-contacted. No `--unsealed/--dev/--plant`, no coverage flags exist
+on `rfr`. The runner types nothing else; the seed is never printed.
+
+The manual expansion (for the record, and when a row must be re-issued
+by order of the human — e.g. a read-only re-audit), run once per run ID:
+
+```bash
+fth run --run-dir rfr/<run-id> --manifest rfr/rfr-input/manifest.json \
     --plan <plan.json> --bench <bench.json> --tests <deployment>/test/int
 ```
 
