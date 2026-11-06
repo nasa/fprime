@@ -90,6 +90,13 @@ concurrently on the same UUT SHA.
   only place that bound is defined), then escalate with the disagreement
   log. Harness review: five rounds, then escalate. Agreement reached by
   softening a must-fix is recorded as a disagreement, not a resolution.
+- **A rerouted path has every consumer enumerated.** When a review covers a
+  change that moves where a value comes from (a path, a pin, a recipe key),
+  the reviewer greps the whole harness for every consumer of the old source
+  (`grep -rn` on the key, the template placeholder and the accessor) and walks
+  each one by experiment; a consumer not on that list is a review finding in
+  itself. (FRAM ++ ledger #14: the GDS/recorder lines were rerouted to the
+  package dictionary, the run-start marker `send` was not.)
 - **Never weaken a test to make it pass.** Changing a pass rule,
   threshold, metric, or the test list after plan approval is a plan
   change and returns to the human gate with a diff.
@@ -249,7 +256,7 @@ this table; bumping it is a one-line change here and nowhere else.
 
 | Tool | Pinned | Install |
 |---|---|---|
-| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit cc40a51) | `git clone <fprime-testing-harness> harness && git -C harness checkout --detach cc40a51 && pip install -e "harness[test]"` — the same checkout `fth manifest --harness` pins; assert `fth.__file__` lies under it (private repo: clone with the host's credentials; `pip install git+https://…` has none) |
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit a232493) | `git clone <fprime-testing-harness> harness && git -C harness checkout --detach a232493 && pip install -e "harness[test]"` — the same checkout `fth manifest --harness` pins; assert `fth.__file__` lies under it (private repo: clone with the host's credentials; `pip install git+https://…` has none) |
 
 Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and

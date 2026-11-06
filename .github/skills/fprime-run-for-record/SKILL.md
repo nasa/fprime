@@ -36,7 +36,7 @@ stage-3 step (bench host included):
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
 git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach cc40a51
+git -C harness checkout --detach a232493
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
@@ -154,9 +154,16 @@ Stage 3 is ONE command, from the campaign root on the bench host, with the
 delivered package as its only required input (README stage-3 row 1):
 
 ```bash
+fth rfr rfr-input.zip --dry-run [--evidence dev-evidence/] [--ledger ledger.md] [--name <campaign>-<date>]   # REHEARSAL GATE first: seed-free, bench-free
 umask 077; head -c 32 /dev/urandom | base64 > rfr/seed.txt     # the seed: the human's, kept nowhere else
 fth rfr rfr-input.zip --seed-file rfr/seed.txt [--out rfr] [--evidence dev-evidence/] [--ledger ledger.md] [--name <campaign>-<date>]
 ```
+
+The rehearsal (`--dry-run`) runs rows 1–2 for real (unpack, every preflight check, the real `verify`), then renders every
+command line rows 3–8 would execute — flash/dump, GDS, recorder, run-start marker `send`, the stimulus pytest argv, audit,
+unseal, package — into `rfr/<run-id>-rehearsal/rfr.log` and refuses on any `build-artifacts` path, `..`, absolute host path
+(devices excepted) or campaign-root path that does not exist. Its log (and sha256) is the gate evidence before the seed is
+requested; the real run id stays free.
 
 It runs the manual rows 1–8 in order with the arguments the rows name —
 `verify-package` + unpack, the package's manifest, sealed draw, run with
