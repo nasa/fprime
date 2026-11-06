@@ -14,7 +14,7 @@ description: >-
 
 # F Prime component checklist review
 
-The checklist has 72 items in five sections. All but one are decided by
+The checklist has 73 items in five sections. All but one are decided by
 tools; this skill tells you where each verdict comes from and defines the
 few judgements that remain for the reviewer.
 
