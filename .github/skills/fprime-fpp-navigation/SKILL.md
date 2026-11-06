@@ -139,8 +139,6 @@ Argument passing: primitives by value, enums/structs/arrays `const T&`,
 - `fprime-util generate` refuses to run when the installed `fpp` does
   not match `cmake/required.cmake`; build the venv from the
   framework's `requirements.txt`.
-- `fpp-to-json` is **not** a shortcut: it emits 15–30× the size of the
-  source file.
 
 ---
 

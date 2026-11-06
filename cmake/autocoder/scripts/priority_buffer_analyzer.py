@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Priority Buffer Size Analyzer - fprime_python_model Implementation
+Priority Buffer Size Analyzer
 
 Analyzes F' components to compute maximum buffer sizes per priority level.
-Uses fprime_python_model for parsing FPP JSON artifacts (no direct JSON parsing).
+Uses fprime-fpp-python to analyze the topology's FPP model in-process.
 
 Author: B. Duckett
 Assisted by: Claude 4.5 Sonnet
@@ -21,38 +21,19 @@ from typing import Dict, List, Optional, Set, Tuple
 from datetime import datetime
 from dataclasses import dataclass, field
 
-# Note: fpm_ prefixes on imports are intentional to make it clear which
-# classes are from fprime_python_model vs. local definitions
-from fprime_python_model.model import FprimePythonModel as fpm_FprimePythonModel
-from fprime_python_model.semantics.analysis import Analysis as fpm_Analysis
-from fprime_python_model.semantics.topology import Topology as fpm_Topology
-from fprime_python_model.semantics.component import Component as fpm_Component
-from fprime_python_model.semantics.component_instance import (
-    ComponentInstance as fpm_ComponentInstance,
-)
-from fprime_python_model.semantics import port_instance as fpm_port_instance
-from fprime_python_model.semantics import command as fpm_command
-from fprime_python_model.semantics.interface_instance import (
-    InterfaceComponentInstance as fpm_InterfaceComponentInstance,
-)
-from fprime_python_model.semantics import types_values as fpm_types_values
-from fprime_python_model import fpp_ast as fpm_fpp_ast
-from fprime_python_model.semantics.symbol import Symbol as fpm_Symbol
+import fpp
 
 # Initialize logger
 logger = logging.getLogger(__name__)
 
-# Build path patterns
-FPRIME_SOURCE_PATTERN = "/lib/fprime/"
-FPRIME_BUILD_PREFIX = "F-Prime"
+# Files written into each module's build directory by the F Prime CMake system
+FPP_SOURCE_LIST_FILE = "fpp-source-list"
+FPP_IMPORT_LIST_FILE = "fpp-import-list"
+SOURCE_LOCATIONS_FILE = "fprime-source-locations.fprime-util"
+BINARY_LOCATIONS_FILE = "fprime-binary-locations.fprime-util"
 
 # Default buffer sizes
 INTERNAL_PORT_BUFFER_SIZE = "sizeof(FwIndexType)"
-
-# JSON file names
-JSON_AST_FILE = "fpp-ast.json"
-JSON_LOCATIONS_FILE = "fpp-loc-map.json"
-JSON_ANALYSIS_FILE = "fpp-analysis.json"
 
 
 @dataclass
@@ -80,8 +61,13 @@ class ComponentPriorityInfo:
         return self.component_path.replace("/", "_").replace("-", "_")
 
 
+def to_cpp_name(qualified_name: str) -> str:
+    """Convert a dotted FPP qualified name to a C++ qualified name"""
+    return qualified_name.replace(".", "::")
+
+
 class PriorityBufferAnalyzer:
-    """Analyzes F' components using fprime_python_model to compute priority buffer sizes"""
+    """Analyzes F' components using fprime-fpp-python to compute priority buffer sizes"""
 
     def __init__(
         self,
@@ -95,26 +81,24 @@ class PriorityBufferAnalyzer:
         self.output_file = output_file
         self.verbose = verbose
         self.component_headers: Set[str] = set()
-        self.topology_model: Optional[fpm_FprimePythonModel] = None
+        self.model: Optional[fpp.Model] = None
+        self.location_pairs: List[Tuple[Path, Path]] = []
 
-    def _validate_component_json_files(self, directory: Path) -> bool:
-        """Check if all required FPP JSON files exist in directory"""
-        required = [JSON_AST_FILE, JSON_LOCATIONS_FILE, JSON_ANALYSIS_FILE]
-        return all((directory / f).exists() for f in required)
+    def load_location_pairs(self) -> List[Tuple[Path, Path]]:
+        """Load (source, binary) location pairs, longest source path first
 
-    def _load_fprime_model(self, json_dir: Path) -> Optional[fpm_FprimePythonModel]:
-        """Load fpm_FprimePythonModel from directory with standard JSON files"""
-        if not self._validate_component_json_files(json_dir):
-            return None
-        try:
-            return fpm_FprimePythonModel(
-                str(json_dir / JSON_AST_FILE),
-                str(json_dir / JSON_LOCATIONS_FILE),
-                str(json_dir / JSON_ANALYSIS_FILE),
+        Raises:
+            FileNotFoundError: If the location files are missing from the build directory
+            ValueError: If the source and binary locations do not pair up
+        """
+        sources = (self.build_dir / SOURCE_LOCATIONS_FILE).read_text().split()
+        binaries = (self.build_dir / BINARY_LOCATIONS_FILE).read_text().split()
+        if len(sources) != len(binaries):
+            raise ValueError(
+                f"Mismatched source and binary locations in {self.build_dir}"
             )
-        except (FileNotFoundError, ValueError) as e:
-            logger.error(f"Failed to load model from {json_dir}: {e}")
-            return None
+        pairs = [(Path(s).resolve(), Path(b).resolve()) for s, b in zip(sources, binaries)]
+        return sorted(pairs, key=lambda pair: len(pair[0].parts), reverse=True)
 
     def run(self) -> int:
         """Main analysis entry point
@@ -124,17 +108,18 @@ class PriorityBufferAnalyzer:
         """
         logger.info(f"Loading topology from: {self.topology_path}")
 
-        self.topology_model = self.load_topology_model()
-        topology = self.extract_topology(self.topology_model)
-        component_instances = self.get_component_instances(topology)
+        self.location_pairs = self.load_location_pairs()
+        self.model = self.load_topology_model()
+        topology = self.extract_topology(self.model)
+        components = self.get_components(topology)
 
-        logger.info(f"Found {len(component_instances)} component instances in topology")
+        logger.info(f"Found {len(components)} components in topology")
 
         component_results = []
         fail_count = 0
-        for comp_instance in component_instances:
+        for component in components:
             try:
-                result = self.analyze_component_instance(comp_instance)
+                result = self.analyze_component(component)
                 if result:
                     component_results.append(result)
                     logger.info(
@@ -142,7 +127,7 @@ class PriorityBufferAnalyzer:
                     )
             except (FileNotFoundError, ValueError, KeyError, AttributeError) as e:
                 logger.info(
-                    f"  ✗ Failed to analyze {comp_instance.get_qualified_name()}: {e}"
+                    f"  ✗ Failed to analyze {component.symbol.qualified_name}: {e}"
                 )
                 if self.verbose:
                     traceback.print_exc()
@@ -157,73 +142,60 @@ class PriorityBufferAnalyzer:
             self.generate_empty_header()
         return fail_count
 
-    def load_topology_model(self) -> fpm_FprimePythonModel:
-        """Load topology using fpm_FprimePythonModel
+    def load_topology_model(self) -> fpp.Model:
+        """Analyze the topology module's FPP sources along with their imports
 
         Raises:
-            FileNotFoundError: If required JSON files are missing
+            FileNotFoundError: If the topology build directory lacks the FPP source lists
+            ValueError: If the FPP model has errors
         """
-        topology_dir = self.topology_path
+        sources = self._read_list_file(self.topology_path / FPP_SOURCE_LIST_FILE)
+        imports = self._read_list_file(self.topology_path / FPP_IMPORT_LIST_FILE)
+        if not sources:
+            raise ValueError(f"No FPP sources listed in {self.topology_path}")
 
-        if not self._validate_component_json_files(topology_dir):
-            raise FileNotFoundError(f"Missing required JSON files in {topology_dir}")
+        model = fpp.analyze(sources, imports=imports)
+        for diagnostic in model.diagnostics:
+            print(diagnostic.render(color=sys.stderr.isatty()), file=sys.stderr)
+        if model.has_errors:
+            raise ValueError(f"FPP model has {model.error_count} error(s)")
+        return model
 
-        return fpm_FprimePythonModel(
-            str(topology_dir / JSON_AST_FILE),
-            str(topology_dir / JSON_LOCATIONS_FILE),
-            str(topology_dir / JSON_ANALYSIS_FILE),
-        )
+    @staticmethod
+    def _read_list_file(list_file: Path) -> List[str]:
+        """Read a CMake list (semicolon-separated) written by the build system"""
+        return [entry for entry in list_file.read_text().strip().split(";") if entry]
 
-    def extract_topology(self, model: fpm_FprimePythonModel) -> fpm_Topology:
-        """Extract fpm_Topology from fpm_Analysis.topology_map
+    def extract_topology(self, model: fpp.Model) -> fpp.Topology:
+        """Select the deployment topology defined by the topology module's own sources
 
         Raises:
             ValueError: If no topology found in analysis
         """
-        analysis = model.analysis
-
-        if not analysis.topology_map:
+        topologies = [
+            topology
+            for topology in model.analysis.topology_map.values()
+            if topology.node.in_source
+        ]
+        if not topologies:
             raise ValueError("No topology found in analysis")
 
-        topology = next(iter(analysis.topology_map.values()))
-        logger.debug(f"Loaded topology: {topology.get_qualified_name()}")
+        deployments = [t for t in topologies if t.node.is_deployment]
+        topology = (deployments or topologies)[0]
+        logger.debug(f"Loaded topology: {topology.qualified_name}")
         return topology
 
-    def get_component_instances(
-        self, topology: fpm_Topology
-    ) -> List[fpm_ComponentInstance]:
-        """Extract fpm_ComponentInstance objects from fpm_Topology.instance_map"""
-        component_instances = []
+    def get_components(self, topology: fpp.Topology) -> List[fpp.Component]:
+        """Collect the unique components instantiated in the topology"""
+        components: Dict[fpp.Symbol, fpp.Component] = {}
 
-        for interface_instance, location in topology.instance_map.items():
-            if isinstance(interface_instance, fpm_InterfaceComponentInstance):
-                comp_instance = interface_instance.ci
-                component_instances.append(comp_instance)
-                logger.debug(
-                    f"  Component instance: {comp_instance.get_qualified_name()}"
-                )
+        for comp_instance in topology.component_instance_map:
+            logger.debug(f"  Component instance: {comp_instance.qualified_name}")
+            component = comp_instance.component
+            if component is not None:
+                components.setdefault(component.symbol, component)
 
-        return component_instances
-
-    def _load_component_from_model(
-        self, comp_model: fpm_FprimePythonModel, component_dir: Path
-    ) -> fpm_Component:
-        """Load single component from component model
-
-        Raises:
-            ValueError: If no components found or multiple components in single file
-        """
-        comp_analysis = comp_model.analysis
-        if not comp_analysis.component_map:
-            raise ValueError("No components in component_map")
-
-        comp_ids = list(comp_analysis.component_map.keys())
-        if len(comp_ids) != 1:
-            raise ValueError(
-                f"Multiple component definitions in single component file: {comp_ids} in {component_dir}"
-            )
-
-        return comp_analysis.component_map[comp_ids[0]]
+        return list(components.values())
 
     def _should_skip_component(
         self, priority_buffers: Dict[int, List[PortBufferInfo]]
@@ -240,148 +212,89 @@ class PriorityBufferAnalyzer:
 
         return False
 
-    def _load_and_analyze_component(
-        self, component_dir: Path
-    ) -> Optional[Dict[int, List[PortBufferInfo]]]:
-        """Load component model and extract priority buffers
-
-        Returns:
-            Priority buffer mapping or None if model loading fails
-
-        Raises:
-            ValueError: If component model is invalid
-        """
-        comp_model = self.load_component_model(component_dir)
-        if not comp_model:
-            return None
-
-        loaded_component = self._load_component_from_model(comp_model, component_dir)
-        return self.extract_priority_buffers(loaded_component, comp_model.analysis)
-
     def _create_component_info(
         self,
-        component: fpm_Component,
+        component: fpp.Component,
         component_dir: Path,
         priority_buffers: Dict[int, List[PortBufferInfo]],
     ) -> ComponentPriorityInfo:
         """Create ComponentPriorityInfo from component data"""
-        sym = fpm_Symbol.construct(component.a_node)
-        component_name = self.topology_model.analysis.get_qualified_name_from_map(sym)
-        relative_path = str(component_dir.relative_to(self.build_dir))
+        symbol = component.symbol
+        relative_path = component_dir.relative_to(self.build_dir).as_posix()
         self.component_headers.add(
-            f"{relative_path}/{component_name.base}ComponentAc.hpp"
+            f"{relative_path}/{symbol.unqualified_name}ComponentAc.hpp"
         )
 
         return ComponentPriorityInfo(
-            component_name=component_name.base,
-            component_namespace=component_name.qualifier,
+            component_name=symbol.unqualified_name,
+            component_namespace=symbol.parent.qualified_name if symbol.parent else "",
             component_path=relative_path,
             priority_buffers=priority_buffers,
         )
 
-    def analyze_component_instance(
-        self, comp_instance: fpm_ComponentInstance
+    def analyze_component(
+        self, component: fpp.Component
     ) -> Optional[ComponentPriorityInfo]:
-        """Analyze a component instance for priority buffer requirements"""
-        comp_qualified_name = comp_instance.get_qualified_name()
+        """Analyze a component for priority buffer requirements"""
+        comp_qualified_name = component.symbol.qualified_name
         logger.debug(f"Analyzing: {comp_qualified_name}")
 
-        component = comp_instance.component
-        component_dir = self.find_component_build_dir(comp_instance, component)
+        component_dir = self.find_component_build_dir(component)
         if not component_dir:
             logger.debug(f"  Could not find build directory for {comp_qualified_name}")
             return None
 
-        priority_buffers = self._load_and_analyze_component(component_dir)
-        if priority_buffers is None:
-            return None
-
+        priority_buffers = self.extract_priority_buffers(component)
         if self._should_skip_component(priority_buffers):
             return None
 
         return self._create_component_info(component, component_dir, priority_buffers)
 
-    def _transform_source_to_build_path(self, source_path: str) -> Optional[Path]:
-        """Transform source path to expected build path"""
-        source_str = str(source_path)
-        if FPRIME_SOURCE_PATTERN in source_str:
-            # Extract path after lib/fprime/
-            rel_path = source_str.split(FPRIME_SOURCE_PATTERN)[1]
-            # Remove the .fpp filename
-            rel_dir = str(Path(rel_path).parent)
-            # Build path is F-Prime/<rel_dir>
-            build_path = self.build_dir / FPRIME_BUILD_PREFIX / rel_dir
+    def find_component_build_dir(self, component: fpp.Component) -> Optional[Path]:
+        """Find component's build directory by mapping its source directory through the location pairs"""
+        source_dir = Path(component.node.location.uri).resolve().parent
+        logger.debug(f"  Source directory: {source_dir}")
 
-            if build_path.exists() and (build_path / JSON_ANALYSIS_FILE).exists():
-                return build_path
-        return None
-
-    def find_component_build_dir(
-        self, comp_instance: fpm_ComponentInstance, component: fpm_Component
-    ) -> Optional[Path]:
-        """Find component's build directory by deriving from source path"""
-        # Get the source path from component's AST node using topology_model
-        if not self.topology_model:
-            return None
-
-        try:
-            comp_def_node = component.a_node[1]
-            source_path = self.topology_model.get_location(comp_def_node).path
-            logger.debug(f"  Source path: {source_path}")
-
-            # Try to transform source path to build path
-            build_path = self._transform_source_to_build_path(source_path)
-            if build_path:
+        for source_location, binary_location in self.location_pairs:
+            try:
+                relative_dir = source_dir.relative_to(source_location)
+            except ValueError:
+                continue
+            build_path = binary_location / relative_dir
+            if build_path.is_dir():
                 logger.debug(f"  Found at: {build_path}")
                 return build_path
-
-        except (AttributeError, KeyError, OSError) as e:
-            logger.debug(f"  Error getting source path: {e}")
-
+            return None
         return None
 
-    def load_component_model(
-        self, component_dir: Path
-    ) -> Optional[fpm_FprimePythonModel]:
-        """Load component model using fpm_FprimePythonModel"""
-        model = self._load_fprime_model(component_dir)
-        if not model:
-            logger.debug(
-                f"  Missing JSON files or failed to load model from {component_dir}"
-            )
-        return model
-
     def extract_priority_buffers(
-        self, component: fpm_Component, analysis: fpm_Analysis
+        self, component: fpp.Component
     ) -> Dict[int, List[PortBufferInfo]]:
         """Extract priority -> buffer info mapping for component"""
         priority_map: Dict[int, List[PortBufferInfo]] = {}
 
-        self.extract_async_ports(component, analysis, priority_map)
-        self.extract_async_commands(component, analysis, priority_map)
+        self.extract_async_ports(component, priority_map)
+        self.extract_async_commands(component, priority_map)
 
         return priority_map
 
     def extract_async_ports(
         self,
-        component: fpm_Component,
-        analysis: fpm_Analysis,
+        component: fpp.Component,
         priority_map: Dict[int, List[PortBufferInfo]],
     ) -> None:
         """Extract async input ports and internal ports"""
         for port_name, port_instance in component.port_map.items():
-            if isinstance(port_instance, fpm_port_instance.GeneralPortInstance):
-                if port_instance.kind == fpm_fpp_ast.fpp_ast.GeneralKind.ASYNC_INPUT:
-                    priority = self.get_port_priority(port_instance, analysis)
-                    buffer_expr = self.get_port_buffer_size_expr(
-                        port_instance, analysis
-                    )
+            if isinstance(port_instance, fpp.PortInstance.General):
+                if isinstance(port_instance.kind, fpp.GeneralKind.AsyncInput):
+                    priority = self.get_port_priority(port_instance)
+                    buffer_expr = self.get_port_buffer_size_expr(port_instance)
 
                     if buffer_expr:
                         if priority not in priority_map:
                             priority_map[priority] = []
 
-                        port_type = self.get_port_type_name(port_instance, analysis)
+                        port_type = self.get_port_type_name(port_instance)
                         priority_map[priority].append(
                             PortBufferInfo(
                                 port_name=str(port_name),
@@ -394,11 +307,9 @@ class PriorityBufferAnalyzer:
                             f"  Async port '{port_name}' at priority {priority}: {buffer_expr}"
                         )
 
-            elif isinstance(port_instance, fpm_port_instance.InternalPortInstance):
-                priority = self.get_port_priority(port_instance, analysis)
-                buffer_expr = self.calculate_internal_port_buffer(
-                    port_instance, analysis
-                )
+            elif isinstance(port_instance, fpp.PortInstance.Internal):
+                priority = self.get_port_priority(port_instance)
+                buffer_expr = self.calculate_internal_port_buffer(port_instance)
 
                 if buffer_expr:
                     if priority not in priority_map:
@@ -418,20 +329,19 @@ class PriorityBufferAnalyzer:
 
     def extract_async_commands(
         self,
-        component: fpm_Component,
-        analysis: fpm_Analysis,
+        component: fpp.Component,
         priority_map: Dict[int, List[PortBufferInfo]],
     ) -> None:
         """Extract async commands and add Fw::CmdPortBuffer"""
         async_command_priorities = set()
 
         for opcode, command in component.command_map.items():
-            if isinstance(command, fpm_command.CommandNonParam):
-                if isinstance(command.kind, fpm_command.NonParamKindAsync):
-                    priority = self.get_command_priority(command, analysis)
+            if isinstance(command, fpp.Command.NonParam):
+                if isinstance(command.kind, fpp.NonParamKind.Async):
+                    priority = self.get_command_priority(command)
                     async_command_priorities.add(priority)
                     logger.debug(
-                        f"  Async command '{command.get_name()}' at priority {priority}"
+                        f"  Async command '{command.name}' at priority {priority}"
                     )
 
         port_type = "Fw::Cmd"
@@ -455,190 +365,119 @@ class PriorityBufferAnalyzer:
                 )
                 logger.debug(f"  Added {port_type} to priority {priority}")
 
-    def get_port_priority(
-        self, port_instance: fpm_port_instance.PortInstance, analysis: fpm_Analysis
-    ) -> int:
-        """Extract priority from port instance"""
+    def get_port_priority(self, port_instance: fpp.PortInstance) -> int:
+        """Extract the resolved priority from a port instance, defaulting to 0"""
         priority_val = None
 
-        if isinstance(port_instance, fpm_port_instance.GeneralPortInstance):
-            if port_instance.specifier.priority is not None:
-                expr = port_instance.specifier.priority.data
-                # Handle numeric literal
-                if isinstance(expr, fpm_fpp_ast.fpp_ast.ExprLiteralInt):
-                    priority_val = int(expr.value)
-                # Handle named constant (e.g., "ActiveRateGroupOutputPorts")
-                elif isinstance(expr, fpm_fpp_ast.fpp_ast.ExprIdent):
-                    priority_val = analysis.value_map[
-                        port_instance.specifier.priority._id
-                    ].value
-                else:
-                    raise ValueError(f"Cannot interpret priority {expr!r}")
-        elif isinstance(port_instance, fpm_port_instance.SpecialPortInstance):
-            priority_val = port_instance.priority
-        elif isinstance(port_instance, fpm_port_instance.InternalPortInstance):
+        if isinstance(port_instance, fpp.PortInstance.General):
+            if isinstance(port_instance.kind, fpp.GeneralKind.AsyncInput):
+                priority_val = port_instance.kind.priority
+        elif isinstance(
+            port_instance, (fpp.PortInstance.Special, fpp.PortInstance.Internal)
+        ):
             priority_val = port_instance.priority
 
-        if priority_val is None:
-            return 0
-        elif isinstance(priority_val, int):
-            return priority_val
-        else:
-            raise ValueError(f"Cannot interpret priority for port {port_instance!r}")
+        return 0 if priority_val is None else priority_val
 
-    def get_command_priority(
-        self, command: fpm_command.CommandNonParam, analysis: fpm_Analysis
-    ) -> int:
-        """Extract priority from async command"""
-        if isinstance(command.kind, fpm_command.NonParamKindAsync):
-            priority_val = command.kind.priority
-
-            if priority_val is None:
-                return 0
-
-            if isinstance(priority_val, int):
-                return priority_val
-
+    def get_command_priority(self, command: fpp.Command.NonParam) -> int:
+        """Extract the resolved priority from an async command, defaulting to 0"""
+        if isinstance(command.kind, fpp.NonParamKind.Async):
+            if command.kind.priority is not None:
+                return command.kind.priority
         return 0
 
-    def get_port_type_name(
-        self,
-        port_instance: fpm_port_instance.GeneralPortInstance,
-        analysis: fpm_Analysis,
-    ) -> str:
-        """Get qualified port type name using fpm_Analysis.get_qualified_name_from_map"""
+    def _get_port_symbol(
+        self, port_instance: fpp.PortInstance.General
+    ) -> Optional[fpp.Symbol]:
+        """Get the symbol of the port definition used by a typed port instance"""
         port_type = port_instance.ty
+        if isinstance(port_type, fpp.PortInstanceType.DefPort):
+            return self.model.analysis.symbol_map[port_type.definition.node_id]
+        return None
 
-        if isinstance(port_type, fpm_port_instance.DefPortPortInstanceType):
-            symbol = port_type.symbol
-            qualified_name = analysis.get_qualified_name_from_map(symbol)
-            return str(qualified_name)
+    def get_port_type_name(self, port_instance: fpp.PortInstance.General) -> str:
+        """Get qualified port type name"""
+        symbol = self._get_port_symbol(port_instance)
+        return symbol.qualified_name if symbol else "Unknown"
 
-        return "Unknown"
-
-    def get_port_buffer_size_expr(
-        self,
-        port_instance: fpm_port_instance.GeneralPortInstance,
-        analysis: fpm_Analysis,
-    ) -> str:
+    def get_port_buffer_size_expr(self, port_instance: fpp.PortInstance.General) -> str:
         """Get C++ buffer expression for port"""
-        port_type = port_instance.ty
-
-        if isinstance(port_type, fpm_port_instance.DefPortPortInstanceType):
-            symbol = port_type.symbol
-            qualified_name = analysis.get_qualified_name_from_map(symbol)
-
-            qualified_str = str(qualified_name).replace(".", "::")
-
-            return self.get_qual_port_buffer_size_expr(qualified_str)
-
+        symbol = self._get_port_symbol(port_instance)
+        if symbol:
+            return self.get_qual_port_buffer_size_expr(
+                to_cpp_name(symbol.qualified_name)
+            )
         return ""
 
     def get_qual_port_buffer_size_expr(self, qualified_str: str) -> str:
         """Get C++ buffer expression for port"""
         return f"{qualified_str}PortBuffer::CAPACITY"
 
-    def _is_primitive_type(self, resolved_type: fpm_types_values.Type) -> bool:
+    def _is_primitive_type(self, resolved_type: fpp.Type) -> bool:
         """Check if type is a primitive type (int, float, or bool)"""
         return isinstance(
             resolved_type,
-            (
-                fpm_types_values.PrimitiveIntType,
-                fpm_types_values.FloatType,
-                fpm_types_values.BooleanType,
-            ),
+            (fpp.Type.PrimitiveInt, fpp.Type.Float, fpp.Type.Boolean),
         )
 
-    def resolved_type_to_cpp_size_expr(
-        self, resolved_type: fpm_types_values.Type, analysis: fpm_Analysis
-    ) -> str:
+    def resolved_type_to_cpp_size_expr(self, resolved_type: fpp.Type) -> str:
         """Convert a resolved semantic Type to a C++ serialized-size expression.
 
         Raises:
             ValueError: If type cannot be handled
         """
-        if isinstance(resolved_type, fpm_types_values.PrimitiveIntType):
-            return f"sizeof({resolved_type.kind.name})"
-        elif isinstance(resolved_type, fpm_types_values.FloatType):
-            return f"sizeof({resolved_type.kind.name})"
-        elif isinstance(resolved_type, fpm_types_values.BooleanType):
+        if isinstance(resolved_type, (fpp.Type.PrimitiveInt, fpp.Type.Float)):
+            return f"sizeof({resolved_type.value.name})"
+        elif isinstance(resolved_type, fpp.Type.Boolean):
             return "sizeof(FwEnumStoreType)"
-        elif isinstance(resolved_type, fpm_types_values.StringType):
-            if resolved_type.size:
-                return f"Fw::StringBase::STATIC_SERIALIZED_SIZE({resolved_type.size})"
+        elif isinstance(resolved_type, fpp.Type.String):
+            if resolved_type.value:
+                return f"Fw::StringBase::STATIC_SERIALIZED_SIZE({resolved_type.value})"
             return "Fw::StringBase::SERIALIZED_SIZE"
-        elif isinstance(resolved_type, fpm_types_values.AliasType):
-            underlying = resolved_type.get_underlying_type()
+        elif isinstance(resolved_type, fpp.Type.Alias):
+            underlying = resolved_type.underlying_type
             if self._is_primitive_type(underlying):
-                symbol = resolved_type.get_def_symbol()
-                qn = analysis.get_qualified_name_from_map(symbol)
-                cpp_name = "::".join(qn.to_ident_list())
+                cpp_name = to_cpp_name(resolved_type.def_symbol.qualified_name)
                 return f"sizeof({cpp_name})"
             else:
-                return self.resolved_type_to_cpp_size_expr(underlying, analysis)
+                return self.resolved_type_to_cpp_size_expr(underlying)
         elif isinstance(
             resolved_type,
-            (
-                fpm_types_values.AbsType,
-                fpm_types_values.StructType,
-                fpm_types_values.ArrayType,
-                fpm_types_values.EnumType,
-            ),
+            (fpp.Type.Abs, fpp.Type.Struct, fpp.Type.Array, fpp.Type.Enum),
         ):
-            symbol = resolved_type.get_def_symbol()
-            qn = analysis.get_qualified_name_from_map(symbol)
-            cpp_name = "::".join(qn.to_ident_list())
+            cpp_name = to_cpp_name(resolved_type.def_symbol.qualified_name)
             return f"{cpp_name}::SERIALIZED_SIZE"
         else:
-            raise ValueError(f"Unhandled type: {resolved_type}")
+            raise ValueError(f"Unhandled type: {resolved_type!r}")
 
     def calculate_internal_port_buffer(
-        self,
-        port_instance: fpm_port_instance.InternalPortInstance,
-        analysis: fpm_Analysis,
+        self, port_instance: fpp.PortInstance.Internal
     ) -> str:
         """Calculate buffer size expression for internal port by summing parameter sizes
 
         Raises:
-            ValueError: If type not found in type map
-            AttributeError: If port structure is invalid
-            KeyError: If type lookup fails
+            ValueError: If a parameter type was not resolved
         """
-        try:
-            ast_node = port_instance.a_node
-            spec: fpm_fpp_ast.fpp_ast.SpecInternalPort = ast_node[1]
-            params = spec.data.params
-            if not params:
-                return "0"
+        params = port_instance.node.params
+        if not params:
+            return "0"
 
-            size_expressions = []
-            for annotated_param in params:
-                _, param_node, _ = annotated_param
-                formal_param = param_node.data
-                logger.debug(
-                    f"    param: {formal_param.name}, type: {formal_param.type_name}"
+        size_expressions = []
+        for formal_param in params:
+            logger.debug(f"    param: {formal_param.name}")
+            resolved_type = formal_param.type_name.resolved_type
+            if resolved_type is None:
+                raise ValueError(
+                    f"Could not resolve type of parameter '{formal_param.name}' at {formal_param.location.display}"
                 )
-                type_node_id = formal_param.type_name.get_id()
 
-                if type_node_id not in analysis.type_map:
-                    raise ValueError(f"Could not find type in type map: {type_node_id}")
-
-                resolved_type = analysis.type_map[type_node_id]
-                type_size_expr = self.resolved_type_to_cpp_size_expr(
-                    resolved_type, analysis
-                )
-                logger.debug(
-                    f"    type_size_expr: {type_size_expr!r}, resolved_type: {resolved_type!r}"
-                )
-                size_expressions.append(type_size_expr)
-
-            return " + ".join(size_expressions)
-
-        except (AttributeError, KeyError) as e:
-            logger.warning(
-                f"Warning: Could not calculate internal port size: {e}\n{port_instance.__dict__!r}"
+            type_size_expr = self.resolved_type_to_cpp_size_expr(resolved_type)
+            logger.debug(
+                f"    type_size_expr: {type_size_expr!r}, resolved_type: {resolved_type!r}"
             )
-            raise
+            size_expressions.append(type_size_expr)
+
+        return " + ".join(size_expressions)
 
     def _generate_header_preamble(self, lines: List[str]) -> None:
         """Generate header file preamble with includes"""
@@ -736,7 +575,7 @@ class PriorityBufferAnalyzer:
             "#ifndef PRIORITY_BUFFER_SIZES_AC_HPP",
             "#define PRIORITY_BUFFER_SIZES_AC_HPP",
             "",
-            "// Auto-generated by priority_buffer_analyzer.py (fprime_python_model)",
+            "// Auto-generated by priority_buffer_analyzer.py",
             "// No components with multiple priorities found",
             "",
             "namespace PriorityBufferConfig {",
@@ -752,8 +591,7 @@ class PriorityBufferAnalyzer:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Analyze F' components for priority buffer sizes using fprime_python_model",
-        epilog="Requires FPRIME_ENABLE_JSON_MODEL_GENERATION in CMakeLists.txt",
+        description="Analyze F' components for priority buffer sizes using fprime-fpp-python",
     )
     parser.add_argument(
         "--build-dir",
@@ -765,7 +603,7 @@ def main():
         "--topology-path",
         type=Path,
         required=True,
-        help="Path to topology JSON files (e.g., build-dir/Deployment/Top)",
+        help="Build directory of the topology module (e.g., build-dir/Deployment/Top)",
     )
     parser.add_argument(
         "--output", type=Path, required=True, help="Output header file path"
@@ -801,6 +639,9 @@ def main():
     try:
         fail_count = analyzer.run()
         return fail_count
+    except fpp.DiagnosticError as e:
+        print(e.diagnostic.render(color=sys.stderr.isatty()), file=sys.stderr)
+        return 1
     except Exception as e:
         logger.error(f"Error: {e}")
         if args.verbose:
