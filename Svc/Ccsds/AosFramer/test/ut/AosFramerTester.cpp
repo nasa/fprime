@@ -188,7 +188,6 @@ void AosFramerTester ::testLongPacket() {
     for (U8 frame = 0; frame < 3; frame++) {
         ASSERT_from_dataOut_SIZE(frame + 1);
         Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(frame).data;
-        ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(frame).context;
         ASSERT_EQ(outBuffer.getSize(), frameSize);
         ASSERT_EQ(this->fromPortHistory_dataOut->at(frame).context.get_vcId(), context.get_vcId());
 
@@ -336,7 +335,6 @@ void AosFramerTester ::testShortPackets() {
     U32 payloadInd = 0;
 
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
-    ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
     ASSERT_EQ(outBuffer.getSize(), frameSize);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), context.get_vcId());
 
@@ -405,10 +403,13 @@ void AosFramerTester ::testShortPackets() {
     // Each of the nine packets that did not produce a frame was answered with one SUCCESS directly
     ASSERT_from_comStatusOut_SIZE(9);
 
-    // Behave as the adapter: return the frame, then report its status, which is forwarded since no
-    // tail is outstanding — ten messages, ten statuses upstream (#5888)
+    // Behave as the adapter: return the frame, then report its status. The 6-byte idle remainder
+    // striped an SPP idle tail onto the next frame, so the acked SUCCESS is consumed to finish it
+    // and check_and_send_vc emits the tenth SUCCESS — ten messages, ten SUCCESSes upstream (#5888)
     this->ackFrame(0);
     ASSERT_from_comStatusOut_SIZE(10);
+    Fw::Success expectedStatus = Fw::Success::SUCCESS;
+    ASSERT_from_comStatusOut(9, expectedStatus);
 
     // Make sure we don't send any extra frames (continue into null)
     ASSERT_from_dataOut_SIZE(1);
@@ -417,14 +418,6 @@ void AosFramerTester ::testShortPackets() {
 // ----------------------------------------------------------------------
 // Status Protocol Tests
 // ----------------------------------------------------------------------
-
-void AosFramerTester ::ackFrame(FwSizeType frameIndex) {
-    Fw::Buffer frame = this->fromPortHistory_dataOut->at(static_cast<U32>(frameIndex)).data;
-    ComCfg::FrameContext context = this->fromPortHistory_dataOut->at(static_cast<U32>(frameIndex)).context;
-    this->invoke_to_dataReturnIn(0, frame, context);
-    Fw::Success status = Fw::Success::SUCCESS;
-    this->invoke_to_comStatusIn(0, status);
-}
 
 void AosFramerTester ::testTailPackingSingleStatus() {
     // The repro from #5888: a packet whose tail spans into a second frame must yield exactly one
@@ -444,17 +437,20 @@ void AosFramerTester ::testTailPackingSingleStatus() {
     ComCfg::FrameContext context;
     context.set_sendNow(true);
 
-    // The packet fills the first frame, which is sent; nothing goes upstream yet
+    // The packet fills the first frame, which is sent; nothing goes upstream yet, and the message
+    // buffer stays with the framer while its tail is outstanding
     this->invoke_to_dataIn(0, buffer, context);
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_from_comStatusOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(0);
 
     // The adapter returns the frame and reports its status: the status is consumed to pack the
     // tail, which (with sendNow) is idle-filled and emitted as the second frame — still nothing
-    // upstream
+    // upstream, and the fully packed message buffer is returned to its sender
     this->ackFrame(0);
     ASSERT_from_dataOut_SIZE(2);
     ASSERT_from_comStatusOut_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
 
     // The second frame's status finds no tail outstanding and is forwarded: exactly one status
     // for the one message
@@ -472,10 +468,19 @@ void AosFramerTester ::testTailPackingSingleStatus() {
     // The first frame of this second packet is full and sent; the tail is outstanding
     ASSERT_from_dataOut_SIZE(3);
     this->ackFrame(2);
-    // The consumed status packed the tail into a partial frame, which asks upstream for more data
+    // The consumed status packed the tail into a partial frame, which asks upstream for more data;
+    // the message buffer is returned once its tail is packed
     ASSERT_from_dataOut_SIZE(3);
     ASSERT_from_comStatusOut_SIZE(2);
     ASSERT_from_comStatusOut(1, expectedStatus);
+    ASSERT_from_dataReturnOut_SIZE(2);
+
+    // A SUCCESS for an outstanding tail before the frame buffer has been returned violates the
+    // interface ordering (dataReturnOut before the comStatusOut it applies to) the handler asserts on
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(4);
+    Fw::Success early = Fw::Success::SUCCESS;
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_comStatusIn(0, early), "AosFramer.cpp");
 }
 
 void AosFramerTester ::testTailPackingFailureThenRecovery() {
@@ -525,6 +530,14 @@ void AosFramerTester ::testTailPackingFailureThenRecovery() {
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------
+
+void AosFramerTester ::ackFrame(FwSizeType frameIndex) {
+    Fw::Buffer frame = this->fromPortHistory_dataOut->at(static_cast<U32>(frameIndex)).data;
+    ComCfg::FrameContext context = this->fromPortHistory_dataOut->at(static_cast<U32>(frameIndex)).context;
+    this->invoke_to_dataReturnIn(0, frame, context);
+    Fw::Success status = Fw::Success::SUCCESS;
+    this->invoke_to_comStatusIn(0, status);
+}
 
 U8 AosFramerTester::getFrameTfVn(U8* frameData) {
     // Most 2 bits of 1st octet
