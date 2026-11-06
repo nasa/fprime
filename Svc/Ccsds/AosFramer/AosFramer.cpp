@@ -6,9 +6,8 @@
 // ======================================================================
 
 #include "Svc/Ccsds/AosFramer/AosFramer.hpp"
-#include "Svc/Ccsds/Types/EppLengthOfLengthEnumAc.hpp"
-#include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Svc {
@@ -381,51 +380,6 @@ void AosFramer ::serialize_idle_spp_packet(Fw::SerialBufferBase& serializer, U16
     }
 }
 
-void AosFramer ::serialize_idle_epp_packet(Fw::SerialBufferBase& serializer, U16 length) {
-    // The fill is only requested for a non-empty remainder; a single octet is the EPP minimum
-    FW_ASSERT(length > 0, static_cast<FwAssertArgType>(length));
-
-    // First octet: Packet Version Number '111' | Protocol ID 'idle' | Length of Length (4.1.2.1)
-    constexpr U8 pvnAndIdleBits =
-        static_cast<U8>((0x7 << EPPSubfields::packetVersionOffset) |
-                        (static_cast<U8>(EppProtocolId::Idle) << EPPSubfields::protocolIdOffset));
-
-    // Use the smallest header that can carry the length; each Packet Length field holds the
-    // header-inclusive total packet length (4.1.2.8.2), as AosDeframer::sizeEppPacket decodes it
-    Fw::SerializeStatus status;
-    U16 headerLength;
-    if (length == 1) {
-        // One-octet idle packet: the header is the whole packet and there is no Packet Length field
-        status = serializer.serializeFrom(static_cast<U8>(pvnAndIdleBits | EppLengthOfLength::Zero));
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-        headerLength = 1;
-    } else if (length <= std::numeric_limits<U8>::max()) {
-        // Two-octet header: a one-octet Packet Length field
-        status = serializer.serializeFrom(static_cast<U8>(pvnAndIdleBits | EppLengthOfLength::One));
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-        status = serializer.serializeFrom(static_cast<U8>(length));
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-        headerLength = 2;
-    } else {
-        // Four-octet header: a zero User Defined Field / Protocol ID Extension octet and a two-octet
-        // Packet Length field. The M_PDU payload is bounded to U16 (fill_with_idle_packet), so the
-        // eight-octet header (LengthOfLength 'Four') is never needed
-        status = serializer.serializeFrom(static_cast<U8>(pvnAndIdleBits | EppLengthOfLength::Two));
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-        status = serializer.serializeFrom(static_cast<U8>(0));
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-        status = serializer.serializeFrom(length);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-        headerLength = 4;
-    }
-
-    // Fill the rest with idle pattern
-    for (U16 i = headerLength; i < length; i++) {
-        status = serializer.serializeFrom(EPP_IDLE_DATA_PATTERN);  // Idle data
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    }
-}
-
 void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& context) {
     // Bytes that aren't actual PDUs
     const U16 overhead = START_OF_PAYLOAD + (m_fecf ? AOSTrailer::SERIALIZED_SIZE : 0);
@@ -458,8 +412,10 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
     // (CCSDS 133.1-B-3 4.1.2.8.2), so an EPP idle fill always fits in this frame and never
     // stripes onto the next one as a minimum-size SPP fill may have to
     if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
-        // Serialize the idle packet right into the frame
-        serialize_idle_epp_packet(frameSerializer, idlePacketSize);
+        // Serialize the idle packet right into the frame; the remainder is non-empty (caller
+        // checked) and bounded to U16 above, so it is within the encoder's size limits
+        status = Utils::IdlePacket::serializeEpp(frameSerializer, idlePacketSize);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
         // Increment the offset since we serialized directly into the frame
         vc.current_payload_offset = static_cast<U16>(vc.current_payload_offset + idlePacketSize);

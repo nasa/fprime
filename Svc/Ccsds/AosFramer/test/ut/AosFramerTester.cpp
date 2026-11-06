@@ -12,6 +12,7 @@
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 
 namespace Svc {
 
@@ -441,8 +442,9 @@ void AosFramerTester ::checkEppIdleFilledFrame(FwSizeType frameSize, FwSizeType 
     const U8* frameData = outBuffer.getData();
 
     // First octet: PVN '111' and Protocol ID 'idle' (0b000), with the smallest usable Length of Length;
-    // the Packet Length fields hold the header-inclusive total, as AosDeframer::sizeEppPacket decodes
-    const U8 pvnAndIdleBits = static_cast<U8>(0x7 << EPPSubfields::packetVersionOffset);
+    // the Packet Length fields hold the header-inclusive total (CCSDS 133.1-B-3 4.1.2.8.2)
+    const U8 pvnAndIdleBits = static_cast<U8>(static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL)
+                                              << EPPSubfields::packetVersionOffset);
     FwSizeType headerLength = 0;
     if (idleLength == 1) {
         ASSERT_EQ(frameData[idleStart], static_cast<U8>(pvnAndIdleBits | EppLengthOfLength::Zero));
@@ -458,7 +460,7 @@ void AosFramerTester ::checkEppIdleFilledFrame(FwSizeType frameSize, FwSizeType 
         ASSERT_EQ(frameData[idleStart + 3], static_cast<U8>(idleLength & 0xFF));
         headerLength = 4;
     }
-    const U8 idlePattern = this->component.EPP_IDLE_DATA_PATTERN;
+    const U8 idlePattern = Utils::IdlePacket::DATA_PATTERN;
     for (FwSizeType i = idleStart + headerLength; i < idleEnd; ++i) {
         ASSERT_EQ(frameData[i], idlePattern)
             << "Idle data at index " << i << " in range (" << idleStart + headerLength << ", " << idleEnd << ")"
@@ -484,6 +486,9 @@ void AosFramerTester ::testEppIdleFill() {
     this->checkEppIdleFilledFrame(frameSize, maxPayload - 2, 2);
     // One-byte remainder: the single-octet idle packet, which SPP cannot express without striping
     this->checkEppIdleFilledFrame(frameSize, maxPayload - 1, 3);
+    // Header-shape boundary: 255 bytes still uses the two-octet header, 256 needs the four-octet one
+    this->checkEppIdleFilledFrame(frameSize, maxPayload - 255, 4);
+    this->checkEppIdleFilledFrame(frameSize, maxPayload - 256, 5);
 }
 
 void AosFramerTester ::testEppPreferredOverSpp() {
@@ -500,8 +505,9 @@ void AosFramerTester ::testIdlePvnsValidation() {
     // At least one idle packet protocol must be permitted, and only SPP/EPP bits are valid
     ASSERT_DEATH_IF_SUPPORTED(this->component.configure(1024, true, ComCfg::SpacecraftId, 1, 0), "AosFramer.cpp");
     ASSERT_DEATH_IF_SUPPORTED(this->component.configure(1024, true, ComCfg::SpacecraftId, 1, 0x02), "AosFramer.cpp");
-    // EPP alone is a valid configuration
+    // EPP alone is a valid configuration, and the accepted bitfield is stored
     this->component.configure(1024, true, ComCfg::SpacecraftId, 1, PvnBitfield::EPP_MASK);
+    ASSERT_EQ(this->component.m_vcs[0].idle_packet_types, PvnBitfield::EPP_MASK);
 }
 
 // ----------------------------------------------------------------------

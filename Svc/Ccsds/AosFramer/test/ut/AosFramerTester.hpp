@@ -59,8 +59,8 @@ class AosFramerTester final : public AosFramerGTestBase {
     // Helper functions
     // ----------------------------------------------------------------------
 
-    //! Send one sendNow packet of packetSize bytes and check the emitted frame is completed with an
-    //! Encapsulation Idle Packet of the expected header shape; returns the frame for further checks
+    //! Send one sendNow packet of packetSize bytes, check the emitted frame is completed with an
+    //! Encapsulation Idle Packet of the expected header shape, then return the frame to the component
     void checkEppIdleFilledFrame(FwSizeType frameSize, FwSizeType packetSize, U32 expectedVcCount);
 
     //! Connect ports

@@ -24,7 +24,6 @@ class AosFramer final : public AosFramerComponentBase {
     friend class AosFramerTester;
 
     static constexpr U8 SPP_IDLE_DATA_PATTERN = 0x44;
-    static constexpr U8 EPP_IDLE_DATA_PATTERN = 0x44;
     static constexpr U8 MIN_SPP_LENGTH = 7;
 
     // Offset to start of payload
@@ -142,10 +141,6 @@ class AosFramer final : public AosFramerComponentBase {
     void fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& context);
 
     void serialize_idle_spp_packet(Fw::SerialBufferBase& serializer, U16 length);
-
-    //! Serialize an Encapsulation Idle Packet of exactly length bytes (CCSDS 133.1-B-3 4.1.3.2),
-    //! using the smallest header that can carry the length
-    void serialize_idle_epp_packet(Fw::SerialBufferBase& serializer, U16 length);
 
     //! Fill out the Transfer Frame Primary Header (4.1.2)
     void setup_header(const ComCfg::FrameContext& context);
