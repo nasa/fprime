@@ -90,6 +90,8 @@ relevant one instead of improvising:
 - Modifying pre-existing code (bug fixes, small changes, cleanup):
   `fprime-maintenance` — the doctrine of minimal effect.
 - Writing unit tests: `fprime-unit-testing`.
+- Filling the component development checklist from CodeQL/component-checks
+  evidence: `fprime-component-checklist-review`.
 - Driving development to convergence through local test-and-review
   iterations: `fprime-iterative-development` (requires explicit user
   approval before use).

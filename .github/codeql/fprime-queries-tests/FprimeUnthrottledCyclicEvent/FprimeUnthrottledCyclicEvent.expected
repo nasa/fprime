@@ -1,0 +1,3 @@
+| test.cpp:36:11:36:32 | call to log_WARNING_HI_Overrun | Event log_WARNING_HI_Overrun is emitted from cyclic handler schedIn_handler without throttling or a change-of-state gate. |
+| test.cpp:43:15:43:36 | call to log_WARNING_HI_Overrun | Event log_WARNING_HI_Overrun is emitted from cyclic handler schedIn_handler without throttling or a change-of-state gate. |
+| test.cpp:48:11:48:33 | call to log_ACTIVITY_LO_Started | Event log_ACTIVITY_LO_Started is emitted from cyclic handler run_handler without throttling or a change-of-state gate. |
