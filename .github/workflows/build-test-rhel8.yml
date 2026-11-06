@@ -51,7 +51,7 @@ jobs:
         ccache: "false"
     - name: Build Framework
       run: |
-        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
+        fprime-util generate 2>&1 | output-cleaner
         fprime-util build --all -j4 2>&1 | output-cleaner
       shell: bash
 
@@ -80,7 +80,7 @@ jobs:
     - name: Build Ref
       run: |
         cd TestDeploymentsProject
-        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
+        fprime-util generate 2>&1 | output-cleaner
         fprime-util build -j4 2>&1 | output-cleaner
       shell: bash
 

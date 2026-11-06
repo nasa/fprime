@@ -235,6 +235,8 @@ F´ provides `priority_buffer_analyzer.py` to automatically calculate the maximu
 
 **Script Location**: `${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/scripts/priority_buffer_analyzer.py`
 
+**Requirements**: the `fprime-fpp-python` package (installed by F´'s `requirements.txt`). The script analyzes the topology's FPP model in-process and needs no extra CMake options.
+
 **Integration Steps**:
 
 1. **Add CMake hook in Deployment CMakeLists.txt**:
@@ -310,7 +312,7 @@ namespace PriorityBufferConfig {
 ```
 
 **How It Works**:
-1. Script parses topology dictionaries to identify all port connections by priority
+1. Script analyzes the topology's FPP model to find each instantiated component's async input ports, internal ports, and async commands by priority
 2. For each component and priority, finds maximum serialized size across all port types
 3. Adds `DATA_OFFSET` (priority + port ID overhead) to each size
 4. Generates namespaced constants for use in configuration
