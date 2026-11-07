@@ -2,8 +2,9 @@
 // \title config/OsSelection.hpp
 // \brief configured selection of Os OSAL implementations
 //
-// This header configures how the Os services below (RawTime, Mutex, and
-// ConditionVariable) resolve to concrete implementations. Two mechanisms are
+// This header configures how the Os services below (RawTime, Mutex,
+// ConditionVariable, File, FileSystem, Directory, Console, CountingSemaphore,
+// Cpu, and Memory) resolve to concrete implementations. Two mechanisms are
 // available:
 //
 // 1. Link-time selection (default): each service aliases to an Os::Delegate*
@@ -87,6 +88,22 @@
 //     }  // namespace Os
 //     #define OS_MUTEX_HEADER "Va416x0/Os/AtomicMutex/AtomicMutex.hpp"
 //     #define OS_CONDITION_VARIABLE_HEADER "Os/Stub/ConditionVariable.hpp"
+//
+// ----------------------------------------------------------------------
+// File, FileSystem, Directory, Console, CountingSemaphore, Cpu, and Memory
+//
+// Each of these services is selected independently. A compile-time selection
+// MUST derive from the matching Os::<Service>Interface. The aliased class must
+// still be in the link (see the Mutex note above). Singleton services (Console,
+// FileSystem, Cpu, Memory) must also provide static init()/getSingleton(), and a
+// direct Os::File alias must implement the CRC methods and the open/closed guards
+// that DelegateFile otherwise provides; see Os/docs/sdd.md "Compile-time selection".
+//
+// Example compile-time selection override:
+//
+//     namespace SomePlatform { class PlatformFile; }
+//     namespace Os { using File = SomePlatform::PlatformFile; }
+//     #define OS_FILE_HEADER "SomePlatform/Os/File/PlatformFile.hpp"
 // ======================================================================
 #ifndef CONFIG_OSSELECTION_HPP
 #define CONFIG_OSSELECTION_HPP
@@ -104,10 +121,38 @@ using Mutex = DelegateMutex;
 class DelegateConditionVariable;
 using ConditionVariable = DelegateConditionVariable;
 
+class DelegateFile;
+using File = DelegateFile;
+
+class DelegateFileSystem;
+using FileSystem = DelegateFileSystem;
+
+class DelegateDirectory;
+using Directory = DelegateDirectory;
+
+class DelegateConsole;
+using Console = DelegateConsole;
+
+class DelegateCountingSemaphore;
+using CountingSemaphore = DelegateCountingSemaphore;
+
+class DelegateCpu;
+using Cpu = DelegateCpu;
+
+class DelegateMemory;
+using Memory = DelegateMemory;
+
 }  // namespace Os
 
 #define OS_RAW_TIME_HEADER <Os/DelegateRawTime.hpp>
 #define OS_MUTEX_HEADER <Os/DelegateMutex.hpp>
 #define OS_CONDITION_VARIABLE_HEADER <Os/DelegateConditionVariable.hpp>
+#define OS_FILE_HEADER <Os/DelegateFile.hpp>
+#define OS_FILE_SYSTEM_HEADER <Os/DelegateFileSystem.hpp>
+#define OS_DIRECTORY_HEADER <Os/DelegateDirectory.hpp>
+#define OS_CONSOLE_HEADER <Os/DelegateConsole.hpp>
+#define OS_COUNTING_SEMAPHORE_HEADER <Os/DelegateCountingSemaphore.hpp>
+#define OS_CPU_HEADER <Os/DelegateCpu.hpp>
+#define OS_MEMORY_HEADER <Os/DelegateMemory.hpp>
 
 #endif  // CONFIG_OSSELECTION_HPP

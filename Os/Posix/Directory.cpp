@@ -46,6 +46,9 @@ PosixDirectory::Status PosixDirectory::open(const char* path, OpenMode mode) {
     }
 
     this->m_handle.m_dir_descriptor = dir;
+    // Maintain the open state tracked by DirectoryInterface so that this class behaves correctly
+    // when it is used directly as the Os::Directory alias (compile-time selection)
+    this->setOpen(dir != nullptr);
     return status;
 }
 
@@ -94,6 +97,7 @@ void PosixDirectory::close() {
         (void)::closedir(this->m_handle.m_dir_descriptor);
     }
     this->m_handle.m_dir_descriptor = nullptr;
+    this->setOpen(false);
 }
 
 }  // namespace Directory

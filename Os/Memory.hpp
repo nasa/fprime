@@ -1,110 +1,45 @@
 // ======================================================================
 // \title Os/Memory.hpp
-// \brief common function definitions for Os::Memory
+// \brief public Os::Memory interface and alias
+//
+// This header aggregates all definitions needed to use Os::Memory:
+// the interface, the configured alias, and the concrete delegate type.
+//
+// WARNING — include order is load-bearing. Do not reorder.
+//
+// The dependency constraints are:
+//
+//   1. config/OsSelection.hpp (CFG) defines the Os::Memory type alias by
+//      forward-declaring a link-time delegate (e.g. DelegateMemory) or directly
+//      aliasing a concrete implementation.
+//      Must not include Os OSAL headers (they aren't yet defined).
+//      Included by Os/MemoryInterface.hpp, which this header includes first.
+//
+//   2. Os/MemoryInterface.hpp (IF) includes CFG first (so the Os::Memory alias is
+//      available), then defines MemoryHandle and MemoryInterface.
+//
+//   3. OS_MEMORY_HEADER (IMPL) is defined by CFG and points to the concrete
+//      implementation header. If using delegation, this points to
+//      Os/DelegateMemory.hpp. If using compile-time selection, it points
+//      directly to a platform-specific implementation.
+//
+// MemoryInterface.hpp must precede OS_MEMORY_HEADER here,
+// and CFG must never include either of them (that would form a cycle).
 // ======================================================================
-#include "Os/Os.hpp"
+#ifndef Os_Memory_hpp
+#define Os_Memory_hpp
 
-#ifndef OS_MEMORY_HPP_
-#define OS_MEMORY_HPP_
+#include "Os/MemoryInterface.hpp"
 
+// A project config/OsSelection.hpp that predates the Memory selection defines neither the Os::Memory
+// alias nor OS_MEMORY_HEADER; fall back to the link-time delegate so such projects keep building.
+#ifndef OS_MEMORY_HEADER
+#include "Os/DelegateMemory.hpp"
 namespace Os {
+using Memory = DelegateMemory;
+}
+#else
+#include OS_MEMORY_HEADER
+#endif
 
-//! \brief Memory variable handle parent
-class MemoryHandle {};
-
-//! \brief interface for memory implementation
-class MemoryInterface {
-  public:
-    using Status = Os::Generic::Status;
-    using Usage = Os::Generic::UsedTotal;
-
-    //! Default constructor
-    MemoryInterface() = default;
-    //! Default destructor
-    virtual ~MemoryInterface() = default;
-
-    //! \brief copy constructor is forbidden
-    MemoryInterface(const MemoryInterface& other) = delete;  // NO_CODESONAR (cpp:S3657)
-
-    //! \brief assignment operator is forbidden
-    virtual MemoryInterface& operator=(const MemoryInterface& other) = delete;
-
-    //! \brief get system memory usage
-    //!
-    //! \param memory_usage: (output) data structure used to store memory usage
-    //! \return: ERROR when error occurs, OK otherwise.
-    virtual Status _getUsage(Usage& memory_usage) = 0;
-
-    //! \brief return the underlying memory handle (implementation specific).
-    //! \return internal task handle representation
-    virtual MemoryHandle* getHandle() = 0;
-
-    //! \brief provide a pointer to a Mutex delegate object
-    static MemoryInterface* getDelegate(MemoryHandleStorage& aligned_new_memory);
-};
-
-//! \brief memory implementation
-class Memory final : public MemoryInterface {
-  public:
-    //! \brief default constructor
-    Memory();
-
-    //! \brief default virtual destructor
-    ~Memory() final;
-
-    //! \brief copy constructor is forbidden
-    Memory(const MemoryInterface& other) = delete;
-
-    //! \brief copy constructor is forbidden
-    Memory(const MemoryInterface* other) = delete;
-
-    //! \brief assignment operator is forbidden
-    MemoryInterface& operator=(const MemoryInterface& other) override = delete;
-
-    //-----------------------------------------------------------------------------
-    // Interface methods
-    //-----------------------------------------------------------------------------
-  public:
-    //! \brief initialize the singleton
-    static void init();
-
-    //! \brief return singleton
-    static Memory& getSingleton();
-
-    //-----------------------------------------------------------------------------
-    // Delegating methods
-    //-----------------------------------------------------------------------------
-
-    //! \brief get system memory usage
-    //!
-    //! This method delegates to the underlying implementation.
-    //!
-    //! \param memory_usage: (output) data structure used to store memory usage
-    //! \return:  ERROR when error occurs, OK otherwise.
-    Status _getUsage(Usage& memory_usage) override;
-
-    //! \brief return the underlying memory handle (implementation specific).
-    //! \return internal task handle representation
-    MemoryHandle* getHandle() override;
-
-    //-----------------------------------------------------------------------------
-    // Static interface (singleton) methods
-    //-----------------------------------------------------------------------------
-
-    //! \brief get system memory usage
-    //!
-    //! This method wraps delegates to the underlying implementation.
-    //!
-    //! \param memory_usage: (output) data structure used to store memory usage
-    //! \return: ERROR when error occurs, OK otherwise.
-    static Status getUsage(Usage& memory);
-
-  private:
-    // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
-    // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
-    // the byte-array here and set `handle` to that address for storage.
-    alignas(FW_HANDLE_ALIGNMENT) MemoryHandleStorage m_handle_storage;  //!< Storage for aligned data
-    MemoryInterface& m_delegate;                                        //!< Delegate for the real implementation
-};
-}  // namespace Os
-#endif  // OS_CONDITION_HPP_
+#endif  // Os_Memory_hpp
