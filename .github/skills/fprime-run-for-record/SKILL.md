@@ -36,7 +36,7 @@ stage-3 step (bench host included):
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
 git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach 74550a8
+git -C harness checkout --detach v0.1.0        # annotated tag = e6e4a64 (fth frozen: refusal fixes only until the next trial closes)
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
@@ -105,7 +105,8 @@ can only be reported `REBUILD DIFFERS (toolchain unpinned)`); and the
 exact raw binaries that will be flashed — each must contain every
 repository's describe string, which is what `Svc.Version` reports, or
 `--no-version-check <reason>` is recorded on the manifest and printed
-at unseal. ELF, hex and UF2 files are refused (flash the `.bin` and
+at unseal (policy: required where the deployment has `Svc.Version`; the SAMD21 waiver is the plan's
+`image_version: {"policy": "waived", "reason": …}` block, which `fth deliver` takes as the waiver). ELF, hex and UF2 files are refused (flash the `.bin` and
 read back the range with `picotool save -r` or OpenOCD `dump_image`).
 The checks live in the integration tests; the manifest pins them as `stimulus`
 (`--tests`: repo, sha, per-file sha256) and the auditor replays exactly those. A

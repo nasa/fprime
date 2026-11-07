@@ -120,6 +120,13 @@ it (`fth verify-package`) and assembles nothing. `rfr-input/inputs/tests/` ships
 test sources the manifest pins as `stimulus` (the runner executes them); a retired checker
 left in the test directory is pinned and shipped too — remove it from the tree if it is not
 run. Repo URLs in the manifest are canonical (`https://github.com/...`), never a git proxy.
+
+**Image version / build-id policy (Captain ruling 2026-11-06).** The image version check is required where the
+deployment includes `Svc.Version` (every pinned repository's describe string is read back from the flashed image).
+Where it is absent (the SAMD21 `CuriosityReference`) a reasoned waiver — deliver's rebuild proof + the dictionary
+describe-string check — is accepted and MUST be recorded in the plan (`image_version: {"policy": "waived", "reason": …}`,
+printed by `fth verify-plan` and used by `fth deliver` as the waiver) and in the campaign ledger; a plan with
+`policy: required` refuses a waiver file.
 Inside, the **manifest**:
 
 ```
@@ -256,7 +263,7 @@ this table; bumping it is a one-line change here and nowhere else.
 
 | Tool | Pinned | Install |
 |---|---|---|
-| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (commit 74550a8) | `git clone <fprime-testing-harness> harness && git -C harness checkout --detach 74550a8 && pip install -e "harness[test]"` — the same checkout `fth manifest --harness` pins; assert `fth.__file__` lies under it (private repo: clone with the host's credentials; `pip install git+https://…` has none) |
+| fprime-testing-harness (`fth` CLI, `fth.pytest_plugin`, `fth.engine`, `fth.replay`) | fprime-testing-harness v0.1.0 (tag `v0.1.0` = commit e6e4a64; frozen — refusal fixes only until the next trial closes) | `git clone <fprime-testing-harness> harness && git -C harness checkout --detach v0.1.0 && pip install -e "harness[test]"` — the same checkout `fth manifest --harness` pins; assert `fth.__file__` lies under it (private repo: clone with the host's credentials; `pip install git+https://…` has none) |
 
 Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and
