@@ -6,7 +6,9 @@ agents behave and hand work to each other. Every agent in the flow —
 `test-runner`, `test-auditor` — opens its body with "Apply the test
 process contract in `_shared/test-process-contract.md`." and follows
 the rules below. If a per-agent file disagrees with this contract, the
-contract wins.
+contract wins. These agents and skills live on `lestarch-autobot/fprime`
+branch `test-process-agents-skills` (nasa/fprime PR #6229) until merged into
+`nasa/fprime` `devel`.
 
 The flow exists to make AI-run testing **inspectable by a human who
 did not run it**: the human reviews a plan and a small harness up
@@ -33,16 +35,27 @@ comes from the agents; trust comes from the hand-offs below.
 | Quick-look | One page per test rendered by program (`fth render-ql`, inside `fth audit`) from the hashed record: verdict, purpose, pass rule with per-predicate result and record lines, completeness, provenance. Never written by an agent. |
 | Tooling | `fth`, the CLI of fprime-testing-harness, pinned in §8. Every `fth …` command in the skills and agents means that pinned version. |
 
-## 1. Three stages, three human gates
+## 1. Four lanes, two human reviews
+
+DESIGN (requirements · FPP + SDD design · test design, each step with its
+adversarial review) → human **Approve SDD** → DEVELOPMENT (code · unit
+tests · harness + integration tests; the local review and the harness
+review are agent reviews; dry run) → RELEASE (coverage evidence · delivery
+package) → human **Seed** → RUN-FOR-RECORD (one command, human or LLM) →
+human **Read QL**. The human reads two documents — the SDD and the QL
+package; Request + goals and Seed are inputs, not reviews. Diagram:
+fprime-testing-harness `docs/process-diagram.md`. The table below maps the
+lanes onto the agent stages.
 
 | Stage | Who iterates | Human gate | Close condition | Hand-off |
 |---|---|---|---|---|
-| 1. Base development | `fprime-development.agent` with review and unit-test skills (`fprime-iterative-development` when approved); requirements, FPP design and test design (system test plan, fault menu, unit-test list) each pass the loop of `phase-review-loop.md` | Requirements, FPP design and test-design approval **before** iteration | No must-fix findings; unit and component integration tests pass; the unit-test list is implemented with no gap rows | UUT SHA |
-| 2. System-test development | `system-test-design` ↔ `system-test-review` on the plan, standalone, when stage 1 produced none; else `system-test-design` runs the plan refresh of `fprime-system-test-design` §7 (bench L0, code read last, diff reviewed once then to the human); then `system-test-build` ↔ `system-test-review` on the harness, closing with the mutation vectors and a stage-3 rehearsal (`fprime-system-test-design` §6) | Test-plan approval (or approval of the refresh diff) **before** building; harness review (local files; a PR only if the human asks) **before** the manifest is frozen | Plan has no open must-fix; `fth vectors` green on the real bench (clean record + one record per planted fault); hand `pytest` and `fth run --replay-record` agree per test on every vector, `fth audit --tests` replays them without DIVERGENCE; rehearsal ran draw → run → audit → unseal without a tooling error | Manifest (§3) |
+| 1. Base development | `fprime-development.agent` with review and unit-test skills (`fprime-iterative-development` when approved); requirements, FPP design and test design (system test plan, fault menu, unit-test list) each pass the loop of `phase-review-loop.md` | Approve SDD (requirements, design and Tests table in one document) **before** DEVELOPMENT | No must-fix findings; unit and component integration tests pass; the unit-test list is implemented with no gap rows | UUT SHA |
+| 2. System-test development | `system-test-design` ↔ `system-test-review` on the plan, standalone, when stage 1 produced none; else `system-test-design` runs the plan refresh of `fprime-system-test-design` §7 (bench L0, code read last, diff reviewed once then to the human); then `system-test-build` ↔ `system-test-review` on the harness, closing with the mutation vectors and a stage-3 rehearsal (`fprime-system-test-design` §6) | None — test design was approved in the SDD; the plan-refresh diff and the harness review are agent reviews, and only a non-empty plan-change diff returns to the human (§2) | Plan has no open must-fix; `fth vectors` green on the real bench (clean record + one record per planted fault); hand `pytest` and `fth run --replay-record` agree per test on every vector, `fth audit --tests` replays them without DIVERGENCE; rehearsal ran draw → run → audit → unseal without a tooling error | Manifest (§3) |
 | 3. Run-for-record (RfR) | `test-runner` then `test-auditor`, both blind | Human seeds the draw at start; human reviews `unseal.md` and the quick-looks at the end | `unseal.md` produced | Run directory |
 
-Each stage is a separate human-driven prompt. Stages never run
-concurrently on the same UUT SHA.
+One campaign prompt drives all four lanes (the RfR lane as a clean runner
+sub-session or a human at the keyboard); stages never run concurrently on
+the same UUT SHA.
 
 ## 2. Standing rules
 
