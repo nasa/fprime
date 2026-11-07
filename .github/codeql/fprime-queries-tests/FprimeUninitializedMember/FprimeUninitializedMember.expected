@@ -1,0 +1,3 @@
+| test.cpp:16:5:16:7 | Bad | Constructor of Bad does not initialize member $@. | test.cpp:19:9:19:15 | m_count | m_count |
+| test.cpp:16:5:16:7 | Bad | Constructor of Bad does not initialize member $@. | test.cpp:20:10:20:15 | m_mode | m_mode |
+| test.cpp:56:5:56:12 | BadArray | Constructor of BadArray does not initialize member $@. | test.cpp:59:9:59:13 | m_arr | m_arr |

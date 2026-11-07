@@ -1,0 +1,2 @@
+| test.cpp:11:12:11:16 | ... + ... | Signed int + may overflow; its operands are not range-checked beforehand. |
+| test.cpp:15:12:15:16 | ... * ... | Signed int * may overflow; its operands are not range-checked beforehand. |

@@ -1,0 +1,3 @@
+| test.cpp:11:9:11:14 | ... == ... | Floating-point values are compared with ==; compare against a tolerance instead. |
+| test.cpp:14:9:14:17 | ... != ... | Floating-point values are compared with !=; compare against a tolerance instead. |
+| test.cpp:17:9:17:16 | ... == ... | Floating-point values are compared with ==; compare against a tolerance instead. |

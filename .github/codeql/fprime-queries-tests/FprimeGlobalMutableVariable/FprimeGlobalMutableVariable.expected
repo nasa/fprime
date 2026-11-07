@@ -1,0 +1,4 @@
+| test.cpp:4:5:4:11 | counter | Namespace-scope variable counter is mutable; declare it local or as a member. |
+| test.cpp:5:12:5:16 | cache | Namespace-scope variable cache is mutable; declare it local or as a member. |
+| test.cpp:8:20:8:24 | NAMES | Namespace-scope variable NAMES is mutable; declare it local or as a member. |
+| test.cpp:11:16:11:20 | calls | Function-static variable calls is mutable; declare it local or as a member. |
