@@ -417,6 +417,10 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // reset catalog
     this->resetCatalog();
 
+    // a build reports its first skipped files only: DpFileSkipped is throttled so that a build over
+    // many transmitted files cannot flood the event path, and the budget starts over per build
+    this->log_ACTIVITY_HI_DpFileSkipped_ThrottleClear();
+
     // fill the catalog with DP files
     response = this->fillBinaryTree();
     if (response != Fw::CmdResponse::OK) {
@@ -574,7 +578,7 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
     Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));   // buffer for container header decoding
     Fw::DpContainer container;                    // container object for extracting header fields
 
-    this->log_ACTIVITY_LO_ProcessingFile(fullFile);
+    this->log_DIAGNOSTIC_ProcessingFile(fullFile);
 
     // get file size
     FwSizeType fileSize = 0;
@@ -702,8 +706,6 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
     // increment our counters
     this->m_pendingFiles++;
     this->m_pendingDpBytes += entry.record.get_size();
-
-    this->log_ACTIVITY_HI_DpFileAdded(canonicalFileName);
 
     // No need to track iterator state - begin() always gives us the highest priority entry
     // and we remove entries as we transmit them
@@ -976,9 +978,16 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         return;
     }
 
+    // a runtime addition is one file per call, so a skip is always reported: clear the throttle
+    // that a preceding build over many transmitted files may have exhausted
+    this->log_ACTIVITY_HI_DpFileSkipped_ThrottleClear();
+
     const ProcessFileStatus ret = processFile(fileName, dir);
 
     if (ret == ProcessFileStatus::SUCCESS) {
+        // announced here, not in processFile, so that a build does not emit it per file (3.6.2);
+        // a successful processFile has checked that fileName is the canonical name
+        this->log_ACTIVITY_HI_DpFileAdded(fileName);
         this->resumeIfRemainActive();
         // The state file is not rewritten here: a newly written product has no transmit state to
         // record, and pruneAndWriteStateFile() would discard the TRANSMITTED records appended by
@@ -1367,6 +1376,9 @@ Fw::CmdResponse DpCatalog ::doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub) {
         this->m_stateFileData[this->m_stateFileEntries].used = false;
         this->m_stateFileData[this->m_stateFileEntries].visited = false;
     }
+    // a retransmit catalogs one file, so a skip (a file whose header says TRANSMITTED) is always
+    // reported: clear the throttle that a preceding build may have exhausted
+    this->log_ACTIVITY_HI_DpFileSkipped_ThrottleClear();
     const ProcessFileStatus ret = this->processFile(fullFile, dir);
     if (ret != ProcessFileStatus::SUCCESS) {
         if (hadRecord) {
