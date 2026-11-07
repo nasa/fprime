@@ -64,7 +64,8 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SystemResources/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpCompressProc/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor/")
 
-# Subtopologies
+# Subtopology templates and subtopologies
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Templates/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Subtopologies/")
 
 # Text logger components included by default, 

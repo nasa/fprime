@@ -6,6 +6,7 @@
 #include <Svc/BufferManager/BufferManager.hpp>
 #include "DataProductsConfig/DataProductsSubtopologyConfig.hpp"
 #include "Svc/Subtopologies/DataProducts/DataProductsConfig/FppConstantsAc.hpp"
+#include "Svc/Subtopologies/DataProducts/FppConstantsAc.hpp"
 
 namespace DataProducts {
 // State for topology construction
