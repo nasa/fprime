@@ -36,7 +36,7 @@ stage-3 step (bench host included):
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
 git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach 2478e70
+git -C harness checkout --detach 74550a8
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
@@ -163,12 +163,14 @@ The rehearsal (`--dry-run`) runs rows 1–2 for real (unpack, every preflight ch
 command line rows 3–8 would execute — flash/dump, GDS, recorder, run-start marker `send`, the stimulus pytest argv, audit,
 unseal, package — into `rfr/<run-id>-rehearsal/rfr.log` and refuses on any `build-artifacts` path, `..`, absolute host path
 (devices excepted) or campaign-root path that does not exist. Its log (and sha256) is the gate evidence before the seed is
-requested; the real run id stays free.
+requested; the real run id stays free. The harness's own CI runs this rehearsal over fresh `git clone`s of a UUT and of the
+harness at the pins (no build outputs) plus a delivered zip (`tests/test_rfr_clean_clone.py`), and proves the old
+`uut/build-artifacts/...` manifest shape is refused by name.
 
 It runs the manual rows 1–8 in order with the arguments the rows name —
 `verify-package` + unpack, the package's manifest, sealed draw, run with
 the pure image, audit + replay with the manifest-pinned coverage reports
-rendered, quick-look, unseal, `package` → `rfr/<name>.zip` — and refuses
+rendered, quick-look, unseal, `package` → `rfr/<name>.zip` + `rfr/<name>.zip.sha256` (`sha256sum -c` format; the row-8 log line names it) — and refuses
 with a NAMED check before the bench when anything a row needs is not in
 the package or the campaign root (`uut/`/`harness/` at the pins, the
 running `fth` is the pinned harness, bench device present, no foreign
