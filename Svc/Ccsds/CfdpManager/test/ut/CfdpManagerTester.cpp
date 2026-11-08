@@ -1151,8 +1151,9 @@ void CfdpManagerTester::testClass2RxFileDataOffsetOverflow() {
     const U8 channelId = 0;
     const U32 transactionSeq = 501;
     const U16 dataSize = 32;
-    // Offset chosen so that offset + dataSize wraps the 32-bit file offset space
-    const FileSize offset = std::numeric_limits<FileSize>::max() - (dataSize / 2);
+    // Offset chosen so that offset + dataSize runs past the receive limit (and, at the default
+    // limit, would wrap the 32-bit file offset space)
+    const FileSize offset = RxFileSizeLimit() - (dataSize / 2);
     U8 data[dataSize];
     memset(data, 0xA5, sizeof(data));
 
@@ -1169,7 +1170,7 @@ void CfdpManagerTester::testClass2RxFileDataOffsetOverflow() {
     ASSERT_EVENTS_RxFileDataOutOfBounds_SIZE(1);
     ASSERT_EVENTS_RxFileDataOutOfBounds(0,  // index
                                         Cfdp::Class::CLASS_2, TEST_GROUND_EID, transactionSeq, offset, dataSize,
-                                        std::numeric_limits<FileSize>::max());
+                                        RxFileSizeLimit());
 
     // Cycle once so channel telemetry is emitted
     this->invoke_to_run1Hz(0, 0);
@@ -1181,6 +1182,82 @@ void CfdpManagerTester::testClass2RxFileDataOffsetOverflow() {
     EXPECT_EQ(0u, tlm[channelId].get_recvFileDataBytes()) << "Rejected FileData must not be written";
 
     cleanupTestFile(txn->m_history->fnames.dst_filename.toChar());
+}
+
+void CfdpManagerTester::testClass2RxDataBeforeMdPastDeclaredSize() {
+    const U8 channelId = 0;
+    const U32 transactionSeq = 502;
+    const U16 dataSize = 16;
+    const FileSize farOffset = 4096;
+    const FileSize declaredSize = dataSize;
+    const char* srcFile = "/ground/far_offset.bin";
+    const char* dstFile = "test/ut/output/far_offset_rx.bin";
+    U8 data[dataSize];
+    memset(data, 0x5A, sizeof(data));
+    cleanupTestFile(dstFile);
+
+    // Class 2 FileData before metadata, far past the size the metadata will declare
+    sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, farOffset, dataSize, data,
+                    Cfdp::Class::CLASS_2);
+    component.doDispatch();
+
+    Transaction* txn = findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn) << "R2 transaction should be created for FileData received before metadata";
+    EXPECT_FALSE(txn->m_flags.rx.md_recv);
+    EXPECT_EQ(farOffset + dataSize, txn->m_state_data.receive.max_recv_end);
+    // Before metadata the transaction writes to its temp file
+    const Fw::String tempFile = txn->m_history->fnames.dst_filename;
+
+    // Metadata then declares a file smaller than the data already received
+    this->clearHistory();
+    sendMetadataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, declaredSize, srcFile,
+                    dstFile, Cfdp::Class::CLASS_2, 1);
+    component.doDispatch();
+
+    ASSERT_EVENTS_RxDataPastMdSize_SIZE(1);
+    ASSERT_EVENTS_RxDataPastMdSize(0, Cfdp::Class::CLASS_2, TEST_GROUND_EID, transactionSeq, farOffset + dataSize,
+                                   declaredSize);
+    EXPECT_EQ(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR, txn->m_history->txn_stat);
+    EXPECT_TRUE(txn->m_flags.rx.send_fin) << "Sender must be told the transfer failed";
+    EXPECT_FALSE(txn->m_flags.rx.md_recv) << "Rejected metadata must not complete the transaction setup";
+    EXPECT_FALSE(Os::FileSystem::exists(dstFile)) << "Oversized temp file must not be moved to the destination";
+
+    cleanupTestFile(tempFile.toChar());
+    cleanupTestFile(dstFile);
+}
+
+void CfdpManagerTester::testClass2RxDataBeforeMdAtDeclaredSize() {
+    const U8 channelId = 0;
+    const U32 transactionSeq = 503;
+    const U16 dataSize = 16;
+    const FileSize declaredSize = 2 * dataSize;
+    const char* srcFile = "/ground/at_size.bin";
+    const char* dstFile = "test/ut/output/at_size_rx.bin";
+    U8 data[dataSize];
+    memset(data, 0x3C, sizeof(data));
+    cleanupTestFile(dstFile);
+
+    // Control: FileData before metadata that ends exactly at the declared size is kept
+    sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, declaredSize - dataSize,
+                    dataSize, data, Cfdp::Class::CLASS_2);
+    component.doDispatch();
+
+    Transaction* txn = findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn);
+    const Fw::String tempFile = txn->m_history->fnames.dst_filename;
+
+    this->clearHistory();
+    sendMetadataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, declaredSize, srcFile,
+                    dstFile, Cfdp::Class::CLASS_2, 1);
+    component.doDispatch();
+
+    ASSERT_EVENTS_RxDataPastMdSize_SIZE(0);
+    EXPECT_FALSE(TxnStatusIsError(txn->m_history->txn_stat));
+    EXPECT_TRUE(txn->m_flags.rx.md_recv);
+    EXPECT_TRUE(Os::FileSystem::exists(dstFile)) << "In-bounds temp file must be moved to the destination";
+
+    cleanupTestFile(tempFile.toChar());
+    cleanupTestFile(dstFile);
 }
 
 void CfdpManagerTester::testClass2RxTruncatedFileDataCrcSpin() {

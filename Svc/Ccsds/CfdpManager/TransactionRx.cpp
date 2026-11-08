@@ -509,10 +509,10 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
     U16 dataSize = fd.getDataSize();
     const U8* dataPtr = fd.getData();
 
-    // Reject file data past the declared file size, or past the addressable offset space when no
+    // Reject file data past the declared file size, or past the receive file size limit when no
     // metadata has been received yet (subtraction form avoids offset + dataSize overflow).
     if (ret == Cfdp::Status::SUCCESS) {
-        const FileSize bound = this->m_flags.rx.md_recv ? this->m_fsize : std::numeric_limits<FileSize>::max();
+        const FileSize bound = this->m_flags.rx.md_recv ? this->m_fsize : RxFileSizeLimit();
         if ((offset > bound) || ((bound - offset) < dataSize)) {
             this->m_cfdpManager->log_WARNING_LO_RxFileDataOutOfBounds(
                 this->getClass(), this->m_history->src_eid, this->m_history->seq_num, offset, dataSize, bound);
@@ -557,6 +557,10 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
             ret = Cfdp::Status::ERROR;
         } else {
             this->m_state_data.receive.cached_pos = static_cast<FileSize>(dataSize) + offset;
+            // Bounds check above guarantees offset + dataSize fits in FileSize
+            if (this->m_state_data.receive.cached_pos > this->m_state_data.receive.max_recv_end) {
+                this->m_state_data.receive.max_recv_end = this->m_state_data.receive.cached_pos;
+            }
             this->m_cfdpManager->addRecvFileDataBytes(this->m_chan_num, dataSize);
         }
     }
@@ -1096,6 +1100,19 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                 this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
                 success = false;
             }
+        }
+
+        // File data that arrived before the metadata was bounded only by the receive file size
+        // limit. Now that the declared size is known, refuse a temp file that already extends past
+        // it instead of moving an oversized file into the destination (a move across filesystems
+        // copies the whole file on this thread).
+        if (success && (this->m_state_data.receive.max_recv_end > this->m_fsize)) {
+            this->m_cfdpManager->log_WARNING_LO_RxDataPastMdSize(
+                this->getClass(), this->m_history->src_eid, this->m_history->seq_num,
+                this->m_state_data.receive.max_recv_end, this->m_fsize);
+            this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
+            this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
+            success = false;
         }
 
         if (success) {
