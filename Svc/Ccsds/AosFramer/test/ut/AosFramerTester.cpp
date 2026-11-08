@@ -451,6 +451,8 @@ void AosFramerTester ::testTailPackingSingleStatus() {
     ASSERT_from_dataOut_SIZE(2);
     ASSERT_from_comStatusOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);
+    // and it is the message's own buffer and context that come back
+    ASSERT_from_dataReturnOut(0, buffer, context);
 
     // The second frame's status finds no tail outstanding and is forwarded: exactly one status
     // for the one message
@@ -474,6 +476,7 @@ void AosFramerTester ::testTailPackingSingleStatus() {
     ASSERT_from_comStatusOut_SIZE(2);
     ASSERT_from_comStatusOut(1, expectedStatus);
     ASSERT_from_dataReturnOut_SIZE(2);
+    ASSERT_from_dataReturnOut(1, buffer, noSendNow);
 
     // A SUCCESS for an outstanding tail before the frame buffer has been returned violates the
     // interface ordering (dataReturnOut before the comStatusOut it applies to) the handler asserts on
@@ -481,6 +484,13 @@ void AosFramerTester ::testTailPackingSingleStatus() {
     ASSERT_from_dataOut_SIZE(4);
     Fw::Success early = Fw::Success::SUCCESS;
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_comStatusIn(0, early), "AosFramer.cpp");
+
+    // Returning the frame without acking it leaves the tail outstanding: a new message in that
+    // state trips the dataIn guard for a topology whose adapter status bypasses the framer
+    Fw::Buffer lastFrame = this->fromPortHistory_dataOut->at(3).data;
+    ComCfg::FrameContext lastContext = this->fromPortHistory_dataOut->at(3).context;
+    this->invoke_to_dataReturnIn(0, lastFrame, lastContext);
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "AosFramer.cpp");
 }
 
 void AosFramerTester ::testTailPackingFailureThenRecovery() {
