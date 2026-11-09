@@ -6,6 +6,7 @@
 #include <Os/FileSystem.hpp>
 #include <Svc/Ccsds/CfdpManager/test/ut/CfdpManagerTester.hpp>
 
+#include <cinttypes>
 #include <cstring>
 
 namespace Svc {
@@ -24,6 +25,14 @@ void fillData(U8* data, U16 size) {
     for (U16 i = 0; i < size; ++i) {
         data[i] = static_cast<U8>(i + 1);
     }
+}
+
+//! Staging file a receive on channel 0 from sourceEid writes before it commits to dst
+Fw::String stagingPathOf(const char* dst, EntityId sourceEid, TransactionSeq transactionSeq) {
+    Fw::String staging;
+    (void)staging.format("%s.cfdp-0-%" PRIu32 "-%" PRIu32 ".part", dst, static_cast<U32>(sourceEid),
+                         static_cast<U32>(transactionSeq));
+    return staging;
 }
 
 U32 checksumOf(const U8* data, U16 size) {
@@ -83,7 +92,9 @@ void CfdpManagerTester::testClass1RxChecksumMismatchRemovesFile() {
     sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, 0, sizeof(data), data,
                     Cfdp::Class::CLASS_1);
     component.doDispatch();
-    ASSERT_TRUE(fileExists(dstFile));
+    // Data is staged; the destination is not written until the transfer is verified
+    ASSERT_TRUE(fileExists(stagingPathOf(dstFile, TEST_GROUND_EID, transactionSeq).toChar()));
+    ASSERT_FALSE(fileExists(dstFile));
 
     sendEofPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq,
                Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, checksumOf(data, sizeof(data)) + 1, sizeof(data),
@@ -92,6 +103,7 @@ void CfdpManagerTester::testClass1RxChecksumMismatchRemovesFile() {
 
     ASSERT_EVENTS_RxCrcMismatch_SIZE(1);
     expectRxFailedAndRemoved(TxnStatus::TXN_STATUS_FILE_CHECKSUM_FAILURE, dstFile);
+    EXPECT_FALSE(fileExists(stagingPathOf(dstFile, TEST_GROUND_EID, transactionSeq).toChar()));
     cleanupTestFile(dstFile);
 }
 
@@ -112,7 +124,9 @@ void CfdpManagerTester::testClass1RxSizeMismatchRemovesFile() {
     sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, 0, sizeof(data), data,
                     Cfdp::Class::CLASS_1);
     component.doDispatch();
-    ASSERT_TRUE(fileExists(dstFile));
+    // Data is staged; the destination is not written until the transfer is verified
+    ASSERT_TRUE(fileExists(stagingPathOf(dstFile, TEST_GROUND_EID, transactionSeq).toChar()));
+    ASSERT_FALSE(fileExists(dstFile));
 
     // Correct checksum, but the EOF declares a different size than the metadata
     sendEofPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq,
@@ -122,6 +136,7 @@ void CfdpManagerTester::testClass1RxSizeMismatchRemovesFile() {
 
     ASSERT_EVENTS_RxFileSizeMismatch_SIZE(1);
     expectRxFailedAndRemoved(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR, dstFile);
+    EXPECT_FALSE(fileExists(stagingPathOf(dstFile, TEST_GROUND_EID, transactionSeq).toChar()));
     cleanupTestFile(dstFile);
 }
 
@@ -146,13 +161,16 @@ void CfdpManagerTester::testClass2RxChecksumMismatchRemovesFile() {
                Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, checksumOf(data, sizeof(data)) + 1, sizeof(data),
                Cfdp::Class::CLASS_2);
     component.doDispatch();
-    ASSERT_TRUE(fileExists(dstFile));
+    // Data is staged; the destination is not written until the transfer is verified
+    ASSERT_TRUE(fileExists(stagingPathOf(dstFile, TEST_GROUND_EID, transactionSeq).toChar()));
+    ASSERT_FALSE(fileExists(dstFile));
 
     // The sender never acknowledges the FIN, so the transaction ends on its retry limits
     runRxUntilRecycled(channelId, transactionSeq, rxRecycleCycleBudget(channelId));
 
     ASSERT_EVENTS_RxCrcMismatch_SIZE(1);
     expectRxFailedAndRemoved(TxnStatus::TXN_STATUS_FILE_CHECKSUM_FAILURE, dstFile);
+    EXPECT_FALSE(fileExists(stagingPathOf(dstFile, TEST_GROUND_EID, transactionSeq).toChar()));
     cleanupTestFile(dstFile);
 }
 
@@ -173,7 +191,9 @@ void CfdpManagerTester::runRxInactivityCase(Cfdp::Class::T cfdpClass, Transactio
     sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, 0, sizeof(data), data,
                     cfdpClass);
     component.doDispatch();
-    ASSERT_TRUE(fileExists(dstFile));
+    // Data is staged; the destination is not written until the transfer is verified
+    ASSERT_TRUE(fileExists(stagingPathOf(dstFile, TEST_GROUND_EID, transactionSeq).toChar()));
+    ASSERT_FALSE(fileExists(dstFile));
 
     runRxUntilRecycled(channelId, transactionSeq, rxRecycleCycleBudget(channelId));
 
@@ -181,10 +201,12 @@ void CfdpManagerTester::runRxInactivityCase(Cfdp::Class::T cfdpClass, Transactio
         // Class 1 has no retries: the inactivity timer ends it and recycles the slot directly
         ASSERT_EVENTS_RxInactivityTimeout_SIZE(1);
         expectRxFailedAndRemoved(TxnStatus::TXN_STATUS_INACTIVITY_DETECTED, dstFile);
+        EXPECT_FALSE(fileExists(stagingPathOf(dstFile, TEST_GROUND_EID, transactionSeq).toChar()));
     } else {
         // Class 2 keeps NAKing the missing data and gives up on the NAK limit first
         ASSERT_EVENTS_RxNakLimitReached_SIZE(1);
         expectRxFailedAndRemoved(TxnStatus::TXN_STATUS_NAK_LIMIT_REACHED, dstFile);
+        EXPECT_FALSE(fileExists(stagingPathOf(dstFile, TEST_GROUND_EID, transactionSeq).toChar()));
     }
     cleanupTestFile(dstFile);
 }

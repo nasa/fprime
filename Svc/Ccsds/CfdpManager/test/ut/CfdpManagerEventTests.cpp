@@ -19,6 +19,7 @@
 #include "Os/File.hpp"
 #include "Os/FilePathUtils.hpp"
 #include "Os/FileSystem.hpp"
+#include "Svc/Ccsds/CfdpManager/Utils.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -972,7 +973,9 @@ void CfdpManagerTester::testRxFileCreateFailedEvent() {
     ASSERT_EQ(Cfdp::Class::CLASS_1, this->eventHistory_RxFileCreateFailed->at(0).cfdpClass);
     ASSERT_EQ(sourceEid, this->eventHistory_RxFileCreateFailed->at(0).srcEid);
     ASSERT_EQ(transactionSeq, this->eventHistory_RxFileCreateFailed->at(0).seqNum);
-    ASSERT_STREQ(dstFile, this->eventHistory_RxFileCreateFailed->at(0).filename.toChar());
+    // The file that fails to be created is the staging file beside the destination
+    ASSERT_STREQ("/nonexistent_dir/subdir/file.bin.cfdp-0-100-700.part",
+                 this->eventHistory_RxFileCreateFailed->at(0).filename.toChar());
 }
 
 void CfdpManagerTester::testRxCrcMismatchEvent() {
@@ -1224,8 +1227,9 @@ void CfdpManagerTester::testRxEofMdSizeMismatchEvent() {
 
     // Simulate EOF already received with DIFFERENT size
     txn->m_flags.rx.eof_recv = true;
-    txn->m_flags.rx.md_recv = false;               // Metadata not yet received
-    txn->m_state_data.receive.r2.eof_size = 2000;  // Mismatch: 2000 != 1000
+    txn->m_flags.rx.md_recv = false;                        // Metadata not yet received
+    txn->m_flags.rx.file_owned = RxFileOwned::RX_FILE_TMP;  // File data so far is in a temp file
+    txn->m_state_data.receive.r2.eof_size = 2000;           // Mismatch: 2000 != 1000
 
     // Ensure engine is set (should already be set from setupTestTransaction)
     txn->m_engine = this->component.m_engine;
@@ -2203,12 +2207,16 @@ void CfdpManagerTester::testFileRemoveFailedEvent() {
     this->clearEvents();
 
     // Modify transaction to point to a file in a protected/nonexistent location
-    // Use /root which typically requires root permissions to write/delete
-    txn->m_history->fnames.dst_filename = "/root/protected_file_that_cannot_be_deleted.bin";
-    txn->m_history->dir = Direction::DIRECTION_RX;  // RX uses dst_filename
+    // Use /root which typically requires root permissions to write/delete. The transmit branch of
+    // handleNotKeepFile removes its source file; a receive only removes files it created.
+    const Fw::String rxSrcFile = txn->m_history->fnames.src_filename;
+    txn->m_history->fnames.src_filename = "/root/protected_file_that_cannot_be_deleted.bin";
+    txn->m_history->dir = Direction::DIRECTION_TX;  // TX removes src_filename
 
     // Directly call handleNotKeepFile which will try to delete the protected file
     this->component.m_engine->handleNotKeepFile(txn);
+    txn->m_history->dir = Direction::DIRECTION_RX;
+    txn->m_history->fnames.src_filename = rxSrcFile;
 
     // Verify FileRemoveFailed event and its filename argument. The status field is an
     // OS-dependent file-op code, so only the filename is asserted.
@@ -2321,55 +2329,47 @@ void CfdpManagerTester::testRxSeekFailedEvent() {
 }
 
 void CfdpManagerTester::testRxFileRenameFailedEvent() {
-    // RxFileRenameFailed emitted in r2RecvMd() when the Class-2 receiver learns the true
-    // destination filename from a late Metadata PDU and the rename (moveFile) of the
-    // current/temp file to that final destination fails.
+    // RxFileRenameFailed emitted in r2RecvMd() when a Class 2 receiver learns its destination from a
+    // late Metadata PDU, claims the staging file beside it, and then fails to move the temp file
+    // holding the data received so far into that staging file.
     //
-    // r2RecvMd() logic (TransactionRx.cpp ~1013-1090):
-    //   fname = m_history->fnames.dst_filename;         // saved BEFORE parsing -> move SOURCE
-    //   engine->recvMd(...)  ->  m_history->fnames.dst_filename = md.getDestFilename();  // move DEST
-    //   m_fd.close();
-    //   moveFile(fname /*src*/, dst_filename /*dst*/);   // fails -> RxFileRenameFailed
-    //
-    // Strategy: the move SOURCE (the txn's initial dst_filename) must be a real file on disk,
-    // while the Metadata PDU's destination filename points to a nonexistent directory so
-    // moveFile() fails. eof_recv is left false so the EOF/MD size-mismatch check is skipped
-    // and control reaches the rename block with success==true.
+    // Strategy: the transaction holds its temp file open, as a receive with a temp file always does,
+    // but the file has been unlinked, so its size is known while the move fails. The Metadata
+    // destination is in an existing directory so the staging file can be claimed. eof_recv is left
+    // false so the EOF/MD size-mismatch check is skipped.
 
     U8 channelId = 0;
     Cfdp::EntityId sourceEid = TEST_GROUND_EID;
     Cfdp::FileSize fileSize = 1000;
     Cfdp::TransactionSeq seq = 1;
 
-    // Move SOURCE: the transaction's initial dst_filename (must exist on disk before moveFile)
-    const char* moveSource = "test/ut/output/rename_src.bin";
-    // Move DEST: comes from the Metadata PDU; point at a nonexistent directory to force failure
-    const char* badDest = "/nonexistent_dir/subdir/renamed.bin";
+    // Move SOURCE: the transaction's temp file, unlinked after it is opened so the move fails
+    const char* moveSource = "test/ut/output/rename_src_missing.bin";
+    // Metadata destination; the move target is the staging file beside it
+    const char* dest = "test/ut/output/rename_dst.bin";
+    const char* staging = "test/ut/output/rename_dst.bin.cfdp-0-100-1.part";
+    (void)Os::FileSystem::removeFile(moveSource);
+    (void)Os::FileSystem::removeFile(dest);
+    (void)Os::FileSystem::removeFile(staging);
 
-    // Create the move-source file on disk so moveFile()'s source is valid
-    Os::File srcFile;
-    Os::File::Status openStatus = srcFile.open(moveSource, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
-    ASSERT_EQ(Os::File::OP_OK, openStatus);
-    U8 data[4] = {1, 2, 3, 4};
-    FwSizeType writeSize = sizeof(data);
-    srcFile.write(data, writeSize);
-    srcFile.close();
-
-    // Set up Class 2 receiver transaction; its dst_filename is the move SOURCE
+    // Set up Class 2 receiver transaction holding a temp file; its dst_filename is the move SOURCE
     Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Class 2 receiver
                                             channelId,
                                             "test_src.dat",  // srcFilename (unused for rename)
-                                            moveSource,      // dstFilename -> becomes the move SOURCE (fname)
+                                            moveSource,      // dstFilename -> the temp file (fname)
                                             fileSize, seq, sourceEid);
 
     txn->m_engine = this->component.m_engine;
     txn->m_history->src_eid = sourceEid;
 
-    // Force the "metadata arriving late" rename path:
-    txn->m_flags.rx.md_recv = false;   // metadata not yet received -> enter rename branch
-    txn->m_flags.rx.eof_recv = false;  // skip EOF/MD size-mismatch check -> keep success==true
+    // Force the "metadata arriving late" path:
+    txn->m_flags.rx.md_recv = false;                        // metadata not yet received
+    txn->m_flags.rx.eof_recv = false;                       // skip EOF/MD size-mismatch check
+    txn->m_flags.rx.file_owned = RxFileOwned::RX_FILE_TMP;  // data so far is in the temp file
+    ASSERT_EQ(Os::File::OP_OK, txn->m_fd.open(moveSource, Os::File::OPEN_CREATE, Os::File::NO_OVERWRITE));
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::removeFile(moveSource));
 
-    // Build the Metadata PDU whose destination filename is the (bad) rename target
+    // Build the Metadata PDU naming the destination
     Cfdp::MetadataPdu metadataPdu;
     metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
                            sourceEid,                           // sourceEid
@@ -2377,7 +2377,7 @@ void CfdpManagerTester::testRxFileRenameFailedEvent() {
                            this->component.getLocalEidParam(),  // destEid
                            fileSize,                            // fileSize
                            "test_src.dat",                      // source filename
-                           badDest,                             // dest filename -> move DEST (bad dir)
+                           dest,                                // dest filename
                            Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
                            1);  // closureRequested for Class 2
 
@@ -2390,18 +2390,16 @@ void CfdpManagerTester::testRxFileRenameFailedEvent() {
     // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
-    // Directly call r2RecvMd -> parses MD (MetadataReceived) then moveFile fails (RxFileRenameFailed)
+    // Directly call r2RecvMd -> parses MD (MetadataReceived) then the move fails (RxFileRenameFailed)
     txn->r2RecvMd(pduBuffer);
 
-    // Verify events: MetadataReceived (from recvMd) + RxFileRenameFailed (rename failure).
-    // The rename SOURCE (tempFile) is the transaction's initial dst_filename (moveSource); the
-    // rename DEST (finalFile) is the metadata's dest filename (badDest). The status field is an
-    // OS-dependent file-op code, so it is intentionally not asserted.
+    // Verify events: MetadataReceived (from recvMd) + RxFileRenameFailed (move failure).
+    // The status field is an OS-dependent file-op code, so it is intentionally not asserted.
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
     ASSERT_EVENTS_MetadataReceived(0,               // index
                                    "test_src.dat",  // srcFile from metadata
-                                   badDest,         // destFile from metadata
+                                   dest,            // destFile from metadata
                                    seq              // transaction sequence number
     );
     ASSERT_EVENTS_RxFileRenameFailed_SIZE(1);
@@ -2409,10 +2407,12 @@ void CfdpManagerTester::testRxFileRenameFailedEvent() {
     ASSERT_EQ(sourceEid, this->eventHistory_RxFileRenameFailed->at(0).srcEid);
     ASSERT_EQ(seq, this->eventHistory_RxFileRenameFailed->at(0).seqNum);
     ASSERT_STREQ(moveSource, this->eventHistory_RxFileRenameFailed->at(0).tempFile.toChar());
-    ASSERT_STREQ(badDest, this->eventHistory_RxFileRenameFailed->at(0).finalFile.toChar());
+    ASSERT_STREQ(staging, this->eventHistory_RxFileRenameFailed->at(0).finalFile.toChar());
 
-    // Cleanup: moveFile failed so the source file still exists
-    Os::FileSystem::removeFile(moveSource);
+    // The claimed staging file is removed and the destination is never created
+    EXPECT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(staging));
+    EXPECT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(dest));
+    EXPECT_TRUE(TxnStatusIsError(txn->m_history->txn_stat));
 }
 
 void CfdpManagerTester::testTxFileSeekFailedEvent() {
@@ -3425,61 +3425,58 @@ void CfdpManagerTester::testPlaybackDirSlotUnavailableEvent() {
 }
 
 void CfdpManagerTester::testRxFileReopenFailedEvent() {
-    // RxFileReopenFailed emitted in r2RecvMd() (TransactionRx.cpp ~1073) on the SUCCESS branch
-    // of the file rename: moveFile(fname -> dst_filename) succeeds, but the immediately-following
-    // reopen open(dst_filename, OPEN_WRITE) fails.
+    // RxFileReopenFailed emitted in r2RecvMd() when the temp file has been moved into the staging
+    // file beside the late Metadata destination, but reopening that staging file for writing fails.
     //
-    // r2RecvMd() logic:
-    //   fname = m_history->fnames.dst_filename;          // saved BEFORE parsing -> move SOURCE
-    //   engine->recvMd(...) -> m_history->fnames.dst_filename = md.getDestFilename();  // move DEST
-    //   m_fd.close();
-    //   moveFile(fname /*src*/, dst_filename /*dst*/);    // must SUCCEED
-    //   m_fd.open(dst_filename, OPEN_WRITE);              // must FAIL -> RxFileReopenFailed
+    // White-box trigger (real Posix Os backend):
+    //   - The transaction's temp file is a symbolic link to a directory. rename(2) moves the link
+    //     itself onto the claimed staging file, so the move SUCCEEDS.
+    //   - Os::File::open(OPEN_WRITE) on the staging path follows the link to the directory and
+    //     fails with EISDIR, so RxFileReopenFailed is emitted.
     //
-    // White-box trigger (real Posix Os backend, verified against Os/Posix source):
-    //   - Os::FileSystem::moveFile() -> _rename() -> ::rename(2). rename(2) will happily rename a
-    //     DIRECTORY to a new name, so if the move SOURCE (the txn's initial dst_filename) is a
-    //     directory, the rename SUCCEEDS and the DEST path is now itself a directory.
-    //   - Os::File::open(OPEN_WRITE) -> ::open(dst, O_WRONLY | O_CREAT). Opening an existing
-    //     directory O_WRONLY fails with EISDIR, which errno_to_file_status() maps to a non-OP_OK
-    //     status -> RxFileReopenFailed is emitted.
-    //
-    // eof_recv is left false so the EOF/MD size-mismatch check is skipped and control reaches the
-    // rename block with success==true.
+    // A receive with a temp file always holds it open; here the open handle is to an unlinked scratch
+    // file, so the temp size check passes. eof_recv is left false so the EOF/MD size-mismatch check
+    // is skipped.
 
     U8 channelId = 0;
     Cfdp::EntityId sourceEid = TEST_GROUND_EID;
     Cfdp::FileSize fileSize = 1000;
     Cfdp::TransactionSeq seq = 1;
 
-    // Move SOURCE: the transaction's initial dst_filename. Make it a DIRECTORY so that
-    // rename(source_dir -> dest) succeeds and turns the DEST into a directory.
-    const char* moveSourceDir = "test/ut/output/reopen_src_dir";
-    // Move DEST: comes from the Metadata PDU. After the rename it is a directory; opening a
-    // directory for writing then fails with EISDIR.
-    const char* moveDest = "test/ut/output/reopen_dst_dir";
+    // Move SOURCE: the transaction's temp file, a link to a directory
+    const char* targetDir = "test/ut/output/reopen_target_dir";
+    const char* moveSourceLink = "test/ut/output/reopen_src_link";
+    // Metadata destination; the move target is the staging file beside it
+    const char* moveDest = "test/ut/output/reopen_dst.bin";
+    const char* staging = "test/ut/output/reopen_dst.bin.cfdp-0-100-1.part";
+    const char* handleFile = "test/ut/output/reopen_src_handle.bin";
 
-    // Make sure neither path pre-exists (clean slate), then create the source directory on disk.
-    Os::FileSystem::removeDirectory(moveDest);
-    Os::FileSystem::removeDirectory(moveSourceDir);
-    Os::FileSystem::Status mkStatus = Os::FileSystem::createDirectory(moveSourceDir);
-    ASSERT_EQ(Os::FileSystem::OP_OK, mkStatus);
+    // Clean slate, then create the directory and the link to it
+    (void)Os::FileSystem::removeFile(staging);
+    (void)Os::FileSystem::removeFile(moveSourceLink);
+    (void)Os::FileSystem::removeDirectory(targetDir);
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::createDirectory(targetDir));
+    ASSERT_EQ(0, ::symlink("reopen_target_dir", moveSourceLink));
 
-    // Set up Class 2 receiver transaction; its dst_filename is the move SOURCE (the directory)
+    // Set up Class 2 receiver transaction holding a temp file; its dst_filename is the move SOURCE
     Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Class 2 receiver
                                             channelId,
                                             "test_src.dat",  // srcFilename (unused for rename)
-                                            moveSourceDir,   // dstFilename -> becomes the move SOURCE (fname)
+                                            moveSourceLink,  // dstFilename -> the temp file (fname)
                                             fileSize, seq, sourceEid);
 
     txn->m_engine = this->component.m_engine;
     txn->m_history->src_eid = sourceEid;
 
-    // Force the "metadata arriving late" rename path:
-    txn->m_flags.rx.md_recv = false;   // metadata not yet received -> enter rename branch
-    txn->m_flags.rx.eof_recv = false;  // skip EOF/MD size-mismatch check -> keep success==true
+    // Force the "metadata arriving late" path:
+    txn->m_flags.rx.md_recv = false;                        // metadata not yet received
+    txn->m_flags.rx.eof_recv = false;                       // skip EOF/MD size-mismatch check
+    txn->m_flags.rx.file_owned = RxFileOwned::RX_FILE_TMP;  // data so far is in the temp file
+    (void)Os::FileSystem::removeFile(handleFile);
+    ASSERT_EQ(Os::File::OP_OK, txn->m_fd.open(handleFile, Os::File::OPEN_CREATE, Os::File::NO_OVERWRITE));
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::removeFile(handleFile));
 
-    // Build the Metadata PDU whose destination filename is the rename target
+    // Build the Metadata PDU naming the destination
     Cfdp::MetadataPdu metadataPdu;
     metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
                            sourceEid,                           // sourceEid
@@ -3487,7 +3484,7 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
                            this->component.getLocalEidParam(),  // destEid
                            fileSize,                            // fileSize
                            "test_src.dat",                      // source filename
-                           moveDest,                            // dest filename -> move DEST (becomes a directory)
+                           moveDest,                            // dest filename
                            Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
                            1);  // closureRequested for Class 2
 
@@ -3500,14 +3497,12 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
     // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
-    // Directly call r2RecvMd -> parses MD (MetadataReceived), rename of the directory succeeds,
-    // then reopen of the (now-directory) dest for writing fails -> RxFileReopenFailed.
+    // Directly call r2RecvMd -> parses MD (MetadataReceived), the move succeeds, then reopening
+    // the staging file for writing fails -> RxFileReopenFailed.
     txn->r2RecvMd(pduBuffer);
 
     // Verify events: MetadataReceived (from recvMd) + RxFileReopenFailed (reopen failure).
-    // After the successful rename, the transaction's dst_filename is the metadata dest (moveDest),
-    // which is the file that failed to reopen. The status field is an OS-dependent file-op code,
-    // so it is intentionally not asserted.
+    // The status field is an OS-dependent file-op code, so it is intentionally not asserted.
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
     ASSERT_EVENTS_MetadataReceived(0,               // index
@@ -3519,11 +3514,12 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
     ASSERT_EQ(Cfdp::Class::CLASS_2, this->eventHistory_RxFileReopenFailed->at(0).cfdpClass);
     ASSERT_EQ(sourceEid, this->eventHistory_RxFileReopenFailed->at(0).srcEid);
     ASSERT_EQ(seq, this->eventHistory_RxFileReopenFailed->at(0).seqNum);
-    ASSERT_STREQ(moveDest, this->eventHistory_RxFileReopenFailed->at(0).filename.toChar());
+    ASSERT_STREQ(staging, this->eventHistory_RxFileReopenFailed->at(0).filename.toChar());
+    EXPECT_EQ(Os::FileSystem::NOT_EXIST, Os::FileSystem::getPathType(moveDest));
 
-    // Cleanup: rename succeeded, so the source no longer exists; the dest is now the directory.
-    Os::FileSystem::removeDirectory(moveDest);
-    Os::FileSystem::removeDirectory(moveSourceDir);
+    // Cleanup: the staging path is now the link; the transaction would remove it when it ends
+    (void)Os::FileSystem::removeFile(staging);
+    (void)Os::FileSystem::removeDirectory(targetDir);
 }
 
 void CfdpManagerTester::runPlaybackPathTooLongCase(const char* srcDir,

@@ -44,6 +44,7 @@ register_fprime_ut(
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerEventTests.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerHelperTests.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerRxDisposalTests.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/CfdpManagerRxStagingTests.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/PduTester.cpp"
     UT_AUTO_HELPERS
 )

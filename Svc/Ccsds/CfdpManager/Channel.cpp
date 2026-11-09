@@ -176,6 +176,8 @@ void Channel::cleanup(Fw::MemAllocator& allocator, FwEnumStoreType memId) {
     if (m_transactions != nullptr) {
         // Manually call destructors since we used placement new
         for (U32 j = 0; j < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; ++j) {
+            // A receive still in progress can never complete now; remove the file it created
+            m_transactions[j].rDiscardOwnedFile();
             m_transactions[j].~Transaction();
         }
         allocator.deallocate(memId, m_transactions);
@@ -628,6 +630,9 @@ void Channel::recycleTransaction(Transaction* txn) {
         this->m_cfdpManager->log_WARNING_LO_DanglingFileHandleClosed(txn->getChannelId(), txn->m_history->seq_num);
         txn->m_fd.close();
     }
+
+    // Defensive: a receive recycled without being finished removes the file it created
+    txn->rDiscardOwnedFile();
 
     this->dequeueTransaction(txn);  // this makes it "float" (not in any queue)
 
