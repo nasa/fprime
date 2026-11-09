@@ -46,6 +46,11 @@ TEST(Transaction, Class1TxNominal) {
     tester.testClass1TxNominal();
 }
 
+TEST(Transaction, Class1TxWideEidFileDataPduSizing) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1TxWideEidFileDataPduSizing();
+}
+
 TEST(Transaction, Class2TxNominal) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass2TxNominal();

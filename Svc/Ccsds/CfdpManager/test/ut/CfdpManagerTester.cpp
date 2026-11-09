@@ -53,8 +53,8 @@ Fw::Buffer CfdpManagerTester::from_bufferAllocate_handler(FwIndexType portNum, F
         return Fw::Buffer();
     }
 
-    EXPECT_LT(size, MaxPduSize) << "Buffer size request is too large";
-    if (size >= MaxPduSize) {
+    EXPECT_LE(size, static_cast<FwSizeType>(MAX_PDU_BUFFER_SIZE)) << "Buffer size request is too large";
+    if (size > MAX_PDU_BUFFER_SIZE) {
         return Fw::Buffer();
     }
     return Fw::Buffer(this->m_internalDataBuffer, size);
@@ -65,8 +65,8 @@ void CfdpManagerTester::from_dataOut_handler(FwIndexType portNum, Fw::Buffer& fw
     EXPECT_LT(m_pduCopyCount, MAX_PDU_COPIES) << "Too many PDUs sent";
     if (m_pduCopyCount < MAX_PDU_COPIES) {
         FwSizeType copySize = fwBuffer.getSize();
-        if (copySize > MaxPduSize) {
-            copySize = MaxPduSize;
+        if (copySize > MAX_PDU_BUFFER_SIZE) {
+            copySize = MAX_PDU_BUFFER_SIZE;
         }
         memcpy(m_pduCopyStorage[m_pduCopyCount], fwBuffer.getData(), copySize);
 
@@ -978,6 +978,61 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
 void CfdpManagerTester::testClass1TxNominal() {
     sendAndVerifyClass1Tx("test/ut/output/test_class1_tx.bin", "test/ut/output/test_class1_tx_dst.dat",
                           component.getOutgoingFileChunkSizeParam());
+}
+
+void CfdpManagerTester::testClass1TxWideEidFileDataPduSizing() {
+    // Two-byte entity ID and a chunk size that does not bind: the File Data payload must be
+    // sized from the real header so that no PDU exceeds MaxPduSize
+    const EntityId wideLocalEid = 0x1234;
+    this->paramSet_LocalEid(wideLocalEid, Fw::ParamValid::VALID);
+    this->paramSend_LocalEid(0, 0);
+    this->paramSet_OutgoingFileChunkSize(MaxPduSize, Fw::ParamValid::VALID);
+    this->paramSend_OutgoingFileChunkSize(0, 0);
+    this->clearHistory();
+    ASSERT_EQ(wideLocalEid, this->component.getLocalEidParam());
+
+    const char* srcFile = "test/ut/output/c1_wide_eid.bin";
+    const char* dstFile = "test/ut/output/c1_wide_eid_dst.dat";
+    FwSizeType fileSize;
+    createAndVerifyTestFile(srcFile, MaxPduSize, fileSize);
+
+    TransactionSetup setup;
+    setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID, Cfdp::Class::CLASS_1, TEST_PRIORITY,
+                       TxnState::TXN_STATE_S1, setup);
+
+    // Expected payload of a full File Data PDU: MaxPduSize less the real header and the 32-bit offset
+    PduHeader header;
+    header.initialize(PduTypeEnum::FILE_DATA, PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1,
+                      wideLocalEid, setup.expectedSeqNum, TEST_GROUND_EID);
+    const U16 fullPduData = static_cast<U16>(MaxPduSize - header.getBufferSize() - sizeof(U32));
+    ASSERT_GT(fileSize, fullPduData) << "File must span two File Data PDUs";
+    const U16 lastPduData = static_cast<U16>(fileSize - fullPduData);
+
+    // Cycle until Metadata, two File Data PDUs and EOF have been sent
+    for (U32 cycle = 0; (cycle < 4) && (this->fromPortHistory_dataOut->size() < 4); cycle++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+    ASSERT_EQ(4u, this->fromPortHistory_dataOut->size()) << "Expected Metadata + 2 File Data + EOF";
+    ASSERT_EVENTS_BuffersExhausted_SIZE(0);
+
+    for (FwIndexType pduIndex = 0; pduIndex < 4; pduIndex++) {
+        EXPECT_LE(this->getSentPduBuffer(pduIndex).getSize(), static_cast<FwSizeType>(MAX_PDU_BUFFER_SIZE))
+            << "PDU " << pduIndex << " exceeds MaxPduSize";
+    }
+
+    verifyMetadataPduAtIndex(0, setup, fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1);
+    EXPECT_EQ(static_cast<FwSizeType>(MAX_PDU_BUFFER_SIZE), this->getSentPduBuffer(1).getSize())
+        << "First File Data PDU should fill MaxPduSize";
+    verifyFileDataPdu(this->getSentPduBuffer(1), wideLocalEid, TEST_GROUND_EID, setup.expectedSeqNum, 0, fullPduData,
+                      srcFile, Cfdp::Class::CLASS_1);
+    verifyFileDataPdu(this->getSentPduBuffer(2), wideLocalEid, TEST_GROUND_EID, setup.expectedSeqNum, fullPduData,
+                      lastPduData, srcFile, Cfdp::Class::CLASS_1);
+    verifyEofPdu(this->getSentPduBuffer(3), wideLocalEid, TEST_GROUND_EID, setup.expectedSeqNum,
+                 Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(fileSize), srcFile);
+
+    ASSERT_EVENTS_TxFileTransferCompleted_SIZE(1);
+    cleanupTestFile(srcFile);
 }
 
 void CfdpManagerTester::testClass2TxNominal() {
