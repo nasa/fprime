@@ -29,7 +29,6 @@ The BufferLogger is an active component. Data arriving on the async `bufferSendI
 | `bufferSendOut` | output | `Fw.BufferSend` | Forwarded buffers (e.g., for return to a buffer manager) |
 | `comIn` | async input | `Fw.Com` | Com buffers to log (not forwarded) |
 | `pingIn` / `pingOut` | async input / output | `Svc.Ping` | Health ping |
-| `schedIn` | async input | `Svc.Sched` | Run-time scheduling (currently unused) |
 
 ### 3.2 Logging State
 
