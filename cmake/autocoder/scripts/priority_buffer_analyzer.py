@@ -97,7 +97,9 @@ class PriorityBufferAnalyzer:
             raise ValueError(
                 f"Mismatched source and binary locations in {self.build_dir}"
             )
-        pairs = [(Path(s).resolve(), Path(b).resolve()) for s, b in zip(sources, binaries)]
+        pairs = [
+            (Path(s).resolve(), Path(b).resolve()) for s, b in zip(sources, binaries)
+        ]
         return sorted(pairs, key=lambda pair: len(pair[0].parts), reverse=True)
 
     def run(self) -> int:
