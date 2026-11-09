@@ -152,6 +152,36 @@ TEST(Transaction, Class2RxZeroLengthFileData) {
     tester.testClass2RxZeroLengthFileData();
 }
 
+TEST(Transaction, Class1RxChecksumMismatchRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxChecksumMismatchRemovesFile();
+}
+
+TEST(Transaction, Class1RxSizeMismatchRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxSizeMismatchRemovesFile();
+}
+
+TEST(Transaction, Class2RxChecksumMismatchRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxChecksumMismatchRemovesFile();
+}
+
+TEST(Transaction, Class1RxInactivityRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxInactivityRemovesFile();
+}
+
+TEST(Transaction, Class2RxStalledRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxStalledRemovesFile();
+}
+
+TEST(Transaction, Class2RxWithoutMetadataRemovesTempFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxWithoutMetadataRemovesTempFile();
+}
+
 TEST(Transaction, MultipleTransactionsInSeries) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testMultipleTransactionsInSeries();
