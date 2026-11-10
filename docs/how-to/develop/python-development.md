@@ -439,6 +439,8 @@ The steps below use `<YOUR_DEPLOYMENT_NAME>` for the name of the phased deployme
         --dictionary build-artifacts/<platform>/<YOUR_DEPLOYMENT_NAME>/dict/<YOUR_DEPLOYMENT_NAME>TopologyDictionary.json
     ```
 
+    For a deployment below the root of the project, the directory after `<platform>` is the deployment's path with `/` replaced by `_`, e.g. `MyProject_MyDeployment`.
+
 4. Send `<YOUR_DEPLOYMENT_NAME>.pythonEchoer.HELLO` from the GDS. The `Hello` event and `HelloCount` channel report the result.
 
 The flight software and the GDS may be started in either order.
