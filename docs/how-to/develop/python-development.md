@@ -355,7 +355,7 @@ The steps below use `<YOUR_DEPLOYMENT_NAME>` for the name of the phased deployme
     def parse_args():
         """ Parse the address the flight software listens on for the GDS """
         parser = argparse.ArgumentParser(description="<YOUR_DEPLOYMENT_NAME> flight software")
-        parser.add_argument("--hostname", type=str, default="0.0.0.0", help="Address to listen on")
+        parser.add_argument("--hostname", type=str, default="127.0.0.1", help="Address to listen on")
         parser.add_argument("--port", type=int, default=50000, help="Port to listen on")
         return parser.parse_args()
 
@@ -386,7 +386,7 @@ The steps below use `<YOUR_DEPLOYMENT_NAME>` for the name of the phased deployme
         fsw_main()
     ```
 
-    - `--hostname` and `--port` reach the communication driver through `TopologyState`: Python assigns them to the bound members, `setup` receives the state, and the `comDriver` phases read `state.hostname` and `state.port`.
+    - `--hostname` and `--port` reach the communication driver through `TopologyState`: Python assigns them to the bound members, `setup` receives the state, and the `comDriver` phases read `state.hostname` and `state.port`. The default address accepts a GDS on the same machine only; pass `--hostname 0.0.0.0` to listen on every network interface.
     - `Instances` holds the Python component instances of the topology by instance name. `Instances.timer` exists because `timer` is now a `PythonRateGroupDriver`; the call is required, as nothing else cycles the rate groups. The interval must match the base rate the rate group divisors assume.
     - The [reference deployment's entry point](https://github.com/fprime-community/fprime-python-reference/blob/main/FprimePythonReference/ReferenceDeployment/fsw_main.py) also calls `Instances.pythonCom`, a Python communication component of that deployment. Omit those calls unless your topology has such an instance.
 
