@@ -416,13 +416,13 @@ The steps below use `<YOUR_DEPLOYMENT_NAME>` for the name of the phased deployme
 
 ## Build and Run
 
-1. Build from the root of the project:
+1. Build from the root of the project or from the deployment's directory:
 
     ```bash
     fprime-util build
     ```
 
-    The build installs `fprime_py`, `fsw_main.py`, and every Python component to `build-artifacts/python`. Python files are reinstalled by every build, so after editing only Python, `fprime-util build` is quick.
+    The build installs `fprime_py`, `fsw_main.py`, and every Python component to `build-artifacts/python`. Python files are reinstalled by every such build, so after editing only Python, `fprime-util build` is quick. A build from a component's directory builds that component alone and installs nothing.
 
 2. Start the flight software with the Python interpreter that built it. It is a separate process from the GDS:
 
@@ -440,6 +440,8 @@ The steps below use `<YOUR_DEPLOYMENT_NAME>` for the name of the phased deployme
     ```
 
 4. Send `<YOUR_DEPLOYMENT_NAME>.pythonEchoer.HELLO` from the GDS. The `Hello` event and `HelloCount` channel report the result.
+
+The flight software and the GDS may be started in either order.
 
 Stop the flight software with CTRL-C.
 
