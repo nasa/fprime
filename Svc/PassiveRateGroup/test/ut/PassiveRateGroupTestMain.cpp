@@ -100,6 +100,17 @@ TEST_F(PassiveRateGroupTestFixture, RawTimeSourceConfiguration) {
     tester.runRawTimeSourceTest();
 }
 
+TEST_F(PassiveRateGroupTestFixture, InitialTelemetry) {
+    Svc::PassiveRateGroup impl("PassiveRateGroup");
+    Svc::PassiveRateGroupTester tester(impl);
+
+    configureAndConnect(impl, tester);
+    // Configure again now that the ports are connected
+    impl.configure(contexts);
+
+    tester.runInitialTlmTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

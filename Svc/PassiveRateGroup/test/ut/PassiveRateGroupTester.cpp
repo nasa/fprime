@@ -338,4 +338,19 @@ void PassiveRateGroupTester::runRawTimeSourceTest() {
     ASSERT_GT(this->tlmHistory_CycleTime->at(0).arg, 0U);
 }
 
+void PassiveRateGroupTester::runInitialTlmTest() {
+    TEST_CASE(101.5.1, "Test initial telemetry written by configure");
+
+    // configure() was called after the ports were connected and before any cycle ran
+    ASSERT_TLM_MaxCycleTime_SIZE(1);
+    ASSERT_TLM_MaxCycleTime(0, 0U);
+    ASSERT_TLM_CycleTime_SIZE(1);
+    ASSERT_TLM_CycleTime(0, 0U);
+    ASSERT_TLM_CycleCount_SIZE(1);
+    ASSERT_TLM_CycleCount(0, 0U);
+    if (Svc::PassiveRateGroupCfg::PortCycleTime) {
+        ASSERT_TLM_PortCycleTimeHWM_SIZE(1);
+    }
+}
+
 }  // namespace Svc

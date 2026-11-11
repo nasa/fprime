@@ -51,7 +51,9 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     //!  \brief PassiveRateGroup configuration function
     //!
     //!  The configuration function takes an array of context values to pass to
-    //!  members of the rate group.
+    //!  members of the rate group. It also writes initial telemetry values so that every
+    //!  channel has a value before the first cycle; call it after the telemetry and time
+    //!  ports are connected for these writes to be delivered.
     //!
     //!  \param contexts Array of context values that will be sent to each member component.
     //!         The index of the array corresponds to the output port number.
