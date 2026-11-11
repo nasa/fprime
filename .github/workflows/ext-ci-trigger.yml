@@ -1,0 +1,22 @@
+name: External CI Trigger
+
+# Deliberately trivial. This workflow runs under the repository's normal `pull_request`
+# rules, and its completion is what starts the privileged orchestrator in ext-ci.yml via
+# `workflow_run`. The design assumes the repository setting "Require approval for all outside
+# collaborators" (GitHub's default gates first-time contributors only). It must never need
+# secrets and must never produce anything the orchestrator trusts. No paths filter here: the
+# orchestrator applies the manifest's paths_ignore itself and emits skipped Check Runs, so
+# docs-only PRs still satisfy required checks.
+on:
+  pull_request:
+    branches: [ devel, release/** ]
+  merge_group:
+
+permissions: {}
+
+jobs:
+  approved:
+    name: "Approval Gate"
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${GITHUB_EVENT_NAME} workflow ran for ${GITHUB_SHA}; ext-ci may proceed"

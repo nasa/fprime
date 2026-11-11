@@ -1,0 +1,22 @@
+{
+  "upstream_repository": "nasa/fprime",
+  "check_prefix": "External CI",
+  "paths_ignore": [
+    "docs/**",
+    "**.md",
+    ".github/actions/spelling/**",
+    ".github/ISSUE_TEMPLATE/**",
+    ".github/agents/**"
+  ],
+  "repos": [
+    {
+      "id": "led-blinker",
+      "repository": "fprime-community/fprime-workshop-led-blinker",
+      "workflow": "ci.yml",
+      "default_ref": "devel",
+      "timeout_minutes": 20,
+      "failure_policy": "notify",
+      "on_pr": true
+    }
+  ]
+}
