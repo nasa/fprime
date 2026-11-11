@@ -111,7 +111,7 @@ void AtomicQueue::teardown() {
         FW_ASSERT(this->m_allocator != nullptr, 0);
 
         // Call destructor
-        this->m_notFullSem->~CountingSemaphore();
+        this->m_notFullSem->Os::CountingSemaphore::~CountingSemaphore();
 
         // Deallocate memory
         this->m_allocator->deallocate(this->m_allocatorId, this->m_notFullSem);

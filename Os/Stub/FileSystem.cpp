@@ -8,6 +8,11 @@ namespace Os {
 namespace Stub {
 namespace FileSystem {
 
+StubFileSystem& StubFileSystem::getSingleton() {
+    static StubFileSystem s_singleton;
+    return s_singleton;
+}
+
 StubFileSystem::Status StubFileSystem::_removeDirectory(const char* path) {
     return Status::NOT_SUPPORTED;
 }
