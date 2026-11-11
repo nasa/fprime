@@ -116,6 +116,7 @@ happens on the test (teardown error, body exception, a later
 `Incomplete`); all failed checks are raised together at the test's last
 window — the stimulus of every window runs so the record stays whole for
 replay. END carries **no verdict** (contract §4).
+- Before harness review, the stimulus must pass `fth verify-stimulus plan.json --tests test/int` (static: every `with window(...)` block sends exactly the procedure's command steps, in order, with the plan's literal arguments; non-literal arguments are reported, never a failure).
 The L0 feasibility gate sends one marker and checks the archive shows
 it byte-exact (`NO_OP_STRING` truncates when a project shortens
 `FW_LOG_STRING_MAX_SIZE`; a `MARK(U32)` round-trips or not) — nothing
