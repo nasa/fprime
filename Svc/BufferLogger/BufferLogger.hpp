@@ -206,12 +206,6 @@ class BufferLogger final : public BufferLoggerComponentBase {
                         U32 key                     //!< Value to return to pinger
     );
 
-    //! Handler implementation for schedIn
-    //!
-    void schedIn_handler(const FwIndexType portNum, /*!< The port number*/
-                         U32 context                /*!< The call order*/
-    );
-
   private:
     // ----------------------------------------------------------------------
     // Command handler implementations

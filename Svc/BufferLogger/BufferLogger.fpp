@@ -21,8 +21,6 @@ module Svc {
     @ Ping output port
     output port pingOut: Svc.Ping
 
-    async input port schedIn: Svc.Sched
-
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------

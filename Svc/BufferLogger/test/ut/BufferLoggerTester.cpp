@@ -89,9 +89,6 @@ void BufferLoggerTester ::connectPorts() {
     // pingIn
     this->connect_to_pingIn(0, this->component.get_pingIn_InputPort(0));
 
-    // schedIn
-    this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
-
     // bufferSendOut
     this->component.set_bufferSendOut_OutputPort(0, this->get_from_bufferSendOut(0));
 
