@@ -42,7 +42,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      38   100%
+Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
 Fw/DataStructures/ExternalArray.hpp           57      57   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -137,7 +137,7 @@ googletest/googletest/include/gtest/gtest-printers.h
 googletest/googletest/include/gtest/gtest-test-part.h
                                                1       1   100%
 googletest/googletest/include/gtest/gtest.h
-                                              47      26    55%   244,252,257-258,339,1338,1343,1362,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
+                                              47      27    57%   244,252,257-258,339,1338,1343,1407,1411-1413,1555-1557,1559-1561,1565-1566,1663
 googletest/googletest/include/gtest/internal/gtest-death-test-internal.h
                                                6       4    66%   95-96
 googletest/googletest/include/gtest/internal/gtest-internal.h
@@ -170,11 +170,11 @@ Os/Generic/DefaultPriorityMemQueue.cpp         3       0     0%   16-18
 Os/Generic/DefaultPriorityQueue.cpp            3       3   100%
 Os/Generic/LocklessPriorityQueue.cpp         202     190    94%   128,130-131,147-149,151-154,368-369
 Os/Generic/LocklessPriorityQueue.hpp           1       1   100%
-Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,123-124,190-192,196-197,213,219-220,223-224,228-230,232,235-236,238,246,424,434-435,460,485,531-532,601,767
+Os/Generic/PriorityMemQueue.cpp              352     318    90%   79-80,110-111,123-124,190-192,196-197,213,219-220,223-224,228-230,232,235-236,238,246,424,434-435,460,485,531-532,601,766-767
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 166     139    83%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,262-263
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     155    91%   21-26,28,194,248-249,253,318,343,346
+Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,248-249,253,311,318,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -265,7 +265,7 @@ Svc/BufferAccumulator/ArrayFIFOBuffer.cpp
                                               36      32    88%   45,65,89-90
 Svc/BufferAccumulator/BufferAccumulator.cpp
                                              118     112    94%   118-119,121,154-156
-Svc/BufferLogger/BufferLogger.cpp             43      40    93%   62,64,94
+Svc/BufferLogger/BufferLogger.cpp             41      40    97%   90
 Svc/BufferLogger/BufferLoggerFile.cpp        118     111    94%   60,117-118,149-150,152-153
 Svc/BufferManager/BufferManagerComponentImpl.cpp
                                              111     110    99%   42
@@ -449,5 +449,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      26752   22988    85%
+TOTAL                                      26750   22988    85%
 ------------------------------------------------------------------------------
