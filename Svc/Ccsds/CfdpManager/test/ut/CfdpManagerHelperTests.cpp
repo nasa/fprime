@@ -488,6 +488,7 @@ TEST(FileDataPduHelper, GetBufferSizeAndMaxSize) {
 
     // Max payload fits within one PDU and leaves room for header + offset
     EXPECT_GT(pdu.getMaxFileDataSize(), 0U);
+    EXPECT_EQ(MaxPduSize - pdu.asHeader().getBufferSize() - static_cast<U32>(sizeof(U32)), pdu.getMaxFileDataSize());
 }
 
 TEST(FileDataPduHelper, ToBufferFromBufferRoundTrip) {
