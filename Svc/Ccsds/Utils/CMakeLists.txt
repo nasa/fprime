@@ -10,12 +10,15 @@
 #
 ####
 
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/AesGcm/")
+
 register_fprime_library(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/IdlePacket.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/CRC16.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/IdlePacket.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SdlsAad.hpp"
   DEPENDS
     Svc_Ccsds_Types
 )

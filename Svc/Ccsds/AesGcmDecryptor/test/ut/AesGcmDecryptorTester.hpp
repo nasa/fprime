@@ -9,6 +9,7 @@
 
 #include "Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptor.hpp"
 #include "Svc/Ccsds/AesGcmDecryptor/AesGcmDecryptorGTestBase.hpp"
+#include "Svc/Ccsds/Utils/AesGcm/AesGcmCipher.hpp"
 
 namespace Svc {
 
@@ -27,13 +28,13 @@ class AesGcmDecryptorTester final : public AesGcmDecryptorGTestBase {
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
     //! Length of an AES-256 key, in bytes
-    static const FwSizeType AES_256_KEY_LEN = 32;
+    static const FwSizeType AES_256_KEY_LEN = Svc::Ccsds::Utils::AesGcmCipher::KEY_LEN;
 
     //! Length of the AES-GCM initialization vector, in bytes
-    static const FwSizeType GCM_IV_LEN = 12;
+    static const FwSizeType GCM_IV_LEN = Svc::Ccsds::Utils::AesGcmCipher::IV_LEN;
 
     //! Length of the AES-GCM authentication tag (the SDLS MAC), in bytes
-    static const FwSizeType GCM_TAG_LEN = 16;
+    static const FwSizeType GCM_TAG_LEN = Svc::Ccsds::Utils::AesGcmCipher::TAG_LEN;
 
     //! Virtual channel the component is configured for in these tests
     static const U8 TEST_VC_ID = 5;
@@ -64,9 +65,9 @@ class AesGcmDecryptorTester final : public AesGcmDecryptorGTestBase {
     //! plaintext. Covers SVC-CCSDS-AES-DECRYPTOR-001 and SVC-CCSDS-AES-DECRYPTOR-002.
     void testKnownAnswer();
 
-    //! Svc::Ccsds::Utils::SdlsTcAuthMask agrees, byte for byte, with the mask this harness
+    //! Svc::Ccsds::Utils::SdlsTcAad agrees, byte for byte, with the mask this harness
     //! builds from the ground segment's contract. Covers SVC-CCSDS-AES-DECRYPTOR-002.
-    void testAuthMaskLayout();
+    void testAadLayout();
 
     //! A well-formed frame decrypts in place, leaving the plaintext at IV_LEN into the
     //! original allocation. Covers SVC-CCSDS-AES-DECRYPTOR-001.
