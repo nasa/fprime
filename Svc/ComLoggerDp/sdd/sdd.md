@@ -79,7 +79,7 @@ The component uses constants defined in `default/config/ComLoggerDpCfg.fpp` and 
 | Constant | Defined in | Type | Default | Description |
 |---|---|---|---|---|
 | `DpBufferErrorThrottle` | `ComLoggerDpCfg.fpp` | `U32` | `1` | Throttle value for `DpBufferError` event - limits the number of times the event can be emitted consecutively |
-| `ComLoggerDpSentry` | `ComLoggerDpCfg.hpp` | `U32` | `0xDEADBEEF` | Sentry value prepended to each ComBuffer record for corruption detection during deserialization; must match the `--sentry` value given to `scripts/decode_comlogger_dp.py` |
+| `ComLoggerDpSentry` | `ComLoggerDpCfg.hpp` | `U32` | `0xDEADBEEF` | Sentry value prepended to each ComBuffer record for corruption detection during deserialization; must match the `--sentry` value given to `fprime-dp comlog` |
 
 These constants can be overridden in deployment-specific configuration files to tune behavior without modifying the component source.
 
@@ -357,7 +357,7 @@ A common deployment pattern:
    StopComDp()
    ```
 5. Data products are downlinked via the data product manager
-6. Ground can reconstruct the full telemetry stream from the data products using [`decode_comlogger_dp.py](../scripts/decode_comlogger_dp.py) in the [scripts](../scripts/) directory.
+6. Ground can reconstruct the full telemetry stream from the data products using `fprime-dp comlog`, the decoder shipped with [fprime-gds](https://github.com/nasa/fprime-gds).
 
 ## 6. Change Log
 

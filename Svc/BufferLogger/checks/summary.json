@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-10T21:08:22Z",
+  "generated_at": "2026-11-11T21:13:36Z",
   "ref": "devel",
-  "commit": "b188d185ec46699b5fdc0a0666537896a5ea9d47",
+  "commit": "5d55cfb5e6006e7a5b6a6d19936a65302181cf0b",
   "passed": 2,
   "failed": 6,
   "skipped": 8,
@@ -14,7 +14,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/BufferLogger",
       "status": "pass",
       "failures": [],
-      "detail": "4 input port(s) checked"
+      "detail": "3 input port(s) checked"
     },
     {
       "id": "D2",
@@ -132,9 +132,9 @@
       "module": "/home/runner/work/fprime/fprime/Svc/BufferLogger",
       "status": "fail",
       "failures": [
-        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/BufferLogger/docs/sdd.md); cannot trace 6 port(s)"
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/BufferLogger/docs/sdd.md); cannot trace 5 port(s)"
       ],
-      "detail": "6 port(s) traced against 0 requirement(s)"
+      "detail": "5 port(s) traced against 0 requirement(s)"
     },
     {
       "id": "R7",
