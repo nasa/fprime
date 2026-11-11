@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "5d55cfb5e6006e7a5b6a6d19936a65302181cf0b",
-  "generated_at": "2026-11-11T21:13:40Z",
+  "generated_at": "2026-11-11T21:18:29Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -8285,11 +8285,11 @@
         "tier": "bronze"
       },
       "codeql": {
-        "findings": 4,
+        "findings": 2,
         "by_severity": {
           "error": 0,
           "medium": 0,
-          "low": 4
+          "low": 2
         },
         "worst": "low",
         "tier": "silver",
@@ -8298,14 +8298,14 @@
       },
       "codeql_checks": {
         "codeql": {
-          "findings": 2,
+          "findings": 0,
           "by_severity": {
             "error": 0,
             "medium": 0,
-            "low": 2
+            "low": 0
           },
-          "worst": "low",
-          "tier": "silver",
+          "worst": null,
+          "tier": "platinum",
           "dismissed": 0,
           "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ComLoggerDp/codeql/index.html"
