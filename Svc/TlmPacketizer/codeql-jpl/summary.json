@@ -1,11 +1,11 @@
 {
-  "findings": 11,
+  "findings": 16,
   "by_severity": {
-    "error": 0,
+    "error": 5,
     "medium": 3,
     "low": 8
   },
-  "worst": "medium",
+  "worst": "error",
   "tier": "bronze",
   "dismissed": 1,
   "label": "Static Analysis (JPL) [CodeQL]"
