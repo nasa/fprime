@@ -1,0 +1,2 @@
+| test.cpp:27:5:27:45 | FW_ASSERT(cond,__VA_ARGS__...) | FW_ASSERT checks command argument channel, which originates from the ground; validate and report instead. |
+| test.cpp:53:5:53:39 | FW_ASSERT(cond,__VA_ARGS__...) | FW_ASSERT checks parameter value from paramGet_THRESHOLD, which originates from the ground; validate and report instead. |
