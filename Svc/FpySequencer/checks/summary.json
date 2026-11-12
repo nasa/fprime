@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-11T21:13:36Z",
+  "generated_at": "2026-11-12T21:08:30Z",
   "ref": "devel",
-  "commit": "5d55cfb5e6006e7a5b6a6d19936a65302181cf0b",
+  "commit": "654e14decd89ec46c999143a75b7366b1bdcf46d",
   "passed": 3,
   "failed": 10,
   "skipped": 3,
@@ -84,10 +84,9 @@
         "requirement 'FPY-SEQ-012' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:32) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'FPY-SEQ-013' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:33) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'FPY-SEQ-014' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:34) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'FPY-SEQ-020' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:40) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'FPY-SEQ-021' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:41) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+        "requirement 'FPY-SEQ-021' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:40) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "21 requirement(s) checked"
+      "detail": "20 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -134,7 +133,7 @@
         "command 'STEP' has no requirement referencing it (add a requirement mentioning 'STEP')",
         "command 'DUMP_STACK_TO_FILE' has no requirement referencing it (add a requirement mentioning 'DUMP_STACK_TO_FILE')"
       ],
-      "detail": "12 command(s) traced against 21 requirement(s)"
+      "detail": "12 command(s) traced against 20 requirement(s)"
     },
     {
       "id": "R2",
@@ -166,7 +165,7 @@
         "telemetry channel 'PRM_STATEMENT_TIMEOUT_SECS' has no requirement referencing it (add a requirement mentioning 'PRM_STATEMENT_TIMEOUT_SECS')",
         "telemetry channel 'PRM_SEQ_BASE_DIR' has no requirement referencing it (add a requirement mentioning 'PRM_SEQ_BASE_DIR')"
       ],
-      "detail": "22 telemetry channel(s) traced against 21 requirement(s)"
+      "detail": "22 telemetry channel(s) traced against 20 requirement(s)"
     },
     {
       "id": "R3",
@@ -224,7 +223,7 @@
         "event 'DirectiveFromOldSequence' has no requirement referencing it (add a requirement mentioning 'DirectiveFromOldSequence')",
         "event 'FileOutsideSandbox' has no requirement referencing it (add a requirement mentioning 'FileOutsideSandbox')"
       ],
-      "detail": "48 event(s) traced against 21 requirement(s)"
+      "detail": "48 event(s) traced against 20 requirement(s)"
     },
     {
       "id": "R4",
@@ -236,7 +235,7 @@
         "parameter 'STATEMENT_TIMEOUT_SECS' has no requirement referencing it (add a requirement mentioning 'STATEMENT_TIMEOUT_SECS')",
         "parameter 'SEQ_BASE_DIR' has no requirement referencing it (add a requirement mentioning 'SEQ_BASE_DIR')"
       ],
-      "detail": "2 parameter(s) traced against 21 requirement(s)"
+      "detail": "2 parameter(s) traced against 20 requirement(s)"
     },
     {
       "id": "R5",
@@ -268,7 +267,7 @@
         "port 'getParam' has no requirement referencing it (add a requirement mentioning 'getParam')",
         "port 'serialOut' has no requirement referencing it (add a requirement mentioning 'serialOut')"
       ],
-      "detail": "13 port(s) traced against 21 requirement(s)"
+      "detail": "13 port(s) traced against 20 requirement(s)"
     },
     {
       "id": "R7",
@@ -296,10 +295,9 @@
         "requirement 'FPY-SEQ-017' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:37) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'FPY-SEQ-018' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:38) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'FPY-SEQ-019' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:39) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'FPY-SEQ-020' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:40) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'FPY-SEQ-021' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:41) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'FPY-SEQ-021' (/home/runner/work/fprime/fprime/Svc/FpySequencer/docs/sdd.md:40) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "21 requirement(s) checked"
+      "detail": "20 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -308,7 +306,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/FpySequencer",
       "status": "pass",
       "failures": [],
-      "detail": "21 requirement(s) checked"
+      "detail": "20 requirement(s) checked"
     },
     {
       "id": "U3",

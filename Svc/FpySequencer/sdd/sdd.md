@@ -37,7 +37,6 @@ The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` packa
 | FPY-SEQ-017 | The sequencer shall support looping constructs.                                                                                                   | Unit Test                       |
 | FPY-SEQ-018 | The sequencer shall support NO OP functionality.                                                                                                  | Unit Test                       |
 | FPY-SEQ-019 | The sequencer shall support working with complex modeled data structures (Arrays, Serializables).                                                 | Unit Test                       |
-| FPY-SEQ-020 | The sequencer shall support setting flags as described in the [Flags](#flags) section via command and sequence directive.                  | Unit Test                       |
 | FPY-SEQ-021 | The sequencer shall support the directives described in the [Directives](#directives) section.                                                    | Unit Test                       |
 
 ## States
@@ -126,13 +125,6 @@ entry / clearBreakpoint, clearSequenceFile
 
 ```
 
-
-## Flags
-The FpySequencer supports certain boolean flags which control the behavior of the sequencer while running a sequence. The flags can be accessed and modified by the sequence itself, or by command while a sequence is running. When a sequence starts running, the flags are initialized to a value configured by the FLAG_DEFAULT_XYZ parameters.
-
-| Name | Description | Default value (configurable) |
-|---|------------|---|
-|EXIT_ON_CMD_FAIL|if true, the sequence will exit with an error if a command fails|false|
 
 ## Commands
 | Name | Description |
