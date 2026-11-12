@@ -42,7 +42,7 @@ jobs:
       - name: "Generate UT build cache"
         working-directory: ./FppTestProject
         run: |
-          fprime-util generate --ut -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
+          fprime-util generate --ut 2>&1 | output-cleaner
         shell: bash
       - name: "Build UTs"
         working-directory: ./FppTestProject/FppTest
@@ -81,7 +81,7 @@ jobs:
       - name: "Generate UT build cache"
         working-directory: ./FppTestProject
         run: |
-          fprime-util generate --ut -DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
+          fprime-util generate --ut -DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON 2>&1 | output-cleaner
         shell: bash
       - name: "Build UTs"
         working-directory: ./FppTestProject/FppTest
