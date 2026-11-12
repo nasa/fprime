@@ -189,11 +189,13 @@ module Svc {
       id 1 \
       format "Processing directory {}"
 
-    @ Processing directory
+    @ Processing a file. Emitted for every file read (by BUILD_CATALOG, a runtime addition or
+    @ RETRANSMIT_DP), so it is a diagnostic, filtered by Svc.EventManager unless that severity is
+    @ enabled, to keep a build from flooding the event path
     event ProcessingFile (
                             file: string size FileNameStringSize @< The file
                           ) \
-      severity activity low \
+      severity diagnostic \
       id 2 \
       format "Processing file {}"
 
@@ -457,7 +459,9 @@ module Svc {
       format "Error sending DP file {}, stat {}. Halting xmit." \
       throttle 10
 
-    @ File added
+    @ File added at runtime by a runtime addition (addToCat); a BUILD_CATALOG does not emit it per
+    @ file and reports its totals with ProcessingDirectoryComplete, and RETRANSMIT_DP announces its
+    @ file with DpRetransmitScheduled
     event DpFileAdded(
                           file: string size FileNameStringSize @< The file
       ) \
@@ -472,13 +476,16 @@ module Svc {
       id 44 \
       format "Not adding file {} now; Catalog not yet loaded"
 
-    @ Skipped a transmitted file
+    @ Skipped a transmitted file. Throttled so that a BUILD_CATALOG over many transmitted files
+    @ reports the first few only; the throttle is cleared at the start of each build and before
+    @ each runtime addition or RETRANSMIT_DP
     event DpFileSkipped(
                           file: string size FileNameStringSize @< The file
       ) \
       severity activity high \
       id 45 \
-      format "Already Transmitted DP file {} not added"
+      format "Already Transmitted DP file {} not added" \
+      throttle 10
 
     event XmitUnbuiltCatalog() \
       severity warning high \
