@@ -34,9 +34,12 @@ class PassiveRateGroupTestFixture : public ::testing::Test {
     void configureAndConnect(Svc::PassiveRateGroup& impl,
                              Svc::PassiveRateGroupTester& tester,
                              FwEnumStoreType instance = 0,
-                             Os::RawTimeSource rawTimeSource = Os::RAWTIME_DEFAULT) {
+                             Os::RawTimeSource rawTimeSource = Os::RAWTIME_DEFAULT,
+                             bool configureAfterConnect = false) {
         // Configure with optional rawTimeSource
-        impl.configure(contexts, rawTimeSource);
+        if (!configureAfterConnect) {
+            impl.configure(contexts, rawTimeSource);
+        }
 
         // Initialize
         tester.init();
@@ -56,6 +59,10 @@ class PassiveRateGroupTestFixture : public ::testing::Test {
         impl.set_CmdStatus_OutputPort(0, tester.get_from_CmdStatus(0));
         impl.set_CmdReg_OutputPort(0, tester.get_from_CmdReg(0));
         tester.connect_to_CmdDisp(0, impl.get_CmdDisp_InputPort(0));
+
+        if (configureAfterConnect) {
+            impl.configure(contexts, rawTimeSource);
+        }
     }
 
     Svc::PassiveRateGroup::ContextArray contexts;
@@ -104,9 +111,9 @@ TEST_F(PassiveRateGroupTestFixture, InitialTelemetry) {
     Svc::PassiveRateGroup impl("PassiveRateGroup");
     Svc::PassiveRateGroupTester tester(impl);
 
-    configureAndConnect(impl, tester);
-    // Configure again now that the ports are connected
-    impl.configure(contexts);
+    // Configure only after the ports are connected: update-on-change channels (MaxCycleTime,
+    // PortCycleTimeHWM) emit only their first write, so an earlier unconnected configure() would consume it
+    configureAndConnect(impl, tester, 0, Os::RAWTIME_DEFAULT, true);
 
     tester.runInitialTlmTest();
 }
