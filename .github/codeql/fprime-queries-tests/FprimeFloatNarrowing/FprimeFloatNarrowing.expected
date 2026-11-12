@@ -1,0 +1,3 @@
+| test.cpp:7:13:7:16 | wide | Value of type double is implicitly narrowed to float. |
+| test.cpp:8:13:8:19 | call to compute | Value of type double is implicitly narrowed to float. |
+| test.cpp:13:9:13:17 | ... * ... | Value of type double is implicitly narrowed to float. |

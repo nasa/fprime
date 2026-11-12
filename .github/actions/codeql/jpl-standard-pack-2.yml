@@ -23,6 +23,9 @@ query-filters:
         - cpp/fprime/magic-numbers
         - cpp/fprime/public-data-member
         - cpp/fprime/incomplete-code
+        # The autocoded component bases leave parameter-cache members unset
+        # until loadParameters(); guard hand-written constructors only
+        - cpp/fprime/uninitialized-member
   # We are excluding the following query because it overflows the limit of
   # 5000 results that the SARIF upload can handle
   # This sole query is ran in jpl-standard-pack-3.yml

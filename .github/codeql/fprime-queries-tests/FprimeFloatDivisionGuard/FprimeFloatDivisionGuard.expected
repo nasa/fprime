@@ -1,0 +1,2 @@
+| test.cpp:13:12:13:20 | ... / ... | The floating-point divisor den is not checked against zero (or a minimum magnitude) before this division. |
+| test.cpp:37:5:37:14 | ... /= ... | The floating-point divisor den is not checked against zero (or a minimum magnitude) before this division. |

@@ -1,0 +1,2 @@
+| test.cpp:24:12:24:32 | access to array | Index slot is not checked against the array bounds before this access. |
+| test.cpp:39:13:39:43 | access to array | Index m_cursor is not checked against the array bounds before this access. |

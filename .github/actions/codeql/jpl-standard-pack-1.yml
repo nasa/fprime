@@ -16,6 +16,12 @@ query-filters:
   - exclude:
       problem.severity:
         - recommendation
+  # The autocoded component bases leave parameter-cache members unset until
+  # loadParameters(), so this rule runs in jpl-standard-known-autocode-issues.yml
+  # with build paths excluded to guard hand-written constructors only
+  - exclude:
+      id:
+        - cpp/fprime/uninitialized-member
   # Excluded in favor of the F Prime refinements above
   - exclude:
       id:

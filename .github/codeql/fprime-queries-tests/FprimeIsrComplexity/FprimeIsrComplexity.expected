@@ -1,0 +1,2 @@
+| test.cpp:13:6:13:12 | dma_isr | Interrupt service routine dma_isr contains a loop; keep ISRs minimal. |
+| test.cpp:21:6:21:28 | timer_interrupt_handler | Interrupt service routine timer_interrupt_handler has 24 statements; keep ISRs minimal. |
