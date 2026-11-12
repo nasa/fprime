@@ -807,6 +807,10 @@ DirectiveError FpySequencer::op_fpext() {
     if (this->m_runtime.stack.size < sizeof(F32)) {
         return DirectiveError::STACK_UNDERFLOW;
     }
+    // the result is wider than the operand, so it needs room to grow
+    if (sizeof(F64) - sizeof(F32) > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+        return DirectiveError::STACK_OVERFLOW;
+    }
     this->m_runtime.stack.push(static_cast<F64>(this->m_runtime.stack.pop<F32>()));
     return DirectiveError::NO_ERROR;
 }
@@ -1106,6 +1110,10 @@ DirectiveError FpySequencer::op_siext_8_64() {
     if (this->m_runtime.stack.size < sizeof(I8)) {
         return DirectiveError::STACK_UNDERFLOW;
     }
+    // the result is wider than the operand, so it needs room to grow
+    if (sizeof(I64) - sizeof(I8) > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+        return DirectiveError::STACK_OVERFLOW;
+    }
     I8 src = this->m_runtime.stack.pop<I8>();
     this->m_runtime.stack.push(static_cast<I64>(src));
     return DirectiveError::NO_ERROR;
@@ -1113,6 +1121,10 @@ DirectiveError FpySequencer::op_siext_8_64() {
 DirectiveError FpySequencer::op_siext_16_64() {
     if (this->m_runtime.stack.size < sizeof(I16)) {
         return DirectiveError::STACK_UNDERFLOW;
+    }
+    // the result is wider than the operand, so it needs room to grow
+    if (sizeof(I64) - sizeof(I16) > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+        return DirectiveError::STACK_OVERFLOW;
     }
     I16 src = this->m_runtime.stack.pop<I16>();
     this->m_runtime.stack.push(static_cast<I64>(src));
@@ -1122,6 +1134,10 @@ DirectiveError FpySequencer::op_siext_32_64() {
     if (this->m_runtime.stack.size < sizeof(I32)) {
         return DirectiveError::STACK_UNDERFLOW;
     }
+    // the result is wider than the operand, so it needs room to grow
+    if (sizeof(I64) - sizeof(I32) > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+        return DirectiveError::STACK_OVERFLOW;
+    }
     I32 src = this->m_runtime.stack.pop<I32>();
     this->m_runtime.stack.push(static_cast<I64>(src));
     return DirectiveError::NO_ERROR;
@@ -1129,6 +1145,10 @@ DirectiveError FpySequencer::op_siext_32_64() {
 DirectiveError FpySequencer::op_ziext_8_64() {
     if (this->m_runtime.stack.size < sizeof(U8)) {
         return DirectiveError::STACK_UNDERFLOW;
+    }
+    // the result is wider than the operand, so it needs room to grow
+    if (sizeof(U64) - sizeof(U8) > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+        return DirectiveError::STACK_OVERFLOW;
     }
     U8 src = this->m_runtime.stack.pop<U8>();
     this->m_runtime.stack.push(static_cast<U64>(src));
@@ -1138,6 +1158,10 @@ DirectiveError FpySequencer::op_ziext_16_64() {
     if (this->m_runtime.stack.size < sizeof(U16)) {
         return DirectiveError::STACK_UNDERFLOW;
     }
+    // the result is wider than the operand, so it needs room to grow
+    if (sizeof(U64) - sizeof(U16) > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+        return DirectiveError::STACK_OVERFLOW;
+    }
     U16 src = this->m_runtime.stack.pop<U16>();
     this->m_runtime.stack.push(static_cast<U64>(src));
     return DirectiveError::NO_ERROR;
@@ -1145,6 +1169,10 @@ DirectiveError FpySequencer::op_ziext_16_64() {
 DirectiveError FpySequencer::op_ziext_32_64() {
     if (this->m_runtime.stack.size < sizeof(U32)) {
         return DirectiveError::STACK_UNDERFLOW;
+    }
+    // the result is wider than the operand, so it needs room to grow
+    if (sizeof(U64) - sizeof(U32) > Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size) {
+        return DirectiveError::STACK_OVERFLOW;
     }
     U32 src = this->m_runtime.stack.pop<U32>();
     this->m_runtime.stack.push(static_cast<U64>(src));

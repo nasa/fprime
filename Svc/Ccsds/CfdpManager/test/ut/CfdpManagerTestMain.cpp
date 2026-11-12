@@ -36,6 +36,11 @@ TEST(Pdu, NakPdu) {
     tester.testNakPdu();
 }
 
+TEST(Pdu, NakPduSegmentCountLimit) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testNakPduSegmentCountLimit();
+}
+
 TEST(Transaction, Class1TxNominal) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass1TxNominal();
@@ -54,6 +59,46 @@ TEST(Transaction, Class2TxNack) {
 TEST(Transaction, Class2TxLateFinAck) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass2TxLateFinAck();
+}
+
+TEST(Transaction, Class2TxQueuedEarlyFinNoHang) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxQueuedEarlyFinNoHang();
+}
+
+TEST(Transaction, Class2TxQueuedAbandonNoHang) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxQueuedAbandonNoHang();
+}
+
+TEST(Transaction, Class2TxMalformedEarlyFinNoSpin) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxMalformedEarlyFinNoSpin();
+}
+
+TEST(Transaction, Class2TxThrottledNakMetadataYields) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxThrottledNakMetadataYields();
+}
+
+TEST(Transaction, Class2TxThrottledNakChunkRetries) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxThrottledNakChunkRetries();
+}
+
+TEST(Transaction, Class2TxThrottledInitialMetadataYields) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxThrottledInitialMetadataYields();
+}
+
+TEST(Transaction, PlaybackThrottledMetadataYields) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPlaybackThrottledMetadataYields();
+}
+
+TEST(Transaction, TxCycleNoProgressFailsTransaction) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTxCycleNoProgressFailsTransaction();
 }
 
 TEST(Transaction, Class1RxNominal) {
@@ -220,6 +265,21 @@ TEST(Command, AbandonTransactionNominal) {
 TEST(Command, AbandonTransactionInvalidChannel) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testAbandonTransactionInvalidChannel();
+}
+
+TEST(Command, AbandonTransactionTwice) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testAbandonTransactionTwice();
+}
+
+TEST(Command, AbandonTransactionAfterCompletion) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testAbandonTransactionAfterCompletion();
+}
+
+TEST(Command, AbandonPlaybackTransactionAfterCompletion) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testAbandonPlaybackTransactionAfterCompletion();
 }
 
 TEST(Command, ResetCountersSingleChannel) {
@@ -412,6 +472,11 @@ TEST(Event, FailPduHeaderDeserialization) {
     tester.testFailPduHeaderDeserializationEvent();
 }
 
+TEST(Event, FailPduHeaderDeserializationUnsupportedVersion) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testFailPduHeaderDeserializationUnsupportedVersionEvent();
+}
+
 TEST(Event, FailMetadataPduDeserialization) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testFailMetadataPduDeserializationEvent();
@@ -445,6 +510,16 @@ TEST(Event, RxEofCancelReceived) {
 TEST(Event, RxTransactionLimitReached) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testRxTransactionLimitReachedEvent();
+}
+
+TEST(Event, OrphanPdusDoNotHoldSlots) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testOrphanPdusDoNotHoldSlots();
+}
+
+TEST(Event, RxCapReservesTxCapacity) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxCapReservesTxCapacity();
 }
 
 TEST(Event, InvalidDestinationEid) {
@@ -663,9 +738,54 @@ TEST(Event, PlaybackDirSlotUnavailable) {
     tester.testPlaybackDirSlotUnavailableEvent();
 }
 
+TEST(Event, PlaybackDirEntrySourcePathTooLong) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPlaybackDirEntrySourcePathTooLong();
+}
+
+TEST(Event, PlaybackDirEntryDestinationPathTooLong) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPlaybackDirEntryDestinationPathTooLong();
+}
+
+TEST(Timer, ZeroDurationExpiresOnFirstTick) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testTimerZeroDurationExpiresOnFirstTick();
+}
+
+TEST(Timer, ZeroInactivityTimerExpiresOnFirstTick) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testZeroInactivityTimerExpiresOnFirstTick();
+}
+
 TEST(Event, RxFileReopenFailed) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testRxFileReopenFailedEvent();
+}
+
+TEST(Event, RxDestPathRejected) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDestPathRejectedEvent();
+}
+
+TEST(Event, RxDestPathContained) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDestPathContained();
+}
+
+TEST(Event, RxDestPathRejectedLateMetadata) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDestPathRejectedLateMetadata();
+}
+
+TEST(Event, RxDirPerChannel) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDirPerChannel();
+}
+
+TEST(Event, RxDirUnresolvable) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxDirUnresolvable();
 }
 
 TEST(Miscellaneous, Ping) {

@@ -8,12 +8,18 @@
 #define Svc_DpCatalog_HPP
 
 #include "Svc/DpCatalog/DpCatalogComponentAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_EntryLookupStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_PriorityChangeStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_RetransmitRejectReasonEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_StateFileUpdateStatusEnumAc.hpp"
+#include "Svc/DpCatalog/DpCatalog_StateFileWriteStatusEnumAc.hpp"
 #include "Svc/DpCatalog/DpRecordSerializableAc.hpp"
 
 #include <Fw/DataStructures/ExternalArray.hpp>
 #include <Fw/DataStructures/RedBlackTreeSet.hpp>
 #include <Fw/Deprecate.hpp>
 #include <Fw/Types/MemAllocator.hpp>
+#include <limits>
 
 #include <Fw/Types/FileNameString.hpp>
 #include <config/DpCatalogCfg.hpp>
@@ -117,6 +123,18 @@ class DpCatalog final : public DpCatalogComponentBase {
         bool remainActive      //!< should the catalog resume transmission when Dps are added at runtime
         ) override;
 
+    //! Handler implementation for command START_XMIT_CATALOG_WITH_PRIORITY
+    //!
+    //! Start transmitting the catalog products inside a priority range
+    void START_XMIT_CATALOG_WITH_PRIORITY_cmdHandler(
+        FwOpcodeType opCode,             //!< The opcode
+        U32 cmdSeq,                      //!< The command sequence number
+        const Fw::Wait& wait,            //!< have the command wait for the in-range products to finish transmitting
+        bool remainActive,               //!< resume transmission when an in-range DP is added at runtime
+        FwDpPriorityType startPriority,  //!< lowest priority value (most urgent) to transmit, inclusive
+        FwDpPriorityType endPriority     //!< highest priority value (least urgent) to transmit, inclusive
+        ) override;
+
     //! Handler implementation for command STOP_XMIT_CATALOG
     //!
     //! Stop transmitting catalog
@@ -131,6 +149,37 @@ class DpCatalog final : public DpCatalogComponentBase {
                                   U32 cmdSeq            //!< The command sequence number
                                   ) override;
 
+    //! Handler implementation for command SET_DP_PRIORITY
+    //!
+    //! Set the transmit priority of one data product; the change is recorded in the state file if one is configured
+    void SET_DP_PRIORITY_cmdHandler(FwOpcodeType opCode,       //!< The opcode
+                                    U32 cmdSeq,                //!< The command sequence number
+                                    FwDpIdType id,             //!< Container ID of the data product
+                                    U32 tSec,                  //!< Seconds of the data product time tag
+                                    U32 tSub,                  //!< Microseconds of the data product time tag
+                                    FwDpPriorityType priority  //!< New transmit priority
+                                    ) override;
+
+    //! Handler implementation for command DELETE_DP
+    //!
+    //! Delete one data product: its file, its catalog entry and its state file record
+    void DELETE_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                              U32 cmdSeq,           //!< The command sequence number
+                              FwDpIdType id,        //!< Container ID of the data product
+                              U32 tSec,             //!< Seconds of the data product time tag
+                              U32 tSub              //!< Microseconds of the data product time tag
+                              ) override;
+
+    //! Handler implementation for command RETRANSMIT_DP
+    //!
+    //! Reschedule one transmitted data product for downlink at its recorded priority
+    void RETRANSMIT_DP_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                  U32 cmdSeq,           //!< The command sequence number
+                                  FwDpIdType id,        //!< Container ID of the data product
+                                  U32 tSec,             //!< Seconds of the data product time tag
+                                  U32 tSub              //!< Microseconds of the data product time tag
+                                  ) override;
+
     // ----------------------------------
     // Private data structures
     // ----------------------------------
@@ -140,7 +189,20 @@ class DpCatalog final : public DpCatalogComponentBase {
         FwIndexType dir;  //!< index to m_directories entry that has directory name where DP exists
         DpRecord record;  //!< data product metadata
 
-        /// @brief insert an entry into the sorted list; if it exists, update the metadata
+        /// @brief check whether the entry is the data product with the given identity (id and time tag)
+        /// @param id container ID
+        /// @param tSec seconds of the time tag
+        /// @param tSub microseconds of the time tag
+        /// @return true if the entry has that identity
+        bool hasIdentity(FwDpIdType id, U32 tSec, U32 tSub) const;
+
+        /// @brief check whether the entry is the same data product as another: same directory and identity
+        ///        (id and time tag). The priority and state, which change, are not compared
+        /// @param other the entry to compare with
+        /// @return true if both entries are the same data product
+        bool isSameProduct(const DpStateEntry& other) const;
+
+        /// @brief compare two entries by transmit priority, then time tag, id, and directory (the catalog sort order)
         /// @param left an entry to compare
         /// @param right other entry to compare
         /// @return -1 if left is higher priority, 0 if equal, and 1 if right is higher priority
@@ -175,7 +237,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return directory index in m_directories; DP_MAX_DIRECTORIES if not in a managed dir
     FwSizeType determineDirectory(const Fw::String& fullFile);
 
-    /// @brief add entry to sorted list and state file; called on each file in it & upon addToCat
+    /// @brief add entry to sorted list and state file; called on each file in it, upon addToCat and by RETRANSMIT_DP
     /// @param fullFile full path to file to be processed
     /// @param dir directory index in m_directories
     /// @return QUIT to stop processing, FAILED for failure but continue, SUCCESS for success
@@ -183,7 +245,7 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// @brief insert an entry into the sorted catalog; if it exists, update the metadata
     /// @param entry new entry
-    /// @return true if inserted successfully, false if catalog is full
+    /// @return true if inserted successfully, false if the tree insert failed
     bool insertEntry(DpStateEntry& entry);
 
     /// @brief reset the catalog
@@ -200,7 +262,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     void getFileState(DpStateEntry& entry);
 
     /// @brief prune the state file data and write the remaining entries back
-    void pruneAndWriteStateFile();
+    /// @return WRITTEN, or the error (also reported by event)
+    DpCatalog_StateFileWriteStatus pruneAndWriteStateFile();
 
     /// @brief load state data from file
     Fw::CmdResponse loadStateFile();
@@ -212,9 +275,9 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief send the next entry to file downlink
     void sendNextEntry();
 
-    /// @brief find the next entry in the catalog using iterator
+    /// @brief find the next entry in the catalog inside the active priority range
     /// @param entry entry to return
-    /// @return true if an entry was found, false if no more entries
+    /// @return true if an in-range entry was found, false if no more entries are in range
     bool findNextEntry(DpStateEntry& entry);
 
     /// @brief check to see if component successfully initialized
@@ -225,9 +288,26 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return command response for pass/fail
     Fw::CmdResponse doCatalogBuild();
 
-    /// @brief start transmitting catalog. Shared between command and port
+    /// @brief handle a START_XMIT_CATALOG or START_XMIT_CATALOG_WITH_PRIORITY command: validate the range,
+    ///        then start transmitting and send (or arm, for a waited command) the command response
+    /// @param opCode the command opcode
+    /// @param cmdSeq the command sequence number
+    /// @param wait whether the command response waits for the transmission to complete
+    /// @param remainActive whether runtime additions resume transmission
+    /// @param startPriority lowest priority value to transmit, inclusive
+    /// @param endPriority highest priority value to transmit, inclusive
+    void startXmitCmd(FwOpcodeType opCode,
+                      U32 cmdSeq,
+                      const Fw::Wait& wait,
+                      bool remainActive,
+                      FwDpPriorityType startPriority,
+                      FwDpPriorityType endPriority);
+
+    /// @brief start transmitting catalog. Called only by startXmitCmd, which validates the range
+    /// @param startPriority lowest priority value to transmit, inclusive
+    /// @param endPriority highest priority value to transmit, inclusive; must be >= startPriority
     /// @return command response for pass/fail
-    Fw::CmdResponse doCatalogXmit();
+    Fw::CmdResponse doCatalogXmit(FwDpPriorityType startPriority, FwDpPriorityType endPriority);
 
     /// @brief send a cmdResponse to the start xmit cmd if user waited
     /// @param response the command response for pass/fail
@@ -236,6 +316,71 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief abandon the transmit: clear both transmit flags and answer a waited START_XMIT_CATALOG
     /// @param response the command response for the waited command
     void abortXmit(Fw::CmdResponse response);
+
+    /// @brief find the catalog entry for a data product by its stable identity (directory, id and time tag)
+    /// @param product the data product to find; its priority and state are not compared
+    /// @param entry the entry found
+    /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
+    DpCatalog_EntryLookupStatus findEntryByIdentity(const DpStateEntry& product, DpStateEntry& entry) const;
+
+    /// @brief find the first catalog entry of a data product named by id and time tag, as SET_DP_PRIORITY, DELETE_DP
+    /// and RETRANSMIT_DP name it
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @param entry the entry found
+    /// @return FOUND if an entry was found (and copied to entry), NOT_FOUND otherwise
+    DpCatalog_EntryLookupStatus findProductEntry(FwDpIdType id, U32 tSec, U32 tSub, DpStateEntry& entry) const;
+
+    /// @brief set the transmit priority of a catalog entry and record it in the state file, if one is configured
+    /// @param entry a copy of the catalog entry; updated to the new priority
+    /// @param priority the new priority
+    /// @return UNCHANGED if the entry already had the priority, CHANGED if it was set (and recorded if a state file
+    ///         is configured), NOT_RECORDED if it was set but could not be recorded in the configured state file
+    DpCatalog_PriorityChangeStatus setDpPriority(DpStateEntry& entry, FwDpPriorityType priority);
+
+    /// @brief find the state file data slot for an entry's product (same directory, id and time tag; see
+    ///        findStateFileSlotByIdentity for a lookup without the directory)
+    /// @param entry the entry to look up
+    /// @return the slot index, or m_stateFileEntries if the product has no slot
+    FwSizeType findStateFileSlot(const DpStateEntry& entry) const;
+
+    /// @brief find the state file data slot of the first product named by id and time tag, as DELETE_DP names it
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @return the slot index, or m_stateFileEntries if no product with the identity has a slot
+    FwSizeType findStateFileSlotByIdentity(FwDpIdType id, U32 tSec, U32 tSub) const;
+
+    /// @brief delete a data product named by id and time tag: its file, catalog entry and state file record
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @return OK if the product was deleted (and the state file rewritten, if one is configured and held a
+    ///         record of it), EXECUTION_ERROR otherwise
+    Fw::CmdResponse doDeleteDp(FwDpIdType id, U32 tSec, U32 tSub);
+
+    /// @brief record an entry's state in the state file data, reusing the product's slot or a stale one
+    /// @param entry the entry to record
+    /// @return RECORDED, or FULL if the state file data has no free slot (StateFileFull is reported when a state
+    ///         file is configured)
+    DpCatalog_StateFileUpdateStatus updateStateFileData(const DpStateEntry& entry);
+
+    /// @brief resume a finished or stopped transmission after an entry was inserted, if the last transmit command
+    ///        had remainActive set and a pending entry lies inside its priority range
+    void resumeIfRemainActive();
+
+    /// @brief reschedule a transmitted data product named by id and time tag for downlink: catalog its file again
+    ///        from its header, record it UNTRANSMITTED in the state file data, and rewrite the state file if one is
+    ///        configured
+    /// @param id container ID
+    /// @param tSec seconds of the time tag
+    /// @param tSub microseconds of the time tag
+    /// @return OK if the product was rescheduled (and the state file rewritten, if one is configured); EXECUTION_ERROR
+    ///         when the request is rejected (DpRetransmitError names the reason), when the component is not
+    ///         initialized (ComponentNotInitialized), or when the product was rescheduled but the state file could not
+    ///         be rewritten (StateFileOpenError/StateFileWriteError)
+    Fw::CmdResponse doRetransmitDp(FwDpIdType id, U32 tSec, U32 tSub);
 
     // ----------------------------------
     // Private data
@@ -274,7 +419,12 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     bool m_remainActive = false;  //!< Does the DpCat resume transmission when
                                   //!< a runtime Dp is received after
-                                  //!< the full catalog is sent
+                                  //!< the in-range catalog is sent
+
+    FwDpPriorityType m_xmitStartPriority = 0;  //!< Lowest priority value sent by the active/last transmit command
+    FwDpPriorityType m_xmitEndPriority =
+        std::numeric_limits<FwDpPriorityType>::max();  //!< Highest priority value sent by the active/last
+                                                       //!< transmit command
 };
 
 }  // namespace Svc

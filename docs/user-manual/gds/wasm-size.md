@@ -1,6 +1,6 @@
-# Advanced Sequence Size In F´
+# Rust Advanced Sequence Size In F´
 
-An [advanced sequence](./wasm-rust.md) is a compiled program, so it _can_ be bigger than the
+A [Rust advanced sequence](./wasm-rust.md) is a compiled program, so it _can_ be bigger than the
 [standard sequence](./seqgen.md) binary that encodes the same list of commands. This page gives
 measured sizes for both, the marginal cost of adding one more command to each, and the two places
 where a Wasm sequence gets expensive far out of proportion to what it appears to do.

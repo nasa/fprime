@@ -53,6 +53,13 @@ class Version final : public VersionComponentBase {
                             Svc::VersionStatus& status                       //!< The command response argument
                             ) override;
 
+    //! Handler implementation for schedIn
+    //!
+    //! Scheduled port to periodically re-emit all version information
+    void schedIn_handler(FwIndexType portNum,  //!< The port number
+                         U32 context           //!< The call order
+                         ) override;
+
     //! \struct verId_db
     //! \brief Custom Version database structure
     //!
@@ -97,15 +104,15 @@ class Version final : public VersionComponentBase {
         VER_SLOT_09 = 9
     };
 
-    // function to log framework version events and channels
-    void fwVersion_tlm();
-    // function to log project version events and channels
-    void projectVersion_tlm();
-    // function to log library version events and channels
-    void libraryVersion_tlm();
-    // function to log custom version events and channels
-    void customVersion_tlm(VersionSlot custom_slot);
-    void customVersion_tlm_all();
+    // function to log framework version channel, and event when sendEvent is true
+    void fwVersion_tlm(bool sendEvent = true);
+    // function to log project version channel, and event when sendEvent is true
+    void projectVersion_tlm(bool sendEvent = true);
+    // function to log library version channels, and events when sendEvent is true
+    void libraryVersion_tlm(bool sendEvent = true);
+    // function to log custom version channels (if verbosity is enabled), and events when sendEvent is true
+    void customVersion_tlm(VersionSlot custom_slot, bool sendEvent = true);
+    void customVersion_tlm_all(bool sendEvent = true);
     bool m_enable;             /*!<Send TLM when true>*/
     U8 m_num_custom_elements;  // number of custom versions
 };

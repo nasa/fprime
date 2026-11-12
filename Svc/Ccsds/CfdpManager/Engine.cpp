@@ -40,6 +40,7 @@
 #include <new>
 
 #include <Fw/Types/StringUtils.hpp>
+#include <Os/FilePathUtils.hpp>
 #include <Os/FileSystem.hpp>
 
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
@@ -163,7 +164,11 @@ void Engine::dispatchRecv(Transaction* txn, const Fw::Buffer& buffer) {
         }
     }
 
-    this->armInactTimer(txn);  // whenever a packet was received by the other size, always arm its inactivity timer
+    // Whenever a packet was received from the other side, re-arm its inactivity timer, unless the
+    // transaction was abandoned during dispatch and already sits on the FREE queue
+    if (txn->m_flags.com.q_index != QueueId::FREE) {
+        this->armInactTimer(txn);
+    }
 }
 
 void Engine::dispatchTx(Transaction* txn) {
@@ -397,16 +402,71 @@ Status::T Engine::sendFinAckStateless(Channel& chan,
     return this->serializeAndSendPduOnChannel(chan, ack);
 }
 
-void Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
+bool Engine::validateRxDestPath(U8 chan_num, Fw::String& path, RxDestPathRejectReason& reason) {
+    Fw::String rxDir = this->m_manager->getRxDirParam(chan_num);
+    if (rxDir.length() == 0) {
+        // Sandbox not configured for this channel: accept path as-is (documented fail-open behavior)
+        return true;
+    }
+
+    // Canonicalize the receive directory (relative rx_dir resolves against CWD) into the
+    // trailing-'/' form that checkContainment requires; shared with Os::SandboxedFile
+    char root[Os::FilePathUtils::MAX_PATH_LENGTH];
+    if (Os::FilePathUtils::resolveDirectoryFromCwd(rxDir.toChar(), root, sizeof(root)) != Os::FilePathUtils::VALID) {
+        reason = RxDestPathRejectReason::RX_DIR_UNRESOLVABLE;
+        return false;
+    }
+
+    // Resolve the received path: relative paths land inside the receive directory, `..` segments
+    // are collapsed textually (symlinks are not followed; see Os::SandboxedFile threat model)
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    if (Os::FilePathUtils::resolvePath(path.toChar(), root, resolved, sizeof(resolved)) != Os::FilePathUtils::VALID) {
+        reason = RxDestPathRejectReason::PATH_UNRESOLVABLE;
+        return false;
+    }
+    if (Os::FilePathUtils::checkContainment(resolved, root) != Os::FilePathUtils::VALID) {
+        reason = RxDestPathRejectReason::OUTSIDE_RX_DIR;
+        return false;
+    }
+    // The canonical path is stored in the transaction and reported in events sized to
+    // MaxFilePathSize; reject rather than silently truncate a longer result
+    if (Fw::StringUtils::string_length(resolved, sizeof(resolved)) > Cfdp::MaxFilePathSize) {
+        reason = RxDestPathRejectReason::TOO_LONG;
+        return false;
+    }
+
+    path = resolved;
+    return true;
+}
+
+Status::T Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
+    /* the destination path comes from the remote entity: canonicalize it and confirm it lies within
+     * the configured receive directory BEFORE anything from this PDU is committed to the transaction.
+     * On rejection nothing from the PDU (file size, source name, destination) is stored; the only
+     * change to the transaction is its status, set below. */
+    Fw::String dst = md.getDestFilename();
+    RxDestPathRejectReason reason;
+    if (!this->validateRxDestPath(txn->m_chan_num, dst, reason)) {
+        this->m_manager->log_WARNING_HI_RxDestPathRejected(txn->m_chan_num, txn->m_history->src_eid,
+                                                           txn->m_history->seq_num, dst,
+                                                           this->m_manager->getRxDirParam(txn->m_chan_num), reason);
+        this->m_manager->incrementFaultFileOpen(txn->m_chan_num);
+        // Refused destination = filestore rejection, so finishTransaction reports a failed reception.
+        // Whether the sender learns of it depends on the caller; see the recvMd doc in Engine.hpp.
+        this->setTxnStatus(txn, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
+        return Status::PDU_METADATA_ERROR;
+    }
+
     /* store the expected file size in transaction */
     txn->m_fsize = md.getFileSize();
 
-    /* store the filenames in transaction - validation already done during deserialization */
+    /* structural validation (length, non-empty) already done during deserialization */
     txn->m_history->fnames.src_filename = md.getSourceFilename();
-    txn->m_history->fnames.dst_filename = md.getDestFilename();
+    txn->m_history->fnames.dst_filename = dst;
 
     this->m_manager->log_ACTIVITY_LO_MetadataReceived(txn->m_history->fnames.src_filename,
                                                       txn->m_history->fnames.dst_filename, txn->m_history->seq_num);
+    return Status::SUCCESS;
 }
 
 Status::T Engine::recvFd(Transaction* txn, const FileDataPdu& fd) {
@@ -566,13 +626,19 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
 
                 Fw::SerializeStatus deserStatus = md.deserializeFrom(sb2);
                 if (deserStatus == Fw::FW_SERIALIZE_OK) {
-                    this->recvMd(txn, md);
-
-                    // NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path
-                    txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? TxnState::TXN_STATE_R1 : TxnState::TXN_STATE_R2;
-                    txn->m_txn_class = txmMode;
-                    txn->m_flags.rx.md_recv = true;
-                    txn->rInit();  // initialize R
+                    if (this->recvMd(txn, md) == Status::SUCCESS) {
+                        // NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup
+                        // path
+                        txn->m_state =
+                            txmMode == Cfdp::Class::CLASS_1 ? TxnState::TXN_STATE_R1 : TxnState::TXN_STATE_R2;
+                        txn->m_txn_class = txmMode;
+                        txn->m_flags.rx.md_recv = true;
+                        txn->rInit();  // initialize R
+                    }
+                    // else: destination path rejected and the transaction marked FILESTORE_REJECTION.
+                    // State stays INIT so the transaction is finished below as a failed reception
+                    // (parked in HOLD until the inactivity timer recycles it) without any file
+                    // ever being opened.
                 } else {
                     m_manager->log_WARNING_LO_FailMetadataPduDeserialization(txn->getChannelId(),
                                                                              static_cast<I32>(deserStatus));
@@ -584,14 +650,36 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
             }
         }
 
-        if (txn->m_state == TxnState::TXN_STATE_INIT) {
-            // state was not changed, so free the transaction
-            this->finishTransaction(txn, false);
-        }
     } else {
         m_manager->log_WARNING_LO_FailPduHeaderDeserialization(txn->getChannelId(), status);
     }
+
+    if (txn->m_state == TxnState::TXN_STATE_INIT) {
+        if (TxnStatusIsError(txn->m_history->txn_stat)) {
+            // A transfer was identified and refused (e.g. destination path rejected). Report
+            // it as a failed reception and park the slot in HOLD so the inactivity timer
+            // recycles it, as for any other failed transaction.
+            this->finishTransaction(txn, false);
+        } else {
+            // The PDU could not start a transaction, so nothing was transferred. Release the
+            // slot now rather than routing through finishTransaction(), which would report a
+            // completed transfer and park the slot in HOLD until the inactivity timer expires.
+            // Holding slots for PDUs that never start a transaction lets a stream of stray
+            // PDUs exhaust the pool shared with commanded transmit transactions.
+            this->abandonInitTransaction(txn);
+        }
+    }
     return false;  // No re-dispatch needed
+}
+
+void Engine::abandonInitTransaction(Transaction* txn) {
+    FW_ASSERT(txn != nullptr);
+    FW_ASSERT(txn->m_state == TxnState::TXN_STATE_INIT, static_cast<FwAssertArgType>(txn->m_state));
+    FW_ASSERT(txn->m_chan != nullptr);
+
+    txn->m_chan->clearCurrentIfMatch(txn);
+    // Returns chunk list and history, then places the transaction back on the FREE queue
+    txn->m_chan->recycleTransaction(txn);
 }
 
 void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer) {
@@ -716,7 +804,9 @@ Status::T Engine::abandonTransaction(U8 channelId, TransactionSeq transactionSeq
     Channel* chan = m_channels[channelId];
     Transaction* txn = chan->findTransactionBySequenceNumber(transactionSeq, entityId);
 
-    if (txn != nullptr) {
+    // A finished transaction stays findable in HOLD until its inactivity timer recycles it.
+    // There is nothing left to abandon, so report it the same as a transaction that is not found.
+    if ((txn != nullptr) && (txn->m_state != TxnState::TXN_STATE_HOLD)) {
         this->finishTransaction(txn, false);
         status = Status::SUCCESS;
     }
@@ -795,18 +885,17 @@ Transaction* Engine::startRxTransaction(U8 chan_num) {
     FW_ASSERT(chan_num < Cfdp::NumChannels, chan_num, Cfdp::NumChannels);
     chan = m_channels[chan_num];
 
-    // if (CF_AppData.hk.Payload.channel_hk[chan_num].q_size[QueueId::RX] < CF_MAX_SIMULTANEOUS_RX)
-    // {
-    //     txn = chan->findUnusedTransaction(Direction::DIRECTION_RX);
-    // }
-    // else
-    // {
-    //     txn = nullptr;
-    // }
-    // Receive transactions are limited by MaxRxTransactions parameter
-    txn = chan->findUnusedTransaction(Direction::DIRECTION_RX);
+    // Bound concurrent receive transactions. The transaction pool is shared with commanded
+    // transmit work and sized for MaxSimultaneousRx receive transactions, so without this
+    // bound inbound traffic alone can consume every slot and block commanded transfers.
+    if (chan->getNumRx() < MaxSimultaneousRx) {
+        txn = chan->findUnusedTransaction(Direction::DIRECTION_RX);
+    } else {
+        txn = nullptr;
+    }
 
     if (txn != nullptr) {
+        chan->incrementRxCounter();
         // set default FIN status
         txn->m_state_data.receive.r2.dc = FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE;
         txn->m_state_data.receive.r2.fs = FinFileStatus::FIN_FILE_STATUS_DISCARDED;
@@ -980,6 +1069,13 @@ void Engine::finishTransaction(Transaction* txn, bool keep_history) {
         return;
     }
 
+    // A transaction in HOLD has already been finished and is waiting for its inactivity timer
+    // to recycle it. Finishing it again would repeat the completion bookkeeping (the commanded
+    // TX and playback counters, completion events, and the port notification), so do nothing.
+    if (txn->m_state == TxnState::TXN_STATE_HOLD) {
+        return;
+    }
+
     // this should always be
     FW_ASSERT(txn->m_chan != nullptr);
 
@@ -987,10 +1083,16 @@ void Engine::finishTransaction(Transaction* txn, bool keep_history) {
     // so the tick processor will stop trying to actively transmit something -
     // it should move on to the next transaction.
     //
+    // A TX transaction still waiting on PEND (queued behind another downlink, or held
+    // because dequeue is disabled) must also be moved to TXW. PEND is never ticked, so
+    // the inactivity timer armed below could never recycle it, and cycleTx would later
+    // promote the HOLD transaction to TXA where dispatchTx has no handler for it and
+    // cycleTxFirstActive would never leave its dispatch loop.
+    //
     // RX transactions can stay on the RX queue, that does not hurt anything
     // because they are only triggered when a PDU comes in matching that seq_num
     // (RX queue is not separated into A/W parts)
-    if (txn->m_flags.com.q_index == QueueId::TXA) {
+    if (txn->m_flags.com.q_index == QueueId::TXA || txn->m_flags.com.q_index == QueueId::PEND) {
         txn->m_chan->dequeueTransaction(txn);
         txn->m_chan->insertSortPrio(txn, QueueId::TXW);
     }

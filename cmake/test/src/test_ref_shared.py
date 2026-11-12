@@ -68,6 +68,12 @@ def test_ref_dictionary_json(REF_BUILD):
         / "RefTopologyDictionary.json"
     )
     assert output_path.exists(), "Failed to locate Ref JSON Dictionary in build output"
+    # fpp-to-dict also writes Ref_RefSystemDictionary.json; only the topology dictionary may be installed, since
+    # fprime-gds locates the dictionary by globbing dict/*Dictionary.json and refuses several matches
+    installed_dictionaries = sorted(output_path.parent.glob("*Dictionary.json"))
+    assert installed_dictionaries == [
+        output_path
+    ], f"Expected exactly one installed dictionary, found {installed_dictionaries}"
     dict_metadata = json.loads(output_path.read_text()).get("metadata")
     assert (
         dict_metadata.get("projectVersion") is not None

@@ -22,6 +22,7 @@ register_fprime_module(
   REQUIRES_IMPLEMENTATIONS
     Fw_StringFormat
     Fw_StringScan
+    Fw_AssertHook
 )
 
 register_fprime_implementation(
@@ -42,6 +43,26 @@ register_fprime_implementation(
     Fw_Types
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/sscanf_scan.cpp"
+)
+
+register_fprime_implementation(
+    Fw_AssertHook_fputs
+  IMPLEMENTS
+    Fw_AssertHook
+  DEPENDS
+    Fw_Types
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/fputs_assert_hook.cpp"
+)
+
+register_fprime_implementation(
+    Fw_AssertHook_Stub
+  IMPLEMENTS
+    Fw_AssertHook
+  DEPENDS
+    Fw_Types
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/stub_assert_hook.cpp"
 )
 
 
@@ -80,6 +101,26 @@ if (FPRIME_PLATFORM STREQUAL "Linux")
         Fw_Types
     )
 endif()
+register_fprime_ut(
+    Fw_AssertHook_fputs_ut_exe
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FputsAssertHookTest.cpp"
+  DEPENDS
+    Fw_Types
+  CHOOSES_IMPLEMENTATIONS
+    Fw_AssertHook_fputs
+)
+
+register_fprime_ut(
+    Fw_AssertHook_Stub_ut_exe
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubAssertHookTest.cpp"
+  DEPENDS
+    Fw_Types
+  CHOOSES_IMPLEMENTATIONS
+    Fw_AssertHook_Stub
+)
+
 register_fprime_ut(
     Fw_StringScan_sscanf_ut_exe
   SOURCES

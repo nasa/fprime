@@ -59,10 +59,6 @@ void BufferLogger ::pingIn_handler(FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
-void BufferLogger ::schedIn_handler(const FwIndexType portNum, U32 context) {
-    // TODO
-}
-
 // ----------------------------------------------------------------------
 // Command handler implementations
 // ----------------------------------------------------------------------

@@ -360,6 +360,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Svc::Signal tester_checkShouldWake();
     Svc::FpySequencer::Telemetry* tester_get_m_tlm_ptr();
     void tester_doDispatch();
+    FwSizeType tester_getMessagesAvailable();
+    // dispatches messages until the queue is empty, including messages enqueued while dispatching
+    void tester_dispatchAllMessages(U32 bound = 100);
     void tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
     Svc::FpySequencer_SequencerStateMachineStateMachineBase::State tester_getState();
     void tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id);

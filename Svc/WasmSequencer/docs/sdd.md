@@ -450,23 +450,26 @@ instance voSeq: Svc.WasmSequencer base id 0x10007000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 20 {
-        phase Fpp.ToCpp.Phases.configConstants """
-        // Config is default-constructed and then populated field by field.
+        phase Fpp.ToCpp.Phases.configObjects """
+        // Default-constructed here (namespace scope); populated in configComponents below.
         Svc::WasmSequencer::Config wasmConfig;
-        wasmConfig.heapPages       = Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES;
-        wasmConfig.guestMemorySize = ImageData::SERIALIZED_SIZE + 4096;  // an image plus guest scratch
-        wasmConfig.stackSize       = 256;   // 32-bit words
-        wasmConfig.serialOutMax    = 256;
-        // Size the REPLY_IMAGE queue to hold a single image plus its 4-byte length frame,
-        // and keep the latest image if an unprocessed one is still queued.
-        wasmConfig.serialIn[VoSequencerInPorts::REPLY_IMAGE] = {
-            /* size         */ sizeof(U32) + ImageData::SERIALIZED_SIZE,
-            /* fullBehavior */ Svc::WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST
-        };
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        voSeq.configure(ConfigObjects::voSeq::wasmConfig, mallocator);
+        {
+            Svc::WasmSequencer::Config& wasmConfig = ConfigObjects::AwesomeTopology_voSeq::wasmConfig;
+            wasmConfig.heapPages       = Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES;
+            wasmConfig.guestMemorySize = ImageData::SERIALIZED_SIZE + 4096;  // an image plus guest scratch
+            wasmConfig.stackSize       = 256;   // 32-bit words
+            wasmConfig.serialOutMax    = 256;
+            // Size the REPLY_IMAGE queue to hold a single image plus its 4-byte length frame,
+            // and keep the latest image if an unprocessed one is still queued.
+            wasmConfig.serialIn[VoSequencerInPorts::REPLY_IMAGE] = {
+                /* size         */ sizeof(U32) + ImageData::SERIALIZED_SIZE,
+                /* fullBehavior */ Svc::WasmSequencer::SerialInQueueFullBehavior::DROP_OLDEST
+            };
+            voSeq.configure(wasmConfig, mallocator);
+        }
         """
     }
 
@@ -474,22 +477,25 @@ instance fpSeq: Svc.WasmSequencer base id 0x10008000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 20 {
-        phase Fpp.ToCpp.Phases.configConstants """
+        phase Fpp.ToCpp.Phases.configObjects """
         Svc::WasmSequencer::Config wasmConfig;
-        wasmConfig.heapPages       = Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES;
-        wasmConfig.guestMemorySize = 4096;
-        wasmConfig.stackSize       = 256;   // 32-bit words
-        wasmConfig.serialOutMax    = 0;     // fpSeq only receives faults; no serialOut
-        // Hold up to 10 FaultAnnouncement messages (each with its 4-byte length frame),
-        // and assert if we don't process them fast enough!
-        wasmConfig.serialIn[FpPortInPorts::FAULT_ANNOUNCEMENT] = {
-            /* size         */ 10 * (sizeof(U32) + FaultAnnouncement::SERIALIZED_SIZE),
-            /* fullBehavior */ Svc::WasmSequencer::SerialInQueueFullBehavior::ASSERT
-        };
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        fpSeq.configure(ConfigObjects::fpSeq::wasmConfig, mallocator);
+        {
+            Svc::WasmSequencer::Config& wasmConfig = ConfigObjects::AwesomeTopology_fpSeq::wasmConfig;
+            wasmConfig.heapPages       = Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES;
+            wasmConfig.guestMemorySize = 4096;
+            wasmConfig.stackSize       = 256;   // 32-bit words
+            wasmConfig.serialOutMax    = 0;     // fpSeq only receives faults; no serialOut
+            // Hold up to 10 FaultAnnouncement messages (each with its 4-byte length frame),
+            // and assert if we don't process them fast enough!
+            wasmConfig.serialIn[FpPortInPorts::FAULT_ANNOUNCEMENT] = {
+                /* size         */ 10 * (sizeof(U32) + FaultAnnouncement::SERIALIZED_SIZE),
+                /* fullBehavior */ Svc::WasmSequencer::SerialInQueueFullBehavior::ASSERT
+            };
+            fpSeq.configure(wasmConfig, mallocator);
+        }
         """
     }
 
@@ -570,7 +576,7 @@ struct Config {
     FwSizeType heapPages       = 8;      // interpreter-heap pages to allocate (<= SPACEWASM_MAX_PAGES)
     FwSizeType guestMemorySize = 8192;   // bytes for the shared guest linear-memory pool
     FwSizeType stackSize       = 1024;   // Wasm operand-stack size in 32-bit words (carved from the heap pool)
-    U32        maxCodePages    = 256;    // capacity of the code-page pointer table (see below)
+    FwSizeType maxCodePages    = 256;    // capacity of the code-page pointer table (see below)
     U8         maxGuestModules = 8;      // max modules loadable into the store (<= 255)
     FwSizeType serialOutMax    = 0;      // max serial_send payload; 0 leaves serialOut unconfigured
     SerialInQueueConfig serialIn[NUM_SERIALIN_INPUT_PORTS];  // per-index queue size + overflow policy
@@ -584,16 +590,19 @@ instance wasmSeq: Svc.WasmSequencer base id 0x10007000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 20 {
-      phase Fpp.ToCpp.Phases.configConstants """
+      phase Fpp.ToCpp.Phases.configObjects """
         Svc::WasmSequencer::Config wasmConfig;
-        wasmConfig.heapPages       = 4;
-        wasmConfig.guestMemorySize = 1024 * 8;
-        wasmConfig.stackSize       = 1024 * 2;   // 32-bit words
-        wasmConfig.serialOutMax    = 0;
-        // serialIn queues left at their defaults (all sizes 0)
         """
       phase Fpp.ToCpp.Phases.configComponents """
-        wasmSeq.configure(ConfigObjects::wasmSeq::wasmConfig, memAllocator);
+        {
+            Svc::WasmSequencer::Config& wasmConfig = ConfigObjects::MyTopology_wasmSeq::wasmConfig;
+            wasmConfig.heapPages       = 4;
+            wasmConfig.guestMemorySize = 1024 * 8;
+            wasmConfig.stackSize       = 1024 * 2;   // 32-bit words
+            wasmConfig.serialOutMax    = 0;
+            // serialIn queues left at their defaults (all sizes 0)
+            wasmSeq.configure(wasmConfig, memAllocator);
+        }
         """
     }
 ```

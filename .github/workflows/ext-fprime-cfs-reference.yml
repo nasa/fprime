@@ -63,7 +63,7 @@ jobs:
           binary: ./core-cpu1
           binary-args: ""
           gds-args: >-
-            --ip-client --ip-port 15010
+            --communication-selection cfs-lab --framing-selection cfs
             --dictionary ${{ github.workspace }}/build-artifacts/exe/Linux/fprime_app/dict/FPrimeDeploymentTopologyDictionary.json
           pytest-args: >-
             --dictionary ${{ github.workspace }}/build-artifacts/exe/Linux/fprime_app/dict/FPrimeDeploymentTopologyDictionary.json

@@ -9,6 +9,8 @@
 
 #include <config/DpCfg.hpp>
 
+#include <atomic>
+
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/String.hpp"
@@ -62,6 +64,12 @@ class DpWriter final : public DpWriterComponentBase {
     void schedIn_handler(const FwIndexType portNum,  //!< The port number
                          U32 context                 //!< The call order
                          ) final;
+
+    //! Internal interface handler for schedInInternal
+    void schedInInternal_internalInterfaceHandler() final;
+
+    //! Overflow hook for schedInInternal
+    void schedInInternal_overflowHook() final;
 
   private:
     // ----------------------------------------------------------------------
@@ -123,6 +131,9 @@ class DpWriter final : public DpWriterComponentBase {
 
     //! The number of errors
     U32 m_numErrors = 0;
+
+    //! True while a schedInInternal message is on the queue
+    std::atomic<bool> m_schedInQueued{false};
 
     //! The file name prefix for writing DP files
     //! The precise meaning depends on the DP format string

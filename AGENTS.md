@@ -92,6 +92,8 @@ relevant one instead of improvising:
 - Modifying pre-existing code (bug fixes, small changes, cleanup):
   `fprime-maintenance` — the doctrine of minimal effect.
 - Writing unit tests: `fprime-unit-testing`.
+- Filling the component development checklist from CodeQL/component-checks
+  evidence: `fprime-component-checklist-review`.
 - Driving development to convergence through local test-and-review
   iterations: `fprime-iterative-development` (requires explicit user
   approval before use).
@@ -104,6 +106,7 @@ relevant one instead of improvising:
   `fprime-system-test-design` (plan), `fprime-system-test-harness`
   (harness), `fprime-test-oracle` (pass rules and checkers),
   `fprime-run-for-record` (seal, run, audit, unseal).
+- Deriving generated C++ names or wiring from the `.fpp` without reading autocode: `fprime-fpp-navigation`.
 
 Pull-request review is performed by the multi-agent flow in
 [`.github/agents/`](.github/agents/), entered through

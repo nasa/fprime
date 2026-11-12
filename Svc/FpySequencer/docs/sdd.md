@@ -37,7 +37,6 @@ The FpySequencer runs files compiled by `fprime-fpyc` (in the `fprime-gds` packa
 | FPY-SEQ-017 | The sequencer shall support looping constructs.                                                                                                   | Unit Test                       |
 | FPY-SEQ-018 | The sequencer shall support NO OP functionality.                                                                                                  | Unit Test                       |
 | FPY-SEQ-019 | The sequencer shall support working with complex modeled data structures (Arrays, Serializables).                                                 | Unit Test                       |
-| FPY-SEQ-020 | The sequencer shall support setting flags as described in the [Flags](#flags) section via command and sequence directive.                  | Unit Test                       |
 | FPY-SEQ-021 | The sequencer shall support the directives described in the [Directives](#directives) section.                                                    | Unit Test                       |
 
 ## States
@@ -127,13 +126,6 @@ entry / clearBreakpoint, clearSequenceFile
 ```
 
 
-## Flags
-The FpySequencer supports certain boolean flags which control the behavior of the sequencer while running a sequence. The flags can be accessed and modified by the sequence itself, or by command while a sequence is running. When a sequence starts running, the flags are initialized to a value configured by the FLAG_DEFAULT_XYZ parameters.
-
-| Name | Description | Default value (configurable) |
-|---|------------|---|
-|EXIT_ON_CMD_FAIL|if true, the sequence will exit with an error if a command fails|false|
-
 ## Commands
 | Name | Description |
 |-----|-----|
@@ -155,6 +147,9 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | CLEAR_BREAKPOINT | Clears any set breakpoint, but does not continue executing the sequence. |
 | STEP | When paused, executes the next statement then returns to paused state. Not valid during automatic execution. |
 | DUMP_STACK_TO_FILE | Writes the contents of the stack to a file. Not valid during automatic execution. |
+
+## File Sandbox
+`configureSandbox(directory)` optionally restricts the files the sequencer opens to a directory, in the same way as the `Os::SandboxedFile` sandboxes of the file-handling components. The directory may be absolute or relative to the current working directory. Once configured, a sequence file (`RUN`, `RUN_ARGS`, `VALIDATE`, `VALIDATE_ARGS` and the `seqRunIn` port) or a `DUMP_STACK_TO_FILE` output file whose name resolves outside the directory is rejected with the `FileOutsideSandbox` event before the file is opened. Until `configureSandbox()` is called, any path is allowed, which keeps existing deployments unchanged. Call it from topology setup code. Path checking is textual and does not follow symbolic links.
 
 ## Directives
 See `directives.md` for documentation on all directives.

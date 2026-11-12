@@ -1,0 +1,85 @@
+# Cross-compile https://github.com/fprime-community/fprime-samd-reference (CuriosityReference,
+# baremetal SAMD21) and run its integration tests on a Microchip SAMD21 Curiosity Nano
+# attached to the self-hosted hardware runner.
+
+name: "External Repo: SAMD Reference"
+
+on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
+  push:
+    branches: [ release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-samd-reference
+      default_target_ref: main
+
+  build:
+    name: "SAMD21 Build (Curiosity Nano)"
+    needs: get-branch
+    # fprime-samd's static-tlm-packetizer / static-cmd-dispatcher autocoders need
+    # Python >= 3.11 (tomllib); ubuntu-22.04 ships 3.10.
+    runs-on: ubuntu-24.04
+    steps:
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-samd-reference
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+          stage: build
+      - name: "Build Binary (Curiosity Nano)"
+        run: |
+          CCACHE_DISABLE=1 fprime-ci -c ./lib/fprime-samd/ci/sample-configs/samd21g17.yml --add-stage build
+      - name: "Archive Results"
+        uses: actions/upload-artifact@v7
+        with:
+          name: archive-samd21g17.tar.gz
+          path: ./archive.tar.gz
+
+  integration-tests:
+    needs: [ get-branch, build ]
+    name: "Integration Tests (Curiosity Nano)"
+    runs-on: apple-ci
+    env:
+      CI_CONFIG_FILE: ./lib/fprime-samd/ci/sample-configs/samd21g17.yml
+    steps:
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-samd-reference
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+          stage: int
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+      - name: Pull Archive Results
+        uses: actions/download-artifact@v8
+        with:
+          name: archive-samd21g17.tar.gz
+      - name: "Integration tests"
+        run: |
+          fprime-ci -c ${CI_CONFIG_FILE} --skip-stage build

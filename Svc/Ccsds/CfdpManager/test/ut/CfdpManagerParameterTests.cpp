@@ -7,6 +7,9 @@
 
 #include "CfdpManagerTester.hpp"
 
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
+
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
@@ -52,7 +55,21 @@ void CfdpManagerTester::testParamOutgoingFileChunkSizeDefault() {
     Fw::ParamValid valid;
     const U32 value = this->component.paramGet_OutgoingFileChunkSize(valid);
     ASSERT_EQ(Fw::ParamValid::DEFAULT, valid.e) << "Loaded default should flag DEFAULT";
-    ASSERT_EQ(992u, value);
+    ASSERT_EQ(981u, value);
+
+    // A full File Data PDU with the default chunk size must stay within MaxPduSize, even with the widest
+    // (4-byte) entity IDs and transaction sequence number
+    U8 data[MaxPduSize] = {};
+    FileDataPdu pdu;
+    pdu.initialize(PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0,
+                   static_cast<U16>(value), data);
+    EXPECT_LE(pdu.getBufferSize(), MaxPduSize);
+
+    // The stock ComCcsds downlink without packet spanning takes a Space Packet of at most the TM data field minus a
+    // minimum idle packet; a file PDU goes out with the packet descriptor and a Space Packet header in front of it
+    static_assert(MaxPduSize + CfdpManager::PACKET_DESCRIPTOR_SIZE + SpacePacketHeader::SERIALIZED_SIZE <=
+                      static_cast<FwSizeType>(TmDataFieldSize) - (SpacePacketHeader::SERIALIZED_SIZE + 1),
+                  "Default MaxPduSize does not fit the stock ComCcsds downlink");
 }
 
 void CfdpManagerTester::testParamOutgoingFileChunkSizeSetGet() {
@@ -217,7 +234,7 @@ void CfdpManagerTester::testTlmLocalEid() {
 
 void CfdpManagerTester::testTlmOutgoingFileChunkSize() {
     ASSERT_TLM_PRM_OUTGOING_FILE_CHUNK_SIZE_SIZE(1);
-    ASSERT_TLM_PRM_OUTGOING_FILE_CHUNK_SIZE(0, 992u);
+    ASSERT_TLM_PRM_OUTGOING_FILE_CHUNK_SIZE(0, 981u);
 
     this->clearHistory();
     const U32 newValue = 512;

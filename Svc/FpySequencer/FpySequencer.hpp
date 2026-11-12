@@ -7,6 +7,7 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
+#include <atomic>
 #include <random>
 #include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
@@ -14,6 +15,7 @@
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Fw/Types/WaitEnumAc.hpp"
 #include "Os/File.hpp"
+#include "Os/FilePathUtils.hpp"
 #include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
 #include "Svc/FpySequencer/FooterSerializableAc.hpp"
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
@@ -537,6 +539,15 @@ class FpySequencer : public FpySequencerComponentBase {
                           U32 context           //!< The call order
                           ) override;
 
+    //! Internal interface handler for checkTimersInternal
+    void checkTimersInternal_internalInterfaceHandler() override;
+
+    //! Internal interface handler for tlmWriteInternal
+    void tlmWriteInternal_internalInterfaceHandler() override;
+
+    //! Overflow hook for tlmWriteInternal
+    void tlmWriteInternal_overflowHook() override;
+
     //! Internal interface handler for directive_waitAbs
     void directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive,
                                                     U64 sequenceIndex) override;
@@ -672,8 +683,20 @@ class FpySequencer : public FpySequencerComponentBase {
 
     void deallocateBuffer(Fw::MemAllocator& allocator);
 
+    //! (Optional) Restrict file access to a directory.
+    //! Sequence files (RUN, VALIDATE and the seqRunIn port) and DUMP_STACK_TO_FILE output files
+    //! whose names resolve outside the directory are rejected with FileOutsideSandbox before the
+    //! file is opened. Until this is called, any path is allowed.
+    //! \param directory the allowed directory (absolute, or relative to CWD)
+    void configureSandbox(const char* directory);
+
   private:
     static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
+
+    //! Check a file name against the configured sandbox directory, if any.
+    //! Emits FileOutsideSandbox on rejection.
+    //! \return true if the file may be opened
+    bool checkSandbox(const Fw::StringBase& fileName);
 
     // allocated at startup
     Fw::ExternalSerializeBuffer m_sequenceBuffer;
@@ -715,6 +738,13 @@ class FpySequencer : public FpySequencerComponentBase {
     U64 m_statementsDispatched;
 
     const Fw::String NO_SEQ{"<no seq>"};
+
+    // true while a checkTimersInternal message is on the queue. set by the
+    // sync checkTimers handler, cleared by the internal handler
+    std::atomic<bool> m_checkTimersQueued;
+    // true while a tlmWriteInternal message is on the queue. set by the
+    // sync tlmWrite handler, cleared by the internal handler
+    std::atomic<bool> m_tlmWriteQueued;
 
     // the runtime state of the sequence. encapsulates all state
     // needed to run the sequence.
@@ -794,6 +824,11 @@ class FpySequencer : public FpySequencerComponentBase {
         // the opcode of the last directive that errored
         Fpy::DirectiveId directiveErrorId = Fpy::DirectiveId::INVALID;
     } m_tlm;
+
+    // directory file access is restricted to (resolved, with trailing '/')
+    char m_sandboxDir[Os::FilePathUtils::MAX_PATH_LENGTH];
+    // whether configureSandbox() has been called; until then any path is allowed
+    bool m_sandboxConfigured;
 
     // ----------------------------------------------------------------------
     // Validation state

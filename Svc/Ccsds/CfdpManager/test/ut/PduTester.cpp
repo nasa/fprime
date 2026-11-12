@@ -52,12 +52,24 @@ Transaction* CfdpManagerTester::setupTestTransaction(TxnState state,
 
     // Mark this as a live (in-use) transaction. This helper grabs a raw transaction
     // slot directly instead of going through Channel::findUnusedTransaction(), so it
-    // must clear the FREE tag that freeTransaction() leaves on transactions parked on
-    // the FREE list after engine init. Otherwise q_index == QueueId::FREE would make
-    // finishTransaction()'s double-free guard trip on an intentionally-live transaction.
-    // PEND (0) is the neutral not-on-FREE-list default the engine uses before a queue
-    // is assigned.
-    txn->m_flags.com.q_index = QueueId::PEND;
+    // must take the slot off the FREE list (where engine init parked it) and put it on
+    // the queue the engine itself would use. Engine::finishTransaction() keys its
+    // double-free guard off q_index == QueueId::FREE and requeues anything tagged TXA or
+    // PEND to TXW, so the tag must match actual list membership:
+    //  - RX transactions go on the RX queue, as Engine::startRxTransaction() does. They
+    //    never pass through PEND, and leaving one there would make finishTransaction()
+    //    misfile it on TXW.
+    //  - TX transactions go on PEND, the queue every new downlink starts on.
+    if (txn->m_flags.com.q_index == QueueId::FREE) {
+        chan->dequeueTransaction(txn);
+    }
+    const bool isRx = (state == TxnState::TXN_STATE_R1) || (state == TxnState::TXN_STATE_R2);
+    if (isRx) {
+        txn->m_flags.com.q_index = QueueId::RX;
+        chan->insertBackInQueue(QueueId::RX, &txn->m_cl_node);
+    } else {
+        chan->insertSortPrio(txn, QueueId::PEND);
+    }
 
     // Set transaction class based on state
     // S2/R2 are Class 2, S1/R1 are Class 1
@@ -938,6 +950,60 @@ void CfdpManagerTester::testAckPdu() {
                  static_cast<Cfdp::FileDirective>(testDirectiveCode), expectedSubtypeCode,
                  static_cast<Cfdp::ConditionCode>(testConditionCode),
                  static_cast<Cfdp::AckTxnStatus>(testTransactionStatus));
+}
+
+void CfdpManagerTester::testNakPduSegmentCountLimit() {
+    // Parse-side boundary for the NAK segment request list. A peer may send more
+    // segment requests than NakMaxSegments. The parsed count must clamp to the limit
+    // for any input size, including counts of 256 and above that would wrap the U8
+    // count field if it were narrowed before the limit check.
+    const U32 counts[] = {0, 1, NakMaxSegments, NakMaxSegments + 1, 255, 256, 259, 512};
+
+    for (U32 numSegs : counts) {
+        // Use a zero-segment NAK to obtain a valid header, then write the body by hand
+        // so the segment list can exceed what addSegment() allows.
+        Cfdp::NakPdu source;
+        source.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
+                          1,               // source EID
+                          7,               // transaction sequence
+                          2,               // destination EID
+                          0,               // scope start
+                          numSegs * 1024U  // scope end
+        );
+        Cfdp::PduHeader header = source.asHeader();
+
+        const U32 segmentBytes = static_cast<U32>(2 * sizeof(FileSize));
+        const U32 bodyLen = 1 + segmentBytes + numSegs * segmentBytes;  // directive + scope + segments
+        const U32 bufLen = header.getBufferSize() + bodyLen;
+        header.setPduDataLength(static_cast<U16>(bodyLen));
+
+        static U8 raw[16384];
+        ASSERT_LE(bufLen, sizeof(raw));
+        Fw::SerialBuffer sb(raw, bufLen);
+
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, header.toSerialBuffer(sb));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb.serializeFrom(static_cast<U8>(Cfdp::FileDirective::FILE_DIRECTIVE_NAK)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb.serializeFrom(static_cast<FileSize>(0)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb.serializeFrom(static_cast<FileSize>(numSegs * 1024U)));
+        for (U32 i = 0; i < numSegs; i++) {
+            ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb.serializeFrom(static_cast<FileSize>(i * 1024U)));
+            ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb.serializeFrom(static_cast<FileSize>((i + 1) * 1024U)));
+        }
+
+        Cfdp::NakPdu parsed;
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, parsed.deserializeFrom(sb)) << "segments in PDU: " << numSegs;
+
+        const U32 expected = std::min<U32>(numSegs, NakMaxSegments);
+        EXPECT_EQ(expected, static_cast<U32>(parsed.getNumSegments())) << "segments in PDU: " << numSegs;
+
+        // The retained segments are the leading ones, in order
+        for (U8 i = 0; i < parsed.getNumSegments(); i++) {
+            EXPECT_EQ(static_cast<FileSize>(i * 1024U), parsed.getSegment(i).offsetStart)
+                << "segments in PDU: " << numSegs << " index " << static_cast<int>(i);
+            EXPECT_EQ(static_cast<FileSize>((i + 1) * 1024U), parsed.getSegment(i).offsetEnd)
+                << "segments in PDU: " << numSegs << " index " << static_cast<int>(i);
+        }
+    }
 }
 
 void CfdpManagerTester::testNakPdu() {

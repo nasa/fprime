@@ -53,7 +53,10 @@ module Svc {
     output port FatalAnnounce: Svc.FatalEvent
 
     @ Rate group input port for telemetry
-    async input port run: Svc.Sched drop
+    sync input port run: Svc.Sched
+
+    @ Internal port that performs the run work on the component thread
+    internal port runInternal hook
 
     @ Ping input port
     async input port pingIn: Svc.Ping drop

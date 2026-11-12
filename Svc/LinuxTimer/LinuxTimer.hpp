@@ -35,8 +35,9 @@ class LinuxTimer final : public LinuxTimerComponentBase {
     //!
     ~LinuxTimer();
 
-    //! Start timer
-    void startTimer(const Fw::TimeInterval& interval);  //!< interval in milliseconds
+    //! Start the timer, donating the calling thread; blocks until quit().
+    //! Asserts if the interval's seconds do not fit in time_t (32-bit targets).
+    void startTimer(const Fw::TimeInterval& interval);
 
     //! Quit timer
     void quit();

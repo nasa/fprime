@@ -59,3 +59,6 @@ query-filters:
         - cpp/fprime/magic-numbers
         - cpp/fprime/public-data-member
         - cpp/fprime/incomplete-code
+        # The autocoded component bases leave parameter-cache members unset
+        # until loadParameters(); guard hand-written constructors only
+        - cpp/fprime/uninitialized-member

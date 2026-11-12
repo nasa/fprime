@@ -40,7 +40,9 @@ The `Svc::AssertFatalAdapter` component contains a private implementation of the
 
 #### 3.3.1 FW_ASSERT calls
 
-When FW_ASSERT fires, the registered hook logs the assert message via `Fw::Logger` and then issues the
+When FW_ASSERT fires, the registered hook formats the assert text with `Fw::formatAssertMessage` (supplied by
+the platform's chosen `Fw_AssertHook` implementation; an empty string under `Fw_AssertHook_Stub`), logs it via
+`Fw::Logger`, and then issues the
 FATAL event (`AF_ASSERT_0` through `AF_ASSERT_6`) matching the number of assert arguments. If the `Log`
 output port is not connected, or more than `FW_ASSERT_COUNT_MAX` asserts are already being processed
 (a cascading-assert guard), the component falls back to the C `assert()` instead of issuing an event.

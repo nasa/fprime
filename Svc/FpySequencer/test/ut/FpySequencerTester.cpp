@@ -1145,6 +1145,19 @@ void FpySequencerTester::tester_doDispatch() {
     this->cmp.doDispatch();
 }
 
+FwSizeType FpySequencerTester::tester_getMessagesAvailable() {
+    return this->cmp.m_queue.getMessagesAvailable();
+}
+
+void FpySequencerTester::tester_dispatchAllMessages(U32 bound) {
+    U32 iters = 0;
+    while (this->cmp.m_queue.getMessagesAvailable() > 0 && iters < bound) {
+        this->cmp.doDispatch();
+        iters++;
+    }
+    ASSERT_EQ(this->cmp.m_queue.getMessagesAvailable(), 0);
+}
+
 Svc::FpySequencer_SequencerStateMachineStateMachineBase::State FpySequencerTester::tester_getState() {
     return this->cmp.m_stateMachine_sequencer.getState();
 }

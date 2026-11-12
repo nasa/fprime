@@ -8,6 +8,7 @@
 #define Svc_DpCatalogTester_HPP
 
 #include <STest/Pick/Pick.hpp>
+#include "Fw/Types/MallocAllocator.hpp"
 #include "Svc/DpCatalog/DpCatalog.hpp"
 #include "Svc/DpCatalog/DpCatalogGTestBase.hpp"
 
@@ -27,6 +28,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
 
     // Queue depth supplied to the component instance under test
     static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
+
+    // Highest priority value; with a start of 0 this requests the whole catalog
+    static const FwDpPriorityType PRIORITY_MAX = std::numeric_limits<FwDpPriorityType>::max();
 
   public:
     // ----------------------------------------------------------------------
@@ -72,6 +76,15 @@ class DpCatalogTester : public DpCatalogGTestBase {
 
     //! Verify transmitted state is preserved across catalog rebuilds
     void stateFileSkipsTransmitted();
+
+    //! configure the component on one directory and build the catalog as the first command
+    void configureAndBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq, Fw::MemAllocator& alloc);
+
+    //! overwrite the state file with one transmitted record per (directory index, id), without checking the index
+    void writeStateFileRecords(Fw::FileNameString& stateFile,
+                               const FwIndexType* dirs,
+                               const FwDpIdType* ids,
+                               FwSizeType count);
 
     //! Generate some data product files
     Fw::String genDP(FwDpIdType id,
@@ -168,10 +181,188 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_StopThenErrorCompletion();
     void test_ProcessFileInvalidDir();
     void test_MalformedFile();
+
     void test_TruncatedDpRejected();
     void test_NonCanonicalDpRejected();
     void test_BadHeaderHashRejected();
     void test_NonDpFilesDoNotConsumeSlots();
+    void test_InsertIntoEmptyBuiltCatalog();
+    void test_InsertDuringTransmitInPriorityOrder();
+    void test_InsertWhenFull();
+    void test_InsertBeforeBuild();
+    void test_InsertDuplicate();
+    void test_InsertPreservesTransmittedState();
+    void test_InsertAlreadyTransmitted();
+    void test_XmitPriorityRangeAll();
+    void test_XmitPriorityRangeSubset();
+    void test_XmitPriorityRangeBoundary();
+    void test_XmitPriorityRangeInverted();
+    void test_XmitPriorityRangeRuntimeAdd();
+    void test_XmitPriorityRangeStopThenRuntimeAdd();
+    void test_XmitPriorityRangeStartAfterStopAppliesRangeToNextFile();
+    void test_XmitLegacyCommandSendsFullRange();
+
+    //! SET_DP_PRIORITY to a lower number moves the product earlier in the transmit order
+    void test_SetPriorityRaise();
+
+    //! SET_DP_PRIORITY to a higher number moves the product later in the transmit order
+    void test_SetPriorityLower();
+
+    //! SET_DP_PRIORITY for a product not in the catalog is rejected with DpNotFound
+    void test_SetPriorityNotFound();
+
+    //! SET_DP_PRIORITY to the current priority is a reported no-op
+    void test_SetPrioritySameNoOp();
+
+    //! SET_DP_PRIORITY during a transmit reorders the pending products and leaves the send in flight intact
+    void test_SetPriorityDuringXmit();
+
+    //! SET_DP_PRIORITY change is kept across restart, rebuild and CLEAR_CATALOG
+    void test_SetPriorityPersisted();
+
+    //! Runtime addToCat after SET_DP_PRIORITY and after transmit keeps the state file consistent
+    void test_SetPriorityRuntimeAdd();
+
+    //! SET_DP_PRIORITY with a state file that cannot be opened for writing
+    void test_SetPriorityStateFileOpenError();
+
+    //! SET_DP_PRIORITY with full state file data
+    void test_SetPriorityStateFileFull();
+
+    //! SET_DP_PRIORITY with no state file and full state file data: a runtime addToCat is still a duplicate
+    void test_SetPriorityNoStateFileTableFull();
+
+    //! Two directories holding a file of the same name at different header priorities: both are transmitted
+    //! after SET_DP_PRIORITY moves the one in flight onto the other's priority
+    void test_SetPriorityNamesakeDirs();
+
+    //! Two directories holding a file of the same name at the same header priority: both are cataloged and sent
+    void test_NamesakeDirsSamePriority();
+
+    //! loadStateFile with more products in the state file than slots: later records for slotted products still
+    //! apply, the slotless transmitted product is re-added, and the read offset stays exact past the skipped record
+    void test_LoadStateFileSlotExhausted();
+    //! loadStateFile with records whose directory index is negative or past the configured list: each is skipped
+    //! with an event at its offset, the valid record still applies, and the event throttle is reset per load
+    void test_LoadStateFileDirectoryInvalid();
+
+    //! SET_DP_PRIORITY before configure
+    void test_SetPriorityNotInit();
+
+    //! SET_DP_PRIORITY tells apart products of one container (same ID) by their time tags
+    void test_SetPrioritySameIdByTime();
+
+    //! SET_DP_PRIORITY moves products into and out of a START_XMIT_CATALOG_WITH_PRIORITY range
+    void test_SetPriorityWithXmitRange();
+    //! DELETE_DP removes the file and the catalog entry; the product is no longer transmitted
+    void test_DeleteDp();
+    //! DELETE_DP is refused before configure and reports DpNotFound before the build and for an unknown product
+    void test_DeleteDpNotFound();
+    //! The product being sent cannot be deleted, before and after STOP; a pending one can
+    void test_DeleteDpInFlight();
+    //! Deleting a transmitted product drops its state file record, so a rebuild no longer sees it
+    void test_DeleteDpStateFileReload();
+    void test_DeleteDpStaleDirectory();
+    void test_DeleteDpPendingWithStateFile();
+    void test_DeleteDpNamesakeDirs();
+    //! A file that cannot be removed leaves the catalog untouched
+    void test_DeleteDpRemoveError();
+    //! A state file that cannot be rewritten fails the command after the product is deleted
+    void test_DeleteDpStateFileWriteError();
+
+    //! A product transmitted in an earlier session (record loaded by the rebuild) is rescheduled, resent and skipped
+    //! again
+    void test_RetransmitAfterRebuild();
+    //! The reset is recorded in the state file and survives rebuilds until the product is sent again
+    void test_RetransmitPersistsAcrossRebuild();
+    //! A product transmitted since the build is rescheduled and resent; the rebuild skips it again
+    void test_RetransmitSameSession();
+    //! A retransmit during a transmission is sent in priority order after the file in flight
+    void test_RetransmitDuringTransmit();
+    //! With remainActive set, a retransmit after the transmission finished resumes it
+    void test_RetransmitRemainActiveResumes();
+    //! Every rejection answers EXECUTION_ERROR with DpRetransmitError naming the reason and changes nothing
+    void test_RetransmitRejected();
+    //! A file that cannot be cataloged is reported FILE_ERROR and the record is left as it was
+    void test_RetransmitFileError();
+    //! A directory too long for the canonical file name is skipped with DpRetransmitNameError and the search goes on
+    void test_RetransmitNameError();
+    //! A state file that cannot be rewritten fails the command after the product is rescheduled
+    void test_RetransmitNoStateFileDir();
+    //! A retransmit after STOP_XMIT_CATALOG resumes the stopped transmission once the file in flight completes
+    void test_RetransmitAfterStop();
+    //! The product file is searched in every managed directory
+    void test_RetransmitSecondDirectory();
+    //! A retransmit with every state file slot in use survives a rebuild without growing the file
+    void test_RetransmitFullStateFile();
+    //! A product reprioritized before its downlink is rescheduled at the header priority
+    void test_RetransmitHeaderPriority();
+    //! Without a state file nothing is written; without a record one is added, or StateFileFull reported, and the file
+    //! rewritten
+    void test_RetransmitWithoutRecord();
+
+  private:
+    //! Generate one DP per priority (ids 1..numPrios) in dir, configure the component, and build the catalog
+    void buildPriorityCatalog(const char* dir, const FwDpPriorityType* prios, FwSizeType numPrios);
+
+    //! Send a waited START_XMIT_CATALOG over [startPriority, endPriority], drain the queue, and check that
+    //! exactly the products with expectedPrios were sent, in order
+    void xmitPriorityRange(U32 cmdSeq,
+                           FwDpPriorityType startPriority,
+                           FwDpPriorityType endPriority,
+                           const FwDpPriorityType* expectedPrios,
+                           FwSizeType numExpected);
+
+    //! Shut the component down and remove the DPs and state file created by buildPriorityCatalog
+    void cleanPriorityCatalog(const char* dir, FwSizeType numPrios);
+
+    static const Fw::Time PRIORITY_RANGE_TIME;
+    static constexpr FwSizeType PRIORITY_RANGE_DATA_SIZE = 100;  //!< data size of each priority-range test DP
+
+    //! Allocator handed to configure() by buildPriorityCatalog; the component keeps a pointer to it until shutdown()
+    Fw::MallocAllocator m_priorityRangeAlloc;
+
+    //! Generate three DPs with priorities 10, 20, 30 in dir, configure the component, and build the catalog
+    void setPriorityBuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, Fw::String (&dpFiles)[3]);
+
+    //! Restart the component and rebuild the catalog
+    void setPriorityRebuild(Fw::FileNameString& dir, Fw::FileNameString& stateFile, U32 cmdSeq);
+
+    //! Transmit the whole catalog
+    void setPriorityXmitAll(U32 cmdSeq);
+
+    //! generate a file of the same name in two directories (header priorities prio0, prio1), configure on both,
+    //! and build the catalog: both files are added
+    void namesakeBuild(Fw::FileNameString (&dirs)[2],
+                       FwDpPriorityType prio0,
+                       FwDpPriorityType prio1,
+                       Fw::String (&dpFiles)[2]);
+
+    //! remove the namesake files
+    void namesakeClean(Fw::FileNameString (&dirs)[2]);
+
+    //! Size of a generated DP file, as reported by SendingProduct
+    U32 setPriorityFileSize(const Fw::String& dpFile);
+
+    //! Send RETRANSMIT_DP for one product and dispatch it; the command response is at index 0 of a cleared history
+    void retransmit(U32 cmdSeq, FwDpIdType id, const Fw::Time& time, Fw::CmdResponse expected);
+
+    //! Send START_XMIT_CATALOG (no wait) and drain the queue so every auto-completed send is processed
+    void xmitAll(U32 cmdSeq, bool remainActive);
+
+    //! Create dirName with one product (id, time, prio, 16 data bytes), configure with its dpState.dat state file,
+    //! build the catalog (cmdSeq 10) and transmit it (cmdSeq 11); returns the product file name
+    Fw::String transmitOneProduct(const char* dirName,
+                                  FwDpIdType id,
+                                  const Fw::Time& time,
+                                  FwDpPriorityType prio,
+                                  bool remainActive,
+                                  Fw::FileNameString& dir,
+                                  Fw::FileNameString& stateFile,
+                                  Fw::MemAllocator& alloc);
+
+    //! Size of one state file record (directory index and DpRecord)
+    static constexpr FwSizeType STATE_ENTRY_SIZE = sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE;
 };
 
 }  // namespace Svc

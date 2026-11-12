@@ -41,6 +41,14 @@ All code contributions to F´ begin with an issue. Whether you're fixing a bug, 
 
 For non-trivial changes, opening an issue is not just a notification step. It is an approval gate. Please do not invest significant implementation effort until maintainers confirm that the work is in scope for F´ and appropriate for this repository.
 
+Issue status is tracked on the [CCB Resolution Board](https://github.com/orgs/nasa/projects/21/views/17). Do **not** start work on an issue in any of the following states:
+
+- **CCB**: the issue is awaiting review by the CCB and has not been approved.
+- **Backlog - Deferred**: the CCB has accepted the idea but deferred the work; it is not currently prioritized or resourced.
+- **No Status**: the issue has not yet been triaged onto the board.
+
+Work started on issues in these states may be reworked, delayed, or declined. Issues in other states (e.g. **Backlog - Resourced**) have been approved for work; check that nobody is already assigned before starting.
+
 ### What We Prioritize
 
 Maintainer review time is limited. We prioritize work that is approved by our [Change Control Board (CCB)](./GOVERNANCE.md) and aligned with project and community needs.

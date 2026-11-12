@@ -133,7 +133,8 @@ module in the build (everything depending on `Fw_Types`) sees it without an expl
 ### Platform Packages
 
 A platform supplies the platform-dependent types and chooses the implementations (OSAL, string formatting,
-...) used on that platform. The platform CMake file registers a configuration module with `AUTOCODER_INPUTS`
+default assert handling via `Fw_AssertHook` — see [Asserts](../framework/assert.md#default-assert-handling), ...)
+used on that platform. The platform CMake file registers a configuration module with `AUTOCODER_INPUTS`
 for `PlatformTypes.fpp`, `HEADERS` for `PlatformTypes.h`, `CHOOSES_IMPLEMENTATIONS` for the implementation
 selections, and `GLOBAL_IMPLICIT_DEPENDENCY` so that all modules see the platform types. For example, the shared Unix
 platform module (`cmake/platform/unix/Platform/CMakeLists.txt`) and the Linux platform file

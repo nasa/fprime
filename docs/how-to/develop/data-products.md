@@ -163,7 +163,7 @@ Fw::Success status = this->dpGet_SinusoidContainer(containerSize, this->m_contai
 ```
 
 > [!CAUTION]
-> Allocation may fail due to memory pressure. Producers must handle this case gracefully. [The example](https://github.com/nasa/fprime-examples/tree/devel/DataProduct/Producer/Producer.cpp) skips record generation when allocation fails and tries again on the next cycle.
+> Allocation may fail due to memory pressure. Producers must handle this case gracefully. [The example](https://github.com/nasa/fprime-examples/blob/devel/FlightExamples/DataProduct/Producer/Producer.cpp) skips record generation when allocation fails and tries again on the next cycle.
 
 
 ### Serialize Records

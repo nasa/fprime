@@ -61,8 +61,12 @@ module Svc {
             @      Limits the maximum possible Tx PDU size.
             @
             @ @par Limits:
-            @      Must respect any CCSDS packet size limits on the system.
-            constant MaxPduSize = 1024
+            @      Must respect any CCSDS packet size limits on the system. The default fits the
+            @      stock Svc.ComCcsds downlink without packet spanning: a 1024-byte TM frame leaves
+            @      a 1016-byte data field, minus a minimum idle packet (7), the Space Packet header (6)
+            @      and the packet descriptor CfdpManager prepends (2) = 1001. Recompute it if the frame
+            @      size, the framing or packet spanning changes.
+            constant MaxPduSize = 1001
 
             @ @brief Max NAK segments supported in a NAK PDU
             @
