@@ -105,7 +105,11 @@ class AosFramer final : public AosFramerComponentBase {
     //! Handler implementation for comStatusIn
     //!
     //! Port receiving the general status from the downstream component
-    //! indicating it is ready or not-ready for more input
+    //! indicating it is ready or not-ready for more input.
+    //! A SUCCESS received while a packet tail is outstanding is consumed to continue
+    //! that packet into the next frame; otherwise the status is forwarded upstream,
+    //! so exactly one SUCCESS reaches the upstream queue per dataIn message (a FAILURE
+    //! is always forwarded and is followed by the recovery SUCCESS)
     void comStatusIn_handler(FwIndexType portNum,    //!< The port number
                              Fw::Success& condition  //!< Condition success/failure
                              ) override;
