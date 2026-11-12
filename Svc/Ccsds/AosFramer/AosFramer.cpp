@@ -7,6 +7,7 @@
 
 #include "Svc/Ccsds/AosFramer/AosFramer.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Svc {
@@ -42,10 +43,10 @@ void AosFramer::configure(const U32 fixedFrameSize,
     // Virtual Channel ID is 6 bits (per CCSDS 732.0-B-5 Section 4.1.2.3)
     FW_ASSERT((vcId & 0xC0) == 0, static_cast<FwAssertArgType>(vcId));
 
-    // AOS Framer must be provided with a protocol to use for Idle Packets
-    // Currently, only SPP idle packing is supported
-    // EPP is more optimal, however
-    FW_ASSERT((idlePvns & PvnBitfield::SPP_MASK) != 0, static_cast<FwAssertArgType>(idlePvns));
+    // AOS Framer must be provided with at least one protocol to use for Idle Packets: SPP and/or EPP.
+    // EPP is preferred when both are permitted (fill_with_idle_packet)
+    FW_ASSERT((idlePvns & PvnBitfield::VALID_MASK) != 0, static_cast<FwAssertArgType>(idlePvns));
+    FW_ASSERT((idlePvns & static_cast<U8>(~PvnBitfield::VALID_MASK)) == 0, static_cast<FwAssertArgType>(idlePvns));
 
     // FECF is constant for a given Physical Channel during a Mission Phase (4.1.6.1.3)
     this->m_fecf = frameErrorControlField;
@@ -407,9 +408,17 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
         vc.past_first_fresh_packet = true;
     }
 
-    // EPP-only idle fill is not yet supported; configure() requires the SPP bit
+    // EPP is preferred when permitted: the minimum Encapsulation Packet is a single octet
+    // (CCSDS 133.1-B-3 4.1.2.8.2), so an EPP idle fill always fits in this frame and never
+    // stripes onto the next one as a minimum-size SPP fill may have to
     if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
-        // TODO: Serialize an EPP of the right size once EPP idle is supported
+        // Serialize the idle packet right into the frame; the remainder is non-empty (caller
+        // checked) and bounded to U16 above, so it is within the encoder's size limits
+        status = Utils::IdlePacket::serializeEpp(frameSerializer, idlePacketSize);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+        // Increment the offset since we serialized directly into the frame
+        vc.current_payload_offset = static_cast<U16>(vc.current_payload_offset + idlePacketSize);
     }
     // While we are using only SPP, we have to comply w/ the min SPP packet size
     // We'll stripe this packet onto the next frame of this VC if we have to
