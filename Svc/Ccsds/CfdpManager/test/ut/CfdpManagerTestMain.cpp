@@ -723,6 +723,21 @@ TEST(Event, FailPollFileMove) {
     tester.testFailPollFileMoveEvent();
 }
 
+TEST(Event, KeepFileMoveToDirectory) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testKeepFileMoveToDirectory();
+}
+
+TEST(Event, PollFileMoveToDirectory) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPollFileMoveToDirectory();
+}
+
+TEST(Event, KeepFileMoveOverlongPath) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testKeepFileMoveOverlongPath();
+}
+
 TEST(Event, FileDataSegmentMetadata) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testFileDataSegmentMetadataEvent();

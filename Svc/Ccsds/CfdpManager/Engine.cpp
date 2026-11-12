@@ -1223,6 +1223,23 @@ bool Engine::isPollingDir(const Fw::StringBase& src_file, U8 chan_num) {
     return return_code;
 }
 
+bool Engine::buildKeepFilePath(const Fw::StringBase& dir, const Fw::StringBase& src_file, Fw::StringBase& dest) {
+    // Base name: everything after the last '/'
+    const CHAR* basename = src_file.toChar();
+    for (FwSizeType pos = 0; pos < src_file.length(); ++pos) {
+        if (src_file.toChar()[pos] == '/') {
+            basename = &src_file.toChar()[pos + 1];
+        }
+    }
+    // Avoid a doubled separator when the directory already ends with '/'
+    const CHAR* separator = "/";
+    if ((dir.length() > 0) && (dir.toChar()[dir.length() - 1] == '/')) {
+        separator = "";
+    }
+    Fw::FormatStatus status = dest.format("%s%s%s", dir.toChar(), separator, basename);
+    return status == Fw::FormatStatus::SUCCESS;
+}
+
 void Engine::handleNotKeepFile(Transaction* txn) {
     Os::FileSystem::Status fileStatus = Os::FileSystem::OTHER_ERROR;
     Fw::String failDir;
@@ -1234,7 +1251,13 @@ void Engine::handleNotKeepFile(Transaction* txn) {
             // If move directory is defined attempt move
             moveDir = m_manager->getMoveDirParam(txn->getChannelId());
             if (moveDir.length() > 0) {
-                fileStatus = Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), moveDir.toChar());
+                Fw::String moveDest;
+                if (Engine::buildKeepFilePath(moveDir, txn->m_history->fnames.src_filename, moveDest)) {
+                    fileStatus =
+                        Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), moveDest.toChar());
+                } else {
+                    fileStatus = Os::FileSystem::INVALID_PATH;
+                }
                 if (fileStatus != Os::FileSystem::OP_OK) {
                     m_manager->log_WARNING_LO_FailKeepFileMove(txn->m_history->fnames.src_filename, moveDir,
                                                                fileStatus);
@@ -1254,8 +1277,13 @@ void Engine::handleNotKeepFile(Transaction* txn) {
                 // If fail directory is defined attempt move
                 failDir = m_manager->getFailDirParam(txn->getChannelId());
                 if (failDir.length() > 0) {
-                    fileStatus =
-                        Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), failDir.toChar());
+                    Fw::String failDest;
+                    if (Engine::buildKeepFilePath(failDir, txn->m_history->fnames.src_filename, failDest)) {
+                        fileStatus =
+                            Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), failDest.toChar());
+                    } else {
+                        fileStatus = Os::FileSystem::INVALID_PATH;
+                    }
                     if (fileStatus != Os::FileSystem::OP_OK) {
                         m_manager->log_WARNING_LO_FailPollFileMove(txn->m_history->fnames.src_filename, failDir,
                                                                    fileStatus);
