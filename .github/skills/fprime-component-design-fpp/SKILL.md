@@ -153,54 +153,66 @@ errors before proceeding.
 
 ### Step 5 — Draft the SDD
 
-Draft the **Design** section of `docs/sdd.md` (the requirements
-section already exists), in this order and nothing more:
+Draft `docs/sdd.md` to the shape and length of
+[`Svc/DpWriter/docs/sdd.md`](https://github.com/nasa/fprime/blob/devel/Svc/DpWriter/docs/sdd.md).
+Numbered sections, in this order and nothing more:
 
-1. **Block diagram** — one box for the component; input ports drawn
-   as small squares on the **left** edge, output ports as small
-   squares on the **right** edge, each annotated `name : PortType`
-   with `[N]` when it is a port array (special ports — command,
-   event, telemetry, time, parameter — are a single note under the
-   box, not squares). Generate it from the FPP model (an SVG or a
-   fenced ASCII box); do not use a flowchart of peer components and
-   do not include the topology — a topology delta belongs to the
-   topology PR, not to the component SDD.
-2. **Port table** — name, kind (sync/async/guarded, array size),
-   type, purpose in ≤ 8 words; the reason for the kind choice only
-   when it is not obvious, as one clause.
-3. **Command / Event / Telemetry / Parameter tables** — one row each;
-   omit a table that is empty with one sentence saying so.
-4. **Configure** — the constants and configuration the integrator
-   sets (sizes, timeouts, speeds, instance arguments): what each one
-   means and a fenced code snippet showing how it is set (FPP
-   constant, `config/` header, or topology instance line). A little
-   exposition is welcome here; no separate "types" or "used types"
-   table — a type appears only where a snippet uses it.
-5. **Behavior** — a short paragraph (3–6 sentences) explaining how
-   the component behaves end to end — request, hardware completion,
-   reply, error paths — followed by the **timing / sequence diagram**
-   (Mermaid `sequenceDiagram` or equivalent) for any asynchronous or
-   multi-context flow. No state table and no step list.
+1. **Introduction** — what the component manages and for whom, one
+   paragraph. No out-of-scope list here (see Idiosyncrasies).
+2. **Requirements** — the approved table.
+3. **Design**
+   - **Component Diagram** — one box for the component; input ports
+     as small squares on the **left** edge, output ports on the
+     **right**, each `name : PortType` (`[N]` for arrays); special
+     ports (command, event, telemetry, time, parameter) are one note
+     under the box. Generated from the FPP model (`fpp-to-layout` +
+     fprime-visual, the generator in `tools/`, or a fenced ASCII box).
+     No topology, no peer components.
+   - **Ports** — table: name, kind (sync/async/guarded, array size),
+     type, purpose in ≤ 8 words; the reason for the kind only when
+     not obvious, as one clause. Queue-full handling is one sentence
+     under the table ("Hooks report BUSY to the command dispatcher on
+     queue overflow"), not a description of the hook mechanics.
+   - **State** — table of the member variables (name, values,
+     meaning) and a Mermaid `stateDiagram-v2` when the component has
+     modes.
+   - **Configuration and Setup** — the configuration constants (FPP
+     constant block or `config/` header) and the topology `instance`
+     line, each as a fenced snippet with one line of meaning. No rate,
+     queue, buffer-pool or scheduling tuning and no size arithmetic —
+     those belong to the deployment.
+   - **Port Handlers** — one subsection per handler (commands may
+     share one), **two short sentences each**: what admits the call,
+     what it does. No flowcharts of handler internals, no outcome
+     tables — the events table already lists the outcomes.
+4. **Data Product Format** (if any) — tables only: container / record
+   id / type / count; struct fields (name, type, value); byte layout
+   of any raw record. No container-size calculations, no buffer-bin
+   advice, no sequence diagram here.
+5. **Ground Interface** — Commands, Parameters, Telemetry, Events
+   tables, one row each; a table that is empty is one sentence.
+6. **Example Uses** — one Mermaid `sequenceDiagram` of the main
+   operation (request → hardware → reply → product). No topology
+   diagram (wiring is the deployment's SDD).
+7. **Idiosyncrasies** (if any) — a documented-vs-observed table of
+   hardware deviations and the out-of-scope table (failure, owner),
+   one SHORT line each. No error-handling narrative.
+8. **Tests** — the system-test table (ID, title, requirements, pass
+   rule) and the unit-test list.
 
-Budget: §Design is at most 80 lines; prose only where this list allows
-it (Configure exposition, the Behavior paragraph) — the rest is the
-diagram and tables. Keep each
-subsection to what a reviewer needs to check the FPP against the
-requirements; the SDD is the quick-look the user reads at the design
-gate, so brevity is part of the design quality. Anything longer (design
-notes, alternatives, rationale) goes in the PR description or the
-review record — never in a tracked `docs/design-notes.md` (the F Prime
-lead removes such files from PRs). The SDD carries no change history
-(no "was/now", no revision table) and no Waivers subsection; failure
-modes the component does not own go in one table titled
-"Out-of-scope failure modes", one SHORT line each.
+Budget: tables and diagrams carry the content; prose is one sentence
+per table and two per handler. Every statement traces to the FPP
+model, the code or a requirement, and nothing is said twice — when a
+section grows, cut before adding. Design notes, alternatives and
+rationale go in the PR description or the review record, never in a
+tracked `docs/design-notes.md` (the F Prime lead removes such files
+from PRs). No change history ("was/now", revision table) and no
+Waivers subsection. A subtopology is written up in
+`Subtopology/docs/sdd.md`, not in the component SDD.
 
-SDD shape agreed with the F Prime lead: requirements → tables; a
-**port-box diagram** (input ports boxed on the left, output ports boxed
-on the right — `fpp-to-layout` + fprime-visual or the generator in
-`tools/`); telemetry and constants as tables; a **system-test table**
-(ID, title, requirements, pass rule) in its own section; no subtopology
-write-up in a component SDD — that goes in `Subtopology/docs/sdd.md`.
+Mermaid: `;` ends a statement, so never use it inside a label, message
+or `loop` title; render every block with mermaid-cli (`mmdc`) before
+pushing — GitHub shows a parse error, not the diagram.
 
 ### Step 6 — Confirm Design with User
 
