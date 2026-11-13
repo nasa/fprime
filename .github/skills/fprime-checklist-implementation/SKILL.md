@@ -21,9 +21,20 @@ behind (`coverage/summary.txt`), never produced here.
 
 ## Procedure
 
-0. The tool is [fprime-auto-checklist](https://github.com/LeStarch/fprime-auto-checklist)
-   (`pip install git+https://github.com/LeStarch/fprime-auto-checklist`; needs
-   `clang-tidy` for `--analyzer clang-tidy`). Run it from the project root.
+0. Install the tool from a clone (the clang-tidy plugin is built from the
+   clone, it is not in the pip package); without the plugin every
+   static-analysis row (31 of them) comes back UNCHECKED, so do not skip it:
+
+   ```bash
+   git clone https://github.com/LeStarch/fprime-auto-checklist && cd fprime-auto-checklist
+   pip install -e .
+   sudo apt-get install -y clang-tidy-15 llvm-15-dev libclang-15-dev   # LLVM 15 (plugin and clang-tidy must match)
+   cmake -S native -B native/build -DClang_DIR=/usr/lib/llvm-15/lib/cmake/clang && cmake --build native/build
+   cd -   # back to the project root; run the tool from there
+   ```
+
+   A prebuilt plugin is picked up from `$FPRIME_TIDY_PLUGIN` (`--tidy-plugin`),
+   `clang-tidy` from `$CLANG_TIDY` (`--clang-tidy`).
 
 1. Run against the previous checklist:
 
