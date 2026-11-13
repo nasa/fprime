@@ -36,6 +36,8 @@
 
 #include <Fw/Types/Assert.hpp>
 
+#include <limits>
+
 #include <Svc/Ccsds/CfdpManager/Engine.hpp>
 
 namespace Svc {
@@ -135,6 +137,26 @@ bool TxnStatusIsError(TxnStatus txn_stat);
  * @returns AckTxnStatus value corresponding to transaction
  */
 AckTxnStatus GetTxnStatus(Transaction* txn);
+
+/**
+ * @brief Smaller of two sizes (helper for RxFileSizeLimit)
+ *
+ * Takes its operands as parameters so the comparison is not between two constants, which some
+ * compilers flag with -Wtype-limits when the configured limit equals the FileSize maximum.
+ */
+constexpr U64 RxFileSizeClamp(U64 limit, U64 typeMax) {
+    return (limit < typeMax) ? limit : typeMax;
+}
+
+/**
+ * @brief Largest file size a receive transaction accepts
+ *
+ * MaxRxFileSize from CfdpCfg.fpp, clamped to the range of FileSize.
+ */
+constexpr FileSize RxFileSizeLimit() {
+    return static_cast<FileSize>(
+        RxFileSizeClamp(static_cast<U64>(MaxRxFileSize), static_cast<U64>(std::numeric_limits<FileSize>::max())));
+}
 
 }  // namespace Cfdp
 }  // namespace Ccsds

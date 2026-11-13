@@ -99,6 +99,17 @@ module Svc {
             @      The overall bytes calculated per wakeup is set in the configuration table.
             constant R2CrcChunkSize = 1024
 
+            @ @brief Largest file a receive transaction accepts, in bytes
+            @
+            @ @par Description:
+            @      Before the Metadata PDU arrives, File Data PDUs are accepted only if they
+            @      end at or below this size. A Metadata PDU that declares a larger file fails
+            @      the transaction with a file size error. Values larger than the maximum of
+            @      the FileSize type are treated as that maximum. The default leaves the
+            @      FileSize maximum as the only limit; set it to the largest file a mission
+            @      expects to uplink so temporary files cannot grow past it.
+            constant MaxRxFileSize = 0xFFFFFFFF
+
             @ @brief Max number of simultaneous file receives
             @
             @ @par Description:
