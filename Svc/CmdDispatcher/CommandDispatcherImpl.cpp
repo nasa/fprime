@@ -27,6 +27,7 @@ CommandDispatcherImpl::CommandDispatcherImpl(const char* name)
       m_numCmdsDispatched(0),
       m_numCmdErrors(0),
       m_numCmdsDropped(0),
+      m_numCmdStatusDropped(0),
       m_runQueued(false) {}
 
 CommandDispatcherImpl::~CommandDispatcherImpl() {}
@@ -183,6 +184,7 @@ void CommandDispatcherImpl ::runInternal_overflowHook() {
 void CommandDispatcherImpl ::runInternal_internalInterfaceHandler() {
     this->m_runQueued = false;
     this->tlmWrite_CommandsDropped(this->m_numCmdsDropped.load(std::memory_order_relaxed));
+    this->tlmWrite_CommandStatusDropped(this->m_numCmdStatusDropped.load(std::memory_order_relaxed));
     this->tlmWrite_CommandErrors(this->m_numCmdErrors);
     this->tlmWrite_CommandsDispatched(this->m_numCmdsDispatched);
 }
@@ -249,6 +251,36 @@ void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::Com
 
     this->log_WARNING_HI_CommandDroppedQueueOverflow(CmdDispatcherCfg::getEventOpcode(opcode), context);
     // This hook runs on the caller's thread; the counter is atomic so no lock is needed
+    this->m_numCmdsDropped.fetch_add(1, std::memory_order_relaxed);
+}
+
+void CommandDispatcherImpl::compCmdStat_overflowHook(FwIndexType portNum,
+                                                     FwOpcodeType opCode,
+                                                     U32 cmdSeq,
+                                                     const Fw::CmdResponse& response) {
+    this->log_WARNING_HI_CommandStatusDroppedQueueOverflow(CmdDispatcherCfg::getEventOpcode(opCode), cmdSeq);
+    // This hook runs on the caller's thread; the counter is atomic so no lock is needed
+    this->m_numCmdStatusDropped.fetch_add(1, std::memory_order_relaxed);
+}
+
+void CommandDispatcherImpl::CMD_NO_OP_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->dropOwnCommand(opCode, cmdSeq);
+}
+
+void CommandDispatcherImpl::CMD_NO_OP_STRING_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->dropOwnCommand(opCode, cmdSeq);
+}
+
+void CommandDispatcherImpl::CMD_TEST_CMD_1_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->dropOwnCommand(opCode, cmdSeq);
+}
+
+void CommandDispatcherImpl::CMD_CLEAR_TRACKING_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->dropOwnCommand(opCode, cmdSeq);
+}
+
+void CommandDispatcherImpl::dropOwnCommand(FwOpcodeType opCode, U32 cmdSeq) {
+    this->log_WARNING_HI_CommandDroppedQueueOverflow(CmdDispatcherCfg::getEventOpcode(opCode), cmdSeq);
     this->m_numCmdsDropped.fetch_add(1, std::memory_order_relaxed);
 }
 

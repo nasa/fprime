@@ -158,6 +158,43 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param context call value defined by user
     void seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
 
+    //!  \brief Called when a command status cannot be queued because the queue is full
+    //!
+    //!  Generate a throttled event and count the dropped status. The pending
+    //!  command table entry for the status is not released; CMD_CLEAR_TRACKING
+    //!  recovers it.
+    //!
+    //!  \param portNum the number of the incoming port.
+    //!  \param opCode the opcode of the completed command.
+    //!  \param cmdSeq the sequence number assigned to the command when it was dispatched
+    //!  \param response the completion status of the command
+    void compCmdStat_overflowHook(FwIndexType portNum,
+                                  FwOpcodeType opCode,
+                                  U32 cmdSeq,
+                                  const Fw::CmdResponse& response) override;
+
+    //! Overflow hook for command CMD_NO_OP
+    void CMD_NO_OP_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command CMD_NO_OP_STRING
+    void CMD_NO_OP_STRING_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command CMD_TEST_CMD_1
+    void CMD_TEST_CMD_1_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command CMD_CLEAR_TRACKING
+    void CMD_CLEAR_TRACKING_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! \brief Drop one of this component's own commands because the queue is full
+    //!
+    //! Generates the dropped-command event and counts the drop. No status is
+    //! produced, so the caller's pending command table entry remains until
+    //! CMD_CLEAR_TRACKING releases it.
+    //!
+    //! \param opCode the opcode of the dropped command
+    //! \param cmdSeq the sequence number assigned to the dropped command
+    void dropOwnCommand(FwOpcodeType opCode, U32 cmdSeq);
+
     //! \brief Increment m_seq, latching m_seqWrapped when the U32 counter wraps
     void advanceSequenceNumber();
 
@@ -198,7 +235,8 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     U32 m_numCmdErrors;       //!< number of commands with an error
     std::atomic<U32>
         m_numCmdsDropped;  //!< number of commands dropped due to queue overflow (incremented on caller threads)
-    std::atomic<bool> m_runQueued;  //!< true while a runInternal message is on the queue
+    std::atomic<U32> m_numCmdStatusDropped;  //!< number of command statuses dropped due to queue overflow
+    std::atomic<bool> m_runQueued;           //!< true while a runInternal message is on the queue
 };
 }  // namespace Svc
 

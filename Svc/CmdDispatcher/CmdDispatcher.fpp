@@ -15,7 +15,7 @@ module Svc {
     guarded input port compCmdReg: [CmdDispatcherComponentCommandPorts] Fw.CmdReg
 
     @ Input Command Status Port
-    async input port compCmdStat: Fw.CmdResponse
+    async input port compCmdStat: Fw.CmdResponse hook
 
     @ Output Command Status Port
     output port seqCmdStatus: [CmdDispatcherSequencePorts] Fw.CmdResponse
@@ -74,13 +74,15 @@ module Svc {
 
     @ No-op command
     async command CMD_NO_OP \
-      opcode 0
+      opcode 0 \
+      hook
 
     @ No-op string command
     async command CMD_NO_OP_STRING(
                                     arg1: string size 40 @< The String command argument
                                   ) \
-      opcode 1
+      opcode 1 \
+      hook
 
     @ No-op command
     async command CMD_TEST_CMD_1(
@@ -88,11 +90,13 @@ module Svc {
                                   arg2: F32 @< The F32 command argument
                                   arg3: U8 @< The U8 command argument
                                 ) \
-      opcode 2
+      opcode 2 \
+      hook
 
     @ Clear command tracking info to recover from components not returning status
     async command CMD_CLEAR_TRACKING \
-      opcode 3
+      opcode 3 \
+      hook
 
     # ----------------------------------------------------------------------
     # Events
@@ -200,6 +204,16 @@ module Svc {
       format "Opcode 0x{x} was dropped due to buffer overflow and not processed. Context {}" \
       throttle 5
 
+    @ This log event reports that a command status was dropped because the command dispatcher queue was full.
+    event CommandStatusDroppedQueueOverflow(
+                              OpCode: FwOpcodeType @< The opcode of the completed command
+                              CmdSeq: U32 @< The sequence number of the completed command
+                            ) \
+      severity warning high \
+      id 12 \
+      format "Status for opcode 0x{x} sequence {} was dropped due to buffer overflow and not processed" \
+      throttle 5
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
@@ -210,8 +224,11 @@ module Svc {
     @ Number of command errors
     telemetry CommandErrors: U32 id 1 update on change
 
-    @ Number of commands drooped due to buffer overflow
+    @ Number of commands dropped due to buffer overflow
     telemetry CommandsDropped: U32 id 2 update on change
+
+    @ Number of command statuses dropped due to buffer overflow
+    telemetry CommandStatusDropped: U32 id 3 update on change
   }
 
 }

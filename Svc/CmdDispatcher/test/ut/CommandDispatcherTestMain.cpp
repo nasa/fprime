@@ -265,6 +265,42 @@ TEST(CmdDispTestOffNominal, ConcurrentQueueOverflow) {
     tester.runConcurrentQueueOverflow();
 }
 
+TEST(CmdDispTestOffNominal, CommandStatusQueueOverflow) {
+    TEST_CASE(102.2.11, "Off-nominal Command Status QueueOverflow");
+    COMMENT("Verify a command status arriving on a full queue is dropped and counted and does not ASSERT.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runCommandStatusQueueOverflow();
+}
+
+TEST(CmdDispTestOffNominal, OwnCommandQueueOverflow) {
+    TEST_CASE(102.2.12, "Off-nominal Dispatcher Command QueueOverflow");
+    COMMENT("Verify the dispatcher's own commands arriving on a full queue are dropped and counted and do not ASSERT.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runOwnCommandQueueOverflow();
+}
+
 TEST(CmdDispTestOffNominal, SequenceNumberWrapSkipsTrackedIds) {
     TEST_CASE(102.2.9, "Sequence Number Wraparound");
     COMMENT("Verify sequence number allocation skips IDs that are still tracked across U32 wraparound.");

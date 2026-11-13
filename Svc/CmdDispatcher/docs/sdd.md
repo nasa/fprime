@@ -17,6 +17,7 @@ CD-004 | The `Svc::CmdDispatcher` component shall process command status from co
 CD-005 | The `Svc::CmdDispatcher` component shall drop incoming commands to avert a queue overflow (DOS attack). | Unit Test
 CD-006 | The `Svc::CmdDispatcher` component shall count every dropped command, including drops occurring concurrently on multiple caller threads, and report the count in the `CommandsDropped` telemetry channel. | Unit Test
 CD-007 | The `Svc::CmdDispatcher` component shall not dispatch a command that it cannot track in the pending command table, unless configured to do so, in which case it shall dispatch the command and report that the command is untracked. | Unit Test
+CD-008 | The `Svc::CmdDispatcher` component shall drop and count, rather than assert on, a command status or one of its own commands that arrives while its queue is full, and report the counts in the `CommandsDropped` and `CommandStatusDropped` telemetry channels. | Unit Test
 
 ## 3. Design
 
@@ -35,7 +36,7 @@ The `Svc::CmdDispatcher` component uses the following port types:
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
 [`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.md) | compCmdSend | Output | n/a | Send commands to components
-[`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | compCmdStat | Input | Asynchronous | Port for components to report command status
+[`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | compCmdStat | Input | Asynchronous (`hook` overflow behavior) | Port for components to report command status
 [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | seqCmdStatus | Output | n/a | Send command status to command buffer source
 [`Fw::Com`](../../../Fw/Com/docs/sdd.md) | seqCmdBuff | Input | Asynchronous (`hook` overflow behavior) | Receive command buffer
 [`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | compCmdReg | Input | Guarded | Command Registration
@@ -60,6 +61,7 @@ Note #2: the `seqCmdStatus` port utilize the same type as the `compCmdStat`, the
 Note #3: the `CMD_CLEAR_TRACKING` command empties the pending command table. Before doing so, every pending command (other than `CMD_CLEAR_TRACKING` itself) is reported to its source via `seqCmdStatus` with the `Fw::CmdResponse::CLEARED` status, so callers do not wait indefinitely for a completion that will never be delivered. `CMD_CLEAR_TRACKING` then completes with `Fw::CmdResponse::OK`.
 Note #4: sequence numbers are assigned from a monotonically increasing `U32` counter. Once the counter has wrapped around, the dispatcher checks the pending command table before assigning a sequence number and skips any value still associated with an outstanding command, so a wrapped counter cannot overwrite a pending entry. No such check is performed before the first wraparound, since a monotonic counter cannot collide with a pending entry.
 Note #5: the pending sequence command table is a fixed-size table (`CMD_DISPATCHER_SEQUENCER_TABLE_SIZE`), and it is only consulted when the `seqCmdStatus` output port for the calling port is connected. When a command arrives, that port is connected, and the table is full, the dispatcher's behavior is selected by `CommandDispatcherImpl::configure(bool)`, which defaults to `Svc::CmdDispatcherCfg::EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT`. When `false` (the default), the command is not dispatched: a `TooManyCommands` warning is emitted and the caller receives `Fw::CmdResponse::EXECUTION_ERROR`. When `true`, the command is dispatched, a `TooManyCommands` warning is emitted, and the caller receives `Fw::CmdResponse::DISPATCHED_UNTRACKED`, indicating that the command is executing but that its completion status cannot be matched back to the caller and will never be reported. Note that the stock sequencers do not treat `DISPATCHED_UNTRACKED` as success: `Svc::CmdSequencer` fails and cancels the sequence on any non-`OK` response, `Svc::WasmSequencer` counts it as a failed command, and `Svc::FpySequencer` pushes the raw response value for the sequence to branch on.
+Note #6: every asynchronous input to the component shares one message queue, and the component's own `CmdStatus` and `compCmdSend` outputs are normally connected back to its `compCmdStat` and `CmdDisp` inputs. A burst of command buffers can therefore leave no free slot for a status reported by a component or for one of the dispatcher's own commands. Neither case asserts: `seqCmdBuff` drops the incoming command buffer (emitting `CommandDroppedQueueOverflow` and counting in `CommandsDropped`), the dispatcher's own commands (`CMD_NO_OP`, `CMD_NO_OP_STRING`, `CMD_TEST_CMD_1`, `CMD_CLEAR_TRACKING`) are dropped the same way with the command sequence number reported in the event's `Context` field, and a status that cannot be queued emits `CommandStatusDroppedQueueOverflow` and is counted in `CommandStatusDropped`. A dropped status or dropped dispatcher command leaves its pending command table entry in place and no `seqCmdStatus` is sent for it; the caller must time out, and `CMD_CLEAR_TRACKING` releases the entry.
 
 ### 3.3 Scenarios
 
@@ -106,7 +108,7 @@ sequenceDiagram
 
 `Svc::CmdDispatcher` has no state machines.
 
-The dropped-command counter backing the `CommandsDropped` channel is incremented by the `seqCmdBuff` overflow hook, which runs on the thread of each caller when the queue is full. The counter is therefore an atomic (`std::atomic<U32>`) so concurrent drops are never lost and the value read by `run` is never torn.
+The dropped-command counter backing the `CommandsDropped` channel is incremented by the `seqCmdBuff` and command overflow hooks, and the counter backing `CommandStatusDropped` by the `compCmdStat` overflow hook. Each hook runs on the thread of the caller when the queue is full. The counters are therefore atomics (`std::atomic<U32>`) so concurrent drops are never lost and the values read by `run` are never torn.
 
 ### 3.5 Algorithms
 
@@ -150,6 +152,7 @@ Date | Description
 9/03/2026 | Added a note about sequence number allocation after wraparound
 9/14/2026 | Dropped-command counter made atomic; added CD-006
 9/20/2026 | Added `EXECUTE_WHEN_SEQUENCE_TABLE_FULL_DEFAULT`, `configure()`, and `Fw::CmdResponse::DISPATCHED_UNTRACKED`; added CD-007 and section 3.6
+11/13/2026 | `compCmdStat` and the dispatcher's own commands drop on queue overflow instead of asserting; added `CommandStatusDroppedQueueOverflow`, `CommandStatusDropped`, and CD-008
 
 
 
