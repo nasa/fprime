@@ -39,8 +39,11 @@ SerialBufferBase::~SerialBufferBase() {}
 
 LinearBufferBase::LinearBufferBase(U8* buffAddr, Serializable::SizeType capacity)
     : m_buffAddr(buffAddr), m_capacity(capacity), m_serLoc(0), m_deserLoc(0) {
-    // Ensure buffAddr & capacity are consistent
-    FW_ASSERT((buffAddr == nullptr) == (capacity == 0), static_cast<FwAssertArgType>(capacity));
+    // A null buffer must have zero capacity. A valid buffer may have zero capacity:
+    // callers routinely wrap the (possibly empty) tail of a larger buffer, such as a
+    // packet that carries a descriptor but no body. This matches the contract of
+    // ExternalSerializeBuffer::setExtBuffer.
+    FW_ASSERT((buffAddr != nullptr) || (capacity == 0), static_cast<FwAssertArgType>(capacity));
 }
 
 LinearBufferBase::~LinearBufferBase() {}
