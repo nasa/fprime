@@ -160,6 +160,10 @@ Numbered sections, in this order and nothing more:
 1. **Introduction** — what the component manages and for whom, one
    paragraph. No out-of-scope list here (see Idiosyncrasies).
 2. **Requirements** — the approved table.
+   Followed by the **External References** table (Document | Identifier /
+   Revision | Type | Governs; a single `None` row when there are none) —
+   the datasheets, ICDs and FDDs the requirements lean on, once, by
+   identifier and revision (see `fprime-component-requirements`).
 3. **Design**
    - **Component Diagram** — one box for the component; input ports
      as small squares on the **left** edge, output ports on the
