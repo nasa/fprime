@@ -39,6 +39,22 @@ Each phase has a dedicated skill with detailed guidance:
 | 5. Unit Test | `fprime-component-unit-test` | `test/ut/` test suite |
 | 6. Integration Test | `fprime-component-integration-test` | `test/int/` pytest suite |
 
+The Component Development Checklist is filled alongside, in three passes
+driven by the skills of
+[fprime-auto-checklist](https://github.com/LeStarch/fprime-auto-checklist)
+(each runs the tool with `--stage`, decides the rows it queues with
+`decide`, and performs no development step itself):
+
+| After | Skill | Decides |
+|---|---|---|
+| phase 2 (SDD + FPP model approved) | `fprime-checklist-design` | sections 1–2 review rows; creates `docs/checklist.md` |
+| phase 5 (implementation + unit tests) | `fprime-checklist-implementation` | sections 3–4 review rows, plus any earlier decision the tool flags `STALE` because the SDD or model changed |
+| system testing / run-for-record | `fprime-checklist-closeout` | section 5, anything stale, and an audit of every tool-decided row |
+
+Rows that depend on a step the process has not performed (topology build,
+hardware run, CI) stay UNCHECKED until it is; the checklist reports what was
+done, it does not do it.
+
 ---
 
 ## Cardinal Rules
