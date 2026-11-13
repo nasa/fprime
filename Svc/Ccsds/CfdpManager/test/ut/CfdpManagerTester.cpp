@@ -1183,6 +1183,72 @@ void CfdpManagerTester::testClass2RxFileDataOffsetOverflow() {
     cleanupTestFile(txn->m_history->fnames.dst_filename.toChar());
 }
 
+void CfdpManagerTester::runTxSourceTruncatedCase(Cfdp::Class::T cfdpClass, const char* srcFile) {
+    const U8 channelId = TEST_CHANNEL_ID_0;
+    // Large enough that the downlink spans several cycles at the default throttle
+    const FwSizeType fileSize = 200000;
+
+    FwSizeType actualSize;
+    createAndVerifyTestFile(srcFile, fileSize, actualSize);
+    TransactionSetup setup;
+    const TxnState expectedState =
+        (cfdpClass == Cfdp::Class::CLASS_1) ? TxnState::TXN_STATE_S1 : TxnState::TXN_STATE_S2;
+    setupTxTransaction(srcFile, "/dest/truncated.bin", channelId, TEST_GROUND_EID, cfdpClass, TEST_PRIORITY,
+                       expectedState, setup);
+
+    // First cycle opens the source and sends part of it
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    ASSERT_GT(setup.txn->m_foffs, 0U);
+    ASSERT_LT(setup.txn->m_foffs, setup.txn->m_fsize) << "Downlink must still be in progress";
+    const FileSize truncatedAt = setup.txn->m_foffs;
+
+    // Something onboard truncates the source while it is being sent; the transaction keeps its
+    // open handle, so later reads at the current offset return 0 bytes
+    Os::File truncator;
+    ASSERT_EQ(Os::File::OP_OK, truncator.open(srcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE));
+    truncator.close();
+
+    this->clearHistory();
+    const FwSizeType pdusBefore = this->fromPortHistory_dataOut->size();
+    for (U32 cycle = 0; cycle < 10; cycle++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+
+    ASSERT_EVENTS_TxFileShortRead_SIZE(1);
+    ASSERT_EVENTS_TxFileShortRead(0, cfdpClass, component.getLocalEidParam(), setup.expectedSeqNum, srcFile,
+                                  truncatedAt, static_cast<FileSize>(fileSize));
+    ASSERT_EVENTS_TxFileTransferCompleted_SIZE(0);
+    if (cfdpClass == Cfdp::Class::CLASS_1) {
+        // Class 1 finishes right after its EOF, and the transaction may already be recycled, so
+        // check the failure event rather than transaction state
+        ASSERT_EVENTS_TxFileTransferFailed_SIZE(1);
+        ASSERT_EVENTS_TxFileTransferFailed(0, cfdpClass, setup.expectedSeqNum, component.getLocalEidParam(), srcFile,
+                                           TEST_GROUND_EID, "/dest/truncated.bin",
+                                           static_cast<U8>(TxnStatus::TXN_STATUS_FILESTORE_REJECTION));
+    } else {
+        // Class 2 has sent its EOF with the error and is waiting for the EOF-ACK
+        ASSERT_NE(nullptr, setup.txn->m_history);
+        EXPECT_EQ(TxnStatus::TXN_STATUS_FILESTORE_REJECTION, setup.txn->m_history->txn_stat);
+        EXPECT_GE(setup.txn->m_state_data.send.sub_state, TxSubState::TX_SUB_STATE_EOF)
+            << "Downlink must stop sending file data and move to EOF";
+    }
+    // Without the check, every cycle sends max_outgoing_pdus_per_cycle empty File Data PDUs
+    EXPECT_LE(this->fromPortHistory_dataOut->size() - pdusBefore, 4U)
+        << "Only the EOF (and its retries) should be sent after the source was truncated";
+
+    cleanupTestFile(srcFile);
+}
+
+void CfdpManagerTester::testClass1TxSourceTruncated() {
+    runTxSourceTruncatedCase(Cfdp::Class::CLASS_1, "test/ut/output/tx_truncated_c1.bin");
+}
+
+void CfdpManagerTester::testClass2TxSourceTruncated() {
+    runTxSourceTruncatedCase(Cfdp::Class::CLASS_2, "test/ut/output/tx_truncated_c2.bin");
+}
+
 void CfdpManagerTester::testClass2RxTruncatedFileDataCrcSpin() {
     const char* groundSrcFile = "/ground/test_class2_rx_crcspin_source.bin";
     const char* dstFile = "test/ut/output/test_class2_rx_crcspin_received.bin";

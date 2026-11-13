@@ -377,6 +377,14 @@ Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 
         Os::File::Status fileStatus = this->m_fd.read(fileDataBuffer, actual_bytes, Os::File::WaitType::WAIT);
         if (fileStatus != Os::File::OP_OK) {
             status = Cfdp::Status::ERROR;
+        } else if ((actual_bytes == 0) && (max_data_bytes > 0)) {
+            // The read succeeded but returned nothing before the size captured when the transfer
+            // started: the source file was truncated while it was being sent. Retrying would read
+            // 0 bytes forever and never advance, so fail instead of sending an empty File Data PDU.
+            this->m_cfdpManager->log_WARNING_LO_TxFileShortRead(
+                this->getClass(), this->m_history->src_eid, this->m_history->seq_num,
+                this->m_history->fnames.src_filename, foffs, this->m_fsize);
+            status = Cfdp::Status::ERROR;
         }
     }
 
