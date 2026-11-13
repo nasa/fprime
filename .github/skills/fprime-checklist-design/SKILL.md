@@ -57,7 +57,16 @@ run coverage, or touch the component.
    commit and the section-1/2 fingerprint so later stages know when the SDD
    or model changed under it.
 
-4. Re-run step 1 with `--previous <...>/docs/checklist.md` and confirm the
+4. Link the checklist from the SDD: its very last line is
+   `Component Development Checklist: [checklist.md](checklist.md)` — append it once, after Tests,
+   nothing after it:
+
+   ```bash
+   grep -qxF 'Component Development Checklist: [checklist.md](checklist.md)' <Path/To/Component>/docs/sdd.md || \
+       printf '\nComponent Development Checklist: [checklist.md](checklist.md)\n' >> <Path/To/Component>/docs/sdd.md
+   ```
+
+5. Re-run step 1 with `--previous <...>/docs/checklist.md` and confirm the
    Hand-off section says *Nothing to review at the design stage*. Report the
    totals line and every row that is NO, with its note, to the user; tool NOs
    (e.g. a missing SDD table) are fixed in the SDD/model, not in the checklist.

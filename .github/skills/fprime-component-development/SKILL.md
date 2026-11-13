@@ -47,7 +47,7 @@ development step itself:
 
 | After | Skill | Decides |
 |---|---|---|
-| phase 2 (SDD + FPP model approved) | `fprime-checklist-design` | sections 1–2 review rows; creates `docs/checklist.md` |
+| phase 3 (SDD, model and test design reviewed, before Approve SDD) | `fprime-checklist-design` | sections 1–2 review rows; creates `docs/checklist.md` beside the SDD and appends the SDD's last line, `Component Development Checklist: [checklist.md](checklist.md)` |
 | phase 5 (implementation + unit tests) | `fprime-checklist-implementation` | sections 3–4 review rows, plus any earlier decision the tool flags `STALE` because the SDD or model changed |
 | system testing / run-for-record | `fprime-checklist-closeout` | section 5, anything stale, and an audit of every tool-decided row |
 

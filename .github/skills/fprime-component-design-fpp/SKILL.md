@@ -204,6 +204,10 @@ Numbered sections, in this order and nothing more:
 8. **Tests** — the system-test table (ID, title, requirements, pass
    rule) and the unit-test list.
 
+The document's very last line, after Tests, is the link to the checklist
+kept beside it: `Component Development Checklist: [checklist.md](checklist.md)` (written by
+`fprime-checklist-design`; nothing follows it).
+
 Budget: tables and diagrams carry the content; prose is one sentence
 per table and two per handler. Every statement traces to the FPP
 model, the code or a requirement, and nothing is said twice — when a

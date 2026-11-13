@@ -75,6 +75,8 @@ The rendered table is read by people; keep it sparse.
   renders as one `Audit (...)` line from your `--note`.
 
 ## Rules
+- `docs/checklist.md` stays beside `docs/sdd.md`; the SDD's last line is
+  `Component Development Checklist: [checklist.md](checklist.md)` — restore it if an SDD edit dropped it.
 
 - Decide only queued rows; tool-decided rows are audited at close-out.
 - A `STALE` row is re-read in full, not re-confirmed from its old note.

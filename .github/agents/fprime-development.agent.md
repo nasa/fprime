@@ -43,6 +43,17 @@ see below):
 5. **Unit test** — `fprime-component-unit-test` (with `fprime-unit-testing`)
 6. **Integration test** — `fprime-component-integration-test`
 
+The Component Development Checklist is filled beside the SDD, as
+`docs/checklist.md`, in three passes that run inside this sequence —
+each only decides the rows its tool run queues, and performs no
+development step: `fprime-checklist-design` after phase 3 passes its
+review loop and before the SDD is presented for approval (it also
+appends the SDD's last line, `Component Development Checklist: [checklist.md](checklist.md)`);
+`fprime-checklist-implementation` after phase 5; `fprime-checklist-closeout`
+after the run-for-record (test-process contract §1), auditing every
+tool-decided row. The checklist is presented with the SDD at each gate
+as an attachment, never pasted.
+
 This agent — not the writing skills — runs the review loop of
 `.github/agents/_shared/phase-review-loop.md` after phases 1, 2 and
 3 (reviewers, bound, prompt override and fallback are defined
