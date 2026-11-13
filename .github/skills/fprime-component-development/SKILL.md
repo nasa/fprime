@@ -39,11 +39,11 @@ Each phase has a dedicated skill with detailed guidance:
 | 5. Unit Test | `fprime-component-unit-test` | `test/ut/` test suite |
 | 6. Integration Test | `fprime-component-integration-test` | `test/int/` pytest suite |
 
-The Component Development Checklist is filled alongside, in three passes
-driven by the skills of
+The Component Development Checklist is filled alongside, in three passes;
+each skill runs
 [fprime-auto-checklist](https://github.com/LeStarch/fprime-auto-checklist)
-(each runs the tool with `--stage`, decides the rows it queues with
-`decide`, and performs no development step itself):
+with `--stage`, decides the rows it queues with `decide`, and performs no
+development step itself:
 
 | After | Skill | Decides |
 |---|---|---|
