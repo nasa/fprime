@@ -99,6 +99,22 @@ the datasheet: "shall read N bytes at an offset", "shall write N
 bytes at an offset" and one row "reads and writes shall be compliant
 with \<datasheet, revision\>" are sufficient; frame bytes, opcodes and
 timings are design facts verified by unit test against the datasheet.
+
+External inputs the requirements lean on — datasheets, ICDs, FDDs,
+standards — are listed once, in an **External References** table that
+follows the requirements table (checklist item 1.8 asks for exactly
+this; the component-checklist tooling reads it):
+
+| Document | Identifier / Revision | Type | Governs |
+|---|---|---|---|
+| \<Vendor part\> datasheet | \<document number\> Rev. \<x\> | Datasheet | command set, timing |
+
+`Type` is Datasheet / ICD / FDD / Standard / Other; `Governs` names what
+the document decides for this component. A component with no external
+inputs keeps the table with a single row `| None | — | — | no external
+interfaces |` so the absence is a statement, not an omission. Cite the
+same identifier and revision in the requirement rows ("compliant with
+\<datasheet, revision\>") — never a bare "the datasheet".
 Keep the fault-scenario rows (invalid input, concurrent request, host
 error, wrong device) — they are the rows reviewers find missing.
 When a requirement is retired or merged, delete the row and renumber
