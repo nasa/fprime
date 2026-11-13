@@ -333,9 +333,12 @@ the first package of the campaign has passed its seed-free rehearsal
 (`fprime-run-for-record` §3) and never earlier. The seed of each run —
 each child's first run, each final re-run, the system run — is derived by
 the human, in a shell of their own, as
-`sha256("<master>:<campaign-id>")` (lower-case hex of the UTF-8 bytes,
-e.g. `printf '%s' "<master>:<campaign-id>" | sha256sum`), written to the
-`chmod 600` file `fth draw --seed-file` reads and deletes; `campaign-id`
+`sha256("<master>:<campaign-id>")` (lower-case hex of the UTF-8 bytes).
+The master is never typed on a command line — it would land in the shell
+history; read it un-echoed and derive in one pipeline, e.g.
+`read -rs m; (umask 077; printf '%s' "$m:<campaign-id>" | sha256sum | cut -d' ' -f1 > seed); unset m`,
+so only the derived seed is written, to the `chmod 600` file
+`fth draw --seed-file` reads and deletes; `campaign-id`
 is the inventory id of the component (≤ 8 characters), `<id>:final` for
 its final re-run, `system` for the system run, and is recorded in the
 ledger. The master never leaves the human: the derived seed that

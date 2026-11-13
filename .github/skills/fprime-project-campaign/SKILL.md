@@ -99,9 +99,12 @@ after that — child, final re-run, system — needs only its `campaign-id`
     upstream issue filed, standalone stage-2 plan (contract §1 row 2) run
     before the component is treated as inherited.
 12. Verify on the bench: image builds for the target, boots, the L0 marker
-    round-trips (`fprime-system-test-design` §1); the system plan's first line
-    moves to `L0: bench-confirmed`. Record `repo@sha` of the base deployment
-    in the ledger — the **test configuration** every child receives.
+    round-trips (`fprime-system-test-design` §1). The system plan is then
+    refreshed per `fprime-system-test-design` §7: the L0 line (and any
+    evidence-path change) is a plan-change diff — `system-test-review` Mode A
+    once, then the human re-approves it (contract §2; a plan-change diff, not
+    a third gate). Record `repo@sha` of the base deployment in the ledger —
+    the **test configuration** every child receives.
 
 ## 4. COMPONENT CAMPAIGNS lane — no human gate by default
 
