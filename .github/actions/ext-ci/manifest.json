@@ -17,6 +17,15 @@
       "timeout_minutes": 20,
       "failure_policy": "notify",
       "on_pr": true
+    },
+    {
+      "id": "stm32-baremetal",
+      "repository": "fprime-community/fprime-stm32-baremetal-reference",
+      "workflow": "hil.yml",
+      "default_ref": "devel",
+      "timeout_minutes": 25,
+      "failure_policy": "notify",
+      "on_pr": false
     }
   ]
 }
