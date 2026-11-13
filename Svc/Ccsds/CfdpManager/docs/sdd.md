@@ -149,6 +149,10 @@ A related case is a Class 2 FileData PDU whose header declares more file-data oc
 
 On the transmit side, a FIN that arrives before a Class 2 send has finished transmitting is parsed before any transaction state changes. If the FIN fails deserialization, the event `FailFinPduDeserialization` is emitted and the transaction continues in its current sub-state. The transmit cycle also bounds its per-transaction dispatch loop: every dispatch must send a PDU, change the transaction's state or sub-state, or yield the cycle. A transaction whose dispatch does none of these is failed with `PROTOCOL_ERROR` instead of being dispatched again, so no PDU sequence can leave the `run1Hz` cycle spinning.
 
+#### Received File Disposal
+
+A received file is kept only once its checksum has been verified. Every receive transaction starts with `keep` set to `DELETE`, and only a matching checksum (Class 1 at EOF, Class 2 after the CRC pass over the stored file) sets it to `KEEP`. A reception that ends any other way is reported with `RxFileTransferFailed` instead of `RxFileTransferCompleted`, and its file is removed: the destination file, or the temporary file under `tmp_dir` when no Metadata PDU arrived. This covers a Class 1 checksum mismatch (`FILE_CHECKSUM_FAILURE`), an EOF whose file size differs from the Metadata PDU (`FILE_SIZE_ERROR`), a Class 1 File Data or EOF PDU that fails to deserialize (`PROTOCOL_ERROR`), the Class 2 failures reported in the FIN, and a reception ended by its inactivity timer (`INACTIVITY_DETECTED`), which is finished like any other failed reception before its slot is recycled. Received data is still written in place to the destination once the Metadata PDU has arrived, so an earlier file of the same name is overwritten when the reception opens it and is not restored if the reception fails.
+
 ### Main Class Hierarchy
 
 CfdpManager ([CfdpManager.hpp](../CfdpManager.hpp))
