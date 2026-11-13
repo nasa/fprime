@@ -57,6 +57,13 @@ One campaign prompt drives all four lanes (the RfR lane as a clean runner
 sub-session or a human at the keyboard); stages never run concurrently on
 the same UUT SHA.
 
+The Component Development Checklist travels with the SDD: `docs/checklist.md`
+beside it, linked from the SDD's last line (`Component Development Checklist: [checklist.md](checklist.md)`).
+It is filled by the checklist skills at three points — `fprime-checklist-design`
+before **Approve SDD**, `fprime-checklist-implementation` at DEVELOPMENT exit,
+`fprime-checklist-closeout` after **Read QL** (auditing every tool-decided
+row) — and is an attachment to those reviews, not a third review.
+
 ## 2. Standing rules
 
 - **Requirements first.** Tests derive from requirements, the SDD and

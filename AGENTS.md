@@ -94,6 +94,10 @@ relevant one instead of improvising:
 - Writing unit tests: `fprime-unit-testing`.
 - Filling the component development checklist from CodeQL/component-checks
   evidence: `fprime-component-checklist-review`.
+- Filling the checklist in step with development (after design, after unit
+  tests, at close-out, each deciding only the rows the tool queues):
+  `fprime-checklist-design`, `fprime-checklist-implementation`,
+  `fprime-checklist-closeout`.
 - Driving development to convergence through local test-and-review
   iterations: `fprime-iterative-development` (requires explicit user
   approval before use).
