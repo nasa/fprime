@@ -67,6 +67,21 @@ UNCHECKED, it is never argued into a YES.
    step each waits on. Commit `docs/checklist.md` and `docs/checklist.json`
    with the component.
 
+## Notes discipline
+
+The rendered table is read by people; keep it sparse.
+
+- **YES**: no note. The tool's own rule pointer (`R8 pass`, `` `cpp/fprime/no-printf` 0 findings ``)
+  is the only text a YES row carries; your `--note` (one clause, the ids you
+  checked) is stored in the JSON for traceability and is not rendered.
+- **NO**: one line, what is wrong and where — `file:line`, requirement id or
+  table — and the fix in a few words. No requirement-by-requirement walks, no
+  restating the tool's finding, no "Confirmed:" prefixes.
+- **N/A**: one clause stating why the item does not apply.
+- **UNCHECKED**: name the process step that has not been performed.
+- Audits that confirm the tool's verdict are silent in the table; an override
+  renders as one `Audit (...)` line from your `--note`.
+
 ## Rules
 
 - An audit reads the evidence; it does not re-run the analysis to make a

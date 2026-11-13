@@ -51,8 +51,8 @@ run coverage, or touch the component.
        --item 1.4 --status YES --note "REQ-003/REQ-007 bound all buffers; no heap after init (SDD §3.4)."
    ```
 
-   `--status` is YES, NO or N/A; NO and N/A need a `--note` that cites the
-   requirement ids or SDD section. `--from decisions.json` records a batch
+   `--status` is YES, NO or N/A; NO and N/A take a one-line `--note`
+   (see Notes discipline). `--from decisions.json` records a batch
    (`[{"id","status","notes"}]`). The tool stamps each decision with the
    commit and the section-1/2 fingerprint so later stages know when the SDD
    or model changed under it.
@@ -61,6 +61,21 @@ run coverage, or touch the component.
    Hand-off section says *Nothing to review at the design stage*. Report the
    totals line and every row that is NO, with its note, to the user; tool NOs
    (e.g. a missing SDD table) are fixed in the SDD/model, not in the checklist.
+
+## Notes discipline
+
+The rendered table is read by people; keep it sparse.
+
+- **YES**: no note. The tool's own rule pointer (`R8 pass`, `` `cpp/fprime/no-printf` 0 findings ``)
+  is the only text a YES row carries; your `--note` (one clause, the ids you
+  checked) is stored in the JSON for traceability and is not rendered.
+- **NO**: one line, what is wrong and where — `file:line`, requirement id or
+  table — and the fix in a few words. No requirement-by-requirement walks, no
+  restating the tool's finding, no "Confirmed:" prefixes.
+- **N/A**: one clause stating why the item does not apply.
+- **UNCHECKED**: name the process step that has not been performed.
+- Audits that confirm the tool's verdict are silent in the table; an override
+  renders as one `Audit (...)` line from your `--note`.
 
 ## Rules
 

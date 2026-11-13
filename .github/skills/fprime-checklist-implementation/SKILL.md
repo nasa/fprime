@@ -49,8 +49,8 @@ behind (`coverage/summary.txt`), never produced here.
    (array sizes, `FW_ASSERT` limits, config constants, argument ranges) and the
    test that exercises the limit and one past it.
 
-3. Record with `decide` (`--status YES|NO|N/A`, `--note` citing file:line,
-   requirement id or test name; `--from` for a batch). Stale rows are recorded
+3. Record with `decide` (`--status YES|NO|N/A`, a one-line `--note` (file:line,
+   requirement id or test name); `--from` for a batch). Stale rows are recorded
    the same way; the new decision replaces the old one and is stamped with the
    current fingerprint.
 
@@ -58,6 +58,21 @@ behind (`coverage/summary.txt`), never produced here.
    Report the totals line, every NO with its note, and the UNCHECKED rows that
    wait on a process step not yet performed (coverage, leak check, topology
    build, CI) — say which step, do not perform it.
+
+## Notes discipline
+
+The rendered table is read by people; keep it sparse.
+
+- **YES**: no note. The tool's own rule pointer (`R8 pass`, `` `cpp/fprime/no-printf` 0 findings ``)
+  is the only text a YES row carries; your `--note` (one clause, the ids you
+  checked) is stored in the JSON for traceability and is not rendered.
+- **NO**: one line, what is wrong and where — `file:line`, requirement id or
+  table — and the fix in a few words. No requirement-by-requirement walks, no
+  restating the tool's finding, no "Confirmed:" prefixes.
+- **N/A**: one clause stating why the item does not apply.
+- **UNCHECKED**: name the process step that has not been performed.
+- Audits that confirm the tool's verdict are silent in the table; an override
+  renders as one `Audit (...)` line from your `--note`.
 
 ## Rules
 
