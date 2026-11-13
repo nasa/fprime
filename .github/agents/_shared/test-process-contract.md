@@ -355,8 +355,8 @@ the human waived it by name in the ledger.
 
 The release description document is built by a program independent of
 `fth` from: the SSDD; the inventory; per new component the final
-`ql.zip` + sha256, the component checklist
-(`fprime-component-checklist-review`) and the campaign ledger; the
+`ql.zip` + sha256, the component's `docs/checklist.md` as
+`fprime-checklist-closeout` left it (§1) and the campaign ledger; the
 system `ql.zip` + sha256; the project ledger. It verifies every hash,
 refuses a missing or unverifiable input, and renders: the component
 table (class, origin, SHAs, links to SDD, checklist, QL, coverage,

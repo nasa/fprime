@@ -35,11 +35,12 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
 | Bench facts | yes | As `fprime-development-campaign` §0, for the whole testbed. |
 | Component review | no | Names of new components the human will gate themselves (default: none — the project session is the approver, contract §9.2). |
 | Review bound | no | `review rounds: N` for every design loop. |
+| Skills source | no | Repository and ref the contract, agents and skills are read from. Default `nasa/fprime` `devel`; a campaign trialling unmerged skills names the branch or PR, and passes it to every child. |
 | Master seed | later | Requested only when the FINAL RUN-FOR-RECORD lane is about to start (contract §9.3). |
 
 ## 1. Setup (anchor session)
 
-1. Read fresh from `nasa/fprime` `devel`: the contract, `phase-review-loop.md`,
+1. Read fresh from the skills source: the contract, `phase-review-loop.md`,
    `fprime-development.agent.md`, and every skill named below. Clone the
    project repository and the catalogs at their refs.
 2. Open the **project ledger**; every lane and every child campaign's
@@ -136,8 +137,8 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
     the ledger.
 20. **RDD assembly** by the RDD tool (independent of `fth`; contract §9.5
     names its inputs and refusals): the SSDD, the inventory, every
-    component package (`ql.zip` + sha256 + checklist), the system `ql.zip`,
-    the ledgers. The tool verifies every hash and refuses a missing input;
+    component package (`ql.zip` + sha256, `docs/checklist.md` after
+    `fprime-checklist-closeout`), the system `ql.zip`, the ledgers. The tool verifies every hash and refuses a missing input;
     nothing is hand-assembled. Until the tool exists, the campaign stops
     here and reports the input set — it does not write the RDD by hand.
 21. **Gate 2 — Read RDD (block).** Deliver the tool-built RDD and its

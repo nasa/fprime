@@ -35,10 +35,11 @@ Read it first, every time.
 | Approver | no | `human` (default) or `project-campaign` (contract §9.2). |
 | Seed | later | Requested only when the RUN-FOR-RECORD lane is about to start; `human` or `derived` per contract §9.3. Never sent with the request. |
 | Review bound | no | `review rounds: N` for the DESIGN loops (default per `_shared/phase-review-loop.md`). |
+| Skills source | no | Repository and ref the contract, agents and skills are read from. Default `nasa/fprime` `devel`; a campaign trialling unmerged skills names the branch or PR. |
 
 ## 1. Setup (anchor session)
 
-1. Read fresh from `nasa/fprime` `devel`: the contract,
+1. Read fresh from the skills source: the contract,
    `_shared/phase-review-loop.md`, `fprime-development.agent.md`, and the
    lane skills below. Clone the UUT and deployment repositories.
 2. Identities and bench access follow the repositories' workflows and the
@@ -60,13 +61,16 @@ Read it first, every time.
    `design-principles-review`); test design (`fprime-system-test-design`,
    unit-test list per `fprime-component-unit-test`; reviewed by
    `system-test-review` Mode A). Coverage targets and the image-version
-   policy are set in the plan here.
+   policy are set in the plan here. When the test-design loop closes,
+   `fprime-checklist-design` creates `docs/checklist.md` beside the SDD
+   (contract §1, checklist paragraph).
 6. Sub-sessions: one reviewer child per reviewer agent, reused across
    rounds, LOCAL ONLY. Elicitation findings are questions to the human,
    batched once per round.
 7. **Gate 1 — Approve SDD (block).** Hand the approver `docs/sdd.md` as the
-   single document (requirements table, design, Tests table); plan, fault
-   menu and review records as named attachments. Record the ruling in the
+   single document (requirements table, design, Tests table, linking
+   `docs/checklist.md`); plan, fault menu, checklist and review records as
+   named attachments. Record the ruling in the
    ledger. A rejection redoes the affected phase and returns here.
 
 ## 3. DEVELOPMENT lane — no gate
@@ -76,7 +80,9 @@ Read it first, every time.
    `fprime-component-implementation`, `fprime-cpp-design`,
    `fprime-component-unit-test` / `fprime-unit-testing`; local review by
    the review agents named there, LOCAL ONLY. Delivered code is reviewed
-   against the approved SDD under the pinned test configuration.
+   against the approved SDD under the pinned test configuration. When the
+   unit tests pass, `fprime-checklist-implementation` updates
+   `docs/checklist.md` (sections 3–4, anything `STALE`).
 9. Harness + integration tests: `fprime-system-test-harness` with
    `system-test-build` and `system-test-review` Mode B; dry run per that
    skill on the bench. Triage per the contract: harness defect → fix here;
@@ -111,7 +117,10 @@ Read it first, every time.
     checksum sidecar, the ledger and the RfR log as produced by the tooling.
     Independently verify the hash and the package's acceptance checklist
     (`fprime-run-for-record` §5a); report `[V]`/`[I]` facts only. Close out
-    the bench and say so. Campaign close per `fprime-run-for-record` §7.
+    the bench and say so. Campaign close per `fprime-run-for-record` §7,
+    then `fprime-checklist-closeout` finishes `docs/checklist.md` (section
+    5, anything `STALE`, audit of every tool-decided row) — the checklist
+    the RDD reads (contract §9.5).
 
 ## 6. Approver
 
