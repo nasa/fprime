@@ -74,6 +74,20 @@ module Svc {
     @ Ping output port
     output port pingOut: Svc.Ping
 
+    @ Data product ports (synchronous get/send)
+    import Fw.DataProductSync
+
+    # ----------------------------------------------------------------------
+    # Data products
+    # ----------------------------------------------------------------------
+
+    @ Record holding one parameter database entry: the serialized parameter ID
+    @ followed by the serialized parameter value bytes
+    product record PrmEntryRecord: U8 array id 0
+
+    @ Container for a snapshot of a range of parameter database entries
+    product container PrmEntryContainer id 0 default priority PrmDbCfg.DEFAULT_DP_PRIORITY
+
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------

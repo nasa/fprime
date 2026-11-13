@@ -55,6 +55,11 @@ void PrmDbImpl::configureSandbox(const char* directory) {
     this->m_sandboxDir = directory;
 }
 
+void PrmDbImpl::configureDp(FwSizeType bufferSize) {
+    FW_ASSERT(bufferSize > Fw::DpContainer::MIN_PACKET_SIZE, static_cast<FwAssertArgType>(bufferSize));
+    this->m_dpMaxDataSize = bufferSize - Fw::DpContainer::MIN_PACKET_SIZE;
+}
+
 void PrmDbImpl::applySandbox(Os::SandboxedFile& file) const {
     // Left unconfigured (fail-closed) when configureSandbox() was never called
     if (this->m_sandboxDir.length() > 0) {
@@ -361,6 +366,115 @@ void PrmDbImpl::PRM_COMMIT_STAGED_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     m_state = PrmDbFileLoadState::IDLE;
 
     this->log_ACTIVITY_HI_PrmDbCommitComplete();
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrmIdType startId, FwPrmIdType endId) {
+    if (startId > endId) {
+        this->log_WARNING_LO_PrmDpInvalidRange(startId, endId);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    if (!this->isConnected_productGetOut_OutputPort(0) || !this->isConnected_productSendOut_OutputPort(0) ||
+        (this->m_dpMaxDataSize == 0)) {
+        this->log_WARNING_HI_PrmDpBufferFailed(0);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    this->lock();
+    auto* db = this->getDbPtr(PrmDbType::DB_ACTIVE);
+    FW_ASSERT(db != nullptr);
+
+    bool anyInRange = false;
+    for (const auto& entry : *db) {
+        if ((entry.getKey() >= startId) && (entry.getKey() <= endId)) {
+            anyInRange = true;
+            break;
+        }
+    }
+
+    if (!anyInRange) {
+        this->unLock();
+        this->log_ACTIVITY_LO_PrmDpNoEntriesInRange(startId, endId);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        return;
+    }
+
+    // Single pass: chunk the in-range entries across as many containers as needed, each
+    // requested at the fixed size configured via configureDp(). An entry too large to fit
+    // in any container at that size is dropped with a throttled warning. A container
+    // allocation failure truncates the snapshot (with a warning) but does not fail the
+    // command, since a partial snapshot may have already been sent.
+    DpContainer container;
+    bool haveContainer = false;
+    U32 numRecords = 0;
+    U32 numContainers = 0;
+    WorkingBuffer buff;
+
+    for (const auto& entry : *db) {
+        const FwPrmIdType id = entry.getKey();
+        if ((id < startId) || (id > endId)) {
+            continue;
+        }
+
+        const FwSizeType recordDataSize = sizeof(FwPrmIdType) + entry.getValue().getSize();
+        const FwSizeType requiredSize = SIZE_OF_PrmEntryRecord_RECORD(recordDataSize);
+        if (requiredSize > this->m_dpMaxDataSize) {
+            this->log_WARNING_LO_PrmDpRecordTooLarge(id);
+            continue;
+        }
+
+        if (!haveContainer) {
+            const Fw::Success::T dpStatus = this->dpGet_PrmEntryContainer(this->m_dpMaxDataSize, container);
+            if (dpStatus != Fw::Success::SUCCESS) {
+                this->log_WARNING_HI_PrmDpBufferFailed(static_cast<U32>(this->m_dpMaxDataSize));
+                break;
+            }
+            haveContainer = true;
+            numContainers++;
+        }
+
+        buff.resetSer();
+        Fw::SerializeStatus serStat = buff.serializeFrom(id);
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+        serStat = buff.serializeFrom(entry.getValue().getBuffAddr(), entry.getValue().getSize(),
+                                     Fw::Serialization::OMIT_LENGTH);
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+
+        Fw::SerializeStatus recStat = container.serializeRecord_PrmEntryRecord(buff.getBuffAddr(), buff.getSize());
+        if (recStat == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+            // Current container is full: send it and start a fresh one for this entry
+            this->dpSend(container);
+            haveContainer = false;
+
+            const Fw::Success::T dpStatus = this->dpGet_PrmEntryContainer(this->m_dpMaxDataSize, container);
+            if (dpStatus != Fw::Success::SUCCESS) {
+                this->log_WARNING_HI_PrmDpBufferFailed(static_cast<U32>(this->m_dpMaxDataSize));
+                break;
+            }
+            haveContainer = true;
+            numContainers++;
+
+            // A fresh container has a full m_dpMaxDataSize of room, and requiredSize was
+            // already checked against m_dpMaxDataSize above, so this must succeed.
+            recStat = container.serializeRecord_PrmEntryRecord(buff.getBuffAddr(), buff.getSize());
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == recStat, static_cast<FwAssertArgType>(recStat));
+        } else {
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == recStat, static_cast<FwAssertArgType>(recStat));
+        }
+
+        numRecords++;
+    }
+
+    if (haveContainer) {
+        this->dpSend(container);
+    }
+
+    this->unLock();
+
+    this->log_ACTIVITY_HI_PrmDpComplete(startId, endId, numRecords, numContainers);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
