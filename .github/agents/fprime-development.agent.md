@@ -20,6 +20,7 @@ and orders them; do not improvise a different process.
 | A component: `.fpp` model, handlers, commands, telemetry, events, parameters, `test/ut/`, `test/int/` | Component | §2 |
 | A `Top/` directory, `instances.fpp`, `topology.fpp`, `*TopologyDefs.hpp`, a subtopology | Topology | §3 |
 | `CMakeLists.txt`, `cmake/`, toolchains, platforms, build targets, autocoder registration | Build system | §4 |
+| A whole project or deployment to be qualified: system requirements, which components are inherited or new, a release description document | Project | `fprime-project-campaign` (contract §9) |
 
 Mixed tasks (e.g. a new component that must fly in a deployment) run
 §2 to completion first, then §3 to wire the result in; build-system

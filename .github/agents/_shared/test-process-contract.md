@@ -6,9 +6,9 @@ agents behave and hand work to each other. Every agent in the flow —
 `test-runner`, `test-auditor` — opens its body with "Apply the test
 process contract in `_shared/test-process-contract.md`." and follows
 the rules below. If a per-agent file disagrees with this contract, the
-contract wins. These agents and skills live on `lestarch-autobot/fprime`
-branch `test-process-agents-skills` (nasa/fprime PR #6229) until merged into
-`nasa/fprime` `devel`.
+contract wins. The project-level campaign (`fprime-project-campaign`) and
+the component campaign it runs (`fprime-development-campaign`) follow §9 in
+addition.
 
 The flow exists to make AI-run testing **inspectable by a human who
 did not run it**: the human reviews a plan and a small harness up
@@ -289,3 +289,84 @@ Before any stage-3 step a host shows the pinned commit in
 `pip show fprime-testing-harness` (or `pip freeze`); the manifest and
 every report name it. A change of pin after the manifest is frozen is a
 plan change (§2).
+
+## 9. Project level
+
+A project campaign (`fprime-project-campaign`) qualifies a whole
+deployment. It runs the §1 lanes once per new component and adds the
+rules below; where this section is silent, §1–§8 apply unchanged.
+
+### 9.1 Lanes and gates
+
+SYSTEM DESIGN (system requirements · decomposition · allocation · system
+test plan, each with its adversarial review) → human **Approve SSDD** →
+BASE DEPLOYMENT (inherited components only) → human **Master seed** (at
+the first rehearsed package) → COMPONENT CAMPAIGNS (one §1 campaign per new
+component, test configuration = the base deployment) → SYSTEM TESTS
+(harness on the system plan, system package) → FINAL RUN-FOR-RECORD (every
+component re-run, then the system) → RDD → human **Read RDD**. Two human
+reviews, two human inputs.
+The SSDD (`docs/ssdd.md` in the deployment repository) is the UUT
+document of the system package: its `## Requirements` and `## Tests`
+tables are what the tooling reads (§3); `## Architecture`,
+`## Allocation` and `## Inventory` are defined by
+`fprime-system-decomposition` and `fprime-system-allocation`. Modifying
+an inherited component is a **red flag**: it appears by name in the SSDD
+`### Red flags` list and is approved by name at Approve SSDD, or it does
+not happen.
+
+### 9.2 Delegated approver
+
+A component campaign started by a project campaign names
+`approver: project-campaign`. Its two gates (Approve SDD, Read QL) are
+then performed by the project session against the SSDD and recorded as
+one ledger line each naming the artifact and the check
+(`fprime-development-campaign` §6); the human reads them in the RDD. The
+human may name components to gate themselves (`approver: human`). A
+delegated approver never closes what §6 routes to the human: an unseal
+row needing human triage, a plan-change diff, an elicitation question.
+
+### 9.3 Seeds
+
+One human-held **master seed** per project campaign, requested once, when
+the first package of the campaign has passed its seed-free rehearsal
+(`fprime-run-for-record` §3) and never earlier. The seed of each run —
+each child's first run, each final re-run, the system run — is derived by
+the human, in a shell of their own, as
+`sha256("<master>:<campaign-id>")` (lower-case hex of the UTF-8 bytes).
+The master is never typed on a command line — it would land in the shell
+history; read it un-echoed and derive in one pipeline, e.g.
+`read -rs m; (umask 077; printf '%s' "$m:<campaign-id>" | sha256sum | cut -d' ' -f1 > seed); unset m`,
+so only the derived seed is written, to the `chmod 600` file
+`fth draw --seed-file` reads and deletes; `campaign-id`
+is the inventory id of the component (≤ 8 characters), `<id>:final` for
+its final re-run, `system` for the system run, and is recorded in the
+ledger. The master never leaves the human: the derived seed that
+`unseal` publishes reveals nothing about it or about any other run's
+draw, so one master serves every run. §4 is unchanged — no agent,
+including the project session, holds the master or a derived seed.
+
+### 9.4 Final run and staleness
+
+Before the RDD, every component package is rebuilt against the frozen
+deployment (`fth deliver`, seed-free rehearsal) and run for record
+again, then the system package is run; the component results in the RDD
+are those final runs. A component result is **STALE** when its manifest
+`repos[]` SHA differs from the system manifest's for any shared
+repository, or when it was not re-run after the deployment froze. The
+RDD marks `STALE` rows and is not handed to the human with one unless
+the human waived it by name in the ledger.
+
+### 9.5 RDD
+
+The release description document is built by a program independent of
+`fth` from: the SSDD; the inventory; per new component the final
+`ql.zip` + sha256, the component's `docs/checklist.md` as
+`fprime-checklist-closeout` left it (§1) and the campaign ledger; the
+system `ql.zip` + sha256; the project ledger. It verifies every hash,
+refuses a missing or unverifiable input, and renders: the component
+table (class, origin, SHAs, links to SDD, checklist, QL, coverage,
+VnV), the system VnV matrix over `## Requirements`, system test
+coverage, the roll-up of every unseal table, `STALE` and waived rows,
+open items. Nothing in it is written or edited by an agent; the ledgers
+are attached as produced.
