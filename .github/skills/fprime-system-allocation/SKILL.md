@@ -41,7 +41,8 @@ human must see and approve by name.
 |---|---|---|
 | `INHERITED` | Used as published at `repo@ref`; configured through parameters, `settings.ini`, topology or a project `config/` override only | Wired in the base deployment; evidence = its upstream SDD, checklist and tests at that ref; qualified by the system tests that touch it |
 | `INHERITED-MODIFIED` | Needs a change to its source (behaviour, interface, bug fix) — **red flag** | Explicitly listed in the SSDD with justification; approved by the human at the system design gate by name; change made through `fprime-maintenance` with an upstream issue, and the component re-qualified on the standalone stage-2 path (contract §1 row 2) |
-| `NEW` | No catalog component provides the function | One `fprime-development-campaign` per component, test configuration = the base deployment |
+| `NEW` | A component no catalog provides | One `fprime-development-campaign` per component, test configuration = the base deployment |
+| `NEW-SUBTOPOLOGY` | A subtopology no catalog provides; its members are elements of their own (inherited or new) | Built with `fprime-topology-development` §5 in the deployment once its members exist; no component campaign; qualified by the system tests on its allocation rows |
 
 A *project adapter* — a new thin component that wraps an inherited one so
 the inherited one stays unchanged — is `NEW` and is the preferred answer
@@ -58,7 +59,8 @@ when an inherited component is almost right (AL-3).
    project adapter; (d) fits only with a source change; (e) no fit. (a)–(b)
    → `INHERITED`; (c) → `INHERITED` + a `NEW` adapter; (d) →
    `INHERITED-MODIFIED` with the change described in one line and the
-   reason (b) and (c) fail; (e) → `NEW`.
+   reason (b) and (c) fail; (e) → `NEW` for a component, `NEW-SUBTOPOLOGY`
+   for a subtopology (list its members as elements of their own).
 3. **Pin.** Every inherited element gets `repo@ref` (tag or sha; a branch
    name is not a pin) — the same refs the base deployment and the RfR
    manifests will carry (`repos[]`, contract §3).
@@ -74,10 +76,10 @@ when an inherited component is almost right (AL-3).
    change, why (b) and (c) failed, the upstream issue to be filed, and the
    re-qualification path. An empty list says `None`.
 6. **Hand off.** The `NEW` rows (with campaign ids `<element>` ≤ 8
-   characters, used as `campaign-id` in contract §9) and the pinned
-   `INHERITED` rows go to the base-deployment lane of
-   `fprime-project-campaign`; red flags go to the human gate as its first
-   item.
+   characters, used as `campaign-id` in contract §9) go to the component
+   campaigns lane of `fprime-project-campaign`; the pinned `INHERITED` rows
+   and the `NEW-SUBTOPOLOGY` rows go to its base-deployment lane; red flags
+   go to the human gate as its first item.
 
 ## 4. Rules (reviewer's checklist, `system-allocation-review`)
 
@@ -95,13 +97,18 @@ when an inherited component is almost right (AL-3).
 - **AL-5 Evidence recorded.** Every `INHERITED` row states SDD and
   checklist presence; a missing item moves the allocated requirement's
   verification to a system test (the allocation table is updated, not the
-  requirement).
+  requirement) and the system test plan must then carry a test for it
+  (`fprime-project-campaign` lane 2 step 7).
 - **AL-6 Allocation preserved.** Every REQ id of the allocation table
   appears on exactly the inventory rows that implement its target; a REQ
   whose target became two elements (adapter + inherited) lists both.
 - **AL-7 Platform fit.** Each inherited element is known to build for the
   target platform (`Os` implementation, toolchain, memory) or the row says
   `platform: unverified` and the base-deployment lane verifies it first.
+- **AL-8 Components and subtopologies told apart.** A `NEW` row is a
+  component (one `.fpp` component, handlers, unit tests); a new subtopology
+  is `NEW-SUBTOPOLOGY` with its members listed — a subtopology sent to a
+  component campaign is a must-fix.
 
 ## Anti-patterns
 

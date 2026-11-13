@@ -75,11 +75,14 @@ Read it first, every time.
 
 ## 3. DEVELOPMENT lane — no gate
 
-8. Code + unit tests: `fprime-iterative-development` Phase 2 entered at
-   implementation (its §0 approval is the SDD approval), with
-   `fprime-component-implementation`, `fprime-cpp-design`,
-   `fprime-component-unit-test` / `fprime-unit-testing`; local review by
-   the review agents named there, LOCAL ONLY. Delivered code is reviewed
+8. Code + unit tests: `fprime-development.agent.md` §2 phases 4–6 —
+   `fprime-component-implementation` with `fprime-cpp-design`,
+   `fprime-component-unit-test` / `fprime-unit-testing`,
+   `fprime-component-integration-test` — then one local review by the
+   review agents `fprime-iterative-development` names, LOCAL ONLY, bounded
+   per `phase-review-loop.md`. `fprime-iterative-development` itself runs
+   only if its §0 loop plan was attached at gate 1 and approved there with
+   the SDD (no third gate); without that approval the lane is single-pass. Delivered code is reviewed
    against the approved SDD under the pinned test configuration. When the
    unit tests pass, `fprime-checklist-implementation` updates
    `docs/checklist.md` (sections 3–4, anything `STALE`).

@@ -21,9 +21,14 @@ The development campaign, one level up. Six lanes, two human reviews
 the source of truth. Read both first, every time.
 
 ```
-SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
-→ SYSTEM TESTS → Master seed → FINAL RUN-FOR-RECORD → RDD → Read RDD
+SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → Master seed → COMPONENT
+CAMPAIGNS → SYSTEM TESTS → FINAL RUN-FOR-RECORD → RDD → Read RDD
 ```
+
+The master seed is requested once, when the first package of the campaign
+(normally the first child's) has passed its seed-free rehearsal; every run
+after that — child, final re-run, system — needs only its `campaign-id`
+(contract §9.3).
 
 ## 0. Inputs
 
@@ -36,7 +41,7 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
 | Component review | no | Names of new components the human will gate themselves (default: none — the project session is the approver, contract §9.2). |
 | Review bound | no | `review rounds: N` for every design loop. |
 | Skills source | no | Repository and ref the contract, agents and skills are read from. Default `nasa/fprime` `devel`; a campaign trialling unmerged skills names the branch or PR, and passes it to every child. |
-| Master seed | later | Requested only when the FINAL RUN-FOR-RECORD lane is about to start (contract §9.3). |
+| Master seed | later | Requested once, when the first package has passed its seed-free rehearsal — never with the ask (contract §9.3). The human keeps it and derives every run's seed from it. |
 
 ## 1. Setup (anchor session)
 
@@ -60,10 +65,14 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
    `system-allocation-review`: SSDD `## Inventory` + `### Red flags`.
 7. **System test plan** — `fprime-system-test-design` with the SSDD as the
    UUT document (its `## Requirements` and `## Tests` tables are what `fth`
-   reads, contract §3): every `subtopology`, `set` and `system` allocation
-   row has at least one test; `component` rows are covered by their child
-   campaigns and listed as such in the not-covered list's `inherited`
-   subsection. Reviewed by `system-test-review` Mode A. Deployment = the
+   reads, contract §3). Coverage follows the allocation's *final*
+   verification level after step 6: every row whose verification is a
+   system test has at least one test — all `subtopology`, `set` and
+   `system` rows, every `component` row allocated to an `INHERITED`,
+   `INHERITED-MODIFIED` or `NEW-SUBTOPOLOGY` element, and any row AL-5
+   moved. The only rows without a system test are `component` rows owned
+   by a `NEW` element's child campaign; they are listed in the plan's
+   not-covered list under `delegated: <campaign-id>`. Reviewed by `system-test-review` Mode A. Deployment = the
    base deployment to be built in lane 3; L0 is `desk-checked`.
 8. Sub-sessions: one reviewer child per reviewer agent, reused across
    rounds, LOCAL ONLY. Elicitation findings batched once per round.
@@ -82,7 +91,10 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
     Include the coverage-dump component the tooling requires for
     `fth dev-campaign` (`fprime-system-test-harness` §3a). New components
     are not wired yet; where the topology needs a placeholder, use the
-    tester component of `fprime-system-test-harness`.
+    tester component of `fprime-system-test-harness`. A `NEW-SUBTOPOLOGY`
+    whose members are all inherited is built here
+    (`fprime-topology-development` §5); one with a `NEW` member is built in
+    lane 4 step 15 once that member's campaign has exited.
 11. `INHERITED-MODIFIED` changes (approved at gate 1 only): `fprime-maintenance`,
     upstream issue filed, standalone stage-2 plan (contract §1 row 2) run
     before the component is treated as inherited.
@@ -93,7 +105,8 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
 
 ## 4. COMPONENT CAMPAIGNS lane — no human gate by default
 
-13. One `fprime-development-campaign` child per `NEW` inventory row, in the
+13. One `fprime-development-campaign` child per `NEW` (component) inventory
+    row — never for a `NEW-SUBTOPOLOGY` — in the
     order the allocation's dependencies dictate (a component another one's
     tests need goes first). Kickoff: the ask (verbatim), the component's
     allocated REQ ids and the SSDD, the test configuration (step 12),
@@ -102,12 +115,16 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
     rules, LOCAL ONLY.
 14. Each child's two gates are performed by this session per
     `fprime-development-campaign` §6; every ruling is a ledger line that
-    names the artifact and the check. Children run sequentially on one bench;
+    names the artifact and the check. Each child's seed is `derived`
+    (`fprime-development-campaign` §4 step 12) with `campaign-id = <id>`;
+    the first child to pass its seed-free rehearsal triggers the one
+    master-seed request. Children run sequentially on one bench;
     a child's harness lands in the project repository on a per-component
     branch merged into the base deployment branch when the child exits.
 15. Exit: every child's QL package verified and its UUT SHA, package identity
     and ledger recorded in the project ledger; all new components wired into
-    the deployment (`fprime-topology-development` §6).
+    the deployment and the remaining `NEW-SUBTOPOLOGY` rows built from them
+    (`fprime-topology-development` §5–§6).
 
 ## 5. SYSTEM TESTS lane — no gate
 
@@ -122,10 +139,9 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
 17. `fth deliver` for the system package; seed-free rehearsal
     (`fprime-run-for-record` §3). Freeze the deployment SHA.
 
-## 6. FINAL RUN-FOR-RECORD lane — human input **Master seed**, then **Read RDD**
+## 6. FINAL RUN-FOR-RECORD lane — ends at gate 2, **Read RDD**
 
-18. Request the master seed (contract §9.3) only now. For every `NEW`
-    component, re-run its RELEASE lane against the frozen deployment (new
+18. For every `NEW` component, re-run its RELEASE lane against the frozen deployment (new
     manifest: `fth deliver`, rehearsal) and its RfR with the derived seed
     `campaign-id = <id>:final`; then the system RfR with `campaign-id =
     system`. Each RfR in a clean runner child, one bench actor at a time,
@@ -153,7 +169,7 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
 - Lanes run in order; the deployment SHA does not change after lane 5
   exits; no two RfRs run concurrently on the bench.
 - Exactly two human reviews (SSDD, RDD) and two inputs (ask, master
-  seed) unless the human named components to gate themselves (then two
+  seed — requested once, at the first rehearsed package) unless the human named components to gate themselves (then two
   more per named component). Any other return to the human is a red flag,
   a plan-change diff, a tooling refusal, an unseal row needing triage, or a
   bench fact.
@@ -170,8 +186,8 @@ SYSTEM DESIGN → Approve SSDD → BASE DEPLOYMENT → COMPONENT CAMPAIGNS
 - Approving a child gate without the ledger line naming the evidence;
   gating a component the human asked to gate themselves.
 - Deriving, holding or forwarding any seed in this session or a child
-  other than the runner; asking for the master seed before every package
-  has passed its seed-free rehearsal.
+  other than the runner; asking for the master seed before the first
+  package has passed its seed-free rehearsal.
 - Handing over an RDD with an unwaived `STALE` row, or one not built by the
   RDD tool.
 - Everything `fprime-development-campaign` and contract §7 forbid.

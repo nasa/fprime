@@ -300,11 +300,12 @@ rules below; where this section is silent, §1–§8 apply unchanged.
 
 SYSTEM DESIGN (system requirements · decomposition · allocation · system
 test plan, each with its adversarial review) → human **Approve SSDD** →
-BASE DEPLOYMENT (inherited components only) → COMPONENT CAMPAIGNS (one
-§1 campaign per new component, test configuration = the base deployment)
-→ SYSTEM TESTS (harness on the system plan, system package) → human
-**Master seed** → FINAL RUN-FOR-RECORD (every component re-run, then the
-system) → RDD → human **Read RDD**. Two human reviews, two human inputs.
+BASE DEPLOYMENT (inherited components only) → human **Master seed** (at
+the first rehearsed package) → COMPONENT CAMPAIGNS (one §1 campaign per new
+component, test configuration = the base deployment) → SYSTEM TESTS
+(harness on the system plan, system package) → FINAL RUN-FOR-RECORD (every
+component re-run, then the system) → RDD → human **Read RDD**. Two human
+reviews, two human inputs.
 The SSDD (`docs/ssdd.md` in the deployment repository) is the UUT
 document of the system package: its `## Requirements` and `## Tests`
 tables are what the tooling reads (§3); `## Architecture`,
@@ -327,8 +328,10 @@ row needing human triage, a plan-change diff, an elicitation question.
 
 ### 9.3 Seeds
 
-One human-held **master seed** per project campaign, requested only when
-the FINAL RUN-FOR-RECORD lane starts. The seed of each run is derived by
+One human-held **master seed** per project campaign, requested once, when
+the first package of the campaign has passed its seed-free rehearsal
+(`fprime-run-for-record` §3) and never earlier. The seed of each run —
+each child's first run, each final re-run, the system run — is derived by
 the human, in a shell of their own, as
 `sha256("<master>:<campaign-id>")` (lower-case hex of the UTF-8 bytes,
 e.g. `printf '%s' "<master>:<campaign-id>" | sha256sum`), written to the

@@ -85,9 +85,10 @@ A requirement that needs more than one kind is two requirements
    one line per element, one row per requirement, no prose where a table
    serves.
 7. **Hand off** the element list (step 2) and the allocation (step 4) to
-   `fprime-system-allocation`; the system test plan takes every
-   `subtopology`, `set` and `system` row plus the integration rows of
-   `component` kinds.
+   `fprime-system-allocation`; the system test plan takes every row whose
+   final verification (after allocation) is a system test — every
+   `subtopology`, `set` and `system` row and every `component` row not
+   owned by a new component's own campaign.
 
 ## 4. Rules (reviewer's checklist, `system-decomposition-review`)
 
