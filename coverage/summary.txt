@@ -145,7 +145,7 @@ googletest/googletest/include/gtest/internal/gtest-internal.h
 googletest/googletest/include/gtest/internal/gtest-param-util.h
                                              151     138    91%   325-326,344,350,354-355,389,584,588,610-611,710-711
 googletest/googletest/include/gtest/internal/gtest-port.h
-                                              15       8    53%   904,910-911,967,1065-1066,2102
+                                              15       9    60%   904,910-911,1065-1066,2102
 Os/ConditionVariableInterface.hpp              6       6   100%
 Os/Console.cpp                                42      39    92%   39-41
 Os/Console.hpp                                 2       2   100%
@@ -174,7 +174,7 @@ Os/Generic/PriorityMemQueue.cpp              352     318    90%   79-80,110-111,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 166     139    83%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,262-263
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     155    91%   21-26,28,248-249,253,311,318,343,346
+Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,248-249,253,311,318,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -449,5 +449,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      26750   22988    85%
+TOTAL                                      26750   22990    85%
 ------------------------------------------------------------------------------
