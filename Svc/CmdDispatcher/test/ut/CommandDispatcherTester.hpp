@@ -28,6 +28,8 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
     void runClearCommandTracking();
     void runCommandQueueOverflow();
     void runConcurrentQueueOverflow();
+    void runCommandStatusQueueOverflow();
+    void runOwnCommandQueueOverflow();
     void runNonZeroPortDispatch();
 
     void registerBuiltinCommands();
@@ -51,6 +53,12 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
 
     //! Task routine that invokes the seqCmdBuff overflow hook repeatedly on its own thread
     static void overflowHookTask(void* ptr);
+
+    //! Fill the component queue with NO_OP command buffers without dispatching any of them
+    void fillCommandQueue();
+
+    //! Dispatch messages until the component queue is empty, including messages queued while draining
+    void drainCommandQueue();
 
     Svc::CommandDispatcherImpl& m_impl;
 
