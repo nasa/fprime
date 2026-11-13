@@ -110,6 +110,13 @@ relevant one instead of improvising:
   `fprime-system-test-design` (plan), `fprime-system-test-harness`
   (harness), `fprime-test-oracle` (pass rules and checkers),
   `fprime-run-for-record` (seal, run, audit, unseal).
+- Running a component campaign end to end (design, development, release,
+  run-for-record; two human gates): `fprime-development-campaign`.
+- Qualifying a whole project or deployment (system requirements,
+  decomposition and inheritance into an SSDD, base deployment, one campaign
+  per new component, system tests, final run-for-record, RDD):
+  `fprime-project-campaign`, which sequences `fprime-system-decomposition`
+  and `fprime-system-allocation` and the skills above.
 - Deriving generated C++ names or wiring from the `.fpp` without reading autocode: `fprime-fpp-navigation`.
 
 Pull-request review is performed by the multi-agent flow in
@@ -125,7 +132,10 @@ existing unit is entered through `system-test-design.agent.md`
 (plan), `system-test-build.agent.md` (harness), and
 `test-runner.agent.md` / `test-auditor.agent.md` (run-for-record),
 with `system-test-review.agent.md` as the adversarial reviewer; all five
-follow `.github/agents/_shared/test-process-contract.md`.
+follow `.github/agents/_shared/test-process-contract.md`. A system
+decomposition and its inheritance partition are reviewed through
+`system-decomposition-review.agent.md` and
+`system-allocation-review.agent.md` (contract §9).
 
 ## Contributing
 
