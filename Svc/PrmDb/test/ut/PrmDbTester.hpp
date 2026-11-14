@@ -61,7 +61,7 @@ class PrmDbTester : public PrmDbGTestBase {
     //!
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
                               U32 key                    /*!< Value to return to pinger*/
-    );
+    ) override;
     Svc::PrmDbImpl& m_impl;
     void resetEvents();
 
