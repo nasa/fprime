@@ -387,21 +387,6 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     auto* db = this->getDbPtr(PrmDbType::DB_ACTIVE);
     FW_ASSERT(db != nullptr);
 
-    bool anyInRange = false;
-    for (const auto& entry : *db) {
-        if ((entry.getKey() >= startId) && (entry.getKey() <= endId)) {
-            anyInRange = true;
-            break;
-        }
-    }
-
-    if (!anyInRange) {
-        this->unLock();
-        this->log_ACTIVITY_LO_PrmDpNoEntriesInRange(startId, endId);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-        return;
-    }
-
     // Single pass: chunk the in-range entries across as many containers as needed, each
     // requested at the fixed size configured via configureDp(). An entry too large to fit
     // in any container at that size is dropped with a throttled warning. A container
@@ -409,6 +394,7 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     // command, since a partial snapshot may have already been sent.
     DpContainer container;
     bool haveContainer = false;
+    bool anyInRange = false;
     U32 numRecords = 0;
     U32 numContainers = 0;
     WorkingBuffer buff;
@@ -418,6 +404,7 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
         if ((id < startId) || (id > endId)) {
             continue;
         }
+        anyInRange = true;
 
         const FwSizeType recordDataSize = sizeof(FwPrmIdType) + entry.getValue().getSize();
         const FwSizeType requiredSize = SIZE_OF_PrmEntryRecord_RECORD(recordDataSize);
@@ -474,7 +461,11 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
 
     this->unLock();
 
-    this->log_ACTIVITY_HI_PrmDpComplete(startId, endId, numRecords, numContainers);
+    if (!anyInRange) {
+        this->log_ACTIVITY_LO_PrmDpNoEntriesInRange(startId, endId);
+    } else {
+        this->log_ACTIVITY_HI_PrmDpComplete(startId, endId, numRecords, numContainers);
+    }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
