@@ -67,6 +67,15 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param directory directory that all parameter file accesses are restricted to.
     void configureSandbox(const char* directory);
 
+    //!  \brief PrmDb data product configure method
+    //!
+    //!  Sets the buffer size used for data product container requests made by PRM_REQUEST_DP.
+    //!  This must match the size of the buffer pool (e.g. Svc::BufferManager bin) backing
+    //!  productGetOut. Until called, PRM_REQUEST_DP fails with EXECUTION_ERROR.
+    //!
+    //!  \param bufferSize size, in bytes, of the buffer pool backing productGetOut
+    void configureDp(FwSizeType bufferSize);
+
     //!  \brief PrmDb file read function
     //!
     //!  The readFile function reads the set of parameters from the file passed in to
@@ -96,6 +105,10 @@ class PrmDbImpl final : public PrmDbComponentBase {
   private:
     Fw::String m_fileName;    //!< filename for parameter storage
     Fw::String m_sandboxDir;  //!< directory restriction for all file access (empty = all opens rejected)
+
+    //!< Maximum data product payload size per container, derived from configureDp()'s bufferSize.
+    //!< Zero (the default) means data product generation has not been configured.
+    FwSizeType m_dpMaxDataSize = 0;
 
     PrmDbFileLoadState m_state;  // Current file load state of the parameter database
 
@@ -222,6 +235,22 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param opCode The opcode of this commands
     //!  \param cmdSeq The sequence number of the command
     void PRM_COMMIT_STAGED_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
+
+    //!  \brief PrmDb PRM_REQUEST_DP command handler
+    //!
+    //!  This function requests a data product snapshot of active-database
+    //!  parameter entries whose IDs fall within [startId, endId]. The database
+    //!  is traversed once; containers are requested at the fixed size configured via
+    //!  configureDp(), and the snapshot is chunked across as many containers as needed.
+    //!  An entry too large to fit in any container at the configured size is dropped
+    //!  with a throttled warning. If a container allocation fails, the snapshot is
+    //!  truncated with a warning but the command still responds OK.
+    //!
+    //!  \param opCode The opcode of this commands
+    //!  \param cmdSeq The sequence number of the command
+    //!  \param startId The first parameter ID in the requested range (inclusive)
+    //!  \param endId The last parameter ID in the requested range (inclusive)
+    void PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrmIdType startId, FwPrmIdType endId);
 
     //! ----------------------------------------------------------------------
     //! Helpers for database management
