@@ -1543,6 +1543,7 @@ void PrmDbTester::runShorterSaveDoesNotCorrupt() {
 }
 
 Fw::Success::T PrmDbTester::productGet_handler(FwDpIdType id, FwSizeType dataSize, Fw::Buffer& buffer) {
+    EXPECT_EQ(id, PrmDbImpl::ContainerId::PrmEntryContainer);
     this->pushProductGetEntry(id, dataSize);
     this->m_dpGetCallCount++;
 
@@ -1639,7 +1640,7 @@ void PrmDbTester::runPrmRequestDpNominal() {
     ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 20, Fw::CmdResponse::OK);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PrmDpComplete_SIZE(1);
-    ASSERT_EVENTS_PrmDpComplete(0, idInRange1, idInRange2, 2, 1);
+    ASSERT_EVENTS_PrmDpComplete(0, idInRange1, idInRange2, 2, 1, 0);
 
     ASSERT_PRODUCT_GET_SIZE(1);
     ASSERT_PRODUCT_SEND_SIZE(1);
@@ -1649,12 +1650,12 @@ void PrmDbTester::runPrmRequestDpNominal() {
     ASSERT_EQ(this->m_numDecodedRecords, static_cast<FwSizeType>(2));
 
     EXPECT_EQ(this->m_decodedRecords[0].id, idInRange1);
-    U32 decodedVal1;
+    U32 decodedVal1 = 0;
     EXPECT_EQ(this->m_decodedRecords[0].value.deserializeTo(decodedVal1), Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(decodedVal1, valInRange1);
 
     EXPECT_EQ(this->m_decodedRecords[1].id, idInRange2);
-    U32 decodedVal2;
+    U32 decodedVal2 = 0;
     EXPECT_EQ(this->m_decodedRecords[1].value.deserializeTo(decodedVal2), Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(decodedVal2, valInRange2);
 }
@@ -1743,7 +1744,7 @@ void PrmDbTester::runPrmRequestDpBufferFailure() {
         0, static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_impl.m_dpMaxDataSize)),
         PrmDb_PrmDpBufferFailStage::FIRST_CONTAINER);
     ASSERT_EVENTS_PrmDpComplete_SIZE(1);
-    ASSERT_EVENTS_PrmDpComplete(0, 0x0, 0x20, 0, 0);
+    ASSERT_EVENTS_PrmDpComplete(0, 0x0, 0x20, 0, 0, 0);
     ASSERT_PRODUCT_GET_SIZE(1);
     ASSERT_PRODUCT_SEND_SIZE(0);
     ASSERT_EQ(this->m_numDecodedRecords, static_cast<FwSizeType>(0));
@@ -1792,7 +1793,7 @@ void PrmDbTester::runPrmRequestDpChunking() {
     ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 24, Fw::CmdResponse::OK);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PrmDpComplete_SIZE(1);
-    ASSERT_EVENTS_PrmDpComplete(0, ids[0], ids[2], 3, 3);
+    ASSERT_EVENTS_PrmDpComplete(0, ids[0], ids[2], 3, 3, 0);
 
     ASSERT_PRODUCT_GET_SIZE(3);
     ASSERT_PRODUCT_SEND_SIZE(3);
@@ -1800,7 +1801,7 @@ void PrmDbTester::runPrmRequestDpChunking() {
     ASSERT_EQ(this->m_numDecodedRecords, static_cast<FwSizeType>(3));
     for (FwSizeType i = 0; i < 3; i++) {
         EXPECT_EQ(this->m_decodedRecords[i].id, ids[i]);
-        U32 decodedVal;
+        U32 decodedVal = 0;
         EXPECT_EQ(this->m_decodedRecords[i].value.deserializeTo(decodedVal), Fw::FW_SERIALIZE_OK);
         EXPECT_EQ(decodedVal, vals[i]);
     }
@@ -1849,7 +1850,7 @@ void PrmDbTester::runPrmRequestDpRecordTooLarge() {
     ASSERT_EVENTS_PrmDpRecordTooLarge_SIZE(1);
     ASSERT_EVENTS_PrmDpRecordTooLarge(0, largeId);
     ASSERT_EVENTS_PrmDpComplete_SIZE(1);
-    ASSERT_EVENTS_PrmDpComplete(0, smallId, largeId, 1, 1);
+    ASSERT_EVENTS_PrmDpComplete(0, smallId, largeId, 1, 1, 1);
 
     ASSERT_PRODUCT_GET_SIZE(1);
     ASSERT_PRODUCT_SEND_SIZE(1);
@@ -1902,7 +1903,7 @@ void PrmDbTester::runPrmRequestDpMidStreamBufferFailure() {
         0, static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_impl.m_dpMaxDataSize)),
         PrmDb_PrmDpBufferFailStage::NEXT_CONTAINER);
     ASSERT_EVENTS_PrmDpComplete_SIZE(1);
-    ASSERT_EVENTS_PrmDpComplete(0, ids[0], ids[1], 1, 1);
+    ASSERT_EVENTS_PrmDpComplete(0, ids[0], ids[1], 1, 1, 0);
 
     ASSERT_PRODUCT_GET_SIZE(2);
     ASSERT_PRODUCT_SEND_SIZE(1);
@@ -1937,6 +1938,111 @@ void PrmDbTester::runPrmRequestDpNotConfigured() {
     ASSERT_EVENTS_PrmDpNotConfigured_SIZE(1);
     ASSERT_PRODUCT_GET_SIZE(0);
     ASSERT_PRODUCT_SEND_SIZE(0);
+}
+
+void PrmDbTester::runPrmRequestDpNotConfiguredProductGetOutUnconnected() {
+    // configureDp() is called, but productGetOut is left unconnected (see connectPorts in
+    // PrmDbTestMain.cpp); PRM_REQUEST_DP must still fail with EXECUTION_ERROR /
+    // PrmDpNotConfigured via the structural precondition check
+    this->m_impl.clearDb(PrmDbType::DB_ACTIVE);
+    this->m_impl.configureDp(sizeof(this->m_dpBuffer));
+    this->m_dpBufferSize = sizeof(this->m_dpBuffer);
+
+    Fw::ParamBuffer pBuff;
+    U32 val = 0x99;
+    FwPrmIdType id = 0x10;
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, pBuff.serializeFrom(val));
+    this->m_impl.updateAddPrmImpl(id, pBuff, PrmDbType::DB_ACTIVE);
+
+    this->clearEvents();
+    this->clearHistory();
+
+    this->sendCmd_PRM_REQUEST_DP(0, 28, 0x0, 0x20);
+    Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 28, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PrmDpNotConfigured_SIZE(1);
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+}
+
+void PrmDbTester::runPrmRequestDpNotConfiguredProductSendOutUnconnected() {
+    // configureDp() is called, but productSendOut is left unconnected (see connectPorts in
+    // PrmDbTestMain.cpp); PRM_REQUEST_DP must still fail with EXECUTION_ERROR /
+    // PrmDpNotConfigured via the structural precondition check
+    this->m_impl.clearDb(PrmDbType::DB_ACTIVE);
+    this->m_impl.configureDp(sizeof(this->m_dpBuffer));
+    this->m_dpBufferSize = sizeof(this->m_dpBuffer);
+
+    Fw::ParamBuffer pBuff;
+    U32 val = 0x99;
+    FwPrmIdType id = 0x10;
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, pBuff.serializeFrom(val));
+    this->m_impl.updateAddPrmImpl(id, pBuff, PrmDbType::DB_ACTIVE);
+
+    this->clearEvents();
+    this->clearHistory();
+
+    this->sendCmd_PRM_REQUEST_DP(0, 29, 0x0, 0x20);
+    Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 29, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PrmDpNotConfigured_SIZE(1);
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+}
+
+void PrmDbTester::runPrmRequestDpRecordTooLargeThrottle() {
+    // Six entries, all too large to fit in any container at the configured buffer size: the
+    // PrmDpRecordTooLarge warning is throttled to 5 occurrences, but numDropped in
+    // PrmDpComplete must still report all 6 drops
+    this->m_impl.clearDb(PrmDbType::DB_ACTIVE);
+
+    Fw::ParamBuffer largeBuff;
+    U8 largeData[FW_PARAM_BUFFER_MAX_SIZE];
+    ::memset(largeData, 0xA5, sizeof(largeData));
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK,
+              largeBuff.serializeFrom(largeData, sizeof(largeData), Fw::Serialization::OMIT_LENGTH));
+
+    constexpr FwSizeType numLargeEntries = 6;
+    FwPrmIdType largeIds[numLargeEntries] = {0x10, 0x11, 0x12, 0x13, 0x14, 0x15};
+    for (FwSizeType i = 0; i < numLargeEntries; i++) {
+        this->m_impl.updateAddPrmImpl(largeIds[i], largeBuff, PrmDbType::DB_ACTIVE);
+    }
+
+    // Size the configured buffer so that none of the entries' records can possibly fit in any
+    // container
+    const FwSizeType bufferSize = Fw::DpContainer::MIN_PACKET_SIZE + 1;
+    this->m_impl.configureDp(bufferSize);
+    this->m_dpBufferSize = bufferSize;
+    this->m_dpGetFailOnCall = 0;
+    this->m_dpGetCallCount = 0;
+    this->m_numDecodedRecords = 0;
+
+    this->clearEvents();
+    this->clearHistory();
+
+    this->sendCmd_PRM_REQUEST_DP(0, 30, largeIds[0], largeIds[numLargeEntries - 1]);
+    Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus = this->m_impl.doDispatch();
+    EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 30, Fw::CmdResponse::OK);
+    // The throttle caps PrmDpRecordTooLarge at 5 occurrences even though 6 entries were dropped
+    ASSERT_EVENTS_PrmDpRecordTooLarge_SIZE(5);
+    ASSERT_EVENTS_PrmDpComplete_SIZE(1);
+    ASSERT_EVENTS_PrmDpComplete(0, largeIds[0], largeIds[numLargeEntries - 1], 0, 0,
+                                static_cast<U32>(numLargeEntries));
+
+    ASSERT_PRODUCT_GET_SIZE(0);
+    ASSERT_PRODUCT_SEND_SIZE(0);
+    ASSERT_EQ(this->m_numDecodedRecords, static_cast<FwSizeType>(0));
 }
 
 PrmDbTester* PrmDbTester::PrmDbTestFile::s_tester = nullptr;

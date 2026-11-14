@@ -76,6 +76,9 @@ The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied pat
 > reports a runtime container-allocation failure. An inverted range (`startId > endId`) is still
 > rejected with `VALIDATION_ERROR` and `PrmDpInvalidRange` first, regardless of DP configuration.
 
+`PrmEntryContainer`'s default priority is `Svc::PrmDbCfg::DEFAULT_DP_PRIORITY`, a compile-time
+constant in `config/PrmDbCfg.fpp` that projects can adjust.
+
 The parameter file begins with a CRC32 followed by the serialized parameter records. The CRC is written as a placeholder, then overwritten after all records are written, and is computed over all record bytes.
 
 Description | Size (in bytes) | Value
@@ -119,7 +122,9 @@ whenever the current one runs out of room.
 
 An entry whose record cannot fit in any container at the configured size is dropped from the
 snapshot with a throttled `PrmDpRecordTooLarge` warning; the rest of the snapshot proceeds
-normally. If a container allocation fails, the snapshot is truncated at that point — any
+normally. The total number of entries dropped this way is always reported in `PrmDpComplete`'s
+`numDropped` argument, even once the per-command `PrmDpRecordTooLarge` warning has been
+throttled. If a container allocation fails, the snapshot is truncated at that point — any
 already-sent containers remain valid — a `PrmDpBufferFailed` warning is emitted, and the command
 responds `EXECUTION_ERROR`, since the requested range was not fully captured. `PrmDpBufferFailed`
 carries a `PrmDpBufferFailStage` argument (`FIRST_CONTAINER` or `NEXT_CONTAINER`) so the two
@@ -130,8 +135,9 @@ is allocated or sent. A range with `startId > endId` is rejected with `VALIDATIO
 database is touched, emitting a `PrmDpInvalidRange` event with the requested `startId` and `endId`.
 
 A snapshot that sends at least one container completes with a `PrmDpComplete` event reporting the
-requested `[startId, endId]` range, the number of records sent (`numRecords`), and the number of DP
-containers sent (`numContainers`).
+requested `[startId, endId]` range, the number of records sent (`numRecords`), the number of DP
+containers sent (`numContainers`), and the number of in-range entries dropped for being too large
+for any container (`numDropped`).
 
 ### 3.4 State
 

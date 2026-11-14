@@ -174,7 +174,8 @@ event PrmDpComplete(
                         endId: FwPrmIdType @< The requested end ID
                         numRecords: U32 @< The number of records in the snapshot
                         numContainers: U32 @< The number of DP containers sent for the snapshot
+                        numDropped: U32 @< The number of in-range entries dropped for being too large for any container
                     ) \
     severity activity high \
     id 17 \
-    format "Parameter DP snapshot complete: range [0x{x}, 0x{x}], {} records in {} containers"
+    format "Parameter DP snapshot complete: range [0x{x}, 0x{x}], {} records in {} containers, {} dropped"

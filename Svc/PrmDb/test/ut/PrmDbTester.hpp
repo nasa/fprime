@@ -46,6 +46,9 @@ class PrmDbTester : public PrmDbGTestBase {
     void runPrmRequestDpRecordTooLarge();
     void runPrmRequestDpMidStreamBufferFailure();
     void runPrmRequestDpNotConfigured();
+    void runPrmRequestDpNotConfiguredProductGetOutUnconnected();
+    void runPrmRequestDpNotConfiguredProductSendOutUnconnected();
+    void runPrmRequestDpRecordTooLargeThrottle();
 
   private:
     bool dbEqual();
@@ -105,7 +108,7 @@ class PrmDbTester : public PrmDbGTestBase {
 
     //! One decoded data product record, captured by productSend_handler
     struct DecodedRecord {
-        FwPrmIdType id;
+        FwPrmIdType id = 0;
         Fw::ParamBuffer value;
     };
 

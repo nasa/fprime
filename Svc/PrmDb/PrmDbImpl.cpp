@@ -172,13 +172,17 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Traverse the parameter list, saving each entry
 
     U32 numRecords = 0;
+    bool writeFailed = false;
+    PrmWriteError::T failStage = PrmWriteError::OPEN;
+    I32 failErrorValue = 0;
 
     for (const auto& entry : *db) {
         // write delimiter
         static const U8 delim = PRMDB_ENTRY_DELIMITER;
         if (!this->writeSaveFileChunk(paramFile, &delim, sizeof(delim), PrmWriteError::DELIMITER,
-                                      PrmWriteError::DELIMITER_SIZE, numRecords, opCode, cmdSeq, crc)) {
-            return;
+                                      PrmWriteError::DELIMITER_SIZE, crc, failStage, failErrorValue)) {
+            writeFailed = true;
+            break;
         }
 
         // serialize record size = id field + data
@@ -192,8 +196,9 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
         // write record size
         if (!this->writeSaveFileChunk(paramFile, buff.getBuffAddr(), buff.getSize(), PrmWriteError::RECORD_SIZE,
-                                      PrmWriteError::RECORD_SIZE_SIZE, numRecords, opCode, cmdSeq, crc)) {
-            return;
+                                      PrmWriteError::RECORD_SIZE_SIZE, crc, failStage, failErrorValue)) {
+            writeFailed = true;
+            break;
         }
 
         // reset buffer
@@ -207,21 +212,29 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
         // write parameter ID
         if (!this->writeSaveFileChunk(paramFile, buff.getBuffAddr(), buff.getSize(), PrmWriteError::PARAMETER_ID,
-                                      PrmWriteError::PARAMETER_ID_SIZE, numRecords, opCode, cmdSeq, crc)) {
-            return;
+                                      PrmWriteError::PARAMETER_ID_SIZE, crc, failStage, failErrorValue)) {
+            writeFailed = true;
+            break;
         }
 
         // write serialized parameter value
         if (!this->writeSaveFileChunk(paramFile, entry.getValue().getBuffAddr(), entry.getValue().getSize(),
-                                      PrmWriteError::PARAMETER_VALUE, PrmWriteError::PARAMETER_VALUE_SIZE, numRecords,
-                                      opCode, cmdSeq, crc)) {
-            return;
+                                      PrmWriteError::PARAMETER_VALUE, PrmWriteError::PARAMETER_VALUE_SIZE, crc,
+                                      failStage, failErrorValue)) {
+            writeFailed = true;
+            break;
         }
 
         numRecords++;
     }
 
     this->unLock();
+
+    if (writeFailed) {
+        this->log_WARNING_HI_PrmFileWriteError(failStage, static_cast<I32>(numRecords), failErrorValue);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
 
     // save current location of pointer in paramFile
     FwSizeType currPosInParamFile;
@@ -273,22 +286,19 @@ bool PrmDbImpl::writeSaveFileChunk(Os::SandboxedFile& paramFile,
                                    FwSizeType size,
                                    PrmWriteError::T statusStage,
                                    PrmWriteError::T sizeStage,
-                                   U32 numRecords,
-                                   FwOpcodeType opCode,
-                                   U32 cmdSeq,
-                                   Utils::Hash& crc) {
+                                   Utils::Hash& crc,
+                                   PrmWriteError::T& outStage,
+                                   I32& outErrorValue) {
     FwSizeType writeSize = size;
     Os::File::Status stat = paramFile.write(data, writeSize, Os::File::WaitType::WAIT);
     if (stat != Os::File::OP_OK) {
-        this->unLock();
-        this->log_WARNING_HI_PrmFileWriteError(statusStage, static_cast<I32>(numRecords), stat);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        outStage = statusStage;
+        outErrorValue = stat;
         return false;
     }
     if (writeSize != size) {
-        this->unLock();
-        this->log_WARNING_HI_PrmFileWriteError(sizeStage, static_cast<I32>(numRecords), static_cast<I32>(writeSize));
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        outStage = sizeStage;
+        outErrorValue = static_cast<I32>(writeSize);
         return false;
     }
     if (data != nullptr && writeSize != 0) {
@@ -369,6 +379,16 @@ void PrmDbImpl::PRM_COMMIT_STAGED_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+bool PrmDbImpl::allocateDpContainer(DpContainer& container, PrmDb_PrmDpBufferFailStage stage) {
+    const Fw::Success::T dpStatus = this->dpGet_PrmEntryContainer(this->m_dpMaxDataSize, container);
+    if (dpStatus != Fw::Success::SUCCESS) {
+        this->log_WARNING_HI_PrmDpBufferFailed(
+            static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_dpMaxDataSize)), stage);
+        return false;
+    }
+    return true;
+}
+
 void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrmIdType startId, FwPrmIdType endId) {
     if (startId > endId) {
         this->log_WARNING_LO_PrmDpInvalidRange(startId, endId);
@@ -407,8 +427,12 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     bool bufferFailed = false;
     U32 numRecords = 0;
     U32 numContainers = 0;
+    U32 numDropped = 0;
     WorkingBuffer buff;
 
+    // Terminates because the iterator advances once per pass and the underlying ArrayMap
+    // holds at most PRMDB_NUM_DB_ENTRIES entries; it.isInRange() becomes false once the
+    // iterator reaches the end of that bounded range.
     while (true) {
         this->lock();
         if (!it.isInRange()) {
@@ -442,15 +466,12 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
 
         if (tooLarge) {
             this->log_WARNING_LO_PrmDpRecordTooLarge(id);
+            numDropped++;
             continue;
         }
 
         if (!haveContainer) {
-            const Fw::Success::T dpStatus = this->dpGet_PrmEntryContainer(this->m_dpMaxDataSize, container);
-            if (dpStatus != Fw::Success::SUCCESS) {
-                this->log_WARNING_HI_PrmDpBufferFailed(
-                    static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_dpMaxDataSize)),
-                    PrmDb_PrmDpBufferFailStage::FIRST_CONTAINER);
+            if (!this->allocateDpContainer(container, PrmDb_PrmDpBufferFailStage::FIRST_CONTAINER)) {
                 bufferFailed = true;
                 break;
             }
@@ -464,11 +485,7 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
             this->dpSend(container);
             haveContainer = false;
 
-            const Fw::Success::T dpStatus = this->dpGet_PrmEntryContainer(this->m_dpMaxDataSize, container);
-            if (dpStatus != Fw::Success::SUCCESS) {
-                this->log_WARNING_HI_PrmDpBufferFailed(
-                    static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_dpMaxDataSize)),
-                    PrmDb_PrmDpBufferFailStage::NEXT_CONTAINER);
+            if (!this->allocateDpContainer(container, PrmDb_PrmDpBufferFailStage::NEXT_CONTAINER)) {
                 bufferFailed = true;
                 break;
             }
@@ -493,7 +510,7 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     if (!anyInRange) {
         this->log_ACTIVITY_LO_PrmDpNoEntriesInRange(startId, endId);
     } else {
-        this->log_ACTIVITY_HI_PrmDpComplete(startId, endId, numRecords, numContainers);
+        this->log_ACTIVITY_HI_PrmDpComplete(startId, endId, numRecords, numContainers, numDropped);
     }
     this->cmdResponse_out(opCode, cmdSeq,
                            bufferFailed ? Fw::CmdResponse::EXECUTION_ERROR : Fw::CmdResponse::OK);
