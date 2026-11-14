@@ -144,6 +144,13 @@ event PrmDpBufferFailed(
     id 15 \
     format "Failed to allocate parameter DP buffer of size {}"
 
+@ A parameter DP snapshot was requested, but data product generation is not usable:
+@ either the data product ports are not connected, or configureDp() was never called
+event PrmDpNotConfigured() \
+    severity warning high \
+    id 18 \
+    format "Parameter DP snapshot requested, but data product generation is not configured"
+
 @ A parameter entry was too large to fit in a data product container at the configured
 @ buffer size, and was dropped from the snapshot
 event PrmDpRecordTooLarge(

@@ -70,8 +70,9 @@ The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied pat
 > [!WARNING]
 > `PRM_REQUEST_DP` requires `configureDp(bufferSize)` to have been called during topology setup,
 > with `bufferSize` matching the size of the buffer pool (e.g. the `Svc::BufferManager` bin) backing
-> `productGetOut`. Until called, every `PRM_REQUEST_DP` command fails with `EXECUTION_ERROR` and a
-> `PrmDpBufferFailed` event.
+> `productGetOut`, and requires `productGetOut`/`productSendOut` to be connected. Until both are
+> true, every `PRM_REQUEST_DP` command fails with `EXECUTION_ERROR` and a `PrmDpNotConfigured`
+> event, distinct from `PrmDpBufferFailed`, which reports a runtime container-allocation failure.
 
 The parameter file begins with a CRC32 followed by the serialized parameter records. The CRC is written as a placeholder, then overwritten after all records are written, and is computed over all record bytes.
 
@@ -106,10 +107,13 @@ This diagram shows the scenario where parameters are saved to a file.
 #### 3.3.4 Parameter Data Product Snapshot Scenario
 
 The `PRM_REQUEST_DP` command requests a snapshot of active-database entries whose parameter IDs
-fall within `[startId, endId]`. The active database is traversed once while the database mutex is
-held. Containers are always requested at the fixed size configured via `configureDp(bufferSize)`;
-the snapshot is chunked across as many containers as needed to hold every in-range entry, sending
-a container and allocating a fresh one whenever the current one runs out of room.
+fall within `[startId, endId]`. The active database is traversed once, but the database mutex is
+only held briefly to read one entry at a time; it is never held across a `dpGet`, `dpSend`, or
+`serializeRecord` call. This keeps a large or slow snapshot from blocking other guarded-port
+callers (e.g. `getPrm`) for the full duration of the command. Containers are always requested at
+the fixed size configured via `configureDp(bufferSize)`; the snapshot is chunked across as many
+containers as needed to hold every in-range entry, sending a container and allocating a fresh one
+whenever the current one runs out of room.
 
 An entry whose record cannot fit in any container at the configured size is dropped from the
 snapshot with a throttled `PrmDpRecordTooLarge` warning; the rest of the snapshot proceeds

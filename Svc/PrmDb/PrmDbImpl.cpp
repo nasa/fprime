@@ -378,7 +378,7 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
 
     if (!this->isConnected_productGetOut_OutputPort(0) || !this->isConnected_productSendOut_OutputPort(0) ||
         (this->m_dpMaxDataSize == 0)) {
-        this->log_WARNING_HI_PrmDpBufferFailed(0);
+        this->log_WARNING_HI_PrmDpNotConfigured();
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -386,12 +386,21 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     this->lock();
     auto* db = this->getDbPtr(PrmDbType::DB_ACTIVE);
     FW_ASSERT(db != nullptr);
+    auto it = db->begin();
+    this->unLock();
 
-    // Single pass: chunk the in-range entries across as many containers as needed, each
-    // requested at the fixed size configured via configureDp(). An entry too large to fit
-    // in any container at that size is dropped with a throttled warning. A container
-    // allocation failure truncates the snapshot (with a warning) but does not fail the
-    // command, since a partial snapshot may have already been sent.
+    // Chunk the in-range entries across as many containers as needed, each requested at the
+    // fixed size configured via configureDp(). An entry too large to fit in any container at
+    // that size is dropped with a throttled warning. A container allocation failure truncates
+    // the snapshot (with a warning) but does not fail the command, since a partial snapshot
+    // may have already been sent.
+    //
+    // The database lock is reacquired only to read one entry at a time (copying its bytes out
+    // below); it is never held across the dpGet/dpSend/serializeRecord calls, so a large
+    // snapshot does not block other guarded-port callers (e.g. getPrm) for its full duration.
+    // This component dispatches commands one at a time on its own thread, so no other handler
+    // of this component can mutate the active database while this loop runs; the only other
+    // accessor is getPrm, which only reads.
     DpContainer container;
     bool haveContainer = false;
     bool anyInRange = false;
@@ -399,16 +408,38 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     U32 numContainers = 0;
     WorkingBuffer buff;
 
-    for (const auto& entry : *db) {
-        const FwPrmIdType id = entry.getKey();
-        if ((id < startId) || (id > endId)) {
+    while (true) {
+        this->lock();
+        if (!it.isInRange()) {
+            this->unLock();
+            break;
+        }
+
+        const FwPrmIdType id = it->getKey();
+        const bool inRange = (id >= startId) && (id <= endId);
+        bool tooLarge = false;
+        if (inRange) {
+            const Fw::ParamBuffer& value = it->getValue();
+            const FwSizeType recordDataSize = sizeof(FwPrmIdType) + value.getSize();
+            const FwSizeType requiredSize = SIZE_OF_PrmEntryRecord_RECORD(recordDataSize);
+            tooLarge = (requiredSize > this->m_dpMaxDataSize);
+            if (!tooLarge) {
+                buff.resetSer();
+                Fw::SerializeStatus serStat = buff.serializeFrom(id);
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+                serStat = buff.serializeFrom(value.getBuffAddr(), value.getSize(), Fw::Serialization::OMIT_LENGTH);
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+            }
+        }
+        ++it;
+        this->unLock();
+
+        if (!inRange) {
             continue;
         }
         anyInRange = true;
 
-        const FwSizeType recordDataSize = sizeof(FwPrmIdType) + entry.getValue().getSize();
-        const FwSizeType requiredSize = SIZE_OF_PrmEntryRecord_RECORD(recordDataSize);
-        if (requiredSize > this->m_dpMaxDataSize) {
+        if (tooLarge) {
             this->log_WARNING_LO_PrmDpRecordTooLarge(id);
             continue;
         }
@@ -422,13 +453,6 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
             haveContainer = true;
             numContainers++;
         }
-
-        buff.resetSer();
-        Fw::SerializeStatus serStat = buff.serializeFrom(id);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
-        serStat = buff.serializeFrom(entry.getValue().getBuffAddr(), entry.getValue().getSize(),
-                                     Fw::Serialization::OMIT_LENGTH);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
         Fw::SerializeStatus recStat = container.serializeRecord_PrmEntryRecord(buff.getBuffAddr(), buff.getSize());
         if (recStat == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
@@ -458,8 +482,6 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     if (haveContainer) {
         this->dpSend(container);
     }
-
-    this->unLock();
 
     if (!anyInRange) {
         this->log_ACTIVITY_LO_PrmDpNoEntriesInRange(startId, endId);

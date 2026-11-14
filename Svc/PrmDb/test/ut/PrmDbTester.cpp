@@ -1928,8 +1928,7 @@ void PrmDbTester::runPrmRequestDpNotConfigured() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 27, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_PrmDpBufferFailed_SIZE(1);
-    ASSERT_EVENTS_PrmDpBufferFailed(0, 0);
+    ASSERT_EVENTS_PrmDpNotConfigured_SIZE(1);
     ASSERT_PRODUCT_GET_SIZE(0);
     ASSERT_PRODUCT_SEND_SIZE(0);
 }
