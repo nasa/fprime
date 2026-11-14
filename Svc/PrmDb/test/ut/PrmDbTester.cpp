@@ -1733,12 +1733,15 @@ void PrmDbTester::runPrmRequestDpBufferFailure() {
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus = this->m_impl.doDispatch();
     EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
 
-    // A buffer allocation failure degrades gracefully: the command still responds OK, with
-    // the failure reported only via a warning event
+    // A buffer allocation failure truncates the snapshot and fails the command, with the
+    // failure reported via a warning event
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 23, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 23, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_PrmDpBufferFailed_SIZE(1);
+    ASSERT_EVENTS_PrmDpBufferFailed(
+        0, static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_impl.m_dpMaxDataSize)),
+        PrmDb_PrmDpBufferFailStage::FIRST_CONTAINER);
     ASSERT_EVENTS_PrmDpComplete_SIZE(1);
     ASSERT_EVENTS_PrmDpComplete(0, 0x0, 0x20, 0, 0);
     ASSERT_PRODUCT_GET_SIZE(1);
@@ -1889,12 +1892,15 @@ void PrmDbTester::runPrmRequestDpMidStreamBufferFailure() {
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus = this->m_impl.doDispatch();
     EXPECT_EQ(dispatchStatus, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
 
-    // The command still responds OK despite the mid-stream failure; the first container's
-    // record was already sent before the failure occurred
+    // The mid-stream failure fails the command, even though the first container's record was
+    // already sent before the failure occurred
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 26, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_REQUEST_DP, 26, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_PrmDpBufferFailed_SIZE(1);
+    ASSERT_EVENTS_PrmDpBufferFailed(
+        0, static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_impl.m_dpMaxDataSize)),
+        PrmDb_PrmDpBufferFailStage::NEXT_CONTAINER);
     ASSERT_EVENTS_PrmDpComplete_SIZE(1);
     ASSERT_EVENTS_PrmDpComplete(0, ids[0], ids[1], 1, 1);
 

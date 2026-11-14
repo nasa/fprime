@@ -392,8 +392,8 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     // Chunk the in-range entries across as many containers as needed, each requested at the
     // fixed size configured via configureDp(). An entry too large to fit in any container at
     // that size is dropped with a throttled warning. A container allocation failure truncates
-    // the snapshot (with a warning) but does not fail the command, since a partial snapshot
-    // may have already been sent.
+    // the snapshot (with a warning); any containers already sent remain valid, but the command
+    // responds EXECUTION_ERROR since the requested range was not fully captured.
     //
     // The database lock is reacquired only to read one entry at a time (copying its bytes out
     // below); it is never held across the dpGet/dpSend/serializeRecord calls, so a large
@@ -404,6 +404,7 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     DpContainer container;
     bool haveContainer = false;
     bool anyInRange = false;
+    bool bufferFailed = false;
     U32 numRecords = 0;
     U32 numContainers = 0;
     WorkingBuffer buff;
@@ -447,7 +448,10 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
         if (!haveContainer) {
             const Fw::Success::T dpStatus = this->dpGet_PrmEntryContainer(this->m_dpMaxDataSize, container);
             if (dpStatus != Fw::Success::SUCCESS) {
-                this->log_WARNING_HI_PrmDpBufferFailed(static_cast<U32>(this->m_dpMaxDataSize));
+                this->log_WARNING_HI_PrmDpBufferFailed(
+                    static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_dpMaxDataSize)),
+                    PrmDb_PrmDpBufferFailStage::FIRST_CONTAINER);
+                bufferFailed = true;
                 break;
             }
             haveContainer = true;
@@ -462,7 +466,10 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
 
             const Fw::Success::T dpStatus = this->dpGet_PrmEntryContainer(this->m_dpMaxDataSize, container);
             if (dpStatus != Fw::Success::SUCCESS) {
-                this->log_WARNING_HI_PrmDpBufferFailed(static_cast<U32>(this->m_dpMaxDataSize));
+                this->log_WARNING_HI_PrmDpBufferFailed(
+                    static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_dpMaxDataSize)),
+                    PrmDb_PrmDpBufferFailStage::NEXT_CONTAINER);
+                bufferFailed = true;
                 break;
             }
             haveContainer = true;
@@ -488,7 +495,8 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     } else {
         this->log_ACTIVITY_HI_PrmDpComplete(startId, endId, numRecords, numContainers);
     }
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    this->cmdResponse_out(opCode, cmdSeq,
+                           bufferFailed ? Fw::CmdResponse::EXECUTION_ERROR : Fw::CmdResponse::OK);
 }
 
 //! ----------------------------------------------------------------------

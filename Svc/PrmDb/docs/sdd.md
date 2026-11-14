@@ -71,8 +71,10 @@ The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied pat
 > `PRM_REQUEST_DP` requires `configureDp(bufferSize)` to have been called during topology setup,
 > with `bufferSize` matching the size of the buffer pool (e.g. the `Svc::BufferManager` bin) backing
 > `productGetOut`, and requires `productGetOut`/`productSendOut` to be connected. Until both are
-> true, every `PRM_REQUEST_DP` command fails with `EXECUTION_ERROR` and a `PrmDpNotConfigured`
-> event, distinct from `PrmDpBufferFailed`, which reports a runtime container-allocation failure.
+> true, every `PRM_REQUEST_DP` command with a valid `[startId, endId]` range fails with
+> `EXECUTION_ERROR` and a `PrmDpNotConfigured` event, distinct from `PrmDpBufferFailed`, which
+> reports a runtime container-allocation failure. An inverted range (`startId > endId`) is still
+> rejected with `VALIDATION_ERROR` and `PrmDpInvalidRange` first, regardless of DP configuration.
 
 The parameter file begins with a CRC32 followed by the serialized parameter records. The CRC is written as a placeholder, then overwritten after all records are written, and is computed over all record bytes.
 
@@ -118,13 +120,18 @@ whenever the current one runs out of room.
 An entry whose record cannot fit in any container at the configured size is dropped from the
 snapshot with a throttled `PrmDpRecordTooLarge` warning; the rest of the snapshot proceeds
 normally. If a container allocation fails, the snapshot is truncated at that point — any
-already-sent containers remain valid — a `PrmDpBufferFailed` warning is emitted, but the command
-still responds `OK`, since a buffer-allocation failure is a transient resource condition rather
-than a command-level error.
+already-sent containers remain valid — a `PrmDpBufferFailed` warning is emitted, and the command
+responds `EXECUTION_ERROR`, since the requested range was not fully captured. `PrmDpBufferFailed`
+carries a `PrmDpBufferFailStage` argument (`FIRST_CONTAINER` or `NEXT_CONTAINER`) so the two
+`dpGet()` call sites remain distinguishable from the downlinked event alone.
 
 An empty range (no entries match) completes with a `PrmDpNoEntriesInRange` event and no container
 is allocated or sent. A range with `startId > endId` is rejected with `VALIDATION_ERROR` before the
-database is touched.
+database is touched, emitting a `PrmDpInvalidRange` event with the requested `startId` and `endId`.
+
+A snapshot that sends at least one container completes with a `PrmDpComplete` event reporting the
+requested `[startId, endId]` range, the number of records sent (`numRecords`), and the number of DP
+containers sent (`numContainers`).
 
 ### 3.4 State
 

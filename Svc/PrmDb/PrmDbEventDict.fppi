@@ -136,13 +136,20 @@ event PrmDpNoEntriesInRange(
     id 14 \
     format "No parameter entries found in requested DP range: start 0x{x}, end 0x{x}"
 
+@ The dpGet() call site that failed to allocate a parameter DP container
+enum PrmDpBufferFailStage : U8 {
+    FIRST_CONTAINER @< Allocation of the first container for the snapshot
+    NEXT_CONTAINER @< Allocation of a replacement container after the prior one filled up
+}
+
 @ Failed to allocate a data product buffer for a parameter DP snapshot
 event PrmDpBufferFailed(
                             $size: U32 @< The requested buffer size
+                            stage: PrmDpBufferFailStage @< Which dpGet() call site failed
                         ) \
     severity warning high \
     id 15 \
-    format "Failed to allocate parameter DP buffer of size {}"
+    format "Failed to allocate parameter DP buffer of size {} at stage {}"
 
 @ A parameter DP snapshot was requested, but data product generation is not usable:
 @ either the data product ports are not connected, or configureDp() was never called
