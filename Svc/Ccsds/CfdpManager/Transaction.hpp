@@ -40,6 +40,7 @@
 #define Svc_Ccsds_CfdpTransaction_HPP
 
 #include <Fw/Types/BasicTypes.hpp>
+#include <Os/FileSystem.hpp>
 
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
@@ -515,6 +516,89 @@ class Transaction {
     Status::T rCheckCrc(U32 expected_crc);
 
     /************************************************************************/
+    /** @brief Builds the staging path a received file is written to before it is committed.
+     *
+     * The path is the destination followed by ".cfdp-<channel>-<source EID>-<sequence>.part", so it
+     * lies in the destination's directory and differs for every live receive transaction.
+     *
+     * @param dst Validated destination path
+     * @param staging Output staging path
+     * @retval Cfdp::Status::SUCCESS if the full path fits, otherwise Cfdp::Status::ERROR
+     */
+    Status::T rFormatStagingPath(const Fw::StringBase& dst, Fw::StringBase& staging) const;
+
+    /************************************************************************/
+    /** @brief Renames the owned staging file onto the destination.
+     *
+     * Emits RxFileRenameFailed on failure; the staging file then stays owned and is removed
+     * when the transaction ends. The destination is changed only by a successful rename.
+     *
+     * @retval Cfdp::Status::SUCCESS if the destination now holds the received file
+     * @retval Cfdp::Status::ERROR otherwise
+     */
+    Status::T rCommitFile();
+
+    /************************************************************************/
+    /** @brief Removes the received-data file this transaction owns, if any.
+     *
+     * Only a file this transaction created is removed; the destination is never touched.
+     * Removal is best effort and raises no event. Does nothing for transmit transactions.
+     */
+    void rDiscardOwnedFile();
+
+    /************************************************************************/
+    /** @brief Builds the staging path for a destination, refusing reserved destination names.
+     *
+     * A destination whose last component has the form of a receive's own staging or temp file
+     * name is refused, so committing it can never replace another transaction's file.
+     *
+     * @param dst Validated destination path
+     * @param staging Output staging path; the destination itself when the name is reserved, and not
+     *                a usable path when OTHER_ERROR is returned
+     * @retval Os::File::OP_OK if staging holds the full staging path
+     * @retval Os::File::INVALID_ARGUMENT if the destination name is reserved
+     * @retval Os::File::OTHER_ERROR if the staging path does not fit
+     */
+    Os::File::Status rStagingPathFor(const Fw::StringBase& dst, Fw::StringBase& staging) const;
+
+    /************************************************************************/
+    /** @brief Creates a receive file exclusively; the only emitter of RxFileCreateFailed.
+     *
+     * Nothing is created unless refusal is Os::File::OP_OK. On failure emits RxFileCreateFailed
+     * with the refusal or open status and increments faultFileOpen.
+     *
+     * @param file File to open
+     * @param path Path to create
+     * @param refusal Os::File::OP_OK to create the file, otherwise the reason it is not created
+     * @returns Os::File::OP_OK if the file was created
+     */
+    Os::File::Status rCreateFile(Os::File& file, const Fw::StringBase& path, Os::File::Status refusal);
+
+    /************************************************************************/
+    /** @brief Renames or moves a receive file; the only emitter of RxFileRenameFailed.
+     *
+     * Nothing is moved unless refusal is Os::FileSystem::OP_OK. On failure emits
+     * RxFileRenameFailed and increments faultFileRename.
+     *
+     * @param from Current path
+     * @param to New path
+     * @param refusal Os::FileSystem::OP_OK to move the file, otherwise the reason it is not moved
+     * @param sameFileSystem true to rename only; false to allow Os::FileSystem::moveFile to copy
+     * @returns Os::FileSystem::OP_OK if the file is now at to
+     */
+    Os::FileSystem::Status rMoveFile(const Fw::StringBase& from,
+                                     const Fw::StringBase& to,
+                                     Os::FileSystem::Status refusal,
+                                     bool sameFileSystem);
+
+    /************************************************************************/
+    /** @brief Removes a file this transaction created, best effort and without an event.
+     *
+     * @param path File to remove
+     */
+    void rRemoveFile(const Fw::StringBase& path);
+
+    /************************************************************************/
     /** @brief Checks R2 transaction state for transaction completion status.
      *
      * This function is called anywhere there's a desire to know if the
@@ -715,9 +799,11 @@ class Transaction {
      *
      * It's possible that metadata PDU was missed in cf_cfdp.c, or that
      * it was re-sent. This function checks if it was already processed,
-     * and if not, handles it. If there was a temp file opened due to
-     * missed metadata PDU, it will move the file to the correct
-     * destination according to the metadata PDU.
+     * and if not, handles it. File data received before the metadata PDU
+     * is in a temp file; it is moved to a newly claimed staging file beside
+     * the destination, which is renamed onto the destination only once the
+     * file checksum passes. A transaction that has already failed ignores
+     * further metadata PDUs.
      *
      * @param pdu Buffer containing the metadata PDU to process
      */

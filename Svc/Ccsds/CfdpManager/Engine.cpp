@@ -1105,6 +1105,9 @@ void Engine::finishTransaction(Transaction* txn, bool keep_history) {
         }
     }
 
+    // A receive that ends without committing its file removes it; a committed file is no longer owned
+    txn->rDiscardOwnedFile();
+
     if (txn->m_history != nullptr) {
         // Emit completion events for successful transactions
         if (!TxnStatusIsError(txn->m_history->txn_stat)) {
@@ -1272,12 +1275,10 @@ void Engine::handleNotKeepFile(Transaction* txn) {
             }
         }
     }
-    // Not Sender
+    // Not Sender: a receive removes only the staging or temp file it created. dst_filename names the
+    // destination once Metadata has arrived, which is left as it was until a verified file is committed.
     else {
-        fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.dst_filename.toChar());
-        if (fileStatus != Os::FileSystem::OP_OK) {
-            m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.dst_filename, fileStatus);
-        }
+        txn->rDiscardOwnedFile();
     }
 }
 

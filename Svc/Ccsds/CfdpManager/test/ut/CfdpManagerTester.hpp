@@ -411,6 +411,26 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 RX handling of a zero-length FileData segment (GHSA-mh5x-2m6h-8267)
     void testClass2RxZeroLengthFileData();
 
+    // Receptions that do not complete (CfdpManagerRxDisposalTests.cpp)
+
+    //! Test Class 1 RX checksum mismatch is reported failed and the file removed
+    void testClass1RxChecksumMismatchRemovesFile();
+
+    //! Test Class 1 RX EOF size mismatch is reported failed and the file removed
+    void testClass1RxSizeMismatchRemovesFile();
+
+    //! Test Class 2 RX checksum mismatch is reported failed and the file removed
+    void testClass2RxChecksumMismatchRemovesFile();
+
+    //! Test Class 1 RX inactivity timeout is reported failed and the file removed
+    void testClass1RxInactivityRemovesFile();
+
+    //! Test Class 2 RX that stops receiving data is reported failed and the file removed
+    void testClass2RxStalledRemovesFile();
+
+    //! Test Class 2 RX that never receives metadata removes its temporary file
+    void testClass2RxWithoutMetadataRemovesTempFile();
+
     //! Test multiple transactions in series
     void testMultipleTransactionsInSeries();
 
@@ -726,6 +746,111 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
   public:
     // ----------------------------------------------------------------------
+    // RX staging, commit and cleanup (issue #6230)
+    // ----------------------------------------------------------------------
+
+    void testRxStagingClass1TimeoutKeepsExistingFile();
+    void testRxStagingClass2NakLimitKeepsExistingFile();
+    void testRxStagingClass1CommitReplacesExistingFile();
+    void testRxStagingClass1CrcMismatchKeepsExistingFile();
+    void testRxStagingClass2CrcMismatchKeepsExistingFile();
+    void testRxStagingClass1EofCancelKeepsExistingFile();
+    void testRxStagingClass2LateMetadataCommits();
+    void testRxStagingClass2LateMetadataMoveFailureKeepsExistingFile();
+    void testRxStagingClass2LateMetadataOversizeDataNotCommitted();
+    void testRxStagingClass2LateMetadataUnknownTempSizeFails();
+    void testRxStagingClass2RepeatedMetadataIgnored();
+    void testRxStagingClass2ExistingStagingFileNotReplaced();
+    void testRxStagingClass1EofSizeMismatchFails();
+    void testRxStagingNotKeptReceiveRemovesOnlyOwnedFile();
+    void testRxStagingClass1FlushFailureNotCommitted();
+    void testRxStagingClass2PausedChecksumPassCommits();
+    void testRxStagingClass2LateMetadataSizeMismatchThenRetransmit();
+    void testRxStagingExistingStagingFileNotReplaced();
+    void testRxStagingClass2LateMetadataExistingStagingFileNotReplaced();
+    void testRxStagingCommitFailureKeepsDestination();
+    void testRxStagingClass2CommitFailureKeepsDestination();
+    void testRxStagingPathFormat();
+    void testRxStagingClass1MissingTrailingZerosNotCommitted();
+    void testRxStagingClass1MissingMiddleSegmentNotCommitted();
+    void testRxStagingClass1OutOfOrderSegmentsCommit();
+    void testRxStagingClass1ZeroLengthCommits();
+    void testRxStagingDestinationNamingActiveStagingFileRefused();
+    void testRxStagingDestinationNamingActiveTempFileRefused();
+    void testRxStagingDestinationNamingActiveStagingFileRefusedLateMetadata();
+    void testRxStagingReservedNameParsing();
+    void testRxStagingClass1AbandonKeepsExistingFile();
+    void testRxStagingTeardownRemovesInProgressFile();
+    void testRxStagingClass1PartialOverlapFailsChecksum();
+    void testRxStagingClass2InactivityKeepsExistingFile();
+    void testRxStagingClass1DroppedTransactionNotReported();
+
+  private:
+    //! Staging and temp paths the component uses for the test destination and a sequence number
+    struct RxStagingPaths {
+        Fw::String staging;
+        Fw::String tmp;
+    };
+
+    //! Configure every channel with the default timers and limits (or the given inactivity timer) and
+    //! tmp_dir under test/ut/output,
+    //! compute the paths, remove leftovers, and write the existing destination file if requested
+    void rxStagingBegin(TransactionSeq seq, bool existing, RxStagingPaths& paths, U32 inactivityTimer = 120);
+    //! Remove every file and directory a staging test may have left
+    void rxStagingCleanup(const RxStagingPaths& paths);
+    void rxStagingWriteFile(const char* path, const U8* data, FwSizeType size);
+    //! Assert the file exists with exactly the given contents
+    void rxStagingExpectFile(const char* path, const U8* data, FwSizeType size);
+    void rxStagingExpectNoFile(const char* path);
+    //! Assert the existing destination is unchanged, no staging or temp file remains, and no completion
+    void rxStagingExpectKept(const RxStagingPaths& paths);
+    //! Assert the destination holds the given data, no staging or temp file remains, and one completion
+    void rxStagingExpectCommitted(const RxStagingPaths& paths, const U8* data, FwSizeType size);
+    //! Assert exactly one RxFileTransferFailed carrying the given condition code
+    void rxStagingExpectFailed(Cfdp::ConditionCode conditionCode);
+    //! Emit and return the test channel's telemetry
+    void rxStagingTelemetry(Cfdp::ChannelTelemetry& tlm);
+    void rxStagingSendMetadata(TransactionSeq seq, Cfdp::Class::T cfdpClass, FileSize fileSize);
+    void rxStagingSendMetadataTo(TransactionSeq seq, Cfdp::Class::T cfdpClass, FileSize fileSize, const char* dst);
+    void rxStagingSendSegment(TransactionSeq seq, Cfdp::Class::T cfdpClass, FileSize offset, const U8* data, U16 size);
+    //! Send the standard 10-byte segment at offset 0
+    void rxStagingSendData(TransactionSeq seq, Cfdp::Class::T cfdpClass);
+    void rxStagingSendEof(TransactionSeq seq,
+                          Cfdp::Class::T cfdpClass,
+                          Cfdp::ConditionCode conditionCode,
+                          U32 checksum,
+                          FileSize fileSize);
+    //! Send an EOF for the standard 10-byte segment with its correct checksum
+    void rxStagingSendGoodEof(TransactionSeq seq, Cfdp::Class::T cfdpClass);
+    //! Run run1Hz until the transaction is recycled; returns false if it never is
+    bool rxStagingRunUntilFreed(TransactionSeq seq);
+    //! Run a Class 2 receive until its FIN is sent, acknowledge it, and run until recycled;
+    //! optionally return the file status and delivery code the FIN reported
+    void rxStagingRunClass2ToFinAck(TransactionSeq seq,
+                                    FinFileStatus* finFileStatus = nullptr,
+                                    FinDeliveryCode* deliveryCode = nullptr);
+    //! Send a Class 1 transfer whose File Data PDUs carry only the given segments of the payload,
+    //! then an EOF with the full size and the full payload's checksum
+    void rxStagingClass1Segments(TransactionSeq seq,
+                                 const U8* payload,
+                                 FileSize fileSize,
+                                 const FileSize* offsets,
+                                 const U16* sizes,
+                                 U32 count);
+    void rxStagingTimeout(Cfdp::Class::T cfdpClass, TransactionSeq seq);
+    void rxStagingCrcMismatch(Cfdp::Class::T cfdpClass, TransactionSeq seq);
+    //! A failed rename onto the destination keeps it and removes the staging file
+    void rxStagingCommitFailure(Cfdp::Class::T cfdpClass, TransactionSeq seq);
+    //! A Class 1 transfer missing some bytes of the declared size is not committed
+    void rxStagingClass1Incomplete(TransactionSeq seq,
+                                   const U8* payload,
+                                   FileSize fileSize,
+                                   const FileSize* offsets,
+                                   const U16* sizes,
+                                   U32 count);
+
+  public:
+    // ----------------------------------------------------------------------
     // Coverage Tests
     //
     // Target trivial paths in CfdpManager.cpp/.hpp and transaction-dependent
@@ -803,6 +928,18 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedSeqNum;
         Transaction* txn;
     };
+
+    //! Run scheduler cycles until the transaction is recycled, failing if it is not within maxCycles
+    void runRxUntilRecycled(U8 channelId, TransactionSeq transactionSeq, U32 maxCycles);
+
+    //! Upper bound on the cycles an RX transaction can take to be recycled with the current parameters
+    U32 rxRecycleCycleBudget(U8 channelId);
+
+    //! Expect exactly one RX failure event with the given status, no completion, and no file at path
+    void expectRxFailedAndRemoved(TxnStatus expectedStatus, const char* path);
+
+    //! Send part of a file, then go quiet until the reception is given up
+    void runRxInactivityCase(Cfdp::Class::T cfdpClass, TransactionSeq transactionSeq);
 
     //! Create test file and verify size matches expected
     void createAndVerifyTestFile(const char* filePath, FwSizeType expectedFileSize, FwSizeType& actualFileSize);

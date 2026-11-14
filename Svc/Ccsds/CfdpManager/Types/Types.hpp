@@ -147,6 +147,15 @@ enum class RxSubState : U8 {
 };
 
 /**
+ * @brief File a receive transaction created and must remove unless it is committed
+ */
+enum class RxFileOwned : U8 {
+    RX_FILE_NONE = 0,    /**< no file is owned: none created yet, committed, or discarded */
+    RX_FILE_TMP = 1,     /**< temp file under tmp_dir, named by fnames.dst_filename */
+    RX_FILE_STAGING = 2, /**< staging file beside the destination, see Transaction::rFormatStagingPath */
+};
+
+/**
  * @brief Direction identifier
  *
  * Differentiates between send and receive history entries
@@ -377,8 +386,9 @@ struct CfdpFlagsRx {
     bool send_nak;
     bool send_fin;
     bool send_eof_ack;
-    bool complete;    /**< \brief r2 */
-    bool fd_nak_sent; /**< \brief latches that at least one NAK has been sent for file data */
+    bool complete;          /**< \brief r2 */
+    bool fd_nak_sent;       /**< \brief latches that at least one NAK has been sent for file data */
+    RxFileOwned file_owned; /**< \brief received-data file this transaction must remove unless committed */
 };
 
 /**

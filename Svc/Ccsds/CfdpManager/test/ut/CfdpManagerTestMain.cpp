@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "CfdpManagerTester.hpp"
+#include "Fw/Test/UnitTest.hpp"
 
 TEST(Pdu, MetaDataPdu) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
@@ -150,6 +151,36 @@ TEST(Transaction, Class2RxCrcShortFile) {
 TEST(Transaction, Class2RxZeroLengthFileData) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass2RxZeroLengthFileData();
+}
+
+TEST(Transaction, Class1RxChecksumMismatchRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxChecksumMismatchRemovesFile();
+}
+
+TEST(Transaction, Class1RxSizeMismatchRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxSizeMismatchRemovesFile();
+}
+
+TEST(Transaction, Class2RxChecksumMismatchRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxChecksumMismatchRemovesFile();
+}
+
+TEST(Transaction, Class1RxInactivityRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1RxInactivityRemovesFile();
+}
+
+TEST(Transaction, Class2RxStalledRemovesFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxStalledRemovesFile();
+}
+
+TEST(Transaction, Class2RxWithoutMetadataRemovesTempFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxWithoutMetadataRemovesTempFile();
 }
 
 TEST(Transaction, MultipleTransactionsInSeries) {
@@ -850,6 +881,283 @@ TEST(Coverage, FindBySequenceNumberCallback) {
 TEST(Coverage, PrioritySearchCallback) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testPrioritySearchCallback();
+}
+
+TEST(RxStaging, Class1TimeoutKeepsExistingFile) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-009");
+    COMMENT("A Class 1 receive cut off by inactivity leaves an existing destination file unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1TimeoutKeepsExistingFile();
+}
+
+TEST(RxStaging, Class2NakLimitKeepsExistingFile) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-008");
+    COMMENT("A Class 2 receive ended by its NAK and ACK limits leaves an existing destination file unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2NakLimitKeepsExistingFile();
+}
+
+TEST(RxStaging, Class1CommitReplacesExistingFile) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("A verified Class 1 receive replaces the destination only at EOF, leaving no staging file.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1CommitReplacesExistingFile();
+}
+
+TEST(RxStaging, Class1CrcMismatchKeepsExistingFile) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-004");
+    COMMENT("A Class 1 checksum mismatch is reported as failed and leaves the destination unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1CrcMismatchKeepsExistingFile();
+}
+
+TEST(RxStaging, Class2CrcMismatchKeepsExistingFile) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-004");
+    COMMENT("A Class 2 checksum mismatch is reported as failed and leaves the destination unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2CrcMismatchKeepsExistingFile();
+}
+
+TEST(RxStaging, Class1EofCancelKeepsExistingFile) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("A Class 1 receive cancelled by its EOF leaves the destination unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1EofCancelKeepsExistingFile();
+}
+
+TEST(RxStaging, Class2LateMetadataCommits) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-002");
+    COMMENT("File Data received before Metadata is staged and committed only after verification.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2LateMetadataCommits();
+}
+
+TEST(RxStaging, Class2LateMetadataMoveFailureKeepsExistingFile) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("A failed move of the temp file removes the claimed staging file; repeated Metadata is ignored.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2LateMetadataMoveFailureKeepsExistingFile();
+}
+
+TEST(RxStaging, Class2LateMetadataOversizeDataNotCommitted) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "Class 2 File Data received before Metadata that extends past the declared size fails the transfer with "
+        "FILE_SIZE_ERROR; the destination is unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2LateMetadataOversizeDataNotCommitted();
+}
+
+TEST(RxStaging, Class2LateMetadataUnknownTempSizeFails) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "If the temp file's size cannot be read when late Metadata arrives, the transfer fails with FILE_SIZE_ERROR "
+        "before anything is staged; the destination is unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2LateMetadataUnknownTempSizeFails();
+}
+
+TEST(RxStaging, Class2RepeatedMetadataIgnored) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("A Metadata PDU repeated after the first was accepted claims and moves no further file.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2RepeatedMetadataIgnored();
+}
+
+TEST(RxStaging, Class2ExistingStagingFileNotReplaced) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "A Class 2 receive with Metadata first does not replace an existing file at its staging path; it fails with "
+        "FILESTORE_REJECTION and the FIN does not report the file as retained.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2ExistingStagingFileNotReplaced();
+}
+
+TEST(RxStaging, Class1EofSizeMismatchFails) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "A Class 1 EOF whose size differs from the Metadata size fails with FILE_SIZE_ERROR; nothing is committed.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1EofSizeMismatchFails();
+}
+
+TEST(RxStaging, NotKeptReceiveRemovesOnlyOwnedFile) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "Disposing of a receive that is not kept removes only the staging file it created; the existing destination "
+        "is unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingNotKeptReceiveRemovesOnlyOwnedFile();
+}
+
+TEST(RxStaging, Class1FlushFailureNotCommitted) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "Data that cannot be flushed to stable storage before the rename is not committed; the transfer fails with "
+        "FILESTORE_REJECTION and the existing destination is unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1FlushFailureNotCommitted();
+}
+
+TEST(RxStaging, Class2PausedChecksumPassCommits) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "A Class 2 checksum pass paused by RxCrcCalcBytesPerCycle = 0 does not fail the transfer; it commits later.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2PausedChecksumPassCommits();
+}
+
+TEST(RxStaging, Class2LateMetadataSizeMismatchThenRetransmit) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("After an EOF/Metadata size mismatch, repeated Metadata and File Data never reach the destination.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2LateMetadataSizeMismatchThenRetransmit();
+}
+
+TEST(RxStaging, ExistingStagingFileNotReplaced) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("An existing file at the staging path is neither replaced nor removed; the transfer fails.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingExistingStagingFileNotReplaced();
+}
+
+TEST(RxStaging, Class2LateMetadataExistingStagingFileNotReplaced) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("An existing file at the staging path is not replaced when Metadata arrives late.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2LateMetadataExistingStagingFileNotReplaced();
+}
+
+TEST(RxStaging, CommitFailureKeepsDestination) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("A failed Class 1 rename onto the destination keeps it and removes the staging file.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingCommitFailureKeepsDestination();
+}
+
+TEST(RxStaging, Class2CommitFailureKeepsDestination) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "A failed Class 2 rename onto the destination keeps it; the FIN reports the data complete and the file "
+        "discarded by filestore rejection.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2CommitFailureKeepsDestination();
+}
+
+TEST(RxStaging, PathFormat) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("Staging paths are unique, refused rather than truncated, and reserved destination names are refused.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingPathFormat();
+}
+
+TEST(RxStaging, Class1MissingTrailingZerosNotCommitted) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-004");
+    COMMENT("A Class 1 receive missing trailing zero bytes fails although its checksum matches.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1MissingTrailingZerosNotCommitted();
+}
+
+TEST(RxStaging, Class1MissingMiddleSegmentNotCommitted) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-004");
+    COMMENT("A Class 1 receive missing a middle zero segment fails although its checksum matches.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1MissingMiddleSegmentNotCommitted();
+}
+
+TEST(RxStaging, Class1OutOfOrderSegmentsCommit) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-001");
+    COMMENT("A Class 1 receive whose segments arrive out of order is committed.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1OutOfOrderSegmentsCommit();
+}
+
+TEST(RxStaging, Class1ZeroLengthCommits) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-001");
+    COMMENT("A zero-length Class 1 receive is committed as an empty file.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1ZeroLengthCommits();
+}
+
+TEST(RxStaging, DestinationNamingActiveStagingFileRefused) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "A destination naming another receive's active staging file is refused; that receive still commits its own "
+        "data.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingDestinationNamingActiveStagingFileRefused();
+}
+
+TEST(RxStaging, DestinationNamingActiveTempFileRefused) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "A destination naming another receive's active temp file is refused; that receive still commits its own data.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingDestinationNamingActiveTempFileRefused();
+}
+
+TEST(RxStaging, DestinationNamingActiveStagingFileRefusedLateMetadata) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "A Class 2 receive whose late Metadata names another receive's active staging file is refused and removes "
+        "only its own temp file; the other receive still commits its own data.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingDestinationNamingActiveStagingFileRefusedLateMetadata();
+}
+
+TEST(RxStaging, ReservedNameParsing) {
+    REQUIREMENT("CFDP-016");
+    COMMENT(
+        "Reserved staging and temp names are recognised in any directory and ignoring ASCII case; short ordinary and "
+        "malformed names are allowed.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingReservedNameParsing();
+}
+
+TEST(RxStaging, Class1AbandonKeepsExistingFile) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("An abandoned Class 1 receive removes its staging file and leaves the destination unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1AbandonKeepsExistingFile();
+}
+
+TEST(RxStaging, TeardownRemovesInProgressFile) {
+    REQUIREMENT("CFDP-016");
+    COMMENT("Component teardown removes an unfinished receive's staging file without emitting events.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingTeardownRemovesInProgressFile();
+}
+
+TEST(RxStaging, Class1PartialOverlapFailsChecksum) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-004");
+    COMMENT("Partly overlapping Class 1 File Data is digested twice, fails the checksum, and is not committed.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1PartialOverlapFailsChecksum();
+}
+
+TEST(RxStaging, Class2InactivityKeepsExistingFile) {
+    REQUIREMENT("CFDP-016");
+    REQUIREMENT("CFDP-009");
+    COMMENT("A Class 2 receive ended by inactivity is reported as failed and leaves the destination unchanged.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass2InactivityKeepsExistingFile();
+}
+
+TEST(RxStaging, Class1DroppedTransactionNotReported) {
+    REQUIREMENT("CFDP-009");
+    COMMENT("Class 1 File Data without Metadata is dropped, creates no file, and is not reported as a transfer.");
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRxStagingClass1DroppedTransactionNotReported();
 }
 
 int main(int argc, char** argv) {
