@@ -14,6 +14,7 @@
 #include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
 #include <Utils/Hash/Hash.hpp>
 #include <config/CommandDispatcherImplCfg.hpp>
+#include <limits>
 
 namespace Svc {
 
@@ -540,6 +541,23 @@ void CmdSequencerComponentImpl::commandComplete(const FwOpcodeType opcode) {
 }
 
 void CmdSequencerComponentImpl ::performCmd_Step_RELATIVE(Fw::Time& currentTime) {
+    const U32 relSec = this->m_record.m_timeTag.getSeconds();
+    const U32 relUsec = this->m_record.m_timeTag.getUSeconds();
+    const U32 curSec = currentTime.getSeconds();
+    const U32 curUsec = currentTime.getUSeconds();
+
+    U64 totalSec = static_cast<U64>(curSec) + static_cast<U64>(relSec);
+    if ((static_cast<U64>(curUsec) + static_cast<U64>(relUsec)) >= 1000000ULL) {
+        totalSec += 1ULL;
+    }
+
+    // Check for integer overflow when computing relative deadline
+    if (totalSec > static_cast<U64>(std::numeric_limits<U32>::max())) {
+        this->commandError(this->m_executedCount, this->m_record.m_command.getOpCode(), Fw::CmdResponse::EXECUTION_ERROR);
+        this->performCmd_Cancel();
+        return;
+    }
+
     this->m_record.m_timeTag.add(currentTime.getSeconds(), currentTime.getUSeconds());
     this->performCmd_Step_ABSOLUTE(currentTime);
 }

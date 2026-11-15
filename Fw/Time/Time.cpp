@@ -245,6 +245,8 @@ void Time::add(U32 seconds, U32 useconds) {
         newSeconds += 1;
         newUSeconds -= 1000000;
     }
+    // Check that seconds addition did not overflow
+    FW_ASSERT(newSeconds >= this->m_val.get_seconds(), static_cast<FwAssertArgType>(newSeconds));
     this->set(newSeconds, newUSeconds);
 }
 
