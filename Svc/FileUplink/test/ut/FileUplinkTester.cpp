@@ -337,6 +337,50 @@ void FileUplinkTester ::packetDuplicated() {
     this->removeFile("test.bin");
 }
 
+void FileUplinkTester ::packetDuplicateThrottleCleared() {
+    const char* const sourcePath = "source.bin";
+    const char* const destPath = "dest.bin";
+    U8 packetData[] = {5, 6, 7, 8, 9};
+    const size_t fileSize = 2 * PACKET_SIZE;
+    const size_t byteOffset = 0;
+    const U32 throttle = FileUplinkComponentBase::EVENTID_PACKETDUPLICATE_THROTTLE;
+
+    // First upload: send the start packet (packet 0) and data packet 1
+    this->sendStartPacket(sourcePath, destPath, fileSize);
+    this->sendDataPacket(byteOffset, packetData);
+    ASSERT_EVENTS_SIZE(0);
+
+    // Duplicate packet 1 until the throttle is used up
+    for (U32 i = 0; i < throttle; ++i) {
+        this->sendDuplicateDataPacket(byteOffset, packetData);
+        ASSERT_TLM_Warnings(0, i + 1);
+        ASSERT_EVENTS_SIZE(1);
+        ASSERT_EVENTS_PacketDuplicate(0, component.m_lastSequenceIndex);
+    }
+
+    // One more duplicate is still counted, but its event is throttled
+    this->sendDuplicateDataPacket(byteOffset, packetData);
+    ASSERT_TLM_Warnings(0, throttle + 1);
+    ASSERT_EVENTS_SIZE(0);
+
+    // End the first upload
+    this->sendCancelPacket();
+    ASSERT_EQ(FileUplink::START, this->component.m_receiveMode);
+
+    // Second upload: the start packet clears the throttle
+    this->sendStartPacket(sourcePath, destPath, fileSize);
+    this->sendDataPacket(byteOffset, packetData);
+    ASSERT_EVENTS_SIZE(0);
+
+    // A duplicate of packet 1 is reported again
+    this->sendDuplicateDataPacket(byteOffset, packetData);
+    ASSERT_TLM_Warnings(0, throttle + 2);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PacketDuplicate(0, component.m_lastSequenceIndex);
+
+    this->removeFile(destPath);
+}
+
 void FileUplinkTester ::cancelPacketInStartMode() {
     const char* const sourcePath = "source.bin";
     const char* const destPath = "dest.bin";
@@ -490,6 +534,11 @@ void FileUplinkTester ::sendDataPacket(const size_t byteOffset, U8* const packet
     Fw::FilePacket filePacket;
     filePacket.fromDataPacket(dataPacket);
     this->sendFilePacket(filePacket);
+}
+
+void FileUplinkTester ::sendDuplicateDataPacket(const size_t byteOffset, U8* const packetData) {
+    --this->sequenceIndex;
+    this->sendDataPacket(byteOffset, packetData);
 }
 
 void FileUplinkTester ::sendEndPacket(const CFDP::Checksum& checksum) {

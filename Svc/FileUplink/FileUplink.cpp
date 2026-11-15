@@ -106,6 +106,7 @@ void FileUplink::handleStartPacket(const Fw::FilePacket::StartPacket& startPacke
     this->log_WARNING_HI_InvalidReceiveMode_ThrottleClear();
     this->log_WARNING_HI_PacketOutOfBounds_ThrottleClear();
     this->log_WARNING_HI_PacketOutOfOrder_ThrottleClear();
+    this->log_WARNING_HI_PacketDuplicate_ThrottleClear();
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode != START) {
         this->m_file.osFile.close();

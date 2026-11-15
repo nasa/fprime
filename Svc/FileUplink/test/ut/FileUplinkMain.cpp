@@ -54,6 +54,11 @@ TEST(FileUplink, PacketDuplicated) {
     tester.packetDuplicated();
 }
 
+TEST(FileUplink, PacketDuplicateThrottleCleared) {
+    Svc::FileUplinkTester tester;
+    tester.packetDuplicateThrottleCleared();
+}
+
 TEST(FileUplink, CancelPacketInStartMode) {
     Svc::FileUplinkTester tester;
     tester.cancelPacketInStartMode();

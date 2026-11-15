@@ -79,6 +79,11 @@ class FileUplinkTester : public FileUplinkGTestBase {
     //!
     void packetDuplicated();
 
+    //! Use up the PacketDuplicate throttle in one upload and check that the
+    //! START packet of the next upload clears it
+    //!
+    void packetDuplicateThrottleCleared();
+
     //! Send a CANCEL packet in START mode
     //!
     void cancelPacketInStartMode();
@@ -130,6 +135,10 @@ class FileUplinkTester : public FileUplinkGTestBase {
     //! Send a DataPacket
     //!
     void sendDataPacket(const size_t byteOffset, U8* const packetData);
+
+    //! Send a DataPacket with the sequence index of the previous packet
+    //!
+    void sendDuplicateDataPacket(const size_t byteOffset, U8* const packetData);
 
     //! Send an EndPacket
     //!
