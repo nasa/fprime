@@ -14,6 +14,16 @@ TEST(FileUplink, BadChecksum) {
     tester.badChecksum();
 }
 
+TEST(FileUplink, FileIncomplete) {
+    Svc::FileUplinkTester tester;
+    tester.fileIncomplete();
+}
+
+TEST(FileUplink, ExistingFileTruncated) {
+    Svc::FileUplinkTester tester;
+    tester.existingFileTruncated();
+}
+
 TEST(FileUplink, FileOpenError) {
     Svc::FileUplinkTester tester;
     tester.fileOpenError();

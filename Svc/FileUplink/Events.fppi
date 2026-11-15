@@ -93,3 +93,13 @@ event InvalidPacketReceived(
   severity warning high \
   id 10 \
   format "Invalid packet received. Wrong packet type: {}"
+
+@ At the end of a file transfer, the number of bytes received did not match the declared file size
+event FileIncomplete(
+                      fileName: string size 40 @< The file name
+                      bytesReceived: U64 @< The number of data bytes received
+                      fileSize: U32 @< The file size declared in the START packet
+                    ) \
+  severity warning high \
+  id 11 \
+  format "File {} incomplete: received {} of {} bytes"

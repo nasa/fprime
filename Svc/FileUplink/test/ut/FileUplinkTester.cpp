@@ -15,6 +15,7 @@
 #include <cstring>
 
 #include <Os/FilePathUtils.hpp>
+#include <Os/FileSystem.hpp>
 #include "FileUplinkTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 
@@ -145,6 +146,96 @@ void FileUplinkTester ::badChecksum() {
     ASSERT_from_fileAnnounce_SIZE(0);
 
     // Remove the file
+    this->removeFile(destPath);
+}
+
+void FileUplinkTester ::fileIncomplete() {
+    const char* const sourcePath = "source.bin";
+    const char* const destPath = "dest.bin";
+    const U32 numPackets = 2;
+    // The first packet is all zeros, so dropping it leaves the CFDP checksum unchanged
+    U8 packetData[numPackets][5] = {{0, 0, 0, 0, 0}, {5, 6, 7, 8, 9}};
+    const U8* const linearPacketData = reinterpret_cast<U8*>(packetData);
+    const size_t fileSize = sizeof(packetData);
+
+    // Send the start packet
+    this->sendStartPacket(sourcePath, destPath, fileSize);
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_PacketsReceived(0, ++this->expectedPacketsReceived);
+    ASSERT_EVENTS_SIZE(0);
+
+    // Simulate dropping of packet 1
+    ++this->sequenceIndex;
+
+    // Send data packet 2
+    this->sendDataPacket(PACKET_SIZE, packetData[1]);
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_PacketsReceived(0, ++this->expectedPacketsReceived);
+    ASSERT_TLM_Warnings(0, 1);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PacketOutOfOrder(0, 2, 0);
+
+    // Send the end packet with the checksum an honest sender computes over the whole file
+    CFDP::Checksum checksum;
+    checksum.update(linearPacketData, 0, fileSize);
+    this->sendEndPacket(checksum);
+    ASSERT_TLM_SIZE(3);
+    ASSERT_TLM_PacketsReceived(0, ++this->expectedPacketsReceived);
+    ASSERT_TLM_FilesReceivedFailed(0, 1);
+    ASSERT_TLM_Warnings(0, 2);
+
+    // The transfer is rejected as incomplete even though the checksum matches
+    ASSERT_TLM_FilesReceived_SIZE(0);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_FileIncomplete(0, destPath, PACKET_SIZE, fileSize);
+    ASSERT_from_fileAnnounce_SIZE(0);
+
+    ASSERT_EQ(FileUplink::START, this->component.m_receiveMode);
+
+    this->removeFile(destPath);
+}
+
+void FileUplinkTester ::existingFileTruncated() {
+    const char* const sourcePath = "source.bin";
+    const char* const destPath = "dest.bin";
+    const U32 numPackets = 2;
+    U8 packetData[numPackets][5] = {{0, 1, 2, 3, 4}, {5, 6, 7, 8, 9}};
+    const U8* const linearPacketData = reinterpret_cast<U8*>(packetData);
+    const size_t fileSize = sizeof(packetData);
+
+    // Create a larger destination file with stale contents
+    this->createFile(destPath, 0xFF, 2 * fileSize);
+    this->verifyFileSize(destPath, 2 * fileSize);
+
+    // Send the start packet
+    this->sendStartPacket(sourcePath, destPath, fileSize);
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_PacketsReceived(0, ++this->expectedPacketsReceived);
+    ASSERT_EVENTS_SIZE(0);
+
+    // Send the data packets
+    for (size_t i = 0; i < numPackets; ++i) {
+        const size_t byteOffset = i * PACKET_SIZE;
+        this->sendDataPacket(byteOffset, packetData[i]);
+        ASSERT_TLM_SIZE(1);
+        ASSERT_TLM_PacketsReceived(0, ++this->expectedPacketsReceived);
+        ASSERT_EVENTS_SIZE(0);
+    }
+
+    // Send the end packet
+    CFDP::Checksum checksum;
+    checksum.update(linearPacketData, 0, fileSize);
+    this->sendEndPacket(checksum);
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_PacketsReceived(0, ++this->expectedPacketsReceived);
+    ASSERT_TLM_FilesReceived(0, 1);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_FileReceived(0, destPath);
+
+    // The stale contents are gone: the file holds exactly the uplinked bytes
+    this->verifyFileSize(destPath, fileSize);
+    this->verifyFileData(destPath, linearPacketData, fileSize);
+
     this->removeFile(destPath);
 }
 
@@ -534,6 +625,26 @@ void FileUplinkTester ::verifyFileData(const char* const path, const U8* const s
     for (size_t i = 0; i < dataSize; ++i) {
         ASSERT_EQ(sentData[i], fileData[i]);
     }
+}
+
+void FileUplinkTester ::verifyFileSize(const char* const path, const size_t expectedSize) {
+    FwSizeType size = 0;
+    const Os::FileSystem::Status status = Os::FileSystem::getFileSize(path, size);
+    ASSERT_EQ(Os::FileSystem::OP_OK, status);
+    ASSERT_EQ(static_cast<size_t>(size), expectedSize);
+}
+
+void FileUplinkTester ::createFile(const char* const path, const U8 fill, const size_t size) {
+    U8 data[size];
+    (void)memset(data, fill, size);
+    Os::File file;
+    Os::File::Status status = file.open(path, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    ASSERT_EQ(Os::File::OP_OK, status);
+    FwSizeType intSize = static_cast<FwSizeType>(size);
+    status = file.write(data, intSize, Os::File::WaitType::WAIT);
+    ASSERT_EQ(Os::File::OP_OK, status);
+    ASSERT_EQ(static_cast<size_t>(intSize), size);
+    file.close();
 }
 
 void FileUplinkTester ::removeFile(const char* const path) {

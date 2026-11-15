@@ -50,4 +50,9 @@ void FileUplink::Warnings::badChecksum(const U32 computed, const U32 read) {
     this->warning();
 }
 
+void FileUplink::Warnings::fileIncomplete(const U64 bytesReceived, const U32 fileSize) {
+    this->m_fileUplink->log_WARNING_HI_FileIncomplete(this->m_fileUplink->m_file.name, bytesReceived, fileSize);
+    this->warning();
+}
+
 }  // namespace Svc

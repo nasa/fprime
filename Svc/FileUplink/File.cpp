@@ -31,7 +31,8 @@ Os::File::Status FileUplink::File::open(const Fw::FilePacket::StartPacket& start
     this->size = startPacket.getFileSize();
     CFDP::Checksum checksum;
     this->m_checksum = checksum;
-    return this->osFile.open(path, Os::File::OPEN_WRITE);
+    this->m_bytesReceived = 0;
+    return this->osFile.open(path, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
 }
 
 Os::File::Status FileUplink::File::write(const U8* const data, const U32 byteOffset, const U32 length) {
@@ -53,6 +54,7 @@ Os::File::Status FileUplink::File::write(const U8* const data, const U32 byteOff
         return Os::File::NO_SPACE;
     }
     this->m_checksum.update(data, byteOffset, length);
+    this->m_bytesReceived += length;
     return Os::File::OP_OK;
 }
 

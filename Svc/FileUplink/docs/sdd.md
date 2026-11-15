@@ -91,6 +91,12 @@ write locations to a configured sandbox directory.
 The status of the last file write, used when deciding whether a
 duplicate packet may be skipped.
 
+* <a name="bytesReceived">*bytesReceived*</a>:
+The total number of data bytes written to
+[*file*](#writeFileDescriptor) since the START packet.
+It is compared against the declared file size when the END packet
+arrives.
+
 ### 3.5 The bufferSendIn Port
 
 `FileUplink` asynchronously receives buffers on
@@ -111,7 +117,10 @@ then close
 [*file*](#writeFileDescriptor)
 and issue an *InvalidReceiveMode* warning.
 
-2. Open [*file*](#writeFileDescriptor) for writing.
+2. Open [*file*](#writeFileDescriptor) for writing, creating it if it
+does not exist and truncating it to zero length if it does, so that no
+stale contents survive the transfer. Set
+[*bytesReceived*](#bytesReceived) to zero.
 
 3. If step 2 succeeded, then set
 [*lastSequenceIndex*](#lastSequenceIndex)
@@ -146,7 +155,8 @@ warning reporting *lastSequenceIndex* and *I*.
 packet at offset specified in the packet.
 
     2. If there was an error writing the file, then issue a
-*FileWriteError* warning. Record the write status in
+*FileWriteError* warning; otherwise add the packet data size to
+[*bytesReceived*](#bytesReceived). Record the write status in
 [*lastPacketWriteStatus*](#lastPacketWriteStatus).
 
     d. Otherwise issue a *PacketOutOfBounds* warning.
@@ -164,11 +174,20 @@ then issue a *PacketOutOfOrder* warning reporting
 
     b. Use [*file*](#writeFileDescriptor) to do the following:
 
-    1. Use the method described in &sect; 4.1.2 of the
+    1. Compare [*bytesReceived*](#bytesReceived) against the file size
+declared in the START packet.
+If the two values are different, then issue a *FileIncomplete* warning
+reporting both values, increment the *FilesReceivedFailed* telemetry
+channel, and do **not** issue the *FileReceived* event or the
+`fileAnnounce` output. Skip the remaining steps of (b).
+Note that overlapping DATA packets are not detected individually by
+this count; they are caught by the checksum comparison below.
+
+    2. Use the method described in &sect; 4.1.2 of the
 [CCSDS File Delivery Protocol (CFDP) Recommended Standard](https://public.ccsds.org/Pubs/727x0b4s.pdf)
 to compute the checksum value for the file.
 
-    2. Compare the value computed in the previous step against the
+    3. Compare the value computed in the previous step against the
 checksum value in the packet.
 If the two values are different, then issue a *BadChecksum* warning,
 increment the *FilesReceivedFailed* telemetry channel, and do **not**

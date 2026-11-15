@@ -49,16 +49,22 @@ class FileUplink final : public FileUplinkComponentBase {
         //! The checksum for the file
         ::CFDP::Checksum m_checksum;
 
+        //! The number of data bytes written to the file
+        U64 m_bytesReceived;
+
       public:
-        //! Open the OS file for writing and initialize the checksum
+        //! Open the OS file for writing, truncating any existing contents, and initialize the checksum
         Os::File::Status open(const Fw::FilePacket::StartPacket& startPacket);
 
-        //! Write bytes into the OS file and update the checksum
+        //! Write bytes into the OS file and update the checksum and byte count
         //! \return OP_OK on success, NO_SPACE on a short write, or the OS status on failure
         Os::File::Status write(const U8* const data, const U32 byteOffset, const U32 length);
 
         //! Get the checksum
         void getChecksum(::CFDP::Checksum& checksum) { checksum = this->m_checksum; }
+
+        //! Get the number of data bytes written to the file
+        U64 getBytesReceived() const { return this->m_bytesReceived; }
     };
 
     //! Object to record files received
@@ -84,7 +90,7 @@ class FileUplink final : public FileUplinkComponentBase {
         FileUplink* const m_fileUplink;
     };
 
-    //! Object to record files rejected for a bad checksum
+    //! Object to record files rejected for an incomplete transfer or a bad checksum
     class FilesReceivedFailed {
         friend class FileUplinkTester;
 
@@ -93,14 +99,14 @@ class FileUplink final : public FileUplinkComponentBase {
         FilesReceivedFailed(FileUplink* const fileUplink) : m_failed_files_counter(0), m_fileUplink(fileUplink) {}
 
       public:
-        //! Record a file rejected for a bad checksum
+        //! Record a file rejected for an incomplete transfer or a bad checksum
         void fileReceivedFailed() {
             ++this->m_failed_files_counter;
             this->m_fileUplink->tlmWrite_FilesReceivedFailed(m_failed_files_counter);
         }
 
       private:
-        //! The total number of files rejected for a bad checksum
+        //! The total number of files rejected for an incomplete transfer or a bad checksum
         U32 m_failed_files_counter;
 
         //! The enclosing FileUplink object
@@ -159,6 +165,9 @@ class FileUplink final : public FileUplinkComponentBase {
 
         //! Record a Bad Checksum warning
         void badChecksum(const U32 computed, const U32 read);
+
+        //! Record a File Incomplete warning
+        void fileIncomplete(const U64 bytesReceived, const U32 fileSize);
 
       private:
         //! Record a warning
@@ -240,6 +249,9 @@ class FileUplink final : public FileUplinkComponentBase {
     //! Check if a received packet is a duplicate
     bool checkDuplicatedPacket(const U32 sequenceIndex);
 
+    //! Check completeness; returns true if the number of bytes received equals the declared file size
+    bool checkFileComplete();
+
     //! Compare checksums; returns true if the computed checksum matches the value in the END packet
     bool compareChecksums(const Fw::FilePacket::EndPacket& endPacket);
 
@@ -269,7 +281,7 @@ class FileUplink final : public FileUplinkComponentBase {
     //! The total number of files received
     FilesReceived m_filesReceived;
 
-    //! The total number of files rejected for a bad checksum
+    //! The total number of files rejected for an incomplete transfer or a bad checksum
     FilesReceivedFailed m_filesReceivedFailed;
 
     //! The total number of packets received

@@ -154,16 +154,16 @@ void FileUplink::handleEndPacket(const Fw::FilePacket::EndPacket& endPacket) {
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode == DATA) {
         this->checkSequenceIndex(endPacket.asHeader().getSequenceIndex());
-        if (this->compareChecksums(endPacket)) {
+        if (this->checkFileComplete() && this->compareChecksums(endPacket)) {
             this->m_filesReceived.fileReceived();
             this->log_ACTIVITY_HI_FileReceived(this->m_file.name);
             if (this->isConnected_fileAnnounce_OutputPort(0)) {
                 this->fileAnnounce_out(0, this->m_file.name);
             }
         } else {
-            // compareChecksums() has already issued the BadChecksum warning. The
-            // file failed its integrity check, so it is not announced or reported
-            // as successfully received; record the failed transfer instead.
+            // The failing check has already issued its warning. The file failed
+            // its integrity check, so it is not announced or reported as
+            // successfully received; record the failed transfer instead.
             this->m_filesReceivedFailed.fileReceivedFailed();
         }
     } else {
@@ -193,6 +193,15 @@ bool FileUplink::checkDuplicatedPacket(const U32 sequenceIndex) {
     }
 
     return false;
+}
+
+bool FileUplink::checkFileComplete() {
+    const U64 bytesReceived = this->m_file.getBytesReceived();
+    const bool complete = (bytesReceived == this->m_file.size);
+    if (!complete) {
+        this->m_warnings.fileIncomplete(bytesReceived, this->m_file.size);
+    }
+    return complete;
 }
 
 bool FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
