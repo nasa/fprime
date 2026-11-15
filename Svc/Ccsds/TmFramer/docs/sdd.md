@@ -26,7 +26,7 @@ For each frame generated, the `Svc::Ccsds::TmFramer` will populate the CCSDS TM 
 |---|---|---|
 | Transfer Frame Version Number | 0 | As per protocol 4.1.2.2 |
 | Spacecraft ID | Configured in `config/ComCfg.fpp` | Set in the project configuration |
-| Virtual Channel ID | Uses value passed in the `context` argument (defaults to 0) | Set by an upstream component |
+| Virtual Channel ID | Uses value passed in the `context` argument (the `ComCfg.FrameContext` default is 1); must fit the 3-bit field | Set by an upstream component |
 | Operational Control Field Flag | 0 | Unsupported |
 | Master Channel Frame Count | Incremented for each frame | Managed internally by TmFramer |
 | Virtual Channel Frame Count | Incremented for each frame | Managed internally by TmFramer. One TmFramer instance can only keep count of a single VCID. |
@@ -67,3 +67,4 @@ For each frame generated, the `Svc::Ccsds::TmFramer` will populate the CCSDS TM 
 | SVC-Ccsds-TM-FRAMER-013 | The TmFramer shall fill the data field of the TM Transfer Frame with the payload data received on `dataIn`, unchanged. | Unit Test |
 | SVC-Ccsds-TM-FRAMER-014 | The TmFramer shall assert that payload data received on `dataIn` fills the data field exactly. | Unit Test |
 | SVC-Ccsds-TM-FRAMER-015 | The TmFramer shall assert that the First Header Pointer received in the `dataIn` context fits within the 11-bit First Header Pointer field. | Unit Test |
+| SVC-Ccsds-TM-FRAMER-016 | The TmFramer shall assert that the Virtual Channel Identifier received in the `dataIn` context fits within the 3-bit Virtual Channel Identifier field. | Unit Test |

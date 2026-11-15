@@ -189,6 +189,25 @@ void TmFramerTester ::testPartialDataFieldAsserts() {
     }
 }
 
+void TmFramerTester ::testVirtualChannelIdFromContext() {
+    U8 bufferData[TmFramer::TmPayloadCapacity];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext context;
+
+    // The largest VCID the 3-bit field holds is written unchanged, beside the configured SCID
+    context.set_vcId(TMSubfields::vcIdMask);
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(1);
+    U8* const frameData = this->fromPortHistory_dataOut->at(0).data.getData();
+    ASSERT_EQ(this->getFrameVcId(frameData), TMSubfields::vcIdMask);
+    ASSERT_EQ(this->getFrameScId(frameData), ComCfg::SpacecraftId);
+
+    // A VCID outside the 3-bit field is a caller error
+    this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
+    context.set_vcId(static_cast<U8>(TMSubfields::vcIdMask + 1));
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
+}
+
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------

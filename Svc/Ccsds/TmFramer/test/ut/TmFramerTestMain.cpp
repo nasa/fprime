@@ -46,6 +46,11 @@ TEST(TmFramer, testPartialDataFieldAsserts) {
     tester.testPartialDataFieldAsserts();
 }
 
+TEST(TmFramer, testVirtualChannelIdFromContext) {
+    Svc::Ccsds::TmFramerTester tester;
+    tester.testVirtualChannelIdFromContext();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
