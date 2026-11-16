@@ -150,8 +150,7 @@ Each successful `OVERRIDE_PACKET_SEND` or `OVERRIDE_PACKET_RATES` emits `PacketO
 
 ### 3.5 Algorithms
 
-In order to speed up lookups for storing and reading telemetry channels, a simple hash function is used to select a location in an array of hash table slots.
-A configuration value in `TlmPacketizerImplCfg.h` defines a set of hash buckets to store the telemetry values. The number of buckets has to be at least as large as the number of telemetry channels defined in the system. The number of channels in the system can be determined by invoking `make comp_report_gen` from the deployment directory. The number of has table slots `TLMPACKETIZER_NUM_TLM_HASH_SLOTS` and the hash value `TLMPACKETIZER_HASH_MOD_VALUE` in the configuration file can be varied to balance the amount of memory for slots versus the distribution of buckets to slots. See `TlmPacketizerImplCfg.h` for a procedure on how to tune the algorithm.
+Telemetry channel lookups for storing and reading values use an `Fw::RedBlackTreeMap` keyed by channel ID, sized by `MAX_PACKETIZER_CHANNELS`.
 
 ## 4. Configuration
 
