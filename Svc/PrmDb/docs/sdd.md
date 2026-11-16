@@ -134,10 +134,12 @@ An empty range (no entries match) completes with a `PrmDpNoEntriesInRange` event
 is allocated or sent. A range with `startId > endId` is rejected with `VALIDATION_ERROR` before the
 database is touched, emitting a `PrmDpInvalidRange` event with the requested `startId` and `endId`.
 
-A snapshot that sends at least one container completes with a `PrmDpComplete` event reporting the
+A snapshot with at least one in-range entry ends with a `PrmDpComplete` event reporting the
 requested `[startId, endId]` range, the number of records sent (`numRecords`), the number of DP
 containers sent (`numContainers`), and the number of in-range entries dropped for being too large
-for any container (`numDropped`).
+for any container (`numDropped`). It is emitted even when the snapshot was truncated by a failed
+container allocation (alongside `EXECUTION_ERROR`) or when every in-range entry was dropped, so
+`numContainers` can be `0`.
 
 ### 3.4 State
 
