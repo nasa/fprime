@@ -509,7 +509,7 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
 
     if (!anyInRange) {
         this->log_ACTIVITY_LO_PrmDpNoEntriesInRange(startId, endId);
-    } else {
+    } else if (!bufferFailed) {
         this->log_ACTIVITY_HI_PrmDpComplete(startId, endId, numRecords, numContainers, numDropped);
     }
     this->cmdResponse_out(opCode, cmdSeq,
