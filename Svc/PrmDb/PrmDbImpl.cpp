@@ -512,8 +512,7 @@ void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrm
     } else {
         this->log_ACTIVITY_HI_PrmDpComplete(startId, endId, numRecords, numContainers, numDropped);
     }
-    this->cmdResponse_out(opCode, cmdSeq,
-                           bufferFailed ? Fw::CmdResponse::EXECUTION_ERROR : Fw::CmdResponse::OK);
+    this->cmdResponse_out(opCode, cmdSeq, bufferFailed ? Fw::CmdResponse::EXECUTION_ERROR : Fw::CmdResponse::OK);
 }
 
 //! ----------------------------------------------------------------------

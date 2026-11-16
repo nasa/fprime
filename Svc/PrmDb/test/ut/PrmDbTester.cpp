@@ -2037,8 +2037,7 @@ void PrmDbTester::runPrmRequestDpRecordTooLargeThrottle() {
     // The throttle caps PrmDpRecordTooLarge at 5 occurrences even though 6 entries were dropped
     ASSERT_EVENTS_PrmDpRecordTooLarge_SIZE(5);
     ASSERT_EVENTS_PrmDpComplete_SIZE(1);
-    ASSERT_EVENTS_PrmDpComplete(0, largeIds[0], largeIds[numLargeEntries - 1], 0, 0,
-                                static_cast<U32>(numLargeEntries));
+    ASSERT_EVENTS_PrmDpComplete(0, largeIds[0], largeIds[numLargeEntries - 1], 0, 0, static_cast<U32>(numLargeEntries));
 
     ASSERT_PRODUCT_GET_SIZE(0);
     ASSERT_PRODUCT_SEND_SIZE(0);
