@@ -87,7 +87,11 @@ run-for-record lane; every run needs only its `campaign-id` (contract
    skills source, identity rules, LOCAL ONLY, and *stop after your Approve
    SDD gate*. This session performs that gate per
    `fprime-development-campaign` §6 (a ledger line naming the artifact and
-   the check). Each SDD lands at the path the inventory links. Sub-sessions
+   the check). Each SDD lands at the path the inventory links. **Exit:**
+   the lane does not proceed to step 9 until every `NEW` component's SDD
+   has been received and its gate passed, each with its ledger line; a
+   gate that does not pass sends that child back into its DESIGN lane,
+   and a component the human named blocks here on the human. Sub-sessions
    of steps 4–7: one reviewer child per reviewer agent, reused across
    rounds, LOCAL ONLY. Elicitation findings batched once per round.
 
