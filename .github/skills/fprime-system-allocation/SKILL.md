@@ -71,7 +71,7 @@ when an inherited component is almost right (AL-3).
    becomes a system-test obligation (the allocation row's verification moves
    to system test).
 5. **Write SSDD `## Inventory`**, one row per element:
-   `element | class | origin repo@ref (or "new: <repo>") | configuration / adapter / change (one line) | SDD | upstream checklist | campaign id (NEW only) | allocated REQ ids`.
+   `element | class | origin repo@ref (or "new: <repo>") | configuration / adapter / change (one line) | SDD | grade | upstream checklist | campaign id (NEW only) | allocated REQ ids`.
    The `SDD` cell is a link on every component row: an inherited
    component's `docs/sdd.md` at its pinned ref; a `NEW` component's
    `docs/sdd.md` at the path its campaign will write it (the link resolves
@@ -79,6 +79,16 @@ when an inherited component is almost right (AL-3).
    component SDDs; do not repeat it elsewhere. Component SDDs are
    linked, never copied or inlined into the SSDD — the SSDD shows a
    component only as a box in the topology diagram.
+   The `grade` cell of an inherited row is the element's published
+   overall grade (Platinum, Gold, Silver, Bronze), linked to its page in
+   the F Prime quality index: `https://nasa.github.io/fprime/<module
+   path>/index.html` for `devel`, or the same page on branch
+   `coverage/<tag>` of nasa/fprime for a pinned release. State once,
+   above the table, the revision the index grades (its header line,
+   e.g. `devel @ <sha>`); it is not the pinned ref unless the two
+   match. An element the index does not list reads `unavailable`; a
+   `NEW` row reads `—` until its campaign grades it. Copy the grade,
+   never estimate one.
    Then a `### Red flags` list: every `INHERITED-MODIFIED` row with the
    change, why (b) and (c) failed, the upstream issue to be filed, and the
    re-qualification path. An empty list says `None`.
