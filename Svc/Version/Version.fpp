@@ -113,6 +113,30 @@ module Svc {
         telemetry LibraryVersion09: string size 40 id 20 
         telemetry LibraryVersion10: string size 40 id 21 
 
+        # Custom Versions 11-32 (ids 2-11 hold CustomVersion01-10, ids 12-21 the library versions)
+        telemetry CustomVersion11: CustomVersionDb id 22
+        telemetry CustomVersion12: CustomVersionDb id 23
+        telemetry CustomVersion13: CustomVersionDb id 24
+        telemetry CustomVersion14: CustomVersionDb id 25
+        telemetry CustomVersion15: CustomVersionDb id 26
+        telemetry CustomVersion16: CustomVersionDb id 27
+        telemetry CustomVersion17: CustomVersionDb id 28
+        telemetry CustomVersion18: CustomVersionDb id 29
+        telemetry CustomVersion19: CustomVersionDb id 30
+        telemetry CustomVersion20: CustomVersionDb id 31
+        telemetry CustomVersion21: CustomVersionDb id 32
+        telemetry CustomVersion22: CustomVersionDb id 33
+        telemetry CustomVersion23: CustomVersionDb id 34
+        telemetry CustomVersion24: CustomVersionDb id 35
+        telemetry CustomVersion25: CustomVersionDb id 36
+        telemetry CustomVersion26: CustomVersionDb id 37
+        telemetry CustomVersion27: CustomVersionDb id 38
+        telemetry CustomVersion28: CustomVersionDb id 39
+        telemetry CustomVersion29: CustomVersionDb id 40
+        telemetry CustomVersion30: CustomVersionDb id 41
+        telemetry CustomVersion31: CustomVersionDb id 42
+        telemetry CustomVersion32: CustomVersionDb id 43
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

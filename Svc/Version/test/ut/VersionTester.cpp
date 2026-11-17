@@ -53,6 +53,28 @@ void VersionTester ::clear_all() {
     ASSERT_TLM_CustomVersion08_SIZE(0);
     ASSERT_TLM_CustomVersion09_SIZE(0);
     ASSERT_TLM_CustomVersion10_SIZE(0);
+    ASSERT_TLM_CustomVersion11_SIZE(0);
+    ASSERT_TLM_CustomVersion12_SIZE(0);
+    ASSERT_TLM_CustomVersion13_SIZE(0);
+    ASSERT_TLM_CustomVersion14_SIZE(0);
+    ASSERT_TLM_CustomVersion15_SIZE(0);
+    ASSERT_TLM_CustomVersion16_SIZE(0);
+    ASSERT_TLM_CustomVersion17_SIZE(0);
+    ASSERT_TLM_CustomVersion18_SIZE(0);
+    ASSERT_TLM_CustomVersion19_SIZE(0);
+    ASSERT_TLM_CustomVersion20_SIZE(0);
+    ASSERT_TLM_CustomVersion21_SIZE(0);
+    ASSERT_TLM_CustomVersion22_SIZE(0);
+    ASSERT_TLM_CustomVersion23_SIZE(0);
+    ASSERT_TLM_CustomVersion24_SIZE(0);
+    ASSERT_TLM_CustomVersion25_SIZE(0);
+    ASSERT_TLM_CustomVersion26_SIZE(0);
+    ASSERT_TLM_CustomVersion27_SIZE(0);
+    ASSERT_TLM_CustomVersion28_SIZE(0);
+    ASSERT_TLM_CustomVersion29_SIZE(0);
+    ASSERT_TLM_CustomVersion30_SIZE(0);
+    ASSERT_TLM_CustomVersion31_SIZE(0);
+    ASSERT_TLM_CustomVersion32_SIZE(0);
 }
 // ----------------------------------------------------------------------
 // Test STARTUP

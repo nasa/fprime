@@ -200,9 +200,9 @@ void Version ::libraryVersion_tlm(bool sendEvent) {
 }
 // Write all custom version tlm; also emit the event when sendEvent is true (default in Version.hpp)
 void Version ::customVersion_tlm_all(bool sendEvent) {
-    // projects may define a maximum of 10 custom slots
-    static_assert(Svc::VersionCfg::VersionEnum::NUM_CONSTANTS <= VER_SLOT_09 + 1,
-                  "Svc::Version supports at most 10 custom version slots");
+    // projects may define a maximum of 32 custom slots
+    static_assert(Svc::VersionCfg::VersionEnum::NUM_CONSTANTS <= VER_SLOT_31 + 1,
+                  "Svc::Version supports at most 32 custom version slots");
     for (U8 i = 0; (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS); i++) {
         this->customVersion_tlm(static_cast<VersionSlot>(i), sendEvent);
     }
@@ -253,8 +253,74 @@ void Version ::customVersion_tlm(VersionSlot custom_slot, bool sendEvent) {
                 case VER_SLOT_09:
                     this->tlmWrite_CustomVersion10(verId_db[custom_slot]);
                     break;
+                case VER_SLOT_10:
+                    this->tlmWrite_CustomVersion11(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_11:
+                    this->tlmWrite_CustomVersion12(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_12:
+                    this->tlmWrite_CustomVersion13(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_13:
+                    this->tlmWrite_CustomVersion14(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_14:
+                    this->tlmWrite_CustomVersion15(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_15:
+                    this->tlmWrite_CustomVersion16(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_16:
+                    this->tlmWrite_CustomVersion17(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_17:
+                    this->tlmWrite_CustomVersion18(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_18:
+                    this->tlmWrite_CustomVersion19(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_19:
+                    this->tlmWrite_CustomVersion20(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_20:
+                    this->tlmWrite_CustomVersion21(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_21:
+                    this->tlmWrite_CustomVersion22(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_22:
+                    this->tlmWrite_CustomVersion23(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_23:
+                    this->tlmWrite_CustomVersion24(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_24:
+                    this->tlmWrite_CustomVersion25(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_25:
+                    this->tlmWrite_CustomVersion26(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_26:
+                    this->tlmWrite_CustomVersion27(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_27:
+                    this->tlmWrite_CustomVersion28(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_28:
+                    this->tlmWrite_CustomVersion29(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_29:
+                    this->tlmWrite_CustomVersion30(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_30:
+                    this->tlmWrite_CustomVersion31(verId_db[custom_slot]);
+                    break;
+                case VER_SLOT_31:
+                    this->tlmWrite_CustomVersion32(verId_db[custom_slot]);
+                    break;
                 default:
-                    // There are only 10 custom slots available
+                    // There are only 32 custom slots available
                     FW_ASSERT(false, custom_slot);
                     break;
             }
