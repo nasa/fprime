@@ -122,7 +122,7 @@ Read it first, every time.
     (`fprime-run-for-record` §5a); report `[V]`/`[I]` facts only. Close out
     the bench and say so. Campaign close per `fprime-run-for-record` §7,
     then `fprime-checklist-closeout` finishes `docs/checklist.md` (section
-    5, anything `STALE`, audit of every tool-decided row) — the checklist
+    5, anything `STALE`, the tool's NO/UNCHECKED rows read) — the checklist
     the RDD reads (contract §9.5).
 
 ## 6. Approver

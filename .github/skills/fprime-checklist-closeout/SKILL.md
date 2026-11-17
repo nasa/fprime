@@ -4,18 +4,18 @@ description: >-
   Close-out pass of the F Prime Component Development Checklist. Run after
   system testing / run-for-record: re-runs fprime-auto-checklist with
   --stage closeout, decides the Close-Out (section 5) review rows, re-decides
-  anything STALE from earlier stages, and audits every tool-decided row
-  (YES/NO/N/A/UNCHECKED) so the delivered checklist has no row nobody read.
-  Keywords: F Prime, checklist, close-out, audit, hardware run, CI,
+  anything STALE from earlier stages, and reads every NO/UNCHECKED row the
+  tool decided, overriding only where the tool is wrong.
+  Keywords: F Prime, checklist, close-out, override, hardware run, CI,
   fprime-auto-checklist.
 ---
 
 # Checklist — close-out
 
 Finishes the component's `docs/checklist.md`. At this stage every section is
-due and the tool additionally queues each row it decided itself for an
-**audit**: a reviewer reads the evidence behind the verdict and confirms or
-overrides it. The skill performs no development step: whether the component
+due and the tool additionally queues its own NO / UNCHECKED rows to **read**:
+a reviewer opens the evidence behind the verdict and overrides it only when
+the tool is wrong (a tool YES is accepted as is). The skill performs no development step: whether the component
 was built into a topology, run on hardware, or passed CI is answered from the
 artefacts the process left (`docs/hardware-run.md`, the CI status via
 `GITHUB_TOKEN`, deployment build caches), truthfully — "not done" stays
@@ -50,8 +50,8 @@ UNCHECKED, it is never argued into a YES.
    for 4.1 when the process published unit-test artifacts.)
 
    The queue contains `review` rows (section 5 and anything left undecided),
-   `stale` rows (earlier decisions whose section inputs changed) and `audit`
-   rows — every tool-decided row without a current audit.
+   `stale` rows (earlier decisions whose section inputs changed) and `read`
+   rows — the tool's NO / UNCHECKED rows.
 
 2. Decide the `review` and `stale` rows as in the earlier stages (rule text is
    in the queue). 5.3 is the hardware run: YES only when `docs/hardware-run.md`
@@ -59,24 +59,22 @@ UNCHECKED, it is never argued into a YES.
    current commit (check C2 validates it); otherwise NO with "not run" — never
    infer a run from a build.
 
-3. Audit every `audit` row. For each, open the evidence the Notes cite (the
-   clang-tidy/CodeQL finding and file:line, the check's detail, the SDD table,
-   the coverage figure) and record:
-   - `decide --item <id> --status <same as tool> --note "<what you checked>"` —
-     recorded as *Audited: confirmed*;
-   - `decide --item <id> --status <different> --note "<why the tool is wrong>"`
-     — recorded as *Audited: overridden*; the note must point at the evidence
-     (a false positive's file:line, the artefact the tool missed).
-   An UNCHECKED row is confirmed as UNCHECKED only by stating which process
-   step has not been performed (`--status` is not needed for that: leave it and
-   list it in the report); override it to YES/NO only with an artefact in hand.
-   Use `--from decisions.json` for the batch.
+3. Read every `read` row: open the evidence the Notes cite (the clang-tidy/CodeQL
+   finding and file:line, the check's detail, the SDD table, the coverage
+   figure). A correct verdict needs nothing — no stamp, no note. Where the tool
+   is wrong, `decide --item <id> --status <status> --note "<why>"` renders
+   `<status> @<commit> overridden by reviewer` with your one-clause reason in
+   Notes pointing at the evidence (a false positive's file:line, the artefact
+   the tool missed). An UNCHECKED row is overridden to YES/NO only with an
+   artefact in hand; otherwise it stays and the report names the process step
+   it waits on. Use `--from decisions.json` for a batch.
 
-4. Re-run step 1 and confirm *Nothing to review at the closeout stage*: zero
-   REVIEW rows, every row carrying a decision or an audit stamp. Report the
-   totals, the NO rows with notes, and the UNCHECKED rows with the process
-   step each waits on. Commit `docs/checklist.md` and `docs/checklist.json`
-   with the component.
+4. Re-run step 1 and confirm zero REVIEW and zero `stale` rows (the `read`
+   list remains: it is the sign-off list). Report the totals, the NO rows and
+   whether each is pre-existing or introduced, and the UNCHECKED rows with the
+   process step each waits on. Commit `docs/checklist.md` with the component —
+   it is the only record (no `checklist.json`; the evidence JSON stays in the
+   tool's work dir).
 
 ## Notes discipline
 
@@ -90,17 +88,17 @@ The rendered table is read by people; keep it sparse.
   restating the tool's finding, no "Confirmed:" prefixes.
 - **N/A**: one clause stating why the item does not apply.
 - **UNCHECKED**: name the process step that has not been performed.
-- Audits that confirm the tool's verdict are silent in the table; an override
-  renders as one `Audit (...)` line from your `--note`.
+- Every Status cell carries its stamp: `YES @<commit>` (tool), `… by review`
+  (your decision on a row the tool left open), `… overridden by reviewer`
+  (you replaced the tool's verdict — one-clause reason in Notes).
 
 ## Rules
 - `docs/checklist.md` stays beside `docs/sdd.md`; the SDD's last line is
   `Component Development Checklist: [checklist.md](checklist.md)` — restore it if an SDD edit dropped it.
 
-- An audit reads the evidence; it does not re-run the analysis to make a
-  finding disappear. Fix the code or the document, re-run the tool, and the
-  audit lapses by itself (the tool drops an audit whose verdict or section
-  fingerprint changed).
+- Reading a row does not re-run the analysis to make a finding disappear. Fix
+  the code or the document and re-run the tool; an override lapses by itself
+  when its section's inputs change or the tool comes to agree.
 - Hardware, topology and CI rows are answered from records of what was done.
   If the process has not done it, say so.
-- Never hand-edit the Markdown table; `decide` re-renders it from the JSON.
+- Never hand-edit the Markdown table; `decide` rewrites it.
