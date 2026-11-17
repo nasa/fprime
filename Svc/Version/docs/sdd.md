@@ -13,15 +13,19 @@ Tracks versions for framework,project, libraries and user defined project specif
 |SVC-VERSION-005|`Svc::Version` shall provide a ground command to request events and telemetry on framework version| Accessibility on demand|
 |SVC-VERSION-006|`Svc::Version` shall provide a ground command to request events and telemetry on project version| Accessibility on demand|
 |SVC-VERSION-007|`Svc::Version` shall provide a ground command to request events and telemetry channels (upto 10) on library versions| Accessibility on demand|
-|SVC-VERSION-008|`Svc::Version` shall provide a ground command to request events and telemetry channels (upto 10) on custom versions| Accessibility on demand. Verbosity configuration will determine the channel generation|
+|SVC-VERSION-008|`Svc::Version` shall provide a ground command to request events and telemetry channels (upto 32) on custom versions| Accessibility on demand. Verbosity configuration will determine the channel generation|
 |SVC-VERSION-009|`Svc::Version` shall provide a ground command to enable/disable verbosity on custom versions| Accessibility on demand|
 |SVC-VERSION-010|`Svc::Version` shall provide a telemetry channel on framework version| Accessibility to versions being used|
 |SVC-VERSION-011|`Svc::Version` shall provide a telemetry channel on project version| Accessibility to versions being used|
 |SVC-VERSION-012|`Svc::Version` shall provide upto 10 telemetry channels on library versions| Accessibility to versions being used|
-|SVC-VERSION-013|`Svc::Version` shall provide upto 10 telemetry channels on custom versions| Accessibility to versions being used. Only accessible if verbosity is enabled|
+|SVC-VERSION-013|`Svc::Version` shall provide upto 32 telemetry channels on custom versions| Accessibility to versions being used. Only accessible if verbosity is enabled|
 |SVC-VERSION-014|`Svc::Version` shall provide an interface for other components to set custom versions.| Enables projects to set hardware and FPGA versions, say, as needed. Also generates Events/TLM based on verbosity configuration|
 |SVC-VERSION-015|`Svc::Version` shall provide an interface for other components to get custom versions.| Also generates Events/TLM based on verbosity configuration|
 |SVC-VERSION-016|`Svc::Version` shall provide a scheduled input port that periodically re-emits the framework, project and library version telemetry channels, and the populated custom version telemetry channels when verbosity is enabled, without generating events.| Allows ground systems that connect after startup, or that miss the one-shot telemetry write, to receive version telemetry periodically without flooding the event log|
+
+## Custom Version Slots
+
+Custom versions are keyed by the project-defined `Svc.VersionCfg.VersionEnum` (see `config/VersionCfg.fpp`). Each enumerator occupies one telemetry channel: enumerator 0 is reported on `CustomVersion01`, enumerator 1 on `CustomVersion02`, and so on up to `CustomVersion32`. A project may therefore define at most 32 enumerators; a `static_assert` in `Svc::Version` rejects larger enumerations at compile time. Deployments that use `Svc::TlmPacketizer` must place every `CustomVersionNN` channel in a packet or in the `omit` list, including slots the project does not use.
 
 ## Emitting Versions on Start-Up
 
@@ -29,7 +33,7 @@ The version component can emit versions on startup by calling `version.start();`
 
 ## Periodically Re-Emitting Versions
 
-The version component exposes an optional scheduled input port, `schedIn` (`Svc.Sched`), that can be connected to a rate group or other scheduler. On each invocation, `schedIn_handler` re-emits all version telemetry channels (framework, project, library and custom) **without** generating events, so operators can confirm version telemetry on a periodic basis without flooding the event log. Each invocation re-writes up to 22 channels (2 + 10 library + 10 custom) even though their values rarely change, which adds to downlink bandwidth and to `TlmChan`'s `TLMCHAN_MAX_ENTRIES_PER_RUN` budget; connect `schedIn` to a slow rate group (e.g. 1 Hz or slower) sized for the link.
+The version component exposes an optional scheduled input port, `schedIn` (`Svc.Sched`), that can be connected to a rate group or other scheduler. On each invocation, `schedIn_handler` re-emits all version telemetry channels (framework, project, library and custom) **without** generating events, so operators can confirm version telemetry on a periodic basis without flooding the event log. Each invocation re-writes up to 44 channels (2 + 10 library + 32 custom) even though their values rarely change, which adds to downlink bandwidth and to `TlmChan`'s `TLMCHAN_MAX_ENTRIES_PER_RUN` budget; connect `schedIn` to a slow rate group (e.g. 1 Hz or slower) sized for the link.
 
 This is achieved via a `sendEvent` function argument (default `true`) on the internal version-emit helpers, which decouples telemetry writes from event emission. The scheduled handler calls each helper with `sendEvent = false`:
 
@@ -44,3 +48,4 @@ The port is optional and additive: deployments that do not connect `schedIn` are
 |---| Initial Draft |
 | 07/30/26 | Added `start()` information |
 | 10/14/26 | Added `schedIn` scheduled port for periodic version re-emission without events |
+| 11/09/26 | Raised the custom version slot maximum from 10 to 32 (`CustomVersion11`-`CustomVersion32`) |

@@ -304,6 +304,28 @@ telemetry packets RefPackets {
 
 } omit {
   CdhCore.cmdDisp.CommandErrors
+  CdhCore.version.CustomVersion11
+  CdhCore.version.CustomVersion12
+  CdhCore.version.CustomVersion13
+  CdhCore.version.CustomVersion14
+  CdhCore.version.CustomVersion15
+  CdhCore.version.CustomVersion16
+  CdhCore.version.CustomVersion17
+  CdhCore.version.CustomVersion18
+  CdhCore.version.CustomVersion19
+  CdhCore.version.CustomVersion20
+  CdhCore.version.CustomVersion21
+  CdhCore.version.CustomVersion22
+  CdhCore.version.CustomVersion23
+  CdhCore.version.CustomVersion24
+  CdhCore.version.CustomVersion25
+  CdhCore.version.CustomVersion26
+  CdhCore.version.CustomVersion27
+  CdhCore.version.CustomVersion28
+  CdhCore.version.CustomVersion29
+  CdhCore.version.CustomVersion30
+  CdhCore.version.CustomVersion31
+  CdhCore.version.CustomVersion32
   cmdSeq.CS_CurrentSequence
   wasmSeq.SeqName
 }

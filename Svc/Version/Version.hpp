@@ -101,7 +101,29 @@ class Version final : public VersionComponentBase {
         VER_SLOT_06 = 6,
         VER_SLOT_07 = 7,
         VER_SLOT_08 = 8,
-        VER_SLOT_09 = 9
+        VER_SLOT_09 = 9,
+        VER_SLOT_10 = 10,
+        VER_SLOT_11 = 11,
+        VER_SLOT_12 = 12,
+        VER_SLOT_13 = 13,
+        VER_SLOT_14 = 14,
+        VER_SLOT_15 = 15,
+        VER_SLOT_16 = 16,
+        VER_SLOT_17 = 17,
+        VER_SLOT_18 = 18,
+        VER_SLOT_19 = 19,
+        VER_SLOT_20 = 20,
+        VER_SLOT_21 = 21,
+        VER_SLOT_22 = 22,
+        VER_SLOT_23 = 23,
+        VER_SLOT_24 = 24,
+        VER_SLOT_25 = 25,
+        VER_SLOT_26 = 26,
+        VER_SLOT_27 = 27,
+        VER_SLOT_28 = 28,
+        VER_SLOT_29 = 29,
+        VER_SLOT_30 = 30,
+        VER_SLOT_31 = 31
     };
 
     // function to log framework version channel, and event when sendEvent is true
