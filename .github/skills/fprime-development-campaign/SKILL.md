@@ -135,12 +135,19 @@ Read it first, every time.
 
 - `human`: gates 1 and 2 block on the human; the human reads the SDD and
   the QL.
-- `project-campaign` (contract §9.2): the project session performs both
-  gates against the SSDD — gate 1 passes when the SDD `## Requirements`
-  rows trace to every system requirement allocated to this component and
-  the review loop closed per `phase-review-loop.md`; gate 2 passes when the
-  QL package verifies (§5a) and `unseal.md` shows no row needing human
-  triage (contract §6). Each ruling is one ledger line with the evidence
+- `project-campaign` (contract §9.2): the campaign runs in two stretches
+  the project session starts. First the DESIGN lane, stopping at gate 1:
+  the project session performs it against the SSDD — it passes when the
+  SDD `## Requirements` rows trace to every system requirement allocated
+  to this component and the review loop closed per `phase-review-loop.md`
+  — and the human reads the SDD at the project's Approve SSDD gate. Then,
+  once the project session supplies the test configuration, DEVELOPMENT
+  and RELEASE, stopping at a delivered package that passed its seed-free
+  rehearsal. The campaign requests no seed and does not run for record:
+  its RUN-FOR-RECORD lane, with gate 2, is run by the project campaign
+  (`fprime-project-campaign` §6), which passes it when the QL package
+  verifies (§5a) and `unseal.md` shows no row needing human triage
+  (contract §6). Each ruling is one ledger line with the evidence
   read. Any row that needs human triage, any plan-change diff and any
   step 6 stop still goes to the human. The human may name
   components they will approve themselves; those run as `human`.

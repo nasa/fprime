@@ -299,13 +299,22 @@ rules below; where this section is silent, §1–§8 apply unchanged.
 ### 9.1 Lanes and gates
 
 SYSTEM DESIGN (system requirements · decomposition · allocation · system
-test plan, each with its adversarial review) → human **Approve SSDD** →
-BASE DEPLOYMENT (inherited components only) → human **Master seed** (at
-the first rehearsed package) → COMPONENT CAMPAIGNS (one §1 campaign per new
-component, test configuration = the base deployment) → SYSTEM TESTS
-(harness on the system plan, system package) → FINAL RUN-FOR-RECORD (every
-component re-run, then the system) → RDD → human **Read RDD**. Two human
-reviews, two human inputs.
+test plan, each with its adversarial review, then the DESIGN lane of one
+§1 campaign per new component, so every new component has its SDD) →
+BASE DEPLOYMENT (a prototype of the inherited components only, unmodified,
+built and run on the bench; when it fails or differs from the SSDD the
+campaign returns to decomposition by itself, at most three passes, then
+to the human) → human **Approve SSDD** (the SSDD, the component SDDs it
+links, and a prototype that ran) → COMPONENT CAMPAIGNS (approved
+inherited-modified changes, then the DEVELOPMENT and RELEASE lanes of each
+new component's campaign, test configuration = the base deployment; no
+run-for-record here) → SYSTEM TESTS (harness on the system plan, system
+package) → human **Master seed** → RUN-FOR-RECORD (every component once,
+then the system) → RDD → human **Read RDD**. Two human reviews, two human
+inputs. The SSDD carries the design and the test plan from the gate to
+the RDD: the bench result of the prototype is a ledger line, and only a
+change to a requirement or a test returns to the human as a plan-change
+diff (§2).
 The SSDD (`docs/ssdd.md` in the deployment repository) is the UUT
 document of the system package: its `## Requirements` and `## Tests`
 tables are what the tooling reads (§3); `## Architecture`,
@@ -318,10 +327,13 @@ not happen.
 ### 9.2 Delegated approver
 
 A component campaign started by a project campaign names
-`approver: project-campaign`. Its two gates (Approve SDD, Read QL) are
-then performed by the project session against the SSDD and recorded as
-one ledger line each naming the artifact and the check
-(`fprime-development-campaign` §6); the human reads them in the RDD. The
+`approver: project-campaign`. Its Approve SDD gate is performed by the
+project session against the SSDD during SYSTEM DESIGN and recorded as
+one ledger line naming the artifact and the check
+(`fprime-development-campaign` §6); the human then reads that SDD at
+Approve SSDD. Its package is checked by the project session the same
+way, and its run-for-record and quick-look belong to the project's
+RUN-FOR-RECORD lane; the human reads them in the RDD. The
 human may name components to gate themselves (`approver: human`). A
 delegated approver never closes what §6 routes to the human: an unseal
 row needing human triage, a plan-change diff, a step 6 stop
@@ -329,10 +341,12 @@ row needing human triage, a plan-change diff, a step 6 stop
 
 ### 9.3 Seeds
 
-One human-held **master seed** per project campaign, requested once, when
-the first package of the campaign has passed its seed-free rehearsal
-(`fprime-run-for-record` §3) and never earlier. The seed of each run —
-each child's first run, each final re-run, the system run — is derived by
+One human-held **master seed** per project campaign, requested once,
+directly before the RUN-FOR-RECORD lane, when every component package and
+the system package have passed their seed-free rehearsal
+(`fprime-run-for-record` §3) and the deployment SHA is frozen, and never
+earlier. The seed of each run — each component's run, the system run — is
+derived by
 the human, in a shell of their own, as
 `sha256("<master>:<campaign-id>")` (lower-case hex of the UTF-8 bytes).
 The master is never typed on a command line — it would land in the shell
@@ -340,8 +354,8 @@ history; read it un-echoed and derive in one pipeline, e.g.
 `read -rs m; (umask 077; printf '%s' "$m:<campaign-id>" | sha256sum | cut -d' ' -f1 > seed); unset m`,
 so only the derived seed is written, to the `chmod 600` file
 `fth draw --seed-file` reads and deletes; `campaign-id`
-is the inventory id of the component (≤ 8 characters), `<id>:final` for
-its final re-run, `system` for the system run, and is recorded in the
+is the inventory id of the component (≤ 8 characters), `system` for the
+system run, and is recorded in the
 ledger. The master never leaves the human: the derived seed that
 `unseal` publishes reveals nothing about it or about any other run's
 draw, so one master serves every run. §4 is unchanged — no agent,
@@ -349,10 +363,10 @@ including the project session, holds the master or a derived seed.
 
 ### 9.4 Final run and staleness
 
-Before the RDD, every component package is rebuilt against the frozen
-deployment (`fth deliver`, seed-free rehearsal) and run for record
-again, then the system package is run; the component results in the RDD
-are those final runs. A component result is **STALE** when its manifest
+Each component is run for record once, in the RUN-FOR-RECORD lane, from
+a package built against the frozen deployment (`fth deliver`, seed-free
+rehearsal); then the system package is run. A package delivered before
+the deployment froze is rebuilt first. A component result is **STALE** when its manifest
 `repos[]` SHA differs from the system manifest's for any shared
 repository, or when it was not re-run after the deployment froze. The
 RDD marks `STALE` rows and is not handed to the human with one unless
