@@ -506,7 +506,7 @@ void FileDownlink ::finishHelper(bool cancel) {
         this->log_ACTIVITY_HI_DownlinkCanceled(this->m_file.getSourceName(), this->m_file.getDestName());
     }
     this->enterCooldown();
-    sendResponse(SendFileStatus::STATUS_OK);
+    sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
 }
 
 void FileDownlink ::getBuffer(Fw::Buffer& buffer, PacketType type) {
