@@ -361,13 +361,27 @@ the human waived it by name in the ledger.
 ### 9.5 RDD
 
 The release description document is built by a program independent of
-`fth` from: the SSDD; the inventory; per new component the final
-`ql.zip` + sha256, the component's `docs/checklist.md` as
-`fprime-checklist-closeout` left it (§1) and the campaign ledger; the
-system `ql.zip` + sha256; the project ledger. It verifies every hash,
-refuses a missing or unverifiable input, and renders: the component
-table (class, origin, SHAs, links to SDD, checklist, QL, coverage,
-VnV), the system VnV matrix over `## Requirements`, system test
-coverage, the roll-up of every unseal table, `STALE` and waived rows,
-open items. Nothing in it is written or edited by an agent; the ledgers
+`fth` (`rdd`, LeStarch/rdd-creator) from: the SSDD; the deployment's
+top-level topology FPP, from which it reads every component and
+subtopology of the release; the inventory, for each element's class
+and origin; per element its SDD, checklist, unit-test and integration
+coverage and grade; per new component the final `ql.zip` + sha256 and
+the campaign ledger; the system coverage report, system test reports
+and `ql.zip` + sha256; the project ledger. An element's records are
+taken, in order, from the published F Prime quality index (grade
+carried over, for the release the project pins when that release is
+published), from beside its SDD (`docs/checklist.md` as
+`fprime-checklist-closeout` left it (§1), `docs/coverage/`,
+`docs/int-coverage/`), else they read `unavailable`. It verifies every
+hash and refuses an unverifiable input, a `NEW` component that is not
+in the topology, and a `NEW` component without SDD, checklist or
+unit-test coverage; an inherited element's missing record is
+`unavailable`, not a refusal. The refusal over `NEW` components has
+one override (`--allow-incomplete`), which marks the RDD incomplete
+at its top and lists what is missing; such an RDD is a draft, not the
+document of gate 2. It renders: the component
+table (class, origin, grade, links to SDD, checklist, QL, coverage),
+the differences between inventory and topology, the system VnV matrix
+over `## Requirements`, system test coverage and report links, the
+roll-up of every unseal table, `STALE` and waived rows, open items. Nothing in it is written or edited by an agent; the ledgers
 are attached as produced.

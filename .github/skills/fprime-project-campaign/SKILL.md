@@ -155,11 +155,20 @@ after that — child, final re-run, system — needs only its `campaign-id`
     handed over with a `STALE` row unless the human waived it by name in
     the ledger.
 20. **RDD assembly** by the RDD tool (independent of `fth`; contract §9.5
-    names its inputs and refusals): the SSDD, the inventory, every
-    component package (`ql.zip` + sha256, `docs/checklist.md` after
-    `fprime-checklist-closeout`), the system `ql.zip`, the ledgers. The tool verifies every hash and refuses a missing input;
-    nothing is hand-assembled. Until the tool exists, the campaign stops
-    here and reports the input set — it does not write the RDD by hand.
+    names its inputs and refusals): `rdd <project>` reads the SSDD, the
+    top-level topology FPP (every component and subtopology of the
+    release), and per element its SDD, checklist, coverage and grade —
+    from the published F Prime quality index, else beside the SDD, else
+    `unavailable`. Before running it, see that each `NEW` component has
+    `docs/sdd.md`, `docs/checklist.md` (after `fprime-checklist-closeout`)
+    and `docs/coverage/index.html`, and that `docs/rdd.json` names the
+    system coverage report, the system test reports and every `ql.zip`
+    with its sha256. The tool verifies every hash and refuses a `NEW`
+    component that is absent or lacks one of those; nothing is
+    hand-assembled. `--allow-incomplete` builds a draft marked incomplete
+    and is never used for the RDD of gate 2. If the tool is not
+    installed, the campaign stops here and reports the input set — it
+    does not write the RDD by hand.
 21. **Gate 2 — Read RDD (block).** Deliver the tool-built RDD and its
     checksum sidecar, the project ledger and the RfR logs as produced.
     Independently verify the hashes and each QL package's acceptance
