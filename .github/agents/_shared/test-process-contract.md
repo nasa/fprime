@@ -309,7 +309,7 @@ reviews, two human inputs.
 The SSDD (`docs/ssdd.md` in the deployment repository) is the UUT
 document of the system package: its `## Requirements` and `## Tests`
 tables are what the tooling reads (§3); `## Architecture`,
-`## Allocation` and `## Inventory` are defined by
+`## Requirement to Component Map` and `## Inventory` are defined by
 `fprime-system-decomposition` and `fprime-system-allocation`. Modifying
 an inherited component is a **red flag**: it appears by name in the SSDD
 `### Red flags` list and is approved by name at Approve SSDD, or it does

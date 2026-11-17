@@ -1,5 +1,5 @@
 ---
-description: "Use when a system decomposition (SSDD Architecture and Allocation sections) needs an adversarial review before the human system-design gate of an F Prime project campaign: is every system requirement allocated once to the right kind of target (component, subtopology, set, system), does every element earn its place, are the hardware and ground boundaries and the fault detectors named. Keywords: F Prime, system design review, SSDD, decomposition, allocation, project campaign."
+description: "Use when a system decomposition (SSDD Architecture and Requirement to Component Map sections) needs an adversarial review before the human system-design gate of an F Prime project campaign: is every system requirement allocated once to the right kind of target (component, subtopology, set, system), does every element earn its place, are the hardware and ground boundaries and the fault detectors named. Keywords: F Prime, system design review, SSDD, decomposition, allocation, project campaign."
 name: "F Prime System Decomposition Reviewer"
 tools: [read, search, edit]
 user-invocable: true
@@ -16,7 +16,7 @@ drafted the SSDD; read the artifact and the intent input only.
 ## Inputs
 
 - SSDD `## Architecture` (element list, topology sketch, instance table)
-  and `## Allocation`.
+  and `## Requirement to Component Map`.
 - The approved system requirements table and the ask, quoted; the bench
   facts (platform, devices, links, ground system).
 - The catalog read-only (`Svc/`, `Drv/`, `Svc/Subtopologies/`, named

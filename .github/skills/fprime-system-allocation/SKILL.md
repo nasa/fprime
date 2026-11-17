@@ -25,7 +25,7 @@ human must see and approve by name.
 
 ## 1. Inputs
 
-- SSDD `## Architecture` and `## Allocation` (element list, allocation
+- SSDD `## Architecture` and `## Requirement to Component Map` (element list, allocation
   table) and the approved `## Requirements`.
 - The catalogs, read-only, at a named ref each: `nasa/fprime` (`Svc/`,
   `Drv/`, `Svc/Subtopologies/`), the `fprime-community` repositories the
@@ -71,7 +71,12 @@ when an inherited component is almost right (AL-3).
    becomes a system-test obligation (the allocation row's verification moves
    to system test).
 5. **Write SSDD `## Inventory`**, one row per element:
-   `element | class | origin repo@ref (or "new: <repo>") | configuration / adapter / change (one line) | upstream SDD | upstream checklist | campaign id (NEW only) | allocated REQ ids`.
+   `element | class | origin repo@ref (or "new: <repo>") | configuration / adapter / change (one line) | SDD | upstream checklist | campaign id (NEW only) | allocated REQ ids`.
+   The `SDD` cell is a link on every component row: an inherited
+   component's `docs/sdd.md` at its pinned ref; a `NEW` component's
+   `docs/sdd.md` at the path its campaign will write it (the link resolves
+   once that campaign's design lane ends). This table is the SSDD's index of
+   component SDDs; do not repeat it elsewhere.
    Then a `### Red flags` list: every `INHERITED-MODIFIED` row with the
    change, why (b) and (c) failed, the upstream issue to be filed, and the
    re-qualification path. An empty list says `None`.

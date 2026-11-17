@@ -60,7 +60,7 @@ after that — child, final re-run, system — needs only its `campaign-id`
    under `phase-review-loop.md`. Fault scenarios (RS-2) include loss of each
    link and device and of the ground system.
 5. **Decomposition** — `fprime-system-decomposition`, reviewed by
-   `system-decomposition-review`: SSDD `## Architecture` + `## Allocation`.
+   `system-decomposition-review`: SSDD `## Architecture` + `## Requirement to Component Map`.
 6. **Allocation** — `fprime-system-allocation`, reviewed by
    `system-allocation-review`: SSDD `## Inventory` + `### Red flags`.
 7. **System test plan** — `fprime-system-test-design` with the SSDD as the

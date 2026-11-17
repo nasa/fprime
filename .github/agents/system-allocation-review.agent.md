@@ -16,7 +16,7 @@ drafted the inventory; read the artifact and the intent input only.
 ## Inputs
 
 - SSDD `## Inventory` and `### Red flags`.
-- SSDD `## Architecture` and `## Allocation` (approved by
+- SSDD `## Architecture` and `## Requirement to Component Map` (approved by
   `system-decomposition-review`) and the requirements table.
 - The catalogs at the refs the inventory names, read-only: `.fpp` and
   `docs/sdd.md` of each candidate; code only to confirm a behaviour the

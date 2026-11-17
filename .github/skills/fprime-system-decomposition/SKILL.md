@@ -63,8 +63,18 @@ A requirement that needs more than one kind is two requirements
    state why when you do not.
 3. **Sketch the topology.** Instances of the elements, rate groups and
    who drives them, the command/event/telemetry spine, the comm stack to
-   the ground system, hardware links to the bench devices. A block diagram
-   (Mermaid or ASCII) plus an instance table `instance | element | rate group / queue | notes`;
+   the ground system, hardware links to the bench devices. Write the
+   sketch as an FPP topology over the elements (imports of the
+   subtopologies, instances, the connections of the spine; port-only
+   component definitions for elements that do not exist yet — nothing is
+   built) and generate the diagrams from it with `fpp-diagram-render`
+   (fpp-tools, `editors/code/cli`):
+   `fpp-diagram-render --kind topology --name <Module.Topology> --document docs/img --hide-pattern-connections --theme light <fpp files>`.
+   It writes one image per topology with each imported subtopology
+   collapsed to one box, and `<name>.md`: the top-level image followed by
+   one `<details>` block per subtopology. Paste that fragment under
+   `### Topology`. Where the tool is not installed, a Mermaid block diagram.
+   Then an instance table `instance | element | rate group / queue | notes`;
    no base ids, priorities or stack sizes — `fprime-topology-development`
    fixes those in the base-deployment lane.
 4. **Allocate.** One row per requirement:
@@ -79,7 +89,7 @@ A requirement that needs more than one kind is two requirements
    repository): `## Introduction` (the ask, platform, ground system — a few
    sentences), `## Requirements` (the approved table, unchanged — `fth`
    reads this heading, contract §3), `## Architecture` (element list,
-   diagram, instance table), `## Allocation` (the table of step 4), then
+   diagram, instance table), `## Requirement to Component Map` (the table of step 4), then
    leave `## Inventory` to `fprime-system-allocation` and `## Tests` to
    `fprime-system-test-design`. Budgets as `fprime-development.agent.md` §6:
    one line per element, one row per requirement, no prose where a table

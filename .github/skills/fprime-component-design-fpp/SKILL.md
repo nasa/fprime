@@ -169,8 +169,12 @@ Numbered sections, in this order and nothing more:
      as small squares on the **left** edge, output ports on the
      **right**, each `name : PortType` (`[N]` for arrays); special
      ports (command, event, telemetry, time, parameter) are one note
-     under the box. Generated from the FPP model (`fpp-to-layout` +
-     fprime-visual, the generator in `tools/`, or a fenced ASCII box).
+     under the box. Generated from the FPP model with
+     `fpp-diagram-render` (fpp-tools, `editors/code/cli`):
+     `fpp-diagram-render --name <Module.Component> --compact-ports --hide-special-ports --theme light -o docs/img/<Component>.svg <fpp files>`,
+     embedded as `![Component <Module.Component>](img/<Component>.svg)`
+     and regenerated whenever the model's ports change. Where the tool is
+     not installed, a fenced ASCII box.
      No topology, no peer components.
    - **Ports** — table: name, kind (sync/async/guarded, array size),
      type, purpose in ≤ 8 words; the reason for the kind only when
