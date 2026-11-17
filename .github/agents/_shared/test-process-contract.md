@@ -336,8 +336,9 @@ one ledger line naming the artifact and the check
 (`fprime-development-campaign` §6); the human then reads that SDD at
 Approve SSDD. Its package is checked by the project session the same
 way, and its run-for-record and quick-look belong to the project's
-RUN-FOR-RECORD lane; the human reads them in the RDD. The
-human may name components to gate themselves (`approver: human`). A
+RUN-FOR-RECORD lane; the human reads them in the RDD. No component is
+gated by the human separately: the human's input on a component is given
+at Approve SSDD. A
 delegated approver never closes what §6 routes to the human: an unseal
 row needing human triage, a plan-change diff, a step 6 stop
 (`fprime-development-campaign`).

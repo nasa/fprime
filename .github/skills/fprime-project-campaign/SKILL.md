@@ -52,7 +52,6 @@ run-for-record lane; every run needs only its `campaign-id` (contract
 | Project repository | yes | Where the deployment, SSDD, system tests and ledger live; its branch workflow. |
 | Catalogs | yes | The repositories the inheritor may draw from, each at a ref: `nasa/fprime`, the `fprime-community` repositories allowed, project libraries. |
 | Bench facts | yes | As `fprime-development-campaign` §0, for the whole testbed. |
-| Component review | no | Names of new components the human will gate themselves (default: none — the project session is the approver, contract §9.2). |
 | Review bound | no | `review rounds: N` for every design loop. |
 | Skills source | no | Repository and ref the contract, agents and skills are read from. Default `nasa/fprime` `devel`; a campaign trialling unmerged skills names the branch or PR, and passes it to every child. |
 | Master seed | later | Requested once, directly before the run-for-record lane — never with the ask, and never held by this session (contract §9.3). The human keeps it and derives every run's seed from it. |
@@ -93,16 +92,16 @@ run-for-record lane; every run needs only its `campaign-id` (contract
 8. **Component SDDs** — one `fprime-development-campaign` child per `NEW`
    (component) inventory row — never for a `NEW-SUBTOPOLOGY` — run through
    its DESIGN lane only. Kickoff: the ask (verbatim), the component's
-   allocated REQ ids and the SSDD, `approver: project-campaign` unless
-   the human named the component, `campaign-id: <inventory id>`, the
+   allocated REQ ids and the SSDD, `approver: project-campaign`,
+   `campaign-id: <inventory id>`, the
    skills source, identity rules, LOCAL ONLY, and *stop after your Approve
    SDD gate*. This session performs that gate per
    `fprime-development-campaign` §6 (a ledger line naming the artifact and
    the check). Each SDD lands at the path the inventory links. **Exit:**
    the lane does not proceed to step 9 until every `NEW` component's SDD
    has been received and its gate passed, each with its ledger line; a
-   gate that does not pass sends that child back into its DESIGN lane,
-   and a component the human named blocks here on the human. Sub-sessions
+   gate that does not pass sends that child back into its DESIGN lane.
+   Sub-sessions
    of steps 4–7: one reviewer child per reviewer agent, reused across
    rounds, LOCAL ONLY. Elicitation findings batched once per round.
 
@@ -219,8 +218,7 @@ run-for-record lane; every run needs only its `campaign-id` (contract
 - Lanes run in order; the deployment SHA does not change after lane 5
   exits; no two RfRs run concurrently on the bench.
 - Exactly two human reviews (SSDD, RDD) and two inputs (ask, master
-  seed — requested once, directly before the run-for-record lane) unless the human named components to gate themselves (then two
-  more per named component). Any other return to the human is a red flag,
+  seed — requested once, directly before the run-for-record lane). Any other return to the human is a red flag,
   a plan-change diff, a tooling refusal, an unseal row needing triage, or a
   bench fact.
 - Everything is local; nothing is posted to GitHub by this session or any
@@ -235,7 +233,7 @@ run-for-record lane; every run needs only its `campaign-id` (contract
   into DEVELOPMENT without the test configuration SHA.
 - Modifying an inherited component to make the prototype run.
 - Approving a child gate without the ledger line naming the evidence;
-  gating a component the human asked to gate themselves.
+  asking the human to gate a component outside Approve SSDD.
 - Deriving, holding or forwarding any seed in this session or a child
   other than the runner; asking for the master seed before the first
   package has passed its seed-free rehearsal.

@@ -149,8 +149,7 @@ Read it first, every time.
   verifies (§5a) and `unseal.md` shows no row needing human triage
   (contract §6). Each ruling is one ledger line with the evidence
   read. Any row that needs human triage, any plan-change diff and any
-  step 6 stop still goes to the human. The human may name
-  components they will approve themselves; those run as `human`.
+  step 6 stop still goes to the human.
 
 ## Specifications
 
