@@ -26,6 +26,17 @@ bench) → Approve SSDD → COMPONENT CAMPAIGNS → SYSTEM TESTS → Master seed
 RUN-FOR-RECORD → RDD → Read RDD
 ```
 
+**Who decides what.** The human concurs on the system design only, at
+Approve SSDD. The agents of this process are responsible for every
+component, one by one — its requirements, SDD, code, tests and package —
+and the project session, not the human, passes each component's gates.
+The human's input on a component enters at Approve SSDD, where the
+component SDDs are linked: an SDD the human rejects there, or comments
+on, returns to that component's campaign (step 12). After that gate the
+human is asked only for the master seed, for what the contract always
+routes to a human (an unseal row needing triage, a plan-change diff, a
+red flag), and to read the RDD.
+
 The human approves a design that has already run: every new component has
 its SDD and the inherited components have booted as a prototype before
 gate 1. The SSDD then carries the design and the test plan unchanged to

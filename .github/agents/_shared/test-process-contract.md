@@ -311,7 +311,10 @@ new component's campaign, test configuration = the base deployment; no
 run-for-record here) → SYSTEM TESTS (harness on the system plan, system
 package) → human **Master seed** → RUN-FOR-RECORD (every component once,
 then the system) → RDD → human **Read RDD**. Two human reviews, two human
-inputs. The SSDD carries the design and the test plan from the gate to
+inputs. The human concurs on the system design; the agents are
+responsible for each component's development, and the human's input on a
+component enters at Approve SSDD, through the component SDDs the SSDD
+links (§9.2). The SSDD carries the design and the test plan from the gate to
 the RDD: the bench result of the prototype is a ledger line, and only a
 change to a requirement or a test returns to the human as a plan-change
 diff (§2).
