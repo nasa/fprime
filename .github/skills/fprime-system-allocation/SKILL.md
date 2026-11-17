@@ -76,7 +76,9 @@ when an inherited component is almost right (AL-3).
    component's `docs/sdd.md` at its pinned ref; a `NEW` component's
    `docs/sdd.md` at the path its campaign will write it (the link resolves
    once that campaign's design lane ends). This table is the SSDD's index of
-   component SDDs; do not repeat it elsewhere.
+   component SDDs; do not repeat it elsewhere. Component SDDs are
+   linked, never copied or inlined into the SSDD — the SSDD shows a
+   component only as a box in the topology diagram.
    Then a `### Red flags` list: every `INHERITED-MODIFIED` row with the
    change, why (b) and (c) failed, the upstream issue to be filed, and the
    re-qualification path. An empty list says `None`.
