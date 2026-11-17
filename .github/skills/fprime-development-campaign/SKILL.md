@@ -65,12 +65,18 @@ Read it first, every time.
    `fprime-checklist-design` creates `docs/checklist.md` beside the SDD
    (contract §1, checklist paragraph).
 6. Sub-sessions: one reviewer child per reviewer agent, reused across
-   rounds, LOCAL ONLY. Elicitation findings are questions to the human,
-   batched once per round.
+   rounds, LOCAL ONLY. Elicitation findings go to the **writer**, not
+   the human: the writer answers each with a proposed design in the SDD,
+   logs it in the ledger as `proposed`, and the next round reviews it.
+   The approver first sees the proposals at gate 1. Stop for the human
+   before gate 1 only when a proposal would change code outside the UUT
+   or deviate materially from the request. The same holds for every
+   phase redone after a gate 1 rejection.
 7. **Gate 1 — Approve SDD (block).** Hand the approver `docs/sdd.md` as the
    single document (requirements table, design, Tests table, linking
    `docs/checklist.md`); plan, fault menu, checklist and review records as
-   named attachments. Record the ruling in the
+   named attachments. The gate message lists the requirement IDs that
+   carry a writer's proposal (step 6). Record the ruling in the
    ledger. A rejection redoes the affected phase and returns here.
 
 ## 3. DEVELOPMENT lane — no gate
@@ -136,7 +142,7 @@ Read it first, every time.
   QL package verifies (§5a) and `unseal.md` shows no row needing human
   triage (contract §6). Each ruling is one ledger line with the evidence
   read. Any row that needs human triage, any plan-change diff and any
-  elicitation question still goes to the human. The human may name
+  step 6 stop still goes to the human. The human may name
   components they will approve themselves; those run as `human`.
 
 ## Specifications

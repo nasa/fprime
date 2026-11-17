@@ -324,7 +324,8 @@ one ledger line each naming the artifact and the check
 (`fprime-development-campaign` §6); the human reads them in the RDD. The
 human may name components to gate themselves (`approver: human`). A
 delegated approver never closes what §6 routes to the human: an unseal
-row needing human triage, a plan-change diff, an elicitation question.
+row needing human triage, a plan-change diff, a step 6 stop
+(`fprime-development-campaign`).
 
 ### 9.3 Seeds
 
