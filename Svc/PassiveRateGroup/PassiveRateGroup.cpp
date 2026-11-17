@@ -44,6 +44,20 @@ void PassiveRateGroup::configure(const ContextArray& contexts, const Os::RawTime
     }
 
     this->m_rawTimeSource = rawTimeSource;
+
+    // Write initial telemetry so that every channel has a value before the first cycle runs
+    // (ports must already be connected for these writes to be delivered)
+    if (Svc::PassiveRateGroupCfg::PortCycleTime) {
+        PassiveRateGroup_CycleTime portCycleTimeHWM;
+        for (FwIndexType port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
+            portCycleTimeHWM[static_cast<FwSizeType>(port)] =
+                this->m_portCycleTimeHWMUsec[static_cast<FwSizeType>(port)].load(std::memory_order_relaxed);
+        }
+        this->tlmWrite_PortCycleTimeHWM(portCycleTimeHWM);
+    }
+    this->tlmWrite_MaxCycleTime(this->m_maxTime.load(std::memory_order_relaxed));
+    this->tlmWrite_CycleTime(0);
+    this->tlmWrite_CycleCount(this->m_cycles);
 }
 
 void PassiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {

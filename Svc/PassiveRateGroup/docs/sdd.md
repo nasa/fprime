@@ -49,6 +49,8 @@ The component must be configured via `configure()` with:
 - A context array of U32 values (one per output port) passed to each rate group member
 - An optional `Os::RawTimeSource` specifying which hardware timer to use for execution time measurements (defaults to `Os::RAWTIME_DEFAULT`)
 
+`configure()` also writes the initial values of the `MaxCycleTime`, `CycleTime`, `CycleCount` and (when enabled) `PortCycleTimeHWM` channels so that they are available before the first cycle runs. The telemetry and time ports must be connected before calling `configure()` for these writes to be delivered.
+
 The component tracks execution time statistics:
 - Overall rate group cycle time (current and maximum)
 - Per-port execution times and high water marks (when PassiveRateGroupCfg::PortCycleTime is enabled)

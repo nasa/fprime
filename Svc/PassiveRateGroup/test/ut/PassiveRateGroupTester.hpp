@@ -29,6 +29,7 @@ class PassiveRateGroupTester : public PassiveRateGroupGTestBase {
     void runPortCycleTimeTest();
     void runClearStatisticsTest();
     void runRawTimeSourceTest();
+    void runInitialTlmTest();
 
     static FwSizeType getNumRateGroupMemberOutPorts() {
         return Svc::PassiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
