@@ -170,7 +170,7 @@ Os/Generic/DefaultPriorityMemQueue.cpp         3       0     0%   16-18
 Os/Generic/DefaultPriorityQueue.cpp            3       3   100%
 Os/Generic/LocklessPriorityQueue.cpp         202     190    94%   128,130-131,147-149,151-154,368-369
 Os/Generic/LocklessPriorityQueue.hpp           1       1   100%
-Os/Generic/PriorityMemQueue.cpp              352     318    90%   79-80,110-111,123-124,190-192,196-197,213,219-220,223-224,228-230,232,235-236,238,246,424,434-435,460,485,531-532,601,766-767
+Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,123-124,190-192,196-197,213,219-220,223-224,228-230,232,235-236,238,246,424,434-435,460,485,531-532,601,767
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 166     139    83%   77,79-80,90-91,93-95,107-109,111-114,124-127,129-133,193,262-263
 Os/Generic/PriorityQueue.hpp                   1       1   100%
@@ -202,7 +202,7 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      89    50%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,134-136,140-142,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
@@ -426,7 +426,7 @@ Svc/TlmChan/TlmChan.cpp                      182     145    79%   100,130,132,13
 Svc/TlmPacketizer/TlmPacketizer.cpp          472     448    94%   165,296,298-299,339,424,483-484,517-518,642-644,698-700,770,790,860-861,864,875-876,878
 Svc/Types/EventSeverityFilter/EventSeverityFilter.cpp
                                               46      45    97%   41
-Svc/Version/Version.cpp                      172     166    96%   124-126,256,258-259
+Svc/Version/Version.cpp                      238     166    69%   124-126,256-322,324-325
 Svc/WasmSequencer/WasmSequencer.cpp          313     302    96%   34,255-257,350-351,353,472-473,579-580
 Svc/WasmSequencer/WasmSequencer.hpp            7       7   100%
 Svc/WasmSequencer/WasmSequencerController.cpp
@@ -449,5 +449,5 @@ Utils/TokenBucket.cpp                         54      54   100%
 Utils/Types/CircularBuffer.cpp               146     128    87%   87,89-93,95-96,179,181-184,186-190
 Utils/Types/Queue.cpp                        104      95    91%   48,54,74,80,121,143,148,189-190
 ------------------------------------------------------------------------------
-TOTAL                                      26759   22997    85%
+TOTAL                                      26825   22995    85%
 ------------------------------------------------------------------------------
