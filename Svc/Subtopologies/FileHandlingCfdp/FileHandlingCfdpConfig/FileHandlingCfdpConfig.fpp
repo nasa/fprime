@@ -25,4 +25,9 @@ module FileHandlingCfdpConfig {
         constant fileManager   = Os.TASK_DEFAULT
         constant prmDb         = Os.TASK_DEFAULT
     }
+
+    # CFDP manager configuration constants
+    module CfdpConfig {
+        constant fileQueueDepth = 10           # Depth of the cfdpManager fileIn request queue
+    }
 }

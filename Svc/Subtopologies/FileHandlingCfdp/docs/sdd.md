@@ -135,12 +135,13 @@ See the [CfdpManager SDD](../../../Ccsds/CfdpManager/docs/sdd.md) for detailed c
 * **Stack sizes** — Task stacks for active components.
 * **Priorities** — RTOS priorities for the active/queued components.
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
+* **CFDP configuration** — `CfdpConfig.fileQueueDepth`, the depth of the `cfdpManager` `fileIn` request queue passed to `cfdpManager.configure()`.
 
 > These knobs tailor runtime footprint and scheduling without modifying the subtopology wiring.
 
 ### 4.2 Memory Allocation
 
-The `cfdpManager` component requires a memory allocator to be provided during configuration. The subtopology includes a `MallocAllocator` instance (`Allocation::memAllocator`) that is passed to `cfdpManager.configure()` in the `configComponents` phase. The allocator is used to dynamically allocate the CFDP engine structure.
+The `cfdpManager` component requires a memory allocator to be provided during configuration. The subtopology includes a `MallocAllocator` instance (`Allocation::memAllocator`) that is passed to `cfdpManager.configure()`, together with `CfdpConfig.fileQueueDepth`, in the `configComponents` phase. The allocator is used to dynamically allocate the CFDP engine structure.
 
 ---
 
