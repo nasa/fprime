@@ -51,6 +51,7 @@ BUILD_20 | The build system shall support execution of the F´ Autocoder. | | Un
 BUILD_21 | The build system shall verify that required compilers, linkers, libraries, etc. are installed on host where build is being executed. | | Unit-Test |
 BUILD_22 | The build system shall support execution of individual, sets, or all F´ Autocoder and associated tooling tests. | | |
 BUILD_24 | The build system shall support execution of custom Autocoders. | | Unit-Test |
+BUILD_25 | The build system shall build, by default, only a project's modules and the framework and library modules they depend upon, while providing a target (`universe`) that builds every registered module. | Projects should not pay to build framework and library code they do not use (`FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`). | Unit-Test |
 
 ## 3 Operations Concepts
 

@@ -144,7 +144,7 @@ macro(fprime_initialize_build_system)
     # Ensure that the build system is loaded only once
     get_property(_FPRIME_BUILD_SYSTEM_LOADED GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED)
     if (NOT _FPRIME_BUILD_SYSTEM_LOADED)
-        cmake_minimum_required(VERSION 3.18)
+        cmake_minimum_required(VERSION 3.19)
         fprime_detect_libraries()
         fprime_setup_standard_targets()
         fprime_setup_override_targets()
@@ -169,6 +169,10 @@ endmacro(fprime_initialize_build_system)
 #
 # Sets up the code/build for fprime and libraries. Call after all project specific targets and autocoders are set up and
 # registered. Resets the fprime-util metadata of the calling directory, so nothing may register in it before this call.
+#
+# Decides whether the framework and library modules registered here are excluded from `all` (global property
+# FPRIME_EXCLUDING_INCLUDED_CODE: `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`, forced OFF when F Prime is the top-level project).
+# Unit tests built by `all` are labeled and listed at the root of the build cache by `ut_add_ctest`.
 ####
 function(fprime_setup_included_code)
     # The calling directory (e.g. "F-Prime") has no add_fprime_subdirectory parent to reset its metadata
@@ -210,10 +214,24 @@ function(fprime_setup_included_code)
     # the current module and then calling stock "add_subdirectory".
     fprime_setup_platform()
     # Add "all" target to top level and a target to match all tests
-    fprime_util_metadata_add_build_target("all")
-    if (BUILD_TESTING)
-        fprime_util_metadata_add_test(".*")
+    # The project build target belongs to the root of the build cache even when F Prime is added from a subdirectory
+    fprime_util_metadata_setup_project()
+    # Decide whether framework and library modules are excluded from "all". When F Prime is the top-level project
+    # (the framework building itself) everything is the project and nothing is excluded.
+    set(_FP_EXCLUDE_INCLUDED_CODE "${FPRIME_EXCLUDE_LIBRARIES_FROM_ALL}")
+    get_filename_component(_FP_SOURCE_REAL "${CMAKE_SOURCE_DIR}" REALPATH)
+    get_filename_component(_FP_FRAMEWORK_REAL "${FPRIME_FRAMEWORK_PATH}" REALPATH)
+    if (_FP_EXCLUDE_INCLUDED_CODE AND "${_FP_SOURCE_REAL}" STREQUAL "${_FP_FRAMEWORK_REAL}")
+        fprime_cmake_status("[FPRIME] Framework is the top-level project: FPRIME_EXCLUDE_LIBRARIES_FROM_ALL forced OFF")
+        set(_FP_EXCLUDE_INCLUDED_CODE OFF)
     endif()
+    set_property(GLOBAL PROPERTY FPRIME_EXCLUDING_INCLUDED_CODE "${_FP_EXCLUDE_INCLUDED_CODE}")
+    # Build the `universe` target from every registered module once the whole project has been configured
+    if (NOT FPRIME_IS_SUB_BUILD)
+        cmake_language(DEFER DIRECTORY "${CMAKE_SOURCE_DIR}" CALL fprime__internal_setup_universe_target)
+    endif()
+    # Modules registered while this is set belong to the framework or a library, not to the project
+    set(FPRIME__INTERNAL_INCLUDED_CODE ON)
     set(_FP_CORE_PACKAGES Fpp default Fw Svc Os Drv CFDP Utils)
     foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)
         set(FPRIME_CURRENT_MODULE "${_FP_PACKAGE_DIR}")
@@ -237,6 +255,7 @@ function(fprime_setup_included_code)
     endforeach()
     # Always enable UTs for a project
     set(__FPRIME_NO_UT_GEN__ OFF)
+    unset(FPRIME__INTERNAL_INCLUDED_CODE)
 endfunction(fprime_setup_included_code)
 
 

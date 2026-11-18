@@ -6,6 +6,10 @@
 include(target/build) # Borrows some implementation
 include(fprime-util)
 set(FPRIME__INTERNAL_UT_TARGET "ut_exe" CACHE INTERNAL "Internal name for UT target" FORCE) # For historical reasons
+# CTest labels read by fprime-util to run tests by label: every unit test, and the unit tests built by "all"
+set(FPRIME_UNIVERSE_TEST_LABEL "fprime_universe" CACHE STRING "CTest label carried by every F Prime unit test" FORCE)
+set(FPRIME_PROJECT_TEST_LABEL "fprime_project" CACHE STRING "CTest label carried by the F Prime unit tests built by all" FORCE)
+mark_as_advanced(FPRIME_UNIVERSE_TEST_LABEL FPRIME_PROJECT_TEST_LABEL)
 set(FPRIME__INTERNAL_UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake" CACHE INTERNAL "Internal path to UT clean script" FORCE)
 
 
@@ -133,6 +137,18 @@ function(ut_add_ctest UT_EXECUTABLE_TARGET)
     )
     add_test(NAME ${UT_EXECUTABLE_TARGET} COMMAND ${UT_EXECUTABLE_TARGET} WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
     fprime_util_metadata_add_test("${UT_EXECUTABLE_TARGET}")
+    # Every test is labeled FPRIME_UNIVERSE_TEST_LABEL; tests built by "all" (not EXCLUDE_FROM_ALL) are also labeled
+    # FPRIME_PROJECT_TEST_LABEL and listed by name in the root metadata, the fallback for tools that do not run by label.
+    get_target_property(UT_EXCLUDED_FROM_ALL "${UT_EXECUTABLE_TARGET}" EXCLUDE_FROM_ALL)
+    set(UT_LABELS "${FPRIME_UNIVERSE_TEST_LABEL}")
+    if (NOT UT_EXCLUDED_FROM_ALL)
+        list(APPEND UT_LABELS "${FPRIME_PROJECT_TEST_LABEL}")
+        # A test registered in the root directory is already listed there by fprime_util_metadata_add_test
+        if (NOT "${CMAKE_CURRENT_BINARY_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+            fprime_util_metadata_add_project_test("${UT_EXECUTABLE_TARGET}")
+        endif()
+    endif()
+    set_tests_properties(${UT_EXECUTABLE_TARGET} PROPERTIES LABELS "${UT_LABELS}")
 endfunction(ut_add_ctest)
 
 ####

@@ -388,7 +388,7 @@ overrides `CdhCoreTlmConfig.fpp`.
 | `GLOBAL_IMPLICIT_DEPENDENCY` | Linked into the global interface target: visible to every module without `DEPENDS`. Used by framework defaults and platform packages; available to library defaults. Replaces the deprecated `BASE_CONFIG`, which still works as a synonym and emits a warning. |
 | `DEPENDS` | Modules this configuration needs to compile, typically `Fw_Types` (or `${FPRIME_GLOBAL_INTERFACE_TARGET}` when the module is `GLOBAL_IMPLICIT_DEPENDENCY`; see [Library Defaults](#library-defaults)). Not required for FPP imports, which the FPP dependency analysis discovers. |
 | `CHOOSES_IMPLEMENTATIONS` | Implementation selections (see [CMake Implementations](./cmake-implementations.md)). Platform packages must choose every required implementation; projects may override. |
-| `EXCLUDE_FROM_ALL` | Build only when depended upon. Used by subtopology configuration. |
+| `EXCLUDE_FROM_ALL` | Leave out of `all`: build only when named or depended upon, or through the `universe` target (see [Targets](./cmake-targets.md#all-and-universe)). Used by subtopology configuration. |
 
 ## Errors
 

@@ -195,7 +195,7 @@ endfunction()
 # ```
 #
 # > [!NOTE]
-# > This delegates to CMake's `add_library` call. The library argument EXCLUDE_FROM_ALL is supported.
+# > This delegates to CMake's `add_library` call. The library argument EXCLUDE_FROM_ALL is supported. As in CMake, a module registered with EXCLUDE_FROM_ALL is left out of `all` and builds when named or depended upon, or through the `universe` target (see `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`).
 # > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
 # > a rebuild when they change.
 #
@@ -276,7 +276,7 @@ endfunction()
 # ```
 #
 # > [!NOTE]
-# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported. As in CMake, a module registered with EXCLUDE_FROM_ALL is left out of `all` and builds when named or depended upon, or through the `universe` target (see `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`).
 # > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
 # > a rebuild when they change.
 #
@@ -344,7 +344,7 @@ endfunction()
 # ```
 #
 # > [!NOTE]
-# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported. As in CMake, a module registered with EXCLUDE_FROM_ALL is left out of `all` and builds when named or depended upon, or through the `universe` target (see `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`).
 # > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
 # > a rebuild when they change.
 #
@@ -580,7 +580,7 @@ endfunction()
 # ```
 #
 # > [!NOTE]
-# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported. As in CMake, a module registered with EXCLUDE_FROM_ALL is left out of `all` and builds when named or depended upon, or through the `universe` target (see `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`).
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
 # **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
@@ -802,12 +802,14 @@ endfunction()
 #   3. Add the current source directory to the global include directories
 #   4. Add the current binary directory to the global include directories
 #   5. Add the current source directory to the CMAKE_PATH_PREFIX variable for this module
+#   6. Set up the fprime-util metadata at the root of the build cache (the project builds `all`)
 # This allows it to be found and used by other modules in the build system.  It ensures that the components are properly
 # slotted underneath this library for the purpose of include path and target names.
 # Args: none
 #####
 macro(register_fprime_project)
     fprime_initialize_build_system() # Make sure the build system is initialized before registering the project
+    fprime_util_metadata_setup_project()
     # Typically it is an error to call register_fprime_project outside the root CMakeLists.txt of a defined `project()`
     if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
         fprime_cmake_warning("register_fprime_project not called in CMakeLists.txt containing a project() declaration")

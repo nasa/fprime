@@ -13,7 +13,8 @@ _ = cmake.get_build(
     "UT_BUILD",
     settings.REF_APP_PATH,
     cmake_arguments={"BUILD_TESTING": "ON"},
-    make_targets=["all", "Ref", "Ref_ut_exe"],
+    # "universe" builds the framework unit tests that the project build ("all") now leaves out
+    make_targets=["all", "universe", "Ref", "Ref_ut_exe"],
     install_directory=tempfile.mkdtemp(),
 )
 MODULES = settings.FRAMEWORK_MODULES + settings.STANDARD_MODULES

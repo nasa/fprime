@@ -58,7 +58,8 @@ jobs:
             generate_args: va416x0-baremetal-profiler -f
             build_cmd: build va416x0-baremetal-profiler
           - toolchain: linux-gcc-ut
-            generate_args: --ut -f
+            # The project registers no unit tests of its own: keep framework and library tests in the project build
+            generate_args: --ut -f -DFPRIME_EXCLUDE_LIBRARIES_FROM_ALL=OFF
             build_cmd: check
 
     steps:

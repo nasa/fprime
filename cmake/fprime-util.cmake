@@ -90,6 +90,45 @@ function(fprime_util_metadata_add_test TEST_NAME)
 endfunction()
 
 ####
+# Function `fprime_util_metadata_add_project_build_target`:
+#
+# Adds a build target to the project-level (root of the build cache) metadata, i.e. the targets built by
+# `fprime-util build` at the project root, regardless of the directory F Prime is included from.
+#
+# - **BUILD_TARGET:** name of the build target to add
+####
+function(fprime_util_metadata_add_project_build_target BUILD_TARGET)
+    file(APPEND "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_BUILD_TARGETS_FILE}" "${BUILD_TARGET}\n")
+endfunction()
+
+####
+# Function `fprime_util_metadata_setup_project`:
+#
+# Sets up the project-level (root of the build cache) metadata: `all` is what `fprime-util build` builds at the project
+# root. Runs once per configure; called when a project is registered (`register_fprime_project`) and when the framework
+# and library code is set up (`fprime_setup_included_code`), whichever comes first.
+####
+function(fprime_util_metadata_setup_project)
+    get_property(_FPRIME_PROJECT_METADATA_SETUP GLOBAL PROPERTY FPRIME__INTERNAL_PROJECT_METADATA_SETUP)
+    if (NOT _FPRIME_PROJECT_METADATA_SETUP)
+        set_property(GLOBAL PROPERTY FPRIME__INTERNAL_PROJECT_METADATA_SETUP ON)
+        fprime_util_metadata_add_project_build_target("all")
+    endif()
+endfunction()
+
+####
+# Function `fprime_util_metadata_add_project_test`:
+#
+# Adds a test to the project-level (root of the build cache) metadata, i.e. the tests run by `fprime-util check` at the
+# project root (and by `fprime-util check --project` in fprime-tools releases after 4.4.0).
+#
+# - **TEST_NAME:** name of the test to add
+####
+function(fprime_util_metadata_add_project_test TEST_NAME)
+    file(APPEND "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_TESTS_FILE}" "${TEST_NAME}\n")
+endfunction()
+
+####
 # Function `fprime_util_metadata_set_test_dir`:
 #
 # Sets the CTest test directory for the current build directory. This writes a test-dir.fprime-util file that tells

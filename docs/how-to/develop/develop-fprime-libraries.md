@@ -59,6 +59,12 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MyLibrary/MyTopology")
 
 `library.cmake` should exist at the root of the library's directory structure.
 
+> [!NOTE]
+> A consuming project's build (`all`) builds a library's modules only when the project depends upon them
+> (`FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`, default `ON`). To build or test every module of a library from a project, build
+> the `universe` target (`cmake --build . --target universe`) or run `fprime-util build`/`check` from the module's
+> directory; see [Targets](../../user-manual/build-system/cmake-targets.md#all-and-universe).
+
 
 ## Optional: F´ Module Directories
 

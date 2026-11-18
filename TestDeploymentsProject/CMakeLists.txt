@@ -14,6 +14,7 @@ project(Ref VERSION 1.0.0 LANGUAGES C CXX)
 # Find the fprime package and include the core codebase
 set(FPRIME_INCLUDE_FRAMEWORK_CODE OFF)
 find_package(FPrime REQUIRED PATHS "${CMAKE_CURRENT_LIST_DIR}/..")
+register_fprime_project()
 
 # Hold this project to the same warning set F Prime validates against. The flags F Prime requires in
 # order to build arrive with the framework targets themselves.
