@@ -246,14 +246,18 @@ def test_telemetry_and_parameters():
     # The sequencer's own telemetry is readable too
     check Ref.wasmSeq.CommandsDispatched > 0 timeout {seconds: 20} period {seconds: 1}
 
-    # Parameters are read back from the parameter database, so save after setting
+    # Parameters are read back from the parameter database, so save after setting.
+    # PRM_SAVE completes once the write is queued on the database's async setPrm
+    # port, so sleep to let the database apply it before reading back.
     Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS_PRM_SET(120.0)
     Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS_PRM_SAVE()
+    sleep(1)
     timeout_prm: F32 = Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS
     assert timeout_prm == 120.0
     # Restore the default
     Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS_PRM_SET(60.0)
     Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS_PRM_SAVE()
+    sleep(1)
     assert Ref.wasmSeq.HOST_FUNCTION_TIMEOUT_SECS == 60.0
 
 # ---------------------------------------------------------------------------
