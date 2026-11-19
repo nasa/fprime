@@ -16,6 +16,8 @@ include(fprime-util)
 set(FPRIME__INTERNAL_BASE_CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" "AUTOCODER_INPUTS" "REQUIRES_IMPLEMENTATIONS" "LINK_DEPENDS" CACHE INTERNAL "Base set of control directives for module registration" FORCE)
 
 set(FPRIME__INTERNAL_EMPTY_CPP "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp" CACHE INTERNAL "Empty cpp file to attach to targets before autocoding" FORCE)
+set(FPRIME_UNIVERSE_TARGET "universe" CACHE STRING "Target building every registered F Prime module (see FPRIME_EXCLUDE_LIBRARIES_FROM_ALL)" FORCE)
+mark_as_advanced(FPRIME_UNIVERSE_TARGET)
 
 ####
 # Function `fprime__internal_add_build_target`:
@@ -211,6 +213,44 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
 endfunction()
 
 ####
+# Function `fprime__internal_mark_exclusion`:
+#
+# Excludes a newly registered target from `all` when it belongs to included code (the framework or a library) and
+# `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL` is in effect. This is the same EXCLUDE_FROM_ALL a module sets through its register
+# call or inherits from a directory added with EXCLUDE_FROM_ALL: the target builds when named or depended upon, and
+# through `universe` (see `fprime__internal_setup_universe_target`).
+#
+# - **TARGET_NAME:** name of the registered target
+####
+function(fprime__internal_mark_exclusion TARGET_NAME)
+    get_property(FPRIME__INTERNAL_EXCLUDING GLOBAL PROPERTY FPRIME_EXCLUDING_INCLUDED_CODE)
+    if (FPRIME__INTERNAL_INCLUDED_CODE AND FPRIME__INTERNAL_EXCLUDING)
+        set_target_properties("${TARGET_NAME}" PROPERTIES EXCLUDE_FROM_ALL TRUE)
+    endif()
+endfunction(fprime__internal_mark_exclusion)
+
+####
+# Function `fprime__internal_setup_universe_target`:
+#
+# Creates the `universe` target (name: FPRIME_UNIVERSE_TARGET) depending on every module registered through the F Prime
+# API (the FPRIME_MODULES global property), excluded from `all` or not. Runs once, deferred to the end of the top-level
+# directory's configuration so that every module is known; builds the whole build system.
+####
+function(fprime__internal_setup_universe_target)
+    if (TARGET "${FPRIME_UNIVERSE_TARGET}")
+        return()
+    endif()
+    add_custom_target("${FPRIME_UNIVERSE_TARGET}")
+    get_property(FPRIME__INTERNAL_ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
+    foreach (FPRIME__INTERNAL_MODULE IN LISTS FPRIME__INTERNAL_ALL_MODULES)
+        get_target_property(FPRIME__INTERNAL_TARGET_TYPE "${FPRIME__INTERNAL_MODULE}" TYPE)
+        if (NOT FPRIME__INTERNAL_TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
+            add_dependencies("${FPRIME_UNIVERSE_TARGET}" "${FPRIME__INTERNAL_MODULE}")
+        endif()
+    endforeach()
+endfunction(fprime__internal_setup_universe_target)
+
+####
 # Function `fprime__internal_add_build_target_helper`:
 #
 # Helper to add the target and set target properties.
@@ -250,6 +290,9 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
         set_target_properties("${TARGET_NAME}" PROPERTIES 
             FPRIME_TESTED_MODULE "${INTERNAL_TESTED_MODULE}"
         )
+    endif()
+    if (NOT FPRIME_IS_SUB_BUILD)
+        fprime__internal_mark_exclusion("${TARGET_NAME}")
     endif()
     fprime_util_metadata_add_build_target("${TARGET_NAME}")
     # TODO: this is needed because sub-builds still attempt register targets, but without the build target to add back in the

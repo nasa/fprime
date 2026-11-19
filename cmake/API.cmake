@@ -195,7 +195,7 @@ endfunction()
 # ```
 #
 # > [!NOTE]
-# > This delegates to CMake's `add_library` call. The library argument EXCLUDE_FROM_ALL is supported.
+# > This delegates to CMake's `add_library` call. The library argument EXCLUDE_FROM_ALL is supported. As in CMake, a module registered with EXCLUDE_FROM_ALL is left out of `all` and builds when named or depended upon, or through the `universe` target (see `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`).
 # > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
 # > a rebuild when they change.
 #
@@ -276,7 +276,7 @@ endfunction()
 # ```
 #
 # > [!NOTE]
-# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported. As in CMake, a module registered with EXCLUDE_FROM_ALL is left out of `all` and builds when named or depended upon, or through the `universe` target (see `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`).
 # > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
 # > a rebuild when they change.
 #
@@ -344,7 +344,7 @@ endfunction()
 # ```
 #
 # > [!NOTE]
-# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported. As in CMake, a module registered with EXCLUDE_FROM_ALL is left out of `all` and builds when named or depended upon, or through the `universe` target (see `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`).
 # > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
 # > a rebuild when they change.
 #
@@ -580,7 +580,7 @@ endfunction()
 # ```
 #
 # > [!NOTE]
-# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported. As in CMake, a module registered with EXCLUDE_FROM_ALL is left out of `all` and builds when named or depended upon, or through the `universe` target (see `FPRIME_EXCLUDE_LIBRARIES_FROM_ALL`).
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
 # **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
@@ -619,6 +619,36 @@ function(fprime_add_unit_test_build_target)
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
 endfunction()
 
+
+####
+# Function `fprime_exclude_test_from_project`:
+#
+# Excludes unit tests from the project's test set: each test loses the `fprime_project` CTest label
+# (`FPRIME_PROJECT_TEST_LABEL`) and its entry in the project test list, so `fprime-util check` at the project root and
+# `fprime-util check --project` no longer run it. The test is still built, still labeled `fprime_universe`, and still
+# runs with `fprime-util check --all` and from its own directory.
+#
+# A test is named by its unit test executable target, e.g. `Svc_Health_ut_exe`. This may be called before or after
+# the test is registered, from any directory.
+#
+# ```
+# fprime_exclude_test_from_project(Svc_Health_ut_exe)
+# ```
+#
+# **ARGN**: names of the tests to exclude
+####
+function(fprime_exclude_test_from_project)
+    foreach (TEST_NAME IN LISTS ARGN)
+        append_list_property("${TEST_NAME}" GLOBAL PROPERTY FPRIME__INTERNAL_PROJECT_EXCLUDED_TESTS)
+        # Tests not yet registered are handled when registered; a registered test is relabeled here. Sub-builds
+        # register the unit test targets without their tests.
+        if (TARGET "${TEST_NAME}" AND NOT FPRIME_IS_SUB_BUILD)
+            get_target_property(_TEST_DIRECTORY "${TEST_NAME}" SOURCE_DIR)
+            set_property(TEST "${TEST_NAME}" DIRECTORY "${_TEST_DIRECTORY}" PROPERTY LABELS "${FPRIME_UNIVERSE_TEST_LABEL}")
+            fprime_util_metadata_remove_project_test("${TEST_NAME}")
+        endif()
+    endforeach()
+endfunction(fprime_exclude_test_from_project)
 
 ####
 # Macro `register_fprime_target`:
@@ -802,12 +832,14 @@ endfunction()
 #   3. Add the current source directory to the global include directories
 #   4. Add the current binary directory to the global include directories
 #   5. Add the current source directory to the CMAKE_PATH_PREFIX variable for this module
+#   6. Set up the fprime-util metadata at the root of the build cache (the project builds `all`)
 # This allows it to be found and used by other modules in the build system.  It ensures that the components are properly
 # slotted underneath this library for the purpose of include path and target names.
 # Args: none
 #####
 macro(register_fprime_project)
     fprime_initialize_build_system() # Make sure the build system is initialized before registering the project
+    fprime_util_metadata_setup_project()
     # Typically it is an error to call register_fprime_project outside the root CMakeLists.txt of a defined `project()`
     if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
         fprime_cmake_warning("register_fprime_project not called in CMakeLists.txt containing a project() declaration")

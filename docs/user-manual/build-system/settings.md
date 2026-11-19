@@ -45,6 +45,8 @@ These settings include:
   computer platform.
 - `environment_file`: An ini file that can be used to set environmental variables during the build
   process.
+- `default_cmake_options`: CMake cache options (`NAME=VALUE`, one per line) passed to every `fprime-util generate`.
+  Ex: `default_cmake_options: FPRIME_EXCLUDE_LIBRARIES_FROM_ALL=OFF` keeps framework and library modules in `all`.
 
 > [!NOTE]
 > `config_directory` is no longer used by the build system: `fprime-util` still accepts it but CMake ignores the
