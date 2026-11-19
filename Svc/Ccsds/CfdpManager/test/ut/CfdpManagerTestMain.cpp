@@ -167,6 +167,21 @@ TEST(Command, SendFileNonExistent) {
     tester.testSendFileNonExistent();
 }
 
+TEST(Command, SendFileTooLarge) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testSendFileTooLarge();
+}
+
+TEST(Command, SendFileMaxRepresentableSize) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testSendFileMaxRepresentableSize();
+}
+
+TEST(Command, PollDirectoryFileTooLarge) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPollDirectoryFileTooLarge();
+}
+
 TEST(Command, StopPollDirNotActive) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testStopPollDirNotActive();

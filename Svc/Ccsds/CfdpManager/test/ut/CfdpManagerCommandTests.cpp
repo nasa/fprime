@@ -5,17 +5,40 @@
 //
 // ======================================================================
 
+#include <fcntl.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <Svc/Ccsds/CfdpManager/Utils.hpp>
+#include <limits>
 #include "CfdpManagerTester.hpp"
 
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
+
+namespace {
+
+//! Create a sparse file with the given logical size. Only the first byte is written, so the
+//! file occupies almost no physical storage however large its reported size is.
+void createSparseFile(const char* path, FwSizeType size) {
+    const int fd = ::open(path, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+    ASSERT_GE(fd, 0) << "Should create sparse test file " << path;
+    const U8 firstByte = 0x5A;
+    ASSERT_EQ(1, ::write(fd, &firstByte, 1));
+    ASSERT_EQ(0, ::ftruncate(fd, static_cast<off_t>(size)));
+    ASSERT_EQ(0, ::close(fd));
+}
+
+//! True when a file can be larger than the configured Cfdp::FileSize can represent
+bool fileSizeCanExceedCfdpFileSize() {
+    return (sizeof(FwSizeType) > sizeof(FileSize)) && (sizeof(off_t) > sizeof(FileSize));
+}
+
+}  // namespace
 
 // ----------------------------------------------------------------------
 // SendFile Command Tests
@@ -123,6 +146,181 @@ void CfdpManagerTester::testSendFileNonExistent() {
     ASSERT_EVENTS_TxFileOpenFailed_SIZE(1);
     ASSERT_EVENTS_TxFileOpenFailed(0, Cfdp::Class::CLASS_1, this->component.getLocalEidParam(), 1, nonExistentFile,
                                    Os::File::DOESNT_EXIST);
+}
+
+void CfdpManagerTester::testSendFileTooLarge() {
+    // A source larger than the configured Cfdp::FileSize can represent must be rejected before
+    // any PDU is sent. Before the fix the size was narrowed with a static_cast, so a source of
+    // FileSize max + 2 bytes was sent as a one-byte file, reported as completed, and - with
+    // DELETE retention - removed.
+    if (!fileSizeCanExceedCfdpFileSize()) {
+        GTEST_SKIP() << "Files cannot exceed Cfdp::FileSize on this platform/configuration";
+    }
+
+    const char* srcFile = "test/ut/output/too_large_src.bin";
+    const char* dstFile = "test/ut/output/too_large_dst.bin";
+    const FwSizeType maxSize = static_cast<FwSizeType>(std::numeric_limits<FileSize>::max());
+    // max + 2 narrows to 1: a non-zero size, so the zero-length check cannot catch it
+    const FwSizeType actualSize = maxSize + 2;
+    createSparseFile(srcFile, actualSize);
+
+    FwSizeType observedSize = 0;
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::getFileSize(srcFile, observedSize));
+    ASSERT_EQ(actualSize, observedSize) << "Test file should report its full logical size";
+
+    U8 channelId = 0;
+    EntityId destEid = 2;
+    Fw::String srcFilename(srcFile);
+    Fw::String dstFilename(dstFile);
+    const U32 faultsBefore = this->component.getChannelTelemetryRef(channelId).get_faultFileSizeMismatch();
+
+    this->clearHistory();
+
+    // DELETE retention: the destructive case
+    this->sendCmd_SendFile(0,  // Instance
+                           0,  // cmdSeq
+                           channelId, destEid, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE,
+                           0,  // priority
+                           srcFilename, dstFilename);
+
+    for (U32 i = 0; i < 10; i++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+
+    // The command is accepted; the size is checked when the transaction opens the file
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SENDFILE, 0, Fw::CmdResponse::OK);
+
+    // The transfer is refused with the real size and the configured maximum
+    ASSERT_EVENTS_TxFileTooLarge_SIZE(1);
+    ASSERT_EVENTS_TxFileTooLarge(0, Cfdp::Class::CLASS_1, this->component.getLocalEidParam(), 1, srcFile,
+                                 static_cast<U64>(actualSize), static_cast<U64>(maxSize));
+    ASSERT_EQ(faultsBefore + 1, this->component.getChannelTelemetryRef(channelId).get_faultFileSizeMismatch());
+
+    // Nothing was started, sent, or reported complete
+    ASSERT_EVENTS_TxFileTransferStarted_SIZE(0);
+    ASSERT_EVENTS_TxFileTransferCompleted_SIZE(0);
+    ASSERT_from_dataOut_SIZE(0);
+
+    // DELETE retention was not applied: the complete source is still there
+    observedSize = 0;
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::getFileSize(srcFile, observedSize))
+        << "Oversized source must not be removed";
+    ASSERT_EQ(actualSize, observedSize);
+
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::removeFile(srcFile));
+}
+
+void CfdpManagerTester::testSendFileMaxRepresentableSize() {
+    // Boundary: a source of exactly FileSize max bytes is representable and must still be
+    // accepted. Only the start of the transfer is checked; the file is sparse and the
+    // transfer is not run to completion.
+    if (!fileSizeCanExceedCfdpFileSize()) {
+        GTEST_SKIP() << "Files cannot exceed Cfdp::FileSize on this platform/configuration";
+    }
+
+    const char* srcFile = "test/ut/output/max_size_src.bin";
+    const char* dstFile = "test/ut/output/max_size_dst.bin";
+    const FwSizeType maxSize = static_cast<FwSizeType>(std::numeric_limits<FileSize>::max());
+    createSparseFile(srcFile, maxSize);
+
+    U8 channelId = 0;
+    EntityId destEid = 2;
+    Fw::String srcFilename(srcFile);
+    Fw::String dstFilename(dstFile);
+    const U32 initialSeq = this->component.m_engine->m_seqNum;
+
+    this->clearHistory();
+
+    this->sendCmd_SendFile(0,  // Instance
+                           0,  // cmdSeq
+                           channelId, destEid, Cfdp::Class::CLASS_1, Cfdp::Keep::KEEP,
+                           0,  // priority
+                           srcFilename, dstFilename);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SENDFILE, 0, Fw::CmdResponse::OK);
+
+    Transaction* txn = findTransaction(channelId, initialSeq + 1);
+    ASSERT_NE(nullptr, txn);
+
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_TxFileTooLarge_SIZE(0);
+    ASSERT_EVENTS_TxFileTransferStarted_SIZE(1);
+    ASSERT_EQ(std::numeric_limits<FileSize>::max(), txn->m_fsize);
+
+    // Abandon the in-progress transfer and clean up
+    this->component.m_engine->finishTransaction(txn, false);
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::removeFile(srcFile));
+}
+
+void CfdpManagerTester::testPollDirectoryFileTooLarge() {
+    // A polled file is sent with DELETE retention, and a failed polled file is moved to
+    // fail_dir or, when fail_dir is empty or the move fails, deleted. An oversized polled file
+    // must be exempt from that: it is refused and left in place, since removing it would
+    // destroy the only complete copy of a file that was never transferred.
+    if (!fileSizeCanExceedCfdpFileSize()) {
+        GTEST_SKIP() << "Files cannot exceed Cfdp::FileSize on this platform/configuration";
+    }
+
+    U8 channelId = 0;
+    U8 pollId = 0;
+    EntityId destEid = 2;
+    U32 interval = 1;
+    U8 priority = 0;
+    Fw::String srcDir("test/ut/output/poll_too_large_src");
+    Fw::String dstDir("test/ut/output/poll_too_large_dst");
+
+    Os::FileSystem::Status dirStatus = Os::FileSystem::createDirectory(srcDir.toChar());
+    ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
+
+    Fw::String testFilePath(srcDir);
+    testFilePath += "/too_large.bin";
+    const FwSizeType actualSize = static_cast<FwSizeType>(std::numeric_limits<FileSize>::max()) + 2;
+    createSparseFile(testFilePath.toChar(), actualSize);
+
+    this->clearHistory();
+
+    this->sendCmd_PollDirectory(0,  // Instance
+                                0,  // cmdSeq
+                                channelId, pollId, destEid, Cfdp::Class::CLASS_1, priority, interval, srcDir, dstDir);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_POLLDIRECTORY, 0, Fw::CmdResponse::OK);
+
+    // Cycle until the poll has fired and the transaction has opened the file
+    for (U32 i = 0; i < 20 && this->eventHistory_TxFileTooLarge->size() == 0; i++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+    ASSERT_GE(this->eventHistory_TxFileTooLarge->size(), 1U) << "Poll should have picked up the oversized file";
+    ASSERT_STREQ(testFilePath.toChar(), this->eventHistory_TxFileTooLarge->at(0).filename.toChar());
+    ASSERT_EQ(static_cast<U64>(actualSize), this->eventHistory_TxFileTooLarge->at(0).fileSize);
+
+    // The file stays in the directory, so later poll cycles find and refuse it again
+    for (U32 i = 0; i < 20 && this->eventHistory_TxFileTooLarge->size() < 2; i++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+    ASSERT_GE(this->eventHistory_TxFileTooLarge->size(), 2U) << "Oversized file should be reported on each poll";
+
+    // Stop the poll before checking the file so no later cycle can touch it
+    this->sendCmd_StopPollDirectory(0, 0, channelId, pollId);
+    this->component.doDispatch();
+
+    ASSERT_EVENTS_TxFileTransferCompleted_SIZE(0);
+    ASSERT_from_dataOut_SIZE(0);
+
+    // The oversized file is still in the polled directory, complete
+    FwSizeType observedSize = 0;
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::getFileSize(testFilePath.toChar(), observedSize))
+        << "Oversized polled file must not be removed";
+    ASSERT_EQ(actualSize, observedSize);
+
+    Os::FileSystem::removeFile(testFilePath.toChar());
+    Os::FileSystem::removeDirectory(srcDir.toChar());
 }
 
 // ----------------------------------------------------------------------

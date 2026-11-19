@@ -37,6 +37,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <limits>
+
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/Channel.hpp>
 #include <Svc/Ccsds/CfdpManager/Chunk.hpp>
@@ -532,21 +534,37 @@ void Transaction::sSubstateSendMetadata() {
         }
 
         if (success) {
-            FwSizeType file_size;
+            FwSizeType file_size = 0;
             fileStatus = this->m_fd.size(file_size);
-            this->m_fsize = static_cast<FileSize>(file_size);
             if (fileStatus != Os::File::Status::OP_OK) {
                 this->m_cfdpManager->log_WARNING_LO_TxFileSeekFailed(this->getClass(), this->m_history->src_eid,
                                                                      this->m_history->seq_num, fileStatus);
                 this->m_cfdpManager->incrementFaultFileSeek(this->m_chan_num);
                 success = false;
-            } else if (this->m_fsize == 0) {
-                // Zero-length file - fail transaction gracefully instead of asserting
-                this->m_cfdpManager->log_WARNING_LO_TxZeroLengthFile(this->getClass(), this->m_history->src_eid,
-                                                                     this->m_history->seq_num,
-                                                                     this->m_history->fnames.src_filename);
+            } else if (file_size > static_cast<FwSizeType>(std::numeric_limits<FileSize>::max())) {
+                // The source is larger than the configured Cfdp::FileSize can represent. Narrowing it with a
+                // static_cast would silently truncate the transfer to a wrapped-around prefix, report that
+                // prefix as a completed file, and - under DELETE retention - remove the complete original.
+                // Fail the transaction here, before any PDU or completion event.
+                this->m_cfdpManager->log_WARNING_HI_TxFileTooLarge(
+                    this->getClass(), this->m_history->src_eid, this->m_history->seq_num,
+                    this->m_history->fnames.src_filename, static_cast<U64>(file_size),
+                    static_cast<U64>(std::numeric_limits<FileSize>::max()));
                 this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
+                // Save the file: a failed transfer of a polled file is otherwise moved to fail_dir or
+                // deleted, and this source cannot be transferred until an operator intervenes.
+                this->m_keep = Cfdp::Keep::KEEP;
                 success = false;
+            } else {
+                this->m_fsize = static_cast<FileSize>(file_size);
+                if (this->m_fsize == 0) {
+                    // Zero-length file - fail transaction gracefully instead of asserting
+                    this->m_cfdpManager->log_WARNING_LO_TxZeroLengthFile(this->getClass(), this->m_history->src_eid,
+                                                                         this->m_history->seq_num,
+                                                                         this->m_history->fnames.src_filename);
+                    this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
+                    success = false;
+                }
             }
         }
     }

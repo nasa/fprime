@@ -364,6 +364,17 @@ event TxZeroLengthFile(
     severity warning low \
     format "TX class {} transaction {}:{} cannot transfer zero-length file {}"
 
+event TxFileTooLarge(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< Oversized source file
+    fileSize: U64 @< Actual source size in bytes
+    maxSize: U64 @< Maximum size representable in the configured Cfdp.FileSize type
+) \
+    severity warning high \
+    format "TX class {} transaction {}:{} cannot transfer file {}: size {} bytes exceeds CFDP FileSize max {}"
+
 event TxFileOpenFailed(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID

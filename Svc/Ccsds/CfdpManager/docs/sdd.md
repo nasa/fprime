@@ -147,6 +147,8 @@ The PDU header is validated before any body decoder runs. `PduHeader::fromSerial
 
 A related case is a Class 2 FileData PDU whose header declares more file-data octets than the PDU carries, following a Metadata PDU with an oversized `fileSize`. Such a PDU fails deserialization; the receive handler faults the transaction with `PROTOCOL_ERROR` (the same status used for other unsupported FileData PDUs) and tears it down instead of leaving it eligible for FIN/CRC processing. Independently, the CRC pass over the received file treats an end-of-file short read — fewer bytes returned than requested while `rx_crc_calc_bytes` is still below the declared file size — as a `FILE_SIZE_ERROR` (`RxReadCrcFailed`) rather than as progress, so a file shorter than its declared size can never keep the CRC loop spinning on zero-byte reads and pin the `CfdpManager` thread.
 
+The same care applies to local input on the transmit side. A source file's size is read from the filesystem as an `FwSizeType`, which can be wider than the configured `FileSize` (64 bits against the default `U32`). Before any PDU is built, the transmit path checks that the size is representable in `FileSize`. A larger source is refused: the transaction raises the `TxFileTooLarge` warning (which carries the actual size and the configured maximum), increments the channel's `faultFileSizeMismatch` counter, and finishes with `FILESTORE_REJECTION` without sending a Metadata PDU or reporting completion. The refused source is always left in place, whatever retention was requested: it is not deleted under `DELETE`, not moved to `move_dir`, and, for a polled file, not moved to `fail_dir` or deleted. Without this check the size would be narrowed silently: a source of 4 GiB + 1 byte would be sent as a one-byte file, reported as completed, and removed under `DELETE` retention.
+
 On the transmit side, a FIN that arrives before a Class 2 send has finished transmitting is parsed before any transaction state changes. If the FIN fails deserialization, the event `FailFinPduDeserialization` is emitted and the transaction continues in its current sub-state. The transmit cycle also bounds its per-transaction dispatch loop: every dispatch must send a PDU, change the transaction's state or sub-state, or yield the cycle. A transaction whose dispatch does none of these is failed with `PROTOCOL_ERROR` instead of being dispatched again, so no PDU sequence can leave the `run1Hz` cycle spinning.
 
 ### Main Class Hierarchy
@@ -235,7 +237,7 @@ Unlike transmit operations that are driven by the periodic `run1Hz` scheduler po
 CfdpManager supports two related mechanisms for transferring the contents of a directory:
 
 - **Directory playback** (`PlaybackDirectory` command): a one-shot operation that sends every file currently in the source directory as individual CFDP transactions and completes when the directory has been fully processed. An entry whose combined `<directory>/<entry>` source or destination path would exceed `MaxFilePathSize` is skipped and reported with `PlaybackSourcePathTooLong` or `PlaybackDestinationPathTooLong` (path length, maximum, directory, and entry); the playback continues with the remaining entries.
-- **Directory polling** (`PollDirectory` command): a recurring operation that re-checks the source directory on a fixed interval and automatically sends any new files found. Each channel supports up to `MaxPollingDirPerChan` independent polling slots, identified by a poll index. The file is deleted from the directory after a successful transfer. The same `MaxFilePathSize` check applies to polled entries: an over-long entry is skipped with the same events, is not deleted or moved to `fail_dir`, and is reported again on every poll cycle until an operator removes or renames it.
+- **Directory polling** (`PollDirectory` command): a recurring operation that re-checks the source directory on a fixed interval and automatically sends any new files found. Each channel supports up to `MaxPollingDirPerChan` independent polling slots, identified by a poll index. The file is deleted from the directory after a successful transfer. The same `MaxFilePathSize` check applies to polled entries: an over-long entry is skipped with the same events, is not deleted or moved to `fail_dir`, and is reported again on every poll cycle until an operator removes or renames it. A polled file larger than `FileSize` can represent is handled the same way: it is refused with `TxFileTooLarge`, left in the directory, and reported again on every poll cycle until an operator removes it.
 
 **Poll cycle behavior:**
 
@@ -453,7 +455,7 @@ These types define the size of CFDP protocol fields:
 |------|---------|
 | `EntityId` | Entity ID size. Maximum size of entity IDs in CFDP packets. The protocol supports variable-size entity IDs at runtime, but this establishes the maximum. Must be one of: U8, U16, U32, U64. |
 | `TransactionSeq` | Transaction sequence number size. Maximum size of transaction sequence numbers in CFDP packets. The protocol supports variable sizes at runtime, but this establishes the maximum. Must be one of: U8, U16, U32, U64. |
-| `FileSize` | File size and offset type. Used for file sizes and offsets in CFDP operations. The protocol permits 64-bit values, but the current implementation uses 32-bit. Must be one of: U8, U16, U32, U64. |
+| `FileSize` | File size and offset type. Used for file sizes and offsets in CFDP operations. The protocol permits 64-bit values, but the current implementation uses 32-bit. A source file larger than this type can represent (4,294,967,295 bytes for `U32`) cannot be sent and is refused with `TxFileTooLarge`. Must be one of: U8, U16, U32, U64. |
 
 ### C++ Configuration Constants (CfdpCfg.hpp)
 
@@ -544,6 +546,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | TxAckLimitReached | warning low | TX transaction ACK limit reached, no eof-ack received |
 | TxInactivityTimeout | warning low | TX transaction inactivity timer expired |
 | TxZeroLengthFile | warning low | TX transaction cannot transfer zero-length file |
+| TxFileTooLarge | warning high | TX transaction cannot transfer a file larger than the configured `FileSize` can represent; the file is left in place |
 | TxFileOpenFailed | warning low | TX transaction failed to open file |
 | TxFileSeekFailed | warning low | TX transaction failed to seek to beginning of file |
 | TxSendMetadataFailed | warning low | TX transaction failed to send metadata PDU |
@@ -676,7 +679,7 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 | faultNakLimit | U32 | Number of transactions abandoned due to NAK limit exceeded (retransmitted data not received) |
 | faultInactivityTimer | U32 | Number of transactions abandoned due to inactivity timeout |
 | faultCrcMismatch | U32 | Number of CRC mismatches detected in received files |
-| faultFileSizeMismatch | U32 | Number of file size mismatches detected (EOF size vs actual received size) |
+| faultFileSizeMismatch | U32 | Number of file size mismatches detected (EOF size vs actual received size), plus source files refused for transmission because they are zero-length or larger than `FileSize` can represent |
 | faultFileOpen | U32 | Number of file open failures, plus Metadata PDU destination paths rejected by `rx_dir` |
 | faultFileRead | U32 | Number of file read failures |
 | faultFileWrite | U32 | Number of file write failures |
@@ -748,3 +751,4 @@ section above.
 | CFDP-013 | `CfdpManager` shall process malformed or degenerate received PDUs, including zero-length FileData segments, without raising a FATAL assertion | Preserves deployment availability against untrusted link input and prevents a single crafted PDU from terminating the process ([GHSA-mh5x-2m6h-8267](https://github.com/nasa/fprime/security/advisories/GHSA-mh5x-2m6h-8267)) | Unit Test |
 | CFDP-014 | `CfdpManager` shall skip and report a playback or poll directory entry whose combined source or destination path exceeds `MaxFilePathSize`, continuing with the remaining entries without raising a FATAL assertion | Directory contents and the `PlaybackDirectory` arguments are ground-controlled and must not be able to assert the flight software ([#5890](https://github.com/nasa/fprime/issues/5890)) | Unit Test |
 | CFDP-015 | `CfdpManager` shall treat an `ack_timer` or `inactivity_timer` of zero as expiring on the first 1 Hz cycle after it is armed, without raising a FATAL assertion | `ChannelConfig` is a ground-settable parameter and must not be able to assert the flight software ([#5890](https://github.com/nasa/fprime/issues/5890)) | Unit Test |
+| CFDP-016 | `CfdpManager` shall refuse to transmit a source file whose size is not representable in the configured `FileSize` type, without sending any PDU, reporting completion, or deleting or moving the source file | A truncated size would send a prefix of the file, report it as a complete transfer, and remove the only complete copy under `DELETE` retention | Unit Test |
