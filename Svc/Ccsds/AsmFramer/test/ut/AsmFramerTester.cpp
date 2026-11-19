@@ -339,7 +339,8 @@ Fw::String AsmFramerTester ::assertPattern() {
 
 Fw::String AsmFramerTester ::assertPattern(FwSizeType argument) {
     Fw::String pattern;
-    pattern.format("AsmFramer\\.cpp:[0-9]+\" %" PRI_FwSizeType "\n", argument);
+    const Fw::FormatStatus status = pattern.format("AsmFramer\\.cpp:[0-9]+\" %" PRI_FwSizeType "\n", argument);
+    FW_ASSERT(status == Fw::FormatStatus::SUCCESS, static_cast<FwAssertArgType>(status));
     return pattern;
 }
 
