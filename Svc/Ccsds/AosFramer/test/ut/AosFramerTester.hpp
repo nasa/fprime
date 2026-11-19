@@ -50,11 +50,18 @@ class AosFramerTester final : public AosFramerGTestBase {
     void testBufferOwnershipState();
     void testLongPacket();
     void testShortPackets();
+    void testTailPackingSingleStatus();
+    void testTailPackingFailureThenRecovery();
 
   private:
     // ----------------------------------------------------------------------
     // Helper functions
     // ----------------------------------------------------------------------
+
+    //! Behave as a communication adapter for the frame at frameIndex of the dataOut history:
+    //! return the frame buffer, then report SUCCESS on comStatusIn (the interface requires the
+    //! return before the status it applies to)
+    void ackFrame(FwSizeType frameIndex);
 
     //! Connect ports
     void connectPorts();

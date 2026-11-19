@@ -98,6 +98,7 @@ Framer implementations may choose to implement a different behavior. For example
 |-----------------|----------------------------------------|----------------------------------------------------------|
 | 0               | Send one `Fw::Success::SUCCESS` status | Data must continue to flow to produce a frame            |
 | 1               | Pass through received status from ComQueue | Frame produced and communication adapter produces status |
+| N > 1 (one message striped across N frames) | Consume the `SUCCESS` statuses of the first N-1 frames to continue the message; pass through the status of the Nth | Exactly one `SUCCESS` must reach `Svc::ComQueue` per message; intermediate-frame statuses drive the striping, not the queue (see `Svc::Ccsds::AosFramer`) |
 
 > [!IMPORTANT]
 > All framer implementations must pass through the initiation message from the communication adapter to start data flow.
