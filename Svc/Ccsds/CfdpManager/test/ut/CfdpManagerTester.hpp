@@ -425,6 +425,16 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test SendFile command with nonexistent file
     void testSendFileNonExistent();
 
+    //! Test SendFile command with a source larger than Cfdp::FileSize can represent:
+    //! refused before any PDU, and not removed under DELETE retention
+    void testSendFileTooLarge();
+
+    //! Test SendFile command with a source of exactly the maximum representable size
+    void testSendFileMaxRepresentableSize();
+
+    //! Test that an oversized file in a polled directory is refused and left in place
+    void testPollDirectoryFileTooLarge();
+
     //! Test StopPollDirectory command on inactive directory
     void testStopPollDirNotActive();
 
