@@ -42,9 +42,9 @@ asmFramer.comStatusOut             -> ComCcsds.TmTcFraming.framedComStatusIn
 ```
 
 On the ground side, the matching `fprime-gds` deframing chain is selected with
-`--framing-selection space-packet-space-data-link-asm` (or `ccsds-asm` for the ASM layer alone).
-**Note:** these selections require an `fprime-gds` release that includes the ASM deframer plugin
-([nasa/fprime-gds#337](https://github.com/nasa/fprime-gds/pull/337)); releases up to 4.4.1 reject them
+`--framing-selection space-packet-space-data-link-asm`.
+**Note:** this selection requires an `fprime-gds` release that includes the ASM deframer plugin
+([nasa/fprime-gds#337](https://github.com/nasa/fprime-gds/pull/337)); releases up to 4.4.1 reject it
 and cannot synchronize on an ASM-marked downlink. Until then the matching ground deframer must be
 provided by the project.
 
