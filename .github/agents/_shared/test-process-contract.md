@@ -304,8 +304,9 @@ test plan, each with its adversarial review, then the DESIGN lane of one
 BASE DEPLOYMENT (a prototype of the inherited components only, unmodified,
 built and run on the bench; when it fails or differs from the SSDD the
 campaign returns to decomposition by itself, at most three passes, then
-to the human) → human **Approve SSDD** (the SSDD, the component SDDs it
-links, and a prototype that ran) → COMPONENT CAMPAIGNS (approved
+to the human) → human **Approve SSDD** (the SSDD package — the SSDD and
+the SDD of every new component, each in Markdown and HTML — and a
+prototype that ran) → COMPONENT CAMPAIGNS (approved
 inherited-modified changes, then the DEVELOPMENT and RELEASE lanes of each
 new component's campaign, test configuration = the base deployment; no
 run-for-record here) → SYSTEM TESTS (harness on the system plan, system

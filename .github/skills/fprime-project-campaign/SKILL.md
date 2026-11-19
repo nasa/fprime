@@ -132,8 +132,16 @@ run-for-record lane; every run needs only its `campaign-id` (contract
     reviews run again), rebuild, re-run. At most three passes; then, or
     when the failure shows a system requirement is wrong, return to the
     human with what failed. Each pass is a ledger line.
-12. **Gate 1 — Approve SSDD (block).** The human reads `docs/ssdd.md` and
-   the component SDDs it links, with a prototype that ran; the gate
+12. **Gate 1 — Approve SSDD (block).** The human reads the **SSDD
+   package**, with a prototype that ran. Build the package with
+   `ssdd-package <project>` (https://github.com/LeStarch/rdd-creator): it
+   writes `docs/ssdd-package/` holding the SSDD and the SDD of every `NEW`
+   element of the inventory, each as Markdown and as one self-contained
+   HTML page, plus an index, and refuses when a `NEW` component has no
+   SDD or a diagram is missing. Attach the package to the gate message as
+   one archive and name the commit it was built from; rebuild and
+   re-attach it whenever the SSDD or a new component's SDD changes before
+   the ruling. The gate is not asked without it. The gate
    message is ≤ 10 lines: `### Red flags` first (each `INHERITED-MODIFIED`
    row approved by name or struck), the prototype's ledger line, routed
    adjudication items, residual counts, bound. Plan, fault menu, review
