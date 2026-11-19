@@ -51,6 +51,7 @@ class TmFramerTester final : public TmFramerGTestBase {
     void testFirstHeaderPointerFromContext();
     void testPartialDataFieldAsserts();
     void testVirtualChannelIdFromContext();
+    void testVirtualChannelIdMaskedWithoutAssert();
 
   private:
     // ----------------------------------------------------------------------

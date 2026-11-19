@@ -25,7 +25,7 @@ For each frame generated, the `Svc::Ccsds::TmFramer` will populate the CCSDS TM 
 | Field | Value | Notes |
 |---|---|---|
 | Transfer Frame Version Number | 0 | As per protocol 4.1.2.2 |
-| Spacecraft ID | Configured in `config/ComCfg.fpp` | Set in the project configuration |
+| Spacecraft ID | Configured in `config/ComCfg.fpp`; must fit the 10-bit field (checked at compile time) | Set in the project configuration |
 | Virtual Channel ID | Uses value passed in the `context` argument (the `ComCfg.FrameContext` default is 1); must fit the 3-bit field | Set by an upstream component |
 | Operational Control Field Flag | 0 | Unsupported |
 | Master Channel Frame Count | Incremented for each frame | Managed internally by TmFramer |

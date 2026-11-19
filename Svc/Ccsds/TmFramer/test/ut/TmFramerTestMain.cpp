@@ -51,6 +51,11 @@ TEST(TmFramer, testVirtualChannelIdFromContext) {
     tester.testVirtualChannelIdFromContext();
 }
 
+TEST(TmFramer, testVirtualChannelIdMaskedWithoutAssert) {
+    Svc::Ccsds::TmFramerTester tester;
+    tester.testVirtualChannelIdMaskedWithoutAssert();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -12,6 +12,9 @@ namespace Svc {
 
 namespace Ccsds {
 
+static_assert(static_cast<U32>(ComCfg::SpacecraftId) <= TMSubfields::spacecraftIdMask,
+              "ComCfg.SpacecraftId must fit the 10 bit Spacecraft ID field of the TM Primary Header");
+
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
@@ -40,8 +43,11 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     TMHeader header;
 
     // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
-    U16 globalVcId = static_cast<U16>(context.get_vcId() << TMSubfields::virtualChannelIdOffset);
-    globalVcId |= static_cast<U16>(ComCfg::SpacecraftId << TMSubfields::spacecraftIdOffset);
+    // Each field is masked to its width so an out-of-range value cannot corrupt a neighboring field
+    U16 globalVcId =
+        static_cast<U16>((context.get_vcId() & TMSubfields::vcIdMask) << TMSubfields::virtualChannelIdOffset);
+    globalVcId |= static_cast<U16>((static_cast<U16>(ComCfg::SpacecraftId) & TMSubfields::spacecraftIdMask)
+                                   << TMSubfields::spacecraftIdOffset);
     globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
 
     // Data Field Status (Standard 4.1.2.7):
