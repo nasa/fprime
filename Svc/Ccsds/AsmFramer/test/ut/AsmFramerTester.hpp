@@ -7,8 +7,11 @@
 #ifndef Svc_Ccsds_AsmFramerTester_HPP
 #define Svc_Ccsds_AsmFramerTester_HPP
 
+#include <string>
+
 #include "Svc/Ccsds/AsmFramer/AsmFramer.hpp"
 #include "Svc/Ccsds/AsmFramer/AsmFramerGTestBase.hpp"
+#include "Svc/Ccsds/TmFramer/TmFramer.hpp"
 
 namespace Svc {
 
@@ -51,6 +54,7 @@ class AsmFramerTester final : public AsmFramerGTestBase {
     void testDataReturn();
     void testBufferOwnershipState();
     void testReentrantReturn();
+    void testTmFrameChain();
 
   private:
     // ----------------------------------------------------------------------
@@ -63,9 +67,24 @@ class AsmFramerTester final : public AsmFramerGTestBase {
                                     Fw::Buffer& data,
                                     const ComCfg::FrameContext& context) override;
 
+    //! Discards the payload buffer a chained TmFramer returns on its dataReturnOut
+    static void payloadReturnSinkHandler(Fw::PassiveComponentBase* callComp,
+                                         FwIndexType portNum,
+                                         Fw::Buffer& data,
+                                         const ComCfg::FrameContext& context);
+
     // ----------------------------------------------------------------------
     // Helper functions
     // ----------------------------------------------------------------------
+
+    //! Death-test pattern for an AsmFramer.cpp assert that reports no argument
+    static std::string assertPattern();
+
+    //! Death-test pattern for an AsmFramer.cpp assert that reports the given argument
+    static std::string assertPattern(FwSizeType argument);
+
+    //! Death-test pattern for an AsmFramer.cpp assert that reports the given buffer state
+    static std::string assertPattern(AsmFramer::BufferOwnershipState state);
 
     //! Connect ports
     void connectPorts();

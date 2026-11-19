@@ -55,6 +55,8 @@ void AsmFramer ::configure(const Fw::ConstByteArray& asmPattern) {
 // ----------------------------------------------------------------------
 
 void AsmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    // Safe because the upstream framer (TmFramer, AosFramer) holds one buffer and cannot send
+    // again until dataReturnOut returns it, which happens only after m_frameBuffer is back
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
     FW_ASSERT(data.getSize() <= FRAME_MAX_SIZE, static_cast<FwAssertArgType>(data.getSize()));
     FW_ASSERT((data.getSize() == 0) || (data.getData() != nullptr), static_cast<FwAssertArgType>(data.getSize()));

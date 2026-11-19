@@ -1,6 +1,6 @@
 # Svc::Ccsds::AsmFramer
 
-The `Svc::Ccsds::AsmFramer` is an implementation of the [FramerInterface](../../../Interfaces/docs/sdd.md) that prepends the CCSDS Attached Sync Marker (ASM) to transfer frames, producing Sync-Marked Transfer Frames (SMTFs) as specified by [CCSDS 131.0-B-5, TM Synchronization and Channel Coding](https://ccsds.org/Pubs/131x0b5.pdf), Section 9.
+The `Svc::Ccsds::AsmFramer` is an implementation of the [FramerInterface](../../../Interfaces/docs/sdd.md) that prepends the CCSDS Attached Sync Marker (ASM) to transfer frames, producing Sync-Marked Transfer Frames (SMTFs) as specified by [CCSDS 131.0-B-5, TM Synchronization and Channel Coding](https://ccsds.org/Pubs/131x0b5.pdf), Section 9. CCSDS 131.0-B-6 supersedes that issue; this component follows 131.0-B-5.
 
 It receives a transfer frame (e.g. a TM or AOS Transfer Frame) on its input port and produces the same frame preceded by the ASM on its output port. The frame content is not modified: per the standard, the ASM is not part of the transfer frame; it is a marker attached ahead of the data it delimits (Standard 9.4) so the receiving end can acquire frame synchronization (Standard 9.2).
 

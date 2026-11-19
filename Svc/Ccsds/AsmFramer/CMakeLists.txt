@@ -27,6 +27,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/AsmFramer.fpp"
   DEPENDS
     Fw_Types
+    Svc_Ccsds_TmFramer
     STest
   UT_AUTO_HELPERS
 )
