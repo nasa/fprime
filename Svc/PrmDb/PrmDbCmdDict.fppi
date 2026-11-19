@@ -16,3 +16,11 @@ async command PRM_LOAD_FILE(
 @ Commits the backup database to become the prime (active) database
 async command PRM_COMMIT_STAGED \
   opcode 0x02
+
+@ Requests a data product snapshot of active-database parameter entries
+@ whose IDs fall within [startId, endId]
+async command PRM_REQUEST_DP(
+    startId: FwPrmIdType @< The first parameter ID in the requested range (inclusive)
+    endId: FwPrmIdType @< The last parameter ID in the requested range (inclusive)
+  ) \
+  opcode 0x03

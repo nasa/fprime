@@ -15,6 +15,7 @@ PRMDB-002 | The `Svc::PrmDb` component shall provide an interface to read parame
 PRMDB-003 | The `Svc::PrmDb` component shall provide an interface to update parameter values | Inspection, Unit Test
 PRMDB-004 | The `Svc::PrmDb` component shall provide a command to save the current parameter values | Inspection, Unit Test
 PRMDB-005 | The `Svc::PrmDb` component shall reject a `PRM_LOAD_FILE` command with an empty file name with a `VALIDATION_ERROR` response and a `PrmDbFileLoadFailed` event, without asserting or altering the staging database | Unit Test, Integration Test
+PRMDB-006 | The `Svc::PrmDb` component shall provide a command to request a data product snapshot of active-database parameter entries in an ID range | Unit Test
 
 ## 3. Design
 
@@ -34,6 +35,14 @@ Port | Name | Direction | Type | Usage
 ---- | ---- | --------- | ---- | -----
 [`Fw::PrmGet`](../../../Fw/Prm/docs/sdd.md) | getPrm | Input | Synchronous | Get a parameter
 [`Fw::PrmSet`](../../../Fw/Prm/docs/sdd.md) | setPrm | Input | Asynchronous | Update a parameter
+`Fw::DpGet` | productGetOut | Output | Synchronous | Allocate a data product container
+`Fw::DpSend` | productSendOut | Output | Synchronous | Send a filled data product container
+
+#### 3.1.3 Data Products
+
+The `Svc::PrmDb` component produces one container type, `PrmEntryContainer`, holding zero or more
+`PrmEntryRecord` instances. Each record holds one active-database entry: the serialized parameter
+ID followed by the raw serialized parameter value bytes.
 
 #### 3.2 Functional Description
 
@@ -57,6 +66,18 @@ The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied pat
 > Security-conscious deployments using them **must** call `configureSandbox(directory)` again from
 > topology setup code with a restricted directory, after which `../` traversal and absolute paths
 > outside it are rejected. `configure(file)` sets the store-file name only and is **not** a sandbox.
+
+> [!WARNING]
+> `PRM_REQUEST_DP` requires `configureDp(bufferSize)` to have been called during topology setup,
+> with `bufferSize` matching the size of the buffer pool (e.g. the `Svc::BufferManager` bin) backing
+> `productGetOut`, and requires `productGetOut`/`productSendOut` to be connected. Until both are
+> true, every `PRM_REQUEST_DP` command with a valid `[startId, endId]` range fails with
+> `EXECUTION_ERROR` and a `PrmDpNotConfigured` event, distinct from `PrmDpBufferFailed`, which
+> reports a runtime container-allocation failure. An inverted range (`startId > endId`) is still
+> rejected with `VALIDATION_ERROR` and `PrmDpInvalidRange` first, regardless of DP configuration.
+
+`PrmEntryContainer`'s default priority is `Svc::PrmDbCfg::DEFAULT_DP_PRIORITY`, a compile-time
+constant in `config/PrmDbCfg.fpp` that projects can adjust.
 
 The parameter file begins with a CRC32 followed by the serialized parameter records. The CRC is written as a placeholder, then overwritten after all records are written, and is computed over all record bytes.
 
@@ -87,6 +108,39 @@ This diagram shows the scenario where parameters are retrieved and updated by co
 This diagram shows the scenario where parameters are saved to a file.
 
 ![External User Scenario](img/ParameterSaveScenario.jpg) 
+
+#### 3.3.4 Parameter Data Product Snapshot Scenario
+
+The `PRM_REQUEST_DP` command requests a snapshot of active-database entries whose parameter IDs
+fall within `[startId, endId]`. The active database is traversed once, but the database mutex is
+only held briefly to read one entry at a time; it is never held across a `dpGet`, `dpSend`, or
+`serializeRecord` call. This keeps a large or slow snapshot from blocking other guarded-port
+callers (e.g. `getPrm`) for the full duration of the command. Containers are always requested at
+the fixed size configured via `configureDp(bufferSize)`; the snapshot is chunked across as many
+containers as needed to hold every in-range entry, sending a container and allocating a fresh one
+whenever the current one runs out of room.
+
+An entry whose record cannot fit in any container at the configured size is dropped from the
+snapshot with a throttled `PrmDpRecordTooLarge` warning; the rest of the snapshot proceeds
+normally. The total number of entries dropped this way is always reported in `PrmDpComplete`'s
+`numDropped` argument, even once the per-command `PrmDpRecordTooLarge` warning has been
+throttled. If a container allocation fails, the snapshot is truncated at that point — any
+already-sent containers remain valid — a `PrmDpBufferFailed` warning is emitted, and the command
+responds `EXECUTION_ERROR`, since the requested range was not fully captured. `PrmDpBufferFailed`
+carries a `PrmDpBufferFailStage` argument (`FIRST_CONTAINER` or `NEXT_CONTAINER`) so the two
+`dpGet()` call sites remain distinguishable from the downlinked event alone.
+
+An empty range (no entries match) completes with a `PrmDpNoEntriesInRange` event and no container
+is allocated or sent. A range with `startId > endId` is rejected with `VALIDATION_ERROR` before the
+database is touched, emitting a `PrmDpInvalidRange` event with the requested `startId` and `endId`.
+
+A snapshot with at least one in-range entry that completes without a container allocation failure
+ends with a `PrmDpComplete` event reporting the requested `[startId, endId]` range, the number of
+records sent (`numRecords`), the number of DP containers sent (`numContainers`), and the number of
+in-range entries dropped for being too large for any container (`numDropped`). It is emitted when
+every in-range entry was dropped, so `numContainers` can be `0`, but it is not emitted when the
+snapshot was truncated by a failed container allocation — in that case `PrmDpBufferFailed` alone
+reports the failure, alongside `EXECUTION_ERROR`.
 
 ### 3.4 State
 

@@ -55,6 +55,11 @@ void PrmDbImpl::configureSandbox(const char* directory) {
     this->m_sandboxDir = directory;
 }
 
+void PrmDbImpl::configureDp(FwSizeType bufferSize) {
+    FW_ASSERT(bufferSize > Fw::DpContainer::MIN_PACKET_SIZE, static_cast<FwAssertArgType>(bufferSize));
+    this->m_dpMaxDataSize = bufferSize - Fw::DpContainer::MIN_PACKET_SIZE;
+}
+
 void PrmDbImpl::applySandbox(Os::SandboxedFile& file) const {
     // Left unconfigured (fail-closed) when configureSandbox() was never called
     if (this->m_sandboxDir.length() > 0) {
@@ -167,13 +172,17 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Traverse the parameter list, saving each entry
 
     U32 numRecords = 0;
+    bool writeFailed = false;
+    PrmWriteError::T failStage = PrmWriteError::OPEN;
+    I32 failErrorValue = 0;
 
     for (const auto& entry : *db) {
         // write delimiter
         static const U8 delim = PRMDB_ENTRY_DELIMITER;
         if (!this->writeSaveFileChunk(paramFile, &delim, sizeof(delim), PrmWriteError::DELIMITER,
-                                      PrmWriteError::DELIMITER_SIZE, numRecords, opCode, cmdSeq, crc)) {
-            return;
+                                      PrmWriteError::DELIMITER_SIZE, crc, failStage, failErrorValue)) {
+            writeFailed = true;
+            break;
         }
 
         // serialize record size = id field + data
@@ -187,8 +196,9 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
         // write record size
         if (!this->writeSaveFileChunk(paramFile, buff.getBuffAddr(), buff.getSize(), PrmWriteError::RECORD_SIZE,
-                                      PrmWriteError::RECORD_SIZE_SIZE, numRecords, opCode, cmdSeq, crc)) {
-            return;
+                                      PrmWriteError::RECORD_SIZE_SIZE, crc, failStage, failErrorValue)) {
+            writeFailed = true;
+            break;
         }
 
         // reset buffer
@@ -202,21 +212,29 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
         // write parameter ID
         if (!this->writeSaveFileChunk(paramFile, buff.getBuffAddr(), buff.getSize(), PrmWriteError::PARAMETER_ID,
-                                      PrmWriteError::PARAMETER_ID_SIZE, numRecords, opCode, cmdSeq, crc)) {
-            return;
+                                      PrmWriteError::PARAMETER_ID_SIZE, crc, failStage, failErrorValue)) {
+            writeFailed = true;
+            break;
         }
 
         // write serialized parameter value
         if (!this->writeSaveFileChunk(paramFile, entry.getValue().getBuffAddr(), entry.getValue().getSize(),
-                                      PrmWriteError::PARAMETER_VALUE, PrmWriteError::PARAMETER_VALUE_SIZE, numRecords,
-                                      opCode, cmdSeq, crc)) {
-            return;
+                                      PrmWriteError::PARAMETER_VALUE, PrmWriteError::PARAMETER_VALUE_SIZE, crc,
+                                      failStage, failErrorValue)) {
+            writeFailed = true;
+            break;
         }
 
         numRecords++;
     }
 
     this->unLock();
+
+    if (writeFailed) {
+        this->log_WARNING_HI_PrmFileWriteError(failStage, static_cast<I32>(numRecords), failErrorValue);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
 
     // save current location of pointer in paramFile
     FwSizeType currPosInParamFile;
@@ -268,22 +286,19 @@ bool PrmDbImpl::writeSaveFileChunk(Os::SandboxedFile& paramFile,
                                    FwSizeType size,
                                    PrmWriteError::T statusStage,
                                    PrmWriteError::T sizeStage,
-                                   U32 numRecords,
-                                   FwOpcodeType opCode,
-                                   U32 cmdSeq,
-                                   Utils::Hash& crc) {
+                                   Utils::Hash& crc,
+                                   PrmWriteError::T& outStage,
+                                   I32& outErrorValue) {
     FwSizeType writeSize = size;
     Os::File::Status stat = paramFile.write(data, writeSize, Os::File::WaitType::WAIT);
     if (stat != Os::File::OP_OK) {
-        this->unLock();
-        this->log_WARNING_HI_PrmFileWriteError(statusStage, static_cast<I32>(numRecords), stat);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        outStage = statusStage;
+        outErrorValue = stat;
         return false;
     }
     if (writeSize != size) {
-        this->unLock();
-        this->log_WARNING_HI_PrmFileWriteError(sizeStage, static_cast<I32>(numRecords), static_cast<I32>(writeSize));
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        outStage = sizeStage;
+        outErrorValue = static_cast<I32>(writeSize);
         return false;
     }
     if (data != nullptr && writeSize != 0) {
@@ -362,6 +377,142 @@ void PrmDbImpl::PRM_COMMIT_STAGED_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     this->log_ACTIVITY_HI_PrmDbCommitComplete();
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+bool PrmDbImpl::allocateDpContainer(DpContainer& container, PrmDb_PrmDpBufferFailStage stage) {
+    const Fw::Success::T dpStatus = this->dpGet_PrmEntryContainer(this->m_dpMaxDataSize, container);
+    if (dpStatus != Fw::Success::SUCCESS) {
+        this->log_WARNING_HI_PrmDpBufferFailed(
+            static_cast<U32>(Fw::DpContainer::getPacketSizeForDataSize(this->m_dpMaxDataSize)), stage);
+        return false;
+    }
+    return true;
+}
+
+void PrmDbImpl::PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrmIdType startId, FwPrmIdType endId) {
+    if (startId > endId) {
+        this->log_WARNING_LO_PrmDpInvalidRange(startId, endId);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    if (!this->isConnected_productGetOut_OutputPort(0) || !this->isConnected_productSendOut_OutputPort(0) ||
+        (this->m_dpMaxDataSize == 0)) {
+        this->log_WARNING_HI_PrmDpNotConfigured();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    this->lock();
+    auto* db = this->getDbPtr(PrmDbType::DB_ACTIVE);
+    FW_ASSERT(db != nullptr);
+    auto it = db->begin();
+    this->unLock();
+
+    // Chunk the in-range entries across as many containers as needed, each requested at the
+    // fixed size configured via configureDp(). An entry too large to fit in any container at
+    // that size is dropped with a throttled warning. A container allocation failure truncates
+    // the snapshot (with a warning); any containers already sent remain valid, but the command
+    // responds EXECUTION_ERROR since the requested range was not fully captured.
+    //
+    // The database lock is reacquired only to read one entry at a time (copying its bytes out
+    // below); it is never held across the dpGet/dpSend/serializeRecord calls, so a large
+    // snapshot does not block other guarded-port callers (e.g. getPrm) for its full duration.
+    // This component dispatches commands one at a time on its own thread, so no other handler
+    // of this component can mutate the active database while this loop runs; the only other
+    // accessor is getPrm, which only reads.
+    DpContainer container;
+    bool haveContainer = false;
+    bool anyInRange = false;
+    bool bufferFailed = false;
+    U32 numRecords = 0;
+    U32 numContainers = 0;
+    U32 numDropped = 0;
+    WorkingBuffer buff;
+
+    // Terminates because the iterator advances once per pass and the underlying ArrayMap
+    // holds at most PRMDB_NUM_DB_ENTRIES entries; it.isInRange() becomes false once the
+    // iterator reaches the end of that bounded range.
+    while (true) {
+        this->lock();
+        if (!it.isInRange()) {
+            this->unLock();
+            break;
+        }
+
+        const FwPrmIdType id = it->getKey();
+        const bool inRange = (id >= startId) && (id <= endId);
+        bool tooLarge = false;
+        if (inRange) {
+            const Fw::ParamBuffer& value = it->getValue();
+            const FwSizeType recordDataSize = sizeof(FwPrmIdType) + value.getSize();
+            const FwSizeType requiredSize = SIZE_OF_PrmEntryRecord_RECORD(recordDataSize);
+            tooLarge = (requiredSize > this->m_dpMaxDataSize);
+            if (!tooLarge) {
+                buff.resetSer();
+                Fw::SerializeStatus serStat = buff.serializeFrom(id);
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+                serStat = buff.serializeFrom(value.getBuffAddr(), value.getSize(), Fw::Serialization::OMIT_LENGTH);
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+            }
+        }
+        ++it;
+        this->unLock();
+
+        if (!inRange) {
+            continue;
+        }
+        anyInRange = true;
+
+        if (tooLarge) {
+            this->log_WARNING_LO_PrmDpRecordTooLarge(id);
+            numDropped++;
+            continue;
+        }
+
+        if (!haveContainer) {
+            if (!this->allocateDpContainer(container, PrmDb_PrmDpBufferFailStage::FIRST_CONTAINER)) {
+                bufferFailed = true;
+                break;
+            }
+            haveContainer = true;
+            numContainers++;
+        }
+
+        Fw::SerializeStatus recStat = container.serializeRecord_PrmEntryRecord(buff.getBuffAddr(), buff.getSize());
+        if (recStat == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+            // Current container is full: send it and start a fresh one for this entry
+            this->dpSend(container);
+            haveContainer = false;
+
+            if (!this->allocateDpContainer(container, PrmDb_PrmDpBufferFailStage::NEXT_CONTAINER)) {
+                bufferFailed = true;
+                break;
+            }
+            haveContainer = true;
+            numContainers++;
+
+            // A fresh container has a full m_dpMaxDataSize of room, and requiredSize was
+            // already checked against m_dpMaxDataSize above, so this must succeed.
+            recStat = container.serializeRecord_PrmEntryRecord(buff.getBuffAddr(), buff.getSize());
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == recStat, static_cast<FwAssertArgType>(recStat));
+        } else {
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == recStat, static_cast<FwAssertArgType>(recStat));
+        }
+
+        numRecords++;
+    }
+
+    if (haveContainer) {
+        this->dpSend(container);
+    }
+
+    if (!anyInRange) {
+        this->log_ACTIVITY_LO_PrmDpNoEntriesInRange(startId, endId);
+    } else if (!bufferFailed) {
+        this->log_ACTIVITY_HI_PrmDpComplete(startId, endId, numRecords, numContainers, numDropped);
+    }
+    this->cmdResponse_out(opCode, cmdSeq, bufferFailed ? Fw::CmdResponse::EXECUTION_ERROR : Fw::CmdResponse::OK);
 }
 
 //! ----------------------------------------------------------------------

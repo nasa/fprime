@@ -67,6 +67,17 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param directory directory that all parameter file accesses are restricted to.
     void configureSandbox(const char* directory);
 
+    //!  \brief PrmDb data product configure method
+    //!
+    //!  Sets the buffer size used for data product container requests made by PRM_REQUEST_DP.
+    //!  This must match the size of the buffer pool (e.g. Svc::BufferManager bin) backing
+    //!  productGetOut. Until called, PRM_REQUEST_DP fails with EXECUTION_ERROR.
+    //!
+    //!  \note Asserts bufferSize > Fw::DpContainer::MIN_PACKET_SIZE.
+    //!
+    //!  \param bufferSize size, in bytes, of the buffer pool backing productGetOut
+    void configureDp(FwSizeType bufferSize);
+
     //!  \brief PrmDb file read function
     //!
     //!  The readFile function reads the set of parameters from the file passed in to
@@ -96,6 +107,10 @@ class PrmDbImpl final : public PrmDbComponentBase {
   private:
     Fw::String m_fileName;    //!< filename for parameter storage
     Fw::String m_sandboxDir;  //!< directory restriction for all file access (empty = all opens rejected)
+
+    // Maximum data product payload size per container, derived from configureDp()'s bufferSize.
+    // Zero (the default) means data product generation has not been configured.
+    FwSizeType m_dpMaxDataSize = 0;  //!< Maximum DP payload size per container; 0 = not configured
 
     PrmDbFileLoadState m_state;  // Current file load state of the parameter database
 
@@ -133,17 +148,25 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param file sandboxed file to configure
     void applySandbox(Os::SandboxedFile& file) const;
 
-    //! Write one chunk of the parameter file while locked; on failure unlocks, emits PrmFileWriteError, responds
-    //! EXECUTION_ERROR
+    //! Write one chunk of the parameter file. Does not touch the lock or call any port (log or
+    //! command response); the caller is responsible for unlocking and reporting a failure once,
+    //! after its per-entry write loop.
+    //!
+    //! \param statusStage PrmWriteError stage to report if the underlying write fails
+    //! \param sizeStage PrmWriteError stage to report if fewer bytes are written than requested
+    //! \param crc running CRC, updated with the written bytes on success
+    //! \param outStage set to statusStage or sizeStage on failure; unspecified on success
+    //! \param outErrorValue set to the Os::File::Status (on write failure) or the actual byte
+    //!                      count written (on a size mismatch); unspecified on success
+    //! \return true on success, false on failure
     bool writeSaveFileChunk(Os::SandboxedFile& paramFile,
                             const U8* data,
                             FwSizeType size,
                             PrmWriteError::T statusStage,
                             PrmWriteError::T sizeStage,
-                            U32 numRecords,
-                            FwOpcodeType opCode,
-                            U32 cmdSeq,
-                            Utils::Hash& crc);
+                            Utils::Hash& crc,
+                            PrmWriteError::T& outStage,
+                            I32& outErrorValue);
 
     //!  \brief PrmDb parameter get handler
     //!
@@ -222,6 +245,32 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param opCode The opcode of this commands
     //!  \param cmdSeq The sequence number of the command
     void PRM_COMMIT_STAGED_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
+
+    //!  \brief PrmDb PRM_REQUEST_DP command handler
+    //!
+    //!  This function requests a data product snapshot of active-database
+    //!  parameter entries whose IDs fall within [startId, endId]. The database
+    //!  is traversed once; containers are requested at the fixed size configured via
+    //!  configureDp(), and the snapshot is chunked across as many containers as needed.
+    //!  An entry too large to fit in any container at the configured size is dropped
+    //!  with a throttled warning. If a container allocation fails, the snapshot is
+    //!  truncated with a warning but the command still responds OK.
+    //!
+    //!  \param opCode The opcode of this commands
+    //!  \param cmdSeq The sequence number of the command
+    //!  \param startId The first parameter ID in the requested range (inclusive)
+    //!  \param endId The last parameter ID in the requested range (inclusive)
+    void PRM_REQUEST_DP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FwPrmIdType startId, FwPrmIdType endId);
+
+    //! \brief Allocate a data product container for a PRM_REQUEST_DP snapshot
+    //!
+    //!  Requests a container sized to m_dpMaxDataSize via dpGet_PrmEntryContainer. On failure,
+    //!  emits PrmDpBufferFailed tagged with the given call-site stage.
+    //!
+    //!  \param container the container to allocate into (output)
+    //!  \param stage which dpGet() call site this allocation is for
+    //!  \return true on success, false on allocation failure (PrmDpBufferFailed already emitted)
+    bool allocateDpContainer(DpContainer& container, PrmDb_PrmDpBufferFailStage stage);
 
     //! ----------------------------------------------------------------------
     //! Helpers for database management

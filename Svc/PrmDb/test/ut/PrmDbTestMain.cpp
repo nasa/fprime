@@ -5,7 +5,6 @@
  *      Author: tcanham
  */
 
-#include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 #include <Svc/PrmDb/test/ut/PrmDbTester.hpp>
 
@@ -13,11 +12,10 @@
 
 #include <Fw/Test/UnitTest.hpp>
 
-#if FW_OBJECT_REGISTRATION == 1
-static Fw::SimpleObjRegistry simpleReg;
-#endif
-
-void connectPorts(Svc::PrmDbImpl& impl, Svc::PrmDbTester& tester) {
+void connectPorts(Svc::PrmDbImpl& impl,
+                  Svc::PrmDbTester& tester,
+                  bool connectProductGetOut = true,
+                  bool connectProductSendOut = true) {
     // command ports
     tester.connect_to_CmdDisp(0, impl.get_CmdDisp_InputPort(0));
     impl.set_CmdStatus_OutputPort(0, tester.get_from_CmdStatus(0));
@@ -30,6 +28,14 @@ void connectPorts(Svc::PrmDbImpl& impl, Svc::PrmDbTester& tester) {
     // parameter ports
     tester.connect_to_getPrm(0, impl.get_getPrm_InputPort(0));
     tester.connect_to_setPrm(0, impl.get_setPrm_InputPort(0));
+
+    // data product ports
+    if (connectProductGetOut) {
+        impl.set_productGetOut_OutputPort(0, tester.get_from_productGetOut(0));
+    }
+    if (connectProductSendOut) {
+        impl.set_productSendOut_OutputPort(0, tester.get_from_productSendOut(0));
+    }
 
 #if FW_PORT_TRACING
     // Fw::PortBase::setTrace(true);
@@ -313,6 +319,193 @@ TEST(ParameterDbTest, PrmShorterSaveDoesNotCorrupt) {
     connectPorts(impl, tester);
 
     tester.runShorterSaveDoesNotCorrupt();
+}
+
+TEST(ParameterDbTest, PrmRequestDpNominal) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmRequestDpNominal();
+}
+
+TEST(ParameterDbTest, PrmRequestDpInvalidRange) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmRequestDpInvalidRange();
+}
+
+TEST(ParameterDbTest, PrmRequestDpEmptyRange) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmRequestDpEmptyRange();
+}
+
+TEST(ParameterDbTest, PrmRequestDpBufferFailure) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmRequestDpBufferFailure();
+}
+
+TEST(ParameterDbTest, PrmRequestDpChunking) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmRequestDpChunking();
+}
+
+TEST(ParameterDbTest, PrmRequestDpRecordTooLarge) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmRequestDpRecordTooLarge();
+}
+
+TEST(ParameterDbTest, PrmRequestDpMidStreamBufferFailure) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmRequestDpMidStreamBufferFailure();
+}
+
+TEST(ParameterDbTest, PrmRequestDpNotConfigured) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmRequestDpNotConfigured();
+}
+
+TEST(ParameterDbTest, PrmRequestDpNotConfiguredProductGetOutUnconnected) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports, but leave productGetOut unconnected
+    connectPorts(impl, tester, false, true);
+
+    tester.runPrmRequestDpNotConfiguredProductGetOutUnconnected();
+}
+
+TEST(ParameterDbTest, PrmRequestDpNotConfiguredProductSendOutUnconnected) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports, but leave productSendOut unconnected
+    connectPorts(impl, tester, true, false);
+
+    tester.runPrmRequestDpNotConfiguredProductSendOutUnconnected();
+}
+
+TEST(ParameterDbTest, PrmRequestDpRecordTooLargeThrottle) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("/prm/TestFile.prm");
+    impl.configureSandbox("/prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPrmRequestDpRecordTooLargeThrottle();
 }
 
 int main(int argc, char** argv) {
