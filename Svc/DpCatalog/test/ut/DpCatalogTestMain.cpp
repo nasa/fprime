@@ -360,6 +360,11 @@ TEST(NominalManual, NonDpFilesDoNotConsumeSlots) {
     tester.test_NonDpFilesDoNotConsumeSlots();
 }
 
+TEST(NominalManual, BuildFileEventsThrottled) {
+    Svc::DpCatalogTester tester;
+    tester.test_BuildFileEventsThrottled();
+}
+
 TEST(NominalManual, XmitPriorityRangeAll) {
     Svc::DpCatalogTester tester;
     tester.test_XmitPriorityRangeAll();
