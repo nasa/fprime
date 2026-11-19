@@ -47,6 +47,10 @@ class FileUplinkTester : public FileUplinkGTestBase {
     //!
     void badChecksum();
 
+    void fileIncomplete();
+
+    void existingFileTruncated();
+
     //! Cause a file open error
     //!
     void fileOpenError();
@@ -142,6 +146,10 @@ class FileUplinkTester : public FileUplinkGTestBase {
     //! Verify file data
     //!
     void verifyFileData(const char* const path, const U8* const sentData, const size_t sentDataSize);
+
+    void verifyFileSize(const char* const path, const size_t expectedSize);
+
+    void createFile(const char* const path, const U8 fill, const size_t size);
 
     //! Remove a file
     //!
