@@ -164,7 +164,7 @@ This should look something like the following:
 # This contains the basic project information. Specifically, a cmake version and
 # project definition.
 ##
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.28)
 project(FPrime-Ref C CXX)
 
 ##

@@ -129,6 +129,26 @@ function(fprime_util_metadata_add_project_test TEST_NAME)
 endfunction()
 
 ####
+# Function `fprime_util_metadata_remove_project_test`:
+#
+# Removes a test from the project-level (root of the build cache) metadata.
+#
+# - **TEST_NAME:** name of the test to remove
+####
+function(fprime_util_metadata_remove_project_test TEST_NAME)
+    set(_PROJECT_TESTS_FILE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_TESTS_FILE}")
+    if (EXISTS "${_PROJECT_TESTS_FILE}")
+        file(STRINGS "${_PROJECT_TESTS_FILE}" _PROJECT_TESTS)
+        list(REMOVE_ITEM _PROJECT_TESTS "${TEST_NAME}")
+        list(JOIN _PROJECT_TESTS "\n" _PROJECT_TESTS_TEXT)
+        if (_PROJECT_TESTS)
+            string(APPEND _PROJECT_TESTS_TEXT "\n")
+        endif()
+        file(WRITE "${_PROJECT_TESTS_FILE}" "${_PROJECT_TESTS_TEXT}")
+    endif()
+endfunction()
+
+####
 # Function `fprime_util_metadata_set_test_dir`:
 #
 # Sets the CTest test directory for the current build directory. This writes a test-dir.fprime-util file that tells

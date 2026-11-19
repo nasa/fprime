@@ -621,6 +621,36 @@ endfunction()
 
 
 ####
+# Function `fprime_exclude_test_from_project`:
+#
+# Excludes unit tests from the project's test set: each test loses the `fprime_project` CTest label
+# (`FPRIME_PROJECT_TEST_LABEL`) and its entry in the project test list, so `fprime-util check` at the project root and
+# `fprime-util check --project` no longer run it. The test is still built, still labeled `fprime_universe`, and still
+# runs with `fprime-util check --all` and from its own directory.
+#
+# A test is named by its unit test executable target, e.g. `Svc_Health_ut_exe`. This may be called before or after
+# the test is registered, from any directory.
+#
+# ```
+# fprime_exclude_test_from_project(Svc_Health_ut_exe)
+# ```
+#
+# **ARGN**: names of the tests to exclude
+####
+function(fprime_exclude_test_from_project)
+    foreach (TEST_NAME IN LISTS ARGN)
+        append_list_property("${TEST_NAME}" GLOBAL PROPERTY FPRIME__INTERNAL_PROJECT_EXCLUDED_TESTS)
+        # Tests not yet registered are handled when registered; a registered test is relabeled here. Sub-builds
+        # register the unit test targets without their tests.
+        if (TARGET "${TEST_NAME}" AND NOT FPRIME_IS_SUB_BUILD)
+            get_target_property(_TEST_DIRECTORY "${TEST_NAME}" SOURCE_DIR)
+            set_property(TEST "${TEST_NAME}" DIRECTORY "${_TEST_DIRECTORY}" PROPERTY LABELS "${FPRIME_UNIVERSE_TEST_LABEL}")
+            fprime_util_metadata_remove_project_test("${TEST_NAME}")
+        endif()
+    endforeach()
+endfunction(fprime_exclude_test_from_project)
+
+####
 # Macro `register_fprime_target`:
 #
 # This function allows users to register custom build targets into the build system.  These targets are defined in a

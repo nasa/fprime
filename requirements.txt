@@ -10,7 +10,7 @@ chardet==5.2.0
 charset-normalizer==3.4.0
 clang-format==20.1.8
 click==8.1.7
-cmake==3.26.0
+cmake==3.28.4
 colorlog==6.8.2
 cookiecutter==2.6.0
 crcmod==1.7

@@ -144,7 +144,7 @@ macro(fprime_initialize_build_system)
     # Ensure that the build system is loaded only once
     get_property(_FPRIME_BUILD_SYSTEM_LOADED GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED)
     if (NOT _FPRIME_BUILD_SYSTEM_LOADED)
-        cmake_minimum_required(VERSION 3.19)
+        cmake_minimum_required(VERSION 3.28)
         fprime_detect_libraries()
         fprime_setup_standard_targets()
         fprime_setup_override_targets()

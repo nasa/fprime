@@ -35,6 +35,10 @@ root and `fprime-util check --project` (from any directory of the project) run t
 `fprime-util check --all` runs the `fprime_universe` tests. The tests built by `all` are also listed by name in the
 root `tests.fprime-util`, which earlier fprime-util versions use to select the same tests with a `ctest -R` expression.
 
+A project removes a test from its project test set with `fprime_exclude_test_from_project(<test name>)`: the test
+loses the `fprime_project` label and its root `tests.fprime-util` entry, and is still built and labeled
+`fprime_universe`. See the [API](../../reference/api/cmake/API.md) for when to call it.
+
 A module may exclude itself regardless of this option with the `EXCLUDE_FROM_ALL` argument of its `register_fprime_*`
 call (or of `add_fprime_subdirectory`). `EXCLUDE_FROM_ALL` has its CMake meaning however it was set: the module is left
 out of `all`, builds when named or depended upon, and is part of `universe`.
