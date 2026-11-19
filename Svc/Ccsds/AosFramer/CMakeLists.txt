@@ -13,10 +13,11 @@
 register_fprime_library(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/AosFramer.cpp"
-  AUTOCODER_INPUTS  
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/AosFramer.fpp"
   DEPENDS
     Svc_Ccsds_Types
+    Svc_Ccsds_Utils
 )
 
 register_fprime_ut(
@@ -27,6 +28,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/AosFramer.fpp"
   DEPENDS
     Svc_Ccsds_Types
+    Svc_Ccsds_Utils
     STest
   UT_AUTO_HELPERS
 )

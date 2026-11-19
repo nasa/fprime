@@ -5,10 +5,14 @@
 // \details modified from thomas-bc's TmFramer
 // ======================================================================
 
+#include <limits>
+
 #include "AosFramerTester.hpp"
+#include "Svc/Ccsds/Types/EppLengthOfLengthEnumAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Utils/IdlePacket.hpp"
 
 namespace Svc {
 
@@ -402,6 +406,108 @@ void AosFramerTester ::testShortPackets() {
 
     // Make sure we don't send any extra frames (continue into null)
     ASSERT_from_dataOut_SIZE(1);
+}
+
+// ----------------------------------------------------------------------
+// EPP Idle Fill Tests
+// ----------------------------------------------------------------------
+
+void AosFramerTester ::checkEppIdleFilledFrame(FwSizeType frameSize, FwSizeType packetSize, U32 expectedVcCount) {
+    U8 bufferData[ComCfg::AosMaxFrameFixedSize];
+    ASSERT_LE(packetSize, sizeof(bufferData));
+    Fw::Buffer buffer(bufferData, packetSize);
+
+    ComCfg::FrameContext context;
+    context.set_sendNow(true);
+
+    // Fill the buffer with some data
+    for (FwSizeType i = 0; i < packetSize; ++i) {
+        bufferData[i] = static_cast<U8>(i);
+    }
+
+    const U32 framesBefore = static_cast<U32>(this->fromPortHistory_dataOut->size());
+    this->invoke_to_dataIn(0, buffer, context);
+
+    // The sendNow frame is emitted, completed by an EPP idle fill, instead of being withheld
+    ASSERT_from_dataOut_SIZE(framesBefore + 1);
+    Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(framesBefore).data;
+    ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(framesBefore).context;
+    ASSERT_EQ(outBuffer.getSize(), frameSize);
+    ASSERT_EQ(this->getFrameVcCount(outBuffer.getData()), expectedVcCount);
+
+    // The idle packet spans from the end of the packet to the FECF
+    const FwSizeType idleStart = AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + packetSize;
+    const FwSizeType idleEnd = frameSize - AOSTrailer::SERIALIZED_SIZE;
+    const FwSizeType idleLength = idleEnd - idleStart;
+    const U8* frameData = outBuffer.getData();
+
+    // First octet: PVN '111' and Protocol ID 'idle' (0b000), with the smallest usable Length of Length;
+    // the Packet Length fields hold the header-inclusive total (CCSDS 133.1-B-3 4.1.2.8.2)
+    const U8 pvnAndIdleBits = static_cast<U8>(static_cast<U8>(ComCfg::Pvn::ENCAPSULATION_PACKET_PROTOCOL)
+                                              << EPPSubfields::packetVersionOffset);
+    FwSizeType headerLength = 0;
+    if (idleLength == 1) {
+        ASSERT_EQ(frameData[idleStart], static_cast<U8>(pvnAndIdleBits | EppLengthOfLength::Zero));
+        headerLength = 1;
+    } else if (idleLength <= std::numeric_limits<U8>::max()) {
+        ASSERT_EQ(frameData[idleStart], static_cast<U8>(pvnAndIdleBits | EppLengthOfLength::One));
+        ASSERT_EQ(frameData[idleStart + 1], static_cast<U8>(idleLength));
+        headerLength = 2;
+    } else {
+        ASSERT_EQ(frameData[idleStart], static_cast<U8>(pvnAndIdleBits | EppLengthOfLength::Two));
+        ASSERT_EQ(frameData[idleStart + 1], 0);  // User Defined Field / Protocol ID Extension
+        ASSERT_EQ(frameData[idleStart + 2], static_cast<U8>((idleLength >> 8) & 0xFF));
+        ASSERT_EQ(frameData[idleStart + 3], static_cast<U8>(idleLength & 0xFF));
+        headerLength = 4;
+    }
+    const U8 idlePattern = Utils::IdlePacket::DATA_PATTERN;
+    for (FwSizeType i = idleStart + headerLength; i < idleEnd; ++i) {
+        ASSERT_EQ(frameData[i], idlePattern)
+            << "Idle data at index " << i << " in range (" << idleStart + headerLength << ", " << idleEnd << ")"
+            << " does not match expected idle pattern";
+    }
+
+    // Return the frame so the component can reuse it
+    this->invoke_to_dataReturnIn(0, outBuffer, outContext);
+}
+
+void AosFramerTester ::testEppIdleFill() {
+    const FwSizeType frameSize = 1024;
+    this->component.configure(frameSize, true, ComCfg::SpacecraftId, 1, PvnBitfield::EPP_MASK);
+
+    const FwSizeType maxPayload =
+        frameSize - AOSHeader::SERIALIZED_SIZE - M_PDUHeader::SERIALIZED_SIZE - AOSTrailer::SERIALIZED_SIZE;
+
+    // Large remainder: four-octet header with a two-octet length
+    this->checkEppIdleFilledFrame(frameSize, 100, 0);
+    // Remainder below 256: two-octet header with a one-octet length
+    this->checkEppIdleFilledFrame(frameSize, maxPayload - 10, 1);
+    // Two-byte remainder: a two-octet header is the whole idle packet
+    this->checkEppIdleFilledFrame(frameSize, maxPayload - 2, 2);
+    // One-byte remainder: the single-octet idle packet, which SPP cannot express without striping
+    this->checkEppIdleFilledFrame(frameSize, maxPayload - 1, 3);
+    // Header-shape boundary: 255 bytes still uses the two-octet header, 256 needs the four-octet one
+    this->checkEppIdleFilledFrame(frameSize, maxPayload - 255, 4);
+    this->checkEppIdleFilledFrame(frameSize, maxPayload - 256, 5);
+}
+
+void AosFramerTester ::testEppPreferredOverSpp() {
+    // The repro from #5881: both SPP and EPP permitted. The EPP branch used to swallow the fill
+    // condition without serializing anything, so the sendNow frame was never completed or emitted;
+    // the fill is now done with an EPP idle packet
+    const FwSizeType frameSize = 1024;
+    this->component.configure(frameSize, true, ComCfg::SpacecraftId, 1,
+                              static_cast<U8>(PvnBitfield::SPP_MASK | PvnBitfield::EPP_MASK));
+    this->checkEppIdleFilledFrame(frameSize, 100, 0);
+}
+
+void AosFramerTester ::testIdlePvnsValidation() {
+    // At least one idle packet protocol must be permitted, and only SPP/EPP bits are valid
+    ASSERT_DEATH_IF_SUPPORTED(this->component.configure(1024, true, ComCfg::SpacecraftId, 1, 0), "AosFramer.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(this->component.configure(1024, true, ComCfg::SpacecraftId, 1, 0x02), "AosFramer.cpp");
+    // EPP alone is a valid configuration, and the accepted bitfield is stored
+    this->component.configure(1024, true, ComCfg::SpacecraftId, 1, PvnBitfield::EPP_MASK);
+    ASSERT_EQ(this->component.m_vcs[0].idle_packet_types, PvnBitfield::EPP_MASK);
 }
 
 // ----------------------------------------------------------------------

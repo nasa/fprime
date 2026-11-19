@@ -19,6 +19,7 @@ The AOS Framer and Deframer support the following subset of CCSDS AOS SDL:
 * Operational Control Field is disabled
 * Frame Error Control Field is configurable per instance via `configure`
 * This component supports packing multiple CCSDS Recognized packets (i.e. Space Packet Protocol or Encapsulation Packet Protocol) into one AOS SDL Frame. It also supports striping a single packet across multiple frames. Extra space is padded with idle packets.
+* Idle packets are built with the protocols permitted by the `idlePvns` bitfield passed to `configure` (SPP and/or EPP, at least one). When EPP is permitted it is preferred: the minimum Encapsulation Idle Packet is a single octet (CCSDS 133.1-B-3 4.1.2.8.2), so the fill always fits in the frame being completed, and the smallest header that can carry the remainder is used (one octet for a 1-byte remainder, a two-octet header up to 255 bytes, a four-octet header beyond that) with the Packet Length field holding the header-inclusive total. With SPP only, a remainder smaller than the minimum Space Packet (7 bytes) stripes the idle packet onto the next frame of the virtual channel. Permitting EPP therefore requires every receiver of the virtual channel to accept PVN 7: a peer `Svc::Ccsds::AosDeframer` must have `EPP_MASK` in its configured `pvnMask` (one whose mask is SPP-only raises a `DisabledPvn` `WARNING_HI` on every EPP-idle-filled frame, though extraction still stops cleanly). Keep the default `idlePvns = SPP_MASK` unless every receiver of the virtual channel accepts EPP.
 
 ## Internals
 

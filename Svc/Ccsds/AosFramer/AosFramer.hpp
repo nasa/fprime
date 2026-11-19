@@ -93,7 +93,8 @@ class AosFramer final : public AosFramerComponentBase {
                    U16 spacecraftId = ComCfg::SpacecraftId,  //!< Spacecraft ID
                    U8 vcId = 1,                              //!< Virtual Channel ID (default 1)
                    U8 idlePvns = PvnBitfield::SPP_MASK       //!< Bitfield of which Packet Version Numbers to use
-                                                             //!< for idle packets
+                                                             //!< for idle packets: SPP and/or EPP, at least one.
+                                                             //!< EPP is preferred when both are permitted.
                                                              //!< Default to SPP
     );
 
