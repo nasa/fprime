@@ -7,11 +7,9 @@
 #ifndef Svc_Ccsds_AsmFramerTester_HPP
 #define Svc_Ccsds_AsmFramerTester_HPP
 
-#include <string>
-
+#include "Fw/Types/String.hpp"
 #include "Svc/Ccsds/AsmFramer/AsmFramer.hpp"
 #include "Svc/Ccsds/AsmFramer/AsmFramerGTestBase.hpp"
-#include "Svc/Ccsds/TmFramer/TmFramer.hpp"
 
 namespace Svc {
 
@@ -78,13 +76,13 @@ class AsmFramerTester final : public AsmFramerGTestBase {
     // ----------------------------------------------------------------------
 
     //! Death-test pattern for an AsmFramer.cpp assert that reports no argument
-    static std::string assertPattern();
+    static Fw::String assertPattern();
 
     //! Death-test pattern for an AsmFramer.cpp assert that reports the given argument
-    static std::string assertPattern(FwSizeType argument);
+    static Fw::String assertPattern(FwSizeType argument);
 
     //! Death-test pattern for an AsmFramer.cpp assert that reports the given buffer state
-    static std::string assertPattern(AsmFramer::BufferOwnershipState state);
+    static Fw::String assertPattern(AsmFramer::BufferOwnershipState state);
 
     //! Connect ports
     void connectPorts();

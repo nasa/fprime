@@ -7,8 +7,8 @@
 #include "AsmFramerTester.hpp"
 
 #include <cstring>
-#include <string>
 
+#include "Svc/Ccsds/TmFramer/TmFramer.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
@@ -104,17 +104,17 @@ void AsmFramerTester ::testDisabledAsm() {
 void AsmFramerTester ::testConfigureInvalid() {
     // configure() minimum-size assert: a marker shorter than the shortest CCSDS pattern is rejected (sizes 1-3)
     ASSERT_DEATH_IF_SUPPORTED(this->component.configure(Fw::ConstByteArray(DEFAULT_ASM, AsmFramer::ASM_MIN_SIZE - 1)),
-                              assertPattern(AsmFramer::ASM_MIN_SIZE - 1));
+                              assertPattern(AsmFramer::ASM_MIN_SIZE - 1).toChar());
     // configure() null-pattern assert: a null pattern is only acceptable with size 0
     ASSERT_DEATH_IF_SUPPORTED(this->component.configure(Fw::ConstByteArray(nullptr, sizeof(DEFAULT_ASM))),
-                              assertPattern(sizeof(DEFAULT_ASM)));
+                              assertPattern(sizeof(DEFAULT_ASM)).toChar());
     // configure() maximum-size assert: a marker longer than Svc.AsmFramerCfg.AsmMaxSize is rejected
     ASSERT_DEATH_IF_SUPPORTED(this->component.configure(Fw::ConstByteArray(DEFAULT_ASM, AsmFramer::ASM_MAX_SIZE + 1)),
-                              assertPattern(AsmFramer::ASM_MAX_SIZE + 1));
+                              assertPattern(AsmFramer::ASM_MAX_SIZE + 1).toChar());
     // configure() OWNED assert: reconfiguring while the frame buffer is outstanding is rejected
     this->component.m_bufferState = AsmFramer::BufferOwnershipState::NOT_OWNED;
     ASSERT_DEATH_IF_SUPPORTED(this->component.configure(Fw::ConstByteArray(DEFAULT_ASM, sizeof(DEFAULT_ASM))),
-                              assertPattern(AsmFramer::BufferOwnershipState::NOT_OWNED));
+                              assertPattern(AsmFramer::BufferOwnershipState::NOT_OWNED).toChar());
     this->component.m_bufferState = AsmFramer::BufferOwnershipState::OWNED;
 }
 
@@ -144,11 +144,12 @@ void AsmFramerTester ::testFrameSizeBounds() {
     // dataIn FRAME_MAX_SIZE assert: one byte more than the largest supported frame is rejected
     Fw::Buffer tooLargeBuffer(maxData, AsmFramer::FRAME_MAX_SIZE + 1);
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, tooLargeBuffer, context),
-                              assertPattern(AsmFramer::FRAME_MAX_SIZE + 1));
+                              assertPattern(AsmFramer::FRAME_MAX_SIZE + 1).toChar());
 
     // dataIn null-data assert: a non-empty frame without backing storage is rejected
     Fw::Buffer nullBuffer(nullptr, 2);
-    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, nullBuffer, context), assertPattern(nullBuffer.getSize()));
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, nullBuffer, context),
+                              assertPattern(nullBuffer.getSize()).toChar());
 }
 
 void AsmFramerTester ::testDataReturn() {
@@ -161,7 +162,7 @@ void AsmFramerTester ::testDataReturn() {
     // dataReturnIn NOT_OWNED assert: returning a buffer while no frame is outstanding is a protocol violation
     ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::OWNED);
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, internalBuffer, context),
-                              assertPattern(AsmFramer::BufferOwnershipState::OWNED));
+                              assertPattern(AsmFramer::BufferOwnershipState::OWNED).toChar());
 
     // Frame a buffer so that the internal buffer is legitimately outstanding
     this->invoke_to_dataIn(0, buffer, context);
@@ -170,12 +171,12 @@ void AsmFramerTester ::testDataReturn() {
 
     // dataReturnIn lower-bound assert: storage below the internal buffer is rejected
     Fw::Buffer belowBuffer(this->component.m_asm, 1);
-    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, belowBuffer, context), assertPattern());
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, belowBuffer, context), assertPattern().toChar());
     // dataReturnIn upper-bound assert: storage above the internal buffer is rejected
     Fw::Buffer aboveBuffer(&this->component.m_frameBuffer[0] + sizeof(this->component.m_frameBuffer), 1);
-    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, aboveBuffer, context), assertPattern());
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, aboveBuffer, context), assertPattern().toChar());
     // dataReturnIn bounds asserts (either): the upstream frame's own storage is not the internal buffer
-    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, context), assertPattern());
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, context), assertPattern().toChar());
 
     // Returning the internal buffer restores ownership and releases the upstream frame with the
     // context captured at dataIn, not the context the com adapter hands back
@@ -195,7 +196,7 @@ void AsmFramerTester ::testBufferOwnershipState() {
     // dataIn OWNED assert: force state to be NOT_OWNED and test that assertion is triggered
     this->component.m_bufferState = AsmFramer::BufferOwnershipState::NOT_OWNED;
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context),
-                              assertPattern(AsmFramer::BufferOwnershipState::NOT_OWNED));
+                              assertPattern(AsmFramer::BufferOwnershipState::NOT_OWNED).toChar());
     this->component.m_bufferState = AsmFramer::BufferOwnershipState::OWNED;
     this->invoke_to_dataIn(0, buffer, context);  // this should work now
     ASSERT_EQ(this->component.m_bufferState, AsmFramer::BufferOwnershipState::NOT_OWNED);
@@ -268,8 +269,9 @@ void AsmFramerTester ::testTmFrameChain() {
     ComCfg::FrameContext context;
     context.set_vcId(1);
 
-    // Expected bytes on the wire, built independently of both framers: the ASM, then the TM
-    // Transfer Frame (CCSDS 132.0-B-3 Section 4.1) with primary header, data field, and FECF
+    // Expected bytes on the wire: the ASM, then the TM Transfer Frame (CCSDS 132.0-B-3 Section 4.1).
+    // Primary header and data field are built independently of both framers; the FECF uses the
+    // shared CRC16 utility
     U8 expected[sizeof(DEFAULT_ASM) + ComCfg::TmFrameFixedSize] = {};
     (void)::memcpy(expected, DEFAULT_ASM, sizeof(DEFAULT_ASM));
     U8* const tmFrame = &expected[sizeof(DEFAULT_ASM)];
@@ -299,6 +301,7 @@ void AsmFramerTester ::testTmFrameChain() {
     Fw::Buffer returned(smtf);
     this->invoke_to_dataReturnIn(0, returned, context);
     ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).context, context);
     Fw::Buffer tmFrameBuffer = this->fromPortHistory_dataReturnOut->at(0).data;
     ASSERT_EQ(tmFrameBuffer.getSize(), static_cast<FwSizeType>(ComCfg::TmFrameFixedSize));
     tmFramer.get_dataReturnIn_InputPort(0)->invoke(tmFrameBuffer, context);
@@ -330,15 +333,17 @@ void AsmFramerTester ::payloadReturnSinkHandler(Fw::PassiveComponentBase* callCo
 // Helper functions
 // ----------------------------------------------------------------------
 
-std::string AsmFramerTester ::assertPattern() {
-    return "AsmFramer\\.cpp:[0-9]+\"\n";
+Fw::String AsmFramerTester ::assertPattern() {
+    return Fw::String("AsmFramer\\.cpp:[0-9]+\"\n");
 }
 
-std::string AsmFramerTester ::assertPattern(FwSizeType argument) {
-    return "AsmFramer\\.cpp:[0-9]+\" " + std::to_string(argument) + "\n";
+Fw::String AsmFramerTester ::assertPattern(FwSizeType argument) {
+    Fw::String pattern;
+    pattern.format("AsmFramer\\.cpp:[0-9]+\" %" PRI_FwSizeType "\n", argument);
+    return pattern;
 }
 
-std::string AsmFramerTester ::assertPattern(AsmFramer::BufferOwnershipState state) {
+Fw::String AsmFramerTester ::assertPattern(AsmFramer::BufferOwnershipState state) {
     return assertPattern(static_cast<FwSizeType>(state));
 }
 
