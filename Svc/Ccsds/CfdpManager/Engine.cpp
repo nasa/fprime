@@ -457,6 +457,17 @@ Status::T Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
         return Status::PDU_METADATA_ERROR;
     }
 
+    /* refuse a declared file size above the receive limit, again before committing anything.
+     * setTxnStatus keeps the first error, so callers that then set a filestore rejection still
+     * report the file size error. */
+    if (md.getFileSize() > RxFileSizeLimit()) {
+        this->m_manager->log_WARNING_LO_RxFileTooLarge(txn->m_chan_num, txn->m_history->src_eid,
+                                                       txn->m_history->seq_num, md.getFileSize(), RxFileSizeLimit());
+        this->m_manager->incrementFaultFileSizeMismatch(txn->m_chan_num);
+        this->setTxnStatus(txn, TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
+        return Status::PDU_METADATA_ERROR;
+    }
+
     /* store the expected file size in transaction */
     txn->m_fsize = md.getFileSize();
 

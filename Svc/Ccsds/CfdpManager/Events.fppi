@@ -300,6 +300,26 @@ event RxEofMdSizeMismatch(
     severity warning low \
     format "RX class {} transaction {}:{} EOF/metadata size mismatch: metadata={}, EOF={}"
 
+event RxFileTooLarge(
+    channelId: U8 @< CFDP channel number
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    mdSize: U32 @< File size declared by the metadata PDU
+    limit: U32 @< Largest receive file size accepted (MaxRxFileSize)
+) \
+    severity warning low \
+    format "RX transaction {}:{}:{} metadata declares file size {}, above the receive limit {}"
+
+event RxDataPastMdSize(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    receivedEnd: U32 @< Highest offset + length of file data received before the metadata PDU
+    mdSize: U32 @< File size declared by the metadata PDU
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} file data received before metadata extends to {}, past the declared file size {}"
+
 event RxFileRenameFailed(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID

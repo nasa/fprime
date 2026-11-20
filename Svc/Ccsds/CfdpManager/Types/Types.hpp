@@ -348,6 +348,7 @@ struct CfdpRxS2Data {
 struct CfdpRxStateData {
     RxSubState sub_state;
     FileSize cached_pos;
+    FileSize max_recv_end; /**< \brief highest offset + length of any file data written so far */
 
     CfdpRxS2Data r2;
 };

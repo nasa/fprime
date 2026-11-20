@@ -471,6 +471,7 @@ These types define the size of CFDP protocol fields:
 
 | Constant | Purpose |
 |----------|---------|
+| `MaxRxFileSize` | Largest file a receive transaction accepts, in bytes. File Data PDUs received before the Metadata PDU must end at or below it, and a Metadata PDU declaring a larger file fails the transaction. Clamped to the `FileSize` range; the default (`0xFFFFFFFF`) leaves the `FileSize` maximum as the only limit. |
 | `MaxSimultaneousRx` | Maximum simultaneous file receives. Each channel can support this many active/concurrent receive transactions. Contributes to total transaction pool size. |
 | `MaxCommandedPlaybackFilesPerChan` | Maximum commanded playback files per channel. Maximum number of outstanding ground-commanded file transmits per channel. |
 | `MaxCommandedPlaybackDirectoriesPerChan` | Maximum commanded playback directories per channel. Each channel can support this many ground-commanded directory playbacks. |
@@ -531,6 +532,8 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | RxSeekCrcFailed | warning low | RX transaction failed to seek during CRC calculation |
 | RxReadCrcFailed | warning low | RX transaction failed to read, or read fewer bytes than expected, during CRC calculation |
 | RxEofMdSizeMismatch | warning low | RX transaction EOF/metadata size mismatch |
+| RxFileTooLarge | warning low | RX metadata declares a file larger than `MaxRxFileSize` |
+| RxDataPastMdSize | warning low | RX file data received before metadata extends past the declared file size |
 | RxFileRenameFailed | warning low | RX transaction failed to rename temp file to final file |
 | RxFileReopenFailed | warning low | RX transaction failed to reopen file after rename |
 | RxInactivityTimeout | warning low | RX transaction inactivity timer expired |
