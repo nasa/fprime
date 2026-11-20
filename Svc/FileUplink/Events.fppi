@@ -93,3 +93,10 @@ event InvalidPacketReceived(
   severity warning high \
   id 10 \
   format "Invalid packet received. Wrong packet type: {}"
+
+@ A file packet was dropped because the File Uplink queue was full
+event PacketDroppedQueueFull \
+  severity warning high \
+  id 12 \
+  format "File packet dropped because the FileUplink queue is full" \
+  throttle 5

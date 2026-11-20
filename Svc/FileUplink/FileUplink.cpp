@@ -41,7 +41,20 @@ void FileUplink::configure(const char* directory) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+void FileUplink::bufferSendIn_overflowHook(const FwIndexType portNum, Fw::Buffer& buffer) {
+    // Called on the sender's thread when the queue is full. The packet is dropped; an uplink in
+    // progress then sees a gap in the sequence index and reports it. The sender still owns the
+    // buffer, so hand it back exactly as the handler would have.
+    this->log_WARNING_HI_PacketDroppedQueueFull();
+    this->bufferSendOut_out(0, buffer);
+}
+
 void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
+    // An empty queue means the overload that dropped packets is over: report the next one again
+    if (this->m_queue.getMessagesAvailable() == 0) {
+        this->log_WARNING_HI_PacketDroppedQueueFull_ThrottleClear();
+    }
+
     // If packet is too small to contain a packet type, log + deallocate and return
     if (buffer.getSize() < sizeof(FwPacketDescriptorType)) {
         this->log_WARNING_HI_InvalidPacketReceived(Fw::ComPacketType::FW_PACKET_UNKNOWN);
