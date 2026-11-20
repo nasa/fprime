@@ -768,6 +768,20 @@ class Engine {
     bool isPollingDir(const Fw::StringBase& src_file, U8 chan_num);
 
     /**
+     * @brief Build the destination path for a file kept in a directory
+     *
+     * Joins the directory and the base name of the source file as
+     * "<dir>/<basename>" for use as an Os::FileSystem::moveFile destination.
+     *
+     * @param dir Destination directory (non-empty)
+     * @param src_file Source file path
+     * @param dest Receives the joined path
+     *
+     * @retval true if the joined path fits in dest, false otherwise
+     */
+    static bool buildKeepFilePath(const Fw::StringBase& dir, const Fw::StringBase& src_file, Fw::StringBase& dest);
+
+    /**
      * @brief Remove/Move file after transaction
      *
      * This helper is used to handle "not keep" file option after a transaction.

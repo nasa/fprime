@@ -3248,6 +3248,175 @@ void CfdpManagerTester::testFailPollFileMoveEvent() {
     Os::FileSystem::removeFile(srcFile);
 }
 
+// Helper for the keep/fail directory tests: create a 10-byte source file
+static void createKeepTestFile(const char* srcFile) {
+    Os::File testFile;
+    Os::File::Status fileOpenStatus = testFile.open(srcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    ASSERT_EQ(Os::File::OP_OK, fileOpenStatus) << "Failed to create test file " << srcFile;
+    U8 testData[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    FwSizeType sizeWritten = sizeof(testData);
+    Os::File::Status fileWriteStatus = testFile.write(testData, sizeWritten, Os::File::WAIT);
+    ASSERT_EQ(Os::File::OP_OK, fileWriteStatus);
+    testFile.close();
+}
+
+void CfdpManagerTester::setKeepDirectoryParams(U8 channelId, const char* moveDir, const char* failDir) {
+    Cfdp::ChannelArrayParams channelConfig;
+    Cfdp::ChannelParams& params = channelConfig[channelId];
+    params.set_ack_limit(2);
+    params.set_nack_limit(3);
+    params.set_ack_timer(5000);
+    params.set_inactivity_timer(30000);
+    params.set_dequeue_enabled(Fw::Enabled::ENABLED);
+    params.set_move_dir(Fw::String(moveDir));
+    params.set_max_outgoing_pdus_per_cycle(10);
+    params.set_tmp_dir(Fw::String("test/ut/output/tmp"));
+    params.set_fail_dir(Fw::String(failDir));
+    // PRM_SET is dispatched synchronously in cmdIn_handlerBase (see testFailKeepFileMoveEvent)
+    this->paramSet_ChannelConfig(channelConfig, Fw::ParamValid::VALID);
+    this->paramSend_ChannelConfig(0, 0);
+    ASSERT_STREQ(moveDir, component.getMoveDirParam(channelId).toChar());
+    ASSERT_STREQ(failDir, component.getFailDirParam(channelId).toChar());
+}
+
+void CfdpManagerTester::testKeepFileMoveToDirectory() {
+    // After a successful TX with keep == DELETE and a non-empty move_dir, the source file
+    // must be moved to <move_dir>/<basename>, not to the path named by move_dir itself.
+    U8 channelId = 0;
+    const char* moveDirPath = "test/ut/output/keep_move_dir";
+    const char* srcFile = "test/ut/output/keep_move_src.bin";
+    const char* dstFile = "/ground/keep_move_dst.bin";
+    const char* expectedDest = "test/ut/output/keep_move_dir/keep_move_src.bin";
+
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::createDirectory(moveDirPath));
+    Os::FileSystem::removeFile(expectedDest);  // stale output from a previous run
+    createKeepTestFile(srcFile);
+
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1,  // Class 1 sender
+                                            channelId, srcFile, dstFile,
+                                            10,              // File size
+                                            4200,            // Transaction sequence
+                                            TEST_GROUND_EID  // Peer
+    );
+    ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
+    txn->m_engine = component.m_engine;
+    txn->m_chan = component.m_engine->m_channels[channelId];
+    txn->m_keep = Cfdp::Keep::DELETE;
+    txn->m_history->txn_stat = TxnStatus::TXN_STATUS_NO_ERROR;  // successful transfer
+
+    this->setKeepDirectoryParams(channelId, moveDirPath, "test/ut/output/fail");
+    this->clearEvents();
+
+    component.m_engine->handleNotKeepFile(txn);
+
+    // The move succeeded: no warning event, source gone, file archived under move_dir
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_FALSE(Os::FileSystem::exists(srcFile)) << "source file should have been moved";
+    ASSERT_TRUE(Os::FileSystem::exists(expectedDest)) << "file should be at <move_dir>/<basename>";
+    ASSERT_TRUE(Os::FileSystem::exists(moveDirPath)) << "move_dir must still be a directory";
+
+    // Cleanup
+    Os::FileSystem::removeFile(expectedDest);
+    Os::FileSystem::removeDirectory(moveDirPath);
+}
+
+void CfdpManagerTester::testPollFileMoveToDirectory() {
+    // After a failed TX of a polled-directory file with a non-empty fail_dir, the source
+    // file must be moved to <fail_dir>/<basename>.
+    U8 channelId = 0;
+    const char* srcDirPath = "test/ut/output";
+    const char* failDirPath = "test/ut/output/poll_fail_dir";
+    const char* srcFile = "test/ut/output/poll_fail_src.bin";
+    const char* dstFile = "/ground/poll_fail_dst.bin";
+    const char* expectedDest = "test/ut/output/poll_fail_dir/poll_fail_src.bin";
+
+    ASSERT_EQ(Os::FileSystem::OP_OK, Os::FileSystem::createDirectory(failDirPath));
+    Os::FileSystem::removeFile(expectedDest);  // stale output from a previous run
+    createKeepTestFile(srcFile);
+
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1,  // Class 1 sender
+                                            channelId, srcFile, dstFile,
+                                            10,              // File size
+                                            4300,            // Transaction sequence
+                                            TEST_GROUND_EID  // Peer
+    );
+    ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
+    txn->m_engine = component.m_engine;
+    txn->m_chan = component.m_engine->m_channels[channelId];
+    txn->m_keep = Cfdp::Keep::DELETE;
+    txn->m_history->txn_stat = TxnStatus::TXN_STATUS_PROTOCOL_ERROR;  // failed transfer
+
+    // Register the source directory as a polling directory (see testFailPollFileMoveEvent)
+    Channel* chan = component.m_engine->m_channels[channelId];
+    ASSERT_NE(chan, nullptr);
+    CfdpPollDir* pd = chan->getPollDir(0);
+    ASSERT_NE(pd, nullptr);
+    pd->srcDir = Fw::String(srcDirPath);
+    ASSERT_TRUE(component.m_engine->isPollingDir(txn->m_history->fnames.src_filename, channelId));
+
+    this->setKeepDirectoryParams(channelId, "", failDirPath);
+    this->clearEvents();
+
+    component.m_engine->handleNotKeepFile(txn);
+
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_FALSE(Os::FileSystem::exists(srcFile)) << "source file should have been moved";
+    ASSERT_TRUE(Os::FileSystem::exists(expectedDest)) << "file should be at <fail_dir>/<basename>";
+
+    // Cleanup
+    Os::FileSystem::removeFile(expectedDest);
+    Os::FileSystem::removeDirectory(failDirPath);
+}
+
+void CfdpManagerTester::testKeepFileMoveOverlongPath() {
+    // When <move_dir>/<basename> does not fit in the path string, the move is reported as
+    // failed (FailKeepFileMove) and the source file is deleted, as for any failed move.
+    U8 channelId = 0;
+    const char* dstFile = "/ground/keep_overlong_dst.bin";
+
+    // Source file with a long base name (still within MaxFilePathSize)
+    char srcFile[Cfdp::MaxFilePathSize] = "test/ut/output/";
+    for (FwSizeType i = strlen(srcFile); i < sizeof(srcFile) - 5; ++i) {
+        srcFile[i] = 'f';
+    }
+    (void)strncpy(&srcFile[sizeof(srcFile) - 5], ".bin", 5);
+
+    // Longest directory the parameter can hold; joined with the basename it overflows Fw::String
+    char longDir[Cfdp::MaxFilePathSize] = {0};
+    longDir[0] = '/';
+    for (FwSizeType i = 1; i < sizeof(longDir) - 1; ++i) {
+        longDir[i] = 'd';
+    }
+    Fw::String probe;
+    ASSERT_NE(Fw::FormatStatus::SUCCESS, probe.format("%s/%s", longDir, srcFile))
+        << "test precondition: joined path must not fit in Fw::String";
+
+    createKeepTestFile(srcFile);
+
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1,  // Class 1 sender
+                                            channelId, srcFile, dstFile,
+                                            10,              // File size
+                                            4400,            // Transaction sequence
+                                            TEST_GROUND_EID  // Peer
+    );
+    ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
+    txn->m_engine = component.m_engine;
+    txn->m_chan = component.m_engine->m_channels[channelId];
+    txn->m_keep = Cfdp::Keep::DELETE;
+
+    this->setKeepDirectoryParams(channelId, longDir, "test/ut/output/fail");
+    this->clearEvents();
+
+    component.m_engine->handleNotKeepFile(txn);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_FailKeepFileMove_SIZE(1);
+    ASSERT_STREQ(srcFile, this->eventHistory_FailKeepFileMove->at(0).srcFile.toChar());
+    ASSERT_STREQ(longDir, this->eventHistory_FailKeepFileMove->at(0).moveDir.toChar());
+    ASSERT_EQ(static_cast<I32>(Os::FileSystem::INVALID_PATH), this->eventHistory_FailKeepFileMove->at(0).status);
+    ASSERT_FALSE(Os::FileSystem::exists(srcFile)) << "source file is deleted when the move fails";
+}
+
 void CfdpManagerTester::testFileDataSegmentMetadataEvent() {
     // FileDataSegmentMetadata emitted when a received FileData PDU has the (unsupported)
     // segment-metadata flag set. Engine::recvFd() checks header.hasSegmentMetadata() and,

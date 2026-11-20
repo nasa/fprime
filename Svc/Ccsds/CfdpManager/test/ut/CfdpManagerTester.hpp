@@ -655,6 +655,11 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testFailKeepFileMoveEvent();
     void testFailPduSerializationEvent();
     void testFailPollFileMoveEvent();
+    void testKeepFileMoveToDirectory();
+    void testPollFileMoveToDirectory();
+    void testKeepFileMoveOverlongPath();
+    //! Set move_dir/fail_dir (and nominal defaults) on a channel via PRM_SET
+    void setKeepDirectoryParams(U8 channelId, const char* moveDir, const char* failDir);
     void testFileDataSegmentMetadataEvent();
 
     // RX Error Events
