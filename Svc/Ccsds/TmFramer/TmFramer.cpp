@@ -12,9 +12,6 @@ namespace Svc {
 
 namespace Ccsds {
 
-static_assert(static_cast<U32>(ComCfg::SpacecraftId) <= TMSubfields::spacecraftIdMask,
-              "ComCfg.SpacecraftId must fit the 10 bit Spacecraft ID field of the TM Primary Header");
-
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
@@ -33,7 +30,7 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     FW_ASSERT(data.getSize() == TmPayloadCapacity, static_cast<FwAssertArgType>(data.getSize()));
     FW_ASSERT(context.get_firstHeaderPointer() <= TMSubfields::fhpMask,
               static_cast<FwAssertArgType>(context.get_firstHeaderPointer()));
-    // A wider VCID would spill into the Spacecraft ID bits of the Primary Header (Standard 4.1.2.3)
+    // A wider VCID does not fit the 3-bit field; the mask below would frame it on the wrong VC (Standard 4.1.2.3)
     FW_ASSERT(context.get_vcId() <= TMSubfields::vcIdMask, static_cast<FwAssertArgType>(context.get_vcId()));
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
 

@@ -64,7 +64,7 @@ module ComCfg {
         hasSecHdr: bool             @< Secondary header flag for SpacePacketFramer
         sequenceFlags: U8           @< 2 bit Sequence flags (0b00=continuation, 0b01=first, 0b10=last, 0b11=unsegmented)
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
-        vcId: U8                    @< 6 bit Virtual Channel ID - used for AOS, TC, and TM Protocols
+        vcId: U8                    @< Virtual Channel ID: 6 bits for AOS and TC, 3 bits for TM (TmFramer asserts above 7)
         pvn: Pvn                    @< Packet Version Number - used for AOS deframing to identify packet type
         sendNow: bool               @< Flag to AOS Framer that the Frame this packet goes into should be sent ASAP
         saIndex: U16                @< Security Association Index - set by SDLS deframers, read by SDLS framers
