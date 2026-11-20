@@ -502,6 +502,33 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
   public:
     // ----------------------------------------------------------------------
+    // Queue Overflow Tests
+    // ----------------------------------------------------------------------
+
+    //! Test that a PDU received while the queue is full is dropped and its buffer returned
+    void testDataInQueueOverflow();
+
+    //! Test that the dataIn overflow event is throttled and re-armed by run1Hz
+    void testDataInQueueOverflowEventThrottle();
+
+    //! Test that a buffer returned while the queue is full is deallocated directly
+    void testDataReturnInQueueOverflow();
+
+    //! Test that a run1Hz tick arriving while the queue is full is dropped
+    void testRun1HzQueueOverflow();
+
+    //! Test that a command arriving while the queue is full is answered with BUSY
+    void testCommandQueueOverflow();
+
+    //! Fill the component queue with dataIn messages carrying the given buffer
+    void fillComponentQueue(Fw::Buffer& buffer);
+
+    //! Dispatch until the component queue is empty
+    //! \return the number of messages dispatched
+    FwSizeType drainComponentQueue();
+
+  public:
+    // ----------------------------------------------------------------------
     // Parameter Tests
     // ----------------------------------------------------------------------
 

@@ -1488,6 +1488,160 @@ void CfdpManagerTester::testPrioritySearchCallback() {
     EXPECT_EQ(nullptr, missArg.txn);
 }
 
+// ----------------------------------------------------------------------
+// Queue Overflow Tests
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester::fillComponentQueue(Fw::Buffer& buffer) {
+    // Queue dataIn messages without dispatching until the component queue is full. Every one
+    // of these is accepted, so none of them reaches an overflow hook.
+    for (FwSizeType i = 0; i < TEST_INSTANCE_QUEUE_DEPTH; i++) {
+        this->invoke_to_dataIn(0, buffer);
+    }
+    ASSERT_from_dataInReturn_SIZE(0);
+    ASSERT_EVENTS_DataInQueueOverflow_SIZE(0);
+}
+
+FwSizeType CfdpManagerTester::drainComponentQueue() {
+    // doDispatch blocks on an empty queue, so dispatch exactly what is queued
+    FwSizeType dispatched = 0;
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        (void)this->component.doDispatch();
+        dispatched++;
+    }
+    return dispatched;
+}
+
+void CfdpManagerTester::testDataInQueueOverflow() {
+    // A PDU that arrives while the component queue is full is dropped and its buffer returned.
+    // Before the fix dataIn used the default queue-full behavior, so this asserted.
+    this->clearHistory();
+    const U32 droppedBefore = this->component.getChannelTelemetryRef(0).get_recvDropped();
+
+    // One byte is shorter than the packet descriptor, so the queued messages are ignored by
+    // the handler and only exercise the queue.
+    U8 queuedByte = 0;
+    Fw::Buffer queuedBuffer(&queuedByte, sizeof(queuedByte));
+    this->fillComponentQueue(queuedBuffer);
+
+    U8 overflowBytes[3] = {0, 0, 0};
+    for (U32 i = 0; i < 3; i++) {
+        Fw::Buffer overflowBuffer(&overflowBytes[i], 1);
+        this->invoke_to_dataIn(0, overflowBuffer);
+
+        // The buffer comes straight back on the caller's thread, before anything is dispatched
+        ASSERT_from_dataInReturn_SIZE(i + 1);
+        ASSERT_from_dataInReturn(i, overflowBuffer);
+    }
+    ASSERT_EVENTS_DataInQueueOverflow_SIZE(3);
+    ASSERT_EVENTS_DataInQueueOverflow(0, 0);
+
+    // The drop count reaches telemetry on the component thread, at the next run1Hz
+    ASSERT_EQ(droppedBefore, this->component.getChannelTelemetryRef(0).get_recvDropped());
+    this->drainComponentQueue();
+    ASSERT_from_dataInReturn_SIZE(3 + TEST_INSTANCE_QUEUE_DEPTH);
+    this->invoke_to_run1Hz(0, 0);
+    this->drainComponentQueue();
+    ASSERT_EQ(droppedBefore + 3, this->component.getChannelTelemetryRef(0).get_recvDropped());
+}
+
+void CfdpManagerTester::testDataInQueueOverflowEventThrottle() {
+    // DataInQueueOverflow is throttled so a sustained burst cannot flood the event log, and is
+    // re-armed by the first run1Hz cycle that sees no drop.
+    this->clearHistory();
+
+    U8 byte = 0;
+    Fw::Buffer buffer(&byte, sizeof(byte));
+    this->fillComponentQueue(buffer);
+
+    const U32 throttle = CfdpManagerComponentBase::EVENTID_DATAINQUEUEOVERFLOW_THROTTLE;
+    for (U32 i = 0; i < throttle + 4; i++) {
+        this->invoke_to_dataIn(0, buffer);
+    }
+    // Every overflowing buffer is returned, but only `throttle` events are emitted
+    ASSERT_from_dataInReturn_SIZE(throttle + 4);
+    ASSERT_EVENTS_DataInQueueOverflow_SIZE(throttle);
+
+    // First cycle collects the drops; the second sees none and re-arms the event
+    this->drainComponentQueue();
+    for (U32 i = 0; i < 2; i++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->drainComponentQueue();
+    }
+
+    this->clearHistory();
+    this->fillComponentQueue(buffer);
+    this->invoke_to_dataIn(0, buffer);
+    ASSERT_EVENTS_DataInQueueOverflow_SIZE(1);
+    this->drainComponentQueue();
+}
+
+void CfdpManagerTester::testDataReturnInQueueOverflow() {
+    // A returned PDU buffer that cannot be queued is deallocated directly instead of asserting
+    // or leaking.
+    this->clearHistory();
+
+    U8 byte = 0;
+    Fw::Buffer queuedBuffer(&byte, sizeof(byte));
+    this->fillComponentQueue(queuedBuffer);
+
+    U8 returnedData[8] = {0};
+    Fw::Buffer returnedBuffer(returnedData, sizeof(returnedData));
+    this->invoke_to_dataReturnIn(0, returnedBuffer);
+
+    ASSERT_from_bufferDeallocate_SIZE(1);
+    ASSERT_from_bufferDeallocate(0, returnedBuffer);
+    this->drainComponentQueue();
+}
+
+void CfdpManagerTester::testRun1HzQueueOverflow() {
+    // A 1 Hz tick that cannot be queued is dropped instead of asserting. The component keeps
+    // running and takes the next tick normally.
+    this->clearHistory();
+
+    U8 byte = 0;
+    Fw::Buffer buffer(&byte, sizeof(byte));
+    this->fillComponentQueue(buffer);
+
+    this->invoke_to_run1Hz(0, 0);
+
+    // Only the dataIn messages were queued: the tick was dropped
+    const FwSizeType queueDepth = TEST_INSTANCE_QUEUE_DEPTH;
+    ASSERT_EQ(queueDepth, this->drainComponentQueue());
+    ASSERT_TLM_ChannelTelemetry_SIZE(0);
+
+    this->invoke_to_run1Hz(0, 0);
+    ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->component.doDispatch());
+    ASSERT_TLM_ChannelTelemetry_SIZE(1);
+}
+
+void CfdpManagerTester::testCommandQueueOverflow() {
+    // A command that cannot be queued is answered with BUSY and reported, instead of asserting.
+    this->clearHistory();
+
+    U8 byte = 0;
+    Fw::Buffer buffer(&byte, sizeof(byte));
+    this->fillComponentQueue(buffer);
+
+    this->sendCmd_ResetCounters(0, 7, 0);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_RESETCOUNTERS, 7, Fw::CmdResponse::BUSY);
+    ASSERT_EVENTS_CommandQueueOverflow_SIZE(1);
+    ASSERT_EVENTS_CommandQueueOverflow(0, CfdpManagerComponentBase::OPCODE_RESETCOUNTERS, 7);
+
+    // A command with arguments takes the same path
+    this->sendCmd_SendFile(0, 8, 0, 2, Cfdp::Class::CLASS_1, Cfdp::Keep::KEEP, 0, Fw::CmdStringArg("src.bin"),
+                           Fw::CmdStringArg("dst.bin"));
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, CfdpManagerComponentBase::OPCODE_SENDFILE, 8, Fw::CmdResponse::BUSY);
+    ASSERT_EVENTS_CommandQueueOverflow_SIZE(2);
+
+    // Neither command was executed
+    this->drainComponentQueue();
+    ASSERT_EVENTS_ResetCounters_SIZE(0);
+    ASSERT_EVENTS_TxFileQueued_SIZE(0);
+}
+
 }  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc

@@ -852,6 +852,31 @@ TEST(Coverage, PrioritySearchCallback) {
     tester.testPrioritySearchCallback();
 }
 
+TEST(QueueOverflow, DataIn) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testDataInQueueOverflow();
+}
+
+TEST(QueueOverflow, DataInEventThrottle) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testDataInQueueOverflowEventThrottle();
+}
+
+TEST(QueueOverflow, DataReturnIn) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testDataReturnInQueueOverflow();
+}
+
+TEST(QueueOverflow, Run1Hz) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testRun1HzQueueOverflow();
+}
+
+TEST(QueueOverflow, Command) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testCommandQueueOverflow();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
