@@ -11,6 +11,7 @@ Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
 FPRIME-FU-001 | `FileUplink` shall receive file packets, assemble them into files, and store the files in the on-board non-volatile storage. | This requirement provides the capability to uplink files to the spacecraft. | Unit Test, System Test
 FPRIME-FU-002 | `FileUplink` shall announce the completion of uplinked files.| This requirement provides the capability to inform other components of newly uplinked files | Unit Test, System Test
+FPRIME-FU-003 | `FileUplink` shall drop a file packet that arrives while its message queue is full, return the packet's buffer, and report the drop, without raising a FATAL assertion. | File packets arrive at the rate the uplink delivers them, so a burst must not be able to terminate the process or lose buffers from the uplink buffer pool | Unit Test
 
 ## 3 Design
 
@@ -63,7 +64,7 @@ Name | Type | Role
 
 Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
-<a name="bufferSendIn">`bufferSendIn`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | async input | Receives buffers containing file packets.
+<a name="bufferSendIn">`bufferSendIn`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | async input | Receives buffers containing file packets. A packet that arrives while the queue is full is dropped and its buffer returned (see 3.5.5).
 <a name="bufferSendOut">`bufferSendOut`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | output | Returns buffers for deallocation.
 <a name="pingIn">`pingIn`</a> | [`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | async input | Receives ping calls from [`Svc::Health`](../../../Svc/Health/docs/sdd.md) for aliveness check
 <a name="pingOut">`pingOut`</a> | [`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | output | Returns ping request to [`Svc::Health`](../../../Svc/Health/docs/sdd.md) to respond to liveness check
@@ -195,6 +196,16 @@ Upon receipt of a cancel packet *P*, `FileUplink` does the following:
 3. Issue an *UplinkCanceled* event.
 
 4. Go to START mode.
+
+#### 3.5.5 Queue Overflow
+
+`bufferSendIn` is asynchronous, and the sender does not check whether the `FileUplink` queue has room. If a buffer arrives while the queue is full, `FileUplink` does not raise a FATAL assertion. In an overflow hook, on the sender's thread, it does the following:
+
+1. Issue a *PacketDroppedQueueFull* warning. The event is throttled to five and is re-armed once the queue has been drained.
+
+2. Invoke [`bufferSendOut`](#bufferSendOut) to return the buffer for deallocation, as for any other packet.
+
+The packet is dropped. If an uplink is in progress, the missing packet shows up as a gap in the sequence index when the next packet is handled, and is reported as described in the sections above.
 
 ## 4 Dictionary
 

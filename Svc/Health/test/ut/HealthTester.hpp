@@ -49,6 +49,8 @@ class HealthTester : public HealthGTestBase {
     void nominalCmd();
     void nominal2CmdsDuringTlm();
     void miscellaneous();
+    void commandQueueOverflow();
+    void pingReturnQueueOverflow();
 
   private:
     // ----------------------------------------------------------------------

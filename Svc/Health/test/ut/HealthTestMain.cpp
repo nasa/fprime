@@ -64,6 +64,16 @@ TEST(Test, Miscellaneous) {
     tester.miscellaneous();
 }
 
+TEST(Test, CommandQueueOverflow) {
+    Svc::HealthTester tester;
+    tester.commandQueueOverflow();
+}
+
+TEST(Test, PingReturnQueueOverflow) {
+    Svc::HealthTester tester;
+    tester.pingReturnQueueOverflow();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
