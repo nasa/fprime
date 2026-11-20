@@ -156,6 +156,8 @@ module Ccsds {
         constant spacecraftIdOffset = 4
         constant virtualChannelIdOffset = 1
         constant segLengthOffset = 11
+        constant spacecraftIdMask = 0x03FF       @< 10 bit Spacecraft ID field of the Primary Header, unshifted (apply before spacecraftIdOffset)
+        constant vcIdMask = 0x07                 @< 3 bit Virtual Channel ID field of the Primary Header, unshifted (apply before virtualChannelIdOffset)
         constant fhpMask = 0x07FF                @< 11 bit First Header Pointer field of Data Field Status
         # Special First Header Pointer values per CCSDS 132.0-B-3 Sections 4.1.2.7.6.4 & 4.1.2.7.6.5
         constant FHP_NO_PACKET_START = 0x7FF     @< No packet starts in this frame (continuation data only)

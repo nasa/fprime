@@ -27,6 +27,9 @@ class TmFramer final : public TmFramerComponentBase {
     static_assert(static_cast<FwSizeType>(TMTrailer::SERIALIZED_SIZE) == static_cast<FwSizeType>(TmTrailerSize),
                   "Svc.Ccsds.TmTrailerSize must match TMTrailer");
 
+    static_assert(static_cast<U32>(ComCfg::SpacecraftId) <= TMSubfields::spacecraftIdMask,
+                  "ComCfg.SpacecraftId must fit the 10 bit Spacecraft ID field of the TM Primary Header");
+
     //! Size of the frame data field: every dataIn payload must be exactly this size
     static constexpr FwSizeType TmPayloadCapacity = static_cast<FwSizeType>(TmDataFieldSize);
 

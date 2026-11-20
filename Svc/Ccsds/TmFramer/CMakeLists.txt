@@ -30,5 +30,6 @@ register_fprime_ut(
     Svc_Ccsds_Types
     Svc_Ccsds_Utils
     STest
+    Fw_Test # For Test::UnitTestAssert (non-aborting FW_ASSERT hook)
   UT_AUTO_HELPERS
 )
