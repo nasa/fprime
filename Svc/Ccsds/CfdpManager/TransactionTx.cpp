@@ -346,7 +346,14 @@ Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 
 
     // Create File Data PDU
     FileDataPdu fdPdu;
-    Cfdp::PduDirection direction = PduDirection::DIRECTION_TOWARD_RECEIVER;
+    const Cfdp::PduDirection direction = PduDirection::DIRECTION_TOWARD_RECEIVER;
+    const EntityId sourceEid = this->m_cfdpManager->getLocalEidParam();
+    const TransactionSeq seqNum = this->m_history->seq_num;
+    const EntityId destEid = this->m_history->peer_eid;
+
+    // Initialize the header first: the PDU overhead depends on the encoded width of the
+    // entity IDs and sequence number, so the capacity must be computed from the real values
+    fdPdu.initialize(direction, this->getClass(), sourceEid, seqNum, destEid, foffs, 0, nullptr);
 
     // Calculate maximum data size we can send, accounting for PDU overhead
     U32 maxDataCapacity = fdPdu.getMaxFileDataSize();
@@ -388,13 +395,13 @@ Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 
         this->m_state_data.send.cached_pos += static_cast<FileSize>(actual_bytes);
 
         fdPdu.initialize(direction,
-                         this->getClass(),                         // transmission mode
-                         this->m_cfdpManager->getLocalEidParam(),  // source EID
-                         this->m_history->seq_num,                 // transaction sequence number
-                         this->m_history->peer_eid,                // destination EID
-                         foffs,                                    // file offset
-                         static_cast<U16>(actual_bytes),           // data size
-                         fileDataBuffer                            // data pointer
+                         this->getClass(),                // transmission mode
+                         sourceEid,                       // source EID
+                         seqNum,                          // transaction sequence number
+                         destEid,                         // destination EID
+                         foffs,                           // file offset
+                         static_cast<U16>(actual_bytes),  // data size
+                         fileDataBuffer                   // data pointer
         );
 
         status = this->m_engine->sendFd(this, fdPdu);
