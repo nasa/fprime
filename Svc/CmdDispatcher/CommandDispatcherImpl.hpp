@@ -235,8 +235,7 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     U32 m_numCmdErrors;       //!< number of commands with an error
     std::atomic<U32>
         m_numCmdsDropped;  //!< number of commands dropped due to queue overflow (incremented on caller threads)
-    std::atomic<U32> m_numCmdStatusDropped;  //!< number of command statuses dropped due to queue overflow
-    std::atomic<bool> m_runQueued;           //!< true while a runInternal message is on the queue
+    std::atomic<bool> m_runQueued;  //!< true while a runInternal message is on the queue
 };
 }  // namespace Svc
 

@@ -226,9 +226,6 @@ module Svc {
 
     @ Number of commands dropped due to buffer overflow
     telemetry CommandsDropped: U32 id 2 update on change
-
-    @ Number of command statuses dropped due to buffer overflow
-    telemetry CommandStatusDropped: U32 id 3 update on change
   }
 
 }

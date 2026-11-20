@@ -909,7 +909,7 @@ void CommandDispatcherTester::runCommandStatusQueueOverflow() {
     this->clearTlm();
     this->fillCommandQueue();
 
-    // Statuses arriving while the queue is full are dropped and counted; the event is throttled
+    // Statuses arriving while the queue is full are dropped and reported; the event is throttled
     const U32 statusDrops = 6;
     for (U32 i = 0; i < statusDrops; i++) {
         this->invoke_to_compCmdStat(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, i, Fw::CmdResponse::OK);
@@ -917,17 +917,17 @@ void CommandDispatcherTester::runCommandStatusQueueOverflow() {
     ASSERT_EVENTS_CommandStatusDroppedQueueOverflow_SIZE(5);
     ASSERT_EVENTS_CommandStatusDroppedQueueOverflow(0, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_NO_OP),
                                                     0);
-    ASSERT_EQ(statusDrops, this->m_impl.m_numCmdStatusDropped.load());
     ASSERT_EQ(0u, this->m_impl.m_numCmdsDropped.load());
 
     // The queued commands still complete once the queue drains
     this->drainCommandQueue();
     ASSERT_EQ(this->m_impl.m_sequenceTracker.getSize(), 0);
 
+    // A dropped status is not a dropped command
     this->invoke_to_run(0, 0);
     this->dispatchCurrentMessages(this->m_impl);
-    ASSERT_TLM_CommandStatusDropped_SIZE(1);
-    ASSERT_TLM_CommandStatusDropped(0, statusDrops);
+    ASSERT_TLM_CommandsDropped_SIZE(1);
+    ASSERT_TLM_CommandsDropped(0, 0);
 }
 
 void CommandDispatcherTester::runOwnCommandQueueOverflow() {
@@ -951,7 +951,6 @@ void CommandDispatcherTester::runOwnCommandQueueOverflow() {
         ASSERT_EVENTS_CommandDroppedQueueOverflow(i, getExpectedEventOpcode(opcodes[i]), i);
     }
     ASSERT_EQ(commandDrops, this->m_impl.m_numCmdsDropped.load());
-    ASSERT_EQ(0u, this->m_impl.m_numCmdStatusDropped.load());
 
     // The queued commands still complete once the queue drains
     this->drainCommandQueue();
