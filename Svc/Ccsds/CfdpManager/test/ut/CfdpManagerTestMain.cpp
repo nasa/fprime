@@ -71,6 +71,26 @@ TEST(Transaction, Class2TxQueuedAbandonNoHang) {
     tester.testClass2TxQueuedAbandonNoHang();
 }
 
+TEST(Transaction, Class2TxInactivityReleasesCommandedSlot) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxInactivityReleasesCommandedSlot();
+}
+
+TEST(Transaction, Class2TxInactivityNotifiesPortRequester) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxInactivityNotifiesPortRequester();
+}
+
+TEST(Transaction, Class2TxInactivityReleasesPlaybackCount) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxInactivityReleasesPlaybackCount();
+}
+
+TEST(Transaction, Class2TxHoldRecycleDoesNotFinishTwice) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxHoldRecycleDoesNotFinishTwice();
+}
+
 TEST(Transaction, Class2TxMalformedEarlyFinNoSpin) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass2TxMalformedEarlyFinNoSpin();

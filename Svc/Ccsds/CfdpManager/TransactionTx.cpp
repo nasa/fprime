@@ -256,6 +256,15 @@ void Transaction::sTick(I32* cont /* unused */) {
     bool should_recycle = this->m_flags.com.inactivity_fired && (!pending_send || retries_exhausted);
 
     if (should_recycle) {
+        // A transaction that reaches this point in HOLD was already finished. One that timed out
+        // while still waiting on the peer (S2 waiting for the EOF-ACK or the FIN) was not, so finish
+        // it first. Recycling alone returns the object to the free pool without the transmit-side
+        // completion work: the commanded-transfer slot, the playback count, the failure event, the
+        // fileDoneOut notification and the retention handling.
+        if (this->m_state != TxnState::TXN_STATE_HOLD) {
+            this->m_engine->finishTransaction(this, true);
+        }
+
         // the transaction is now recyclable - this means we will
         // no longer have a record of this transaction seq.  If the sender
         // wakes up or if the network delivers severely delayed PDUs at

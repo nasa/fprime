@@ -542,7 +542,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | Event Name | Severity | Description |
 |------------|----------|-------------|
 | TxAckLimitReached | warning low | TX transaction ACK limit reached, no eof-ack received |
-| TxInactivityTimeout | warning low | TX transaction inactivity timer expired |
+| TxInactivityTimeout | warning low | TX transaction inactivity timer expired while waiting on the peer; the transaction is then finished as failed (see below) |
 | TxZeroLengthFile | warning low | TX transaction cannot transfer zero-length file |
 | TxFileOpenFailed | warning low | TX transaction failed to open file |
 | TxFileSeekFailed | warning low | TX transaction failed to seek to beginning of file |
@@ -553,6 +553,8 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | TxNonFileDirectivePduReceived | warning low | TX transaction received non-file-directive PDU |
 | TxInvalidDirectiveCode | warning low | TX transaction received invalid directive code for substate |
 | TxLateFinAcked | diagnostic | Retransmitted FIN acknowledged statelessly for an already-completed/recycled TX transaction (source EID, transaction sequence number) |
+
+A Class 2 TX transaction whose inactivity timer expires while it is still waiting on the peer (for the EOF acknowledgement or the FIN) is finished as a failed transfer before its transaction object is recycled, the same as one that reaches its ACK limit. In addition to `TxInactivityTimeout` it emits `TxFileTransferFailed` with status `INACTIVITY_DETECTED`, releases its commanded-transfer slot, is removed from its playback's or poll's outstanding count, reports `STATUS_ERROR` on `fileDoneOut` if it was port-initiated, and gets the retention handling of a failed transfer (a polled file is moved to `fail_dir` or deleted; any other source is left in place). With the default parameters this is the case where the peer acknowledges EOF and then never sends its FIN; a peer that never acknowledges EOF reaches the ACK limit first.
 
 ### File Transfer Complete Events
 
@@ -674,7 +676,7 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 |---|---|---|
 | faultAckLimit | U32 | Number of transactions abandoned due to ACK limit exceeded (no ACK(EOF) or ACK(FIN) received) |
 | faultNakLimit | U32 | Number of transactions abandoned due to NAK limit exceeded (retransmitted data not received) |
-| faultInactivityTimer | U32 | Number of transactions abandoned due to inactivity timeout |
+| faultInactivityTimer | U32 | Number of transactions abandoned due to inactivity timeout. Each such TX transaction is also reported with `TxFileTransferFailed` |
 | faultCrcMismatch | U32 | Number of CRC mismatches detected in received files |
 | faultFileSizeMismatch | U32 | Number of file size mismatches detected (EOF size vs actual received size) |
 | faultFileOpen | U32 | Number of file open failures, plus Metadata PDU destination paths rejected by `rx_dir` |

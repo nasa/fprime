@@ -361,6 +361,25 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! PEND must not leave a HOLD transaction on PEND and hang cycleTxFirstActive.
     void testClass2TxQueuedAbandonNoHang();
 
+    //! Regression: a Class 2 downlink that times out waiting for the peer releases its
+    //! commanded-transfer slot and is reported as a failed transfer.
+    void testClass2TxInactivityReleasesCommandedSlot();
+
+    //! Regression: a port-initiated Class 2 downlink that times out reports the failure
+    //! on fileDoneOut.
+    void testClass2TxInactivityNotifiesPortRequester();
+
+    //! Regression: a playback child that times out is removed from the playback's
+    //! outstanding-transaction count.
+    void testClass2TxInactivityReleasesPlaybackCount();
+
+    //! A transaction already finished and in HOLD is recycled without repeating its
+    //! completion work.
+    void testClass2TxHoldRecycleDoesNotFinishTwice();
+
+    //! Time out a Class 2 sender that is waiting for the peer after EOF
+    void expireWaitingClass2Tx(Transaction* txn);
+
     //! Regression: a malformed early FIN must not leave an active downlink in
     //! CLOSEOUT_SYNC on TXA and hang cycleTxFirstActive.
     void testClass2TxMalformedEarlyFinNoSpin();
