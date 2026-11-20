@@ -68,7 +68,7 @@ Transaction::Transaction(Channel* channel, U8 channelId, Engine* engine, CfdpMan
       m_foffs(0),
       m_fd(),
       m_crc(),
-      m_keep(Cfdp::Keep::KEEP),
+      m_keep(Cfdp::Keep::DELETE),
       m_chan_num(channelId),  // Initialize from parameter
       m_priority(0),
       m_initType(TransactionInitType::INIT_BY_COMMAND),
@@ -93,7 +93,9 @@ void Transaction::reset() {
     this->m_txn_class = Cfdp::Class::CLASS_1;
     this->m_fsize = 0;
     this->m_foffs = 0;
-    this->m_keep = Cfdp::Keep::KEEP;
+    // A received file is kept only once its checksum has been verified; transmit transactions set
+    // their own keep value in initTxFile().
+    this->m_keep = Cfdp::Keep::DELETE;
     this->m_priority = 0;
     this->m_initType = TransactionInitType::INIT_BY_COMMAND;
     this->m_crc = CFDP::Checksum(0);
@@ -320,6 +322,12 @@ void Transaction::rTick(I32* cont /* unused */) {
          * wakes up or if the network delivers severely delayed PDUs at
          * some future point, then they will be seen as spurious.  They
          * will no longer be associable with this transaction at all */
+        if ((this->m_state == TxnState::TXN_STATE_R1) || (this->m_state == TxnState::TXN_STATE_R2)) {
+            /* the reception never finished: report it as failed and dispose of its file (removed
+             * unless its checksum was already verified) before the slot is recycled */
+            this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_INACTIVITY_DETECTED);
+            this->m_engine->finishTransaction(this, true);
+        }
         this->m_chan->recycleTransaction(this);
 
         /* NOTE: this must be the last thing in here.  Do not use txn after this */
@@ -374,6 +382,7 @@ void Transaction::rInit() {
         if (this->m_state == TxnState::TXN_STATE_R2) {
             this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
         } else {
+            this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
             this->r1Reset();
         }
     } else {
@@ -496,6 +505,7 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         this->m_cfdpManager->log_WARNING_LO_FailFileDataPduDeserialization(this->getChannelId(),
                                                                            static_cast<I32>(deserStatus));
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_PROTOCOL_ERROR);
         ret = Cfdp::Status::ERROR;
     }
 
@@ -638,6 +648,7 @@ void Transaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
         // Bad EOF, reset transaction
         this->m_cfdpManager->log_WARNING_LO_FailEofPduDeserialization(this->getChannelId(),
                                                                       static_cast<I32>(deserStatus));
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_PROTOCOL_ERROR);
         this->r1Reset();
         return;
     }
@@ -653,9 +664,16 @@ void Transaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
             if (this->rCheckCrc(crc) == Cfdp::Status::SUCCESS) {
                 /* successfully processed the file */
                 this->m_keep = Cfdp::Keep::KEEP; /* save the file */
+            } else {
+                /* rCheckCrc() generates the event; fail the transaction so the file is removed */
+                this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILE_CHECKSUM_FAILURE);
             }
-            /* if file failed to process, there's nothing to do. CFDP_R_CheckCrc() generates an event on failure */
         }
+    } else if (ret == Cfdp::Status::REC_PDU_FSIZE_MISMATCH_ERROR) {
+        /* rSubstateRecvEof() generates the event */
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
+    } else {
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_PROTOCOL_ERROR);
     }
 
     /* after exit, always reset since we are done */
@@ -732,6 +750,7 @@ void Transaction::r1SubstateRecvFileData(const Fw::Buffer& buffer) {
         // Bad file data PDU, reset transaction
         this->m_cfdpManager->log_WARNING_LO_FailFileDataPduDeserialization(this->getChannelId(),
                                                                            static_cast<I32>(deserStatus));
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_PROTOCOL_ERROR);
         this->r1Reset();
         return;
     }

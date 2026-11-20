@@ -411,6 +411,26 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 RX handling of a zero-length FileData segment (GHSA-mh5x-2m6h-8267)
     void testClass2RxZeroLengthFileData();
 
+    // Receptions that do not complete (CfdpManagerRxDisposalTests.cpp)
+
+    //! Test Class 1 RX checksum mismatch is reported failed and the file removed
+    void testClass1RxChecksumMismatchRemovesFile();
+
+    //! Test Class 1 RX EOF size mismatch is reported failed and the file removed
+    void testClass1RxSizeMismatchRemovesFile();
+
+    //! Test Class 2 RX checksum mismatch is reported failed and the file removed
+    void testClass2RxChecksumMismatchRemovesFile();
+
+    //! Test Class 1 RX inactivity timeout is reported failed and the file removed
+    void testClass1RxInactivityRemovesFile();
+
+    //! Test Class 2 RX that stops receiving data is reported failed and the file removed
+    void testClass2RxStalledRemovesFile();
+
+    //! Test Class 2 RX that never receives metadata removes its temporary file
+    void testClass2RxWithoutMetadataRemovesTempFile();
+
     //! Test multiple transactions in series
     void testMultipleTransactionsInSeries();
 
@@ -803,6 +823,18 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
         U32 expectedSeqNum;
         Transaction* txn;
     };
+
+    //! Run scheduler cycles until the transaction is recycled, failing if it is not within maxCycles
+    void runRxUntilRecycled(U8 channelId, TransactionSeq transactionSeq, U32 maxCycles);
+
+    //! Upper bound on the cycles an RX transaction can take to be recycled with the current parameters
+    U32 rxRecycleCycleBudget(U8 channelId);
+
+    //! Expect exactly one RX failure event with the given status, no completion, and no file at path
+    void expectRxFailedAndRemoved(TxnStatus expectedStatus, const char* path);
+
+    //! Send part of a file, then go quiet until the reception is given up
+    void runRxInactivityCase(Cfdp::Class::T cfdpClass, TransactionSeq transactionSeq);
 
     //! Create test file and verify size matches expected
     void createAndVerifyTestFile(const char* filePath, FwSizeType expectedFileSize, FwSizeType& actualFileSize);
