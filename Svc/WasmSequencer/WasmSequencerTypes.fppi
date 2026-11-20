@@ -39,6 +39,7 @@ enum Status : I32 {
     ERR_ALLOC_FAILED                        = 16
     ERR_OUT_OF_MEMORY                       = 17
     ERR_PAGE_TOO_SMALL                      = 18
+    ERR_HEAP_POISONED                       = 19
     ERR_MEM_OUT_OF_BOUNDS                   = 32
     ERR_PARAM_LEN_MISMATCH                  = 48
     ERR_PARAM_TYPE_MISMATCH                 = 49
@@ -93,7 +94,6 @@ enum Status : I32 {
     ERR_INVALID_MEM_INDEX                   = 118
     ERR_MEMORY_NOT_DEFINED                  = 119
     ERR_INVALID_MEM_OFFSET_TYPE             = 120
-    ERR_INVALID_NEGATIVE_MEM_OFFSET         = 121
     ERR_INVALID_MEM_OFFSET                  = 122
     ERR_MULTIPLE_MEMORIES                   = 123
     ERR_MULTIPLE_TABLES                     = 124

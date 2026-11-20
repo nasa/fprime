@@ -126,11 +126,13 @@ The design of this component is tightly coupled with the [spacewasm](https://git
 
 The engine, [spacewasm](https://github.com/nasa/spacewasm), implements the official WebAssembly [specification](https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/) with the following features:
 
-| Feature                                                                           | Description                        |
-| --------------------------------------------------------------------------------- | ---------------------------------- |
-| [MVP](https://github.com/WebAssembly/design/blob/main/MVP.md)                     | The Wasm MVP                       |
-| [Import/Export of mutable globals](https://github.com/WebAssembly/mutable-global) | Mutable globals (part of Wasm 1.0) |
-| [Custom Page Sizes](https://github.com/WebAssembly/custom-page-sizes)             | Linear memory page sizes < 64 KiB  |
+| Feature                                                                                                      | Description                                                                            |
+| ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| [MVP](https://github.com/WebAssembly/design/blob/main/MVP.md)                                                | The Wasm MVP                                                                           |
+| [Import/Export of mutable globals](https://github.com/WebAssembly/mutable-global)                            | Mutable globals (part of Wasm 1.0)                                                     |
+| [Custom Page Sizes](https://github.com/WebAssembly/custom-page-sizes)                                        | Linear memory page sizes < 64 KiB                                                      |
+| [Sign-extension operators](https://github.com/WebAssembly/sign-extension-ops)                                | `i32.extend8_s`, `i32.extend16_s`, `i64.extend8_s`, `i64.extend16_s`, `i64.extend32_s` |
+| [Non-trapping float-to-int conversions](https://github.com/WebAssembly/nontrapping-float-to-int-conversions) | `*.trunc_sat_*`: saturate on NaN, infinity, or out-of-range input instead of trapping  |
 
 Unlike most production-grade Wasm engines, spacewasm is an _interpreter_ — more precisely an _IR interpreter_: during load it translates Wasm byte-code into a resolved intermediate representation (IR) that it then decodes and executes in a loop. This is slower than a typical production just-in-time (JIT) compiler but provides determinism and safety guarantees as well as an extremely low memory footprint. This document does not cover the engine's internals, see the [spacewasm repository](https://github.com/nasa/spacewasm) for more details. A few of its design choices drive this component:
 
@@ -578,6 +580,8 @@ struct Config {
     FwSizeType stackSize       = 1024;   // Wasm operand-stack size in 32-bit words (carved from the heap pool)
     FwSizeType maxCodePages    = 256;    // capacity of the code-page pointer table (see below)
     U8         maxGuestModules = 8;      // max modules loadable into the store (<= 255)
+    FwSizeType decoderControlFrames = 64;  // validator control frames (max block nesting per function)
+    FwSizeType decoderOperands      = 256; // validator operand slots (max operand-stack depth per function)
     FwSizeType serialOutMax    = 0;      // max serial_send payload; 0 leaves serialOut unconfigured
     SerialInQueueConfig serialIn[NUM_SERIALIN_INPUT_PORTS];  // per-index queue size + overflow policy
 };
@@ -621,16 +625,18 @@ instance wasmSeq: Svc.WasmSequencer base id 0x10007000 \
 ```
 
 
-| Field             | Purpose                                                                                                                                                                                                                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `heapPages`       | Number of `SPACEWASM_PAGE_SIZE` pages for the interpreter heap (store + compiled IR). Must be `> 0` and `<= SPACEWASM_MAX_PAGES`.                                                                                                                                               |
-| `guestMemorySize` | Size in bytes of the guest linear-memory pool, shared by every loaded module (see [Guest Memory](#guest-memory)).                                                                                                                                                               |
-| `stackSize`       | Wasm operand-stack size in 32-bit words, carved from the heap pool when the store is created.                                                                                                                                                                                   |
-| `maxCodePages`    | Capacity of the compiled-code-page pointer table across all loaded modules. Costs `maxCodePages * sizeof(void*)` in the heap pool up front; the code pages themselves (512 bytes each) are allocated lazily.                                                                    |
-| `maxGuestModules` | Maximum number of modules loadable into the store. The store's per-module bookkeeping is allocated from the heap pool when the store is created, so a larger value needs a larger heap pool. Capped at `255` by its `U8` type (SpaceWasm addresses modules with a single byte). |
-| `serialOutMax`    | Largest `serial_send` payload copied out of guest memory; a larger request traps the guest. `0` leaves `serialOut` unconfigured (any send traps).                                                                                                                               |
-| `serialIn`        | Per-`serialIn`-index queue config (`.size` in bytes, `.fullBehavior` policy). A `.size` of `0` leaves that index without a queue (all inbound frames on it are dropped). See below.                                                                                             |
-| `mallocator`      | `Fw::MemAllocator` used for every allocation above; the same instance is retained and used to free the pools at destruction.                                                                                                                                                    |
+| Field                  | Purpose                                                                                                                                                                                                                                                                                              |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `heapPages`            | Number of `SPACEWASM_PAGE_SIZE` pages for the interpreter heap (store + compiled IR). Must be `> 0` and `<= SPACEWASM_MAX_PAGES`.                                                                                                                                                                    |
+| `guestMemorySize`      | Size in bytes of the guest linear-memory pool, shared by every loaded module (see [Guest Memory](#guest-memory)).                                                                                                                                                                                    |
+| `stackSize`            | Wasm operand-stack size in 32-bit words, carved from the heap pool when the store is created.                                                                                                                                                                                                        |
+| `maxCodePages`         | Capacity of the compiled-code-page pointer table across all loaded modules. Costs `maxCodePages * sizeof(void*)` in the heap pool up front; the code pages themselves (512 bytes each) are allocated lazily.                                                                                         |
+| `maxGuestModules`      | Maximum number of modules loadable into the store. The store's per-module bookkeeping is allocated from the heap pool when the store is created, so a larger value needs a larger heap pool. Capped at `255` by its `U8` type (SpaceWasm addresses modules with a single byte).                      |
+| `decoderControlFrames` | Validator control-frame capacity lent to spacewasm for each module load; bounds the `block`/`loop`/`if` nesting depth of any one function (the function body counts as one frame). A deeper function fails to load with `ERR_OUT_OF_MEMORY`. Allocated once in `configure()` (`12` bytes per frame). |
+| `decoderOperands`      | Validator operand-stack capacity lent to spacewasm for each module load; bounds the operand-stack depth of any one function. A deeper function fails to load with `ERR_OUT_OF_MEMORY`. Allocated once in `configure()` (`2` bytes per operand).                                                      |
+| `serialOutMax`         | Largest `serial_send` payload copied out of guest memory; a larger request traps the guest. `0` leaves `serialOut` unconfigured (any send traps).                                                                                                                                                    |
+| `serialIn`             | Per-`serialIn`-index queue config (`.size` in bytes, `.fullBehavior` policy). A `.size` of `0` leaves that index without a queue (all inbound frames on it are dropped). See below.                                                                                                                  |
+| `mallocator`           | `Fw::MemAllocator` used for every allocation above; the same instance is retained and used to free the pools at destruction.                                                                                                                                                                         |
 
 Each `serialIn[]` element defaults to size `0` (unconfigured indices drop all inbound frames) and `DROP_NEWEST`, then is populated per port index:
 
@@ -646,7 +652,7 @@ Each `serialIn` frame is stored framed as `[U32 length][payload]`, so size a que
 
 ### `config/WasmSequencerConfig.hpp`
 
-C++ compile-time constants consumed directly by the component. Per-instance memory sizing — heap page count, guest pool size, Wasm stack size, code-page table capacity, max guest modules, serialOut buffer size, and each serialIn queue's size and overflow policy — is **not** compile-time; it is passed to `configure()` when the instance is set up (see the [Serial Ports](#serial-ports) example).
+C++ compile-time constants consumed directly by the component. Per-instance memory sizing — heap page count, guest pool size, Wasm stack size, code-page table capacity, max guest modules, decoder limits, serialOut buffer size, and each serialIn queue's size and overflow policy — is **not** compile-time; it is passed to `configure()` when the instance is set up (see the [Serial Ports](#serial-ports) example).
 
 | Constant                       | Value   | Purpose                                                                                     |
 | ------------------------------ | ------- | ------------------------------------------------------------------------------------------- |

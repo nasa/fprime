@@ -114,6 +114,16 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         //! Maximum number of Wasm modules that may be loaded into the sequencer's store.
         U8 maxGuestModules = 8;
 
+        //! Validator control-frame capacity used while loading a module. Bounds the block nesting depth
+        //! (block/loop/if) of any single function; a deeper function fails to load with ERR_OUT_OF_MEMORY.
+        //! Costs `decoderControlFrames * sizeof(spacewasm_control_frame_t)` bytes, allocated in configure().
+        FwSizeType decoderControlFrames = 64;
+
+        //! Validator operand-stack capacity used while loading a module. Bounds the operand stack depth of any
+        //! single function; a deeper function fails to load with ERR_OUT_OF_MEMORY.
+        //! Costs `decoderOperands * sizeof(spacewasm_operand_t)` bytes, allocated in configure().
+        FwSizeType decoderOperands = 256;
+
         //! Size (in bytes) of the serialOut buffer used to copy a `serial_send` payload out of guest memory
         //! before invoking the connected serialOut port. A value of 0 leaves serialOut unconfigured (disabled
         //! serial_send).
@@ -938,6 +948,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Current bump offset into `m_guestPool`.
     FwSizeType m_guestPoolOffset;
+
+    //! Validator scratch storage lent to spacewasm for the duration of each module load.
+    //! Sized by `m_config.decoderControlFrames` and `m_config.decoderOperands`.
+    spacewasm_control_frame_t* m_decoderControlFrames;
+    spacewasm_operand_t* m_decoderOperands;
 
     //! Opaque handle to the spacewasm engine, or null (before the store is initialized).
     spacewasm_t* m_wasm;

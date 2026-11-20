@@ -55,6 +55,8 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_heapPoisoned(false),
       m_guestPool(nullptr),
       m_guestPoolOffset(0),
+      m_decoderControlFrames(nullptr),
+      m_decoderOperands(nullptr),
       m_wasm(nullptr),
       m_hasExecutingContext(false),
       m_pendingTimer(),
@@ -132,6 +134,21 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
         }
     }
 
+    // Allocate the module-load validator scratch storage
+    {
+        const FwIndexType decoderId = static_cast<FwIndexType>(this->m_config.heapPages) + 3 + NUM_SERIALIN_INPUT_PORTS;
+        if (this->m_config.decoderControlFrames > 0) {
+            FwSizeType actualSize = sizeof(spacewasm_control_frame_t) * this->m_config.decoderControlFrames;
+            auto ptr = mallocator.checkedAllocate(decoderId, actualSize, alignof(spacewasm_control_frame_t));
+            this->m_decoderControlFrames = reinterpret_cast<spacewasm_control_frame_t*>(ptr);
+        }
+        if (this->m_config.decoderOperands > 0) {
+            FwSizeType actualSize = sizeof(spacewasm_operand_t) * this->m_config.decoderOperands;
+            auto ptr = mallocator.checkedAllocate(decoderId + 1, actualSize, alignof(spacewasm_operand_t));
+            this->m_decoderOperands = reinterpret_cast<spacewasm_operand_t*>(ptr);
+        }
+    }
+
     // Allocate the initial store
     this->m_allocator = &mallocator;
     this->createStore();
@@ -169,6 +186,17 @@ void WasmSequencer ::deinit() {
                 this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 3 + i,
                                               this->m_serialInQueue[i].get_buffer());
             }
+        }
+
+        // Deallocate the module-load validator scratch storage
+        const FwIndexType decoderId = static_cast<FwIndexType>(this->m_config.heapPages) + 3 + NUM_SERIALIN_INPUT_PORTS;
+        if (this->m_decoderControlFrames != nullptr) {
+            this->m_allocator->deallocate(decoderId, this->m_decoderControlFrames);
+            this->m_decoderControlFrames = nullptr;
+        }
+        if (this->m_decoderOperands != nullptr) {
+            this->m_allocator->deallocate(decoderId + 1, this->m_decoderOperands);
+            this->m_decoderOperands = nullptr;
         }
     }
 
