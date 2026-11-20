@@ -97,16 +97,16 @@ class HealthImpl final : public HealthComponentBase {
     //!
     //!  \param portNum Port number
     //!  \param key Key value
-    void PingReturn_overflowHook(const FwIndexType portNum, U32 key) override;
+    void PingReturn_overflowHook(const FwIndexType portNum, U32 key);
 
     //!  \brief HLTH_ENABLE overflow hook
-    void HLTH_ENABLE_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+    void HLTH_ENABLE_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq);
 
     //!  \brief HLTH_PING_ENABLE overflow hook
-    void HLTH_PING_ENABLE_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+    void HLTH_PING_ENABLE_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq);
 
     //!  \brief HLTH_CHNG_PING overflow hook
-    void HLTH_CHNG_PING_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+    void HLTH_CHNG_PING_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq);
 
     //!  \brief Reject a command that could not be queued
     //!
